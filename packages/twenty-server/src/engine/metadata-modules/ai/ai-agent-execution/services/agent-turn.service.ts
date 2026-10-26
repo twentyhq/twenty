@@ -12,6 +12,7 @@ import {
   AgentToolsetService,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-toolset.service';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
+import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import {
   AiModelRegistryService,
@@ -67,6 +68,7 @@ export class AgentTurnService {
     private readonly aiModelConfigService: AiModelConfigService,
     private readonly agentToolsetService: AgentToolsetService,
     private readonly agentStepLoopService: AgentStepLoopService,
+    private readonly aiBillingService: AiBillingService,
   ) {}
 
   async start({
@@ -87,6 +89,12 @@ export class AgentTurnService {
     const modelConfig = this.aiModelRegistryService.getEffectiveModelConfig(
       registeredModel.modelId,
     );
+
+    await this.aiBillingService.assertModelAllowedForWorkspace({
+      workspaceId: loopInput.billing.workspaceId,
+      modelConfig,
+    });
+
     const nativeCapabilities = getNativeModelCapabilities(
       registeredModel.sdkPackage,
     );

@@ -1,5 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { type QuotaDebitResult } from 'src/engine/core-modules/usage-limit/types/quota-debit-result.type';
@@ -18,8 +21,14 @@ import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { type AiModelCostConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-cost-config.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
+import { isPremiumAiModel } from 'src/engine/metadata-modules/ai/ai-models/utils/is-premium-ai-model.util';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 
 export type WebSearchOperationType =
   | UsageOperationType.WEB_SEARCH
@@ -39,7 +48,34 @@ export class AiBillingService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly billingService: BillingService,
   ) {}
+
+  async assertModelAllowedForWorkspace({
+    workspaceId,
+    modelConfig,
+  }: {
+    workspaceId: string;
+    modelConfig: Pick<AiModelConfig, 'label' | 'inputCostPerMillionTokens'>;
+  }): Promise<void> {
+    if (!isPremiumAiModel(modelConfig)) {
+      return;
+    }
+
+    if (await this.billingService.isPayingCustomer(workspaceId)) {
+      return;
+    }
+
+    const modelLabel = modelConfig.label;
+
+    throw new AiException(
+      `${modelLabel} is available on paid plans. Pick another model or subscribe to use it.`,
+      AiExceptionCode.MODEL_REQUIRES_PAID_PLAN,
+      {
+        userFriendlyMessage: msg`${modelLabel} is available on paid plans. Pick another model or subscribe to use it.`,
+      },
+    );
+  }
 
   async assertAiExecutionAllowed({
     workspaceId,

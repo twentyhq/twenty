@@ -94,6 +94,13 @@ export class AiGenerateTextController {
         workspace,
       );
 
+    await this.aiBillingService.assertModelAllowedForWorkspace({
+      workspaceId: workspace.id,
+      modelConfig: this.aiModelRegistryService.getEffectiveModelConfig(
+        registeredModel.modelId,
+      ),
+    });
+
     let result: Awaited<ReturnType<typeof generateText>> | undefined;
 
     try {
