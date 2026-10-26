@@ -36,6 +36,19 @@ describe('expandFlatFieldMetadataMaps', () => {
     });
   });
 
+  it('should derive isSearchable from the search rows when the entry predates it', () => {
+    expect(expandOne({ $B: ['search-field-1'] })).toMatchObject({
+      isSearchable: true,
+    });
+    expect(expandOne({})).toMatchObject({ isSearchable: false });
+  });
+
+  it('should keep a cached isSearchable over the derived value', () => {
+    expect(
+      expandOne({ $B: ['search-field-1'], isSearchable: false }),
+    ).toMatchObject({ isSearchable: false });
+  });
+
   it('should round trip a field through JSON, as the cache storage layer does', () => {
     const compacted = JSON.parse(
       JSON.stringify(

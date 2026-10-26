@@ -136,6 +136,9 @@ const recomputeFlatFieldMetadataMapsWithoutIsSearchable = async () => {
     });
 
   await recomputeFlatFieldMetadataMaps();
+  await getAppProviderByClassName<WorkspaceCacheService>(
+    'WorkspaceCacheService',
+  ).evictWorkspaceFromLocalCache(SEED_APPLE_WORKSPACE_ID);
 };
 
 describe('Application manifest sync with a field cache that predates isSearchable', () => {
@@ -166,14 +169,6 @@ describe('Application manifest sync with a field cache that predates isSearchabl
 
     await recomputeFlatFieldMetadataMapsWithoutIsSearchable();
 
-    const staleFlatFieldMetadataMaps = await getCachedFlatFieldMetadataMaps();
-
-    expect(
-      staleFlatFieldMetadataMaps.byUniversalIdentifier[
-        NAME_FIELD_UNIVERSAL_IDENTIFIER
-      ],
-    ).not.toHaveProperty('isSearchable');
-
     const { data, errors } = await syncApplication({
       expectToFail: false,
       manifest: MANIFEST,
@@ -193,15 +188,15 @@ describe('Application manifest sync with a field cache that predates isSearchabl
       searchFieldMetadataListBeforeResync,
     );
 
-    const healedFlatFieldMetadataMaps = await getCachedFlatFieldMetadataMaps();
+    const flatFieldMetadataMaps = await getCachedFlatFieldMetadataMaps();
 
     expect(
-      healedFlatFieldMetadataMaps.byUniversalIdentifier[
+      flatFieldMetadataMaps.byUniversalIdentifier[
         NAME_FIELD_UNIVERSAL_IDENTIFIER
       ]?.isSearchable,
     ).toBe(true);
     expect(
-      healedFlatFieldMetadataMaps.byUniversalIdentifier[
+      flatFieldMetadataMaps.byUniversalIdentifier[
         NOTE_FIELD_UNIVERSAL_IDENTIFIER
       ]?.isSearchable,
     ).toBe(false);

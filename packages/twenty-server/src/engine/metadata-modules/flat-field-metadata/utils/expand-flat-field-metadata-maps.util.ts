@@ -27,7 +27,13 @@ const expandFlatFieldMetadata = (
     }
   }
 
-  return expanded as FlatFieldMetadata;
+  const flatFieldMetadata = expanded as FlatFieldMetadata;
+
+  // Entries cached before isSearchable existed lack it; the cache derives it from the same search rows.
+  flatFieldMetadata.isSearchable ??=
+    flatFieldMetadata.searchFieldMetadataUniversalIdentifiers.length > 0;
+
+  return flatFieldMetadata;
 };
 
 export const expandFlatFieldMetadataMaps = (
