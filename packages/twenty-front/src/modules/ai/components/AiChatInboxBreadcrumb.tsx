@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useAgentChatInboxViewHeading } from '@/ai/hooks/useAgentChatInboxViewHeading';
+import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 
-const StyledBreadcrumb = styled.span`
+const StyledBreadcrumb = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
@@ -17,14 +17,10 @@ const StyledBreadcrumb = styled.span`
 `;
 
 export const AiChatInboxBreadcrumb = () => {
-  const theme = useTheme();
-  const { HeadingIcon, headingLabel } = useAgentChatInboxViewHeading();
-
   return (
     <UndecoratedLink to={getAppPath(AppPath.AiChatInbox, { threadId: null })}>
       <StyledBreadcrumb>
-        <HeadingIcon size={theme.icon.size.md} />
-        {headingLabel}
+        <AiChatInboxViewHeading />
         <span aria-hidden>/</span>
       </StyledBreadcrumb>
     </UndecoratedLink>

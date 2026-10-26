@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
+import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import {
   AgentChatChannelAssignmentFilter,
@@ -14,11 +15,16 @@ export const useOpenAgentChatChannel = () => {
   const navigate = useNavigateApp();
 
   const openAgentChatChannel = useCallback(
-    (channelId: string) => {
+    ({
+      channelId,
+      channelStatus = AgentChatChannelThreadStatus.OPEN,
+      assignment = AgentChatChannelAssignmentFilter.ANY,
+    }: Pick<AgentChatChannelView, 'channelId'> &
+      Partial<AgentChatChannelView>) => {
       store.set(agentChatChannelViewState.atom, {
         channelId,
-        channelStatus: AgentChatChannelThreadStatus.OPEN,
-        assignment: AgentChatChannelAssignmentFilter.ANY,
+        channelStatus,
+        assignment,
       });
       navigate(AppPath.AiChatInbox, { threadId: null });
     },

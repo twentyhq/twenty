@@ -87,6 +87,7 @@ export {
   IconChevronsRight,
   IconChevronUp,
   IconCircle,
+  IconCircleCheck,
   IconCircleDashed,
   IconCircleDot,
   IconCircleOff,

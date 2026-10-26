@@ -66,7 +66,7 @@ export const NavigationDrawerAiChatChannelsSection = () => {
     const channelId = await createAgentChatChannel(trimmedName);
 
     if (isDefined(channelId)) {
-      openAgentChatChannel(channelId);
+      openAgentChatChannel({ channelId });
     }
   };
 
@@ -118,10 +118,9 @@ export const NavigationDrawerAiChatChannelsSection = () => {
           placeholder={t`Channel name`}
         />
       ) : (
-        agentChatAccessibleChannels.length === 0 &&
         canManageChannels && (
           <NavigationDrawerItem
-            label={t`New channel`}
+            label={t`Add channel`}
             Icon={IconPlus}
             variant="tertiary"
             onClick={startCreate}

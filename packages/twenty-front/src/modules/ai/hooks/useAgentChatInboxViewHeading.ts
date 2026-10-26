@@ -8,6 +8,10 @@ import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import {
+  AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadStatus,
+} from '~/generated-metadata/graphql';
 
 export const useAgentChatInboxViewHeading = () => {
   const { t } = useLingui();
@@ -23,7 +27,32 @@ export const useAgentChatInboxViewHeading = () => {
   const ChannelIcon = useAgentChatChannelIcon(channel?.icon);
 
   if (isDefined(agentChatShownChannelView)) {
-    return { HeadingIcon: ChannelIcon, headingLabel: channel?.name ?? '' };
+    const channelStatusLabels = {
+      [AgentChatChannelThreadStatus.OPEN]: t`Open`,
+      [AgentChatChannelThreadStatus.SNOOZED]: t`Snoozed`,
+      [AgentChatChannelThreadStatus.DONE]: t`Done`,
+    };
+    const channelStatusLabel =
+      channelStatusLabels[agentChatShownChannelView.channelStatus];
+    const { assignment, channelStatus } = agentChatShownChannelView;
+    const isAssignedOpenView =
+      channelStatus === AgentChatChannelThreadStatus.OPEN &&
+      assignment === AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME;
+    const assignmentLabel =
+      assignment === AgentChatChannelAssignmentFilter.UNASSIGNED
+        ? t`Unassigned`
+        : t`Mine`;
+    const channelViewLabel = isAssignedOpenView
+      ? t`Assigned`
+      : assignment === AgentChatChannelAssignmentFilter.ANY
+        ? channelStatusLabel
+        : t`${channelStatusLabel} · ${assignmentLabel}`;
+
+    return {
+      HeadingIcon: ChannelIcon,
+      headingLabel: channel?.name ?? '',
+      channelViewLabel,
+    };
   }
 
   return {
@@ -32,5 +61,6 @@ export const useAgentChatInboxViewHeading = () => {
     headingLabel: t(
       AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[agentChatThreadFilterStatus],
     ),
+    channelViewLabel: undefined,
   };
 };

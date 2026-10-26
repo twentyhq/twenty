@@ -207,11 +207,16 @@ export const NavigationDrawerItem = ({
   secondaryLabel,
   indentationLevel = DEFAULT_INDENTATION_LEVEL,
   Icon,
+  icon,
+  trailingIcon,
+  'aria-expanded': ariaExpanded,
+  'aria-controls': ariaControls,
   to,
   onClick,
   active,
   modifier,
   subItemState,
+  subItemIndentation = 'default',
   rightOptions,
   alwaysShowRightOptions = false,
   isDragging,
@@ -308,6 +313,8 @@ export const NavigationDrawerItem = ({
           }}
           active={active}
           aria-current={active ? (isDefined(to) ? 'page' : true) : undefined}
+          aria-expanded={ariaExpanded}
+          aria-controls={ariaControls}
           isSoon={isSoon}
           variant={variant}
           disabled={variant === 'placeholder'}
@@ -324,6 +331,31 @@ export const NavigationDrawerItem = ({
               ? 'button'
               : undefined
           }
+          tabIndex={
+            !isDefined(editingContent) &&
+            !to &&
+            isDefined(rightOptions) &&
+            !isSoon &&
+            variant !== 'placeholder'
+              ? 0
+              : undefined
+          }
+          onKeyDown={(event) => {
+            const isRowKeyboardActivation =
+              event.target === event.currentTarget &&
+              !isDefined(editingContent) &&
+              !isDefined(to) &&
+              isDefined(rightOptions) &&
+              !isSoon &&
+              variant !== 'placeholder' &&
+              (event.key === 'Enter' || event.key === ' ');
+
+            if (isRowKeyboardActivation) {
+              event.preventDefault();
+              handleMobileNavigation();
+              onClick?.();
+            }
+          }}
           to={isInternalLink ? to : undefined}
           href={isExternalLink ? to : undefined}
           target={isExternalLink ? '_blank' : undefined}
@@ -333,24 +365,30 @@ export const NavigationDrawerItem = ({
           <StyledItemElementsContainer>
             {showBreadcrumb && (
               <NavigationDrawerAnimatedCollapseWrapper>
-                <NavigationDrawerItemBreadcrumb state={subItemState} />
+                <NavigationDrawerItemBreadcrumb
+                  state={subItemState}
+                  isCompact={subItemIndentation === 'compact'}
+                />
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
 
             {editingContent ? (
               <StyledIcon>{editingContent.icon}</StyledIcon>
             ) : (
-              isDefined(Icon) && (
+              (isDefined(icon) || isDefined(Icon)) && (
                 <StyledIcon>
-                  <Icon
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.md}
-                    color={
-                      showBreadcrumb && !isExpanded
-                        ? theme.font.color.light
-                        : 'currentColor'
-                    }
-                  />
+                  {icon ??
+                    (isDefined(Icon) && (
+                      <Icon
+                        size={theme.icon.size.md}
+                        stroke={theme.icon.stroke.md}
+                        color={
+                          showBreadcrumb && !isExpanded
+                            ? theme.font.color.light
+                            : 'currentColor'
+                        }
+                      />
+                    ))}
                   {isUnread && !isExpanded && (
                     <StyledNavigationDrawerUnreadDot />
                   )}
@@ -385,6 +423,12 @@ export const NavigationDrawerItem = ({
             </StyledLabelParent>
 
             {showStyledSpacer && <StyledSpacer />}
+
+            {isDefined(trailingIcon) && (
+              <NavigationDrawerAnimatedCollapseWrapper>
+                {trailingIcon}
+              </NavigationDrawerAnimatedCollapseWrapper>
+            )}
 
             {isSoon && (
               <NavigationDrawerAnimatedCollapseWrapper>

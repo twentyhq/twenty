@@ -8,6 +8,7 @@ import { parseThemeColor } from 'twenty-ui/utilities';
 
 import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { NavigationDrawerAiChatChannelActionsDropdown } from '@/ai/components/NavigationDrawerAiChatChannelActionsDropdown';
+import { NavigationDrawerAiChatChannelNavigation } from '@/ai/components/NavigationDrawerAiChatChannelNavigation';
 import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { useDeleteAgentChatChannel } from '@/ai/hooks/useDeleteAgentChatChannel';
 import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
@@ -20,8 +21,6 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type AgentChatChannel } from '~/generated-metadata/graphql';
@@ -104,11 +103,6 @@ export const NavigationDrawerAiChatChannelItem = ({
     ({ id }) => id === deleteDestinationChannelId,
   )?.name;
   const channelName = channel.name;
-  const openCount = summary?.openCount ?? 0;
-  const openCountLabel = openCount > 0 ? `${openCount}` : undefined;
-  const secondaryLabel = channel.isAccessible
-    ? openCountLabel
-    : t`Not open to you`;
   const coloredIcon = <AgentChatChannelIcon channel={channel} />;
 
   const icon = canManage ? (
@@ -146,50 +140,41 @@ export const NavigationDrawerAiChatChannelItem = ({
 
   return (
     <>
-      <NavigationDrawerItemEditingContext.Provider
-        value={{ icon, label: undefined, isSelected: false }}
-      >
-        <NavigationDrawerItem
-          label={channel.name}
-          secondaryLabel={secondaryLabel}
-          variant={channel.isAccessible ? 'default' : 'tertiary'}
-          isUnread={summary?.hasUnreadOpen}
-          active={
-            isAiChatInboxPath(location.pathname) &&
-            agentChatShownChannelView?.channelId === channel.id
-          }
-          onClick={
-            channel.isAccessible
-              ? () => openAgentChatChannel(channel.id)
-              : undefined
-          }
-          triggerEvent="CLICK"
-          isRightOptionsDropdownOpen={isDropdownOpen}
-          rightOptions={
-            canManage || channel.isAccessible ? (
-              <NavigationDrawerAiChatChannelActionsDropdown
-                channel={channel}
-                destinationChannels={destinationChannels}
-                dropdownId={dropdownId}
-                canManage={canManage}
-                onRename={() => setDraftName(channel.name)}
-                onChangeAppearance={() =>
-                  openDropdown({
-                    dropdownComponentInstanceIdFromProps: iconPickerDropdownId,
-                  })
-                }
-                onUpdate={(input) =>
-                  void updateAgentChatChannel({ channelId: channel.id, input })
-                }
-                onDelete={(destinationChannelId) => {
-                  setDeleteDestinationChannelId(destinationChannelId);
-                  openDialog(deleteDialogId);
-                }}
-              />
-            ) : undefined
-          }
-        />
-      </NavigationDrawerItemEditingContext.Provider>
+      <NavigationDrawerAiChatChannelNavigation
+        channel={channel}
+        summary={summary}
+        icon={icon}
+        channelView={agentChatShownChannelView}
+        isActive={
+          isAiChatInboxPath(location.pathname) &&
+          agentChatShownChannelView?.channelId === channel.id
+        }
+        onNavigate={openAgentChatChannel}
+        isRightOptionsDropdownOpen={isDropdownOpen}
+        rightOptions={
+          canManage || channel.isAccessible ? (
+            <NavigationDrawerAiChatChannelActionsDropdown
+              channel={channel}
+              destinationChannels={destinationChannels}
+              dropdownId={dropdownId}
+              canManage={canManage}
+              onRename={() => setDraftName(channel.name)}
+              onChangeAppearance={() =>
+                openDropdown({
+                  dropdownComponentInstanceIdFromProps: iconPickerDropdownId,
+                })
+              }
+              onUpdate={(input) =>
+                void updateAgentChatChannel({ channelId: channel.id, input })
+              }
+              onDelete={(destinationChannelId) => {
+                setDeleteDestinationChannelId(destinationChannelId);
+                openDialog(deleteDialogId);
+              }}
+            />
+          ) : undefined
+        }
+      />
       <ConfirmationDialog
         dialogId={deleteDialogId}
         title={t`Delete ${channelName}?`}

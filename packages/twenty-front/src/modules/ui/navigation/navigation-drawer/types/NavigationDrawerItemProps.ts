@@ -11,9 +11,14 @@ export type NavigationDrawerItemProps = {
   secondaryLabel?: string;
   indentationLevel?: NavigationDrawerItemIndentationLevel;
   subItemState?: NavigationDrawerSubItemState;
+  subItemIndentation?: 'default' | 'compact';
   to?: string;
   onClick?: () => void;
   Icon?: IconComponent | ((props: TablerIconsProps) => JSX.Element);
+  icon?: ReactNode;
+  trailingIcon?: ReactNode;
+  'aria-expanded'?: boolean;
+  'aria-controls'?: string;
   active?: boolean;
   modifier?: NavigationDrawerItemModifier;
   rightOptions?: ReactNode;
