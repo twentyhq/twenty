@@ -198,7 +198,10 @@ export const MainNavigationDrawerModeSwitcher = () => {
           );
         })}
       {canAddTab && (
-        <MainNavigationDrawerAddTabButton isExpanded={isExpanded} />
+        <MainNavigationDrawerAddTabButton
+          isExpanded={isExpanded}
+          isTooltipDisabled={!shouldShowTooltips}
+        />
       )}
       {isDefined(settingsMode) && renderMode(settingsMode)}
     </StyledSwitcher>
