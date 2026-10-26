@@ -19,6 +19,16 @@ exports[`Sync application should reject hijacking the searchVector system field 
               "userFriendlyMessage": "Field type TS_VECTOR must have SYSTEM writability",
               "value": "OPEN",
             },
+            {
+              "code": "NON_UPDATABLE_PROPERTY_DIVERGENCE",
+              "message": "fieldMetadata property "isSystemSideEffect" cannot be updated",
+              "userFriendlyMessage": "Property isSystemSideEffect cannot be updated",
+            },
+            {
+              "code": "NON_UPDATABLE_PROPERTY_DIVERGENCE",
+              "message": "fieldMetadata property "isSystem" cannot be updated",
+              "userFriendlyMessage": "Property isSystem cannot be updated",
+            },
           ],
           "flatEntityMinimalInformation": {
             "name": "searchVector",
@@ -142,6 +152,21 @@ exports[`Sync application should reject hijacking the searchVector system field 
               "message": "Field type TS_VECTOR must have SYSTEM writability",
               "userFriendlyMessage": "Field type TS_VECTOR must have SYSTEM writability",
               "value": "OPEN",
+            },
+            {
+              "code": "NON_UPDATABLE_PROPERTY_DIVERGENCE",
+              "message": "fieldMetadata property "isSystemSideEffect" cannot be updated",
+              "userFriendlyMessage": "Property isSystemSideEffect cannot be updated",
+            },
+            {
+              "code": "NON_UPDATABLE_PROPERTY_DIVERGENCE",
+              "message": "fieldMetadata property "type" cannot be updated",
+              "userFriendlyMessage": "Property type cannot be updated",
+            },
+            {
+              "code": "NON_UPDATABLE_PROPERTY_DIVERGENCE",
+              "message": "fieldMetadata property "isSystem" cannot be updated",
+              "userFriendlyMessage": "Property isSystem cannot be updated",
             },
           ],
           "flatEntityMinimalInformation": {

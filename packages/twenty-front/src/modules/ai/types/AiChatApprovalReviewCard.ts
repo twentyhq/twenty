@@ -10,7 +10,8 @@ export type AiChatApprovalReviewCard = AiChatApprovalReviewSummary & {
   denyLabel?: string;
   status: AiChatApprovalReviewStatus;
   isDestructive?: boolean;
-  hint?: string;
+  isApprovalDisabled?: boolean;
+  hint?: ReactNode;
   outcomeMessage?: string;
   progress?: { completed: number; total: number };
 };

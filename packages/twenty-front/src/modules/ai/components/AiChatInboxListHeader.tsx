@@ -7,7 +7,6 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { AiChatInboxLayoutDropdown } from '@/ai/components/AiChatInboxLayoutDropdown';
 import { AiChatInboxTriageCommandMenuItems } from '@/ai/components/AiChatInboxTriageCommandMenuItems';
 import { useAgentChatInboxViewHeading } from '@/ai/hooks/useAgentChatInboxViewHeading';
-import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
@@ -19,16 +18,17 @@ import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 
 type AiChatInboxListHeaderProps = {
   selectedThreadCount: number;
+  isSecondaryPaneShown: boolean;
 };
 
 export const AiChatInboxListHeader = ({
   selectedThreadCount,
+  isSecondaryPaneShown,
 }: AiChatInboxListHeaderProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { HeadingIcon, headingLabel } = useAgentChatInboxViewHeading();
   const isMobile = useIsMobile();
-  const isSplitView = useIsAiChatInboxSplitView();
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
   });
@@ -73,8 +73,7 @@ export const AiChatInboxListHeader = ({
             >
               {t`New chat`}
             </Button>
-            {/* In split view the chat beside the list has the command menu */}
-            {!isSplitView && <SidePanelToggleButton />}
+            {!isSecondaryPaneShown && <SidePanelToggleButton />}
           </>
         )
       }
