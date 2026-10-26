@@ -25,6 +25,10 @@ const AGENT_CHAT_THREAD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.agentChatThread.universalIdentifier;
 const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-3333-4333-8333-333333333333';
+const PREVIOUS_NEW_CHAT_AVAILABILITY_EXPRESSION =
+  'numberOfSelectedRecords == 1 and pageType == "RECORD_PAGE" and not isInSidePanel and permissionFlags.AI';
+const NEW_CHAT_PINNED_EXPRESSION =
+  'pageType == "RECORD_PAGE" and objectMetadataItem.nameSingular == "agentChatThread" and not isInSidePanel';
 const SYNCABLE = {
   workspaceId: '20202020-1111-4111-8111-111111111111',
   applicationId: '20202020-2222-4222-8222-222222222222',
@@ -41,13 +45,13 @@ const NEW_CHAT: FlatCommandMenuItem = {
   shortLabel: 'New chat',
   icon: 'IconMessageCirclePlus',
   position: 43,
-  isPinned: false,
+  isPinned: true,
   isActive: true,
   isSystemSideEffect: false,
   engineComponentKey: EngineComponentKey.NEW_AI_CHAT,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   conditionalAvailabilityExpression: 'permissionFlags.AI',
-  conditionalPinnedExpression: null,
+  conditionalPinnedExpression: NEW_CHAT_PINNED_EXPRESSION,
   availabilityObjectMetadataId: null,
   availabilityObjectMetadataUniversalIdentifier: null,
   navigationTargetObjectMetadataId: null,
@@ -71,6 +75,8 @@ const OPEN_CHAT: FlatCommandMenuItem = {
   shortLabel: 'Open chat',
   icon: 'IconMessage',
   position: 44,
+  isPinned: false,
+  conditionalPinnedExpression: null,
   engineComponentKey: EngineComponentKey.VIEW_PREVIOUS_AI_CHATS,
 };
 const CHAT_OBJECT_METADATA: FlatObjectMetadata = {
@@ -139,14 +145,17 @@ const FLAT_OBJECT_METADATA_MAPS: FlatEntityMaps<FlatObjectMetadata> = {
 };
 
 describe('buildGlobalChatCommandMenuItemUpdates', () => {
-  it('migrates both commands while preserving identifiers and user overrides', () => {
+  it('migrates both commands while preserving identifiers, pin state and user overrides', () => {
     const newChat = {
       ...NEW_CHAT,
       availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
       availabilityObjectMetadataId: 'chat-object-id',
       availabilityObjectMetadataUniversalIdentifier:
         AGENT_CHAT_THREAD_UNIVERSAL_IDENTIFIER,
-      isPinned: true,
+      conditionalAvailabilityExpression:
+        PREVIOUS_NEW_CHAT_AVAILABILITY_EXPRESSION,
+      conditionalPinnedExpression: null,
+      isPinned: false,
       overrides: {
         [CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: { label: 'My new chat' },
       },
@@ -184,7 +193,7 @@ describe('buildGlobalChatCommandMenuItemUpdates', () => {
         availabilityObjectMetadataId: null,
         availabilityObjectMetadataUniversalIdentifier: null,
         conditionalAvailabilityExpression: 'permissionFlags.AI',
-        isPinned: false,
+        conditionalPinnedExpression: NEW_CHAT_PINNED_EXPRESSION,
         updatedAt: NOW,
       },
     ]);
@@ -201,7 +210,7 @@ describe('buildGlobalChatCommandMenuItemUpdates', () => {
     ).toEqual([]);
   });
 
-  it('restores the previous labels and resolves the chat object binding on down', () => {
+  it('restores the previous labels, chat object binding and pinning on down', () => {
     const updates = buildGlobalChatCommandMenuItemUpdates({
       flatCommandMenuItemMaps: FLAT_COMMAND_MENU_ITEM_MAPS,
       flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS,
@@ -223,8 +232,9 @@ describe('buildGlobalChatCommandMenuItemUpdates', () => {
         availabilityObjectMetadataUniversalIdentifier:
           AGENT_CHAT_THREAD_UNIVERSAL_IDENTIFIER,
         conditionalAvailabilityExpression:
-          'numberOfSelectedRecords == 1 and pageType == "RECORD_PAGE" and not isInSidePanel and permissionFlags.AI',
-        isPinned: false,
+          PREVIOUS_NEW_CHAT_AVAILABILITY_EXPRESSION,
+        conditionalPinnedExpression: null,
+        isPinned: true,
       }),
     ]);
   });

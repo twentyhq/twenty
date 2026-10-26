@@ -11,7 +11,6 @@ const PICKER_PAGE: SidePanelNavigationStackItem = {
 };
 
 const CURRENT_REQUEST = {
-  isRequestAborted: false,
   isSidePanelOpened: true,
   initialPage: PICKER_PAGE,
   currentPage: PICKER_PAGE,
@@ -25,7 +24,6 @@ describe('isAiChatPickerRequestCurrent', () => {
   });
 
   it.each([
-    { reason: 'aborted', changedState: { isRequestAborted: true } },
     { reason: 'closed', changedState: { isSidePanelOpened: false } },
     {
       reason: 'replaced with the same page ID',

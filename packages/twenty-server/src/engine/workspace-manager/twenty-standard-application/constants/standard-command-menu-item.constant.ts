@@ -884,13 +884,15 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       msg({ message: `New chat`, context: 'commandMenuItem.label' }),
     ),
     icon: 'IconMessageCirclePlus',
-    isPinned: false,
+    isPinned: true,
     position: 43,
     shortLabel: i18nLabel(
       msg({ message: `New chat`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'permissionFlags.AI',
+    conditionalPinnedExpression:
+      'pageType == "RECORD_PAGE" and objectMetadataItem.nameSingular == "agentChatThread" and not isInSidePanel',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NEW_AI_CHAT,

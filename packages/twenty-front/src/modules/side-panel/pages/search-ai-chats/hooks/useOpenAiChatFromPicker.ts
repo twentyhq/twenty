@@ -1,3 +1,4 @@
+import { isNull } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -10,40 +11,33 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isAiChatPickerRequestCurrent } from '@/side-panel/pages/search-ai-chats/utils/isAiChatPickerRequestCurrent';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isAiModePath } from '~/utils/isAiModePath';
 import { logError } from '~/utils/logError';
 
-export const useOpenAiChatFromPicker = ({
-  pendingOpenRequests,
-}: {
-  pendingOpenRequests: Set<AbortController>;
-}) => {
+type AiChatPickerOpenError = {
+  threadId: string;
+  isThreadUnavailable: boolean;
+};
+
+export const useOpenAiChatFromPicker = () => {
   const store = useStore();
   const { pathname } = useLocation();
   const { loadAgentChatThread } = useRefreshAgentChatThreads();
-  const isOnChatPage = isAiChatPath(pathname) || isAiChatInboxPath(pathname);
-  const { handleThreadClick } = useAiChatThreadClick({
-    shouldOpenInFullPage: isOnChatPage,
-  });
+  const { handleThreadClick } = useAiChatThreadClick();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const [openingThreadId, setOpeningThreadId] = useState<string | null>(null);
-  const [hasOpenError, setHasOpenError] = useState(false);
+  const [openError, setOpenError] = useState<AiChatPickerOpenError | null>(
+    null,
+  );
+  const [unavailableThreadIds, setUnavailableThreadIds] = useState<string[]>(
+    [],
+  );
 
   const openThread = async (threadId: string) => {
-    if (isDefined(openingThreadId)) {
-      return;
-    }
-
-    const request = new AbortController();
-
-    pendingOpenRequests.add(request);
-
     const pickerPage = store.get(sidePanelNavigationStackState.atom).at(-1);
     const workspaceId = store.get(currentWorkspaceState.atom)?.id;
     const isPickerStillOpen = () =>
       isAiChatPickerRequestCurrent({
-        isRequestAborted: request.signal.aborted,
         isSidePanelOpened: store.get(isSidePanelOpenedState.atom),
         initialPage: pickerPage,
         currentPage: store.get(sidePanelNavigationStackState.atom).at(-1),
@@ -52,7 +46,7 @@ export const useOpenAiChatFromPicker = ({
       });
 
     setOpeningThreadId(threadId);
-    setHasOpenError(false);
+    setOpenError(null);
 
     try {
       const thread = await loadAgentChatThread(threadId);
@@ -61,30 +55,32 @@ export const useOpenAiChatFromPicker = ({
         return;
       }
 
+      if (isNull(thread)) {
+        setUnavailableThreadIds((threadIds) => [...threadIds, threadId]);
+        setOpenError({ threadId, isThreadUnavailable: true });
+        return;
+      }
+
       if (!isDefined(thread)) {
-        setHasOpenError(true);
+        setOpenError({ threadId, isThreadUnavailable: false });
         return;
       }
 
       handleThreadClick(thread);
 
-      if (isOnChatPage) {
+      if (isAiModePath(pathname)) {
         void closeSidePanelMenu();
       }
     } catch (error) {
       logError(error);
 
       if (isPickerStillOpen()) {
-        setHasOpenError(true);
+        setOpenError({ threadId, isThreadUnavailable: false });
       }
     } finally {
-      pendingOpenRequests.delete(request);
-
-      if (!request.signal.aborted) {
-        setOpeningThreadId(null);
-      }
+      setOpeningThreadId(null);
     }
   };
 
-  return { openThread, openingThreadId, hasOpenError };
+  return { openThread, openingThreadId, openError, unavailableThreadIds };
 };

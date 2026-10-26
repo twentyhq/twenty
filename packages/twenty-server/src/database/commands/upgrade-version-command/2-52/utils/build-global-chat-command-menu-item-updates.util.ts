@@ -16,6 +16,8 @@ const AGENT_CHAT_THREAD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.agentChatThread.universalIdentifier;
 const PREVIOUS_NEW_CHAT_AVAILABILITY_EXPRESSION =
   'numberOfSelectedRecords == 1 and pageType == "RECORD_PAGE" and not isInSidePanel and permissionFlags.AI';
+const NEW_CHAT_PINNED_EXPRESSION =
+  'pageType == "RECORD_PAGE" and objectMetadataItem.nameSingular == "agentChatThread" and not isInSidePanel';
 
 export const buildGlobalChatCommandMenuItemUpdates = ({
   flatCommandMenuItemMaps,
@@ -51,13 +53,15 @@ export const buildGlobalChatCommandMenuItemUpdates = ({
     updates.push({
       universalIdentifier: NEW_AI_CHAT_UNIVERSAL_IDENTIFIER,
       target: {
-        isPinned: false,
         availabilityType: isUpgrade
           ? CommandMenuItemAvailabilityType.GLOBAL
           : CommandMenuItemAvailabilityType.RECORD_SELECTION,
         conditionalAvailabilityExpression: isUpgrade
           ? 'permissionFlags.AI'
           : PREVIOUS_NEW_CHAT_AVAILABILITY_EXPRESSION,
+        conditionalPinnedExpression: isUpgrade
+          ? NEW_CHAT_PINNED_EXPRESSION
+          : null,
         availabilityObjectMetadataId: isUpgrade
           ? null
           : (chatObjectMetadata?.id ?? null),
