@@ -1,0 +1,12 @@
+{
+  "rows": 10000000,
+  "members": 1000,
+  "shares": 50000,
+  "startedAt": "2026-10-26T18:11:46.455Z",
+  "processed": 881090,
+  "retries": 15,
+  "elapsedSeconds": 500.896177625,
+  "rowsPerSecond": 1759.0271976356696,
+  "readErrors": 0,
+  "error": "error: canceling statement due to statement timeout"
+}

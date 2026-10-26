@@ -1,0 +1,1194 @@
+[
+  {
+    "Plan": {
+      "Node Type": "ModifyTable",
+      "Operation": "Update",
+      "Parallel Aware": false,
+      "Async Capable": false,
+      "Relation Name": "company",
+      "Alias": "target",
+      "Startup Cost": 184593.8,
+      "Total Cost": 186717.74,
+      "Plan Rows": 250,
+      "Plan Width": 430,
+      "Plans": [
+        {
+          "Node Type": "Index Scan",
+          "Parent Relationship": "InitPlan",
+          "Subplan Name": "CTE computed",
+          "Parallel Aware": false,
+          "Async Capable": false,
+          "Scan Direction": "Forward",
+          "Index Name": "company_pkey",
+          "Relation Name": "company",
+          "Alias": "permissionTarget",
+          "Startup Cost": 0.43,
+          "Total Cost": 184593.36,
+          "Plan Rows": 250,
+          "Plan Width": 208,
+          "Index Cond": "(id = ANY ('{0145f56c-2099-a36c-bbac-37a23249c5af,0145f91f-dbb7-07d2-31ed-85b30adf4aa3,0145fc79-bc5b-4f23-26b9-d0b97538cdce,0145fef2-53c6-da9e-95e0-32f4e6c02b3f,01460193-7e20-68ca-c1a1-8ad6f6c36e8e,01460a4b-88e7-8425-968b-09f74c98556b,01460b2b-97e0-6e57-3ddc-c6ac6d1d467a,01460bef-22e6-aa05-3ddb-5ec66b42f207,01460d5e-7cfc-48d5-5d5f-6272708ae47b,01460eb1-7d9c-fdc7-f270-ab18fa10e458,014610da-089a-a708-4b2a-f59a2aac3377,01461419-de46-6733-5a94-6390a118891f,01461438-49a6-142b-1103-b35b6bb94456,0146147d-b419-a9b5-6c9b-d250ba40524b,01461488-1ef0-a1a4-e0c2-1693cfab87ef,01461b2f-f876-361e-089d-f8c7fdfcc2fe,01461cb5-762e-4fd0-dcfb-aca096bc6c47,0146202f-97d3-93de-aa80-9404f085709f,01462435-19ba-d7dd-2195-a56e9903b828,014624ab-2554-b76f-19c5-8fccb2164292,01462628-92af-4267-e9c4-1cf75f5b7c9a,01462719-c83d-fceb-d1c8-6340803d4a31,01462743-db8b-64da-63b4-2d6388999852,01462960-dc9a-fca9-b7cd-d7ddfeb11b4f,01462ea6-0d89-6c03-6fa6-1291c887b40a,014631c6-6307-cff8-6ea9-2d85b4a52bfe,014632d6-f93d-937d-2e75-970d0d18192b,01463497-fb98-e4d5-f5fc-2efe0f19f377,014634a6-98a4-cbe5-aad6-56cef835da98,01463f4e-ed68-b1cc-d9cd-30d1dc3b613d,014646b4-fb90-2f11-27ca-abdffb8b5c33,014646b9-1f10-c46e-79d9-fdb74618c617,014647f7-ce8e-5e18-dc8d-dff204c0fb52,01464b20-9f57-f04c-aa60-68faa46a2abc,01464bed-2155-2674-c750-7e1ee148bd5e,01464e67-eb7f-740f-0608-f8fed6bf1f15,0146523e-0be8-ac24-b983-ac6821366a81,01465292-dee1-4685-770e-b6ad0be8dabc,01465525-5d2e-aa9a-a765-cba8f378dee2,01465607-7b9b-ab68-0e8c-dbf522114888,014659ed-be53-f1a1-572c-ae20bcfb9821,01465b08-1575-b38d-7339-9b0b0b6cf83e,01465c40-7aa4-d8d7-5fa8-a2b19d98a593,01465d1e-2d0e-02f9-2341-cde0bb1203c3,01465e9c-6c6a-290a-8f02-ea764a092ef7,01465f3b-8091-2e5b-bd86-196ee79668c2,01466259-1fde-502b-22bc-54e27930e7f4,0146632b-81af-4719-1d8d-40bddab983d1,014664b7-6b7c-8c39-150b-5ad978f15971,0146685c-9d95-12fd-5517-e48f830a627a,01466a52-160e-2a2c-0317-31bfe334d882,01466bca-f906-bb07-3015-bc1250e64db8,01466c09-fbd2-e952-342a-eedebbc59f1e,01466f26-9f5f-d640-0da0-1fd6eb9037c4,014670d6-3718-b38c-59cc-bbe9334bb974,01467c69-16a0-b3e7-be4b-2dedc97e93cd,01467cd1-199e-a2af-9a81-74ebe6bc9d54,01467ceb-f5f3-50b5-8916-645d70fce95e,01467d97-7207-0c8b-9d4c-f448f9f3a7be,01467d9a-adf0-8e82-7d1a-bde3e765f9f4,01467f31-202f-1521-a86b-def31b464951,01468368-a1a2-1fd2-132a-b29fb0a7904c,0146848f-3287-cbb0-ec80-6df4e7e93ab4,01468992-cfc8-8928-e437-579c82d31e13,01468a14-115e-7d59-4e29-55a04fa63b18,01468c73-0359-a7b3-4a8b-87cf1e7e4803,01468fa5-264e-5b76-f11f-7e09478f3bfc,01468fea-2406-5b85-ac79-8d9f52e5b980,014692b3-41cd-3426-333a-ea856d0af38e,01469479-8fc3-23e2-6fbd-d71445ebbd69,01469525-0ff7-e501-74a2-c069d64f0aa1,014695c8-6960-906d-9d4d-234b5c70633d,0146973f-f45b-4da4-7585-fc0df0254826,01469765-d689-e01c-4af2-3a37c4dc7e0f,01469804-c772-c020-b5b8-e64debef5437,01469bc4-717f-fa5f-804a-fc5ae696d05b,01469c14-8771-9558-3fee-38d21ab11e59,01469d0f-195d-d766-f104-92dd6c5eee8a,01469e72-655f-7a41-bf7c-ec86bbeef157,0146a075-0a0e-4f43-e1db-924996ac1dbe,0146a08d-f7d3-20e0-d521-23b6faf8932a,0146a3a8-e98b-6644-42ec-041e9c152da1,0146ae6c-4b40-a302-c204-0bcf3931194d,0146aec8-1529-6489-8a7d-454c6246758d,0146af90-66dc-1112-1830-8f7ba03fb436,0146afa1-a7e3-90b1-daea-dd15ad01b918,0146b22e-c8cb-9686-0dd6-b284a48dba20,0146b3ea-eec3-dd9f-0f34-b8270bce15ab,0146b438-1bfa-7ce6-451c-df0fa052b21d,0146b5b6-364a-031b-1a9d-7e97c8b29ce7,0146b5bf-99b6-d019-a835-0a095194945f,0146b6ea-8fbb-3fe4-c048-64c350e23024,0146b94d-bcf9-a752-7836-43812f39a841,0146c2f6-144a-e4aa-4317-d149eacf8b61,0146c365-0bef-0bab-cf92-ff35aeaee5f9,0146c471-3890-08cb-26f9-5280f60f9436,0146c8ae-7799-6058-22d5-3cec1c2c3bee,0146cce4-5bb8-9575-73a9-bf78199ec9a7,0146cda1-6660-b311-1369-892e4574d5d5,0146d071-fec7-93a5-aff6-cd8a0e02a498,0146d38c-6b28-950b-01d9-d13faef88942,0146d5de-81f1-01bf-6dd2-5b56eac8a3be,0146d680-569e-d73e-68ff-2dc7d373d577,0146d78b-8723-a6fa-1531-be7dab63598d,0146d7a6-9959-f6af-e7eb-d2a47e4f9d44,0146db86-ce5e-a3be-1f19-1a88412596ae,0146dbb0-5382-61b2-e652-cb1068d57dde,0146dc0b-7125-9f3f-666c-fafa94881dd2,0146de91-d237-5ded-38d0-5fbc52114be8,0146df1a-298e-8970-b556-c1f7aaccb5d7,0146e507-e60d-88ca-30a7-9c1fefeaca82,0146e540-c4a2-9f90-e0aa-d4037b9a4150,0146e5b8-530a-0458-2217-66add01a5b86,0146e653-0e3c-9a6f-184f-e8af093e6ff9,0146e6fe-84d4-3812-17ba-f869f96195df,0146ec9c-0431-37ea-bf7b-68b133bab4fb,0146ed17-2def-e8c0-cf1a-01a1b93ea178,0146ed9b-7946-d78c-7765-b4c81c86b108,0146ed9c-d20e-1eff-a2f1-4110529ffb88,0146f127-ecb7-dc3b-10e4-46cc0080b385,0146f36e-98cf-7312-9990-12f4915ea5c2,0146f4d2-232b-b261-9663-6c390d6db795,0146f79f-42bf-25b5-2eea-370dcc185250,0146f99f-e600-7a94-a6c5-2df2e1cb494b,0146f9d0-7af1-13cc-d6d7-01399b6ccb0d,0146fb9d-4dfb-36c9-65c3-6a6eb820f037,0146ff79-401c-ac5a-0a93-67cc613740c3,014700c1-0868-89ff-e97d-99cf30c7b7af,0147030b-4cbc-6ca9-ec45-f85561b9588c,01470411-bfd8-759f-e707-7de46e80099b,01470628-254e-86fe-33e6-4666aba1d3bb,01470739-9c5c-04e0-1ee6-9ae2975353fe,014707d9-2081-dc4d-9c45-be2e386346e4,014707d9-b37d-d47d-88a9-7741114426d3,01470818-964a-ae92-ef04-e3f78a94b22c,0147092d-10c4-c7e0-08f6-6860892422fa,01470a62-a902-f223-61ac-91d92dc8d5a7,01470bdc-d69e-1bdd-078b-7e15d129b68a,01470e5c-010a-9e31-cc21-1edab52f7131,0147112d-b55e-8e45-7b35-00cf82da12e7,0147121a-0460-7e4c-0154-8e01e8ad2c8b,01471353-117b-f11a-2aa4-806145b396f2,01471378-e886-6025-16b7-e03be3b96dc2,014713b4-9007-c18f-ba46-02e89681547f,014713b8-2a67-d0b6-b136-70d59d78ab27,0147142c-e8fa-c4d4-695d-442d83556897,0147153e-6091-0da8-9900-c64e06e65399,014715c0-66c5-5d48-277c-9514aafad8ef,01471910-9d33-d06f-681b-8fae20fdf7ab,014719ab-ea3d-886b-5321-bec55448b9c3,01471a54-f634-dacb-ed9a-0036c679bcb6,01471add-ec04-da10-e032-4ce616df576e,01471b9d-00ee-9406-f1cd-6656ef6e5e0d,01471d1b-5038-040f-8a72-1c7f662e855d,01471d4a-b4ff-aea6-182e-8c810660114c,01471e23-3d98-b914-0147-e8ff979a74c0,01471f7d-a423-bc49-3181-8e51b5c21c83,01472396-d571-376a-60ce-22b86ad59c97,014724e6-b425-dbe8-9a2f-ee48a3cd3f76,01472520-5f83-926a-9c9d-768f05689a54,0147260b-8391-1588-cd2b-e97e897f7a37,01472617-7906-ccf2-9aba-6aca2330a29a,0147269a-071a-f505-333a-7ea6519e3f4c,01472909-0d8b-acf2-78ca-5324aa821de7,01472a22-9164-2373-fc2a-e6b718cf9135,01472bfb-18cb-14d5-6f4a-8c38eb3d7ac2,01472ed7-ed6c-9797-c64a-b70ac8ea429b,01473057-cc2e-992b-9ed5-a39c20da249d,01473624-5c78-7f66-33fb-2cdf5f11096e,0147369f-50cb-0b6f-87c4-9548723fd67e,0147383d-cb5c-ba1e-8ecb-6f0ef9beb9eb,01473f5d-20cd-74a0-3bdd-74ff0c8b0ea5,014740fa-7c76-bc5c-36cb-008086effd9e,014741e2-1d4f-84da-6ec8-eb9bf5fad986,014748c4-1f83-8c2e-f867-3a9b3a712db3,014749cf-6bdb-9fb5-3489-9b30a47987dc,0147520e-ec55-edc2-8862-b16ef76414f5,014752d5-6ab7-6280-fa3a-20d3918aa568,01475405-4d4f-c5f0-41d4-81d1a243852e,0147546a-fb97-0d12-7065-36df1a754f20,01475766-b2f5-bc8d-daa9-8b17e8b8809c,014757ca-af64-74eb-7f73-b27837cf53c2,01475915-824e-362a-9a44-cdfd4cdb9269,01475985-1fd6-9b9f-d660-30084e39d2b6,01475a50-ab6c-fd88-636d-78f0add3e712,01475aad-55b5-916a-c6f4-558f06c78482,01475afc-b76d-9868-3cf8-9ee6238f69f7,01475db0-a0fc-35b4-2d5d-159ec61f3800,01475ecc-5d98-1caa-c7a9-86a8353ca473,0147627f-7665-ef30-998b-ab24448aaea6,014763f8-cef3-11dc-bc01-a9edbe8fda34,0147662f-f1b2-5db3-44a9-7a52a6440004,01476916-0249-da34-e903-a1e00163889d,01476c7e-a904-ca49-28d1-f75d1f067053,01476de0-d5e5-9f28-5b9c-a568397c16b9,014774eb-dff2-8923-a746-fff91501475d,014778b9-f171-315e-353e-1bac1bf2bced,01477967-d744-e70b-758a-59f5fc5512cc,01477e17-4f7f-e9fe-2baa-ad683b1e19c2,01477efe-18ba-ea01-425e-83f6b44991b5,01477fc6-9ab9-5a11-d8c6-952e444800a2,0147805b-5c5e-8131-78bc-23501ea94a72,01478082-815f-241e-af6f-b65ed23cd792,014782d3-7f8d-dd30-1e98-00d707c8df12,014786db-15c9-e1fd-b486-dacfe8717cc4,014789e4-1aa1-9fc4-384d-70762162d451,01478ac1-d68d-141c-112b-2f895a142413,014793d4-748d-327c-a1bf-9612d88c8aa0,014793e3-678b-7bba-0d1c-551557231a08,014793fc-c075-9b35-37f9-bf5c530b4fec,014796b5-b4dd-c391-5f5c-38df377eb4b1,01479879-c0ef-1963-6a7b-2f2d0c92ed68,0147992f-6f56-a86c-bf02-2d10ea64b166,01479bee-a04c-c1de-b385-ed22dadfae8d,01479ea2-2d2b-05eb-924a-3b4720e685d8,01479f25-d169-acd5-f1a0-130c6de489f7,0147a10e-20f3-6dce-a641-2b63938ebf88,0147a1f4-d7b7-3b14-c3a2-cbeffda5cd93,0147a3c5-d6a8-d02c-425e-5625a0464e0c,0147a598-1582-7b4a-7c4b-c163e18bd0d2,0147a82d-e749-e321-4555-c9f3eddc5006,0147ab07-c0f3-6214-f0c3-3e6b246fb029,0147ab5f-14fd-81e9-0110-e58a2753702a,0147ad4a-916f-55ce-7cf9-89e955d4e0e2,0147ad6a-004b-a2b5-1340-e3f4acad016f,0147b09d-90e1-6858-2014-df98296ff41c,0147b19d-8dde-55bd-5da7-eb719295dd06,0147b211-3c2c-f8d0-3c5d-09869787a3f8,0147b2bd-71d9-931e-1b6e-ab8559860af6,0147b450-ab1d-e81d-6064-b0327f96b259,0147b8b3-33fc-5d96-0fa7-acf94c79d6e4,0147b8ed-d5f3-5891-6404-abafec9e2bd2,0147b920-52f0-c737-c984-22a8ba25a485,0147b956-4aa9-c554-be0e-d065f86a9868,0147bb1a-3af2-9bc3-0ef7-e41a71a48a36,0147bbee-a344-664a-93b3-6e9c36faa85e,0147bcae-ad7f-4517-1c16-9d95124aaf97,0147bd15-f4f6-95a5-9b8f-25fd63711b4b,0147c264-872b-a000-5564-11487d54c5f6,0147c520-22d7-cebe-4816-28df689f8a73,0147c582-a31c-84d9-60ca-d340347f5ad0,0147c6f7-cc32-d92f-7868-3925d429049e,0147c7e7-5854-58b5-faa4-0b03827a8888,0147ca8a-9448-08ea-d685-415680397bcc,0147cabd-8cd1-53c1-ae10-0fac15f964f0,0147cf41-22aa-6d41-3c72-a96271aa8fe2,0147d084-2c55-4d1f-f55a-1fed4a6a57e3,0147d29c-98b8-473a-daea-583b1fc437d2,0147d309-bfb3-f793-a58d-7ddeb1d65034,0147d551-e0aa-06c8-bd10-b64613c48682}'::uuid[]))",
+          "Plans": [
+            {
+              "Node Type": "Unique",
+              "Parent Relationship": "SubPlan",
+              "Subplan Name": "SubPlan 3",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "Startup Cost": 123.24,
+              "Total Cost": 123.29,
+              "Plan Rows": 10,
+              "Plan Width": 16,
+              "Plans": [
+                {
+                  "Node Type": "Nested Loop",
+                  "Parent Relationship": "InitPlan",
+                  "Subplan Name": "InitPlan 1 (returns $2)",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Join Type": "Semi",
+                  "Startup Cost": 0.28,
+                  "Total Cost": 113.11,
+                  "Plan Rows": 10,
+                  "Plan Width": 16,
+                  "Inner Unique": false,
+                  "Plans": [
+                    {
+                      "Node Type": "Function Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Function Name": "unnest",
+                      "Alias": "value",
+                      "Startup Cost": 0,
+                      "Total Cost": 0.1,
+                      "Plan Rows": 10,
+                      "Plan Width": 16
+                    },
+                    {
+                      "Node Type": "Nested Loop",
+                      "Parent Relationship": "Inner",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Join Type": "Inner",
+                      "Startup Cost": 0.28,
+                      "Total Cost": 49.5,
+                      "Plan Rows": 14,
+                      "Plan Width": 16,
+                      "Inner Unique": false,
+                      "Join Filter": "((revisiongroup.\"revisionId\" = state.\"activeRevisionId\") OR (revisiongroup.\"revisionId\" = state.\"candidateRevisionId\"))",
+                      "Plans": [
+                        {
+                          "Node Type": "Index Scan",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Scan Direction": "Forward",
+                          "Index Name": "recordPermissionAccessGroup_pkey",
+                          "Relation Name": "recordPermissionAccessGroup",
+                          "Alias": "revisiongroup",
+                          "Startup Cost": 0.28,
+                          "Total Cost": 5.5,
+                          "Plan Rows": 1,
+                          "Plan Width": 32,
+                          "Index Cond": "(id = value.value)",
+                          "Filter": "(\"revisionId\" <> '62e69114-9cfc-4839-b957-e0d87779f354'::uuid)"
+                        },
+                        {
+                          "Node Type": "Seq Scan",
+                          "Parent Relationship": "Inner",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Relation Name": "recordPermissionState",
+                          "Alias": "state",
+                          "Startup Cost": 0,
+                          "Total Cost": 23.6,
+                          "Plan Rows": 1360,
+                          "Plan Width": 32
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Unique",
+                  "Parent Relationship": "InitPlan",
+                  "Subplan Name": "InitPlan 2 (returns $4)",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 9.85,
+                  "Total Cost": 9.86,
+                  "Plan Rows": 1,
+                  "Plan Width": 16,
+                  "Plans": [
+                    {
+                      "Node Type": "Sort",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Startup Cost": 9.85,
+                      "Total Cost": 9.85,
+                      "Plan Rows": 1,
+                      "Plan Width": 16,
+                      "Sort Key": [
+                        "binding.\"groupId\""
+                      ],
+                      "Plans": [
+                        {
+                          "Node Type": "Hash Join",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Join Type": "Inner",
+                          "Startup Cost": 8.45,
+                          "Total Cost": 9.84,
+                          "Plan Rows": 1,
+                          "Plan Width": 16,
+                          "Inner Unique": false,
+                          "Hash Cond": "(binding.\"principalId\" = share.\"principalId\")",
+                          "Plans": [
+                            {
+                              "Node Type": "Function Scan",
+                              "Parent Relationship": "Outer",
+                              "Parallel Aware": false,
+                              "Async Capable": false,
+                              "Function Name": "jsonb_to_recordset",
+                              "Alias": "binding",
+                              "Startup Cost": 0,
+                              "Total Cost": 1,
+                              "Plan Rows": 100,
+                              "Plan Width": 32
+                            },
+                            {
+                              "Node Type": "Hash",
+                              "Parent Relationship": "Inner",
+                              "Parallel Aware": false,
+                              "Async Capable": false,
+                              "Startup Cost": 8.44,
+                              "Total Cost": 8.44,
+                              "Plan Rows": 1,
+                              "Plan Width": 16,
+                              "Plans": [
+                                {
+                                  "Node Type": "Index Scan",
+                                  "Parent Relationship": "Outer",
+                                  "Parallel Aware": false,
+                                  "Async Capable": false,
+                                  "Scan Direction": "Forward",
+                                  "Index Name": "share_record",
+                                  "Relation Name": "recordShare",
+                                  "Alias": "share",
+                                  "Startup Cost": 0.41,
+                                  "Total Cost": 8.44,
+                                  "Plan Rows": 1,
+                                  "Plan Width": 16,
+                                  "Index Cond": "((\"objectMetadataId\" = '3157294c-dc30-47af-b0cd-a4f01c79ab10'::uuid) AND (\"recordId\" = \"permissionTarget\".id))",
+                                  "Filter": "((\"deletedAt\" IS NULL) AND (\"accessLevel\" = ANY ('{READ,READ_WRITE,FULL}'::text[])))"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Sort",
+                  "Parent Relationship": "Outer",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 0.27,
+                  "Total Cost": 0.3,
+                  "Plan Rows": 10,
+                  "Plan Width": 16,
+                  "Sort Key": [
+                    "combined.combined"
+                  ],
+                  "Plans": [
+                    {
+                      "Node Type": "Function Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Function Name": "unnest",
+                      "Alias": "combined",
+                      "Startup Cost": 0.01,
+                      "Total Cost": 0.11,
+                      "Plan Rows": 10,
+                      "Plan Width": 16
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Node Type": "Unique",
+              "Parent Relationship": "SubPlan",
+              "Subplan Name": "SubPlan 6",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "Startup Cost": 123.24,
+              "Total Cost": 123.29,
+              "Plan Rows": 10,
+              "Plan Width": 16,
+              "Plans": [
+                {
+                  "Node Type": "Nested Loop",
+                  "Parent Relationship": "InitPlan",
+                  "Subplan Name": "InitPlan 4 (returns $7)",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Join Type": "Semi",
+                  "Startup Cost": 0.28,
+                  "Total Cost": 113.11,
+                  "Plan Rows": 10,
+                  "Plan Width": 16,
+                  "Inner Unique": false,
+                  "Plans": [
+                    {
+                      "Node Type": "Function Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Function Name": "unnest",
+                      "Alias": "value_1",
+                      "Startup Cost": 0,
+                      "Total Cost": 0.1,
+                      "Plan Rows": 10,
+                      "Plan Width": 16
+                    },
+                    {
+                      "Node Type": "Nested Loop",
+                      "Parent Relationship": "Inner",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Join Type": "Inner",
+                      "Startup Cost": 0.28,
+                      "Total Cost": 49.5,
+                      "Plan Rows": 14,
+                      "Plan Width": 16,
+                      "Inner Unique": false,
+                      "Join Filter": "((revisiongroup_1.\"revisionId\" = state_1.\"activeRevisionId\") OR (revisiongroup_1.\"revisionId\" = state_1.\"candidateRevisionId\"))",
+                      "Plans": [
+                        {
+                          "Node Type": "Index Scan",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Scan Direction": "Forward",
+                          "Index Name": "recordPermissionAccessGroup_pkey",
+                          "Relation Name": "recordPermissionAccessGroup",
+                          "Alias": "revisiongroup_1",
+                          "Startup Cost": 0.28,
+                          "Total Cost": 5.5,
+                          "Plan Rows": 1,
+                          "Plan Width": 32,
+                          "Index Cond": "(id = value_1.value)",
+                          "Filter": "(\"revisionId\" <> '62e69114-9cfc-4839-b957-e0d87779f354'::uuid)"
+                        },
+                        {
+                          "Node Type": "Seq Scan",
+                          "Parent Relationship": "Inner",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Relation Name": "recordPermissionState",
+                          "Alias": "state_1",
+                          "Startup Cost": 0,
+                          "Total Cost": 23.6,
+                          "Plan Rows": 1360,
+                          "Plan Width": 32
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Unique",
+                  "Parent Relationship": "InitPlan",
+                  "Subplan Name": "InitPlan 5 (returns $9)",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 9.85,
+                  "Total Cost": 9.85,
+                  "Plan Rows": 1,
+                  "Plan Width": 16,
+                  "Plans": [
+                    {
+                      "Node Type": "Sort",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Startup Cost": 9.85,
+                      "Total Cost": 9.85,
+                      "Plan Rows": 1,
+                      "Plan Width": 16,
+                      "Sort Key": [
+                        "binding_1.\"groupId\""
+                      ],
+                      "Plans": [
+                        {
+                          "Node Type": "Hash Join",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Join Type": "Inner",
+                          "Startup Cost": 8.45,
+                          "Total Cost": 9.84,
+                          "Plan Rows": 1,
+                          "Plan Width": 16,
+                          "Inner Unique": false,
+                          "Hash Cond": "(binding_1.\"principalId\" = share_1.\"principalId\")",
+                          "Plans": [
+                            {
+                              "Node Type": "Function Scan",
+                              "Parent Relationship": "Outer",
+                              "Parallel Aware": false,
+                              "Async Capable": false,
+                              "Function Name": "jsonb_to_recordset",
+                              "Alias": "binding_1",
+                              "Startup Cost": 0,
+                              "Total Cost": 1,
+                              "Plan Rows": 100,
+                              "Plan Width": 32
+                            },
+                            {
+                              "Node Type": "Hash",
+                              "Parent Relationship": "Inner",
+                              "Parallel Aware": false,
+                              "Async Capable": false,
+                              "Startup Cost": 8.44,
+                              "Total Cost": 8.44,
+                              "Plan Rows": 1,
+                              "Plan Width": 16,
+                              "Plans": [
+                                {
+                                  "Node Type": "Index Scan",
+                                  "Parent Relationship": "Outer",
+                                  "Parallel Aware": false,
+                                  "Async Capable": false,
+                                  "Scan Direction": "Forward",
+                                  "Index Name": "share_record",
+                                  "Relation Name": "recordShare",
+                                  "Alias": "share_1",
+                                  "Startup Cost": 0.41,
+                                  "Total Cost": 8.44,
+                                  "Plan Rows": 1,
+                                  "Plan Width": 16,
+                                  "Index Cond": "((\"objectMetadataId\" = '3157294c-dc30-47af-b0cd-a4f01c79ab10'::uuid) AND (\"recordId\" = \"permissionTarget\".id))",
+                                  "Filter": "((\"deletedAt\" IS NULL) AND (\"accessLevel\" = ANY ('{READ_WRITE,FULL}'::text[])))"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Sort",
+                  "Parent Relationship": "Outer",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 0.27,
+                  "Total Cost": 0.3,
+                  "Plan Rows": 10,
+                  "Plan Width": 16,
+                  "Sort Key": [
+                    "combined_1.combined"
+                  ],
+                  "Plans": [
+                    {
+                      "Node Type": "Function Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Function Name": "unnest",
+                      "Alias": "combined_1",
+                      "Startup Cost": 0.01,
+                      "Total Cost": 0.11,
+                      "Plan Rows": 10,
+                      "Plan Width": 16
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Node Type": "Unique",
+              "Parent Relationship": "SubPlan",
+              "Subplan Name": "SubPlan 9",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "Startup Cost": 123.24,
+              "Total Cost": 123.29,
+              "Plan Rows": 10,
+              "Plan Width": 16,
+              "Plans": [
+                {
+                  "Node Type": "Nested Loop",
+                  "Parent Relationship": "InitPlan",
+                  "Subplan Name": "InitPlan 7 (returns $12)",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Join Type": "Semi",
+                  "Startup Cost": 0.28,
+                  "Total Cost": 113.11,
+                  "Plan Rows": 10,
+                  "Plan Width": 16,
+                  "Inner Unique": false,
+                  "Plans": [
+                    {
+                      "Node Type": "Function Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Function Name": "unnest",
+                      "Alias": "value_2",
+                      "Startup Cost": 0,
+                      "Total Cost": 0.1,
+                      "Plan Rows": 10,
+                      "Plan Width": 16
+                    },
+                    {
+                      "Node Type": "Nested Loop",
+                      "Parent Relationship": "Inner",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Join Type": "Inner",
+                      "Startup Cost": 0.28,
+                      "Total Cost": 49.5,
+                      "Plan Rows": 14,
+                      "Plan Width": 16,
+                      "Inner Unique": false,
+                      "Join Filter": "((revisiongroup_2.\"revisionId\" = state_2.\"activeRevisionId\") OR (revisiongroup_2.\"revisionId\" = state_2.\"candidateRevisionId\"))",
+                      "Plans": [
+                        {
+                          "Node Type": "Index Scan",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Scan Direction": "Forward",
+                          "Index Name": "recordPermissionAccessGroup_pkey",
+                          "Relation Name": "recordPermissionAccessGroup",
+                          "Alias": "revisiongroup_2",
+                          "Startup Cost": 0.28,
+                          "Total Cost": 5.5,
+                          "Plan Rows": 1,
+                          "Plan Width": 32,
+                          "Index Cond": "(id = value_2.value)",
+                          "Filter": "(\"revisionId\" <> '62e69114-9cfc-4839-b957-e0d87779f354'::uuid)"
+                        },
+                        {
+                          "Node Type": "Seq Scan",
+                          "Parent Relationship": "Inner",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Relation Name": "recordPermissionState",
+                          "Alias": "state_2",
+                          "Startup Cost": 0,
+                          "Total Cost": 23.6,
+                          "Plan Rows": 1360,
+                          "Plan Width": 32
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Unique",
+                  "Parent Relationship": "InitPlan",
+                  "Subplan Name": "InitPlan 8 (returns $14)",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 9.85,
+                  "Total Cost": 9.85,
+                  "Plan Rows": 1,
+                  "Plan Width": 16,
+                  "Plans": [
+                    {
+                      "Node Type": "Sort",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Startup Cost": 9.85,
+                      "Total Cost": 9.85,
+                      "Plan Rows": 1,
+                      "Plan Width": 16,
+                      "Sort Key": [
+                        "binding_2.\"groupId\""
+                      ],
+                      "Plans": [
+                        {
+                          "Node Type": "Hash Join",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Join Type": "Inner",
+                          "Startup Cost": 8.45,
+                          "Total Cost": 9.84,
+                          "Plan Rows": 1,
+                          "Plan Width": 16,
+                          "Inner Unique": false,
+                          "Hash Cond": "(binding_2.\"principalId\" = share_2.\"principalId\")",
+                          "Plans": [
+                            {
+                              "Node Type": "Function Scan",
+                              "Parent Relationship": "Outer",
+                              "Parallel Aware": false,
+                              "Async Capable": false,
+                              "Function Name": "jsonb_to_recordset",
+                              "Alias": "binding_2",
+                              "Startup Cost": 0,
+                              "Total Cost": 1,
+                              "Plan Rows": 100,
+                              "Plan Width": 32
+                            },
+                            {
+                              "Node Type": "Hash",
+                              "Parent Relationship": "Inner",
+                              "Parallel Aware": false,
+                              "Async Capable": false,
+                              "Startup Cost": 8.44,
+                              "Total Cost": 8.44,
+                              "Plan Rows": 1,
+                              "Plan Width": 16,
+                              "Plans": [
+                                {
+                                  "Node Type": "Index Scan",
+                                  "Parent Relationship": "Outer",
+                                  "Parallel Aware": false,
+                                  "Async Capable": false,
+                                  "Scan Direction": "Forward",
+                                  "Index Name": "share_record",
+                                  "Relation Name": "recordShare",
+                                  "Alias": "share_2",
+                                  "Startup Cost": 0.41,
+                                  "Total Cost": 8.44,
+                                  "Plan Rows": 1,
+                                  "Plan Width": 16,
+                                  "Index Cond": "((\"objectMetadataId\" = '3157294c-dc30-47af-b0cd-a4f01c79ab10'::uuid) AND (\"recordId\" = \"permissionTarget\".id))",
+                                  "Filter": "((\"deletedAt\" IS NULL) AND (\"accessLevel\" = ANY ('{FULL}'::text[])))"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Sort",
+                  "Parent Relationship": "Outer",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 0.27,
+                  "Total Cost": 0.3,
+                  "Plan Rows": 10,
+                  "Plan Width": 16,
+                  "Sort Key": [
+                    "combined_2.combined"
+                  ],
+                  "Plans": [
+                    {
+                      "Node Type": "Function Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Function Name": "unnest",
+                      "Alias": "combined_2",
+                      "Startup Cost": 0.01,
+                      "Total Cost": 0.11,
+                      "Plan Rows": 10,
+                      "Plan Width": 16
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Node Type": "Unique",
+              "Parent Relationship": "SubPlan",
+              "Subplan Name": "SubPlan 12",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "Startup Cost": 123.24,
+              "Total Cost": 123.29,
+              "Plan Rows": 10,
+              "Plan Width": 16,
+              "Plans": [
+                {
+                  "Node Type": "Nested Loop",
+                  "Parent Relationship": "InitPlan",
+                  "Subplan Name": "InitPlan 10 (returns $17)",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Join Type": "Semi",
+                  "Startup Cost": 0.28,
+                  "Total Cost": 113.11,
+                  "Plan Rows": 10,
+                  "Plan Width": 16,
+                  "Inner Unique": false,
+                  "Plans": [
+                    {
+                      "Node Type": "Function Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Function Name": "unnest",
+                      "Alias": "value_3",
+                      "Startup Cost": 0,
+                      "Total Cost": 0.1,
+                      "Plan Rows": 10,
+                      "Plan Width": 16
+                    },
+                    {
+                      "Node Type": "Nested Loop",
+                      "Parent Relationship": "Inner",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Join Type": "Inner",
+                      "Startup Cost": 0.28,
+                      "Total Cost": 49.5,
+                      "Plan Rows": 14,
+                      "Plan Width": 16,
+                      "Inner Unique": false,
+                      "Join Filter": "((revisiongroup_3.\"revisionId\" = state_3.\"activeRevisionId\") OR (revisiongroup_3.\"revisionId\" = state_3.\"candidateRevisionId\"))",
+                      "Plans": [
+                        {
+                          "Node Type": "Index Scan",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Scan Direction": "Forward",
+                          "Index Name": "recordPermissionAccessGroup_pkey",
+                          "Relation Name": "recordPermissionAccessGroup",
+                          "Alias": "revisiongroup_3",
+                          "Startup Cost": 0.28,
+                          "Total Cost": 5.5,
+                          "Plan Rows": 1,
+                          "Plan Width": 32,
+                          "Index Cond": "(id = value_3.value)",
+                          "Filter": "(\"revisionId\" <> '62e69114-9cfc-4839-b957-e0d87779f354'::uuid)"
+                        },
+                        {
+                          "Node Type": "Seq Scan",
+                          "Parent Relationship": "Inner",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Relation Name": "recordPermissionState",
+                          "Alias": "state_3",
+                          "Startup Cost": 0,
+                          "Total Cost": 23.6,
+                          "Plan Rows": 1360,
+                          "Plan Width": 32
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Unique",
+                  "Parent Relationship": "InitPlan",
+                  "Subplan Name": "InitPlan 11 (returns $19)",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 9.85,
+                  "Total Cost": 9.85,
+                  "Plan Rows": 1,
+                  "Plan Width": 16,
+                  "Plans": [
+                    {
+                      "Node Type": "Sort",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Startup Cost": 9.85,
+                      "Total Cost": 9.85,
+                      "Plan Rows": 1,
+                      "Plan Width": 16,
+                      "Sort Key": [
+                        "binding_3.\"groupId\""
+                      ],
+                      "Plans": [
+                        {
+                          "Node Type": "Hash Join",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Join Type": "Inner",
+                          "Startup Cost": 8.45,
+                          "Total Cost": 9.84,
+                          "Plan Rows": 1,
+                          "Plan Width": 16,
+                          "Inner Unique": false,
+                          "Hash Cond": "(binding_3.\"principalId\" = share_3.\"principalId\")",
+                          "Plans": [
+                            {
+                              "Node Type": "Function Scan",
+                              "Parent Relationship": "Outer",
+                              "Parallel Aware": false,
+                              "Async Capable": false,
+                              "Function Name": "jsonb_to_recordset",
+                              "Alias": "binding_3",
+                              "Startup Cost": 0,
+                              "Total Cost": 1,
+                              "Plan Rows": 100,
+                              "Plan Width": 32
+                            },
+                            {
+                              "Node Type": "Hash",
+                              "Parent Relationship": "Inner",
+                              "Parallel Aware": false,
+                              "Async Capable": false,
+                              "Startup Cost": 8.44,
+                              "Total Cost": 8.44,
+                              "Plan Rows": 1,
+                              "Plan Width": 16,
+                              "Plans": [
+                                {
+                                  "Node Type": "Index Scan",
+                                  "Parent Relationship": "Outer",
+                                  "Parallel Aware": false,
+                                  "Async Capable": false,
+                                  "Scan Direction": "Forward",
+                                  "Index Name": "share_record",
+                                  "Relation Name": "recordShare",
+                                  "Alias": "share_3",
+                                  "Startup Cost": 0.41,
+                                  "Total Cost": 8.44,
+                                  "Plan Rows": 1,
+                                  "Plan Width": 16,
+                                  "Index Cond": "((\"objectMetadataId\" = '3157294c-dc30-47af-b0cd-a4f01c79ab10'::uuid) AND (\"recordId\" = \"permissionTarget\".id))",
+                                  "Filter": "((\"deletedAt\" IS NULL) AND (\"accessLevel\" = ANY ('{FULL}'::text[])))"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Sort",
+                  "Parent Relationship": "Outer",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 0.27,
+                  "Total Cost": 0.3,
+                  "Plan Rows": 10,
+                  "Plan Width": 16,
+                  "Sort Key": [
+                    "combined_3.combined"
+                  ],
+                  "Plans": [
+                    {
+                      "Node Type": "Function Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Function Name": "unnest",
+                      "Alias": "combined_3",
+                      "Startup Cost": 0.01,
+                      "Total Cost": 0.11,
+                      "Plan Rows": 10,
+                      "Plan Width": 16
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Node Type": "Unique",
+              "Parent Relationship": "SubPlan",
+              "Subplan Name": "SubPlan 15",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "Startup Cost": 123.24,
+              "Total Cost": 123.29,
+              "Plan Rows": 10,
+              "Plan Width": 16,
+              "Plans": [
+                {
+                  "Node Type": "Nested Loop",
+                  "Parent Relationship": "InitPlan",
+                  "Subplan Name": "InitPlan 13 (returns $22)",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Join Type": "Semi",
+                  "Startup Cost": 0.28,
+                  "Total Cost": 113.11,
+                  "Plan Rows": 10,
+                  "Plan Width": 16,
+                  "Inner Unique": false,
+                  "Plans": [
+                    {
+                      "Node Type": "Function Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Function Name": "unnest",
+                      "Alias": "value_4",
+                      "Startup Cost": 0,
+                      "Total Cost": 0.1,
+                      "Plan Rows": 10,
+                      "Plan Width": 16
+                    },
+                    {
+                      "Node Type": "Nested Loop",
+                      "Parent Relationship": "Inner",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Join Type": "Inner",
+                      "Startup Cost": 0.28,
+                      "Total Cost": 49.5,
+                      "Plan Rows": 14,
+                      "Plan Width": 16,
+                      "Inner Unique": false,
+                      "Join Filter": "((revisiongroup_4.\"revisionId\" = state_4.\"activeRevisionId\") OR (revisiongroup_4.\"revisionId\" = state_4.\"candidateRevisionId\"))",
+                      "Plans": [
+                        {
+                          "Node Type": "Index Scan",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Scan Direction": "Forward",
+                          "Index Name": "recordPermissionAccessGroup_pkey",
+                          "Relation Name": "recordPermissionAccessGroup",
+                          "Alias": "revisiongroup_4",
+                          "Startup Cost": 0.28,
+                          "Total Cost": 5.5,
+                          "Plan Rows": 1,
+                          "Plan Width": 32,
+                          "Index Cond": "(id = value_4.value)",
+                          "Filter": "(\"revisionId\" <> '62e69114-9cfc-4839-b957-e0d87779f354'::uuid)"
+                        },
+                        {
+                          "Node Type": "Seq Scan",
+                          "Parent Relationship": "Inner",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Relation Name": "recordPermissionState",
+                          "Alias": "state_4",
+                          "Startup Cost": 0,
+                          "Total Cost": 23.6,
+                          "Plan Rows": 1360,
+                          "Plan Width": 32
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Unique",
+                  "Parent Relationship": "InitPlan",
+                  "Subplan Name": "InitPlan 14 (returns $24)",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 9.85,
+                  "Total Cost": 9.85,
+                  "Plan Rows": 1,
+                  "Plan Width": 16,
+                  "Plans": [
+                    {
+                      "Node Type": "Sort",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Startup Cost": 9.85,
+                      "Total Cost": 9.85,
+                      "Plan Rows": 1,
+                      "Plan Width": 16,
+                      "Sort Key": [
+                        "binding_4.\"groupId\""
+                      ],
+                      "Plans": [
+                        {
+                          "Node Type": "Hash Join",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Join Type": "Inner",
+                          "Startup Cost": 8.45,
+                          "Total Cost": 9.84,
+                          "Plan Rows": 1,
+                          "Plan Width": 16,
+                          "Inner Unique": false,
+                          "Hash Cond": "(binding_4.\"principalId\" = share_4.\"principalId\")",
+                          "Plans": [
+                            {
+                              "Node Type": "Function Scan",
+                              "Parent Relationship": "Outer",
+                              "Parallel Aware": false,
+                              "Async Capable": false,
+                              "Function Name": "jsonb_to_recordset",
+                              "Alias": "binding_4",
+                              "Startup Cost": 0,
+                              "Total Cost": 1,
+                              "Plan Rows": 100,
+                              "Plan Width": 32
+                            },
+                            {
+                              "Node Type": "Hash",
+                              "Parent Relationship": "Inner",
+                              "Parallel Aware": false,
+                              "Async Capable": false,
+                              "Startup Cost": 8.44,
+                              "Total Cost": 8.44,
+                              "Plan Rows": 1,
+                              "Plan Width": 16,
+                              "Plans": [
+                                {
+                                  "Node Type": "Index Scan",
+                                  "Parent Relationship": "Outer",
+                                  "Parallel Aware": false,
+                                  "Async Capable": false,
+                                  "Scan Direction": "Forward",
+                                  "Index Name": "share_record",
+                                  "Relation Name": "recordShare",
+                                  "Alias": "share_4",
+                                  "Startup Cost": 0.41,
+                                  "Total Cost": 8.44,
+                                  "Plan Rows": 1,
+                                  "Plan Width": 16,
+                                  "Index Cond": "((\"objectMetadataId\" = '3157294c-dc30-47af-b0cd-a4f01c79ab10'::uuid) AND (\"recordId\" = \"permissionTarget\".id))",
+                                  "Filter": "((\"deletedAt\" IS NULL) AND (\"accessLevel\" = ANY ('{FULL}'::text[])))"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Sort",
+                  "Parent Relationship": "Outer",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 0.27,
+                  "Total Cost": 0.3,
+                  "Plan Rows": 10,
+                  "Plan Width": 16,
+                  "Sort Key": [
+                    "combined_4.combined"
+                  ],
+                  "Plans": [
+                    {
+                      "Node Type": "Function Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Function Name": "unnest",
+                      "Alias": "combined_4",
+                      "Startup Cost": 0.01,
+                      "Total Cost": 0.11,
+                      "Plan Rows": 10,
+                      "Plan Width": 16
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Node Type": "Unique",
+              "Parent Relationship": "SubPlan",
+              "Subplan Name": "SubPlan 18",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "Startup Cost": 113.42,
+              "Total Cost": 113.47,
+              "Plan Rows": 10,
+              "Plan Width": 16,
+              "Plans": [
+                {
+                  "Node Type": "Nested Loop",
+                  "Parent Relationship": "InitPlan",
+                  "Subplan Name": "InitPlan 16 (returns $27)",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Join Type": "Semi",
+                  "Startup Cost": 0.28,
+                  "Total Cost": 113.11,
+                  "Plan Rows": 10,
+                  "Plan Width": 16,
+                  "Inner Unique": false,
+                  "Plans": [
+                    {
+                      "Node Type": "Function Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Function Name": "unnest",
+                      "Alias": "value_5",
+                      "Startup Cost": 0,
+                      "Total Cost": 0.1,
+                      "Plan Rows": 10,
+                      "Plan Width": 16
+                    },
+                    {
+                      "Node Type": "Nested Loop",
+                      "Parent Relationship": "Inner",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Join Type": "Inner",
+                      "Startup Cost": 0.28,
+                      "Total Cost": 49.5,
+                      "Plan Rows": 14,
+                      "Plan Width": 16,
+                      "Inner Unique": false,
+                      "Join Filter": "((revisiongroup_5.\"revisionId\" = state_5.\"activeRevisionId\") OR (revisiongroup_5.\"revisionId\" = state_5.\"candidateRevisionId\"))",
+                      "Plans": [
+                        {
+                          "Node Type": "Index Scan",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Scan Direction": "Forward",
+                          "Index Name": "recordPermissionAccessGroup_pkey",
+                          "Relation Name": "recordPermissionAccessGroup",
+                          "Alias": "revisiongroup_5",
+                          "Startup Cost": 0.28,
+                          "Total Cost": 5.5,
+                          "Plan Rows": 1,
+                          "Plan Width": 32,
+                          "Index Cond": "(id = value_5.value)",
+                          "Filter": "(\"revisionId\" <> '62e69114-9cfc-4839-b957-e0d87779f354'::uuid)"
+                        },
+                        {
+                          "Node Type": "Seq Scan",
+                          "Parent Relationship": "Inner",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Relation Name": "recordPermissionState",
+                          "Alias": "state_5",
+                          "Startup Cost": 0,
+                          "Total Cost": 23.6,
+                          "Plan Rows": 1360,
+                          "Plan Width": 32
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Unique",
+                  "Parent Relationship": "InitPlan",
+                  "Subplan Name": "InitPlan 17 (returns $28)",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 0.02,
+                  "Total Cost": 0.03,
+                  "Plan Rows": 1,
+                  "Plan Width": 16,
+                  "Plans": [
+                    {
+                      "Node Type": "Sort",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Startup Cost": 0.02,
+                      "Total Cost": 0.03,
+                      "Plan Rows": 1,
+                      "Plan Width": 16,
+                      "Sort Key": [
+                        "value_6.value"
+                      ],
+                      "Plans": [
+                        {
+                          "Node Type": "Function Scan",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Function Name": "unnest",
+                          "Alias": "value_6",
+                          "Startup Cost": 0,
+                          "Total Cost": 0.01,
+                          "Plan Rows": 1,
+                          "Plan Width": 16,
+                          "Filter": "(value IS NOT NULL)"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Sort",
+                  "Parent Relationship": "Outer",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 0.27,
+                  "Total Cost": 0.3,
+                  "Plan Rows": 10,
+                  "Plan Width": 16,
+                  "Sort Key": [
+                    "combined_5.combined"
+                  ],
+                  "Plans": [
+                    {
+                      "Node Type": "Function Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Function Name": "unnest",
+                      "Alias": "combined_5",
+                      "Startup Cost": 0.01,
+                      "Total Cost": 0.11,
+                      "Plan Rows": 10,
+                      "Plan Width": 16
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Node Type": "Nested Loop",
+          "Parent Relationship": "Outer",
+          "Parallel Aware": false,
+          "Async Capable": false,
+          "Join Type": "Inner",
+          "Startup Cost": 0.43,
+          "Total Cost": 2124.38,
+          "Plan Rows": 250,
+          "Plan Width": 430,
+          "Inner Unique": true,
+          "Plans": [
+            {
+              "Node Type": "CTE Scan",
+              "Parent Relationship": "Outer",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "CTE Name": "computed",
+              "Alias": "computed",
+              "Startup Cost": 0,
+              "Total Cost": 5,
+              "Plan Rows": 250,
+              "Plan Width": 440
+            },
+            {
+              "Node Type": "Index Scan",
+              "Parent Relationship": "Inner",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "Scan Direction": "Forward",
+              "Index Name": "company_pkey",
+              "Relation Name": "company",
+              "Alias": "target",
+              "Startup Cost": 0.43,
+              "Total Cost": 8.47,
+              "Plan Rows": 1,
+              "Plan Width": 100,
+              "Index Cond": "(id = computed.id)",
+              "Filter": "((\"readableByAccessGroupIds\" IS DISTINCT FROM computed.\"readableByAccessGroupIds\") OR (\"writableByAccessGroupIds\" IS DISTINCT FROM computed.\"writableByAccessGroupIds\") OR (\"softDeletableByAccessGroupIds\" IS DISTINCT FROM computed.\"softDeletableByAccessGroupIds\") OR (\"destroyableByAccessGroupIds\" IS DISTINCT FROM computed.\"destroyableByAccessGroupIds\") OR (\"shareableByAccessGroupIds\" IS DISTINCT FROM computed.\"shareableByAccessGroupIds\") OR (\"receivableByAccessGroupIds\" IS DISTINCT FROM computed.\"receivableByAccessGroupIds\"))"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

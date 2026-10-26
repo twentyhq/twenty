@@ -1,0 +1,3329 @@
+{
+  "capabilitiesByObjectUniversalIdentifier": {
+    "fab0fff8-0c90-4116-9bb0-7dbc07392633": {},
+    "9f2a5bf4-3a57-4e61-b561-eaf5a5b86973": {},
+    "63697477-8606-415e-86cb-be078d7fcf7e": {
+      "read": false,
+      "update": false,
+      "softDelete": false,
+      "destroy": false,
+      "share": false,
+      "create": false,
+      "restore": false
+    },
+    "62d0354c-3b99-4769-b0f5-4e2651c2ca7d": {
+      "read": false,
+      "update": false,
+      "softDelete": false,
+      "destroy": false,
+      "share": false,
+      "create": false,
+      "restore": false
+    },
+    "214bacb0-df89-494e-be42-e5b11c99cff6": {
+      "read": false,
+      "update": false,
+      "softDelete": false,
+      "destroy": false,
+      "share": false,
+      "create": false,
+      "restore": false
+    },
+    "7d34e524-cbaf-4a53-b021-eb0313397f22": {
+      "read": false,
+      "update": false,
+      "softDelete": false,
+      "destroy": false,
+      "share": false,
+      "create": false,
+      "restore": false
+    },
+    "a043622a-48ef-426f-b55d-3fdcf4ae52f2": {
+      "update": false,
+      "softDelete": false,
+      "destroy": false,
+      "share": false,
+      "create": false,
+      "restore": false
+    },
+    "0c76066d-26f7-4f57-b0bd-0eb61465fb1a": {
+      "read": false,
+      "update": false,
+      "softDelete": false,
+      "destroy": false,
+      "share": false,
+      "create": false,
+      "restore": false
+    },
+    "41410724-723c-48ab-8312-9b85131b4d84": {
+      "read": false,
+      "update": false,
+      "softDelete": false,
+      "destroy": false,
+      "share": false,
+      "create": false,
+      "restore": false
+    },
+    "20202020-bd3d-4c60-8dca-571c71d4447a": {},
+    "20202020-0408-4f38-b8a8-4d5e3e26e24d": {},
+    "20202020-491b-4aaa-9825-afd1bae6ae00": {
+      "update": false,
+      "softDelete": false,
+      "destroy": false,
+      "share": false,
+      "create": false,
+      "restore": false
+    },
+    "20202020-a1c3-47a6-9732-27e5b1e8436d": {},
+    "20202020-8f1d-4eef-9f85-0d1965e27221": {},
+    "6a9b9656-3e23-4234-94a4-b913c5dde668": {},
+    "ce19efb9-710f-45b2-b141-473abbeea60b": {},
+    "20202020-b374-4779-a561-80086cb2e17f": {},
+    "20202020-3840-4b6d-9425-0c5188b05ca8": {},
+    "238acb94-dd4c-4036-bc55-19b99d821efd": {},
+    "826561ea-4816-411c-baa0-eec5e6ca8866": {},
+    "27773d24-8ce3-40f8-aa6c-1f590f2c08d2": {},
+    "20202020-ad1e-4127-bccb-d83ae04d2ccb": {
+      "update": false,
+      "softDelete": false,
+      "destroy": false,
+      "share": false,
+      "create": false,
+      "restore": false
+    },
+    "20202020-a1b0-40b0-8ab0-5b6c7d8e9f0a": {
+      "update": false,
+      "softDelete": false,
+      "destroy": false,
+      "share": false,
+      "create": false,
+      "restore": false
+    },
+    "20202020-a433-4456-aa2d-fd9cb26b774a": {},
+    "20202020-849a-4c3e-84f5-a25a7d802271": {},
+    "378ad1b0-592d-4084-80ee-86fef44725b9": {},
+    "20202020-3f6b-4425-80ab-e468899ab4b2": {},
+    "20202020-0b00-45cd-b6f6-6cd806fc6804": {},
+    "20202020-fff0-4b44-be82-bda313884400": {},
+    "20202020-9549-49dd-b2b2-883999db8938": {},
+    "20202020-e674-48e5-a542-72570eee7213": {},
+    "fecdb92c-d150-4544-81f8-f1158d18a7a2": {
+      "read": false,
+      "update": false,
+      "softDelete": false,
+      "destroy": false,
+      "share": false,
+      "create": false,
+      "restore": false
+    },
+    "22c96608-d1b1-49a2-b328-3e738d61d82d": {
+      "read": false,
+      "update": false,
+      "softDelete": false,
+      "destroy": false,
+      "share": false,
+      "create": false,
+      "restore": false
+    },
+    "20202020-1ba1-48ba-bc83-ef7e5990ed10": {},
+    "20202020-5a9a-44e8-95df-771cd06d0fb1": {},
+    "20202020-6736-4337-b5c4-8b39fae325a5": {},
+    "20202020-62be-406c-b9ca-8caa50d51392": {},
+    "20202020-3319-4234-a34c-7f3b9d2e4d1f": {
+      "update": false,
+      "softDelete": false,
+      "destroy": false,
+      "share": false,
+      "create": false,
+      "restore": false
+    },
+    "20202020-4e28-4e95-a9d7-6c00874f843c": {},
+    "20202020-d65d-4ab9-9344-d77bfb376a3d": {},
+    "20202020-3319-4234-a34c-82d5c0e881a6": {},
+    "ec01fe7c-1710-416b-a78a-6513a47e503f": {},
+    "ce243a9a-3a3a-4405-9b23-f32c7825ca9a": {},
+    "3c5a0320-f88e-4186-a239-d1d3f59ebcce": {},
+    "4865a1af-e580-453b-bba1-1ab5cbda3ac9": {},
+    "442e4299-7785-492f-aa5b-ca95f4a95911": {}
+  },
+  "activeRevisionId": null,
+  "candidateRevisionId": null,
+  "status": "inactive",
+  "definition": {
+    "version": 1,
+    "objects": [
+      {
+        "objectUniversalIdentifier": "fab0fff8-0c90-4116-9bb0-7dbc07392633",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "cb125ef7-0d14-57d7-930d-3984df7bdef5",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "93f55512-7c92-5c20-9c95-f3045c557263",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "0bead142-5963-5070-be31-84232e3e6aa5",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "e9b22e12-3a72-5474-ba85-505403c41683",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "f23cd84f-564b-553d-ac92-b1aa70599c09",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "9f2a5bf4-3a57-4e61-b561-eaf5a5b86973",
+        "inheritancePaths": [
+          {
+            "universalIdentifier": "4c310e03-aa23-52d7-99ff-4c4528957e64",
+            "sourceObjectUniversalIdentifier": "fab0fff8-0c90-4116-9bb0-7dbc07392633",
+            "fieldUniversalIdentifiers": [
+              "5b37eceb-2992-4d27-9897-14af3e3ce9b2"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "universalIdentifier": "da85b428-4bf2-56fb-b6dd-02bb8a645012",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "49dceef1-f124-53f0-8ee5-2cc1346b8106",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "b148e251-b24c-5c15-9a71-0818adaa3d0f",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "bf56462d-0db4-589f-8883-15e87f4f718e",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "60ebdf78-9985-5058-9c04-d25c723f762f",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "63697477-8606-415e-86cb-be078d7fcf7e",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "866c23ff-6daf-513a-80c0-f248d5384b70",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "391d5772-a75b-5f34-bb0e-ca2494189d11",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "b8fb26c9-9de1-582b-b7fb-6b1760fd3f2f",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "c24a61b5-6be2-59f4-b7c6-ed63f3683ea9",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "96b432b7-55ef-50f0-90ae-d553942e6f8f",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "62d0354c-3b99-4769-b0f5-4e2651c2ca7d",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "4d8e5280-274c-5ca0-8ffe-f57e5990cd91",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "bcd2eda2-bab8-5a7a-9090-f4092b66d60b",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "a9fa1370-c56c-51e6-8f7c-683b50cbdf4b",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "082394e9-040f-5513-9d81-117fbec1df6e",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "34dee30b-fad9-5b4d-b38d-4c1f1aef6318",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "214bacb0-df89-494e-be42-e5b11c99cff6",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "905f0cf6-75aa-5825-a99e-3e6479a9d784",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "1557e43e-0c8d-5f24-a8eb-3776ebb79149",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "1b48552b-1719-5dbe-8ff8-bff8eab5ac67",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "e14cd8cc-6394-574d-8c3b-da75230700ef",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "94492aba-6528-5865-baf8-b32f8c78a0e6",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "7d34e524-cbaf-4a53-b021-eb0313397f22",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "db2bdb7c-2438-5f77-ad37-360a77a00749",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "99625f2a-42f9-5bcb-a315-bc8a9d08230a",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "aa94fc8b-171a-5ee4-89e7-789ec8aeb9d9",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "1f0609e5-0354-5449-bf8a-aff10717f85f",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "7ed9953d-4d94-5800-8310-906dfedb51db",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "a043622a-48ef-426f-b55d-3fdcf4ae52f2",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "a424dbed-58bb-5e8a-97be-7d7e115535c0",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "8c3e66aa-8e05-5424-8ee7-186142f04f84",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "1cca46b5-2bda-517c-a534-1f5a5ea558ff",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "579e89bc-81f1-515e-9fc6-e76467fbefb5",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "8a438b68-ed76-5417-9e7e-8af7f63809ea",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "0c76066d-26f7-4f57-b0bd-0eb61465fb1a",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "86f1f0f5-3578-5c1a-aac0-c9bc5255f9a3",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "3fa88b32-d586-56f7-b4c2-a383f5518b99",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "d5a62a3d-397f-565c-bf8b-98ca44310a39",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "23a8b4b7-8bdf-5c5d-9b17-78081c53338a",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "e5ef00db-b62b-51b8-8471-9495474bf095",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "41410724-723c-48ab-8312-9b85131b4d84",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "0456ffef-8403-53c8-91f1-d2a1763790ee",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "d0c84154-cd7a-57d6-8afd-e3003e3df14a",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "33017f74-ece9-58c8-a013-e7513675c13b",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "c3428c0f-e100-5561-a0f9-7b4279dd4125",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "6118d3a4-e255-586c-80cf-de6e30e1e32e",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a",
+        "inheritancePaths": [
+          {
+            "universalIdentifier": "42b75f4b-17e9-5cfb-9889-ea634e97dba9",
+            "sourceObjectUniversalIdentifier": "20202020-0b00-45cd-b6f6-6cd806fc6804",
+            "fieldUniversalIdentifiers": [
+              "b5e03b44-f726-5eae-9ea9-141d074f2120"
+            ]
+          },
+          {
+            "universalIdentifier": "53e057be-0067-5773-aee4-55fb04dad9d2",
+            "sourceObjectUniversalIdentifier": "fab0fff8-0c90-4116-9bb0-7dbc07392633",
+            "fieldUniversalIdentifiers": [
+              "2a0e0b57-e55b-5432-9ec1-04a43f4cd8b8"
+            ]
+          },
+          {
+            "universalIdentifier": "454ec7cd-f11d-5060-931f-1a29da8ce61f",
+            "sourceObjectUniversalIdentifier": "20202020-1ba1-48ba-bc83-ef7e5990ed10",
+            "fieldUniversalIdentifiers": [
+              "d88469f5-b558-5e11-ab85-66f9ffcaecc0"
+            ]
+          },
+          {
+            "universalIdentifier": "91daaf02-b610-5732-85f2-dc43a4e174c6",
+            "sourceObjectUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
+            "fieldUniversalIdentifiers": [
+              "54dd92e1-67bf-5381-86f3-c747976dcdaf"
+            ]
+          },
+          {
+            "universalIdentifier": "7d8e5210-80c2-55d8-a72e-a3a792ce5fe2",
+            "sourceObjectUniversalIdentifier": "20202020-b374-4779-a561-80086cb2e17f",
+            "fieldUniversalIdentifiers": [
+              "a4399ae3-fe89-59fe-a282-aec77d4e63a8"
+            ]
+          },
+          {
+            "universalIdentifier": "fbd97b85-0708-5972-9be1-7d991892fe61",
+            "sourceObjectUniversalIdentifier": "20202020-9549-49dd-b2b2-883999db8938",
+            "fieldUniversalIdentifiers": [
+              "37d15d4b-7441-5bbc-8a5f-228f2d62abf4"
+            ]
+          },
+          {
+            "universalIdentifier": "560f74e9-954b-5d2c-9697-c20655804806",
+            "sourceObjectUniversalIdentifier": "20202020-3840-4b6d-9425-0c5188b05ca8",
+            "fieldUniversalIdentifiers": [
+              "6e0748cd-8876-53f9-b78d-8bdb3c71883e"
+            ]
+          },
+          {
+            "universalIdentifier": "fff5995e-9485-5134-9a8b-adf84dff380d",
+            "sourceObjectUniversalIdentifier": "20202020-62be-406c-b9ca-8caa50d51392",
+            "fieldUniversalIdentifiers": [
+              "78d27c16-be35-54d2-988a-451dc24f77ff"
+            ]
+          },
+          {
+            "universalIdentifier": "70ec3d06-b508-5662-9e65-7cdd4c26f37b",
+            "sourceObjectUniversalIdentifier": "ec01fe7c-1710-416b-a78a-6513a47e503f",
+            "fieldUniversalIdentifiers": [
+              "b152a134-1af6-5e16-b0f3-f3fee84c7685"
+            ]
+          },
+          {
+            "universalIdentifier": "5701e5e9-7e46-59ef-84df-4b4179c2a15a",
+            "sourceObjectUniversalIdentifier": "ce243a9a-3a3a-4405-9b23-f32c7825ca9a",
+            "fieldUniversalIdentifiers": [
+              "51a1e3ad-803f-5e15-a40e-fe1120844a68"
+            ]
+          },
+          {
+            "universalIdentifier": "f8b918fa-4ecc-5c2a-ab06-ca5e17ac39f8",
+            "sourceObjectUniversalIdentifier": "3c5a0320-f88e-4186-a239-d1d3f59ebcce",
+            "fieldUniversalIdentifiers": [
+              "33601f2d-48b9-52f7-82e7-762a90328ea6"
+            ]
+          },
+          {
+            "universalIdentifier": "707ac87b-4dd5-557f-bc98-6767a362aafb",
+            "sourceObjectUniversalIdentifier": "442e4299-7785-492f-aa5b-ca95f4a95911",
+            "fieldUniversalIdentifiers": [
+              "b2b07e00-41e6-55e9-ad46-8ffa6907b990"
+            ]
+          },
+          {
+            "universalIdentifier": "50b2efb7-ea81-5d72-bbd2-3209860341cc",
+            "sourceObjectUniversalIdentifier": "4865a1af-e580-453b-bba1-1ab5cbda3ac9",
+            "fieldUniversalIdentifiers": [
+              "5edc53cb-bb51-5313-af15-f1f54b02b59e"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "universalIdentifier": "e8fe81ae-6991-5973-87a2-c13416049216",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "1056a484-4874-5e48-9e94-4e8913612338",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "173f6212-a851-5d2b-98ff-4d8a4e0d9b3a",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "20f91310-ca36-5525-8278-bedc47b44616",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "7d35e07b-7c86-5a4c-961d-b46500095153",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-0408-4f38-b8a8-4d5e3e26e24d",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "c91a2ff5-82b8-51bf-9785-e53466c301c6",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "293fdbe6-7df8-53af-a843-e914a9bd84a5",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "f1963f37-01b6-50d5-a7cc-b622befdfe11",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "f7e9591c-4486-5dee-91c0-a7b621a92b5b",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "8f207bcf-3e1d-58ac-a983-38d385850b70",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-491b-4aaa-9825-afd1bae6ae00",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "06a2ef4b-eb69-5600-88a3-2405c99304da",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "f9fe0b54-90a8-521f-bf8c-c1a6b32afdc5",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "bf05d0ea-0751-5d2f-b7f3-5e6196841ca4",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "7dab5c65-dba7-58a7-95ba-7771f5bc1035",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "3f97c063-b00d-5c51-9539-19b815198395",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-a1c3-47a6-9732-27e5b1e8436d",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "4a74820a-8580-51f4-8563-2a08ab289e7e",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "f2473ab0-4008-5190-b394-79f4c0aac921",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "70c38212-8943-52ff-9850-d2d8e4bf972b",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "4aa76b4b-a7a8-5793-bab9-36a5988b0500",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "bcab8ebe-c0df-57cc-a7d6-30c35c3c75f6",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-8f1d-4eef-9f85-0d1965e27221",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "5b311498-2da2-5952-bf9b-0a0ad12f2592",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "b1de49c8-dcaa-581e-a2d9-9ba3bd12951d",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "0e3e50d7-9e8b-507e-9a60-e289e03c1c4c",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "a159a329-4976-5aac-a220-6d6cc566a19e",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "7c42d515-82ec-5a49-9787-92854b91d159",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "6a9b9656-3e23-4234-94a4-b913c5dde668",
+        "inheritancePaths": [
+          {
+            "universalIdentifier": "96219893-49bd-5268-8168-5d34e6735e90",
+            "sourceObjectUniversalIdentifier": "20202020-8f1d-4eef-9f85-0d1965e27221",
+            "fieldUniversalIdentifiers": [
+              "2b4a0785-3462-485f-b1a8-79ebb2078eab"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "universalIdentifier": "a2d934c8-53b3-5730-bbb2-6f166ad8b956",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "52b343ca-edae-5134-b94d-beec4661099c",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "5421591c-1e98-5aa8-ad31-33a1e97c3f1e",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "16f09636-0460-58b7-8ba5-a4537b0f1578",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "cfb49eaa-7349-5597-8808-c3b35e5a17b2",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "ce19efb9-710f-45b2-b141-473abbeea60b",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "74247737-9586-5ea5-a337-f0da7d068ec8",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "4013c0ea-95dc-5dba-99e0-0bbffb721c9b",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "01ee4fc3-f971-53c6-b6ef-9e663c645068",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "384df342-d8cd-5c36-8ce4-0a59c5da5590",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "e28e79b2-d505-5d5e-8320-4b19c76a1505",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-b374-4779-a561-80086cb2e17f",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "cc434a3d-b068-59fb-8506-43bd3287af6b",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "821646d9-2a21-54bd-a2f9-0dd5068e42a5",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "ca1ee738-696d-5ce8-bd1f-5fd2bcb32420",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "9b62eaeb-3307-51ee-a35a-c3edc1eafdb4",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "2d5dbc1f-2b38-5dd4-bfcc-255f6a29db16",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-3840-4b6d-9425-0c5188b05ca8",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "1976875d-c75a-519b-a092-ae544ece1c7f",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "db982502-98cf-5aae-aa12-6844db4cc351",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "08c4fc78-8a72-5aee-8a36-64603b5260f9",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "3bd9c8f7-bfdc-584f-8889-ca052fe81972",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "648265b4-4a01-5886-a444-1df68601ca57",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "238acb94-dd4c-4036-bc55-19b99d821efd",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "6e866cdf-8059-5921-986c-9802796858a6",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "4a76b861-43e8-56aa-a8e8-4a139bd7e752",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "6a60d5fa-b561-560a-b14c-8529d5ec068d",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "8f40edae-2406-5f8c-81b9-13fe26db35c8",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "042d3f22-70b0-5536-bf5d-e14d45f1a522",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "826561ea-4816-411c-baa0-eec5e6ca8866",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "df0f0211-f607-5872-bb78-f6121df2d2e1",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "c341de95-57bc-5063-b002-a9e2899ac2be",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "91e5764a-7e32-58f6-8dfb-9ecdeb06f7ec",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "19ed3c13-9454-5d9b-9ef1-0c9c88f2bf87",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "beadb22e-9e95-58c0-a05a-fb18541d9ccd",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "27773d24-8ce3-40f8-aa6c-1f590f2c08d2",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "27e26641-a4d2-5ca0-af22-fd1b3dc1bab5",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "7aabc222-61fd-565f-b70b-e254dcbadd6a",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "b902f291-ae28-56f3-badc-c36898ef2d21",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "3974ed88-8fbe-5cc7-89de-63a384ff3fd2",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "332a4b02-9b17-5ca4-b31c-a0ccbd36360d",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-ad1e-4127-bccb-d83ae04d2ccb",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "b8ec1c3a-4b0f-51a6-b5e3-8953bc77d494",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "69732a71-e0af-5f3e-b1e6-5b8f3ad5a794",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "11279170-ec4e-5857-bf5d-94807be323d6",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "9828c972-36b1-5021-9610-f125be15aef4",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "8d16ac51-91cb-5e51-b8c3-a86c31fc6c75",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-a1b0-40b0-8ab0-5b6c7d8e9f0a",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "bf61c480-4557-5422-8aeb-fcf4ceb66c78",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "d2f95a75-cae4-53b7-9984-2b5fd541068d",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "e5846c51-6e0d-52aa-a861-fde15bbff342",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "e017ba6e-a5d8-5e48-aec0-19f598ce3f59",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "a26655c0-1e1d-534e-99ac-52ea5f9178f9",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-a433-4456-aa2d-fd9cb26b774a",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "966b3c6a-f9cb-50b0-ba48-bead742498c2",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "5e1d0fe6-d514-574d-a388-350770b5c05b",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "3221171a-2736-54e7-a98b-9970d323e3ef",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "9bd8d9af-cd78-535a-9779-330064aeab44",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "907b8286-804b-5c2c-9331-c19aceec8adb",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-849a-4c3e-84f5-a25a7d802271",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "2141b7c7-9c60-5bc1-8579-3617c766a31c",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "f5818ada-15ee-5e93-a34d-5ba8bbf90618",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "e831ea93-d083-5b6d-8694-803a9801088c",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "562a2844-b0c2-5fd4-a27a-08a2b1795461",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "ef6373b6-b4f4-5fff-8fbf-d820f24b9f88",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "378ad1b0-592d-4084-80ee-86fef44725b9",
+        "inheritancePaths": [
+          {
+            "universalIdentifier": "9ccdf3ce-4f04-5dbd-aac3-21714bc401d6",
+            "sourceObjectUniversalIdentifier": "20202020-849a-4c3e-84f5-a25a7d802271",
+            "fieldUniversalIdentifiers": [
+              "8d7c8b17-b835-4082-96bd-de704c491d49"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "universalIdentifier": "613fb88c-e98a-5a9a-9548-694fe75284da",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "c6766c3d-ca41-5aa1-bfd5-fba15634ad99",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "d5070bca-b23b-5815-b0eb-94cb580ba71e",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "b0422c4c-7bba-5f88-a3a3-d4329680662b",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "20a90043-3d6b-57f1-bfa4-ea2a86c37fc8",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-3f6b-4425-80ab-e468899ab4b2",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "d2d81bad-05a6-521f-ae1f-7ab39ddc8088",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "1f949cc9-1c1a-5f40-b976-0487838f2d89",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "63951087-ce55-5e90-a7ba-caef06a64402",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "a882c27d-180d-54dc-8128-e294ecbb59c4",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "abfaf5b2-9275-547b-b057-18624e96ad72",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-0b00-45cd-b6f6-6cd806fc6804",
+        "inheritancePaths": [
+          {
+            "universalIdentifier": "a3b895aa-430a-5577-a931-5486d8bfdef2",
+            "sourceObjectUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400",
+            "fieldUniversalIdentifiers": [
+              "20202020-57f3-4f50-9599-fc0f671df003"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "universalIdentifier": "8724736b-f633-5a92-96be-b9ac970ed4ee",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "2e7d0819-e911-5028-81d3-629bbe42e0b1",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "3726e01a-e21a-58db-9e3c-f43eae59be1f",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "0250155c-0d5b-5d9f-9f20-5dd31daa9a74",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "e1a0d109-36ce-5724-a82b-63a75a11919d",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400",
+        "inheritancePaths": [
+          {
+            "universalIdentifier": "77b9d1d9-9ac8-59f6-98ea-c93fbc192ee8",
+            "sourceObjectUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
+            "fieldUniversalIdentifiers": [
+              "1c0e0dfe-a01f-58d6-8948-08b93164d03c"
+            ]
+          },
+          {
+            "universalIdentifier": "275c6490-db6a-51ce-953f-7f79f255ed4d",
+            "sourceObjectUniversalIdentifier": "20202020-b374-4779-a561-80086cb2e17f",
+            "fieldUniversalIdentifiers": [
+              "0b28db77-8099-5ce3-a11f-86a5778d7740"
+            ]
+          },
+          {
+            "universalIdentifier": "fd621b00-93fa-5d5e-a3d9-9f68619bf085",
+            "sourceObjectUniversalIdentifier": "20202020-9549-49dd-b2b2-883999db8938",
+            "fieldUniversalIdentifiers": [
+              "ee980fc9-5f51-5986-9fbe-ccf5a103f595"
+            ]
+          },
+          {
+            "universalIdentifier": "3504a598-b29e-5c3f-86b0-f1fcde5a6c87",
+            "sourceObjectUniversalIdentifier": "ec01fe7c-1710-416b-a78a-6513a47e503f",
+            "fieldUniversalIdentifiers": [
+              "4e06fe67-8e43-50b9-a310-6c0dec81cabf"
+            ]
+          },
+          {
+            "universalIdentifier": "46cd272a-f262-5127-8919-310fe02baff4",
+            "sourceObjectUniversalIdentifier": "ce243a9a-3a3a-4405-9b23-f32c7825ca9a",
+            "fieldUniversalIdentifiers": [
+              "ebc59e85-135f-594e-8680-68cd49d6bb74"
+            ]
+          },
+          {
+            "universalIdentifier": "79728471-c00b-56cf-b240-318cbb3636c1",
+            "sourceObjectUniversalIdentifier": "3c5a0320-f88e-4186-a239-d1d3f59ebcce",
+            "fieldUniversalIdentifiers": [
+              "a71657ee-3946-5454-bb16-2ec8262ce759"
+            ]
+          },
+          {
+            "universalIdentifier": "9601144d-17d8-5ec1-abef-8492e6f6578b",
+            "sourceObjectUniversalIdentifier": "442e4299-7785-492f-aa5b-ca95f4a95911",
+            "fieldUniversalIdentifiers": [
+              "6b5f7746-cafd-5b41-af67-13a57bd3d1ef"
+            ]
+          },
+          {
+            "universalIdentifier": "6c61100c-f226-57cb-aa74-865a68b4b2a7",
+            "sourceObjectUniversalIdentifier": "4865a1af-e580-453b-bba1-1ab5cbda3ac9",
+            "fieldUniversalIdentifiers": [
+              "d6884666-0ae0-5222-960d-10c18b6f9429"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "universalIdentifier": "434692dc-b7e9-5fd7-ae05-06d7a1427d22",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "b85f5bcd-3e5e-5ce0-baef-67044ace83c9",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "ce8a3c87-1d46-5e3f-875d-b6227e7299f1",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "bce2e18e-e73c-5acd-9216-ac7a2a146a31",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "2616b2e6-bf6a-5f06-aecc-b98acecbd777",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-9549-49dd-b2b2-883999db8938",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "fc8f695b-1bf4-51ad-8fd6-02956becf370",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "814d571f-6483-536a-b079-9205187acc14",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "f7d4d72b-60e9-5ee9-9565-423494e22338",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "76a5ebec-2e00-53bb-9a9e-2ad0a6031e4d",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "17a24471-e489-5593-82bf-e2b9e718504d",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "8c5e9551-1415-56c1-9a76-c9a7c411ab49",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "0c467207-52d1-5b9d-99c1-5cde4fbd8165",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "04e09817-d952-53f8-be60-92dc6aec4193",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "2ac9fe85-d7b2-57ab-8c7d-71fa146cb584",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "7c9161bc-506f-56e6-82d8-b34278b6dc12",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "22c96608-d1b1-49a2-b328-3e738d61d82d",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "45c8bab7-5100-5f10-996f-7cb71fd1fe53",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "2dfc9cbe-6325-51a5-ac7e-5d258df62eba",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "79b32530-3d29-5fd6-810b-0a2756e92505",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "9877e50b-7f0c-508a-a72c-604105961d9d",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "5e722e44-7081-5e9e-b3a2-c68481658e25",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-1ba1-48ba-bc83-ef7e5990ed10",
+        "inheritancePaths": [
+          {
+            "universalIdentifier": "cae31807-9b13-527d-b078-6c581e7fcf3d",
+            "sourceObjectUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1",
+            "fieldUniversalIdentifiers": [
+              "20202020-e881-457a-8758-74aaef4ae78a"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "universalIdentifier": "f11038da-3f73-54cf-bc0f-97cab1de6993",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "9c641219-a2e5-5e4b-b40a-74b8fecf6fc6",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "f049390e-f130-5d46-acc0-c7a13d6150cd",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "4da631d1-6589-5286-acbb-b8f551bab329",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "80c514ef-11ff-582b-86fc-8c315e85b426",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1",
+        "inheritancePaths": [
+          {
+            "universalIdentifier": "eeb838a2-7ff7-5003-9771-0232128b6675",
+            "sourceObjectUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
+            "fieldUniversalIdentifiers": [
+              "ddea86e6-5766-5798-ac32-14fbab6089f6"
+            ]
+          },
+          {
+            "universalIdentifier": "4af9eaec-2c0c-5d85-92ad-2b21545da1bc",
+            "sourceObjectUniversalIdentifier": "20202020-b374-4779-a561-80086cb2e17f",
+            "fieldUniversalIdentifiers": [
+              "9d7b0087-7037-55dc-bb59-456064455694"
+            ]
+          },
+          {
+            "universalIdentifier": "b6e2bf4c-1a13-5152-9534-c5c7a303aa23",
+            "sourceObjectUniversalIdentifier": "20202020-9549-49dd-b2b2-883999db8938",
+            "fieldUniversalIdentifiers": [
+              "3e20f0e5-c0f5-5af4-8cac-02a65ecc4e86"
+            ]
+          },
+          {
+            "universalIdentifier": "31e79ec3-ff79-5be1-9ecf-1f084d865b1d",
+            "sourceObjectUniversalIdentifier": "ec01fe7c-1710-416b-a78a-6513a47e503f",
+            "fieldUniversalIdentifiers": [
+              "971a9a3f-49e8-550f-9662-791454ce0f99"
+            ]
+          },
+          {
+            "universalIdentifier": "0ef9959b-98a7-57c3-9376-1b99b6fe8262",
+            "sourceObjectUniversalIdentifier": "ce243a9a-3a3a-4405-9b23-f32c7825ca9a",
+            "fieldUniversalIdentifiers": [
+              "4339541b-2881-5c48-8ac5-3a6683bcb628"
+            ]
+          },
+          {
+            "universalIdentifier": "385e7350-a9e0-53d8-b92a-49d9782820e6",
+            "sourceObjectUniversalIdentifier": "3c5a0320-f88e-4186-a239-d1d3f59ebcce",
+            "fieldUniversalIdentifiers": [
+              "7c3e8034-bf4c-5345-b190-13ee4ccb9db9"
+            ]
+          },
+          {
+            "universalIdentifier": "e8bf8819-c93c-5350-868e-90f054ff8f7f",
+            "sourceObjectUniversalIdentifier": "442e4299-7785-492f-aa5b-ca95f4a95911",
+            "fieldUniversalIdentifiers": [
+              "62d820aa-32cc-537c-8a90-bbd93a789756"
+            ]
+          },
+          {
+            "universalIdentifier": "3f4d2e81-48bb-56c3-84e0-25218349cb8c",
+            "sourceObjectUniversalIdentifier": "4865a1af-e580-453b-bba1-1ab5cbda3ac9",
+            "fieldUniversalIdentifiers": [
+              "4a461e18-4f79-583b-bd15-16c70e35ccbe"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "universalIdentifier": "32978879-2892-5a11-a26c-5798a52a7e7b",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "bd85ecac-6c46-5980-a81f-fa0933cc261f",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "1a601cfe-c873-5bde-90e2-6e33fd9bf00c",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "c4b07336-193c-5f9d-a9fc-224a20b2b3f4",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "935287e2-03a7-567a-82be-1b870288fbaa",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5",
+        "inheritancePaths": [
+          {
+            "universalIdentifier": "85164808-c1df-5307-930b-1f4a0567a71c",
+            "sourceObjectUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
+            "fieldUniversalIdentifiers": [
+              "32d7483f-6227-528b-bc65-62d9cf858cd8"
+            ]
+          },
+          {
+            "universalIdentifier": "2a8f78aa-c9e4-56ad-92de-ad447dea5940",
+            "sourceObjectUniversalIdentifier": "20202020-b374-4779-a561-80086cb2e17f",
+            "fieldUniversalIdentifiers": [
+              "28ec0f8f-ad23-5317-b2d9-1a487bcefee2"
+            ]
+          },
+          {
+            "universalIdentifier": "d9beb24d-0a21-5c13-b0ea-8fb2e5af87c3",
+            "sourceObjectUniversalIdentifier": "20202020-3840-4b6d-9425-0c5188b05ca8",
+            "fieldUniversalIdentifiers": [
+              "82711ab6-00a2-57e7-9db8-9f77dde9944c"
+            ]
+          },
+          {
+            "universalIdentifier": "93296905-d4fc-5f9e-8521-8c650dc4c682",
+            "sourceObjectUniversalIdentifier": "238acb94-dd4c-4036-bc55-19b99d821efd",
+            "fieldUniversalIdentifiers": [
+              "b4dd1932-bcfa-50c6-ada7-37de5d9c2825"
+            ]
+          },
+          {
+            "universalIdentifier": "893cacee-f3cc-56e4-ad89-cf0d031ba351",
+            "sourceObjectUniversalIdentifier": "826561ea-4816-411c-baa0-eec5e6ca8866",
+            "fieldUniversalIdentifiers": [
+              "e0fbfc29-9b77-52c0-935e-a21af8e10325"
+            ]
+          },
+          {
+            "universalIdentifier": "53ba989e-0253-5aa1-b157-0a86bc7fd799",
+            "sourceObjectUniversalIdentifier": "20202020-0b00-45cd-b6f6-6cd806fc6804",
+            "fieldUniversalIdentifiers": [
+              "dd80c0fb-074a-5ca2-8596-dbb967f20155"
+            ]
+          },
+          {
+            "universalIdentifier": "67e17d38-fa3e-5034-96b7-a7fbfeda37cd",
+            "sourceObjectUniversalIdentifier": "20202020-9549-49dd-b2b2-883999db8938",
+            "fieldUniversalIdentifiers": [
+              "64f26c76-9427-55a1-82e6-332b495878ad"
+            ]
+          },
+          {
+            "universalIdentifier": "46ea8e07-3cac-5461-88cc-2c8a4e435457",
+            "sourceObjectUniversalIdentifier": "20202020-1ba1-48ba-bc83-ef7e5990ed10",
+            "fieldUniversalIdentifiers": [
+              "9058db0a-b156-5c9e-999f-c89387ef4a9b"
+            ]
+          },
+          {
+            "universalIdentifier": "548f6090-77ef-5de9-a357-1fc63645c58f",
+            "sourceObjectUniversalIdentifier": "20202020-62be-406c-b9ca-8caa50d51392",
+            "fieldUniversalIdentifiers": [
+              "0ca041cd-598d-5c6b-881c-fe89ee97a0bc"
+            ]
+          },
+          {
+            "universalIdentifier": "d73d3ebf-55b3-54f5-a305-2118d6ece2a1",
+            "sourceObjectUniversalIdentifier": "20202020-d65d-4ab9-9344-d77bfb376a3d",
+            "fieldUniversalIdentifiers": [
+              "4be90325-f6ca-5931-a977-1194bb4b3d5c"
+            ]
+          },
+          {
+            "universalIdentifier": "e37da980-fc58-536b-949e-1bd83706ad23",
+            "sourceObjectUniversalIdentifier": "20202020-4e28-4e95-a9d7-6c00874f843c",
+            "fieldUniversalIdentifiers": [
+              "1e8e4e87-48c3-54d5-bd75-5cda9cf393b0"
+            ]
+          },
+          {
+            "universalIdentifier": "756f861e-31ee-54e7-8a13-cb9948dd6aec",
+            "sourceObjectUniversalIdentifier": "ec01fe7c-1710-416b-a78a-6513a47e503f",
+            "fieldUniversalIdentifiers": [
+              "668bd1e9-8b60-5d71-8f4d-d6fd9cbd12db"
+            ]
+          },
+          {
+            "universalIdentifier": "f889b800-ffdd-526e-9ade-2bb20a22839b",
+            "sourceObjectUniversalIdentifier": "ce243a9a-3a3a-4405-9b23-f32c7825ca9a",
+            "fieldUniversalIdentifiers": [
+              "584c1f58-478d-5460-a1be-42558618e4ab"
+            ]
+          },
+          {
+            "universalIdentifier": "369a4abd-1a39-5f03-8a01-a16ef73a40a2",
+            "sourceObjectUniversalIdentifier": "3c5a0320-f88e-4186-a239-d1d3f59ebcce",
+            "fieldUniversalIdentifiers": [
+              "e75eeb18-591c-58ce-9e5a-618448fd6519"
+            ]
+          },
+          {
+            "universalIdentifier": "01f50082-7283-57ff-8cef-bb1c81a08599",
+            "sourceObjectUniversalIdentifier": "442e4299-7785-492f-aa5b-ca95f4a95911",
+            "fieldUniversalIdentifiers": [
+              "5b6245fb-44a6-5a71-b31f-a3a69aebe0e2"
+            ]
+          },
+          {
+            "universalIdentifier": "c1b51359-22dc-539e-a09e-312e1650fbb1",
+            "sourceObjectUniversalIdentifier": "4865a1af-e580-453b-bba1-1ab5cbda3ac9",
+            "fieldUniversalIdentifiers": [
+              "54028b80-d9a2-5c01-9471-a9098dbac07b"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "universalIdentifier": "af32f520-4fbc-5fc7-816a-3847b015ca30",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "fbff8fb8-45a5-580a-8b88-f788bb8e5ed7",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "21aa49fe-c73e-5416-a52c-36adc054e2aa",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "0ede5ff8-4251-5b2b-8bbd-4a82c550d725",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "b2ab0d0f-1e39-5722-9fca-83f2e395f5d0",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-62be-406c-b9ca-8caa50d51392",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "dabd68fe-f0f2-576f-85c5-d09f7bc8d660",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "2b4255c5-646b-52f4-8db7-f708c8c7364e",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "2471503c-f7f7-5c68-8aac-caf3cc9e3697",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "8eadba18-0095-51cb-83c8-ca028c716fe9",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "6ae65cdd-9f23-516f-82e7-265a977c1a1d",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-3319-4234-a34c-7f3b9d2e4d1f",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "498a3f11-ae87-5dd4-b47c-45f9a85d2288",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "8f39b2b0-cb77-550b-94d1-58b56420dcb3",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "0feb4a55-c4dc-56f8-a8c7-df45c20e9a0b",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "deed43e2-0e09-55fd-80c6-38c67faba3d2",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "a157a3ca-fcc4-530d-bd4b-ff81d35cda29",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-4e28-4e95-a9d7-6c00874f843c",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "aee97a44-cf12-5bcf-bb39-f3b371f45dd5",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "d1898b38-9a9c-5f38-884f-d8e5a4772af8",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "67ed0ab4-f4d3-5872-aa95-468461dca92f",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "236a8fd7-2ff9-5bac-8d29-e8e2f220423c",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "392adcc9-421b-5bc7-9b76-1847cbd3929e",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-d65d-4ab9-9344-d77bfb376a3d",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "f18bcd04-361e-520f-a2e2-27acda76b538",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "4df6398f-0ff1-576a-831a-762ed5197956",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "c1468ac8-5962-5c8c-adf4-7c69b66dd44e",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "00f3fa49-4592-5b88-a880-9dc192392627",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "22e13b4d-7430-5eda-9f1b-328041645e6e",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "20202020-3319-4234-a34c-82d5c0e881a6",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "7f0df402-a782-598a-961b-5dad2cf80cd1",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "02bb1fe6-8dd9-5ef1-83c6-66ab53c94c64",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "7cb58700-8a70-5bc6-91de-b81268a117c7",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "3f2b1947-18d0-5c41-9787-27e214775315",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "de35a074-ece3-5603-8eae-a4a7e5764837",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "ec01fe7c-1710-416b-a78a-6513a47e503f",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "b1754b30-94fe-537e-89af-40ea460109c7",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "7bb537f8-4e03-5ccd-9dff-fbf5af739463",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "673ad03e-ec0e-5bf6-82ad-e34eb0c524b6",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "9dae06ac-3fd7-5983-8195-2201a784de27",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "18f6679c-02db-5372-8a51-39710d7aefc9",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "ce243a9a-3a3a-4405-9b23-f32c7825ca9a",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "f4b29e8c-e28f-52c4-b98f-d3fbc1aa82fb",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "524d7c2a-e9d8-5ed9-857b-a01f850d1fa9",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "4ef27fd1-46c1-5588-99d6-8e363d6a6888",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "c0039791-6867-5822-8026-96f61beae7e6",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "77634d4d-8b0e-5c12-8039-7a301639f9b3",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "3c5a0320-f88e-4186-a239-d1d3f59ebcce",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "2b38c6ba-0b5c-59ea-addd-1e31e6110328",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "a04cb194-792c-50cf-98b7-653e089c44d8",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "44771802-1036-5f16-a4db-668e65baad0e",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "96888570-2ff3-56cf-a7c5-5bc4d01cb03d",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "ce5b331f-fce1-535a-aeac-168c7d74535f",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "4865a1af-e580-453b-bba1-1ab5cbda3ac9",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "e29d6f23-e500-5f44-a4a3-3318b413b4c0",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "d1144183-2cdb-584f-8a95-3e50de51cd98",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "0eec5444-678d-511b-b331-bf91b1a183e4",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "fa60be85-ebf0-5df5-bf60-388a67f80482",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "a0a85772-be14-58b3-9a45-20daa8bb7761",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      },
+      {
+        "objectUniversalIdentifier": "442e4299-7785-492f-aa5b-ca95f4a95911",
+        "inheritancePaths": [],
+        "rules": [
+          {
+            "universalIdentifier": "eeb580b7-adf5-53ff-a481-0aaf909da906",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-02c2-43f2-b94d-cab1f2b532eb",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "85269506-fc36-5f37-adbb-d9e7b8bf1594",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "441d89b8-6fa1-4b11-b053-c87fefdfe4dc",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "0ea7c023-5c50-5fb3-bce5-a110bf7b14b8",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "4224c205-40a1-4cd2-a7a9-d25407e317b9",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "share",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "bf641287-7013-591e-9182-f83dfc593a67",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "31b8e645-8d92-4b7d-83a6-e180b4e33ab7",
+            "actions": [
+              "read",
+              "receive"
+            ],
+            "condition": null
+          },
+          {
+            "universalIdentifier": "36ff6b4f-e034-575b-b93f-f8e536f9de09",
+            "label": "Imported permissions",
+            "roleUniversalIdentifier": "20202020-a8a6-47ae-be79-e3601fa46a8e",
+            "actions": [
+              "read",
+              "update",
+              "softDelete",
+              "destroy",
+              "receive"
+            ],
+            "condition": null
+          }
+        ]
+      }
+    ]
+  },
+  "progress": [],
+  "failureReason": null
+}

@@ -1,0 +1,22 @@
+{
+  "members": 1000,
+  "actions": 6,
+  "records": 100,
+  "schema": "dense_benchmark_df419e302a40457184b13db3f8843754",
+  "startedAt": "2026-10-26T22:09:58.961Z",
+  "cases": [
+    {
+      "numberOfRules": 1,
+      "groups": 4000,
+      "elapsedMs": 448.39795800000024,
+      "error": "relation \"dense_benchmark_df419e302a40457184b13db3f8843754.recordShare\" does not exist"
+    },
+    {
+      "numberOfRules": 2,
+      "groups": 8000,
+      "elapsedMs": 836.4046250000001,
+      "error": "relation \"dense_benchmark_df419e302a40457184b13db3f8843754.recordShare\" does not exist"
+    }
+  ],
+  "finishedAt": "2026-10-26T22:10:00.534Z"
+}

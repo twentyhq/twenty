@@ -1,0 +1,22 @@
+{
+  "members": 1000,
+  "actions": 6,
+  "records": 100,
+  "schema": "dense_benchmark_5942fe1f5234447e8ab86a4ddd549ebe",
+  "startedAt": "2026-10-26T22:12:03.785Z",
+  "cases": [
+    {
+      "numberOfRules": 1,
+      "groups": 4000,
+      "elapsedMs": 1841.69775,
+      "error": "canceling statement due to statement timeout"
+    },
+    {
+      "numberOfRules": 2,
+      "groups": 8000,
+      "elapsedMs": 2190.1062919999995,
+      "error": "canceling statement due to statement timeout"
+    }
+  ],
+  "finishedAt": "2026-10-26T22:12:08.084Z"
+}

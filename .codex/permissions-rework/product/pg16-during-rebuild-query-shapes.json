@@ -1,0 +1,19 @@
+[
+  {
+    "name": "exact whole-table count",
+    "elapsedMs": 253.116542,
+    "code": "57014",
+    "error": "canceling statement due to statement timeout"
+  },
+  {
+    "name": "exact selective count",
+    "elapsedMs": 255.592375,
+    "code": "57014",
+    "error": "canceling statement due to statement timeout"
+  },
+  {
+    "name": "ordered ordinary page",
+    "elapsedMs": 1.7402089999999362,
+    "rows": 50
+  }
+]

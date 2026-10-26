@@ -1,0 +1,23 @@
+{
+  "rows": 10000000,
+  "members": 1000,
+  "shares": 50000,
+  "startedAt": "2026-10-26T18:26:58.747Z",
+  "processed": 100000,
+  "retries": 6,
+  "cursor": "0251814d-9090-7e49-8769-22383fa64c08",
+  "elapsedSeconds": 1487.8959421250001,
+  "rowsPerSecond": 61.37517268402789,
+  "readErrors": 1,
+  "walBytes": "2198697512",
+  "relationBytesBefore": "6609108992",
+  "relationBytesAfter": "6655778816",
+  "reads": {
+    "samples": 420,
+    "errors": 1,
+    "p99Ms": 134.32000000000698
+  },
+  "p50BatchMs": 378.56466699996963,
+  "p99BatchMs": 1616.0306249998976,
+  "finishedAt": "2026-10-26T18:51:54.694Z"
+}
