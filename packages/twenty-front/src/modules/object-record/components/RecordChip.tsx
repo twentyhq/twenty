@@ -1,5 +1,8 @@
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -10,6 +13,8 @@ import { type TriggerEventType } from '@/ui/navigation/types/TriggerEventType';
 import { type MouseEvent } from 'react';
 import { CoreObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { getIconTileColorShades } from 'twenty-ui/components/data-display';
+import { useIcons } from 'twenty-ui/icon';
 import { Chip, type ChipSize } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -26,6 +31,7 @@ type RecordChipProps = {
   isIconHidden?: boolean;
   triggerEvent?: TriggerEventType;
   onClick?: (event: MouseEvent) => void;
+  tooltipContent?: string;
 };
 
 export const RecordChip = ({
@@ -41,11 +47,38 @@ export const RecordChip = ({
   isIconHidden = false,
   triggerEvent = 'MOUSE_DOWN',
   onClick,
+  tooltipContent: customTooltipContent,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
     record,
   });
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const { getIcon } = useIcons();
+
+  const imageIdentifierFieldMetadataItem =
+    getImageIdentifierFieldMetadataItem(objectMetadataItem);
+
+  const hasImageIdentifier = isDefined(imageIdentifierFieldMetadataItem);
+
+  const shouldDisplayObjectIcon =
+    !hasImageIdentifier && isDefined(objectMetadataItem?.icon);
+
+  const Icon = shouldDisplayObjectIcon
+    ? getIcon(objectMetadataItem.icon)
+    : undefined;
+
+  const iconColor = shouldDisplayObjectIcon
+    ? getIconTileColorShades(getObjectColorWithFallback(objectMetadataItem))
+        .iconColor
+    : undefined;
+
+  const tooltipContent =
+    customTooltipContent ?? objectMetadataItem.labelSingular;
 
   const { text: label, content } = getChipLabel(recordChipData.name);
 
@@ -76,6 +109,8 @@ export const RecordChip = ({
         size={size}
         maxWidth={maxWidth}
         variant="plain"
+        tooltipContent={tooltipContent}
+        alwaysShowTooltip={isDefined(tooltipContent)}
         startElement={
           isIconHidden ? null : (
             <AvatarOrIcon
@@ -83,6 +118,8 @@ export const RecordChip = ({
               colorSeed={record.id}
               shape={recordChipData.avatarShape}
               src={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
+              Icon={Icon}
+              IconColor={iconColor}
             />
           )
         }
@@ -98,6 +135,8 @@ export const RecordChip = ({
       maxWidth={maxWidth}
       weight={isBold ? 'medium' : 'regular'}
       aria-label={isLabelHidden ? label : undefined}
+      tooltipContent={tooltipContent}
+      alwaysShowTooltip={isDefined(tooltipContent)}
       startElement={
         isIconHidden ? null : (
           <AvatarOrIcon
@@ -105,6 +144,8 @@ export const RecordChip = ({
             colorSeed={record.id}
             shape={recordChipData.avatarShape}
             src={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
+            Icon={Icon}
+            IconColor={iconColor}
           />
         )
       }
