@@ -1,7 +1,7 @@
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { atom, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -593,7 +593,7 @@ describe('AiChatInboxPage', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('moves between chats and back to the list from the chat', () => {
+    it('moves between chats and back to the list from the chat', async () => {
       renderInbox(`/inbox/${secondThread.id}`);
 
       fireEvent.click(screen.getByRole('button', { name: 'Next chat' }));
@@ -605,7 +605,9 @@ describe('AiChatInboxPage', () => {
 
       fireEvent.click(screen.getByRole('link', { name: /Open/ }));
 
-      expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument();
+      await waitFor(() =>
+        expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument(),
+      );
       expect(
         screen.getByRole('button', { name: 'Third chat' }),
       ).toBeInTheDocument();
