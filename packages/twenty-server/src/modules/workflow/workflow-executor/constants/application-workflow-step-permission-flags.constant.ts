@@ -1,8 +1,7 @@
-import { PermissionFlagType } from '@/constants/PermissionFlagType';
-import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
+import { PermissionFlagType } from 'twenty-shared/constants';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 
-// Steps that act through a connected account run on an application workflow
-// only when the application's role holds the matching tool permission.
+// Steps acting through a connected account need the matching tool permission on the app role
 export const APPLICATION_WORKFLOW_STEP_PERMISSION_FLAGS: Partial<
   Record<WorkflowActionType, PermissionFlagType>
 > = {

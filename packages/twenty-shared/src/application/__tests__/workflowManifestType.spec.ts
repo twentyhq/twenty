@@ -144,7 +144,7 @@ describe('workflow manifest step types', () => {
     {
       type: 'CREATE_CALENDAR_EVENT',
       input: {
-        connectedAccountId: ASSIGNEE,
+        connectedAccountId: '{{trigger.properties.after.connectedAccountId}}',
         title: 'Kick-off',
         startsAt: '2026-11-02T09:00:00.000Z',
         endsAt: '2026-11-02T09:30:00.000Z',

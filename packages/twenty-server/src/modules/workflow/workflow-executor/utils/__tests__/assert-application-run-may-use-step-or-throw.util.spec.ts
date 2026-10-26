@@ -1,14 +1,14 @@
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-import { assertApplicationRunMayUseStep } from 'src/modules/workflow/workflow-executor/utils/assert-application-run-may-use-step.util';
+import { assertApplicationRunMayUseStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/assert-application-run-may-use-step-or-throw.util';
 
 const grantedFlags =
   (...flags: PermissionFlagType[]) =>
-  async (_applicationId: string, permissionFlag: PermissionFlagType) =>
+  async ({ permissionFlag }: { permissionFlag: PermissionFlagType }) =>
     flags.includes(permissionFlag);
 
-describe('assertApplicationRunMayUseStep', () => {
+describe('assertApplicationRunMayUseStepOrThrow', () => {
   it.each([
     [WorkflowActionType.SEND_EMAIL, PermissionFlagType.SEND_EMAIL_TOOL],
     [WorkflowActionType.DRAFT_EMAIL, PermissionFlagType.SEND_EMAIL_TOOL],
@@ -20,7 +20,7 @@ describe('assertApplicationRunMayUseStep', () => {
     'lets an application run use %s steps when its role has %s',
     async (stepType, permissionFlag) => {
       await expect(
-        assertApplicationRunMayUseStep({
+        assertApplicationRunMayUseStepOrThrow({
           stepType,
           runApplicationId: 'installed-app-id',
           applicationHasPermissionFlag: grantedFlags(permissionFlag),
@@ -31,7 +31,7 @@ describe('assertApplicationRunMayUseStep', () => {
 
   it('refuses an email step when the application role lacks the permission', async () => {
     await expect(
-      assertApplicationRunMayUseStep({
+      assertApplicationRunMayUseStepOrThrow({
         stepType: WorkflowActionType.SEND_EMAIL,
         runApplicationId: 'installed-app-id',
         applicationHasPermissionFlag: grantedFlags(
@@ -46,12 +46,12 @@ describe('assertApplicationRunMayUseStep', () => {
   it('does not look up permissions for other steps or runs without an application', async () => {
     const applicationHasPermissionFlag = jest.fn();
 
-    await assertApplicationRunMayUseStep({
+    await assertApplicationRunMayUseStepOrThrow({
       stepType: WorkflowActionType.CREATE_RECORD,
       runApplicationId: 'installed-app-id',
       applicationHasPermissionFlag,
     });
-    await assertApplicationRunMayUseStep({
+    await assertApplicationRunMayUseStepOrThrow({
       stepType: WorkflowActionType.SEND_EMAIL,
       runApplicationId: undefined,
       applicationHasPermissionFlag,

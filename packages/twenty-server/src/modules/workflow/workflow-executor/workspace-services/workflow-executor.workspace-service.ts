@@ -36,7 +36,7 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input.type';
-import { assertApplicationRunMayUseStep } from 'src/modules/workflow/workflow-executor/utils/assert-application-run-may-use-step.util';
+import { assertApplicationRunMayUseStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/assert-application-run-may-use-step-or-throw.util';
 import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
 import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';
 import { stepHasRetryAttemptsLeft } from 'src/modules/workflow/workflow-executor/utils/step-has-retry-attempts-left.util';
@@ -603,14 +603,14 @@ export class WorkflowExecutorWorkspaceService {
     try {
       await this.assertActionTypeEnabled({ type: step.type, workspaceId });
 
-      await assertApplicationRunMayUseStep({
+      await assertApplicationRunMayUseStepOrThrow({
         stepType: step.type,
         runApplicationId,
-        applicationHasPermissionFlag: (applicationId, setting) =>
+        applicationHasPermissionFlag: ({ applicationId, permissionFlag }) =>
           this.permissionsService.userHasWorkspaceSettingPermission({
             userWorkspaceId: undefined,
             workspaceId,
-            setting,
+            setting: permissionFlag,
             applicationId,
             agentId: undefined,
           }),
