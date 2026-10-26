@@ -22,6 +22,13 @@ const getPinLockValidationError = (): FlatEntityValidationError => ({
   userFriendlyMessage: msg`This command is always pinned`,
 });
 
+const PIN_LOCKED_SCOPE_PROPERTIES = [
+  'engineComponentKey',
+  'availabilityType',
+  'availabilityObjectMetadataUniversalIdentifier',
+  'pageLayoutUniversalIdentifier',
+] as const satisfies (keyof UniversalFlatCommandMenuItem)[];
+
 export const validateCommandMenuItemPinLock = ({
   fromFlatCommandMenuItem,
   toFlatCommandMenuItem,
@@ -29,12 +36,13 @@ export const validateCommandMenuItemPinLock = ({
 }: ValidateCommandMenuItemPinLockArgs):
   | FlatEntityValidationError
   | undefined => {
-  if (toFlatCommandMenuItem.isPinLocked && !toFlatCommandMenuItem.isPinned) {
-    return getPinLockValidationError();
+  if (!isDefined(fromFlatCommandMenuItem)) {
+    return toFlatCommandMenuItem.isPinLocked && !toFlatCommandMenuItem.isPinned
+      ? getPinLockValidationError()
+      : undefined;
   }
 
   if (
-    !isDefined(fromFlatCommandMenuItem) ||
     !fromFlatCommandMenuItem.isPinLocked ||
     buildOptions.applicationUniversalIdentifier ===
       fromFlatCommandMenuItem.applicationUniversalIdentifier
@@ -47,24 +55,29 @@ export const validateCommandMenuItemPinLock = ({
     universalFlatEntity: fromFlatCommandMenuItem,
   });
 
+  if (
+    !effectiveFromFlatCommandMenuItem.isPinned ||
+    !effectiveFromFlatCommandMenuItem.isActive
+  ) {
+    return undefined;
+  }
+
   const effectiveToFlatCommandMenuItem = resolveEffectiveUniversalFlatEntity({
     metadataName: 'commandMenuItem',
     universalFlatEntity: toFlatCommandMenuItem,
   });
 
-  const isUnpinned =
-    effectiveFromFlatCommandMenuItem.isPinned &&
-    !effectiveToFlatCommandMenuItem.isPinned;
+  const isMovedOutOfScope = PIN_LOCKED_SCOPE_PROPERTIES.some(
+    (property) =>
+      effectiveToFlatCommandMenuItem[property] !==
+        effectiveFromFlatCommandMenuItem[property] &&
+      effectiveToFlatCommandMenuItem[property] !==
+        toFlatCommandMenuItem[property],
+  );
 
-  const isDeactivated =
-    effectiveFromFlatCommandMenuItem.isActive &&
-    !effectiveToFlatCommandMenuItem.isActive;
-
-  const isEngineComponentKeyChanged =
-    effectiveFromFlatCommandMenuItem.engineComponentKey !==
-    effectiveToFlatCommandMenuItem.engineComponentKey;
-
-  return isUnpinned || isDeactivated || isEngineComponentKeyChanged
+  return !effectiveToFlatCommandMenuItem.isPinned ||
+    !effectiveToFlatCommandMenuItem.isActive ||
+    isMovedOutOfScope
     ? getPinLockValidationError()
     : undefined;
 };

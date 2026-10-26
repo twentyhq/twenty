@@ -150,7 +150,7 @@ describe('buildPageCommandMenuItemUpdates', () => {
     ]);
   });
 
-  it('does not lock a dashboard command that is no longer pinned', () => {
+  it('locks a dashboard command a workspace unpinned without pinning it again', () => {
     expect(
       buildPageCommandMenuItemUpdates({
         flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
@@ -159,7 +159,13 @@ describe('buildPageCommandMenuItemUpdates', () => {
         direction: 'up',
         now: NOW,
       }),
-    ).toEqual([]);
+    ).toEqual([
+      expect.objectContaining({
+        universalIdentifier: SAVE_DASHBOARD.universalIdentifier,
+        isPinned: false,
+        isPinLocked: true,
+      }),
+    ]);
   });
 
   it('skips missing commands and commands owned by another application', () => {

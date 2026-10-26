@@ -143,4 +143,25 @@ describe('SidePanelCommandMenuItemEditPage', () => {
     expect(getDraftItem(GO_TO_PEOPLE_ITEM.id)?.isPinned).toBe(false);
     expect(getDraftItem(SAVE_PAGE_ITEM.id)?.isPinned).toBe(true);
   });
+
+  it('lets a command that is always pinned be unpinned again before its pin is saved', async () => {
+    const user = userEvent.setup();
+
+    jotaiStore.set(metadataStoreState.atomFamily('commandMenuItems'), {
+      current: [{ ...SAVE_PAGE_ITEM, isPinned: false }, GO_TO_PEOPLE_ITEM],
+      draft: [],
+      status: 'up-to-date',
+    });
+
+    render(<SidePanelCommandMenuItemEditPage />, { wrapper: Wrapper });
+
+    const unpinButtons = screen.getAllByRole('button', { name: 'Unpin' });
+
+    expect(unpinButtons).toHaveLength(2);
+
+    await user.click(unpinButtons[1]);
+
+    expect(getDraftItem(SAVE_PAGE_ITEM.id)?.isPinned).toBe(false);
+    expect(getDraftItem(GO_TO_PEOPLE_ITEM.id)?.isPinned).toBe(true);
+  });
 });

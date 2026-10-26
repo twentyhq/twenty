@@ -62,8 +62,7 @@ export const buildPageCommandMenuItemUpdates = ({
     if (
       !isDefined(commandMenuItem) ||
       commandMenuItem.applicationUniversalIdentifier !==
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER ||
-      (target.isPinLocked === true && !commandMenuItem.isPinned)
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
     ) {
       return [];
     }

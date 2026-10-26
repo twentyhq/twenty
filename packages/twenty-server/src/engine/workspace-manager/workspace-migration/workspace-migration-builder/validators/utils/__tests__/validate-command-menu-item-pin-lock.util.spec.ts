@@ -90,6 +90,21 @@ describe('validateCommandMenuItemPinLock', () => {
       'changes its engine component key',
       { engineComponentKey: EngineComponentKey.CANCEL_PAGE },
     ],
+    [
+      'changes its availability type',
+      { availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION },
+    ],
+    [
+      'scopes it to an object',
+      {
+        availabilityObjectMetadataUniversalIdentifier:
+          '0a9e2b1c-5d4f-4e3a-8b7c-6d5e4f3a2b1c',
+      },
+    ],
+    [
+      'scopes it to a page layout',
+      { pageLayoutUniversalIdentifier: '1b2c3d4e-5f6a-4b7c-8d9e-0f1a2b3c4d5e' },
+    ],
   ])('should refuse a workspace override that %s', (_, workspaceOverrides) => {
     expect(
       validateCommandMenuItemPinLock({
@@ -129,6 +144,39 @@ describe('validateCommandMenuItemPinLock', () => {
           position: 3,
         }),
         buildOptions: WORKSPACE_BUILD_OPTIONS,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should allow a workspace to hide a locked command it already unpinned', () => {
+    const unpinnedSaveCommand = withWorkspaceOverrides(LOCKED_SAVE_COMMAND, {
+      isPinned: false,
+    });
+
+    expect(
+      validateCommandMenuItemPinLock({
+        fromFlatCommandMenuItem: unpinnedSaveCommand,
+        toFlatCommandMenuItem: withWorkspaceOverrides(LOCKED_SAVE_COMMAND, {
+          isPinned: false,
+          isActive: false,
+        }),
+        buildOptions: WORKSPACE_BUILD_OPTIONS,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should allow the owner to lock a command a workspace already unpinned', () => {
+    const unpinnedSaveCommand = {
+      ...LOCKED_SAVE_COMMAND,
+      isPinLocked: false,
+      isPinned: false,
+    };
+
+    expect(
+      validateCommandMenuItemPinLock({
+        fromFlatCommandMenuItem: unpinnedSaveCommand,
+        toFlatCommandMenuItem: { ...unpinnedSaveCommand, isPinLocked: true },
+        buildOptions: OWNER_BUILD_OPTIONS,
       }),
     ).toBeUndefined();
   });

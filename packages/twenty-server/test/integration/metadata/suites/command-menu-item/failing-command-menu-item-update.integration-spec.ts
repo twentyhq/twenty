@@ -12,6 +12,7 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
@@ -171,6 +172,22 @@ describe('CommandMenuItem update should fail', () => {
     const { errors } = await updateCommandMenuItem({
       expectToFail: true,
       input: { id, engineComponentKey: EngineComponentKey.CANCEL_PAGE },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('when scoping a locked command to selected records', async () => {
+    const { id } = await findCommandMenuItemByEngineComponentKey(
+      EngineComponentKey.SAVE_PAGE,
+    );
+
+    const { errors } = await updateCommandMenuItem({
+      expectToFail: true,
+      input: {
+        id,
+        availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+      },
     });
 
     expectOneNotInternalServerErrorSnapshot({ errors });

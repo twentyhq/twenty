@@ -77,6 +77,8 @@ export const SidePanelCommandMenuItemEditPage = () => {
   const serverItemsById = new Map(
     commandMenuItems.map((item) => [item.id, item]),
   );
+  const isPinLockedOnServer = (item: CommandMenuItemFieldsFragment) =>
+    item.isPinLocked && serverItemsById.get(item.id)?.isPinned === true;
   const { updateCommandMenuItemInDraft } = useUpdateCommandMenuItemInDraft();
   const { reorderCommandMenuItemInDraft } = useReorderCommandMenuItemsInDraft();
 
@@ -120,7 +122,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
     currentlyPinned: boolean;
   }) => {
     if (currentlyPinned) {
-      if (item.isPinLocked) {
+      if (isPinLockedOnServer(item)) {
         return;
       }
 
@@ -264,7 +266,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
                                   </LightIconButton>
                                 }
                               />
-                              {!item.isPinLocked && (
+                              {!isPinLockedOnServer(item) && (
                                 <LightIconButton
                                   aria-label={t`Unpin`}
                                   onClick={(event) => {
