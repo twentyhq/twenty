@@ -270,15 +270,13 @@ export const SettingsTabReplacesVariablesTab: Story = {
     expect(
       canvas.queryByRole('link', { name: 'Variables' }),
     ).not.toBeInTheDocument();
-    expect(
-      canvas.queryByRole('button', { name: 'Save' }),
-    ).not.toBeInTheDocument();
 
     await waitFor(() =>
       expect(findOneFrontComponent).toHaveBeenCalledWith(
         GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
       ),
     );
+    expect(canvas.queryByText('Save')).not.toBeInTheDocument();
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
   },
 };

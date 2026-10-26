@@ -1,13 +1,19 @@
 import { act, render, screen } from '@testing-library/react';
-import { createStore, Provider as JotaiProvider } from 'jotai';
-import { type ReactNode } from 'react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
+import { createStore } from 'jotai';
+import { Route, Routes } from 'react-router-dom';
 
+import { SettingsPageCommandMenu } from '@/command-menu-item/components/SettingsPageCommandMenu';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStorePageCommandsComponentState } from '@/context-store/states/contextStorePageCommandsComponentState';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { SettingsApplicationPageCommands } from '@/settings/applications/components/SettingsApplicationPageCommands';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
+import { getJestPageCommandsWrapper } from '~/testing/jest/getJestPageCommandsWrapper';
+
+jest.mock(
+  '@/command-menu-item/display/components/PinnedCommandMenuItemsInlineMeasurements',
+  () => ({ PinnedCommandMenuItemsInlineMeasurements: () => null }),
+);
 
 const INSTALLED_APPLICATION_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
@@ -25,42 +31,46 @@ const renderPageCommands = ({
   installProgress,
 }: RenderPageCommandsOptions) => {
   const store = createStore();
-
-  const Wrapper = ({ children }: { children: ReactNode }) => (
-    <JotaiProvider store={store}>
-      <ContextStoreComponentInstanceContext.Provider
-        value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
-      >
-        <MemoryRouter initialEntries={['/settings/applications/available']}>
-          <Routes>
-            <Route path="/settings/applications/available" element={children} />
-            <Route
-              path="/settings/applications/:applicationId"
-              element="Application settings"
-            />
-          </Routes>
-        </MemoryRouter>
-      </ContextStoreComponentInstanceContext.Provider>
-    </JotaiProvider>
-  );
+  const onInstall = jest.fn();
 
   render(
-    <SettingsApplicationPageCommands
-      installedApplicationId={installedApplicationId}
-      canInstallMarketplaceApps={canInstallMarketplaceApps}
-      onInstall={jest.fn()}
-      isInstalling={isInstalling}
-      installProgress={installProgress}
-    />,
-    { wrapper: Wrapper },
+    <Routes>
+      <Route
+        path="/settings/applications/available"
+        element={
+          <>
+            <SettingsApplicationPageCommands
+              installedApplicationId={installedApplicationId}
+              canInstallMarketplaceApps={canInstallMarketplaceApps}
+              onInstall={onInstall}
+              isInstalling={isInstalling}
+              installProgress={installProgress}
+            />
+            <SettingsPageCommandMenu />
+          </>
+        }
+      />
+      <Route
+        path="/settings/applications/:applicationId"
+        element="Application settings"
+      />
+    </Routes>,
+    {
+      wrapper: getJestPageCommandsWrapper({
+        store,
+        initialEntries: ['/settings/applications/available'],
+      }),
+    },
   );
 
-  return () =>
+  const getPageCommands = () =>
     store.get(
       contextStorePageCommandsComponentState.atomFamily({
         instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
     );
+
+  return { getPageCommands, onInstall };
 };
 
 describe('SettingsApplicationPageCommands', () => {
@@ -92,13 +102,22 @@ describe('SettingsApplicationPageCommands', () => {
       expectedCommands: [EngineComponentKey.INSTALL_APPLICATION],
     },
   ])('offers $expectedCommands for $state', ({ props, expectedCommands }) => {
-    const getPageCommands = renderPageCommands(props);
+    const { getPageCommands } = renderPageCommands(props);
 
     expect(Object.keys(getPageCommands())).toEqual(expectedCommands);
   });
 
+  it('installs the application from the Install button', async () => {
+    const user = userEvent.setup();
+    const { onInstall } = renderPageCommands({});
+
+    await user.click(screen.getByRole('button', { name: 'Install' }));
+
+    expect(onInstall).toHaveBeenCalledTimes(1);
+  });
+
   it('shows the install as busy with its progress', () => {
-    const getPageCommands = renderPageCommands({
+    const { getPageCommands } = renderPageCommands({
       isInstalling: true,
       installProgress: 60,
     });
@@ -109,7 +128,7 @@ describe('SettingsApplicationPageCommands', () => {
   });
 
   it('opens the installed application settings', async () => {
-    const getPageCommands = renderPageCommands({
+    const { getPageCommands } = renderPageCommands({
       installedApplicationId: INSTALLED_APPLICATION_ID,
     });
 
