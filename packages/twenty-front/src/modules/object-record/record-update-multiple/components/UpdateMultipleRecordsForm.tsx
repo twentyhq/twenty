@@ -8,7 +8,6 @@ import { type UpdateMultipleRecordsState } from '@/object-record/record-update-m
 import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple/utils/isUpdateRecordValueEmpty';
 import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-multiple/utils/shouldDisplayFormMultiEditField';
 import { css } from '@linaria/core';
-import { useId } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -23,6 +22,7 @@ const updateMultipleRecordsFormSectionClassName = css`
 
 export type UpdateMultipleRecordsFormProps = {
   objectNameSingular: string;
+  formInstanceId: string;
   disabled?: boolean;
   values: UpdateMultipleRecordsState;
   onChange: (fieldName: string, value: any) => void;
@@ -30,6 +30,7 @@ export type UpdateMultipleRecordsFormProps = {
 
 export const UpdateMultipleRecordsForm = ({
   objectNameSingular,
+  formInstanceId,
   disabled = false,
   values,
   onChange,
@@ -37,7 +38,6 @@ export const UpdateMultipleRecordsForm = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-  const formInstanceId = useId();
 
   const editableFields = objectMetadataItem.fields
     .filter(shouldDisplayFormMultiEditField)

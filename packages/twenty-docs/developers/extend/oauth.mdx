@@ -1,8 +1,11 @@
 ---
 title: OAuth
-icon: "key"
 description: Authorization code flow with PKCE and client credentials for server-to-server access.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Twenty implements OAuth 2.0 with authorization code + PKCE for user-facing apps and client credentials for server-to-server access. Clients are registered dynamically via [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) — no manual setup in a dashboard.
 
@@ -187,3 +190,5 @@ This returns all endpoints, supported grant types, scopes, and capabilities — 
 | **Best for** | Scripts, internal tools | External apps, multi-user integrations |
 | **Token rotation** | Manual | Automatic via refresh tokens |
 | **Scoped access** | Full API access | Granular via scopes |
+
+<PageBanner illustration="card-page-sso" />

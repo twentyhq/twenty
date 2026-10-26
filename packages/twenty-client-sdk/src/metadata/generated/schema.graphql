@@ -1427,6 +1427,7 @@ input CreateAppMessageChannelInput {
   connectedAccountId: UUID!
   displayName: String
   handle: String!
+  participantHandleFieldUniversalIdentifier: UUID
   visibility: MessageChannelVisibility!
 }
 
@@ -2248,7 +2249,6 @@ type FeatureFlag {
 
 enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED
-  IS_APPLICATION_MONITORING_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
@@ -2930,6 +2930,7 @@ type MessageChannel {
   isContactAutoCreationEnabled: Boolean!
   isSyncEnabled: Boolean!
   messageFolderImportPolicy: MessageFolderImportPolicy!
+  participantHandleFieldUniversalIdentifier: UUID
   pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
   syncStage: MessageChannelSyncStage!
   syncStageStartedAt: DateTime

@@ -14,6 +14,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import semver from 'semver';
 import { isDefined } from 'twenty-shared/utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -107,7 +108,7 @@ describe('app init', () => {
       engines: {
         node: '^24.5.0',
         npm: 'please-use-yarn',
-        twenty: `>=${APP_TEMPLATE_PACKAGE_VERSION}`,
+        twenty: `>=${semver.major(APP_TEMPLATE_PACKAGE_VERSION)}.${semver.minor(APP_TEMPLATE_PACKAGE_VERSION)}.0`,
         yarn: '>=4.0.2',
       },
       devDependencies: {
@@ -242,6 +243,27 @@ describe('app init', () => {
       ],
     });
     expect((await readPackageJson(appDirectory)).name).toBe('@acme/billing');
+  });
+
+  it('warns on Windows that building apps needs WSL 2', async () => {
+    const platform = process.platform;
+
+    Object.defineProperty(process, 'platform', { value: 'win32' });
+
+    try {
+      const result = await runJson(['my-app']);
+
+      expect(result.exitCode, result.stdout).toBe(0);
+      expect(result.envelope.warnings).toEqual([
+        {
+          code: 'PLATFORM_UNSUPPORTED',
+          message:
+            'Building apps is only supported on macOS and Linux. On Windows, work inside WSL 2.',
+        },
+      ]);
+    } finally {
+      Object.defineProperty(process, 'platform', { value: platform });
+    }
   });
 
   it('writes quotes and replacement patterns in the display name and description literally', async () => {

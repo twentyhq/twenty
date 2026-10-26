@@ -43,6 +43,10 @@
   }
 }
 
+.fullWidth {
+  inline-size: 100%;
+}
+
 .sm {
   --tw-segmented-control-block-size: var(--t-spacing-6);
   --tw-segmented-control-item-size: var(--t-spacing-5);

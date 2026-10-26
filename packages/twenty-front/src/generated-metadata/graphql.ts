@@ -1548,6 +1548,7 @@ export type CreateAppMessageChannelInput = {
   connectedAccountId: Scalars['UUID']['input'];
   displayName?: InputMaybe<Scalars['String']['input']>;
   handle: Scalars['String']['input'];
+  participantHandleFieldUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
   visibility: MessageChannelVisibility;
 };
 
@@ -2383,7 +2384,6 @@ export type FeatureFlag = {
 
 export enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
-  IS_APPLICATION_MONITORING_ENABLED = 'IS_APPLICATION_MONITORING_ENABLED',
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
@@ -3103,6 +3103,7 @@ export type MessageChannel = {
   isContactAutoCreationEnabled: Scalars['Boolean']['output'];
   isSyncEnabled: Scalars['Boolean']['output'];
   messageFolderImportPolicy: MessageFolderImportPolicy;
+  participantHandleFieldUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
   pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction;
   syncStage: MessageChannelSyncStage;
   syncStageStartedAt?: Maybe<Scalars['DateTime']['output']>;
