@@ -295,26 +295,8 @@ export const InvalidPriorityRequiresSource: Story = {
     await expect(canvas.getByRole('button', { name: 'Merge' })).toBeDisabled();
     await expect(canvas.getByRole('button', { name: 'Skip' })).toBeEnabled();
     await expect(
-      canvas.getByRole('button', { name: 'Merge all 3' }),
-    ).toBeEnabled();
-    await userEvent.click(canvas.getByRole('button', { name: 'Merge all 3' }));
-
-    const confirmation = within(await body.findByRole('alertdialog'));
-
-    await expect(
-      confirmation.getByRole('heading', { name: 'Approve 3 actions?' }),
-    ).toBeVisible();
-    await expect(confirmation.getAllByRole('listitem')).toHaveLength(3);
-    await expect(
-      confirmation.queryByText('Merge Google and Google Inc.'),
-    ).not.toBeInTheDocument();
-    await expect(
-      confirmation.getByText('6 records selected · 0 records skipped'),
-    ).toBeVisible();
-    await userEvent.click(confirmation.getByRole('button', { name: 'Cancel' }));
-    await waitFor(() =>
-      expect(body.queryByRole('alertdialog')).not.toBeInTheDocument(),
-    );
+      canvas.getByRole('button', { name: 'Merge all 4' }),
+    ).toBeDisabled();
     await userEvent.click(canvas.getByRole('tab', { name: 'Settings' }));
     await userEvent.click(
       canvas.getByRole('button', { name: 'No record holds priority' }),
@@ -323,6 +305,9 @@ export const InvalidPriorityRequiresSource: Story = {
       await body.findByRole('option', { name: 'First record holds priority' }),
     );
     await expect(canvas.getByRole('button', { name: 'Merge' })).toBeEnabled();
+    await expect(
+      canvas.getByRole('button', { name: 'Merge all 4' }),
+    ).toBeEnabled();
     await expect(canvas.getByText('Google', { exact: true })).toBeVisible();
     await expect(canvas.getByText('Survives')).toBeVisible();
     await expect(

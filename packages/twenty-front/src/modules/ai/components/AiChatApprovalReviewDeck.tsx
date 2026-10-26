@@ -100,11 +100,10 @@ type AiChatApprovalReviewDeckProps = {
   onActiveIndexChange: (index: number) => void;
   onRequestApproval: (cardIds: string[]) => void;
   onDeny: (cardId: string) => void;
-  approveAllLabel?: string;
+  getApproveAllLabel?: (pendingCardCount: number) => string;
   previousLabel?: string;
   nextLabel?: string;
   disabled?: boolean;
-  approveAllLabel?: string;
 };
 
 export const AiChatApprovalReviewDeck = ({
@@ -113,11 +112,10 @@ export const AiChatApprovalReviewDeck = ({
   onActiveIndexChange,
   onRequestApproval,
   onDeny,
-  approveAllLabel,
+  getApproveAllLabel,
   previousLabel,
   nextLabel,
   disabled = false,
-  approveAllLabel,
 }: AiChatApprovalReviewDeckProps) => {
   const { t } = useLingui();
   const activeCard = cards[activeIndex];
@@ -220,7 +218,8 @@ export const AiChatApprovalReviewDeck = ({
                   disabled={!canApproveAll}
                   onClick={() => onRequestApproval(pendingCardIds)}
                 >
-                  {approveAllLabel ?? t`Approve all ${pendingCardCount}`}
+                  {getApproveAllLabel?.(pendingCardCount) ??
+                    t`Approve all ${pendingCardCount}`}
                 </Button>
               )}
               <Button

@@ -52,7 +52,8 @@ export const AiChatApprovalMergeReview = ({
       hint: isWaitingForPriorityRecord
         ? t`Choose a source record to keep`
         : t`The priority record keeps its identity`,
-      selectedCount: hasValidPriorityRecord ? pair.sources.length : 0,
+      selectedCount: pair.sources.length,
+      isApprovalDisabled: !hasValidPriorityRecord,
       skippedCount: 0,
       status: pair.status,
       outcomeMessage: pair.outcomeMessage,
@@ -70,25 +71,16 @@ export const AiChatApprovalMergeReview = ({
     };
   });
 
-  const mergeablePairIds = cards
-    .filter(
-      ({ status, selectedCount }) => status === 'pending' && selectedCount > 0,
-    )
-    .map(({ id }) => id);
-  const mergeablePairCount = mergeablePairIds.length;
-
   return (
     <AiChatApprovalReviewDeck
       cards={cards}
       activeIndex={activeIndex}
       onActiveIndexChange={onActiveIndexChange}
-      onRequestApproval={(pairIds) =>
-        onRequestMerge(
-          pairIds.filter((pairId) => mergeablePairIds.includes(pairId)),
-        )
-      }
+      onRequestApproval={onRequestMerge}
       onDeny={onSkip}
-      approveAllLabel={t`Merge all ${mergeablePairCount}`}
+      getApproveAllLabel={(pendingPairCount) =>
+        t`Merge all ${pendingPairCount}`
+      }
       previousLabel={t`Previous pair`}
       nextLabel={t`Next pair`}
       disabled={disabled}
