@@ -1,3 +1,5 @@
+import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
+
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
 import { WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies-directory-name';
 
@@ -18,7 +20,7 @@ describe('application dependency defaults', () => {
     expect(customPackage.devDependencies).toEqual({
       react: '19.2.0',
       'react-dom': '19.2.0',
-      'twenty-ui': '2.50.0',
+      'twenty-ui': `~${TWENTY_PREVIOUS_VERSIONS[TWENTY_PREVIOUS_VERSIONS.length - 1]}`,
     });
     expect(customPackage.frontComponentSharedDependencies).toEqual(
       expect.arrayContaining([
