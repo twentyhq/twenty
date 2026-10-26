@@ -4,7 +4,6 @@ import { useLingui } from '@lingui/react/macro';
 import { AiModelPicker } from '@/ai/components/AiModelPicker';
 import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -23,16 +22,6 @@ const StyledFormContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledIconNameRow = styled.div`
-  align-items: flex-start;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledNameContainer = styled.div`
-  flex: 1;
 `;
 
 const StyledErrorMessage = styled.div`
@@ -74,29 +63,17 @@ export const CoreAgentSettingsTab = ({
   return (
     <StyledFormContainer>
       <StyledFormContainer>
-        <StyledIconNameRow>
-          <IconPicker
-            selectedIconKey={formValues.icon || 'IconLego'}
-            onChange={({ iconKey }) => {
-              onFieldChange('icon', iconKey);
-            }}
-            disabled={disabled}
-          />
-
-          <StyledNameContainer>
-            <SettingsTextInput
-              instanceId="agent-label-input"
-              placeholder={t`Enter agent name*`}
-              value={formValues.label}
-              onChange={(value) => {
-                onFieldChange('label', value);
-                fillNameFromLabel(value);
-              }}
-              fullWidth
-              disabled={disabled}
-            />
-          </StyledNameContainer>
-        </StyledIconNameRow>
+        <SettingsTextInput
+          instanceId="agent-label-input"
+          placeholder={t`Enter agent name*`}
+          value={formValues.label}
+          onChange={(value) => {
+            onFieldChange('label', value);
+            fillNameFromLabel(value);
+          }}
+          fullWidth
+          disabled={disabled}
+        />
       </StyledFormContainer>
       <StyledFormContainer>
         <TextArea

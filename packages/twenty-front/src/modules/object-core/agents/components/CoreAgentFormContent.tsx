@@ -3,13 +3,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import {
-  IconBolt,
-  IconLock,
-  IconSettings,
-  IconTerminal,
-  useIcons,
-} from 'twenty-ui/icon';
+import { IconBolt, IconLock, IconSettings, IconTerminal } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -30,6 +24,7 @@ import {
   FeatureFlagKey,
   type FindOneAgentQuery,
 } from '~/generated-metadata/graphql';
+import { CoreAgentIcon } from '@/object-core/agents/components/CoreAgentIcon';
 import { CoreAgentRoleTab } from '@/object-core/agents/components/CoreAgentRoleTab';
 import { CoreAgentRunsTab } from '@/object-core/agents/components/CoreAgentRunsTab';
 import { CoreAgentSettingsTab } from '@/object-core/agents/components/CoreAgentSettingsTab';
@@ -56,7 +51,6 @@ type CoreAgentFormContentProps = {
 
 export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const theme = useTheme();
-  const { getIcon } = useIcons();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -142,7 +136,6 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   ];
 
   const title = agent.label;
-  const AgentIcon = getIcon(formValues.icon || 'IconLego');
 
   const isRoleTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.ROLE;
   const isSettingsTab =
@@ -164,9 +157,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
       )}
       <SettingsPageLayout
         title={title}
-        icon={
-          <AgentIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        }
+        icon={<CoreAgentIcon agentId={agent.id} size={theme.icon.size.md} />}
         links={getCoreAgentBreadcrumbLinks([{ children: title }])}
         secondaryBar={
           <SettingsTabBar
