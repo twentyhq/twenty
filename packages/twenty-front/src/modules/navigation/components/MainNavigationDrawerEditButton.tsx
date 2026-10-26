@@ -49,8 +49,8 @@ export const MainNavigationDrawerEditButton = ({
     <StyledShownOnDrawerHover onMouseEnter={preloadNavigationMenuItemDndKit}>
       <MainNavigationDrawerModeButton
         Icon={IconTool}
-        label={t`Edit navigation`}
-        tooltip={t`Edit navigation`}
+        label={t`Customize sidebar`}
+        tooltip={t`Customize sidebar`}
         isTooltipDisabled={isTooltipDisabled}
         isActive={false}
         isExpanded={isExpanded}

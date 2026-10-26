@@ -50,11 +50,6 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
   min-width: 0;
 `;
 
-const StyledTrailingActions = styled.div`
-  display: flex;
-  margin-left: auto;
-`;
-
 export const MainNavigationDrawerModeSwitcher = () => {
   const { t } = useLingui();
 
@@ -199,12 +194,10 @@ export const MainNavigationDrawerModeSwitcher = () => {
         />
       )}
       {isExpanded && (
-        <StyledTrailingActions>
-          <MainNavigationDrawerEditButton
-            isExpanded={isExpanded}
-            isTooltipDisabled={!shouldShowTooltips}
-          />
-        </StyledTrailingActions>
+        <MainNavigationDrawerEditButton
+          isExpanded={isExpanded}
+          isTooltipDisabled={false}
+        />
       )}
     </StyledSwitcher>
   );
