@@ -27,10 +27,13 @@ const StyledFields = styled.dl`
   gap: ${MERGE_FIELD_ROW_GAP}px;
   margin: 0;
   min-width: 0;
+`;
 
-  dd {
-    font-size: ${themeCssVariables.font.size.md};
-  }
+const StyledValue = styled.div`
+  align-items: center;
+  display: flex;
+  font-size: ${themeCssVariables.font.size.md};
+  min-width: 0;
 `;
 
 const StyledOwner = styled.span`
@@ -53,56 +56,70 @@ export const AiChatApprovalMergeReviewFields = ({
       labelWidth={MERGE_FIELD_LABEL_WIDTH}
       startIcon={<IconLink size={MERGE_FIELD_ICON_SIZE} />}
     >
-      <LinkDisplay value={{ url: fields.url }} />
+      <StyledValue>
+        <LinkDisplay value={{ url: fields.url }} />
+      </StyledValue>
     </DetailsRow>
     <DetailsRow
       label="Account Owner"
       labelWidth={MERGE_FIELD_LABEL_WIDTH}
       startIcon={<IconUserCircle size={MERGE_FIELD_ICON_SIZE} />}
     >
-      <StyledOwner>
-        <Avatar name={fields.owner} size="sm" shape="circle" />
-        <TextDisplay text={fields.owner} />
-      </StyledOwner>
+      <StyledValue>
+        <StyledOwner>
+          <Avatar name={fields.owner} size="sm" shape="circle" />
+          <TextDisplay text={fields.owner} />
+        </StyledOwner>
+      </StyledValue>
     </DetailsRow>
     <DetailsRow
       label="Address"
       labelWidth={MERGE_FIELD_LABEL_WIDTH}
       startIcon={<IconMap size={MERGE_FIELD_ICON_SIZE} />}
     >
-      <TextDisplay text={fields.address} />
+      <StyledValue>
+        <TextDisplay text={fields.address} />
+      </StyledValue>
     </DetailsRow>
     <DetailsRow
       label="ICP"
       labelWidth={MERGE_FIELD_LABEL_WIDTH}
       startIcon={<IconTarget size={MERGE_FIELD_ICON_SIZE} />}
     >
-      <BooleanDisplay value={fields.isIdealCustomer} />
+      <StyledValue>
+        <BooleanDisplay value={fields.isIdealCustomer} />
+      </StyledValue>
     </DetailsRow>
     <DetailsRow
       label="Revenue"
       labelWidth={MERGE_FIELD_LABEL_WIDTH}
       startIcon={<IconCurrencyDollar size={MERGE_FIELD_ICON_SIZE} />}
     >
-      <TextDisplay text={fields.revenue} />
+      <StyledValue>
+        <TextDisplay text={fields.revenue} />
+      </StyledValue>
     </DetailsRow>
     <DetailsRow
       label="Linkedin"
       labelWidth={MERGE_FIELD_LABEL_WIDTH}
       startIcon={<IconBrandLinkedin size={MERGE_FIELD_ICON_SIZE} />}
     >
-      <LinkDisplay
-        value={{ url: fields.linkedin, label: 'linkedin.com/company...' }}
-      />
+      <StyledValue>
+        <LinkDisplay
+          value={{ url: fields.linkedin, label: 'linkedin.com/company...' }}
+        />
+      </StyledValue>
     </DetailsRow>
     <DetailsRow
       label="Twitter"
       labelWidth={MERGE_FIELD_LABEL_WIDTH}
       startIcon={<IconBrandX size={MERGE_FIELD_ICON_SIZE} />}
     >
-      <Chip variant="outline" shape="round">
-        {fields.twitter}
-      </Chip>
+      <StyledValue>
+        <Chip variant="outline" shape="round">
+          {fields.twitter}
+        </Chip>
+      </StyledValue>
     </DetailsRow>
   </StyledFields>
 );
