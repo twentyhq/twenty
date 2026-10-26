@@ -1,6 +1,7 @@
 import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import {
   FieldMetadataType,
+  type ObjectsPermissions,
   RelationType,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
@@ -74,6 +75,26 @@ const updateEvent = {
   },
 } as unknown as ObjectRecordUpdateEvent;
 
+const buildObjectsPermissions = (
+  restrictedFields: RestrictedFieldsPermissions | undefined,
+): ObjectsPermissions => {
+  if (!isDefined(restrictedFields)) {
+    return {};
+  }
+
+  return {
+    [OBJECT_METADATA_ID]: {
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: true,
+      canDestroyObjectRecords: true,
+      restrictedFields,
+      rowLevelPermissionPredicates: [],
+      rowLevelPermissionPredicateGroups: [],
+    },
+  };
+};
+
 const omit = ({
   event,
   restrictedFields,
@@ -84,19 +105,7 @@ const omit = ({
   omitRestrictedFieldsFromEvent({
     event,
     objectMetadata: { id: OBJECT_METADATA_ID, nameSingular: 'company' },
-    objectsPermissions: isDefined(restrictedFields)
-      ? {
-          [OBJECT_METADATA_ID]: {
-            canReadObjectRecords: true,
-            canUpdateObjectRecords: true,
-            canSoftDeleteObjectRecords: true,
-            canDestroyObjectRecords: true,
-            restrictedFields,
-            rowLevelPermissionPredicates: [],
-            rowLevelPermissionPredicateGroups: [],
-          },
-        }
-      : {},
+    objectsPermissions: buildObjectsPermissions(restrictedFields),
     flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
     flatFieldMetadataMaps,
   });

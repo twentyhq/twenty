@@ -100,7 +100,7 @@ const DIFF = {
 type TimelineActivityFixture = {
   linkedObjectMetadataId?: string | null;
   targetPersonId?: string | null;
-  properties: unknown;
+  properties: Record<string, unknown>;
 };
 
 const omitRestrictedFields = ({
