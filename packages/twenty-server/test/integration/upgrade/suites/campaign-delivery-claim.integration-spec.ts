@@ -1,8 +1,8 @@
 import { config } from 'dotenv';
-import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 jest.useRealTimers();
@@ -84,17 +84,7 @@ describe('campaignDelivery claim protocol (integration)', () => {
     });
     await dataSource.initialize();
 
-    const [seedWorkspaceRow] = await dataSource.query(
-      `SELECT id AS "workspaceId" FROM "core"."workspace" LIMIT 1`,
-    );
-
-    if (!isDefined(seedWorkspaceRow)) {
-      throw new Error(
-        'No seeded workspace row found; run database:reset before the integration suite.',
-      );
-    }
-
-    campaignDeliveryTableName = `"${getWorkspaceSchemaName(seedWorkspaceRow.workspaceId)}"."campaignDelivery"`;
+    campaignDeliveryTableName = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."campaignDelivery"`;
   });
 
   afterAll(async () => {
