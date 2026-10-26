@@ -34,11 +34,8 @@ export const getJunctionRelationPickerData = ({
     isSelected: true,
     isMatchingSearchFilter: true,
   })),
-  searchableObjectMetadataItems: getSearchableObjectMetadataItems(
-    getPermittedJunctionTargetFields({
-      targetFields,
-      permittedFields: junctionObjectMetadata.updatableFields,
-    }),
+  searchableObjectMetadataItems: getSearchableObjectMetadataItems({
+    junctionConfig: { junctionObjectMetadata, targetFields },
     objectMetadataItems,
-  ),
+  }),
 });

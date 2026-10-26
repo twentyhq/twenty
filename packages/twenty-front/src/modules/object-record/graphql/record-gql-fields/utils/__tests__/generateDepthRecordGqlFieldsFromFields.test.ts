@@ -41,17 +41,22 @@ describe('generateDepthRecordGqlFieldsFromFields', () => {
       fieldName: 'taskTargets',
     });
     const taskTargetMetadata = getMockObjectMetadataItemOrThrow('taskTarget');
-    const companyTargetSourceFieldMetadataId = getMockFieldMetadataItemOrThrow({
-      objectMetadataItem: taskTargetMetadata,
-      fieldName: 'target',
-    }).morphRelations?.find(
-      (morphRelation) =>
-        morphRelation.targetObjectMetadata.nameSingular === 'company',
-    )?.sourceFieldMetadata.id;
-
-    if (!companyTargetSourceFieldMetadataId) {
-      throw new Error('Company task target not found');
-    }
+    const companyTargetRestrictedFields = Object.fromEntries(
+      (
+        getMockFieldMetadataItemOrThrow({
+          objectMetadataItem: taskTargetMetadata,
+          fieldName: 'target',
+        }).morphRelations ?? []
+      )
+        .filter(
+          ({ targetObjectMetadata }) =>
+            targetObjectMetadata.nameSingular === 'company',
+        )
+        .map(({ sourceFieldMetadata }) => [
+          sourceFieldMetadata.id,
+          { canRead: false, canUpdate: false },
+        ]),
+    );
 
     const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock().map(
       (objectMetadataItem) =>
@@ -61,12 +66,7 @@ describe('generateDepthRecordGqlFieldsFromFields', () => {
               ...getPermittedFields({
                 fields: objectMetadataItem.fields,
                 objectPermissions: {
-                  restrictedFields: {
-                    [companyTargetSourceFieldMetadataId]: {
-                      canRead: false,
-                      canUpdate: false,
-                    },
-                  },
+                  restrictedFields: companyTargetRestrictedFields,
                 },
               }),
             }

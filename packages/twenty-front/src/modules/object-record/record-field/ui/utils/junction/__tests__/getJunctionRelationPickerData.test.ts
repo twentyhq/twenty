@@ -4,6 +4,7 @@ import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junctio
 import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
+import { isDefined } from 'twenty-shared/utils';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -24,7 +25,7 @@ describe('getJunctionRelationPickerData', () => {
 
     expect(junctionConfig).not.toBeNull();
 
-    if (junctionConfig === null) {
+    if (!isDefined(junctionConfig)) {
       throw new Error('Task morph junction config not found');
     }
 
@@ -191,17 +192,22 @@ describe('getJunctionRelationPickerData', () => {
     const taskTargetObjectMetadata =
       getMockObjectMetadataItemOrThrow('taskTarget');
     const companyObjectMetadata = getMockObjectMetadataItemOrThrow('company');
-    const companyTargetSourceFieldMetadataId = getMockFieldMetadataItemOrThrow({
-      objectMetadataItem: taskTargetObjectMetadata,
-      fieldName: 'target',
-    }).morphRelations?.find(
-      ({ targetObjectMetadata }) =>
-        targetObjectMetadata.id === companyObjectMetadata.id,
-    )?.sourceFieldMetadata.id;
-
-    if (!companyTargetSourceFieldMetadataId) {
-      throw new Error('Company task target not found');
-    }
+    const companyTargetRestrictedFields = Object.fromEntries(
+      (
+        getMockFieldMetadataItemOrThrow({
+          objectMetadataItem: taskTargetObjectMetadata,
+          fieldName: 'target',
+        }).morphRelations ?? []
+      )
+        .filter(
+          ({ targetObjectMetadata }) =>
+            targetObjectMetadata.id === companyObjectMetadata.id,
+        )
+        .map(({ sourceFieldMetadata }) => [
+          sourceFieldMetadata.id,
+          { canRead: true, canUpdate: false },
+        ]),
+    );
 
     const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock().map(
       (objectMetadataItem) =>
@@ -211,12 +217,7 @@ describe('getJunctionRelationPickerData', () => {
               ...getPermittedFields({
                 fields: objectMetadataItem.fields,
                 objectPermissions: {
-                  restrictedFields: {
-                    [companyTargetSourceFieldMetadataId]: {
-                      canRead: true,
-                      canUpdate: false,
-                    },
-                  },
+                  restrictedFields: companyTargetRestrictedFields,
                 },
               }),
             }
@@ -228,7 +229,7 @@ describe('getJunctionRelationPickerData', () => {
       objectMetadataItems,
     });
 
-    if (junctionConfig === null) {
+    if (!isDefined(junctionConfig)) {
       throw new Error('Task morph junction config not found');
     }
 
