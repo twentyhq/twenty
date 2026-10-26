@@ -601,7 +601,6 @@ export const handler = (payload) => {
     const [otherMessage]: { messageId: string; messageThreadId: string }[] =
       otherIngestResponse.body.data.ingestAppMessages.messages;
 
-    // threads can span channels; move the other channel's newer message into this thread
     await globalThis.testDataSource.query(
       `UPDATE "${WORKSPACE_SCHEMA}"."message" SET "messageThreadId" = $1 WHERE id = $2`,
       [messageThreadId, otherMessage.messageId],

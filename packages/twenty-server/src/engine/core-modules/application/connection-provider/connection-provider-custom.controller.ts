@@ -39,7 +39,6 @@ export class ConnectionProviderCustomController {
     private readonly flowRedirectService: ConnectionProviderFlowRedirectService,
   ) {}
 
-  // the account may arrive here or through the POST notification, in either order
   @Get('callback')
   async callback(@Req() req: Request, @Res() res: Response) {
     let state: string | undefined;
@@ -76,7 +75,6 @@ export class ConnectionProviderCustomController {
     }
   }
 
-  // public: the signed state in the notification URL is what authenticates the caller
   @Post('callback')
   @HttpCode(200)
   @UseFilters(

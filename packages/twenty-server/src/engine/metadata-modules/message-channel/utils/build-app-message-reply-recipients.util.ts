@@ -17,7 +17,6 @@ type ReplyParticipant = Pick<
   | 'role'
 >;
 
-// newest first: only the latest message's participants receive the reply, so someone who left is not messaged; older rows fill names and links
 export const buildAppMessageReplyRecipients = ({
   participants,
   channelHandle,

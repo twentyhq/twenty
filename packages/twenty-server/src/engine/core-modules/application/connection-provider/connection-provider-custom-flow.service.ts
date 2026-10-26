@@ -14,7 +14,6 @@ import { buildAppCustomConnectionCallbackUrl } from 'src/engine/core-modules/app
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-// hosted logins can involve 2FA or checkpoints, and the account then arrives by notification
 const STATE_JWT_EXPIRES_IN = '1h';
 
 type CallbackArgs = {
@@ -122,7 +121,6 @@ export class ConnectionProviderCustomFlowService {
     const { externalAccountId, handle, accessToken } =
       connectedAccountFromCallback;
 
-    // the redirect and the notification for one authorization often arrive together
     const { connectedAccount, isRepeatReport } =
       await this.cacheLockService.withLock(async () => {
         const existingConnectedAccount =
@@ -146,7 +144,6 @@ export class ConnectionProviderCustomFlowService {
         }
 
         return {
-          // an explicit reconnect is how a member repairs remote state, so onConnect runs again
           isRepeatReport:
             !isDefined(statePayload.reconnectingConnectedAccountId) &&
             isDefined(existingConnectedAccount) &&
@@ -154,7 +151,6 @@ export class ConnectionProviderCustomFlowService {
             !isDefined(existingConnectedAccount.authFailedAt),
           connectedAccount: await this.connectedAccountService.persist({
             provider,
-            // a repeat report without a token or handle keeps the stored ones
             credentials: isDefined(accessToken)
               ? { accessToken, refreshToken: null, scopes: null }
               : undefined,
@@ -176,7 +172,6 @@ export class ConnectionProviderCustomFlowService {
       return { ...callbackResult, connectedAccountId: null };
     }
 
-    // onConnect sets up remote state once per connection, not once per report
     if (!isRepeatReport) {
       await this.connectionProviderLifecycleHookService.dispatchOnConnect({
         provider,

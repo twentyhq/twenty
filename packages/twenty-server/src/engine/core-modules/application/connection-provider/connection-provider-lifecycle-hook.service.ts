@@ -244,7 +244,6 @@ export class ConnectionProviderLifecycleHookService {
     return parsedResult.authorizationUrl;
   }
 
-  // failures propagate so nothing is saved from a request the app could not read
   async runCallback({
     provider,
     workspaceId,

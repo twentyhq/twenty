@@ -10,14 +10,12 @@ const sendAppMessageResultSchema = z.object({
   sentAt: z.union([z.string(), z.number()]).nullish(),
 });
 
-// below this a number cannot be epoch milliseconds after 1973, so providers sending seconds are read as such
 const EPOCH_MILLISECONDS_THRESHOLD = 1e11;
 
 type ParseSendAppMessageResultOutcome =
   | { isValid: true; sentMessage: SendAppMessageResult }
   | { isValid: false; reason: string };
 
-// the message is already delivered, so an unreadable time falls back to now instead of failing the send
 const toIsoDateOrUndefined = (
   value: string | number | null | undefined,
 ): string | undefined => {

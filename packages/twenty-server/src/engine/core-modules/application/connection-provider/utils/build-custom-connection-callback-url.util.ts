@@ -1,6 +1,5 @@
 import { ApiPath } from 'twenty-shared/types';
 
-// the state rides in the URL because the service gets it as both a return URL and a notification URL
 export const buildAppCustomConnectionCallbackUrl = ({
   serverUrl,
   state,

@@ -31,7 +31,6 @@ const isInApplication = <TFlatEntity extends UniversalSyncableFlatEntity>({
   findFlatEntityByUniversalIdentifier({ flatEntityMaps, universalIdentifier })
     ?.applicationUniversalIdentifier === applicationUniversalIdentifier;
 
-// a messaging provider runs with its application's access, so it may only point at that application's entities
 const validateMessagingProviderReferences = ({
   flatMessagingProvider,
   flatConnectionProviderMaps,
@@ -266,7 +265,6 @@ export class FlatMessagingProviderValidatorService {
       );
     }
 
-    // channels bound to this provider were created against its connection provider's accounts
     if (
       isDefined(flatEntityUpdate.connectionProviderUniversalIdentifier) &&
       flatEntityUpdate.connectionProviderUniversalIdentifier !==

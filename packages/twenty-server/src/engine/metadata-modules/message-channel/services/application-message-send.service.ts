@@ -32,12 +32,10 @@ import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/module
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
-// the provider thread id and recipient names come from recent messages; older ones only slow the lookup
 const CONVERSATION_LOOKUP_MESSAGE_LIMIT = 50;
 
 const APP_MESSAGE_DELIVERY_TTL_MS = 24 * 60 * 60 * 1000;
 
-// a concurrent retry fails rather than sends when the send in flight outlasts this wait
 const APP_MESSAGE_DELIVERY_LOCK_OPTIONS = { ms: 500, maxRetries: 60 };
 
 type SendArgs = {
@@ -98,7 +96,6 @@ export class ApplicationMessageSendService {
       );
     }
 
-    // checked before sending: the ingestion that records the message would refuse it after delivery
     if (!messageChannel.isSyncEnabled) {
       throw new MessageChannelException(
         `Message channel ${messageChannelId} has sync disabled`,
@@ -132,7 +129,6 @@ export class ApplicationMessageSendService {
 
     const deliveryKey = `app-message-delivery:${workspaceId}:${userWorkspaceId}:${messageChannelId}:${messageThreadId}:${idempotencyKey}`;
 
-    // a retry after the provider delivered but recording failed must record, not send again
     return this.cacheLockService.withLock(
       async () => {
         const delivery =
@@ -150,7 +146,6 @@ export class ApplicationMessageSendService {
             deliveryKey,
           }));
 
-        // the provider usually echoes the sent message back through the app's webhook; the shared externalId makes that a no-op
         const {
           messages: [ingestedMessage],
         } = await this.applicationMessageIngestionService.ingest({
@@ -287,7 +282,6 @@ export class ApplicationMessageSendService {
             return null;
           }
 
-          // a thread can span channels; another channel's messages must not pick the recipients
           const associations = await this.workspaceOrmManager
             .getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
               'messageChannelMessageAssociation',
@@ -385,7 +379,6 @@ export class ApplicationMessageSendService {
     return conversation;
   }
 
-  // ingestion refuses links to deleted records, and by then the provider has already delivered the message
   private async dropLinksToDeletedRecords(
     recipients: Conversation['recipients'],
   ): Promise<Conversation['recipients']> {

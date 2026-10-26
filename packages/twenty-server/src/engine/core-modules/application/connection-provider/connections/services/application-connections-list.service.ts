@@ -288,7 +288,6 @@ export class ApplicationConnectionsListService {
     provider: Pick<ConnectionProviderEntity, 'type'>;
     workspaceId: string;
   }): Promise<string | null> {
-    // A custom flow's callback may save an account without any token.
     if (provider.type === 'custom' && !isDefined(account.accessToken)) {
       return null;
     }

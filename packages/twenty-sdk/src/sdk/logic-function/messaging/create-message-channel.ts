@@ -22,7 +22,6 @@ export type CreateMessageChannelInput = {
   visibility: MessageChannelVisibility;
   // Person field to match participant handles against (handles are then stored in its canonical form); set once
   participantHandleFieldUniversalIdentifier?: string;
-  // A messaging provider of this app on the connection's provider; members reply through it. Without one the channel only ingests
   messagingProvider?: { universalIdentifier: string };
 };
 

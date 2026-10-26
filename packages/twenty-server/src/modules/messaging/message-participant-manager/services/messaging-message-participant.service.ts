@@ -54,7 +54,6 @@ export class MessagingMessageParticipantService {
           isDefined(participant.personId) ||
           isDefined(participant.workspaceMemberId);
 
-        // Caller-identified and app channel rows match on message, handle and role only: displayName can drift between deliveries
         const findExisting = (participant: ParticipantWithMessageId) =>
           existingParticipantsBasedOnMessageIds.find(
             (existingParticipant) =>
@@ -96,7 +95,6 @@ export class MessagingMessageParticipantService {
         // Without this a re-ingested participant would keep its original unlinked row forever
         const identityUpdates = participantsWithExisting.flatMap(
           ({ participant, existingParticipant }) => {
-            // app channel rows match without their name, so one stored without it takes a later delivery's
             const shouldFillMissingDisplayName =
               !shouldMatchOnDisplayName &&
               !isNonEmptyString(existingParticipant?.displayName) &&

@@ -37,7 +37,6 @@ export class UpdateAppMessageChannelInput {
   @IsBoolean()
   isSyncEnabled?: boolean;
 
-  // null unbinds the channel, leaving it ingestion-only
   @Field(() => UUIDScalarType, { nullable: true })
   @IsOptional()
   @IsUUID()

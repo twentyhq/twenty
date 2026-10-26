@@ -196,7 +196,6 @@ export class ConnectionProviderConnectedAccountService {
     return this.connectedAccountRepository.save(created);
   }
 
-  // services report one account several times (browser return, notification, retries), and each must update one connection
   async findConnectedAccountForReport({
     provider,
     workspaceId,

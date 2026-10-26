@@ -68,7 +68,6 @@ export class ApplicationConnectionAuthFailureService {
           : IsNull(),
       },
       {
-        // wasStateIssuedBeforeAccountChange compares this to a sign-in's start, so it must stay the time the failure began
         authFailedAt: () => 'COALESCE("authFailedAt", NOW())',
         authFailedReason: reason,
       },

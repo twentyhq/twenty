@@ -141,7 +141,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   workspaceId,
                   transactionScope,
                   {
-                    // an app redelivering its own message names people however its provider does at the time
                     shouldMatchOnDisplayName:
                       messageChannel.type !== MessageChannelType.APP,
                   },
