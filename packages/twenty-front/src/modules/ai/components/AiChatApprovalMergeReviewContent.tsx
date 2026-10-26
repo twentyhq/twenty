@@ -81,7 +81,10 @@ const StyledDescription = styled.p`
 `;
 
 type AiChatApprovalMergeReviewContentProps = {
-  pair: AiChatApprovalMergePair;
+  pair: Pick<
+    AiChatApprovalMergePair,
+    'id' | 'sources' | 'priorityRecordId' | 'activeTab' | 'preview'
+  >;
   onTabChange: (tab: AiChatApprovalMergePair['activeTab']) => void;
   onPriorityRecordChange: (recordId: string) => void;
   disabled?: boolean;
