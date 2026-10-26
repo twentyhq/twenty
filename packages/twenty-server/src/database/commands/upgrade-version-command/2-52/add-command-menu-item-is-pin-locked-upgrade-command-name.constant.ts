@@ -1,0 +1,2 @@
+export const ADD_COMMAND_MENU_ITEM_IS_PIN_LOCKED_UPGRADE_COMMAND_NAME =
+  '2.52.0_AddCommandMenuItemIsPinLockedFastInstanceCommand_1793041060683';

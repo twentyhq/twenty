@@ -113,19 +113,23 @@ export const SidePanelCommandMenuItemEditPage = () => {
   ];
 
   const handleTogglePin = ({
-    itemId,
+    item,
     currentlyPinned,
   }: {
-    itemId: string;
+    item: CommandMenuItemFieldsFragment;
     currentlyPinned: boolean;
   }) => {
     if (currentlyPinned) {
+      if (item.isPinLocked) {
+        return;
+      }
+
       const nextOtherPosition =
         allOtherItems.length === 0
           ? 0
           : allOtherItems[allOtherItems.length - 1].position + 1;
 
-      updateCommandMenuItemInDraft(itemId, {
+      updateCommandMenuItemInDraft(item.id, {
         isPinned: false,
         position: nextOtherPosition,
       });
@@ -138,7 +142,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
         ? 0
         : allPinnedItems[allPinnedItems.length - 1].position + 1;
 
-    updateCommandMenuItemInDraft(itemId, {
+    updateCommandMenuItemInDraft(item.id, {
       isPinned: true,
       position: nextPinnedPosition,
     });
@@ -229,10 +233,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
                       <SelectableListItem
                         itemId={item.id}
                         onEnter={() =>
-                          handleTogglePin({
-                            itemId: item.id,
-                            currentlyPinned: true,
-                          })
+                          handleTogglePin({ item, currentlyPinned: true })
                         }
                       >
                         <DraggableListRow
@@ -263,18 +264,20 @@ export const SidePanelCommandMenuItemEditPage = () => {
                                   </LightIconButton>
                                 }
                               />
-                              <LightIconButton
-                                aria-label={t`Unpin`}
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  handleTogglePin({
-                                    itemId: item.id,
-                                    currentlyPinned: true,
-                                  });
-                                }}
-                              >
-                                <IconPinnedOff />
-                              </LightIconButton>
+                              {!item.isPinLocked && (
+                                <LightIconButton
+                                  aria-label={t`Unpin`}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    handleTogglePin({
+                                      item,
+                                      currentlyPinned: true,
+                                    });
+                                  }}
+                                >
+                                  <IconPinnedOff />
+                                </LightIconButton>
+                              )}
                             </ButtonGroup>
                           }
                         >
@@ -299,7 +302,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
                   key={item.id}
                   itemId={item.id}
                   onEnter={() =>
-                    handleTogglePin({ itemId: item.id, currentlyPinned: false })
+                    handleTogglePin({ item, currentlyPinned: false })
                   }
                 >
                   <ListItem
@@ -314,10 +317,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
                       <LightIconButton
                         aria-label={t`Pin`}
                         onClick={() =>
-                          handleTogglePin({
-                            itemId: item.id,
-                            currentlyPinned: false,
-                          })
+                          handleTogglePin({ item, currentlyPinned: false })
                         }
                       >
                         <IconPin />

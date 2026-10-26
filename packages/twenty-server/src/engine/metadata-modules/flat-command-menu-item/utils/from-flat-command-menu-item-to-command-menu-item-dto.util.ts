@@ -25,6 +25,7 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
     shortLabel: effectiveFlatCommandMenuItem.shortLabel ?? undefined,
     position: effectiveFlatCommandMenuItem.position,
     isPinned: effectiveFlatCommandMenuItem.isPinned,
+    isPinLocked: effectiveFlatCommandMenuItem.isPinLocked,
     payload: isObjectMetadataCommandMenuItemPayload(
       effectiveFlatCommandMenuItem.payload,
     )

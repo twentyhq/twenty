@@ -3,6 +3,7 @@ import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { PinnedCommandMenuItemsInlineMeasurements } from '@/command-menu-item/display/components/PinnedCommandMenuItemsInlineMeasurements';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
+import { PRIMARY_ACTION_ENGINE_COMPONENT_KEYS } from '@/command-menu-item/display/constants/PrimaryActionEngineComponentKeys';
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
 import { getLabelledPinnedCommandMenuItemId } from '@/command-menu-item/display/utils/getLabelledPinnedCommandMenuItemId';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
@@ -12,10 +13,7 @@ import { motion } from 'framer-motion';
 import { useContext, useMemo } from 'react';
 import { useTheme } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
-import {
-  type CommandMenuItemFieldsFragment,
-  EngineComponentKey,
-} from '~/generated-metadata/graphql';
+import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 const StyledCommandMenuItemContainer = styled(motion.div)`
   align-items: center;
@@ -119,13 +117,9 @@ export const PinnedCommandMenuItemButtons = ({
             item={item}
             shouldHideLabel={shouldHideCommandMenuItemLabel(item.id)}
             shouldShowHotKey={shouldShowHotKeys}
-            isPrimaryAction={
-              item.engineComponentKey ===
-                EngineComponentKey.CREATE_NEW_RECORD ||
-              item.engineComponentKey === EngineComponentKey.COMPOSE_CAMPAIGN ||
-              item.engineComponentKey ===
-                EngineComponentKey.SEND_MESSAGE_CAMPAIGN
-            }
+            isPrimaryAction={PRIMARY_ACTION_ENGINE_COMPONENT_KEYS.has(
+              item.engineComponentKey,
+            )}
           />
         </StyledCommandMenuItemContainer>
       ))}

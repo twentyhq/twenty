@@ -10,6 +10,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
+import { contextStorePageCommandsComponentState } from '@/context-store/states/contextStorePageCommandsComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -175,6 +176,10 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     contextStoreCurrentPageTypeComponentState,
   );
 
+  const contextStorePageCommands = useAtomComponentStateValue(
+    contextStorePageCommandsComponentState,
+  );
+
   const isDashboardInEditMode = useAtomValue(
     isDashboardInEditModeComponentState.atomFamily({
       instanceId: dashboardPageLayoutIdForCommandMenu,
@@ -215,6 +220,7 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
 
   return {
     pageType,
+    pageCommandKeys: Object.keys(contextStorePageCommands),
     isInSidePanel,
     isDashboardPageLayoutInEditMode: isDashboardInEditMode,
     isLayoutCustomizationModeEnabled,

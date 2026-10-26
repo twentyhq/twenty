@@ -81,6 +81,7 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     shortLabel: createCommandMenuItemInput.shortLabel ?? null,
     position: createCommandMenuItemInput.position ?? 0,
     isPinned: createCommandMenuItemInput.isPinned ?? false,
+    isPinLocked: false,
     payload,
     hotKeys: createCommandMenuItemInput.hotKeys ?? null,
     availabilityType:

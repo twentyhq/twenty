@@ -6,6 +6,7 @@ import { isEngineCommandMountedFamilySelector } from '@/command-menu-item/engine
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { contextStorePageCommandsComponentState } from '@/context-store/states/contextStorePageCommandsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreGraphqlFilterFromStore } from '@/context-store/utils/computeContextStoreGraphqlFilterFromStore';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
@@ -42,6 +43,11 @@ export const useCommandMenuItemClick = ({
     contextStoreInstanceId,
   );
 
+  const contextStorePageCommands = useAtomComponentStateValue(
+    contextStorePageCommandsComponentState,
+    contextStoreInstanceId,
+  );
+
   const isMounted = useAtomFamilySelectorValue(
     isEngineCommandMountedFamilySelector,
     item.id,
@@ -64,6 +70,10 @@ export const useCommandMenuItemClick = ({
     item.frontComponent?.isHeadless !== true;
 
   const shouldMountCommand = isHeadless || isEngineCommand;
+
+  const pageCommand = isEngineCommand
+    ? contextStorePageCommands[item.engineComponentKey]
+    : undefined;
 
   const closeBehavior = shouldMountCommand
     ? ({
@@ -142,6 +152,15 @@ export const useCommandMenuItemClick = ({
       });
     }
   };
+
+  if (isDefined(pageCommand)) {
+    return {
+      handleClick,
+      disabled: isMounted || pageCommand.isDisabled || pageCommand.isLoading,
+      progress: pageCommand.progress,
+      showDisabledLoader: isDefined(pageCommand.progress),
+    };
+  }
 
   return {
     handleClick,

@@ -58,6 +58,7 @@ const buildDiscardDraftWorkflowCommandMenuItem = ({
   icon: DISCARD_DRAFT_WORKFLOW_DEFINITION.icon,
   position: DISCARD_DRAFT_WORKFLOW_DEFINITION.position,
   isPinned: DISCARD_DRAFT_WORKFLOW_DEFINITION.isPinned,
+  isPinLocked: false,
   availabilityType: DISCARD_DRAFT_WORKFLOW_DEFINITION.availabilityType,
   conditionalAvailabilityExpression,
   conditionalPinnedExpression: null,

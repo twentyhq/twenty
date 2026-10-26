@@ -361,7 +361,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
-      'pageType != "SETTINGS_PAGE" and not isLayoutCustomizationModeEnabled and permissionFlags.LAYOUTS',
+      'not isLayoutCustomizationModeEnabled and permissionFlags.LAYOUTS',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT,
@@ -394,6 +394,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconDeviceFloppy',
     isPinned: true,
+    isPinLocked: true,
     position: 20,
     shortLabel: i18nLabel(
       msg({ message: `Save`, context: 'commandMenuItem.shortLabel' }),
@@ -414,6 +415,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconCancel',
     isPinned: true,
+    isPinLocked: true,
     position: 21,
     shortLabel: i18nLabel(
       msg({ message: `Cancel`, context: 'commandMenuItem.shortLabel' }),
@@ -849,6 +851,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
       'permissionFlags.AI and not isInSidePanel and objectMetadataItem.nameSingular != "agentChatThread"',
+    conditionalPinnedExpression: 'pageType != "SETTINGS_PAGE"',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.ASK_AI,
@@ -1808,6 +1811,295 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.person.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.ADD_VIEW_TO_MESSAGE_LIST,
+    hotKeys: null,
+  },
+  savePage: {
+    universalIdentifier: '8479b7b5-74e0-4726-a727-a6f3ce0f146f',
+    label: i18nLabel(
+      msg({ message: `Save`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconDeviceFloppy',
+    isPinned: true,
+    isPinLocked: true,
+    position: 81,
+    shortLabel: i18nLabel(
+      msg({ message: `Save`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression: 'includes(pageCommandKeys, "SAVE_PAGE")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SAVE_PAGE,
+    hotKeys: null,
+  },
+  cancelPage: {
+    universalIdentifier: '2f137cba-7e57-4559-96bf-b39cf40e4d4a',
+    label: i18nLabel(
+      msg({ message: `Cancel`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconX',
+    isPinned: true,
+    isPinLocked: true,
+    position: 82,
+    shortLabel: i18nLabel(
+      msg({ message: `Cancel`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "CANCEL_PAGE")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.CANCEL_PAGE,
+    hotKeys: null,
+  },
+  nextPageStep: {
+    universalIdentifier: '0a0d918d-8cae-4d88-af06-89f44b81bfd6',
+    label: i18nLabel(
+      msg({ message: `Next`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconChevronRight',
+    isPinned: true,
+    isPinLocked: true,
+    position: 83,
+    shortLabel: i18nLabel(
+      msg({ message: `Next`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "NEXT_PAGE_STEP")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.NEXT_PAGE_STEP,
+    hotKeys: null,
+  },
+  addConnectedAccount: {
+    universalIdentifier: '9b52cd08-8956-428e-8166-6bc65c5c750b',
+    label: i18nLabel(
+      msg({ message: `Add account`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconPlus',
+    isPinned: true,
+    isPinLocked: true,
+    position: 84,
+    shortLabel: i18nLabel(
+      msg({ message: `Add account`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "ADD_CONNECTED_ACCOUNT")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.ADD_CONNECTED_ACCOUNT,
+    hotKeys: null,
+  },
+  finishAccountSetup: {
+    universalIdentifier: '15e62826-9a00-4f89-91c5-4c96ae31dfc4',
+    label: i18nLabel(
+      msg({ message: `Finish Setup`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconDeviceFloppy',
+    isPinned: true,
+    isPinLocked: true,
+    position: 85,
+    shortLabel: i18nLabel(
+      msg({ message: `Finish Setup`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "FINISH_ACCOUNT_SETUP")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.FINISH_ACCOUNT_SETUP,
+    hotKeys: null,
+  },
+  installApplication: {
+    universalIdentifier: '95bb6fb1-7268-4dbb-be7e-83625ae4a4ec',
+    label: i18nLabel(
+      msg({ message: `Install`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconDownload',
+    isPinned: true,
+    position: 86,
+    shortLabel: i18nLabel(
+      msg({ message: `Install`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "INSTALL_APPLICATION")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.INSTALL_APPLICATION,
+    hotKeys: null,
+  },
+  openApplicationSettings: {
+    universalIdentifier: '7902a3d0-15e6-4321-930a-6dacc512ceb4',
+    label: i18nLabel(
+      msg({ message: `Open settings`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconSettings',
+    isPinned: true,
+    position: 87,
+    shortLabel: i18nLabel(
+      msg({ message: `Open settings`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "OPEN_APPLICATION_SETTINGS")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.OPEN_APPLICATION_SETTINGS,
+    hotKeys: null,
+  },
+  addDataModelObject: {
+    universalIdentifier: 'df770ce2-961b-447a-8325-b7afc4cf7296',
+    label: i18nLabel(
+      msg({ message: `Add object`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconPlus',
+    isPinned: true,
+    position: 88,
+    shortLabel: i18nLabel(
+      msg({ message: `Add object`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "ADD_DATA_MODEL_OBJECT")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.ADD_DATA_MODEL_OBJECT,
+    hotKeys: null,
+  },
+  createDataModelField: {
+    universalIdentifier: '326ba0b9-6b2f-4e93-966b-5827a6bcd4da',
+    label: i18nLabel(
+      msg({ message: `New Field`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconPlus',
+    isPinned: true,
+    position: 89,
+    shortLabel: i18nLabel(
+      msg({ message: `New Field`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "CREATE_DATA_MODEL_FIELD")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.CREATE_DATA_MODEL_FIELD,
+    hotKeys: null,
+  },
+  seeObjectRecords: {
+    universalIdentifier: 'f805ef5c-bd22-439c-a7a3-2ed3e28d9368',
+    label: i18nLabel(
+      msg({ message: `See records`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconArrowUpRight',
+    isPinned: true,
+    position: 90,
+    shortLabel: i18nLabel(
+      msg({ message: `See records`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "SEE_OBJECT_RECORDS")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEE_OBJECT_RECORDS,
+    hotKeys: null,
+  },
+  createAiSkill: {
+    universalIdentifier: '48e42a63-0dae-40c2-b30a-514287138280',
+    label: i18nLabel(
+      msg({ message: `New Skill`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconPlus',
+    isPinned: true,
+    position: 91,
+    shortLabel: i18nLabel(
+      msg({ message: `New Skill`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "CREATE_AI_SKILL")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.CREATE_AI_SKILL,
+    hotKeys: null,
+  },
+  createAiTool: {
+    universalIdentifier: '38864c41-3ab2-4662-9525-bdd24650663c',
+    label: i18nLabel(
+      msg({ message: `New Tool`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconPlus',
+    isPinned: true,
+    position: 92,
+    shortLabel: i18nLabel(
+      msg({ message: `New Tool`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "CREATE_AI_TOOL")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.CREATE_AI_TOOL,
+    hotKeys: null,
+  },
+  createBillingLimit: {
+    universalIdentifier: '132fd96f-cf43-4be8-bc50-fa1c649e700f',
+    label: i18nLabel(
+      msg({ message: `New limit`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconPlus',
+    isPinned: true,
+    position: 93,
+    shortLabel: i18nLabel(
+      msg({ message: `New limit`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "CREATE_BILLING_LIMIT")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.CREATE_BILLING_LIMIT,
+    hotKeys: null,
+  },
+  generateDpa: {
+    universalIdentifier: 'cbd2f5b0-2e3c-48a2-919a-146db60c11c4',
+    label: i18nLabel(
+      msg({ message: `Generate DPA`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconPlus',
+    isPinned: true,
+    position: 94,
+    shortLabel: i18nLabel(
+      msg({ message: `Generate DPA`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "GENERATE_DPA")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.GENERATE_DPA,
+    hotKeys: null,
+  },
+  deletePageItem: {
+    universalIdentifier: '4f34f34c-50cb-4c9e-b28d-574e5b8f4ed9',
+    label: i18nLabel(
+      msg({ message: `Delete`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconTrash',
+    isPinned: true,
+    position: 95,
+    shortLabel: i18nLabel(
+      msg({ message: `Delete`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      'includes(pageCommandKeys, "DELETE_PAGE_ITEM")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.DELETE_PAGE_ITEM,
     hotKeys: null,
   },
 } as const;

@@ -12,6 +12,7 @@ import { OpenEmailBlockSettingsSingleRecordCommand } from '@/command-menu-item/e
 import { OpenEmailPageStyleSingleRecordCommand } from '@/command-menu-item/engine-command/record/components/OpenEmailPageStyleSingleRecordCommand';
 import { ComposeEmailCommand } from '@/command-menu-item/engine-command/global/components/ComposeEmailCommand';
 import { EditLayoutCommand } from '@/command-menu-item/engine-command/global/components/EditLayoutCommand';
+import { RunPageCommand } from '@/command-menu-item/engine-command/global/components/RunPageCommand';
 import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
 import { DestroyRecordsCommand } from '@/command-menu-item/engine-command/record/components/DestroyRecordsCommand';
 import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
@@ -316,6 +317,22 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.EMAIL_PAGE_STYLE]: (
     <OpenEmailPageStyleSingleRecordCommand />
   ),
+
+  [EngineComponentKey.SAVE_PAGE]: <RunPageCommand />,
+  [EngineComponentKey.CANCEL_PAGE]: <RunPageCommand />,
+  [EngineComponentKey.NEXT_PAGE_STEP]: <RunPageCommand />,
+  [EngineComponentKey.ADD_CONNECTED_ACCOUNT]: <RunPageCommand />,
+  [EngineComponentKey.FINISH_ACCOUNT_SETUP]: <RunPageCommand />,
+  [EngineComponentKey.INSTALL_APPLICATION]: <RunPageCommand />,
+  [EngineComponentKey.OPEN_APPLICATION_SETTINGS]: <RunPageCommand />,
+  [EngineComponentKey.ADD_DATA_MODEL_OBJECT]: <RunPageCommand />,
+  [EngineComponentKey.CREATE_DATA_MODEL_FIELD]: <RunPageCommand />,
+  [EngineComponentKey.SEE_OBJECT_RECORDS]: <RunPageCommand />,
+  [EngineComponentKey.CREATE_AI_SKILL]: <RunPageCommand />,
+  [EngineComponentKey.CREATE_AI_TOOL]: <RunPageCommand />,
+  [EngineComponentKey.CREATE_BILLING_LIMIT]: <RunPageCommand />,
+  [EngineComponentKey.GENERATE_DPA]: <RunPageCommand />,
+  [EngineComponentKey.DELETE_PAGE_ITEM]: <RunPageCommand />,
 
   // Deprecated keys kept for backward compatibility until migration runs
   [EngineComponentKey.DELETE_SINGLE_RECORD]: <DeleteRecordsCommand />,

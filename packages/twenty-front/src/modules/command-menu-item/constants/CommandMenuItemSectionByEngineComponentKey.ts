@@ -3,6 +3,22 @@ import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMe
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 export const COMMAND_MENU_ITEM_SECTION_BY_ENGINE_COMPONENT_KEY = {
+  [EngineComponentKey.SAVE_PAGE]: 'THIS_PAGE',
+  [EngineComponentKey.CANCEL_PAGE]: 'THIS_PAGE',
+  [EngineComponentKey.NEXT_PAGE_STEP]: 'THIS_PAGE',
+  [EngineComponentKey.ADD_CONNECTED_ACCOUNT]: 'THIS_PAGE',
+  [EngineComponentKey.FINISH_ACCOUNT_SETUP]: 'THIS_PAGE',
+  [EngineComponentKey.INSTALL_APPLICATION]: 'THIS_PAGE',
+  [EngineComponentKey.OPEN_APPLICATION_SETTINGS]: 'THIS_PAGE',
+  [EngineComponentKey.ADD_DATA_MODEL_OBJECT]: 'THIS_PAGE',
+  [EngineComponentKey.CREATE_DATA_MODEL_FIELD]: 'THIS_PAGE',
+  [EngineComponentKey.SEE_OBJECT_RECORDS]: 'THIS_PAGE',
+  [EngineComponentKey.CREATE_AI_SKILL]: 'THIS_PAGE',
+  [EngineComponentKey.CREATE_AI_TOOL]: 'THIS_PAGE',
+  [EngineComponentKey.CREATE_BILLING_LIMIT]: 'THIS_PAGE',
+  [EngineComponentKey.GENERATE_DPA]: 'THIS_PAGE',
+  [EngineComponentKey.DELETE_PAGE_ITEM]: 'THIS_PAGE',
+
   [EngineComponentKey.ADD_TO_FAVORITES]: 'SELECTION',
   [EngineComponentKey.REMOVE_FROM_FAVORITES]: 'SELECTION',
   [EngineComponentKey.DELETE_RECORDS]: 'SELECTION',

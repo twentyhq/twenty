@@ -59,6 +59,7 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     icon: definition.icon,
     position: definition.position,
     isPinned: definition.isPinned,
+    isPinLocked: 'isPinLocked' in definition ? definition.isPinLocked : false,
     availabilityType: definition.availabilityType,
     conditionalAvailabilityExpression:
       definition.conditionalAvailabilityExpression ?? null,
