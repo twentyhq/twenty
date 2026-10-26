@@ -223,6 +223,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToStringify": [
       "overrides",
       "readabilityParentFieldUniversalIdentifiers",
+      "duplicateCriteria",
     ],
   },
   "objectPermission": {
@@ -276,6 +277,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "universalOverrides",
     ],
     "propertiesToStringify": [
+      "gridPosition",
       "position",
       "universalConfiguration",
       "conditionalDisplay",
