@@ -1,7 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
-  IconCommand,
   IconHash,
   IconHeart,
   IconInbox,
@@ -12,7 +11,6 @@ import {
 } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-import { isNavigationMenuItemCommandsSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemCommandsSection';
 import { useWorkspaceNavigationMenuSections } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuSections';
 import { useNavigationMenuItemAiChatSectionLabel } from '@/navigation-menu-item/display/sections/ai-chat/hooks/useNavigationMenuItemAiChatSectionLabel';
 import { NavigationMenuItemContainerTemplateMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerTemplateMenu';
@@ -42,9 +40,8 @@ export const NavigationMenuItemAddSectionButton = ({
   const sections = useWorkspaceNavigationMenuSections(parentId);
   const { getDefaultAiChatSectionLabel } =
     useNavigationMenuItemAiChatSectionLabel();
-  const { createSection, createAiSection, createCommandsSection } =
+  const { createSection, createAiSection } =
     useCreateNavigationMenuTabOrSection();
-  const hasCommandsSection = sections.some(isNavigationMenuItemCommandsSection);
 
   return (
     <NavigationDrawerSection>
@@ -64,19 +61,6 @@ export const NavigationMenuItemAddSectionButton = ({
             </div>
           }
           groups={[
-            {
-              id: 'commands',
-              options: [
-                {
-                  id: NavigationMenuItemType.COMMANDS,
-                  label: t`Commands`,
-                  Icon: IconCommand,
-                  isDisabled: hasCommandsSection,
-                  isAlreadyInSidebar: hasCommandsSection,
-                  onClick: () => createCommandsSection(parentId),
-                },
-              ],
-            },
             {
               id: 'ai',
               options: hasAiPermission

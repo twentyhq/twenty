@@ -41,7 +41,7 @@ type WorkspaceSectionContainerProps = {
   isTitleHidden?: boolean;
   rightIcon?: React.ReactNode;
   visibleItemLimit?: number | null;
-  isAddMenuItemButtonHidden?: boolean;
+  addMenuItemButton?: React.ReactNode;
   selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   onActiveObjectMetadataItemClick?: (
@@ -58,7 +58,7 @@ export const WorkspaceSectionContainer = ({
   isTitleHidden = false,
   rightIcon,
   visibleItemLimit,
-  isAddMenuItemButtonHidden = false,
+  addMenuItemButton,
   selectedNavigationMenuItemId = null,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
@@ -144,7 +144,7 @@ export const WorkspaceSectionContainer = ({
           filteredItems={workspaceOrphanItemsForSection}
           folderChildrenById={folderChildrenById}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-          isAddMenuItemButtonHidden={isAddMenuItemButtonHidden}
+          addMenuItemButton={addMenuItemButton}
         />
       }
     >
@@ -154,7 +154,7 @@ export const WorkspaceSectionContainer = ({
         folderChildrenById={folderChildrenById}
         onNavigationMenuItemClick={onNavigationMenuItemClick}
         onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-        isAddMenuItemButtonHidden={isAddMenuItemButtonHidden}
+        addMenuItemButton={addMenuItemButton}
       />
     </Suspense>
   ) : (

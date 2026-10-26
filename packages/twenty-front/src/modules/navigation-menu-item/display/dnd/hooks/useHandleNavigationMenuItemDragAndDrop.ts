@@ -15,7 +15,7 @@ import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { computeDndReorderPosition } from '@/navigation-menu-item/common/utils/computeDndReorderPosition';
 import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
-import { isNavigationMenuItemCommandsSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemCommandsSection';
+import { isNavigationMenuItemCommandsContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemCommandsContainer';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -160,13 +160,13 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       return;
     }
 
-    const isCommandsSectionDestination =
+    const isCommandsContainerDestination =
       isDefined(destinationParent) &&
-      isNavigationMenuItemCommandsSection(destinationParent);
+      isNavigationMenuItemCommandsContainer(destinationParent);
 
     if (
       (draggedItem.type === NavigationMenuItemType.COMMAND) !==
-      isCommandsSectionDestination
+      isCommandsContainerDestination
     ) {
       return;
     }

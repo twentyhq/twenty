@@ -3,6 +3,7 @@ import {
   type NavigationMenuItemCommandKey,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -13,6 +14,7 @@ import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { buildOptimisticNavigationMenuItem } from '@/navigation-menu-item/common/utils/buildOptimisticNavigationMenuItem';
 import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
+import { isNavigationMenuItemCommandsContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemCommandsContainer';
 import { isNavigationMenuItemTab } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTab';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
@@ -48,18 +50,6 @@ export const useCreateNavigationMenuTabOrSection = () => {
         .map((item) => item.position),
     ) + 1;
 
-  const getTopSectionPosition = (parentId: string | null) =>
-    Math.min(
-      0,
-      ...workspaceNavigationMenuItems
-        .filter(
-          (item) =>
-            isNavigationMenuItemAnySection(item) &&
-            (item.folderId ?? null) === parentId,
-        )
-        .map((item) => item.position),
-    ) - 1;
-
   const addToDraft = (newItem: NavigationMenuItem) =>
     setNavigationMenuItemsDraft((draft) => [
       ...(draft ?? workspaceNavigationMenuItems),
@@ -76,14 +66,6 @@ export const useCreateNavigationMenuTabOrSection = () => {
     });
 
     addToDraft(tab);
-    addToDraft(
-      buildOptimisticNavigationMenuItem({
-        id: v4(),
-        type: NavigationMenuItemType.COMMANDS,
-        folderId: tab.id,
-        position: getTopSectionPosition(tab.id),
-      }),
-    );
 
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setCurrentNavigationMenuTabId(tab.id);
@@ -123,41 +105,44 @@ export const useCreateNavigationMenuTabOrSection = () => {
     setNavigationMenuItemIdToRename(section.id);
   };
 
-  const createCommandsSection = (parentId: string | null) =>
-    addToDraft(
-      buildOptimisticNavigationMenuItem({
-        id: v4(),
-        type: NavigationMenuItemType.COMMANDS,
-        folderId: parentId ?? undefined,
-        position: getTopSectionPosition(parentId),
-      }),
-    );
-
   const pinCommand = ({
-    sectionId,
+    parentId,
     commandKey,
   }: {
-    sectionId: string;
+    parentId: string | null;
     commandKey: NavigationMenuItemCommandKey;
-  }) =>
+  }) => {
+    const commandsContainer = workspaceNavigationMenuItems.find(
+      (item) =>
+        isNavigationMenuItemCommandsContainer(item) &&
+        (item.folderId ?? null) === parentId,
+    );
+    const commandsContainerId = commandsContainer?.id ?? v4();
+
+    if (!isDefined(commandsContainer)) {
+      addToDraft(
+        buildOptimisticNavigationMenuItem({
+          id: commandsContainerId,
+          type: NavigationMenuItemType.COMMANDS,
+          folderId: parentId ?? undefined,
+          position: -1,
+        }),
+      );
+    }
+
     addToDraft(
       buildOptimisticNavigationMenuItem({
         id: v4(),
         type: NavigationMenuItemType.COMMAND,
         commandKey,
-        folderId: sectionId,
+        folderId: commandsContainerId,
         position: getNextPosition(
           (item) => item.type === NavigationMenuItemType.COMMAND,
-          sectionId,
+          commandsContainerId,
         ),
       }),
     );
-
-  return {
-    createTab,
-    createSection,
-    createAiSection,
-    createCommandsSection,
-    pinCommand,
   };
+
+  return { createTab, createSection, createAiSection, pinCommand };
 };

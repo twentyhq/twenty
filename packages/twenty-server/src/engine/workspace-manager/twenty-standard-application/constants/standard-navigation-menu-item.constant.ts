@@ -5,12 +5,12 @@ import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-m
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
-  commandsSection: {
+  homeCommands: {
     universalIdentifier: '20202020-b012-4b12-8b12-c0aba11c0012',
     type: NavigationMenuItemType.COMMANDS,
     position: -1,
   },
-  commandsSectionSearch: {
+  homeCommandsSearch: {
     universalIdentifier: '20202020-b013-4b13-8b13-c0aba11c0013',
     type: NavigationMenuItemType.COMMAND,
     commandKey: 'SEARCH',

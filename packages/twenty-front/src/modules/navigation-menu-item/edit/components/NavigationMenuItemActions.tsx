@@ -1,5 +1,6 @@
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { useLingui } from '@lingui/react/macro';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconChevronUp,
   IconChevronDown,
@@ -46,6 +47,7 @@ export const NavigationMenuItemActions = ({
     void action();
     onClose();
   };
+  const isCommand = item.type === NavigationMenuItemType.COMMAND;
   const actions: NavigationMenuItemOption[] = [
     {
       id: 'up',
@@ -61,30 +63,37 @@ export const NavigationMenuItemActions = ({
       isDisabled: index < 0 || index === siblings.length - 1,
       onClick: () => run(() => moveDown(item.id)),
     },
-    {
-      id: 'move',
-      label: t`Move to`,
-      Icon: IconFolderSymlink,
-      isDisabled: !hasMoveDestination,
-      hasSubMenu: true,
-      onClick: () => goToPage('move'),
-    },
-    {
-      id: 'before',
-      label: t`Add menu item before`,
-      Icon: IconRowInsertTop,
-      hasSubMenu: true,
-      onClick: () =>
-        onAdd({ folderId: item.folderId ?? undefined, position: index }),
-    },
-    {
-      id: 'after',
-      label: t`Add menu item after`,
-      Icon: IconRowInsertBottom,
-      hasSubMenu: true,
-      onClick: () =>
-        onAdd({ folderId: item.folderId ?? undefined, position: index + 1 }),
-    },
+    ...(isCommand
+      ? []
+      : [
+          {
+            id: 'move',
+            label: t`Move to`,
+            Icon: IconFolderSymlink,
+            isDisabled: !hasMoveDestination,
+            hasSubMenu: true,
+            onClick: () => goToPage('move'),
+          },
+          {
+            id: 'before',
+            label: t`Add menu item before`,
+            Icon: IconRowInsertTop,
+            hasSubMenu: true,
+            onClick: () =>
+              onAdd({ folderId: item.folderId ?? undefined, position: index }),
+          },
+          {
+            id: 'after',
+            label: t`Add menu item after`,
+            Icon: IconRowInsertBottom,
+            hasSubMenu: true,
+            onClick: () =>
+              onAdd({
+                folderId: item.folderId ?? undefined,
+                position: index + 1,
+              }),
+          },
+        ]),
     {
       id: 'remove',
       label: t`Remove from sidebar`,

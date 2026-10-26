@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import type { NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import type { EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -13,5 +15,5 @@ export type NavigationMenuItemSectionListDndKitProps = {
     objectMetadataItem: EnrichedObjectMetadataItem,
     navigationMenuItemId: string,
   ) => void;
-  isAddMenuItemButtonHidden?: boolean;
+  addMenuItemButton?: ReactNode;
 };

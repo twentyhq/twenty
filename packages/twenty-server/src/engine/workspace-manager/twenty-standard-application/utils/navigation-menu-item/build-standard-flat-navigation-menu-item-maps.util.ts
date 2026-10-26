@@ -28,7 +28,7 @@ const WORKFLOWS_FOLDER_ITEM_NAMES = [
   'workflowsFolderAllWorkflowVersions',
 ] as const;
 
-const HOME_COMMAND_NAMES = ['commandsSectionSearch'] as const;
+const HOME_COMMAND_NAMES = ['homeCommandsSearch'] as const;
 
 const CHATS_TAB_COMMAND_NAMES = [
   'chatsTabCommandsNewChat',
@@ -59,33 +59,33 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     byUserWorkspaceIdAndFolderId: {},
   };
 
-  const addCommandsSection = ({
-    sectionName,
+  const addPinnedCommands = ({
+    containerName,
     commandNames,
     folderId,
   }: {
-    sectionName: 'commandsSection' | 'chatsTabCommands';
+    containerName: 'homeCommands' | 'chatsTabCommands';
     commandNames: readonly (
       | (typeof HOME_COMMAND_NAMES)[number]
       | (typeof CHATS_TAB_COMMAND_NAMES)[number]
     )[];
     folderId: string | null;
   }) => {
-    const sectionDefinition = STANDARD_NAVIGATION_MENU_ITEMS[sectionName];
-    const sectionId = v4();
+    const containerDefinition = STANDARD_NAVIGATION_MENU_ITEMS[containerName];
+    const containerId = v4();
 
     addFlatNavigationMenuItemToMapsAndUpdateIndex({
       flatNavigationMenuItem:
         createStandardNavigationMenuItemContainerFlatMetadata({
-          universalIdentifier: sectionDefinition.universalIdentifier,
-          type: sectionDefinition.type,
+          universalIdentifier: containerDefinition.universalIdentifier,
+          type: containerDefinition.type,
           folderId,
           folderUniversalIdentifier:
-            'folderUniversalIdentifier' in sectionDefinition
-              ? sectionDefinition.folderUniversalIdentifier
+            'folderUniversalIdentifier' in containerDefinition
+              ? containerDefinition.folderUniversalIdentifier
               : null,
-          position: sectionDefinition.position,
-          navigationMenuItemId: sectionId,
+          position: containerDefinition.position,
+          navigationMenuItemId: containerId,
           workspaceId,
           twentyStandardApplicationId,
           now,
@@ -102,7 +102,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
             universalIdentifier: commandDefinition.universalIdentifier,
             type: commandDefinition.type,
             commandKey: commandDefinition.commandKey,
-            folderId: sectionId,
+            folderId: containerId,
             folderUniversalIdentifier:
               commandDefinition.folderUniversalIdentifier,
             position: commandDefinition.position,
@@ -116,8 +116,8 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     }
   };
 
-  addCommandsSection({
-    sectionName: 'commandsSection',
+  addPinnedCommands({
+    containerName: 'homeCommands',
     commandNames: HOME_COMMAND_NAMES,
     folderId: null,
   });
@@ -251,8 +251,8 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     flatNavigationMenuItemMaps,
   });
 
-  addCommandsSection({
-    sectionName: 'chatsTabCommands',
+  addPinnedCommands({
+    containerName: 'chatsTabCommands',
     commandNames: CHATS_TAB_COMMAND_NAMES,
     folderId: chatsTabId,
   });

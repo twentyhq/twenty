@@ -5,12 +5,10 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { isNavigationMenuItemAgentsSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAgentsSection';
 import { isNavigationMenuItemAiChatSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAiChatSection';
-import { isNavigationMenuItemCommandsSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemCommandsSection';
 import { isNavigationMenuItemSectionAboveContainerItems } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSectionAboveContainerItems';
 import { useWorkspaceNavigationMenuSections } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuSections';
 import { NavigationMenuItemAgentsSection } from '@/navigation-menu-item/display/sections/agents/components/NavigationMenuItemAgentsSection';
 import { NavigationMenuItemAiChatSection } from '@/navigation-menu-item/display/sections/ai-chat/components/NavigationMenuItemAiChatSection';
-import { NavigationMenuItemCommandsSection } from '@/navigation-menu-item/display/sections/commands/components/NavigationMenuItemCommandsSection';
 import { NavigationMenuItemCustomSection } from '@/navigation-menu-item/display/sections/custom/components/NavigationMenuItemCustomSection';
 import { NavigationMenuItemAddSectionButton } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddSectionButton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -28,10 +26,6 @@ const renderSectionContent = (section: NavigationMenuItem) => {
 
   if (isNavigationMenuItemAgentsSection(section)) {
     return <NavigationMenuItemAgentsSection section={section} />;
-  }
-
-  if (isNavigationMenuItemCommandsSection(section)) {
-    return <NavigationMenuItemCommandsSection section={section} />;
   }
 
   return <NavigationMenuItemCustomSection section={section} />;

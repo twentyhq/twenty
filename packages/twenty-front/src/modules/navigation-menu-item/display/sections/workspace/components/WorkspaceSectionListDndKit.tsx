@@ -40,7 +40,7 @@ export const WorkspaceSectionListDndKit = ({
   folderChildrenById,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
-  isAddMenuItemButtonHidden = false,
+  addMenuItemButton,
 }: WorkspaceSectionListDndKitProps) => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -53,8 +53,7 @@ export const WorkspaceSectionListDndKit = ({
   const folderCount = filteredItems.filter(
     (item) => item.type === NavigationMenuItemType.FOLDER,
   ).length;
-  const isAddMenuItemButtonVisible =
-    isLayoutCustomizationModeEnabled && !isAddMenuItemButtonHidden;
+  const isAddMenuItemButtonVisible = isLayoutCustomizationModeEnabled;
   const orphanAppendDndIndex = filteredItems.length;
   return (
     <StyledList>
@@ -93,12 +92,13 @@ export const WorkspaceSectionListDndKit = ({
           compact
           highlightPosition="top"
         />
-        {isAddMenuItemButtonVisible && (
-          <WorkspaceSectionAddMenuItemButton
-            containerId={containerId}
-            position={filteredItems.length}
-          />
-        )}
+        {isAddMenuItemButtonVisible &&
+          (addMenuItemButton ?? (
+            <WorkspaceSectionAddMenuItemButton
+              containerId={containerId}
+              position={filteredItems.length}
+            />
+          ))}
       </NavigationMenuItemDroppableSlot>
     </StyledList>
   );

@@ -13,13 +13,13 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const COMMANDS_SECTIONS = [
+const PINNED_COMMANDS = [
   {
-    section: STANDARD_NAVIGATION_MENU_ITEMS.commandsSection,
-    commands: [STANDARD_NAVIGATION_MENU_ITEMS.commandsSectionSearch],
+    container: STANDARD_NAVIGATION_MENU_ITEMS.homeCommands,
+    commands: [STANDARD_NAVIGATION_MENU_ITEMS.homeCommandsSearch],
   },
   {
-    section: STANDARD_NAVIGATION_MENU_ITEMS.chatsTabCommands,
+    container: STANDARD_NAVIGATION_MENU_ITEMS.chatsTabCommands,
     commands: [
       STANDARD_NAVIGATION_MENU_ITEMS.chatsTabCommandsNewChat,
       STANDARD_NAVIGATION_MENU_ITEMS.chatsTabCommandsSearch,
@@ -29,11 +29,11 @@ const COMMANDS_SECTIONS = [
 
 @RegisteredWorkspaceCommand('2.52.0', 1793031015299)
 @Command({
-  name: 'upgrade:2-52:add-commands-navigation-menu-sections',
+  name: 'upgrade:2-52:add-pinned-navigation-menu-commands',
   description:
-    'Add a Commands section at the top of Home and of the Chats tab, for workspaces where they have none',
+    'Pin the default commands at the top of Home and of the Chats tab, for workspaces where they have none',
 })
-export class AddCommandsNavigationMenuSectionsCommand extends ProvisionedWorkspaceCommandRunner {
+export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -76,10 +76,10 @@ export class AddCommandsNavigationMenuSectionsCommand extends ProvisionedWorkspa
           )
         : undefined;
 
-    const commandsSectionsToAdd = COMMANDS_SECTIONS.filter(({ section }) => {
+    const pinnedCommandsToAdd = PINNED_COMMANDS.filter(({ container }) => {
       const folderUniversalIdentifier =
-        'folderUniversalIdentifier' in section
-          ? section.folderUniversalIdentifier
+        'folderUniversalIdentifier' in container
+          ? container.folderUniversalIdentifier
           : undefined;
       const parent = getParent(folderUniversalIdentifier);
 
@@ -90,9 +90,9 @@ export class AddCommandsNavigationMenuSectionsCommand extends ProvisionedWorkspa
       return !parentIdsWithCommands.has(parent?.id ?? null);
     });
 
-    if (commandsSectionsToAdd.length === 0) {
+    if (pinnedCommandsToAdd.length === 0) {
       this.logger.log(
-        `Commands sections already present for workspace ${workspaceId}, skipping`,
+        `Pinned commands already present for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -100,7 +100,7 @@ export class AddCommandsNavigationMenuSectionsCommand extends ProvisionedWorkspa
 
     if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Would add ${commandsSectionsToAdd.length} Commands sections for workspace ${workspaceId}`,
+        `[DRY RUN] Would pin the default commands in ${pinnedCommandsToAdd.length} tabs for workspace ${workspaceId}`,
       );
 
       return;
@@ -149,11 +149,11 @@ export class AddCommandsNavigationMenuSectionsCommand extends ProvisionedWorkspa
       updatedAt: now,
     });
 
-    const flatNavigationMenuItemsToCreate = commandsSectionsToAdd.flatMap(
-      ({ section, commands }) => {
+    const flatNavigationMenuItemsToCreate = pinnedCommandsToAdd.flatMap(
+      ({ container, commands }) => {
         const parent = getParent(
-          'folderUniversalIdentifier' in section
-            ? section.folderUniversalIdentifier
+          'folderUniversalIdentifier' in container
+            ? container.folderUniversalIdentifier
             : undefined,
         );
         const parentId = parent?.id ?? null;
@@ -164,17 +164,17 @@ export class AddCommandsNavigationMenuSectionsCommand extends ProvisionedWorkspa
               navigationMenuItem.type !== NavigationMenuItemType.TAB,
           )
           .map((navigationMenuItem) => navigationMenuItem.position);
-        const sectionId = v4();
+        const containerId = v4();
 
         return [
           buildFlatNavigationMenuItem({
-            id: sectionId,
-            universalIdentifier: section.universalIdentifier,
-            type: section.type,
+            id: containerId,
+            universalIdentifier: container.universalIdentifier,
+            type: container.type,
             folderId: parentId,
             folderUniversalIdentifier: parent?.universalIdentifier ?? null,
             position: Math.min(
-              section.position,
+              container.position,
               ...siblingPositions.map((position) => position - 1),
             ),
             commandKey: null,
@@ -184,7 +184,7 @@ export class AddCommandsNavigationMenuSectionsCommand extends ProvisionedWorkspa
               id: v4(),
               universalIdentifier: command.universalIdentifier,
               type: command.type,
-              folderId: sectionId,
+              folderId: containerId,
               folderUniversalIdentifier: command.folderUniversalIdentifier,
               position: command.position,
               commandKey: command.commandKey,
@@ -213,16 +213,16 @@ export class AddCommandsNavigationMenuSectionsCommand extends ProvisionedWorkspa
 
     if (validateAndBuildResult.status === 'fail') {
       this.logger.error(
-        `Failed to add the Commands sections:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+        `Failed to pin the default commands:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
 
       throw new Error(
-        `Failed to add the Commands sections for workspace ${workspaceId}`,
+        `Failed to pin the default commands for workspace ${workspaceId}`,
       );
     }
 
     this.logger.log(
-      `Added ${commandsSectionsToAdd.length} Commands sections for workspace ${workspaceId}`,
+      `Pinned the default commands in ${pinnedCommandsToAdd.length} tabs for workspace ${workspaceId}`,
     );
   }
 }

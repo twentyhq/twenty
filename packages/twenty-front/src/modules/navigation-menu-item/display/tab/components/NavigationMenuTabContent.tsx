@@ -4,6 +4,8 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { NavigationMenuItemCommands } from '@/navigation-menu-item/display/command/components/NavigationMenuItemCommands';
+import { useNavigationMenuItemCommands } from '@/navigation-menu-item/display/command/hooks/useNavigationMenuItemCommands';
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { useWorkspaceNavigationMenuSections } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuSections';
 import { NavigationMenuItemCustomSections } from '@/navigation-menu-item/display/sections/custom/components/NavigationMenuItemCustomSections';
@@ -24,6 +26,7 @@ export const NavigationMenuTabContent = ({
   const { t } = useLingui();
   const items = useNavigationMenuItemSectionItems(tabId);
   const sections = useWorkspaceNavigationMenuSections(tabId);
+  const { commandItems } = useNavigationMenuItemCommands(tabId);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -35,15 +38,18 @@ export const NavigationMenuTabContent = ({
     onActiveObjectMetadataItemClick,
   } = useWorkspaceSectionItemClickHandlers();
 
-  const isEmpty = items.length === 0 && sections.length === 0;
+  const hasItemsOrSections = items.length > 0 || sections.length > 0;
+  const isEmpty = !hasItemsOrSections && commandItems.length === 0;
 
   return (
     <>
+      <NavigationMenuItemCommands parentId={tabId} />
       <NavigationMenuItemCustomSections
         parentId={tabId}
         placement="above-items"
       />
-      {(items.length > 0 || (isLayoutCustomizationModeEnabled && isEmpty)) && (
+      {(items.length > 0 ||
+        (isLayoutCustomizationModeEnabled && !hasItemsOrSections)) && (
         <WorkspaceSectionContainer
           sectionTitle=""
           items={items}
