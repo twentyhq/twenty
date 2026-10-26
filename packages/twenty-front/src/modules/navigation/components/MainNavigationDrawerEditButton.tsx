@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconTool } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -8,8 +9,8 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { preloadNavigationMenuItemDndKit } from '@/navigation-menu-item/display/dnd/preloadNavigationMenuItemDndKit';
-import { MainNavigationDrawerModeButton } from '@/navigation/components/MainNavigationDrawerModeButton';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { NAVIGATION_DRAWER_CLICK_OUTSIDE_ID } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerClickOutsideId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -26,12 +27,10 @@ const StyledShownOnDrawerHover = styled.div`
 
 type MainNavigationDrawerEditButtonProps = {
   isExpanded: boolean;
-  isTooltipDisabled: boolean;
 };
 
 export const MainNavigationDrawerEditButton = ({
   isExpanded,
-  isTooltipDisabled,
 }: MainNavigationDrawerEditButtonProps) => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
@@ -47,15 +46,18 @@ export const MainNavigationDrawerEditButton = ({
 
   return (
     <StyledShownOnDrawerHover onMouseEnter={preloadNavigationMenuItemDndKit}>
-      <MainNavigationDrawerModeButton
-        Icon={IconTool}
-        label={t`Customize sidebar`}
-        tooltip={t`Customize sidebar`}
-        isTooltipDisabled={isTooltipDisabled}
-        isActive={false}
-        isExpanded={isExpanded}
+      <LightIconButton
+        emphasis="standard"
+        size={isExpanded ? 'sm' : 'md'}
         onClick={enterLayoutCustomizationMode}
-      />
+        aria-label={t`Customize sidebar`}
+        tooltip={t`Customize sidebar`}
+        tooltipDelay={TooltipDelay.longDelay}
+        tooltipPlace={isExpanded ? 'bottom' : 'right'}
+        tooltipOffset={5}
+      >
+        <IconTool />
+      </LightIconButton>
     </StyledShownOnDrawerHover>
   );
 };

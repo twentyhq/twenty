@@ -4,7 +4,6 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ToastProvider } from 'twenty-ui/components/feedback';
 import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -130,9 +129,7 @@ const renderModeSwitcher = ({
         <MockedProvider
           mocks={[buildOpenThreadsSummaryMock(hasUnreadOpenThread)]}
         >
-          <ToastProvider>
-            <MainNavigationDrawerModeSwitcher />
-          </ToastProvider>
+          <MainNavigationDrawerModeSwitcher />
         </MockedProvider>
       </JotaiProvider>
     </I18nProvider>,

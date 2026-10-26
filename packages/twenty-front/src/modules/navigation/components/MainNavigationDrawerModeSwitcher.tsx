@@ -14,7 +14,6 @@ import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks
 import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerCustomTab } from '@/navigation/components/MainNavigationDrawerCustomTab';
-import { MainNavigationDrawerEditButton } from '@/navigation/components/MainNavigationDrawerEditButton';
 import { MainNavigationDrawerModeButton } from '@/navigation/components/MainNavigationDrawerModeButton';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import {
@@ -191,12 +190,6 @@ export const MainNavigationDrawerModeSwitcher = () => {
         <MainNavigationDrawerAddTabButton
           isExpanded={isExpanded}
           isTooltipDisabled={!shouldShowTooltips}
-        />
-      )}
-      {isExpanded && (
-        <MainNavigationDrawerEditButton
-          isExpanded={isExpanded}
-          isTooltipDisabled={false}
         />
       )}
     </StyledSwitcher>

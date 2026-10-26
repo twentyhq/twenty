@@ -63,6 +63,7 @@ export const NavigationDrawerHeader = () => {
         {isExpanded && (
           <StyledRightActions>
             <FrontComponentMediaSessionIndicator />
+            <MainNavigationDrawerEditButton isExpanded />
             <NavigationDrawerCollapseButton
               direction="left"
               size={isMobile ? 'md' : 'sm'}
@@ -73,10 +74,7 @@ export const NavigationDrawerHeader = () => {
       {!isExpanded && !isMobile && (
         <StyledCollapsedActions>
           <FrontComponentMediaSessionIndicator />
-          <MainNavigationDrawerEditButton
-            isExpanded={false}
-            isTooltipDisabled={false}
-          />
+          <MainNavigationDrawerEditButton isExpanded={false} />
         </StyledCollapsedActions>
       )}
     </StyledContainer>
