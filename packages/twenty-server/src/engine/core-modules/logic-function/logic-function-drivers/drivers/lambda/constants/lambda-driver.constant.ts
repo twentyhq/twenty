@@ -8,6 +8,9 @@ export const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60;
 export const LAMBDA_CLIENT_MAX_ATTEMPTS = 8;
 export const LAMBDA_CLIENT_RETRY_MODE = 'adaptive' as const;
 
+// Deletes share the account's 15 req/s control plane quota with live function builds
+export const LAMBDA_FUNCTION_DELETION_BATCH_SIZE = 3;
+
 export const YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS = 300;
 export const YARN_INSTALL_LAMBDA_MEMORY_MB = 4096;
 export const BUILDER_LAMBDA_TIMEOUT_SECONDS = 60;

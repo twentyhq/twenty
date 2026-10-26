@@ -892,26 +892,6 @@ export class WorkspaceService {
     const logicFunctionDriver =
       this.logicFunctionDriverFactory.getCurrentDriver();
 
-    const { flatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    for (const flatLogicFunction of Object.values(
-      flatLogicFunctionMaps.byUniversalIdentifier,
-    ).filter(isDefined)) {
-      try {
-        await logicFunctionDriver.delete(flatLogicFunction);
-      } catch (error) {
-        this.logger.warn(
-          `Failed to delete logic function ${flatLogicFunction.id} before hard deleting workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-        );
-      }
-    }
-
     const applications =
       await this.applicationService.findManyApplications(workspaceId);
 

@@ -5,6 +5,8 @@ import {
   ResourceNotFoundException,
 } from '@aws-sdk/client-lambda';
 import { Logger } from '@nestjs/common';
+import chunk from 'lodash.chunk';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   type LogicFunctionDriver,
@@ -16,6 +18,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { LAMBDA_FUNCTION_DELETION_BATCH_SIZE } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import {
   type LambdaDriverExecutorPayload,
   type LambdaDriverOptions,
@@ -27,6 +30,7 @@ import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-functio
 import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
 import { buildLogicFunctionTimeoutResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-logic-function-timeout-result.util';
 import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
+import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -36,6 +40,7 @@ import {
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export {
   type LambdaDriverOptions,
@@ -53,9 +58,11 @@ export class LambdaDriver implements LogicFunctionDriver {
   private readonly layerManager: LambdaLayerManagerService;
   private readonly executorManager: LambdaExecutorManagerService;
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
+  private readonly workspaceCacheService: WorkspaceCacheService;
 
   constructor(options: LambdaDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
+    this.workspaceCacheService = options.workspaceCacheService;
     this.awsClient = new LambdaAwsClientService(options);
     this.toolFunctions = new LambdaToolFunctionsService(
       options,
@@ -105,10 +112,51 @@ export class LambdaDriver implements LogicFunctionDriver {
     workspaceId: string;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
+    const { flatApplicationMaps, flatLogicFunctionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+        'flatLogicFunctionMaps',
+      ]);
+
+    const applicationId =
+      flatApplicationMaps.idByUniversalIdentifier[
+        applicationUniversalIdentifier
+      ];
+
+    const flatLogicFunctions = isDefined(applicationId)
+      ? findFlatEntitiesByApplicationId({
+          flatEntityMaps: flatLogicFunctionMaps,
+          applicationId,
+        })
+      : [];
+
+    const results: PromiseSettledResult<void>[] = [];
+
+    for (const flatLogicFunctionBatch of chunk(
+      flatLogicFunctions,
+      LAMBDA_FUNCTION_DELETION_BATCH_SIZE,
+    )) {
+      results.push(
+        ...(await Promise.allSettled(
+          flatLogicFunctionBatch.map((flatLogicFunction) =>
+            this.executorManager.delete(flatLogicFunction),
+          ),
+        )),
+      );
+    }
+
     await this.layerManager.deleteSdkLayer({
       workspaceId,
       applicationUniversalIdentifier,
     });
+
+    const failure = results.find(
+      (result): result is PromiseRejectedResult => result.status === 'rejected',
+    );
+
+    if (isDefined(failure)) {
+      throw failure.reason;
+    }
   }
 
   async installPrebuiltBundle(
