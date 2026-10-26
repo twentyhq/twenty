@@ -2,10 +2,10 @@ import { Injectable, type OnModuleInit } from '@nestjs/common';
 
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
-import { redactTimelineActivityProperties } from 'src/modules/timeline/utils/redact-timeline-activity-properties.util';
+import { omitRestrictedFieldsFromTimelineActivity } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
 
 @Injectable()
-export class ApplyTimelineActivitiesFieldPermissionsService
+export class ApplyTimelineActivitiesVisibilityRestrictionsService
   implements RecordVisibilityRestrictionHandler, OnModuleInit
 {
   constructor(
@@ -32,7 +32,7 @@ export class ApplyTimelineActivitiesFieldPermissionsService
         continue;
       }
 
-      timelineActivity.properties = redactTimelineActivityProperties({
+      timelineActivity.properties = omitRestrictedFieldsFromTimelineActivity({
         properties: timelineActivity.properties,
         timelineActivity,
         objectsPermissions,

@@ -11,7 +11,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { redactTimelineActivityEvent } from 'src/modules/timeline/utils/redact-timeline-activity-event.util';
+import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity-event.util';
 
 const buildRestrictedFieldNames = ({
   restrictedFields,
@@ -91,7 +91,7 @@ export const omitRestrictedFieldsFromEvent = <
     : event;
 
   return objectMetadata.nameSingular === 'timelineActivity'
-    ? redactTimelineActivityEvent({
+    ? omitRestrictedFieldsFromTimelineActivityEvent({
         event: eventWithoutRestrictedFields,
         objectsPermissions,
         flatObjectMetadataMaps,

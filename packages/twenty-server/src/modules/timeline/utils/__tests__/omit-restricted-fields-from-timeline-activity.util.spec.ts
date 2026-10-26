@@ -9,8 +9,8 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { redactTimelineActivityEvent } from 'src/modules/timeline/utils/redact-timeline-activity-event.util';
-import { redactTimelineActivityProperties } from 'src/modules/timeline/utils/redact-timeline-activity-properties.util';
+import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity-event.util';
+import { omitRestrictedFieldsFromTimelineActivity } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
 
 const PERSON_OBJECT = getFlatObjectMetadataMock({
   id: 'person-object-id',
@@ -103,14 +103,14 @@ type TimelineActivityFixture = {
   properties: unknown;
 };
 
-const keepReadableFields = ({
+const omitRestrictedFields = ({
   timelineActivity,
   objectsPermissions = PERSON_JOB_TITLE_DENIED,
 }: {
   timelineActivity: TimelineActivityFixture;
   objectsPermissions?: ObjectsPermissions;
 }) =>
-  redactTimelineActivityProperties({
+  omitRestrictedFieldsFromTimelineActivity({
     properties: timelineActivity.properties,
     timelineActivity,
     objectsPermissions,
@@ -118,10 +118,10 @@ const keepReadableFields = ({
     flatFieldMetadataMaps,
   });
 
-describe('redactTimelineActivityProperties', () => {
+describe('omitRestrictedFieldsFromTimelineActivity', () => {
   it('should keep the readable fields of the target object', () => {
     expect(
-      keepReadableFields({
+      omitRestrictedFields({
         timelineActivity: {
           linkedObjectMetadataId: null,
           targetPersonId: 'person-id',
@@ -133,7 +133,7 @@ describe('redactTimelineActivityProperties', () => {
 
   it('should keep the readable fields of the linked object', () => {
     expect(
-      keepReadableFields({
+      omitRestrictedFields({
         timelineActivity: {
           linkedObjectMetadataId: NOTE_OBJECT.id,
           targetPersonId: 'person-id',
@@ -145,7 +145,7 @@ describe('redactTimelineActivityProperties', () => {
 
   it('should keep no field of a linked object the role cannot read', () => {
     expect(
-      keepReadableFields({
+      omitRestrictedFields({
         timelineActivity: {
           linkedObjectMetadataId: NOTE_OBJECT.id,
           targetPersonId: 'person-id',
@@ -163,13 +163,13 @@ describe('redactTimelineActivityProperties', () => {
 
   it('should keep no field when the activity object cannot be found', () => {
     expect(
-      keepReadableFields({ timelineActivity: { properties: DIFF } }),
+      omitRestrictedFields({ timelineActivity: { properties: DIFF } }),
     ).toEqual({ diff: {} });
   });
 
   it('should keep no field when the linked object column was not selected', () => {
     expect(
-      keepReadableFields({
+      omitRestrictedFields({
         timelineActivity: { targetPersonId: 'person-id', properties: DIFF },
       }),
     ).toEqual({ diff: {} });
@@ -183,8 +183,8 @@ type TimelineActivityRecord = {
   properties: Record<string, unknown>;
 };
 
-describe('redactTimelineActivityEvent', () => {
-  it('should redact properties in the records and in the diff', () => {
+describe('omitRestrictedFieldsFromTimelineActivityEvent', () => {
+  it('should omit restricted fields from properties in the records and in the diff', () => {
     const before: TimelineActivityRecord = {
       id: 'activity-id',
       linkedObjectMetadataId: null,
@@ -205,10 +205,10 @@ describe('redactTimelineActivityEvent', () => {
       },
     };
 
-    const redactedDiff = { diff: { city: { before: 'Paris', after: 'Lyon' } } };
+    const readableDiff = { diff: { city: { before: 'Paris', after: 'Lyon' } } };
 
     expect(
-      redactTimelineActivityEvent({
+      omitRestrictedFieldsFromTimelineActivityEvent({
         event,
         objectsPermissions: PERSON_JOB_TITLE_DENIED,
         flatObjectMetadataMaps,
@@ -216,9 +216,9 @@ describe('redactTimelineActivityEvent', () => {
       }).properties,
     ).toEqual({
       updatedFields: ['properties'],
-      before: { ...before, properties: redactedDiff },
+      before: { ...before, properties: readableDiff },
       after: { ...after, properties: { diff: {} } },
-      diff: { properties: { before: redactedDiff, after: { diff: {} } } },
+      diff: { properties: { before: readableDiff, after: { diff: {} } } },
     });
   });
 });

@@ -5,9 +5,11 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { redactTimelineActivityProperties } from 'src/modules/timeline/utils/redact-timeline-activity-properties.util';
+import { omitRestrictedFieldsFromTimelineActivity } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
 
-export const redactTimelineActivityEvent = <TEvent extends ObjectRecordEvent>({
+export const omitRestrictedFieldsFromTimelineActivityEvent = <
+  TEvent extends ObjectRecordEvent,
+>({
   event,
   objectsPermissions,
   flatObjectMetadataMaps,
@@ -28,14 +30,14 @@ export const redactTimelineActivityEvent = <TEvent extends ObjectRecordEvent>({
       ? properties.after
       : undefined;
 
-  const redact = ({
+  const omitRestrictedFields = ({
     value,
     timelineActivity,
   }: {
     value: unknown;
     timelineActivity: Record<string, unknown> | undefined;
   }) =>
-    redactTimelineActivityProperties({
+    omitRestrictedFieldsFromTimelineActivity({
       properties: value,
       timelineActivity: timelineActivity ?? {},
       objectsPermissions,
@@ -43,9 +45,12 @@ export const redactTimelineActivityEvent = <TEvent extends ObjectRecordEvent>({
       flatFieldMetadataMaps,
     });
 
-  const redactRecord = (record: Record<string, unknown>) => ({
+  const omitRestrictedFieldsFromRecord = (record: Record<string, unknown>) => ({
     ...record,
-    properties: redact({ value: record.properties, timelineActivity: record }),
+    properties: omitRestrictedFields({
+      value: record.properties,
+      timelineActivity: record,
+    }),
   });
 
   const diff =
@@ -60,18 +65,20 @@ export const redactTimelineActivityEvent = <TEvent extends ObjectRecordEvent>({
     ...event,
     properties: {
       ...properties,
-      ...(isDefined(before) && { before: redactRecord(before) }),
-      ...(isDefined(after) && { after: redactRecord(after) }),
+      ...(isDefined(before) && {
+        before: omitRestrictedFieldsFromRecord(before),
+      }),
+      ...(isDefined(after) && { after: omitRestrictedFieldsFromRecord(after) }),
       ...(isDefined(diffProperties) && {
         diff: {
           ...diff,
           properties: {
             ...diffProperties,
-            before: redact({
+            before: omitRestrictedFields({
               value: diffProperties.before,
               timelineActivity: before ?? after,
             }),
-            after: redact({
+            after: omitRestrictedFields({
               value: diffProperties.after,
               timelineActivity: after ?? before,
             }),
