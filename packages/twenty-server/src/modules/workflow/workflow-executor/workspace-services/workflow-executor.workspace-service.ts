@@ -36,7 +36,6 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input.type';
-import { assertApplicationRunMayUseStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/assert-application-run-may-use-step-or-throw.util';
 import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
 import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';
 import { stepHasRetryAttemptsLeft } from 'src/modules/workflow/workflow-executor/utils/step-has-retry-attempts-left.util';
@@ -52,12 +51,12 @@ import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor
 import { findEnclosingIteratorWithContinueOnFailure } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/find-enclosing-iterator-with-continue-on-failure.util';
 import { getNextStepIdsForIterator } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-next-step-ids-for-iterator.util';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { ApplicationWorkflowStepPermissionService } from 'src/modules/workflow/workflow-executor/services/application-workflow-step-permission.service';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
 
@@ -80,7 +79,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly permissionsService: PermissionsService,
+    private readonly applicationWorkflowStepPermissionService: ApplicationWorkflowStepPermissionService,
   ) {}
 
   async executeFromSteps({
@@ -603,18 +602,13 @@ export class WorkflowExecutorWorkspaceService {
     try {
       await this.assertActionTypeEnabled({ type: step.type, workspaceId });
 
-      await assertApplicationRunMayUseStepOrThrow({
-        stepType: step.type,
-        runApplicationId,
-        applicationHasPermissionFlag: ({ applicationId, permissionFlag }) =>
-          this.permissionsService.userHasWorkspaceSettingPermission({
-            userWorkspaceId: undefined,
-            workspaceId,
-            setting: permissionFlag,
-            applicationId,
-            agentId: undefined,
-          }),
-      });
+      await this.applicationWorkflowStepPermissionService.assertRunApplicationMayUseStepOrThrow(
+        {
+          workspaceId,
+          runApplicationId,
+          stepType: step.type,
+        },
+      );
 
       const nodeRunRefusal = await this.getNodeRunRefusal({
         workspaceId,
