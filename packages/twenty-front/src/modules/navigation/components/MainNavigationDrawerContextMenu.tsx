@@ -8,7 +8,7 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { type PositionType } from '@/command-menu-item/types/PositionType';
 import { createVirtualElementFromPosition } from '@/command-menu-item/utils/createVirtualElementFromPosition';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { NavigationMenuTabCustomizeMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabCustomizeMenuContent';
+import { MainNavigationDrawerContextMenuContent } from '@/navigation/components/MainNavigationDrawerContextMenuContent';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -37,6 +37,7 @@ export const MainNavigationDrawerContextMenu = ({
     isLayoutCustomizationModeEnabledState,
   );
   const [position, setPosition] = useState<PositionType>({ x: null, y: null });
+  const [targetSectionId, setTargetSectionId] = useState<string | null>(null);
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
 
@@ -48,15 +49,23 @@ export const MainNavigationDrawerContextMenu = ({
     !isLayoutCustomizationModeEnabled;
 
   const handleContextMenu = (event: MouseEvent<HTMLDivElement>) => {
-    const isOnLink =
-      event.target instanceof Element && isDefined(event.target.closest('a'));
+    const target = event.target instanceof Element ? event.target : null;
 
-    if (!canCustomizeSidebar || event.defaultPrevented || isOnLink) {
+    if (
+      !canCustomizeSidebar ||
+      event.defaultPrevented ||
+      isDefined(target?.closest('a'))
+    ) {
       return;
     }
 
     event.preventDefault();
     setPosition({ x: event.clientX, y: event.clientY });
+    setTargetSectionId(
+      target
+        ?.closest('[data-navigation-menu-section-id]')
+        ?.getAttribute('data-navigation-menu-section-id') ?? null,
+    );
     openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   };
 
@@ -72,7 +81,8 @@ export const MainNavigationDrawerContextMenu = ({
             width={GenericDropdownContentWidth.Large}
             aria-label={t`Sidebar actions`}
           >
-            <NavigationMenuTabCustomizeMenuContent
+            <MainNavigationDrawerContextMenuContent
+              targetSectionId={targetSectionId}
               onClose={() => closeDropdown(dropdownId)}
             />
           </DropdownContent>

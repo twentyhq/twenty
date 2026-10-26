@@ -6,6 +6,7 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { IconHash, IconPlus } from 'twenty-ui/icon';
 
 import { NavigationDrawerAiChatChannelItem } from '@/ai/components/NavigationDrawerAiChatChannelItem';
+import { AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatChannelsNavigationSectionId';
 import { useCreateAgentChatChannel } from '@/ai/hooks/useCreateAgentChatChannel';
 import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
 import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
@@ -20,8 +21,6 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { useNavigationSectionVisibleItems } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSectionVisibleItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-
-const AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID = 'AiChatChannels';
 
 type NavigationDrawerAiChatChannelsSectionProps = {
   label?: string;

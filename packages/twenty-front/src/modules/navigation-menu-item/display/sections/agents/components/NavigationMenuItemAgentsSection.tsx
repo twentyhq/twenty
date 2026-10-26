@@ -19,6 +19,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerSectionSeeMoreItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionSeeMoreItem';
 import { useNavigationSectionVisibleItems } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSectionVisibleItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
 
 type NavigationMenuItemAgentsSectionProps = {
   section: NavigationMenuItem;
@@ -40,7 +41,8 @@ export const NavigationMenuItemAgentsSection = ({
     fetchPolicy: 'cache-and-network',
     skip: !hasAiPermission,
   });
-  const navigationSectionId = `navigation-menu-section-${section.id}`;
+  const navigationSectionId =
+    getNavigationMenuSectionNavigationSectionId(section);
   const agents = (data?.findManyAgents ?? [])
     .filter((agent) => !agent.isSystem)
     .sort((agentA, agentB) => agentA.label.localeCompare(agentB.label));

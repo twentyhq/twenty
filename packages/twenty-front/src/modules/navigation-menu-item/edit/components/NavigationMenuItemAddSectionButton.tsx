@@ -16,6 +16,7 @@ import { useNavigationMenuItemAiChatSectionLabel } from '@/navigation-menu-item/
 import { NavigationMenuItemContainerTemplateMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerTemplateMenu';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { useCreateNavigationMenuTabOrSection } from '@/navigation-menu-item/edit/hooks/useCreateNavigationMenuTabOrSection';
+import { getNavigationMenuAddSectionDropdownId } from '@/navigation-menu-item/edit/utils/getNavigationMenuAddSectionDropdownId';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -47,7 +48,7 @@ export const NavigationMenuItemAddSectionButton = ({
     <NavigationDrawerSection>
       <NavigationMenuItemEntrance>
         <NavigationMenuItemContainerTemplateMenu
-          dropdownId={`navigation-menu-add-section-${parentId ?? 'home'}`}
+          dropdownId={getNavigationMenuAddSectionDropdownId(parentId)}
           title={t`Add section`}
           isTriggerNativeButton={false}
           trigger={

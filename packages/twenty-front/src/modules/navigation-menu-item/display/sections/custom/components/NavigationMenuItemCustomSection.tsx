@@ -10,8 +10,10 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionContainer';
 import { useWorkspaceSectionItemClickHandlers } from '@/navigation-menu-item/display/sections/workspace/hooks/useWorkspaceSectionItemClickHandlers';
+import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
 import { NavigationMenuItemAddDropdown } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdown';
 import { NavigationMenuItemSectionMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemSectionMenu';
+import { getNavigationMenuSectionAddItemInstanceId } from '@/navigation-menu-item/edit/utils/getNavigationMenuSectionAddItemInstanceId';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -39,7 +41,8 @@ export const NavigationMenuItemCustomSection = ({
     onNavigationMenuItemClick,
     onActiveObjectMetadataItemClick,
   } = useWorkspaceSectionItemClickHandlers();
-  const navigationSectionId = `navigation-menu-section-${section.id}`;
+  const navigationSectionId =
+    getNavigationMenuSectionNavigationSectionId(section);
   const { openNavigationSection } = useNavigationSection(navigationSectionId);
 
   if (!isLayoutCustomizationModeEnabled && items.length === 0) {
@@ -53,7 +56,7 @@ export const NavigationMenuItemCustomSection = ({
   const editModeActions = (
     <StyledRightIconsContainer>
       <NavigationMenuItemAddDropdown
-        instanceId={`section-header-${section.id}`}
+        instanceId={getNavigationMenuSectionAddItemInstanceId(section.id)}
         folderId={section.id}
         position={topLevelItemCount}
         onOpen={openNavigationSection}

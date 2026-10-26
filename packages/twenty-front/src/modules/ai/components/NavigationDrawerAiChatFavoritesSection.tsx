@@ -3,6 +3,7 @@ import { type ReactNode } from 'react';
 
 import { NavigationDrawerAiChatChannelItem } from '@/ai/components/NavigationDrawerAiChatChannelItem';
 import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
+import { AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatFavoritesNavigationSectionId';
 import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
 import { agentChatAccessibleChannelsSelector } from '@/ai/states/selectors/agentChatAccessibleChannelsSelector';
 import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
@@ -15,8 +16,6 @@ import {
   type AgentChatChannel,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-
-const AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
 type FavoriteItem =
   | { type: 'channel'; channel: AgentChatChannel }

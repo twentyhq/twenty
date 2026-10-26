@@ -1,4 +1,5 @@
-import { Fragment, lazy, Suspense } from 'react';
+import { styled } from '@linaria/react';
+import { lazy, Suspense } from 'react';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -18,6 +19,10 @@ const LazyNavigationMenuSectionSortable = lazy(() =>
     (module) => ({ default: module.NavigationMenuSectionSortable }),
   ),
 );
+
+const StyledSectionArea = styled.div`
+  display: contents;
+`;
 
 const renderSectionContent = (section: NavigationMenuItem) => {
   if (isNavigationMenuItemAiChatSection(section)) {
@@ -67,7 +72,12 @@ export const NavigationMenuItemCustomSections = ({
             </LazyNavigationMenuSectionSortable>
           </Suspense>
         ) : (
-          <Fragment key={section.id}>{sectionContent}</Fragment>
+          <StyledSectionArea
+            key={section.id}
+            data-navigation-menu-section-id={section.id}
+          >
+            {sectionContent}
+          </StyledSectionArea>
         );
       })}
       {!isAboveItems && isEditable && (
