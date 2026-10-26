@@ -219,7 +219,8 @@ const CaseAction = styled.span`
 `;
 
 function caseLayout(index: number, total: number): 'compact' | 'featured' {
-  return index === 0 && total > 1 ? 'featured' : 'compact';
+  // Only feature the first card when the rest can fill the two-column grid evenly
+  return index === 0 && total % 2 === 1 ? 'featured' : 'compact';
 }
 
 export function PartnerSelectedWork({
