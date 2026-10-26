@@ -28,7 +28,6 @@ const SHARE_LEVELS: Record<RecordPermissionAction, RecordShareAccessLevel[]> = {
   receive: [],
 };
 
-// One indexed share lookup per bound Receive condition, independent of recipient count.
 export const compileRecordShareProjection = ({
   context,
   groups,
@@ -97,10 +96,11 @@ export const compileRecordShareProjection = ({
       ]);
       buckets.set(key, [...(buckets.get(key) ?? []), group]);
     }
+    const prefix = `shareProjection_${SHARE_LEVELS[action].join('_')}_${pathIndex}`;
+    const sourceAlias =
+      path.hops.length === 0 ? tableAlias : `${prefix}_source0`;
+    const bindings: string[] = [];
     for (const [bucketIndex, bucket] of [...buckets.values()].entries()) {
-      const prefix = `shareProjection_${SHARE_LEVELS[action].join('_')}_${pathIndex}_${bucketIndex}`;
-      const sourceAlias =
-        path.hops.length === 0 ? tableAlias : `${prefix}_source0`;
       const filter = compileRecordPermissionGroup({
         context,
         group: {
@@ -115,25 +115,10 @@ export const compileRecordShareProjection = ({
         tableAlias: sourceAlias,
       });
       if (filter.sql === 'FALSE') continue;
-      const relationJoins = path.hops
-        .slice(0, -1)
-        .map(
-          (hop, index) =>
-            `JOIN ${schema}.${escapeIdentifier(computeObjectTargetTable(hop.targetObject))} ${escapeIdentifier(`${prefix}_source${index + 1}`)} ON ${escapeIdentifier(`${prefix}_source${index}`)}.${escapeIdentifier(hop.sourceColumn)} = ${escapeIdentifier(`${prefix}_source${index + 1}`)}.${escapeIdentifier(hop.targetColumn)}`,
-        );
-      const lastHop = path.hops[path.hops.length - 1];
-      const relationFilter = isDefined(lastHop)
-        ? `${escapeIdentifier(`${prefix}_source${path.hops.length - 1}`)}.${escapeIdentifier(lastHop.sourceColumn)} = ${escapeIdentifier(tableAlias)}.${escapeIdentifier(lastHop.targetColumn)} AND ${path.hops.map((_, index) => `${escapeIdentifier(`${prefix}_source${index}`)}."deletedAt" IS NULL`).join(' AND ')}`
-        : 'TRUE';
-      const sourceFrom =
-        path.hops.length === 0
-          ? ''
-          : `${schema}.${escapeIdentifier(computeObjectTargetTable(object))} ${escapeIdentifier(sourceAlias)} ${relationJoins.join(' ')} CROSS JOIN `;
-      selects.push(
-        `SELECT (:${prefix}_bindings::jsonb ->> share."principalId"::text)::uuid AS value FROM ${sourceFrom}${schema}."recordShare" share WHERE :${prefix}_bindings::jsonb ? share."principalId"::text AND share."objectMetadataId" = :${prefix}_object::uuid AND share."recordId" = ${escapeIdentifier(sourceAlias)}.id AND share."deletedAt" IS NULL AND share."accessLevel"::text = ANY(:${prefix}_levels::text[]) AND (${relationFilter}) AND (${filter?.sql ?? 'TRUE'})`,
-      );
-      Object.assign(parameters, filter?.parameters, {
-        [`${prefix}_bindings`]: JSON.stringify(
+      const parameterName = `${prefix}_bindings_${bucketIndex}`;
+      bindings.push(`(:${parameterName}::jsonb, (${filter.sql}))`);
+      Object.assign(parameters, filter.parameters, {
+        [parameterName]: JSON.stringify(
           Object.fromEntries(
             bucket.flatMap((group) =>
               (group.sharePrincipalIds ?? []).map((principalId) => [
@@ -143,11 +128,31 @@ export const compileRecordShareProjection = ({
             ),
           ),
         ),
-        [`${prefix}_object`]: object.id,
-        [`${prefix}_levels`]: SHARE_LEVELS[action],
       });
     }
+    if (bindings.length === 0) continue;
+    const relationJoins = path.hops
+      .slice(0, -1)
+      .map(
+        (hop, index) =>
+          `JOIN ${schema}.${escapeIdentifier(computeObjectTargetTable(hop.targetObject))} ${escapeIdentifier(`${prefix}_source${index + 1}`)} ON ${escapeIdentifier(`${prefix}_source${index}`)}.${escapeIdentifier(hop.sourceColumn)} = ${escapeIdentifier(`${prefix}_source${index + 1}`)}.${escapeIdentifier(hop.targetColumn)}`,
+      );
+    const lastHop = path.hops[path.hops.length - 1];
+    const relationFilter = isDefined(lastHop)
+      ? `${escapeIdentifier(`${prefix}_source${path.hops.length - 1}`)}.${escapeIdentifier(lastHop.sourceColumn)} = ${escapeIdentifier(tableAlias)}.${escapeIdentifier(lastHop.targetColumn)} AND ${path.hops.map((_, index) => `${escapeIdentifier(`${prefix}_source${index}`)}."deletedAt" IS NULL`).join(' AND ')}`
+      : 'TRUE';
+    const sourceFrom =
+      path.hops.length === 0
+        ? ''
+        : `${schema}.${escapeIdentifier(computeObjectTargetTable(object))} ${escapeIdentifier(sourceAlias)} ${relationJoins.join(' ')} CROSS JOIN `;
+    // One indexed source-share lookup per path avoids a subplan for every member binding.
+    selects.push(
+      `SELECT (binding.recipients ->> share."principalId"::text)::uuid AS value FROM ${sourceFrom}${schema}."recordShare" share CROSS JOIN LATERAL (VALUES ${bindings.join(', ')}) AS binding(recipients, allowed) WHERE binding.allowed AND binding.recipients ? share."principalId"::text AND share."objectMetadataId" = :${prefix}_object::uuid AND share."recordId" = ${escapeIdentifier(sourceAlias)}.id AND share."deletedAt" IS NULL AND share."accessLevel"::text = ANY(:${prefix}_levels::text[]) AND (${relationFilter})`,
+    );
+    parameters[`${prefix}_object`] = object.id;
+    parameters[`${prefix}_levels`] = SHARE_LEVELS[action];
   }
+
   return {
     sql:
       selects.length === 0

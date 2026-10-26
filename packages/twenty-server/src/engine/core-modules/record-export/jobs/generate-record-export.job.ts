@@ -23,6 +23,7 @@ import {
   RECORD_EXPORT_REQUESTER_REFRESH_INTERVAL_MS,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
+import { CustomException } from 'src/utils/custom-exception';
 import { RecordExportQueryService } from 'src/engine/core-modules/record-export/services/record-export-query.service';
 import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { type RecordExportQueryContext } from 'src/engine/core-modules/record-export/types/record-export-query-context.type';
@@ -121,7 +122,7 @@ export class GenerateRecordExportJob {
         errorMessage: this.i18nService
           .getI18nInstance(locale)
           ._(
-            error instanceof RecordExportException
+            error instanceof CustomException
               ? error.userFriendlyMessage
               : msg`The export failed. Please try again or export fewer records.`,
           ),

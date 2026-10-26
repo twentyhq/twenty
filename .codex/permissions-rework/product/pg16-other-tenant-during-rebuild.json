@@ -1,0 +1,32 @@
+{
+  "rows": 1000000,
+  "concurrency": 4,
+  "elapsedSeconds": 3446.937009875,
+  "queries": 301799,
+  "errors": 3,
+  "errorSamples": [
+    {
+      "at": "2026-10-26T21:41:12.084Z",
+      "code": "57014",
+      "message": "canceling statement due to statement timeout",
+      "elapsedMs": 320.1166669999948
+    },
+    {
+      "at": "2026-10-26T22:22:22.577Z",
+      "code": "57014",
+      "message": "canceling statement due to statement timeout",
+      "elapsedMs": 330.84912500018254
+    },
+    {
+      "at": "2026-10-26T22:22:41.285Z",
+      "code": "57014",
+      "message": "canceling statement due to statement timeout",
+      "elapsedMs": 340.84237500000745
+    }
+  ],
+  "p50Ms": 1.3080830001272261,
+  "p99Ms": 25.453749999869615,
+  "maximumMs": 614.8259999998845,
+  "updatedAt": "2026-10-26T22:31:44.576Z",
+  "finishedAt": "2026-10-26T22:31:44.576Z"
+}

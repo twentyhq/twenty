@@ -1,4 +1,5 @@
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { scheduleRecordPermissionReconciliation } from 'src/engine/core-modules/record-permission/utils/schedule-record-permission-reconciliation.util';
 import { readRecordPermissionScanBatch } from 'src/engine/core-modules/record-permission/utils/read-record-permission-scan-batch.util';
 import { enrollRecordPermissionMetadata } from 'src/engine/core-modules/record-permission/utils/enroll-record-permission-metadata.util';
 import { type SqlCondition } from 'src/engine/twenty-orm/types/row-access-policy.type';
@@ -191,19 +192,24 @@ export class RecordPermissionWorkerService {
   }
 
   async reconcile(workspaceId: string): Promise<void> {
-    await this.drain(workspaceId);
-    const revision = await this.dataSource
-      .getRepository(RecordPermissionRevisionEntity)
-      .findOneBy({ workspaceId, status: 'active' });
-
-    if (!isDefined(revision)) return;
-    const context = await this.policyService.loadContext(workspaceId, revision);
-    const schema = escapeIdentifier(context.schemaName);
-
-    await this.dataSource.query(
-      `UPDATE ${schema}."recordPermissionScan" SET "blockCursor" = 0, "blockLimit" = NULL, "relationFileNode" = NULL, complete = false, processed = 0 WHERE ("revisionId", "objectMetadataId") = (SELECT "revisionId", "objectMetadataId" FROM ${schema}."recordPermissionScan" WHERE "revisionId" = $1 AND complete ORDER BY "completedAt" NULLS FIRST, "objectMetadataId" LIMIT 1)`,
-      [revision.id],
-    );
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+    await this.dataSource.transaction(async (manager) => {
+      await manager.query("SET LOCAL statement_timeout = '1500ms'");
+      await manager.query("SET LOCAL lock_timeout = '100ms'");
+      const [{ acquired }] = await manager.query(
+        'SELECT pg_try_advisory_xact_lock(hashtextextended($1, 0)) AS acquired',
+        [schemaName + ':record-permission-worker'],
+      );
+      if (!acquired) return;
+      await manager.query(
+        'SELECT pg_advisory_xact_lock_shared(hashtextextended($1, 0))',
+        [schemaName + ':record-permissions'],
+      );
+      await scheduleRecordPermissionReconciliation({
+        database: manager,
+        schemaName,
+      });
+    });
   }
 
   private async synchronizeGroups(
@@ -502,6 +508,7 @@ export class RecordPermissionWorkerService {
       batchSize,
       scan: {
         blockCursor: Number(scan.blockCursor),
+        tupleCursor: Number(scan.tupleCursor ?? 0),
         blockLimit: isDefined(scan.blockLimit) ? Number(scan.blockLimit) : null,
         relationFileNode: isDefined(scan.relationFileNode)
           ? Number(scan.relationFileNode)
@@ -517,7 +524,7 @@ export class RecordPermissionWorkerService {
       recordIds: batch.recordIds,
     });
     await database.query(
-      `UPDATE ${schema}."recordPermissionScan" SET "blockCursor" = $3, "blockLimit" = $4, "relationFileNode" = $5, processed = processed + $6, complete = $7, "completedAt" = CASE WHEN $7 THEN now() ELSE "completedAt" END WHERE "revisionId" = $1 AND "objectMetadataId" = $2`,
+      `UPDATE ${schema}."recordPermissionScan" SET "blockCursor" = $3, "tupleCursor" = $8, "blockLimit" = $4, "relationFileNode" = $5, processed = processed + $6, complete = $7, "completedAt" = CASE WHEN $7 THEN now() ELSE "completedAt" END WHERE "revisionId" = $1 AND "objectMetadataId" = $2`,
       [
         context.revisionId,
         object.id,
@@ -526,6 +533,7 @@ export class RecordPermissionWorkerService {
         batch.relationFileNode,
         batch.recordIds.length,
         batch.complete,
+        batch.tupleCursor ?? 0,
       ],
     );
 

@@ -36,6 +36,7 @@ export const useLazyFindManyRecordsWithOffset = ({
   const { findManyRecordsQuery } = useFindManyRecordsQuery({
     objectNameSingular,
     recordGqlFields,
+    includeTotalCount: false,
   });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
@@ -55,6 +56,7 @@ export const useLazyFindManyRecordsWithOffset = ({
           data: null,
           records: null,
           totalCount: 0,
+          hasNextPage: false,
           error: undefined,
         };
       }
@@ -88,6 +90,9 @@ export const useLazyFindManyRecordsWithOffset = ({
       return {
         data: result?.data,
         records,
+        hasNextPage:
+          result?.data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ??
+          false,
         error: result?.error,
       };
     },

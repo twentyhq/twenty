@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "API role authorizes creation and live reads while field restrictions remain restrictive",
+    "Changing the API role immediately revokes update and destroy while retaining its new read grant",
+    "Revoked API key cannot read"
+  ],
+  "startedAt": "2026-10-26T21:46:42.607Z",
+  "apiKeyId": "d23c0dd9-a7b7-4105-8ef2-d75ede05d4c5",
+  "keyRevoked": true,
+  "testRecordRemoved": true,
+  "finishedAt": "2026-10-26T21:46:43.421Z"
+}

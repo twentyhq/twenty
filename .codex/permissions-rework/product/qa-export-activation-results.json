@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "SSE export completes with the projected authorized row; authenticated CSV download has exactly one data row",
+    "Restricted field cannot be exported",
+    "Activating a new policy invalidates an already completed export before download"
+  ],
+  "startedAt": "2026-10-26T22:20:42.618Z",
+  "candidateId": "9336a71e-be50-4897-8012-d9438096e26c",
+  "activeRevisionId": "9336a71e-be50-4897-8012-d9438096e26c",
+  "finishedAt": "2026-10-26T22:21:35.353Z"
+}

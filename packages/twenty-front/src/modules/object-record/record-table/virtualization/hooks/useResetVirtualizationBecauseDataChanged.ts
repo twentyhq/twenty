@@ -1,3 +1,7 @@
+import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
+import { isTotalNumberOfRowsKnownComponentState } from '@/object-record/record-table/virtualization/states/isTotalNumberOfRowsKnownComponentState';
+import { recordTableDataGenerationComponentState } from '@/object-record/record-table/virtualization/states/recordTableDataGenerationComponentState';
+import { getRecordTableRowExtent } from '@/object-record/record-table/virtualization/utils/getRecordTableRowExtent';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -17,13 +21,18 @@ import { getVirtualizationOverscanWindow } from '@/object-record/record-table/vi
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
 export const useResetVirtualizationBecauseDataChanged = (
   objectNameSingular: string,
 ) => {
   const store = useStore();
+  const hasUserSelectedAllRecordsCallbackState =
+    useAtomComponentStateCallbackState(hasUserSelectedAllRecordsComponentState);
+  const recordTableDataGenerationCallbackState =
+    useAtomComponentStateCallbackState(recordTableDataGenerationComponentState);
+  const isTotalNumberOfRowsKnownCallbackState =
+    useAtomComponentStateCallbackState(isTotalNumberOfRowsKnownComponentState);
   const { recordLimit } = useRecordIndexContextOrThrow();
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -43,6 +52,7 @@ export const useResetVirtualizationBecauseDataChanged = (
     recordGqlFields,
     fetchPolicy: 'network-only',
     limit: 1,
+    allowMissingTotalCountOnTimeout: true,
   });
 
   const totalNumberOfRowsCallbackState = useAtomComponentStateCallbackState(
@@ -63,11 +73,24 @@ export const useResetVirtualizationBecauseDataChanged = (
   const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
 
   const resetVirtualizationBecauseDataChanged = useCallback(async () => {
-    const { totalCount: unboundedTotalCount } = await findManyRecordsLazy();
-
-    const totalCount = isDefined(recordLimit)
-      ? Math.min(unboundedTotalCount, recordLimit)
-      : unboundedTotalCount;
+    const generation = store.get(recordTableDataGenerationCallbackState) + 1;
+    store.set(recordTableDataGenerationCallbackState, generation);
+    const result = await findManyRecordsLazy();
+    if (store.get(recordTableDataGenerationCallbackState) !== generation) {
+      return;
+    }
+    const extent = getRecordTableRowExtent({
+      totalCount: result.isTotalCountKnown ? result.totalCount : undefined,
+      numberOfRecords: result.records?.length ?? 0,
+      hasNextPage: result.hasNextPage,
+      recordLimit,
+      previousExtent: store.get(totalNumberOfRowsCallbackState) ?? 0,
+    });
+    const totalCount = extent.totalNumberOfRows;
+    store.set(isTotalNumberOfRowsKnownCallbackState, extent.isTotalCountKnown);
+    if (!extent.isTotalCountKnown) {
+      store.set(hasUserSelectedAllRecordsCallbackState, false);
+    }
 
     const { firstRowIndexInOverscanWindow, lastRowIndexInOverscanWindow } =
       getVirtualizationOverscanWindow({
@@ -106,6 +129,9 @@ export const useResetVirtualizationBecauseDataChanged = (
     store,
     totalNumberOfRowsCallbackState,
     triggerFetchPagesWithoutDebounce,
+    hasUserSelectedAllRecordsCallbackState,
+    recordTableDataGenerationCallbackState,
+    isTotalNumberOfRowsKnownCallbackState,
   ]);
 
   return { resetVirtualizationBecauseDataChanged };

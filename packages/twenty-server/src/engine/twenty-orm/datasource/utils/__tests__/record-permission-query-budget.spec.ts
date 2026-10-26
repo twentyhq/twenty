@@ -1,5 +1,7 @@
 import { Pool } from 'pg';
+import { setTimeout as delay } from 'node:timers/promises';
 
+import { runWithRecordPermissionSharingFence } from 'src/engine/core-modules/record-permission/utils/run-with-record-permission-sharing-fence.util';
 import { runWithRecordPermissionBudget } from 'src/engine/twenty-orm/datasource/utils/run-with-record-permission-budget.util';
 import { TwentyOrmExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
@@ -11,6 +13,41 @@ describeDatabase('Record query resource isolation', () => {
   const pool = new Pool({ connectionString, max: 8 });
 
   afterAll(() => pool.end());
+
+  it('waits outside the pool for a projector fence before authorizing a share', async () => {
+    const blocker = await pool.connect();
+    const schemaName = 'sharing_fence_database_test';
+    let writes = 0;
+    await blocker.query('BEGIN');
+    await blocker.query(
+      'SELECT pg_advisory_xact_lock_shared(hashtextextended($1, 0))',
+      [schemaName + ':record-permissions'],
+    );
+    const releaseBlocker = delay(80).then(() => blocker.query('ROLLBACK'));
+
+    try {
+      await runWithRecordPermissionSharingFence({
+        schemaName,
+        runInTransaction: (callback) =>
+          runWithRecordPermissionBudget({
+            pool,
+            workspaceId: schemaName,
+            work: (client) =>
+              callback({
+                executeRawQuery: async (sql, parameters) =>
+                  (await client.query(sql, parameters)).rows,
+              }),
+          }),
+        work: async () => {
+          writes++;
+        },
+      });
+      expect(writes).toBe(1);
+    } finally {
+      await releaseBlocker;
+      blocker.release();
+    }
+  });
 
   it('cancels work in PostgreSQL and returns a reusable connection', async () => {
     const startedAt = Date.now();
@@ -83,6 +120,52 @@ describeDatabase('Record query resource isolation', () => {
       runWithRecordPermissionBudget({
         pool,
         workspaceId: 'saturated-test',
+        work: (client) => client.query('SELECT 1'),
+      }),
+    ).resolves.toBeDefined();
+  });
+
+  it('enforces database admission against slots occupied outside this process', async () => {
+    const externalClient = await pool.connect();
+    try {
+      for (const [key, slots] of [
+        ['record-query:external-tenant', 4],
+        ['record-query:instance', 32],
+      ] as const) {
+        await externalClient.query('BEGIN');
+        await externalClient.query(
+          'SELECT pg_advisory_xact_lock(hashtextextended($1 || slot::text, 0)) FROM generate_series(0,$2::int - 1) AS slot',
+          [key, slots],
+        );
+        const work = jest.fn();
+        await expect(
+          runWithRecordPermissionBudget({
+            pool,
+            workspaceId: 'external-tenant',
+            work,
+          }),
+        ).rejects.toMatchObject({
+          code: TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR,
+        });
+        expect(work).not.toHaveBeenCalled();
+        if (slots === 4) {
+          const other = await runWithRecordPermissionBudget({
+            pool,
+            workspaceId: 'external-other-tenant',
+            work: (client) => client.query('SELECT 42 AS answer'),
+          });
+          expect(other.rows).toEqual([{ answer: 42 }]);
+        }
+        await externalClient.query('ROLLBACK');
+      }
+    } finally {
+      await externalClient.query('ROLLBACK');
+      externalClient.release();
+    }
+    await expect(
+      runWithRecordPermissionBudget({
+        pool,
+        workspaceId: 'external-tenant',
         work: (client) => client.query('SELECT 1'),
       }),
     ).resolves.toBeDefined();

@@ -1,0 +1,781 @@
+{
+  "startedAt": "2026-10-26T22:32:59.042Z",
+  "deadlineMs": 250,
+  "cases": [
+    {
+      "name": "broad ordered page",
+      "sql": "SELECT id,city,created_at FROM compiler_benchmark.company WHERE \"deletedAt\" IS NULL AND \"readableByAccessGroupIds\" && $1::uuid[] ORDER BY created_at DESC,id DESC LIMIT 50",
+      "samples": 100,
+      "errors": [],
+      "rowCounts": [
+        50
+      ],
+      "plan": [
+        {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 0.43,
+            "Total Cost": 17.47,
+            "Plan Rows": 50,
+            "Plan Width": 32,
+            "Actual Startup Time": 0.002,
+            "Actual Total Time": 0.025,
+            "Actual Rows": 50,
+            "Actual Loops": 1,
+            "Shared Hit Blocks": 69,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Index Scan",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Scan Direction": "Backward",
+                "Index Name": "company_created",
+                "Relation Name": "company",
+                "Alias": "company",
+                "Startup Cost": 0.43,
+                "Total Cost": 3403827.43,
+                "Plan Rows": 9991985,
+                "Plan Width": 32,
+                "Actual Startup Time": 0.002,
+                "Actual Total Time": 0.022,
+                "Actual Rows": 50,
+                "Actual Loops": 1,
+                "Filter": "((\"deletedAt\" IS NULL) AND (\"readableByAccessGroupIds\" && '{36f6d913-6b4b-551f-b464-4f42262696ee}'::uuid[]))",
+                "Rows Removed by Filter": 0,
+                "Shared Hit Blocks": 69,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 1,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.022,
+          "Triggers": [],
+          "Execution Time": 0.032
+        }
+      ],
+      "p50Ms": 0.1795839999999913,
+      "p95Ms": 0.5201249999999931,
+      "p99Ms": 1.7793749999999875,
+      "firstMs": 1.7793749999999875
+    },
+    {
+      "name": "broad indexed city page",
+      "sql": "SELECT id,city,created_at FROM compiler_benchmark.company WHERE \"deletedAt\" IS NULL AND \"readableByAccessGroupIds\" && $1::uuid[] AND city=$2 ORDER BY created_at DESC,id DESC LIMIT 50",
+      "samples": 100,
+      "errors": [],
+      "rowCounts": [
+        50
+      ],
+      "plan": [
+        {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 0.56,
+            "Total Cost": 202.2,
+            "Plan Rows": 50,
+            "Plan Width": 32,
+            "Actual Startup Time": 0.003,
+            "Actual Total Time": 0.024,
+            "Actual Rows": 50,
+            "Actual Loops": 1,
+            "Shared Hit Blocks": 56,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Index Scan",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Scan Direction": "Backward",
+                "Index Name": "company_city",
+                "Relation Name": "company",
+                "Alias": "company",
+                "Startup Cost": 0.56,
+                "Total Cost": 61788.43,
+                "Plan Rows": 15321,
+                "Plan Width": 32,
+                "Actual Startup Time": 0.003,
+                "Actual Total Time": 0.021,
+                "Actual Rows": 50,
+                "Actual Loops": 1,
+                "Index Cond": "(city = 'City-500'::text)",
+                "Rows Removed by Index Recheck": 0,
+                "Filter": "((\"deletedAt\" IS NULL) AND (\"readableByAccessGroupIds\" && '{36f6d913-6b4b-551f-b464-4f42262696ee}'::uuid[]))",
+                "Rows Removed by Filter": 0,
+                "Shared Hit Blocks": 56,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 1,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.02,
+          "Triggers": [],
+          "Execution Time": 0.029
+        }
+      ],
+      "p50Ms": 0.19058300000000372,
+      "p95Ms": 0.2669999999999959,
+      "p99Ms": 0.6809590000000014,
+      "firstMs": 0.6809590000000014
+    },
+    {
+      "name": "sparse recipient positive page",
+      "sql": "SELECT id,city,created_at FROM compiler_benchmark.company WHERE \"deletedAt\" IS NULL AND \"readableByAccessGroupIds\" && $1::uuid[] ORDER BY created_at DESC,id DESC LIMIT 50",
+      "samples": 100,
+      "errors": [],
+      "rowCounts": [
+        50
+      ],
+      "plan": [
+        {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 1352.35,
+            "Total Cost": 1352.48,
+            "Plan Rows": 50,
+            "Plan Width": 32,
+            "Actual Startup Time": 0.051,
+            "Actual Total Time": 0.056,
+            "Actual Rows": 50,
+            "Actual Loops": 1,
+            "Shared Hit Blocks": 53,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 1352.35,
+                "Total Cost": 1353.19,
+                "Plan Rows": 334,
+                "Plan Width": 32,
+                "Actual Startup Time": 0.051,
+                "Actual Total Time": 0.053,
+                "Actual Rows": 50,
+                "Actual Loops": 1,
+                "Sort Key": [
+                  "created_at DESC",
+                  "id DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 28,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 53,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "company",
+                    "Alias": "company",
+                    "Startup Cost": 22.8,
+                    "Total Cost": 1341.26,
+                    "Plan Rows": 334,
+                    "Plan Width": 32,
+                    "Actual Startup Time": 0.014,
+                    "Actual Total Time": 0.042,
+                    "Actual Rows": 50,
+                    "Actual Loops": 1,
+                    "Recheck Cond": "(\"readableByAccessGroupIds\" && '{22f6b32f-7741-516a-b858-440a2b787c74}'::uuid[])",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "(\"deletedAt\" IS NULL)",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 50,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 53,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Bitmap Index Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Index Name": "company_access",
+                        "Startup Cost": 0,
+                        "Total Cost": 22.72,
+                        "Plan Rows": 334,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 0.005,
+                        "Actual Total Time": 0.005,
+                        "Actual Rows": 50,
+                        "Actual Loops": 1,
+                        "Index Cond": "(\"readableByAccessGroupIds\" && '{22f6b32f-7741-516a-b858-440a2b787c74}'::uuid[])",
+                        "Shared Hit Blocks": 3,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 1,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.024,
+          "Triggers": [],
+          "Execution Time": 0.068
+        }
+      ],
+      "p50Ms": 0.18966700000001424,
+      "p95Ms": 0.2575420000000008,
+      "p99Ms": 0.8987079999999992,
+      "firstMs": 0.28845799999999144
+    },
+    {
+      "name": "sparse recipient positive city page",
+      "sql": "SELECT id,city,created_at FROM compiler_benchmark.company WHERE \"deletedAt\" IS NULL AND \"readableByAccessGroupIds\" && $1::uuid[] AND city=$2 ORDER BY created_at DESC,id DESC LIMIT 50",
+      "samples": 100,
+      "errors": [],
+      "rowCounts": [
+        1
+      ],
+      "plan": [
+        {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 906.63,
+            "Total Cost": 906.63,
+            "Plan Rows": 1,
+            "Plan Width": 32,
+            "Actual Startup Time": 1.093,
+            "Actual Total Time": 1.093,
+            "Actual Rows": 1,
+            "Actual Loops": 1,
+            "Shared Hit Blocks": 133,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 906.63,
+                "Total Cost": 906.63,
+                "Plan Rows": 1,
+                "Plan Width": 32,
+                "Actual Startup Time": 1.093,
+                "Actual Total Time": 1.093,
+                "Actual Rows": 1,
+                "Actual Loops": 1,
+                "Sort Key": [
+                  "created_at DESC",
+                  "id DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 25,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 133,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "company",
+                    "Alias": "company",
+                    "Startup Cost": 902.6,
+                    "Total Cost": 906.62,
+                    "Plan Rows": 1,
+                    "Plan Width": 32,
+                    "Actual Startup Time": 1.091,
+                    "Actual Total Time": 1.091,
+                    "Actual Rows": 1,
+                    "Actual Loops": 1,
+                    "Recheck Cond": "((\"readableByAccessGroupIds\" && '{22f6b32f-7741-516a-b858-440a2b787c74}'::uuid[]) AND (city = 'City-500'::text))",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "(\"deletedAt\" IS NULL)",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 1,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 133,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "BitmapAnd",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Startup Cost": 902.6,
+                        "Total Cost": 902.6,
+                        "Plan Rows": 1,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 1.09,
+                        "Actual Total Time": 1.09,
+                        "Actual Rows": 0,
+                        "Actual Loops": 1,
+                        "Shared Hit Blocks": 132,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0,
+                        "Plans": [
+                          {
+                            "Node Type": "Bitmap Index Scan",
+                            "Parent Relationship": "Member",
+                            "Parallel Aware": false,
+                            "Async Capable": false,
+                            "Index Name": "company_access",
+                            "Startup Cost": 0,
+                            "Total Cost": 22.72,
+                            "Plan Rows": 334,
+                            "Plan Width": 0,
+                            "Actual Startup Time": 0.005,
+                            "Actual Total Time": 0.005,
+                            "Actual Rows": 50,
+                            "Actual Loops": 1,
+                            "Index Cond": "(\"readableByAccessGroupIds\" && '{22f6b32f-7741-516a-b858-440a2b787c74}'::uuid[])",
+                            "Shared Hit Blocks": 3,
+                            "Shared Read Blocks": 0,
+                            "Shared Dirtied Blocks": 0,
+                            "Shared Written Blocks": 0,
+                            "Local Hit Blocks": 0,
+                            "Local Read Blocks": 0,
+                            "Local Dirtied Blocks": 0,
+                            "Local Written Blocks": 0,
+                            "Temp Read Blocks": 0,
+                            "Temp Written Blocks": 0
+                          },
+                          {
+                            "Node Type": "Bitmap Index Scan",
+                            "Parent Relationship": "Member",
+                            "Parallel Aware": false,
+                            "Async Capable": false,
+                            "Index Name": "company_city",
+                            "Startup Cost": 0,
+                            "Total Cost": 879.63,
+                            "Plan Rows": 15343,
+                            "Plan Width": 0,
+                            "Actual Startup Time": 1.083,
+                            "Actual Total Time": 1.083,
+                            "Actual Rows": 11411,
+                            "Actual Loops": 1,
+                            "Index Cond": "(city = 'City-500'::text)",
+                            "Shared Hit Blocks": 129,
+                            "Shared Read Blocks": 0,
+                            "Shared Dirtied Blocks": 0,
+                            "Shared Written Blocks": 0,
+                            "Local Hit Blocks": 0,
+                            "Local Read Blocks": 0,
+                            "Local Dirtied Blocks": 0,
+                            "Local Written Blocks": 0,
+                            "Temp Read Blocks": 0,
+                            "Temp Written Blocks": 0
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 1,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.032,
+          "Triggers": [],
+          "Execution Time": 1.099
+        }
+      ],
+      "p50Ms": 1.141666000000015,
+      "p95Ms": 1.4179169999999885,
+      "p99Ms": 8.402874999999995,
+      "firstMs": 8.402874999999995
+    },
+    {
+      "name": "zero-overlap access group",
+      "sql": "SELECT id,city,created_at FROM compiler_benchmark.company WHERE \"deletedAt\" IS NULL AND \"readableByAccessGroupIds\" && $1::uuid[] ORDER BY created_at DESC,id DESC LIMIT 50",
+      "samples": 100,
+      "errors": [],
+      "rowCounts": [
+        0
+      ],
+      "plan": [
+        {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 1352.35,
+            "Total Cost": 1352.48,
+            "Plan Rows": 50,
+            "Plan Width": 32,
+            "Actual Startup Time": 0.002,
+            "Actual Total Time": 0.002,
+            "Actual Rows": 0,
+            "Actual Loops": 1,
+            "Shared Hit Blocks": 3,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 1352.35,
+                "Total Cost": 1353.19,
+                "Plan Rows": 334,
+                "Plan Width": 32,
+                "Actual Startup Time": 0.002,
+                "Actual Total Time": 0.002,
+                "Actual Rows": 0,
+                "Actual Loops": 1,
+                "Sort Key": [
+                  "created_at DESC",
+                  "id DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 25,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 3,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "company",
+                    "Alias": "company",
+                    "Startup Cost": 22.8,
+                    "Total Cost": 1341.26,
+                    "Plan Rows": 334,
+                    "Plan Width": 32,
+                    "Actual Startup Time": 0.001,
+                    "Actual Total Time": 0.001,
+                    "Actual Rows": 0,
+                    "Actual Loops": 1,
+                    "Recheck Cond": "(\"readableByAccessGroupIds\" && '{b18d7c01-b054-4d3c-aebb-a0e2f94b2bb1}'::uuid[])",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "(\"deletedAt\" IS NULL)",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 0,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 3,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Bitmap Index Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Index Name": "company_access",
+                        "Startup Cost": 0,
+                        "Total Cost": 22.72,
+                        "Plan Rows": 334,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 0.001,
+                        "Actual Total Time": 0.001,
+                        "Actual Rows": 0,
+                        "Actual Loops": 1,
+                        "Index Cond": "(\"readableByAccessGroupIds\" && '{b18d7c01-b054-4d3c-aebb-a0e2f94b2bb1}'::uuid[])",
+                        "Shared Hit Blocks": 3,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 1,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.016,
+          "Triggers": [],
+          "Execution Time": 0.007
+        }
+      ],
+      "p50Ms": 0.05820899999997664,
+      "p95Ms": 0.1037499999999909,
+      "p99Ms": 0.1516250000000241,
+      "firstMs": 0.1516250000000241
+    },
+    {
+      "name": "exact broad count",
+      "sql": "SELECT count(*) FROM compiler_benchmark.company WHERE \"deletedAt\" IS NULL AND \"readableByAccessGroupIds\" && $1::uuid[]",
+      "samples": 0,
+      "errors": [
+        {
+          "code": "57014",
+          "message": "canceling statement due to statement timeout",
+          "elapsedMs": 251.51483399999995
+        },
+        {
+          "code": "57014",
+          "message": "canceling statement due to statement timeout",
+          "elapsedMs": 251.77391599999999
+        },
+        {
+          "code": "57014",
+          "message": "canceling statement due to statement timeout",
+          "elapsedMs": 252.10124999999994
+        }
+      ],
+      "rowCounts": []
+    },
+    {
+      "name": "exact indexed city count",
+      "sql": "SELECT count(*) FROM compiler_benchmark.company WHERE \"deletedAt\" IS NULL AND \"readableByAccessGroupIds\" && $1::uuid[] AND city=$2",
+      "samples": 1,
+      "errors": [
+        {
+          "code": "57014",
+          "message": "canceling statement due to statement timeout",
+          "elapsedMs": 251.8391670000001
+        },
+        {
+          "code": "57014",
+          "message": "canceling statement due to statement timeout",
+          "elapsedMs": 251.01025000000004
+        }
+      ],
+      "rowCounts": [
+        1
+      ],
+      "p50Ms": 96.84520800000018,
+      "p95Ms": 96.84520800000018,
+      "p99Ms": 96.84520800000018,
+      "firstMs": 96.84520800000018
+    },
+    {
+      "name": "hostile unindexed filter with no match",
+      "sql": "SELECT id,city,created_at FROM compiler_benchmark.company WHERE \"deletedAt\" IS NULL AND \"readableByAccessGroupIds\" && $1::uuid[] AND business_payload LIKE '%absent-value%' ORDER BY created_at DESC,id DESC LIMIT 50",
+      "samples": 0,
+      "errors": [
+        {
+          "code": "57014",
+          "message": "canceling statement due to statement timeout",
+          "elapsedMs": 251.36087500000008
+        },
+        {
+          "code": "57014",
+          "message": "canceling statement due to statement timeout",
+          "elapsedMs": 252.11579200000028
+        },
+        {
+          "code": "57014",
+          "message": "canceling statement due to statement timeout",
+          "elapsedMs": 251.55825000000004
+        }
+      ],
+      "rowCounts": []
+    },
+    {
+      "name": "deep offset",
+      "sql": "SELECT id,city,created_at FROM compiler_benchmark.company WHERE \"deletedAt\" IS NULL AND \"readableByAccessGroupIds\" && $1::uuid[] ORDER BY created_at DESC,id DESC OFFSET 1000000 LIMIT 50",
+      "samples": 0,
+      "errors": [
+        {
+          "code": "57014",
+          "message": "canceling statement due to statement timeout",
+          "elapsedMs": 252.0324169999999
+        },
+        {
+          "code": "57014",
+          "message": "canceling statement due to statement timeout",
+          "elapsedMs": 251.39466700000003
+        },
+        {
+          "code": "57014",
+          "message": "canceling statement due to statement timeout",
+          "elapsedMs": 251.02741700000024
+        }
+      ],
+      "rowCounts": []
+    }
+  ],
+  "cacheConditions": "PostgreSQL shared buffers reset by isolated cluster restart; OS cache remains warm; later samples warm progressively",
+  "pagination": "Two positive cursor pages exactly match all 50 authoritative source grants",
+  "connectionReusableAfterTimeouts": true,
+  "finishedAt": "2026-10-26T22:33:02.134Z"
+}

@@ -7,8 +7,12 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 export const computeRecordExportPermissionsHash = ({
   permissionsHash,
   application,
+  recordPermissionRevisionId = null,
+  recordCapabilitiesHash = null,
 }: {
   permissionsHash: string;
+  recordPermissionRevisionId?: string | null;
+  recordCapabilitiesHash?: string | null;
   application:
     | Pick<FlatApplication, 'id' | 'defaultRoleId' | 'deletedAt'>
     | undefined;
@@ -17,6 +21,8 @@ export const computeRecordExportPermissionsHash = ({
     .update(
       JSON.stringify({
         permissionsHash,
+        recordPermissionRevisionId,
+        recordCapabilitiesHash,
         application: isDefined(application)
           ? {
               id: application.id,

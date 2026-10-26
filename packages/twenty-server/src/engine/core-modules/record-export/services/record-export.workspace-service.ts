@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { type Request } from 'express';
 import { setTimeout } from 'node:timers/promises';
 import { type Readable } from 'stream';
@@ -91,6 +93,7 @@ export class RecordExportWorkspaceService {
   private readonly logger = new Logger(RecordExportWorkspaceService.name);
 
   constructor(
+    @InjectDataSource() private readonly dataSource: DataSource,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly permissionsService: PermissionsService,
@@ -642,14 +645,29 @@ export class RecordExportWorkspaceService {
     RecordExportRequester,
     'workspaceId' | 'applicationId'
   >): Promise<string> {
-    const permissionsHash =
-      await this.workspaceCacheService.getOrRecomputeCombinedHash(
+    const [permissionsHash, revisions] = await Promise.all([
+      this.workspaceCacheService.getOrRecomputeCombinedHash(
         workspaceId,
         RECORD_EXPORT_PERMISSION_CACHE_KEYS,
-      );
+      ),
+      this.dataSource.query<{ id: string; capabilitiesHash: string }[]>(
+        `SELECT revision.id,
+          (SELECT md5(COALESCE(jsonb_agg(jsonb_build_array(object.id, object.readability, object.writability, object."recordCapabilities") ORDER BY object.id)::text, '[]'))
+            FROM core."objectMetadata" object WHERE object."workspaceId" = $1) AS "capabilitiesHash"
+          FROM core."recordPermissionRevision" revision WHERE revision."workspaceId" = $1 AND revision.status = 'active'`,
+        [workspaceId],
+      ),
+    ]);
+    const recordPermissionRevisionId = revisions[0]?.id ?? null;
+    const recordCapabilitiesHash = revisions[0]?.capabilitiesHash ?? null;
 
     if (!isDefined(applicationId)) {
-      return permissionsHash;
+      return computeRecordExportPermissionsHash({
+        permissionsHash,
+        application: undefined,
+        recordPermissionRevisionId,
+        recordCapabilitiesHash,
+      });
     }
 
     const { flatApplicationMaps } =
@@ -658,7 +676,12 @@ export class RecordExportWorkspaceService {
       ]);
     const application = flatApplicationMaps.byId[applicationId];
 
-    return computeRecordExportPermissionsHash({ permissionsHash, application });
+    return computeRecordExportPermissionsHash({
+      permissionsHash,
+      application,
+      recordPermissionRevisionId,
+      recordCapabilitiesHash,
+    });
   }
 
   async assertPermissionsUnchanged(

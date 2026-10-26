@@ -1,3 +1,4 @@
+import { isTotalNumberOfRowsKnownComponentState } from '@/object-record/record-table/virtualization/states/isTotalNumberOfRowsKnownComponentState';
 import { useStore } from 'jotai';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,6 +26,8 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 
 export const useApplyRecordOperationToRows = () => {
   const store = useStore();
+  const isTotalNumberOfRowsKnownCallbackState =
+    useAtomComponentStateCallbackState(isTotalNumberOfRowsKnownComponentState);
   const { objectMetadataItem, recordLimit } = useRecordIndexContextOrThrow();
   const { objectNameSingular } = useRecordTableContextOrThrow();
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -59,6 +62,7 @@ export const useApplyRecordOperationToRows = () => {
   const { triggerFetchPages } = useTriggerFetchPages();
 
   const canShiftRows = () =>
+    store.get(isTotalNumberOfRowsKnownCallbackState) &&
     !isDefined(recordLimit) &&
     !store.get(hasAnySoftDeleteFilterOnViewCallbackState) &&
     store.get(numberOfPendingPageFetchesCallbackState) === 0;

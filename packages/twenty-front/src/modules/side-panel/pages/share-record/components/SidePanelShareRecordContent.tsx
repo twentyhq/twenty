@@ -1,4 +1,5 @@
 import { SidePanelInheritedRecordShares } from '@/side-panel/pages/share-record/components/SidePanelInheritedRecordShares';
+import { SidePanelRecordRoleAccess } from '@/side-panel/pages/share-record/components/SidePanelRecordRoleAccess';
 import { SidePanelRecordAccessExplanation } from '@/side-panel/pages/share-record/components/SidePanelRecordAccessExplanation';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -194,6 +195,12 @@ export const SidePanelShareRecordContent = ({
                         setGeneralAccess={setGeneralAccess}
                       />
                     </SidePanelShareRecordGroup>
+                  )}
+                  {sharing.usesRecordPermissionPolicy && !isInviting && (
+                    <SidePanelRecordRoleAccess
+                      roles={sharing.roles}
+                      search={search}
+                    />
                   )}
                   {recipientGroups.map(({ heading, matchingShares }) =>
                     isNonEmptyArray(matchingShares) ? (

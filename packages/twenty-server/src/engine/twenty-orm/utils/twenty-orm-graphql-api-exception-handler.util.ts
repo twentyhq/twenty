@@ -1,6 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  TimeoutError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   type TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -16,6 +19,8 @@ export const twentyOrmGraphqlApiExceptionHandler = (
   error: TwentyOrmException,
 ) => {
   switch (true) {
+    case error.code === TwentyOrmExceptionCode.QUERY_READ_TIMEOUT:
+      throw new TimeoutError(error);
     case error.code === TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED: {
       const duplicateKeyError: DuplicateKeyErrorWithMetadata = error;
 

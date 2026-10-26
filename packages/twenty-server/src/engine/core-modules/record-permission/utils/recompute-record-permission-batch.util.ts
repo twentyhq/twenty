@@ -74,20 +74,27 @@ export const recomputeRecordPermissionBatch = async ({
   };
   const evaluatedExpressions = new Map<
     string,
-    { alias: string; sql: string }
+    { alias: string; sql: string; isPredicate: boolean }
   >();
-  const evaluateOnce = (condition: SqlCondition): string => {
+  const evaluateOnce = (
+    condition: SqlCondition,
+    isPredicate = false,
+  ): string => {
     if (
       condition.sql === 'TRUE' ||
       condition.sql === 'FALSE' ||
       condition.sql === "'{}'::uuid[]"
     )
       return condition.sql;
-    const key = JSON.stringify([condition.sql, condition.parameters]);
+    const normalized = compileNamedParameters(
+      condition.sql,
+      condition.parameters,
+    );
+    const key = JSON.stringify([normalized.text, normalized.values]);
     const existing = evaluatedExpressions.get(key);
     if (isDefined(existing)) return escapeIdentifier(existing.alias);
     const alias = `permissionExpression${evaluatedExpressions.size}`;
-    evaluatedExpressions.set(key, { alias, sql: condition.sql });
+    evaluatedExpressions.set(key, { alias, sql: condition.sql, isPredicate });
     return escapeIdentifier(alias);
   };
   const targetPolicy = context.definition.objects.find(
@@ -142,7 +149,7 @@ export const recomputeRecordPermissionBatch = async ({
         });
 
         return [
-          `CASE WHEN (${evaluateOnce(condition)}) THEN :${parameterName}::uuid END`,
+          `CASE WHEN (${evaluateOnce(condition, true)}) THEN :${parameterName}::uuid END`,
         ];
       });
 
@@ -164,7 +171,7 @@ export const recomputeRecordPermissionBatch = async ({
     .join(', ');
   const retained = (column: string) =>
     `ARRAY(SELECT value FROM unnest("permissionTarget".${escapeIdentifier(column)}) value WHERE EXISTS (SELECT 1 FROM ${escapeIdentifier(context.schemaName)}."recordPermissionAccessGroup" revisionGroup CROSS JOIN ${escapeIdentifier(context.schemaName)}."recordPermissionState" state WHERE revisionGroup.id = value AND revisionGroup."revisionId" <> :permissionRevisionId AND revisionGroup."revisionId" IN (state."activeRevisionId", state."candidateRevisionId")))`;
-  const selectColumns = expressions
+  let selectColumns = expressions
     .map(
       ({ column, sql }) =>
         `ARRAY(SELECT DISTINCT combined FROM unnest(${retained(column)} || ${sql}) combined ORDER BY combined) AS ${escapeIdentifier(column)}`,
@@ -177,9 +184,28 @@ export const recomputeRecordPermissionBatch = async ({
     )
     .join(' OR ');
   // Most rules grant several actions. Materialize their identical predicates once per row.
-  const evaluatedColumns = [...evaluatedExpressions.values()]
-    .map(({ alias, sql }) => `, (${sql}) AS ${escapeIdentifier(alias)}`)
-    .join('');
+  const predicates = [...evaluatedExpressions.values()].filter(
+    ({ isPredicate }) => isPredicate,
+  );
+  // PostgreSQL limits SELECT target lists; many member bindings must not become columns.
+  const packPredicates = predicates.length > 1000;
+  if (packPredicates) {
+    for (const [index, { alias }] of predicates.entries()) {
+      selectColumns = selectColumns
+        .split(escapeIdentifier(alias))
+        .join(`"permissionPredicates"[${index + 1}]`);
+    }
+  }
+  const evaluatedColumns = [
+    ...[...evaluatedExpressions.values()]
+      .filter(({ isPredicate }) => !packPredicates || !isPredicate)
+      .map(({ alias, sql }) => `, (${sql}) AS ${escapeIdentifier(alias)}`),
+    ...(packPredicates
+      ? [
+          ` , ARRAY[${predicates.map(({ sql }) => `(${sql})`).join(', ')}] AS "permissionPredicates"`,
+        ]
+      : []),
+  ].join('');
   const retainedColumns = RECORD_PERMISSION_ACTIONS.map(
     (action) =>
       `, "permissionTarget".${escapeIdentifier(RECORD_PERMISSION_ACCESS_COLUMNS[action])}`,

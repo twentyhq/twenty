@@ -1,0 +1,8 @@
+{
+  "checks": [
+    "SSE export completes with the projected authorized row; authenticated CSV download has exactly one data row",
+    "Restricted field cannot be exported"
+  ],
+  "startedAt": "2026-10-26T22:07:34.350Z",
+  "finishedAt": "2026-10-26T22:07:36.616Z"
+}

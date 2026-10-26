@@ -1,0 +1,44 @@
+{
+  "members": 1000,
+  "actions": 6,
+  "records": 100,
+  "schema": "dense_benchmark_727a3765ae704dbdae3c240878922e4f",
+  "startedAt": "2026-10-26T22:15:41.692Z",
+  "cases": [
+    {
+      "numberOfRules": 1,
+      "groups": 4000,
+      "changed": 100,
+      "retries": 2,
+      "finalBatchSize": 25,
+      "projectionMs": 8311.256875000001,
+      "size": {
+        "readableByAccessGroupIds": 1000,
+        "writableByAccessGroupIds": 1000,
+        "softDeletableByAccessGroupIds": 1000,
+        "destroyableByAccessGroupIds": 1000,
+        "shareableByAccessGroupIds": 1000,
+        "receivableByAccessGroupIds": 1000,
+        "rowBytes": "99416.000000000000"
+      }
+    },
+    {
+      "numberOfRules": 2,
+      "groups": 8000,
+      "changed": 100,
+      "retries": 4,
+      "finalBatchSize": 6,
+      "projectionMs": 23908.70075,
+      "size": {
+        "readableByAccessGroupIds": 2000,
+        "writableByAccessGroupIds": 2000,
+        "softDeletableByAccessGroupIds": 2000,
+        "destroyableByAccessGroupIds": 2000,
+        "shareableByAccessGroupIds": 2000,
+        "receivableByAccessGroupIds": 2000,
+        "rowBytes": "195416.000000000000"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-26T22:16:14.330Z"
+}

@@ -1,3 +1,7 @@
+import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
+import { isTotalNumberOfRowsKnownComponentState } from '@/object-record/record-table/virtualization/states/isTotalNumberOfRowsKnownComponentState';
+import { recordTableDataGenerationComponentState } from '@/object-record/record-table/virtualization/states/recordTableDataGenerationComponentState';
+import { getRecordTableRowExtent } from '@/object-record/record-table/virtualization/utils/getRecordTableRowExtent';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -56,6 +60,12 @@ export const useTriggerInitialRecordTableDataLoad = () => {
   );
 
   const store = useStore();
+  const hasUserSelectedAllRecordsCallbackState =
+    useAtomComponentStateCallbackState(hasUserSelectedAllRecordsComponentState);
+  const recordTableDataGenerationCallbackState =
+    useAtomComponentStateCallbackState(recordTableDataGenerationComponentState);
+  const isTotalNumberOfRowsKnownCallbackState =
+    useAtomComponentStateCallbackState(isTotalNumberOfRowsKnownComponentState);
 
   const recordIndexRecordIdsByGroupFamilyState =
     useAtomComponentFamilyStateCallbackState(
@@ -106,6 +116,8 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       }
 
       store.set(isInitializingVirtualTableDataLoadingCallbackState, true);
+      const generation = store.get(recordTableDataGenerationCallbackState) + 1;
+      store.set(recordTableDataGenerationCallbackState, generation);
 
       try {
         const hasRecordsToKeepDisplayed = isNonEmptyArray(
@@ -144,17 +156,34 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         try {
           findManyRecordsResult = await findManyRecordsLazy();
         } finally {
-          clearLoadedRecords();
+          if (
+            store.get(recordTableDataGenerationCallbackState) === generation
+          ) {
+            clearLoadedRecords();
+          }
         }
 
-        const { records, totalCount } = findManyRecordsResult;
+        if (store.get(recordTableDataGenerationCallbackState) !== generation) {
+          return;
+        }
 
+        const { records, totalCount, isTotalCountKnown, hasNextPage } =
+          findManyRecordsResult;
+        const extent = getRecordTableRowExtent({
+          totalCount: isTotalCountKnown ? totalCount : undefined,
+          numberOfRecords: records?.length ?? 0,
+          hasNextPage,
+          recordLimit,
+        });
+
+        store.set(totalNumberOfRowsCallbackState, extent.totalNumberOfRows);
         store.set(
-          totalNumberOfRowsCallbackState,
-          isDefined(recordLimit)
-            ? Math.min(totalCount, recordLimit)
-            : totalCount,
+          isTotalNumberOfRowsKnownCallbackState,
+          extent.isTotalCountKnown,
         );
+        if (!extent.isTotalCountKnown) {
+          store.set(hasUserSelectedAllRecordsCallbackState, false);
+        }
 
         if (isDefined(records)) {
           upsertRecordsInStore({ partialRecords: records });
@@ -207,6 +236,9 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       reapplyRowSelection,
       recordTableId,
       recordLimit,
+      hasUserSelectedAllRecordsCallbackState,
+      isTotalNumberOfRowsKnownCallbackState,
+      recordTableDataGenerationCallbackState,
     ],
   );
 

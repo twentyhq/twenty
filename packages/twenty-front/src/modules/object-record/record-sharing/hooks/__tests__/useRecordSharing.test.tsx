@@ -41,6 +41,11 @@ const SHARING = {
   generalAccessLevel: 'NONE',
   defaultGeneralAccessLevel: 'NONE',
   hasManagedGeneralAccess: false,
+  allowedShareAccessLevels: ['READ', 'READ_WRITE', 'FULL'],
+  usesRecordPermissionPolicy: true,
+  hasMoreShares: false,
+  hasMoreInheritedShares: false,
+  inheritedShares: [],
   shares: [],
   roles: [],
 };

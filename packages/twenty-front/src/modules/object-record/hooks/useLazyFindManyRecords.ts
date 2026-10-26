@@ -1,3 +1,4 @@
+import { findManyRecordsWithOptionalCount } from '@/object-record/utils/findManyRecordsWithOptionalCount';
 import { useLazyQuery } from '@apollo/client/react';
 import { useCallback, useMemo } from 'react';
 
@@ -23,6 +24,7 @@ type UseLazyFindManyRecordsParams<T> = Omit<
   'skip' | 'onCompleted' | 'onError'
 > & {
   shouldToastOnError?: boolean;
+  allowMissingTotalCountOnTimeout?: boolean;
 };
 
 export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
@@ -33,6 +35,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   recordGqlFields,
   fetchPolicy = 'cache-first',
   shouldToastOnError = true,
+  allowMissingTotalCountOnTimeout = false,
 }: UseLazyFindManyRecordsParams<T>) => {
   const store = useStore();
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -45,6 +48,13 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     objectNameSingular,
     recordGqlFields,
   });
+
+  const { findManyRecordsQuery: findManyRecordsWithoutCountQuery } =
+    useFindManyRecordsQuery({
+      objectNameSingular,
+      recordGqlFields,
+      includeTotalCount: false,
+    });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
@@ -99,6 +109,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         data: null,
         records: null,
         totalCount: 0,
+        isTotalCountKnown: true,
         hasNextPage: false,
         error: undefined,
       };
@@ -108,9 +119,22 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     // the query document changes (e.g. metadata/permissions loading).
     // Calling .retain() keeps the query running to completion even if
     // the ObservableQuery is updated, preventing AbortError rejections.
-    const result = await findManyRecords({
-      variables: defaultVariables,
-    }).retain();
+    const result = await findManyRecordsWithOptionalCount({
+      allowMissingTotalCountOnTimeout,
+      findWithCount: () =>
+        findManyRecords({ variables: defaultVariables }).retain(),
+      findWithoutCount: () =>
+        apolloCoreClient.query<RecordGqlOperationFindManyResult>({
+          query: findManyRecordsWithoutCountQuery,
+          variables: defaultVariables,
+          fetchPolicy: 'network-only',
+        }),
+    }).catch((error: unknown) => {
+      if (shouldToastOnError && error instanceof Error) {
+        handleFindManyRecordsError(error);
+      }
+      throw error;
+    });
 
     if (isDefined(result?.error) && shouldToastOnError) {
       handleFindManyRecordsError(result.error);
@@ -145,11 +169,17 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       data: result?.data,
       records,
       totalCount,
+      isTotalCountKnown: isDefined(
+        result?.data?.[objectMetadataItem.namePlural]?.totalCount,
+      ),
       hasNextPage,
       error: result?.error,
     };
   }, [
     hasReadPermission,
+    allowMissingTotalCountOnTimeout,
+    apolloCoreClient,
+    findManyRecordsWithoutCountQuery,
     findManyRecords,
     defaultVariables,
     objectMetadataItem.namePlural,

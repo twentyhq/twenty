@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { saveAs } from 'file-saver';
 import { useRef, useState, type ChangeEvent } from 'react';
 import { parseRecordPermissionPolicy } from 'twenty-shared/utils';
+import { type RecordPermissionPolicyDefinition } from 'twenty-shared/types';
 import { Button } from 'twenty-ui/primitives/input';
 import { useToast } from 'twenty-ui/components/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -19,12 +20,17 @@ const StyledDescription = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
-type RecordPermissionPolicyTransferProps = { disabled: boolean };
+type RecordPermissionPolicyTransferProps = {
+  disabled: boolean;
+  exportedDefinition?: RecordPermissionPolicyDefinition;
+};
 
 export const RecordPermissionPolicyTransfer = ({
   disabled,
+  exportedDefinition,
 }: RecordPermissionPolicyTransferProps) => {
   const { definition, updateDefinition } = useRecordPermissionPolicy();
+  const definitionToExport = exportedDefinition ?? definition;
   const inputRef = useRef<HTMLInputElement>(null);
   const [importing, setImporting] = useState(false);
   const { enqueueToast } = useToast();
@@ -54,9 +60,9 @@ export const RecordPermissionPolicyTransfer = ({
     }
   };
   const handleExport = () => {
-    if (!definition) return;
+    if (!definitionToExport) return;
     saveAs(
-      new Blob([JSON.stringify(definition, null, 2)], {
+      new Blob([JSON.stringify(definitionToExport, null, 2)], {
         type: 'application/json',
       }),
       'record-permissions.json',

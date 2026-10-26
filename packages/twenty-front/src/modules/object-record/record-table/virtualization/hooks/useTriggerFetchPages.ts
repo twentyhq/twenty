@@ -1,3 +1,9 @@
+import { isTotalNumberOfRowsKnownComponentState } from '@/object-record/record-table/virtualization/states/isTotalNumberOfRowsKnownComponentState';
+import { recordTableDataGenerationComponentState } from '@/object-record/record-table/virtualization/states/recordTableDataGenerationComponentState';
+import { getRecordTableRowExtent } from '@/object-record/record-table/virtualization/utils/getRecordTableRowExtent';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useAllocateRowSlots } from '@/object-record/record-table/virtualization/hooks/useAllocateRowSlots';
+import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { getContiguousIncrementalValues, isDefined } from 'twenty-shared/utils';
@@ -25,9 +31,17 @@ const PAGING_FOR_UI_UPDATE = 10;
 const TIME_BETWEEN_TWO_REQUESTS = 25;
 
 export const useTriggerFetchPages = () => {
+  const { recordLimit } = useRecordIndexContextOrThrow();
+  const { allocateRowSlots } = useAllocateRowSlots();
+  const { triggerInitialRecordTableDataLoad } =
+    useTriggerInitialRecordTableDataLoad();
   const { objectNameSingular } = useRecordTableContextOrThrow();
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
   const store = useStore();
+  const recordTableDataGenerationCallbackState =
+    useAtomComponentStateCallbackState(recordTableDataGenerationComponentState);
+  const isTotalNumberOfRowsKnownCallbackState =
+    useAtomComponentStateCallbackState(isTotalNumberOfRowsKnownComponentState);
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { loadRecordsAtRowIndexes } = useLoadRecordsAtRowIndexes();
@@ -107,14 +121,38 @@ export const useTriggerFetchPages = () => {
 
       store.set(numberOfPendingPageFetchesCallbackState, (count) => count + 1);
 
+      const generation = store.get(recordTableDataGenerationCallbackState);
       try {
-        const { records } = await findManyRecordsLazyWithOffset(
+        const { records, hasNextPage } = await findManyRecordsLazyWithOffset(
           numberOfRecordsToFetch,
           startingRowIndexToFetch,
         );
 
-        if (!isDefined(records)) {
+        if (
+          !isDefined(records) ||
+          store.get(recordTableDataGenerationCallbackState) !== generation
+        ) {
           return;
+        }
+
+        if (!store.get(isTotalNumberOfRowsKnownCallbackState)) {
+          if (records.length === 0 && startingRowIndexToFetch > 0) {
+            await triggerInitialRecordTableDataLoad();
+            return;
+          }
+          const extent = getRecordTableRowExtent({
+            offset: startingRowIndexToFetch,
+            numberOfRecords: records.length,
+            hasNextPage,
+            recordLimit,
+            previousExtent: store.get(totalNumberOfRowsCallbackState) ?? 0,
+          });
+          store.set(totalNumberOfRowsCallbackState, extent.totalNumberOfRows);
+          store.set(
+            isTotalNumberOfRowsKnownCallbackState,
+            extent.isTotalCountKnown,
+          );
+          allocateRowSlots();
         }
 
         for (
@@ -126,6 +164,11 @@ export const useTriggerFetchPages = () => {
             setTimeout(resolve, TIME_BETWEEN_UI_BATCH_UPDATE),
           );
 
+          if (
+            store.get(recordTableDataGenerationCallbackState) !== generation
+          ) {
+            return;
+          }
           const recordsSlice = records.slice(
             sliceStart,
             sliceStart + PAGING_FOR_UI_UPDATE,
@@ -156,6 +199,11 @@ export const useTriggerFetchPages = () => {
       store,
       totalNumberOfRowsCallbackState,
       upsertRecordsInStore,
+      recordTableDataGenerationCallbackState,
+      isTotalNumberOfRowsKnownCallbackState,
+      recordLimit,
+      allocateRowSlots,
+      triggerInitialRecordTableDataLoad,
     ],
   );
 

@@ -24,6 +24,7 @@ import {
   type ORMWorkspaceContext,
   withWorkspaceContext,
   getWorkspaceContext,
+  reusableReadWorkspaceContextStorage,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
@@ -128,6 +129,10 @@ export class WorkspaceOrmManager {
     options?: ExecuteInWorkspaceContextOptions,
   ): Promise<T> {
     const resolvedAuthContext = authContext ?? getWorkspaceAuthContext();
+    const reusableContext = reusableReadWorkspaceContextStorage.getStore();
+    if (reusableContext?.authContext === resolvedAuthContext) {
+      return withWorkspaceContext(reusableContext, fn);
+    }
     const context = options?.lite
       ? await this.loadLiteWorkspaceContext(resolvedAuthContext)
       : await this.loadWorkspaceContext(resolvedAuthContext);
@@ -137,6 +142,11 @@ export class WorkspaceOrmManager {
       workspaceContext: context,
     });
 
+    if (options?.reuseContextForNestedReads && !options.lite) {
+      return reusableReadWorkspaceContextStorage.run(context, () =>
+        withWorkspaceContext(context, fn),
+      );
+    }
     return withWorkspaceContext(context, fn);
   }
 

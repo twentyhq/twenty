@@ -285,7 +285,7 @@ export const RecordPermissionObjectCard = ({
             <StyledRule key={rule.universalIdentifier}>
               {rule.condition && (
                 <fieldset
-                  disabled={disabled}
+                  disabled={disabled || !canUseRowLevelSecurity}
                   style={{ border: 0, margin: 0, padding: 0 }}
                 >
                   <RecordPermissionConditionEditor
@@ -300,7 +300,14 @@ export const RecordPermissionObjectCard = ({
               )}
               <StyledRuleActions>
                 {actions.map(({ action, label }) => (
-                  <StyledPermissionLabel key={action}>
+                  <StyledPermissionLabel
+                    key={action}
+                    title={
+                      rule.actions.length === 1 && rule.actions.includes(action)
+                        ? t`A rule must allow at least one action. Remove the rule to stop granting access.`
+                        : undefined
+                    }
+                  >
                     <Checkbox
                       checked={
                         rule.actions.includes(action) &&
@@ -308,6 +315,9 @@ export const RecordPermissionObjectCard = ({
                       }
                       disabled={
                         disabled ||
+                        !canUseRowLevelSecurity ||
+                        (rule.actions.length === 1 &&
+                          rule.actions.includes(action)) ||
                         capabilities[action] === false ||
                         ((action === 'share' || action === 'receive') &&
                           !isRecordSharingEnabled)
@@ -334,6 +344,7 @@ export const RecordPermissionObjectCard = ({
                     value={rule.shareAccessLevel ?? RecordShareAccessLevel.FULL}
                     disabled={
                       disabled ||
+                      !canUseRowLevelSecurity ||
                       capabilities.share === false ||
                       !isRecordSharingEnabled
                     }

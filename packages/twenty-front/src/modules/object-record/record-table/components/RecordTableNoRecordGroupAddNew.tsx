@@ -1,3 +1,5 @@
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -10,6 +12,7 @@ import { RecordTableWidgetNestedRelationAddNewRow } from '@/object-record/record
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useLoadRecordsAtRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsAtRowIndexes';
+import { isTotalNumberOfRowsKnownComponentState } from '@/object-record/record-table/virtualization/states/isTotalNumberOfRowsKnownComponentState';
 import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
 import { recordTableRowIndexByRecordIdComponentSelector } from '@/object-record/record-table/states/selectors/recordTableRowIndexByRecordIdComponentSelector';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
@@ -23,7 +26,16 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 
+const StyledLoadingHint = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[4]};
+`;
+
 export const RecordTableNoRecordGroupAddNew = () => {
+  const isTotalNumberOfRowsKnown = useAtomComponentStateValue(
+    isTotalNumberOfRowsKnownComponentState,
+  );
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
   const recordTableWidgetContext = useContext(RecordTableWidgetContext);
@@ -95,6 +107,12 @@ export const RecordTableNoRecordGroupAddNew = () => {
       totalNumberOfRowsCallbackState,
     ],
   );
+
+  if (!isTotalNumberOfRowsKnown) {
+    return (
+      <StyledLoadingHint role="status">{t`More records load as you scroll`}</StyledLoadingHint>
+    );
+  }
 
   if (isRecordTableCellsNonEditable) {
     return null;

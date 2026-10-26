@@ -6,6 +6,7 @@ import {
 
 export type RecordPermissionPolicyState = {
   activeRevisionId: string | null;
+  activeDefinition: RecordPermissionPolicyDefinition | null;
   candidateRevisionId: string | null;
   status: RecordPermissionRevisionStatus | 'inactive';
   definition: RecordPermissionPolicyDefinition;

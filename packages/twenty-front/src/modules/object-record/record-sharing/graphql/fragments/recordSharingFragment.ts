@@ -40,6 +40,8 @@ export const RECORD_SHARING_FRAGMENT = gql`
       label
       canRead
       canUpdate
+      hasSomeReadAccess
+      hasSomeUpdateAccess
     }
   }
 `;

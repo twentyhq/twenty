@@ -1,0 +1,15 @@
+{
+  "noteId": "6ac87a97-bfd2-4982-98a5-7c61e57f624f",
+  "startedAt": "2026-10-26T22:54:24.649Z",
+  "checks": [
+    "Private by default; creator receives no implicit grant; private collection/count is empty",
+    "Disabling all authoring flags preserves active enforcement and blocks publication",
+    "Inherited read works live; a member without Share cannot delegate; explicit grants survive grantor access loss",
+    "Removing a direct grant preserves inheritance; removing its final parent denies point reads immediately",
+    "REST point read also denies the unshared private record",
+    "Projected collection and exact count converge to the live revocation",
+    "Active policy identity is unchanged"
+  ],
+  "cleanedUp": true,
+  "finishedAt": "2026-10-26T22:54:27.809Z"
+}

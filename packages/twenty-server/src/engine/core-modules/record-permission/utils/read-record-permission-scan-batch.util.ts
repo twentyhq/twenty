@@ -27,6 +27,7 @@ export const readRecordPermissionScanBatch = async ({
   const relationFileNode = Number(relation.fileNode);
   const restarting = scan.relationFileNode !== relationFileNode;
   const blockCursor = restarting ? 0 : scan.blockCursor;
+  const tupleCursor = restarting ? 0 : (scan.tupleCursor ?? 0);
   const blockLimit =
     restarting || scan.blockLimit === null
       ? Number(relation.blocks)
@@ -39,14 +40,23 @@ export const readRecordPermissionScanBatch = async ({
   // UUID order scatters heap writes. These page bounds are progress only; identities remain primary keys.
   // Concurrent business changes are covered by the transactional outbox, including moves behind the cursor.
   const records = await database.query(
-    `SELECT id FROM ${table} WHERE ctid >= $1::tid AND ctid < $2::tid`,
-    [`(${blockCursor},0)`, `(${nextBlock},0)`],
+    `SELECT id, ctid::text AS "tupleId" FROM ${table} WHERE ctid >= $1::tid AND ctid < $2::tid ORDER BY ctid LIMIT $3`,
+    [`(${blockCursor},${tupleCursor})`, `(${nextBlock},0)`, batchSize + 1],
   );
+  const batch = records.slice(0, batchSize);
+  const hasRemainingTuples = records.length > batchSize;
+  const lastTuple = hasRemainingTuples
+    ? String(batch[batch.length - 1].tupleId)
+        .slice(1, -1)
+        .split(',')
+        .map(Number)
+    : [nextBlock, -1];
   return {
-    recordIds: records.map((record) => String(record.id)),
-    blockCursor: nextBlock,
+    recordIds: batch.map((record) => String(record.id)),
+    blockCursor: lastTuple[0],
+    tupleCursor: lastTuple[1] + 1,
     blockLimit,
     relationFileNode,
-    complete: nextBlock >= blockLimit,
+    complete: !hasRemainingTuples && nextBlock >= blockLimit,
   };
 };

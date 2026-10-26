@@ -1,0 +1,10 @@
+{
+  "noteId": "a31322e0-8f05-4b81-94e8-ceef03a4524f",
+  "startedAt": "2026-10-26T22:50:09.105Z",
+  "checks": [
+    "Private by default; creator receives no implicit grant; private collection/count is empty",
+    "Disabling all authoring flags preserves active enforcement and blocks publication"
+  ],
+  "cleanedUp": true,
+  "error": "[{\"message\":\"canceling statement due to lock timeout\",\"extensions\":{\"code\":\"INTERNAL_SERVER_ERROR\",\"userFriendlyMessage\":\"We are experiencing a temporary issue with our database. Please try again later.\"}}]"
+}

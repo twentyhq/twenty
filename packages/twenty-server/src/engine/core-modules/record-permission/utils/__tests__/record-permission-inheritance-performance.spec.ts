@@ -231,6 +231,7 @@ import { type SqlCondition } from 'src/engine/twenty-orm/types/row-access-policy
           await client.query('COMMIT');
           scan = {
             blockCursor: batch.blockCursor,
+            tupleCursor: batch.tupleCursor,
             blockLimit: batch.blockLimit,
             relationFileNode: batch.relationFileNode,
           };

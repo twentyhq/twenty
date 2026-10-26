@@ -19,33 +19,29 @@ export class RecordPermissionJob {
   @Process(RecordPermissionJob.name)
   async handle({
     workspaceId,
-    reconcile,
   }: {
     workspaceId: string;
     reconcile?: boolean;
   }): Promise<void> {
-    if (reconcile) {
-      await this.worker.reconcile(workspaceId);
-    } else {
-      const remaining = await this.worker.drain(workspaceId);
+    await this.worker.reconcile(workspaceId);
+    const remaining = await this.worker.drain(workspaceId);
 
-      if (remaining) {
-        await this.queue.add(
-          RecordPermissionJob.name,
-          { workspaceId },
-          {
-            deduplication: {
-              id: `record-permission-${workspaceId}`,
-              keepLastIfActive: true,
-            },
-            retryLimit: 5,
-            backoff: {
-              strategy: 'exponential',
-              initialDelayMilliseconds: 1000,
-            },
+    if (remaining) {
+      await this.queue.add(
+        RecordPermissionJob.name,
+        { workspaceId },
+        {
+          deduplication: {
+            id: `record-permission-${workspaceId}`,
+            keepLastIfActive: true,
           },
-        );
-      }
+          retryLimit: 5,
+          backoff: {
+            strategy: 'exponential',
+            initialDelayMilliseconds: 1000,
+          },
+        },
+      );
     }
   }
 }

@@ -1,4 +1,5 @@
 import { installRecordPermissionPathIndexes } from 'src/engine/core-modules/record-permission/utils/install-record-permission-path-indexes.util';
+import { hasRecordPermissionConditionChanges } from 'src/engine/core-modules/record-permission/utils/has-record-permission-condition-changes.util';
 import { resolveRecordPermissionDefinition } from 'src/engine/core-modules/record-permission/utils/resolve-record-permission-definition.util';
 import { getRecordCapabilities } from 'src/engine/core-modules/record-permission/utils/get-record-capabilities.util';
 import { isRecordPermissionConditionMemberDependent } from 'src/engine/core-modules/record-permission/utils/is-record-permission-condition-member-dependent.util';
@@ -78,6 +79,7 @@ export class RecordPermissionPolicyService {
       capabilitiesByObjectUniversalIdentifier:
         context.capabilitiesByObjectUniversalIdentifier,
       activeRevisionId: active?.id ?? null,
+      activeDefinition: active?.definition ?? null,
       candidateRevisionId: candidate?.id ?? null,
       status: candidate?.status ?? active?.status ?? 'inactive',
       definition,
@@ -134,9 +136,14 @@ export class RecordPermissionPolicyService {
       throw new Error('Record permission editing is not enabled');
     }
 
+    const activeRevision = await this.dataSource
+      .getRepository(RecordPermissionRevisionEntity)
+      .findOneBy({ workspaceId, status: 'active' });
+
     if (
-      definition.objects.some((object) =>
-        object.rules.some((rule) => isDefined(rule.condition)),
+      hasRecordPermissionConditionChanges(
+        definition,
+        activeRevision?.definition,
       ) &&
       (!featureFlagsMap[FeatureFlagKey.IS_ROW_LEVEL_SECURITY_ENABLED] ||
         !(await this.rowLevelPermissionPredicateService.hasRowLevelPermissionFeature(

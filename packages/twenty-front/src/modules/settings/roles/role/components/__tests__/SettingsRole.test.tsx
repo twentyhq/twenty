@@ -19,6 +19,20 @@ const mockSaveDraftRoleToDB = jest.fn();
 const mockLoadCurrentUser = jest.fn();
 const mockEnqueueToast = jest.fn();
 const mockNavigateSettings = jest.fn();
+const mockPublishRecordPermissionPolicy = jest.fn();
+const mockResetRecordPermissionPolicy = jest.fn();
+let mockIsRecordPermissionPolicyDirty = false;
+
+jest.mock(
+  '@/settings/record-permissions/hooks/useRecordPermissionPolicy',
+  () => ({
+    useRecordPermissionPolicy: () => ({
+      isDirty: mockIsRecordPermissionPolicyDirty,
+      publish: mockPublishRecordPermissionPolicy,
+      reset: mockResetRecordPermissionPolicy,
+    }),
+  }),
+);
 
 jest.mock('@/settings/roles/components/SettingsRolesQueryEffect', () => ({
   SettingsRolesQueryEffect: () => null,
@@ -183,6 +197,35 @@ const renderSettingsRole = ({
 describe('SettingsRole', () => {
   afterEach(() => {
     jest.resetAllMocks();
+    mockIsRecordPermissionPolicyDirty = false;
+  });
+
+  it('publishes record permission changes without rewriting an unchanged role', async () => {
+    mockIsRecordPermissionPolicyDirty = true;
+    const user = userEvent.setup();
+    renderSettingsRole({ draftLabel: PERSISTED_ROLE.label });
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+    expect(mockPublishRecordPermissionPolicy).toHaveBeenCalledTimes(1);
+    expect(mockSaveDraftRoleToDB).not.toHaveBeenCalled();
+  });
+
+  it('retains the policy draft and restores Save after publication fails', async () => {
+    mockIsRecordPermissionPolicyDirty = true;
+    mockPublishRecordPermissionPolicy.mockRejectedValue(
+      new Error('Publication failed'),
+    );
+    const user = userEvent.setup();
+    renderSettingsRole({ draftLabel: PERSISTED_ROLE.label });
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    await user.click(saveButton);
+    await waitFor(() =>
+      expect(mockEnqueueToast).toHaveBeenCalledWith(
+        expect.objectContaining({ status: 'error' }),
+      ),
+    );
+    expect(mockResetRecordPermissionPolicy).not.toHaveBeenCalled();
+    expect(saveButton).toBeEnabled();
+    expect(saveButton).not.toHaveAttribute('aria-busy', 'true');
   });
 
   it.each([null, 'role-creation-flow'])(

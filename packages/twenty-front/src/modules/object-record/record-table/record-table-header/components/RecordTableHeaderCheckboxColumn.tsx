@@ -1,3 +1,4 @@
+import { isTotalNumberOfRowsKnownComponentState } from '@/object-record/record-table/virtualization/states/isTotalNumberOfRowsKnownComponentState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
@@ -40,6 +41,9 @@ const StyledColumnHeaderCell = styled.div`
 
 export const RecordTableHeaderCheckboxColumn = () => {
   const { t } = useLingui();
+  const isTotalNumberOfRowsKnown = useAtomComponentStateValue(
+    isTotalNumberOfRowsKnownComponentState,
+  );
 
   const allRowsSelectedStatus = useAtomComponentSelectorValue(
     allRecordsSelectedStatusComponentSelector,
@@ -90,7 +94,11 @@ export const RecordTableHeaderCheckboxColumn = () => {
           onCheckedChange={() => onChange()}
           indeterminate={indeterminate}
           disabled={recordTableIsEmpty}
-          aria-label={t`Select all rows`}
+          aria-label={
+            isTotalNumberOfRowsKnown
+              ? t`Select all rows`
+              : t`Select loaded rows`
+          }
         />
       </StyledContainer>
     </StyledColumnHeaderCell>

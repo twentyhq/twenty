@@ -13,11 +13,20 @@ const StyledStatus = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[3]};
   padding: ${themeCssVariables.spacing[3]};
 `;
 
-export const RecordPermissionPolicyStatus = () => {
+type RecordPermissionPolicyStatusProps = {
+  isViewingActive?: boolean;
+  onToggleActive?: () => void;
+};
+
+export const RecordPermissionPolicyStatus = ({
+  isViewingActive = false,
+  onToggleActive,
+}: RecordPermissionPolicyStatusProps) => {
   const { state, error, cancel } = useRecordPermissionPolicy();
   const { enqueueToast } = useToast();
   if (error) return <StyledStatus role="alert">{error.message}</StyledStatus>;
@@ -38,8 +47,25 @@ export const RecordPermissionPolicyStatus = () => {
         {state.status === 'failed'
           ? t`Permissions could not be applied. ${state.failureReason ?? ''}`
           : t`Applying permissions. Current access remains active until this finishes.`}
-        {progress && ` ${progress.completedObjects} / ${progress.totalObjects}`}
+        {progress && (
+          <>
+            {' '}
+            {t`${progress.completedObjects} of ${progress.totalObjects} objects completed; ${progress.processed} records checked.`}
+          </>
+        )}
       </span>
+      {state.activeDefinition && onToggleActive && (
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={onToggleActive}
+          aria-pressed={isViewingActive}
+        >
+          {isViewingActive
+            ? t`View pending changes`
+            : t`View current permissions`}
+        </Button>
+      )}
       <Button
         size="sm"
         variant="outline"

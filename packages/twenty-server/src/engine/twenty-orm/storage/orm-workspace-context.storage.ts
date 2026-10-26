@@ -40,6 +40,9 @@ export type ORMWorkspaceContext = {
 export const workspaceContextStorage =
   new AsyncLocalStorage<ORMWorkspaceContext>();
 
+export const reusableReadWorkspaceContextStorage =
+  new AsyncLocalStorage<ORMWorkspaceContext>();
+
 export const getWorkspaceContext = (): ORMWorkspaceContext => {
   const context = workspaceContextStorage.getStore();
 

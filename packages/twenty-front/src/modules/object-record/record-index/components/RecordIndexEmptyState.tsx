@@ -39,9 +39,11 @@ export const RecordIndexEmptyState = ({
     objectMetadataItem,
   });
 
-  const { totalCount } = useFindManyRecords({
+  const { records, loading, error } = useFindManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     limit: 1,
+    includeTotalCount: false,
+    recordGqlFields: { id: true },
   });
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
@@ -105,7 +107,7 @@ export const RecordIndexEmptyState = ({
     );
   }
 
-  if (totalCount === 0) {
+  if (!loading && !error && records.length === 0) {
     return (
       <RecordIndexEmptyStateDisplay
         animatedPlaceholderType="noRecord"

@@ -14,11 +14,13 @@ export const useFindManyRecordsQuery = ({
   objectNameSingular,
   recordGqlFields,
   computeReferences,
+  includeTotalCount = true,
   cursorDirection = 'after',
 }: {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
+  includeTotalCount?: boolean;
   cursorDirection?: QueryCursorDirection;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -36,6 +38,7 @@ export const useFindManyRecordsQuery = ({
         objectMetadataItems,
         recordGqlFields,
         computeReferences,
+        includeTotalCount,
         cursorDirection,
         objectPermissionsByObjectMetadataId,
       }),
@@ -44,6 +47,7 @@ export const useFindManyRecordsQuery = ({
       objectMetadataItems,
       recordGqlFields,
       computeReferences,
+      includeTotalCount,
       cursorDirection,
       objectPermissionsByObjectMetadataId,
     ],

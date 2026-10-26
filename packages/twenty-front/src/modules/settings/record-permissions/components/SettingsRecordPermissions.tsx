@@ -26,8 +26,20 @@ export const SettingsRecordPermissions = ({
   roleId,
   isEditable,
 }: SettingsRecordPermissionsProps) => {
-  const { state, definition, loading, updateDefinition } =
-    useRecordPermissionPolicy();
+  const {
+    state,
+    definition: draftDefinition,
+    loading,
+    updateDefinition,
+  } = useRecordPermissionPolicy();
+  const [showActive, setShowActive] = useState(false);
+  const isViewingActive =
+    showActive &&
+    Boolean(state?.candidateRevisionId) &&
+    Boolean(state?.activeDefinition);
+  const definition = isViewingActive
+    ? state?.activeDefinition
+    : draftDefinition;
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
   const settingsDraftRole = useAtomFamilyStateValue(
@@ -49,6 +61,7 @@ export const SettingsRecordPermissions = ({
     );
   const [search, setSearch] = useState('');
   const disabled =
+    isViewingActive ||
     !isEditable ||
     Boolean(state?.candidateRevisionId) ||
     !settingsDraftRole.universalIdentifier;
@@ -58,7 +71,10 @@ export const SettingsRecordPermissions = ({
         title={t`Objects`}
         description={t`Object and field permission settings. Access is private until a permission allows it.`}
       />
-      <RecordPermissionPolicyStatus />
+      <RecordPermissionPolicyStatus
+        isViewingActive={isViewingActive}
+        onToggleActive={() => setShowActive(!showActive)}
+      />
       {loading && <span role="status">{t`Loading permissions…`}</span>}
       {definition && (
         <>
@@ -144,7 +160,10 @@ export const SettingsRecordPermissions = ({
                 />
               );
             })}
-          <RecordPermissionPolicyTransfer disabled={disabled} />
+          <RecordPermissionPolicyTransfer
+            disabled={disabled}
+            exportedDefinition={definition}
+          />
         </>
       )}
     </Section.Root>

@@ -59,15 +59,24 @@ export const SettingsRelatedRecordPermissions = ({
   disabled = false,
 }: SettingsRelatedRecordPermissionsProps) => {
   const policy = useRecordPermissionPolicy();
+  const [showActive, setShowActive] = useState(false);
+  const isViewingActive =
+    showActive &&
+    Boolean(policy.state?.candidateRevisionId) &&
+    Boolean(policy.state?.activeDefinition);
+  const definition = isViewingActive
+    ? policy.state?.activeDefinition
+    : policy.definition;
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
   const { enqueueToast } = useToast();
   const [editing, setEditing] = useState(false);
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
   const [steps, setSteps] = useState(1);
   const source = objectMetadataItem.universalIdentifier;
-  const blocked = disabled || Boolean(policy.state?.candidateRevisionId);
+  const blocked =
+    disabled || isViewingActive || Boolean(policy.state?.candidateRevisionId);
   const paths =
-    policy.definition?.objects.flatMap((object) =>
+    definition?.objects.flatMap((object) =>
       object.inheritancePaths
         .filter((path) => path.sourceObjectUniversalIdentifier === source)
         .map((path) => ({
@@ -164,7 +173,10 @@ export const SettingsRelatedRecordPermissions = ({
         title={t`Related records`}
         description={t`Related records inherit every allowed action from this object. Follow up to three relation fields.`}
       />
-      <RecordPermissionPolicyStatus />
+      <RecordPermissionPolicyStatus
+        isViewingActive={isViewingActive}
+        onToggleActive={() => setShowActive(!showActive)}
+      />
       <StyledRow>
         <span>{t`Object`}</span>
         <span>{t`Relation`}</span>
@@ -202,7 +214,7 @@ export const SettingsRelatedRecordPermissions = ({
       {paths.length === 0 && (
         <StyledHint>{t`No related records inherit access from this object.`}</StyledHint>
       )}
-      {editing && (
+      {editing && !blocked && (
         <StyledForm>
           {Array.from({ length: steps }, (_, index) => {
             const { current, visited } = resolveSteps(

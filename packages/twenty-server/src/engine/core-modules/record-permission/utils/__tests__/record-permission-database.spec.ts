@@ -1,4 +1,7 @@
 import { readRecordPermissionScanBatch } from 'src/engine/core-modules/record-permission/utils/read-record-permission-scan-batch.util';
+import { evaluateRecordPermissionRoleAccess } from 'src/engine/core-modules/record-permission/utils/evaluate-record-permission-role-access.util';
+import { type RecordPermissionAuthority } from 'src/engine/core-modules/record-permission/types/record-permission-context.type';
+import { scheduleRecordPermissionReconciliation } from 'src/engine/core-modules/record-permission/utils/schedule-record-permission-reconciliation.util';
 import { compileRecordPermissionExplanation } from 'src/engine/core-modules/record-permission/utils/compile-record-permission-explanation.util';
 import { type RecordPermissionScan } from 'src/engine/core-modules/record-permission/types/record-permission-scan.type';
 import { compileInheritedRecordShares } from 'src/engine/core-modules/record-permission/utils/compile-inherited-record-shares.util';
@@ -7,7 +10,10 @@ import { type DataSource } from 'typeorm';
 import { RecordPermissionWorkerService } from 'src/engine/core-modules/record-permission/services/record-permission-worker.service';
 import { type RecordPermissionPolicyService } from 'src/engine/core-modules/record-permission/services/record-permission-policy.service';
 import { Client } from 'pg';
-import { RECORD_PERMISSION_ACTIONS } from 'twenty-shared/constants';
+import {
+  RECORD_PERMISSION_ACTIONS,
+  RECORD_PERMISSION_ACCESS_COLUMNS,
+} from 'twenty-shared/constants';
 import {
   RowLevelPermissionPredicateOperand,
   type RecordPermissionAction,
@@ -125,6 +131,69 @@ describeDatabase('Record permission SQL and durable invalidation', () => {
     await client.end();
   });
 
+  it('recovers a missed reconciliation tick, resumes unfinished work, and rotates completed objects', async () => {
+    await client.query('BEGIN');
+    try {
+      await client.query(
+        `INSERT INTO ${schema}."recordPermissionScan" ("revisionId", "objectMetadataId", complete, "completedAt", processed, "blockCursor") VALUES ($1, $2, true, now() - interval '2 hours', 42, 12), ($1, $3, true, now() - interval '1 hour', 24, 8)`,
+        [context.revisionId, objects.company.id, objects.person.id],
+      );
+      const schedule = () =>
+        scheduleRecordPermissionReconciliation({
+          database,
+          schemaName: context.schemaName,
+        });
+      const unfinishedObjects = async () =>
+        (
+          await client.query(
+            `SELECT "objectMetadataId", "blockCursor", processed FROM ${schema}."recordPermissionScan" WHERE NOT complete`,
+          )
+        ).rows;
+
+      await schedule();
+      expect(await unfinishedObjects()).toEqual([
+        {
+          objectMetadataId: objects.company.id,
+          blockCursor: '0',
+          processed: '0',
+        },
+      ]);
+      await client.query(
+        `UPDATE ${schema}."recordPermissionScan" SET "blockCursor" = 7 WHERE "objectMetadataId" = $1`,
+        [objects.company.id],
+      );
+      await schedule();
+      expect(await unfinishedObjects()).toEqual([
+        {
+          objectMetadataId: objects.company.id,
+          blockCursor: '7',
+          processed: '0',
+        },
+      ]);
+
+      await client.query(
+        `UPDATE ${schema}."recordPermissionScan" SET complete = true, "completedAt" = now() WHERE "objectMetadataId" = $1`,
+        [objects.company.id],
+      );
+      await schedule();
+      expect(await unfinishedObjects()).toEqual([]);
+      await client.query(
+        `UPDATE ${schema}."recordPermissionScan" SET "completedAt" = now() - interval '16 minutes' WHERE "objectMetadataId" = $1`,
+        [objects.company.id],
+      );
+      await schedule();
+      expect(await unfinishedObjects()).toEqual([
+        {
+          objectMetadataId: objects.person.id,
+          blockCursor: '0',
+          processed: '0',
+        },
+      ]);
+    } finally {
+      await client.query('ROLLBACK');
+    }
+  });
+
   it('restarts physical progress after a table rewrite and visits every primary key', async () => {
     await client.query(
       `CREATE TABLE ${schema}.scan_probe AS SELECT md5(value::text)::uuid AS id, repeat('x', 750) AS payload FROM generate_series(1, 1000) value`,
@@ -169,6 +238,184 @@ describeDatabase('Record permission SQL and durable invalidation', () => {
     }
     expect(identifiers.size).toBe(1000);
     expect(scan.blockCursor).toBe(scan.blockLimit);
+  });
+
+  it('resumes inside a heap page when an adaptive batch is smaller than that page', async () => {
+    await client.query(
+      `CREATE TABLE ${schema}.compact_scan_probe AS SELECT md5(value::text)::uuid AS id, ''::text AS payload FROM generate_series(1, 50) value`,
+    );
+    await client.query(`ANALYZE ${schema}.compact_scan_probe`);
+    let scan: RecordPermissionScan = {
+      blockCursor: 0,
+      blockLimit: null,
+      relationFileNode: null,
+    };
+    const identifiers = new Set<string>();
+    for (let attempt = 0; attempt < 200; attempt++) {
+      await client.query('BEGIN');
+      try {
+        const batch = await readRecordPermissionScanBatch({
+          database,
+          schemaName: context.schemaName,
+          tableName: 'compact_scan_probe',
+          scan,
+          batchSize: 1,
+        });
+        expect(batch.recordIds.length).toBeLessThanOrEqual(1);
+        await client.query(
+          `UPDATE ${schema}.compact_scan_probe SET payload = 'projected' WHERE id = ANY($1::uuid[]) AND payload <> 'projected'`,
+          [batch.recordIds],
+        );
+        batch.recordIds.forEach((id) => identifiers.add(id));
+        scan = batch;
+        await client.query('COMMIT');
+        if (batch.complete) break;
+      } catch (error) {
+        await client.query('ROLLBACK');
+        throw error;
+      }
+    }
+    expect(identifiers.size).toBe(50);
+    expect(scan.blockCursor).toBe(scan.blockLimit);
+  });
+
+  it('projects two thousand distinct member predicates across every action without PostgreSQL column-limit errors', async () => {
+    const denseContext = structuredClone(context);
+    denseContext.definition.objects.forEach((object) => {
+      object.inheritancePaths = [];
+    });
+    const denseRule = denseContext.definition.objects[0].rules[0];
+    denseRule.actions = [...RECORD_PERMISSION_ACTIONS];
+    denseRule.condition = {
+      kind: 'predicate',
+      fieldUniversalIdentifier: fixture.city.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.CONTAINS,
+      value: null,
+      memberFieldUniversalIdentifier: fixture.memberCity.universalIdentifier,
+    };
+    denseContext.definition.objects[0].rules.push({
+      ...denseRule,
+      universalIdentifier: v4(),
+      condition: {
+        kind: 'all',
+        conditions: [
+          denseRule.condition,
+          {
+            kind: 'predicate',
+            fieldUniversalIdentifier: fixture.city.universalIdentifier,
+            operand: RowLevelPermissionPredicateOperand.CONTAINS,
+            value: 'Region-',
+          },
+        ],
+      },
+    });
+    const values = Array.from(
+      { length: 1000 },
+      (_, index) => `Region-${index};`,
+    );
+    const denseGroups = values.flatMap((value) =>
+      resolveRecordPermissionAccessGroups({
+        revisionId: context.revisionId,
+        definition: denseContext.definition,
+        metadata: denseContext,
+        authority: {
+          ...context.authorities[0],
+          workspaceMember: { id: v4(), city: value } as unknown as NonNullable<
+            RecordPermissionAuthority['workspaceMember']
+          >,
+        },
+      }),
+    );
+    await client.query('BEGIN');
+    try {
+      await client.query(
+        "SET LOCAL jit=off; SET LOCAL statement_timeout='1500ms'",
+      );
+      await client.query(`UPDATE ${schema}.company SET city=$2 WHERE id=$1`, [
+        companyId,
+        values.join(''),
+      ]);
+      await recomputeRecordPermissionBatch({
+        database,
+        context: denseContext,
+        groups: denseGroups,
+        objectUniversalIdentifier: objects.company.universalIdentifier,
+        recordIds: [companyId],
+      });
+      const columns = Object.values(RECORD_PERMISSION_ACCESS_COLUMNS);
+      const projected = (
+        await client.query(
+          `SELECT ${columns.map((column) => `cardinality("${column}") AS "${column}"`).join(', ')} FROM ${schema}.company WHERE id=$1`,
+          [companyId],
+        )
+      ).rows[0];
+      for (const column of columns) expect(projected[column]).toBe(2000);
+    } finally {
+      await client.query('ROLLBACK');
+    }
+  }, 15000);
+
+  it('summarizes mixed inherited role access for a thousand members without counting explicit shares as role grants', async () => {
+    const dynamicContext = structuredClone(context);
+    const dynamicRule = dynamicContext.definition.objects[0].rules[0];
+    dynamicRule.condition = {
+      kind: 'predicate',
+      fieldUniversalIdentifier: fixture.city.universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.CONTAINS,
+      value: null,
+      memberFieldUniversalIdentifier: fixture.memberCity.universalIdentifier,
+    };
+    const authority = context.authorities[0];
+    const authorities = Array.from({ length: 1000 }, (_, index) => ({
+      ...authority,
+      workspaceMember: {
+        id: v4(),
+        city: index % 2 === 0 ? 'Paris' : 'Berlin',
+      } as unknown as NonNullable<RecordPermissionAuthority['workspaceMember']>,
+    }));
+    const query = jest.fn(database.query);
+    const evaluate = () =>
+      evaluateRecordPermissionRoleAccess({
+        database: { query },
+        context: dynamicContext,
+        objectUniversalIdentifier: objects.message.universalIdentifier,
+        recordId: messageId,
+        authorities,
+      });
+    expect((await evaluate()).get(authority.roleId)).toEqual({
+      canRead: false,
+      canUpdate: false,
+      hasSomeReadAccess: true,
+      hasSomeUpdateAccess: true,
+    });
+    expect(query).toHaveBeenCalledTimes(1);
+
+    dynamicContext.capabilitiesByObjectUniversalIdentifier[
+      objects.message.universalIdentifier
+    ] = { update: false };
+    expect((await evaluate()).get(authority.roleId)).toEqual({
+      canRead: false,
+      canUpdate: false,
+      hasSomeReadAccess: true,
+      hasSomeUpdateAccess: false,
+    });
+
+    await client.query('BEGIN');
+    try {
+      dynamicRule.actions = ['receive'];
+      await client.query(
+        `INSERT INTO ${schema}."recordShare" (id, "objectMetadataId", "recordId", "principalId", "accessLevel") VALUES ($1, $2, $3, $4, 'FULL')`,
+        [v4(), objects.company.id, companyId, authority.roleId],
+      );
+      expect((await evaluate()).get(authority.roleId)).toEqual({
+        canRead: false,
+        canUpdate: false,
+        hasSomeReadAccess: false,
+        hasSomeUpdateAccess: false,
+      });
+    } finally {
+      await client.query('ROLLBACK');
+    }
   });
 
   it('matches live and materialized inherited grants for all six actions', async () => {

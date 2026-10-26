@@ -64,6 +64,12 @@ export class InheritedRecordSharingGrantDTO extends RecordSharingGrantDTO {
 
 @ObjectType()
 export class RecordSharingRoleDTO {
+  @Field(() => Boolean, { nullable: true })
+  hasSomeReadAccess?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  hasSomeUpdateAccess?: boolean;
+
   @Field(() => UUIDScalarType)
   id: string;
 

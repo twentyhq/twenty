@@ -31,6 +31,7 @@ export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
     recordGqlFields?: RecordGqlFields;
     fetchPolicy?: WatchQueryFetchPolicy;
     withSoftDeleted?: boolean;
+    includeTotalCount?: boolean;
   };
 
 export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
@@ -45,6 +46,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   cursorFilter,
   limit = QUERY_DEFAULT_LIMIT_RECORDS,
   withSoftDeleted = false,
+  includeTotalCount = true,
 }: UseFindManyRecordsParams<T>) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -54,6 +56,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     objectNameSingular,
     recordGqlFields,
     cursorDirection: cursorFilter?.cursorDirection,
+    includeTotalCount,
   });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({

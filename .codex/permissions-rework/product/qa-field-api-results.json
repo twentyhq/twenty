@@ -1,0 +1,38 @@
+{
+  "restrictedField": {
+    "error": [
+      {
+        "message": "Entity performing the request does not have permission: no permission to read field \"linkedinLink\" on \"company\"",
+        "extensions": {
+          "userFriendlyMessage": "User does not have permission.",
+          "subCode": "PERMISSION_DENIED",
+          "code": "FORBIDDEN"
+        }
+      }
+    ]
+  },
+  "restrictedFilter": {
+    "error": [
+      {
+        "message": "Entity performing the request does not have permission",
+        "extensions": {
+          "userFriendlyMessage": "User does not have permission.",
+          "subCode": "PERMISSION_DENIED",
+          "code": "FORBIDDEN"
+        }
+      }
+    ]
+  },
+  "restrictedOrder": {
+    "error": [
+      {
+        "message": "Entity performing the request does not have permission",
+        "extensions": {
+          "userFriendlyMessage": "User does not have permission.",
+          "subCode": "PERMISSION_DENIED",
+          "code": "FORBIDDEN"
+        }
+      }
+    ]
+  }
+}

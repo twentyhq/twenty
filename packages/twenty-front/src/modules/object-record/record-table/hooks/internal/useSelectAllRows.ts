@@ -1,3 +1,4 @@
+import { isTotalNumberOfRowsKnownComponentState } from '@/object-record/record-table/virtualization/states/isTotalNumberOfRowsKnownComponentState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -14,12 +15,25 @@ export const useSelectAllRows = (recordTableId?: string) => {
   );
 
   const store = useStore();
+  const isTotalNumberOfRowsKnownCallbackState =
+    useAtomComponentStateCallbackState(
+      isTotalNumberOfRowsKnownComponentState,
+      recordTableId,
+    );
 
   const selectAllRows = useCallback(() => {
     if (selectAllRecords()) {
-      store.set(hasUserSelectedAllRecords, true);
+      store.set(
+        hasUserSelectedAllRecords,
+        store.get(isTotalNumberOfRowsKnownCallbackState),
+      );
     }
-  }, [selectAllRecords, hasUserSelectedAllRecords, store]);
+  }, [
+    selectAllRecords,
+    hasUserSelectedAllRecords,
+    store,
+    isTotalNumberOfRowsKnownCallbackState,
+  ]);
 
   return {
     selectAllRows,

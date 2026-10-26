@@ -108,10 +108,10 @@ export class RecordPermissionDispatcherService
     await this.listener?.end().catch(() => undefined);
   }
 
-  async enqueue(workspaceId: string, reconcile = false): Promise<void> {
+  async enqueue(workspaceId: string): Promise<void> {
     await this.permissionQueue.add(
       RecordPermissionJob.name,
-      { workspaceId, reconcile },
+      { workspaceId },
       {
         deduplication: {
           id: `record-permission-${workspaceId}`,
@@ -131,11 +131,7 @@ export class RecordPermissionDispatcherService
     );
 
     for (const { workspaceId } of workspaces) {
-      await this.enqueue(
-        workspaceId,
-        new Date().getUTCMinutes() % 15 === 0 &&
-          new Date().getUTCSeconds() < 10,
-      );
+      await this.enqueue(workspaceId);
     }
   }
 }

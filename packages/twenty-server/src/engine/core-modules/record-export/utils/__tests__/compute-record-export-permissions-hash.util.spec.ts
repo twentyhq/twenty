@@ -15,6 +15,31 @@ const originalHash = computeRecordExportPermissionsHash({
 });
 
 describe('computeRecordExportPermissionsHash', () => {
+  it('invalidates exports when primary capability metadata changes before the cache refreshes', () => {
+    const hash = (recordCapabilitiesHash: string) =>
+      computeRecordExportPermissionsHash({
+        permissionsHash,
+        application,
+        recordPermissionRevisionId: 'same-active-policy',
+        recordCapabilitiesHash,
+      });
+
+    expect(hash('readable')).not.toBe(hash('not-readable'));
+  });
+  it.each([undefined, application])(
+    'invalidates exports when the active record policy changes, with application %j',
+    (application) => {
+      const hash = (recordPermissionRevisionId: string | null) =>
+        computeRecordExportPermissionsHash({
+          permissionsHash,
+          application,
+          recordPermissionRevisionId,
+        });
+      expect(hash('first-revision')).not.toBe(hash(null));
+      expect(hash('second-revision')).not.toBe(hash('first-revision'));
+      expect(hash('first-revision')).toBe(hash('first-revision'));
+    },
+  );
   it('ignores application settings unrelated to permissions', () => {
     const updatedApplication = { ...application, autoUpgrade: true };
 

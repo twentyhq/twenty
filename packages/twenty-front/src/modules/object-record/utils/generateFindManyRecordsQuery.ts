@@ -14,6 +14,7 @@ export const generateFindManyRecordsQuery = ({
   objectMetadataItems,
   recordGqlFields,
   computeReferences,
+  includeTotalCount = true,
   cursorDirection,
   objectPermissionsByObjectMetadataId,
 }: {
@@ -21,6 +22,7 @@ export const generateFindManyRecordsQuery = ({
   objectMetadataItems: EnrichedObjectMetadataItem[];
   recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
+  includeTotalCount?: boolean;
   cursorDirection?: QueryCursorDirection;
   objectPermissionsByObjectMetadataId: Record<
     string,
@@ -55,7 +57,7 @@ query FindMany${capitalize(
       startCursor
       endCursor
     }
-    totalCount
+    ${includeTotalCount ? 'totalCount' : ''}
   }
 }
 `;

@@ -22,15 +22,18 @@ export const getRecordSharingRecipientGroups = <
     return [{ heading: msg`Have access`, matchingShares }];
   }
 
+  if (usesRecordPermissionPolicy)
+    return [{ heading: msg`Shared directly`, matchingShares }];
+
   return [
     {
-      heading: usesRecordPermissionPolicy ? msg`Through roles` : msg`Roles`,
+      heading: msg`Roles`,
       matchingShares: matchingShares.filter(
         ({ share }) => share.principalType === RecordSharePrincipalType.ROLE,
       ),
     },
     {
-      heading: usesRecordPermissionPolicy ? msg`Shared directly` : msg`Users`,
+      heading: msg`Users`,
       matchingShares: matchingShares.filter(
         ({ share }) =>
           share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER,

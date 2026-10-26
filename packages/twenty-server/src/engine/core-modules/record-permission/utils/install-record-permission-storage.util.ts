@@ -39,13 +39,14 @@ export const installRecordPermissionStorage = async ({
     CREATE INDEX IF NOT EXISTS "IDX_PERMISSION_WORK_ORDER" ON ${schema}."recordPermissionWork" ("revisionId", "createdAt");
     CREATE TABLE IF NOT EXISTS ${schema}."recordPermissionScan" (
       "revisionId" uuid NOT NULL, "objectMetadataId" uuid NOT NULL,
-      "blockCursor" bigint NOT NULL DEFAULT 0, "blockLimit" bigint, "relationFileNode" oid,
+      "blockCursor" bigint NOT NULL DEFAULT 0, "tupleCursor" integer NOT NULL DEFAULT 0, "blockLimit" bigint, "relationFileNode" oid,
       processed bigint NOT NULL DEFAULT 0, complete boolean NOT NULL DEFAULT false,
       "completedAt" timestamptz,
       PRIMARY KEY ("revisionId", "objectMetadataId")
     );
     ALTER TABLE ${schema}."recordPermissionScan" ADD COLUMN IF NOT EXISTS "completedAt" timestamptz;
     ALTER TABLE ${schema}."recordPermissionScan" ADD COLUMN IF NOT EXISTS "blockCursor" bigint NOT NULL DEFAULT 0;
+    ALTER TABLE ${schema}."recordPermissionScan" ADD COLUMN IF NOT EXISTS "tupleCursor" integer NOT NULL DEFAULT 0;
     ALTER TABLE ${schema}."recordPermissionScan" ADD COLUMN IF NOT EXISTS "blockLimit" bigint;
     ALTER TABLE ${schema}."recordPermissionScan" ADD COLUMN IF NOT EXISTS "relationFileNode" oid;
     CREATE TABLE IF NOT EXISTS ${schema}."recordPermissionAccessGroup" (

@@ -1,0 +1,22 @@
+{
+  "members": 1000,
+  "actions": 6,
+  "records": 100,
+  "schema": "dense_benchmark_9e30aa3db7bd4ab7858e4c86cd05588a",
+  "startedAt": "2026-10-26T22:10:28.337Z",
+  "cases": [
+    {
+      "numberOfRules": 1,
+      "groups": 4000,
+      "elapsedMs": 511.2125840000001,
+      "error": "target lists can have at most 1664 entries"
+    },
+    {
+      "numberOfRules": 2,
+      "groups": 8000,
+      "elapsedMs": 931.0915840000002,
+      "error": "target lists can have at most 1664 entries"
+    }
+  ],
+  "finishedAt": "2026-10-26T22:10:30.062Z"
+}

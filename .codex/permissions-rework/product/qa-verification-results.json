@@ -1,0 +1,128 @@
+{
+  "verifiedAt": "2026-10-26T22:55:19.372639+00:00",
+  "branch": "codex/record-permissions-product",
+  "baseCommit": "4c48997ee70",
+  "artifactParentCommit": "29b5707b63b",
+  "qaSourceSha256": "150b5e15205b2ec3c07db5ec078ffe7ca938f46c3cb3c904c2fce0492d43e2b7",
+  "status": "Functional QA passed with documented integration deviations; full scale and production acceptance not complete",
+  "readyForProduction": false,
+  "server": {
+    "suitesPassed": 113,
+    "testsPassed": 1022,
+    "optionalBenchmarkSuitesSkipped": 4,
+    "testFileList": "qa-server-test-files.txt",
+    "scope": "Permission and adjacent regression suites, including real PostgreSQL behavior; not the entire monorepo"
+  },
+  "frontend": {
+    "suitesPassed": 46,
+    "testsPassed": 186,
+    "testFileList": "qa-front-test-files.txt"
+  },
+  "typecheck": {
+    "server": "passed: direct tsgo -p tsconfig.json --noEmit after final sharing fix",
+    "frontend": "passed: direct tsgo -p tsconfig.json --noEmit"
+  },
+  "typeAwareLint": {
+    "server": "passed on 35 changed source files, including final sharing changes",
+    "frontend": "passed on 38 changed source files"
+  },
+  "metadataGraphqlGeneration": "passed; generated sharing fields included",
+  "whitespaceCheck": "passed",
+  "browser": {
+    "flows": [
+      "role permissions and fields",
+      "current versus pending policy and cancellation",
+      "related-record field paths",
+      "sharing and member access explanation",
+      "company list and detail"
+    ],
+    "finalCleanReloadErrors": 0,
+    "enterpriseEditor": "component tested; local workspace paywall preserved",
+    "screenshots": [
+      "screenshots/qa-role-sharing.jpg",
+      "screenshots/qa-active-policy-during-rebuild.jpg"
+    ]
+  },
+  "liveApiReports": [
+    "qa-live-api-results.json",
+    "qa-api-role-results.json",
+    "qa-field-api-results.json",
+    "qa-export-results.json",
+    "qa-export-activation-results.json",
+    "qa-publication-ui-results.json"
+  ],
+  "performance": {
+    "postgresVersion": 16,
+    "fullRebuild": {
+      "report": "pg16-10m-rebuild.json",
+      "verifiedRows": 10000000,
+      "elapsedSeconds": 3358.7499959170004,
+      "codeScope": "Before final dense compiler and tuple cursor changes"
+    },
+    "finalProjectorSegment": {
+      "report": "pg16-final-projector-1m.json",
+      "processedRows": 1000000,
+      "elapsedSeconds": 334.735168542,
+      "codeScope": "Final projector, segment of existing 10M table"
+    },
+    "finalInheritance": {
+      "report": "pg16-final-inheritance.json",
+      "verifiedRows": 1500000,
+      "sourceShares": 50000,
+      "hops": 3,
+      "elapsedSeconds": 503.41304504100003,
+      "livePointP99Ms": 6.3365,
+      "inheritedShareP99Ms": 1.395959
+    },
+    "neighboringTenant": {
+      "fullRun": "pg16-other-tenant-during-rebuild.json",
+      "fullRunCancellations": 3,
+      "segment": "pg16-other-tenant-final-1m.json",
+      "segmentErrors": 0,
+      "inheritance": "pg16-other-tenant-inheritance.json",
+      "inheritanceErrors": 0,
+      "baseline": "pg16-other-tenant-baseline.json"
+    },
+    "positiveAndPathologicalQueries": [
+      "pg16-query-shapes.json",
+      "pg16-shared-buffer-cold-query-shapes.json"
+    ],
+    "denseBindingReport": "pg16-dense-groups.json",
+    "limits": [
+      "Dense overlapping groups fail the general 10M/60-minute target despite correct bounded execution",
+      "Full-run tenant isolation was not error-free; concurrent host work prevents causal attribution",
+      "Shared-buffer reset did not clear OS cache",
+      "Exact counts, unindexed no-match filters and deep offsets canceled at the SQL deadline",
+      "SQL fixtures are not a browser connected to a 10M-record application workspace"
+    ]
+  },
+  "integrationDeviations": [
+    "Policy portability uses validated JSON transfer; full-policy automatic application-manifest synchronization is not implemented",
+    "Field settings save before record-policy publication; the two changes are not atomic",
+    "Statement, checkout and admission budgets exist; a full request-wide deadline and sustained-work fairness budget are not implemented"
+  ],
+  "observedFailures": [
+    "One native server test-runner crash followed by successful full reruns",
+    "Sharing lock contention reproduced, fixed with bounded pre-write acquisition; original failure preserved in qa-live-api-lock-contention-before-fix.json",
+    "One sharing-panel read timed out at 250ms; explicit retry and later clean reload succeeded",
+    "Dense compiler target-list failure fixed without truncation; fixed-size batch failures replaced with bounded adaptive execution"
+  ],
+  "runtime": {
+    "frontend": "http://localhost:3001",
+    "server": "http://localhost:3000",
+    "worker": "running",
+    "activeRevisionId": "9336a71e-be50-4897-8012-d9438096e26c",
+    "pendingCandidate": false,
+    "disposableApiRecords": "cleaned up",
+    "benchmarkClusters": "stopped; fixtures retained"
+  },
+  "commands": {
+    "server": "RECORD_PERMISSION_TEST_DATABASE_URL=<disposable_database_ending_in_permission_test> xargs npx jest --config=packages/twenty-server/jest.config.mjs --runInBand --runTestsByPath < .codex/permissions-rework/product/qa-server-test-files.txt",
+    "frontend": "xargs npx jest --config=packages/twenty-front/jest.config.mjs --runInBand --runTestsByPath < .codex/permissions-rework/product/qa-front-test-files.txt",
+    "liveApi": "node .codex/permissions-rework/product/qa-live-api.cjs",
+    "apiRoles": "node .codex/permissions-rework/product/qa-api-role.cjs",
+    "export": "node .codex/permissions-rework/product/qa-export.cjs --activate-policy",
+    "typecheck": "npx tsgo -p tsconfig.json --noEmit in each package",
+    "benchmarks": "See record-permissions-implementation-decisions.md; only use a dedicated permission benchmark database"
+  }
+}
