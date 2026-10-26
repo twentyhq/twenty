@@ -50,6 +50,12 @@ const describeAgentChatThreadOwners = (dataSource: DataSource) =>
      WHERE "workspaceMemberId" IS NOT NULL ORDER BY id`,
   );
 
+const describeAgentMessageSenders = (dataSource: DataSource) =>
+  dataSource.query<{ id: string; senderWorkspaceMemberId: string }[]>(
+    `SELECT id, "senderWorkspaceMemberId" FROM "${SCHEMA}"."agentMessage"
+     WHERE "senderWorkspaceMemberId" IS NOT NULL ORDER BY id`,
+  );
+
 const describeAgentHistoryColumns = ({
   dataSource,
   objectNames,
@@ -121,6 +127,9 @@ describe('versioned agent history upgrade (integration)', () => {
   >;
   let seededAgentChatThreadOwners: Awaited<
     ReturnType<typeof describeAgentChatThreadOwners>
+  >;
+  let seededAgentMessageSenders: Awaited<
+    ReturnType<typeof describeAgentMessageSenders>
   >;
   let seededUpgradeMigrationIds: string[];
   const createdUpgradeMigrationIds = new Set<string>();
@@ -255,6 +264,7 @@ describe('versioned agent history upgrade (integration)', () => {
     await dataSource.query(
       `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE "workspaceMemberId" IS NULL`,
     );
+    seededAgentMessageSenders = await describeAgentMessageSenders(dataSource);
     // And the membership columns 2.47 dropped, which the rollback copies back
     await restoreLegacyChatMembershipColumns(WORKSPACE_ID);
     await runCommand({ direction: 'down' });
@@ -326,6 +336,13 @@ describe('versioned agent history upgrade (integration)', () => {
       [threadId],
     );
     await runCommand({ direction: 'up' });
+    await dataSource.query(
+      `UPDATE "${SCHEMA}"."agentMessage" message
+       SET "senderWorkspaceMemberId" = seededMessage."senderWorkspaceMemberId"
+       FROM jsonb_to_recordset($1::jsonb) AS seededMessage(id uuid, "senderWorkspaceMemberId" uuid)
+       WHERE message.id = seededMessage.id`,
+      [JSON.stringify(seededAgentMessageSenders)],
+    );
     await workspaceOrmManager.executeInWorkspaceContext(
       () =>
         provisionAgentChatThreadTargetCommand.runOnWorkspace({
@@ -435,6 +452,9 @@ describe('versioned agent history upgrade (integration)', () => {
     ).toEqual(seededHistoryColumns);
     expect(await describeAgentChatThreadOwners(dataSource)).toEqual(
       seededAgentChatThreadOwners,
+    );
+    expect(await describeAgentMessageSenders(dataSource)).toEqual(
+      seededAgentMessageSenders,
     );
   });
 
