@@ -3,12 +3,22 @@ import { cp, readFile, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import semver from 'semver';
+import { isDefined } from 'twenty-shared/utils';
 
 import { APP_TEMPLATE_PACKAGE_VERSION } from '@/app/constants/app-template-package-version.constant';
 import { APP_TEMPLATE_FIRST_PARTY_PACKAGES } from '@/app/constants/app-template-packages.constant';
 import { getAppTemplateDirectory } from '@/app/get-app-template-directory';
 import { printTypescriptValue } from '@/app/pull/print-typescript-value';
 import { CLI_VERSION } from '@/constants/cli-version.constant';
+
+export const getEnginesTwentyRequirement = (
+  templateVersion: string,
+): string => {
+  const isPrerelease = isDefined(semver.prerelease(templateVersion));
+  const prereleaseSuffix = isPrerelease ? '-0' : '';
+
+  return `>=${semver.major(templateVersion)}.${semver.minor(templateVersion)}.0${prereleaseSuffix}`;
+};
 
 export const renderAppTemplate = async ({
   appDirectory,
@@ -74,7 +84,9 @@ export const renderAppTemplate = async ({
 
   packageJson.name = appName;
   // Patch releases of the CLI can ship without a matching server release.
-  packageJson.engines.twenty = `>=${semver.major(APP_TEMPLATE_PACKAGE_VERSION)}.${semver.minor(APP_TEMPLATE_PACKAGE_VERSION)}.0`;
+  packageJson.engines.twenty = getEnginesTwentyRequirement(
+    APP_TEMPLATE_PACKAGE_VERSION,
+  );
 
   for (const packageName of APP_TEMPLATE_FIRST_PARTY_PACKAGES) {
     packageJson.devDependencies[packageName] = APP_TEMPLATE_PACKAGE_VERSION;
