@@ -9,11 +9,12 @@ const computeSha256Hex = (content: string): string =>
   createHash('sha256').update(content).digest('hex');
 
 const buildFingerprintedUrl = (checksum: string): string =>
-  `https://api.twenty.com/rest/front-components/component-id/${checksum}.js`;
+  `https://api.twenty.com/rest/front-components/component-id/${checksum}`;
 
 const FINGERPRINTED_URL = buildFingerprintedUrl(
   computeSha256Hex(COMPONENT_SOURCE),
 );
+const LEGACY_SHA256_URL = `${FINGERPRINTED_URL}.js`;
 const STALE_URL = buildFingerprintedUrl(
   computeSha256Hex('some other build output'),
 );
@@ -26,15 +27,15 @@ const SHARED_DEPENDENCIES_SOURCE =
   'export const __shared_dependencies_react__ = {};';
 
 const buildFingerprintedSharedDependenciesUrl = (checksum: string): string =>
-  `https://api.twenty.com/rest/front-component-shared-dependencies/application-id/${checksum}.js`;
+  `https://api.twenty.com/rest/front-component-shared-dependencies/application-id/${checksum}`;
 
 const FINGERPRINTED_SHARED_DEPENDENCIES_URL =
   buildFingerprintedSharedDependenciesUrl(
     computeSha256Hex(SHARED_DEPENDENCIES_SOURCE),
   );
-const LEGACY_MD5_URL = buildFingerprintedUrl(
+const LEGACY_MD5_URL = `${buildFingerprintedUrl(
   createHash('md5').update(COMPONENT_SOURCE).digest('hex'),
-);
+)}.js`;
 
 const createFakeJsResponse = (body: string) => ({
   ok: true,
@@ -158,11 +159,11 @@ describe('fetchComponentSource', () => {
   it('evicts stale entries of the same component when caching a new build', async () => {
     const cache = new FakeCache();
 
-    const staleUrl = buildFingerprintedUrl(
+    const staleUrl = `${buildFingerprintedUrl(
       computeSha256Hex('previous build output'),
-    );
+    )}.js`;
     const otherComponentUrl =
-      'https://api.twenty.com/rest/front-components/other-component-id/0000000000000000000000000000000000000000000000000000000000000000.js';
+      'https://api.twenty.com/rest/front-components/other-component-id/0000000000000000000000000000000000000000000000000000000000000000';
 
     await cache.put(staleUrl, {
       text: async () => 'previous build output',
@@ -191,24 +192,27 @@ describe('fetchComponentSource', () => {
     expect(cache.delete).not.toHaveBeenCalledWith({ url: FINGERPRINTED_URL });
   });
 
-  it('serves a verified cache hit without hitting the network', async () => {
-    const cache = new FakeCache();
+  it.each([FINGERPRINTED_URL, LEGACY_SHA256_URL])(
+    'serves a verified cache hit without hitting the network for %s',
+    async (url) => {
+      const cache = new FakeCache();
 
-    await cache.put(FINGERPRINTED_URL, {
-      text: async () => COMPONENT_SOURCE,
-    });
+      await cache.put(url, {
+        text: async () => COMPONENT_SOURCE,
+      });
 
-    setupCaches(cache);
+      setupCaches(cache);
 
-    const fetchMock = jest.fn();
+      const fetchMock = jest.fn();
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+      globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-    const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
+      const source = await fetchComponentSource({ url });
 
-    expect(source).toBe(COMPONENT_SOURCE);
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
+      expect(source).toBe(COMPONENT_SOURCE);
+      expect(fetchMock).not.toHaveBeenCalled();
+    },
+  );
 
   it('evicts a poisoned cache entry and refetches from the network', async () => {
     const cache = new FakeCache();
@@ -317,7 +321,7 @@ describe('fetchComponentSource', () => {
       computeSha256Hex('previous shared dependencies build'),
     );
     const otherApplicationSharedDependenciesUrl =
-      'https://api.twenty.com/rest/front-component-shared-dependencies/other-application-id/0000000000000000000000000000000000000000000000000000000000000000.js';
+      'https://api.twenty.com/rest/front-component-shared-dependencies/other-application-id/0000000000000000000000000000000000000000000000000000000000000000';
 
     await cache.put(staleSharedDependenciesUrl, {
       text: async () => 'previous shared dependencies build',

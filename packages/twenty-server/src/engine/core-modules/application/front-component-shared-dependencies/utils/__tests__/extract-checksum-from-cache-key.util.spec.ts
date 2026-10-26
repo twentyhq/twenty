@@ -3,11 +3,12 @@ import { extractChecksumFromCacheKey } from 'src/engine/core-modules/application
 const VALID_CHECKSUM = 'a'.repeat(64);
 
 describe('extractChecksumFromCacheKey', () => {
-  it('extracts the checksum from a fingerprinted cache key', () => {
-    expect(extractChecksumFromCacheKey(`${VALID_CHECKSUM}.js`)).toBe(
-      VALID_CHECKSUM,
-    );
-  });
+  it.each([VALID_CHECKSUM, `${VALID_CHECKSUM}.js`])(
+    'extracts the checksum from %s',
+    (cacheKey) => {
+      expect(extractChecksumFromCacheKey(cacheKey)).toBe(VALID_CHECKSUM);
+    },
+  );
 
   it.each([
     ['no cache key', undefined],

@@ -55,6 +55,7 @@ describe('fetchComponentSourceFromNetwork', () => {
     expect(source).toBe('export default () => {};');
     expect(fetchMock).toHaveBeenCalledWith(CACHE_BUSTED_COMPONENT_URL, {
       headers: { Authorization: 'Bearer token' },
+      cache: 'no-store',
       credentials: 'same-origin',
     });
   });
@@ -82,6 +83,7 @@ describe('fetchComponentSourceFromNetwork', () => {
     expect(source).toBe('presigned bundle source');
     expect(fetchMock).toHaveBeenNthCalledWith(1, CACHE_BUSTED_COMPONENT_URL, {
       headers: { Authorization: 'Bearer token' },
+      cache: 'no-store',
       credentials: 'same-origin',
     });
     expect(fetchMock).toHaveBeenNthCalledWith(2, PRESIGNED_URL, {
@@ -102,7 +104,7 @@ describe('fetchComponentSourceFromNetwork', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(
       `${COMPONENT_URL}?token=abc&cacheBust=v2`,
-      { headers: undefined, credentials: 'same-origin' },
+      { headers: undefined, cache: 'no-store', credentials: 'same-origin' },
     );
   });
 

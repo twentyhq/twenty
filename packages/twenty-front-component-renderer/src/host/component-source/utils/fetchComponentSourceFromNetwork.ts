@@ -31,6 +31,7 @@ export const fetchComponentSourceFromNetwork = async ({
 }): Promise<string> => {
   const response = await fetch(appendCacheBustQueryParameter(url), {
     headers,
+    cache: 'no-store',
     credentials: 'same-origin',
   });
 

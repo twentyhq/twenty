@@ -11,5 +11,5 @@ export const getFingerprintedRestUrl = ({
   checksum?: string;
 }): string =>
   isDefined(checksum)
-    ? `${REST_API_BASE_URL}/${resource}/${id}/${checksum}.js`
+    ? `${REST_API_BASE_URL}/${resource}/${id}/${checksum}`
     : `${REST_API_BASE_URL}/${resource}/${id}`;

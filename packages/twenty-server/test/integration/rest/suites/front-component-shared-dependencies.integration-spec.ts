@@ -83,17 +83,23 @@ describe('Front component shared dependencies endpoint', () => {
         });
     });
 
-    it('should serve the checksum-fingerprinted path with an immutable cache header', async () => {
-      await makeRestApiRequest({
-        method: 'get',
-        path: `/front-component-shared-dependencies/${applicationId}/${SHARED_DEPENDENCIES_CHECKSUM}.js`,
-        bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      })
-        .expect(200)
-        .expect('Cache-Control', 'private, max-age=86400, immutable')
-        .expect((res) => {
-          expect(res.text).toBe(SHARED_DEPENDENCIES_BUNDLE_CONTENT);
-        });
-    });
+    it.each([
+      SHARED_DEPENDENCIES_CHECKSUM,
+      `${SHARED_DEPENDENCIES_CHECKSUM}.js`,
+    ])(
+      'should serve the checksum path %s with an immutable cache header',
+      async (cacheKey) => {
+        await makeRestApiRequest({
+          method: 'get',
+          path: `/front-component-shared-dependencies/${applicationId}/${cacheKey}`,
+          bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        })
+          .expect(200)
+          .expect('Cache-Control', 'private, max-age=86400, immutable')
+          .expect((res) => {
+            expect(res.text).toBe(SHARED_DEPENDENCIES_BUNDLE_CONTENT);
+          });
+      },
+    );
   });
 });
