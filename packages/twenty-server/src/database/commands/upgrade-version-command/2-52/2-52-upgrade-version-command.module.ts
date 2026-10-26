@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { ReconcileStandardSkillCatalogCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-workspace-command-1792764632845-reconcile-standard-skill-catalog.command';
 import { BackfillFilesRecordFormWidgetsCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-workspace-command-1792861553907-backfill-files-record-form-widgets.command';
-import { AddInboxNavigationMenuTabCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-workspace-command-1793025684649-add-inbox-navigation-menu-tab.command';
+import { AddInboxAndChatsNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-workspace-command-1793025684649-add-inbox-and-chats-navigation-menu-items.command';
 import { AddWorkspaceNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-workspace-command-1793025684650-add-workspace-navigation-menu-section.command';
 import { SeedWorkspaceFrontendDependenciesCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-workspace-command-1792766943126-seed-workspace-frontend-dependencies.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -21,7 +21,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ReconcileStandardSkillCatalogCommand,
     SeedWorkspaceFrontendDependenciesCommand,
     BackfillFilesRecordFormWidgetsCommand,
-    AddInboxNavigationMenuTabCommand,
+    AddInboxAndChatsNavigationMenuItemsCommand,
     AddWorkspaceNavigationMenuSectionCommand,
   ],
 })

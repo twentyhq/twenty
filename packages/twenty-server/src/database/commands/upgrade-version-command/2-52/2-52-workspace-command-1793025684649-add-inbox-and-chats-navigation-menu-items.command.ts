@@ -13,27 +13,26 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const INBOX_SECTION_TYPES: string[] = [
+const INBOX_AND_CHATS_SECTION_TYPES: string[] = [
   NavigationMenuItemType.AI_CHAT_TRIAGE,
   NavigationMenuItemType.AI_CHAT_FAVORITES,
   NavigationMenuItemType.AI_CHAT_CHANNELS,
   NavigationMenuItemType.AI_CHAT_RECENTS,
 ];
 
-const INBOX_SECTION_DEFINITIONS = [
-  STANDARD_NAVIGATION_MENU_ITEMS.inboxTabTriage,
-  STANDARD_NAVIGATION_MENU_ITEMS.inboxTabFavoriteChats,
-  STANDARD_NAVIGATION_MENU_ITEMS.inboxTabChannels,
-  STANDARD_NAVIGATION_MENU_ITEMS.inboxTabRecentChats,
+const CHATS_TAB_SECTION_DEFINITIONS = [
+  STANDARD_NAVIGATION_MENU_ITEMS.chatsTabFavoriteChats,
+  STANDARD_NAVIGATION_MENU_ITEMS.chatsTabChannels,
+  STANDARD_NAVIGATION_MENU_ITEMS.chatsTabRecentChats,
 ];
 
 @RegisteredWorkspaceCommand('2.52.0', 1793025684649)
 @Command({
-  name: 'upgrade:2-52:add-inbox-navigation-menu-tab',
+  name: 'upgrade:2-52:add-inbox-and-chats-navigation-menu-items',
   description:
-    'Add the Inbox sidebar tab, holding the triage, favorite chats, channels and recent chats sections, to workspaces whose sidebar has none of them',
+    'Add the Inbox section to Home and the Chats tab, holding the favorite chats, channels and recent chats sections, to workspaces whose sidebar has none of them',
 })
-export class AddInboxNavigationMenuTabCommand extends ProvisionedWorkspaceCommandRunner {
+export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -52,20 +51,20 @@ export class AddInboxNavigationMenuTabCommand extends ProvisionedWorkspaceComman
         'flatNavigationMenuItemMaps',
       ]);
 
-    const hasInbox = Object.values(
+    const hasInboxOrChats = Object.values(
       flatNavigationMenuItemMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
       .some(
         (navigationMenuItem) =>
           navigationMenuItem.universalIdentifier ===
-            STANDARD_NAVIGATION_MENU_ITEMS.inboxTab.universalIdentifier ||
-          INBOX_SECTION_TYPES.includes(navigationMenuItem.type),
+            STANDARD_NAVIGATION_MENU_ITEMS.chatsTab.universalIdentifier ||
+          INBOX_AND_CHATS_SECTION_TYPES.includes(navigationMenuItem.type),
       );
 
-    if (hasInbox) {
+    if (hasInboxOrChats) {
       this.logger.log(
-        `Inbox sidebar tab already present for workspace ${workspaceId}, skipping`,
+        `Inbox section or Chats tab already present for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -73,7 +72,7 @@ export class AddInboxNavigationMenuTabCommand extends ProvisionedWorkspaceComman
 
     if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Would add the Inbox sidebar tab for workspace ${workspaceId}`,
+        `[DRY RUN] Would add the Inbox section and the Chats tab for workspace ${workspaceId}`,
       );
 
       return;
@@ -85,7 +84,7 @@ export class AddInboxNavigationMenuTabCommand extends ProvisionedWorkspaceComman
       );
 
     const now = new Date().toISOString();
-    const inboxTabId = v4();
+    const chatsTabId = v4();
 
     const buildFlatNavigationMenuItem = ({
       id,
@@ -135,29 +134,39 @@ export class AddInboxNavigationMenuTabCommand extends ProvisionedWorkspaceComman
       updatedAt: now,
     });
 
-    const inboxTab = STANDARD_NAVIGATION_MENU_ITEMS.inboxTab;
+    const { inboxSection, chatsTab } = STANDARD_NAVIGATION_MENU_ITEMS;
 
     const flatNavigationMenuItemsToCreate = [
       buildFlatNavigationMenuItem({
-        id: inboxTabId,
-        universalIdentifier: inboxTab.universalIdentifier,
-        type: inboxTab.type,
-        name: inboxTab.name,
-        icon: inboxTab.icon,
+        id: v4(),
+        universalIdentifier: inboxSection.universalIdentifier,
+        type: inboxSection.type,
+        name: null,
+        icon: null,
         folderId: null,
         folderUniversalIdentifier: null,
-        position: inboxTab.position,
+        position: inboxSection.position,
       }),
-      ...INBOX_SECTION_DEFINITIONS.map((inboxSection) =>
+      buildFlatNavigationMenuItem({
+        id: chatsTabId,
+        universalIdentifier: chatsTab.universalIdentifier,
+        type: chatsTab.type,
+        name: chatsTab.name,
+        icon: chatsTab.icon,
+        folderId: null,
+        folderUniversalIdentifier: null,
+        position: chatsTab.position,
+      }),
+      ...CHATS_TAB_SECTION_DEFINITIONS.map((chatsTabSection) =>
         buildFlatNavigationMenuItem({
           id: v4(),
-          universalIdentifier: inboxSection.universalIdentifier,
-          type: inboxSection.type,
+          universalIdentifier: chatsTabSection.universalIdentifier,
+          type: chatsTabSection.type,
           name: null,
           icon: null,
-          folderId: inboxTabId,
-          folderUniversalIdentifier: inboxSection.folderUniversalIdentifier,
-          position: inboxSection.position,
+          folderId: chatsTabId,
+          folderUniversalIdentifier: chatsTabSection.folderUniversalIdentifier,
+          position: chatsTabSection.position,
         }),
       ),
     ];
@@ -181,14 +190,16 @@ export class AddInboxNavigationMenuTabCommand extends ProvisionedWorkspaceComman
 
     if (validateAndBuildResult.status === 'fail') {
       this.logger.error(
-        `Failed to add the Inbox sidebar tab:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+        `Failed to add the Inbox section and the Chats tab:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
 
       throw new Error(
-        `Failed to add the Inbox sidebar tab for workspace ${workspaceId}`,
+        `Failed to add the Inbox section and the Chats tab for workspace ${workspaceId}`,
       );
     }
 
-    this.logger.log(`Added the Inbox sidebar tab for workspace ${workspaceId}`);
+    this.logger.log(
+      `Added the Inbox section and the Chats tab for workspace ${workspaceId}`,
+    );
   }
 }

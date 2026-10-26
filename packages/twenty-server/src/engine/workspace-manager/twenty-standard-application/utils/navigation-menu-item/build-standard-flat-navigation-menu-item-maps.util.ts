@@ -28,11 +28,10 @@ const WORKFLOWS_FOLDER_ITEM_NAMES = [
   'workflowsFolderAllWorkflowVersions',
 ] as const;
 
-const INBOX_TAB_SECTION_NAMES = [
-  'inboxTabTriage',
-  'inboxTabFavoriteChats',
-  'inboxTabChannels',
-  'inboxTabRecentChats',
+const CHATS_TAB_SECTION_NAMES = [
+  'chatsTabFavoriteChats',
+  'chatsTabChannels',
+  'chatsTabRecentChats',
 ] as const;
 
 export const buildStandardFlatNavigationMenuItemMaps = ({
@@ -52,6 +51,22 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     ...createEmptyFlatEntityMaps(),
     byUserWorkspaceIdAndFolderId: {},
   };
+
+  const inboxSectionDefinition = STANDARD_NAVIGATION_MENU_ITEMS.inboxSection;
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem:
+      createStandardNavigationMenuItemContainerFlatMetadata({
+        universalIdentifier: inboxSectionDefinition.universalIdentifier,
+        type: inboxSectionDefinition.type,
+        position: inboxSectionDefinition.position,
+        navigationMenuItemId: v4(),
+        workspaceId,
+        twentyStandardApplicationId,
+        now,
+      }),
+    flatNavigationMenuItemMaps,
+  });
 
   const workspaceSectionDefinition =
     STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection;
@@ -147,18 +162,18 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     });
   }
 
-  const inboxTabDefinition = STANDARD_NAVIGATION_MENU_ITEMS.inboxTab;
-  const inboxTabId = v4();
+  const chatsTabDefinition = STANDARD_NAVIGATION_MENU_ITEMS.chatsTab;
+  const chatsTabId = v4();
 
   addFlatNavigationMenuItemToMapsAndUpdateIndex({
     flatNavigationMenuItem:
       createStandardNavigationMenuItemContainerFlatMetadata({
-        universalIdentifier: inboxTabDefinition.universalIdentifier,
-        type: inboxTabDefinition.type,
-        name: inboxTabDefinition.name,
-        icon: inboxTabDefinition.icon,
-        position: inboxTabDefinition.position,
-        navigationMenuItemId: inboxTabId,
+        universalIdentifier: chatsTabDefinition.universalIdentifier,
+        type: chatsTabDefinition.type,
+        name: chatsTabDefinition.name,
+        icon: chatsTabDefinition.icon,
+        position: chatsTabDefinition.position,
+        navigationMenuItemId: chatsTabId,
         workspaceId,
         twentyStandardApplicationId,
         now,
@@ -166,19 +181,19 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     flatNavigationMenuItemMaps,
   });
 
-  for (const inboxTabSectionName of INBOX_TAB_SECTION_NAMES) {
-    const inboxTabSectionDefinition =
-      STANDARD_NAVIGATION_MENU_ITEMS[inboxTabSectionName];
+  for (const chatsTabSectionName of CHATS_TAB_SECTION_NAMES) {
+    const chatsTabSectionDefinition =
+      STANDARD_NAVIGATION_MENU_ITEMS[chatsTabSectionName];
 
     addFlatNavigationMenuItemToMapsAndUpdateIndex({
       flatNavigationMenuItem:
         createStandardNavigationMenuItemContainerFlatMetadata({
-          universalIdentifier: inboxTabSectionDefinition.universalIdentifier,
-          type: inboxTabSectionDefinition.type,
-          folderId: inboxTabId,
+          universalIdentifier: chatsTabSectionDefinition.universalIdentifier,
+          type: chatsTabSectionDefinition.type,
+          folderId: chatsTabId,
           folderUniversalIdentifier:
-            inboxTabSectionDefinition.folderUniversalIdentifier,
-          position: inboxTabSectionDefinition.position,
+            chatsTabSectionDefinition.folderUniversalIdentifier,
+          position: chatsTabSectionDefinition.position,
           navigationMenuItemId: v4(),
           workspaceId,
           twentyStandardApplicationId,

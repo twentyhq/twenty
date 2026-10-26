@@ -5,13 +5,18 @@ import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-m
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
+  inboxSection: {
+    universalIdentifier: '20202020-b00d-4b0d-8b0d-c0aba11c000d',
+    type: NavigationMenuItemType.AI_CHAT_TRIAGE,
+    position: 0,
+  },
   workspaceSection: {
     universalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     type: NavigationMenuItemType.SECTION,
     name: i18nLabel(
       msg({ message: `Workspace`, context: 'navigationMenuItem.name' }),
     ),
-    position: 0,
+    position: 1,
   },
   allCompanies: {
     universalIdentifier: '20202020-b001-4b01-8b01-c0aba11c0001',
@@ -104,38 +109,32 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     position: 2,
   },
-  inboxTab: {
+  chatsTab: {
     universalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
     type: NavigationMenuItemType.TAB,
     name: i18nLabel(
-      msg({ message: `Inbox`, context: 'navigationMenuItem.name' }),
+      msg({ message: `Chats`, context: 'navigationMenuItem.name' }),
     ),
-    icon: 'IconInbox',
+    icon: 'IconMessage',
     position: 0,
   },
-  inboxTabTriage: {
-    universalIdentifier: '20202020-b00d-4b0d-8b0d-c0aba11c000d',
-    type: NavigationMenuItemType.AI_CHAT_TRIAGE,
-    folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
-    position: 0,
-  },
-  inboxTabFavoriteChats: {
+  chatsTabFavoriteChats: {
     universalIdentifier: '20202020-b00e-4b0e-8b0e-c0aba11c000e',
     type: NavigationMenuItemType.AI_CHAT_FAVORITES,
     folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
-    position: 1,
+    position: 0,
   },
-  inboxTabChannels: {
+  chatsTabChannels: {
     universalIdentifier: '20202020-b011-4b11-8b11-c0aba11c0011',
     type: NavigationMenuItemType.AI_CHAT_CHANNELS,
     folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
-    position: 2,
+    position: 1,
   },
-  inboxTabRecentChats: {
+  chatsTabRecentChats: {
     universalIdentifier: '20202020-b00f-4b0f-8b0f-c0aba11c000f',
     type: NavigationMenuItemType.AI_CHAT_RECENTS,
     folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
-    position: 3,
+    position: 2,
   },
 } as const;
 
