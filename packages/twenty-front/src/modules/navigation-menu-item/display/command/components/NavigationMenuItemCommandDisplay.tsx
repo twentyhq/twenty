@@ -35,7 +35,11 @@ export const NavigationMenuItemCommandDisplay = ({
     <NavigationDrawerItem
       label={t(label)}
       Icon={Icon}
-      modifier={isDefined(keyboard) ? { keyboard } : undefined}
+      modifier={
+        isDefined(keyboard) && !isLayoutCustomizationModeEnabled
+          ? { keyboard }
+          : undefined
+      }
       onClick={
         isLayoutCustomizationModeEnabled
           ? editModeProps?.onEditModeClick
