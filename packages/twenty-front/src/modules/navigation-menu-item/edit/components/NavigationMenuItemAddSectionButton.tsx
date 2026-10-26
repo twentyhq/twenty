@@ -85,7 +85,7 @@ export const NavigationMenuItemAddSectionButton = ({
                   id: 'blank',
                   label: t`Blank section`,
                   Icon: IconPlus,
-                  onClick: () => createSection({ parentId, template: 'blank' }),
+                  onClick: () => createSection(parentId),
                 },
               ],
             },

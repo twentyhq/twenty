@@ -11,16 +11,9 @@ import { buildOptimisticNavigationMenuItem } from '@/navigation-menu-item/common
 import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
 import { isNavigationMenuItemTab } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTab';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
-import { type NavigationMenuItemContainerTemplate } from '@/navigation-menu-item/edit/types/NavigationMenuItemContainerTemplate';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-
-const INBOX_SECTION_TYPES = [
-  NavigationMenuItemType.AI_CHAT_TRIAGE,
-  NavigationMenuItemType.AI_CHAT_FAVORITES,
-  NavigationMenuItemType.AI_CHAT_RECENTS,
-];
 
 export const useCreateNavigationMenuTabOrSection = () => {
   const { t } = useLingui();
@@ -51,56 +44,26 @@ export const useCreateNavigationMenuTabOrSection = () => {
         .map((item) => item.position),
     ) + 1;
 
-  const buildTemplateChildren = (
-    template: NavigationMenuItemContainerTemplate,
-    parentId: string,
-  ): NavigationMenuItem[] => {
-    switch (template) {
-      case 'inbox':
-        return INBOX_SECTION_TYPES.map((type, index) =>
-          buildOptimisticNavigationMenuItem({
-            id: v4(),
-            type,
-            folderId: parentId,
-            position: index,
-          }),
-        );
-      default:
-        return [];
-    }
-  };
-
-  const addToDraft = (newItems: NavigationMenuItem[]) =>
+  const addToDraft = (newItem: NavigationMenuItem) =>
     setNavigationMenuItemsDraft((draft) => [
       ...(draft ?? workspaceNavigationMenuItems),
-      ...newItems,
+      newItem,
     ]);
 
-  const getTabNameAndIcon = (template: NavigationMenuItemContainerTemplate) => {
-    switch (template) {
-      case 'inbox':
-        return { name: t`Inbox`, icon: 'IconInbox' };
-      default:
-        return { name: t`New tab`, icon: NAVIGATION_MENU_TAB_ICON_DEFAULT };
-    }
-  };
-
-  const createTab = (template: NavigationMenuItemContainerTemplate) => {
+  const createTab = () => {
     const tab = buildOptimisticNavigationMenuItem({
       id: v4(),
       type: NavigationMenuItemType.TAB,
-      ...getTabNameAndIcon(template),
+      name: t`New tab`,
+      icon: NAVIGATION_MENU_TAB_ICON_DEFAULT,
       position: getNextPosition(isNavigationMenuItemTab, null),
     });
 
-    addToDraft([tab, ...buildTemplateChildren(template, tab.id)]);
+    addToDraft(tab);
 
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setCurrentNavigationMenuTabId(tab.id);
-
-    if (template === 'blank') {
-      setNavigationMenuItemIdToRename(tab.id);
-    }
+    setNavigationMenuItemIdToRename(tab.id);
   };
 
   const createAiSection = ({
@@ -110,22 +73,16 @@ export const useCreateNavigationMenuTabOrSection = () => {
     parentId: string | null;
     type: NavigationMenuItemType;
   }) =>
-    addToDraft([
+    addToDraft(
       buildOptimisticNavigationMenuItem({
         id: v4(),
         type,
         folderId: parentId ?? undefined,
         position: getNextPosition(isNavigationMenuItemAnySection, parentId),
       }),
-    ]);
+    );
 
-  const createSection = ({
-    parentId,
-    template,
-  }: {
-    parentId: string | null;
-    template: NavigationMenuItemContainerTemplate;
-  }) => {
+  const createSection = (parentId: string | null) => {
     const section = buildOptimisticNavigationMenuItem({
       id: v4(),
       type: NavigationMenuItemType.SECTION,
@@ -134,11 +91,8 @@ export const useCreateNavigationMenuTabOrSection = () => {
       position: getNextPosition(isNavigationMenuItemAnySection, parentId),
     });
 
-    addToDraft([section, ...buildTemplateChildren(template, section.id)]);
-
-    if (template === 'blank') {
-      setNavigationMenuItemIdToRename(section.id);
-    }
+    addToDraft(section);
+    setNavigationMenuItemIdToRename(section.id);
   };
 
   return { createTab, createSection, createAiSection };

@@ -1,11 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconInbox, IconPlus } from 'twenty-ui/icon';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { IconPlus } from 'twenty-ui/icon';
 
-import { NavigationMenuItemContainerTemplateMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerTemplateMenu';
 import { useCreateNavigationMenuTabOrSection } from '@/navigation-menu-item/edit/hooks/useCreateNavigationMenuTabOrSection';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 
 type MainNavigationDrawerAddTabButtonProps = {
   isExpanded: boolean;
@@ -15,53 +12,16 @@ export const MainNavigationDrawerAddTabButton = ({
   isExpanded,
 }: MainNavigationDrawerAddTabButtonProps) => {
   const { t } = useLingui();
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const { createTab } = useCreateNavigationMenuTabOrSection();
 
   return (
-    <NavigationMenuItemContainerTemplateMenu
-      dropdownId="navigation-menu-add-tab"
-      title={t`Add tab`}
-      side={isExpanded ? 'bottom' : 'right'}
-      trigger={
-        <LightIconButton
-          emphasis="subtle"
-          size={isExpanded ? 'sm' : 'md'}
-          aria-label={t`Add tab`}
-        >
-          <IconPlus />
-        </LightIconButton>
-      }
-      groups={[
-        {
-          id: 'blank',
-          options: [
-            {
-              id: 'blank',
-              label: t`Blank tab`,
-              Icon: IconPlus,
-              onClick: () => createTab('blank'),
-            },
-          ],
-        },
-        {
-          id: 'templates',
-          label: t`Templates`,
-          options: [
-            ...(hasAiPermission
-              ? [
-                  {
-                    id: 'inbox',
-                    label: t`Inbox`,
-                    contextualText: t`Triage and chats`,
-                    Icon: IconInbox,
-                    onClick: () => createTab('inbox'),
-                  },
-                ]
-              : []),
-          ],
-        },
-      ]}
-    />
+    <LightIconButton
+      emphasis="subtle"
+      size={isExpanded ? 'sm' : 'md'}
+      aria-label={t`Add tab`}
+      onClick={createTab}
+    >
+      <IconPlus />
+    </LightIconButton>
   );
 };
