@@ -68,6 +68,12 @@ const containsOperandsSchemas = {
   [ViewFilterOperand.DOES_NOT_CONTAIN]: nonEmptyStringFilterValueSchema,
 };
 
+const ADDRESS_TEXT_OPERAND_SCHEMAS = {
+  ...containsOperandsSchemas,
+  [ViewFilterOperand.IS]: nonEmptyStringFilterValueSchema,
+  [ViewFilterOperand.IS_NOT]: nonEmptyStringFilterValueSchema,
+};
+
 const numericOperandsSchemas = {
   [ViewFilterOperand.IS]: numericFilterValueSchema,
   [ViewFilterOperand.IS_NOT]: numericFilterValueSchema,
@@ -143,6 +149,11 @@ export const COMPOSITE_SUB_FIELD_VALUE_SCHEMAS = {
     },
   },
   ADDRESS: {
+    addressStreet1: ADDRESS_TEXT_OPERAND_SCHEMAS,
+    addressStreet2: ADDRESS_TEXT_OPERAND_SCHEMAS,
+    addressCity: ADDRESS_TEXT_OPERAND_SCHEMAS,
+    addressState: ADDRESS_TEXT_OPERAND_SCHEMAS,
+    addressPostcode: ADDRESS_TEXT_OPERAND_SCHEMAS,
     addressCountry: {
       [ViewFilterOperand.CONTAINS]: arrayOfStringsOrVariablesSchema,
       [ViewFilterOperand.DOES_NOT_CONTAIN]: arrayOfStringsOrVariablesSchema,

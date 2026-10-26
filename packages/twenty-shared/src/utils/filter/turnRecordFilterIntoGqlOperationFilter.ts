@@ -43,6 +43,7 @@ import {
   checkIfShouldComputeEmptinessFilter,
   CustomError,
   getFilterTypeFromFieldType,
+  getFilterOperandsForFilterableFieldType,
   getNextPeriodStart,
   getPeriodStart,
   isDefined,
@@ -915,6 +916,30 @@ const buildDirectFieldGqlOperationFilter = ({
     }
     case 'ADDRESS':
       switch (recordFilter.operand) {
+        case RecordFilterOperand.IS:
+        case RecordFilterOperand.IS_NOT: {
+          if (
+            !isSubFieldFilter ||
+            !getFilterOperandsForFilterableFieldType({
+              filterType,
+              subFieldName,
+            }).includes(recordFilter.operand)
+          ) {
+            throw new Error(
+              `Unknown operand ${recordFilter.operand} for ${filterType} / ${subFieldName} filter`,
+            );
+          }
+
+          const equalityFilter = {
+            [fieldMetadataItem.name]: {
+              [subFieldName]: { eq: recordFilter.value },
+            },
+          };
+
+          return recordFilter.operand === RecordFilterOperand.IS
+            ? equalityFilter
+            : { not: equalityFilter };
+        }
         case RecordFilterOperand.CONTAINS:
           if (!isSubFieldFilter) {
             return {

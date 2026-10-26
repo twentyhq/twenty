@@ -2,6 +2,35 @@ import { ViewFilterOperand } from '@/types';
 import { getFilterOperandsForFilterableFieldType } from '@/utils/filter/utils/getFilterOperandsForFilterableFieldType';
 
 describe('getFilterOperandsForFilterableFieldType', () => {
+  it.each([
+    'addressStreet1',
+    'addressStreet2',
+    'addressCity',
+    'addressState',
+    'addressPostcode',
+  ])('offers exact matching for %s', (subFieldName) => {
+    expect(
+      getFilterOperandsForFilterableFieldType({
+        filterType: 'ADDRESS',
+        subFieldName,
+      }),
+    ).toEqual(
+      expect.arrayContaining([ViewFilterOperand.IS, ViewFilterOperand.IS_NOT]),
+    );
+  });
+
+  it.each([undefined, 'addressCountry', 'addressLat', 'addressLng'])(
+    'does not offer text equality for address subfield %s',
+    (subFieldName) => {
+      expect(
+        getFilterOperandsForFilterableFieldType({
+          filterType: 'ADDRESS',
+          subFieldName,
+        }),
+      ).not.toContain(ViewFilterOperand.IS);
+    },
+  );
+
   const emptyOperands = [
     ViewFilterOperand.IS_EMPTY,
     ViewFilterOperand.IS_NOT_EMPTY,

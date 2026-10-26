@@ -314,6 +314,23 @@ describe('getFilterValueSchema', () => {
       );
     });
 
+    it.each([ViewFilterOperand.IS, ViewFilterOperand.IS_NOT])(
+      'validates exact city comparison values for %s',
+      (operand) => {
+        const filter = {
+          filterType: 'ADDRESS' as const,
+          operand,
+          subFieldName: 'addressCity',
+        };
+
+        expectAccepted(filter, 'San Francisco');
+        expectRejected(filter, '');
+        expect(getFilterValueSchema(filter)?.safeParse(null).success).toBe(
+          false,
+        );
+      },
+    );
+
     it('should keep the text contract on other address sub fields', () => {
       expectAccepted(
         {

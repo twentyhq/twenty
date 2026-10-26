@@ -997,6 +997,43 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
   });
 
   describe('ADDRESS filter', () => {
+    it.each(['Paris', 'San Francisco', 'City_%'])(
+      'matches a city exactly without interpreting wildcards: %s',
+      (city) => {
+        const result = turnRecordFilterIntoRecordGqlOperationFilter({
+          filterValueDependencies,
+          recordFilter: makeFilter(
+            'f-address',
+            RecordFilterOperand.IS,
+            city,
+            'ADDRESS',
+            'addressCity',
+          ),
+          fieldMetadataItemById,
+        });
+
+        expect(result).toEqual({ location: { addressCity: { eq: city } } });
+      },
+    );
+
+    it('negates exact city matching', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-address',
+          RecordFilterOperand.IS_NOT,
+          'Paris',
+          'ADDRESS',
+          'addressCity',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        not: { location: { addressCity: { eq: 'Paris' } } },
+      });
+    });
+
     it('should handle CONTAINS operand without subfield', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,

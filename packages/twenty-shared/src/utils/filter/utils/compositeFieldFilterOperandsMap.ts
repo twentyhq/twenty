@@ -9,6 +9,14 @@ const emptyOperands = [
   ViewFilterOperand.IS_NOT_EMPTY,
 ] as const;
 
+const ADDRESS_TEXT_OPERANDS = [
+  ViewFilterOperand.CONTAINS,
+  ViewFilterOperand.DOES_NOT_CONTAIN,
+  ViewFilterOperand.IS,
+  ViewFilterOperand.IS_NOT,
+  ...emptyOperands,
+] as const;
+
 // TODO: we would need to refactor the typing of SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS first
 //   with types like FieldCurrencyValue being derived from a central constant value and not being created like that
 //   in order to narrow down the possible subfield names for each field type
@@ -19,6 +27,13 @@ type CompositeFieldFilterOperandMap = {
 };
 
 export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {
+  ADDRESS: {
+    addressStreet1: ADDRESS_TEXT_OPERANDS,
+    addressStreet2: ADDRESS_TEXT_OPERANDS,
+    addressCity: ADDRESS_TEXT_OPERANDS,
+    addressState: ADDRESS_TEXT_OPERANDS,
+    addressPostcode: ADDRESS_TEXT_OPERANDS,
+  },
   CURRENCY: {
     currencyCode: [
       ViewFilterOperand.IS,

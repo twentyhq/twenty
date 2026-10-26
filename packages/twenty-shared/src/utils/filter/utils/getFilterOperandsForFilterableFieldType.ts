@@ -35,5 +35,15 @@ export const getFilterOperandsForFilterableFieldType = ({
     return actorSubFieldOperands;
   }
 
+  if (
+    filterType === 'ADDRESS' &&
+    subFieldName &&
+    subFieldName in COMPOSITE_FIELD_FILTER_OPERANDS_MAP.ADDRESS
+  ) {
+    return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.ADDRESS[
+      subFieldName as keyof typeof COMPOSITE_FIELD_FILTER_OPERANDS_MAP.ADDRESS
+    ];
+  }
+
   return FILTER_OPERANDS_MAP[filterType];
 };
