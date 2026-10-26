@@ -1,7 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
-import { doNotTranslate } from 'twenty-shared/i18n';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { MultipleRecordPickerPlacementStory } from '@/object-record/record-picker/multiple-record-picker/components/__stories__/MultipleRecordPickerPlacementStory';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -95,11 +94,7 @@ export const FlipKeepsResultsAndFocus: Story = {
       name: FOCUSED_RECORD_LABEL,
     });
 
-    if (!isDefined(recordsScroller)) {
-      throw new Error(
-        doNotTranslate('The records scroll container is missing'),
-      );
-    }
+    assertIsDefinedOrThrow(recordsScroller);
 
     await waitFor(() => {
       expect(popup.getBoundingClientRect().bottom).toBeLessThanOrEqual(
