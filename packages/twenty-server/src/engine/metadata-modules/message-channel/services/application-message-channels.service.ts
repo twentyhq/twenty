@@ -25,6 +25,8 @@ import {
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
+import { canonicalizePersonHandle } from 'src/modules/match-participant/person-handle-field/utils/canonicalize-person-handle.util';
 
 type ApplicationScope = {
   applicationId: string;
@@ -39,6 +41,7 @@ type CreateArgs = ApplicationScope & {
   handle: string;
   displayName?: string;
   visibility: MessageChannelVisibility;
+  participantHandleFieldUniversalIdentifier?: string;
 };
 
 type UpdateArgs = ApplicationScope & {
@@ -73,6 +76,7 @@ export class ApplicationMessageChannelsService {
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly personHandleFieldService: PersonHandleFieldService,
   ) {}
 
   async list({
@@ -116,15 +120,22 @@ export class ApplicationMessageChannelsService {
     workspaceId,
     requestUserWorkspaceId,
     connectedAccountId,
-    handle,
+    handle: requestedHandle,
     displayName,
     visibility,
+    participantHandleFieldUniversalIdentifier,
   }: CreateArgs): Promise<MessageChannelDTO> {
     await this.assertOwnsConnectedAccount({
       applicationId,
       workspaceId,
       requestUserWorkspaceId,
       connectedAccountId,
+    });
+
+    const handle = await this.resolveChannelHandleOrThrow({
+      workspaceId,
+      handle: requestedHandle,
+      participantHandleFieldUniversalIdentifier,
     });
 
     const existingChannel = await this.messageChannelRepository.findOne({
@@ -145,6 +156,8 @@ export class ApplicationMessageChannelsService {
       displayName: normalizeDisplayName(displayName),
       type: MessageChannelType.APP,
       visibility,
+      participantHandleFieldUniversalIdentifier:
+        participantHandleFieldUniversalIdentifier ?? null,
       isSyncEnabled: true,
       // inert since app channels skip the polling crons; mirrors EMAIL_GROUP so the UI reads healthy
       syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
@@ -157,6 +170,47 @@ export class ApplicationMessageChannelsService {
     });
 
     return this.messageChannelRepository.save(entity);
+  }
+
+  // the channel's own handle shares its participants' namespace, so direction still compares like with like
+  private async resolveChannelHandleOrThrow({
+    workspaceId,
+    handle,
+    participantHandleFieldUniversalIdentifier,
+  }: Pick<
+    CreateArgs,
+    'workspaceId' | 'handle' | 'participantHandleFieldUniversalIdentifier'
+  >): Promise<string> {
+    if (!isDefined(participantHandleFieldUniversalIdentifier)) {
+      return handle;
+    }
+
+    const personHandleField =
+      await this.personHandleFieldService.findByUniversalIdentifier({
+        workspaceId,
+        fieldUniversalIdentifier: participantHandleFieldUniversalIdentifier,
+      });
+
+    if (!isDefined(personHandleField)) {
+      throw new MessageChannelException(
+        `Field ${participantHandleFieldUniversalIdentifier} is not an active person field of type EMAILS, PHONES, LINKS or TEXT`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    const canonicalHandle = canonicalizePersonHandle({
+      type: personHandleField.type,
+      value: handle,
+    });
+
+    if (!isDefined(canonicalHandle)) {
+      throw new MessageChannelException(
+        `Handle ${handle} is not a valid ${personHandleField.type} value`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    return canonicalHandle;
   }
 
   async update({

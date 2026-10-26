@@ -180,15 +180,6 @@ export const WorkflowEditActionCode = ({
       ...action,
       settings: {
         ...action.settings,
-        outputSchema: {
-          link: {
-            isLeaf: true,
-            icon: 'IconVariable',
-            tab: 'test',
-            label: t`Generate Function Output`,
-          },
-          _outputSchemaType: 'LINK',
-        },
         input: {
           ...action.settings.input,
           logicFunctionId: targetLogicFunctionId,

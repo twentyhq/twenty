@@ -1,33 +1,32 @@
 import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { normalizeAddressFieldValueForPersist } from '@/object-record/record-field/ui/utils/normalizeAddressFieldValueForPersist';
-import { RecordFormFieldDetailsToggleRow } from '@/object-record/record-form/components/RecordFormFieldDetailsToggleRow';
+import { FieldInputDetailsToggleRow } from '@/ui/field/input/components/FieldInputDetailsToggleRow';
 import { StyledRecordFormFieldBox } from '@/object-record/record-form/components/StyledRecordFormFieldBox';
-import { StyledRecordFormFieldDetails } from '@/object-record/record-form/components/StyledRecordFormFieldDetails';
+import { StyledFieldInputDetails } from '@/ui/field/input/components/StyledFieldInputDetails';
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { styled } from '@linaria/react';
+import { ADDRESS_DETAIL_SUB_FIELDS } from '@/ui/field/input/constants/AddressDetailSubFields';
+import { hasAddressDetailValue } from '@/ui/field/input/utils/hasAddressDetailValue';
+import { StyledFieldInputFullWidthDetail } from '@/ui/field/input/components/StyledFieldInputFullWidthDetail';
+import { AddressAutocompleteRoot } from '@/ui/field/input/components/AddressAutocompleteRoot';
+import { useAddressAutocomplete } from '@/ui/field/input/hooks/useAddressAutocomplete';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { atom, useAtomValue, useStore } from 'jotai';
 import { useId, useState } from 'react';
 import { type AllowedAddressSubField } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Field } from 'twenty-ui/primitives/input';
+import { Autocomplete, Field } from 'twenty-ui/primitives/input';
 
 type AddressTextSubField = Exclude<
   AllowedAddressSubField,
   'addressLat' | 'addressLng'
 >;
 
-const ADDRESS_DETAIL_SUB_FIELDS: AddressTextSubField[] = [
-  'addressStreet2',
-  'addressCity',
-  'addressState',
-  'addressPostcode',
-  'addressCountry',
-];
+type AddressSuggestedSubField = 'addressStreet1' | 'addressCity';
 
 const EMPTY_ADDRESS: FieldAddressValue = {
   addressStreet1: '',
@@ -39,10 +38,6 @@ const EMPTY_ADDRESS: FieldAddressValue = {
   addressLat: null,
   addressLng: null,
 };
-
-const StyledFullWidthDetail = styled.div`
-  grid-column: 1 / -1;
-`;
 
 type RecordFormAddressFieldInputProps = {
   label?: string;
@@ -61,10 +56,24 @@ export const RecordFormAddressFieldInput = ({
 }: RecordFormAddressFieldInputProps) => {
   const { t } = useLingui();
   const instanceId = useId();
+  const addressSuggestionsDropdownId = `${instanceId}-address-suggestions`;
 
-  const [address, setAddress] = useState<FieldAddressValue>({
-    ...EMPTY_ADDRESS,
-    ...defaultValue,
+  const store = useStore();
+  const [addressAtom] = useState(() =>
+    atom<FieldAddressValue>({ ...EMPTY_ADDRESS, ...defaultValue }),
+  );
+  const address = useAtomValue(addressAtom);
+
+  const {
+    placeAutocompleteData,
+    typeOfAddressForAutocomplete,
+    searchPlaces,
+    selectPlace,
+    closeDropdownOfAutocomplete,
+  } = useAddressAutocomplete({
+    onChange: (updatedAddress) =>
+      onChange(normalizeAddressFieldValueForPersist(updatedAddress)),
+    dropdownId: addressSuggestionsDropdownId,
   });
 
   const hasSubField = (subField: AllowedAddressSubField) =>
@@ -74,9 +83,7 @@ export const RecordFormAddressFieldInput = ({
   const hasDetails = ADDRESS_DETAIL_SUB_FIELDS.some(hasSubField);
 
   const [isExpanded, setIsExpanded] = useState(() =>
-    ADDRESS_DETAIL_SUB_FIELDS.some((subField) =>
-      isNonEmptyString(address[subField]),
-    ),
+    hasAddressDetailValue({ address, subFields }),
   );
 
   const shouldShowDetails = hasDetails && (!hasStreet1 || isExpanded);
@@ -85,9 +92,36 @@ export const RecordFormAddressFieldInput = ({
     (subField: AddressTextSubField) => (subFieldValue: string) => {
       const updatedAddress = { ...address, [subField]: subFieldValue };
 
-      setAddress(updatedAddress);
+      store.set(addressAtom, updatedAddress);
       onChange(normalizeAddressFieldValueForPersist(updatedAddress));
     };
+
+  const handleSuggestedSubFieldChange =
+    (subField: AddressSuggestedSubField) => (subFieldValue: string) => {
+      handleSubFieldChange(subField)(subFieldValue);
+      searchPlaces({
+        subField,
+        text: subFieldValue,
+        countryName: address.addressCountry ?? '',
+      });
+    };
+
+  const handlePlaceSelection = async (placeId: string) => {
+    const updatedAddress = await selectPlace({
+      placeId,
+      getInternalValue: () => store.get(addressAtom),
+    });
+
+    if (!isDefined(updatedAddress)) {
+      return;
+    }
+
+    store.set(addressAtom, { ...EMPTY_ADDRESS, ...updatedAddress });
+
+    if (hasAddressDetailValue({ address: updatedAddress, subFields })) {
+      setIsExpanded(true);
+    }
+  };
 
   return (
     <FormFieldInputContainer>
@@ -98,29 +132,38 @@ export const RecordFormAddressFieldInput = ({
       ) : null}
       <StyledRecordFormFieldBox>
         {hasStreet1 && (
-          <RecordFormFieldDetailsToggleRow
+          <FieldInputDetailsToggleRow
             isExpanded={isExpanded}
             toggleLabel={t`Address details`}
             hasToggle={hasDetails}
             onToggle={() => setIsExpanded(!isExpanded)}
           >
-            <StyledTextInput
-              id={instanceId}
-              autoComplete="off"
-              placeholder={
-                subFieldPlaceholders?.addressStreet1 ?? t`Street address`
-              }
+            <AddressAutocompleteRoot
+              dropdownId={addressSuggestionsDropdownId}
+              isEnabled={typeOfAddressForAutocomplete === 'addressStreet1'}
+              places={placeAutocompleteData}
               value={address.addressStreet1 ?? ''}
-              onChange={(event) =>
-                handleSubFieldChange('addressStreet1')(event.target.value)
-              }
-            />
-          </RecordFormFieldDetailsToggleRow>
+              onValueChange={handleSuggestedSubFieldChange('addressStreet1')}
+              onClose={closeDropdownOfAutocomplete}
+              onPlaceSelect={handlePlaceSelection}
+            >
+              <Autocomplete.Input
+                id={instanceId}
+                placeholder={
+                  subFieldPlaceholders?.addressStreet1 ?? t`Street address`
+                }
+                render={(inputProps) => (
+                  // oxlint-disable-next-line react/jsx-props-no-spreading
+                  <StyledTextInput {...inputProps} />
+                )}
+              />
+            </AddressAutocompleteRoot>
+          </FieldInputDetailsToggleRow>
         )}
         {shouldShowDetails && (
-          <StyledRecordFormFieldDetails hasSeparator={hasStreet1}>
+          <StyledFieldInputDetails hasSeparator={hasStreet1}>
             {hasSubField('addressStreet2') && (
-              <StyledFullWidthDetail>
+              <StyledFieldInputFullWidthDetail>
                 <TextInput
                   label={t`Address 2`}
                   placeholder={
@@ -130,16 +173,35 @@ export const RecordFormAddressFieldInput = ({
                   fullWidth
                   onChange={handleSubFieldChange('addressStreet2')}
                 />
-              </StyledFullWidthDetail>
+              </StyledFieldInputFullWidthDetail>
             )}
             {hasSubField('addressCity') && (
-              <TextInput
-                label={t`City`}
-                placeholder={subFieldPlaceholders?.addressCity ?? t`City`}
-                value={address.addressCity ?? ''}
-                fullWidth
-                onChange={handleSubFieldChange('addressCity')}
-              />
+              // Own field so the outer field label does not name the city input
+              <Field.Root>
+                <AddressAutocompleteRoot
+                  dropdownId={addressSuggestionsDropdownId}
+                  isEnabled={typeOfAddressForAutocomplete === 'addressCity'}
+                  places={placeAutocompleteData}
+                  value={address.addressCity ?? ''}
+                  onValueChange={handleSuggestedSubFieldChange('addressCity')}
+                  onClose={closeDropdownOfAutocomplete}
+                  onPlaceSelect={handlePlaceSelection}
+                >
+                  <Autocomplete.Input
+                    aria-label={t`City`}
+                    render={(inputProps) => (
+                      <TextInput
+                        inputProps={inputProps}
+                        label={t`City`}
+                        placeholder={
+                          subFieldPlaceholders?.addressCity ?? t`City`
+                        }
+                        fullWidth
+                      />
+                    )}
+                  />
+                </AddressAutocompleteRoot>
+              </Field.Root>
             )}
             {hasSubField('addressState') && (
               <TextInput
@@ -169,7 +231,7 @@ export const RecordFormAddressFieldInput = ({
                 dropdownId={`${instanceId}-country`}
               />
             )}
-          </StyledRecordFormFieldDetails>
+          </StyledFieldInputDetails>
         )}
       </StyledRecordFormFieldBox>
     </FormFieldInputContainer>

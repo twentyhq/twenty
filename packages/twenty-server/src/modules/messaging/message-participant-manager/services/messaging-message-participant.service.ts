@@ -156,11 +156,13 @@ export class MessagingMessageParticipantService {
     messageIds,
     workspaceId,
     matchWith = 'workspaceMemberAndPerson',
+    personHandleField,
   }: {
     participants: MessageParticipantWorkspaceEntity[];
     messageIds: string[];
     workspaceId: string;
     matchWith?: MatchParticipantsArgs<MessageParticipantWorkspaceEntity>['matchWith'];
+    personHandleField?: MatchParticipantsArgs<MessageParticipantWorkspaceEntity>['personHandleField'];
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -171,6 +173,7 @@ export class MessagingMessageParticipantService {
           sourceRecordIds: messageIds,
           objectMetadataName: 'messageParticipant',
           matchWith,
+          personHandleField,
         });
       },
       authContext,

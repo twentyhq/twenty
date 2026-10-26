@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { graphql, http, HttpResponse } from 'msw';
 import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
@@ -170,6 +171,35 @@ const meta: Meta<typeof RecordFormFieldInputsWithDraft> = {
   args: {
     fieldMetadataItems: [percentageFieldMetadataItem, booleanFieldMetadataItem],
     onFieldValueChange: fn(),
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('GetAutoCompleteAddress', () =>
+          HttpResponse.json({
+            data: {
+              getAutoCompleteAddress: [
+                { text: '10 Rue de Rivoli, Paris', placeId: 'rivoli' },
+              ],
+            },
+          }),
+        ),
+        graphql.query('GetAddressDetails', () =>
+          HttpResponse.json({
+            data: {
+              getAddressDetails: {
+                street: '10 Rue de Rivoli',
+                state: 'Île-de-France',
+                postcode: '75001',
+                city: 'Paris',
+                country: 'FR',
+                location: { lat: 48.8566, lng: 2.3522 },
+              },
+            },
+          }),
+        ),
+      ],
+    },
   },
 };
 
@@ -640,6 +670,70 @@ export const InvalidLink: Story = {
   },
 };
 
+export const FilesDropUpload: Story = {
+  args: {
+    fieldMetadataItems: [filesFieldMetadataItem],
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.mutation('CreateFileUpload', () =>
+          HttpResponse.json({
+            data: {
+              createFileUpload: {
+                __typename: 'FileUploadTarget',
+                fileId: 'dropped-file-id',
+                uploadUrl: 'https://upload.example.com/dropped-file-id',
+                contentType: 'application/pdf',
+              },
+            },
+          }),
+        ),
+        http.put(
+          'https://upload.example.com/dropped-file-id',
+          () => new HttpResponse(null, { status: 200 }),
+        ),
+        graphql.mutation('CompleteFileUpload', () =>
+          HttpResponse.json({
+            data: {
+              completeFileUpload: {
+                __typename: 'FileWithSignedUrl',
+                id: 'dropped-file-id',
+                path: 'files/brief.pdf',
+                size: 4,
+                createdAt: '2026-10-24T00:00:00.000Z',
+                url: 'https://example.com/brief.pdf',
+              },
+            },
+          }),
+        ),
+      ],
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const dataTransfer = new DataTransfer();
+
+    dataTransfer.items.add(
+      new File(['test'], 'brief.pdf', { type: 'application/pdf' }),
+    );
+
+    canvas
+      .getByRole('button', { name: 'Upload file' })
+      .dispatchEvent(new DragEvent('drop', { bubbles: true, dataTransfer }));
+
+    await waitFor(() =>
+      expect(args.onFieldValueChange).toHaveBeenLastCalledWith('attachments', [
+        expect.objectContaining({
+          fileId: 'dropped-file-id',
+          label: 'brief.pdf',
+        }),
+      ]),
+    );
+    await expect(await canvas.findByText('brief.pdf')).toBeVisible();
+  },
+};
+
 export const FilesRenameAndDelete: Story = {
   args: {
     fieldMetadataItems: [filesFieldMetadataItem],
@@ -754,18 +848,18 @@ export const Address: Story = {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.queryByRole('textbox', { name: 'City' }),
+      canvas.queryByRole('combobox', { name: 'City' }),
     ).not.toBeInTheDocument();
 
     await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Address' }),
+      canvas.getByRole('combobox', { name: 'Address' }),
       '12 rue de Rivoli',
     );
     await userEvent.click(
       canvas.getByRole('button', { name: 'Address details' }),
     );
     await userEvent.type(
-      canvas.getByRole('textbox', { name: 'City' }),
+      canvas.getByRole('combobox', { name: 'City' }),
       'Paris',
     );
 
@@ -798,16 +892,52 @@ export const StoredAddressShowsDetails: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByRole('textbox', { name: 'Address' })).toHaveValue(
+    await expect(canvas.getByRole('combobox', { name: 'Address' })).toHaveValue(
       '12 rue de Rivoli',
     );
-    await expect(canvas.getByRole('textbox', { name: 'City' })).toHaveValue(
+    await expect(canvas.getByRole('combobox', { name: 'City' })).toHaveValue(
       'Paris',
     );
     await expect(
       canvas.getByRole('textbox', { name: 'Post Code' }),
     ).toHaveValue('75001');
     await expect(args.onFieldValueChange).not.toHaveBeenCalled();
+  },
+};
+
+export const AddressSuggestions: Story = {
+  args: {
+    fieldMetadataItems: [addressFieldMetadataItem],
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
+
+    await userEvent.type(
+      canvas.getByRole('combobox', { name: 'Address' }),
+      '10 Rue',
+    );
+    await userEvent.click(
+      await screen.findByRole('option', { name: '10 Rue de Rivoli, Paris' }),
+    );
+
+    await waitFor(() =>
+      expect(canvas.getByRole('combobox', { name: 'City' })).toHaveValue(
+        'Paris',
+      ),
+    );
+    await expect(canvas.getByRole('combobox', { name: 'Address' })).toHaveValue(
+      '10 Rue de Rivoli',
+    );
+    await expect(args.onFieldValueChange).toHaveBeenLastCalledWith(
+      'address',
+      expect.objectContaining({
+        addressStreet1: '10 Rue de Rivoli',
+        addressCity: 'Paris',
+        addressPostcode: '75001',
+        addressCountry: 'France',
+      }),
+    );
   },
 };
 

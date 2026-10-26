@@ -12,7 +12,7 @@ const StyledRow = styled.div`
   padding-right: ${themeCssVariables.spacing[1]};
 `;
 
-type RecordFormFieldDetailsToggleRowProps = {
+type FieldInputDetailsToggleRowProps = {
   children: ReactNode;
   isExpanded: boolean;
   toggleLabel: string;
@@ -20,19 +20,20 @@ type RecordFormFieldDetailsToggleRowProps = {
   hasToggle?: boolean;
 };
 
-export const RecordFormFieldDetailsToggleRow = ({
+export const FieldInputDetailsToggleRow = ({
   children,
   isExpanded,
   toggleLabel,
   onToggle,
   hasToggle = true,
-}: RecordFormFieldDetailsToggleRowProps) => (
+}: FieldInputDetailsToggleRowProps) => (
   <StyledRow>
     {children}
     {hasToggle && (
       <LightIconButton
         aria-label={toggleLabel}
         aria-expanded={isExpanded}
+        onMouseDown={(event) => event.preventDefault()}
         onClick={onToggle}
       >
         <IconListDetails />
