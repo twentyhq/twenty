@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconCode, IconInbox, IconPlus } from 'twenty-ui/icon';
+import { IconInbox, IconPlus } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemContainerTemplateMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerTemplateMenu';
@@ -48,13 +48,6 @@ export const MainNavigationDrawerAddTabButton = ({
           id: 'templates',
           label: t`Templates`,
           options: [
-            {
-              id: 'developer-tools',
-              label: t`Developers`,
-              contextualText: t`API, webhooks and more`,
-              Icon: IconCode,
-              onClick: () => createTab('developer-tools'),
-            },
             ...(hasAiPermission
               ? [
                   {

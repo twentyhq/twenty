@@ -3,7 +3,6 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SETTINGS_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorSettingsLink';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
@@ -12,7 +11,6 @@ import { buildOptimisticNavigationMenuItem } from '@/navigation-menu-item/common
 import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
 import { isNavigationMenuItemTab } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTab';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
-import { DEVELOPER_TOOLS_NAVIGATION_MENU_ITEMS } from '@/navigation-menu-item/edit/constants/DeveloperToolsNavigationMenuItems';
 import { type NavigationMenuItemContainerTemplate } from '@/navigation-menu-item/edit/types/NavigationMenuItemContainerTemplate';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
@@ -25,7 +23,7 @@ const INBOX_SECTION_TYPES = [
 ];
 
 export const useCreateNavigationMenuTabOrSection = () => {
-  const { t, i18n } = useLingui();
+  const { t } = useLingui();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
@@ -58,19 +56,6 @@ export const useCreateNavigationMenuTabOrSection = () => {
     parentId: string,
   ): NavigationMenuItem[] => {
     switch (template) {
-      case 'developer-tools':
-        return DEVELOPER_TOOLS_NAVIGATION_MENU_ITEMS.map((tool, index) =>
-          buildOptimisticNavigationMenuItem({
-            id: v4(),
-            type: NavigationMenuItemType.LINK,
-            name: i18n._(tool.label),
-            link: tool.link,
-            icon: tool.iconName,
-            color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SETTINGS_LINK,
-            folderId: parentId,
-            position: index,
-          }),
-        );
       case 'inbox':
         return INBOX_SECTION_TYPES.map((type, index) =>
           buildOptimisticNavigationMenuItem({
@@ -93,8 +78,6 @@ export const useCreateNavigationMenuTabOrSection = () => {
 
   const getTabNameAndIcon = (template: NavigationMenuItemContainerTemplate) => {
     switch (template) {
-      case 'developer-tools':
-        return { name: t`Developers`, icon: 'IconCode' };
       case 'inbox':
         return { name: t`Inbox`, icon: 'IconInbox' };
       default:
@@ -146,7 +129,7 @@ export const useCreateNavigationMenuTabOrSection = () => {
     const section = buildOptimisticNavigationMenuItem({
       id: v4(),
       type: NavigationMenuItemType.SECTION,
-      name: template === 'developer-tools' ? t`Developers` : t`New section`,
+      name: t`New section`,
       folderId: parentId ?? undefined,
       position: getNextPosition(isNavigationMenuItemAnySection, parentId),
     });

@@ -1,4 +1,1 @@
-export type NavigationMenuItemContainerTemplate =
-  | 'blank'
-  | 'developer-tools'
-  | 'inbox';
+export type NavigationMenuItemContainerTemplate = 'blank' | 'inbox';

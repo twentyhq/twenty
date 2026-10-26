@@ -1,4 +1,3 @@
-import { parsePath, useNavigate } from 'react-router-dom';
 import { isSafeInternalPath } from 'twenty-shared/utils';
 import { IconArrowUpRight } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -11,9 +10,6 @@ import { getLinkNavigationMenuItemLabel } from '@/navigation-menu-item/display/l
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { settingsPathOpenedFromNavigationMenuState } from '@/navigation/states/settingsPathOpenedFromNavigationMenuState';
-import { isSettingsPath } from '~/utils/isSettingsPath';
 
 type NavigationMenuItemLinkDisplayProps = NavigationMenuItemSectionContentProps;
 
@@ -27,10 +23,6 @@ export const NavigationMenuItemLinkDisplay = ({
     isLayoutCustomizationModeEnabledState,
   );
   const theme = useTheme();
-  const navigate = useNavigate();
-  const setSettingsPathOpenedFromNavigationMenu = useSetAtomState(
-    settingsPathOpenedFromNavigationMenuState,
-  );
 
   const { activeNavigationMenuItemIds } =
     useIdentifyActiveNavigationMenuItems();
@@ -38,16 +30,6 @@ export const NavigationMenuItemLinkDisplay = ({
   const label = getLinkNavigationMenuItemLabel(item);
   const computedLink = getLinkNavigationMenuItemComputedLink(item);
   const isInternalLink = isSafeInternalPath(computedLink);
-  const settingsPathname = isInternalLink
-    ? parsePath(computedLink).pathname
-    : undefined;
-  const isSettingsLink =
-    settingsPathname !== undefined && isSettingsPath(settingsPathname);
-
-  const openSettingsLinkInNavigationMenu = () => {
-    setSettingsPathOpenedFromNavigationMenu(settingsPathname ?? null);
-    navigate(computedLink);
-  };
 
   const defaultRightOptions = !isLayoutCustomizationModeEnabled &&
     !isInternalLink && (
@@ -69,9 +51,7 @@ export const NavigationMenuItemLinkDisplay = ({
       onClick={
         isLayoutCustomizationModeEnabled
           ? editModeProps?.onEditModeClick
-          : isSettingsLink && !isDragging
-            ? openSettingsLinkInNavigationMenu
-            : undefined
+          : undefined
       }
       Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
       active={activeNavigationMenuItemIds.includes(item.id)}

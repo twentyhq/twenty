@@ -21,7 +21,6 @@ import { normalizeSearchText } from 'twenty-ui/utilities';
 import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 
 const VIEW_OBJECT_PAGE = 'view-object';
-const SETTINGS_PAGE_TABS_PAGE = 'settings-page';
 
 type Step = NavigationMenuItemAddStep;
 
@@ -31,8 +30,6 @@ const STEP_BY_PAGE: Partial<Record<string, Step>> = {
   [VIEW_OBJECT_PAGE]: 'view',
   record: 'record',
   page: 'page',
-  settings: 'settings',
-  [SETTINGS_PAGE_TABS_PAGE]: 'settings-page',
 };
 
 type NavigationMenuItemAddDropdownContentProps = {
@@ -63,7 +60,6 @@ export const NavigationMenuItemAddDropdownContent = ({
   const isSearchingAllItems =
     step === 'main' && isNonEmptyString(search.trim());
   const [objectId, setObjectId] = useState<string | null>(null);
-  const [settingsPageLink, setSettingsPageLink] = useState<string | null>(null);
   const { currentItems, createItem } =
     useNavigationMenuItemEditController(section);
   const insertionIndex =
@@ -78,7 +74,6 @@ export const NavigationMenuItemAddDropdownContent = ({
     goToPage(next);
     setSearch('');
     setObjectId(null);
-    setSettingsPageLink(null);
   };
   const addItem = (input: NewNavigationMenuItemInput) => {
     const itemId = createItem(input, {
@@ -93,8 +88,6 @@ export const NavigationMenuItemAddDropdownContent = ({
   };
   const {
     getItems,
-    getSettingsGroups,
-    getSettingsSearchItems,
     standalonePagesLoading,
     standalonePagesError,
     recordSearchLoading,
@@ -103,7 +96,6 @@ export const NavigationMenuItemAddDropdownContent = ({
     step,
     search,
     objectId,
-    settingsPageLink,
     folderId,
     currentItems,
     isSearchingAllItems,
@@ -114,16 +106,7 @@ export const NavigationMenuItemAddDropdownContent = ({
       setSearch('');
       goToPage(VIEW_OBJECT_PAGE);
     },
-    selectSettingsPage: (nextSettingsPageLink) => {
-      setSettingsPageLink(nextSettingsPageLink);
-      setSearch('');
-      goToPage(SETTINGS_PAGE_TABS_PAGE);
-    },
   });
-
-  const settingsPageTitle = getSettingsGroups()
-    .flatMap((group) => group.items)
-    .find((item) => item.id === settingsPageLink)?.label;
 
   const titles: Record<Step, string> = {
     main: t`Add menu item`,
@@ -131,8 +114,6 @@ export const NavigationMenuItemAddDropdownContent = ({
     view: t`View`,
     record: t`Record`,
     page: t`Page`,
-    settings: t`Settings`,
-    'settings-page': settingsPageTitle ?? t`Settings`,
   };
 
   const normalizedSearch = normalizeSearchText(search.trim());
@@ -150,10 +131,6 @@ export const NavigationMenuItemAddDropdownContent = ({
           items: isSearchDebouncing ? [] : getItems('record'),
         },
         {
-          label: t`Settings`,
-          items: getSettingsSearchItems().filter(matchesSearch),
-        },
-        {
           label: t`Other`,
           items: getItems('main').filter(
             (item) =>
@@ -162,19 +139,14 @@ export const NavigationMenuItemAddDropdownContent = ({
           ),
         },
       ]
-    : step === 'settings'
-      ? getSettingsGroups().map((group) => ({
-          label: group.label,
-          items: group.items.filter(matchesSearch),
-        }))
-      : [
-          {
-            label: '',
-            items: getItems().filter(
-              (item) => step === 'record' || matchesSearch(item),
-            ),
-          },
-        ];
+    : [
+        {
+          label: '',
+          items: getItems().filter(
+            (item) => step === 'record' || matchesSearch(item),
+          ),
+        },
+      ];
   const items = groups.flatMap((group) => group.items);
   const getEmptyMessage = () => {
     if (step === 'page' && isDefined(standalonePagesError)) {
@@ -216,7 +188,6 @@ export const NavigationMenuItemAddDropdownContent = ({
             onClick={() => {
               setSearch('');
               setObjectId(null);
-              setSettingsPageLink(null);
             }}
           >
             {titles[step]}
