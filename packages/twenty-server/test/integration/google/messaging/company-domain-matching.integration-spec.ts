@@ -197,6 +197,25 @@ describe('Gmail contact auto-creation company domain matching (integration)', ()
     expect(await syncMessageFrom(`sender@${domainName}`)).toBe(liveCompany.id);
   }, 120000);
 
+  it('leaves a matched live company untouched', async () => {
+    const domainName = `untouched-${randomUUID()}.com`;
+
+    const company = await createCompany(domainName);
+
+    const findCompanyUpdatedAt = async () => {
+      const [companyNode] = await findRecordNodesByFilter<{
+        updatedAt: string;
+      }>('company', 'companies', 'updatedAt', { id: { eq: company.id } });
+
+      return companyNode.updatedAt;
+    };
+
+    const updatedAtBeforeSync = await findCompanyUpdatedAt();
+
+    expect(await syncMessageFrom(`sender@${domainName}`)).toBe(company.id);
+    expect(await findCompanyUpdatedAt()).toBe(updatedAtBeforeSync);
+  }, 120000);
+
   it('attaches a contact to the surviving company on its primary domain', async () => {
     const survivingDomainName = `surviving-${randomUUID()}.com`;
     const mergedCompany = await mergeTwoCompanies({
