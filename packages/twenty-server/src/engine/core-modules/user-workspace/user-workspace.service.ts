@@ -95,6 +95,29 @@ export class UserWorkspaceService {
     return earliestUserWorkspace?.userId === userId;
   }
 
+  async findWorkspaceIdsCreatedByUser(userId: string): Promise<string[]> {
+    const createdUserWorkspaces = await this.userWorkspaceRepository
+      .createQueryBuilder('userWorkspace')
+      .withDeleted()
+      .select('userWorkspace.workspaceId', 'workspaceId')
+      .where('userWorkspace.userId = :userId', { userId })
+      .andWhere((queryBuilder) => {
+        const earlierUserWorkspaceQuery = queryBuilder
+          .subQuery()
+          .select('1')
+          .from(UserWorkspaceEntity, 'earlierUserWorkspace')
+          .withDeleted()
+          .where('earlierUserWorkspace.workspaceId = userWorkspace.workspaceId')
+          .andWhere('earlierUserWorkspace.createdAt < userWorkspace.createdAt')
+          .getQuery();
+
+        return `NOT EXISTS ${earlierUserWorkspaceQuery}`;
+      })
+      .getRawMany<{ workspaceId: string }>();
+
+    return createdUserWorkspaces.map(({ workspaceId }) => workspaceId);
+  }
+
   async updateUserWorkspaceLocaleForUserWorkspace({
     locale,
     userWorkspaceId,

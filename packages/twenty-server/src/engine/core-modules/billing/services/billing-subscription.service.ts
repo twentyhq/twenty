@@ -4,9 +4,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { differenceInDays } from 'date-fns';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
@@ -71,6 +75,25 @@ export class BillingSubscriptionService {
 
   async getBillingSubscriptions(workspaceId: string) {
     return await this.billingSubscriptionRepository.find(workspaceId);
+  }
+
+  async findWorkspaceIdsWithActiveSubscription(
+    workspaceIds: string[],
+  ): Promise<string[]> {
+    if (!isNonEmptyArray(workspaceIds)) {
+      return [];
+    }
+
+    const activeSubscriptions =
+      await this.billingSubscriptionRepositoryUnscoped.find({
+        select: { workspaceId: true },
+        where: {
+          workspaceId: In(workspaceIds),
+          status: SubscriptionStatus.Active,
+        },
+      });
+
+    return activeSubscriptions.map(({ workspaceId }) => workspaceId);
   }
 
   async getBillingCustomer(
