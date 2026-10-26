@@ -1,17 +1,21 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
+import { getPermittedJunctionTargetFields } from '@/object-record/record-field/ui/utils/junction/getPermittedJunctionTargetFields';
 import { getSearchableObjectMetadataItems } from '@/object-record/record-field/ui/utils/junction/getSearchableObjectMetadataItems';
+import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const getJunctionRelationPickerData = ({
   junctionRecords,
-  targetFields,
+  junctionConfig: { junctionObjectMetadata, targetFields },
   objectMetadataItems,
 }: {
   junctionRecords: ObjectRecord[] | undefined | null;
-  targetFields: FieldMetadataItem[];
+  junctionConfig: Pick<
+    ValidJunctionConfig,
+    'junctionObjectMetadata' | 'targetFields'
+  >;
   objectMetadataItems: EnrichedObjectMetadataItem[];
 }): {
   pickableMorphItems: RecordPickerPickableMorphItem[];
@@ -19,7 +23,10 @@ export const getJunctionRelationPickerData = ({
 } => ({
   pickableMorphItems: extractTargetRecordsFromJunction({
     junctionRecords,
-    targetFields,
+    targetFields: getPermittedJunctionTargetFields({
+      targetFields,
+      permittedFields: junctionObjectMetadata.readableFields,
+    }),
     objectMetadataItems,
   }).map(({ recordId, objectMetadataId }) => ({
     recordId,
@@ -28,7 +35,10 @@ export const getJunctionRelationPickerData = ({
     isMatchingSearchFilter: true,
   })),
   searchableObjectMetadataItems: getSearchableObjectMetadataItems(
-    targetFields,
+    getPermittedJunctionTargetFields({
+      targetFields,
+      permittedFields: junctionObjectMetadata.updatableFields,
+    }),
     objectMetadataItems,
   ),
 });

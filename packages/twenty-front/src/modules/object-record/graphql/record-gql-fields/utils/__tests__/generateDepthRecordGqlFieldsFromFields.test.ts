@@ -49,6 +49,10 @@ describe('generateDepthRecordGqlFieldsFromFields', () => {
         morphRelation.targetObjectMetadata.nameSingular === 'company',
     )?.sourceFieldMetadata.id;
 
+    if (!companyTargetSourceFieldMetadataId) {
+      throw new Error('Company task target not found');
+    }
+
     const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock().map(
       (objectMetadataItem) =>
         objectMetadataItem.id === taskTargetMetadata.id
@@ -58,7 +62,7 @@ describe('generateDepthRecordGqlFieldsFromFields', () => {
                 fields: objectMetadataItem.fields,
                 objectPermissions: {
                   restrictedFields: {
-                    [companyTargetSourceFieldMetadataId as string]: {
+                    [companyTargetSourceFieldMetadataId]: {
                       canRead: false,
                       canUpdate: false,
                     },

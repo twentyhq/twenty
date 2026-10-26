@@ -1,6 +1,8 @@
+import { getPermittedFields } from '@/object-metadata/utils/getPermittedFields';
 import { getJunctionRelationPickerData } from '@/object-record/record-field/ui/utils/junction/getJunctionRelationPickerData';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -40,7 +42,7 @@ describe('getJunctionRelationPickerData', () => {
             targetPerson: { id: 'person-id' },
           },
         ],
-        targetFields: junctionConfig.targetFields,
+        junctionConfig,
         objectMetadataItems,
       });
 
@@ -111,7 +113,7 @@ describe('getJunctionRelationPickerData', () => {
             company: { id: 'company-id' },
           },
         ],
-        targetFields: junctionConfig.targetFields,
+        junctionConfig,
         objectMetadataItems,
       });
 
@@ -151,7 +153,7 @@ describe('getJunctionRelationPickerData', () => {
 
     expect(junctionConfig?.direction).toBe('reverse');
 
-    if (junctionConfig === null) {
+    if (!isUsableJunctionConfig(junctionConfig)) {
       throw new Error('Reverse task junction config not found');
     }
 
@@ -164,7 +166,7 @@ describe('getJunctionRelationPickerData', () => {
             task: { id: 'task-id' },
           },
         ],
-        targetFields: junctionConfig.targetFields,
+        junctionConfig,
         objectMetadataItems,
       });
 
@@ -182,5 +184,73 @@ describe('getJunctionRelationPickerData', () => {
     expect(searchableObjectMetadataItems.map(({ id }) => id)).not.toContain(
       taskTargetObjectMetadata.id,
     );
+  });
+
+  it('only offers morph targets the role can update', () => {
+    const taskObjectMetadata = getMockObjectMetadataItemOrThrow('task');
+    const taskTargetObjectMetadata =
+      getMockObjectMetadataItemOrThrow('taskTarget');
+    const companyObjectMetadata = getMockObjectMetadataItemOrThrow('company');
+    const companyTargetSourceFieldMetadataId = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskTargetObjectMetadata,
+      fieldName: 'target',
+    }).morphRelations?.find(
+      ({ targetObjectMetadata }) =>
+        targetObjectMetadata.id === companyObjectMetadata.id,
+    )?.sourceFieldMetadata.id;
+
+    if (!companyTargetSourceFieldMetadataId) {
+      throw new Error('Company task target not found');
+    }
+
+    const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock().map(
+      (objectMetadataItem) =>
+        objectMetadataItem.id === taskTargetObjectMetadata.id
+          ? {
+              ...objectMetadataItem,
+              ...getPermittedFields({
+                fields: objectMetadataItem.fields,
+                objectPermissions: {
+                  restrictedFields: {
+                    [companyTargetSourceFieldMetadataId]: {
+                      canRead: true,
+                      canUpdate: false,
+                    },
+                  },
+                },
+              }),
+            }
+          : objectMetadataItem,
+    );
+
+    const junctionConfig = getObjectMorphJunctionConfig({
+      objectMetadata: taskObjectMetadata,
+      objectMetadataItems,
+    });
+
+    if (junctionConfig === null) {
+      throw new Error('Task morph junction config not found');
+    }
+
+    const { pickableMorphItems, searchableObjectMetadataItems } =
+      getJunctionRelationPickerData({
+        junctionRecords: [
+          {
+            id: 'task-target-company-id',
+            __typename: 'TaskTarget',
+            targetCompany: { id: 'company-id' },
+          },
+        ],
+        junctionConfig,
+        objectMetadataItems,
+      });
+
+    expect(pickableMorphItems.map(({ recordId }) => recordId)).toEqual([
+      'company-id',
+    ]);
+    expect(searchableObjectMetadataItems.map(({ id }) => id)).not.toContain(
+      companyObjectMetadata.id,
+    );
+    expect(searchableObjectMetadataItems.length).toBeGreaterThan(0);
   });
 });
