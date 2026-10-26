@@ -17,9 +17,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 export const SettingsBillingPageLayout = ({
   children,
   actionButton,
+  pageCommands,
 }: {
   children: ReactNode;
   actionButton?: ReactNode;
+  pageCommands?: ReactNode;
 }) => {
   const { t } = useLingui();
 
@@ -64,6 +66,7 @@ export const SettingsBillingPageLayout = ({
         ]}
         secondaryBar={<SettingsBillingTabBar />}
         actionButton={actionButton}
+        pageCommands={pageCommands}
       >
         {!isDefined(currentWorkspace) ||
         !isBillingLoaded ||
