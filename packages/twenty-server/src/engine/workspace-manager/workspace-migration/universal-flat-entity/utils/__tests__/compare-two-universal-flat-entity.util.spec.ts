@@ -65,6 +65,8 @@ describe('compareTwoFlatEntity', () => {
       context: {
         fromUniversalFlatEntity: getFlatFieldMetadataMock({
           objectMetadataId: 'object-metadata-id',
+          objectMetadataUniversalIdentifier:
+            'object-metadata-universal-identifier',
           type: FieldMetadataType.TEXT,
           universalIdentifier: 'universal-identifier',
           isActive: true,
@@ -72,6 +74,8 @@ describe('compareTwoFlatEntity', () => {
         metadataName: 'fieldMetadata',
         toUniversalFlatEntity: getFlatFieldMetadataMock({
           objectMetadataId: 'object-metadata-id',
+          objectMetadataUniversalIdentifier:
+            'object-metadata-universal-identifier',
           type: FieldMetadataType.TEXT,
           universalIdentifier: 'universal-identifier',
           isActive: false,
@@ -84,6 +88,8 @@ describe('compareTwoFlatEntity', () => {
       context: {
         fromUniversalFlatEntity: getFlatFieldMetadataMock({
           objectMetadataId: 'object-metadata-id',
+          objectMetadataUniversalIdentifier:
+            'object-metadata-universal-identifier',
           type: FieldMetadataType.TEXT,
           universalIdentifier: 'universal-identifier',
           isActive: false,
@@ -91,6 +97,8 @@ describe('compareTwoFlatEntity', () => {
         metadataName: 'fieldMetadata',
         toUniversalFlatEntity: getFlatFieldMetadataMock({
           objectMetadataId: 'object-metadata-id',
+          objectMetadataUniversalIdentifier:
+            'object-metadata-universal-identifier',
           type: FieldMetadataType.TEXT,
           universalIdentifier: 'universal-identifier',
           isActive: true,

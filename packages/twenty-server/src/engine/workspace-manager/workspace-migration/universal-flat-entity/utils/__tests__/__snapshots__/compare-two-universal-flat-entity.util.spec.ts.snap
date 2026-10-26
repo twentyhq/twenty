@@ -2,9 +2,7 @@
 
 exports[`compareTwoFlatEntity It should detect flat field metadata isActive diff from true to false 1`] = `
 {
-  "nonUpdatablePropertyDivergences": [
-    "objectMetadataUniversalIdentifier",
-  ],
+  "nonUpdatablePropertyDivergences": [],
   "update": {
     "isActive": false,
   },
@@ -13,9 +11,7 @@ exports[`compareTwoFlatEntity It should detect flat field metadata isActive diff
 
 exports[`compareTwoFlatEntity It should detect flat field metadata isActive diff from true to false 2`] = `
 {
-  "nonUpdatablePropertyDivergences": [
-    "objectMetadataUniversalIdentifier",
-  ],
+  "nonUpdatablePropertyDivergences": [],
   "update": {
     "isActive": true,
   },
