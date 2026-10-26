@@ -11,7 +11,7 @@ import {
   type AgentChatUsageState,
 } from '@/ai/states/agentChatUsageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { billingState } from '@/client-config/states/billingState';
+import { type AiChatUserCreditsUsage } from '@/ai/types/AiChatUserCreditsUsage';
 import {
   type CurrentWorkspace,
   currentWorkspaceState,
@@ -21,7 +21,6 @@ import {
   GetAiChatUserCreditsUsageDocument,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
-import { mockedClientConfig } from '~/testing/mock-data/config';
 
 const USAGE: AgentChatUsageState = {
   conversationSize: 200000,
@@ -55,18 +54,13 @@ const UsageStory = ({
   consumed?: number | null;
   error?: boolean;
   loading?: boolean;
-  userCreditsUsage?: {
-    limitValue: number;
-    consumedValue: number;
-    periodEnd: string;
-  } | null;
+  userCreditsUsage?: AiChatUserCreditsUsage | null;
   userCreditsFallback?: UserCreditsFallback;
   children?: ReactNode;
 }) => {
   const [store] = useState(() => {
     const storyStore = createStore();
     storyStore.set(currentAiChatThreadState.atom, 'story-thread');
-    storyStore.set(billingState.atom, mockedClientConfig.billing);
     storyStore.set(currentWorkspaceState.atom, {
       billingCustomer: { id: 'billing-customer', userCreditsFallback },
     } as CurrentWorkspace);
@@ -203,6 +197,30 @@ export const WithUserCredits: Story = {
     await expect(
       page.getByRole('progressbar', { name: 'Personal usage' }),
     ).toHaveAttribute('aria-valuetext', 'Reset in 3 days (28%)');
+    await expect(page.getByText('Usage')).toBeVisible();
+  },
+};
+export const UserCreditsSpentWithFallback: Story = {
+  render: () => (
+    <UsageStory
+      userCreditsUsage={{
+        limitValue: 4160000,
+        consumedValue: 4160000,
+        periodEnd: USER_CREDITS_PERIOD_END,
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: /^Context and usage/ }),
+    );
+    await waitFor(() =>
+      expect(
+        page.getByRole('progressbar', { name: 'Personal usage' }),
+      ).toHaveAttribute('aria-valuetext', 'Reset in 3 days (100%)'),
+    );
     await expect(page.getByText('Usage')).toBeVisible();
   },
 };

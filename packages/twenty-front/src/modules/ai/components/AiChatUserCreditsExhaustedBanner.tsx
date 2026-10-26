@@ -7,18 +7,12 @@ import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { agentChatUserCreditsBannerDismissedPeriodEndState } from '@/ai/states/agentChatUserCreditsBannerDismissedPeriodEndState';
-import { computeDaysUntilReset } from '@/ai/utils/computeDaysUntilReset';
-import { isAiChatUserCreditsExhausted } from '@/ai/utils/isAiChatUserCreditsExhausted';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { UserCreditsFallback } from '~/generated-metadata/graphql';
 
 export const AiChatUserCreditsExhaustedBanner = () => {
   const { t } = useLingui();
 
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const [
     agentChatUserCreditsBannerDismissedPeriodEnd,
@@ -31,21 +25,13 @@ export const AiChatUserCreditsExhaustedBanner = () => {
 
   if (
     !isDefined(userCreditsUsage) ||
-    !isAiChatUserCreditsExhausted(userCreditsUsage) ||
+    !userCreditsUsage.isExhausted ||
     userCreditsUsage.periodEnd === agentChatUserCreditsBannerDismissedPeriodEnd
   ) {
     return null;
   }
 
-  const daysUntilReset = computeDaysUntilReset(userCreditsUsage.periodEnd);
-
-  if (daysUntilReset === 0) {
-    return null;
-  }
-
-  const isFallingBackToWorkspaceCredits =
-    currentWorkspace?.billingCustomer?.userCreditsFallback !==
-    UserCreditsFallback.STOP;
+  const { daysUntilReset, isFallingBackToWorkspaceCredits } = userCreditsUsage;
 
   return (
     <AiChatInlineBanner

@@ -20,7 +20,7 @@ import { messages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const PERIOD_END = '2026-10-26T00:00:00.000Z';
+const PERIOD_END = new Date(Date.now() + 3 * 86400000).toISOString();
 
 const renderBanner = ({
   consumedValue,
@@ -70,14 +70,6 @@ const renderBanner = ({
 describe('AiChatUserCreditsExhaustedBanner', () => {
   beforeEach(() => {
     localStorage.clear();
-    jest.useFakeTimers({
-      now: new Date('2026-10-23T12:00:00Z'),
-      doNotFake: ['setTimeout', 'queueMicrotask', 'nextTick', 'setImmediate'],
-    });
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
   });
 
   it.each([

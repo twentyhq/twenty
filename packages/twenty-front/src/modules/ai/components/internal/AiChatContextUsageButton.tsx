@@ -1,8 +1,4 @@
-import { getAiChatUsageLabel } from '@/ai/utils/getAiChatUsageLabel';
 import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
-import { computeDaysUntilReset } from '@/ai/utils/computeDaysUntilReset';
-import { shouldShowAiChatWorkspaceUsage } from '@/ai/utils/shouldShowAiChatWorkspaceUsage';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { FloatingPortal, useTransitionStyles } from '@floating-ui/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -18,6 +14,7 @@ import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
+import { AiChatUsageMetricRow } from '@/ai/components/internal/AiChatUsageMetricRow';
 import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';
 import { useAiChatUsage } from '@/ai/hooks/useAiChatUsage';
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
@@ -28,7 +25,6 @@ import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
-import { computeUsageLimitProgress } from '@/settings/billing/utils/computeUsageLimitProgress';
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { formatNumber } from '@/localization/utils/formatNumber';
@@ -113,55 +109,14 @@ export const AiChatContextUsageButton = () => {
     fetchPolicy: 'network-only',
   });
 
-  const limitValue = creditUsage?.limitValue ?? null;
-
-  const progress = isDefined(limitValue)
-    ? computeUsageLimitProgress({
-        limitValue,
-        consumedValue: creditUsage?.consumedValue ?? null,
-      })
-    : null;
-
-  const creditPercentage =
-    limitValue === 0 ? 100 : (progress?.consumedPercentage ?? null);
-
-  const daysUntilReset = isDefined(creditUsage?.periodEnd)
-    ? computeDaysUntilReset(creditUsage.periodEnd)
-    : null;
-
-  const usageLabelInput = {
-    loading,
-    hasError: isDefined(error),
-    hasUsage: isDefined(creditUsage),
-    daysUntilReset,
-    creditPercentage,
-  };
-
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-
   const { userCreditsUsage } = useAiChatUserCreditsUsage({
     skip: !isOpen || isWorkspaceSetupChat,
   });
 
-  const personalUsagePercentage = isDefined(userCreditsUsage)
-    ? (computeUsageLimitProgress(userCreditsUsage)?.consumedPercentage ?? null)
-    : null;
-
-  const personalUsageLabelInput = {
-    loading: false,
-    hasError: false,
-    hasUsage: true,
-    daysUntilReset: isDefined(userCreditsUsage)
-      ? computeDaysUntilReset(userCreditsUsage.periodEnd)
-      : null,
-    creditPercentage: personalUsagePercentage,
-  };
-
-  const shouldShowWorkspaceUsage = shouldShowAiChatWorkspaceUsage({
-    userCreditsUsage,
-    userCreditsFallback:
-      currentWorkspace?.billingCustomer?.userCreditsFallback ?? null,
-  });
+  const shouldShowWorkspaceUsage =
+    !isDefined(userCreditsUsage) ||
+    !userCreditsUsage.isExhausted ||
+    userCreditsUsage.isFallingBackToWorkspaceCredits;
 
   const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
     duration: shouldReduceMotion ? 0 : { open: 150, close: 100 },
@@ -216,40 +171,20 @@ export const AiChatContextUsageButton = () => {
               {t`Context window`}
             </MetricRow>
             {isDefined(userCreditsUsage) && (
-              <MetricRow
-                startIcon={<IconUser size={theme.icon.size.sm} />}
-                progress={personalUsagePercentage ?? 0}
-                value={getAiChatUsageLabel(personalUsageLabelInput)}
-                progressValueText={getAiChatUsageLabel({
-                  ...personalUsageLabelInput,
-                  unavailableConsumptionLabel: t`Not available`,
-                })}
-                progressColor={getUsageLimitRingColor({
-                  consumedPercentage: personalUsagePercentage ?? 0,
-                  isExhausted: personalUsagePercentage === 100,
-                })}
-              >
-                {t`Personal usage`}
-              </MetricRow>
+              <AiChatUsageMetricRow
+                Icon={IconUser}
+                label={t`Personal usage`}
+                usage={userCreditsUsage}
+              />
             )}
             {!isWorkspaceSetupChat && shouldShowWorkspaceUsage && (
-              <MetricRow
-                startIcon={<IconGauge size={theme.icon.size.sm} />}
-                progress={
-                  loading || isDefined(error) ? 0 : (creditPercentage ?? 0)
-                }
-                value={getAiChatUsageLabel(usageLabelInput)}
-                progressValueText={getAiChatUsageLabel({
-                  ...usageLabelInput,
-                  unavailableConsumptionLabel: t`Not available`,
-                })}
-                progressColor={getUsageLimitRingColor({
-                  consumedPercentage: creditPercentage ?? 0,
-                  isExhausted: creditPercentage === 100,
-                })}
-              >
-                {t`Usage`}
-              </MetricRow>
+              <AiChatUsageMetricRow
+                Icon={IconGauge}
+                label={t`Usage`}
+                usage={creditUsage}
+                loading={loading}
+                hasError={isDefined(error)}
+              />
             )}
             {showDetails && <AiChatContextUsageDetails />}
             {isDefined(agentChatUsage) && (

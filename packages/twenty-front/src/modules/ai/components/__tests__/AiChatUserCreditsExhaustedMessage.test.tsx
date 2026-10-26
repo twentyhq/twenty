@@ -24,13 +24,13 @@ jest.mock('@/ai/hooks/useCanRetryCurrentAiChatTurn', () => ({
 }));
 
 const renderError = (error: AiChatError, consumedValue = 830000) => {
-  const resolveUserCreditsUsage = jest.fn(() => ({
+  const getUserCreditsUsageResult = jest.fn(() => ({
     data: {
       aiChatUserCreditsUsage: {
         __typename: 'AiChatUserCreditsUsage',
         limitValue: 830000,
         consumedValue,
-        periodEnd: '2026-10-26T00:00:00.000Z',
+        periodEnd: new Date(Date.now() + 3 * 86400000).toISOString(),
       },
     },
   }));
@@ -41,7 +41,7 @@ const renderError = (error: AiChatError, consumedValue = 830000) => {
         mocks={[
           {
             request: { query: GetAiChatUserCreditsUsageDocument },
-            result: resolveUserCreditsUsage,
+            result: getUserCreditsUsageResult,
           },
         ]}
       >
@@ -52,27 +52,10 @@ const renderError = (error: AiChatError, consumedValue = 830000) => {
     </JotaiProvider>,
   );
 
-  return { resolveUserCreditsUsage };
+  return { getUserCreditsUsageResult };
 };
 
 describe('AiChatErrorRenderer with spent user credits', () => {
-  beforeEach(() => {
-    jest.useFakeTimers({
-      now: new Date('2026-10-23T12:00:00Z'),
-      doNotFake: [
-        'setTimeout',
-        'setInterval',
-        'queueMicrotask',
-        'nextTick',
-        'setImmediate',
-      ],
-    });
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   it('explains a reopened turn that user credits stopped, without a retry', async () => {
     renderError(
       createAiChatCodedError(
@@ -91,7 +74,7 @@ describe('AiChatErrorRenderer with spent user credits', () => {
   });
 
   it('leaves the renewal out of a reopened turn once credits have renewed', async () => {
-    const { resolveUserCreditsUsage } = renderError(
+    const { getUserCreditsUsageResult } = renderError(
       createAiChatCodedError(
         'The member ran out of AI credits.',
         AiChatErrorCode.USER_CREDITS_EXHAUSTED,
@@ -99,7 +82,7 @@ describe('AiChatErrorRenderer with spent user credits', () => {
       0,
     );
 
-    await waitFor(() => expect(resolveUserCreditsUsage).toHaveBeenCalled());
+    await waitFor(() => expect(getUserCreditsUsageResult).toHaveBeenCalled());
     await act(() => Promise.resolve());
 
     expect(screen.getByText('The member ran out of AI credits.')).toBeVisible();

@@ -1,23 +1,31 @@
+import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconCoins } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useUpdateUserCreditsFallback } from '@/settings/billing/hooks/useUpdateUserCreditsFallback';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import {
   PermissionFlagType,
+  UpdateUserCreditsFallbackDocument,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
 
 export const SettingsBillingUserCreditsSection = () => {
   const { t } = useLingui();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const { updateUserCreditsFallback, loading } = useUpdateUserCreditsFallback();
+  const { enqueueToast } = useToast();
+  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
+    currentWorkspaceState,
+  );
+  const [updateUserCreditsFallback, { loading }] = useMutation(
+    UpdateUserCreditsFallbackDocument,
+  );
 
   const hasPermissionToManageBilling = useHasPermissionFlag(
     PermissionFlagType.BILLING,
@@ -27,13 +35,30 @@ export const SettingsBillingUserCreditsSection = () => {
 
   if (
     !hasPermissionToManageBilling ||
+    !isDefined(currentWorkspace) ||
     !isDefined(billingCustomer) ||
     !billingCustomer.hasUserCredits
   ) {
     return null;
   }
 
-  const { userCreditsFallback } = billingCustomer;
+  const handleUserCreditsFallbackChange = async (checked: boolean) => {
+    const userCreditsFallback = checked
+      ? UserCreditsFallback.WORKSPACE_CREDITS
+      : UserCreditsFallback.STOP;
+
+    try {
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        billingCustomer: { ...billingCustomer, userCreditsFallback },
+      });
+
+      await updateUserCreditsFallback({ variables: { userCreditsFallback } });
+    } catch (error) {
+      setCurrentWorkspace(currentWorkspace);
+      enqueueToast(getToastOptionsFromError({ error }));
+    }
+  };
 
   return (
     <Section.Root>
@@ -47,16 +72,11 @@ export const SettingsBillingUserCreditsSection = () => {
           title={t`Use workspace credits when a member runs out`}
           description={t`When off, a member's AI chats stop until their credits renew`}
           checked={
-            userCreditsFallback === UserCreditsFallback.WORKSPACE_CREDITS
+            billingCustomer.userCreditsFallback ===
+            UserCreditsFallback.WORKSPACE_CREDITS
           }
           disabled={loading}
-          onChange={(checked) =>
-            updateUserCreditsFallback(
-              checked
-                ? UserCreditsFallback.WORKSPACE_CREDITS
-                : UserCreditsFallback.STOP,
-            )
-          }
+          onChange={handleUserCreditsFallbackChange}
         />
       </Card.Root>
     </Section.Root>
