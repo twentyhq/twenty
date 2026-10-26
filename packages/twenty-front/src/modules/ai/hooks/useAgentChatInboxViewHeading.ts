@@ -7,9 +7,8 @@ import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
-import { getAgentChatChannelNavigationItemOrThrow } from '@/ai/utils/getAgentChatChannelNavigationItemOrThrow';
+import { getAgentChatChannelViewLabel } from '@/ai/utils/getAgentChatChannelViewLabel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { AgentChatChannelAssignmentFilter } from '~/generated-metadata/graphql';
 
 export const useAgentChatInboxViewHeading = () => {
   const { t } = useLingui();
@@ -35,27 +34,9 @@ export const useAgentChatInboxViewHeading = () => {
     };
   }
 
-  const navigationItem = getAgentChatChannelNavigationItemOrThrow(
-    agentChatShownChannelView,
-  );
-  const channelHeading = {
+  return {
     HeadingIcon: ChannelIcon,
     headingLabel: channel?.name ?? '',
-  };
-  const channelStatusLabel = t(navigationItem.label);
-
-  if (agentChatShownChannelView.assignment === navigationItem.assignment) {
-    return { ...channelHeading, channelViewLabel: channelStatusLabel };
-  }
-
-  const assignmentLabel =
-    agentChatShownChannelView.assignment ===
-    AgentChatChannelAssignmentFilter.UNASSIGNED
-      ? t`Unassigned`
-      : t`Mine`;
-
-  return {
-    ...channelHeading,
-    channelViewLabel: t`${channelStatusLabel} · ${assignmentLabel}`,
+    channelViewLabel: getAgentChatChannelViewLabel(agentChatShownChannelView),
   };
 };
