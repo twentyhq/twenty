@@ -30,5 +30,5 @@ Notable changes are documented in [CHANGELOG.md](CHANGELOG.md).
 ## Learn more
 
 - [Twenty Apps documentation](https://docs.twenty.com/developers/extend/apps/getting-started/quick-start)
-- [twenty-sdk CLI reference](https://www.npmjs.com/package/twenty-sdk)
+- [Twenty CLI reference](https://docs.twenty.com/developers/extend/apps/operations/cli)
 - [Discord](https://discord.gg/cx5n4Jzs57)

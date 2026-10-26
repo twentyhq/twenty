@@ -1,8 +1,11 @@
 ---
 title: Public Assets
 description: Ship static files — images, icons, fonts — alongside your app via the public/ folder.
-icon: "folder-open"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
 
@@ -13,7 +16,7 @@ Files placed in `public/` are:
 - **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
 - **Used for marketplace metadata** — the `logo` and `galleryImages` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published. External absolute URLs are ignored for these fields — bundle the images in `public/` instead. Each image must not exceed 10 MB.
 - **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
-- **Included in builds** — `yarn twenty dev:build` bundles all public assets into the distribution output.
+- **Included in builds** — `twenty app build` bundles all public assets into the distribution output.
 
 ## Accessing public assets with `getPublicAssetUrl`
 
@@ -65,3 +68,5 @@ export default defineFrontComponent({
 ```
 
 The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.
+
+<PageBanner illustration="page-cover-image" />

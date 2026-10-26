@@ -4,6 +4,10 @@ sidebarTitle: Overview
 description: Shared design presets and reusable app building blocks composed from Twenty UI primitives.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
 Components combine [primitives](/ui/primitives/overview) into recurring design presets and reusable app building blocks. Like primitives, they receive data and callbacks from your application.
 
 Use the matching family import shown below. The aggregate `twenty-ui/components` entry also remains available. The code editor has its own entry point, `twenty-ui/components/code-editor`, because it requires Monaco. See [Getting started](/ui/getting-started) for installation and theme setup.
@@ -89,3 +93,5 @@ Import from `twenty-ui/components/code-editor`.
 | [CodeEditor](/ui/components/code-editor/code-editor) | Code editing with Monaco, an optional header, and the Twenty theme. |
 
 Routing, record formatting, product placeholders, and application state belong to the host application. Shared components expose data, callback, and render props for those integrations.
+
+<PageBanner illustration="section-ui-components" />

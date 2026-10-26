@@ -646,21 +646,42 @@ export class ApplicationService {
     >,
     queryRunner?: QueryRunner,
   ): Promise<void> {
-    const defaultPackageFields = await getDefaultApplicationPackageFields();
+    const { packageJsonContent, yarnLockContent } =
+      await getDefaultApplicationPackageFields();
 
+    await this.uploadPackageFilesAndSetFileIds({
+      application,
+      packageJsonContent,
+      yarnLockContent,
+      queryRunner,
+    });
+  }
+
+  async uploadPackageFilesAndSetFileIds({
+    application,
+    packageJsonContent,
+    yarnLockContent,
+    queryRunner,
+  }: {
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'workspaceId'
+    >;
+    packageJsonContent: string;
+    yarnLockContent: string;
+    queryRunner?: QueryRunner;
+  }): Promise<void> {
     const packageJsonChecksum = logicFunctionCreateHash(
-      JSON.stringify(JSON.parse(defaultPackageFields.packageJsonContent)),
+      JSON.stringify(JSON.parse(packageJsonContent)),
     );
-    const yarnLockChecksum = logicFunctionCreateHash(
-      defaultPackageFields.yarnLockContent,
-    );
+    const yarnLockChecksum = logicFunctionCreateHash(yarnLockContent);
     const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
-      defaultPackageFields.packageJsonContent,
-      defaultPackageFields.yarnLockContent,
+      packageJsonContent,
+      yarnLockContent,
     );
 
     const packageJsonFile = await this.fileStorageService.writeFile({
-      sourceFile: defaultPackageFields.packageJsonContent,
+      sourceFile: packageJsonContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       applicationId: application.id,
@@ -671,7 +692,7 @@ export class ApplicationService {
     });
 
     const yarnLockFile = await this.fileStorageService.writeFile({
-      sourceFile: defaultPackageFields.yarnLockContent,
+      sourceFile: yarnLockContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       applicationId: application.id,

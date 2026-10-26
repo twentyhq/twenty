@@ -8,7 +8,7 @@ import { SEED_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/application/a
 // package.json: hash(JSON.stringify(JSON.parse(content))). yarn.lock: hash(content).
 // Both use first 32 chars of SHA512 hex digest.
 const DEFAULT_PACKAGE_JSON_CHECKSUM = '19e2309740fef4df0654b2e673626344';
-const DEFAULT_YARN_LOCK_CHECKSUM = '2666500ae1675e77f94d63f1ee260c49';
+const DEFAULT_YARN_LOCK_CHECKSUM = 'c17ba0399c57dedf69097e8d3de895c0';
 
 export type DefaultApplicationPackageFields = {
   packageJsonChecksum: string;

@@ -1,8 +1,11 @@
 ---
 title: Messaging Channels
 description: Bring conversations from any provider into Twenty's Message and Message Thread records.
-icon: "messages"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 A **messaging channel** lets your app put conversations from an external provider — LinkedIn, WhatsApp, SMS, an in-app inbox — into the same `Message` and `Message Thread` records Twenty uses for email. Threads you ingest appear on the Person, Company and Opportunity records of the people in them, in the timeline and in search, with no bespoke UI.
 
@@ -128,9 +131,37 @@ A batch is all-or-nothing, and repeating one `externalId` inside a single batch 
 
 ### Linking participants to People
 
-Twenty matches email participants to People by email address. That cannot match a LinkedIn URN or a phone number, so **an app must say who a participant is** — an unlinked thread does not appear on anyone's record page.
+An unlinked participant pulls the conversation onto no record page, so every participant should end up linked to a Person. There are two ways to get there: let Twenty match handles against a person field, or resolve the person yourself.
 
-Pass `personId` alongside the handle:
+#### Match on a person field
+
+When the provider's handles are values people already store on a contact — a phone number, a profile URL, a username — declare that field when you create the channel:
+
+```ts
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
+await createMessageChannel({
+  connectedAccountId: connection.id,
+  handle: '+33612345678',
+  visibility: MessageChannelVisibility.METADATA,
+  participantHandleFieldUniversalIdentifier:
+    STANDARD_OBJECTS.person.fields.phones.universalIdentifier,
+});
+```
+
+Any active person field of type emails, phones, links or text works, including one your app added with [`defineField`](/developers/extend/apps/data/extending-objects) (an Instagram username, say). Twenty then:
+
+- **stores handles in the field's canonical form**: phones as `+` and digits (send E.164 numbers), links lowercased without scheme, `www`, fragment or trailing slash, with the query string kept as sent since it can identify the profile (`linkedin.com/in/ada`, `facebook.com/profile.php?id=111`), emails and text lowercased. The channel's own handle is stored the same way, and a handle with no usable value is rejected.
+- **links each participant you leave unlinked** to the person whose field holds that value, primary values first, then the oldest person.
+- **re-matches when people change**: adding the value to a person links their past conversations, and removing it releases them.
+
+A `personId` you pass still wins, including when someone else later gains or loses that value. The field is set once, at creation; if it is deleted or deactivated, ingestion into the channel is refused rather than storing handles Twenty can no longer normalize.
+
+Pick handles that are both stable and stored on contacts. For LinkedIn, that means the public profile URL rather than the member URN; keep your own mapping if you need the URN to call the provider.
+
+#### Resolve the person yourself
+
+Without a declared field, **your app must say who a participant is**. Pass `personId` alongside the handle:
 
 ```ts
 participants: [
@@ -211,5 +242,7 @@ Deleting a channel deletes the messages ingested through it, and any thread left
 
 - **It is not polled.** Twenty's import pipeline polls mailbox providers on a cron. App channels are push-only: nothing fetches on your behalf, so your app is responsible for getting messages in, via a webhook route or a cron logic function.
 - **It does not send.** Outbound delivery is not yet routed to apps; a reply composed in Twenty cannot reach your provider. Until it is, link out to the provider's own UI for replies.
-- **It does not resolve contacts.** Twenty matches email participants to People by email address, which cannot match a LinkedIn URN, so app channels [link participants explicitly at ingestion](#linking-participants-to-people) instead.
+- **It only resolves contacts through a declared field.** Without one, Twenty cannot tell who a LinkedIn URN belongs to, so app channels [link participants explicitly at ingestion](#resolve-the-person-yourself).
 - **It does not create contacts.** Twenty's auto-creation derives people and companies from email domains, which is meaningless for most providers, so it is off for app channels. Create the Person yourself, then pass its `personId`.
+
+<PageBanner illustration="card-page-messaging-channels" />

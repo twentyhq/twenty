@@ -2,6 +2,8 @@ import { randomUUID } from 'node:crypto';
 import { cp, readFile, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
+import semver from 'semver';
+
 import { APP_TEMPLATE_PACKAGE_VERSION } from '@/app/constants/app-template-package-version.constant';
 import { APP_TEMPLATE_FIRST_PARTY_PACKAGES } from '@/app/constants/app-template-packages.constant';
 import { getAppTemplateDirectory } from '@/app/get-app-template-directory';
@@ -33,13 +35,20 @@ export const renderAppTemplate = async ({
 
   await cp(join(appDirectory, 'AGENTS.md'), join(appDirectory, 'CLAUDE.md'));
 
-  const workflowPath = join(appDirectory, '.github', 'workflows', 'ci.yml');
-  const workflow = (await readFile(workflowPath, 'utf8')).replace(
-    'CLI-VERSION-TO-BE-GENERATED',
-    CLI_VERSION,
-  );
+  for (const workflowName of ['ci.yml', 'cd.yml', 'publish.yml']) {
+    const workflowPath = join(
+      appDirectory,
+      '.github',
+      'workflows',
+      workflowName,
+    );
+    const workflow = (await readFile(workflowPath, 'utf8')).replaceAll(
+      'CLI-VERSION-TO-BE-GENERATED',
+      CLI_VERSION,
+    );
 
-  await writeFile(workflowPath, workflow);
+    await writeFile(workflowPath, workflow);
+  }
 
   const identifiersPath = join(
     appDirectory,
@@ -64,7 +73,8 @@ export const renderAppTemplate = async ({
   } = JSON.parse(await readFile(packageJsonPath, 'utf8'));
 
   packageJson.name = appName;
-  packageJson.engines.twenty = `>=${APP_TEMPLATE_PACKAGE_VERSION}`;
+  // Patch releases of the CLI can ship without a matching server release.
+  packageJson.engines.twenty = `>=${semver.major(APP_TEMPLATE_PACKAGE_VERSION)}.${semver.minor(APP_TEMPLATE_PACKAGE_VERSION)}.0`;
 
   for (const packageName of APP_TEMPLATE_FIRST_PARTY_PACKAGES) {
     packageJson.devDependencies[packageName] = APP_TEMPLATE_PACKAGE_VERSION;

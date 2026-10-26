@@ -1,7 +1,6 @@
 ---
 title: Hook-uri de instalare
 description: Rulați logică în timpul ciclului de viață de instalare, actualizare sau dezinstalare — populați date, faceți backup pentru înregistrări, validați actualizarea, curățați resursele externe.
-icon: wrench
 ---
 
 Hook-urile de instalare sunt funcții logice speciale care rulează în timpul ciclului de viață de instalare, actualizare sau dezinstalare. Acestea folosesc același runtime de handler ca și [funcțiile logice](/ro/developers/extend/apps/logic/logic-functions) obișnuite, dar sunt declarate cu propriile lor funcții de definire și există în afara modelului obișnuit de declanșatori (HTTP, cron, evenimente de bază de date). Hook-urile de instalare primesc un `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` este `undefined` la o instalare nouă); hook-ul de dezinstalare primește un `UninstallPayload` (`{ version?: string }` — versiunea care este eliminată).
