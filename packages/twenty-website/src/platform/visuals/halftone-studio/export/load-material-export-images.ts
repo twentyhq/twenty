@@ -1,6 +1,6 @@
 import { getMaterialTextureImages } from '../engine/get-material-texture-images';
 import { HALFTONE_MATERIAL_IMAGE_URLS } from '../engine/material-image-urls';
-import type { HalftoneMaterialTexture } from '../engine/material-texture';
+import type { HalftoneStudioSettings } from '../engine/studio-settings-types';
 
 import { blobToDataUrl } from './blob-to-data-url';
 import type { HalftoneMaterialExportImages } from './exporter-types';
@@ -16,12 +16,16 @@ async function fetchImageDataUrl(url: string) {
 }
 
 export async function loadMaterialExportImages(
-  texture: HalftoneMaterialTexture,
-): Promise<HalftoneMaterialExportImages> {
+  settings: Pick<HalftoneStudioSettings, 'material' | 'sourceMode'>,
+): Promise<HalftoneMaterialExportImages | undefined> {
+  if (settings.sourceMode === 'image') {
+    return undefined;
+  }
+
   const [environment, textureEntries] = await Promise.all([
     fetchImageDataUrl(HALFTONE_MATERIAL_IMAGE_URLS.environment),
     Promise.all(
-      getMaterialTextureImages(texture).map(
+      getMaterialTextureImages(settings.material.texture).map(
         async (image) =>
           [
             image,

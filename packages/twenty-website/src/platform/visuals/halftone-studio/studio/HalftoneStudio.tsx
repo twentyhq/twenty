@@ -829,9 +829,7 @@ export function HalftoneStudio() {
           )
         : defaultImageExportFilename;
 
-    const materialImages = isImageMode
-      ? undefined
-      : await loadMaterialExportImages(state.settings.material.texture);
+    const materialImages = await loadMaterialExportImages(state.settings);
 
     downloadText(
       `${componentName}.tsx`,
@@ -1026,9 +1024,7 @@ export function HalftoneStudio() {
       ? `${kebabName}${imageFile.name.replace(/^[^.]*/, '')}`
       : undefined;
 
-    const materialImages = isImageMode
-      ? undefined
-      : await loadMaterialExportImages(state.settings.material.texture);
+    const materialImages = await loadMaterialExportImages(state.settings);
 
     downloadText(
       `${kebabName}.html`,

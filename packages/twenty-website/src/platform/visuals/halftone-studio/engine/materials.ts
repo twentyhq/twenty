@@ -526,7 +526,7 @@ async function loadImageTexture({
   assets,
   image,
 }: {
-  assets: HalftoneMaterialAssets;
+  assets: Pick<HalftoneMaterialAssets, 'imageTextures' | 'renderer'>;
   image: HalftoneMaterialTextureImage;
 }) {
   const texture = await loadTexture({
@@ -545,7 +545,10 @@ async function loadHalftoneMaterialTextures({
   assets,
   texture,
 }: {
-  assets: HalftoneMaterialAssets;
+  assets: Pick<
+    HalftoneMaterialAssets,
+    'imageTextureLoads' | 'imageTextures' | 'renderer'
+  >;
   texture: HalftoneMaterialTexture;
 }) {
   const missingImages = getMaterialTextureImages(texture).filter(

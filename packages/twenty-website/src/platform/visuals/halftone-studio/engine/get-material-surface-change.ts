@@ -22,7 +22,7 @@ export function getMaterialSurfaceChange({
   settings,
   surface,
 }: {
-  settings: HalftoneStudioSettings;
+  settings: Pick<HalftoneStudioSettings, 'animation' | 'lighting' | 'material'>;
   surface: HalftoneMaterialSurface;
 }) {
   const currentSurface = settings.material.surface;
