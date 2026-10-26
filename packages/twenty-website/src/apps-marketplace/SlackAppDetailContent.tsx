@@ -32,11 +32,11 @@ const CAPABILITIES: readonly {
 }[] = [
   {
     title: msg`Ask questions`,
-    body: msg`Ask about a contact, a company or your open deals and get the answer from your Twenty data.`,
+    body: msg`Look up a contact, a company or your open deals.`,
   },
   {
     title: msg`Create and update records`,
-    body: msg`Create and update people, companies, opportunities, notes and tasks without leaving Slack.`,
+    body: msg`Create and update people, companies, opportunities, notes and tasks from a message.`,
   },
   {
     title: msg`Preview record links`,
@@ -62,11 +62,11 @@ const SETUP_STEPS: readonly {
   },
   {
     title: msg`Link your accounts`,
-    body: msg`Accounts with the same email in Slack and Twenty are linked automatically. An admin can link the rest from the app's Settings tab, and the Slack user approves the link in a direct message from the bot.`,
+    body: msg`Slack accounts with the same email as a Twenty user are linked automatically. An admin can link the rest from the app's Settings tab. The person then approves it in a DM from the bot.`,
   },
   {
     title: msg`Start asking`,
-    body: msg`Invite the bot to a channel with /invite @Twenty, then mention @Twenty with your question or send it a direct message.`,
+    body: msg`Type /invite @Twenty in a channel and mention it with your question, or send it a DM.`,
   },
 ];
 
@@ -206,11 +206,11 @@ export function SlackAppDetailContent() {
           <ExplainerAside>
             <Eyebrow>{i18n._(msg`How it works`)}</Eyebrow>
             <Heading as="h2" size="sm" weight="light">
-              {i18n._(msg`Your CRM, inside Slack`)}
+              {i18n._(msg`Use Twenty from Slack`)}
             </Heading>
             <Body muted size="sm">
               {i18n._(
-                msg`Mention @Twenty in a channel or send it a direct message, and ask in plain language. It looks up records in your Twenty workspace, makes the changes you ask for and replies in the thread, so the answer lands where the conversation is happening.`,
+                msg`Mention @Twenty in a channel or send it a direct message. It looks up records in your workspace, makes the changes you ask for and replies in the thread.`,
               )}
             </Body>
             <Body muted size="sm">
@@ -220,7 +220,7 @@ export function SlackAppDetailContent() {
             </Body>
             <Body muted size="sm">
               {i18n._(
-                msg`Admins connect the Slack workspace and manage which Slack accounts are linked from the app's settings in Twenty.`,
+                msg`An admin connects the Slack workspace and links Slack accounts to Twenty users from the app's settings.`,
               )}
             </Body>
             <Disclaimer>
