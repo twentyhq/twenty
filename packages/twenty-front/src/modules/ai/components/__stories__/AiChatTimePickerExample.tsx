@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useState } from 'react';
+import { type ReactElement, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -27,7 +27,7 @@ type AiChatTimePickerExampleProps = {
   uncheckedAttendees?: readonly string[];
   disabled?: boolean;
   isSending?: boolean;
-  reviewFields?: ReactNode;
+  reviewFields?: ReactElement;
   timeZone?: string;
   locale?: string;
   timeFormat?: TimeFormat;

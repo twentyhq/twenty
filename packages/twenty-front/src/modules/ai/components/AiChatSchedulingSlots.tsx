@@ -11,6 +11,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type AiChatSchedulingAvailability } from '@/ai/types/AiChatSchedulingAvailability';
 import { type AiChatSchedulingSlot } from '@/ai/types/AiChatSchedulingSlot';
+import { hasMixedTimeZoneOffsets } from '@/ai/utils/hasMixedTimeZoneOffsets';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
 import { resolveTimeFormat } from '@/localization/utils/resolveTimeFormat';
@@ -64,6 +65,7 @@ const formatDateLabel = ({
     weekday: 'long',
     month: 'long',
     day: 'numeric',
+    calendar: 'gregory',
     timeZone: doNotTranslate('UTC'),
   }).format(new Date(doNotTranslate(`${date}T00:00:00Z`)));
 };
@@ -88,9 +90,12 @@ export const AiChatSchedulingSlots = ({
     minute: '2-digit',
     timeZone,
     hourCycle: resolvedTimeFormat === TimeFormat.HOUR_24 ? 'h23' : 'h12',
+    timeZoneName: hasMixedTimeZoneOffsets({ slots, timeZone })
+      ? 'short'
+      : undefined,
   });
-  const referenceSlot =
-    slots.find((slot) => slot.id === selectedSlotId) ?? slots[0];
+  const selectedSlot = slots.find((slot) => slot.id === selectedSlotId);
+  const referenceSlot = selectedSlot ?? slots[0];
   const getTimeZoneReferenceDate = () => {
     if (isDefined(referenceSlot)) {
       return new Date(referenceSlot.startsAt);
@@ -106,17 +111,24 @@ export const AiChatSchedulingSlots = ({
     timeZone,
     referenceDate: getTimeZoneReferenceDate(),
   });
-  const isLoading = availability.status === 'loading';
-  const isStale =
-    (availability.status === 'ready' || availability.status === 'changed') &&
-    availability.date !== date;
+  const isAvailabilityForSelectedDate =
+    isDefined(date) && availability.date === date;
+  const isStale = isDefined(date) && !isAvailabilityForSelectedDate;
+  const isLoading =
+    isAvailabilityForSelectedDate && availability.status === 'loading';
+  const isSelectedSlotUnavailable =
+    isAvailabilityForSelectedDate &&
+    availability.status === 'ready' &&
+    isDefined(selectedSlotId) &&
+    !isDefined(selectedSlot);
 
   return (
     <StyledSlots aria-busy={isLoading}>
       <StyledDate>{dateLabel}</StyledDate>
       <StyledDate>{timeZoneLabel}</StyledDate>
-      {availability.status === 'error' && (
+      {isAvailabilityForSelectedDate && availability.status === 'error' && (
         <InlineBanner
+          role="alert"
           status="error"
           layout="compact"
           action={
@@ -129,13 +141,14 @@ export const AiChatSchedulingSlots = ({
             t`Calendar availability could not be checked.`}
         </InlineBanner>
       )}
-      {availability.status === 'changed' && !isStale && (
-        <InlineBanner status="warning" layout="compact">
+      {isSelectedSlotUnavailable && (
+        <InlineBanner role="alert" status="warning" layout="compact">
           {t`That time is no longer available. Choose another time.`}
         </InlineBanner>
       )}
       {isStale && (
         <InlineBanner
+          role="status"
           status="info"
           layout="compact"
           action={
@@ -148,24 +161,24 @@ export const AiChatSchedulingSlots = ({
         </InlineBanner>
       )}
       <div role="status" aria-atomic="true">
+        {!isDefined(date) && (
+          <StyledMessage>{t`Choose a date to see available times.`}</StyledMessage>
+        )}
         {isLoading && (
           <StyledMessage>{t`Checking calendar availability…`}</StyledMessage>
         )}
-        {!isLoading &&
-          !isStale &&
-          availability.status !== 'error' &&
+        {isAvailabilityForSelectedDate &&
+          availability.status === 'ready' &&
           !isNonEmptyArray(slots) && (
             <StyledMessage>
-              {isDefined(date)
-                ? t`No available times. Choose another date.`
-                : t`Choose a date to see available times.`}
+              {t`No available times. Choose another date.`}
             </StyledMessage>
           )}
       </div>
       {isNonEmptyArray(slots) && (
         <RadioGroup
           aria-label={t`Available times`}
-          value={selectedSlotId}
+          value={selectedSlot?.id ?? null}
           onValueChange={onSlotChange}
           disabled={disabled}
         >

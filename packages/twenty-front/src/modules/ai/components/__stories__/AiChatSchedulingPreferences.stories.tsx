@@ -196,6 +196,51 @@ export const InvalidPreferences: Story = {
   },
 };
 
+export const MissingWorkingHours: Story = {
+  args: { value: { ...PREFERENCES, workingHoursStart: '' } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByText('Enter a start and end time.')).toBeVisible();
+    await expect(
+      canvas.queryByText('End time must be after start time.'),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const TimeZoneAlias: Story = {
+  args: {
+    value: { ...PREFERENCES, timeZone: 'America/Buenos_Aires' },
+    timeZoneOptions: [
+      { value: 'Europe/Paris', label: 'Paris (GMT+01:00)' },
+      {
+        value: 'America/Argentina/Buenos_Aires',
+        label: 'Buenos Aires (GMT-03:00)',
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByText('Buenos Aires (GMT-03:00)')).toBeVisible();
+    await expect(
+      canvas.queryByText('Choose a time zone.'),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const UnlistedTimeZone: Story = {
+  args: { value: { ...PREFERENCES, timeZone: 'Europe/Berlin' } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByText(/Berlin/)).toBeVisible();
+    await expect(
+      canvas.queryByText('Choose a time zone.'),
+    ).not.toBeInTheDocument();
+  },
+};
+
 export const NoCalendars: Story = {
   args: {
     calendars: [],

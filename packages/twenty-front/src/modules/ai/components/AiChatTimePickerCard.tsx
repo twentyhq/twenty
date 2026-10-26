@@ -1,7 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode } from 'react';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { type ReactElement } from 'react';
+import {
+  getValidTimeZoneOrUndefined,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { DatePicker } from 'twenty-ui/components/input';
 import { IconCalendarEvent } from 'twenty-ui/icon';
@@ -13,6 +17,9 @@ import { AiChatSchedulingSlots } from '@/ai/components/AiChatSchedulingSlots';
 import { type AiChatSchedulingAvailability } from '@/ai/types/AiChatSchedulingAvailability';
 import { type AiChatSchedulingSelection } from '@/ai/types/AiChatSchedulingSelection';
 import { type TimeFormat } from '@/localization/constants/TimeFormat';
+import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
+import { getDatePickerWeekdayLabels } from '@/localization/utils/getDatePickerWeekdayLabels';
+import { formatDisplayList } from '~/utils/format/formatDisplayList';
 
 const CALENDAR_WIDTH_PX = 268;
 const STACKED_LAYOUT_WIDTH_PX = 560;
@@ -113,7 +120,7 @@ type AiChatTimePickerCardProps = {
   onRetry: () => void;
   isDateUnavailable?: (date: string) => boolean;
   uncheckedAttendees?: readonly string[];
-  reviewFields?: ReactNode;
+  reviewFields?: ReactElement;
   disabled?: boolean;
   isSending?: boolean;
 };
@@ -142,15 +149,17 @@ export const AiChatTimePickerCard = ({
   isSending = false,
 }: AiChatTimePickerCardProps) => {
   const { t } = useLingui();
+  const resolvedTimeZone =
+    getValidTimeZoneOrUndefined(timeZone) ?? detectTimeZone();
   const slots =
-    (availability.status === 'ready' || availability.status === 'changed') &&
-    availability.date === date
+    availability.status === 'ready' && availability.date === date
       ? availability.slots
       : [];
   const selectedSlot = slots.find((slot) => slot.id === selectedSlotId);
   const areControlsDisabled = disabled || isSending;
   const canSend =
     isDefined(date) && isDefined(selectedSlot) && !areControlsDisabled;
+  const uncheckedAttendeeList = formatDisplayList([...uncheckedAttendees]);
 
   const handleDateChange = (nextDate: string) => {
     onDateChange(nextDate);
@@ -162,7 +171,7 @@ export const AiChatTimePickerCard = ({
       return;
     }
 
-    onSendInvite({ date, slotId: selectedSlot.id, timeZone });
+    onSendInvite({ date, slotId: selectedSlot.id, timeZone: resolvedTimeZone });
   };
 
   return (
@@ -178,12 +187,14 @@ export const AiChatTimePickerCard = ({
           <StyledLayout>
             <StyledCalendar>
               <DatePicker
+                aria-label={t`Choose a date`}
                 value={date}
                 onValueChange={handleDateChange}
                 viewedMonth={viewedMonth}
                 onViewedMonthChange={onViewedMonthChange}
                 weekStart={weekStart}
                 locale={locale}
+                weekdayLabels={getDatePickerWeekdayLabels(locale)}
                 previousMonthLabel={t`Previous month`}
                 nextMonthLabel={t`Next month`}
                 monthLabel={t`Month`}
@@ -196,10 +207,10 @@ export const AiChatTimePickerCard = ({
               availability={availability}
               date={date}
               slots={slots}
-              selectedSlotId={isDefined(selectedSlot) ? selectedSlot.id : null}
+              selectedSlotId={selectedSlotId}
               onSlotChange={onSlotChange}
               onRetry={onRetry}
-              timeZone={timeZone}
+              timeZone={resolvedTimeZone}
               locale={locale}
               timeFormat={timeFormat}
               disabled={areControlsDisabled}
@@ -208,7 +219,7 @@ export const AiChatTimePickerCard = ({
           {isNonEmptyArray(uncheckedAttendees) && (
             <StyledNotice>
               <InlineBanner status="warning" layout="compact">
-                {t`Availability was not checked for ${uncheckedAttendees.join(', ')}. You can still send an invite.`}
+                {t`Availability was not checked for ${uncheckedAttendeeList}. You can still send an invite.`}
               </InlineBanner>
             </StyledNotice>
           )}

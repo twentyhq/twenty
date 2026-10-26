@@ -1,10 +1,10 @@
 import { type AiChatSchedulingSlot } from '@/ai/types/AiChatSchedulingSlot';
 
 export type AiChatSchedulingAvailability =
-  | { status: 'loading' }
-  | { status: 'error'; message?: string }
+  | { status: 'loading'; date: string }
+  | { status: 'error'; date: string; message?: string }
   | {
-      status: 'ready' | 'changed';
+      status: 'ready';
       date: string;
       slots: readonly AiChatSchedulingSlot[];
     };

@@ -7,6 +7,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { AiChatTimePickerExample } from '@/ai/components/__stories__/AiChatTimePickerExample';
 import { AI_CHAT_TIME_PICKER_FIXTURE } from '@/ai/components/__stories__/aiChatTimePickerFixture';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
+import { ARGOS_CAPTURE_DISABLED } from '~/testing/constants/ArgosCaptureDisabled';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 
@@ -92,8 +93,11 @@ export const DaylightSavingSelection: Story = {
     await expect(
       canvas.getByText('(GMT-07:00) Pacific Daylight Time - Los Angeles'),
     ).toBeVisible();
+    await expect(
+      canvas.getByRole('radio', { name: '01:00 PDT – 01:30 PDT' }),
+    ).toBeChecked();
     await userEvent.click(
-      canvas.getAllByRole('radio', { name: '01:00 – 01:30' })[1],
+      canvas.getByRole('radio', { name: '01:00 PST – 01:30 PST' }),
     );
     await expect(
       canvas.getByText('(GMT-08:00) Pacific Standard Time - Los Angeles'),
@@ -107,12 +111,33 @@ export const DaylightSavingSelection: Story = {
   },
 };
 
+export const SystemTimeZone: Story = {
+  args: { timeZone: 'system', initialSelectedSlotId: 'slot-1100' },
+  parameters: { argos: ARGOS_CAPTURE_DISABLED },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Send invite' }));
+    await expect(args.onSendInvite).toHaveBeenCalledWith({
+      date: AI_CHAT_TIME_PICKER_FIXTURE.date,
+      slotId: 'slot-1100',
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    });
+  },
+};
+
 export const NoDateSelected: Story = {
   args: { initialDate: null },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Choose a date')).toBeVisible();
+    await expect(
+      canvas.getByText('Choose a date to see available times.'),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'Refresh' }),
+    ).not.toBeInTheDocument();
     await expect(
       canvas.getByRole('button', { name: 'Send invite' }),
     ).toBeDisabled();
@@ -192,6 +217,11 @@ export const StaleAvailability: Story = {
     await expect(sendInvite).toBeDisabled();
     await userEvent.click(sendInvite);
     await expect(args.onSendInvite).not.toHaveBeenCalled();
+    await expect(
+      canvas.getByText('Refresh availability for this date.'),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Refresh' }));
+    await expect(args.onRetry).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -199,7 +229,7 @@ export const AvailabilityChanged: Story = {
   args: {
     initialSelectedSlotId: 'slot-1100',
     availabilityAfterRefresh: {
-      status: 'changed',
+      status: 'ready',
       date: AI_CHAT_TIME_PICKER_FIXTURE.date,
       slots: AI_CHAT_TIME_PICKER_FIXTURE.availability.slots.filter(
         ({ id }) => id !== 'slot-1100',
@@ -229,6 +259,11 @@ export const AvailabilityChanged: Story = {
 
     await userEvent.click(afternoonTime);
     await expect(afternoonTime).toBeChecked();
+    await expect(
+      canvas.queryByText(
+        'That time is no longer available. Choose another time.',
+      ),
+    ).not.toBeInTheDocument();
     await expect(sendInvite).toBeEnabled();
     await userEvent.click(sendInvite);
     await expect(args.onSendInvite).toHaveBeenCalledTimes(1);
@@ -244,6 +279,7 @@ export const AvailabilityError: Story = {
   args: {
     initialAvailability: {
       status: 'error',
+      date: AI_CHAT_TIME_PICKER_FIXTURE.date,
       message: 'Your calendar could not be reached.',
     },
   },
@@ -261,6 +297,18 @@ export const AvailabilityError: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Skip' }));
     await expect(args.onSkip).toHaveBeenCalledTimes(1);
     await expect(args.onSendInvite).not.toHaveBeenCalled();
+
+    await userEvent.click(
+      await canvas.findByRole('gridcell', {
+        name: 'Choose Thursday, October 8th, 2026',
+      }),
+    );
+    await expect(
+      canvas.queryByText('Your calendar could not be reached.'),
+    ).not.toBeInTheDocument();
+    await expect(
+      canvas.getByText('Refresh availability for this date.'),
+    ).toBeVisible();
   },
 };
 
@@ -280,6 +328,11 @@ export const Disabled: Story = {
       canvas.getByRole('combobox', { name: 'Month' }),
     ).toBeDisabled();
     await userEvent.click(canvas.getByRole('radio', { name: /14:00.*14:30/ }));
+    await userEvent.click(
+      canvas.getByRole('gridcell', {
+        name: 'Not available Thursday, October 8th, 2026',
+      }),
+    );
     await expect(args.onSlotChange).not.toHaveBeenCalled();
     await expect(args.onDateChange).not.toHaveBeenCalled();
     await expect(args.onSendInvite).not.toHaveBeenCalled();
@@ -304,7 +357,12 @@ export const Sending: Story = {
 };
 
 export const Loading: Story = {
-  args: { initialAvailability: { status: 'loading' } },
+  args: {
+    initialAvailability: {
+      status: 'loading',
+      date: AI_CHAT_TIME_PICKER_FIXTURE.date,
+    },
+  },
 };
 
 export const Empty: Story = {
@@ -354,7 +412,7 @@ export const Narrow: Story = {
     const card = canvas.getByRole('group', {
       name: 'Call with Patrick Collison · 30 min',
     });
-    const calendar = within(card).getByRole('group', { name: '' });
+    const calendar = within(card).getByRole('group', { name: 'Choose a date' });
     const times = canvas.getByRole('radiogroup', { name: 'Available times' });
     const calendarBounds = calendar.getBoundingClientRect();
     const timesBounds = times.getBoundingClientRect();

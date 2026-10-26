@@ -1,7 +1,12 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useId, useState } from 'react';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Temporal } from 'temporal-polyfill';
+import {
+  getValidTimeZoneOrUndefined,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { FormFieldRow, SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
 import {
@@ -17,11 +22,11 @@ import { normalizeSearchText } from 'twenty-ui/utilities';
 import { type AiChatSchedulingCalendar } from '@/ai/types/AiChatSchedulingCalendar';
 import { type AiChatSchedulingPreferencesValue } from '@/ai/types/AiChatSchedulingPreferencesValue';
 import { AVAILABLE_TIMEZONE_OPTIONS } from '@/localization/constants/AvailableTimezoneOptions';
-import { TimeFormat } from '@/localization/constants/TimeFormat';
+import { findAvailableTimeZoneOption } from '@/localization/utils/findAvailableTimeZoneOption';
+import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
+import { getValidPlainTimeOrUndefined } from '@/localization/utils/getValidPlainTimeOrUndefined';
 import { Select } from '@/ui/input/components/Select';
-import { useTimeInput } from '@/ui/input/components/internal/date/hooks/useTimeInput';
 
-const MINUTES_PER_HOUR = 60;
 const FIELD_LABEL_WIDTH_PX = 112;
 const CALENDAR_LIST_MAX_HEIGHT_PX = 240;
 
@@ -104,14 +109,15 @@ export const AiChatSchedulingPreferences = ({
 }: AiChatSchedulingPreferencesProps) => {
   const instanceId = useId();
   const [calendarSearch, setCalendarSearch] = useState('');
-  const { parseTime } = useTimeInput(TimeFormat.HOUR_24);
-  const startTime = parseTime(value.workingHoursStart);
-  const endTime = parseTime(value.workingHoursEnd);
-  const hasValidWorkingHours =
-    isDefined(startTime) &&
-    isDefined(endTime) &&
-    startTime.hour * MINUTES_PER_HOUR + startTime.minute <
-      endTime.hour * MINUTES_PER_HOUR + endTime.minute;
+  const workingHoursStart = getValidPlainTimeOrUndefined(
+    value.workingHoursStart,
+  );
+  const workingHoursEnd = getValidPlainTimeOrUndefined(value.workingHoursEnd);
+  const hasWorkingHours =
+    isDefined(workingHoursStart) && isDefined(workingHoursEnd);
+  const isWorkingHoursOrderInvalid =
+    hasWorkingHours &&
+    Temporal.PlainTime.compare(workingHoursStart, workingHoursEnd) >= 0;
   const hasWorkingDays = isNonEmptyArray(value.workingDays);
   const hasAvailabilityCalendar = calendars.some(
     ({ id, isDisabled: isCalendarDisabled }) =>
@@ -133,9 +139,19 @@ export const AiChatSchedulingPreferences = ({
     ({ id, canOrganize, isDisabled: isCalendarDisabled }) =>
       id === value.organizerCalendarId && canOrganize && !isCalendarDisabled,
   );
-  const hasTimeZone = timeZoneOptions.some(
-    ({ value: timeZone }) => timeZone === value.timeZone,
+  const validTimeZone = getValidTimeZoneOrUndefined(value.timeZone);
+  const availableTimeZone = findAvailableTimeZoneOption(value.timeZone)?.value;
+  const listedTimeZoneOption = timeZoneOptions.find(
+    ({ value: timeZone }) =>
+      timeZone === value.timeZone || timeZone === availableTimeZone,
   );
+  const unlistedTimeZoneOption =
+    isDefined(validTimeZone) && !isDefined(listedTimeZoneOption)
+      ? {
+          value: validTimeZone,
+          label: formatTimeZoneLabel({ timeZone: validTimeZone }),
+        }
+      : undefined;
   const workingDays: {
     value: AiChatSchedulingPreferencesValue['workingDays'][number];
     label: string;
@@ -162,15 +178,16 @@ export const AiChatSchedulingPreferences = ({
               dropdownId={`${instanceId}-time-zone`}
               dropdownWidth={400}
               fullWidth
-              value={value.timeZone}
+              value={listedTimeZoneOption?.value ?? value.timeZone}
               options={timeZoneOptions}
+              pinnedOption={unlistedTimeZoneOption}
               emptyOption={{ value: '', label: t`Choose a time zone` }}
               disabled={isDisabled}
               onChange={(timeZone) => onChange({ ...value, timeZone })}
               withSearchInput
               needIconCheck
             />
-            {!hasTimeZone && (
+            {!isDefined(validTimeZone) && (
               <StyledError role="alert">{t`Choose a time zone.`}</StyledError>
             )}
           </StyledFullWidth>
@@ -212,7 +229,9 @@ export const AiChatSchedulingPreferences = ({
               <Input
                 type="time"
                 aria-label={t`Working hours start`}
-                aria-invalid={!hasValidWorkingHours}
+                aria-invalid={
+                  !isDefined(workingHoursStart) || isWorkingHoursOrderInvalid
+                }
                 value={value.workingHoursStart}
                 disabled={isDisabled}
                 onValueChange={(workingHoursStart) =>
@@ -223,7 +242,9 @@ export const AiChatSchedulingPreferences = ({
               <Input
                 type="time"
                 aria-label={t`Working hours end`}
-                aria-invalid={!hasValidWorkingHours}
+                aria-invalid={
+                  !isDefined(workingHoursEnd) || isWorkingHoursOrderInvalid
+                }
                 value={value.workingHoursEnd}
                 disabled={isDisabled}
                 onValueChange={(workingHoursEnd) =>
@@ -231,7 +252,10 @@ export const AiChatSchedulingPreferences = ({
                 }
               />
             </StyledTimeRange>
-            {!hasValidWorkingHours && (
+            {!hasWorkingHours && (
+              <StyledError role="alert">{t`Enter a start and end time.`}</StyledError>
+            )}
+            {isWorkingHoursOrderInvalid && (
               <StyledError role="alert">{t`End time must be after start time.`}</StyledError>
             )}
           </StyledFullWidth>
