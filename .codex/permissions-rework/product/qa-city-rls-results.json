@@ -1,0 +1,73 @@
+{
+  "startedAt": "2026-10-26T23:34:39.371Z",
+  "checks": [
+    "Live company and inherited task reads follow member city \"San Francisco\" immediately",
+    "Live company and inherited task reads follow member city \"New York\" immediately",
+    "Live company and inherited task reads follow member city null immediately",
+    "Live company and inherited task reads follow member city \"\" immediately",
+    "Live company and inherited task reads follow member city \"San Francisco\" immediately",
+    "Unfiltered seven-row cursor pagination and exact counts match SQL-derived company and task sets",
+    "REST denies an out-of-city company",
+    "Company city edits update direct and inherited access, then projections converge",
+    "Relation edits grant and revoke inherited task access",
+    "South San Francisco, missing-city companies, and unlinked tasks stay hidden; a task linked to both cities is visible once"
+  ],
+  "phases": [
+    {
+      "label": "Member city \"San Francisco\"",
+      "companies": 71,
+      "tasks": 72,
+      "convergenceMilliseconds": 30
+    },
+    {
+      "label": "Member city \"New York\"",
+      "companies": 43,
+      "tasks": 44,
+      "convergenceMilliseconds": 19920
+    },
+    {
+      "label": "Member city null",
+      "companies": 0,
+      "tasks": 0,
+      "convergenceMilliseconds": 29
+    },
+    {
+      "label": "Member city \"\"",
+      "companies": 0,
+      "tasks": 0,
+      "convergenceMilliseconds": 22
+    },
+    {
+      "label": "Member city \"San Francisco\"",
+      "companies": 71,
+      "tasks": 72,
+      "convergenceMilliseconds": 19826
+    },
+    {
+      "label": "Company moves into member city",
+      "companies": 72,
+      "tasks": 73,
+      "convergenceMilliseconds": 4337
+    },
+    {
+      "label": "Company moves out of member city",
+      "companies": 71,
+      "tasks": 72,
+      "convergenceMilliseconds": 5237
+    },
+    {
+      "label": "Task relinked into member city",
+      "companies": 71,
+      "tasks": 73,
+      "convergenceMilliseconds": 3148
+    },
+    {
+      "label": "Task relinked out of member city",
+      "companies": 71,
+      "tasks": 72,
+      "convergenceMilliseconds": 2116
+    }
+  ],
+  "revisionId": "f25cca48-bc00-43dd-bda7-4426284d693b",
+  "finishedAt": "2026-10-26T23:35:36.870Z"
+}

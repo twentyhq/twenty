@@ -37,11 +37,15 @@
       "company list and detail"
     ],
     "finalCleanReloadErrors": 0,
-    "enterpriseEditor": "Component tested. On 2026-10-27, configured the existing signed development license fixture locally, confirmed RLS entitlement through the API, and verified the conditional editor renders in Chrome. Existing draft untouched; no additional browser publication/enforcement test.",
+    "enterpriseEditor": "Signed development license configured; saved Address / City IS Me / City rule verified in Chrome. Publication and enforcement exercised through the live API city scenario.",
     "screenshots": [
       "screenshots/qa-role-sharing.jpg",
       "screenshots/qa-active-policy-during-rebuild.jpg",
-      "screenshots/qa-rls-enterprise-enabled.png"
+      "screenshots/qa-rls-enterprise-enabled.png",
+      "screenshots/qa-city-rule.png",
+      "screenshots/qa-city-member.png",
+      "screenshots/qa-city-companies.png",
+      "screenshots/qa-city-tasks.png"
     ]
   },
   "liveApiReports": [
@@ -112,10 +116,18 @@
     "frontend": "http://localhost:3001",
     "server": "http://localhost:3000",
     "worker": "running",
-    "activeRevisionId": "9336a71e-be50-4897-8012-d9438096e26c",
+    "activeRevisionId": "f25cca48-bc00-43dd-bda7-4426284d693b",
     "pendingCandidate": false,
     "disposableApiRecords": "cleaned up",
-    "benchmarkClusters": "stopped; fixtures retained"
+    "benchmarkClusters": "stopped; fixtures retained",
+    "cityScenario": {
+      "member": "tim@apple.dev",
+      "city": "San Francisco",
+      "companyCount": 71,
+      "taskCount": 72,
+      "fixtureReport": "city-rls-fixtures.json",
+      "verificationReport": "qa-city-rls-results.json"
+    }
   },
   "commands": {
     "server": "RECORD_PERMISSION_TEST_DATABASE_URL=<disposable_database_ending_in_permission_test> xargs npx jest --config=packages/twenty-server/jest.config.mjs --runInBand --runTestsByPath < .codex/permissions-rework/product/qa-server-test-files.txt",
@@ -125,5 +137,22 @@
     "export": "node .codex/permissions-rework/product/qa-export.cjs --activate-policy",
     "typecheck": "npx tsgo -p tsconfig.json --noEmit in each package",
     "benchmarks": "See record-permissions-implementation-decisions.md; only use a dedicated permission benchmark database"
+  },
+  "cityRlsFollowUp": {
+    "checks": 10,
+    "phases": 9,
+    "testSuites": 58,
+    "tests": 792,
+    "typechecks": [
+      "twenty-shared",
+      "twenty-server",
+      "twenty-front"
+    ],
+    "priorAttempts": [
+      "Address city exact equality was unsupported; fixed and tested.",
+      "Empty dynamic values dropped restrictions; fixed and tested.",
+      "Brief cross-process admission contention rejected queries; bounded admission retry added and PostgreSQL-tested.",
+      "An immediate post-restart attempt exceeded the existing connection checkout limit; the completed scenario ran without client retries after app readiness."
+    ]
   }
 }

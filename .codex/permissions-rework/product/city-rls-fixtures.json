@@ -1,0 +1,110 @@
+{
+  "roleId": "8daf8b8b-9ffb-48a2-ac02-499b3fe59206",
+  "roleUniversalIdentifier": "353648a1-4749-408b-a761-6aaf66ca0259",
+  "memberId": "20202020-0687-4c41-b707-ed1bfca972a7",
+  "cityField": {
+    "id": "860bbfa7-fcf4-49a7-9d51-004b140364f0",
+    "name": "city",
+    "universalIdentifier": "38be85b2-1147-446d-9b05-a9144d4e0dd0",
+    "type": "TEXT"
+  },
+  "companies": {
+    "sanFrancisco": {
+      "id": "db233393-eca8-4bcf-8421-81729f90979a",
+      "city": "San Francisco",
+      "name": "RLS City Test - San Francisco"
+    },
+    "newYork": {
+      "id": "382f4f0a-0a70-45a7-a7f4-9e48c5b8a68d",
+      "city": "New York",
+      "name": "RLS City Test - New York"
+    },
+    "noCity": {
+      "id": "e3b97a50-cac9-4f35-8f57-0e7beacb39f2",
+      "city": null,
+      "name": "RLS City Test - No city"
+    },
+    "nearMatch": {
+      "id": "dba74bca-1e18-4b3c-affc-880e13a253d6",
+      "city": "South San Francisco",
+      "name": "RLS City Test - South San Francisco"
+    }
+  },
+  "tasks": {
+    "sanFrancisco": {
+      "id": "7153e1b7-5b46-427e-80c2-e0d7cfcdb284",
+      "title": "RLS City Test - sanFrancisco",
+      "companyKeys": [
+        "sanFrancisco"
+      ]
+    },
+    "newYork": {
+      "id": "d7975a67-7acd-4984-bbe3-498c3668a0e0",
+      "title": "RLS City Test - newYork",
+      "companyKeys": [
+        "newYork"
+      ]
+    },
+    "noCity": {
+      "id": "606f7c65-ed25-4c91-82da-33e259b67b0f",
+      "title": "RLS City Test - noCity",
+      "companyKeys": [
+        "noCity"
+      ]
+    },
+    "unlinked": {
+      "id": "dedd1a7a-0e62-4fac-804b-cbeda144a0e6",
+      "title": "RLS City Test - unlinked",
+      "companyKeys": []
+    },
+    "bothCities": {
+      "id": "d2524688-ca76-460e-8d24-416e631ecc18",
+      "title": "RLS City Test - bothCities",
+      "companyKeys": [
+        "sanFrancisco",
+        "newYork"
+      ]
+    },
+    "nearMatch": {
+      "id": "73133e92-659a-4b63-8faf-256878fe0f98",
+      "title": "RLS City Test - nearMatch",
+      "companyKeys": [
+        "nearMatch"
+      ]
+    }
+  },
+  "taskTargets": [
+    {
+      "id": "14dd2a4e-608f-47a2-a8e7-d1f22d038e3f",
+      "taskId": "7153e1b7-5b46-427e-80c2-e0d7cfcdb284",
+      "targetCompanyId": "db233393-eca8-4bcf-8421-81729f90979a"
+    },
+    {
+      "id": "194babfe-c2e0-4003-9833-e41fb9326ded",
+      "taskId": "d7975a67-7acd-4984-bbe3-498c3668a0e0",
+      "targetCompanyId": "382f4f0a-0a70-45a7-a7f4-9e48c5b8a68d"
+    },
+    {
+      "id": "f9901ba0-e987-42d2-a35a-f5783c0913d9",
+      "taskId": "606f7c65-ed25-4c91-82da-33e259b67b0f",
+      "targetCompanyId": "e3b97a50-cac9-4f35-8f57-0e7beacb39f2"
+    },
+    {
+      "id": "51c1a112-bb54-448c-b4a9-d41dd71e5de4",
+      "taskId": "d2524688-ca76-460e-8d24-416e631ecc18",
+      "targetCompanyId": "db233393-eca8-4bcf-8421-81729f90979a"
+    },
+    {
+      "id": "144994db-04c4-4f66-a865-13b461e52abb",
+      "taskId": "d2524688-ca76-460e-8d24-416e631ecc18",
+      "targetCompanyId": "382f4f0a-0a70-45a7-a7f4-9e48c5b8a68d"
+    },
+    {
+      "id": "9b4161f5-74b5-45b9-8d88-8715fe8e61fe",
+      "taskId": "73133e92-659a-4b63-8faf-256878fe0f98",
+      "targetCompanyId": "dba74bca-1e18-4b3c-affc-880e13a253d6"
+    }
+  ],
+  "startedAt": "2026-10-26T23:25:05.647Z",
+  "revisionId": "f25cca48-bc00-43dd-bda7-4426284d693b"
+}
