@@ -207,10 +207,10 @@ export class GraphqlQuerySelectedFieldsParser {
       }
     }
 
-    // Redacting properties needs to know which object the stored diff belongs to
+    // Redaction needs the diff's object; system object columns carry no field permissions
     if (
       flatObjectMetadata.nameSingular === 'timelineActivity' &&
-      accumulator.select.properties === true
+      isDefined(accumulator.select.properties)
     ) {
       for (const columnName of resolveTimelineActivityObjectColumnNames({
         flatObjectMetadata,

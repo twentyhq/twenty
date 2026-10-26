@@ -28,10 +28,13 @@ export const redactTimelineActivityEvent = <TEvent extends ObjectRecordEvent>({
       ? properties.after
       : undefined;
 
-  const redact = (
-    value: unknown,
-    timelineActivity: Record<string, unknown> | undefined,
-  ) =>
+  const redact = ({
+    value,
+    timelineActivity,
+  }: {
+    value: unknown;
+    timelineActivity: Record<string, unknown> | undefined;
+  }) =>
     redactTimelineActivityProperties({
       properties: value,
       timelineActivity: timelineActivity ?? {},
@@ -42,10 +45,9 @@ export const redactTimelineActivityEvent = <TEvent extends ObjectRecordEvent>({
 
   const redactRecord = (record: Record<string, unknown>) => ({
     ...record,
-    properties: redact(record.properties, record),
+    properties: redact({ value: record.properties, timelineActivity: record }),
   });
 
-  // An update's diff carries the activity's old and new properties JSON too
   const diff =
     'diff' in properties && isPlainObject(properties.diff)
       ? properties.diff
@@ -65,8 +67,14 @@ export const redactTimelineActivityEvent = <TEvent extends ObjectRecordEvent>({
           ...diff,
           properties: {
             ...diffProperties,
-            before: redact(diffProperties.before, before ?? after),
-            after: redact(diffProperties.after, after ?? before),
+            before: redact({
+              value: diffProperties.before,
+              timelineActivity: before ?? after,
+            }),
+            after: redact({
+              value: diffProperties.after,
+              timelineActivity: after ?? before,
+            }),
           },
         },
       }),

@@ -45,20 +45,22 @@ const omitFieldNames = <TEvent extends ObjectRecordEvent>({
 }: {
   event: TEvent;
   restrictedFieldNames: Set<string>;
-}): TEvent =>
-  restrictedFieldNames.size === 0
-    ? event
-    : {
-        ...event,
-        properties: {
-          ...event.properties,
-          ...filterFieldNamesInEventProperties({
-            properties: event.properties,
-            isFieldNameKept: (fieldName) =>
-              !restrictedFieldNames.has(fieldName),
-          }),
-        },
-      };
+}): TEvent => {
+  if (restrictedFieldNames.size === 0) {
+    return event;
+  }
+
+  return {
+    ...event,
+    properties: {
+      ...event.properties,
+      ...filterFieldNamesInEventProperties({
+        properties: event.properties,
+        isFieldNameKept: (fieldName) => !restrictedFieldNames.has(fieldName),
+      }),
+    },
+  };
+};
 
 export const omitRestrictedFieldsFromEvent = <
   TEvent extends ObjectRecordEvent,

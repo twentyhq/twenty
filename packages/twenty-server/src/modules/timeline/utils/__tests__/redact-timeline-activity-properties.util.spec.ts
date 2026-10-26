@@ -176,16 +176,26 @@ describe('redactTimelineActivityProperties', () => {
   });
 });
 
+type TimelineActivityRecord = {
+  id: string;
+  linkedObjectMetadataId: string | null;
+  targetPersonId: string;
+  properties: Record<string, unknown>;
+};
+
 describe('redactTimelineActivityEvent', () => {
   it('should redact properties in the records and in the diff', () => {
-    const before = {
+    const before: TimelineActivityRecord = {
       id: 'activity-id',
       linkedObjectMetadataId: null,
       targetPersonId: 'person-id',
       properties: DIFF,
     };
-    const after = { ...before, properties: { diff: {} } };
-    const event = {
+    const after: TimelineActivityRecord = {
+      ...before,
+      properties: { diff: {} },
+    };
+    const event: ObjectRecordUpdateEvent<TimelineActivityRecord> = {
       recordId: 'activity-id',
       properties: {
         updatedFields: ['properties'],
@@ -193,7 +203,7 @@ describe('redactTimelineActivityEvent', () => {
         after,
         diff: { properties: { before: DIFF, after: { diff: {} } } },
       },
-    } as unknown as ObjectRecordUpdateEvent;
+    };
 
     const redactedDiff = { diff: { city: { before: 'Paris', after: 'Lyon' } } };
 

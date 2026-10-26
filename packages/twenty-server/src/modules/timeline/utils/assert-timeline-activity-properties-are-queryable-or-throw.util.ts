@@ -6,8 +6,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
-// properties holds field values of other objects, so filtering or sorting on it
-// would reveal what the response redacts
+// properties holds other objects' field values, so querying it reveals redacted data
 export const assertTimelineActivityPropertiesAreQueryableOrThrow = ({
   objectNameSingular,
   fieldName,
