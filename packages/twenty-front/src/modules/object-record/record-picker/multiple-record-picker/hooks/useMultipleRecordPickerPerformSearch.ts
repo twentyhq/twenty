@@ -102,7 +102,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
         getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,
-        ).canReadObjectRecords === true;
+        ).canReadObjectRecords;
 
       const filteredSearchableObjectMetadataItems =
         searchableObjectMetadataItems.filter(isReadable);
@@ -407,10 +407,13 @@ const performSearchQueries = async ({
     { hasNextPage: boolean; endCursor: string | null },
   ]
 > => {
-  const searchRecords = async (
-    filter: any,
-    includedObjectMetadataItems: EnrichedObjectMetadataItem[],
-  ) => {
+  const searchRecords = async ({
+    filter,
+    includedObjectMetadataItems,
+  }: {
+    filter: any;
+    includedObjectMetadataItems: EnrichedObjectMetadataItem[];
+  }) => {
     if (includedObjectMetadataItems.length === 0) {
       return { records: [], pageInfo: { hasNextPage: false, endCursor: null } };
     }
@@ -441,29 +444,30 @@ const performSearchQueries = async ({
     };
   };
 
-  const searchRecordsExcludingPickedRecordsResult = await searchRecords(
-    pickedRecordIds.length > 0
-      ? {
-          not: {
-            id: {
-              in: pickedRecordIds,
+  const searchRecordsExcludingPickedRecordsResult = await searchRecords({
+    filter:
+      pickedRecordIds.length > 0
+        ? {
+            not: {
+              id: {
+                in: pickedRecordIds,
+              },
             },
-          },
-        }
-      : undefined,
-    searchableObjectMetadataItems,
-  );
+          }
+        : undefined,
+    includedObjectMetadataItems: searchableObjectMetadataItems,
+  });
 
   const searchRecordsIncludingPickedRecordsResult =
     pickedRecordIds.length > 0
-      ? await searchRecords(
-          {
+      ? await searchRecords({
+          filter: {
             id: {
               in: pickedRecordIds,
             },
           },
-          pickedRecordsObjectMetadataItems,
-        )
+          includedObjectMetadataItems: pickedRecordsObjectMetadataItems,
+        })
       : { records: [], pageInfo: { hasNextPage: false, endCursor: null } };
 
   return [
