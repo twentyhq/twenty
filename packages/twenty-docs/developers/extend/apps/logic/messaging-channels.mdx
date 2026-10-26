@@ -196,11 +196,11 @@ A messaging provider declares how an app sends on a channel. It names the connec
 import { defineMessagingProvider } from 'twenty-sdk/define';
 
 export default defineMessagingProvider({
-  universalIdentifier: 'e6c3a4d5-8f7b-4c9d-0e1f-2a3b4c5d6e7f',
+  universalIdentifier: '8a9b0c1d-2e3f-4a5b-8c6d-7e8f9a0b1c2d',
   name: 'linkedin-messaging',
   displayName: 'LinkedIn Messages',
   connectionProvider: {
-    universalIdentifier: 'd5b2f3c4-7e6a-4b8c-9d0e-1f2a3b4c5d6e',
+    universalIdentifier: '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
   },
   sendMessageLogicFunction: {
     universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
@@ -216,7 +216,7 @@ await createMessageChannel({
   handle: profile.memberUrn,
   visibility: 'METADATA',
   messagingProvider: {
-    universalIdentifier: 'e6c3a4d5-8f7b-4c9d-0e1f-2a3b4c5d6e7f',
+    universalIdentifier: '8a9b0c1d-2e3f-4a5b-8c6d-7e8f9a0b1c2d',
   },
 });
 ```

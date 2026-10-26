@@ -74,6 +74,20 @@ const FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_CONNECTION_FLOW_HOOK: Record<
   callback: ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_FAILED,
 };
 
+const buildConnectionFlowHookFailedException = ({
+  hook,
+  provider,
+  reason,
+}: {
+  hook: ConnectionFlowHook;
+  provider: Pick<ConnectionLifecycleHookProvider, 'id'>;
+  reason: string;
+}): ConnectionProviderException =>
+  new ConnectionProviderException(
+    `${hook} logic function of connection provider ${provider.id} ${reason}`,
+    FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_CONNECTION_FLOW_HOOK[hook],
+  );
+
 @Injectable()
 export class ConnectionProviderLifecycleHookService {
   constructor(
@@ -173,10 +187,11 @@ export class ConnectionProviderLifecycleHookService {
     const parsedResult = parseIdentifyAccountResult(data);
 
     if (!parsedResult.isValid) {
-      throw new ConnectionProviderException(
-        `identifyAccount logic function of connection provider ${provider.id} returned an invalid result: ${parsedResult.reason}`,
-        ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
-      );
+      throw buildConnectionFlowHookFailedException({
+        hook: 'identifyAccount',
+        provider,
+        reason: `returned an invalid result: ${parsedResult.reason}`,
+      });
     }
 
     return parsedResult.identifiedAccount;
@@ -219,10 +234,11 @@ export class ConnectionProviderLifecycleHookService {
     const parsedResult = parseAuthorizeConnectionResult(data);
 
     if (!parsedResult.isValid) {
-      throw new ConnectionProviderException(
-        `authorize logic function of connection provider ${provider.id} returned an invalid result: ${parsedResult.reason}`,
-        ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_FAILED,
-      );
+      throw buildConnectionFlowHookFailedException({
+        hook: 'authorize',
+        provider,
+        reason: `returned an invalid result: ${parsedResult.reason}`,
+      });
     }
 
     return parsedResult.authorizationUrl;
@@ -269,10 +285,11 @@ export class ConnectionProviderLifecycleHookService {
     const parsedResult = parseConnectionCallbackResult(data);
 
     if (!parsedResult.isValid) {
-      throw new ConnectionProviderException(
-        `callback logic function of connection provider ${provider.id} returned an invalid result: ${parsedResult.reason}`,
-        ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_FAILED,
-      );
+      throw buildConnectionFlowHookFailedException({
+        hook: 'callback',
+        provider,
+        reason: `returned an invalid result: ${parsedResult.reason}`,
+      });
     }
 
     return parsedResult.connectedAccount;
@@ -344,10 +361,7 @@ export class ConnectionProviderLifecycleHookService {
       payload,
       shouldEnforceUsageLimits: true,
       toException: (reason) =>
-        new ConnectionProviderException(
-          `${hook} logic function of connection provider ${provider.id} ${reason}`,
-          FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_CONNECTION_FLOW_HOOK[hook],
-        ),
+        buildConnectionFlowHookFailedException({ hook, provider, reason }),
     });
   }
 
