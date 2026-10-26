@@ -75,11 +75,11 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
   it.each([
     [
       UserCreditsFallback.WORKSPACE_CREDITS,
-      'You have used all your AI credits. Chats use workspace credits until yours renew in 3 days.',
+      'Personal usage limit reached. Using workspace credits until it resets in 3 days.',
     ],
     [
       UserCreditsFallback.STOP,
-      'You have used all your AI credits. Chats stop until yours renew in 3 days.',
+      'Personal usage limit reached. Chats resume in 3 days.',
     ],
   ])(
     'tells the member what happens until renewal with fallback %s',
@@ -97,7 +97,9 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
       await screen.findByRole('button', { name: 'Dismiss' }),
     );
 
-    expect(screen.queryByText(/AI credits/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/Personal usage limit reached/),
+    ).not.toBeInTheDocument();
     expect(
       JSON.parse(
         localStorage.getItem(
