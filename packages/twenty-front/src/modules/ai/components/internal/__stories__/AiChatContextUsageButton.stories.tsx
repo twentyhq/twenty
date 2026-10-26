@@ -204,7 +204,7 @@ export const WithUserCredits: Story = {
     await waitFor(() =>
       expect(
         page.getByText(
-          'Your own AI credits, separate from the workspace credits',
+          'Your own AI usage, separate from the workspace credits',
         ),
       ).toBeVisible(),
     );

@@ -177,7 +177,7 @@ export const AiChatContextUsageButton = () => {
               <AiChatUsageMetricRow
                 Icon={IconUser}
                 label={t`Personal usage`}
-                tooltip={t`Your own AI credits, separate from the workspace credits`}
+                tooltip={t`Your own AI usage, separate from the workspace credits`}
                 usage={userCreditsUsage}
               />
             )}
