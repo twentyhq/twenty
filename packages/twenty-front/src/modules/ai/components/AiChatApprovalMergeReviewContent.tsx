@@ -98,12 +98,12 @@ export const AiChatApprovalMergeReviewContent = ({
     ({ id }) => id === pair.priorityRecordId,
   );
   const priorityRecord = pair.sources[priorityRecordIndex];
-  const displayedRecord =
-    pair.activeTab === 'first'
-      ? pair.sources[0]
-      : pair.activeTab === 'second'
-        ? pair.sources[1]
-        : priorityRecord;
+  const displayedRecord = {
+    preview: priorityRecord,
+    first: pair.sources[0],
+    second: pair.sources[1],
+    settings: priorityRecord,
+  }[pair.activeTab];
 
   return (
     <StyledReview>
