@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sync application should fail when a workflow calls another application function it cannot reference should fail when another application calls a workflow action it does not own 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "The workflow references metadata that is not available to this application.",
+  },
+  "message": "Workflow step Call the application function: missing application workflow action b7a1e000-0001-4000-a000-000000000003",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Sync application should fail when a workflow calls another application function it cannot reference should fail when the workspace custom application calls a function not exposed as a workflow action 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "The workflow references metadata that is not available to this application.",
+  },
+  "message": "Workflow step Call the application function: missing application workflow action b7a1e000-0001-4000-a000-000000000004",
+  "name": "UserInputError",
+}
+`;
