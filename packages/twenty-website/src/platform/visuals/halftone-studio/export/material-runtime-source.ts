@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { HALFTONE_ENVIRONMENT_DATA_URL } from '../engine/environment-data';
 import { HALFTONE_MATERIAL_CONSTANTS } from '../engine/material-constants';
 import type { HalftoneMaterialTexture } from '../engine/material-texture';
-import { HALFTONE_MATERIAL_TEXTURE_DATA_URLS } from '../engine/material-texture-data';
 import { resolveMaterialTextureSources } from '../engine/resolve-material-texture-sources';
+
+import type { HalftoneMaterialExportImages } from './exporter-types';
 import { DREI_LICENSE_NOTICE } from '@/platform/visuals/three-runtime/drei-license-notice';
 
 // Adapted from MeshTransmissionMaterial in @react-three/drei (MIT): see DREI_LICENSE_NOTICE.
@@ -363,7 +363,6 @@ totalDiffuse = mix(totalDiffuse, transmission.rgb, material.transmission);
 `;
 
 const MATERIAL_RUNTIME_SOURCE = String.raw`
-const ENVIRONMENT_DATA_URL = ${JSON.stringify(HALFTONE_ENVIRONMENT_DATA_URL)};
 const GLASS_THICKNESS_TO_WORLD_UNITS = ${HALFTONE_MATERIAL_CONSTANTS.glassThicknessToWorldUnits};
 const GLASS_BACKSIDE_ENVIRONMENT_INTENSITY = ${HALFTONE_MATERIAL_CONSTANTS.glassBacksideEnvironmentIntensity};
 const GLASS_TRANSMISSION_BACKGROUND = ${HALFTONE_MATERIAL_CONSTANTS.glassTransmissionBackground};
@@ -634,9 +633,15 @@ function createImageTextureLoadSource(url: string | null) {
     : 'null';
 }
 
-export function createMaterialRuntimeSource(texture: HalftoneMaterialTexture) {
+export function createMaterialRuntimeSource({
+  materialImages,
+  texture,
+}: {
+  materialImages: HalftoneMaterialExportImages;
+  texture: HalftoneMaterialTexture;
+}) {
   const textureSources = resolveMaterialTextureSources({
-    sources: HALFTONE_MATERIAL_TEXTURE_DATA_URLS,
+    sources: materialImages.textures,
     texture,
   });
 
@@ -644,6 +649,7 @@ export function createMaterialRuntimeSource(texture: HalftoneMaterialTexture) {
 /*!
 ${DREI_LICENSE_NOTICE}
 */
+const ENVIRONMENT_DATA_URL = ${JSON.stringify(materialImages.environment)};
 const BUMP_SCALE = ${textureSources.bumpScale};
 
 function loadMaterialImageTextures(renderer) {

@@ -306,6 +306,25 @@ function syncResources(
   updateHalftone(resources, settings);
 }
 
+function syncMaterialTextures({
+  resources,
+  resourcesReference,
+  settingsReference,
+}: {
+  resources: SceneResources;
+  resourcesReference: { current: SceneResources | null };
+  settingsReference: { current: HalftoneStudioSettings };
+}) {
+  void HALFTONE_MATERIALS.loadTextures({
+    assets: resources.materialAssets,
+    texture: settingsReference.current.material.texture,
+  }).then((didLoadTextures) => {
+    if (didLoadTextures && resourcesReference.current === resources) {
+      updateMaterial(resources, settingsReference.current);
+    }
+  });
+}
+
 export function HalftoneCanvas({
   geometry,
   initialPose,
@@ -389,6 +408,7 @@ export function HalftoneCanvas({
 
     animationReference.current = settings.animation;
     syncResources(resources, settings);
+    syncMaterialTextures({ resources, resourcesReference, settingsReference });
     resources.canvas.style.cursor = getCanvasCursor(
       settings,
       interactionReference.current.dragging,
@@ -820,6 +840,11 @@ export function HalftoneCanvas({
       }
 
       syncResources(resources, settingsReference.current);
+      syncMaterialTextures({
+        resources,
+        resourcesReference,
+        settingsReference,
+      });
       syncImageElementTexture(resources, imageElementReference.current);
 
       const captureSnapshot: HalftoneSnapshotFn = async (

@@ -29,6 +29,7 @@ import type {
 import { HALFTONE_EXPORT_NAMES } from '../export/export-names';
 import { HALFTONE_EXPORT_PARSING } from '../export/exporter-parsing';
 import { HALFTONE_EXPORTERS } from '../export/exporters';
+import { loadMaterialExportImages } from '../export/load-material-export-images';
 import {
   DEFAULT_REACT_EXPORT_SETTINGS,
   type ReactExportSettings,
@@ -793,7 +794,7 @@ export function HalftoneStudio() {
     [],
   );
 
-  const handleExportReact = useCallback(() => {
+  const handleExportReact = useCallback(async () => {
     const componentName = exportArtifactNames.componentName;
     const kebabName = exportArtifactNames.fileBaseName;
     const isImageMode = state.settings.sourceMode === 'image';
@@ -828,6 +829,10 @@ export function HalftoneStudio() {
           )
         : defaultImageExportFilename;
 
+    const materialImages = isImageMode
+      ? undefined
+      : await loadMaterialExportImages(state.settings.material.texture);
+
     downloadText(
       `${componentName}.tsx`,
       HALFTONE_EXPORTERS.generateReactComponent(
@@ -840,6 +845,7 @@ export function HalftoneStudio() {
           imageFilename: imageExportFilename,
           importedFile: importedFile ?? undefined,
           initialPose: exportPoseReference.current,
+          materialImages,
           modelFilenameOverride: modelFilename,
           exportSettings: reactExportSettings,
           previewDistance,
@@ -1020,6 +1026,10 @@ export function HalftoneStudio() {
       ? `${kebabName}${imageFile.name.replace(/^[^.]*/, '')}`
       : undefined;
 
+    const materialImages = isImageMode
+      ? undefined
+      : await loadMaterialExportImages(state.settings.material.texture);
+
     downloadText(
       `${kebabName}.html`,
       await HALFTONE_EXPORTERS.generateStandaloneHtml(
@@ -1031,6 +1041,7 @@ export function HalftoneStudio() {
           imageFilename: imageExportFilename,
           importedFile: importedFile ?? undefined,
           initialPose: exportPoseReference.current,
+          materialImages,
           modelFilenameOverride: modelFilename,
           previewDistance,
         },

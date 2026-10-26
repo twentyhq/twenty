@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { HALFTONE_FOOTPRINT } from '../engine/footprint';
 import { HALFTONE_IMAGE_CONSTANTS } from '../engine/image-constants';
 import { HALFTONE_SHADERS } from '../engine/shaders';
@@ -7,6 +9,7 @@ import type {
   HalftoneStudioSettings,
 } from '../engine/studio-settings-types';
 
+import { blobToDataUrl } from './blob-to-data-url';
 import { HALFTONE_EXPORT_NAMES } from './export-names';
 import { HALFTONE_MOUNT_FRAGMENTS } from './exporter-mount-fragments';
 import { HALFTONE_EXPORT_PARSING } from './exporter-parsing';
@@ -14,6 +17,7 @@ import { HALFTONE_EXPORT_SOURCE } from './exporter-source';
 import {
   DEFAULT_REACT_EXPORT_SETTINGS,
   type ExportedShapeDescriptor,
+  type HalftoneMaterialExportImages,
   type ReactExportOptions,
   type ReactExportSettings,
 } from './exporter-types';
@@ -183,32 +187,27 @@ async function fileToDataUrl(
     type: getModelMimeType(file, loader),
   });
 
-  return await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.addEventListener('error', () => {
-      reject(reader.error ?? new Error(`Unable to read ${file.name}.`));
-    });
-    reader.addEventListener('load', () => {
-      if (typeof reader.result !== 'string') {
-        reject(new Error(`Unable to encode ${file.name}.`));
-        return;
-      }
-
-      resolve(reader.result);
-    });
-
-    reader.readAsDataURL(blob);
-  });
+  return await blobToDataUrl({ blob, label: file.name });
 }
 
-function serializeRuntimeSource(
-  settings: HalftoneStudioSettings,
-  shape: ExportedShapeDescriptor,
-  initialPose: HalftoneExportPose,
-  previewDistance: number | undefined,
-) {
+function serializeRuntimeSource({
+  initialPose,
+  materialImages,
+  previewDistance,
+  settings,
+  shape,
+}: {
+  initialPose: HalftoneExportPose;
+  materialImages: HalftoneMaterialExportImages | undefined;
+  previewDistance: number | undefined;
+  settings: HalftoneStudioSettings;
+  shape: ExportedShapeDescriptor;
+}) {
   const isImageMode = settings.sourceMode === 'image';
+
+  if (!isImageMode && !isDefined(materialImages)) {
+    throw new Error('Material images are required to export a 3D shape.');
+  }
   const normalizedPreviewDistance =
     HALFTONE_EXPORT_PARSING.normalizePreviewDistance(previewDistance);
 
@@ -229,7 +228,7 @@ ${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.geometryRuntime}
 
 ${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.createImportedGeometryRuntime(shape)}
 
-${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.createMaterialRuntime(settings.material.texture)}
+${isImageMode || !isDefined(materialImages) ? '' : HALFTONE_EXPORT_SOURCE.createMaterialRuntime({ materialImages, texture: settings.material.texture })}
 
 function createRenderTarget({ width, height, type = THREE.UnsignedByteType }) {
   return new THREE.WebGLRenderTarget(width, height, {
@@ -1139,12 +1138,13 @@ function generateReactComponent(
   const mountScript = isImageMode
     ? createImageMountScript()
     : createMountScript();
-  const serializedRuntime = serializeRuntimeSource(
+  const serializedRuntime = serializeRuntimeSource({
+    initialPose: pose,
+    materialImages: options.materialImages,
+    previewDistance: options.previewDistance,
     settings,
     shape,
-    pose,
-    options.previewDistance,
-  );
+  });
   const generatedBanner = exportSettings.includeTsNoCheck
     ? `/**
  * @generated halftone-studio
@@ -1400,7 +1400,7 @@ async function generateStandaloneHtml(
     <script type="module">
       ${threeImports}
 
-      ${serializeRuntimeSource(settings, shape, pose, options.previewDistance)}
+      ${serializeRuntimeSource({ initialPose: pose, materialImages: options.materialImages, previewDistance: options.previewDistance, settings, shape })}
 
       ${mountScript}
 

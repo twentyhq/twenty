@@ -1,8 +1,9 @@
-import { typedObjectEntries } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { HALFTONE_ENVIRONMENT_DATA_URL } from './environment-data';
+import { getMaterialTextureImages } from './get-material-texture-images';
 import { HALFTONE_MATERIAL_CONSTANTS } from './material-constants';
-import { HALFTONE_MATERIAL_TEXTURE_DATA_URLS } from './material-texture-data';
+import { HALFTONE_MATERIAL_IMAGE_URLS } from './material-image-urls';
+import type { HalftoneMaterialTexture } from './material-texture';
 import type { HalftoneMaterialTextureImage } from './material-texture-image';
 import { resolveMaterialTextureSources } from './resolve-material-texture-sources';
 import type { HalftoneMaterialSettings } from './studio-settings-types';
@@ -11,7 +12,11 @@ import * as THREE from 'three';
 export type HalftoneMaterialAssets = {
   environmentTexture: THREE.Texture;
   glassTransmissionScene: THREE.Scene;
+  imageTextureLoads: Partial<
+    Record<HalftoneMaterialTextureImage, Promise<THREE.Texture>>
+  >;
   imageTextures: Partial<Record<HalftoneMaterialTextureImage, THREE.Texture>>;
+  renderer: THREE.WebGLRenderer;
 };
 
 // Adapted from MeshTransmissionMaterial in @react-three/drei (MIT): see DREI_LICENSE_NOTICE.
@@ -501,7 +506,7 @@ async function loadEnvironmentTexture(renderer: THREE.WebGLRenderer) {
   const equirectangularTexture = await loadTexture({
     colorSpace: THREE.SRGBColorSpace,
     renderer,
-    url: HALFTONE_ENVIRONMENT_DATA_URL,
+    url: HALFTONE_MATERIAL_IMAGE_URLS.environment,
   });
   equirectangularTexture.mapping = THREE.EquirectangularReflectionMapping;
   equirectangularTexture.wrapS = THREE.RepeatWrapping;
@@ -517,40 +522,61 @@ async function loadEnvironmentTexture(renderer: THREE.WebGLRenderer) {
   return environmentTexture;
 }
 
-async function loadImageTextures(
-  renderer: THREE.WebGLRenderer,
-): Promise<HalftoneMaterialAssets['imageTextures']> {
-  const entries = await Promise.all(
-    typedObjectEntries(HALFTONE_MATERIAL_TEXTURE_DATA_URLS).map(
-      async ([image, dataUrl]) => {
-        const texture = await loadTexture({
-          colorSpace: THREE.NoColorSpace,
-          renderer,
-          url: dataUrl,
-        });
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
+async function loadImageTexture({
+  assets,
+  image,
+}: {
+  assets: HalftoneMaterialAssets;
+  image: HalftoneMaterialTextureImage;
+}) {
+  const texture = await loadTexture({
+    colorSpace: THREE.NoColorSpace,
+    renderer: assets.renderer,
+    url: HALFTONE_MATERIAL_IMAGE_URLS.textures[image],
+  });
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  assets.imageTextures[image] = texture;
 
-        return [image, texture] as const;
-      },
-    ),
+  return texture;
+}
+
+async function loadHalftoneMaterialTextures({
+  assets,
+  texture,
+}: {
+  assets: HalftoneMaterialAssets;
+  texture: HalftoneMaterialTexture;
+}) {
+  const missingImages = getMaterialTextureImages(texture).filter(
+    (image) => !isDefined(assets.imageTextures[image]),
   );
 
-  return Object.fromEntries(entries);
+  await Promise.all(
+    missingImages.map((image) => {
+      const imageLoad =
+        assets.imageTextureLoads[image] ??
+        loadImageTexture({ assets, image }).finally(() => {
+          assets.imageTextureLoads[image] = undefined;
+        });
+      assets.imageTextureLoads[image] = imageLoad;
+
+      return imageLoad;
+    }),
+  );
+
+  return missingImages.length > 0;
 }
 
 async function createHalftoneMaterialAssets(
   renderer: THREE.WebGLRenderer,
 ): Promise<HalftoneMaterialAssets> {
-  const [environmentTexture, imageTextures] = await Promise.all([
-    loadEnvironmentTexture(renderer),
-    loadImageTextures(renderer),
-  ]);
-
   return {
-    environmentTexture,
+    environmentTexture: await loadEnvironmentTexture(renderer),
     glassTransmissionScene: createGlassTransmissionScene(),
-    imageTextures,
+    imageTextureLoads: {},
+    imageTextures: {},
+    renderer,
   };
 }
 
@@ -684,6 +710,7 @@ function disposeHalftoneMaterialAssets(assets: HalftoneMaterialAssets) {
 export const HALFTONE_MATERIALS = {
   create: createHalftoneMaterial,
   createAssets: createHalftoneMaterialAssets,
+  loadTextures: loadHalftoneMaterialTextures,
   applySettings: applyHalftoneMaterialSettings,
   renderScene: renderHalftoneMaterialScene,
   disposeAssets: disposeHalftoneMaterialAssets,
