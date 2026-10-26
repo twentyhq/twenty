@@ -59,16 +59,12 @@ export class MessagingProviderMessageSenderService {
       );
     }
 
-    const sendMessageLogicFunction = isDefined(
-      messagingProvider.sendMessageLogicFunctionUniversalIdentifier,
-    )
-      ? findApplicationFlatLogicFunction({
-          flatLogicFunctionMaps,
-          universalIdentifier:
-            messagingProvider.sendMessageLogicFunctionUniversalIdentifier,
-          applicationId: messagingProvider.applicationId,
-        })
-      : undefined;
+    const sendMessageLogicFunction = findApplicationFlatLogicFunction({
+      flatLogicFunctionMaps,
+      universalIdentifier:
+        messagingProvider.sendMessageLogicFunctionUniversalIdentifier,
+      applicationId: messagingProvider.applicationId,
+    });
 
     if (!isDefined(sendMessageLogicFunction)) {
       throw new MessagingProviderException(

@@ -9,9 +9,13 @@ export const findApplicationFlatLogicFunction = ({
   applicationId,
 }: {
   flatLogicFunctionMaps: Pick<FlatLogicFunctionMaps, 'byUniversalIdentifier'>;
-  universalIdentifier: string;
+  universalIdentifier: string | null;
   applicationId: string;
 }): FlatLogicFunction | undefined => {
+  if (!isDefined(universalIdentifier)) {
+    return undefined;
+  }
+
   const flatLogicFunction =
     flatLogicFunctionMaps.byUniversalIdentifier[universalIdentifier];
 
