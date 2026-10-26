@@ -12,7 +12,6 @@ import { getLambdaConnectionOptions } from 'src/engine/core-modules/logic-functi
 import { WorkspaceFrontComponentDependenciesService } from 'src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { LambdaDependencyLayerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-dependency-layer.service';
 
 jest.mock(
   'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-connection-options.util',
@@ -80,9 +79,6 @@ describe('FrontComponentCompilerService', () => {
       packageJson: 'package',
       yarnLock: 'lock',
     });
-    jest
-      .spyOn(LambdaDependencyLayerService.prototype, 'ensureLayer')
-      .mockImplementation(async ({ layerName }) => `arn:${layerName}`);
     const client = new Lambda({ region: 'eu-west-1' });
     Object.assign(client, { send });
     jest
@@ -233,19 +229,82 @@ describe('FrontComponentCompilerService', () => {
     });
     const result = await service.build({ workspaceId: 'workspace-a', input });
     const commands = buildCommands();
-    expect(commands[0].input.FunctionName).not.toBe(
-      commands[1].input.FunctionName,
-    );
+    expect(commands[0].input.FunctionName).toBe(commands[1].input.FunctionName);
     expect(result.dependencyRevision).toBe('revision-b');
     expect(send.mock.calls).toHaveLength(4);
-    const { readDependencies } = jest.mocked(
-      LambdaDependencyLayerService.prototype.ensureLayer,
-    ).mock.calls[1][0];
-    expect(await readDependencies()).toEqual({
+    const vendorCommand: InvokeCommand = send.mock.calls[2][0];
+    expect(JSON.parse(String(vendorCommand.input.Payload))).toEqual({
+      action: 'buildDependencies',
       packageJson: 'new package',
       yarnLock: 'new lock',
-      shouldInstallAllDependencies: true,
     });
+    expect(cache.size).toBe(2);
+  });
+  it('gives vendor installation its own Lambda limits and sends only its manifest to the component builder', async () => {
+    await service.build({ workspaceId: 'workspace-a', input });
+    const [vendorCommand, componentCommand] = send.mock.calls.map(
+      ([command]: [InvokeCommand]) => command,
+    );
+    expect(vendorCommand.input.FunctionName).not.toBe(
+      componentCommand.input.FunctionName,
+    );
+    expect(JSON.parse(String(vendorCommand.input.Payload))).toEqual({
+      action: 'buildDependencies',
+      packageJson: 'package',
+      yarnLock: 'lock',
+    });
+    expect(JSON.parse(String(componentCommand.input.Payload))).toEqual({
+      action: 'buildComponent',
+      input,
+      manifest: { checksum: vendor.checksum, exports: vendor.exports },
+    });
+    expect(
+      LambdaToolFunctionsService.prototype.ensureBuilderLambdaExists,
+    ).toHaveBeenCalledWith({
+      functionName: vendorCommand.input.FunctionName,
+      memoryMb: 4096,
+      timeoutSeconds: 300,
+      copyFiles: expect.any(Function),
+    });
+    expect(
+      LambdaToolFunctionsService.prototype.ensureBuilderLambdaExists,
+    ).toHaveBeenCalledWith({
+      functionName: componentCommand.input.FunctionName,
+      copyFiles: expect.any(Function),
+    });
+  });
+  it.each(['index.js', '.yarnrc.yml', 'yarn-4.9.2.cjs'])(
+    'rebuilds the vendor when bundled %s changes',
+    async (changedFile) => {
+      await service.build({ workspaceId: 'workspace-a', input });
+      jest
+        .spyOn(fileSystemPromises, 'readFile')
+        .mockImplementation(async (file) =>
+          String(file).endsWith(changedFile) ? 'changed' : 'handler',
+        );
+      await service.build({ workspaceId: 'workspace-a', input });
+      expect(send.mock.calls).toHaveLength(4);
+      expect(cache.size).toBe(2);
+      const firstVendor: InvokeCommand = send.mock.calls[0][0];
+      const secondVendor: InvokeCommand = send.mock.calls[2][0];
+      expect(firstVendor.input.FunctionName).not.toBe(
+        secondVendor.input.FunctionName,
+      );
+    },
+  );
+  it('does not cache a failed vendor or compile against it', async () => {
+    send.mockResolvedValueOnce({
+      FunctionError: 'Unhandled',
+      Payload: { transformToString: () => 'installation failed' },
+    });
+    await expect(
+      service.build({ workspaceId: 'workspace-a', input }),
+    ).rejects.toThrow('builder Lambda failed');
+    expect(cache.size).toBe(0);
+    expect(buildCommands()).toHaveLength(0);
+    await service.build({ workspaceId: 'workspace-a', input });
+    expect(send.mock.calls).toHaveLength(3);
+    expect(cache.size).toBe(1);
   });
   it('rejects a corrupt vendor before building authored code', async () => {
     send.mockResolvedValue({

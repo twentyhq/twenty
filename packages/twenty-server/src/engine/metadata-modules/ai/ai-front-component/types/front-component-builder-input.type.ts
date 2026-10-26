@@ -3,7 +3,7 @@ import { type frontComponentSharedDependenciesManifestSchema } from 'src/engine/
 import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
 
 export type FrontComponentBuilderInput =
-  | { action: 'buildDependencies' }
+  | { action: 'buildDependencies'; packageJson: string; yarnLock: string }
   | {
       action: 'buildComponent';
       input: FrontComponentBuildInput;

@@ -1,4 +1,5 @@
-import { buildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-shared-dependencies.util';
+import { join } from 'path';
+import { installAndBuildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/install-and-build-front-component-shared-dependencies.util';
 import { type FrontComponentBuilderInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-input.type';
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 import { buildFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
@@ -7,8 +8,10 @@ import { frontComponentSharedDependenciesManifestSchema } from 'src/engine/metad
 export const handler = async (event: FrontComponentBuilderInput) => {
   try {
     if (event.action === 'buildDependencies') {
-      const vendor = await buildFrontComponentSharedDependencies({
-        resolveDirectory: '/opt/nodejs',
+      const vendor = await installAndBuildFrontComponentSharedDependencies({
+        packageJson: event.packageJson,
+        yarnLock: event.yarnLock,
+        yarnEngineDirectory: join(__dirname, 'yarn-engine'),
       });
       return checkResponseSizeOrThrow({
         success: true as const,

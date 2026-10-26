@@ -21,10 +21,7 @@ import {
 type DependencyLayerInput = {
   layerName: string;
   readDependencies: () => Promise<
-    Pick<
-      YarnInstallLambdaPayload,
-      'packageJson' | 'yarnLock' | 'shouldInstallAllDependencies'
-    >
+    Pick<YarnInstallLambdaPayload, 'packageJson' | 'yarnLock'>
   >;
 };
 

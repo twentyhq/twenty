@@ -268,9 +268,11 @@ export class LambdaToolFunctionsService {
   async ensureBuilderLambdaExists({
     functionName,
     copyFiles,
-    dependencyLayerArn,
+    timeoutSeconds = BUILDER_LAMBDA_TIMEOUT_SECONDS,
+    memoryMb = BUILDER_LAMBDA_MEMORY_MB,
   }: {
-    dependencyLayerArn?: string;
+    timeoutSeconds?: number;
+    memoryMb?: number;
     functionName: string;
     copyFiles: (directory: string) => Promise<void>;
   }): Promise<void> {
@@ -301,15 +303,13 @@ export class LambdaToolFunctionsService {
           ZipFile: await fs.readFile(lambdaZipPath),
         },
         FunctionName: functionName,
-        Layers: isDefined(dependencyLayerArn)
-          ? [commonLayerArn, dependencyLayerArn]
-          : [commonLayerArn],
+        Layers: [commonLayerArn],
         Handler: 'index.handler',
         Role: this.options.lambdaRole,
         Tags: this.options.resourceTags,
         Runtime: LogicFunctionRuntime.NODE22,
-        Timeout: BUILDER_LAMBDA_TIMEOUT_SECONDS,
-        MemorySize: BUILDER_LAMBDA_MEMORY_MB,
+        Timeout: timeoutSeconds,
+        MemorySize: memoryMb,
         EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 

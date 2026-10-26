@@ -67,9 +67,9 @@ describe('Lambda builder deployment', () => {
     jest.spyOn(fs, 'readFile').mockResolvedValue(Buffer.from('zip'));
   });
   afterEach(() => jest.restoreAllMocks());
-  it.each([undefined, 'app-dependency-layer'])(
-    'attaches app dependencies when supplied, preserving the existing role and readiness wait: %s',
-    async (dependencyLayerArn) => {
+  it.each([{}, { memoryMb: 4096, timeoutSeconds: 300 }])(
+    'deploys with common tooling and the requested build limits: %s',
+    async (limits) => {
       send
         .mockRejectedValueOnce(
           new ResourceNotFoundException({ message: 'missing', $metadata: {} }),
@@ -78,7 +78,7 @@ describe('Lambda builder deployment', () => {
       await service.ensureBuilderLambdaExists({
         functionName: 'workspace-builder',
         copyFiles,
-        dependencyLayerArn,
+        ...limits,
       });
       expect(send.mock.calls[0][0]).toBeInstanceOf(GetFunctionCommand);
       const command: CreateFunctionCommand = send.mock.calls[1][0];
@@ -86,9 +86,9 @@ describe('Lambda builder deployment', () => {
         FunctionName: 'workspace-builder',
         Role: options.lambdaRole,
         Tags: options.resourceTags,
-        Layers: dependencyLayerArn
-          ? ['existing-layer', dependencyLayerArn]
-          : ['existing-layer'],
+        Layers: ['existing-layer'],
+        MemorySize: limits.memoryMb ?? 512,
+        Timeout: limits.timeoutSeconds ?? 60,
         Handler: 'index.handler',
       });
       expect(copyFiles).toHaveBeenCalledWith('/tmp/builder-test');

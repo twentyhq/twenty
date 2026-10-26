@@ -2,13 +2,15 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { LambdaDependencyLayerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-dependency-layer.service';
+import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
 import {
-  BUILD_LOCK_TTL_MS,
   BUILD_LOCK_RETRY_MS,
   BUILD_LOCK_MAX_RETRIES,
   BUILDER_LAMBDA_MEMORY_MB,
   BUILDER_LAMBDA_TIMEOUT_SECONDS,
+  YARN_INSTALL_LAMBDA_MEMORY_MB,
+  YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
+  LAMBDA_EPHEMERAL_STORAGE_MB,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { WorkspaceFrontComponentDependenciesService } from 'src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service';
 import { type FrontComponentBuilderInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-input.type';
@@ -46,7 +48,6 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
   awsClient: LambdaAwsClientService;
   toolFunctions: LambdaToolFunctionsService;
   resourceNamespace: string;
-  dependencyLayers: LambdaDependencyLayerService;
 }> {
   constructor(
     twentyConfigService: TwentyConfigService,
@@ -73,12 +74,6 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
     return {
       awsClient,
       toolFunctions,
-      dependencyLayers: new LambdaDependencyLayerService(
-        options.layerBucket,
-        awsClient,
-        toolFunctions,
-        this.cacheLockService,
-      ),
       resourceNamespace: options.resourceNamespace,
     };
   }
@@ -102,48 +97,37 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
       ...input,
       query: frontComponentQuerySchema.parse(input.query),
     });
-    const { toolFunctions, resourceNamespace, dependencyLayers } =
-      this.getCurrentDriver();
+    const { toolFunctions, resourceNamespace } = this.getCurrentDriver();
     const dependencies =
       await this.workspaceDependencies.readOrThrow(workspaceId);
     const handlerSource = await fileSystemPromises.readFile(
       join(FRONT_COMPONENT_BUILD_ASSETS_DIRECTORY, 'index.js'),
       'utf8',
     );
-    const layerName = computeHashedLambdaResourceName({
-      resourceNamePrefix: 'twenty-front-component-deps',
-      namespace: resourceNamespace,
-      contents: [dependencies.revision, 'immutable-all-dependencies'],
-    });
-    const dependencyLayerArn = await dependencyLayers.ensureLayer({
-      layerName,
-      readDependencies: async () => ({
-        packageJson: dependencies.packageJson,
-        yarnLock: dependencies.yarnLock,
-        shouldInstallAllDependencies: true,
-      }),
-    });
     const functionName = computeHashedLambdaResourceName({
       resourceNamePrefix: 'twenty-front-component-builder',
       namespace: resourceNamespace,
       contents: [
         workspaceId,
         handlerSource,
-        dependencyLayerArn,
         String(BUILDER_LAMBDA_MEMORY_MB),
         String(BUILDER_LAMBDA_TIMEOUT_SECONDS),
+        String(LAMBDA_EPHEMERAL_STORAGE_MB),
       ],
     });
     await toolFunctions.ensureBuilderLambdaExists({
       functionName,
-      dependencyLayerArn,
       copyFiles: (directory) =>
         fileSystemPromises.copyFile(
           join(FRONT_COMPONENT_BUILD_ASSETS_DIRECTORY, 'index.js'),
           join(directory, 'index.js'),
         ),
     });
-    const vendor = await this.getSharedDependencies({ functionName });
+    const vendor = await this.getSharedDependencies({
+      workspaceId,
+      dependencies,
+      handlerSource,
+    });
     const sharedDependencies = {
       source: vendor.source,
       checksum: vendor.checksum,
@@ -190,19 +174,68 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
   }
 
   private async getSharedDependencies({
-    functionName,
+    workspaceId,
+    dependencies,
+    handlerSource,
   }: {
-    functionName: string;
+    workspaceId: string;
+    dependencies: Awaited<
+      ReturnType<WorkspaceFrontComponentDependenciesService['readOrThrow']>
+    >;
+    handlerSource: string;
   }) {
-    const key = `ai-front-component-vendor:${functionName}`;
+    const { toolFunctions, resourceNamespace } = this.getCurrentDriver();
+    const yarnEngineFiles = await Promise.all(
+      ['.yarnrc.yml', '.yarn/releases/yarn-4.9.2.cjs'].map((file) =>
+        fileSystemPromises.readFile(join(YARN_ENGINE_DIRNAME, file), 'utf8'),
+      ),
+    );
+    const functionName = computeHashedLambdaResourceName({
+      resourceNamePrefix: 'twenty-front-component-vendor',
+      namespace: resourceNamespace,
+      contents: [
+        workspaceId,
+        handlerSource,
+        ...yarnEngineFiles,
+        String(YARN_INSTALL_LAMBDA_MEMORY_MB),
+        String(YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS),
+        String(LAMBDA_EPHEMERAL_STORAGE_MB),
+      ],
+    });
+    const key = `ai-front-component-vendor:${functionName}:${dependencies.revision}`;
     return this.cacheLockService.withLock(
       async () => {
         const cached = await this.cacheStorage.get<unknown>(key);
+
+        if (!isDefined(cached)) {
+          await toolFunctions.ensureBuilderLambdaExists({
+            functionName,
+            timeoutSeconds: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
+            memoryMb: YARN_INSTALL_LAMBDA_MEMORY_MB,
+            copyFiles: async (directory) => {
+              await Promise.all([
+                fileSystemPromises.copyFile(
+                  join(FRONT_COMPONENT_BUILD_ASSETS_DIRECTORY, 'index.js'),
+                  join(directory, 'index.js'),
+                ),
+                fileSystemPromises.cp(
+                  YARN_ENGINE_DIRNAME,
+                  join(directory, 'yarn-engine'),
+                  { recursive: true },
+                ),
+              ]);
+            },
+          });
+        }
         const result = frontComponentVendorResultSchema.parse(
           cached ??
             (await this.invoke({
               functionName,
-              input: { action: 'buildDependencies' },
+              input: {
+                action: 'buildDependencies',
+                packageJson: dependencies.packageJson,
+                yarnLock: dependencies.yarnLock,
+              },
             })),
         );
         if (!result.success) {
@@ -229,7 +262,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
       },
       key,
       {
-        ttl: BUILD_LOCK_TTL_MS,
+        ttl: (YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS + 60) * 1000,
         ms: BUILD_LOCK_RETRY_MS,
         maxRetries: BUILD_LOCK_MAX_RETRIES,
       },
@@ -251,7 +284,11 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
         Payload: JSON.stringify(input),
       }),
       {
-        abortSignal: AbortSignal.timeout(BUILDER_LAMBDA_TIMEOUT_SECONDS * 1000),
+        abortSignal: AbortSignal.timeout(
+          (input.action === 'buildDependencies'
+            ? YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS
+            : BUILDER_LAMBDA_TIMEOUT_SECONDS) * 1000,
+        ),
       },
     );
     if (result.FunctionError || !isDefined(result.Payload)) {

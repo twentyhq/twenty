@@ -21,7 +21,7 @@ const copyYarnEngine = async (nodejsDir) => {
   await fs.cp('yarn-engine', nodejsDir, { recursive: true });
 };
 
-const runYarnInstall = async ({ nodejsDir, shouldInstallAllDependencies }) => {
+const runYarnInstall = async (nodejsDir) => {
   const { execFile } = await import('child_process');
   const { promisify } = await import('util');
   const execFilePromise = promisify(execFile);
@@ -35,12 +35,7 @@ const runYarnInstall = async ({ nodejsDir, shouldInstallAllDependencies }) => {
   try {
     await execFilePromise(
       process.execPath,
-      [
-        YARN_ENGINE_PATH,
-        ...(shouldInstallAllDependencies
-          ? ['install', '--immutable']
-          : ['workspaces', 'focus', '--all', '--production']),
-      ],
+      [YARN_ENGINE_PATH, 'workspaces', 'focus', '--all', '--production'],
       {
         cwd: nodejsDir,
         env: cleanEnv,
@@ -98,13 +93,7 @@ const uploadToPresignedUrl = async (zipPath, presignedUploadUrl) => {
 };
 
 export const handler = async (event) => {
-  const {
-    action,
-    packageJson,
-    yarnLock,
-    presignedUploadUrl,
-    shouldInstallAllDependencies,
-  } = event;
+  const { action, packageJson, yarnLock, presignedUploadUrl } = event;
 
   if (action !== 'createLayer') {
     throw new Error(`Unknown action: ${action}`);
@@ -126,7 +115,7 @@ export const handler = async (event) => {
   try {
     await writePackageFiles(nodejsDir, packageJson, yarnLock);
     await copyYarnEngine(nodejsDir);
-    await runYarnInstall({ nodejsDir, shouldInstallAllDependencies });
+    await runYarnInstall(nodejsDir);
     await createZip(buildDir, zipPath);
 
     await uploadToPresignedUrl(zipPath, presignedUploadUrl);
