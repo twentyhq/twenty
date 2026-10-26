@@ -103,29 +103,23 @@ export class CallAgentDatabaseEventTriggersJob {
             flatObjectMetadataMaps,
           }),
         );
-      const restrictedFields =
-        agentObjectsPermissions[objectMetadata.id]?.restrictedFields;
-
-      const visibleEvents =
-        await eventRecordAccessGate.applyVisibilityRestrictions({
-          events: workspaceEventBatch.events.filter(
-            (event) =>
-              admittedRecordIds.has(event.recordId) &&
-              !isDatabaseEventCausedByAgent({
-                event,
-                eventName,
-                agentId: flatAgent.id,
-              }),
-          ),
-          objectsPermissions: agentObjectsPermissions,
-        });
-
-      const admittedEvents = visibleEvents
+      const admittedEvents = workspaceEventBatch.events
+        .filter((event) => admittedRecordIds.has(event.recordId))
+        .filter(
+          (event) =>
+            !isDatabaseEventCausedByAgent({
+              event,
+              eventName,
+              agentId: flatAgent.id,
+            }),
+        )
         .map((event) =>
           omitInheritedReadabilityChildRecords(
             omitRestrictedFieldsFromEvent({
               event,
-              restrictedFields,
+              objectMetadata,
+              objectsPermissions: agentObjectsPermissions,
+              flatObjectMetadataMaps,
               flatFieldMetadataMaps,
             }),
           ),

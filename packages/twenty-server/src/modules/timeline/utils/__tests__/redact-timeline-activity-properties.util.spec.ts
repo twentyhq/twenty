@@ -1,3 +1,4 @@
+import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import {
   FieldMetadataType,
   type ObjectPermissions,
@@ -8,7 +9,8 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { keepReadableFieldsInTimelineActivities } from 'src/modules/timeline/utils/keep-readable-fields-in-timeline-activities.util';
+import { redactTimelineActivityEvent } from 'src/modules/timeline/utils/redact-timeline-activity-event.util';
+import { redactTimelineActivityProperties } from 'src/modules/timeline/utils/redact-timeline-activity-properties.util';
 
 const PERSON_OBJECT = getFlatObjectMetadataMock({
   id: 'person-object-id',
@@ -107,18 +109,16 @@ const keepReadableFields = ({
 }: {
   timelineActivity: TimelineActivityFixture;
   objectsPermissions?: ObjectsPermissions;
-}) => {
-  keepReadableFieldsInTimelineActivities({
-    timelineActivities: [timelineActivity],
+}) =>
+  redactTimelineActivityProperties({
+    properties: timelineActivity.properties,
+    timelineActivity,
     objectsPermissions,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   });
 
-  return timelineActivity.properties;
-};
-
-describe('keepReadableFieldsInTimelineActivities', () => {
+describe('redactTimelineActivityProperties', () => {
   it('should keep the readable fields of the target object', () => {
     expect(
       keepReadableFields({
@@ -173,5 +173,42 @@ describe('keepReadableFieldsInTimelineActivities', () => {
         timelineActivity: { targetPersonId: 'person-id', properties: DIFF },
       }),
     ).toEqual({ diff: {} });
+  });
+});
+
+describe('redactTimelineActivityEvent', () => {
+  it('should redact properties in the records and in the diff', () => {
+    const before = {
+      id: 'activity-id',
+      linkedObjectMetadataId: null,
+      targetPersonId: 'person-id',
+      properties: DIFF,
+    };
+    const after = { ...before, properties: { diff: {} } };
+    const event = {
+      recordId: 'activity-id',
+      properties: {
+        updatedFields: ['properties'],
+        before,
+        after,
+        diff: { properties: { before: DIFF, after: { diff: {} } } },
+      },
+    } as unknown as ObjectRecordUpdateEvent;
+
+    const redactedDiff = { diff: { city: { before: 'Paris', after: 'Lyon' } } };
+
+    expect(
+      redactTimelineActivityEvent({
+        event,
+        objectsPermissions: PERSON_JOB_TITLE_DENIED,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }).properties,
+    ).toEqual({
+      updatedFields: ['properties'],
+      before: { ...before, properties: redactedDiff },
+      after: { ...after, properties: { diff: {} } },
+      diff: { properties: { before: redactedDiff, after: { diff: {} } } },
+    });
   });
 });

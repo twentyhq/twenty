@@ -19,6 +19,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { resolveTimelineActivityObjectColumnNames } from 'src/modules/timeline/utils/resolve-timeline-activity-object-column-names.util';
 
 export type GraphqlQuerySelectedFieldsResult = {
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -203,6 +204,19 @@ export class GraphqlQuerySelectedFieldsParser {
 
       if (isDefined(graphqlSelectedFieldValue)) {
         accumulator.select[fieldMetadata.name] = true;
+      }
+    }
+
+    // Redacting properties needs to know which object the stored diff belongs to
+    if (
+      flatObjectMetadata.nameSingular === 'timelineActivity' &&
+      accumulator.select.properties === true
+    ) {
+      for (const columnName of resolveTimelineActivityObjectColumnNames({
+        flatObjectMetadata,
+        flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+      })) {
+        accumulator.select[columnName] = true;
       }
     }
   }

@@ -59,23 +59,14 @@ export const resolveEventsReadableByRole = async <
         flatObjectMetadataMaps,
       }),
     );
-  const restrictedFields =
-    objectsPermissions[workspaceEventBatch.objectMetadata.id]?.restrictedFields;
-
-  const visibleEvents = await eventRecordAccessGate.applyVisibilityRestrictions(
-    {
-      events: workspaceEventBatch.events.filter((event) =>
-        admittedRecordIds.has(event.recordId),
-      ),
-      objectsPermissions,
-    },
-  );
-
-  return visibleEvents
+  return workspaceEventBatch.events
+    .filter((event) => admittedRecordIds.has(event.recordId))
     .map((event) =>
       omitRestrictedFieldsFromEvent({
         event,
-        restrictedFields,
+        objectMetadata: workspaceEventBatch.objectMetadata,
+        objectsPermissions,
+        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
     )

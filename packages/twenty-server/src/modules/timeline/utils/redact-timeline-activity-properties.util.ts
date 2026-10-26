@@ -9,51 +9,44 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { buildReadableFieldNames } from 'src/modules/timeline/utils/build-readable-field-names.util';
 import { resolveTimelineActivityObject } from 'src/modules/timeline/utils/resolve-timeline-activity-object.util';
 
-export const keepReadableFieldsInTimelineActivities = ({
-  timelineActivities,
+export const redactTimelineActivityProperties = ({
+  properties,
+  timelineActivity,
   objectsPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
-  timelineActivities: Record<string, unknown>[];
+  properties: unknown;
+  timelineActivity: Record<string, unknown>;
   objectsPermissions: ObjectsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-}): void => {
-  for (const timelineActivity of timelineActivities) {
-    if (!('properties' in timelineActivity)) {
-      continue;
-    }
-
-    const { properties } = timelineActivity;
-
-    if (!isPlainObject(properties)) {
-      timelineActivity.properties = null;
-      continue;
-    }
-
-    const flatObjectMetadata = resolveTimelineActivityObject({
-      timelineActivity,
-      flatObjectMetadataMaps,
-    });
-
-    const readableFieldNames = isDefined(flatObjectMetadata)
-      ? buildReadableFieldNames({
-          flatObjectMetadata,
-          isLinkedActivity: isNonEmptyString(
-            timelineActivity.linkedObjectMetadataId,
-          ),
-          objectsPermissions,
-          flatFieldMetadataMaps,
-        })
-      : new Set<string>();
-
-    timelineActivity.properties = {
-      ...properties,
-      ...filterFieldNamesInEventProperties({
-        properties,
-        isFieldNameKept: (fieldName) => readableFieldNames.has(fieldName),
-      }),
-    };
+}): Record<string, unknown> | null => {
+  if (!isPlainObject(properties)) {
+    return null;
   }
+
+  const flatObjectMetadata = resolveTimelineActivityObject({
+    timelineActivity,
+    flatObjectMetadataMaps,
+  });
+
+  const readableFieldNames = isDefined(flatObjectMetadata)
+    ? buildReadableFieldNames({
+        flatObjectMetadata,
+        isLinkedActivity: isNonEmptyString(
+          timelineActivity.linkedObjectMetadataId,
+        ),
+        objectsPermissions,
+        flatFieldMetadataMaps,
+      })
+    : new Set<string>();
+
+  return {
+    ...properties,
+    ...filterFieldNamesInEventProperties({
+      properties,
+      isFieldNameKept: (fieldName) => readableFieldNames.has(fieldName),
+    }),
+  };
 };

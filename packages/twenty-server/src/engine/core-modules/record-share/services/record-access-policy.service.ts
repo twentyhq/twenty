@@ -9,7 +9,6 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThanOrEqual } from 'typeorm';
 
-import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
@@ -50,7 +49,6 @@ export class RecordAccessPolicyService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
-    private readonly commonRecordVisibilityService: CommonRecordVisibilityService,
   ) {}
 
   // A subject receives the records a query would return it: the event
@@ -118,26 +116,6 @@ export class RecordAccessPolicyService {
     };
 
     return {
-      applyVisibilityRestrictions: async ({
-        events: admittedEvents,
-        objectsPermissions,
-      }) => {
-        const { flatObjectMetadataMaps, flatFieldMetadataMapsOrm } =
-          await this.workspaceCacheService.getOrRecompute(workspaceId, [
-            'flatObjectMetadataMaps',
-            'flatFieldMetadataMapsOrm',
-          ]);
-
-        return this.commonRecordVisibilityService.applyEventVisibilityRestrictions(
-          {
-            events: admittedEvents,
-            flatObjectMetadata: objectMetadata,
-            objectsPermissions,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
-          },
-        );
-      },
       resolveAdmittedRecordIds: async (subject) => {
         const {
           flatObjectMetadataMaps,

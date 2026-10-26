@@ -1,5 +1,8 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
-import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
+import {
+  type ObjectsPermissions,
+  type RestrictedFieldsPermissions,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { filterFieldNamesInEventProperties } from 'src/engine/core-modules/record-share/utils/filter-field-names-in-event-properties.util';
@@ -7,6 +10,8 @@ import { getFieldNamesInEventProperties } from 'src/engine/core-modules/record-s
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { redactTimelineActivityEvent } from 'src/modules/timeline/utils/redact-timeline-activity-event.util';
 
 const buildRestrictedFieldNames = ({
   restrictedFields,
@@ -34,38 +39,61 @@ const buildRestrictedFieldNames = ({
     ),
   );
 
+const omitFieldNames = <TEvent extends ObjectRecordEvent>({
+  event,
+  restrictedFieldNames,
+}: {
+  event: TEvent;
+  restrictedFieldNames: Set<string>;
+}): TEvent =>
+  restrictedFieldNames.size === 0
+    ? event
+    : {
+        ...event,
+        properties: {
+          ...event.properties,
+          ...filterFieldNamesInEventProperties({
+            properties: event.properties,
+            isFieldNameKept: (fieldName) =>
+              !restrictedFieldNames.has(fieldName),
+          }),
+        },
+      };
+
 export const omitRestrictedFieldsFromEvent = <
   TEvent extends ObjectRecordEvent,
 >({
   event,
-  restrictedFields,
+  objectMetadata,
+  objectsPermissions,
+  flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   event: TEvent;
-  restrictedFields: RestrictedFieldsPermissions | undefined;
+  objectMetadata: Pick<FlatObjectMetadata, 'id' | 'nameSingular'>;
+  objectsPermissions: ObjectsPermissions;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): TEvent => {
-  if (!isDefined(restrictedFields)) {
-    return event;
-  }
+  const restrictedFields =
+    objectsPermissions[objectMetadata.id]?.restrictedFields;
 
-  const restrictedFieldNames = buildRestrictedFieldNames({
-    restrictedFields,
-    flatFieldMetadataMaps,
-  });
+  const eventWithoutRestrictedFields = isDefined(restrictedFields)
+    ? omitFieldNames({
+        event,
+        restrictedFieldNames: buildRestrictedFieldNames({
+          restrictedFields,
+          flatFieldMetadataMaps,
+        }),
+      })
+    : event;
 
-  if (restrictedFieldNames.size === 0) {
-    return event;
-  }
-
-  return {
-    ...event,
-    properties: {
-      ...event.properties,
-      ...filterFieldNamesInEventProperties({
-        properties: event.properties,
-        isFieldNameKept: (fieldName) => !restrictedFieldNames.has(fieldName),
-      }),
-    },
-  };
+  return objectMetadata.nameSingular === 'timelineActivity'
+    ? redactTimelineActivityEvent({
+        event: eventWithoutRestrictedFields,
+        objectsPermissions,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      })
+    : eventWithoutRestrictedFields;
 };

@@ -1,11 +1,8 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
-import { type RecordVisibilityRestrictionContext } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-context.type';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
-import { assertTimelineActivityPropertiesAreNotQueriedOrThrow } from 'src/modules/timeline/utils/assert-timeline-activity-properties-are-not-queried-or-throw.util';
-import { keepReadableFieldsInTimelineActivities } from 'src/modules/timeline/utils/keep-readable-fields-in-timeline-activities.util';
-import { resolveTimelineActivityObjectColumnNames } from 'src/modules/timeline/utils/resolve-timeline-activity-object-column-names.util';
+import { redactTimelineActivityProperties } from 'src/modules/timeline/utils/redact-timeline-activity-properties.util';
 
 @Injectable()
 export class ApplyTimelineActivitiesFieldPermissionsService
@@ -24,39 +21,24 @@ export class ApplyTimelineActivitiesFieldPermissionsService
 
   public async applyVisibilityRestrictions({
     records,
-    ...context
-  }: RecordVisibilityRestrictionContext & {
-    records: Record<string, unknown>[];
-  }): Promise<void> {
-    keepReadableFieldsInTimelineActivities({
-      timelineActivities: records,
-      ...context,
-    });
-  }
+    objectsPermissions,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: Parameters<
+    RecordVisibilityRestrictionHandler['applyVisibilityRestrictions']
+  >[0]): Promise<void> {
+    for (const timelineActivity of records) {
+      if (!('properties' in timelineActivity)) {
+        continue;
+      }
 
-  public async applyEventVisibilityRestrictions(
-    args: RecordVisibilityRestrictionContext & {
-      records: Record<string, unknown>[];
-    },
-  ): Promise<void> {
-    await this.applyVisibilityRestrictions(args);
-  }
-
-  public getRequiredFieldNamesToSelect(
-    args: Parameters<
-      NonNullable<
-        RecordVisibilityRestrictionHandler['getRequiredFieldNamesToSelect']
-      >
-    >[0],
-  ): string[] {
-    return resolveTimelineActivityObjectColumnNames(args);
-  }
-
-  public assertQueryIsAllowed(
-    args: Parameters<
-      NonNullable<RecordVisibilityRestrictionHandler['assertQueryIsAllowed']>
-    >[0],
-  ): void {
-    assertTimelineActivityPropertiesAreNotQueriedOrThrow(args);
+      timelineActivity.properties = redactTimelineActivityProperties({
+        properties: timelineActivity.properties,
+        timelineActivity,
+        objectsPermissions,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
+    }
   }
 }

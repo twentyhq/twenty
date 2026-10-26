@@ -227,17 +227,7 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
-    const restrictedFields =
-      objectsPermissions[workspaceEventBatch.objectMetadata.id]
-        ?.restrictedFields ?? {};
-
-    const visibleEvents =
-      await eventRecordAccessGate.applyVisibilityRestrictions({
-        events: workspaceEventBatch.events,
-        objectsPermissions,
-      });
-
-    for (const event of visibleEvents) {
+    for (const event of workspaceEventBatch.events) {
       const { action } = parseEventNameOrThrow(workspaceEventBatch.name);
 
       const eventWithObjectName: ObjectRecordSubscriptionEvent = {
@@ -248,7 +238,9 @@ export class ObjectRecordEventPublisher {
 
       const filteredEvent = omitRestrictedFieldsFromEvent({
         event: eventWithObjectName,
-        restrictedFields,
+        objectMetadata: workspaceEventBatch.objectMetadata,
+        objectsPermissions,
+        flatObjectMetadataMaps: permissionsContext.flatObjectMetadataMaps,
         flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
       });
 

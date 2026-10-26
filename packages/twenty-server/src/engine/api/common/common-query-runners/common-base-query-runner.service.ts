@@ -280,23 +280,10 @@ export abstract class CommonBaseQueryRunnerService<
         queryRunnerContext,
       );
 
-    this.commonRecordVisibilityService.assertQueryIsAllowed({
-      queryArgs: processedArgs,
-      flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-      objectsPermissions:
-        extendedQueryRunnerContext.repository.objectRecordsPermissions,
+    const results = await this.run(processedArgs, {
+      ...extendedQueryRunnerContext,
+      commonQueryParser,
     });
-
-    const results = await this.run(
-      this.withVisibilityRequiredFields({
-        args: processedArgs,
-        queryRunnerContext: extendedQueryRunnerContext,
-      }),
-      {
-        ...extendedQueryRunnerContext,
-        commonQueryParser,
-      },
-    );
 
     return this.enrichResultsWithGettersAndHooks({
       results,
@@ -309,36 +296,6 @@ export abstract class CommonBaseQueryRunnerService<
       objectsPermissions:
         extendedQueryRunnerContext.repository.objectRecordsPermissions,
     });
-  }
-
-  private withVisibilityRequiredFields({
-    args,
-    queryRunnerContext,
-  }: {
-    args: CommonExtendedInput<Args>;
-    queryRunnerContext: Pick<
-      CommonExtendedQueryRunnerContext,
-      | 'flatObjectMetadata'
-      | 'flatObjectMetadataMaps'
-      | 'flatFieldMetadataMaps'
-      | 'repository'
-    >;
-  }): CommonExtendedInput<Args> {
-    return {
-      ...args,
-      selectedFieldsResult: {
-        ...args.selectedFieldsResult,
-        select:
-          this.commonRecordVisibilityService.extendSelectWithRequiredFields({
-            select: args.selectedFieldsResult.select,
-            flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-            objectsPermissions:
-              queryRunnerContext.repository.objectRecordsPermissions,
-            flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
-            flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
-          }),
-      },
-    };
   }
 
   private async enrichResultsWithGettersAndHooks({

@@ -2,7 +2,6 @@ import { Test } from '@nestjs/testing';
 import { MetadataReadability } from 'twenty-shared/types';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
-import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
@@ -28,7 +27,6 @@ describe('webhook mandatory visibility', () => {
       providers: [
         CallWebhookJobsJob,
         RecordAccessPolicyService,
-        CommonRecordVisibilityService,
         {
           provide: getQueueToken(MessageQueue.webhookQueue),
           useValue: { add },

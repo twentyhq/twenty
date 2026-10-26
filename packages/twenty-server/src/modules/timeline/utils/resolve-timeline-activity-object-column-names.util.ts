@@ -1,8 +1,4 @@
-import {
-  FieldMetadataType,
-  type ObjectsPermissions,
-  RelationType,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -14,26 +10,18 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export const resolveTimelineActivityObjectColumnNames = ({
   flatObjectMetadata,
-  objectsPermissions,
   flatFieldMetadataMaps,
 }: {
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'fieldIds'>;
-  objectsPermissions: ObjectsPermissions;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'fieldIds'>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-}): string[] => {
-  const restrictedFields =
-    objectsPermissions[flatObjectMetadata.id]?.restrictedFields ?? {};
-
-  return flatObjectMetadata.fieldIds.flatMap((fieldId) => {
+}): string[] =>
+  flatObjectMetadata.fieldIds.flatMap((fieldId) => {
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: fieldId,
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
-    if (
-      !isDefined(flatFieldMetadata) ||
-      restrictedFields[fieldId]?.canRead === false
-    ) {
+    if (!isDefined(flatFieldMetadata)) {
       return [];
     }
 
@@ -58,4 +46,3 @@ export const resolveTimelineActivityObjectColumnNames = ({
       }),
     ];
   });
-};
