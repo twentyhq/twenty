@@ -20,6 +20,7 @@ const CONTAINER_TYPES: string[] = [
   NavigationMenuItemType.AI_CHAT_FAVORITES,
   NavigationMenuItemType.AI_CHAT_RECENTS,
   NavigationMenuItemType.AI_AGENTS,
+  NavigationMenuItemType.AI_CHAT_CHANNELS,
 ];
 
 @RegisteredWorkspaceCommand('2.51.0', 1792743446000)

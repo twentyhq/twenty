@@ -7,9 +7,10 @@ import {
 
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
+import { NavigationDrawerAiChatChannelsSection } from '@/ai/components/NavigationDrawerAiChatChannelsSection';
+import { NavigationDrawerAiChatFavoritesSection } from '@/ai/components/NavigationDrawerAiChatFavoritesSection';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
-import { AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatFavoritesNavigationSectionId';
 import { AI_CHAT_RECENTS_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatRecentsNavigationSectionId';
 import { useAiChatSidebarThreads } from '@/ai/hooks/useAiChatSidebarThreads';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -38,6 +39,7 @@ export const NavigationMenuItemAiChatSection = ({
   const {
     isAiChatInboxEnabled,
     isLoading,
+    favoriteChannels,
     favoriteThreads,
     recentThreads,
     currentAiChatThread,
@@ -57,43 +59,49 @@ export const NavigationMenuItemAiChatSection = ({
       defaultName={defaultLabel}
     />
   ) : undefined;
+  const emptyEditableSection = isEditable ? (
+    <CollapsibleNavigationDrawerSection
+      sectionId={`navigation-menu-section-${section.id}`}
+      label={label}
+      rightIcon={sectionMenu}
+      alwaysShowRightIcon={isEditable}
+    >
+      {null}
+    </CollapsibleNavigationDrawerSection>
+  ) : null;
 
   switch (section.type) {
     case NavigationMenuItemType.AI_CHAT_TRIAGE:
-      if (isAiChatInboxEnabled) {
-        return (
-          <NavigationDrawerAiChatTriageSection
-            label={label}
-            rightIcon={sectionMenu}
-            alwaysShowRightIcon={isEditable}
-          />
-        );
-      }
-
-      return isEditable ? (
-        <CollapsibleNavigationDrawerSection
-          sectionId={`navigation-menu-section-${section.id}`}
+      return isAiChatInboxEnabled ? (
+        <NavigationDrawerAiChatTriageSection
           label={label}
           rightIcon={sectionMenu}
           alwaysShowRightIcon={isEditable}
-        >
-          {null}
-        </CollapsibleNavigationDrawerSection>
-      ) : null;
+        />
+      ) : (
+        emptyEditableSection
+      );
+    case NavigationMenuItemType.AI_CHAT_CHANNELS:
+      return isAiChatInboxEnabled ? (
+        <NavigationDrawerAiChatChannelsSection
+          label={label}
+          rightIcon={sectionMenu}
+          alwaysShowRightIcon={isEditable ? true : undefined}
+        />
+      ) : (
+        emptyEditableSection
+      );
     case NavigationMenuItemType.AI_CHAT_FAVORITES:
-      if (favoriteThreads.length === 0 && !isEditable) {
-        return null;
-      }
-
       return (
-        <NavigationDrawerAiChatThreadSection
-          sectionId={AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID}
-          title={label}
+        <NavigationDrawerAiChatFavoritesSection
+          label={label}
+          channels={favoriteChannels}
           threads={favoriteThreads}
           currentThreadId={currentAiChatThread}
           onThreadClick={handleThreadClick}
           rightIcon={sectionMenu}
           alwaysShowRightIcon={isEditable}
+          isShownWhenEmpty={isEditable}
         />
       );
     default:

@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 
 import { NavigationDrawerAiChatChannelItem } from '@/ai/components/NavigationDrawerAiChatChannelItem';
 import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
@@ -20,6 +21,10 @@ type NavigationDrawerAiChatFavoritesSectionProps = {
   threads: AgentChatThreadListItem[];
   currentThreadId: string | null;
   onThreadClick: (thread: AgentChatThreadListItem) => void;
+  label?: string;
+  rightIcon?: ReactNode;
+  alwaysShowRightIcon?: boolean;
+  isShownWhenEmpty?: boolean;
 };
 
 export const NavigationDrawerAiChatFavoritesSection = ({
@@ -27,6 +32,10 @@ export const NavigationDrawerAiChatFavoritesSection = ({
   threads,
   currentThreadId,
   onThreadClick,
+  label,
+  rightIcon,
+  alwaysShowRightIcon,
+  isShownWhenEmpty = false,
 }: NavigationDrawerAiChatFavoritesSectionProps) => {
   const { t } = useLingui();
   const agentChatAccessibleChannels = useAtomStateValue(
@@ -39,14 +48,16 @@ export const NavigationDrawerAiChatFavoritesSection = ({
     PermissionFlagType.AI_SETTINGS,
   );
 
-  if (channels.length === 0 && threads.length === 0) {
+  if (!isShownWhenEmpty && channels.length === 0 && threads.length === 0) {
     return null;
   }
 
   return (
     <CollapsibleNavigationDrawerSection
       sectionId={AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID}
-      label={t`Favorites`}
+      label={label ?? t`Favorites`}
+      rightIcon={rightIcon}
+      alwaysShowRightIcon={alwaysShowRightIcon}
     >
       {channels.map((channel) => (
         <NavigationDrawerAiChatChannelItem

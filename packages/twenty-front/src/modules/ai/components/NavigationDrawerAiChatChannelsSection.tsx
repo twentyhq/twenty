@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconHash, IconPlus } from 'twenty-ui/icon';
@@ -21,7 +21,17 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID = 'AiChatChannels';
 
-export const NavigationDrawerAiChatChannelsSection = () => {
+type NavigationDrawerAiChatChannelsSectionProps = {
+  label?: string;
+  rightIcon?: ReactNode;
+  alwaysShowRightIcon?: boolean;
+};
+
+export const NavigationDrawerAiChatChannelsSection = ({
+  label,
+  rightIcon,
+  alwaysShowRightIcon,
+}: NavigationDrawerAiChatChannelsSectionProps = {}) => {
   const { t } = useLingui();
   const agentChatChannels = useAtomStateValue(agentChatChannelsState);
   const agentChatAccessibleChannels = useAtomStateValue(
@@ -73,10 +83,13 @@ export const NavigationDrawerAiChatChannelsSection = () => {
   return (
     <CollapsibleNavigationDrawerSection
       sectionId={AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID}
-      label={t`Channels`}
-      alwaysShowRightIcon={agentChatAccessibleChannels.length === 0}
+      label={label ?? t`Channels`}
+      alwaysShowRightIcon={
+        alwaysShowRightIcon ?? agentChatAccessibleChannels.length === 0
+      }
       rightIcon={
-        canManageChannels ? (
+        rightIcon ??
+        (canManageChannels ? (
           <LightIconButton
             emphasis="subtle"
             aria-label={t`New channel`}
@@ -84,7 +97,7 @@ export const NavigationDrawerAiChatChannelsSection = () => {
           >
             <IconPlus />
           </LightIconButton>
-        ) : undefined
+        ) : undefined)
       }
     >
       {agentChatAccessibleChannels.map((channel) => (

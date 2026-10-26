@@ -16,12 +16,14 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const INBOX_SECTION_TYPES: string[] = [
   NavigationMenuItemType.AI_CHAT_TRIAGE,
   NavigationMenuItemType.AI_CHAT_FAVORITES,
+  NavigationMenuItemType.AI_CHAT_CHANNELS,
   NavigationMenuItemType.AI_CHAT_RECENTS,
 ];
 
 const INBOX_SECTION_DEFINITIONS = [
   STANDARD_NAVIGATION_MENU_ITEMS.inboxTabTriage,
   STANDARD_NAVIGATION_MENU_ITEMS.inboxTabFavoriteChats,
+  STANDARD_NAVIGATION_MENU_ITEMS.inboxTabChannels,
   STANDARD_NAVIGATION_MENU_ITEMS.inboxTabRecentChats,
 ];
 
@@ -29,7 +31,7 @@ const INBOX_SECTION_DEFINITIONS = [
 @Command({
   name: 'upgrade:2-51:add-inbox-navigation-menu-tab',
   description:
-    'Add the Inbox sidebar tab, holding the triage, favorite chats and recent chats sections, to workspaces whose sidebar has none of them',
+    'Add the Inbox sidebar tab, holding the triage, favorite chats, channels and recent chats sections, to workspaces whose sidebar has none of them',
 })
 export class AddInboxNavigationMenuTabCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(

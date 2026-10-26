@@ -6,4 +6,5 @@ export const isNavigationMenuItemAiChatSection = (
 ) =>
   item.type === NavigationMenuItemType.AI_CHAT_TRIAGE ||
   item.type === NavigationMenuItemType.AI_CHAT_FAVORITES ||
+  item.type === NavigationMenuItemType.AI_CHAT_CHANNELS ||
   item.type === NavigationMenuItemType.AI_CHAT_RECENTS;

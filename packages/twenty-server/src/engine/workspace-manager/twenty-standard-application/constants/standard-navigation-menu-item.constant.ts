@@ -125,11 +125,17 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
     position: 1,
   },
+  inboxTabChannels: {
+    universalIdentifier: '20202020-b011-4b11-8b11-c0aba11c0011',
+    type: NavigationMenuItemType.AI_CHAT_CHANNELS,
+    folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    position: 2,
+  },
   inboxTabRecentChats: {
     universalIdentifier: '20202020-b00f-4b0f-8b0f-c0aba11c000f',
     type: NavigationMenuItemType.AI_CHAT_RECENTS,
     folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
-    position: 2,
+    position: 3,
   },
 } as const;
 

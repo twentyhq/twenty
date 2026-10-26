@@ -62,6 +62,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   OR ("type" = 'AI_CHAT_FAVORITES')
   OR ("type" = 'AI_CHAT_RECENTS')
   OR ("type" = 'AI_AGENTS')
+  OR ("type" = 'AI_CHAT_CHANNELS')
   OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL)
   OR ("type" = 'VIEW' AND "viewId" IS NOT NULL)
   OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)

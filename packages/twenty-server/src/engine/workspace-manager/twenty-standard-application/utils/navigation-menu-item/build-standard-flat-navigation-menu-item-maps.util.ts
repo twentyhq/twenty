@@ -31,6 +31,7 @@ const WORKFLOWS_FOLDER_ITEM_NAMES = [
 const INBOX_TAB_SECTION_NAMES = [
   'inboxTabTriage',
   'inboxTabFavoriteChats',
+  'inboxTabChannels',
   'inboxTabRecentChats',
 ] as const;
 

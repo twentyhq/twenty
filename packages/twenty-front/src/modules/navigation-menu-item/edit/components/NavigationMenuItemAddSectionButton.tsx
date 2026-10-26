@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
+  IconHash,
   IconHeart,
   IconInbox,
   IconLego,
@@ -22,6 +23,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 const AI_SECTION_OPTIONS = [
   { type: NavigationMenuItemType.AI_CHAT_TRIAGE, Icon: IconInbox },
   { type: NavigationMenuItemType.AI_CHAT_FAVORITES, Icon: IconHeart },
+  { type: NavigationMenuItemType.AI_CHAT_CHANNELS, Icon: IconHash },
   { type: NavigationMenuItemType.AI_CHAT_RECENTS, Icon: IconMessage },
   { type: NavigationMenuItemType.AI_AGENTS, Icon: IconLego },
 ];

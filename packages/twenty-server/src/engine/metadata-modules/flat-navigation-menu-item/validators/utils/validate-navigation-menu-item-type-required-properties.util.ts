@@ -137,7 +137,8 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     case NavigationMenuItemType.AI_CHAT_TRIAGE:
     case NavigationMenuItemType.AI_CHAT_FAVORITES:
     case NavigationMenuItemType.AI_CHAT_RECENTS:
-    case NavigationMenuItemType.AI_AGENTS: {
+    case NavigationMenuItemType.AI_AGENTS:
+    case NavigationMenuItemType.AI_CHAT_CHANNELS: {
       return [];
     }
     case NavigationMenuItemType.PAGE_LAYOUT: {

@@ -16,6 +16,7 @@ const getAllowedParentTypes = (
     case NavigationMenuItemType.AI_CHAT_FAVORITES:
     case NavigationMenuItemType.AI_CHAT_RECENTS:
     case NavigationMenuItemType.AI_AGENTS:
+    case NavigationMenuItemType.AI_CHAT_CHANNELS:
       return [NavigationMenuItemType.TAB];
     case NavigationMenuItemType.FOLDER:
       return [NavigationMenuItemType.TAB, NavigationMenuItemType.SECTION];
