@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { MetricRow } from 'twenty-ui/components/data-display';
 import { type IconComponent } from 'twenty-ui/icon';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme } from 'twenty-ui/theme';
 
 import { type AiChatUsage } from '@/ai/types/AiChatUsage';
@@ -9,10 +10,12 @@ import { computeDaysUntilReset } from '@/ai/utils/computeDaysUntilReset';
 import { getAiChatUsageLabel } from '@/ai/utils/getAiChatUsageLabel';
 import { computeUsageLimitProgress } from '@/settings/billing/utils/computeUsageLimitProgress';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
 type AiChatUsageMetricRowProps = {
   Icon: IconComponent;
   label: string;
+  tooltip?: string;
   usage: Pick<AiChatUsage, 'limitValue' | 'consumedValue' | 'periodEnd'> | null;
   loading?: boolean;
   hasError?: boolean;
@@ -21,6 +24,7 @@ type AiChatUsageMetricRowProps = {
 export const AiChatUsageMetricRow = ({
   Icon,
   label,
+  tooltip,
   usage,
   loading = false,
   hasError = false,
@@ -56,7 +60,13 @@ export const AiChatUsageMetricRow = ({
         isExhausted: creditPercentage === 100,
       })}
     >
-      {label}
+      {isDefined(tooltip) ? (
+        <Tooltip content={tooltip} delay={TooltipDelay.shortDelay}>
+          <span>{label}</span>
+        </Tooltip>
+      ) : (
+        label
+      )}
     </MetricRow>
   );
 };

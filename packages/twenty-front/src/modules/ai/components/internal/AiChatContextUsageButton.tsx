@@ -113,10 +113,14 @@ export const AiChatContextUsageButton = () => {
     skip: !isOpen || isWorkspaceSetupChat,
   });
 
-  const shouldShowWorkspaceUsage =
+  const isPaidByWorkspaceCredits =
     !isDefined(userCreditsUsage) ||
-    !userCreditsUsage.isExhausted ||
-    userCreditsUsage.isFallingBackToWorkspaceCredits;
+    (userCreditsUsage.isExhausted &&
+      userCreditsUsage.isFallingBackToWorkspaceCredits);
+
+  // A configured AI limit is charged in full, even while user credits remain
+  const isAiLimitCharged =
+    creditUsage?.kind === 'limit' && userCreditsUsage?.isExhausted !== true;
 
   const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
     duration: shouldReduceMotion ? 0 : { open: 150, close: 100 },
@@ -170,22 +174,24 @@ export const AiChatContextUsageButton = () => {
             >
               {t`Context window`}
             </MetricRow>
-            {isDefined(userCreditsUsage) && (
+            {!isPaidByWorkspaceCredits && (
               <AiChatUsageMetricRow
                 Icon={IconUser}
                 label={t`Personal usage`}
+                tooltip={t`Your own AI credits, separate from the workspace credits`}
                 usage={userCreditsUsage}
               />
             )}
-            {!isWorkspaceSetupChat && shouldShowWorkspaceUsage && (
-              <AiChatUsageMetricRow
-                Icon={IconGauge}
-                label={t`Usage`}
-                usage={creditUsage}
-                loading={loading}
-                hasError={isDefined(error)}
-              />
-            )}
+            {!isWorkspaceSetupChat &&
+              (isPaidByWorkspaceCredits || isAiLimitCharged) && (
+                <AiChatUsageMetricRow
+                  Icon={IconGauge}
+                  label={t`Usage`}
+                  usage={creditUsage}
+                  loading={loading}
+                  hasError={isDefined(error)}
+                />
+              )}
             {showDetails && <AiChatContextUsageDetails />}
             {isDefined(agentChatUsage) && (
               <>

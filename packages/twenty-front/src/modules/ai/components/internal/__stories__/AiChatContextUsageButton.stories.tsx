@@ -43,6 +43,7 @@ const UsageStory = ({
   usage = null,
   limit = 1000,
   consumed = 800,
+  kind = 'workspaceAllowance',
   error = false,
   loading = false,
   userCreditsUsage = null,
@@ -52,6 +53,7 @@ const UsageStory = ({
   usage?: AgentChatUsageState | null;
   limit?: number | null;
   consumed?: number | null;
+  kind?: string;
   error?: boolean;
   loading?: boolean;
   userCreditsUsage?: AiChatUserCreditsUsage | null;
@@ -90,7 +92,7 @@ const UsageStory = ({
                               limitValue: limit,
                               consumedValue: consumed,
                               periodEnd: null,
-                              kind: 'workspaceAllowance',
+                              kind,
                             },
                     },
                   },
@@ -197,6 +199,35 @@ export const WithUserCredits: Story = {
     await expect(
       page.getByRole('progressbar', { name: 'Personal usage' }),
     ).toHaveAttribute('aria-valuetext', 'Reset in 3 days (28%)');
+    await expect(page.queryByText('Usage')).not.toBeInTheDocument();
+    await userEvent.hover(page.getByText('Personal usage'));
+    await waitFor(() =>
+      expect(
+        page.getByText(
+          'Your own AI credits, separate from the workspace credits',
+        ),
+      ).toBeVisible(),
+    );
+  },
+};
+export const WithUserCreditsAndLimit: Story = {
+  render: () => (
+    <UsageStory
+      kind="limit"
+      userCreditsUsage={{
+        limitValue: 4160000,
+        consumedValue: 1160000,
+        periodEnd: USER_CREDITS_PERIOD_END,
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: /^Context and usage/ }),
+    );
+    await waitFor(() => expect(page.getByText('Personal usage')).toBeVisible());
     await expect(page.getByText('Usage')).toBeVisible();
   },
 };
@@ -217,11 +248,12 @@ export const UserCreditsSpentWithFallback: Story = {
       canvas.getByRole('button', { name: /^Context and usage/ }),
     );
     await waitFor(() =>
-      expect(
-        page.getByRole('progressbar', { name: 'Personal usage' }),
-      ).toHaveAttribute('aria-valuetext', 'Reset in 3 days (100%)'),
+      expect(page.getByRole('progressbar', { name: 'Usage' })).toHaveAttribute(
+        'aria-valuetext',
+        '80%',
+      ),
     );
-    await expect(page.getByText('Usage')).toBeVisible();
+    await expect(page.queryByText('Personal usage')).not.toBeInTheDocument();
   },
 };
 export const UserCreditsSpentWithoutFallback: Story = {
