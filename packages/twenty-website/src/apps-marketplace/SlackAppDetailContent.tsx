@@ -3,7 +3,6 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { SlackAppFaq } from '@/sections/faq';
 import {
   color,
   DURATION,
@@ -65,7 +64,7 @@ const SETUP_STEPS: readonly {
   },
   {
     title: msg`Link your accounts`,
-    body: msg`Accounts with the same email in Slack and Twenty are linked automatically. An admin can link the rest from the app's Settings tab.`,
+    body: msg`Accounts with the same email in Slack and Twenty are linked automatically. An admin can link the rest from the app's Settings tab, and the Slack user approves the link in a direct message from the bot.`,
   },
   {
     title: msg`Start asking`,
@@ -266,6 +265,25 @@ export function SlackAppDetailContent({
       <SectionShell rhythm="section" scheme="light">
         <SectionStack>
           <SectionIntro>
+            <Eyebrow>{i18n._(msg`Examples`)}</Eyebrow>
+            <Heading as="h2" size="lg" weight="light">
+              {i18n._(msg`What *you can ask*`)}
+            </Heading>
+          </SectionIntro>
+          <ExampleGrid>
+            {EXAMPLE_QUESTIONS.map((question) => (
+              <Card key={question.id}>
+                <Marker aria-hidden />
+                <Body size="md">&ldquo;{i18n._(question)}&rdquo;</Body>
+              </Card>
+            ))}
+          </ExampleGrid>
+        </SectionStack>
+      </SectionShell>
+
+      <SectionShell rhythm="section" scheme="muted">
+        <SectionStack>
+          <SectionIntro>
             <Eyebrow>{i18n._(msg`Getting started`)}</Eyebrow>
             <Heading as="h2" size="lg" weight="light">
               {i18n._(msg`Set up *in four steps*`)}
@@ -286,27 +304,6 @@ export function SlackAppDetailContent({
           </StepGrid>
         </SectionStack>
       </SectionShell>
-
-      <SectionShell rhythm="section" scheme="muted">
-        <SectionStack>
-          <SectionIntro>
-            <Eyebrow>{i18n._(msg`Examples`)}</Eyebrow>
-            <Heading as="h2" size="lg" weight="light">
-              {i18n._(msg`What *you can ask*`)}
-            </Heading>
-          </SectionIntro>
-          <ExampleGrid>
-            {EXAMPLE_QUESTIONS.map((question) => (
-              <Card key={question.id}>
-                <Marker aria-hidden />
-                <Body size="md">&ldquo;{i18n._(question)}&rdquo;</Body>
-              </Card>
-            ))}
-          </ExampleGrid>
-        </SectionStack>
-      </SectionShell>
-
-      <SlackAppFaq />
 
       <EngagementBand
         heading={i18n._(msg`Bring Twenty *into Slack*`)}
