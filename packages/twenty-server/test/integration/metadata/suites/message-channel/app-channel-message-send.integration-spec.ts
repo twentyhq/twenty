@@ -560,6 +560,76 @@ export const handler = (payload) => {
     ]);
   });
 
+  it('takes recipients only from messages of the channel it replies through', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const otherChannelResponse = await createChannel({
+      connectedAccountId: silentConnectionId,
+    });
+    const otherMessageChannelId: string =
+      otherChannelResponse.body.data.createAppMessageChannel.id;
+
+    const otherIngestResponse = await asApplication({
+      query: INGEST_MESSAGES_MUTATION,
+      variables: {
+        input: {
+          messageChannelId: otherMessageChannelId,
+          messages: [
+            {
+              externalId: 'other-channel-1',
+              threadExternalId: 'urn:li:conversation:other',
+              text: 'Newer message from another channel',
+              receivedAt: '2026-10-22T10:00:00.000Z',
+              participants: [
+                {
+                  role: MessageParticipantRole.FROM,
+                  handle: 'urn:li:person:grace',
+                },
+                { role: MessageParticipantRole.TO, handle: CHANNEL_HANDLE },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    expect(otherIngestResponse.body.errors).toBeUndefined();
+
+    const [otherMessage]: { messageId: string; messageThreadId: string }[] =
+      otherIngestResponse.body.data.ingestAppMessages.messages;
+
+    // threads can span channels; move the other channel's newer message into this thread
+    await globalThis.testDataSource.query(
+      `UPDATE "${WORKSPACE_SCHEMA}"."message" SET "messageThreadId" = $1 WHERE id = $2`,
+      [messageThreadId, otherMessage.messageId],
+    );
+    await globalThis.testDataSource.query(
+      `DELETE FROM "${WORKSPACE_SCHEMA}"."messageThreadTarget" WHERE "messageThreadId" = $1`,
+      [otherMessage.messageThreadId],
+    );
+    await globalThis.testDataSource.query(
+      `DELETE FROM "${WORKSPACE_SCHEMA}"."messageThread" WHERE id = $1`,
+      [otherMessage.messageThreadId],
+    );
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
+      text: 'Tuesday works',
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(readSendExecutions()).toEqual([
+      expect.objectContaining({
+        threadExternalId: THREAD_EXTERNAL_ID,
+        recipients: [{ handle: CONTACT_HANDLE, displayName: 'Ada Lovelace' }],
+      }),
+    ]);
+  });
+
   it('records nothing when the app fails to send', async () => {
     const { messageChannelId, messageThreadId } = await startConversation({
       connectedAccountId: sendingConnectionId,

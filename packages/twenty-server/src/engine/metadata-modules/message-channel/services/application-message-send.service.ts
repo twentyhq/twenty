@@ -275,23 +275,19 @@ export class ApplicationMessageSendService {
     const conversation =
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const latestMessages = await this.workspaceOrmManager
+          const threadMessages = await this.workspaceOrmManager
             .getRepository<MessageWorkspaceEntity>('message', {
               shouldBypassPermissionChecks: true,
             })
-            .find({
-              where: { messageThreadId },
-              select: { id: true },
-              order: { receivedAt: 'DESC' },
-              take: CONVERSATION_LOOKUP_MESSAGE_LIMIT,
-            });
+            .find({ where: { messageThreadId }, select: { id: true } });
 
-          const messageIds = latestMessages.map((message) => message.id);
+          const threadMessageIds = threadMessages.map((message) => message.id);
 
-          if (!isNonEmptyArray(messageIds)) {
+          if (!isNonEmptyArray(threadMessageIds)) {
             return null;
           }
 
+          // a thread can span channels; another channel's messages must not pick the recipients
           const associations = await this.workspaceOrmManager
             .getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
               'messageChannelMessageAssociation',
@@ -300,10 +296,31 @@ export class ApplicationMessageSendService {
             .find({
               where: {
                 messageChannelId: messageChannel.id,
-                messageId: In(messageIds),
+                messageId: In(threadMessageIds),
               },
               select: { messageId: true, messageThreadExternalId: true },
             });
+
+          if (!isNonEmptyArray(associations)) {
+            return null;
+          }
+
+          const latestMessages = await this.workspaceOrmManager
+            .getRepository<MessageWorkspaceEntity>('message', {
+              shouldBypassPermissionChecks: true,
+            })
+            .find({
+              where: {
+                id: In(
+                  associations.map((association) => association.messageId),
+                ),
+              },
+              select: { id: true },
+              order: { receivedAt: 'DESC' },
+              take: CONVERSATION_LOOKUP_MESSAGE_LIMIT,
+            });
+
+          const messageIds = latestMessages.map((message) => message.id);
 
           const participants = await this.workspaceOrmManager
             .getRepository<MessageParticipantWorkspaceEntity>(
