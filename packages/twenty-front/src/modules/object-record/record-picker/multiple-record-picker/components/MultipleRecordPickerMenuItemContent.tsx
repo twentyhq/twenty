@@ -60,8 +60,6 @@ export const MultipleRecordPickerMenuItemContent = ({
   return (
     <Dropdown.OptionItem
       value={searchRecord.recordId}
-      indicator="checkbox"
-      closeOnSelect={false}
       description={
         showObjectName
           ? capitalize(objectMetadataItem.labelSingular)

@@ -11,6 +11,19 @@ type DropdownContentRendererProps = {
   render?: PopoverPopupProps['render'];
 };
 
+const skipStateAttribute = () => null;
+
+const POPUP_STATE_ATTRIBUTES_ALREADY_IN_PROPS: Record<
+  keyof PopoverPrimitive.Popup.State,
+  typeof skipStateAttribute
+> = {
+  open: skipStateAttribute,
+  side: skipStateAttribute,
+  align: skipStateAttribute,
+  instant: skipStateAttribute,
+  transitionStatus: skipStateAttribute,
+};
+
 export const DropdownContentRenderer = ({
   props,
   state,
@@ -20,6 +33,7 @@ export const DropdownContentRenderer = ({
     defaultTagName: 'div',
     props: { ...props },
     state: { ...state },
+    stateAttributesMapping: POPUP_STATE_ATTRIBUTES_ALREADY_IN_PROPS,
     render,
   });
 

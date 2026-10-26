@@ -25,7 +25,6 @@ export const MorphRelationOneToManyFieldInput = () => {
   return (
     <FieldInputDropdown
       onDismiss={handleSubmit}
-      defaultPage="records"
       width={GenericDropdownContentWidth.ExtraLarge}
       multiple
       shouldSkipPersist

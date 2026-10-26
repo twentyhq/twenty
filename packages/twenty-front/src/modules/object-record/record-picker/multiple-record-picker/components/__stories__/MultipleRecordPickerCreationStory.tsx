@@ -41,7 +41,6 @@ export const MultipleRecordPickerCreationStory = ({
         dropdownId={componentInstanceId}
         type="picker"
         multiple
-        defaultPage="records"
         onOpenChange={handleOpenChange}
       >
         <Dropdown.Trigger render={<Button>Link records</Button>} />

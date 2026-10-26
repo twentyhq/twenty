@@ -174,28 +174,24 @@ export const MultipleRecordPicker = ({
     }
   };
 
-  const handleCreateNewButtonClick = () => {
-    if (isCreatePending) {
-      return;
-    }
-
-    if (creatableObjectMetadataItems.length === 1) {
-      void handleCreate(creatableObjectMetadataItems[0].id);
-      return;
-    }
-  };
+  const hasSingleCreatableObjectMetadataItem =
+    creatableObjectMetadataItems.length === 1;
 
   const createNewButtonSection = isNonEmptyArray(
     creatableObjectMetadataItems,
   ) ? (
     <Dropdown.Section>
       <Dropdown.ActionItem
-        onClick={handleCreateNewButtonClick}
+        onClick={
+          hasSingleCreatableObjectMetadataItem
+            ? () => void handleCreate(creatableObjectMetadataItems[0].id)
+            : undefined
+        }
         closeOnClick={false}
         disabled={isCreatePending}
         startIcon={<IconPlus />}
         page={
-          creatableObjectMetadataItems.length > 1 ? 'create-target' : undefined
+          hasSingleCreatableObjectMetadataItem ? undefined : 'create-target'
         }
       >{t`Add New`}</Dropdown.ActionItem>
     </Dropdown.Section>
@@ -215,7 +211,7 @@ export const MultipleRecordPicker = ({
           }}
         />
       </Dropdown.Page>
-      <Dropdown.Page id="records">
+      <Dropdown.Page id="root">
         <StyledRecordsPage layoutDirection={resolvedLayoutDirection}>
           <MultipleRecordPickerSearchInput />
           <MultipleRecordPickerItemsDisplay onChange={onChange} />

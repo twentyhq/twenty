@@ -14,7 +14,6 @@ type FieldInputDropdownProps<TValue> = {
   onDismiss: () => void;
   multiple?: boolean;
   width?: number;
-  defaultPage?: string;
   shouldSkipPersist?: boolean;
   shouldDismissOnOutsideInput?: boolean;
 };
@@ -25,7 +24,6 @@ export const FieldInputDropdown = <TValue,>({
   onDismiss,
   multiple,
   width,
-  defaultPage,
   shouldSkipPersist = false,
   shouldDismissOnOutsideInput = false,
 }: FieldInputDropdownProps<TValue>) => {
@@ -60,7 +58,6 @@ export const FieldInputDropdown = <TValue,>({
     <Dropdown.Root
       type="picker"
       multiple={multiple}
-      defaultPage={defaultPage}
       open
       onOpenChange={handleOpenChange}
       onInteractOutside={

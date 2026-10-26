@@ -206,7 +206,6 @@ export const FormMultiRecordPicker = ({
               dropdownId={dropdownId}
               type="picker"
               multiple
-              defaultPage="records"
               onOpenChange={(open) => {
                 if (open) {
                   handleOpenDropdown();

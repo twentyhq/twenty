@@ -12,7 +12,6 @@ import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-rec
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
-import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -65,11 +64,6 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = ({
     instanceId: scopeInstanceId,
   });
 
-  const setMultipleRecordPickerSearchFilter = useSetAtomComponentState(
-    multipleRecordPickerSearchFilterComponentState,
-    dropdownId,
-  );
-
   const setMultipleRecordPickerPickableMorphItems = useSetAtomComponentState(
     multipleRecordPickerPickableMorphItemsComponentState,
     dropdownId,
@@ -90,7 +84,6 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = ({
     setMultipleRecordPickerSearchableObjectMetadataItems(
       relationObjectMetadataItems,
     );
-    setMultipleRecordPickerSearchFilter('');
     setMultipleRecordPickerPickableMorphItems(
       recordsWithObjectNameSingular.map((record) => {
         const objectMetadataId = morphRelations.find(
@@ -145,7 +138,6 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = ({
       dropdownId={dropdownId}
       type="picker"
       multiple
-      defaultPage="records"
       onOpenChange={(open) => {
         if (open) {
           handleOpenRelationPickerDropdown();

@@ -109,7 +109,6 @@ export const CalendarEventComposerTargetsInput = ({
       dropdownId={dropdownId}
       type="picker"
       multiple
-      defaultPage="records"
       onOpenChange={(open) => {
         if (open) {
           handleOpenDropdown();

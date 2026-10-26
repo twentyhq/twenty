@@ -32,12 +32,7 @@ export const MultipleRecordPickerPlacementStory = ({
         paddingTop: 'calc(100vh - 160px)',
       }}
     >
-      <DropdownRoot
-        dropdownId={componentInstanceId}
-        type="picker"
-        multiple
-        defaultPage="records"
-      >
+      <DropdownRoot dropdownId={componentInstanceId} type="picker" multiple>
         <Dropdown.Trigger render={<Button>Link records</Button>} />
         <DropdownContent
           side="bottom"

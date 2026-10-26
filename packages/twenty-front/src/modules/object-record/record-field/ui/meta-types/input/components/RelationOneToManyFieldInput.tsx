@@ -133,7 +133,6 @@ export const RelationOneToManyFieldInput = () => {
   return (
     <FieldInputDropdown
       onDismiss={handleSubmit}
-      defaultPage="records"
       multiple
       shouldSkipPersist
       shouldDismissOnOutsideInput

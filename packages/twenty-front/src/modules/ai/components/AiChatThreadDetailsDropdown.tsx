@@ -253,7 +253,6 @@ export const AiChatThreadDetailsDropdown = ({
           dropdownId={recordPickerDropdownId}
           type="picker"
           multiple
-          defaultPage="records"
         >
           <DropdownContent
             ref={recordPickerContentRef}

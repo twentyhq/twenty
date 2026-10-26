@@ -17,7 +17,6 @@ import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-rec
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
-import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -122,11 +121,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const setMultipleRecordPickerSearchFilter = useSetAtomComponentState(
-    multipleRecordPickerSearchFilterComponentState,
-    dropdownId,
-  );
-
   const setMultipleRecordPickerPickableMorphItems = useSetAtomComponentState(
     multipleRecordPickerPickableMorphItemsComponentState,
     dropdownId,
@@ -168,7 +162,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     setMultipleRecordPickerSearchableObjectMetadataItems(
       searchableObjectMetadataItems,
     );
-    setMultipleRecordPickerSearchFilter('');
     setMultipleRecordPickerPickableMorphItems(pickableMorphItems);
 
     openMultipleRecordPicker(dropdownId);
@@ -230,7 +223,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       dropdownId={dropdownId}
       type="picker"
       multiple
-      defaultPage="records"
       onOpenChange={(open) => {
         if (open) {
           handleOpenRelationPickerDropdown();
