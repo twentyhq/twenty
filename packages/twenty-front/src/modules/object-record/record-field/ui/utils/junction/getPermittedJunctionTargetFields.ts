@@ -1,13 +1,15 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getPermittedJunctionTargetFields = ({
+export const getPermittedJunctionTargetFields = <
+  TPermittedField extends Pick<FieldMetadataItem, 'id'>,
+>({
   targetFields,
   permittedFields,
 }: {
   targetFields: Pick<FieldMetadataItem, 'id'>[];
-  permittedFields: FieldMetadataItem[];
-}): FieldMetadataItem[] =>
+  permittedFields: TPermittedField[];
+}): TPermittedField[] =>
   targetFields
     .map((targetField) =>
       permittedFields.find(
