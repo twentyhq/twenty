@@ -33,7 +33,7 @@ import {
   computeStartingAfterParameters,
   computeUpsertParameters,
   computeViewIdParameters,
-} from 'src/engine/core-modules/open-api/utils/parameters.utils';
+} from 'src/engine/core-modules/open-api/utils/parameters.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';

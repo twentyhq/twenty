@@ -589,6 +589,7 @@ type ApplicationMonitoringActivityBucket {
 type ApplicationMonitoringCreditBucket {
   bucketStart: DateTime!
   creditsUsed: Float!
+  operationType: String!
 }
 
 type ApplicationMonitoringFunction {
@@ -2256,7 +2257,6 @@ type FeatureFlag {
 
 enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED
-  IS_APPLICATION_MONITORING_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
