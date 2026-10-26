@@ -56,8 +56,8 @@ function normalizeMaterialSettings(
     ? settings.surface
     : 'solid';
   const defaults = HALFTONE_STUDIO_DEFAULTS.materialBySurface[surface];
-  const hasLegacyEnvironmentPower =
-    typeof settings?.environmentRotation !== 'number';
+  const hasEnvironmentRotation =
+    typeof settings?.environmentRotation === 'number';
 
   return {
     surface,
@@ -80,8 +80,7 @@ function normalizeMaterialSettings(
         ? settings.refraction
         : defaults.refraction,
     environmentPower:
-      !hasLegacyEnvironmentPower &&
-      typeof settings?.environmentPower === 'number'
+      hasEnvironmentRotation && typeof settings?.environmentPower === 'number'
         ? settings.environmentPower
         : defaults.environmentPower,
     environmentRotation:

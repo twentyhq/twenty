@@ -2,8 +2,7 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import type { HalftoneMaterialTexture } from '../../engine/material-texture';
-import { HALFTONE_STUDIO_DEFAULTS } from '../../engine/studio-settings-defaults';
+import { getMaterialSurfaceChange } from '../../engine/get-material-surface-change';
 import type {
   HalftoneMaterialSurface,
   HalftoneStudioSettings,
@@ -12,20 +11,10 @@ import type {
 import { CONTROLS_PANEL_SHELL } from './controls-panel-shell';
 import { CONTROLS_SECTION } from './ControlsSection';
 import { HALFTONE_FORMATTERS } from './formatters';
+import { GlassMaterialControls } from './GlassMaterialControls';
+import { MaterialTextureControls } from './MaterialTextureControls';
 import { SegmentedControl } from './SegmentedControl';
-import { SelectControl } from './SelectControl';
 import { SliderControl } from './SliderControl';
-
-const MATERIAL_TEXTURE_OPTIONS: Array<{
-  label: string;
-  value: HalftoneMaterialTexture;
-}> = [
-  { label: 'None', value: 'none' },
-  { label: 'Smudged', value: 'smudged' },
-  { label: 'Worn', value: 'worn' },
-  { label: 'Hammered', value: 'hammered' },
-  { label: 'Brushed', value: 'brushed' },
-];
 
 const MATERIAL_SURFACE_OPTIONS: Array<{
   label: string;
@@ -49,15 +38,6 @@ type MaterialControlsProps = {
   settings: HalftoneStudioSettings;
 };
 
-function matchesSettings<TSettings extends object>(
-  value: TSettings,
-  target: TSettings,
-) {
-  return (Object.keys(target) as Array<keyof TSettings>).every(
-    (key) => value[key] === target[key],
-  );
-}
-
 export function MaterialControls({
   onAnimationSettingsChange,
   onLightingChange,
@@ -65,28 +45,16 @@ export function MaterialControls({
   settings,
 }: MaterialControlsProps) {
   const handleSurfaceChange = (surface: HalftoneMaterialSurface) => {
-    const currentSurface = settings.material.surface;
+    const surfaceChange = getMaterialSurfaceChange(settings, surface);
 
-    onMaterialChange(HALFTONE_STUDIO_DEFAULTS.materialBySurface[surface]);
+    onMaterialChange(surfaceChange.material);
 
-    if (
-      matchesSettings(
-        settings.lighting,
-        HALFTONE_STUDIO_DEFAULTS.lightingBySurface[currentSurface],
-      )
-    ) {
-      onLightingChange(HALFTONE_STUDIO_DEFAULTS.lightingBySurface[surface]);
+    if (isDefined(surfaceChange.lighting)) {
+      onLightingChange(surfaceChange.lighting);
     }
 
-    if (
-      matchesSettings(
-        settings.animation,
-        HALFTONE_STUDIO_DEFAULTS.animationBySurface[currentSurface],
-      )
-    ) {
-      onAnimationSettingsChange(
-        HALFTONE_STUDIO_DEFAULTS.animationBySurface[surface],
-      );
+    if (isDefined(surfaceChange.animation)) {
+      onAnimationSettingsChange(surfaceChange.animation);
     }
   };
 
@@ -165,76 +133,15 @@ export function MaterialControls({
         >
           Rotation
         </SliderControl>
-        <SelectControl
-          onChange={(event) => {
-            const option = MATERIAL_TEXTURE_OPTIONS.find(
-              (textureOption) => textureOption.value === event.target.value,
-            );
-
-            if (isDefined(option)) {
-              onMaterialChange({ texture: option.value });
-            }
-          }}
-          options={MATERIAL_TEXTURE_OPTIONS}
-          value={settings.material.texture}
-        >
-          Texture
-        </SelectControl>
-        {settings.material.texture !== 'none' ? (
-          <SliderControl
-            max={16}
-            min={1}
-            onChange={(event) =>
-              onMaterialChange({
-                textureTiling: Number(event.target.value),
-              })
-            }
-            step={0.1}
-            value={settings.material.textureTiling}
-            valueLabel={HALFTONE_FORMATTERS.decimal(
-              settings.material.textureTiling,
-              1,
-            )}
-          >
-            Tiling
-          </SliderControl>
-        ) : null}
+        <MaterialTextureControls
+          material={settings.material}
+          onMaterialChange={onMaterialChange}
+        />
         {settings.material.surface === 'glass' ? (
-          <>
-            <SliderControl
-              max={20}
-              min={1.1}
-              onChange={(event) =>
-                onMaterialChange({
-                  thickness: Number(event.target.value),
-                })
-              }
-              step={0.1}
-              value={settings.material.thickness}
-              valueLabel={HALFTONE_FORMATTERS.decimal(
-                settings.material.thickness,
-                0,
-              )}
-            >
-              Thickness
-            </SliderControl>
-            <SliderControl
-              max={3}
-              min={1.1}
-              onChange={(event) =>
-                onMaterialChange({
-                  refraction: Number(event.target.value),
-                })
-              }
-              step={0.01}
-              value={settings.material.refraction}
-              valueLabel={HALFTONE_FORMATTERS.decimal(
-                settings.material.refraction,
-              )}
-            >
-              Refraction
-            </SliderControl>
-          </>
+          <GlassMaterialControls
+            material={settings.material}
+            onMaterialChange={onMaterialChange}
+          />
         ) : null}
       </CONTROLS_PANEL_SHELL.ControlGrid>
     </CONTROLS_SECTION.Section>

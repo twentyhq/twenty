@@ -1,10 +1,10 @@
-import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
+import { typedObjectEntries } from 'twenty-shared/utils';
 
 import { HALFTONE_ENVIRONMENT_DATA_URL } from './environment-data';
 import { HALFTONE_MATERIAL_CONSTANTS } from './material-constants';
 import { HALFTONE_MATERIAL_TEXTURE_DATA_URLS } from './material-texture-data';
-import type { HalftoneTextureImage } from './material-texture-image';
-import { HALFTONE_MATERIAL_TEXTURE_LAYERS } from './material-texture-layers';
+import type { HalftoneMaterialTextureImage } from './material-texture-image';
+import { resolveMaterialTextureSources } from './resolve-material-texture-sources';
 import type { HalftoneMaterialSettings } from './studio-settings-types';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import * as THREE from 'three';
@@ -12,7 +12,7 @@ import * as THREE from 'three';
 export type HalftoneMaterialAssets = {
   environmentTexture: THREE.Texture;
   glassTransmissionScene: THREE.Scene;
-  patternTextures: Partial<Record<HalftoneTextureImage, THREE.Texture>>;
+  imageTextures: Partial<Record<HalftoneMaterialTextureImage, THREE.Texture>>;
 };
 
 // Adapted from MeshTransmissionMaterial in @react-three/drei (MIT): see DREI_LICENSE_NOTICE.
@@ -523,9 +523,9 @@ async function loadEnvironmentTexture(renderer: THREE.WebGLRenderer) {
   return environmentTexture;
 }
 
-async function loadPatternTextures(
+async function loadImageTextures(
   renderer: THREE.WebGLRenderer,
-): Promise<HalftoneMaterialAssets['patternTextures']> {
+): Promise<HalftoneMaterialAssets['imageTextures']> {
   const entries = await Promise.all(
     typedObjectEntries(HALFTONE_MATERIAL_TEXTURE_DATA_URLS).map(
       async ([image, dataUrl]) => {
@@ -548,7 +548,7 @@ async function loadPatternTextures(
 async function createHalftoneMaterialAssets(
   renderer: THREE.WebGLRenderer,
 ): Promise<HalftoneMaterialAssets> {
-  const patternTextures = await loadPatternTextures(renderer).catch(() => ({}));
+  const imageTextures = await loadImageTextures(renderer).catch(() => ({}));
   const environmentTexture = await loadEnvironmentTexture(renderer).catch(() =>
     createEnvironmentTexture(renderer),
   );
@@ -556,7 +556,7 @@ async function createHalftoneMaterialAssets(
   return {
     environmentTexture,
     glassTransmissionScene: createGlassTransmissionScene(),
-    patternTextures,
+    imageTextures,
   };
 }
 
@@ -572,20 +572,19 @@ function applyHalftoneMaterialSettings(
   assets: HalftoneMaterialAssets,
 ) {
   const isGlass = settings.surface === 'glass';
-  const layers =
-    settings.texture === 'none'
-      ? null
-      : HALFTONE_MATERIAL_TEXTURE_LAYERS[settings.texture];
-  const roughnessTexture = isDefined(layers)
-    ? (assets.patternTextures[layers.roughnessImage] ?? null)
-    : null;
-  const bumpTexture =
-    isDefined(layers) && isDefined(layers.bumpImage)
-      ? (assets.patternTextures[layers.bumpImage] ?? null)
-      : null;
+  const textureSources = resolveMaterialTextureSources(
+    settings.texture,
+    assets.imageTextures,
+  );
 
-  roughnessTexture?.repeat.set(settings.textureTiling, settings.textureTiling);
-  bumpTexture?.repeat.set(settings.textureTiling, settings.textureTiling);
+  textureSources.roughness?.repeat.set(
+    settings.textureTiling,
+    settings.textureTiling,
+  );
+  textureSources.bump?.repeat.set(
+    settings.textureTiling,
+    settings.textureTiling,
+  );
 
   material.color.set(settings.color);
   material.roughness = settings.roughness;
@@ -612,10 +611,9 @@ function applyHalftoneMaterialSettings(
     : 0;
   material.ior = isGlass ? settings.refraction : 1.5;
   material.buffer = null;
-  material.roughnessMap = roughnessTexture;
-  material.bumpMap = bumpTexture;
-  material.bumpScale =
-    isDefined(bumpTexture) && isDefined(layers) ? layers.bumpScale : 0;
+  material.roughnessMap = textureSources.roughness;
+  material.bumpMap = textureSources.bump;
+  material.bumpScale = textureSources.bumpScale;
   material.side = THREE.FrontSide;
   material.attenuationColor.set('white');
   material.attenuationDistance = Infinity;
@@ -686,7 +684,7 @@ function renderHalftoneMaterialScene(options: {
 
 function disposeHalftoneMaterialAssets(assets: HalftoneMaterialAssets) {
   assets.environmentTexture.dispose();
-  Object.values(assets.patternTextures).forEach((texture) => texture.dispose());
+  Object.values(assets.imageTextures).forEach((texture) => texture.dispose());
 }
 
 export const HALFTONE_MATERIALS = {

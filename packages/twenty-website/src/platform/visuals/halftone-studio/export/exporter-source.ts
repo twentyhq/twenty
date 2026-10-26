@@ -1,11 +1,9 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { DRACO_DECODER_PATH } from '../engine/draco-decoder-path';
 import { HALFTONE_ENVIRONMENT_DATA_URL } from '../engine/environment-data';
 import { HALFTONE_MATERIAL_CONSTANTS } from '../engine/material-constants';
 import type { HalftoneMaterialTexture } from '../engine/material-texture';
 import { HALFTONE_MATERIAL_TEXTURE_DATA_URLS } from '../engine/material-texture-data';
-import { HALFTONE_MATERIAL_TEXTURE_LAYERS } from '../engine/material-texture-layers';
+import { resolveMaterialTextureSources } from '../engine/resolve-material-texture-sources';
 import type { HalftoneGeometrySpec } from '../engine/studio-settings-types';
 
 import type { ExportedShapeDescriptor } from './exporter-types';
@@ -1026,38 +1024,21 @@ function createImportedGeometryRuntimeSource(shape: ExportedShapeDescriptor) {
   return createImportedRuntimeSource(loader);
 }
 
-function createMaterialRuntimeSource(texture: HalftoneMaterialTexture) {
-  const layers =
-    texture === 'none' ? null : HALFTONE_MATERIAL_TEXTURE_LAYERS[texture];
-  const roughnessDataUrl = isDefined(layers)
-    ? HALFTONE_MATERIAL_TEXTURE_DATA_URLS[layers.roughnessImage]
-    : null;
-  const bumpDataUrl =
-    isDefined(layers) && isDefined(layers.bumpImage)
-      ? HALFTONE_MATERIAL_TEXTURE_DATA_URLS[layers.bumpImage]
-      : null;
-
-  return String.raw`
-/*!
-${DREI_LICENSE_NOTICE}
-*/
+const MATERIAL_RUNTIME_SOURCE = String.raw`
 const ENVIRONMENT_DATA_URL = ${JSON.stringify(HALFTONE_ENVIRONMENT_DATA_URL)};
-const PATTERN_ROUGHNESS_DATA_URL = ${JSON.stringify(roughnessDataUrl)};
-const PATTERN_BUMP_DATA_URL = ${JSON.stringify(bumpDataUrl)};
-const PATTERN_BUMP_SCALE = ${layers?.bumpScale ?? 0};
 const GLASS_THICKNESS_TO_WORLD_UNITS = ${HALFTONE_MATERIAL_CONSTANTS.glassThicknessToWorldUnits};
 const GLASS_BACKSIDE_ENVIRONMENT_INTENSITY = ${HALFTONE_MATERIAL_CONSTANTS.glassBacksideEnvironmentIntensity};
 const GLASS_TRANSMISSION_BACKGROUND = ${HALFTONE_MATERIAL_CONSTANTS.glassTransmissionBackground};
 const MAX_TEXTURE_ANISOTROPY = 8;
 const HALFTONE_TRANSMISSION_SHADER_PREFIX = ${JSON.stringify(
-    HALFTONE_TRANSMISSION_SHADER_PREFIX,
-  )};
+  HALFTONE_TRANSMISSION_SHADER_PREFIX,
+)};
 const HALFTONE_TRANSMISSION_PARS_FRAGMENT = ${JSON.stringify(
-    HALFTONE_TRANSMISSION_PARS_FRAGMENT,
-  )};
+  HALFTONE_TRANSMISSION_PARS_FRAGMENT,
+)};
 const HALFTONE_TRANSMISSION_FRAGMENT_TEMPLATE = ${JSON.stringify(
-    HALFTONE_TRANSMISSION_FRAGMENT_TEMPLATE,
-  )};
+  HALFTONE_TRANSMISSION_FRAGMENT_TEMPLATE,
+)};
 
 class HalftoneTransmissionMaterial extends THREE.MeshPhysicalMaterial {
   constructor(samples = 10) {
@@ -1188,7 +1169,7 @@ async function loadEnvironmentTexture(renderer) {
   return environmentTexture;
 }
 
-async function loadPatternTexture(url, renderer) {
+async function loadImageTexture(url, renderer) {
   if (!url) {
     return null;
   }
@@ -1202,8 +1183,8 @@ async function loadPatternTexture(url, renderer) {
 
 async function createHalftoneMaterialAssets(renderer) {
   const [roughnessTexture, bumpTexture] = await Promise.all([
-    loadPatternTexture(PATTERN_ROUGHNESS_DATA_URL, renderer).catch(() => null),
-    loadPatternTexture(PATTERN_BUMP_DATA_URL, renderer).catch(() => null),
+    loadImageTexture(ROUGHNESS_IMAGE_DATA_URL, renderer).catch(() => null),
+    loadImageTexture(BUMP_IMAGE_DATA_URL, renderer).catch(() => null),
   ]);
   const environmentTexture = await loadEnvironmentTexture(renderer).catch(() =>
     createEnvironmentTexture(renderer),
@@ -1260,7 +1241,7 @@ function applyHalftoneMaterialSettings(material, materialSettings, materialAsset
   material.buffer = null;
   material.roughnessMap = roughnessTexture;
   material.bumpMap = bumpTexture;
-  material.bumpScale = bumpTexture ? PATTERN_BUMP_SCALE : 0;
+  material.bumpScale = bumpTexture ? BUMP_SCALE : 0;
   material.side = THREE.FrontSide;
   material.attenuationColor.set('white');
   material.attenuationDistance = Infinity;
@@ -1319,6 +1300,21 @@ function disposeHalftoneMaterialAssets(materialAssets) {
   materialAssets.bumpTexture?.dispose();
 }
 `;
+
+function createMaterialRuntimeSource(texture: HalftoneMaterialTexture) {
+  const textureSources = resolveMaterialTextureSources(
+    texture,
+    HALFTONE_MATERIAL_TEXTURE_DATA_URLS,
+  );
+
+  return `
+/*!
+${DREI_LICENSE_NOTICE}
+*/
+const ROUGHNESS_IMAGE_DATA_URL = ${JSON.stringify(textureSources.roughness)};
+const BUMP_IMAGE_DATA_URL = ${JSON.stringify(textureSources.bump)};
+const BUMP_SCALE = ${textureSources.bumpScale};
+${MATERIAL_RUNTIME_SOURCE}`;
 }
 
 export const HALFTONE_EXPORT_SOURCE = {
