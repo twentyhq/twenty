@@ -60,19 +60,7 @@ export const NavigationMenuItemAddSectionButton = ({
           }
           groups={[
             {
-              id: 'blank',
-              options: [
-                {
-                  id: 'blank',
-                  label: t`Blank section`,
-                  Icon: IconPlus,
-                  onClick: () => createSection({ parentId, template: 'blank' }),
-                },
-              ],
-            },
-            {
               id: 'ai',
-              label: t`AI`,
               options: hasAiPermission
                 ? AI_SECTION_OPTIONS.map(({ type, Icon }) => {
                     const isAlreadyInSidebar = sections.some(
@@ -89,6 +77,17 @@ export const NavigationMenuItemAddSectionButton = ({
                     };
                   })
                 : [],
+            },
+            {
+              id: 'blank',
+              options: [
+                {
+                  id: 'blank',
+                  label: t`Blank section`,
+                  Icon: IconPlus,
+                  onClick: () => createSection({ parentId, template: 'blank' }),
+                },
+              ],
             },
           ]}
         />
