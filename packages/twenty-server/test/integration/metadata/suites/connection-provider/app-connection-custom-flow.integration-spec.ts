@@ -34,7 +34,7 @@ const AUTHORIZE_SOURCE = `export const handler = ({ callbackUrl }) => ({
   authorizationUrl: ${JSON.stringify(HOSTED_AUTH_ORIGIN)} + '/connect?notify=' + encodeURIComponent(callbackUrl),
 });`;
 
-// The browser return carries no account; the notification posts it, signed when it has an x-signature header.
+// The browser return carries no account; the notification posts it.
 const CALLBACK_SOURCE = `import { createHmac } from 'node:crypto';
 export const handler = ({ httpMethod, headers, body, rawBody }) => {
   if (httpMethod === 'GET') return null;
