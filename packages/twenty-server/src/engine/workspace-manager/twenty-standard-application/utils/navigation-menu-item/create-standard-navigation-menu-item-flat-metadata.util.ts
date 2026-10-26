@@ -84,6 +84,7 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
     name: null,
     link: null,
     icon: null,
+    visibleItemLimit: null,
     color:
       STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS[navigationMenuItemName] ??
       null,

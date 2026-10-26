@@ -17,7 +17,9 @@ import { WorkspaceSectionListEditModeFallback } from '@/object-metadata/componen
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { NavigationDrawerSectionSeeMoreItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionSeeMoreItem';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { useNavigationSectionVisibleItems } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSectionVisibleItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
@@ -38,6 +40,7 @@ type WorkspaceSectionContainerProps = {
   navigationSectionId?: string;
   isTitleHidden?: boolean;
   rightIcon?: React.ReactNode;
+  visibleItemLimit?: number | null;
   selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   onActiveObjectMetadataItemClick?: (
@@ -53,6 +56,7 @@ export const WorkspaceSectionContainer = ({
   navigationSectionId = doNotTranslate('Workspace'),
   isTitleHidden = false,
   rightIcon,
+  visibleItemLimit,
   selectedNavigationMenuItemId = null,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
@@ -89,6 +93,17 @@ export const WorkspaceSectionContainer = ({
     });
 
   const filteredItems = filteredTopLevelItems;
+
+  const {
+    visibleItems,
+    exceedsVisibleItemLimit,
+    isShowingAllItems,
+    toggleShowingAllItems,
+  } = useNavigationSectionVisibleItems({
+    navigationSectionId,
+    items: filteredItems,
+    visibleItemLimit,
+  });
 
   const workspaceOrphanItemsForSection = isLayoutCustomizationModeEnabled
     ? flatItems
@@ -140,9 +155,17 @@ export const WorkspaceSectionContainer = ({
     </Suspense>
   ) : (
     <WorkspaceSectionListReadOnly
-      filteredItems={filteredItems}
+      filteredItems={visibleItems}
       folderChildrenById={filteredFolderChildrenById}
       onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+      footer={
+        exceedsVisibleItemLimit && (
+          <NavigationDrawerSectionSeeMoreItem
+            isShowingAllItems={isShowingAllItems}
+            onClick={toggleShowingAllItems}
+          />
+        )
+      }
     />
   );
 

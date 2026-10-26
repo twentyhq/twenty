@@ -16,6 +16,7 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemDto = (
   link: flatNavigationMenuItem.link ?? undefined,
   icon: flatNavigationMenuItem.icon ?? undefined,
   color: flatNavigationMenuItem.color ?? undefined,
+  visibleItemLimit: flatNavigationMenuItem.visibleItemLimit ?? undefined,
   pageLayoutId: flatNavigationMenuItem.pageLayoutId ?? undefined,
   agentChatChannelId: flatNavigationMenuItem.agentChatChannelId ?? undefined,
   position: flatNavigationMenuItem.position,

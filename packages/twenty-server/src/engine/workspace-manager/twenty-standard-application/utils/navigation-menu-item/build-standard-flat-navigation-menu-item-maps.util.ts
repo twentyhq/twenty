@@ -194,6 +194,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
           folderUniversalIdentifier:
             chatsTabSectionDefinition.folderUniversalIdentifier,
           position: chatsTabSectionDefinition.position,
+          visibleItemLimit: chatsTabSectionDefinition.visibleItemLimit,
           navigationMenuItemId: v4(),
           workspaceId,
           twentyStandardApplicationId,

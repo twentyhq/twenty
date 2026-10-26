@@ -6,6 +6,7 @@ export type NavigationMenuItemManifest = SyncableEntityOptions & {
   name?: string;
   icon?: string;
   color?: string;
+  visibleItemLimit?: number;
   position: number;
   viewUniversalIdentifier?: string;
   link?: string;

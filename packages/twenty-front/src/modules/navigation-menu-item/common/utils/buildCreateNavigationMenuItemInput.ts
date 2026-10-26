@@ -58,5 +58,9 @@ export const buildCreateNavigationMenuItemInput = (
     input.color = draftItem.color;
   }
 
+  if (isDefined(draftItem.visibleItemLimit)) {
+    input.visibleItemLimit = draftItem.visibleItemLimit;
+  }
+
   return input;
 };

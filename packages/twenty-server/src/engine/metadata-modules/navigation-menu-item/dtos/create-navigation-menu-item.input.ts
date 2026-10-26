@@ -1,11 +1,13 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 
 import {
   IsEnum,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
+  Min,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -61,6 +63,12 @@ export class CreateNavigationMenuItemInput {
   @IsString()
   @Field(() => String, { nullable: true })
   color?: string | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Field(() => Int, { nullable: true })
+  visibleItemLimit?: number | null;
 
   @IsUUID()
   @IsOptional()

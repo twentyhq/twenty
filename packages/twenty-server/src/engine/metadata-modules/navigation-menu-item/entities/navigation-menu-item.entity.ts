@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 
 import { ADD_AGENT_CHAT_CHANNEL_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/add-agent-chat-channel-navigation-menu-item-upgrade-command-name.constant';
+import { ADD_VISIBLE_ITEM_LIMIT_TO_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-52/add-visible-item-limit-to-navigation-menu-item-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
@@ -128,6 +129,13 @@ export class NavigationMenuItemEntity
 
   @Column({ nullable: true, type: 'text' })
   color: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_VISIBLE_ITEM_LIMIT_TO_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'integer' })
+  visibleItemLimit: number | null;
 
   @ManyToOne(() => NavigationMenuItemEntity, {
     onDelete: 'CASCADE',

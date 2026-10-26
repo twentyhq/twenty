@@ -258,6 +258,7 @@ import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/datab
 import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792686749823-add-agent-chat-channel-navigation-menu-item';
 import { AddParticipantHandleFieldToMessageChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1792907887530-add-participant-handle-field-to-message-channel';
 import { AddTabAndSectionNavigationMenuItemTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793025684648-add-tab-and-section-navigation-menu-item-types';
+import { AddVisibleItemLimitToNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793029099068-add-visible-item-limit-to-navigation-menu-item';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -518,4 +519,5 @@ export const INSTANCE_COMMANDS = [
   AddAgentChatChannelNavigationMenuItemFastInstanceCommand,
   AddParticipantHandleFieldToMessageChannelFastInstanceCommand,
   AddTabAndSectionNavigationMenuItemTypesFastInstanceCommand,
+  AddVisibleItemLimitToNavigationMenuItemFastInstanceCommand,
 ];

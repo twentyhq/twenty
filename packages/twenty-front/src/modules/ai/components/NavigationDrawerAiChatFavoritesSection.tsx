@@ -8,6 +8,8 @@ import { agentChatAccessibleChannelsSelector } from '@/ai/states/selectors/agent
 import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
+import { NavigationDrawerSectionSeeMoreItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionSeeMoreItem';
+import { useNavigationSectionVisibleItems } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSectionVisibleItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   type AgentChatChannel,
@@ -15,6 +17,10 @@ import {
 } from '~/generated-metadata/graphql';
 
 const AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
+
+type FavoriteItem =
+  | { type: 'channel'; channel: AgentChatChannel }
+  | { type: 'thread'; thread: AgentChatThreadListItem };
 
 type NavigationDrawerAiChatFavoritesSectionProps = {
   channels: AgentChatChannel[];
@@ -25,6 +31,7 @@ type NavigationDrawerAiChatFavoritesSectionProps = {
   rightIcon?: ReactNode;
   alwaysShowRightIcon?: boolean;
   isShownWhenEmpty?: boolean;
+  visibleItemLimit?: number | null;
 };
 
 export const NavigationDrawerAiChatFavoritesSection = ({
@@ -36,6 +43,7 @@ export const NavigationDrawerAiChatFavoritesSection = ({
   rightIcon,
   alwaysShowRightIcon,
   isShownWhenEmpty = false,
+  visibleItemLimit,
 }: NavigationDrawerAiChatFavoritesSectionProps) => {
   const { t } = useLingui();
   const agentChatAccessibleChannels = useAtomStateValue(
@@ -47,6 +55,19 @@ export const NavigationDrawerAiChatFavoritesSection = ({
   const canManageChannels = useHasPermissionFlag(
     PermissionFlagType.AI_SETTINGS,
   );
+  const {
+    visibleItems,
+    exceedsVisibleItemLimit,
+    isShowingAllItems,
+    toggleShowingAllItems,
+  } = useNavigationSectionVisibleItems<FavoriteItem>({
+    navigationSectionId: AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID,
+    items: [
+      ...channels.map((channel) => ({ type: 'channel' as const, channel })),
+      ...threads.map((thread) => ({ type: 'thread' as const, thread })),
+    ],
+    visibleItemLimit,
+  });
 
   if (!isShownWhenEmpty && channels.length === 0 && threads.length === 0) {
     return null;
@@ -59,25 +80,32 @@ export const NavigationDrawerAiChatFavoritesSection = ({
       rightIcon={rightIcon}
       alwaysShowRightIcon={alwaysShowRightIcon}
     >
-      {channels.map((channel) => (
-        <NavigationDrawerAiChatChannelItem
-          key={channel.id}
-          channel={channel}
-          summary={agentChatChannelSummaries[channel.id]}
-          destinationChannels={agentChatAccessibleChannels.filter(
-            ({ id }) => id !== channel.id,
-          )}
-          canManage={canManageChannels}
+      {visibleItems.map((favoriteItem) =>
+        favoriteItem.type === 'channel' ? (
+          <NavigationDrawerAiChatChannelItem
+            key={favoriteItem.channel.id}
+            channel={favoriteItem.channel}
+            summary={agentChatChannelSummaries[favoriteItem.channel.id]}
+            destinationChannels={agentChatAccessibleChannels.filter(
+              ({ id }) => id !== favoriteItem.channel.id,
+            )}
+            canManage={canManageChannels}
+          />
+        ) : (
+          <NavigationDrawerAiChatThreadItem
+            key={favoriteItem.thread.id}
+            thread={favoriteItem.thread}
+            isActive={currentThreadId === favoriteItem.thread.id}
+            onClick={onThreadClick}
+          />
+        ),
+      )}
+      {exceedsVisibleItemLimit && (
+        <NavigationDrawerSectionSeeMoreItem
+          isShowingAllItems={isShowingAllItems}
+          onClick={toggleShowingAllItems}
         />
-      ))}
-      {threads.map((thread) => (
-        <NavigationDrawerAiChatThreadItem
-          key={thread.id}
-          thread={thread}
-          isActive={currentThreadId === thread.id}
-          onClick={onThreadClick}
-        />
-      ))}
+      )}
     </CollapsibleNavigationDrawerSection>
   );
 };

@@ -1,8 +1,12 @@
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import {
   IconChevronDown,
   IconChevronUp,
+  IconEye,
   IconFolderSymlink,
   IconHome,
   IconTrash,
@@ -10,10 +14,12 @@ import {
 } from 'twenty-ui/icon';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT_OPTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimitOptions';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
 import { NavigationMenuItemContainerNameEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerNameEditor';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 
@@ -34,14 +40,24 @@ export const NavigationMenuItemSectionMenuContent = ({
   const tabs = useWorkspaceNavigationMenuTabs();
   const { getSortedSiblings, moveUp, moveDown, moveToFolder, remove } =
     useNavigationMenuItemMoveRemove('workspace');
+  const { updateItem } = useNavigationMenuItemEditController('workspace');
   const siblings = getSortedSiblings(section.id) ?? [];
   const index = siblings.findIndex((sibling) => sibling.id === section.id);
   const parentId = section.folderId ?? null;
+
+  const isVisibleItemLimitEditable =
+    section.type !== NavigationMenuItemType.AI_CHAT_TRIAGE;
+  const visibleItemLimit = section.visibleItemLimit ?? null;
 
   const run = (action: () => Promise<void>) => {
     void action();
     onClose();
   };
+
+  const getVisibleItemLimitLabel = (limit: number | null) =>
+    isDefined(limit)
+      ? plural(limit, { one: '# item', other: '# items' })
+      : t`All items`;
 
   const actions: NavigationMenuItemOption[] = [
     {
@@ -101,12 +117,54 @@ export const NavigationMenuItemSectionMenuContent = ({
           defaultName={defaultName}
         />
         <Dropdown.Separator />
+        {isVisibleItemLimitEditable && (
+          <>
+            <Dropdown.Section>
+              <NavigationMenuItemSelectableItem
+                item={{
+                  id: 'visible-item-limit',
+                  label: t`Show`,
+                  Icon: IconEye,
+                  contextualText: getVisibleItemLimitLabel(visibleItemLimit),
+                  hasSubMenu: true,
+                  onClick: () => goToPage('visible-item-limit'),
+                }}
+              />
+            </Dropdown.Section>
+            <Dropdown.Separator />
+          </>
+        )}
         <Dropdown.Section>
           {actions.map((option) => (
             <NavigationMenuItemSelectableItem key={option.id} item={option} />
           ))}
         </Dropdown.Section>
       </Dropdown.Page>
+      {isVisibleItemLimitEditable && (
+        <Dropdown.Page id="visible-item-limit">
+          <Dropdown.Back>{t`Show`}</Dropdown.Back>
+          <Dropdown.Section scrollable>
+            {[...NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT_OPTIONS, null].map(
+              (visibleItemLimitOption) => (
+                <Dropdown.OptionItem
+                  key={visibleItemLimitOption ?? 'all'}
+                  selected={visibleItemLimitOption === visibleItemLimit}
+                  indicator="check"
+                  onSelect={() =>
+                    run(() =>
+                      updateItem(section.id, {
+                        visibleItemLimit: visibleItemLimitOption,
+                      }),
+                    )
+                  }
+                >
+                  {getVisibleItemLimitLabel(visibleItemLimitOption)}
+                </Dropdown.OptionItem>
+              ),
+            )}
+          </Dropdown.Section>
+        </Dropdown.Page>
+      )}
       <Dropdown.Page id="move">
         <Dropdown.Back>{t`Move to tab`}</Dropdown.Back>
         <Dropdown.Section scrollable>

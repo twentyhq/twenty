@@ -16,6 +16,8 @@ import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerSectionSeeMoreItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionSeeMoreItem';
+import { useNavigationSectionVisibleItems } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSectionVisibleItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type NavigationMenuItemAgentsSectionProps = {
@@ -38,14 +40,25 @@ export const NavigationMenuItemAgentsSection = ({
     fetchPolicy: 'cache-and-network',
     skip: !hasAiPermission,
   });
+  const navigationSectionId = `navigation-menu-section-${section.id}`;
+  const agents = (data?.findManyAgents ?? [])
+    .filter((agent) => !agent.isSystem)
+    .sort((agentA, agentB) => agentA.label.localeCompare(agentB.label));
+  const {
+    visibleItems: visibleAgents,
+    exceedsVisibleItemLimit,
+    isShowingAllItems,
+    toggleShowingAllItems,
+  } = useNavigationSectionVisibleItems({
+    navigationSectionId,
+    items: agents,
+    visibleItemLimit: section.visibleItemLimit,
+  });
 
   if (!hasAiPermission) {
     return null;
   }
 
-  const agents = (data?.findManyAgents ?? [])
-    .filter((agent) => !agent.isSystem)
-    .sort((agentA, agentB) => agentA.label.localeCompare(agentB.label));
   const isEditable = isLayoutCustomizationModeEnabled && !isMobile;
 
   if (agents.length === 0 && !isEditable) {
@@ -56,7 +69,7 @@ export const NavigationMenuItemAgentsSection = ({
 
   return (
     <CollapsibleNavigationDrawerSection
-      sectionId={`navigation-menu-section-${section.id}`}
+      sectionId={navigationSectionId}
       label={section.name ?? defaultLabel}
       rightIcon={
         isEditable ? (
@@ -68,7 +81,7 @@ export const NavigationMenuItemAgentsSection = ({
       }
       alwaysShowRightIcon={isEditable}
     >
-      {agents.map((agent) => {
+      {visibleAgents.map((agent) => {
         const agentLink = getCoreAgentLink(agent.id);
 
         return (
@@ -84,6 +97,12 @@ export const NavigationMenuItemAgentsSection = ({
           />
         );
       })}
+      {exceedsVisibleItemLimit && (
+        <NavigationDrawerSectionSeeMoreItem
+          isShowingAllItems={isShowingAllItems}
+          onClick={toggleShowingAllItems}
+        />
+      )}
     </CollapsibleNavigationDrawerSection>
   );
 };

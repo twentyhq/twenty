@@ -15,7 +15,9 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerSectionSeeMoreItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionSeeMoreItem';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { useNavigationSectionVisibleItems } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSectionVisibleItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -25,12 +27,14 @@ type NavigationDrawerAiChatChannelsSectionProps = {
   label?: string;
   rightIcon?: ReactNode;
   alwaysShowRightIcon?: boolean;
+  visibleItemLimit?: number | null;
 };
 
 export const NavigationDrawerAiChatChannelsSection = ({
   label,
   rightIcon,
   alwaysShowRightIcon,
+  visibleItemLimit,
 }: NavigationDrawerAiChatChannelsSectionProps = {}) => {
   const { t } = useLingui();
   const agentChatChannels = useAtomStateValue(agentChatChannelsState);
@@ -50,14 +54,24 @@ export const NavigationDrawerAiChatChannelsSection = ({
   const { openAgentChatChannel } = useOpenAgentChatChannel();
   const [newChannelName, setNewChannelName] = useState<string | null>(null);
 
+  // Listed only for who manages channels, so they keep a way to set them up
+  const inaccessibleChannels = (agentChatChannels ?? []).filter(
+    ({ isAccessible }) => !isAccessible,
+  );
+  const {
+    visibleItems: visibleChannels,
+    exceedsVisibleItemLimit,
+    isShowingAllItems,
+    toggleShowingAllItems,
+  } = useNavigationSectionVisibleItems({
+    navigationSectionId: AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID,
+    items: [...agentChatAccessibleChannels, ...inaccessibleChannels],
+    visibleItemLimit,
+  });
+
   if (!isDefined(agentChatChannels)) {
     return null;
   }
-
-  // Listed only for who manages channels, so they keep a way to set them up
-  const inaccessibleChannels = agentChatChannels.filter(
-    ({ isAccessible }) => !isAccessible,
-  );
 
   const startCreate = () => {
     openNavigationSection();
@@ -100,26 +114,27 @@ export const NavigationDrawerAiChatChannelsSection = ({
         ) : undefined)
       }
     >
-      {agentChatAccessibleChannels.map((channel) => (
+      {visibleChannels.map((channel) => (
         <NavigationDrawerAiChatChannelItem
           key={channel.id}
           channel={channel}
-          summary={agentChatChannelSummaries[channel.id]}
+          summary={
+            channel.isAccessible
+              ? agentChatChannelSummaries[channel.id]
+              : undefined
+          }
           destinationChannels={agentChatAccessibleChannels.filter(
             ({ id }) => id !== channel.id,
           )}
           canManage={canManageChannels}
         />
       ))}
-      {inaccessibleChannels.map((channel) => (
-        <NavigationDrawerAiChatChannelItem
-          key={channel.id}
-          channel={channel}
-          summary={undefined}
-          destinationChannels={agentChatAccessibleChannels}
-          canManage={canManageChannels}
+      {exceedsVisibleItemLimit && (
+        <NavigationDrawerSectionSeeMoreItem
+          isShowingAllItems={isShowingAllItems}
+          onClick={toggleShowingAllItems}
         />
-      ))}
+      )}
       {isDefined(newChannelName) ? (
         <NavigationDrawerInput
           Icon={IconHash}

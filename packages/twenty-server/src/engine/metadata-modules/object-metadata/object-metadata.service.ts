@@ -686,6 +686,7 @@ export class ObjectMetadataService {
       name: null,
       link: null,
       icon: null,
+      visibleItemLimit: null,
       color: null,
       position: nextPosition,
       workspaceId,

@@ -9,6 +9,7 @@ import { NavigationDrawerAiChatChannelsSection } from '@/ai/components/Navigatio
 import { NavigationDrawerAiChatFavoritesSection } from '@/ai/components/NavigationDrawerAiChatFavoritesSection';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
+import { AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT } from '@/ai/constants/AiChatInboxRecentThreadsMaxCount';
 import { AI_CHAT_RECENTS_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatRecentsNavigationSectionId';
 import { useAiChatSidebarThreads } from '@/ai/hooks/useAiChatSidebarThreads';
 
@@ -70,7 +71,14 @@ export const NavigationDrawerAiChatContent = () => {
             <NavigationDrawerAiChatThreadSection
               sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
               title={t`Recent`}
-              threads={recentThreads}
+              threads={
+                isAiChatInboxEnabled
+                  ? recentThreads.slice(
+                      0,
+                      AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT,
+                    )
+                  : recentThreads
+              }
               currentThreadId={currentAiChatThread}
               onThreadClick={handleThreadClick}
             />

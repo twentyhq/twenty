@@ -2,6 +2,8 @@ import { type ReactNode } from 'react';
 
 import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
+import { NavigationDrawerSectionSeeMoreItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionSeeMoreItem';
+import { useNavigationSectionVisibleItems } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSectionVisibleItems';
 import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
 
 export type NavigationDrawerAiChatThreadSectionProps = {
@@ -12,6 +14,8 @@ export type NavigationDrawerAiChatThreadSectionProps = {
   onThreadClick: (thread: AgentChatThreadListItem) => void;
   rightIcon?: ReactNode;
   alwaysShowRightIcon?: boolean;
+  visibleItemLimit?: number | null;
+  fetchMoreTrigger?: ReactNode;
 };
 
 export const NavigationDrawerAiChatThreadSection = ({
@@ -22,7 +26,20 @@ export const NavigationDrawerAiChatThreadSection = ({
   onThreadClick,
   rightIcon,
   alwaysShowRightIcon,
+  visibleItemLimit,
+  fetchMoreTrigger,
 }: NavigationDrawerAiChatThreadSectionProps) => {
+  const {
+    visibleItems,
+    exceedsVisibleItemLimit,
+    isShowingAllItems,
+    toggleShowingAllItems,
+  } = useNavigationSectionVisibleItems({
+    navigationSectionId: sectionId,
+    items: threads,
+    visibleItemLimit,
+  });
+
   return (
     <CollapsibleNavigationDrawerSection
       sectionId={sectionId}
@@ -30,7 +47,7 @@ export const NavigationDrawerAiChatThreadSection = ({
       rightIcon={rightIcon}
       alwaysShowRightIcon={alwaysShowRightIcon}
     >
-      {threads.map((thread) => (
+      {visibleItems.map((thread) => (
         <NavigationDrawerAiChatThreadItem
           key={thread.id}
           thread={thread}
@@ -38,6 +55,13 @@ export const NavigationDrawerAiChatThreadSection = ({
           onClick={onThreadClick}
         />
       ))}
+      {(!exceedsVisibleItemLimit || isShowingAllItems) && fetchMoreTrigger}
+      {exceedsVisibleItemLimit && (
+        <NavigationDrawerSectionSeeMoreItem
+          isShowingAllItems={isShowingAllItems}
+          onClick={toggleShowingAllItems}
+        />
+      )}
     </CollapsibleNavigationDrawerSection>
   );
 };

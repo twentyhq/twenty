@@ -42,6 +42,7 @@ export default defineNavigationMenuItem({
 - `position` controls ordering in the sidebar.
 - The enum also contains `NavigationMenuItemType.RECORD`, used internally for user-created record favorites, and `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, used for chat channels pinned to favorites. Neither is usable from an app manifest (there is no field to reference a record or a channel).
 - `icon` and `color` are optional and customize how the entry looks.
+- `visibleItemLimit` is optional and only applies to sections: how many entries the section lists before a **See more** row. Leave it out to list them all.
 - `folderUniversalIdentifier` is also available on any item to nest it inside a `FOLDER`-type parent.
 - `twenty app pull` writes your navigation menu items back as `defineNavigationMenuItem()` files. An item a workspace member added to their own sidebar, and one pinned to a record, belong to that workspace rather than to your app and are reported instead; see [what pull does not write](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 

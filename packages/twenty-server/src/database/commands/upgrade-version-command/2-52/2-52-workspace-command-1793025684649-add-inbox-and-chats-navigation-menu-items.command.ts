@@ -95,6 +95,7 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
       folderId,
       folderUniversalIdentifier,
       position,
+      visibleItemLimit,
     }: Pick<
       FlatNavigationMenuItem,
       | 'id'
@@ -105,6 +106,7 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
       | 'folderId'
       | 'folderUniversalIdentifier'
       | 'position'
+      | 'visibleItemLimit'
     >): FlatNavigationMenuItem => ({
       id,
       type,
@@ -129,6 +131,7 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
       link: null,
       icon,
       color: null,
+      visibleItemLimit,
       position,
       createdAt: now,
       updatedAt: now,
@@ -146,6 +149,7 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
         folderId: null,
         folderUniversalIdentifier: null,
         position: inboxSection.position,
+        visibleItemLimit: null,
       }),
       buildFlatNavigationMenuItem({
         id: chatsTabId,
@@ -156,6 +160,7 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
         folderId: null,
         folderUniversalIdentifier: null,
         position: chatsTab.position,
+        visibleItemLimit: null,
       }),
       ...CHATS_TAB_SECTION_DEFINITIONS.map((chatsTabSection) =>
         buildFlatNavigationMenuItem({
@@ -167,6 +172,7 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
           folderId: chatsTabId,
           folderUniversalIdentifier: chatsTabSection.folderUniversalIdentifier,
           position: chatsTabSection.position,
+          visibleItemLimit: chatsTabSection.visibleItemLimit,
         }),
       ),
     ];

@@ -100,6 +100,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       link: createNavigationMenuItemInput.link ?? null,
       icon: createNavigationMenuItemInput.icon ?? null,
       color: createNavigationMenuItemInput.color ?? null,
+      visibleItemLimit: createNavigationMenuItemInput.visibleItemLimit ?? null,
       position,
       workspaceId,
       applicationId: flatApplication.id,

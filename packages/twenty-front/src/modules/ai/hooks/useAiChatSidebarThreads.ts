@@ -1,4 +1,3 @@
-import { AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT } from '@/ai/constants/AiChatInboxRecentThreadsMaxCount';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -31,12 +30,7 @@ export const useAiChatSidebarThreads = () => {
   const favoriteThreadIds = new Set(
     agentChatFavoriteThreads.map(({ id }) => id),
   );
-  const nonFavoriteThreads = threads.filter(
-    ({ id }) => !favoriteThreadIds.has(id),
-  );
-  const recentThreads = isAiChatInboxEnabled
-    ? nonFavoriteThreads.slice(0, AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT)
-    : nonFavoriteThreads;
+  const recentThreads = threads.filter(({ id }) => !favoriteThreadIds.has(id));
 
   return {
     isAiChatInboxEnabled,

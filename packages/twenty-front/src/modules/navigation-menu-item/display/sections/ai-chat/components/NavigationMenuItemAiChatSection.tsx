@@ -87,6 +87,7 @@ export const NavigationMenuItemAiChatSection = ({
           label={label}
           rightIcon={sectionMenu}
           alwaysShowRightIcon={isEditable ? true : undefined}
+          visibleItemLimit={section.visibleItemLimit}
         />
       ) : (
         emptyEditableSection
@@ -102,6 +103,7 @@ export const NavigationMenuItemAiChatSection = ({
           rightIcon={sectionMenu}
           alwaysShowRightIcon={isEditable}
           isShownWhenEmpty={isEditable}
+          visibleItemLimit={section.visibleItemLimit}
         />
       );
     default:
@@ -114,18 +116,17 @@ export const NavigationMenuItemAiChatSection = ({
       }
 
       return (
-        <>
-          <NavigationDrawerAiChatThreadSection
-            sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
-            title={label}
-            threads={recentThreads}
-            currentThreadId={currentAiChatThread}
-            onThreadClick={handleThreadClick}
-            rightIcon={sectionMenu}
-            alwaysShowRightIcon={isEditable}
-          />
-          {!isAiChatInboxEnabled && <AgentChatThreadsFetchMoreTrigger />}
-        </>
+        <NavigationDrawerAiChatThreadSection
+          sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
+          title={label}
+          threads={recentThreads}
+          currentThreadId={currentAiChatThread}
+          onThreadClick={handleThreadClick}
+          rightIcon={sectionMenu}
+          alwaysShowRightIcon={isEditable}
+          visibleItemLimit={section.visibleItemLimit}
+          fetchMoreTrigger={<AgentChatThreadsFetchMoreTrigger />}
+        />
       );
   }
 };

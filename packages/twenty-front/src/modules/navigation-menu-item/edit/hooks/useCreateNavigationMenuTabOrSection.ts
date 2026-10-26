@@ -3,6 +3,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT } from '@/ai/constants/AiChatInboxRecentThreadsMaxCount';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
@@ -79,6 +80,10 @@ export const useCreateNavigationMenuTabOrSection = () => {
         type,
         folderId: parentId ?? undefined,
         position: getNextPosition(isNavigationMenuItemAnySection, parentId),
+        visibleItemLimit:
+          type === NavigationMenuItemType.AI_CHAT_RECENTS
+            ? AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT
+            : undefined,
       }),
     );
 

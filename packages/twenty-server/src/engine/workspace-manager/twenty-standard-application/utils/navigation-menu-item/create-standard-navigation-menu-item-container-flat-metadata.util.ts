@@ -10,6 +10,7 @@ export const createStandardNavigationMenuItemContainerFlatMetadata = ({
   folderId,
   folderUniversalIdentifier,
   position,
+  visibleItemLimit,
   navigationMenuItemId,
   workspaceId,
   twentyStandardApplicationId,
@@ -22,6 +23,7 @@ export const createStandardNavigationMenuItemContainerFlatMetadata = ({
   folderId?: string | null;
   folderUniversalIdentifier?: string | null;
   position: number;
+  visibleItemLimit?: number | null;
   navigationMenuItemId: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
@@ -50,6 +52,7 @@ export const createStandardNavigationMenuItemContainerFlatMetadata = ({
   link: null,
   icon: icon ?? null,
   color: null,
+  visibleItemLimit: visibleItemLimit ?? null,
   position,
   createdAt: now,
   updatedAt: now,

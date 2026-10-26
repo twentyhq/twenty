@@ -5,6 +5,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
+import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
 import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
@@ -49,6 +50,10 @@ export const buildUpdateInputsFromDraft = ({
     const colorChanged =
       isNavigationMenuItemFolder(draftItem) &&
       (original.color ?? null) !== (draftItem.color ?? null);
+    const visibleItemLimitChanged =
+      isNavigationMenuItemAnySection(draftItem) &&
+      (original.visibleItemLimit ?? null) !==
+        (draftItem.visibleItemLimit ?? null);
 
     if (
       !positionChanged &&
@@ -56,7 +61,8 @@ export const buildUpdateInputsFromDraft = ({
       !nameChanged &&
       !linkChanged &&
       !iconChanged &&
-      !colorChanged
+      !colorChanged &&
+      !visibleItemLimitChanged
     ) {
       continue;
     }
@@ -85,6 +91,9 @@ export const buildUpdateInputsFromDraft = ({
     }
     if (colorChanged) {
       updatePayload.color = draftItem.color ?? null;
+    }
+    if (visibleItemLimitChanged) {
+      updatePayload.visibleItemLimit = draftItem.visibleItemLimit ?? null;
     }
 
     updateInputs.push({

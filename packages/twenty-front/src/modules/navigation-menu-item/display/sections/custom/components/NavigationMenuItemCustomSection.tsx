@@ -96,6 +96,7 @@ export const NavigationMenuItemCustomSection = ({
       items={items}
       containerId={section.id}
       navigationSectionId={navigationSectionId}
+      visibleItemLimit={section.visibleItemLimit}
       rightIcon={
         isMobile
           ? undefined
