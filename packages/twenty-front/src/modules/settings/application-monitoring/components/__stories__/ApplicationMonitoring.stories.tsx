@@ -188,9 +188,6 @@ export const Default: Story = {
         '184 credits by operation type, across every install in this period',
       ),
     ).toBeVisible();
-    expect(
-      canvas.getByText('3,525 API requests rejected and trigger jobs skipped'),
-    ).toBeVisible();
     expect(canvas.queryByText(/Your plan shows/)).not.toBeInTheDocument();
   },
 };

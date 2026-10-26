@@ -84,17 +84,6 @@ export const ApplicationMonitoring = ({
     buildApplicationMonitoringActivityChartData(monitoring);
   const lifecycleChartData =
     buildApplicationMonitoringLifecycleChartData(monitoring);
-  const rateLimitEventCountLabel = i18n.number(monitoring.rateLimitEventCount);
-  const lifecycleRunCountLabel = i18n.number(
-    monitoring.lifecycle.reduce(
-      (total, bucket) =>
-        total +
-        bucket.installCount +
-        bucket.upgradeCount +
-        bucket.uninstallCount,
-      0,
-    ),
-  );
 
   return (
     <>
@@ -143,7 +132,7 @@ export const ApplicationMonitoring = ({
       <Section.Root>
         <Section.Header
           title={t`Rate limits`}
-          description={t`${rateLimitEventCountLabel} API requests rejected and trigger jobs skipped`}
+          description={t`API requests rejected and trigger jobs skipped`}
         />
         {monitoring.rateLimitEventCount === 0 ? (
           <SettingsEmptyPlaceholder padding="2" textAlign="left">
@@ -184,7 +173,7 @@ export const ApplicationMonitoring = ({
       <Section.Root>
         <Section.Header
           title={t`Installs, upgrades and uninstalls`}
-          description={t`${lifecycleRunCountLabel} lifecycle runs and their failures`}
+          description={t`Lifecycle runs and their failures`}
         />
         {monitoring.lifecycle.length === 0 ? (
           <SettingsEmptyPlaceholder>{t`No install, upgrade or uninstall in this period`}</SettingsEmptyPlaceholder>
