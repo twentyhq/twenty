@@ -256,6 +256,7 @@ import { RepairBackfillApplicationRegistrationVersionsSlowInstanceCommand } from
 import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792686569823-add-agent-chat-channel';
 import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-slow-1792686689823-backfill-role-agent-chat-channel-access';
 import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792686749823-add-agent-chat-channel-navigation-menu-item';
+import { AddParticipantHandleFieldToMessageChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1792907887530-add-participant-handle-field-to-message-channel';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -514,4 +515,5 @@ export const INSTANCE_COMMANDS = [
   AddAgentChatChannelFastInstanceCommand,
   BackfillRoleAgentChatChannelAccessSlowInstanceCommand,
   AddAgentChatChannelNavigationMenuItemFastInstanceCommand,
+  AddParticipantHandleFieldToMessageChannelFastInstanceCommand,
 ];

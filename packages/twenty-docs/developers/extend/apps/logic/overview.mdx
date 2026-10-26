@@ -1,8 +1,12 @@
 ---
 title: Overview
 description: Server-side TypeScript that runs inside Twenty — triggered by HTTP routes, cron schedules, database events, AI tools, or workflow actions.
-icon: "bolt"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## What the logic layer covers
 
 A Twenty app's **logic layer** is the code that *runs* — server-side TypeScript handlers reacting to HTTP requests, cron schedules, and record changes; AI skills and agents that live inside the workspace; and OAuth connections that let your functions act on a user's behalf in third-party services.
 
@@ -24,29 +28,37 @@ A Twenty app's **logic layer** is the code that *runs* — server-side TypeScrip
 
 ## In this section
 
-<CardGroup cols={2}>
-  <Card title="Logic Functions" icon="bolt" href="/developers/extend/apps/logic/logic-functions">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/developers/extend/apps/logic/logic-functions" img="/images/user-guide/halftone/card-page-logic-functions.svg">
+    <CardTitle>Logic Functions</CardTitle>
     The core building block — trigger types, payloads, and the typed API client.
   </Card>
-  <Card title="Skills & Agents" icon="robot" href="/developers/extend/apps/logic/skills-and-agents">
+  <Card href="/developers/extend/apps/logic/skills-and-agents" img="/images/user-guide/halftone/card-page-skills-agents.svg">
+    <CardTitle>Skills & Agents</CardTitle>
     Reusable AI agent instructions and assistants with custom system prompts.
   </Card>
-  <Card title="Workflows" icon="diagram-project" href="/developers/extend/apps/logic/workflows">
+  <Card href="/developers/extend/apps/logic/workflows" img="/images/user-guide/halftone/workflows-belt-v1.svg">
+    <CardTitle>Workflows</CardTitle>
     Ready-made workflows installed with your app: triggers, steps, and how they run.
   </Card>
-  <Card title="Connections" icon="plug" href="/developers/extend/apps/logic/connections">
+  <Card href="/developers/extend/apps/logic/connections" img="/images/user-guide/halftone/card-page-connections.svg">
+    <CardTitle>Connections</CardTitle>
     OAuth credentials your app holds for third-party services — Linear, GitHub, Slack, and more.
   </Card>
-  <Card title="Messaging Channels" icon="messages" href="/developers/extend/apps/logic/messaging-channels">
+  <Card href="/developers/extend/apps/logic/messaging-channels" img="/images/user-guide/halftone/card-page-messaging-channels.svg">
+    <CardTitle>Messaging Channels</CardTitle>
     Bring conversations from any provider into Twenty's Message and Message Thread records — threading and de-duplication included.
   </Card>
-  <Card title="Key-Value Store" icon="database" href="/developers/extend/apps/logic/key-value-store">
+  <Card href="/developers/extend/apps/logic/key-value-store" img="/images/user-guide/halftone/card-page-key-value-store.svg">
+    <CardTitle>Key-Value Store</CardTitle>
     Persist state between logic function runs — caches, cursors, and cross-workspace claims.
   </Card>
-  <Card title="Background Jobs" icon="layer-group" href="/developers/extend/apps/logic/background-jobs">
+  <Card href="/developers/extend/apps/logic/background-jobs" img="/images/user-guide/halftone/card-page-background-jobs.svg">
+    <CardTitle>Background Jobs</CardTitle>
     Enqueue a logic function run on the workers to get past the per-run timeout.
   </Card>
-  <Card title="Charging Credits" icon="coins" href="/developers/extend/apps/logic/credits">
+  <Card href="/developers/extend/apps/logic/credits" img="/images/user-guide/halftone/card-page-charging-credits.svg">
+    <CardTitle>Charging Credits</CardTitle>
     Declare what your app bills for and charge workspace credits for it.
   </Card>
 </CardGroup>
@@ -70,3 +82,5 @@ Functions run sandboxed in isolated Node.js processes and access the workspace t
 
 The [**health check**](/developers/extend/apps/logic/logic-functions#health-check) shares it too. It declares no trigger: Twenty calls it on demand when the app's settings page opens.
 </Note>
+
+<PageBanner illustration="section-apps-logic" />

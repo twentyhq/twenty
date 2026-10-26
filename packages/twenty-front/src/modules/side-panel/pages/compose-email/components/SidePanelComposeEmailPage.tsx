@@ -57,6 +57,7 @@ export const SidePanelComposeEmailPage = () => {
     defaultTo: composeEmailDefaultTo ?? '',
     defaultSubject: composeEmailDefaultSubject ?? '',
     defaultInReplyTo: composeEmailDefaultInReplyTo ?? undefined,
+    contextRecord: composeEmailContextRecord,
     onSent: goBackFromSidePanel,
   });
 

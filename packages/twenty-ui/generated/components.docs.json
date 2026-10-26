@@ -2109,6 +2109,13 @@
         "description": "Identifies the form that owns the radio inputs.\nUseful when the radio group is rendered outside the form."
       },
       {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Stretch the control to the width of its container."
+      },
+      {
         "name": "inputRef",
         "type": "Ref<HTMLInputElement>",
         "required": false,

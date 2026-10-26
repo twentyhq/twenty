@@ -8,7 +8,10 @@ export const SingleRecordPickerLoadingEffect = ({
 }: {
   loading: boolean;
 }) => {
-  const [previousLoading, setPreviousLoading] = useState(false);
+  // Undefined on mount, so a picker opened on cached results clears the skeleton
+  const [previousLoading, setPreviousLoading] = useState<boolean | undefined>(
+    undefined,
+  );
 
   const setSingleRecordPickerShouldShowSkeleton = useSetAtomComponentState(
     singleRecordPickerShouldShowSkeletonComponentState,
