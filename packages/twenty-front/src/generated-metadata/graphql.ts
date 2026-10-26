@@ -81,13 +81,13 @@ export type AgentChatChannelRole = {
 
 export type AgentChatChannelSummary = {
   __typename?: 'AgentChatChannelSummary';
-  channelId: Scalars['UUID']['output'];
-  openCount: Scalars['Int']['output'];
   assignedToMeCount: Scalars['Int']['output'];
-  snoozedCount: Scalars['Int']['output'];
+  channelId: Scalars['UUID']['output'];
   doneCount: Scalars['Int']['output'];
-  hasUnreadOpen: Scalars['Boolean']['output'];
   hasUnreadAssignedToMe: Scalars['Boolean']['output'];
+  hasUnreadOpen: Scalars['Boolean']['output'];
+  openCount: Scalars['Int']['output'];
+  snoozedCount: Scalars['Int']['output'];
 };
 
 export type AgentChatChannelThreadIds = {
