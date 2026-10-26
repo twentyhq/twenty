@@ -17,6 +17,7 @@ declare module '@jest/types' {
       APPLE_PHIL_GUEST_ACCESS_TOKEN: string;
       APPLE_SARAH_IMPERSONATE_TIM_INVALID_ACCESS_TOKEN: string;
       API_KEY_ACCESS_TOKEN: string;
+      BLANK_ADA_ADMIN_ACCESS_TOKEN: string;
       testDataSource?: DataSource;
     }
   }
@@ -31,6 +32,7 @@ declare global {
   const APPLE_PHIL_GUEST_ACCESS_TOKEN: string;
   const API_KEY_ACCESS_TOKEN: string;
   const APPLE_SARAH_IMPERSONATE_TIM_INVALID_ACCESS_TOKEN: string;
+  const BLANK_ADA_ADMIN_ACCESS_TOKEN: string;
 
   var testDataSource: DataSource;
   var workflowTestServices: ReturnType<typeof createWorkflowTestServices>;

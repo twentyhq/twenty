@@ -5,6 +5,7 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import {
   getWorkflowVersionUniversalIdentifier,
   type Manifest,
+  type WorkflowManifest,
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -93,6 +94,21 @@ export const logicFunctionStep = (
     input: {},
   }) as WorkflowStepManifestWithoutEdges;
 
+export const buildWorkflowManifest = (
+  workflow: TestApplicationWorkflow,
+): WorkflowManifest => ({
+  universalIdentifier: workflow.universalIdentifier,
+  name: workflow.name,
+  version: {
+    trigger: {
+      universalIdentifier: workflow.triggerUniversalIdentifier,
+      type: 'MANUAL',
+      nextStepIds: [workflow.steps[0].universalIdentifier],
+    },
+    steps: workflow.steps,
+  },
+});
+
 export const buildTestApplicationManifest = ({
   applicationUniversalIdentifier,
   roleUniversalIdentifier,
@@ -146,18 +162,7 @@ export const buildTestApplicationManifest = ({
           },
         },
       ],
-      workflows: workflows.map((workflow) => ({
-        universalIdentifier: workflow.universalIdentifier,
-        name: workflow.name,
-        version: {
-          trigger: {
-            universalIdentifier: workflow.triggerUniversalIdentifier,
-            type: 'MANUAL',
-            nextStepIds: [workflow.steps[0].universalIdentifier],
-          },
-          steps: workflow.steps,
-        },
-      })),
+      workflows: workflows.map(buildWorkflowManifest),
     },
   });
 

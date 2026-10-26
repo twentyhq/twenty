@@ -2,13 +2,16 @@ import { uninstallApplication } from 'test/integration/metadata/suites/applicati
 
 export const cleanupApplicationAndAppRegistration = async ({
   applicationUniversalIdentifier,
+  token,
 }: {
   applicationUniversalIdentifier: string;
+  token?: string;
 }) => {
   try {
     await uninstallApplication({
       universalIdentifier: applicationUniversalIdentifier,
       expectToFail: false,
+      token,
     });
   } catch {
     // May fail if the sync never succeeded
