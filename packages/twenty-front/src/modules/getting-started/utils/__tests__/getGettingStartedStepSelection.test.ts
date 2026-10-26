@@ -1,9 +1,9 @@
-import { GETTING_STARTED_STEPS } from '@/getting-started/constants/GettingStartedSteps';
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
 import {
   GettingStartedStep,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { mockGettingStartedSteps } from '~/testing/mock-data/gettingStartedSteps';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
 const ALL_PERMISSIONS = buildRecordFromKeysWithSameValue(
@@ -53,7 +53,7 @@ describe('getGettingStartedStepSelection', () => {
     },
     {
       description: 'selects the first step once every step is completed',
-      completedSteps: GETTING_STARTED_STEPS,
+      completedSteps: mockGettingStartedSteps.map(({ key }) => key),
       savedSelectedStep: null,
       permissionFlagMap: ALL_PERMISSIONS,
       expected: {
@@ -76,6 +76,7 @@ describe('getGettingStartedStepSelection', () => {
     ({ completedSteps, savedSelectedStep, permissionFlagMap, expected }) => {
       expect(
         getGettingStartedStepSelection({
+          steps: mockGettingStartedSteps,
           completedSteps,
           savedSelectedStep,
           permissionFlagMap,

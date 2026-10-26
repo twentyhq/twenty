@@ -3,6 +3,7 @@ import {
   GettingStartedStep,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { mockGettingStartedSteps } from '~/testing/mock-data/gettingStartedSteps';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
 const ALL_PERMISSIONS = buildRecordFromKeysWithSameValue(
@@ -43,7 +44,11 @@ describe('getGettingStartedRemainingSteps', () => {
     },
   ])('$description', ({ completedSteps, permissionFlagMap, expectedSteps }) => {
     expect(
-      getGettingStartedRemainingSteps({ completedSteps, permissionFlagMap }),
+      getGettingStartedRemainingSteps({
+        steps: mockGettingStartedSteps,
+        completedSteps,
+        permissionFlagMap,
+      }),
     ).toEqual(expectedSteps);
   });
 });

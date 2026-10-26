@@ -2,15 +2,17 @@ import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
-import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
+import { GETTING_STARTED_AI_THREAD_PROMPTS } from '@/getting-started/constants/GettingStartedAiThreadPrompts';
+import { useCompleteGettingStartedStep } from '@/getting-started/hooks/useCompleteGettingStartedStep';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconArrowUp } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { GettingStartedStep } from '~/generated-metadata/graphql';
+import { type GettingStartedStep } from '~/generated-metadata/graphql';
 
 const StyledColumn = styled.div`
   display: flex;
@@ -25,46 +27,51 @@ const StyledComposerActions = styled.div`
   justify-content: flex-end;
 `;
 
-export const GettingStartedFollowUpAction = () => {
+type GettingStartedAiThreadActionProps = {
+  step: GettingStartedStep;
+};
+
+export const GettingStartedAiThreadAction = ({
+  step,
+}: GettingStartedAiThreadActionProps) => {
   const { t } = useLingui();
+  const aiThreadPrompt = GETTING_STARTED_AI_THREAD_PROMPTS[step];
   const [prompt, setPrompt] = useState(
-    t`Every Monday, draft a follow-up email for each deal closing in the next 30 days.`,
+    isDefined(aiThreadPrompt) ? t(aiThreadPrompt.prompt) : '',
   );
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
-  const { updateGettingStarted } = useUpdateGettingStarted();
+  const { completeGettingStartedStep } = useCompleteGettingStartedStep();
   const canSendAgentChatMessage = useCanSendAgentChatMessage();
   const trimmedPrompt = prompt.trim();
 
-  const sendFollowUpPrompt = () => {
-    openAskAiPageWithPreprompt({
+  const sendPrompt = () => {
+    const threadId = openAskAiPageWithPreprompt({
       serializedDocument:
         serializePlainTextAsAdvancedTextEditorDocument(trimmedPrompt),
       mode: 'SEND',
     });
-    void updateGettingStarted({
-      completedStep: GettingStartedStep.FOLLOW_UP_DEALS,
-    });
+    void completeGettingStartedStep({ step, threadId });
   };
 
   return (
     <StyledColumn>
       <TextArea
-        textAreaId="getting-started-follow-up-prompt"
-        label={t`Follow-up instructions`}
+        textAreaId={`getting-started-${step}-prompt`}
+        label={isDefined(aiThreadPrompt) ? t(aiThreadPrompt.label) : undefined}
         minRows={3}
         value={prompt}
         onChange={setPrompt}
       />
       <StyledComposerActions>
-        <AiModelTierDropdown dropdownId="getting-started-follow-up-model" />
+        <AiModelTierDropdown dropdownId={`getting-started-${step}-model`} />
         <IconButton
           size="sm"
           variant="solid"
           color="accent"
           shape="round"
-          aria-label={t`Send follow-up instructions`}
+          aria-label={t`Send instructions`}
           disabled={!canSendAgentChatMessage || trimmedPrompt === ''}
-          onClick={sendFollowUpPrompt}
+          onClick={sendPrompt}
         >
           <IconArrowUp />
         </IconButton>

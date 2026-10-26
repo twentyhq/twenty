@@ -1,5 +1,5 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { GETTING_STARTED_HANDOVER_WORKFLOW_NODES } from '@/getting-started/constants/GettingStartedHandoverWorkflowNodes';
+import { GETTING_STARTED_WORKFLOW_NODES } from '@/getting-started/constants/GettingStartedWorkflowNodes';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeIconContainer';
@@ -16,8 +16,8 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import {
-  GettingStartedStep,
-  PrepareGettingStartedHandoverDocument,
+  type GettingStartedStep,
+  PrepareGettingStartedWorkflowDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -49,23 +49,27 @@ const StyledRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-export const GettingStartedHandoverAction = () => {
+type GettingStartedWorkflowActionProps = {
+  step: GettingStartedStep;
+};
+
+export const GettingStartedWorkflowAction = ({
+  step,
+}: GettingStartedWorkflowActionProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const navigateApp = useNavigateApp();
   const { enqueueToast } = useToast();
   const { progress, refetch } = useGettingStartedProgress();
-  const [prepareGettingStartedHandover, { loading }] = useMutation(
-    PrepareGettingStartedHandoverDocument,
+  const [prepareGettingStartedWorkflow, { loading }] = useMutation(
+    PrepareGettingStartedWorkflowDocument,
   );
-  const isWorkflowEnabled =
-    progress?.completedSteps.includes(GettingStartedStep.HANDOVER_DEALS) ??
-    false;
+  const isWorkflowEnabled = progress?.completedSteps.includes(step) ?? false;
 
-  const prepareHandover = async ({ activate }: { activate: boolean }) => {
+  const prepareWorkflow = async ({ activate }: { activate: boolean }) => {
     try {
-      const { data } = await prepareGettingStartedHandover({
-        variables: { activate },
+      const { data } = await prepareGettingStartedWorkflow({
+        variables: { step, activate },
       });
 
       if (!isDefined(data)) {
@@ -79,7 +83,7 @@ export const GettingStartedHandoverAction = () => {
       }
 
       navigateApp(AppPath.WorkflowCoreShowPage, {
-        coreWorkflowId: data.prepareGettingStartedHandover.workflowId,
+        coreWorkflowId: data.prepareGettingStartedWorkflow.workflowId,
       });
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
@@ -89,7 +93,7 @@ export const GettingStartedHandoverAction = () => {
   return (
     <StyledColumn>
       <StyledWorkflowPreview>
-        {GETTING_STARTED_HANDOVER_WORKFLOW_NODES.map(
+        {(GETTING_STARTED_WORKFLOW_NODES[step] ?? []).map(
           ({ label, title, Icon }, index) => (
             <Fragment key={index}>
               {index > 0 && <StyledConnector />}
@@ -117,13 +121,13 @@ export const GettingStartedHandoverAction = () => {
           color="accent"
           loading={loading}
           disabled={isWorkflowEnabled}
-          onClick={() => void prepareHandover({ activate: true })}
+          onClick={() => void prepareWorkflow({ activate: true })}
         >{t`Turn on the workflow`}</Button>
         <Button
           size="sm"
           variant="ghost"
           disabled={loading}
-          onClick={() => void prepareHandover({ activate: false })}
+          onClick={() => void prepareWorkflow({ activate: false })}
         >{t`Edit the draft`}</Button>
       </StyledRow>
     </StyledColumn>

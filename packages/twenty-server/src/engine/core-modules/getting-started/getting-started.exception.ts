@@ -6,6 +6,7 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export enum GettingStartedExceptionCode {
   MAILBOX_NOT_CONNECTED = 'MAILBOX_NOT_CONNECTED',
+  INVALID_STEP = 'INVALID_STEP',
 }
 
 const getGettingStartedExceptionUserFriendlyMessage = (
@@ -14,6 +15,8 @@ const getGettingStartedExceptionUserFriendlyMessage = (
   switch (code) {
     case GettingStartedExceptionCode.MAILBOX_NOT_CONNECTED:
       return msg`Connect a mailbox before preparing this workflow.`;
+    case GettingStartedExceptionCode.INVALID_STEP:
+      return msg`This step cannot be completed this way.`;
     default:
       assertUnreachable(code);
   }

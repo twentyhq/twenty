@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common';
 
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { EmailOperation } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { GETTING_STARTED_HANDOVER_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-handover-user-var-key.constant';
-import { type GettingStartedHandoverDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-handover.dto';
-import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { GETTING_STARTED_STEP_DEFINITIONS } from 'src/engine/core-modules/getting-started/constants/getting-started-step-definitions.constant';
+import { GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX } from 'src/engine/core-modules/getting-started/constants/getting-started-workflow-user-var-key-prefix.constant';
+import { type GettingStartedWorkflowDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-workflow.dto';
+import { GettingStartedStepKind } from 'src/engine/core-modules/getting-started/enums/getting-started-step-kind.enum';
+import { type GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
 import {
   GettingStartedException,
   GettingStartedExceptionCode,
 } from 'src/engine/core-modules/getting-started/getting-started.exception';
 import { GettingStartedService } from 'src/engine/core-modules/getting-started/services/getting-started.service';
 import { type GettingStartedKeyValueTypeMap } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
-import { buildHandoverWorkflow } from 'src/engine/core-modules/getting-started/utils/build-handover-workflow.util';
+import { type GettingStartedWorkflowTemplate } from 'src/engine/core-modules/getting-started/types/getting-started-workflow-template.type';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
@@ -22,10 +23,9 @@ import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/servic
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 
 @Injectable()
-export class GettingStartedHandoverWorkspaceService {
+export class GettingStartedWorkflowWorkspaceService {
   constructor(
     private readonly userVarsService: UserVarsService<GettingStartedKeyValueTypeMap>,
     private readonly cacheLockService: CacheLockService,
@@ -37,52 +37,68 @@ export class GettingStartedHandoverWorkspaceService {
     private readonly gettingStartedService: GettingStartedService,
   ) {}
 
-  async prepareHandover({
+  async prepareWorkflow({
     userId,
     workspaceId,
     userWorkspaceId,
+    step,
     activate,
   }: {
     userId: string;
     workspaceId: string;
     userWorkspaceId: string;
+    step: GettingStartedStep;
     activate: boolean;
-  }): Promise<GettingStartedHandoverDTO> {
+  }): Promise<GettingStartedWorkflowDTO> {
+    const stepDefinition = GETTING_STARTED_STEP_DEFINITIONS[step];
+
+    if (stepDefinition.kind !== GettingStartedStepKind.WORKFLOW) {
+      throw new GettingStartedException(
+        `Step ${step} is not a workflow step`,
+        GettingStartedExceptionCode.INVALID_STEP,
+      );
+    }
+
+    const workflowKey =
+      `${GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX}${step}` as const;
+
     return this.cacheLockService.withLock(
       async () => {
-        const savedHandover = await this.userVarsService.get({
+        const savedWorkflow = await this.userVarsService.get({
           workspaceId,
-          key: GETTING_STARTED_HANDOVER_USER_VAR_KEY,
+          key: workflowKey,
         });
 
-        const savedCoreWorkflow = isDefined(savedHandover)
+        const savedCoreWorkflow = isDefined(savedWorkflow)
           ? await this.coreWorkflowListService.findOneById({
               workspaceId,
               userWorkspaceId,
-              coreWorkflowId: savedHandover.workflowId,
+              coreWorkflowId: savedWorkflow.workflowId,
             })
           : null;
 
-        const handover = isDefined(savedCoreWorkflow)
-          ? savedHandover
-          : await this.createHandoverDraftOrThrow({
+        const workflow = isDefined(savedCoreWorkflow)
+          ? savedWorkflow
+          : await this.createWorkflowDraftOrThrow({
               workspaceId,
               userWorkspaceId,
+              workflowKey,
+              workflowTemplate: stepDefinition.workflowTemplate,
             });
 
         if (!activate) {
-          return handover;
+          return workflow;
         }
 
-        const isHandoverActive =
+        const isWorkflowActive =
           savedCoreWorkflow?.statuses.includes(WorkflowStatus.ACTIVE) ?? false;
 
-        if (!isHandoverActive) {
+        if (!isWorkflowActive) {
           await this.coreWorkflowLifecycleWorkspaceService.activateCoreWorkflowVersion(
             {
               workspaceId,
               userWorkspaceId,
-              coreWorkflowVersionId: handover.versionId,
+              coreWorkflowVersionId: workflow.versionId,
             },
           );
         }
@@ -90,23 +106,27 @@ export class GettingStartedHandoverWorkspaceService {
         await this.gettingStartedService.completeStep({
           userId,
           workspaceId,
-          step: GettingStartedStep.HANDOVER_DEALS,
+          step,
         });
 
-        return handover;
+        return workflow;
       },
-      `getting-started-handover:${workspaceId}`,
+      `getting-started-workflow:${workspaceId}:${step}`,
       { ttl: 30_000 },
     );
   }
 
-  private async createHandoverDraftOrThrow({
+  private async createWorkflowDraftOrThrow({
     workspaceId,
     userWorkspaceId,
+    workflowKey,
+    workflowTemplate,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-  }): Promise<GettingStartedHandoverDTO> {
+    workflowKey: `${typeof GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX}${GettingStartedStep}`;
+    workflowTemplate: GettingStartedWorkflowTemplate;
+  }): Promise<GettingStartedWorkflowDTO> {
     const mailboxes =
       await this.connectedAccountMetadataService.findMailboxesUsableByCaller({
         workspaceId,
@@ -120,7 +140,7 @@ export class GettingStartedHandoverWorkspaceService {
 
     if (!isDefined(mailbox)) {
       throw new GettingStartedException(
-        `No mailbox can send the handover email for user workspace ${userWorkspaceId}`,
+        `No mailbox can send the workflow emails for user workspace ${userWorkspaceId}`,
         GettingStartedExceptionCode.MAILBOX_NOT_CONNECTED,
       );
     }
@@ -133,50 +153,30 @@ export class GettingStartedHandoverWorkspaceService {
         },
       );
 
-    const companyIdFieldId = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: flatFieldMetadataMaps,
-      universalIdentifier:
-        STANDARD_OBJECTS.company.fields.id.universalIdentifier,
-    }).id;
-
-    const memberIdFieldId = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: flatFieldMetadataMaps,
-      universalIdentifier:
-        STANDARD_OBJECTS.workspaceMember.fields.id.universalIdentifier,
-    }).id;
-
-    const opportunityStageFieldId = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: flatFieldMetadataMaps,
-      universalIdentifier:
-        STANDARD_OBJECTS.opportunity.fields.stage.universalIdentifier,
-    }).id;
-
     const { coreWorkflow, coreWorkflowVersionId } =
       await this.coreWorkflowMutationWorkspaceService.createWorkflowWithContent(
         {
           workspaceId,
           userWorkspaceId,
-          name: 'Hand over won deals',
-          ...buildHandoverWorkflow({
+          name: workflowTemplate.name,
+          ...workflowTemplate.buildWorkflow({
             connectedAccountId: mailbox.id,
-            companyIdFieldId,
-            memberIdFieldId,
-            opportunityStageFieldId,
+            flatFieldMetadataMaps,
           }),
         },
       );
 
-    const handover = {
+    const workflow = {
       workflowId: coreWorkflow.id,
       versionId: coreWorkflowVersionId,
     };
 
     await this.userVarsService.set({
       workspaceId,
-      key: GETTING_STARTED_HANDOVER_USER_VAR_KEY,
-      value: handover,
+      key: workflowKey,
+      value: workflow,
     });
 
-    return handover;
+    return workflow;
   }
 }

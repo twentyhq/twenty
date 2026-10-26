@@ -14,12 +14,21 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { GETTING_STARTED_COMPLETED_USER_VAR_KEY_PREFIX } from 'src/engine/core-modules/getting-started/constants/getting-started-completed-user-var-key-prefix.constant';
 import { GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-selected-step-user-var-key.constant';
 import { GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-snoozed-until-user-var-key.constant';
+import { GETTING_STARTED_STEP_DEFINITIONS } from 'src/engine/core-modules/getting-started/constants/getting-started-step-definitions.constant';
+import { GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX } from 'src/engine/core-modules/getting-started/constants/getting-started-step-user-var-key-prefix.constant';
+import { GETTING_STARTED_TRACK_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-track-user-var-key.constant';
+import { GETTING_STARTED_TRACKS } from 'src/engine/core-modules/getting-started/constants/getting-started-tracks.constant';
+import { type CompleteGettingStartedStepInput } from 'src/engine/core-modules/getting-started/dtos/complete-getting-started-step.input';
 import { type GettingStartedProgressDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-progress.dto';
 import { type UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
 import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { GettingStartedTrack } from 'src/engine/core-modules/getting-started/enums/getting-started-track.enum';
+import {
+  GettingStartedException,
+  GettingStartedExceptionCode,
+} from 'src/engine/core-modules/getting-started/getting-started.exception';
 import { type GettingStartedKeyValueTypeMap } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
 import { ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES } from 'src/engine/core-modules/onboarding/constants/onboarding-reward-idempotency-key-prefixes';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
@@ -78,17 +87,23 @@ export class GettingStartedService {
       }),
     );
 
-    const completedSteps = Object.values(GettingStartedStep).filter((step) => {
+    const savedTrack = userVars.get(GETTING_STARTED_TRACK_USER_VAR_KEY);
+    const trackSteps =
+      GETTING_STARTED_TRACKS[
+        Object.values(GettingStartedTrack).find(
+          (track) => track === savedTrack,
+        ) ?? GettingStartedTrack.DEFAULT
+      ];
+
+    const completedSteps = trackSteps.filter((step) => {
       switch (step) {
         case GettingStartedStep.CONNECT_MAILBOX:
           return hasConnectedMailbox;
         case GettingStartedStep.INSTALL_APP:
           return hasInstalledApp;
         default:
-          return (
-            userVars.get(
-              `${GETTING_STARTED_COMPLETED_USER_VAR_KEY_PREFIX}.${step}`,
-            ) === true
+          return isDefined(
+            userVars.get(`${GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX}${step}`),
           );
       }
     });
@@ -102,11 +117,14 @@ export class GettingStartedService {
 
     return {
       creditsEarned,
+      steps: trackSteps.map((step) => ({
+        key: step,
+        kind: GETTING_STARTED_STEP_DEFINITIONS[step].kind,
+        permissionFlag: GETTING_STARTED_STEP_DEFINITIONS[step].permissionFlag,
+      })),
       completedSteps,
       selectedStep:
-        Object.values(GettingStartedStep).find(
-          (step) => step === savedSelectedStep,
-        ) ?? null,
+        trackSteps.find((step) => step === savedSelectedStep) ?? null,
       snoozedUntil: typeof snoozedUntil === 'string' ? snoozedUntil : null,
     };
   }
@@ -119,14 +137,6 @@ export class GettingStartedService {
   }: GettingStartedScope & {
     input: UpdateGettingStartedInput;
   }): Promise<GettingStartedProgressDTO> {
-    if (isDefined(input.completedStep)) {
-      await this.completeStep({
-        userId,
-        workspaceId,
-        step: input.completedStep,
-      });
-    }
-
     if (isDefined(input.selectedStep)) {
       await this.userVarsService.set({
         userId,
@@ -148,20 +158,59 @@ export class GettingStartedService {
     return this.getProgress({ userId, workspaceId, userWorkspaceId });
   }
 
+  async completeStepFromClient({
+    userId,
+    workspaceId,
+    userWorkspaceId,
+    input,
+  }: GettingStartedScope & {
+    input: CompleteGettingStartedStepInput;
+  }): Promise<GettingStartedProgressDTO> {
+    if (!GETTING_STARTED_STEP_DEFINITIONS[input.step].isClientCompletable) {
+      throw new GettingStartedException(
+        `Step ${input.step} can only be completed by the server`,
+        GettingStartedExceptionCode.INVALID_STEP,
+      );
+    }
+
+    await this.completeStep({
+      userId,
+      workspaceId,
+      step: input.step,
+      threadId: input.threadId ?? undefined,
+    });
+
+    return this.getProgress({ userId, workspaceId, userWorkspaceId });
+  }
+
   async completeStep({
     userId,
     workspaceId,
     step,
+    threadId,
   }: {
     userId: string;
     workspaceId: string;
     step: GettingStartedStep;
+    threadId?: string;
   }): Promise<void> {
+    const key = `${GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX}${step}` as const;
+
+    const completion = await this.userVarsService.get({
+      userId,
+      workspaceId,
+      key,
+    });
+
+    if (isDefined(completion)) {
+      return;
+    }
+
     await this.userVarsService.set({
       userId,
       workspaceId,
-      key: `${GETTING_STARTED_COMPLETED_USER_VAR_KEY_PREFIX}.${step}`,
-      value: true,
+      key,
+      value: { completedAt: new Date().toISOString(), threadId },
     });
   }
 

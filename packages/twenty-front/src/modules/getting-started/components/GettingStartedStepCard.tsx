@@ -1,7 +1,6 @@
 import { GettingStartedStepRewardChip } from '@/getting-started/components/GettingStartedStepRewardChip';
-import { GETTING_STARTED_STEP_ACTIONS } from '@/getting-started/constants/GettingStartedStepActions';
+import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
 import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedStepContent';
-import { GETTING_STARTED_STEP_PERMISSION_FLAGS } from '@/getting-started/constants/GettingStartedStepPermissionFlags';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -11,7 +10,7 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { type GettingStartedStep } from '~/generated-metadata/graphql';
+import { type GettingStartedStepDefinition } from '~/generated-metadata/graphql';
 
 const StyledHeading = styled.div<{ isCompleted: boolean }>`
   align-items: flex-start;
@@ -47,7 +46,7 @@ const StyledPermissionNotice = styled.span`
 `;
 
 type GettingStartedStepCardProps = {
-  step: GettingStartedStep;
+  step: GettingStartedStepDefinition;
   isCompleted: boolean;
 };
 
@@ -59,8 +58,7 @@ export const GettingStartedStepCard = ({
   const theme = useTheme();
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
 
-  const content = GETTING_STARTED_STEP_CONTENT[step];
-  const StepAction = GETTING_STARTED_STEP_ACTIONS[step];
+  const content = GETTING_STARTED_STEP_CONTENT[step.key];
 
   return (
     <Card.Root
@@ -81,11 +79,14 @@ export const GettingStartedStepCard = ({
           </Heading>
           <StyledDescription>{t(content.description)}</StyledDescription>
         </StyledTitle>
-        <GettingStartedStepRewardChip step={step} isCompleted={isCompleted} />
+        <GettingStartedStepRewardChip
+          step={step.key}
+          isCompleted={isCompleted}
+        />
       </StyledHeading>
       <StyledBody>
-        {permissionFlagMap[GETTING_STARTED_STEP_PERMISSION_FLAGS[step]] ? (
-          <StepAction />
+        {permissionFlagMap[step.permissionFlag] ? (
+          <GettingStartedStepAction step={step} />
         ) : (
           <StyledPermissionNotice>{t`Ask your workspace admin for permission to complete this step.`}</StyledPermissionNotice>
         )}

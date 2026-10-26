@@ -1,12 +1,14 @@
 import { GettingStartedStepCard } from '@/getting-started/components/GettingStartedStepCard';
 import { GettingStartedStepRewardChip } from '@/getting-started/components/GettingStartedStepRewardChip';
 import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedStepContent';
-import { GETTING_STARTED_STEPS } from '@/getting-started/constants/GettingStartedSteps';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { type GettingStartedStep } from '~/generated-metadata/graphql';
+import {
+  type GettingStartedStep,
+  type GettingStartedStepDefinition,
+} from '~/generated-metadata/graphql';
 
 const StyledActiveStep = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -85,13 +87,15 @@ const StyledStackedStepTitle = styled.span`
 `;
 
 type GettingStartedStepStackProps = {
-  selectedStep: GettingStartedStep;
+  steps: GettingStartedStepDefinition[];
+  selectedStep: GettingStartedStepDefinition;
   completedSteps: GettingStartedStep[];
   isSaving: boolean;
   onSelectStep: (step: GettingStartedStep) => void;
 };
 
 export const GettingStartedStepStack = ({
+  steps,
   selectedStep,
   completedSteps,
   isSaving,
@@ -100,14 +104,14 @@ export const GettingStartedStepStack = ({
   const { t } = useLingui();
   const theme = useTheme();
 
-  const selectedStepIndex = GETTING_STARTED_STEPS.indexOf(selectedStep);
-  const stackedSteps = [3, 2, 1].map((depth) => ({
-    depth,
-    step: GETTING_STARTED_STEPS[
-      (selectedStepIndex - depth + GETTING_STARTED_STEPS.length) %
-        GETTING_STARTED_STEPS.length
-    ],
-  }));
+  const selectedStepIndex = steps.indexOf(selectedStep);
+  const stackedSteps = [3, 2, 1]
+    .filter((depth) => depth < steps.length)
+    .map((depth) => ({
+      depth,
+      step: steps[(selectedStepIndex - depth + steps.length) % steps.length]
+        .key,
+    }));
 
   return (
     <div>
@@ -133,21 +137,21 @@ export const GettingStartedStepStack = ({
       })}
       <StyledActiveStep>
         <StyledSteps aria-label={t`Getting started steps`}>
-          {GETTING_STARTED_STEPS.map((step) => (
+          {steps.map(({ key }) => (
             <StyledTick
-              key={step}
+              key={key}
               type="button"
-              aria-label={t(GETTING_STARTED_STEP_CONTENT[step].title)}
-              aria-current={step === selectedStep ? 'step' : undefined}
-              data-completed={completedSteps.includes(step) || undefined}
+              aria-label={t(GETTING_STARTED_STEP_CONTENT[key].title)}
+              aria-current={key === selectedStep.key ? 'step' : undefined}
+              data-completed={completedSteps.includes(key) || undefined}
               disabled={isSaving}
-              onClick={() => onSelectStep(step)}
+              onClick={() => onSelectStep(key)}
             />
           ))}
         </StyledSteps>
         <GettingStartedStepCard
           step={selectedStep}
-          isCompleted={completedSteps.includes(selectedStep)}
+          isCompleted={completedSteps.includes(selectedStep.key)}
         />
       </StyledActiveStep>
     </div>

@@ -2,23 +2,23 @@ import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 import { GettingStartedStep } from '~/generated-metadata/graphql';
 
 export const getGettingStartedCreditsToEarn = ({
-  completedSteps,
+  remainingSteps,
   onboardingConfig,
   isWorkspaceCreator,
 }: {
-  completedSteps: GettingStartedStep[];
+  remainingSteps: GettingStartedStep[];
   onboardingConfig: OnboardingConfig;
   isWorkspaceCreator: boolean;
 }): number => {
   const mailboxCredits =
     isWorkspaceCreator &&
-    !completedSteps.includes(GettingStartedStep.CONNECT_MAILBOX)
+    remainingSteps.includes(GettingStartedStep.CONNECT_MAILBOX)
       ? onboardingConfig.importContactsCreditsReward
       : 0;
-  const inviteCredits = completedSteps.includes(GettingStartedStep.INVITE_TEAM)
-    ? 0
-    : onboardingConfig.inviteTeamCreditsRewardPerUser *
-      onboardingConfig.inviteTeamMaxInvites;
+  const inviteCredits = remainingSteps.includes(GettingStartedStep.INVITE_TEAM)
+    ? onboardingConfig.inviteTeamCreditsRewardPerUser *
+      onboardingConfig.inviteTeamMaxInvites
+    : 0;
 
   return mailboxCredits + inviteCredits;
 };

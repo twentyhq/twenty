@@ -2,7 +2,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID } from '@/getting-started/constants/GettingStartedImportContextStoreInstanceId';
 import { SPREADSHEET_EXPORT_GUIDES } from '@/getting-started/constants/SpreadsheetExportGuides';
-import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
+import { useCompleteGettingStartedStep } from '@/getting-started/hooks/useCompleteGettingStartedStep';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
@@ -35,7 +35,7 @@ const StyledMuted = styled.span`
 
 export const GettingStartedImportAction = () => {
   const { t } = useLingui();
-  const { updateGettingStarted } = useUpdateGettingStarted();
+  const { completeGettingStartedStep } = useCompleteGettingStartedStep();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.Person,
   });
@@ -50,8 +50,8 @@ export const GettingStartedImportAction = () => {
     setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
     openObjectRecordsSpreadsheetImportDialog({
       uploadStepHook: async (importedRows) => {
-        void updateGettingStarted({
-          completedStep: GettingStartedStep.IMPORT_DATA,
+        void completeGettingStartedStep({
+          step: GettingStartedStep.IMPORT_DATA,
         });
 
         return importedRows;

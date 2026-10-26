@@ -5,7 +5,6 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { GettingStartedPageContent } from '@/getting-started/components/GettingStartedPageContent';
-import { GETTING_STARTED_STEPS } from '@/getting-started/constants/GettingStartedSteps';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   FeatureFlagKey,
@@ -16,6 +15,7 @@ import {
   UpdateGettingStartedDocument,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
+import { mockGettingStartedSteps } from '~/testing/mock-data/gettingStartedSteps';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const TRIALING_WORKSPACE = {
@@ -38,6 +38,7 @@ const TRIALING_WORKSPACE = {
 const TRIAL_PROGRESS: GettingStartedProgressQuery['gettingStartedProgress'] = {
   __typename: 'GettingStartedProgress',
   creditsEarned: 0,
+  steps: mockGettingStartedSteps,
   completedSteps: [],
   selectedStep: null,
   snoozedUntil: null,
@@ -120,7 +121,7 @@ export const AllDone: Story = {
           data: {
             gettingStartedProgress: {
               ...TRIAL_PROGRESS,
-              completedSteps: GETTING_STARTED_STEPS,
+              completedSteps: mockGettingStartedSteps.map(({ key }) => key),
               selectedStep: GettingStartedStep.CONNECT_MAILBOX,
               creditsEarned: 2,
             },

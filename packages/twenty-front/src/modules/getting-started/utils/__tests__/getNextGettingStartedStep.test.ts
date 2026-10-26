@@ -1,5 +1,6 @@
 import { getNextGettingStartedStep } from '@/getting-started/utils/getNextGettingStartedStep';
 import { GettingStartedStep } from '~/generated-metadata/graphql';
+import { mockGettingStartedSteps } from '~/testing/mock-data/gettingStartedSteps';
 
 describe('getNextGettingStartedStep', () => {
   it.each([
@@ -16,8 +17,12 @@ describe('getNextGettingStartedStep', () => {
       expectedStep: GettingStartedStep.CONNECT_MAILBOX,
     },
   ])('$description', ({ selectedStep, completedSteps, expectedStep }) => {
-    expect(getNextGettingStartedStep({ selectedStep, completedSteps })).toBe(
-      expectedStep,
-    );
+    expect(
+      getNextGettingStartedStep({
+        steps: mockGettingStartedSteps.map(({ key }) => key),
+        selectedStep,
+        completedSteps,
+      }),
+    ).toBe(expectedStep);
   });
 });

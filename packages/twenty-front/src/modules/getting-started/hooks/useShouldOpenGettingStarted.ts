@@ -27,6 +27,7 @@ export const useShouldOpenGettingStarted = ({
   return {
     shouldOpenGettingStarted: shouldOpenGettingStarted({
       remainingSteps: getGettingStartedRemainingSteps({
+        steps: progress.steps,
         completedSteps: progress.completedSteps,
         permissionFlagMap,
       }),

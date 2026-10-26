@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType('GettingStartedHandover')
-export class GettingStartedHandoverDTO {
+@ObjectType('GettingStartedWorkflow')
+export class GettingStartedWorkflowDTO {
   @Field(() => String)
   workflowId: string;
 

@@ -1,4 +1,3 @@
-import { GETTING_STARTED_STEPS } from '@/getting-started/constants/GettingStartedSteps';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
 import { getGettingStartedRemainingSteps } from '@/getting-started/utils/getGettingStartedRemainingSteps';
@@ -124,6 +123,7 @@ export const GettingStartedSidebarCard = () => {
   }
 
   const remainingSteps = getGettingStartedRemainingSteps({
+    steps: progress.steps,
     completedSteps: progress.completedSteps,
     permissionFlagMap,
   });
@@ -148,7 +148,7 @@ export const GettingStartedSidebarCard = () => {
               />
               {t`Getting started`}
               <StyledStepCount>
-                {`${progress.completedSteps.length}/${GETTING_STARTED_STEPS.length}`}
+                {`${progress.completedSteps.length}/${progress.steps.length}`}
               </StyledStepCount>
               {!isGettingStartedPageOpen && (
                 <NavigationLink to={AppPath.GettingStarted}>
@@ -194,7 +194,7 @@ export const GettingStartedSidebarCard = () => {
               <ProgressBar
                 aria-label={t`Getting started progress`}
                 value={progress.completedSteps.length}
-                max={GETTING_STARTED_STEPS.length}
+                max={progress.steps.length}
                 size="sm"
                 backgroundColor={
                   themeCssVariables.background.transparent.medium

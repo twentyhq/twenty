@@ -2,7 +2,6 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { GettingStartedStepStack } from '@/getting-started/components/GettingStartedStepStack';
 import { GETTING_STARTED_CONTENT_MAX_WIDTH } from '@/getting-started/constants/GettingStartedContentMaxWidth';
-import { GETTING_STARTED_STEPS } from '@/getting-started/constants/GettingStartedSteps';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
@@ -127,21 +126,25 @@ export const GettingStartedPageContent = () => {
   const { trialEnd, daysLeft, isCountdownVisible, canKeepPlan, keepPlanLabel } =
     useGettingStartedTrial();
 
+  const steps = progress?.steps ?? [];
   const completedSteps = progress?.completedSteps ?? [];
-  const isComplete = GETTING_STARTED_STEPS.every((step) =>
-    completedSteps.includes(step),
-  );
+  const remainingSteps = steps
+    .map(({ key }) => key)
+    .filter((step) => !completedSteps.includes(step));
+  const isComplete = remainingSteps.length === 0;
   const { selectedStep, stepAfterSkip } = getGettingStartedStepSelection({
+    steps,
     completedSteps,
     savedSelectedStep: progress?.selectedStep,
     permissionFlagMap,
   });
+  const selectedStepDefinition = steps.find(({ key }) => key === selectedStep);
   const isSelectedStepCompleted = completedSteps.includes(selectedStep);
   const creditsEarned = progress?.creditsEarned ?? 0;
 
   const creditsToEarn = isDefined(onboardingConfig)
     ? getGettingStartedCreditsToEarn({
-        completedSteps,
+        remainingSteps,
         onboardingConfig,
         isWorkspaceCreator: currentUser?.isWorkspaceCreator === true,
       })
@@ -161,8 +164,7 @@ export const GettingStartedPageContent = () => {
           localeCatalog,
         })
       : undefined;
-  const remainingStepCount =
-    GETTING_STARTED_STEPS.length - completedSteps.length;
+  const remainingStepCount = remainingSteps.length;
   const remainingStepsLabel = isDefined(formattedTrialEnd)
     ? creditsToEarn > 0
       ? plural(remainingStepCount, {
@@ -260,14 +262,17 @@ export const GettingStartedPageContent = () => {
                 />
               )}
             </StyledGoal>
-            <GettingStartedStepStack
-              selectedStep={selectedStep}
-              completedSteps={completedSteps}
-              isSaving={isSaving}
-              onSelectStep={(step) =>
-                updateGettingStarted({ selectedStep: step })
-              }
-            />
+            {isDefined(selectedStepDefinition) && (
+              <GettingStartedStepStack
+                steps={steps}
+                selectedStep={selectedStepDefinition}
+                completedSteps={completedSteps}
+                isSaving={isSaving}
+                onSelectStep={(step) =>
+                  updateGettingStarted({ selectedStep: step })
+                }
+              />
+            )}
             {!isComplete && (
               <StyledFooter>
                 <Button
