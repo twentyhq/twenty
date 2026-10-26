@@ -59,7 +59,7 @@ export const NavigationDrawerAiChatTriageSection = ({
   return (
     <CollapsibleNavigationDrawerSection
       sectionId={AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID}
-      label={label ?? t`Triage`}
+      label={label ?? t`Inbox`}
       rightIcon={rightIcon}
       alwaysShowRightIcon={alwaysShowRightIcon}
     >
