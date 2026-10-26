@@ -651,8 +651,20 @@ export class ApplicationService {
     >,
     queryRunner?: QueryRunner,
   ): Promise<void> {
+    const workspaceRepository =
+      queryRunner?.manager.getRepository(WorkspaceEntity) ??
+      this.workspaceRepository;
+    const workspace = await workspaceRepository.findOne({
+      where: { id: application.workspaceId },
+      select: ['workspaceCustomApplicationId'],
+    });
     const { packageJsonContent, yarnLockContent } =
-      await getDefaultApplicationPackageFields();
+      await getDefaultApplicationPackageFields({
+        directory:
+          workspace?.workspaceCustomApplicationId === application.id
+            ? WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME
+            : undefined,
+      });
 
     await this.uploadPackageFilesAndSetFileIds({
       application,
