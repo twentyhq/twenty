@@ -543,7 +543,10 @@ export function HalftoneCanvas({
     };
 
     void (async () => {
-      const materialAssets = await HALFTONE_MATERIALS.createAssets(renderer);
+      const materialAssets = await HALFTONE_MATERIALS.createAssets({
+        renderer,
+        texture: settingsReference.current.material.texture,
+      });
 
       if (cancelled) {
         HALFTONE_MATERIALS.disposeAssets(materialAssets);

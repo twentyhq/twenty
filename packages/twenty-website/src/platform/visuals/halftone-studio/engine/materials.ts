@@ -571,15 +571,26 @@ async function loadHalftoneMaterialTextures({
   return missingImages.length > 0;
 }
 
-async function createHalftoneMaterialAssets(
-  renderer: THREE.WebGLRenderer,
-): Promise<HalftoneMaterialAssets> {
+async function createHalftoneMaterialAssets({
+  renderer,
+  texture,
+}: {
+  renderer: THREE.WebGLRenderer;
+  texture: HalftoneMaterialTexture;
+}): Promise<HalftoneMaterialAssets> {
+  const imageTextureAssets: Pick<
+    HalftoneMaterialAssets,
+    'imageTextureLoads' | 'imageTextures' | 'renderer'
+  > = { imageTextureLoads: {}, imageTextures: {}, renderer };
+  const [environmentTexture] = await Promise.all([
+    loadEnvironmentTexture(renderer),
+    loadHalftoneMaterialTextures({ assets: imageTextureAssets, texture }),
+  ]);
+
   return {
-    environmentTexture: await loadEnvironmentTexture(renderer),
+    ...imageTextureAssets,
+    environmentTexture,
     glassTransmissionScene: createGlassTransmissionScene(),
-    imageTextureLoads: {},
-    imageTextures: {},
-    renderer,
   };
 }
 
