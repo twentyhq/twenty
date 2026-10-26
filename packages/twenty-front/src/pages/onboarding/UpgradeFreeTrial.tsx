@@ -357,7 +357,7 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
 
   const billingCheckoutSession = useAtomStateValue(billingCheckoutSessionState);
   const isTrialAvailable =
-    useAtomStateValue(currentWorkspaceState)?.isTrialAvailable ?? true;
+    useAtomStateValue(currentWorkspaceState)?.isTrialAvailable ?? false;
   const { listPlans } = usePlans();
 
   const planKey = getCheckoutPlanKeyOrThrow({

@@ -39,7 +39,7 @@ export const onboardingCreditsProgressSelector =
           isBillingEnabled: get(billingState)?.isBillingEnabled ?? false,
           currentWorkspace,
         }),
-        isTrialAvailable: currentWorkspace?.isTrialAvailable ?? true,
+        isTrialAvailable: currentWorkspace?.isTrialAvailable ?? false,
         profileName:
           get(onboardingCreateProfileDraftState) ??
           get(currentWorkspaceMemberState)?.name,

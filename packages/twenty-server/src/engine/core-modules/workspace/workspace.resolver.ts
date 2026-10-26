@@ -27,6 +27,7 @@ import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/bill
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
@@ -100,6 +101,7 @@ export class WorkspaceResolver {
     private readonly fileUrlService: FileUrlService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
+    private readonly billingService: BillingService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly roleService: RoleService,
     private readonly viewService: ViewService,
@@ -350,7 +352,10 @@ export class WorkspaceResolver {
     @Parent() workspace: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
   ): Promise<boolean> {
-    if (!this.twentyConfigService.isBillingEnabled() || !isDefined(user)) {
+    if (
+      !isDefined(user) ||
+      (await this.billingService.hasWorkspaceAnySubscription(workspace.id))
+    ) {
       return false;
     }
 
