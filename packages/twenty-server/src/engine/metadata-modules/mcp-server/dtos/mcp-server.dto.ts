@@ -17,7 +17,7 @@ export class McpServerDTO {
   url: string;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  connectedAccountId: string | null;
+  connectionProviderId: string | null;
 
   @Field()
   isActive: boolean;

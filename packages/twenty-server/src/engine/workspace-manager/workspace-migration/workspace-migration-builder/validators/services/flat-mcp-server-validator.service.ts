@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
@@ -24,6 +24,7 @@ export class FlatMcpServerValidatorService {
     flatEntityToValidate: flatMcpServer,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatMcpServerMaps: optimisticFlatMcpServerMaps,
+      flatConnectionProviderMaps: optimisticFlatConnectionProviderMaps,
     },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.mcpServer
@@ -45,6 +46,13 @@ export class FlatMcpServerValidatorService {
       }),
       ...this.getLabelErrors(flatMcpServer.label),
       ...this.getUrlErrors(flatMcpServer.url),
+      ...this.getConnectionProviderErrors({
+        connectionProviderUniversalIdentifier:
+          flatMcpServer.connectionProviderUniversalIdentifier,
+        applicationUniversalIdentifier:
+          flatMcpServer.applicationUniversalIdentifier,
+        flatConnectionProviderMaps: optimisticFlatConnectionProviderMaps,
+      }),
     );
 
     return validationResult;
@@ -84,6 +92,7 @@ export class FlatMcpServerValidatorService {
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatMcpServerMaps: optimisticFlatMcpServerMaps,
+      flatConnectionProviderMaps: optimisticFlatConnectionProviderMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.mcpServer
@@ -107,7 +116,16 @@ export class FlatMcpServerValidatorService {
       return validationResult;
     }
 
-    const { name, label, url } = flatEntityUpdate;
+    const { name, label, url, connectionProviderUniversalIdentifier } =
+      flatEntityUpdate;
+
+    const isConnectionProviderUpdated = !isUndefined(
+      connectionProviderUniversalIdentifier,
+    );
+    const nextConnectionProviderUniversalIdentifier =
+      isConnectionProviderUpdated
+        ? connectionProviderUniversalIdentifier
+        : existingMcpServer.connectionProviderUniversalIdentifier;
 
     validationResult.errors.push(
       ...(isDefined(name)
@@ -119,9 +137,74 @@ export class FlatMcpServerValidatorService {
         : []),
       ...(isDefined(label) ? this.getLabelErrors(label) : []),
       ...(isDefined(url) ? this.getUrlErrors(url) : []),
+      ...(isConnectionProviderUpdated
+        ? this.getConnectionProviderErrors({
+            connectionProviderUniversalIdentifier,
+            applicationUniversalIdentifier:
+              existingMcpServer.applicationUniversalIdentifier,
+            flatConnectionProviderMaps: optimisticFlatConnectionProviderMaps,
+          })
+        : []),
     );
 
+    // Tokens minted for the current resource must not be sent to another host.
+    if (
+      isDefined(url) &&
+      url !== existingMcpServer.url &&
+      isDefined(nextConnectionProviderUniversalIdentifier)
+    ) {
+      validationResult.errors.push({
+        code: McpServerExceptionCode.MCP_SERVER_URL_CHANGE_WHILE_CONNECTED,
+        message: t`Disconnect the MCP server before changing its URL`,
+        userFriendlyMessage: msg`Disconnect the MCP server before changing its URL`,
+      });
+    }
+
     return validationResult;
+  }
+
+  private getConnectionProviderErrors({
+    connectionProviderUniversalIdentifier,
+    applicationUniversalIdentifier,
+    flatConnectionProviderMaps,
+  }: {
+    connectionProviderUniversalIdentifier: string | null;
+    applicationUniversalIdentifier: string;
+    flatConnectionProviderMaps: MetadataUniversalFlatEntityMaps<'connectionProvider'>;
+  }): FlatEntityValidationError<McpServerExceptionCode>[] {
+    if (!isDefined(connectionProviderUniversalIdentifier)) {
+      return [];
+    }
+
+    const flatConnectionProvider = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: connectionProviderUniversalIdentifier,
+      flatEntityMaps: flatConnectionProviderMaps,
+    });
+
+    if (!isDefined(flatConnectionProvider)) {
+      return [
+        {
+          code: McpServerExceptionCode.CONNECTION_PROVIDER_NOT_FOUND,
+          message: t`Connection provider not found`,
+          userFriendlyMessage: msg`Connection provider not found`,
+        },
+      ];
+    }
+
+    if (
+      flatConnectionProvider.applicationUniversalIdentifier !==
+      applicationUniversalIdentifier
+    ) {
+      return [
+        {
+          code: McpServerExceptionCode.CONNECTION_PROVIDER_NOT_IN_APPLICATION,
+          message: t`The connection provider belongs to another application`,
+          userFriendlyMessage: msg`The connection provider must belong to the same application as the MCP server`,
+        },
+      ];
+    }
+
+    return [];
   }
 
   private getNotFoundError(): FlatEntityValidationError<McpServerExceptionCode> {

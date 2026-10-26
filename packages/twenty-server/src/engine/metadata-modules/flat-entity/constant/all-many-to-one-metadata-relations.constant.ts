@@ -538,7 +538,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   mcpServer: {
     workspace: null,
     application: null,
-    connectedAccount: null,
+    connectionProvider: {
+      metadataName: 'connectionProvider',
+      foreignKey: 'connectionProviderId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'connectionProviderUniversalIdentifier',
+    },
   },
   applicationVariable: {
     workspace: null,

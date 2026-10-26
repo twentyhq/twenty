@@ -8,7 +8,6 @@ import {
 } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -19,10 +18,6 @@ import { fromFlatMcpServerToMcpServerDto } from 'src/engine/metadata-modules/fla
 import { fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow } from 'src/engine/metadata-modules/flat-mcp-server/utils/from-update-mcp-server-input-to-flat-mcp-server-to-update-or-throw.util';
 import { type CreateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/create-mcp-server.input';
 import { type McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server.dto';
-import {
-  McpServerException,
-  McpServerExceptionCode,
-} from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
 import { type UpdateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/update-mcp-server.input';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -33,7 +28,6 @@ export class McpServerService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
   async findAll(workspaceId: string): Promise<McpServerDTO[]> {
@@ -71,16 +65,16 @@ export class McpServerService {
         { workspaceId },
       );
 
-    await this.assertConnectedAccountIsWorkspaceSharedOrThrow({
-      connectedAccountId: input.connectedAccountId,
-      workspaceId,
-    });
-
     const flatMcpServerToCreate =
       fromCreateMcpServerInputToFlatMcpServerToCreate({
         createMcpServerInput: { ...input, url: this.normalizeUrl(input.url) },
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
+        connectionProviderUniversalIdentifier:
+          await this.resolveConnectionProviderUniversalIdentifier({
+            connectionProviderId: input.connectionProviderId,
+            workspaceId,
+          }),
       });
 
     await this.runMigrationOrThrow({
@@ -107,12 +101,18 @@ export class McpServerService {
         input.update,
         ['name', 'label', 'url'],
       );
-    const { connectedAccountId, isActive } = input.update;
+    const { connectionProviderId, isActive } = input.update;
 
-    await this.assertConnectedAccountIsWorkspaceSharedOrThrow({
-      connectedAccountId,
-      workspaceId,
-    });
+    const connectionProviderUpdate = isUndefined(connectionProviderId)
+      ? {}
+      : {
+          connectionProviderId,
+          connectionProviderUniversalIdentifier:
+            await this.resolveConnectionProviderUniversalIdentifier({
+              connectionProviderId,
+              workspaceId,
+            }),
+        };
 
     const flatMcpServerToUpdate =
       fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow({
@@ -123,7 +123,7 @@ export class McpServerService {
           ...(isDefined(label) && { label }),
           ...(isDefined(url) && { url: this.normalizeUrl(url) }),
           ...(isDefined(isActive) && { isActive }),
-          ...(!isUndefined(connectedAccountId) && { connectedAccountId }),
+          ...connectionProviderUpdate,
         },
       });
 
@@ -162,28 +162,30 @@ export class McpServerService {
     return getUrlSafely(url)?.toString() ?? url;
   }
 
-  private async assertConnectedAccountIsWorkspaceSharedOrThrow({
-    connectedAccountId,
+  // An unknown id is passed through as-is so the validator reports it
+  // instead of the lookup throwing before validation runs.
+  private async resolveConnectionProviderUniversalIdentifier({
+    connectionProviderId,
     workspaceId,
   }: {
-    connectedAccountId: string | null | undefined;
+    connectionProviderId: string | null | undefined;
     workspaceId: string;
-  }): Promise<void> {
-    if (!isDefined(connectedAccountId)) {
-      return;
+  }): Promise<string | null> {
+    if (!isDefined(connectionProviderId)) {
+      return null;
     }
 
-    const isWorkspaceShared =
-      await this.connectedAccountMetadataService.isWorkspaceSharedConnectedAccount(
-        { id: connectedAccountId, workspaceId },
+    const { flatConnectionProviderMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatConnectionProviderMaps'] },
       );
 
-    if (!isWorkspaceShared) {
-      throw new McpServerException(
-        `Connected account ${connectedAccountId} is not a workspace-shared account of workspace ${workspaceId}`,
-        McpServerExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
-      );
-    }
+    return (
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: connectionProviderId,
+        flatEntityMaps: flatConnectionProviderMaps,
+      })?.universalIdentifier ?? connectionProviderId
+    );
   }
 
   private async getFlatMcpServerMaps(workspaceId: string) {

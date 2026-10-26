@@ -1,3 +1,8 @@
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
+import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import {
   createMcpServer,
@@ -8,8 +13,6 @@ import {
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-
-import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 
 const VALID_INPUT = {
   name: 'docs',
@@ -30,14 +33,64 @@ const getMcpServerValidationErrorCodes = (responseBody: {
     ),
   );
 
+const OTHER_APPLICATION_IDENTIFIER = uuidv4();
+const OTHER_APPLICATION_ROLE_IDENTIFIER = uuidv4();
+const OTHER_APPLICATION_PROVIDER_IDENTIFIER = uuidv4();
+
 describe('mcpServersResolver (e2e)', () => {
   const createdMcpServerIds: string[] = [];
+  let otherApplicationConnectionProviderId: string;
 
   beforeAll(async () => {
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_MCP_SERVERS_ENABLED,
       value: true,
       expectToFail: false,
+    });
+
+    await setupApplicationForSync({
+      applicationUniversalIdentifier: OTHER_APPLICATION_IDENTIFIER,
+      name: 'MCP server provider check',
+      description: 'Owns a connection provider the MCP server must not use',
+      sourcePath: 'mcp-server-provider-check',
+    });
+
+    const { errors } = await syncApplication({
+      manifest: buildBaseManifest({
+        appId: OTHER_APPLICATION_IDENTIFIER,
+        roleId: OTHER_APPLICATION_ROLE_IDENTIFIER,
+        overrides: {
+          connectionProviders: [
+            {
+              universalIdentifier: OTHER_APPLICATION_PROVIDER_IDENTIFIER,
+              name: 'other-provider',
+              displayName: 'Other provider',
+              type: 'oauth',
+              oauth: {
+                authorizationEndpoint: 'https://other.example.com/authorize',
+                tokenEndpoint: 'https://other.example.com/token',
+                scopes: ['read'],
+                clientIdVariable: 'CLIENT_ID',
+                clientSecretVariable: 'CLIENT_SECRET',
+              },
+            },
+          ],
+        },
+      }),
+    });
+
+    expect(errors).toBeUndefined();
+
+    const [provider] = await findConnectionProvidersByApplication(
+      OTHER_APPLICATION_IDENTIFIER,
+    );
+
+    otherApplicationConnectionProviderId = provider.id;
+  });
+
+  afterAll(async () => {
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: OTHER_APPLICATION_IDENTIFIER,
     });
   });
 
@@ -49,7 +102,7 @@ describe('mcpServersResolver (e2e)', () => {
 
   const createAndTrack = async (
     input: Partial<typeof VALID_INPUT> & {
-      connectedAccountId?: string | null;
+      connectionProviderId?: string | null;
       isActive?: boolean;
     } = {},
   ) => {
@@ -71,32 +124,28 @@ describe('mcpServersResolver (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.createMcpServer).toMatchObject({
         ...VALID_INPUT,
-        connectedAccountId: null,
+        connectionProviderId: null,
         isActive: true,
       });
     });
 
-    it('links a workspace-shared connected account', async () => {
-      const response = await createAndTrack({
-        connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY_SHARED,
-      });
+    it('rejects an unknown connection provider', async () => {
+      const response = await createAndTrack({ connectionProviderId: uuidv4() });
 
-      expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.createMcpServer.connectedAccountId).toBe(
-        CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY_SHARED,
-      );
+      expect(getMcpServerValidationErrorCodes(response.body)).toEqual([
+        'CONNECTION_PROVIDER_NOT_FOUND',
+      ]);
+      expect(response.body.data).toBeNull();
     });
 
-    it.each([
-      ['unknown', uuidv4()],
-      ['personal', CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM],
-      ['archived shared', CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM_SHARED_ARCHIVED],
-    ])('rejects a %s connected account', async (_label, connectedAccountId) => {
-      const response = await createAndTrack({ connectedAccountId });
+    it('rejects a connection provider of another application', async () => {
+      const response = await createAndTrack({
+        connectionProviderId: otherApplicationConnectionProviderId,
+      });
 
-      expect(response.body.errors?.[0]?.extensions?.code).toBe(
-        'BAD_USER_INPUT',
-      );
+      expect(getMcpServerValidationErrorCodes(response.body)).toEqual([
+        'CONNECTION_PROVIDER_NOT_IN_APPLICATION',
+      ]);
       expect(response.body.data).toBeNull();
     });
 
@@ -141,20 +190,12 @@ describe('mcpServersResolver (e2e)', () => {
   });
 
   describe('updateMcpServer', () => {
-    it('updates editable fields and unlinks the connected account', async () => {
-      const created = (
-        await createAndTrack({
-          connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY_SHARED,
-        })
-      ).body.data.createMcpServer;
+    it('updates editable fields', async () => {
+      const created = (await createAndTrack()).body.data.createMcpServer;
 
       const response = await updateMcpServer({
         id: created.id,
-        update: {
-          label: 'Renamed',
-          isActive: false,
-          connectedAccountId: null,
-        },
+        update: { label: 'Renamed', isActive: false },
       });
 
       expect(response.body.errors).toBeUndefined();
@@ -162,7 +203,6 @@ describe('mcpServersResolver (e2e)', () => {
         id: created.id,
         label: 'Renamed',
         isActive: false,
-        connectedAccountId: null,
       });
     });
 

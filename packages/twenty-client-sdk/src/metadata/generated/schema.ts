@@ -2017,7 +2017,7 @@ export interface MarketplaceAppRoleObjectPermission {
 
 export interface McpServer {
     applicationId: Scalars['UUID']
-    connectedAccountId?: Scalars['UUID']
+    connectionProviderId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     id: Scalars['UUID']
     isActive: Scalars['Boolean']
@@ -5553,7 +5553,7 @@ export interface CreateIndexInput {fields: CreateIndexFieldInput[],indexType: In
 
 export interface CreateLogicFunctionFromSourceInput {cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),description?: (Scalars['String'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null),id?: (Scalars['UUID'] | null),name: Scalars['String'],serverRouteTriggerSettings?: (Scalars['JSON'] | null),source?: (Scalars['JSON'] | null),timeoutSeconds?: (Scalars['Float'] | null),toolTriggerSettings?: (Scalars['JSON'] | null),universalIdentifier?: (Scalars['UUID'] | null),workflowActionTriggerSettings?: (Scalars['JSON'] | null)}
 
-export interface CreateMcpServerInput {connectedAccountId?: (Scalars['UUID'] | null),id?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),label: Scalars['String'],name: Scalars['String'],url: Scalars['String']}
+export interface CreateMcpServerInput {connectionProviderId?: (Scalars['UUID'] | null),id?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),label: Scalars['String'],name: Scalars['String'],url: Scalars['String']}
 
 export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
 
@@ -6474,7 +6474,7 @@ export interface MarketplaceAppRoleObjectPermissionGenqlSelection{
 
 export interface McpServerGenqlSelection{
     applicationId?: boolean | number
-    connectedAccountId?: boolean | number
+    connectionProviderId?: boolean | number
     createdAt?: boolean | number
     id?: boolean | number
     isActive?: boolean | number
@@ -8180,7 +8180,7 @@ export interface UpdateLogicFunctionFromSourceInputUpdates {cronTriggerSettings?
 
 export interface UpdateMcpServerInput {id: Scalars['UUID'],update: UpdateMcpServerInputUpdates}
 
-export interface UpdateMcpServerInputUpdates {connectedAccountId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),name?: (Scalars['String'] | null),url?: (Scalars['String'] | null)}
+export interface UpdateMcpServerInputUpdates {connectionProviderId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),name?: (Scalars['String'] | null),url?: (Scalars['String'] | null)}
 
 export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMessageChannelInputUpdates}
 

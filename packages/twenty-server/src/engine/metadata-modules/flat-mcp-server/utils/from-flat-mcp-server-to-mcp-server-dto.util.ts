@@ -8,7 +8,7 @@ export const fromFlatMcpServerToMcpServerDto = (
   name: flatMcpServer.name,
   label: flatMcpServer.label,
   url: flatMcpServer.url,
-  connectedAccountId: flatMcpServer.connectedAccountId,
+  connectionProviderId: flatMcpServer.connectionProviderId,
   isActive: flatMcpServer.isActive,
   workspaceId: flatMcpServer.workspaceId,
   applicationId: flatMcpServer.applicationId,

@@ -1862,10 +1862,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    connectedAccountId: {
+    connectionProviderId: {
       toCompare: true,
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty: 'connectionProviderUniversalIdentifier',
     },
     isActive: {
       toCompare: true,

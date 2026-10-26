@@ -13,6 +13,7 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 const FLAT_MCP_SERVER_ROWS_REQUIREMENT = {
   mcpServer: true,
   application: ['id', 'universalIdentifier'],
+  connectionProvider: ['id', 'universalIdentifier'],
 } as const;
 
 @Injectable()
@@ -25,10 +26,16 @@ export class WorkspaceFlatMcpServerMapCacheService extends MetadataFlatEntityMap
   }: WorkspaceCacheProviderContext<
     typeof FLAT_MCP_SERVER_ROWS_REQUIREMENT
   >): FlatMcpServerMaps {
-    const { mcpServer: mcpServers, application: applications } = rows;
+    const {
+      mcpServer: mcpServers,
+      application: applications,
+      connectionProvider: connectionProviders,
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
+    const connectionProviderIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(connectionProviders);
 
     const flatMcpServerMaps = createEmptyFlatEntityMaps();
 
@@ -37,6 +44,7 @@ export class WorkspaceFlatMcpServerMapCacheService extends MetadataFlatEntityMap
         flatEntity: fromMcpServerEntityToFlatMcpServer({
           entity: mcpServerEntity,
           applicationIdToUniversalIdentifierMap,
+          connectionProviderIdToUniversalIdentifierMap,
         }),
         flatEntityMapsToMutate: flatMcpServerMaps,
       });

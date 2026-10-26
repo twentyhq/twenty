@@ -10,7 +10,9 @@ export enum McpServerExceptionCode {
   INVALID_MCP_SERVER_INPUT = 'INVALID_MCP_SERVER_INPUT',
   INVALID_MCP_SERVER_NAME = 'INVALID_MCP_SERVER_NAME',
   INVALID_MCP_SERVER_URL = 'INVALID_MCP_SERVER_URL',
-  CONNECTED_ACCOUNT_NOT_FOUND = 'CONNECTED_ACCOUNT_NOT_FOUND',
+  CONNECTION_PROVIDER_NOT_FOUND = 'CONNECTION_PROVIDER_NOT_FOUND',
+  CONNECTION_PROVIDER_NOT_IN_APPLICATION = 'CONNECTION_PROVIDER_NOT_IN_APPLICATION',
+  MCP_SERVER_URL_CHANGE_WHILE_CONNECTED = 'MCP_SERVER_URL_CHANGE_WHILE_CONNECTED',
 }
 
 const getMcpServerExceptionUserFriendlyMessage = (
@@ -27,8 +29,12 @@ const getMcpServerExceptionUserFriendlyMessage = (
       return msg`Invalid MCP server name. Use lowercase letters, digits and underscores, starting with a letter.`;
     case McpServerExceptionCode.INVALID_MCP_SERVER_URL:
       return msg`Invalid MCP server URL. Please provide a valid HTTP or HTTPS URL.`;
-    case McpServerExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND:
-      return msg`Connected account not found. Only workspace-shared accounts can be linked to an MCP server.`;
+    case McpServerExceptionCode.CONNECTION_PROVIDER_NOT_FOUND:
+      return msg`Connection provider not found.`;
+    case McpServerExceptionCode.CONNECTION_PROVIDER_NOT_IN_APPLICATION:
+      return msg`The connection provider must belong to the same application as the MCP server.`;
+    case McpServerExceptionCode.MCP_SERVER_URL_CHANGE_WHILE_CONNECTED:
+      return msg`Disconnect the MCP server before changing its URL.`;
     default:
       assertUnreachable(code);
   }

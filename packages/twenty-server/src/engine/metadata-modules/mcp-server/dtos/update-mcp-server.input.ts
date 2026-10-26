@@ -32,7 +32,7 @@ export class UpdateMcpServerInputUpdates {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  connectedAccountId?: string | null;
+  connectionProviderId?: string | null;
 
   @IsOptional()
   @IsBoolean()

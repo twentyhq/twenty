@@ -7,7 +7,7 @@ const MCP_SERVER_FIELDS = `
   name
   label
   url
-  connectedAccountId
+  connectionProviderId
   isActive
   applicationId
 `;
@@ -48,7 +48,7 @@ export type McpServerInput = {
   name: string;
   label: string;
   url: string;
-  connectedAccountId?: string | null;
+  connectionProviderId?: string | null;
   isActive?: boolean;
 };
 

@@ -1570,7 +1570,7 @@ input CreateLogicFunctionFromSourceInput {
 }
 
 input CreateMcpServerInput {
-  connectedAccountId: UUID
+  connectionProviderId: UUID
   id: UUID
   isActive: Boolean
   label: String!
@@ -2916,7 +2916,7 @@ type MarketplaceAppRoleObjectPermission {
 
 type McpServer {
   applicationId: UUID!
-  connectedAccountId: UUID
+  connectionProviderId: UUID
   createdAt: DateTime!
   id: UUID!
   isActive: Boolean!
@@ -5005,7 +5005,7 @@ input UpdateMcpServerInput {
 }
 
 input UpdateMcpServerInputUpdates {
-  connectedAccountId: UUID
+  connectionProviderId: UUID
   isActive: Boolean
   label: String
   name: String

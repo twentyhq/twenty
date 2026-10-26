@@ -1695,7 +1695,7 @@ export type CreateLogicFunctionFromSourceInput = {
 };
 
 export type CreateMcpServerInput = {
-  connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
+  connectionProviderId?: InputMaybe<Scalars['UUID']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label: Scalars['String']['input'];
@@ -3086,7 +3086,7 @@ export type MarketplaceAppRoleObjectPermission = {
 export type McpServer = {
   __typename?: 'McpServer';
   applicationId: Scalars['UUID']['output'];
-  connectedAccountId?: Maybe<Scalars['UUID']['output']>;
+  connectionProviderId?: Maybe<Scalars['UUID']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
   isActive: Scalars['Boolean']['output'];
@@ -7277,7 +7277,7 @@ export type UpdateMcpServerInput = {
 };
 
 export type UpdateMcpServerInputUpdates = {
-  connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
+  connectionProviderId?: InputMaybe<Scalars['UUID']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;

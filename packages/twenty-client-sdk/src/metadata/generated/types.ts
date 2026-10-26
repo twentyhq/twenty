@@ -3481,7 +3481,7 @@ export default {
             ]
         },
         "CreateMcpServerInput": {
-            "connectedAccountId": [
+            "connectionProviderId": [
                 518
             ],
             "id": [
@@ -6051,7 +6051,7 @@ export default {
             "applicationId": [
                 518
             ],
-            "connectedAccountId": [
+            "connectionProviderId": [
                 518
             ],
             "createdAt": [
@@ -13315,7 +13315,7 @@ export default {
             ]
         },
         "UpdateMcpServerInputUpdates": {
-            "connectedAccountId": [
+            "connectionProviderId": [
                 518
             ],
             "isActive": [

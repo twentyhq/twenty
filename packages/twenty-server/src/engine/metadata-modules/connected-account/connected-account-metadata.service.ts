@@ -328,18 +328,6 @@ export class ConnectedAccountMetadataService {
     return accounts.map((account) => account.id);
   }
 
-  async isWorkspaceSharedConnectedAccount({
-    id,
-    workspaceId,
-  }: {
-    id: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    return this.repository.exists({
-      where: { id, workspaceId, scope: 'WORKSPACE', archivedAt: IsNull() },
-    });
-  }
-
   async getWorkspaceSharedConnectedAccountIds({
     workspaceId,
   }: {

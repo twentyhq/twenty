@@ -35,7 +35,7 @@ export class CreateMcpServerInput {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
-  connectedAccountId?: string | null;
+  connectionProviderId?: string | null;
 
   @IsBoolean()
   @IsOptional()

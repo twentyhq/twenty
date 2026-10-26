@@ -9,13 +9,15 @@ export const fromCreateMcpServerInputToFlatMcpServerToCreate = ({
   createMcpServerInput,
   workspaceId,
   flatApplication,
+  connectionProviderUniversalIdentifier,
 }: {
   createMcpServerInput: Pick<
     CreateMcpServerInput,
-    'id' | 'name' | 'label' | 'url' | 'connectedAccountId' | 'isActive'
+    'id' | 'name' | 'label' | 'url' | 'connectionProviderId' | 'isActive'
   >;
   workspaceId: string;
   flatApplication: FlatApplication;
+  connectionProviderUniversalIdentifier: string | null;
 }): FlatMcpServer => {
   const now = new Date().toISOString();
 
@@ -32,7 +34,8 @@ export const fromCreateMcpServerInputToFlatMcpServerToCreate = ({
     name,
     label,
     url,
-    connectedAccountId: createMcpServerInput.connectedAccountId ?? null,
+    connectionProviderId: createMcpServerInput.connectionProviderId ?? null,
+    connectionProviderUniversalIdentifier,
     isActive: createMcpServerInput.isActive ?? true,
     workspaceId,
     createdAt: now,
