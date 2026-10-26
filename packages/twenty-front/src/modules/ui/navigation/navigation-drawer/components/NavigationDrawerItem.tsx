@@ -5,6 +5,7 @@ import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
+import { NavigationDrawerItemIcon } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemIcon';
 import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
@@ -16,7 +17,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isValidElement, useContext } from 'react';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -369,19 +370,14 @@ export const NavigationDrawerItem = ({
             ) : (
               isDefined(Icon) && (
                 <StyledIcon>
-                  {isValidElement(Icon) ? (
-                    Icon
-                  ) : (
-                    <Icon
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.md}
-                      color={
-                        showBreadcrumb && !isExpanded
-                          ? theme.font.color.light
-                          : 'currentColor'
-                      }
-                    />
-                  )}
+                  <NavigationDrawerItemIcon
+                    Icon={Icon}
+                    color={
+                      showBreadcrumb && !isExpanded
+                        ? theme.font.color.light
+                        : 'currentColor'
+                    }
+                  />
                   {isUnread && !isExpanded && (
                     <StyledNavigationDrawerUnreadDot />
                   )}
