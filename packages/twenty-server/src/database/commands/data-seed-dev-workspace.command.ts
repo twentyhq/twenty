@@ -30,7 +30,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
   @Option({
     flags: '--light',
     description:
-      'Light seed: only seed the Apple workspace (skip YCombinator), skip demo custom objects (Pet, Survey, etc.) and limit records to 5 per object',
+      'Light seed: only seed the Apple workspace (skip YCombinator and Blank), skip demo custom objects (Pet, Survey, etc.) and limit records to 5 per object',
   })
   parseLight(): boolean {
     return true;
@@ -49,6 +49,10 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         await this.devSeederWorkspaceService.seedDev(workspaceId, {
           light: options.light,
         });
+      }
+
+      if (!options.light) {
+        await this.devSeederWorkspaceService.seedBlank();
       }
     } catch (error) {
       this.logger.error(error);

@@ -31,7 +31,9 @@ import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/co
 import { seedBillingEntitlements } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-entitlements.util';
 import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
 import {
+  SEED_BLANK_WORKSPACE_ID,
   type SeededWorkspacesIds,
+  SEEDER_CREATE_BLANK_WORKSPACE_INPUT,
   SEEDER_CREATE_WORKSPACE_INPUT,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
@@ -52,6 +54,10 @@ import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/se
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
 import { DevSeederAgentChatChannelWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-channel.workspace-service';
 import { DevSeederAgentChatPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-pending-input.workspace-service';
+import {
+  getWorkspaceMemberDataSeeds,
+  WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederWorkflowPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-pending-input.workspace-service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
@@ -252,6 +258,55 @@ export class DevSeederWorkspaceService {
     await this.workspaceCacheStorageService.flush(workspaceId);
   }
 
+  public async seedBlank(): Promise<void> {
+    const workspaceId = SEED_BLANK_WORKSPACE_ID;
+    const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
+
+    const lastAttemptedInstanceCommand =
+      await this.upgradeMigrationService.getLastAttemptedInstanceCommandOrThrow();
+    const initialCursor =
+      this.upgradeSequenceReaderService.getInitialCursorForNewWorkspace(
+        lastAttemptedInstanceCommand,
+      );
+
+    await this.seedBlankCoreSchema({ appVersion, initialCursor });
+
+    const schemaName =
+      await this.workspaceSchemaService.createWorkspaceDBSchema(workspaceId);
+
+    await this.workspaceRepository.update(workspaceId, {
+      databaseSchema: schemaName,
+    });
+
+    await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
+      {
+        workspaceId,
+      },
+    );
+
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
+    await this.devSeederPermissionsService.initBlankWorkspacePermissions({
+      workspaceId,
+      workspaceCustomFlatApplication,
+    });
+
+    await this.coreDataSource
+      .createQueryBuilder()
+      .insert()
+      .into(`${schemaName}.workspaceMember`, WORKSPACE_MEMBER_DATA_SEED_COLUMNS)
+      .orIgnore()
+      .values(getWorkspaceMemberDataSeeds(workspaceId))
+      .execute();
+
+    await this.workspaceCacheStorageService.flush(workspaceId);
+  }
+
   private async seedAgentChat({
     workspaceId,
     chatReferenceIds,
@@ -362,6 +417,70 @@ export class DevSeederWorkspaceService {
       }
 
       await seedMetadataEntities({ queryRunner, schemaName, workspaceId });
+
+      await this.upgradeMigrationService.markAsWorkspaceInitial({
+        name: initialCursor.name,
+        workspaceId,
+        executedByVersion: appVersion,
+        status: initialCursor.status,
+        queryRunner,
+      });
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  private async seedBlankCoreSchema({
+    appVersion,
+    initialCursor,
+  }: {
+    appVersion: string;
+    initialCursor: { name: string; status: UpgradeMigrationStatus };
+  }): Promise<void> {
+    const schemaName = 'core';
+    const workspaceId = SEED_BLANK_WORKSPACE_ID;
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const workspaceCustomApplicationId = v4();
+
+      await createWorkspace({
+        queryRunner,
+        schemaName,
+        createWorkspaceInput: {
+          ...SEEDER_CREATE_BLANK_WORKSPACE_INPUT,
+          workspaceCustomApplicationId,
+        },
+      });
+
+      await this.applicationService.createWorkspaceCustomApplication(
+        {
+          workspaceId,
+          applicationId: workspaceCustomApplicationId,
+        },
+        queryRunner,
+      );
+
+      await seedUsers({ queryRunner, schemaName });
+      await seedUserWorkspaces({ queryRunner, schemaName, workspaceId });
+
+      await this.applicationService.createTwentyStandardApplication(
+        {
+          workspaceId,
+          skipCacheInvalidation: true,
+        },
+        queryRunner,
+      );
+
+      await seedFeatureFlags({ queryRunner, schemaName, workspaceId });
 
       await this.upgradeMigrationService.markAsWorkspaceInitial({
         name: initialCursor.name,

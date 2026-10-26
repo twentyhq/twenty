@@ -3,6 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import {
   SEED_APPLE_WORKSPACE_ID,
+  SEED_BLANK_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { generateRandomUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-random-users.util';
@@ -20,6 +21,7 @@ export const USER_WORKSPACE_DATA_SEED_IDS = {
   JONY_ACME: '20202020-e10a-4c27-a90b-b08c57b02d45',
   PHIL_ACME: '20202020-e10a-4c27-a90b-b08c57b02d46',
   SCOTT: '20202020-1111-4a01-8001-000000000002',
+  ADA_BLANK: '20202020-2222-4a02-8002-000000000002',
 };
 
 const {
@@ -101,6 +103,17 @@ export const seedUserWorkspaces = async ({
       },
     ];
   }
+
+  if (workspaceId === SEED_BLANK_WORKSPACE_ID) {
+    userWorkspaces = [
+      {
+        id: USER_WORKSPACE_DATA_SEED_IDS.ADA_BLANK,
+        userId: USER_DATA_SEED_IDS.ADA,
+        workspaceId,
+      },
+    ];
+  }
+
   await queryRunner.manager
     .createQueryBuilder()
     .insert()

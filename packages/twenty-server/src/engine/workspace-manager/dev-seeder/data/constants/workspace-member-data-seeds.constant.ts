@@ -1,5 +1,6 @@
 import {
   SEED_APPLE_WORKSPACE_ID,
+  SEED_BLANK_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { generateRandomUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-random-users.util';
@@ -32,6 +33,7 @@ export const WORKSPACE_MEMBER_DATA_SEED_IDS = {
   PHIL: '20202020-1553-45c6-a028-5a9064cce07f',
   JANE: '20202020-463f-435b-828c-107e007a2711',
   SCOTT: '20202020-1111-4a01-8001-000000000003',
+  ADA: '20202020-2222-4a02-8002-000000000003',
 };
 
 const {
@@ -94,6 +96,18 @@ const appleOnlyWorkspaceMembers: WorkspaceMemberDataSeed[] = [
   },
 ];
 
+const blankOnlyWorkspaceMembers: WorkspaceMemberDataSeed[] = [
+  {
+    id: WORKSPACE_MEMBER_DATA_SEED_IDS.ADA,
+    nameFirstName: 'Ada',
+    nameLastName: 'Lovelace',
+    locale: 'en',
+    colorScheme: 'System',
+    userEmail: 'ada.lovelace@blank.dev',
+    userId: USER_DATA_SEED_IDS.ADA,
+  },
+];
+
 export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
   ...originalWorkspaceMembers,
   ...randomWorkspaceMembers,
@@ -102,6 +116,10 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
 export const getWorkspaceMemberDataSeeds = (
   workspaceId: string,
 ): WorkspaceMemberDataSeed[] => {
+  if (workspaceId === SEED_BLANK_WORKSPACE_ID) {
+    return blankOnlyWorkspaceMembers;
+  }
+
   // In test environment, only return original members to avoid conflicts
   // (Scott is appended for Apple to back the impersonation escalation test).
   if (process.env.NODE_ENV === 'test') {

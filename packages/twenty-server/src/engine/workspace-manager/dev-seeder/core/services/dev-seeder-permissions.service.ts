@@ -177,6 +177,37 @@ export class DevSeederPermissionsService {
     }
   }
 
+  public async initBlankWorkspacePermissions({
+    workspaceId,
+    workspaceCustomFlatApplication,
+  }: {
+    workspaceId: string;
+    workspaceCustomFlatApplication: FlatApplication;
+  }) {
+    const adminRole = await this.roleRepository.findOne(workspaceId, {
+      where: {
+        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+      },
+    });
+
+    if (!adminRole) {
+      throw new Error(
+        'Required roles not found. Make sure the permission sync has run.',
+      );
+    }
+
+    await this.userRoleService.assignRoleToManyUserWorkspace({
+      workspaceId,
+      userWorkspaceIds: [USER_WORKSPACE_DATA_SEED_IDS.ADA_BLANK],
+      roleId: adminRole.id,
+    });
+
+    await this.initMinimalPermissionsAndActivateWorkspace({
+      workspaceId,
+      workspaceCustomFlatApplication,
+    });
+  }
+
   public async initMinimalPermissionsAndActivateWorkspace({
     workspaceId,
     workspaceCustomFlatApplication,

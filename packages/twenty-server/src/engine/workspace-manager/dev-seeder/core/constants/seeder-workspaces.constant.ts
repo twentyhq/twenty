@@ -24,6 +24,9 @@ export const SEED_APPLE_WORKSPACE_ID = (process.env.E2E_SEED_WORKSPACE_ID ??
   DEFAULT_SEED_APPLE_WORKSPACE_ID) as typeof DEFAULT_SEED_APPLE_WORKSPACE_ID;
 export const SEED_YCOMBINATOR_WORKSPACE_ID =
   '3b8e6458-5fc1-4e63-8563-008ccddaa6db';
+// Seeded like a freshly activated workspace, so tests can sync a full custom
+// application manifest without deleting demo data
+export const SEED_BLANK_WORKSPACE_ID = 'bf5d3850-9cfa-4226-958b-37e23998433e';
 export const SEED_EMPTY_WORKSPACE_3_ID = '506915ec-21ca-431b-a04a-257eb216865e';
 export const SEED_EMPTY_WORKSPACE_4_ID = 'aa8fdcb1-8ee1-4012-98af-44a97caa7411';
 
@@ -54,3 +57,12 @@ export const SEEDER_CREATE_WORKSPACE_INPUT = {
   SeededWorkspacesIds,
   Omit<CreateWorkspaceInput, 'workspaceCustomApplicationId'>
 >;
+
+export const SEEDER_CREATE_BLANK_WORKSPACE_INPUT = {
+  id: SEED_BLANK_WORKSPACE_ID,
+  displayName: 'Blank',
+  subdomain: 'blank',
+  inviteHash: 'blank.dev-invite-hash',
+  activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+  isTwoFactorAuthenticationEnforced: false,
+} as const satisfies Omit<CreateWorkspaceInput, 'workspaceCustomApplicationId'>;
