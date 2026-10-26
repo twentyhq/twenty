@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconMessage } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -14,11 +14,13 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelAiChatPickerSkeleton } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSkeleton';
-import { type useOpenAiChatFromPicker } from '@/side-panel/pages/search-ai-chats/hooks/useOpenAiChatFromPicker';
+import { useOpenAiChatFromPicker } from '@/side-panel/pages/search-ai-chats/hooks/useOpenAiChatFromPicker';
+import { aiChatPickerOpenErrorComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpenErrorComponentState';
+import { aiChatPickerOpeningThreadIdComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpeningThreadIdComponentState';
+import { aiChatPickerUnavailableThreadIdsComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerUnavailableThreadIdsComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useWorkspaceSurfaceHeaderPortal } from '@/ui/layout/hooks/useWorkspaceSurfaceHeaderPortal';
-
-const CHAT_PICKER_PAGINATION_SKELETON_ROW_COUNT = 3;
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledStatus = styled.div`
   align-items: center;
@@ -29,21 +31,13 @@ const StyledStatus = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledFooter = styled.div`
-  padding: ${themeCssVariables.spacing[2]} 0;
-`;
-
 type SidePanelAiChatPickerListProps = {
   threads: Pick<AgentChatThreadRecord, 'id' | 'title'>[];
   isLoading: boolean;
   loadingLabel: string;
   noResultsText: string;
-  hasNextPage: boolean;
-  isLoadingMore: boolean;
-  onLoadMore: () => void;
-  hasError?: boolean;
-  onRetry?: () => void;
-  chatOpening: ReturnType<typeof useOpenAiChatFromPicker>;
+  errorAction?: ReactNode;
+  footer?: ReactNode;
 };
 
 export const SidePanelAiChatPickerList = ({
@@ -51,26 +45,32 @@ export const SidePanelAiChatPickerList = ({
   isLoading,
   loadingLabel,
   noResultsText,
-  hasNextPage,
-  isLoadingMore,
-  onLoadMore,
-  hasError = false,
-  onRetry,
-  chatOpening,
+  errorAction,
+  footer,
 }: SidePanelAiChatPickerListProps) => {
   const { t } = useLingui();
   const { actions: headerActionsPortal } = useWorkspaceSurfaceHeaderPortal();
-  const { openThread, openingThreadId, openError, unavailableThreadIds } =
-    chatOpening;
-  const isOpeningThread = isDefined(openingThreadId);
+  const { openAiChatFromPicker } = useOpenAiChatFromPicker();
+  const aiChatPickerOpeningThreadId = useAtomComponentStateValue(
+    aiChatPickerOpeningThreadIdComponentState,
+  );
+  const aiChatPickerOpenError = useAtomComponentStateValue(
+    aiChatPickerOpenErrorComponentState,
+  );
+  const aiChatPickerUnavailableThreadIds = useAtomComponentStateValue(
+    aiChatPickerUnavailableThreadIdsComponentState,
+  );
+  const isOpeningThread = isDefined(aiChatPickerOpeningThreadId);
+  const hasError = isDefined(errorAction);
   const canShowThreads = !isLoading && !hasError;
   const visibleThreads = threads.filter(
-    ({ id }) => !unavailableThreadIds.includes(id),
+    ({ id }) => !aiChatPickerUnavailableThreadIds.includes(id),
   );
   const hasThreads = isNonEmptyArray(visibleThreads);
   const visibleOpenError =
-    canShowThreads && threads.some(({ id }) => id === openError?.threadId)
-      ? openError
+    canShowThreads &&
+    threads.some(({ id }) => id === aiChatPickerOpenError?.threadId)
+      ? aiChatPickerOpenError
       : null;
 
   return (
@@ -89,9 +89,7 @@ export const SidePanelAiChatPickerList = ({
       )}
       {!isLoading && hasError && (
         <StyledStatus onMouseDown={(event) => event.preventDefault()}>
-          <Button size="sm" variant="outline" onClick={onRetry}>
-            {t`Retry search`}
-          </Button>
+          {errorAction}
         </StyledStatus>
       )}
       {isDefined(visibleOpenError) && (
@@ -116,7 +114,9 @@ export const SidePanelAiChatPickerList = ({
               key={thread.id}
               itemId={thread.id}
               onEnter={
-                isOpeningThread ? undefined : () => void openThread(thread.id)
+                isOpeningThread
+                  ? undefined
+                  : () => void openAiChatFromPicker(thread.id)
               }
             >
               <CommandMenuItem
@@ -126,32 +126,13 @@ export const SidePanelAiChatPickerList = ({
                   isNonEmptyString(thread.title) ? thread.title : t`New chat`
                 }
                 disabled={isOpeningThread}
-                onClick={() => void openThread(thread.id)}
+                onClick={() => void openAiChatFromPicker(thread.id)}
               />
             </SelectableListItem>
           ))}
         </SidePanelGroup>
       )}
-      {canShowThreads && hasNextPage && (
-        <StyledFooter onMouseDown={(event) => event.preventDefault()}>
-          {isLoadingMore && (
-            <SidePanelAiChatPickerSkeleton
-              label={t`Loading more chats...`}
-              rowCount={CHAT_PICKER_PAGINATION_SKELETON_ROW_COUNT}
-            />
-          )}
-          {!isLoadingMore && (
-            <Button
-              fullWidth
-              variant="ghost"
-              disabled={isOpeningThread}
-              onClick={onLoadMore}
-            >
-              {t`Load more chats`}
-            </Button>
-          )}
-        </StyledFooter>
-      )}
+      {canShowThreads && footer}
     </SidePanelList>
   );
 };

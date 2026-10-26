@@ -1,6 +1,5 @@
 import { isNull } from '@sniptt/guards';
 import { useStore } from 'jotai';
-import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,16 +7,15 @@ import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { aiChatPickerOpenErrorComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpenErrorComponentState';
+import { aiChatPickerOpeningThreadIdComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpeningThreadIdComponentState';
+import { aiChatPickerUnavailableThreadIdsComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerUnavailableThreadIdsComponentState';
 import { isAiChatPickerRequestCurrent } from '@/side-panel/pages/search-ai-chats/utils/isAiChatPickerRequestCurrent';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isAiModePath } from '~/utils/isAiModePath';
 import { logError } from '~/utils/logError';
-
-type AiChatPickerOpenError = {
-  threadId: string;
-  isThreadUnavailable: boolean;
-};
 
 export const useOpenAiChatFromPicker = () => {
   const store = useStore();
@@ -25,15 +23,17 @@ export const useOpenAiChatFromPicker = () => {
   const { loadAgentChatThread } = useRefreshAgentChatThreads();
   const { handleThreadClick } = useAiChatThreadClick();
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const [openingThreadId, setOpeningThreadId] = useState<string | null>(null);
-  const [openError, setOpenError] = useState<AiChatPickerOpenError | null>(
-    null,
+  const setAiChatPickerOpeningThreadId = useSetAtomComponentState(
+    aiChatPickerOpeningThreadIdComponentState,
   );
-  const [unavailableThreadIds, setUnavailableThreadIds] = useState<string[]>(
-    [],
+  const setAiChatPickerOpenError = useSetAtomComponentState(
+    aiChatPickerOpenErrorComponentState,
+  );
+  const setAiChatPickerUnavailableThreadIds = useSetAtomComponentState(
+    aiChatPickerUnavailableThreadIdsComponentState,
   );
 
-  const openThread = async (threadId: string) => {
+  const openAiChatFromPicker = async (threadId: string) => {
     const pickerPage = store.get(sidePanelNavigationStackState.atom).at(-1);
     const workspaceId = store.get(currentWorkspaceState.atom)?.id;
     const isPickerStillOpen = () =>
@@ -45,8 +45,8 @@ export const useOpenAiChatFromPicker = () => {
         currentWorkspaceId: store.get(currentWorkspaceState.atom)?.id,
       });
 
-    setOpeningThreadId(threadId);
-    setOpenError(null);
+    setAiChatPickerOpeningThreadId(threadId);
+    setAiChatPickerOpenError(null);
 
     try {
       const thread = await loadAgentChatThread(threadId);
@@ -56,13 +56,16 @@ export const useOpenAiChatFromPicker = () => {
       }
 
       if (isNull(thread)) {
-        setUnavailableThreadIds((threadIds) => [...threadIds, threadId]);
-        setOpenError({ threadId, isThreadUnavailable: true });
+        setAiChatPickerUnavailableThreadIds((threadIds) => [
+          ...threadIds,
+          threadId,
+        ]);
+        setAiChatPickerOpenError({ threadId, isThreadUnavailable: true });
         return;
       }
 
       if (!isDefined(thread)) {
-        setOpenError({ threadId, isThreadUnavailable: false });
+        setAiChatPickerOpenError({ threadId, isThreadUnavailable: false });
         return;
       }
 
@@ -75,12 +78,12 @@ export const useOpenAiChatFromPicker = () => {
       logError(error);
 
       if (isPickerStillOpen()) {
-        setOpenError({ threadId, isThreadUnavailable: false });
+        setAiChatPickerOpenError({ threadId, isThreadUnavailable: false });
       }
     } finally {
-      setOpeningThreadId(null);
+      setAiChatPickerOpeningThreadId(null);
     }
   };
 
-  return { openThread, openingThreadId, openError, unavailableThreadIds };
+  return { openAiChatFromPicker };
 };

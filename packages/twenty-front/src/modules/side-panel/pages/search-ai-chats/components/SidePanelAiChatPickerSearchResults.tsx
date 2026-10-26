@@ -2,25 +2,29 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { escapeForIlike, isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/primitives/input';
 
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SidePanelAiChatPickerList } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList';
+import { SidePanelAiChatPickerLoadMoreFooter } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerLoadMoreFooter';
 import { AI_CHAT_PICKER_RECORD_GQL_FIELDS } from '@/side-panel/pages/search-ai-chats/constants/AiChatPickerRecordGqlFields';
-import { type useOpenAiChatFromPicker } from '@/side-panel/pages/search-ai-chats/hooks/useOpenAiChatFromPicker';
+import { aiChatPickerOpeningThreadIdComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpeningThreadIdComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type SidePanelAiChatPickerSearchResultsProps = {
   searchTerm: string;
   isSearchPending: boolean;
-  chatOpening: ReturnType<typeof useOpenAiChatFromPicker>;
 };
 
 export const SidePanelAiChatPickerSearchResults = ({
   searchTerm,
   isSearchPending,
-  chatOpening,
 }: SidePanelAiChatPickerSearchResultsProps) => {
   const { t } = useLingui();
+  const aiChatPickerOpeningThreadId = useAtomComponentStateValue(
+    aiChatPickerOpeningThreadIdComponentState,
+  );
   const [isLoadingMoreChats, setIsLoadingMoreChats] = useState(false);
   const { records, loading, hasNextPage, error, fetchMoreRecords, refetch } =
     useFindManyRecords<AgentChatThreadRecord>({
@@ -47,12 +51,33 @@ export const SidePanelAiChatPickerSearchResults = ({
       isLoading={isSearchPending || (loading && !isLoadingMoreChats)}
       loadingLabel={t`Searching chats...`}
       noResultsText={t`No chats match your search`}
-      hasNextPage={hasNextPage}
-      isLoadingMore={isLoadingMoreChats}
-      onLoadMore={() => void handleLoadMore()}
-      hasError={isDefined(error)}
-      onRetry={() => void refetch().catch(() => undefined)}
-      chatOpening={chatOpening}
+      errorAction={
+        isDefined(error) ? (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => void refetch().catch(() => undefined)}
+          >
+            {t`Retry search`}
+          </Button>
+        ) : undefined
+      }
+      footer={
+        hasNextPage ? (
+          <SidePanelAiChatPickerLoadMoreFooter
+            isLoadingMore={isLoadingMoreChats}
+          >
+            <Button
+              fullWidth
+              variant="ghost"
+              disabled={isDefined(aiChatPickerOpeningThreadId)}
+              onClick={() => void handleLoadMore()}
+            >
+              {t`Load more chats`}
+            </Button>
+          </SidePanelAiChatPickerLoadMoreFooter>
+        ) : undefined
+      }
     />
   );
 };

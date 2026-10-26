@@ -12,5 +12,5 @@ export const useAiChatThreadSearchTerm = () => {
     CHAT_PICKER_SEARCH_DEBOUNCE_DELAY_IN_MS,
   );
 
-  return { searchTerm, isSearchPending: search !== searchTerm };
+  return { searchTerm };
 };
