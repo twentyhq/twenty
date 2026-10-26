@@ -1,3 +1,5 @@
+import { CustomError } from 'twenty-shared/utils';
+
 import { getMaterialTextureImages } from '../engine/get-material-texture-images';
 import { HALFTONE_MATERIAL_IMAGE_URLS } from '../engine/material-image-urls';
 import type { HalftoneStudioSettings } from '../engine/studio-settings-types';
@@ -9,7 +11,10 @@ async function fetchImageDataUrl(url: string) {
   const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error(`Unable to load ${url}.`);
+    throw new CustomError(
+      `Unable to load ${url}.`,
+      'MATERIAL_EXPORT_IMAGE_UNAVAILABLE',
+    );
   }
 
   return await blobToDataUrl({ blob: await response.blob(), label: url });

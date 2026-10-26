@@ -19,7 +19,7 @@ export function syncMaterialTextures<
 }: {
   resources: TResources;
   resourcesReference: { current: TResources | null };
-  settingsReference: { current: HalftoneStudioSettings };
+  settingsReference: { current: Pick<HalftoneStudioSettings, 'material'> };
 }) {
   void HALFTONE_MATERIALS.loadTextures({
     assets: resources.materialAssets,
