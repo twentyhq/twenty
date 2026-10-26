@@ -26,6 +26,7 @@ export const ListItem = ({
   descriptionPlacement = 'inline',
   actions,
   actionsVisibility = 'hover',
+  actionsPlacement = 'auto',
   shortcut,
   shortcutJoinLabel,
   hasSubmenu = false,
@@ -54,6 +55,7 @@ export const ListItem = ({
     props: {
       ...props,
       'data-actions-visibility': actionsVisibility,
+      'data-actions-placement': actionsPlacement,
       'data-description-placement': descriptionPlacement,
       'data-selection-appearance': selectionAppearance,
       className: clsx(styles.root, className),

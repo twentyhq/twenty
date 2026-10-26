@@ -18,6 +18,9 @@ export const AgentChatThreadInboxCommand = ({
     executeAgentChatThreadInboxAction({
       threadIds: selectedRecords.map(({ id }) => id),
       action,
+      isInChannel: selectedRecords.every(
+        (record) => record.inboxStatus?.isChannelCopy ?? false,
+      ),
     });
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;

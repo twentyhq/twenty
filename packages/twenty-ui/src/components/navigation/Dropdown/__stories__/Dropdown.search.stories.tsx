@@ -28,9 +28,11 @@ const onSearchBlur = fn();
 
 const SearchActivationExample = ({
   filterResults = false,
+  searchPlacement = 'top',
   onInteractOutside,
 }: {
   filterResults?: boolean;
+  searchPlacement?: 'top' | 'bottom';
 } & Pick<DropdownRootProps, 'onInteractOutside'>) => {
   const search = query.useValue();
   const orderedPeople = people.useValue();
@@ -42,16 +44,20 @@ const SearchActivationExample = ({
       )
     : orderedPeople;
 
+  const searchInput = (
+    <Dropdown.Search
+      aria-label="Search reviewers"
+      value={search}
+      onValueChange={query.set}
+      onBlur={onSearchBlur}
+    />
+  );
+
   return (
     <Dropdown.Root type="picker" onInteractOutside={onInteractOutside}>
       <Dropdown.Trigger>Reviewers</Dropdown.Trigger>
       <Dropdown.Content aria-label="Choose reviewers">
-        <Dropdown.Search
-          aria-label="Search reviewers"
-          value={search}
-          onValueChange={query.set}
-          onBlur={onSearchBlur}
-        />
+        {searchPlacement === 'top' && searchInput}
         <Dropdown.ActionItem onClick={onInvite}>
           Invite reviewer
         </Dropdown.ActionItem>
@@ -85,6 +91,7 @@ const SearchActivationExample = ({
             Margaret Hamilton
           </Dropdown.OptionItem>
         </Dropdown.SelectionGroup>
+        {searchPlacement === 'bottom' && searchInput}
       </Dropdown.Content>
     </Dropdown.Root>
   );
@@ -323,6 +330,38 @@ export const ControlledQueryUpdatesPreview: Story = {
     );
     expect(ada).not.toHaveAttribute('data-highlighted');
     expect(onSelect).not.toHaveBeenCalled();
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const SearchAfterResultsMirrorsArrowNavigation: Story = {
+  render: () => <SearchActivationExample searchPlacement="bottom" />,
+  play: async ({ canvasElement }) => {
+    const { popup, search } = await openPicker(canvasElement);
+    const picker = within(popup);
+    const invite = picker.getByRole('button', { name: 'Invite reviewer' });
+    const ada = picker.getByRole('option', { name: 'Ada Lovelace' });
+    const margaret = picker.getByRole('option', { name: 'Margaret Hamilton' });
+
+    await userEvent.keyboard('{ArrowUp}');
+    expect(margaret).toHaveFocus();
+    await userEvent.keyboard('{ArrowDown}');
+    expect(search).toHaveFocus();
+    await userEvent.keyboard('{ArrowDown}');
+    expect(invite).toHaveFocus();
+    await userEvent.keyboard('{ArrowUp}');
+    expect(margaret).toHaveFocus();
+    await userEvent.keyboard('{ArrowDown}');
+    expect(search).toHaveFocus();
+
+    await userEvent.type(search, 'ada');
+    await waitFor(() =>
+      expect(search).toHaveAttribute('aria-activedescendant', ada.id),
+    );
+    await userEvent.keyboard('{Enter}');
+    expect(ada).toHaveAttribute('aria-selected', 'true');
+    expect(onSelect).toHaveBeenCalledOnce();
+    expect(popup).toBeVisible();
     await userEvent.keyboard('{Escape}');
   },
 };

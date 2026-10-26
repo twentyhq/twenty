@@ -44,6 +44,8 @@ export const createStandardNavigationMenuItemContainerFlatMetadata = ({
   folderUniversalIdentifier: folderUniversalIdentifier ?? null,
   pageLayoutId: null,
   pageLayoutUniversalIdentifier: null,
+  agentChatChannelId: null,
+  agentChatChannelUniversalIdentifier: null,
   name: name ?? null,
   link: null,
   icon: icon ?? null,

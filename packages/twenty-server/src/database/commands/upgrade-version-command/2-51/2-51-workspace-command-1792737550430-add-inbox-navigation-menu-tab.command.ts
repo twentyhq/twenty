@@ -122,6 +122,8 @@ export class AddInboxNavigationMenuTabCommand extends ProvisionedWorkspaceComman
       folderUniversalIdentifier,
       pageLayoutId: null,
       pageLayoutUniversalIdentifier: null,
+      agentChatChannelId: null,
+      agentChatChannelUniversalIdentifier: null,
       name,
       link: null,
       icon,

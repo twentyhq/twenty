@@ -93,32 +93,32 @@ export const FieldWidgetRelationEditAction = ({
   const triggerLabel = isEditAction ? t`Edit relation` : t`Add relation`;
 
   const dropdownTriggerClickableComponent = (
-    <StyledEditButtonWrapper>
-      <IconButton variant="ghost" size="sm" aria-label={triggerLabel}>
-        <TriggerIcon />
-      </IconButton>
-    </StyledEditButtonWrapper>
+    <IconButton variant="ghost" size="sm" aria-label={triggerLabel}>
+      <TriggerIcon />
+    </IconButton>
   );
 
   return (
-    <FieldContext.Provider value={fieldContextValue}>
-      <FieldInputEventContext.Provider value={{ onSubmit: handleSubmit }}>
-        {isMorphRelation ? (
-          <RecordDetailMorphRelationSectionDropdown
-            loading={false}
-            dropdownTriggerClickableComponent={
-              dropdownTriggerClickableComponent
-            }
-          />
-        ) : (
-          <RecordDetailRelationSectionDropdown
-            loading={false}
-            dropdownTriggerClickableComponent={
-              dropdownTriggerClickableComponent
-            }
-          />
-        )}
-      </FieldInputEventContext.Provider>
-    </FieldContext.Provider>
+    <StyledEditButtonWrapper>
+      <FieldContext.Provider value={fieldContextValue}>
+        <FieldInputEventContext.Provider value={{ onSubmit: handleSubmit }}>
+          {isMorphRelation ? (
+            <RecordDetailMorphRelationSectionDropdown
+              loading={false}
+              dropdownTriggerClickableComponent={
+                dropdownTriggerClickableComponent
+              }
+            />
+          ) : (
+            <RecordDetailRelationSectionDropdown
+              loading={false}
+              dropdownTriggerClickableComponent={
+                dropdownTriggerClickableComponent
+              }
+            />
+          )}
+        </FieldInputEventContext.Provider>
+      </FieldContext.Provider>
+    </StyledEditButtonWrapper>
   );
 };

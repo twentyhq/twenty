@@ -37,6 +37,10 @@ const FLAT_ROLE_ROWS_REQUIREMENT = {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['roleId'],
   },
+  agentChatChannelRole: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['roleId'],
+  },
 } as const;
 
 @Injectable()
@@ -58,6 +62,7 @@ export class WorkspaceFlatRoleMapCacheService extends MetadataFlatEntityMapsCach
       fieldPermission: fieldPermissions,
       rowLevelPermissionPredicate: rowLevelPermissionPredicates,
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
+      agentChatChannelRole: agentChatChannelRoles,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
@@ -79,6 +84,8 @@ export class WorkspaceFlatRoleMapCacheService extends MetadataFlatEntityMapsCach
             rowLevelPermissionPredicates.byRoleId.get(roleEntity.id) || [],
           rowLevelPermissionPredicateGroups:
             rowLevelPermissionPredicateGroups.byRoleId.get(roleEntity.id) || [],
+          agentChatChannelRoles:
+            agentChatChannelRoles.byRoleId.get(roleEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
       });

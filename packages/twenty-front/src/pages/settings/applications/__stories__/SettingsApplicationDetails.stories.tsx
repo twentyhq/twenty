@@ -287,7 +287,7 @@ const seedBuiltInAccountAppStory = ({
   });
 };
 
-export const BuiltInAccountAppShowsGeneralTab: Story = {
+export const BuiltInAccountAppHidesSingleGeneralTab: Story = {
   args: {
     routeParams: { ':applicationId': 'google' },
   },
@@ -303,7 +303,9 @@ export const BuiltInAccountAppShowsGeneralTab: Story = {
         { timeout: 3000 },
       ),
     ).toBeVisible();
-    expect(canvas.getByTestId('tab-general')).toBeVisible();
+    expect(
+      canvas.queryByRole('link', { name: 'General' }),
+    ).not.toBeInTheDocument();
   },
 };
 

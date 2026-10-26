@@ -5,9 +5,10 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
+import { NavigationDrawerAiChatChannelsSection } from '@/ai/components/NavigationDrawerAiChatChannelsSection';
+import { NavigationDrawerAiChatFavoritesSection } from '@/ai/components/NavigationDrawerAiChatFavoritesSection';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
-import { AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatFavoritesNavigationSectionId';
 import { AI_CHAT_RECENTS_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatRecentsNavigationSectionId';
 import { useAiChatSidebarThreads } from '@/ai/hooks/useAiChatSidebarThreads';
 
@@ -32,13 +33,13 @@ const StyledSectionsContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-// Triage opens the inbox page; the drawer itself only lists recent chats
 export const NavigationDrawerAiChatContent = () => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const {
     isAiChatInboxEnabled,
     isLoading,
+    favoriteChannels,
     favoriteThreads,
     recentThreads,
     currentAiChatThread,
@@ -58,15 +59,13 @@ export const NavigationDrawerAiChatContent = () => {
       <StyledThreadList>
         <StyledSectionsContainer>
           {isAiChatInboxEnabled && <NavigationDrawerAiChatTriageSection />}
-          {favoriteThreads.length > 0 && (
-            <NavigationDrawerAiChatThreadSection
-              sectionId={AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID}
-              title={t`Favorites`}
-              threads={favoriteThreads}
-              currentThreadId={currentAiChatThread}
-              onThreadClick={handleThreadClick}
-            />
-          )}
+          <NavigationDrawerAiChatFavoritesSection
+            channels={favoriteChannels}
+            threads={favoriteThreads}
+            currentThreadId={currentAiChatThread}
+            onThreadClick={handleThreadClick}
+          />
+          {isAiChatInboxEnabled && <NavigationDrawerAiChatChannelsSection />}
           {recentThreads.length > 0 && (
             <NavigationDrawerAiChatThreadSection
               sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}

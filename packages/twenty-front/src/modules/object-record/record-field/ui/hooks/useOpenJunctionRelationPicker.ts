@@ -7,7 +7,6 @@ import { getJunctionRelationPickerData } from '@/object-record/record-field/ui/u
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
-import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
@@ -45,13 +44,6 @@ export const useOpenJunctionRelationPicker = () => {
           { instanceId: recordPickerInstanceId },
         ),
         searchableObjectMetadataItems,
-      );
-
-      store.set(
-        multipleRecordPickerSearchFilterComponentState.atomFamily({
-          instanceId: recordPickerInstanceId,
-        }),
-        '',
       );
 
       openMultipleRecordPicker(recordPickerInstanceId);

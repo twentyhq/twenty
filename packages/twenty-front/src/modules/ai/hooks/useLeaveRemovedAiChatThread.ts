@@ -13,7 +13,9 @@ import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/should
 
 export const useLeaveRemovedAiChatThread = () => {
   const store = useStore();
-  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
+  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl({
+    shouldPreserveClosedInbox: true,
+  });
   const { loadAgentChatThread } = useRefreshAgentChatThreads();
 
   const leaveRemovedAiChatThread = useCallback(async () => {

@@ -92,10 +92,6 @@ export const generateDocumentHandler = async (
     documentTemplates: {
       __args: { filter: { id: { eq: templateId } }, first: 1 },
       edges: {
-        // `body` is a RICH_TEXT field: request its Markdown projection. The
-        // generated client only types the composite after
-        // `twenty dev:generate-client` is re-run against a remote that has this
-        // field; until then the cast bridges the lag (drop it after regen).
         node: {
           id: true,
           name: true,

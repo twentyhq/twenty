@@ -41,7 +41,6 @@ export class CalendarEventParticipantWorkspaceMemberListener {
         {
           workspaceId: payload.workspaceId,
           participantMatching: {
-            personIds: [],
             personEmails: [],
             workspaceMemberIds: [eventPayload.recordId],
           },
@@ -68,7 +67,6 @@ export class CalendarEventParticipantWorkspaceMemberListener {
           {
             workspaceId: payload.workspaceId,
             participantMatching: {
-              personIds: [],
               personEmails: [],
               workspaceMemberIds: [eventPayload.recordId],
             },

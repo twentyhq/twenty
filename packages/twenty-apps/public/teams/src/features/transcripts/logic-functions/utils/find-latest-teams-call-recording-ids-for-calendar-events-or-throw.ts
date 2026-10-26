@@ -6,8 +6,8 @@ import { TWENTY_QUERY_MAX_RECORDS } from 'src/features/transcripts/logic-functio
 import { chunkIntoBatches } from 'src/features/transcripts/logic-functions/utils/chunk-into-batches';
 
 type CallRecordingConnection = {
-  edges: { node: { id: string; calendarEventId: string | null } }[];
-  pageInfo: { hasNextPage: boolean; endCursor: string | null };
+  edges: { node: { id: string; calendarEventId?: string | null } }[];
+  pageInfo: { hasNextPage: boolean; endCursor?: string | null };
 };
 
 const addLatestCallRecordingIdsOrThrow = async ({

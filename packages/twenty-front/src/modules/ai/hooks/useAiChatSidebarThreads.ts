@@ -2,6 +2,7 @@ import { AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT } from '@/ai/constants/AiChatInb
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatFavoriteChannelsSelector } from '@/ai/states/selectors/agentChatFavoriteChannelsSelector';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -23,6 +24,9 @@ export const useAiChatSidebarThreads = () => {
   const agentChatFavoriteThreads = useAtomStateValue(
     agentChatFavoriteThreadsSelector,
   );
+  const agentChatFavoriteChannels = useAtomStateValue(
+    agentChatFavoriteChannelsSelector,
+  );
 
   const favoriteThreadIds = new Set(
     agentChatFavoriteThreads.map(({ id }) => id),
@@ -37,6 +41,7 @@ export const useAiChatSidebarThreads = () => {
   return {
     isAiChatInboxEnabled,
     isLoading: loading && threads.length === 0,
+    favoriteChannels: isAiChatInboxEnabled ? agentChatFavoriteChannels : [],
     favoriteThreads: agentChatFavoriteThreads,
     recentThreads,
     currentAiChatThread,

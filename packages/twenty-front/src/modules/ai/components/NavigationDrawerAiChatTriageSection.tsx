@@ -1,11 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 
 import { NavigationDrawerAiChatTriageItem } from '@/ai/components/NavigationDrawerAiChatTriageItem';
 import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
@@ -37,6 +39,9 @@ export const NavigationDrawerAiChatTriageSection = ({
   const agentChatThreadFilterStatus = useAtomStateValue(
     agentChatThreadFilterStatusState,
   );
+  const isChannelShown = isDefined(
+    useAtomStateValue(agentChatShownChannelViewSelector),
+  );
   const {
     openThreadCount,
     hasUnreadOpenThread,
@@ -45,15 +50,22 @@ export const NavigationDrawerAiChatTriageSection = ({
     hasUnreadAssignedThread,
   } = useAgentChatOpenThreadsSummary();
 
+  const isTriageShown = isAiChatInboxPath(location.pathname) && !isChannelShown;
+  const selectedOpenSubItemIndex = isTriageShown
+    ? OPEN_SUB_FILTER_STATUSES.findIndex(
+        (filterStatus) => filterStatus === agentChatThreadFilterStatus,
+      )
+    : -1;
+  const isOpenExpanded =
+    isTriageShown &&
+    (agentChatThreadFilterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE ||
+      selectedOpenSubItemIndex >= 0);
+
   const getOpenSubItemState = (index: number) =>
     getNavigationSubItemLeftAdornment({
       index,
       arrayLength: OPEN_SUB_FILTER_STATUSES.length,
-      selectedIndex: isAiChatInboxPath(location.pathname)
-        ? OPEN_SUB_FILTER_STATUSES.findIndex(
-            (filterStatus) => filterStatus === agentChatThreadFilterStatus,
-          )
-        : -1,
+      selectedIndex: selectedOpenSubItemIndex,
     });
 
   return (
@@ -69,21 +81,25 @@ export const NavigationDrawerAiChatTriageSection = ({
           count={openThreadCount}
           isUnread={hasUnreadOpenThread}
         />
-        <NavigationDrawerAiChatTriageItem
-          filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT}
-          count={needsInputThreadCount}
-          subItemState={getOpenSubItemState(0)}
-        />
-        <NavigationDrawerAiChatTriageItem
-          filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS}
-          isUnread={hasUnreadMentionThread}
-          subItemState={getOpenSubItemState(1)}
-        />
-        <NavigationDrawerAiChatTriageItem
-          filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED}
-          isUnread={hasUnreadAssignedThread}
-          subItemState={getOpenSubItemState(2)}
-        />
+        {isOpenExpanded && (
+          <>
+            <NavigationDrawerAiChatTriageItem
+              filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT}
+              count={needsInputThreadCount}
+              subItemState={getOpenSubItemState(0)}
+            />
+            <NavigationDrawerAiChatTriageItem
+              filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS}
+              isUnread={hasUnreadMentionThread}
+              subItemState={getOpenSubItemState(1)}
+            />
+            <NavigationDrawerAiChatTriageItem
+              filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED}
+              isUnread={hasUnreadAssignedThread}
+              subItemState={getOpenSubItemState(2)}
+            />
+          </>
+        )}
       </NavigationDrawerItemGroup>
       <NavigationDrawerAiChatTriageItem
         filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED}

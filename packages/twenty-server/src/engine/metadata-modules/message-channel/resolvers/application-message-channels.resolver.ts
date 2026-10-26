@@ -74,6 +74,8 @@ export class ApplicationMessageChannelsResolver {
       handle: input.handle,
       displayName: input.displayName,
       visibility: input.visibility,
+      participantHandleFieldUniversalIdentifier:
+        input.participantHandleFieldUniversalIdentifier,
     });
   }
 

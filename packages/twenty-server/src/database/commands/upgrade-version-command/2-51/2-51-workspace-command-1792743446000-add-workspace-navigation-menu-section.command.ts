@@ -104,6 +104,8 @@ export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspa
       folderUniversalIdentifier: null,
       pageLayoutId: null,
       pageLayoutUniversalIdentifier: null,
+      agentChatChannelId: null,
+      agentChatChannelUniversalIdentifier: null,
       name: workspaceSection.name,
       link: null,
       icon: null,

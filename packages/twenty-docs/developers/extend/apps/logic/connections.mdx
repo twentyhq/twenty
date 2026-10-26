@@ -1,8 +1,11 @@
 ---
 title: Connections
 description: Let your app act on a user's behalf in third-party services via OAuth.
-icon: 'plug'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Connections are credentials a user holds for an external service (Linear, GitHub, Slack, ...). Your app declares **how** those credentials are obtained — a **connection provider** — and consumes them at runtime to make authenticated calls to the third-party API.
 
@@ -410,3 +413,5 @@ For each connection provider, the server admin needs to register an OAuth app at
 </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="card-page-connections" />

@@ -1,8 +1,11 @@
 ---
 title: Front Components
 description: Build React components that render inside Twenty's UI with sandboxed isolation.
-icon: 'window-maximize'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code executes inside a sandboxed, opaque-origin iframe, yet its UI still renders natively in the page rather than being confined to that iframe.
 
@@ -65,7 +68,7 @@ export default defineCommandMenuItem({
 });
 ```
 
-After syncing with `yarn twenty dev` (or running a one-shot `yarn twenty apply`), the quick action appears in the top-right corner of the page:
+After syncing with `twenty app dev` (or running a one-shot `twenty app apply`), the quick action appears in the top-right corner of the page:
 
 <div style={{ textAlign: 'center' }}>
   <img
@@ -93,12 +96,12 @@ Beyond commands, you can embed a front component directly into a record page by 
 
 `widgetAvailability` decides which widget picker offers the component while a page layout is being edited. A front component is built either for record pages, where it works on the shown record, or for dashboards, so it declares one `pageLayoutType`:
 
-| `widgetAvailability` | Offered in |
-| --- | --- |
-| omitted | no widget picker |
-| `{ pageLayoutType: PageLayoutType.RECORD_PAGE }` | every record page |
+| `widgetAvailability`                                                                | Offered in                        |
+| ----------------------------------------------------------------------------------- | --------------------------------- |
+| omitted                                                                             | no widget picker                  |
+| `{ pageLayoutType: PageLayoutType.RECORD_PAGE }`                                    | every record page                 |
 | `{ pageLayoutType: PageLayoutType.RECORD_PAGE, objectUniversalIdentifiers: [...] }` | the record pages of those objects |
-| `{ pageLayoutType: PageLayoutType.DASHBOARD }` | dashboards |
+| `{ pageLayoutType: PageLayoutType.DASHBOARD }`                                      | dashboards                        |
 
 ```tsx
 import {
@@ -500,7 +503,7 @@ Available hooks:
 | `useFrontComponentId()`                       | `string`                                         | This component instance's ID                                                                                     |
 | `useTimelineActivityId()`                     | `string` or `null`                               | The current timeline activity ID when rendering a custom timeline row                                            |
 | `useColorScheme()`                            | `'light'` or `'dark'`                            | The host UI's active color scheme (`System` is already resolved)                                                 |
-| `useLocation()`                               | `FrontComponentLocation` or `null`               | The host route's pathname, query string, and hash, plus the host app's origin                                     |
+| `useLocation()`                               | `FrontComponentLocation` or `null`               | The host route's pathname, query string, and hash, plus the host app's origin                                    |
 | `useToolCall()`                               | `FrontComponentToolCall` or `null`               | The AI tool call this component is rendering, when it was surfaced from a logic function's `toolTriggerSettings` |
 | `useFrontComponentExecutionContext(selector)` | varies                                           | Access the full execution context with a selector function                                                       |
 
@@ -926,7 +929,7 @@ Twenty ships its component library as the [`twenty-ui`](https://www.npmjs.com/pa
 
 ### Installation
 
-New apps scaffolded with `create-twenty-app` already include `twenty-ui`. For an existing app, add it as a development dependency, pinned to the same version as `twenty-sdk` and `twenty-client-sdk`. For example, if your SDK packages use `2.51.0`:
+New apps scaffolded with `twenty app init` already include `twenty-ui`. For an existing app, add it as a development dependency, pinned to the same version as `twenty-sdk` and `twenty-client-sdk`. For example, if your SDK packages use `2.51.0`:
 
 ```bash
 yarn add -D twenty-ui@2.51.0
@@ -1172,3 +1175,5 @@ An orange dot in the workspace header indicates active capture. Hover over or se
 - **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
 - **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/developers/extend/apps/logic/logic-functions). Web Crypto replaces `node:crypto`, and `fetch`, `TextEncoder` and `URL` are available too, see [global scope](#global-scope) — but nothing replaces `fs`: the sandbox has no filesystem.
 - **`iframe`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.
+
+<PageBanner illustration="card-page-front-components" />
