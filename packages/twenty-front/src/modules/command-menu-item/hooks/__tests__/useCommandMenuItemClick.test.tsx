@@ -270,7 +270,7 @@ describe('useCommandMenuItemClick', () => {
     );
   });
 
-  it('keeps a page command labelled and disabled while its page is busy', () => {
+  it('shows a page command as loading while its page is busy', () => {
     const { result } = renderHook(
       () =>
         useCommandMenuItemClick({
@@ -298,7 +298,7 @@ describe('useCommandMenuItemClick', () => {
     );
 
     expect(result.current.disabled).toBe(true);
-    expect(result.current.showDisabledLoader).toBe(false);
+    expect(result.current.showDisabledLoader).toBe(true);
   });
 
   it('shows the progress a page reports for its command', () => {

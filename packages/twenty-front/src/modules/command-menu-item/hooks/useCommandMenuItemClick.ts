@@ -158,7 +158,8 @@ export const useCommandMenuItemClick = ({
       handleClick,
       disabled: isMounted || pageCommand.isDisabled || pageCommand.isLoading,
       progress: pageCommand.progress,
-      showDisabledLoader: isDefined(pageCommand.progress),
+      showDisabledLoader:
+        pageCommand.isLoading || isDefined(pageCommand.progress),
     };
   }
 
