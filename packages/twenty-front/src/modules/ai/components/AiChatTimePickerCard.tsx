@@ -36,11 +36,6 @@ const StyledTitle = styled.div`
   padding-left: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledCalendarIcon = styled(IconCalendarEvent)`
-  color: ${themeCssVariables.font.color.secondary};
-  flex-shrink: 0;
-`;
-
 const StyledBody = styled.div`
   background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -178,7 +173,11 @@ export const AiChatTimePickerCard = ({
     <Card.Root fullWidth variant="compact" role="group" aria-label={title}>
       <Card.Header>
         <StyledTitle>
-          <StyledCalendarIcon size={16} aria-hidden="true" />
+          <IconCalendarEvent
+            size={16}
+            color={themeCssVariables.font.color.secondary}
+            aria-hidden="true"
+          />
           {title}
         </StyledTitle>
       </Card.Header>
