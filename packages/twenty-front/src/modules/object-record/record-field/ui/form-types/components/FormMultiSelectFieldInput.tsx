@@ -1,3 +1,4 @@
+import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
@@ -57,10 +58,11 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled.div`
+const StyledDisplayModeContainer = styled.div<{ hasOutline: boolean }>`
   align-items: center;
   cursor: pointer;
   display: flex;
+  outline: ${({ hasOutline }) => (hasOutline ? 'revert' : 'none')};
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
@@ -162,6 +164,8 @@ export const FormMultiSelectFieldInput = ({
       : undefined;
 
   const placeholderText = placeholder ?? label;
+  const hasRightElement = isDefined(VariablePicker) && !readonly;
+
   const accessibleLabel =
     [label, placeholder].find(isNonEmptyString) ?? t`Select options`;
 
@@ -172,7 +176,8 @@ export const FormMultiSelectFieldInput = ({
       <StyledFormFieldInputRowContainer>
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={instanceId}
-          hasRightElement={isDefined(VariablePicker) && !readonly}
+          hasRightElement={hasRightElement}
+          shouldHighlightOnTriggerFocus
           hoverable={!readonly}
           preventFocusStackUpdate={draftValue.type === 'static' && !readonly}
         >
@@ -202,7 +207,15 @@ export const FormMultiSelectFieldInput = ({
                 onInteractOutside={preventDropdownDismissOnInputElement}
               >
                 <Dropdown.Trigger
-                  render={<StyledDisplayModeContainer />}
+                  render={
+                    <StyledDisplayModeContainer
+                      hasOutline={
+                        !hasFullFormFieldBorder({
+                          hasRightElement,
+                        })
+                      }
+                    />
+                  }
                   nativeButton={false}
                   aria-label={accessibleLabel}
                 >
@@ -248,7 +261,7 @@ export const FormMultiSelectFieldInput = ({
           )}
         </FormFieldInputInnerContainer>
 
-        {isDefined(VariablePicker) && !readonly && (
+        {hasRightElement && isDefined(VariablePicker) && (
           <VariablePicker
             instanceId={instanceId}
             onVariableSelect={handleVariableTagInsert}

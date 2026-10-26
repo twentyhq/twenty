@@ -4,6 +4,8 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
+import { isFieldAddressValue } from '@/object-record/record-field/ui/types/guards/isFieldAddressValue';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
 import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
@@ -16,12 +18,15 @@ import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFie
 import { isFieldFilesValue } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/ui/types/guards/isFieldFullNameValue';
+import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
+import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldLinksValue } from '@/object-record/record-field/ui/types/guards/isFieldLinksValue';
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
 import { isFieldNumberValue } from '@/object-record/record-field/ui/types/guards/isFieldNumberValue';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldPhonesValue } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
+import { RecordFormAddressFieldInput } from '@/object-record/record-form/components/RecordFormAddressFieldInput';
 import { RecordFormArrayFieldInput } from '@/object-record/record-form/components/RecordFormArrayFieldInput';
 import { RecordFormBooleanFieldInput } from '@/object-record/record-form/components/RecordFormBooleanFieldInput';
 import { RecordFormCurrencyFieldInput } from '@/object-record/record-form/components/RecordFormCurrencyFieldInput';
@@ -31,11 +36,12 @@ import { RecordFormFilesFieldInput } from '@/object-record/record-form/component
 import { RecordFormFullNameFieldInput } from '@/object-record/record-form/components/RecordFormFullNameFieldInput';
 import { RecordFormLinksFieldInput } from '@/object-record/record-form/components/RecordFormLinksFieldInput';
 import { RecordFormPhonesFieldInput } from '@/object-record/record-form/components/RecordFormPhonesFieldInput';
+import { RecordFormTextAreaFieldInput } from '@/object-record/record-form/components/RecordFormTextAreaFieldInput';
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
 import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isValidCountryCode } from 'twenty-shared/utils';
+import { isDefined, isValidCountryCode } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -123,6 +129,26 @@ export const RecordFormFieldInput = ({
     );
   }
 
+  if (isFieldAddress(field) && !readonly) {
+    const settings = field.metadata.settings;
+
+    return (
+      <RecordFormAddressFieldInput
+        label={field.label}
+        defaultValue={
+          isFieldAddressValue(defaultValue) ? defaultValue : undefined
+        }
+        subFields={
+          isDefined(settings) && 'subFields' in settings
+            ? settings.subFields
+            : undefined
+        }
+        subFieldPlaceholders={subFieldPlaceholders}
+        onChange={onChange}
+      />
+    );
+  }
+
   if (isFieldFullName(field) && !readonly) {
     return (
       <RecordFormFullNameFieldInput
@@ -132,6 +158,21 @@ export const RecordFormFieldInput = ({
         }
         firstNamePlaceholder={subFieldPlaceholders?.firstName}
         lastNamePlaceholder={subFieldPlaceholders?.lastName}
+        onChange={onChange}
+      />
+    );
+  }
+
+  if (
+    isFieldText(field) &&
+    !readonly &&
+    (field.metadata.settings?.displayedMaxRows ?? 0) > 1
+  ) {
+    return (
+      <RecordFormTextAreaFieldInput
+        label={field.label}
+        defaultValue={isFieldTextValue(defaultValue) ? defaultValue : undefined}
+        placeholder={placeholder}
         onChange={onChange}
       />
     );
