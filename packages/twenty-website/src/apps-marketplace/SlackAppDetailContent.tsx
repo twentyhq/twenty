@@ -165,7 +165,17 @@ export function SlackAppDetailContent({
             </Heading>
             <Body muted size="sm">
               {i18n._(
-                msg`It only answers people whose Slack account is linked to a Twenty user, and it acts with that user's permissions.`,
+                msg`Mention @Twenty in a channel or send it a direct message, and ask in plain language. It looks up records in your Twenty workspace, makes the changes you ask for and replies in the thread, so the answer lands where the conversation is happening.`,
+              )}
+            </Body>
+            <Body muted size="sm">
+              {i18n._(
+                msg`It only answers people whose Slack account is linked to a Twenty user, and it acts with that user's permissions, so it can't see or change anything they couldn't in Twenty.`,
+              )}
+            </Body>
+            <Body muted size="sm">
+              {i18n._(
+                msg`Admins connect the Slack workspace and manage which Slack accounts are linked from the app's settings in Twenty.`,
               )}
             </Body>
             <Disclaimer>
