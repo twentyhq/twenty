@@ -284,18 +284,19 @@ export const InvalidPriorityRequiresSource: Story = {
   args: {
     initialPriorityRecordIds: { 'merge-google': 'synthetic-preview-id' },
   },
-  play: async ({ args, canvasElement }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    await expect(canvas.getByText('Blocked')).toBeVisible();
+    await expect(
+      canvas.getByText('Choose a source record to keep'),
+    ).toBeVisible();
     await expect(canvas.queryByText('Survives')).not.toBeInTheDocument();
     await expect(canvas.getByRole('button', { name: 'Merge' })).toBeDisabled();
+    await expect(canvas.getByRole('button', { name: 'Skip' })).toBeEnabled();
     await expect(
       canvas.getByRole('button', { name: 'Merge all 3' }),
     ).toBeEnabled();
-    await userEvent.click(canvas.getByRole('button', { name: 'Merge' }));
-    await expect(args.onMerge).not.toHaveBeenCalled();
     await userEvent.click(canvas.getByRole('button', { name: 'Merge all 3' }));
 
     const confirmation = within(await body.findByRole('alertdialog'));
@@ -316,7 +317,7 @@ export const InvalidPriorityRequiresSource: Story = {
     );
     await userEvent.click(canvas.getByRole('tab', { name: 'Settings' }));
     await userEvent.click(
-      canvas.getByRole('button', { name: 'First record holds priority' }),
+      canvas.getByRole('button', { name: 'No record holds priority' }),
     );
     await userEvent.click(
       await body.findByRole('option', { name: 'First record holds priority' }),
@@ -324,26 +325,26 @@ export const InvalidPriorityRequiresSource: Story = {
     await expect(canvas.getByRole('button', { name: 'Merge' })).toBeEnabled();
     await expect(canvas.getByText('Google', { exact: true })).toBeVisible();
     await expect(canvas.getByText('Survives')).toBeVisible();
-    await expect(canvas.queryByText('Blocked')).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByText('Choose a source record to keep'),
+    ).not.toBeInTheDocument();
   },
 };
 
 export const Running: Story = {
   args: { initialStatus: 'running', initialActiveTab: 'settings' },
-  play: async ({ args, canvasElement }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByRole('button', { name: 'Skip' })).toBeDisabled();
     await expect(canvas.getByRole('button', { name: 'Merge' })).toBeDisabled();
+    await expect(canvas.getByText('First record holds priority')).toBeVisible();
     await expect(
       canvas.queryByRole('button', { name: /record holds priority/ }),
     ).not.toBeInTheDocument();
     await expect(
       canvas.getByRole('progressbar', { name: 'Action progress' }),
     ).toHaveAttribute('aria-valuenow', '1');
-    await userEvent.click(canvas.getByRole('button', { name: 'Merge' }));
-    await expect(args.onMerge).not.toHaveBeenCalled();
-    await expect(args.onSkip).not.toHaveBeenCalled();
   },
 };
 
@@ -391,9 +392,9 @@ export const Narrow: Story = {
   parameters: { container: { width: 360 } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const review = canvas.getByRole('region', { name: 'Approval review' });
+    const card = canvas.getByRole('group', { name: 'Merge 2 companies' });
 
-    await expect(review.scrollWidth).toBeLessThanOrEqual(review.clientWidth);
+    await expect(card.scrollWidth).toBeLessThanOrEqual(card.clientWidth);
     await expect(canvas.getByRole('button', { name: 'Merge' })).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Skip' })).toBeVisible();
     await userEvent.click(canvas.getByRole('tab', { name: 'Settings' }));

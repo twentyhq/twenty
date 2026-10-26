@@ -40,6 +40,8 @@ export const AiChatApprovalMergeReview = ({
     const hasValidPriorityRecord = pair.sources.some(
       (source) => source.id === pair.priorityRecordId,
     );
+    const isWaitingForPriorityRecord =
+      pair.status === 'pending' && !hasValidPriorityRecord;
 
     return {
       id: pair.id,
@@ -47,13 +49,13 @@ export const AiChatApprovalMergeReview = ({
       icon: <IconArrowMerge size={MERGE_REVIEW_ICON_SIZE} />,
       approveLabel: t`Merge`,
       denyLabel: t`Skip`,
-      hint: t`The priority record keeps its identity`,
+      hint: isWaitingForPriorityRecord
+        ? t`Choose a source record to keep`
+        : t`The priority record keeps its identity`,
       selectedCount: hasValidPriorityRecord ? pair.sources.length : 0,
       skippedCount: 0,
-      status: hasValidPriorityRecord ? pair.status : 'blocked',
-      outcomeMessage: hasValidPriorityRecord
-        ? pair.outcomeMessage
-        : t`Choose a source record to keep`,
+      status: pair.status,
+      outcomeMessage: pair.outcomeMessage,
       progress: pair.progress,
       content: (
         <AiChatApprovalMergeReviewContent
@@ -68,18 +70,25 @@ export const AiChatApprovalMergeReview = ({
     };
   });
 
-  const pendingPairCount = cards.filter(
-    ({ status }) => status === 'pending',
-  ).length;
+  const mergeablePairIds = cards
+    .filter(
+      ({ status, selectedCount }) => status === 'pending' && selectedCount > 0,
+    )
+    .map(({ id }) => id);
+  const mergeablePairCount = mergeablePairIds.length;
 
   return (
     <AiChatApprovalReviewDeck
       cards={cards}
       activeIndex={activeIndex}
       onActiveIndexChange={onActiveIndexChange}
-      onRequestApproval={onRequestMerge}
+      onRequestApproval={(pairIds) =>
+        onRequestMerge(
+          pairIds.filter((pairId) => mergeablePairIds.includes(pairId)),
+        )
+      }
       onDeny={onSkip}
-      approveAllLabel={t`Merge all ${pendingPairCount}`}
+      approveAllLabel={t`Merge all ${mergeablePairCount}`}
       previousLabel={t`Previous pair`}
       nextLabel={t`Next pair`}
       disabled={disabled}

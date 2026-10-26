@@ -13,6 +13,7 @@ import { getPositionWordLabel } from '@/object-record/record-merge/utils/getPosi
 
 const MERGE_REVIEW_ICON_SIZE = 16;
 const MERGE_REVIEW_HEADER_HEIGHT = 40;
+const TAB_FOCUS_RING_OUTSET = 3;
 
 const StyledReview = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -55,9 +56,14 @@ const StyledSources = styled.div`
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
-const StyledTabs = styled.div`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+const StyledTabsScrollContainer = styled.div`
+  margin: -${TAB_FOCUS_RING_OUTSET}px 0;
   overflow-x: auto;
+  padding: ${TAB_FOCUS_RING_OUTSET}px 0;
+`;
+
+const StyledTabsList = styled.div`
+  min-width: max-content;
   padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
@@ -71,13 +77,6 @@ const StyledFields = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};
   min-width: 0;
   padding: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledDescription = styled.p`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
-  margin: ${themeCssVariables.spacing[2]};
 `;
 
 type AiChatApprovalMergeReviewContentProps = {
@@ -126,23 +125,29 @@ export const AiChatApprovalMergeReviewContent = ({
         )}
       </StyledHeader>
       <StyledSources role="group" aria-label={t`Source records`}>
-        {pair.sources.map((source, index) => (
-          <Chip key={source.id} variant="soft">
-            <span>
-              {getPositionWordLabel(index)}: {source.name}
-            </span>
-            {source.id === pair.priorityRecordId && (
-              <>
-                {' '}
-                · <span>{t`Survives`}</span>
-              </>
-            )}
-          </Chip>
-        ))}
+        {pair.sources.map(({ id, name }, index) => {
+          const positionLabel = getPositionWordLabel(index);
+
+          return (
+            <Chip
+              key={id}
+              variant="soft"
+              endElement={
+                id === pair.priorityRecordId ? t`Survives` : undefined
+              }
+              endElementDivider
+            >
+              {t`${positionLabel}: ${name}`}
+            </Chip>
+          );
+        })}
       </StyledSources>
       <Tabs.Root value={pair.activeTab} onValueChange={onTabChange}>
-        <StyledTabs>
-          <Tabs.List aria-label={t`Merge review tabs`}>
+        <StyledTabsScrollContainer>
+          <Tabs.List
+            aria-label={t`Merge review tabs`}
+            render={<StyledTabsList />}
+          >
             <Tabs.Tab
               value="preview"
               size="compact"
@@ -169,15 +174,13 @@ export const AiChatApprovalMergeReviewContent = ({
             >{t`Settings`}</Tabs.Tab>
             <Tabs.Indicator />
           </Tabs.List>
-        </StyledTabs>
+        </StyledTabsScrollContainer>
         <Tabs.Panel value="preview">
-          <StyledContent>
-            {isDefined(priorityRecord) ? (
+          {isDefined(priorityRecord) && (
+            <StyledContent>
               <StyledFields>{pair.preview}</StyledFields>
-            ) : (
-              <StyledDescription>{t`Choose a source record to keep`}</StyledDescription>
-            )}
-          </StyledContent>
+            </StyledContent>
+          )}
         </Tabs.Panel>
         {pair.sources.map((source, index) => (
           <Tabs.Panel key={source.id} value={index === 0 ? 'first' : 'second'}>
@@ -201,7 +204,6 @@ export const AiChatApprovalMergeReviewContent = ({
               dropdownId={`merge-review-priority-${pair.id}`}
               disabled={disabled}
             />
-            <StyledDescription>{t`The priority record keeps its identity and takes priority when field values conflict.`}</StyledDescription>
           </StyledContent>
         </Tabs.Panel>
       </Tabs.Root>

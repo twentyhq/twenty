@@ -7,6 +7,8 @@ import { getPositionNumberIcon } from '@/object-record/record-merge/utils/getPos
 import { getPositionWordLabel } from '@/object-record/record-merge/utils/getPositionWordLabel';
 import { Select } from '@/ui/input/components/Select';
 
+const MISSING_PRIORITY_RECORD_INDEX = -1;
+
 const StyledSectionContainer = styled.div`
   padding: ${themeCssVariables.spacing[2]};
   width: auto;
@@ -51,6 +53,10 @@ export const MergePrioritySettings = ({
           dropdownId={dropdownId}
           options={priorityOptions}
           value={priorityRecordIndex}
+          emptyOption={{
+            value: MISSING_PRIORITY_RECORD_INDEX,
+            label: t`No record holds priority`,
+          }}
           onChange={onPriorityRecordIndexChange}
           label={t`Fields conflicts`}
           disabled={disabled}
