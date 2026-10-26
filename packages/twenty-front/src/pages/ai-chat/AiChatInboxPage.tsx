@@ -225,6 +225,39 @@ const AiChatInboxPageContent = () => {
     options: { enableOnContentEditable: false, enableOnFormTags: false },
   });
 
+  const backToInboxButton = (
+    <IconButton
+      size="sm"
+      variant="outline"
+      onClick={() => selectThread(null)}
+      aria-label={t`Back to inbox`}
+    >
+      <IconChevronLeft />
+    </IconButton>
+  );
+
+  const closeConversationButton = isSplitView && (
+    <IconButton
+      size="sm"
+      variant="outline"
+      onClick={() => selectThread(null)}
+      aria-label={t`Close`}
+    >
+      <IconX />
+    </IconButton>
+  );
+
+  const desktopThreadHeaderActions = isDefined(selectedThreadId) && (
+    <>
+      <AiChatInboxThreadPagination
+        threads={threads}
+        threadId={selectedThreadId}
+        onThreadSelect={selectThread}
+      />
+      {closeConversationButton}
+    </>
+  );
+
   return (
     <StyledInbox>
       <AgentChatChannelThreadsLoadEffect />
@@ -322,18 +355,7 @@ const AiChatInboxPageContent = () => {
                   <AiChatInboxNewThreadChannelEffect />
                   <AiChatNewThreadPageContent
                     showInformationBanner={!isSplitView}
-                    headerActions={
-                      isMobile ? (
-                        <IconButton
-                          size="sm"
-                          variant="outline"
-                          onClick={() => selectThread(null)}
-                          aria-label={t`Back to inbox`}
-                        >
-                          <IconChevronLeft />
-                        </IconButton>
-                      ) : undefined
-                    }
+                    headerActions={isMobile ? backToInboxButton : undefined}
                   />
                 </>
               )}
@@ -346,34 +368,7 @@ const AiChatInboxPageContent = () => {
                       !isSplitView && !isMobile && <AiChatInboxBreadcrumb />
                     }
                     headerActions={
-                      isMobile ? (
-                        <IconButton
-                          size="sm"
-                          variant="outline"
-                          onClick={() => selectThread(null)}
-                          aria-label={t`Back to inbox`}
-                        >
-                          <IconChevronLeft />
-                        </IconButton>
-                      ) : (
-                        <>
-                          <AiChatInboxThreadPagination
-                            threads={threads}
-                            threadId={selectedThreadId}
-                            onThreadSelect={selectThread}
-                          />
-                          {isSplitView && (
-                            <IconButton
-                              size="sm"
-                              variant="outline"
-                              onClick={() => selectThread(null)}
-                              aria-label={t`Close`}
-                            >
-                              <IconX />
-                            </IconButton>
-                          )}
-                        </>
-                      )
+                      isMobile ? backToInboxButton : desktopThreadHeaderActions
                     }
                   />
                 </>
