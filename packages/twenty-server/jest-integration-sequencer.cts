@@ -47,13 +47,6 @@ const getMedian = (values: number[]): number => {
   return sortedValues[Math.floor(sortedValues.length / 2)];
 };
 
-const UPGRADE_COMMAND_SPECS_DIRECTORY = 'test/integration/upgrade/';
-
-const isUpgradeCommandSpec = (test: Test): boolean =>
-  path
-    .relative(test.context.config.rootDir, test.path)
-    .startsWith(UPGRADE_COMMAND_SPECS_DIRECTORY);
-
 const compareByDurationThenPath = (
   a: TestWithDuration,
   b: TestWithDuration,
@@ -66,15 +59,6 @@ const compareByDurationThenPath = (
 };
 
 class IntegrationTestSequencer extends Sequencer {
-  async sort(tests: Test[]): Promise<Test[]> {
-    const sortedTests = await super.sort(tests);
-
-    return [
-      ...sortedTests.filter((test) => !isUpgradeCommandSpec(test)),
-      ...sortedTests.filter(isUpgradeCommandSpec),
-    ];
-  }
-
   shard(tests: Test[], options: ShardOptions): Test[] | Promise<Test[]> {
     const timings = readTimings(process.env.INTEGRATION_TEST_TIMINGS_FILE);
     const knownDurations = Object.values(timings);
