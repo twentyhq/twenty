@@ -3,9 +3,13 @@ title: Avatar
 description: Represent a person or record with an image, initial, or icon.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import AvatarReference from '/snippets/ui/generated/data-display/avatar.mdx';
+
+## Overview
 
 `Avatar` shows an image with a first-letter fallback. Use it beside a record name or inside a [Chip](/ui/primitives/data-display/chip). Its default root is a presentational `span`.
 
@@ -199,3 +203,5 @@ Shorthand avatars are decorative by default. `name` does not name the image, fal
 Types and defaults are generated from the public component types. The explicit parts accept native attributes and event handlers. Shorthand Avatar omits `onClick`; supply it on the owner passed through `render`.
 
 <AvatarReference />
+
+<PageBanner illustration="page-cover-profile" />

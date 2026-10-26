@@ -1,7 +1,6 @@
 ---
 title: Archivio chiave-valore
 description: Rendi persistenti i risultati intermedi, memorizza nella cache i dati e condividi lo stato tra le esecuzioni delle funzioni di logica con l'archivio chiave-valore integrato dell'applicazione.
-icon: database
 ---
 
 Le funzioni di logica vengono eseguite in sandbox in processi Node.js di breve durata — una volta terminata un'esecuzione, nulla di ciò che era in memoria sopravvive. Quando devi **ricordare qualcosa tra un'esecuzione e l'altra** (memorizzare nella cache una costosa risposta di un'API, archiviare un cursore per sincronizzazioni incrementali, applicare un debounce al lavoro o passare lo stato da una funzione all'altra), conservalo nell'archivio chiave-valore integrato.

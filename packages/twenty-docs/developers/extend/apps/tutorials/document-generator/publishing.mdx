@@ -1,10 +1,11 @@
 ---
 title: 6. Publishing
-icon: 'rocket'
 description: Add marketplace metadata and publish your app.
 ---
 
-Your app works. The last step is to describe it for the marketplace and publish.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Add marketplace metadata
 
@@ -117,33 +118,23 @@ The finished app is at
 
 ## Where to go next
 
-<CardGroup cols={2}>
-  <Card
-    title="Data reference"
-    icon="database"
-    href="/developers/extend/apps/data/overview"
-  >
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/developers/extend/apps/data/overview" img="/images/documentation/section-overview-icons-v1/apps-data.svg">
+    <CardTitle>Data reference</CardTitle>
     Every field type, relation, and index option.
   </Card>
-  <Card
-    title="Logic reference"
-    icon="bolt"
-    href="/developers/extend/apps/logic/overview"
-  >
+  <Card href="/developers/extend/apps/logic/overview" img="/images/documentation/section-overview-icons-v1/apps-logic.svg">
+    <CardTitle>Logic reference</CardTitle>
     Cron and database-event triggers, the key-value store, OAuth connections.
   </Card>
-  <Card
-    title="Layout reference"
-    icon="table-columns"
-    href="/developers/extend/apps/layout/overview"
-  >
+  <Card href="/developers/extend/apps/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Layout reference</CardTitle>
     Page layouts, dashboard widgets, and more UI surfaces.
   </Card>
-  <Card
-    title="Operations"
-    icon="rocket"
-    href="/developers/extend/apps/operations/overview"
-  >
+  <Card href="/developers/extend/apps/operations/overview" img="/images/documentation/section-overview-icons-v1/apps-operations.svg">
+    <CardTitle>Operations</CardTitle>
     CLI, testing, remotes, and CI.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="card-page-tutorial-publishing" />
