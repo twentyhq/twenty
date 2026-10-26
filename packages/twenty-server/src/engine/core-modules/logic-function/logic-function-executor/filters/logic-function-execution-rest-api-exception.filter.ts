@@ -6,43 +6,11 @@ import {
 } from '@nestjs/common';
 
 import { type Response } from 'express';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
-import {
-  LogicFunctionExecutionException,
-  LogicFunctionExecutionExceptionCode,
-} from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import {
-  LogicFunctionException,
-  LogicFunctionExceptionCode,
-} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-
-const getLogicFunctionExceptionHttpStatus = (
-  exception: LogicFunctionException | LogicFunctionExecutionException,
-): number => {
-  if (exception instanceof LogicFunctionExecutionException) {
-    const { code } = exception;
-
-    switch (code) {
-      case LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
-        return 404;
-      case LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED:
-        return 429;
-      default:
-        return assertUnreachable(code);
-    }
-  }
-
-  switch (exception.code) {
-    case LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
-      return 404;
-    case LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED:
-      return 403;
-    default:
-      return 500;
-  }
-};
+import { LogicFunctionExecutionException } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { getLogicFunctionExceptionHttpStatus } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/get-logic-function-exception-http-status.util';
+import { LogicFunctionException } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 @Injectable()
 @Catch(LogicFunctionException, LogicFunctionExecutionException)

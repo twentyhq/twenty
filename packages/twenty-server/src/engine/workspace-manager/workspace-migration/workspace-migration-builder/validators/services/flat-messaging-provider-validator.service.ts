@@ -92,7 +92,10 @@ const findOtherMessagingProviderWithName = ({
   applicationUniversalIdentifier,
   universalIdentifier,
 }: {
-  flatMessagingProviderMaps: MetadataUniversalFlatEntityMaps<'messagingProvider'>;
+  flatMessagingProviderMaps: Pick<
+    MetadataUniversalFlatEntityMaps<'messagingProvider'>,
+    'byUniversalIdentifier'
+  >;
   name: string;
   applicationUniversalIdentifier: string;
   universalIdentifier: string;
