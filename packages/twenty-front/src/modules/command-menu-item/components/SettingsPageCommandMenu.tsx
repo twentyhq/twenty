@@ -5,10 +5,18 @@ import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/compon
 import { PAGE_COMMAND_ENGINE_COMPONENT_KEYS } from '@/command-menu-item/page-command/constants/PageCommandEngineComponentKeys';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { sidePanelWidthState } from '@/side-panel/states/sidePanelWidthState';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext } from 'react';
 
-const SettingsPagePinnedCommandMenuItemButtons = () => {
+type SettingsPagePinnedCommandMenuItemButtonsProps = {
+  containerWidth?: number;
+};
+
+const SettingsPagePinnedCommandMenuItemButtons = ({
+  containerWidth,
+}: SettingsPagePinnedCommandMenuItemButtonsProps) => {
   const commandMenuContext = useContext(CommandMenuContext);
 
   return (
@@ -21,20 +29,23 @@ const SettingsPagePinnedCommandMenuItemButtons = () => {
         ),
       }}
     >
-      <PinnedCommandMenuItemButtons />
+      <PinnedCommandMenuItemButtons containerWidth={containerWidth} />
     </CommandMenuContext.Provider>
   );
 };
 
 export const SettingsPageCommandMenu = () => {
   const isInMainSurface = useWorkspaceSurface().type === 'main';
+  const sidePanelWidth = useAtomStateValue(sidePanelWidthState);
 
   const pinnedCommandMenuItems = (
     <CommandMenuContextProvider
       displayType="button"
       containerType={CommandMenuItemContainerType.IndexPageHeader}
     >
-      <SettingsPagePinnedCommandMenuItemButtons />
+      <SettingsPagePinnedCommandMenuItemButtons
+        containerWidth={isInMainSurface ? undefined : sidePanelWidth}
+      />
     </CommandMenuContextProvider>
   );
 
