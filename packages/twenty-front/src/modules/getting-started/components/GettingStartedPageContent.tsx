@@ -55,7 +55,7 @@ const StyledDigits = styled.div`
 const StyledDigit = styled.span`
   align-items: center;
   background: ${themeCssVariables.color.orange3};
-  border: 1px solid ${themeCssVariables.color.orange6};
+  border: 1px solid ${themeCssVariables.color.amber6};
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${themeCssVariables.color.amber11};
@@ -63,18 +63,21 @@ const StyledDigit = styled.span`
   font-size: ${themeCssVariables.font.size.xxl};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   height: ${themeCssVariables.spacing[11]};
+  isolation: isolate;
   justify-content: center;
   position: relative;
   width: ${themeCssVariables.spacing[9]};
 
   &::after {
-    background: ${themeCssVariables.color.orange6};
+    background: ${themeCssVariables.color.amber11};
     content: '';
     height: 1px;
     left: 0;
+    opacity: 0.2;
     position: absolute;
     right: 0;
     top: 50%;
+    z-index: -1;
   }
 `;
 
