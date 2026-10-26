@@ -51,13 +51,14 @@ export const DropdownTrigger = ({
           return;
         }
 
-        const tabTarget =
+        const isForwardTabFromOpenPicker =
           open &&
           triggerType === 'picker' &&
           event.key === 'Tab' &&
-          !event.shiftKey
-            ? getDropdownTriggerTabTarget(event.currentTarget)
-            : undefined;
+          !event.shiftKey;
+        const tabTarget = isForwardTabFromOpenPicker
+          ? getDropdownTriggerTabTarget(event.currentTarget)
+          : undefined;
 
         if (isDefined(tabTarget)) {
           event.preventDefault();
