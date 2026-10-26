@@ -11,6 +11,8 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from './FormFieldRow.module.scss';
 import { type FormFieldRowProps } from './types/FormFieldRowProps';
 
+const DEFAULT_CONTENT_PADDING_INLINE = 8;
+
 export const FormFieldRow = ({
   label,
   startIcon,
@@ -18,6 +20,7 @@ export const FormFieldRow = ({
   trailingProps,
   children,
   labelWidth = 80,
+  contentPaddingInline = DEFAULT_CONTENT_PADDING_INLINE,
   isHoverable = false,
   hasDivider = true,
   render,
@@ -28,10 +31,14 @@ export const FormFieldRow = ({
 }: FormFieldRowProps) => {
   const rowStyle: CSSProperties & {
     '--form-field-row-label-width': string;
+    '--form-field-row-content-padding-inline': string;
   } = {
     '--form-field-row-label-width': isNumber(labelWidth)
       ? `${labelWidth}px`
       : labelWidth,
+    '--form-field-row-content-padding-inline': isNumber(contentPaddingInline)
+      ? `${contentPaddingInline}px`
+      : contentPaddingInline,
     ...style,
   };
 

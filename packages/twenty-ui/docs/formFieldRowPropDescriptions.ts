@@ -17,6 +17,8 @@ export const FORM_FIELD_ROW_PROP_DESCRIPTIONS = {
     'Native group click handler. Providing a handler shows a pointer cursor; the caller guards nested-control and portaled events as needed.',
   labelWidth:
     'Preferred label column width, capped at 40% of the row. Numbers use pixels; use the same width for aligned sibling rows.',
+  contentPaddingInline:
+    'Inline padding around the field content, defaulting to 8 pixels. Numbers use pixels; CSS padding values are also supported. Set 0 to align content with the row inset when no visible label is present.',
   isHoverable:
     'Enables a neutral hover background independently of click handlers. Keyboard focus remains on nested controls without changing the row background.',
   hasDivider:

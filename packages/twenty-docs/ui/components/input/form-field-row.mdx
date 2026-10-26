@@ -55,6 +55,14 @@ export const SubjectField = () => {
 
 The root is a group named by `label`. Supply `aria-label` or `aria-labelledby` when the visible label is omitted, and label each nested input separately. The row does not move focus or disable nested controls. Those controls retain their own keyboard behavior and focus styling.
 
+`contentPaddingInline` defaults to 8 pixels and accepts a CSS padding value. Numeric values use pixels. Set `contentPaddingInline={0}` to align recipient chips and an input with the row inset when there is no visible label.
+
+<StoryEmbed
+  storyId="ui-input-formfieldrow--without-label"
+  title="Recipient row without a visible label"
+  height={110}
+/>
+
 ## Events and customization
 
 Native attributes, event handlers, `className`, `style`, `ref` and `render` apply to the group root. Forward supplied props and ref when replacing the root through `render`. An `onClick` handler shows a pointer cursor. The caller owns click-to-focus behavior and guards events from nested controls or portals when needed. `isHoverable` independently enables a neutral hover background.

@@ -1076,6 +1076,7 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: FORM_FIELD_ROW_PROP_DESCRIPTIONS,
     propDefaults: {
       labelWidth: '80',
+      contentPaddingInline: '8',
       isHoverable: 'false',
       hasDivider: 'true',
     },

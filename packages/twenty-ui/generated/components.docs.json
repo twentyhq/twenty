@@ -14915,6 +14915,13 @@
         "description": "CSS class applied to the group root."
       },
       {
+        "name": "contentPaddingInline",
+        "type": "PaddingInline<string | number>",
+        "required": false,
+        "defaultValue": "8",
+        "description": "Inline padding around the field content, defaulting to 8 pixels. Numbers use pixels; CSS padding values are also supported. Set 0 to align content with the row inset when no visible label is present."
+      },
+      {
         "name": "hasDivider",
         "type": "boolean",
         "required": false,

@@ -256,7 +256,33 @@ export const NarrowLayout: Story = {
 };
 
 export const WithoutLabel: Story = {
-  args: { label: undefined, 'aria-label': 'Subject field' },
+  parameters: { container: { width: 280 } },
+  args: {
+    label: undefined,
+    'aria-label': 'Recipients',
+    contentPaddingInline: 0,
+    children: (
+      <>
+        <Chip variant="soft">Ada</Chip>
+        <Input
+          variant="plain"
+          aria-label="Recipients"
+          placeholder="Add people or a channel"
+          style={{ flex: '1 1 100px' }}
+        />
+      </>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const group = canvas.getByRole('group', { name: 'Recipients' });
+    const input = canvas.getByRole('textbox', { name: 'Recipients' });
+
+    await expect(group.scrollWidth).toBeLessThanOrEqual(group.clientWidth);
+    await userEvent.tab();
+    await expect(input).toHaveFocus();
+    await expect(getComputedStyle(input).outlineStyle).not.toBe('none');
+  },
 };
 
 export const Disabled: Story = {
