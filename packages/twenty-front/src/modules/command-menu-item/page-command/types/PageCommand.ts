@@ -3,5 +3,6 @@ export type PageCommand = {
   isDisabled: boolean;
   isLoading: boolean;
   progress?: number;
+  to?: string;
   registrationId: string;
 };

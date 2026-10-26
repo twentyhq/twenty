@@ -36,9 +36,12 @@ export const useCommandMenuHotKeys = () => {
       openRecordsSearchPage();
     },
     containsModifier: false,
+    enableOnSettingsPage: true,
     dependencies: [openRecordsSearchPage],
     options: {
       ignoreModifiers: true,
+      enableOnFormTags: false,
+      enableOnContentEditable: false,
     },
   });
 
@@ -48,9 +51,12 @@ export const useCommandMenuHotKeys = () => {
       openAskAiPage({ resetNavigationStack: true });
     },
     containsModifier: false,
+    enableOnSettingsPage: true,
     dependencies: [openAskAiPage],
     options: {
       ignoreModifiers: true,
+      enableOnFormTags: false,
+      enableOnContentEditable: false,
     },
   });
 

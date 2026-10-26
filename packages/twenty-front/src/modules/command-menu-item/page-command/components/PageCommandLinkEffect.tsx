@@ -1,5 +1,10 @@
 import { useRegisterPageCommand } from '@/command-menu-item/page-command/hooks/useRegisterPageCommand';
-import { type LinkProps, useNavigate } from 'react-router-dom';
+import {
+  createPath,
+  type LinkProps,
+  useNavigate,
+  useResolvedPath,
+} from 'react-router-dom';
 import { type EngineComponentKey } from '~/generated-metadata/graphql';
 
 type PageCommandLinkEffectProps = {
@@ -14,11 +19,13 @@ export const PageCommandLinkEffect = ({
   isDisabled,
 }: PageCommandLinkEffectProps) => {
   const navigate = useNavigate();
+  const path = createPath(useResolvedPath(to));
 
   useRegisterPageCommand({
     engineComponentKey,
-    onRun: () => navigate(to),
+    onRun: () => navigate(path),
     isDisabled,
+    to: path,
   });
 
   return null;

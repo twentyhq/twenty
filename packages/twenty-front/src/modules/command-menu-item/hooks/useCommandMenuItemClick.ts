@@ -75,12 +75,13 @@ export const useCommandMenuItemClick = ({
     ? contextStorePageCommands[item.engineComponentKey]
     : undefined;
 
-  const closeBehavior = shouldMountCommand
-    ? ({
-        closeSidePanelOnShowPageOptionsExecution: false,
-        closeSidePanelOnCommandMenuListExecution: false,
-      } as const)
-    : ({} as const);
+  const closeBehavior =
+    shouldMountCommand && !isDefined(pageCommand)
+      ? ({
+          closeSidePanelOnShowPageOptionsExecution: false,
+          closeSidePanelOnCommandMenuListExecution: false,
+        } as const)
+      : ({} as const);
 
   const { closeCommandMenu } = useCloseCommandMenu(closeBehavior);
 
@@ -160,6 +161,8 @@ export const useCommandMenuItemClick = ({
       progress: pageCommand.progress,
       showDisabledLoader:
         pageCommand.isLoading || isDefined(pageCommand.progress),
+      keepLabelWhileLoading: true,
+      to: pageCommand.to,
     };
   }
 
@@ -168,5 +171,7 @@ export const useCommandMenuItemClick = ({
     disabled,
     progress: shouldMountCommand ? commandMenuItemProgress : undefined,
     showDisabledLoader: shouldMountCommand ? isMounted : false,
+    keepLabelWhileLoading: false,
+    to: undefined,
   };
 };

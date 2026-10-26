@@ -25,6 +25,7 @@ export type CommandMenuButtonProps = {
   disabled?: boolean;
   progress?: number;
   loading?: boolean;
+  keepLabelWhileLoading?: boolean;
   isPrimaryAction?: boolean;
   shouldHideLabel?: boolean;
 };
@@ -37,6 +38,7 @@ export const CommandMenuButton = ({
   disabled = false,
   progress,
   loading = false,
+  keepLabelWhileLoading = false,
   isPrimaryAction = false,
   shouldHideLabel = false,
 }: CommandMenuButtonProps) => {
@@ -49,6 +51,7 @@ export const CommandMenuButton = ({
   const resolvedShortLabel = getCommandMenuButtonLabel({
     shortLabel: command.shortLabel,
     isLoading: loading,
+    keepLabelWhileLoading,
     progress,
     shouldHideLabel,
   });

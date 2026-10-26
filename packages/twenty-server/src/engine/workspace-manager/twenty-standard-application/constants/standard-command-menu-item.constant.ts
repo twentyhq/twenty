@@ -851,7 +851,6 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
       'permissionFlags.AI and not isInSidePanel and objectMetadataItem.nameSingular != "agentChatThread"',
-    conditionalPinnedExpression: 'pageType != "SETTINGS_PAGE"',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.ASK_AI,
@@ -1837,7 +1836,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     label: i18nLabel(
       msg({ message: `Cancel`, context: 'commandMenuItem.label' }),
     ),
-    icon: 'IconX',
+    icon: 'IconCancel',
     isPinned: true,
     isPinLocked: true,
     position: 82,
@@ -1919,6 +1918,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconDownload',
     isPinned: true,
+    isPinLocked: true,
     position: 86,
     shortLabel: i18nLabel(
       msg({ message: `Install`, context: 'commandMenuItem.shortLabel' }),
@@ -1938,6 +1938,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconSettings',
     isPinned: true,
+    isPinLocked: true,
     position: 87,
     shortLabel: i18nLabel(
       msg({ message: `Open settings`, context: 'commandMenuItem.shortLabel' }),
@@ -1957,6 +1958,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconPlus',
     isPinned: true,
+    isPinLocked: true,
     position: 88,
     shortLabel: i18nLabel(
       msg({ message: `Add object`, context: 'commandMenuItem.shortLabel' }),
@@ -1976,6 +1978,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconPlus',
     isPinned: true,
+    isPinLocked: true,
     position: 89,
     shortLabel: i18nLabel(
       msg({ message: `New Field`, context: 'commandMenuItem.shortLabel' }),
@@ -1995,6 +1998,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconArrowUpRight',
     isPinned: true,
+    isPinLocked: true,
     position: 90,
     shortLabel: i18nLabel(
       msg({ message: `See records`, context: 'commandMenuItem.shortLabel' }),
@@ -2014,6 +2018,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconPlus',
     isPinned: true,
+    isPinLocked: true,
     position: 91,
     shortLabel: i18nLabel(
       msg({ message: `New Skill`, context: 'commandMenuItem.shortLabel' }),
@@ -2033,6 +2038,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconPlus',
     isPinned: true,
+    isPinLocked: true,
     position: 92,
     shortLabel: i18nLabel(
       msg({ message: `New Tool`, context: 'commandMenuItem.shortLabel' }),
@@ -2052,6 +2058,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconPlus',
     isPinned: true,
+    isPinLocked: true,
     position: 93,
     shortLabel: i18nLabel(
       msg({ message: `New limit`, context: 'commandMenuItem.shortLabel' }),
@@ -2071,6 +2078,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconPlus',
     isPinned: true,
+    isPinLocked: true,
     position: 94,
     shortLabel: i18nLabel(
       msg({ message: `Generate DPA`, context: 'commandMenuItem.shortLabel' }),
@@ -2090,6 +2098,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconTrash',
     isPinned: true,
+    isPinLocked: true,
     position: 95,
     shortLabel: i18nLabel(
       msg({ message: `Delete`, context: 'commandMenuItem.shortLabel' }),

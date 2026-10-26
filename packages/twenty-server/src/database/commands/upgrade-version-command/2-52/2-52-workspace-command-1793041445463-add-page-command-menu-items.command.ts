@@ -35,7 +35,7 @@ const PAGE_COMMAND_MENU_ITEM_NAMES = [
 @Command({
   name: 'upgrade:2-52:add-page-command-menu-items',
   description:
-    'Add the page header commands, lock the dashboard Save and Cancel pins and keep Ask AI out of settings headers',
+    'Add the page header commands and lock the dashboard Save and Cancel pins',
 })
 export class AddPageCommandMenuItemsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(

@@ -51,7 +51,11 @@ const CommandMenuItemButtonRenderer = ({
     disabled,
     progress,
     isLoading,
+    keepLabelWhileLoading,
+    to,
   } = useCommandMenuItemDisplay(item);
+
+  const linkTo = disabled ? undefined : to;
 
   const command = {
     key: item.id,
@@ -88,10 +92,12 @@ const CommandMenuItemButtonRenderer = ({
       <CommandMenuButton
         command={command}
         hotKey={shouldShowHotKey ? buttonHotKey : undefined}
-        onClick={disabled ? undefined : handleClick}
+        to={linkTo}
+        onClick={disabled || isDefined(linkTo) ? undefined : handleClick}
         disabled={disabled}
         progress={progress}
         loading={isLoading}
+        keepLabelWhileLoading={keepLabelWhileLoading}
         isPrimaryAction={isPrimaryAction}
         shouldHideLabel={shouldHideLabel}
       />

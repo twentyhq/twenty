@@ -11,6 +11,7 @@ import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useId, type JSX, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -44,15 +45,11 @@ export const SettingsPageLayout = ({
     isLayoutCustomizationModeEnabledState,
   );
 
-  const pageTitleCandidate =
-    pageTitle ??
-    (typeof title === 'string'
-      ? title
-      : links.findLast(({ children }) => typeof children === 'string')
-          ?.children);
-
-  const resolvedPageTitle =
-    typeof pageTitleCandidate === 'string' ? pageTitleCandidate : undefined;
+  const resolvedPageTitle = [
+    pageTitle,
+    title,
+    links.findLast(({ children }) => isNonEmptyString(children))?.children,
+  ].find(isNonEmptyString);
 
   const formattedTitle =
     typeof title === 'string' ? (

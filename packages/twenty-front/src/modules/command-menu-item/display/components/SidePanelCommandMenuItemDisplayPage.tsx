@@ -14,6 +14,7 @@ import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMen
 import { groupCommandMenuItemsBySection } from '@/command-menu-item/utils/groupCommandMenuItemsBySection';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStorePageCommandsComponentState } from '@/context-store/states/contextStorePageCommandsComponentState';
 import { contextStorePageTitleComponentState } from '@/context-store/states/contextStorePageTitleComponentState';
 import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
@@ -31,7 +32,6 @@ import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconApps,
-  IconAppWindow,
   IconArrowUpRight,
   IconBox,
   IconCheckbox,
@@ -39,6 +39,7 @@ import {
   IconLifebuoy,
   IconPlus,
   IconSearch,
+  IconSettings,
   IconTable,
   type IconComponent,
 } from 'twenty-ui/icon';
@@ -48,7 +49,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 const SECTION_ICONS: Record<CommandMenuItemSection, IconComponent> = {
-  THIS_PAGE: IconAppWindow,
+  THIS_PAGE: IconSettings,
   SELECTION: IconCheckbox,
   CURRENT_VIEW: IconTable,
   THIS_OBJECT: IconBox,
@@ -68,6 +69,10 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const contextStorePageTitle = useAtomComponentStateValue(
     contextStorePageTitleComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+  const contextStorePageCommands = useAtomComponentStateValue(
+    contextStorePageCommandsComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
   const { commandMenuItems, commandMenuContextApi } =
@@ -100,11 +105,21 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const nonFallbackCommandMenuItems = useMemo(
     () =>
-      pinnedFirstCommandMenuItems.filter(
-        (item) =>
-          item.availabilityType !== CommandMenuItemAvailabilityType.FALLBACK,
-      ),
-    [pinnedFirstCommandMenuItems],
+      pinnedFirstCommandMenuItems
+        .filter(
+          (item) =>
+            item.availabilityType !== CommandMenuItemAvailabilityType.FALLBACK,
+        )
+        .filter((item) => {
+          const pageCommand = contextStorePageCommands[item.engineComponentKey];
+
+          return (
+            !isDefined(pageCommand) ||
+            !pageCommand.isDisabled ||
+            pageCommand.isLoading
+          );
+        }),
+    [pinnedFirstCommandMenuItems, contextStorePageCommands],
   );
 
   const fallbackCommandMenuItems = useMemo(

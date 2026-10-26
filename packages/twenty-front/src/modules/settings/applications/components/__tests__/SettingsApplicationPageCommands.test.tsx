@@ -6,9 +6,11 @@ import { Route, Routes } from 'react-router-dom';
 import { SettingsPageCommandMenu } from '@/command-menu-item/components/SettingsPageCommandMenu';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStorePageCommandsComponentState } from '@/context-store/states/contextStorePageCommandsComponentState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { SettingsApplicationPageCommands } from '@/settings/applications/components/SettingsApplicationPageCommands';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 import { getJestPageCommandsWrapper } from '~/testing/jest/getJestPageCommandsWrapper';
+import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';
 
 jest.mock(
   '@/command-menu-item/display/components/PinnedCommandMenuItemsInlineMeasurements',
@@ -70,7 +72,7 @@ const renderPageCommands = ({
       }),
     );
 
-  return { getPageCommands, onInstall };
+  return { getPageCommands, onInstall, store };
 };
 
 describe('SettingsApplicationPageCommands', () => {
@@ -114,6 +116,27 @@ describe('SettingsApplicationPageCommands', () => {
     await user.click(screen.getByRole('button', { name: 'Install' }));
 
     expect(onInstall).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps pinned global app commands out of the settings header', () => {
+    const { store } = renderPageCommands({});
+
+    act(() => {
+      store.set(metadataStoreState.atomFamily('commandMenuItems'), {
+        current: mockedCommandMenuItems.map((commandMenuItem) =>
+          commandMenuItem.engineComponentKey ===
+          EngineComponentKey.FRONT_COMPONENT_RENDERER
+            ? { ...commandMenuItem, pageLayoutId: null }
+            : commandMenuItem,
+        ),
+        draft: [],
+        status: 'up-to-date',
+      });
+    });
+
+    expect(
+      screen.getAllByRole('button').map((button) => button.textContent),
+    ).toEqual(['Install']);
   });
 
   it('shows the install as busy with its progress', () => {

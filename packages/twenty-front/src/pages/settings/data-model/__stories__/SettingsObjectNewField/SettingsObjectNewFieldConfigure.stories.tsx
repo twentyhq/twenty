@@ -3,6 +3,7 @@ import { graphql, HttpResponse } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { SettingsObjectNewFieldConfigure } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure';
 
+import { CommandMenuItemsDecorator } from '~/testing/decorators/CommandMenuItemsDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -20,7 +21,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title:
     'Pages/Settings/DataModel/SettingsObjectNewField/SettingsObjectNewFieldConfigure',
   component: SettingsObjectNewFieldConfigure,
-  decorators: [PageDecorator],
+  decorators: [CommandMenuItemsDecorator, PageDecorator],
   args: {
     routePath: '/settings/objects/:objectNamePlural/new-field/configure',
     routeParams: { ':objectNamePlural': 'companies' },
@@ -76,10 +77,11 @@ export const Default: Story = {
     const employeeInput = await canvas.findByPlaceholderText('Employees');
     await userEvent.type(employeeInput, 'Test');
 
-    const saveButton = await canvas.findByRole('button', { name: 'Save' });
     await userEvent.tab();
-    await waitFor(() => expect(saveButton).toBeEnabled());
-    await userEvent.click(saveButton);
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Save' })).toBeEnabled(),
+    );
+    await userEvent.click(canvas.getByRole('button', { name: 'Save' }));
     await expect(
       await canvas.findByText('Navigated to /settings/objects/companies'),
     ).toBeVisible();

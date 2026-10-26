@@ -10,6 +10,7 @@ type UseRegisterPageCommandArgs = {
   isDisabled?: boolean;
   isLoading?: boolean;
   progress?: number;
+  to?: string;
 };
 
 export const useRegisterPageCommand = ({
@@ -18,6 +19,7 @@ export const useRegisterPageCommand = ({
   isDisabled = false,
   isLoading = false,
   progress,
+  to,
 }: UseRegisterPageCommandArgs) => {
   const registrationId = useId();
   // oxlint-disable-next-line twenty/no-state-useref
@@ -41,6 +43,7 @@ export const useRegisterPageCommand = ({
         isDisabled,
         isLoading,
         progress,
+        to,
         registrationId,
       },
     }));
@@ -50,6 +53,7 @@ export const useRegisterPageCommand = ({
     isDisabled,
     isLoading,
     progress,
+    to,
     registrationId,
     setContextStorePageCommands,
   ]);
