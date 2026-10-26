@@ -1,14 +1,21 @@
+import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
+
+import { HALFTONE_ENVIRONMENT_DATA_URL } from './environment-data';
+import { HALFTONE_MATERIAL_CONSTANTS } from './material-constants';
+import { HALFTONE_MATERIAL_TEXTURE_DATA_URLS } from './material-texture-data';
+import type { HalftoneTextureImage } from './material-texture-image';
+import { HALFTONE_MATERIAL_TEXTURE_LAYERS } from './material-texture-layers';
 import type { HalftoneMaterialSettings } from './studio-settings-types';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import * as THREE from 'three';
 
 export type HalftoneMaterialAssets = {
-  glassBackgroundTexture: THREE.Texture;
-  glassEnvironmentTexture: THREE.Texture;
+  environmentTexture: THREE.Texture;
   glassTransmissionScene: THREE.Scene;
-  solidEnvironmentTexture: THREE.Texture;
+  patternTextures: Partial<Record<HalftoneTextureImage, THREE.Texture>>;
 };
 
+// Adapted from MeshTransmissionMaterial in @react-three/drei (MIT): see DREI_LICENSE_NOTICE.
 class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
   declare anisotropicBlur: number;
   declare attenuationColor: THREE.Color;
@@ -439,15 +446,6 @@ class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
   }
 }
 
-const GLASS_THICKNESS_TO_WORLD_UNITS = 1 / 320;
-const GLASS_ATTENUATION_DISTANCE_MIN = 0.12;
-const GLASS_ENVIRONMENT_INTENSITY_BASE = 0.18;
-const GLASS_ENVIRONMENT_INTENSITY_MULTIPLIER = 0.12;
-const GLASS_ENVIRONMENT_ZOOM = 1.55;
-const GLASS_TRANSMISSION_BACKGROUND = new THREE.Color(0x030303);
-const GLASS_TEXTURE_URLS = {
-  environment: '/halftone/materials/glass/environment.webp',
-} as const;
 const MAX_TEXTURE_ANISOTROPY = 8;
 
 function setTextureSampling(
@@ -463,144 +461,26 @@ function setTextureSampling(
   );
 }
 
-function disposeEnvironmentScene(scene: THREE.Scene) {
-  scene.traverse((object) => {
-    const mesh = object as THREE.Mesh;
-
-    if (mesh.geometry) {
-      mesh.geometry.dispose();
-    }
-
-    if (Array.isArray(mesh.material)) {
-      mesh.material.forEach((material) => material.dispose());
-      return;
-    }
-
-    mesh.material?.dispose?.();
-  });
-}
-
-function createSolidEnvironmentTexture(renderer: THREE.WebGLRenderer) {
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
-  const environmentTexture = pmremGenerator.fromScene(
-    new RoomEnvironment(),
-    0.04,
-  ).texture;
-  pmremGenerator.dispose();
-
-  return environmentTexture;
-}
-
-function getTextureImageSize(texture: THREE.Texture) {
-  const image = texture.image as
-    | {
-        height?: number;
-        naturalHeight?: number;
-        naturalWidth?: number;
-        videoHeight?: number;
-        videoWidth?: number;
-        width?: number;
-      }
-    | undefined;
-  const width =
-    image?.naturalWidth ?? image?.videoWidth ?? image?.width ?? undefined;
-  const height =
-    image?.naturalHeight ?? image?.videoHeight ?? image?.height ?? undefined;
-
-  return {
-    height,
-    width,
-  };
-}
-
-function createZoomedGlassTexture(
-  sourceTexture: THREE.Texture,
-  renderer: THREE.WebGLRenderer,
-  zoom: number,
-) {
-  if (zoom <= 1) {
-    return sourceTexture;
-  }
-
-  const { width, height } = getTextureImageSize(sourceTexture);
-
-  if (!width || !height) {
-    return sourceTexture;
-  }
-
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-
-  const context = canvas.getContext('2d');
-
-  if (!context) {
-    return sourceTexture;
-  }
-
-  const cropWidth = width / zoom;
-  const cropHeight = height / zoom;
-  const sourceX = (width - cropWidth) / 2;
-  const sourceY = (height - cropHeight) / 2;
-
-  context.drawImage(
-    sourceTexture.image as CanvasImageSource,
-    sourceX,
-    sourceY,
-    cropWidth,
-    cropHeight,
-    0,
-    0,
-    width,
-    height,
+function createGlassTransmissionScene() {
+  const transmissionScene = new THREE.Scene();
+  transmissionScene.background = new THREE.Color(
+    HALFTONE_MATERIAL_CONSTANTS.glassTransmissionBackground,
   );
 
-  const zoomedTexture = new THREE.CanvasTexture(canvas);
-  zoomedTexture.colorSpace = sourceTexture.colorSpace;
-  zoomedTexture.wrapS = THREE.ClampToEdgeWrapping;
-  zoomedTexture.wrapT = THREE.ClampToEdgeWrapping;
-  setTextureSampling(zoomedTexture, renderer);
-  zoomedTexture.needsUpdate = true;
-
-  return zoomedTexture;
+  return transmissionScene;
 }
 
-function createStudioGlassEnvironmentScene(backdropTexture?: THREE.Texture) {
-  const studioScene = new THREE.Scene();
-  studioScene.background = backdropTexture ?? GLASS_TRANSMISSION_BACKGROUND;
-  studioScene.backgroundIntensity = backdropTexture ? 1 : 0.4;
-
-  return studioScene;
-}
-
-function createStudioGlassEnvironmentTexture(
+function createEnvironmentTexture(
   renderer: THREE.WebGLRenderer,
-  backdropTexture?: THREE.Texture,
+  equirectangularTexture?: THREE.Texture,
 ) {
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
-  const environmentTexture = backdropTexture
-    ? pmremGenerator.fromEquirectangular(backdropTexture).texture
+  const environmentTexture = equirectangularTexture
+    ? pmremGenerator.fromEquirectangular(equirectangularTexture).texture
     : pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
   pmremGenerator.dispose();
 
   return environmentTexture;
-}
-
-function createFallbackGlassBackdropTexture(renderer: THREE.WebGLRenderer) {
-  const texture = new THREE.DataTexture(
-    new Uint8Array([3, 3, 3, 255]),
-    1,
-    1,
-    THREE.RGBAFormat,
-  );
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.wrapS = THREE.ClampToEdgeWrapping;
-  texture.wrapT = THREE.ClampToEdgeWrapping;
-  texture.mapping = THREE.EquirectangularReflectionMapping;
-  setTextureSampling(texture, renderer);
-  texture.needsUpdate = true;
-
-  return texture;
 }
 
 function loadTexture(
@@ -624,73 +504,60 @@ function loadTexture(
   });
 }
 
-async function loadGlassEnvironmentAssets(renderer: THREE.WebGLRenderer) {
-  const sourceBackgroundTexture = await loadTexture(
-    GLASS_TEXTURE_URLS.environment,
+async function loadEnvironmentTexture(renderer: THREE.WebGLRenderer) {
+  const equirectangularTexture = await loadTexture(
+    HALFTONE_ENVIRONMENT_DATA_URL,
     renderer,
     THREE.SRGBColorSpace,
   );
-  const backgroundTexture = createZoomedGlassTexture(
-    sourceBackgroundTexture,
-    renderer,
-    GLASS_ENVIRONMENT_ZOOM,
-  );
-  if (backgroundTexture !== sourceBackgroundTexture) {
-    sourceBackgroundTexture.dispose();
-  }
-  backgroundTexture.mapping = THREE.EquirectangularReflectionMapping;
-  backgroundTexture.wrapS = THREE.ClampToEdgeWrapping;
-  backgroundTexture.wrapT = THREE.ClampToEdgeWrapping;
-  backgroundTexture.needsUpdate = true;
-  const transmissionScene =
-    createStudioGlassEnvironmentScene(backgroundTexture);
-  const environmentTexture = createStudioGlassEnvironmentTexture(
-    renderer,
-    backgroundTexture,
-  );
+  equirectangularTexture.mapping = THREE.EquirectangularReflectionMapping;
+  equirectangularTexture.wrapS = THREE.RepeatWrapping;
+  equirectangularTexture.wrapT = THREE.ClampToEdgeWrapping;
 
-  return {
-    backgroundTexture,
-    environmentTexture,
-    glassTransmissionScene: transmissionScene,
-  };
+  const environmentTexture = createEnvironmentTexture(
+    renderer,
+    equirectangularTexture,
+  );
+  equirectangularTexture.dispose();
+
+  return environmentTexture;
 }
 
-function getGlassEnvironmentIntensity(power: number) {
-  return (
-    GLASS_ENVIRONMENT_INTENSITY_BASE +
-    power * GLASS_ENVIRONMENT_INTENSITY_MULTIPLIER
+async function loadPatternTextures(
+  renderer: THREE.WebGLRenderer,
+): Promise<HalftoneMaterialAssets['patternTextures']> {
+  const entries = await Promise.all(
+    typedObjectEntries(HALFTONE_MATERIAL_TEXTURE_DATA_URLS).map(
+      async ([image, dataUrl]) => {
+        const texture = await loadTexture(
+          dataUrl,
+          renderer,
+          THREE.NoColorSpace,
+        );
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+
+        return [image, texture] as const;
+      },
+    ),
   );
+
+  return Object.fromEntries(entries);
 }
 
 async function createHalftoneMaterialAssets(
   renderer: THREE.WebGLRenderer,
 ): Promise<HalftoneMaterialAssets> {
-  const solidEnvironmentTexture = createSolidEnvironmentTexture(renderer);
+  const patternTextures = await loadPatternTextures(renderer).catch(() => ({}));
+  const environmentTexture = await loadEnvironmentTexture(renderer).catch(() =>
+    createEnvironmentTexture(renderer),
+  );
 
-  try {
-    const glassEnvironmentAssets = await loadGlassEnvironmentAssets(renderer);
-
-    return {
-      glassBackgroundTexture: glassEnvironmentAssets.backgroundTexture,
-      glassEnvironmentTexture: glassEnvironmentAssets.environmentTexture,
-      glassTransmissionScene: glassEnvironmentAssets.glassTransmissionScene,
-      solidEnvironmentTexture,
-    };
-  } catch {
-    const transmissionScene = createStudioGlassEnvironmentScene();
-    const fallbackGlassBackdropTexture =
-      createFallbackGlassBackdropTexture(renderer);
-    const fallbackGlassEnvironmentTexture =
-      createStudioGlassEnvironmentTexture(renderer);
-
-    return {
-      glassBackgroundTexture: fallbackGlassBackdropTexture,
-      glassEnvironmentTexture: fallbackGlassEnvironmentTexture,
-      glassTransmissionScene: transmissionScene,
-      solidEnvironmentTexture,
-    };
-  }
+  return {
+    environmentTexture,
+    glassTransmissionScene: createGlassTransmissionScene(),
+    patternTextures,
+  };
 }
 
 export type HalftoneTransmissionMaterial = TransmissionMaterial;
@@ -705,22 +572,31 @@ function applyHalftoneMaterialSettings(
   assets: HalftoneMaterialAssets,
 ) {
   const isGlass = settings.surface === 'glass';
-  const glassThickness = settings.thickness * GLASS_THICKNESS_TO_WORLD_UNITS;
-  const glassEnvironmentIntensity = getGlassEnvironmentIntensity(
-    settings.environmentPower,
-  );
-  const glassAttenuationDistance = Math.max(
-    glassThickness * 4,
-    GLASS_ATTENUATION_DISTANCE_MIN,
-  );
+  const layers =
+    settings.texture === 'none'
+      ? null
+      : HALFTONE_MATERIAL_TEXTURE_LAYERS[settings.texture];
+  const roughnessTexture = isDefined(layers)
+    ? (assets.patternTextures[layers.roughnessImage] ?? null)
+    : null;
+  const bumpTexture =
+    isDefined(layers) && isDefined(layers.bumpImage)
+      ? (assets.patternTextures[layers.bumpImage] ?? null)
+      : null;
 
-  material.color.set(isGlass ? '#ffffff' : settings.color);
+  roughnessTexture?.repeat.set(settings.textureTiling, settings.textureTiling);
+  bumpTexture?.repeat.set(settings.textureTiling, settings.textureTiling);
+
+  material.color.set(settings.color);
   material.roughness = settings.roughness;
   material.metalness = settings.metalness;
-  material.envMap = isGlass
-    ? assets.glassEnvironmentTexture
-    : assets.solidEnvironmentTexture;
-  material.envMapIntensity = isGlass ? glassEnvironmentIntensity : 0.25;
+  material.envMap = assets.environmentTexture;
+  material.envMapIntensity = settings.environmentPower;
+  material.envMapRotation.set(
+    0,
+    THREE.MathUtils.degToRad(settings.environmentRotation),
+    0,
+  );
   material.clearcoat = isGlass ? 1 : 0;
   material.clearcoatRoughness = isGlass
     ? Math.max(settings.roughness * 0.25, 0.01)
@@ -728,20 +604,21 @@ function applyHalftoneMaterialSettings(
   material.reflectivity = isGlass ? 0.98 : 0.5;
   material.transmission = 0;
   material._transmission = isGlass ? 1 : 0;
-  material.refractionEnvMap = isGlass ? assets.glassBackgroundTexture : null;
-  material.useEnvMapRefraction = isGlass ? 1 : 0;
-  material.thickness = isGlass ? glassThickness : 0;
+  material.refractionEnvMap = null;
+  material.useEnvMapRefraction = 0;
+  material.thickness = isGlass
+    ? settings.thickness *
+      HALFTONE_MATERIAL_CONSTANTS.glassThicknessToWorldUnits
+    : 0;
   material.ior = isGlass ? settings.refraction : 1.5;
   material.buffer = null;
-  material.bumpMap = null;
-  material.bumpScale = 0;
-  material.roughnessMap = null;
+  material.roughnessMap = roughnessTexture;
+  material.bumpMap = bumpTexture;
+  material.bumpScale =
+    isDefined(bumpTexture) && isDefined(layers) ? layers.bumpScale : 0;
   material.side = THREE.FrontSide;
-  material.transparent = false;
-  material.opacity = 1;
-  material.depthWrite = true;
-  material.attenuationColor.set(isGlass ? settings.color : 'white');
-  material.attenuationDistance = isGlass ? glassAttenuationDistance : Infinity;
+  material.attenuationColor.set('white');
+  material.attenuationDistance = Infinity;
   material.anisotropicBlur = isGlass
     ? THREE.MathUtils.lerp(0.03, 0.12, settings.roughness)
     : 0.1;
@@ -750,13 +627,6 @@ function applyHalftoneMaterialSettings(
   material.distortionScale = 0.5;
   material.temporalDistortion = 0;
   material.userData.halftoneIsGlass = isGlass;
-  material.userData.halftoneGlassBacksideThickness = isGlass
-    ? glassThickness * 2
-    : 0;
-  material.userData.halftoneGlassBacksideEnvIntensity = isGlass
-    ? glassEnvironmentIntensity * 2.8
-    : 0;
-  material.userData.halftoneUseEnvironmentRefraction = isGlass;
 
   material.needsUpdate = true;
 }
@@ -765,13 +635,10 @@ function renderHalftoneMaterialScene(options: {
   camera: THREE.Camera;
   elapsedTime: number;
   material: TransmissionMaterial;
-  mesh: THREE.Mesh;
   outputTarget: THREE.WebGLRenderTarget | null;
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
-  transmissionBackground?: THREE.Color | THREE.Texture | null;
-  transmissionBackgroundIntensity?: number;
-  transmissionScene?: THREE.Scene;
+  transmissionScene: THREE.Scene;
   transmissionBacksideTarget: THREE.WebGLRenderTarget;
   transmissionTarget: THREE.WebGLRenderTarget;
 }) {
@@ -779,106 +646,47 @@ function renderHalftoneMaterialScene(options: {
     camera,
     elapsedTime,
     material,
-    mesh,
     outputTarget,
     renderer,
     scene,
-    transmissionBackground,
-    transmissionBackgroundIntensity,
     transmissionScene,
     transmissionBacksideTarget,
     transmissionTarget,
   } = options;
-  const isGlass = material.userData.halftoneIsGlass === true;
 
   material.time = elapsedTime;
 
-  if (!isGlass) {
-    renderer.setRenderTarget(outputTarget);
-    renderer.clear();
-    renderer.render(scene, camera);
+  if (material.userData.halftoneIsGlass === true) {
+    const thickness = material.thickness;
+    const envMapIntensity = material.envMapIntensity;
 
-    return;
-  }
-
-  const useEnvironmentRefraction =
-    material.userData.halftoneUseEnvironmentRefraction === true;
-
-  if (useEnvironmentRefraction) {
-    material.buffer = null;
-    renderer.setRenderTarget(outputTarget);
-    renderer.clear();
-    renderer.render(scene, camera);
-
-    return;
-  }
-
-  const previousToneMapping = renderer.toneMapping;
-  const previousVisibility = mesh.visible;
-  const previousBackground = scene.background;
-  const previousBackgroundIntensity = scene.backgroundIntensity;
-  const previousSide = material.side;
-  const previousThickness = material.thickness;
-  const previousEnvMapIntensity = material.envMapIntensity;
-  const backsideThickness =
-    (material.userData.halftoneGlassBacksideThickness as number | undefined) ??
-    previousThickness;
-  const backsideEnvMapIntensity =
-    (material.userData.halftoneGlassBacksideEnvIntensity as
-      | number
-      | undefined) ?? previousEnvMapIntensity;
-  const backgroundIntensity =
-    transmissionBackgroundIntensity ?? previousEnvMapIntensity;
-
-  renderer.toneMapping = THREE.NoToneMapping;
-
-  if (transmissionScene) {
     renderer.setRenderTarget(transmissionBacksideTarget);
     renderer.clear();
     renderer.render(transmissionScene, camera);
-  } else {
-    scene.background = transmissionBackground ?? GLASS_TRANSMISSION_BACKGROUND;
-    scene.backgroundIntensity = transmissionBackground
-      ? backgroundIntensity
-      : 1;
-    mesh.visible = false;
-    renderer.setRenderTarget(transmissionBacksideTarget);
+
+    material.buffer = transmissionBacksideTarget.texture;
+    material.thickness = 0;
+    material.side = THREE.BackSide;
+    material.envMapIntensity =
+      HALFTONE_MATERIAL_CONSTANTS.glassBacksideEnvironmentIntensity;
+    renderer.setRenderTarget(transmissionTarget);
     renderer.clear();
     renderer.render(scene, camera);
-    mesh.visible = previousVisibility;
+
+    material.buffer = transmissionTarget.texture;
+    material.thickness = thickness;
+    material.side = THREE.FrontSide;
+    material.envMapIntensity = envMapIntensity;
   }
 
-  material.buffer = transmissionBacksideTarget.texture;
-  material.thickness = backsideThickness;
-  material.side = THREE.BackSide;
-  material.envMapIntensity = backsideEnvMapIntensity;
-  renderer.setRenderTarget(transmissionTarget);
-  renderer.clear();
-  renderer.render(scene, camera);
-
-  material.buffer = transmissionTarget.texture;
-  material.thickness = previousThickness;
-  material.side = previousSide;
-  material.envMapIntensity = previousEnvMapIntensity;
-  if (!transmissionScene) {
-    scene.background = previousBackground;
-    scene.backgroundIntensity = previousBackgroundIntensity;
-  }
   renderer.setRenderTarget(outputTarget);
   renderer.clear();
   renderer.render(scene, camera);
-  renderer.toneMapping = previousToneMapping;
 }
 
 function disposeHalftoneMaterialAssets(assets: HalftoneMaterialAssets) {
-  assets.glassBackgroundTexture.dispose();
-
-  if (assets.glassEnvironmentTexture !== assets.glassBackgroundTexture) {
-    assets.glassEnvironmentTexture.dispose();
-  }
-
-  disposeEnvironmentScene(assets.glassTransmissionScene);
-  assets.solidEnvironmentTexture.dispose();
+  assets.environmentTexture.dispose();
+  Object.values(assets.patternTextures).forEach((texture) => texture.dispose());
 }
 
 export const HALFTONE_MATERIALS = {

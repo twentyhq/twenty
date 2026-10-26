@@ -239,13 +239,14 @@ ${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.geometryRuntime}
 
 ${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.createImportedGeometryRuntime(shape)}
 
-${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.glassMaterialRuntime}
+${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.createMaterialRuntime(settings.material.texture)}
 
-function createRenderTarget(width, height) {
+function createRenderTarget(width, height, type = THREE.UnsignedByteType) {
   return new THREE.WebGLRenderTarget(width, height, {
     minFilter: THREE.LinearFilter,
     magFilter: THREE.LinearFilter,
     format: THREE.RGBAFormat,
+    type,
   });
 }
 
@@ -328,6 +329,12 @@ ${HALFTONE_MOUNT_FRAGMENTS.sizingHelpers()}
   }
 
 ${HALFTONE_MOUNT_FRAGMENTS.rendererSetup("settings.animation.followDragEnabled ? 'grab' : 'default'")}
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  const hdrTargetType =
+    renderer.extensions.has('EXT_color_buffer_float') ||
+    renderer.extensions.has('EXT_color_buffer_half_float')
+      ? THREE.HalfFloatType
+      : THREE.UnsignedByteType;
 
   const materialAssets = await createHalftoneMaterialAssets(renderer);
 
@@ -365,14 +372,25 @@ ${HALFTONE_MOUNT_FRAGMENTS.rendererSetup("settings.animation.followDragEnabled ?
   const mesh = new THREE.Mesh(geometry, material);
   scene3d.add(mesh);
 
-  const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
+  const sceneTarget = createRenderTarget(
+    getVirtualWidth(),
+    getVirtualHeight(),
+    hdrTargetType,
+  );
+  const isGlass = settings.material.surface === 'glass';
+  const transmissionBacksideTarget = isGlass
+    ? createRenderTarget(getVirtualWidth(), getVirtualHeight(), hdrTargetType)
+    : null;
+  const transmissionTarget = isGlass
+    ? createRenderTarget(getVirtualWidth(), getVirtualHeight(), hdrTargetType)
+    : null;
   const blurTargetA = createRenderTarget(getVirtualWidth(), getVirtualHeight());
   const blurTargetB = createRenderTarget(getVirtualWidth(), getVirtualHeight());
   const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
   const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
 ${HALFTONE_MOUNT_FRAGMENTS.blurMaterials()}
-${HALFTONE_MOUNT_FRAGMENTS.halftoneMaterial({ cropToBounds: 0, hoverHalftoneRadius: '0.2', hoverLightRadius: '0.2', waveSpeed: '1' })}
+${HALFTONE_MOUNT_FRAGMENTS.halftoneMaterial({ cropToBounds: 0, toneMapScene: 1, hoverHalftoneRadius: '0.2', hoverLightRadius: '0.2', waveSpeed: '1' })}
 ${HALFTONE_MOUNT_FRAGMENTS.postScenes()}
 
   const updateViewportUniforms = (
@@ -431,6 +449,8 @@ ${HALFTONE_MOUNT_FRAGMENTS.postScenes()}
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     sceneTarget.setSize(virtualWidth, virtualHeight);
+    transmissionBacksideTarget?.setSize(virtualWidth, virtualHeight);
+    transmissionTarget?.setSize(virtualWidth, virtualHeight);
     blurTargetA.setSize(virtualWidth, virtualHeight);
     blurTargetB.setSize(virtualWidth, virtualHeight);
     updateViewportUniforms(
@@ -766,22 +786,27 @@ ${HALFTONE_MOUNT_FRAGMENTS.postScenes()}
       lookAtTarget,
     );
 
+    renderHalftoneMaterialScene({
+      camera,
+      material,
+      outputTarget: settings.halftone.enabled ? sceneTarget : null,
+      renderer,
+      scene: scene3d,
+      transmissionScene: materialAssets.glassTransmissionScene,
+      transmissionBacksideTarget,
+      transmissionTarget,
+    });
+
     if (!settings.halftone.enabled) {
-      renderer.setRenderTarget(null);
-      renderer.clear();
-      renderer.render(scene3d, camera);
       return;
     }
-
-    renderer.setRenderTarget(sceneTarget);
-    renderer.render(scene3d, camera);
 ${HALFTONE_MOUNT_FRAGMENTS.blurPasses()}
   };
 
   renderFrame();
 
 ${HALFTONE_MOUNT_FRAGMENTS.cleanup(
-  `    material.dispose();\n    disposeHalftoneMaterialAssets(materialAssets);`,
+  `    material.dispose();\n    transmissionBacksideTarget?.dispose();\n    transmissionTarget?.dispose();\n    disposeHalftoneMaterialAssets(materialAssets);`,
   `    canvas.removeEventListener('pointermove', handlePointerMove);\n    canvas.removeEventListener('pointerleave', handlePointerLeave);\n    window.removeEventListener('pointerup', handlePointerUp);\n    window.removeEventListener('pointermove', handleWindowPointerMove);\n    canvas.removeEventListener('pointercancel', handlePointerCancel);\n    window.removeEventListener('blur', handleWindowBlur);\n    canvas.removeEventListener('pointerdown', handlePointerDown);`,
 )}
 }
@@ -834,7 +859,7 @@ ${HALFTONE_MOUNT_FRAGMENTS.rendererSetup('default')}
   imageScene.add(new THREE.Mesh(fullScreenGeometry, imageMaterial));
 
 ${HALFTONE_MOUNT_FRAGMENTS.blurMaterials()}
-${HALFTONE_MOUNT_FRAGMENTS.halftoneMaterial({ cropToBounds: 1, hoverHalftoneRadius: 'settings.animation.hoverHalftoneRadius', hoverLightRadius: 'settings.animation.hoverLightRadius', waveSpeed: 'settings.animation.waveSpeed' })}
+${HALFTONE_MOUNT_FRAGMENTS.halftoneMaterial({ cropToBounds: 1, toneMapScene: 0, hoverHalftoneRadius: 'settings.animation.hoverHalftoneRadius', hoverLightRadius: 'settings.animation.hoverLightRadius', waveSpeed: 'settings.animation.waveSpeed' })}
 ${HALFTONE_MOUNT_FRAGMENTS.postScenes()}
 
   const updateViewportUniforms = (
