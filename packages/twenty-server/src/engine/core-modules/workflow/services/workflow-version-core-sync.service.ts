@@ -200,6 +200,14 @@ export class WorkflowVersionCoreSyncService {
         id: string;
       } = {
         ...coreRow,
+        // Non-comparable, so an update must carry the stored values or the builder rejects it
+        ...(isDefined(existingFlatWorkflowVersion)
+          ? {
+              workflowId: existingFlatWorkflowVersion.workflowId,
+              workspaceWorkflowVersionId:
+                existingFlatWorkflowVersion.workspaceWorkflowVersionId,
+            }
+          : {}),
         isSystemSideEffect: false,
         coreWorkflowId:
           coreRow.coreWorkflowId ??

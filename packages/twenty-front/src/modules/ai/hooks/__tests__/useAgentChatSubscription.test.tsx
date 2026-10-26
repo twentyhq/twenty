@@ -11,6 +11,7 @@ import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetche
 import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import {
   jotaiStore,
@@ -28,6 +29,10 @@ const subscribe = jest.fn();
 const disconnect = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
   useRefreshAgentChatThreads: () => ({ refreshAgentChatThreads }),
+}));
+const refreshAiChatUsage = jest.fn();
+jest.mock('@/ai/hooks/useRefreshAiChatUsage', () => ({
+  useRefreshAiChatUsage: () => ({ refreshAiChatUsage }),
 }));
 const key = { threadId: 'thread' };
 const messagesAtom = agentChatMessagesFamilyState.atomFamily(key);
@@ -346,6 +351,49 @@ describe('Message reactions', () => {
         }),
       ),
     ).toEqual(newerReactions);
+    unmount();
+  });
+});
+
+describe('User credits exhausted', () => {
+  const sendUserCreditsExhausted = (workspaceMemberId: string) =>
+    subscribe.mock.calls[0][1].next({
+      data: {
+        onAgentChatEvent: {
+          threadId: 'thread',
+          event: {
+            type: 'user-credits-exhausted',
+            workspaceMemberId,
+            isFallingBackToWorkspaceCredits: true,
+            renewsAt: '2026-10-26T00:00:00.000Z',
+          },
+        },
+      },
+    });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    resetJotaiStore();
+    subscribe.mockReturnValue(disconnect);
+    jotaiStore.set(sseClientState.atom, { subscribe } as never);
+    jotaiStore.set(currentWorkspaceMemberState.atom, {
+      id: 'julia',
+    } as never);
+  });
+
+  it('refreshes the user credits of the member who sent the turn only', () => {
+    const { unmount } = renderHook(() => useAgentChatSubscription('thread'), {
+      wrapper: Wrapper,
+    });
+
+    act(() => sendUserCreditsExhausted('tom'));
+
+    expect(refreshAiChatUsage).not.toHaveBeenCalled();
+
+    act(() => sendUserCreditsExhausted('julia'));
+
+    expect(refreshAiChatUsage).toHaveBeenCalledTimes(1);
+    expect(jotaiStore.get(errorAtom)).toBeNull();
     unmount();
   });
 });

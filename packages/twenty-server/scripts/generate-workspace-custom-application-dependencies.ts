@@ -25,10 +25,23 @@ export const generateWorkspaceCustomApplicationDependencies = ({
     APPLICATION_PACKAGE_CONSTANTS_DIRECTORY,
     'workspace-custom-application-dependencies',
   ),
-}: { version?: string; dependenciesDirectory?: string } = {}): void => {
+  seedDependenciesDirectory = join(
+    APPLICATION_PACKAGE_CONSTANTS_DIRECTORY,
+    'seed-dependencies',
+  ),
+}: {
+  version?: string;
+  dependenciesDirectory?: string;
+  seedDependenciesDirectory?: string;
+} = {}): void => {
   const packageJsonPath = join(dependenciesDirectory, 'package.json');
   const yarnLockPath = join(dependenciesDirectory, 'yarn.lock');
   const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+  const seedPackageJson = JSON.parse(
+    readFileSync(join(seedDependenciesDirectory, 'package.json'), 'utf8'),
+  );
+
+  packageJson.dependencies = seedPackageJson.dependencies;
 
   // twenty-ui is published after deployment, so defaults use the previous release.
   packageJson.devDependencies['twenty-ui'] =
