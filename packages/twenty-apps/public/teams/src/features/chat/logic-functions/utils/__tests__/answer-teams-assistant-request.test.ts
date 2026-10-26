@@ -11,12 +11,14 @@ const {
   resolveSenderMock,
   runAgentMock,
   sendActivityMock,
+  findHistoryMock,
 } = vi.hoisted(() => ({
   claimMock: vi.fn(),
   updateMock: vi.fn(),
   resolveSenderMock: vi.fn(),
   runAgentMock: vi.fn(),
   sendActivityMock: vi.fn(),
+  findHistoryMock: vi.fn(),
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
@@ -28,6 +30,11 @@ vi.mock('twenty-client-sdk/core', () => ({
 vi.mock(
   'src/features/chat/logic-functions/data/claim-teams-assistant-request',
   () => ({ claimTeamsAssistantRequest: claimMock }),
+);
+
+vi.mock(
+  'src/features/chat/logic-functions/data/find-teams-assistant-history',
+  () => ({ findTeamsAssistantHistory: findHistoryMock }),
 );
 
 vi.mock(
@@ -88,6 +95,7 @@ describe('answerTeamsAssistantRequest', () => {
     sendActivityMock.mockResolvedValue({ id: 'activity-1' });
     resolveSenderMock.mockResolvedValue('workspace-member-1');
     runAgentMock.mockResolvedValue('Acme has 3 open deals.');
+    findHistoryMock.mockResolvedValue([]);
   });
 
   it('should answer as the matched workspace member and mark the request done', async () => {
@@ -107,6 +115,31 @@ describe('answerTeamsAssistantRequest', () => {
         status: TEAMS_ASSISTANT_REQUEST_STATUS.DONE,
         responseText: 'Acme has 3 open deals.',
       }),
+    );
+  });
+
+  it('should pass earlier turns of the conversation to the agent and still answer when they cannot be loaded', async () => {
+    const history = [{ requestText: 'hi', responseText: 'Hi!' }];
+    findHistoryMock.mockResolvedValueOnce(history);
+
+    await answer();
+
+    expect(findHistoryMock.mock.calls).toEqual([
+      [
+        expect.objectContaining({
+          teamsConversationId: REQUEST.teamsConversationId,
+        }),
+      ],
+    ]);
+    expect(runAgentMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ history }),
+    );
+
+    findHistoryMock.mockRejectedValueOnce(new Error('Core API unavailable'));
+
+    await expect(answer()).resolves.toEqual({ status: 'answered' });
+    expect(runAgentMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ history: [] }),
     );
   });
 
