@@ -18,9 +18,7 @@ import {
 } from '@/tokens';
 import {
   Body,
-  Button,
   CornerMarkers,
-  EngagementBand,
   Eyebrow,
   Heading,
   SectionIntro,
@@ -56,7 +54,7 @@ const SETUP_STEPS: readonly {
 }[] = [
   {
     title: msg`Install the app`,
-    body: msg`Click Install on this page and add the Slack app to your Twenty workspace.`,
+    body: msg`Click Install at the top of this page and add the Slack app to your Twenty workspace.`,
   },
   {
     title: msg`Connect Slack`,
@@ -204,13 +202,7 @@ const ExampleGrid = styled.div`
   }
 `;
 
-type SlackAppDetailContentProps = {
-  installUrl: string;
-};
-
-export function SlackAppDetailContent({
-  installUrl,
-}: SlackAppDetailContentProps) {
+export function SlackAppDetailContent() {
   const i18n = getServerI18n();
 
   return (
@@ -304,14 +296,6 @@ export function SlackAppDetailContent({
           </StepGrid>
         </SectionStack>
       </SectionShell>
-
-      <EngagementBand
-        heading={i18n._(msg`Bring Twenty *into Slack*`)}
-        body={i18n._(
-          msg`Install the app on your Twenty workspace, connect Slack and start asking.`,
-        )}
-        actions={<Button href={installUrl} label={i18n._(msg`Install`)} />}
-      />
     </>
   );
 }

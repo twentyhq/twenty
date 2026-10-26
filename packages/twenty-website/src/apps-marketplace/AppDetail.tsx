@@ -245,7 +245,7 @@ export function AppDetail({ app }: AppDetailProps) {
       </SectionShell>
 
       {app.universalIdentifier === SLACK_APP_UNIVERSAL_IDENTIFIER && (
-        <SlackAppDetailContent installUrl={installUrl} />
+        <SlackAppDetailContent />
       )}
     </>
   );
