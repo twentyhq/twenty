@@ -9,7 +9,11 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 
-const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
+const StyledMode = styled.button<{
+  isActive: boolean;
+  isExpanded: boolean;
+  isSelectedInEditMode: boolean;
+}>`
   align-items: center;
   background: ${({ isActive }) =>
     isActive ? themeCssVariables.background.transparent.light : 'transparent'};
@@ -40,6 +44,11 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'flex-start' : 'center'};
   min-width: 0;
+  outline: ${({ isSelectedInEditMode }) =>
+    isSelectedInEditMode
+      ? `1px solid ${themeCssVariables.color.blue}`
+      : 'none'};
+  outline-offset: -1px;
   padding: ${({ isExpanded }) =>
     isExpanded ? `0 ${themeCssVariables.spacing['1.5']}` : '0'};
   transition:
@@ -98,6 +107,7 @@ type MainNavigationDrawerModeButtonProps = {
   isExpanded: boolean;
   isDisabled?: boolean;
   isUnread?: boolean;
+  isSelectedInEditMode?: boolean;
   buttonRef?: Ref<HTMLButtonElement>;
   onClick: () => void;
   onContextMenu?: (event: MouseEvent<HTMLButtonElement>) => void;
@@ -113,6 +123,7 @@ export const MainNavigationDrawerModeButton = ({
   isExpanded,
   isDisabled = false,
   isUnread = false,
+  isSelectedInEditMode = false,
   buttonRef,
   onClick,
   onContextMenu,
@@ -133,6 +144,7 @@ export const MainNavigationDrawerModeButton = ({
         type="button"
         isActive={isActive}
         isExpanded={isExpanded}
+        isSelectedInEditMode={isSelectedInEditMode}
         aria-label={ariaLabel ?? label}
         aria-current={isActive || undefined}
         aria-disabled={isDisabled}

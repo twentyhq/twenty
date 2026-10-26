@@ -9,6 +9,7 @@ import {
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { NavigationMenuTabCustomizeMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabCustomizeMenuContent';
 import { NavigationMenuTabMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabMenuContent';
 import { NavigationMenuItemContainerMenuOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemContainerMenuOpenEffect';
@@ -46,6 +47,10 @@ export const MainNavigationDrawerCustomTab = ({
   );
   const [navigationMenuItemIdToRename, setNavigationMenuItemIdToRename] =
     useAtomState(navigationMenuItemIdToRenameState);
+  const [
+    selectedNavigationMenuItemIdInEditMode,
+    setSelectedNavigationMenuItemIdInEditMode,
+  ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
   const { switchToNavigationMenuTab } = useSwitchNavigationDrawerMode();
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
@@ -57,6 +62,11 @@ export const MainNavigationDrawerCustomTab = ({
     openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
 
   const selectTab = () => switchToNavigationMenuTab(tab.id);
+  const focusTabInEditMode = () => {
+    if (isLayoutCustomizationModeEnabled) {
+      setSelectedNavigationMenuItemIdInEditMode(tab.id);
+    }
+  };
 
   return (
     <>
@@ -69,13 +79,22 @@ export const MainNavigationDrawerCustomTab = ({
         isActive={isActive}
         isExpanded={isExpanded}
         isUnread={isUnread}
+        isSelectedInEditMode={
+          isLayoutCustomizationModeEnabled &&
+          isActive &&
+          selectedNavigationMenuItemIdInEditMode === tab.id
+        }
         buttonRef={buttonRef}
         onClick={() => {
           if (isActive && hasLayoutsPermission) {
+            focusTabInEditMode();
             openTabMenu();
             return;
           }
 
+          setSelectedNavigationMenuItemIdInEditMode((selectedId) =>
+            selectedId === tab.id ? null : selectedId,
+          );
           selectTab();
         }}
         onContextMenu={
@@ -84,6 +103,7 @@ export const MainNavigationDrawerCustomTab = ({
                 event.preventDefault();
                 if (isLayoutCustomizationModeEnabled) {
                   selectTab();
+                  focusTabInEditMode();
                 }
                 openTabMenu();
               }
@@ -95,7 +115,10 @@ export const MainNavigationDrawerCustomTab = ({
           {navigationMenuItemIdToRename === tab.id && (
             <NavigationMenuItemContainerMenuOpenEffect
               dropdownId={dropdownId}
-              onOpen={() => setNavigationMenuItemIdToRename(null)}
+              onOpen={() => {
+                setNavigationMenuItemIdToRename(null);
+                focusTabInEditMode();
+              }}
             />
           )}
           <DropdownContent
