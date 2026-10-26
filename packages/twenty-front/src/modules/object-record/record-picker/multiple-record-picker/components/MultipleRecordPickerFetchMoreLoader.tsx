@@ -57,11 +57,6 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     componentInstanceId,
   );
 
-  const multipleRecordPickerSearchFilter = useAtomComponentStateValue(
-    multipleRecordPickerSearchFilterComponentState,
-    componentInstanceId,
-  );
-
   const multipleRecordPickerShouldShowInitialLoading =
     useAtomComponentStateValue(
       multipleRecordPickerShouldShowInitialLoadingComponentState,
@@ -79,10 +74,18 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
         instanceId: componentInstanceId,
       }),
     );
+    const currentSearchFilter = store.get(
+      multipleRecordPickerSearchFilterComponentState.atomFamily({
+        instanceId: componentInstanceId,
+      }),
+    );
+    const isNewSearchPending =
+      currentPaginationState.searchFilter !== currentSearchFilter;
 
     if (
       !isActive ||
       multipleRecordPickerIsLoading ||
+      isNewSearchPending ||
       !currentPaginationState.hasNextPage
     ) {
       return;
@@ -90,14 +93,13 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
 
     await performSearch({
       multipleRecordPickerInstanceId: componentInstanceId,
-      forceSearchFilter: multipleRecordPickerSearchFilter,
+      forceSearchFilter: currentPaginationState.searchFilter,
       loadMore: true,
     });
   }, [
     componentInstanceId,
     isActive,
     performSearch,
-    multipleRecordPickerSearchFilter,
     multipleRecordPickerIsLoading,
     store,
   ]);

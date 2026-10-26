@@ -4,13 +4,12 @@ import { Key } from 'ts-key-enum';
 
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
-import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
+import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { t } from '@lingui/core/macro';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useDebouncedCallback } from 'use-debounce';
 
 const SEARCH_DEBOUNCE_DELAY_IN_MILLISECONDS = 500;
@@ -26,11 +25,6 @@ export const MultipleRecordPickerSearchInput = () => {
     multipleRecordPickerSearchFilter,
     setMultipleRecordPickerSearchFilter,
   ] = useAtomComponentState(multipleRecordPickerSearchFilterComponentState);
-
-  const multipleRecordPickerIsLoadingState = useAtomComponentStateCallbackState(
-    multipleRecordPickerIsLoadingComponentState,
-    componentInstanceId,
-  );
 
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
@@ -56,11 +50,13 @@ export const MultipleRecordPickerSearchInput = () => {
       return;
     }
 
-    const areResultsStale =
-      debouncedSearch.isPending() ||
-      store.get(multipleRecordPickerIsLoadingState);
+    const { searchFilter: searchedFilter } = store.get(
+      multipleRecordPickerPaginationState.atomFamily({
+        instanceId: componentInstanceId,
+      }),
+    );
 
-    if (!areResultsStale) {
+    if (searchedFilter === multipleRecordPickerSearchFilter) {
       return;
     }
 

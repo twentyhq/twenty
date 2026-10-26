@@ -16,6 +16,7 @@ import { MultipleRecordPickerSearchInput } from '@/object-record/record-picker/m
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
+import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
@@ -101,9 +102,21 @@ export const MultipleRecordPicker = ({
     }
 
     goBack();
+
+    const searchFilter = store.get(multipleRecordPickerSearchFilterState);
+    const { searchFilter: searchedFilter } = store.get(
+      multipleRecordPickerPaginationState.atomFamily({
+        instanceId: componentInstanceId,
+      }),
+    );
+
+    if (searchedFilter === searchFilter) {
+      return;
+    }
+
     void performSearch({
       multipleRecordPickerInstanceId: componentInstanceId,
-      forceSearchFilter: store.get(multipleRecordPickerSearchFilterState),
+      forceSearchFilter: searchFilter,
     });
   };
 
