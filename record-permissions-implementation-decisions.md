@@ -219,3 +219,9 @@ No new product limit or weaker authorization rule was introduced to turn these o
 - Export/SSE/download checks passed, including field restrictions and invalidation of a completed export after a new policy activates. API role reassignment and key revocation checks passed.
 
 The machine-readable report is `.codex/permissions-rework/product/qa-verification-results.json`. It includes reproduction commands, precise test scope, report references, known failures and implementation deviations. The final screenshots show through-role sharing and inspection of current permissions while a candidate is being computed. Both isolated benchmark clusters are stopped, their fixtures are retained, and the normal local frontend/server/worker remain available for product evaluation.
+
+## Local RLS authoring setup correction (2026-10-27)
+
+The earlier browser QA stopped at the enterprise gate because the local `.env` lacked a license. The repository already provides a signed development validity token in `packages/twenty-server/.env.test`, which `EnterprisePlanService` explicitly accepts in development and test environments. That fixture is now configured in the ignored local `.env`; the server and worker were restarted. No entitlement checks or production licensing behavior were changed.
+
+The live workspace API now returns the RLS entitlement as enabled. The requested Object-restricted role page in Chrome shows the conditional editor with field, operator, value, and current-user controls. Its existing draft was left untouched. This verifies local access to the editor; it is not an additional browser publication/enforcement test. Evidence: `.codex/permissions-rework/product/screenshots/qa-rls-enterprise-enabled.png`.

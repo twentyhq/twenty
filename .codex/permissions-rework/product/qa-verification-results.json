@@ -37,10 +37,11 @@
       "company list and detail"
     ],
     "finalCleanReloadErrors": 0,
-    "enterpriseEditor": "component tested; local workspace paywall preserved",
+    "enterpriseEditor": "Component tested. On 2026-10-27, configured the existing signed development license fixture locally, confirmed RLS entitlement through the API, and verified the conditional editor renders in Chrome. Existing draft untouched; no additional browser publication/enforcement test.",
     "screenshots": [
       "screenshots/qa-role-sharing.jpg",
-      "screenshots/qa-active-policy-during-rebuild.jpg"
+      "screenshots/qa-active-policy-during-rebuild.jpg",
+      "screenshots/qa-rls-enterprise-enabled.png"
     ]
   },
   "liveApiReports": [
