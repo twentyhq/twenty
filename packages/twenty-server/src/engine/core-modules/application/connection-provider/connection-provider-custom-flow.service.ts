@@ -9,6 +9,7 @@ import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { type ConnectionAuthorizationArgs } from 'src/engine/core-modules/application/connection-provider/types/connection-authorization-args.type';
 import { assertCustomProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-custom-provider.util';
+import { wasStateIssuedBeforeAccountChange } from 'src/engine/core-modules/application/connection-provider/utils/was-state-issued-before-account-change.util';
 import { buildAppCustomConnectionCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-custom-connection-callback-url.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -137,6 +138,16 @@ export class ConnectionProviderCustomFlowService {
               },
             );
 
+        if (
+          isDefined(existingConnectedAccount) &&
+          wasStateIssuedBeforeAccountChange({
+            stateIssuedAtSeconds: statePayload.iat,
+            connectedAccount: existingConnectedAccount,
+          })
+        ) {
+          return { connectedAccount: null, isRepeatReport: true };
+        }
+
         return {
           isRepeatReport:
             isDefined(existingConnectedAccount) &&
@@ -161,6 +172,10 @@ export class ConnectionProviderCustomFlowService {
           }),
         };
       }, `app-custom-connection:${statePayload.workspaceId}:${provider.id}:${statePayload.userWorkspaceId}:${externalAccountId}`);
+
+    if (!isDefined(connectedAccount)) {
+      return { ...callbackResult, connectedAccountId: null };
+    }
 
     // onConnect sets up remote state once per connection, not once per report
     if (!isRepeatReport) {

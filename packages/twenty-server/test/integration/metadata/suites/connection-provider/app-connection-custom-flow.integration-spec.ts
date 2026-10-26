@@ -322,6 +322,48 @@ export const handler = ({ connectedAccountId }) => {
     expect(readOnConnectExecutions()).toEqual([connections[0].id]);
   });
 
+  it('ignores a replayed report for a connection archived after its state was issued', async () => {
+    const callbackUrl = await authorize();
+
+    await notify({ callbackUrl, body: { account_id: 'account-a' } });
+    const [connection] = await readAccounts();
+
+    await globalThis.testDataSource.query(
+      `UPDATE core."connectedAccount" SET "archivedAt" = NOW() + INTERVAL '5 seconds' WHERE id = $1`,
+      [connection.id],
+    );
+
+    await notify({ callbackUrl, body: { account_id: 'account-a' } });
+
+    const [replayed] = await readAccounts();
+
+    expect(replayed.archivedAt).not.toBeNull();
+    expect(readOnConnectExecutions()).toEqual([connection.id]);
+  });
+
+  it('restores an archived connection when a new authorization reports it', async () => {
+    await notify({
+      callbackUrl: await authorize(),
+      body: { account_id: 'account-a' },
+    });
+    const [connection] = await readAccounts();
+
+    await globalThis.testDataSource.query(
+      `UPDATE core."connectedAccount" SET "archivedAt" = NOW() - INTERVAL '5 seconds' WHERE id = $1`,
+      [connection.id],
+    );
+
+    await notify({
+      callbackUrl: await authorize(),
+      body: { account_id: 'account-a' },
+    });
+
+    const connections = await readAccounts();
+
+    expect(connections).toHaveLength(1);
+    expect(connections[0].archivedAt).toBeNull();
+  });
+
   it('runs onConnect again when an explicit reconnect reports the same account', async () => {
     await notify({
       callbackUrl: await authorize(),

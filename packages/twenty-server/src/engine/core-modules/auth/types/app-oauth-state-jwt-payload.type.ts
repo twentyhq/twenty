@@ -14,4 +14,6 @@ export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   reconnectingConnectedAccountId: string | null;
   redirectLocation: string | null;
   codeVerifier: string | null;
+  // seconds since epoch, set by the signer
+  iat?: number;
 };
