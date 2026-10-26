@@ -9,19 +9,32 @@ import { EventFieldDiff } from '@/activities/timeline-activities/rows/main-objec
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
-jest.mock('@/activities/timeline-activities/rows/main-object/components/EventFieldDiffLabel', () => ({
-  EventFieldDiffLabel: ({ fieldMetadataItem }: { fieldMetadataItem: FieldMetadataItem }) => (
-    <span data-testid="field-label">{fieldMetadataItem.label}</span>
-  ),
-}));
+jest.mock(
+  '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffLabel',
+  () => ({
+    EventFieldDiffLabel: ({
+      fieldMetadataItem,
+    }: {
+      fieldMetadataItem: FieldMetadataItem;
+    }) => <span data-testid="field-label">{fieldMetadataItem.label}</span>,
+  }),
+);
 
-jest.mock('@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValueEffect', () => ({
-  EventFieldDiffValueEffect: () => null,
-}));
+jest.mock(
+  '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValueEffect',
+  () => ({
+    EventFieldDiffValueEffect: () => null,
+  }),
+);
 
-jest.mock('@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValue', () => ({
-  EventFieldDiffValue: () => <span data-testid="field-value">Updated Value</span>,
-}));
+jest.mock(
+  '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValue',
+  () => ({
+    EventFieldDiffValue: () => (
+      <span data-testid="field-value">Updated Value</span>
+    ),
+  }),
+);
 
 const mockFieldMetadataItem = {
   id: 'field-text-id',
@@ -46,7 +59,8 @@ class ResizeObserverMock {
 
 describe('EventFieldDiff', () => {
   beforeAll(() => {
-    global.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
+    global.ResizeObserver =
+      ResizeObserverMock as unknown as typeof ResizeObserver;
   });
 
   it('renders "Empty" when value is updated to empty', () => {
@@ -82,7 +96,8 @@ describe('EventFieldDiff', () => {
         <EventFieldDiff
           fieldDiff={{
             before: 'Old long string value that was previously present',
-            after: 'New long string value that was updated and could be truncated',
+            after:
+              'New long string value that was updated and could be truncated',
           }}
           fieldMetadataItem={mockFieldMetadataItem}
           mainObjectMetadataItem={mockObjectMetadataItem}
@@ -111,7 +126,9 @@ describe('EventFieldDiff', () => {
 
       await userEvent.hover(screen.getByText('Empty'));
 
-      expect(await screen.findByText('Original value → Empty')).toBeInTheDocument();
+      expect(
+        await screen.findByText('Original value → Empty'),
+      ).toBeInTheDocument();
     });
   });
 });

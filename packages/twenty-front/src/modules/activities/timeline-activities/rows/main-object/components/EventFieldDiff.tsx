@@ -13,6 +13,7 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { isDefined } from 'twenty-shared/utils';
 
 type EventFieldDiffProps = {
   fieldDiff: { before: unknown; after: unknown };
@@ -83,7 +84,7 @@ export const EventFieldDiff = ({
   const diffRecord = fieldDiff.after as Record<string, unknown> | undefined;
 
   const isValueEmpty = (value: unknown): boolean =>
-    value === null || value === undefined || value === '';
+    !isDefined(value) || value === '';
 
   const isObjectEmpty = (objectValue: Record<string, unknown>): boolean =>
     Object.values(objectValue).every(isValueEmpty);
@@ -95,18 +96,19 @@ export const EventFieldDiff = ({
       isObjectEmpty(diffRecord));
 
   const formatDiffValue = (value: unknown): string => {
-    if (value === null || value === undefined || value === '') {
+    if (!isDefined(value) || value === '') {
       return emptyLabel;
     }
     if (typeof value === 'object') {
-      if ('name' in (value as Record<string, unknown>)) {
-        return String((value as any).name);
+      const record = value as Record<string, unknown>;
+      if ('name' in record && isDefined(record.name)) {
+        return String(record.name);
       }
-      if ('label' in (value as Record<string, unknown>)) {
-        return String((value as any).label);
+      if ('label' in record && isDefined(record.label)) {
+        return String(record.label);
       }
-      if ('primary' in (value as Record<string, unknown>)) {
-        return String((value as any).primary);
+      if ('primary' in record && isDefined(record.primary)) {
+        return String(record.primary);
       }
       return JSON.stringify(value);
     }
