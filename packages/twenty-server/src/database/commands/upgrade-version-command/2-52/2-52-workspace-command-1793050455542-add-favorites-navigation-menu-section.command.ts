@@ -13,11 +13,37 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
+const HOME_SECTION_TYPES: NavigationMenuItemType[] = [
+  NavigationMenuItemType.SECTION,
+  NavigationMenuItemType.AI_CHAT_TRIAGE,
+  NavigationMenuItemType.AI_CHAT_FAVORITES,
+  NavigationMenuItemType.AI_CHAT_RECENTS,
+  NavigationMenuItemType.AI_AGENTS,
+  NavigationMenuItemType.AI_CHAT_CHANNELS,
+];
+
+const getPositionUnderInbox = (homeSections: FlatNavigationMenuItem[]) => {
+  const inboxSectionIndex = homeSections.findIndex(
+    (section) => section.type === NavigationMenuItemType.AI_CHAT_TRIAGE,
+  );
+
+  if (inboxSectionIndex === -1) {
+    return (homeSections[0]?.position ?? 0) - 1;
+  }
+
+  const inboxSection = homeSections[inboxSectionIndex];
+  const sectionBelowInbox = homeSections[inboxSectionIndex + 1];
+
+  return isDefined(sectionBelowInbox)
+    ? (inboxSection.position + sectionBelowInbox.position) / 2
+    : inboxSection.position + 1;
+};
+
 @RegisteredWorkspaceCommand('2.52.0', 1793050455542)
 @Command({
   name: 'upgrade:2-52:add-favorites-navigation-menu-section',
   description:
-    'Place the Favorites section at the top of Home, for workspaces whose sidebar has none',
+    'Place the Favorites section on Home just under the Inbox, for workspaces whose sidebar has none',
 })
 export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -38,12 +64,16 @@ export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspa
         'flatNavigationMenuItemMaps',
       ]);
 
-    const hasFavoritesSection = Object.values(
+    const workspaceNavigationMenuItems = Object.values(
       flatNavigationMenuItemMaps.byUniversalIdentifier,
-    ).some(
-      (navigationMenuItem) =>
+    ).filter(
+      (navigationMenuItem): navigationMenuItem is FlatNavigationMenuItem =>
         isDefined(navigationMenuItem) &&
-        !isDefined(navigationMenuItem.userWorkspaceId) &&
+        !isDefined(navigationMenuItem.userWorkspaceId),
+    );
+
+    const hasFavoritesSection = workspaceNavigationMenuItems.some(
+      (navigationMenuItem) =>
         navigationMenuItem.type === NavigationMenuItemType.FAVORITES,
     );
 
@@ -68,6 +98,14 @@ export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspa
         { workspaceId },
       );
 
+    const homeSections = workspaceNavigationMenuItems
+      .filter(
+        (navigationMenuItem) =>
+          !isDefined(navigationMenuItem.folderId) &&
+          HOME_SECTION_TYPES.includes(navigationMenuItem.type),
+      )
+      .sort((sectionA, sectionB) => sectionA.position - sectionB.position);
+
     const now = new Date().toISOString();
     const favoritesSection = STANDARD_NAVIGATION_MENU_ITEMS.favoritesSection;
 
@@ -75,7 +113,7 @@ export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspa
       id: v4(),
       universalIdentifier: favoritesSection.universalIdentifier,
       type: favoritesSection.type,
-      position: favoritesSection.position,
+      position: getPositionUnderInbox(homeSections),
       applicationId: twentyStandardFlatApplication.id,
       applicationUniversalIdentifier:
         twentyStandardFlatApplication.universalIdentifier,

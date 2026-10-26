@@ -24,15 +24,15 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     folderUniversalIdentifier: '20202020-b012-4b12-8b12-c0aba11c0012',
     position: 1,
   },
-  favoritesSection: {
-    universalIdentifier: '20202020-b015-4b15-8b15-c0aba11c0015',
-    type: NavigationMenuItemType.FAVORITES,
-    position: -1,
-  },
   inboxSection: {
     universalIdentifier: '20202020-b00d-4b0d-8b0d-c0aba11c000d',
     type: NavigationMenuItemType.AI_CHAT_TRIAGE,
     position: 0,
+  },
+  favoritesSection: {
+    universalIdentifier: '20202020-b015-4b15-8b15-c0aba11c0015',
+    type: NavigationMenuItemType.FAVORITES,
+    position: 1,
   },
   workspaceSection: {
     universalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
@@ -40,7 +40,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     name: i18nLabel(
       msg({ message: `Workspace`, context: 'navigationMenuItem.name' }),
     ),
-    position: 1,
+    position: 2,
   },
   allCompanies: {
     universalIdentifier: '20202020-b001-4b01-8b01-c0aba11c0001',

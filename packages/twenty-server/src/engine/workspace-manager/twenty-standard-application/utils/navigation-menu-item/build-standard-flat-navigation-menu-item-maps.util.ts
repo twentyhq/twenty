@@ -33,7 +33,7 @@ const PINNED_COMMAND_NAMES = [
   'pinnedCommandsNewChat',
 ] as const;
 
-const HOME_SECTION_NAMES = ['favoritesSection', 'inboxSection'] as const;
+const HOME_SECTION_NAMES = ['inboxSection', 'favoritesSection'] as const;
 
 const CHATS_TAB_SECTION_NAMES = [
   'chatsTabFavoriteChats',
