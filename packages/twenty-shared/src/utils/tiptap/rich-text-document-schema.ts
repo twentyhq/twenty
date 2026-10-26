@@ -187,7 +187,9 @@ const imageNodeSchema = z.looseObject({
     src: urlSchema,
     href: urlSchema.nullable().optional(),
     alt: z.string().nullable().optional(),
+    title: z.string().nullable().optional(),
     width: z.union([z.string(), z.number()]).nullable().optional(),
+    align: z.enum(['left', 'center', 'right']).nullable().optional(),
   }),
 });
 

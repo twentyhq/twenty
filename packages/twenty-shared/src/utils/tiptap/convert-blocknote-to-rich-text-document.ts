@@ -323,6 +323,11 @@ const createImageNodes = (props: BlockNoteObject): TipTapNode[] => {
     return [];
   }
 
+  const align =
+    props.textAlignment === 'center' || props.textAlignment === 'right'
+      ? props.textAlignment
+      : undefined;
+
   return [
     {
       type: TIPTAP_NODE_TYPES.IMAGE,
@@ -331,23 +336,42 @@ const createImageNodes = (props: BlockNoteObject): TipTapNode[] => {
         alt: isNonEmptyString(props.name) ? props.name : null,
         title: isNonEmptyString(props.caption) ? props.caption : null,
         width: isNumber(props.previewWidth) ? props.previewWidth : null,
+        ...(isDefined(align) ? { align } : {}),
       },
     },
   ];
 };
 
-const createFileNodes = (props: BlockNoteObject): TipTapNode[] =>
-  isStorableRichTextUrl(props.url)
-    ? [
-        {
-          type: TIPTAP_NODE_TYPES.FILE,
-          attrs: {
-            url: props.url,
-            name: isNonEmptyString(props.name) ? props.name : null,
+const createFileNodes = (props: BlockNoteObject): TipTapNode[] => {
+  if (!isStorableRichTextUrl(props.url)) {
+    return [];
+  }
+
+  const fileNode: TipTapNode = {
+    type: TIPTAP_NODE_TYPES.FILE,
+    attrs: {
+      url: props.url,
+      name: isNonEmptyString(props.name) ? props.name : null,
+    },
+  };
+
+  if (isNonEmptyString(props.caption)) {
+    return [
+      fileNode,
+      {
+        type: TIPTAP_NODE_TYPES.PARAGRAPH,
+        content: [
+          {
+            type: TIPTAP_NODE_TYPES.TEXT,
+            text: props.caption,
           },
-        },
-      ]
-    : [];
+        ],
+      },
+    ];
+  }
+
+  return [fileNode];
+};
 
 const convertBlockContent = (block: BlockNoteObject): TipTapNode[] => {
   switch (block.type) {

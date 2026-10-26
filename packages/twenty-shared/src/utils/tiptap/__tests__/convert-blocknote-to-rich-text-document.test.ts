@@ -525,6 +525,62 @@ describe('convertBlockNoteToRichTextDocument', () => {
     ]);
   });
 
+  it('should preserve media captions and image alignment when converting blocknote blocks', () => {
+    expect(
+      convert([
+        block('video', undefined, {
+          url: 'https://example.com/demo.mp4',
+          name: 'demo.mp4',
+          caption: 'Product demo',
+        }),
+        block('image', undefined, {
+          url: 'https://example.com/whiteboard.png',
+          name: 'whiteboard.png',
+          caption: 'Whiteboard from kickoff',
+          textAlignment: 'center',
+          previewWidth: 320,
+        }),
+        block('image', undefined, {
+          url: 'https://example.com/right.png',
+          name: 'right.png',
+          textAlignment: 'right',
+        }),
+      ]),
+    ).toEqual([
+      {
+        type: 'file',
+        attrs: {
+          url: 'https://example.com/demo.mp4',
+          name: 'demo.mp4',
+        },
+      },
+      {
+        type: 'paragraph',
+        content: [{ type: 'text', text: 'Product demo' }],
+      },
+      {
+        type: 'image',
+        attrs: {
+          src: 'https://example.com/whiteboard.png',
+          alt: 'whiteboard.png',
+          title: 'Whiteboard from kickoff',
+          width: 320,
+          align: 'center',
+        },
+      },
+      {
+        type: 'image',
+        attrs: {
+          src: 'https://example.com/right.png',
+          alt: 'right.png',
+          title: null,
+          width: null,
+          align: 'right',
+        },
+      },
+    ]);
+  });
+
   it('should only produce documents the rich text write validator accepts', () => {
     const longUrl = `https://example.com/${'a'.repeat(4_000)}`;
 
