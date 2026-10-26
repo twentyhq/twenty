@@ -18,8 +18,6 @@ import { buildAppInstallUrl } from './build-app-install-url';
 import { type MarketplaceAppDetail } from './marketplace-app';
 import { SlackAppDetailContent } from './SlackAppDetailContent';
 
-// Slack's Marketplace listing links to this page, and its review requires
-// setup steps and an AI disclaimer on it
 const SLACK_APP_UNIVERSAL_IDENTIFIER = 'a8c47f21-3b9e-4d2a-8f61-9c0e7d4a2b51';
 
 const HeroRow = styled.div`
