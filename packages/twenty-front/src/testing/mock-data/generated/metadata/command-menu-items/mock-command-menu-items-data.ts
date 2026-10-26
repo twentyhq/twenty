@@ -387,7 +387,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "isPinLocked": false,
     "payload": null,
     "hotKeys": null,
-    "conditionalAvailabilityExpression": "not isLayoutCustomizationModeEnabled and permissionFlags.LAYOUTS",
+    "conditionalAvailabilityExpression": "pageType != \"SETTINGS_PAGE\" and not isLayoutCustomizationModeEnabled and permissionFlags.LAYOUTS",
     "availabilityType": "GLOBAL",
     "availabilityObjectMetadataId": null,
     "pageLayoutId": null,

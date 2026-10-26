@@ -66,9 +66,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
   const currentObjectMetadataItemId =
     commandMenuContextApi.objectMetadataItem.id;
 
-  const hasRecordSelectionContext =
-    isDefined(currentObjectMetadataItemId) &&
-    commandMenuContextApi.pageType !== ContextStorePageType.Settings;
+  const hasObjectContext = isDefined(currentObjectMetadataItemId);
 
   const isRecordPage =
     commandMenuContextApi.pageType === ContextStorePageType.Record;
@@ -211,7 +209,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   return (
     <StyledContainer data-click-outside-id={COMMAND_MENU_CLICK_OUTSIDE_ID}>
-      {hasRecordSelectionContext && (
+      {hasObjectContext && (
         <StyledViewbar>
           <CommandMenuItemEditRecordSelectionDropdown
             isRecordPage={isRecordPage}

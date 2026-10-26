@@ -26,6 +26,7 @@ export const useCommandMenuHotKeys = () => {
       toggleSidePanelMenu();
     },
     containsModifier: true,
+    enableOnSettingsPage: true,
     dependencies: [closeKeyboardShortcutMenu, toggleSidePanelMenu],
   });
 

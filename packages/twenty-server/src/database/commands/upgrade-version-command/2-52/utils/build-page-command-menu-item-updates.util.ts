@@ -6,10 +6,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 
 const ASK_AI_PINNED_EXPRESSION = 'pageType != "SETTINGS_PAGE"';
-const PREVIOUS_EDIT_LAYOUT_AVAILABILITY_EXPRESSION =
-  'pageType != "SETTINGS_PAGE" and not isLayoutCustomizationModeEnabled and permissionFlags.LAYOUTS';
-const EDIT_LAYOUT_AVAILABILITY_EXPRESSION =
-  'not isLayoutCustomizationModeEnabled and permissionFlags.LAYOUTS';
 
 export const buildPageCommandMenuItemUpdates = ({
   flatCommandMenuItemMaps,
@@ -32,15 +28,6 @@ export const buildPageCommandMenuItemUpdates = ({
         conditionalPinnedExpression: isUpgrade
           ? ASK_AI_PINNED_EXPRESSION
           : null,
-      },
-    },
-    {
-      universalIdentifier:
-        STANDARD_COMMAND_MENU_ITEMS.editRecordPageLayout.universalIdentifier,
-      target: {
-        conditionalAvailabilityExpression: isUpgrade
-          ? EDIT_LAYOUT_AVAILABILITY_EXPRESSION
-          : PREVIOUS_EDIT_LAYOUT_AVAILABILITY_EXPRESSION,
       },
     },
     {

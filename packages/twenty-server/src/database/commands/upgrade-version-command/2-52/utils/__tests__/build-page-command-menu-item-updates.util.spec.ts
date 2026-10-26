@@ -9,10 +9,6 @@ import { createStandardCommandMenuItemFlatMetadata } from 'src/engine/workspace-
 const NOW = '2026-10-26T12:00:00.000Z';
 const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-3333-4333-8333-333333333333';
-const PREVIOUS_EDIT_LAYOUT_AVAILABILITY_EXPRESSION =
-  'pageType != "SETTINGS_PAGE" and not isLayoutCustomizationModeEnabled and permissionFlags.LAYOUTS';
-const EDIT_LAYOUT_AVAILABILITY_EXPRESSION =
-  'not isLayoutCustomizationModeEnabled and permissionFlags.LAYOUTS';
 const ASK_AI_PINNED_EXPRESSION = 'pageType != "SETTINGS_PAGE"';
 
 const SAVE_DASHBOARD_UNIVERSAL_IDENTIFIER =
@@ -44,11 +40,9 @@ const ASK_AI: FlatCommandMenuItem = {
     [CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: { position: 2 },
   },
 };
-const EDIT_LAYOUT: FlatCommandMenuItem = {
-  ...buildGlobalStandardCommandMenuItem('editRecordPageLayout'),
-  conditionalAvailabilityExpression:
-    PREVIOUS_EDIT_LAYOUT_AVAILABILITY_EXPRESSION,
-};
+const EDIT_LAYOUT: FlatCommandMenuItem = buildGlobalStandardCommandMenuItem(
+  'editRecordPageLayout',
+);
 const SAVE_DASHBOARD: FlatCommandMenuItem = {
   ...EDIT_LAYOUT,
   id: 'save-dashboard-id',
@@ -86,7 +80,7 @@ const PREVIOUS_FLAT_COMMAND_MENU_ITEM_MAPS = buildFlatCommandMenuItemMaps([
 ]);
 
 describe('buildPageCommandMenuItemUpdates', () => {
-  it('unpins Ask AI on settings pages, opens Edit layout to them and locks the dashboard Save and Cancel', () => {
+  it('unpins Ask AI on settings pages and locks the dashboard Save and Cancel', () => {
     expect(
       buildPageCommandMenuItemUpdates({
         flatCommandMenuItemMaps: PREVIOUS_FLAT_COMMAND_MENU_ITEM_MAPS,
@@ -97,11 +91,6 @@ describe('buildPageCommandMenuItemUpdates', () => {
       {
         ...ASK_AI,
         conditionalPinnedExpression: ASK_AI_PINNED_EXPRESSION,
-        updatedAt: NOW,
-      },
-      {
-        ...EDIT_LAYOUT,
-        conditionalAvailabilityExpression: EDIT_LAYOUT_AVAILABILITY_EXPRESSION,
         updatedAt: NOW,
       },
       { ...SAVE_DASHBOARD, isPinLocked: true, updatedAt: NOW },
@@ -127,7 +116,7 @@ describe('buildPageCommandMenuItemUpdates', () => {
     ).toEqual([]);
   });
 
-  it('restores the previous expressions and unlocks the dashboard commands on down', () => {
+  it('restores the Ask AI pinning and unlocks the dashboard commands on down', () => {
     const migratedCommandMenuItems = buildPageCommandMenuItemUpdates({
       flatCommandMenuItemMaps: PREVIOUS_FLAT_COMMAND_MENU_ITEM_MAPS,
       direction: 'up',
@@ -144,7 +133,6 @@ describe('buildPageCommandMenuItemUpdates', () => {
       }),
     ).toEqual([
       { ...ASK_AI, updatedAt: NOW },
-      { ...EDIT_LAYOUT, updatedAt: NOW },
       { ...SAVE_DASHBOARD, updatedAt: NOW },
       { ...CANCEL_DASHBOARD, updatedAt: NOW },
     ]);
