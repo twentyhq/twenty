@@ -230,7 +230,7 @@ export const NavigationMenuItemAddDropdownContent = ({
           placeholder={step === 'record' ? t`Search records...` : t`Search...`}
         />
         <Dropdown.Separator />
-        <Dropdown.Section scrollable>
+        <Dropdown.Section scrollable={step !== 'main' || isSearchingAllItems}>
           {groups
             .filter((group) => isNonEmptyArray(group.items))
             .map((group, index) => (
