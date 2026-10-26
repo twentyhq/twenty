@@ -3,8 +3,12 @@ title: CountrySelect
 description: A complete country picker and shared parts for prepared choices, stable identifiers, and null clearing.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import CountrySelectReference from '/snippets/ui/generated/components/input/country-select.mdx';
+
+## Overview
 
 `CountrySelect` provides a complete country picker with a labeled trigger, decorative flags, search, and a no-country choice. `CountrySelect.Root`, `CountrySelect.Trigger`, and `CountrySelect.Options` expose the same implementation for composition with [Dropdown](/ui/components/navigation/dropdown). Your application supplies country data and translated text and decides how selected identifiers map to stored values.
 
@@ -143,3 +147,5 @@ If your storage uses `''` for no country, convert it to `null` before passing it
 ## Props
 
 <CountrySelectReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

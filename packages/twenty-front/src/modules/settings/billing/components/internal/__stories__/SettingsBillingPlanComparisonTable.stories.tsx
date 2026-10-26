@@ -134,6 +134,9 @@ export const WithLegacyPlan: Story = {
     await expect(
       canvas.getAllByRole('button', { name: 'Upgrade' }),
     ).toHaveLength(2);
+    await expect(canvas.getByText('Plan essentials')).toBeVisible();
+    await expect(canvas.getByText('5 credits/month')).toBeVisible();
+    await expect(canvas.getByText('≈ 100 AI tasks/week')).toBeVisible();
   },
 };
 

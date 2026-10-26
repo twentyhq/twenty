@@ -1,10 +1,13 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
-import { type FormOutputSchema } from '@/workflow/workflow-variables/types/FormOutputSchema';
 import { generateFakeValue } from '@/workflow/workflow-variables/utils/generate/generateFakeValue';
 import { generateRecordOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateRecordOutputSchema';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  type FormFieldLeaf,
+  type FormOutputSchema,
+} from 'twenty-shared/workflow';
 
 export const generateFormOutputSchema = (
   formFields: WorkflowFormActionField[],
@@ -34,7 +37,7 @@ export const generateFormOutputSchema = (
         value: generateRecordOutputSchema(objectMetadataItem),
       };
     } else {
-      result[formField.name] = {
+      const formFieldLeaf: FormFieldLeaf = {
         isLeaf: true,
         type: formField.type as FieldMetadataType,
         label: formField.label,
@@ -42,6 +45,11 @@ export const generateFormOutputSchema = (
           formField.placeholder ??
           generateFakeValue(formField.type, 'FieldMetadataType'),
       };
+      const selectedFieldId = formField.settings?.selectedFieldId;
+
+      result[formField.name] = isDefined(selectedFieldId)
+        ? { ...formFieldLeaf, fieldMetadataId: selectedFieldId }
+        : formFieldLeaf;
     }
   }
 

@@ -1,8 +1,11 @@
 ---
 title: Objects
 description: Declare new record types — custom tables with their own fields — using defineObject.
-icon: 'table'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Custom **objects** are new record types your app adds to a workspace — Post Card, Invoice, Subscription, anything specific to your domain. Each object declares its schema (fields, relations, default values) and a stable universal identifier that survives across syncs and deploys.
 
@@ -193,3 +196,5 @@ Changes to `isNullable` are applied on every sync, including syncs that update a
 - **Connect this object to others** — see [Relations](/developers/extend/apps/data/relations) for the bidirectional relation pattern.
 - **Add fields to objects from other apps** — see [Extending Objects](/developers/extend/apps/data/extending-objects) for `defineField()`.
 - **Display this object in the UI** — see [Navigation Menu Items](/developers/extend/apps/layout/navigation-menu-items) to add a sidebar entry; see [Views](/developers/extend/apps/layout/views) to add custom list configurations.
+
+<PageBanner illustration="card-page-objects" />

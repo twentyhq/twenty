@@ -33,10 +33,12 @@ export class SentMessagePersistenceService {
 
     const savedMessagesResult =
       await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
-        [messageToSave],
-        messageChannel,
-        messageChannel.connectedAccount,
-        input.workspaceId,
+        {
+          messagesToSave: [messageToSave],
+          messageChannel,
+          connectedAccount: messageChannel.connectedAccount,
+          workspaceId: input.workspaceId,
+        },
       );
 
     const messageId = savedMessagesResult?.messageExternalIdsAndIdsMap.get(

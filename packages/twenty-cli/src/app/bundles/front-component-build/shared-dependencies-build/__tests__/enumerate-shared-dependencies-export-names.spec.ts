@@ -3,8 +3,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import * as esbuild from 'esbuild';
-import { getSharedDependenciesEntrySource } from '../utils/get-shared-dependencies-entry-source';
-import { getSharedDependenciesShimSource } from '../utils/get-shared-dependencies-shim-source';
+import {
+  getSharedDependenciesEntrySource,
+  getSharedDependenciesShimSource,
+} from 'twenty-shared/front-component-build';
 import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 import { describe, expect, it } from 'vitest';
 
