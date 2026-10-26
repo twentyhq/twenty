@@ -1,9 +1,15 @@
 import { FrontComponentMediaSessionIndicator } from '@/front-components/media-session/components/FrontComponentMediaSessionIndicator';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { MainNavigationDrawerEditButton } from '@/navigation/components/MainNavigationDrawerEditButton';
+import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { MultiWorkspaceDropdownButton } from '@/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -53,6 +59,26 @@ const StyledWorkspaceDropdownContainer = styled.div`
 export const NavigationDrawerHeader = () => {
   const isMobile = useIsMobile();
   const isExpanded = useIsNavigationDrawerContentExpanded();
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+
+  const searchButton = !isMobile && (
+    <LightIconButton
+      emphasis="standard"
+      size={isExpanded ? 'sm' : 'md'}
+      onClick={openRecordsSearchPage}
+      aria-label={t`Search`}
+    >
+      <IconSearch />
+    </LightIconButton>
+  );
+  const headerAction = isCustomizableSidebarEnabled ? (
+    <MainNavigationDrawerEditButton isExpanded={isExpanded} />
+  ) : (
+    searchButton
+  );
 
   return (
     <StyledContainer>
@@ -63,7 +89,7 @@ export const NavigationDrawerHeader = () => {
         {isExpanded && (
           <StyledRightActions>
             <FrontComponentMediaSessionIndicator />
-            <MainNavigationDrawerEditButton isExpanded />
+            {headerAction}
             <NavigationDrawerCollapseButton
               direction="left"
               size={isMobile ? 'md' : 'sm'}
@@ -74,7 +100,7 @@ export const NavigationDrawerHeader = () => {
       {!isExpanded && !isMobile && (
         <StyledCollapsedActions>
           <FrontComponentMediaSessionIndicator />
-          <MainNavigationDrawerEditButton isExpanded={false} />
+          {headerAction}
         </StyledCollapsedActions>
       )}
     </StyledContainer>

@@ -12,6 +12,12 @@ import { MainNavigationDrawerContextMenu } from '@/navigation/components/MainNav
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { mockedUserData } from '~/testing/mock-data/users';
 
+let mockIsCustomizableSidebarEnabled = true;
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsCustomizableSidebarEnabled,
+}));
+
 jest.mock('twenty-ui/utilities', () => ({
   ...jest.requireActual('twenty-ui/utilities'),
   useIsMobile: () => false,
@@ -59,6 +65,10 @@ const renderSidebar = (permissionFlags: PermissionFlagType[]) => {
 };
 
 describe('MainNavigationDrawerContextMenu', () => {
+  beforeEach(() => {
+    mockIsCustomizableSidebarEnabled = true;
+  });
+
   it('offers to customize the sidebar on right-click', async () => {
     renderSidebar([PermissionFlagType.LAYOUTS]);
 
@@ -92,6 +102,18 @@ describe('MainNavigationDrawerContextMenu', () => {
 
     const isBrowserMenuShown = fireEvent.contextMenu(
       screen.getByText('Companies'),
+    );
+
+    expect(isBrowserMenuShown).toBe(true);
+    expect(screen.queryByText('Customize sidebar')).not.toBeInTheDocument();
+  });
+
+  it('leaves the browser menu while the customizable sidebar is off', () => {
+    mockIsCustomizableSidebarEnabled = false;
+    renderSidebar([PermissionFlagType.LAYOUTS]);
+
+    const isBrowserMenuShown = fireEvent.contextMenu(
+      screen.getByText('Search'),
     );
 
     expect(isBrowserMenuShown).toBe(true);

@@ -12,6 +12,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+let mockIsCustomizableSidebarEnabled = false;
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsCustomizableSidebarEnabled,
+}));
+
 const triageSection: NavigationMenuItem = {
   id: 'triage-section',
   type: NavigationMenuItemType.AI_CHAT_TRIAGE,
@@ -49,6 +55,10 @@ const renderActiveNavigationDrawerMode = ({
 };
 
 describe('useActiveNavigationDrawerMode', () => {
+  beforeEach(() => {
+    mockIsCustomizableSidebarEnabled = false;
+  });
+
   it('is the settings mode on a settings page', () => {
     const { result } = renderActiveNavigationDrawerMode({
       pathname: '/settings/profile',
@@ -89,6 +99,8 @@ describe('useActiveNavigationDrawerMode', () => {
   ] as const)(
     'stays on the navigation menu on %s with %s stored once the menu holds the chat sections',
     (pathname, activeTab) => {
+      mockIsCustomizableSidebarEnabled = true;
+
       const { result } = renderActiveNavigationDrawerMode({
         pathname,
         activeTab,
@@ -98,6 +110,15 @@ describe('useActiveNavigationDrawerMode', () => {
       expect(result.current).toBe(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     },
   );
+
+  it('keeps the AI mode on the inbox page while the customizable sidebar is off', () => {
+    const { result } = renderActiveNavigationDrawerMode({
+      pathname: '/inbox',
+      navigationMenuItems: [triageSection],
+    });
+
+    expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
+  });
 
   it('is the navigation menu mode anywhere else', () => {
     const { result } = renderActiveNavigationDrawerMode({

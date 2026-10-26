@@ -44,4 +44,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`App preferences`,
     description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
   },
+  [FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED]: {
+    label: msg`Customizable sidebar`,
+    description: msg`Organize the sidebar into tabs and sections, pin commands at the top, and customize it from a right-click or the paint roller button.`,
+  },
 };

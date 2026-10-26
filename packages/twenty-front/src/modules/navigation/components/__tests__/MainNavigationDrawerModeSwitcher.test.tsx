@@ -37,9 +37,13 @@ jest.mock(
 jest.mock('@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab');
 
 let mockIsAiChatInboxEnabled = true;
+let mockIsCustomizableSidebarEnabled = true;
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
+  useIsFeatureEnabled: (featureFlagKey: string) =>
+    featureFlagKey === 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED'
+      ? mockIsCustomizableSidebarEnabled
+      : mockIsAiChatInboxEnabled,
 }));
 
 jest.mock('twenty-ui/utilities', () => ({
@@ -145,6 +149,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsAiChatInboxEnabled = true;
+    mockIsCustomizableSidebarEnabled = true;
 
     jest.mocked(useNavigationDrawerModes).mockReturnValue([
       {
@@ -237,6 +242,18 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(mode);
     },
   );
+
+  it('shows the Settings mode and no Add tab while the customizable sidebar is off', () => {
+    mockIsCustomizableSidebarEnabled = false;
+
+    renderModeSwitcher({ isLayoutCustomizationModeEnabled: true });
+
+    const buttonNames = screen
+      .getAllByRole('button')
+      .map((button) => button.getAttribute('aria-label'));
+
+    expect(buttonNames).toEqual(['Home', 'AI', 'Settings']);
+  });
 
   it('lists custom tabs after the leading modes and opens them', async () => {
     jest

@@ -3,7 +3,10 @@ import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent, type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 import { type PositionType } from '@/command-menu-item/types/PositionType';
 import { createVirtualElementFromPosition } from '@/command-menu-item/utils/createVirtualElementFromPosition';
@@ -17,6 +20,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledContextMenuArea = styled.div`
   display: contents;
@@ -33,6 +37,9 @@ export const MainNavigationDrawerContextMenu = ({
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -43,6 +50,7 @@ export const MainNavigationDrawerContextMenu = ({
 
   const dropdownId = 'main-navigation-drawer-context-menu';
   const canCustomizeSidebar =
+    isCustomizableSidebarEnabled &&
     !isMobile &&
     !isSettingsDrawer &&
     hasLayoutsPermission &&

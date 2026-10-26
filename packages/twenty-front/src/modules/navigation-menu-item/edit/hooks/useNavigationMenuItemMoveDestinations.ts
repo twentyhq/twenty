@@ -5,7 +5,10 @@ import {
   IconLayoutList,
   useIcons,
 } from 'twenty-ui/icon';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  type NavigationMenuItem,
+} from '~/generated-metadata/graphql';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
@@ -15,7 +18,9 @@ import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/commo
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSection';
 import { isNavigationMenuItemTab } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTab';
+import { useDefaultWorkspaceSectionId } from '@/navigation-menu-item/display/hooks/useDefaultWorkspaceSectionId';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export type NavigationMenuItemMoveDestination = {
   id: string | null;
@@ -45,6 +50,10 @@ export const useNavigationMenuItemMoveDestinations = ({
   const { getIcon } = useIcons();
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+  const defaultWorkspaceSectionId = useDefaultWorkspaceSectionId();
 
   const items =
     section === 'workspace'
@@ -138,6 +147,15 @@ export const useNavigationMenuItemMoveDestinations = ({
       ]),
     ];
   };
+
+  if (!isCustomizableSidebarEnabled) {
+    return [
+      {
+        id: 'workspace',
+        destinations: getContainerDestinations(defaultWorkspaceSectionId),
+      },
+    ];
+  }
 
   const tabs = sortByPosition(items.filter(isNavigationMenuItemTab));
 

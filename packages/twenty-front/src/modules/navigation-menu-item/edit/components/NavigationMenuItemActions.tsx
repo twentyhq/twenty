@@ -10,13 +10,17 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  type NavigationMenuItem,
+} from '~/generated-metadata/graphql';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { useNavigationMenuItemMoveDestinations } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveDestinations';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 type NavigationMenuItemActionsProps = {
   item: NavigationMenuItem;
@@ -31,6 +35,12 @@ export const NavigationMenuItemActions = ({
   onClose,
 }: NavigationMenuItemActionsProps) => {
   const { t } = useLingui();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+  const moveToLabel = isCustomizableSidebarEnabled
+    ? t`Move to`
+    : t`Move to folder`;
   const { getSortedSiblings, moveUp, moveDown, moveToFolder, remove } =
     useNavigationMenuItemMoveRemove(section);
   const moveDestinationGroups = useNavigationMenuItemMoveDestinations({
@@ -68,7 +78,7 @@ export const NavigationMenuItemActions = ({
       : [
           {
             id: 'move',
-            label: t`Move to`,
+            label: moveToLabel,
             Icon: IconFolderSymlink,
             isDisabled: !hasMoveDestination,
             hasSubMenu: true,
@@ -112,7 +122,7 @@ export const NavigationMenuItemActions = ({
         </Dropdown.Section>
       </Dropdown.Page>
       <Dropdown.Page id="move">
-        <Dropdown.Back>{t`Move to`}</Dropdown.Back>
+        <Dropdown.Back>{moveToLabel}</Dropdown.Back>
         <Dropdown.Section scrollable>
           {moveDestinationGroups.map((group) => (
             <Dropdown.Section key={group.id} label={group.label}>
