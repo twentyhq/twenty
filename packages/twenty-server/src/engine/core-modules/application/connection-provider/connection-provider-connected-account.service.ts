@@ -197,27 +197,35 @@ export class ConnectionProviderConnectedAccountService {
   }
 
   // services report one account several times (browser return, notification, retries), and each must update one connection
-  async findCallerConnectedAccountForUpstreamAccount({
+  async findConnectedAccountForReport({
     provider,
     workspaceId,
     userWorkspaceId,
     externalAccountId,
+    reconnectingConnectedAccountId,
   }: {
     provider: Pick<ConnectionProviderEntity, 'id'>;
     workspaceId: string;
     userWorkspaceId: string;
     externalAccountId: string;
+    reconnectingConnectedAccountId: string | null;
   }): Promise<Pick<
     ConnectedAccountEntity,
     'id' | 'archivedAt' | 'authFailedAt'
   > | null> {
     return this.connectedAccountRepository.findOne({
-      where: {
-        workspaceId,
-        connectionProviderId: provider.id,
-        userWorkspaceId,
-        externalAccountId,
-      },
+      where: isDefined(reconnectingConnectedAccountId)
+        ? {
+            id: reconnectingConnectedAccountId,
+            workspaceId,
+            connectionProviderId: provider.id,
+          }
+        : {
+            workspaceId,
+            connectionProviderId: provider.id,
+            userWorkspaceId,
+            externalAccountId,
+          },
       select: { id: true, archivedAt: true, authFailedAt: true },
     });
   }

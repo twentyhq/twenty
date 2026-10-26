@@ -125,18 +125,15 @@ export class ConnectionProviderCustomFlowService {
     // the redirect and the notification for one authorization often arrive together
     const { connectedAccount, isRepeatReport } =
       await this.cacheLockService.withLock(async () => {
-        const existingConnectedAccount = isDefined(
-          statePayload.reconnectingConnectedAccountId,
-        )
-          ? null
-          : await this.connectedAccountService.findCallerConnectedAccountForUpstreamAccount(
-              {
-                provider,
-                workspaceId: statePayload.workspaceId,
-                userWorkspaceId: statePayload.userWorkspaceId,
-                externalAccountId,
-              },
-            );
+        const existingConnectedAccount =
+          await this.connectedAccountService.findConnectedAccountForReport({
+            provider,
+            workspaceId: statePayload.workspaceId,
+            userWorkspaceId: statePayload.userWorkspaceId,
+            externalAccountId,
+            reconnectingConnectedAccountId:
+              statePayload.reconnectingConnectedAccountId,
+          });
 
         if (
           isDefined(existingConnectedAccount) &&
@@ -149,7 +146,9 @@ export class ConnectionProviderCustomFlowService {
         }
 
         return {
+          // an explicit reconnect is how a member repairs remote state, so onConnect runs again
           isRepeatReport:
+            !isDefined(statePayload.reconnectingConnectedAccountId) &&
             isDefined(existingConnectedAccount) &&
             !isDefined(existingConnectedAccount.archivedAt) &&
             !isDefined(existingConnectedAccount.authFailedAt),
