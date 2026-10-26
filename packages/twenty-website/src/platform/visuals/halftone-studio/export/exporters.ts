@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { HALFTONE_FOOTPRINT } from '../engine/footprint';
 import { HALFTONE_IMAGE_CONSTANTS } from '../engine/image-constants';
@@ -206,7 +206,10 @@ function serializeRuntimeSource({
   const isImageMode = settings.sourceMode === 'image';
 
   if (!isImageMode && !isDefined(materialImages)) {
-    throw new Error('Material images are required to export a 3D shape.');
+    throw new CustomError(
+      'Material images are required to export a 3D shape.',
+      'MISSING_MATERIAL_IMAGES',
+    );
   }
   const normalizedPreviewDistance =
     HALFTONE_EXPORT_PARSING.normalizePreviewDistance(previewDistance);
