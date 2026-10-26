@@ -118,31 +118,36 @@ describe('answerTeamsAssistantRequest', () => {
     );
   });
 
-  it('should pass earlier turns of the conversation to the agent and still answer when they cannot be loaded', async () => {
+  it('should pass the earlier turns of the sender in this conversation to the agent', async () => {
     const history = [{ requestText: 'hi', responseText: 'Hi!' }];
-    findHistoryMock.mockResolvedValueOnce(history);
+    findHistoryMock.mockResolvedValue(history);
 
     await answer();
 
-    expect(findHistoryMock.mock.calls).toEqual([
-      [
-        expect.objectContaining({
-          teamsConversationId: REQUEST.teamsConversationId,
-          workspaceMemberId: 'workspace-member-1',
-        }),
-      ],
-    ]);
-    expect(runAgentMock).toHaveBeenLastCalledWith(
+    expect(findHistoryMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        teamsConversationId: REQUEST.teamsConversationId,
+        workspaceMemberId: 'workspace-member-1',
+      }),
+    );
+    expect(runAgentMock).toHaveBeenCalledWith(
       expect.objectContaining({ history }),
     );
+  });
 
-    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-    findHistoryMock.mockRejectedValueOnce(new Error('Core API unavailable'));
+  it('should still answer without history when it cannot be loaded', async () => {
+    const warnSpy = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+    findHistoryMock.mockRejectedValue(new Error('Core API unavailable'));
 
     await expect(answer()).resolves.toEqual({ status: 'answered' });
-    expect(runAgentMock).toHaveBeenLastCalledWith(
+    expect(runAgentMock).toHaveBeenCalledWith(
       expect.objectContaining({ history: [] }),
     );
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+
+    warnSpy.mockRestore();
   });
 
   it('should not send a failure reply when only the status write fails after answering', async () => {

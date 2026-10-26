@@ -1,9 +1,16 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { TEAMS_ASSISTANT_FAILURE_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-failure-text';
 import { TEAMS_ASSISTANT_HISTORY_TURN_LIMIT } from 'src/features/chat/logic-functions/constants/teams-assistant-history-turn-limit';
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
 import { type TeamsAssistantTurn } from 'src/features/chat/logic-functions/types/teams-assistant-turn.type';
+
+const isTeamsAssistantTurn = (turn: {
+  requestText: string | undefined;
+  responseText: string | undefined;
+}): turn is TeamsAssistantTurn =>
+  isNonEmptyString(turn.requestText) && isNonEmptyString(turn.responseText);
 
 export const findTeamsAssistantHistory = async ({
   client,
@@ -20,13 +27,19 @@ export const findTeamsAssistantHistory = async ({
         filter: {
           teamsConversationId: { eq: teamsConversationId },
           workspaceMemberId: { eq: workspaceMemberId },
-          status: { eq: TEAMS_ASSISTANT_REQUEST_STATUS.DONE },
+          status: {
+            in: [
+              TEAMS_ASSISTANT_REQUEST_STATUS.DONE,
+              TEAMS_ASSISTANT_REQUEST_STATUS.FAILED,
+            ],
+          },
         },
         orderBy: [{ createdAt: 'DescNullsLast' }],
         first: TEAMS_ASSISTANT_HISTORY_TURN_LIMIT,
       },
       edges: {
         node: {
+          status: true,
           requestText: { markdown: true },
           responseText: { markdown: true },
         },
@@ -34,16 +47,14 @@ export const findTeamsAssistantHistory = async ({
     },
   });
 
-  const history: TeamsAssistantTurn[] = [];
-
-  for (const { node } of queryResult.teamsAssistantRequests?.edges ?? []) {
-    const requestText = node.requestText?.markdown;
-    const responseText = node.responseText?.markdown;
-
-    if (isNonEmptyString(requestText) && isNonEmptyString(responseText)) {
-      history.unshift({ requestText, responseText });
-    }
-  }
-
-  return history;
+  return (queryResult.teamsAssistantRequests?.edges ?? [])
+    .map(({ node }) => ({
+      requestText: node.requestText?.markdown,
+      responseText:
+        node.status === TEAMS_ASSISTANT_REQUEST_STATUS.FAILED
+          ? TEAMS_ASSISTANT_FAILURE_TEXT
+          : node.responseText?.markdown,
+    }))
+    .filter(isTeamsAssistantTurn)
+    .reverse();
 };

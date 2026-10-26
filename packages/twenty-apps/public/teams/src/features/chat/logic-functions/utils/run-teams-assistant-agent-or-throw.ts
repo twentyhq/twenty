@@ -1,8 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { runAgent } from 'twenty-sdk/logic-function';
+import { type RunAgentInput, runAgent } from 'twenty-sdk/logic-function';
 
 import { TEAMS_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/features/chat/constants/universal-identifiers';
 import { type TeamsAssistantTurn } from 'src/features/chat/logic-functions/types/teams-assistant-turn.type';
+
+type TeamsAssistantAgentMessage = NonNullable<
+  RunAgentInput['messages']
+>[number];
 
 const hasResponseText = (result: object): result is { response: string } =>
   'response' in result && typeof result.response === 'string';
@@ -38,9 +42,9 @@ export const runTeamsAssistantAgentOrThrow = async ({
         agentUniversalIdentifier: TEAMS_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
         runAsWorkspaceMemberId: workspaceMemberId,
         messages: [
-          ...history.flatMap((turn) => [
-            { role: 'user' as const, content: turn.requestText },
-            { role: 'assistant' as const, content: turn.responseText },
+          ...history.flatMap((turn): TeamsAssistantAgentMessage[] => [
+            { role: 'user', content: turn.requestText },
+            { role: 'assistant', content: turn.responseText },
           ]),
           {
             role: 'user',
