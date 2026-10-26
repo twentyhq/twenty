@@ -393,6 +393,76 @@ describe('resolveOrderByLeaves', () => {
         }),
       ).toThrow('does not have permission');
     });
+
+    it('should reject ordering by timelineActivity properties through a relation for a role with a restricted field', () => {
+      const activityField = createMockField({
+        id: 'activity-id',
+        type: FieldMetadataType.RELATION,
+        name: 'activity',
+        relationTargetObjectMetadataId: 'timeline-activity-object-id',
+        settings: {
+          relationType: 'MANY_TO_ONE',
+          joinColumnName: 'activityId',
+          // oxlint-disable-next-line typescript/no-explicit-any
+        } as any,
+      });
+      const propertiesField = createMockField({
+        id: 'properties-id',
+        type: FieldMetadataType.RAW_JSON,
+        name: 'properties',
+        objectMetadataId: 'timeline-activity-object-id',
+      });
+      const timelineActivityObjectMetadata = {
+        id: 'timeline-activity-object-id',
+        universalIdentifier: 'timeline-activity-object-id',
+        workspaceId,
+        nameSingular: 'timelineActivity',
+        fieldIds: [propertiesField.id],
+      } as unknown as FlatObjectMetadata;
+      const fieldsWithActivity = [...fields, activityField, propertiesField];
+
+      expect(() =>
+        resolveOrderByLeaves({
+          orderBy: [
+            { activity: { properties: OrderByDirection.AscNullsLast } },
+          ],
+          flatObjectMetadata: {
+            ...flatObjectMetadata,
+            fieldIds: [...flatObjectMetadata.fieldIds, activityField.id],
+          },
+          flatObjectMetadataMaps: {
+            ...flatObjectMetadataMaps,
+            byUniversalIdentifier: {
+              ...flatObjectMetadataMaps.byUniversalIdentifier,
+              'timeline-activity-object-id': timelineActivityObjectMetadata,
+            },
+            universalIdentifierById: {
+              ...flatObjectMetadataMaps.universalIdentifierById,
+              'timeline-activity-object-id': 'timeline-activity-object-id',
+            },
+          },
+          flatFieldMetadataMaps: {
+            ...flatFieldMetadataMaps,
+            byUniversalIdentifier: Object.fromEntries(
+              fieldsWithActivity.map((field) => [
+                field.universalIdentifier,
+                field,
+              ]),
+            ),
+            universalIdentifierById: Object.fromEntries(
+              fieldsWithActivity.map((field) => [
+                field.id,
+                field.universalIdentifier,
+              ]),
+            ),
+          },
+          objectsPermissions: permissionsRestricting(
+            'company-name-id',
+            'company-object-id',
+          ),
+        }),
+      ).toThrow('does not have permission');
+    });
   });
 
   it('should reject a relation entry with no valid nested direction in strict mode', () => {
