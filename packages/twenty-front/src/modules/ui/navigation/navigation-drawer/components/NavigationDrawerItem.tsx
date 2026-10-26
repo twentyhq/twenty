@@ -19,6 +19,7 @@ import { t } from '@lingui/core/macro';
 import { isValidElement, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { Badge } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
@@ -28,7 +29,9 @@ import {
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 const DEFAULT_INDENTATION_LEVEL = 1;
-const INTERACTIVE_OPTIONS_SELECTOR = 'button, a, [role="button"]';
+const INTERACTIVE_OPTIONS_SELECTOR = doNotTranslate(
+  'button, a, [role="button"]',
+);
 
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
