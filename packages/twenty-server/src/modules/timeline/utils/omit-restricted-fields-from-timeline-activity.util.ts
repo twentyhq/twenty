@@ -10,6 +10,43 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildTimelineActivityRelatedMorphFieldMetadataName } from 'src/modules/timeline/utils/timeline-activity-related-morph-field-metadata-name-builder.util';
 
+const objectByTargetColumnNameCache = new WeakMap<
+  FlatEntityMaps<FlatObjectMetadata>,
+  Map<string, FlatObjectMetadata>
+>();
+
+const getObjectByTargetColumnName = (
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+): Map<string, FlatObjectMetadata> => {
+  const cachedObjectByTargetColumnName = objectByTargetColumnNameCache.get(
+    flatObjectMetadataMaps,
+  );
+
+  if (isDefined(cachedObjectByTargetColumnName)) {
+    return cachedObjectByTargetColumnName;
+  }
+
+  const objectByTargetColumnName = new Map<string, FlatObjectMetadata>();
+
+  for (const flatObjectMetadata of Object.values(
+    flatObjectMetadataMaps.byUniversalIdentifier,
+  )) {
+    if (isDefined(flatObjectMetadata)) {
+      objectByTargetColumnName.set(
+        `${buildTimelineActivityRelatedMorphFieldMetadataName(flatObjectMetadata.nameSingular)}Id`,
+        flatObjectMetadata,
+      );
+    }
+  }
+
+  objectByTargetColumnNameCache.set(
+    flatObjectMetadataMaps,
+    objectByTargetColumnName,
+  );
+
+  return objectByTargetColumnName;
+};
+
 const resolveTimelineActivityObject = ({
   timelineActivity,
   flatObjectMetadataMaps,
@@ -30,15 +67,19 @@ const resolveTimelineActivityObject = ({
     });
   }
 
-  return Object.values(flatObjectMetadataMaps.byUniversalIdentifier).find(
-    (flatObjectMetadata) =>
-      isDefined(flatObjectMetadata) &&
-      isNonEmptyString(
-        timelineActivity[
-          `${buildTimelineActivityRelatedMorphFieldMetadataName(flatObjectMetadata.nameSingular)}Id`
-        ],
-      ),
+  const objectByTargetColumnName = getObjectByTargetColumnName(
+    flatObjectMetadataMaps,
   );
+
+  for (const [columnName, value] of Object.entries(timelineActivity)) {
+    const flatObjectMetadata = objectByTargetColumnName.get(columnName);
+
+    if (isDefined(flatObjectMetadata) && isNonEmptyString(value)) {
+      return flatObjectMetadata;
+    }
+  }
+
+  return undefined;
 };
 
 const buildReadableFieldNames = ({

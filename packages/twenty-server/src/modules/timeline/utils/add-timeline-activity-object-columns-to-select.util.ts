@@ -69,7 +69,10 @@ export const addTimelineActivityObjectColumnsToSelect = ({
   flatFieldMetadataMaps,
 }: {
   select: CommonSelectedFields;
-  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadata: Pick<
+    FlatObjectMetadata,
+    'id' | 'nameSingular' | 'fieldIds'
+  >;
   objectsPermissions: ObjectsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
