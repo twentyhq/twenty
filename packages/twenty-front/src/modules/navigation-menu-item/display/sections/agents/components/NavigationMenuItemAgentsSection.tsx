@@ -1,7 +1,9 @@
 import { useQuery } from '@apollo/client/react';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation } from 'react-router-dom';
-import { useIcons } from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconPlus, useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 import {
   FindManyAgentsDocument,
@@ -12,6 +14,7 @@ import {
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useNavigationMenuItemAiChatSectionLabel } from '@/navigation-menu-item/display/sections/ai-chat/hooks/useNavigationMenuItemAiChatSectionLabel';
 import { NavigationMenuItemSectionMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemSectionMenu';
+import { useCreateCoreAgent } from '@/object-core/agents/hooks/useCreateCoreAgent';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
@@ -28,6 +31,7 @@ type NavigationMenuItemAgentsSectionProps = {
 export const NavigationMenuItemAgentsSection = ({
   section,
 }: NavigationMenuItemAgentsSectionProps) => {
+  const { t } = useLingui();
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   const { getIcon } = useIcons();
@@ -37,6 +41,7 @@ export const NavigationMenuItemAgentsSection = ({
   );
   const { getDefaultAiChatSectionLabel } =
     useNavigationMenuItemAiChatSectionLabel();
+  const { createCoreAgent, canCreateCoreAgent } = useCreateCoreAgent();
   const { data } = useQuery(FindManyAgentsDocument, {
     fetchPolicy: 'cache-and-network',
     skip: !hasAiPermission,
@@ -68,6 +73,15 @@ export const NavigationMenuItemAgentsSection = ({
   }
 
   const defaultLabel = getDefaultAiChatSectionLabel(section.type);
+  const newAgentButton = canCreateCoreAgent ? (
+    <LightIconButton
+      emphasis="subtle"
+      aria-label={t`New agent`}
+      onClick={() => void createCoreAgent()}
+    >
+      <IconPlus />
+    </LightIconButton>
+  ) : undefined;
 
   return (
     <CollapsibleNavigationDrawerSection
@@ -79,7 +93,9 @@ export const NavigationMenuItemAgentsSection = ({
             section={section}
             defaultName={defaultLabel}
           />
-        ) : undefined
+        ) : (
+          newAgentButton
+        )
       }
       alwaysShowRightIcon={isEditable}
     >
