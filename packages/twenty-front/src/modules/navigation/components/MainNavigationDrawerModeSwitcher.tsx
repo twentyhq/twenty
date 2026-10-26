@@ -14,6 +14,7 @@ import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks
 import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerCustomTab } from '@/navigation/components/MainNavigationDrawerCustomTab';
+import { MainNavigationDrawerEditButton } from '@/navigation/components/MainNavigationDrawerEditButton';
 import { MainNavigationDrawerModeButton } from '@/navigation/components/MainNavigationDrawerModeButton';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import {
@@ -47,6 +48,11 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
   height: ${({ isExpanded }) =>
     isExpanded ? themeCssVariables.spacing[10] : 'auto'};
   min-width: 0;
+`;
+
+const StyledTrailingActions = styled.div`
+  display: flex;
+  margin-left: auto;
 `;
 
 export const MainNavigationDrawerModeSwitcher = () => {
@@ -191,6 +197,14 @@ export const MainNavigationDrawerModeSwitcher = () => {
           isExpanded={isExpanded}
           isTooltipDisabled={!shouldShowTooltips}
         />
+      )}
+      {isExpanded && (
+        <StyledTrailingActions>
+          <MainNavigationDrawerEditButton
+            isExpanded={isExpanded}
+            isTooltipDisabled={!shouldShowTooltips}
+          />
+        </StyledTrailingActions>
       )}
     </StyledSwitcher>
   );
