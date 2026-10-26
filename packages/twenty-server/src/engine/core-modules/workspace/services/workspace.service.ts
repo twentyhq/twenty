@@ -8,6 +8,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { msg } from '@lingui/core/macro';
 import chunk from 'lodash.chunk';
+import { setTimeout } from 'node:timers/promises';
 import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
 import {
   MAX_ALLOWED_IFRAME_ORIGINS,
@@ -890,8 +891,8 @@ export class WorkspaceService {
   private async deleteApplicationRuntimeResourcesBeforeHardDelete(
     workspaceId: string,
   ): Promise<void> {
-    // Lambda's control plane quota (15 req/s per region) is shared with live function builds
-    const LOGIC_FUNCTION_DELETION_BATCH_SIZE = 3;
+    // Leaves most of Lambda's 15 req/s control plane quota to live function builds
+    const LOGIC_FUNCTION_DELETIONS_PER_SECOND = 5;
 
     const logicFunctionDriver =
       this.logicFunctionDriverFactory.getCurrentDriver();
@@ -910,8 +911,10 @@ export class WorkspaceService {
 
     for (const flatLogicFunctionBatch of chunk(
       flatLogicFunctions,
-      LOGIC_FUNCTION_DELETION_BATCH_SIZE,
+      LOGIC_FUNCTION_DELETIONS_PER_SECOND,
     )) {
+      const batchStartedAt = Date.now();
+
       await Promise.all(
         flatLogicFunctionBatch.map(async (flatLogicFunction) => {
           try {
@@ -923,6 +926,8 @@ export class WorkspaceService {
           }
         }),
       );
+
+      await setTimeout(Math.max(0, 1_000 - (Date.now() - batchStartedAt)));
     }
 
     const applications =
