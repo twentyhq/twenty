@@ -79,8 +79,7 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
       );
     }
 
-    // No same-application check: a workflow action is public to every run, and
-    // the executor runs it as its own application, with its role and billing.
+    // No same-application check: the executor runs the action as its own app
     const { authContext } =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 

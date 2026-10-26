@@ -41,9 +41,7 @@ export const prepareWorkflowManifestReferences = ({
     WorkflowManifestFieldReference
   >();
 
-  // Another installed application's workflow action is public the way its
-  // objects and fields are: it runs as its own application, so referencing it
-  // grants the caller nothing beyond the action's inputs.
+  // Other apps' workflow actions run as their own app, so referencing them grants nothing
   for (const logicFunction of Object.values(
     existingAllFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier,
   )) {
