@@ -4,7 +4,7 @@ import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-import { AiChatInboxChannelAssignmentDropdown } from '@/ai/components/AiChatInboxChannelAssignmentDropdown';
+import { AiChatInboxChannelViewDropdown } from '@/ai/components/AiChatInboxChannelViewDropdown';
 import { AiChatInboxLayoutDropdown } from '@/ai/components/AiChatInboxLayoutDropdown';
 import { AiChatInboxTriageCommandMenuItems } from '@/ai/components/AiChatInboxTriageCommandMenuItems';
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
@@ -64,7 +64,7 @@ export const AiChatInboxListHeader = ({
           <>
             {!isMobile && <AiChatInboxLayoutDropdown />}
             {isDefined(agentChatShownChannelView) && (
-              <AiChatInboxChannelAssignmentDropdown
+              <AiChatInboxChannelViewDropdown
                 channelView={agentChatShownChannelView}
               />
             )}

@@ -5,7 +5,7 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatInboxChannelAssignmentDropdown } from '@/ai/components/AiChatInboxChannelAssignmentDropdown';
+import { AiChatInboxChannelViewDropdown } from '@/ai/components/AiChatInboxChannelViewDropdown';
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
@@ -15,6 +15,7 @@ import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/
 import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -24,7 +25,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
-const RECORD_SELECTION_INSTANCE_ID = 'channel-assignment-story';
+const RECORD_SELECTION_INSTANCE_ID = 'channel-view-story';
 const SELECTED_THREAD_ID = 'selected-chat';
 const OPEN_VIEW: AgentChatChannelView = {
   channelId: 'sales',
@@ -42,7 +43,7 @@ const StyledHeader = styled.div`
   width: 480px;
 `;
 
-const ChannelAssignmentStory = () => {
+const ChannelViewStory = () => {
   const channelView = useAtomStateValue(agentChatChannelViewState);
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
@@ -53,14 +54,14 @@ const ChannelAssignmentStory = () => {
   return (
     <StyledHeader>
       <AiChatInboxViewHeading selectedThreadCount={selectedRecordIds.length} />
-      <AiChatInboxChannelAssignmentDropdown channelView={channelView} />
+      <AiChatInboxChannelViewDropdown channelView={channelView} />
     </StyledHeader>
   );
 };
 
 const meta = {
-  title: 'Modules/AI/AiChatInboxChannelAssignmentDropdown',
-  component: AiChatInboxChannelAssignmentDropdown,
+  title: 'Modules/AI/AiChatInboxChannelViewDropdown',
+  component: AiChatInboxChannelViewDropdown,
   decorators: [
     (Story) => (
       <RecordSelectionComponentInstanceContext.Provider
@@ -72,7 +73,7 @@ const meta = {
     ComponentDecorator,
     MemoryRouterDecorator,
   ],
-  render: ChannelAssignmentStory,
+  render: ChannelViewStory,
   args: { channelView: OPEN_VIEW },
   parameters: { container: { width: 560, height: 280 } },
   beforeEach: ({ args }) => {
@@ -104,7 +105,7 @@ const meta = {
       true,
     );
   },
-} satisfies Meta<typeof AiChatInboxChannelAssignmentDropdown>;
+} satisfies Meta<typeof AiChatInboxChannelViewDropdown>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -114,7 +115,7 @@ export const Open: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const trigger = canvas.getByRole('button', {
-      name: 'Filter chats by assignee',
+      name: 'Filter channel chats',
     });
 
     await expect(canvas.getByText('Sales')).toBeVisible();
@@ -159,7 +160,7 @@ export const Snoozed: Story = {
 
     await expect(canvas.getByText('Snoozed')).toBeVisible();
     await userEvent.click(
-      canvas.getByRole('button', { name: 'Filter chats by assignee' }),
+      canvas.getByRole('button', { name: 'Filter channel chats' }),
     );
     await userEvent.click(
       await body.findByRole('menuitemradio', { name: 'Unassigned' }),
@@ -167,5 +168,55 @@ export const Snoozed: Story = {
     await expect(canvas.getByText('Snoozed · Unassigned')).toBeVisible();
     await expect(canvas.getByText('Sales')).toBeVisible();
     await expect(canvas.queryByText('1 selected')).not.toBeInTheDocument();
+  },
+};
+
+export const CollapsedDrawer: Story = {
+  beforeEach: () => {
+    jotaiStore.set(isNavigationDrawerExpandedState.atom, false);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', {
+      name: 'Filter channel chats',
+    });
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('menuitemradio', { name: 'Snoozed' }),
+    );
+    await expect(canvas.getByText('Snoozed')).toBeVisible();
+    await expect(canvas.queryByText('1 selected')).not.toBeInTheDocument();
+
+    await userEvent.click(trigger);
+    await expect(
+      await body.findByRole('menuitemradio', { name: 'Snoozed' }),
+    ).toHaveAttribute('aria-checked', 'true');
+    await userEvent.click(body.getByRole('menuitemradio', { name: 'Mine' }));
+    await expect(canvas.getByText('Snoozed · Mine')).toBeVisible();
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('menuitemradio', { name: 'Done' }),
+    );
+    await expect(canvas.getByText('Done')).toBeVisible();
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('menuitemradio', { name: 'Assigned' }),
+    );
+    await expect(canvas.getByText('Assigned')).toBeVisible();
+
+    await userEvent.click(trigger);
+    await expect(
+      await body.findByRole('menuitemradio', { name: 'Assigned' }),
+    ).toHaveAttribute('aria-checked', 'true');
+    await expect(
+      body.getByRole('menuitemradio', { name: 'Mine' }),
+    ).toHaveAttribute('aria-checked', 'true');
+    await userEvent.click(body.getByRole('menuitemradio', { name: 'Open' }));
+    await expect(canvas.getByText('Open')).toBeVisible();
+    await expect(canvas.getByText('Sales')).toBeVisible();
   },
 };
