@@ -53,7 +53,6 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     targetObjectMetadataUniversalIdentifier,
     viewUniversalIdentifier,
     pageLayoutUniversalIdentifier,
-    commandMenuItemUniversalIdentifier,
   } = flatNavigationMenuItem;
 
   if (!isDefined(type)) {
@@ -145,13 +144,6 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
         value: pageLayoutUniversalIdentifier,
         message: t`A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type`,
         userFriendlyMessage: msg`A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type`,
-      });
-    }
-    case NavigationMenuItemType.COMMAND: {
-      return validateUuidProperty({
-        value: commandMenuItemUniversalIdentifier,
-        message: t`A valid commandMenuItemUniversalIdentifier is required for COMMAND type`,
-        userFriendlyMessage: msg`A valid commandMenuItemUniversalIdentifier is required for COMMAND type`,
       });
     }
     default: {

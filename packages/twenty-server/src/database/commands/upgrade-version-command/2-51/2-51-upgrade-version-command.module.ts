@@ -5,7 +5,6 @@ import { FileSettledAgentChatThreadsCommand } from 'src/database/commands/upgrad
 import { DeleteConnectedAccountsOutsideProviderScopeCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792675225627-delete-connected-accounts-outside-provider-scope.command';
 import { AddInboxNavigationMenuTabCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792737550430-add-inbox-navigation-menu-tab.command';
 import { AddWorkspaceNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792743446000-add-workspace-navigation-menu-section.command';
-import { AddOpenSidePanelCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1793013588000-add-open-side-panel-command-menu-item.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -24,7 +23,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DeleteConnectedAccountsOutsideProviderScopeCommand,
     AddInboxNavigationMenuTabCommand,
     AddWorkspaceNavigationMenuSectionCommand,
-    AddOpenSidePanelCommandMenuItemCommand,
   ],
 })
 export class V2_51_UpgradeVersionCommandModule {}

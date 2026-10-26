@@ -7,5 +7,4 @@ export enum CommandMenuItemContainerType {
   CommandMenuShowPageDropdown = 'command-menu-show-page-dropdown',
   SidePanelFooter = 'side-panel-footer',
   WidgetHeader = 'widget-header',
-  NavigationDrawer = 'navigation-drawer',
 }

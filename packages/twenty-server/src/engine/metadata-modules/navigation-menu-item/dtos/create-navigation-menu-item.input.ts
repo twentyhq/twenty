@@ -72,11 +72,6 @@ export class CreateNavigationMenuItemInput {
   @Field(() => UUIDScalarType, { nullable: true })
   pageLayoutId?: string | null;
 
-  @IsUUID()
-  @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  commandMenuItemId?: string | null;
-
   @IsNumber()
   @IsOptional()
   @Field({ nullable: true })

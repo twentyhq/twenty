@@ -79,8 +79,6 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
     folderUniversalIdentifier,
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
-    commandMenuItemId: null,
-    commandMenuItemUniversalIdentifier: null,
     name: null,
     link: null,
     icon: null,

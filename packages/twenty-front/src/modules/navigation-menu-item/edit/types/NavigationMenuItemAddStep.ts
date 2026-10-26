@@ -5,5 +5,4 @@ export type NavigationMenuItemAddStep =
   | 'record'
   | 'page'
   | 'settings'
-  | 'settings-page'
-  | 'command';
+  | 'settings-page';

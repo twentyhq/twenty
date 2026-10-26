@@ -42,9 +42,6 @@ export const filterAndSortNavigationMenuItems = (
       if (item.type === NavigationMenuItemType.PAGE_LAYOUT) {
         return isDefined(item.pageLayoutId);
       }
-      if (item.type === NavigationMenuItemType.COMMAND) {
-        return isDefined(item.commandMenuItemId);
-      }
       if (item.type === NavigationMenuItemType.OBJECT) {
         return (
           isDefined(item.targetObjectMetadataId) &&

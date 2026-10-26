@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -79,21 +78,16 @@ export class FlatNavigationMenuItemValidatorService {
     flatNavigationMenuItem,
     flatObjectMetadataMaps,
     flatViewMaps,
-    flatCommandMenuItemMaps,
   }: {
     flatNavigationMenuItem: MetadataUniversalFlatEntity<'navigationMenuItem'>;
     flatObjectMetadataMaps: MetadataUniversalFlatEntityMaps<'objectMetadata'>;
     flatViewMaps: MetadataUniversalFlatEntityMaps<'view'>;
-    flatCommandMenuItemMaps: MetadataUniversalFlatEntityMaps<'commandMenuItem'>;
   }): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] {
     const errors: FlatEntityValidationError<NavigationMenuItemExceptionCode>[] =
       [];
 
-    const {
-      targetObjectMetadataUniversalIdentifier,
-      viewUniversalIdentifier,
-      commandMenuItemUniversalIdentifier,
-    } = flatNavigationMenuItem;
+    const { targetObjectMetadataUniversalIdentifier, viewUniversalIdentifier } =
+      flatNavigationMenuItem;
 
     if (
       isDefined(targetObjectMetadataUniversalIdentifier) &&
@@ -127,30 +121,6 @@ export class FlatNavigationMenuItemValidatorService {
       });
     }
 
-    if (isDefined(commandMenuItemUniversalIdentifier)) {
-      const commandMenuItem = findFlatEntityByUniversalIdentifier({
-        universalIdentifier: commandMenuItemUniversalIdentifier,
-        flatEntityMaps: flatCommandMenuItemMaps,
-      });
-
-      if (!isDefined(commandMenuItem)) {
-        errors.push({
-          code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-          message: t`Target command not found`,
-          userFriendlyMessage: msg`Target command not found`,
-        });
-      } else if (
-        commandMenuItem.availabilityType !==
-        CommandMenuItemAvailabilityType.GLOBAL
-      ) {
-        errors.push({
-          code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-          message: t`Only global commands can be pinned to the sidebar`,
-          userFriendlyMessage: msg`Only global commands can be pinned to the sidebar`,
-        });
-      }
-    }
-
     return errors;
   }
 
@@ -160,7 +130,6 @@ export class FlatNavigationMenuItemValidatorService {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
       flatObjectMetadataMaps,
       flatViewMaps,
-      flatCommandMenuItemMaps,
     },
     remainingFlatEntityMapsToValidate,
   }: UniversalFlatEntityValidationArgs<
@@ -195,7 +164,6 @@ export class FlatNavigationMenuItemValidatorService {
         flatNavigationMenuItem,
         flatObjectMetadataMaps,
         flatViewMaps,
-        flatCommandMenuItemMaps,
       }),
     );
 

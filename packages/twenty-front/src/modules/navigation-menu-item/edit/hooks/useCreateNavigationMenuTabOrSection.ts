@@ -1,14 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import {
-  EngineComponentKey,
-  type NavigationMenuItem,
-} from '~/generated-metadata/graphql';
-
-import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
-import { NAVIGATION_MENU_CONTAINER_ITEMS_SECTION_POSITION } from '@/navigation-menu-item/common/constants/NavigationMenuContainerItemsSectionPosition';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SETTINGS_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorSettingsLink';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
@@ -16,7 +9,6 @@ import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/s
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { buildOptimisticNavigationMenuItem } from '@/navigation-menu-item/common/utils/buildOptimisticNavigationMenuItem';
-import { isCommandMenuItemPinnableToNavigationMenu } from '@/navigation-menu-item/common/utils/isCommandMenuItemPinnableToNavigationMenu';
 import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
 import { isNavigationMenuItemTab } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTab';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -24,7 +16,6 @@ import { DEVELOPER_TOOLS_NAVIGATION_MENU_ITEMS } from '@/navigation-menu-item/ed
 import { type NavigationMenuItemContainerTemplate } from '@/navigation-menu-item/edit/types/NavigationMenuItemContainerTemplate';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const INBOX_SECTION_TYPES = [
@@ -33,16 +24,9 @@ const INBOX_SECTION_TYPES = [
   NavigationMenuItemType.AI_CHAT_RECENTS,
 ];
 
-const ACTIONS_SECTION_ENGINE_COMPONENT_KEYS = [
-  EngineComponentKey.SEARCH_RECORDS,
-  EngineComponentKey.ASK_AI,
-  EngineComponentKey.OPEN_SIDE_PANEL,
-];
-
 export const useCreateNavigationMenuTabOrSection = () => {
   const { t, i18n } = useLingui();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
-  const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );
@@ -96,49 +80,8 @@ export const useCreateNavigationMenuTabOrSection = () => {
             position: index,
           }),
         );
-      case 'actions':
-        return ACTIONS_SECTION_ENGINE_COMPONENT_KEYS.map((engineComponentKey) =>
-          commandMenuItems.find(
-            (commandMenuItem) =>
-              commandMenuItem.engineComponentKey === engineComponentKey &&
-              isCommandMenuItemPinnableToNavigationMenu(commandMenuItem),
-          ),
-        )
-          .filter(isDefined)
-          .map((commandMenuItem, index) =>
-            buildOptimisticNavigationMenuItem({
-              id: v4(),
-              type: NavigationMenuItemType.COMMAND,
-              commandMenuItemId: commandMenuItem.id,
-              folderId: parentId,
-              position: index,
-            }),
-          );
       default:
         return [];
-    }
-  };
-
-  const getTopSectionPosition = (parentId: string | null) =>
-    Math.min(
-      NAVIGATION_MENU_CONTAINER_ITEMS_SECTION_POSITION,
-      ...workspaceNavigationMenuItems
-        .filter(
-          (item) =>
-            isNavigationMenuItemAnySection(item) &&
-            (item.folderId ?? null) === parentId,
-        )
-        .map((item) => item.position),
-    ) - 1;
-
-  const getSectionName = (template: NavigationMenuItemContainerTemplate) => {
-    switch (template) {
-      case 'developer-tools':
-        return t`Developers`;
-      case 'actions':
-        return t`Actions`;
-      default:
-        return t`New section`;
     }
   };
 
@@ -203,12 +146,9 @@ export const useCreateNavigationMenuTabOrSection = () => {
     const section = buildOptimisticNavigationMenuItem({
       id: v4(),
       type: NavigationMenuItemType.SECTION,
-      name: getSectionName(template),
+      name: template === 'developer-tools' ? t`Developers` : t`New section`,
       folderId: parentId ?? undefined,
-      position:
-        template === 'actions'
-          ? getTopSectionPosition(parentId)
-          : getNextPosition(isNavigationMenuItemAnySection, parentId),
+      position: getNextPosition(isNavigationMenuItemAnySection, parentId),
     });
 
     addToDraft([section, ...buildTemplateChildren(template, section.id)]);

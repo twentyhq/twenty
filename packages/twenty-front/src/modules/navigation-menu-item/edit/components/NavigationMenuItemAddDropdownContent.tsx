@@ -33,7 +33,6 @@ const STEP_BY_PAGE: Partial<Record<string, Step>> = {
   page: 'page',
   settings: 'settings',
   [SETTINGS_PAGE_TABS_PAGE]: 'settings-page',
-  command: 'command',
 };
 
 type NavigationMenuItemAddDropdownContentProps = {
@@ -134,7 +133,6 @@ export const NavigationMenuItemAddDropdownContent = ({
     page: t`Page`,
     settings: t`Settings`,
     'settings-page': settingsPageTitle ?? t`Settings`,
-    command: t`Command`,
   };
 
   const normalizedSearch = normalizeSearchText(search.trim());
@@ -154,10 +152,6 @@ export const NavigationMenuItemAddDropdownContent = ({
         {
           label: t`Settings`,
           items: getSettingsSearchItems().filter(matchesSearch),
-        },
-        {
-          label: t`Commands`,
-          items: getItems('command').filter(matchesSearch),
         },
         {
           label: t`Other`,

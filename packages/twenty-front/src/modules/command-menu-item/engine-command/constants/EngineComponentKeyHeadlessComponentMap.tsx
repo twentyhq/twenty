@@ -1,7 +1,6 @@
 import { HeadlessFrontComponentRendererEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessFrontComponentRendererEngineCommand';
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { HeadlessOpenAiChatHistoryTabEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenAiChatHistoryTabEngineCommand';
-import { HeadlessOpenSidePanelEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenSidePanelEngineCommand';
 import { HeadlessOpenSidePanelPageEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenSidePanelPageEngineCommand';
 import { NavigationEngineCommand } from '@/command-menu-item/engine-command/components/NavigationEngineCommand';
 import { ComposeCampaignCommand } from '@/command-menu-item/engine-command/global/components/ComposeCampaignCommand';
@@ -235,7 +234,6 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.VIEW_PREVIOUS_AI_CHATS]: (
     <HeadlessOpenAiChatHistoryTabEngineCommand />
   ),
-  [EngineComponentKey.OPEN_SIDE_PANEL]: <HeadlessOpenSidePanelEngineCommand />,
   [EngineComponentKey.SEE_ACTIVE_VERSION_WORKFLOW]: (
     <SeeActiveVersionWorkflowSingleRecordCommand />
   ),

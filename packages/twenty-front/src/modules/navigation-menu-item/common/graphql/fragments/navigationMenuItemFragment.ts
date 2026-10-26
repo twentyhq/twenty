@@ -14,7 +14,6 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     icon
     color
     pageLayoutId
-    commandMenuItemId
     position
     applicationId
     createdAt

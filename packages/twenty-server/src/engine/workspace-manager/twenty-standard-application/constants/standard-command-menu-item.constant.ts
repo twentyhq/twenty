@@ -897,24 +897,6 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.VIEW_PREVIOUS_AI_CHATS,
     hotKeys: null,
   },
-  openSidePanel: {
-    universalIdentifier: '4e06779a-d2ac-4ec0-9645-6d0df6c5b098',
-    label: i18nLabel(
-      msg({ message: `Open side panel`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconLayoutSidebarRightExpand',
-    isPinned: false,
-    position: 81,
-    shortLabel: i18nLabel(
-      msg({ message: `Side panel`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression: null,
-    availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.OPEN_SIDE_PANEL,
-    hotKeys: null,
-  },
   newAiChat: {
     universalIdentifier: '604bc9b2-e438-4572-bd35-726fa0fb2ec7',
     label: i18nLabel(

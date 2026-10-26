@@ -122,11 +122,6 @@ export const CommandMenuContextProviderContent = ({
       )
       .filter(
         (item) =>
-          containerType !== CommandMenuItemContainerType.CommandMenuList ||
-          item.engineComponentKey !== EngineComponentKey.OPEN_SIDE_PANEL,
-      )
-      .filter(
-        (item) =>
           item.engineComponentKey !==
             EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
           isLayoutCustomizationAllowedOnCurrentPage,
@@ -161,7 +156,6 @@ export const CommandMenuContextProviderContent = ({
   }, [
     commandMenuContextApi,
     commandMenuContextApiForAvailability,
-    containerType,
     globalRecordCreationCommandMenuItems,
     shouldDisplayGlobalRecordCreationCommands,
     isCoreWorkflow,

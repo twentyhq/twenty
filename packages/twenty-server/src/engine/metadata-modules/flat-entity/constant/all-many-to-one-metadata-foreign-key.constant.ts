@@ -75,9 +75,6 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     pageLayout: {
       foreignKey: 'pageLayoutId',
     },
-    commandMenuItem: {
-      foreignKey: 'commandMenuItemId',
-    },
   },
   fieldMetadata: {
     object: {

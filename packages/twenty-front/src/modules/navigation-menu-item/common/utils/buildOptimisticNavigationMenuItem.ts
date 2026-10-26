@@ -14,7 +14,6 @@ export const buildOptimisticNavigationMenuItem = (
   targetObjectMetadataId: input.targetObjectMetadataId ?? null,
   viewId: input.viewId ?? null,
   pageLayoutId: input.pageLayoutId ?? null,
-  commandMenuItemId: input.commandMenuItemId ?? null,
   folderId: input.folderId ?? null,
   name: input.name ?? null,
   link: input.link ?? null,
