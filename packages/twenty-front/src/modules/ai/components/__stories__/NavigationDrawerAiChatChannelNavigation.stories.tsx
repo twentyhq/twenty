@@ -32,6 +32,10 @@ const OPEN_VIEW: AgentChatChannelView = {
   assignment: AgentChatChannelAssignmentFilter.ANY,
 };
 
+const OPEN_CHANNEL_LABEL_PATTERN = /^Open\s*·\s*6$/;
+const ASSIGNED_CHANNEL_LABEL_PATTERN = /^Assigned\s*·\s*1$/;
+const INACCESSIBLE_CHANNEL_LABEL_PATTERN = /^Sales\s*·\s*Not open to you$/;
+
 const onOptions = fn();
 
 const ChannelNavigationStory = ({
@@ -60,6 +64,7 @@ const meta = {
   decorators: [IconsProviderDecorator, ComponentWithRouterDecorator],
   render: ChannelNavigationStory,
   beforeEach: ({ args }) => {
+    jotaiStore.set(isNavigationDrawerExpandedState.atom, true);
     jotaiStore.set(agentChatChannelViewState.atom, args.channelView);
   },
   args: {
@@ -94,15 +99,17 @@ export const Open: Story = {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByRole('button', { name: 'Open · 6' }),
+      canvas.getByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
     ).toHaveAttribute('aria-current', 'true');
-    await userEvent.click(canvas.getByRole('button', { name: 'Assigned · 1' }));
+    await userEvent.click(
+      canvas.getByRole('button', { name: ASSIGNED_CHANNEL_LABEL_PATTERN }),
+    );
     await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
       ...OPEN_VIEW,
       assignment: AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME,
     });
     await expect(
-      canvas.getByRole('button', { name: 'Assigned · 1' }),
+      canvas.getByRole('button', { name: ASSIGNED_CHANNEL_LABEL_PATTERN }),
     ).toHaveAttribute('aria-current', 'true');
     await userEvent.click(canvas.getByRole('button', { name: 'Snoozed' }));
     await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
@@ -116,7 +123,7 @@ export const Open: Story = {
     });
     await userEvent.click(canvas.getByRole('button', { name: 'Sales' }));
     await expect(
-      canvas.queryByRole('button', { name: 'Open · 6' }),
+      canvas.queryByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button', { name: 'Sales' }));
     await expect(canvas.getByRole('button', { name: 'Done' })).toHaveAttribute(
@@ -169,12 +176,13 @@ export const KeyboardAndOptions: Story = {
     ).toHaveFocus();
     await userEvent.keyboard(' ');
     await expect(onOptions).toHaveBeenCalledTimes(1);
+    await expect(channel).toHaveAttribute('aria-expanded', 'true');
     await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual(
       OPEN_VIEW,
     );
     await userEvent.tab();
     await expect(
-      canvas.getByRole('button', { name: 'Open · 6' }),
+      canvas.getByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
     ).toHaveFocus();
   },
 };
@@ -199,7 +207,7 @@ export const Unassigned: Story = {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByRole('button', { name: 'Open · 6' }),
+      canvas.getByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
     ).toHaveAttribute('aria-current', 'true');
   },
 };
@@ -215,7 +223,7 @@ export const CollapsedDrawer: Story = {
     await expect(channel).toHaveAttribute('aria-current', 'true');
     await expect(channel).toHaveAttribute('aria-expanded', 'false');
     await expect(
-      canvas.queryByRole('button', { name: 'Open · 6' }),
+      canvas.queryByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
     ).not.toBeInTheDocument();
   },
 };
@@ -254,7 +262,7 @@ export const Inaccessible: Story = {
     const canvas = within(canvasElement);
 
     await userEvent.click(
-      canvas.getByRole('button', { name: 'Sales · Not open to you' }),
+      canvas.getByRole('button', { name: INACCESSIBLE_CHANNEL_LABEL_PATTERN }),
     );
     await expect(jotaiStore.get(agentChatChannelViewState.atom)).toBeNull();
     await expect(
@@ -289,7 +297,7 @@ export const ReturnToTriage: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Open triage' }));
     await expect(channel).toHaveAttribute('aria-expanded', 'false');
     await expect(
-      canvas.queryByRole('button', { name: 'Open · 6' }),
+      canvas.queryByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
     ).not.toBeInTheDocument();
   },
 };
