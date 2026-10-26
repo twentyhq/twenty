@@ -128,6 +128,7 @@ describe('answerTeamsAssistantRequest', () => {
       [
         expect.objectContaining({
           teamsConversationId: REQUEST.teamsConversationId,
+          workspaceMemberId: 'workspace-member-1',
         }),
       ],
     ]);
@@ -135,6 +136,7 @@ describe('answerTeamsAssistantRequest', () => {
       expect.objectContaining({ history }),
     );
 
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     findHistoryMock.mockRejectedValueOnce(new Error('Core API unavailable'));
 
     await expect(answer()).resolves.toEqual({ status: 'answered' });

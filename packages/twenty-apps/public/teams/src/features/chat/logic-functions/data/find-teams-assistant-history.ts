@@ -8,15 +8,18 @@ import { type TeamsAssistantTurn } from 'src/features/chat/logic-functions/types
 export const findTeamsAssistantHistory = async ({
   client,
   teamsConversationId,
+  workspaceMemberId,
 }: {
   client: Pick<CoreApiClient, 'query'>;
   teamsConversationId: string;
+  workspaceMemberId: string;
 }): Promise<TeamsAssistantTurn[]> => {
   const queryResult = await client.query({
     teamsAssistantRequests: {
       __args: {
         filter: {
           teamsConversationId: { eq: teamsConversationId },
+          workspaceMemberId: { eq: workspaceMemberId },
           status: { eq: TEAMS_ASSISTANT_REQUEST_STATUS.DONE },
         },
         orderBy: [{ createdAt: 'DescNullsLast' }],

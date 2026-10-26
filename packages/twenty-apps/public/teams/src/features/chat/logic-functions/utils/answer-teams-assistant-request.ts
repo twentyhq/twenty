@@ -92,7 +92,15 @@ export const answerTeamsAssistantRequest = async ({
     const history = await findTeamsAssistantHistory({
       client,
       teamsConversationId,
-    }).catch(() => []);
+      workspaceMemberId,
+    }).catch((error: unknown) => {
+      console.warn(
+        `[teams] could not load the history of ${teamsConversationId}`,
+        error,
+      );
+
+      return [];
+    });
 
     const responseText = await runTeamsAssistantAgentOrThrow({
       requestText,
