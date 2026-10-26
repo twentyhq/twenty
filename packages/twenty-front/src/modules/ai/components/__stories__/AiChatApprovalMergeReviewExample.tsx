@@ -22,6 +22,16 @@ const createSourceRecord = (
   content: <AiChatApprovalMergeReviewFields fields={source.fields} />,
 });
 
+const mapMergeFixturesById = <TValue,>(
+  getValue: (fixture: AiChatApprovalMergeFixture) => TValue,
+): Record<string, TValue> =>
+  Object.fromEntries(
+    AI_CHAT_APPROVAL_MERGE_FIXTURES.map((fixture) => [
+      fixture.id,
+      getValue(fixture),
+    ]),
+  );
+
 type AiChatApprovalMergeReviewExampleProps = {
   initialStatus?: AiChatApprovalReviewStatus;
   initialStatuses?: Record<string, AiChatApprovalReviewStatus>;
@@ -43,32 +53,16 @@ export const AiChatApprovalMergeReviewExample = ({
 }: AiChatApprovalMergeReviewExampleProps) => {
   const { t } = useLingui();
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
-  const [statuses, setStatuses] = useState<
-    Record<string, AiChatApprovalReviewStatus>
-  >(() =>
-    Object.fromEntries(
-      AI_CHAT_APPROVAL_MERGE_FIXTURES.map(({ id }) => [
-        id,
-        initialStatuses?.[id] ?? initialStatus,
-      ]),
+  const [statuses, setStatuses] = useState(() =>
+    mapMergeFixturesById(({ id }) => initialStatuses?.[id] ?? initialStatus),
+  );
+  const [priorityRecordIds, setPriorityRecordIds] = useState(() =>
+    mapMergeFixturesById(
+      ({ id, sources }) => initialPriorityRecordIds?.[id] ?? sources[0].id,
     ),
   );
-  const [priorityRecordIds, setPriorityRecordIds] = useState<
-    Record<string, string>
-  >(() =>
-    Object.fromEntries(
-      AI_CHAT_APPROVAL_MERGE_FIXTURES.map(({ id, sources }) => [
-        id,
-        initialPriorityRecordIds?.[id] ?? sources[0].id,
-      ]),
-    ),
-  );
-  const [activeTabs, setActiveTabs] = useState<
-    Record<string, AiChatApprovalMergePair['activeTab']>
-  >(() =>
-    Object.fromEntries(
-      AI_CHAT_APPROVAL_MERGE_FIXTURES.map(({ id }) => [id, initialActiveTab]),
-    ),
+  const [activeTabs, setActiveTabs] = useState(() =>
+    mapMergeFixturesById(() => initialActiveTab),
   );
   const [confirmation, setConfirmation] =
     useState<AiChatApprovalMergeReviewSnapshot | null>(null);
