@@ -29,15 +29,15 @@ export const NavigationMenuItemCommandDisplay = ({
     return null;
   }
 
-  const { label, Icon, keyboard } = NAVIGATION_MENU_ITEM_COMMANDS[commandKey];
+  const { label, Icon, shortcut } = NAVIGATION_MENU_ITEM_COMMANDS[commandKey];
 
   return (
     <NavigationDrawerItem
       label={t(label)}
       Icon={Icon}
       modifier={
-        isDefined(keyboard) && !isLayoutCustomizationModeEnabled
-          ? { keyboard }
+        isDefined(shortcut) && !isLayoutCustomizationModeEnabled
+          ? { keyboard: shortcut }
           : undefined
       }
       onClick={

@@ -16,16 +16,16 @@ export const NAVIGATION_MENU_ITEM_COMMANDS: Record<
   {
     label: MessageDescriptor;
     Icon: IconComponent;
-    keyboard?: ShortcutDefinition;
+    shortcut?: ShortcutDefinition;
   }
 > = {
   NEW_CHAT: { label: msg`New chat`, Icon: IconMessageCirclePlus },
-  SEARCH: { label: msg`Search`, Icon: IconSearch, keyboard: ['/'] },
+  SEARCH: { label: msg`Search`, Icon: IconSearch, shortcut: ['/'] },
   NEW_AGENT: { label: msg`New agent`, Icon: IconLego },
   SETTINGS: { label: msg`Settings`, Icon: IconSettings },
   ALL_COMMANDS: {
     label: msg`All commands`,
     Icon: IconCommand,
-    keyboard: ['Mod', 'K'],
+    shortcut: ['Mod', 'K'],
   },
 };
