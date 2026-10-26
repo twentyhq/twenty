@@ -31,6 +31,7 @@ import type {
   HalftoneExportPose,
   HalftoneStudioSettings,
 } from './studio-settings-types';
+import { syncMaterialTextures } from './sync-material-textures';
 import { useLatestRef } from './use-latest-ref';
 
 const MAX_PREVIEW_PIXEL_RATIO = 2;
@@ -304,25 +305,6 @@ function syncResources(
   updateLighting(resources, settings);
   updateMaterial(resources, settings);
   updateHalftone(resources, settings);
-}
-
-function syncMaterialTextures({
-  resources,
-  resourcesReference,
-  settingsReference,
-}: {
-  resources: SceneResources;
-  resourcesReference: { current: SceneResources | null };
-  settingsReference: { current: HalftoneStudioSettings };
-}) {
-  void HALFTONE_MATERIALS.loadTextures({
-    assets: resources.materialAssets,
-    texture: settingsReference.current.material.texture,
-  }).then((didLoadTextures) => {
-    if (didLoadTextures && resourcesReference.current === resources) {
-      updateMaterial(resources, settingsReference.current);
-    }
-  });
 }
 
 export function HalftoneCanvas({
