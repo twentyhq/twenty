@@ -7,7 +7,7 @@ import {
   getMergeManyRequestBody,
   getRequestBody,
   getUpdateRequestBody,
-} from 'src/engine/core-modules/open-api/utils/request-body.utils';
+} from 'src/engine/core-modules/open-api/utils/request-body.util';
 import {
   getCreateManyResponse201,
   getCreateOneResponse201,
@@ -23,7 +23,7 @@ import {
   getRestoreOneResponse200,
   getUpdateManyResponse200,
   getUpdateOneResponse200,
-} from 'src/engine/core-modules/open-api/utils/responses.utils';
+} from 'src/engine/core-modules/open-api/utils/responses.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const computeBatchPath = (
