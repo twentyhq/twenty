@@ -104,16 +104,6 @@ export const AiChatApprovalMergeReviewContent = ({
       : pair.activeTab === 'second'
         ? pair.sources[1]
         : priorityRecord;
-  const handleTabChange = (tab: unknown) => {
-    if (
-      tab === 'preview' ||
-      tab === 'first' ||
-      tab === 'second' ||
-      tab === 'settings'
-    ) {
-      onTabChange(tab);
-    }
-  };
 
   return (
     <StyledReview>
@@ -147,7 +137,7 @@ export const AiChatApprovalMergeReviewContent = ({
           </Chip>
         ))}
       </StyledSources>
-      <Tabs.Root value={pair.activeTab} onValueChange={handleTabChange}>
+      <Tabs.Root value={pair.activeTab} onValueChange={onTabChange}>
         <StyledTabs>
           <Tabs.List aria-label={t`Merge review tabs`}>
             <Tabs.Tab
