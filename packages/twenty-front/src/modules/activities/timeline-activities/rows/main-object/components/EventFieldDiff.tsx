@@ -38,6 +38,13 @@ const StyledEmptyValue = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
+const StyledEventFieldDiffValue = styled.div`
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const StyledArrowContainer = styled.span`
   color: ${themeCssVariables.font.color.secondary};
 `;
@@ -48,6 +55,9 @@ export const EventFieldDiff = ({
   fieldMetadataItem,
   diffArtificialRecordStoreId,
 }: EventFieldDiffProps) => {
+  const { t } = useLingui();
+  const emptyLabel = t`Empty`;
+
   if (!fieldMetadataItem) {
     throw new Error(doNotTranslate('fieldMetadataItem is required'));
   }
@@ -83,9 +93,6 @@ export const EventFieldDiff = ({
     (typeof diffRecord === 'object' &&
       diffRecord !== null &&
       isObjectEmpty(diffRecord));
-
-  const { t } = useLingui();
-  const emptyLabel = t`Empty`;
 
   const formatDiffValue = (value: unknown): string => {
     if (value === null || value === undefined || value === '') {
@@ -125,7 +132,7 @@ export const EventFieldDiff = ({
             <Trans>Empty</Trans>
           </StyledEmptyValue>
         ) : (
-          <>
+          <StyledEventFieldDiffValue>
             <EventFieldDiffValueEffect
               diffArtificialRecordStoreId={diffArtificialRecordStoreId}
               mainObjectMetadataItem={mainObjectMetadataItem}
@@ -137,7 +144,7 @@ export const EventFieldDiff = ({
               mainObjectMetadataItem={mainObjectMetadataItem}
               fieldMetadataItem={fieldMetadataItem}
             />
-          </>
+          </StyledEventFieldDiffValue>
         )}
       </Tooltip>
     </StyledEventFieldDiffContainer>
