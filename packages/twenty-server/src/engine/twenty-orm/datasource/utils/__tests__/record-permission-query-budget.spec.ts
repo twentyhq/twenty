@@ -185,6 +185,49 @@ describeDatabase('Record query resource isolation', () => {
     expect(results.every((result) => result.rows[0].answer === 42)).toBe(true);
   });
 
+  it('waits for a short burst from another process before running work once', async () => {
+    const externalClient = await pool.connect();
+    await externalClient.query('BEGIN');
+    await externalClient.query(
+      'SELECT pg_advisory_xact_lock(hashtextextended($1 || slot::text, 0)) FROM generate_series(0, 3) AS slot',
+      ['record-query:external-burst'],
+    );
+    const releaseExternal = delay(60).then(() =>
+      externalClient.query('ROLLBACK'),
+    );
+    const work = jest.fn(async () => 42);
+
+    try {
+      await expect(
+        runWithRecordPermissionBudget({
+          pool,
+          workspaceId: 'external-burst',
+          work,
+        }),
+      ).resolves.toBe(42);
+      expect(work).toHaveBeenCalledTimes(1);
+    } finally {
+      await releaseExternal;
+      externalClient.release();
+    }
+  });
+
+  it('does not retry a transient error raised after work starts', async () => {
+    const failure = new Error('Record query capacity is temporarily exhausted');
+    const work = jest.fn(async () => {
+      throw failure;
+    });
+
+    await expect(
+      runWithRecordPermissionBudget({
+        pool,
+        workspaceId: 'work-is-not-retried',
+        work,
+      }),
+    ).rejects.toBe(failure);
+    expect(work).toHaveBeenCalledTimes(1);
+  });
+
   it('bounds pool checkout and releases a connection delivered after the deadline', async () => {
     const singleConnectionPool = new Pool({ connectionString, max: 1 });
     const occupied = await singleConnectionPool.connect();

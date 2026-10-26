@@ -1,5 +1,6 @@
 import { acquireRecordPermissionConnection } from 'src/engine/twenty-orm/datasource/utils/acquire-record-permission-connection.util';
 import { type Pool, type PoolClient } from 'pg';
+import { setTimeout as delay } from 'node:timers/promises';
 
 import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm/datasource/utils/run-in-rollback-safe-transaction.util';
 import {
@@ -9,6 +10,7 @@ import {
 
 const WORKSPACE_CONCURRENCY = 4;
 const INSTANCE_CONCURRENCY = 32;
+const ADMISSION_TIMEOUT_MILLISECONDS = 250;
 const runningByWorkspace = new Map<string, number>();
 let running = 0;
 
@@ -54,7 +56,7 @@ const admit = (workspaceId: string): Promise<void> => {
         const index = pendingAdmissions.indexOf(entry);
         if (index >= 0) pendingAdmissions.splice(index, 1);
         reject(capacityError());
-      }, 250),
+      }, ADMISSION_TIMEOUT_MILLISECONDS),
     };
     pendingAdmissions.push(entry);
   });
@@ -91,36 +93,53 @@ export const runWithRecordPermissionBudget = async <TResult>({
   work: (client: PoolClient) => Promise<TResult>;
 }): Promise<TResult> => {
   // A short bounded queue absorbs ordinary UI fan-out before acquiring database connections.
+  const admissionDeadline = Date.now() + ADMISSION_TIMEOUT_MILLISECONDS;
   await admit(workspaceId);
 
+  const databaseCapacityError = capacityError();
+
   try {
-    return await runInRollbackSafeTransaction({
-      pool,
-      acquireConnection: () => acquireRecordPermissionConnection(pool),
-      work: async (client) => {
-        await client.query("SET LOCAL statement_timeout = '250ms'");
-        await client.query('SET LOCAL jit = off');
-        await client.query("SET LOCAL lock_timeout = '50ms'");
-        await client.query(
-          "SET LOCAL idle_in_transaction_session_timeout = '5s'",
-        );
+    while (true) {
+      try {
+        return await runInRollbackSafeTransaction({
+          pool,
+          acquireConnection: () => acquireRecordPermissionConnection(pool),
+          work: async (client) => {
+            await client.query("SET LOCAL statement_timeout = '250ms'");
+            await client.query('SET LOCAL jit = off');
+            await client.query("SET LOCAL lock_timeout = '50ms'");
+            await client.query(
+              "SET LOCAL idle_in_transaction_session_timeout = '5s'",
+            );
 
-        // Database slots also bound concurrency across API processes and replicas.
-        for (const [key, slots] of [
-          [`record-query:${workspaceId}`, WORKSPACE_CONCURRENCY],
-          ['record-query:instance', INSTANCE_CONCURRENCY],
-        ] as const) {
-          const admission = await client.query(
-            'SELECT slot FROM generate_series(0, $2::int - 1) AS slot WHERE pg_try_advisory_xact_lock(hashtextextended($1 || slot::text, 0)) LIMIT 1',
-            [key, slots],
-          );
+            // Database slots also bound concurrency across API processes and replicas.
+            for (const [key, slots] of [
+              [`record-query:${workspaceId}`, WORKSPACE_CONCURRENCY],
+              ['record-query:instance', INSTANCE_CONCURRENCY],
+            ] as const) {
+              const admission = await client.query(
+                'SELECT slot FROM generate_series(0, $2::int - 1) AS slot WHERE pg_try_advisory_xact_lock(hashtextextended($1 || slot::text, 0)) LIMIT 1',
+                [key, slots],
+              );
 
-          if (admission.rowCount === 0) throw capacityError();
+              if (admission.rowCount === 0) throw databaseCapacityError;
+            }
+
+            return work(client);
+          },
+        });
+      } catch (error) {
+        if (
+          error !== databaseCapacityError ||
+          Date.now() >= admissionDeadline
+        ) {
+          throw error;
         }
 
-        return work(client);
-      },
-    });
+        // Retry only admission, after rollback has released the connection and slots.
+        await delay(Math.min(10, admissionDeadline - Date.now()));
+      }
+    }
   } finally {
     release(workspaceId);
   }
