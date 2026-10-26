@@ -28,6 +28,9 @@ type AiChatTimePickerExampleProps = {
   disabled?: boolean;
   isSending?: boolean;
   reviewFields?: ReactNode;
+  timeZone?: string;
+  locale?: string;
+  timeFormat?: TimeFormat;
   onDateChange: (date: string) => void;
   onViewedMonthChange: (month: string) => void;
   onSlotChange: (slotId: string | null) => void;
@@ -46,6 +49,9 @@ export const AiChatTimePickerExample = ({
   disabled,
   isSending,
   reviewFields,
+  timeZone = AI_CHAT_TIME_PICKER_FIXTURE.timeZone,
+  locale = 'en-US',
+  timeFormat = TimeFormat.HOUR_24,
   onDateChange,
   onViewedMonthChange,
   onSlotChange,
@@ -79,9 +85,9 @@ export const AiChatTimePickerExample = ({
           onSlotChange(slotId);
         }}
         availability={availability}
-        timeZone={AI_CHAT_TIME_PICKER_FIXTURE.timeZone}
-        locale="en-US"
-        timeFormat={TimeFormat.HOUR_24}
+        timeZone={timeZone}
+        locale={locale}
+        timeFormat={timeFormat}
         weekStart={1}
         onSendInvite={onSendInvite}
         onSkip={onSkip}

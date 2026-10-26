@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { fromZonedTime } from 'date-fns-tz';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconClock } from 'twenty-ui/icon';
@@ -10,6 +11,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { type AiChatSchedulingAvailability } from '@/ai/types/AiChatSchedulingAvailability';
 import { type AiChatSchedulingSlot } from '@/ai/types/AiChatSchedulingSlot';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
+import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
+import { resolveTimeFormat } from '@/localization/utils/resolveTimeFormat';
 
 const StyledSlots = styled.div`
   display: flex;
@@ -45,6 +48,25 @@ type AiChatSchedulingSlotsProps = {
   disabled: boolean;
 };
 
+const formatDateLabel = ({
+  date,
+  locale,
+}: {
+  date: string | null;
+  locale: string;
+}) => {
+  if (!isDefined(date)) {
+    return null;
+  }
+
+  return new Intl.DateTimeFormat(locale, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(`${date}T00:00:00Z`));
+};
+
 export const AiChatSchedulingSlots = ({
   availability,
   date,
@@ -58,21 +80,30 @@ export const AiChatSchedulingSlots = ({
   disabled,
 }: AiChatSchedulingSlotsProps) => {
   const { t } = useLingui();
-  const dateLabel = isDefined(date)
-    ? new Intl.DateTimeFormat(locale, {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-        timeZone: 'UTC',
-      }).format(new Date(`${date}T00:00:00Z`))
-    : t`Choose a date`;
+  const dateLabel = formatDateLabel({ date, locale }) ?? t`Choose a date`;
+  const resolvedTimeFormat = resolveTimeFormat(timeFormat);
   const timeFormatter = new Intl.DateTimeFormat(locale, {
-    hour: timeFormat === TimeFormat.HOUR_24 ? '2-digit' : 'numeric',
+    hour: resolvedTimeFormat === TimeFormat.HOUR_24 ? '2-digit' : 'numeric',
     minute: '2-digit',
-    timeZone: timeZone,
-    ...(timeFormat === TimeFormat.SYSTEM
-      ? {}
-      : { hour12: timeFormat === TimeFormat.HOUR_12 }),
+    timeZone,
+    hourCycle: resolvedTimeFormat === TimeFormat.HOUR_24 ? 'h23' : 'h12',
+  });
+  const referenceSlot =
+    slots.find((slot) => slot.id === selectedSlotId) ?? slots[0];
+  const getTimeZoneReferenceDate = () => {
+    if (isDefined(referenceSlot)) {
+      return new Date(referenceSlot.startsAt);
+    }
+
+    if (isDefined(date)) {
+      return fromZonedTime(`${date}T12:00:00`, timeZone);
+    }
+
+    return undefined;
+  };
+  const timeZoneLabel = formatTimeZoneLabel({
+    timeZone,
+    referenceDate: getTimeZoneReferenceDate(),
   });
   const isLoading = availability.status === 'loading';
   const isStale =
@@ -82,7 +113,7 @@ export const AiChatSchedulingSlots = ({
   return (
     <StyledSlots aria-busy={isLoading}>
       <StyledDate>{dateLabel}</StyledDate>
-      <StyledDate>{timeZone}</StyledDate>
+      <StyledDate>{timeZoneLabel}</StyledDate>
       {availability.status === 'error' && (
         <InlineBanner
           status="error"

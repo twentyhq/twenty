@@ -6,6 +6,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatTimePickerExample } from '@/ai/components/__stories__/AiChatTimePickerExample';
 import { AI_CHAT_TIME_PICKER_FIXTURE } from '@/ai/components/__stories__/aiChatTimePickerFixture';
+import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 
@@ -33,6 +34,89 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: { initialSelectedSlotId: 'slot-1100' },
+};
+
+export const LocalizedTimeAndDate: Story = {
+  args: {
+    timeZone: 'America/Los_Angeles',
+    timeFormat: TimeFormat.HOUR_12,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByText('Wednesday, October 7')).toBeVisible();
+    await expect(
+      canvas.getByText('(GMT-07:00) Pacific Daylight Time - Los Angeles'),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('radio', { name: /12:30 AM.*1:00 AM/ }),
+    ).toBeVisible();
+  },
+};
+
+export const MidnightUsesZeroHour: Story = {
+  args: { timeZone: 'America/Los_Angeles' },
+  play: async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getByRole('radio', { name: '00:30 – 01:00' }),
+    ).toBeVisible();
+  },
+};
+
+export const DaylightSavingSelection: Story = {
+  args: {
+    timeZone: 'America/Los_Angeles',
+    initialDate: '2026-11-01',
+    initialViewedMonth: '2026-11',
+    initialSelectedSlotId: 'before-clock-change',
+    initialAvailability: {
+      status: 'ready',
+      date: '2026-11-01',
+      slots: [
+        {
+          id: 'before-clock-change',
+          startsAt: '2026-11-01T08:00:00Z',
+          endsAt: '2026-11-01T08:30:00Z',
+        },
+        {
+          id: 'after-clock-change',
+          startsAt: '2026-11-01T09:00:00Z',
+          endsAt: '2026-11-01T09:30:00Z',
+        },
+      ],
+    },
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.getByText('(GMT-07:00) Pacific Daylight Time - Los Angeles'),
+    ).toBeVisible();
+    await userEvent.click(
+      canvas.getAllByRole('radio', { name: '01:00 – 01:30' })[1],
+    );
+    await expect(
+      canvas.getByText('(GMT-08:00) Pacific Standard Time - Los Angeles'),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Send invite' }));
+    await expect(args.onSendInvite).toHaveBeenCalledWith({
+      date: '2026-11-01',
+      slotId: 'after-clock-change',
+      timeZone: 'America/Los_Angeles',
+    });
+  },
+};
+
+export const NoDateSelected: Story = {
+  args: { initialDate: null },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByText('Choose a date')).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'Send invite' }),
+    ).toBeDisabled();
+  },
 };
 
 export const SelectAndSend: Story = {

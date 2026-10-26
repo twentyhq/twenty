@@ -8,24 +8,24 @@ const { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL } = {
     Record<string, SelectOption>
   >((result, ianaTimeZone) => {
     if (
-      formatTimeZoneLabel(ianaTimeZone)
+      formatTimeZoneLabel({ timeZone: ianaTimeZone })
         .slice(11)
         .includes(doNotTranslate('GMT')) ||
-      formatTimeZoneLabel(ianaTimeZone)
+      formatTimeZoneLabel({ timeZone: ianaTimeZone })
         .slice(11)
         .includes(doNotTranslate('UTC')) ||
-      formatTimeZoneLabel(ianaTimeZone)
+      formatTimeZoneLabel({ timeZone: ianaTimeZone })
         .slice(11)
         .includes(doNotTranslate('UCT')) ||
-      formatTimeZoneLabel(ianaTimeZone) in result
+      formatTimeZoneLabel({ timeZone: ianaTimeZone }) in result
     ) {
       return result;
     }
 
     return {
       ...result,
-      [formatTimeZoneLabel(ianaTimeZone)]: {
-        label: formatTimeZoneLabel(ianaTimeZone),
+      [formatTimeZoneLabel({ timeZone: ianaTimeZone })]: {
+        label: formatTimeZoneLabel({ timeZone: ianaTimeZone }),
         value: ianaTimeZone,
       },
     };
