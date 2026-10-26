@@ -4,7 +4,7 @@ import { AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS } from '@/ai/constants/AgentChatCha
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
 import { AgentChatChannelAssignmentFilter } from '~/generated-metadata/graphql';
 
-export const getAgentChatChannelNavigationItem = (
+export const getAgentChatChannelNavigationItemOrThrow = (
   channelView: Pick<AgentChatChannelView, 'channelStatus' | 'assignment'>,
 ) => {
   const matchingView = AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.find(

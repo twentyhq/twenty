@@ -9,7 +9,7 @@ import { AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS } from '@/ai/constants/AgentChatCha
 import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
 import { type AgentChatChannelSummary } from '@/ai/types/AgentChatChannelSummary';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
-import { getAgentChatChannelNavigationItem } from '@/ai/utils/getAgentChatChannelNavigationItem';
+import { getAgentChatChannelNavigationItemOrThrow } from '@/ai/utils/getAgentChatChannelNavigationItemOrThrow';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
@@ -48,7 +48,7 @@ export const NavigationDrawerAiChatChannelNavigation = ({
     isChannelAccessible && isActive && collapsedChannelView !== channelView;
   const selectedItem =
     isActive && isDefined(channelView)
-      ? getAgentChatChannelNavigationItem(channelView)
+      ? getAgentChatChannelNavigationItemOrThrow(channelView)
       : undefined;
   const selectedIndex = AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.findIndex(
     (item) => item === selectedItem,

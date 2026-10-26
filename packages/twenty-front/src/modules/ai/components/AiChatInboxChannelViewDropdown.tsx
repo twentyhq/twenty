@@ -7,7 +7,7 @@ import { IconFilter } from 'twenty-ui/icon';
 import { AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS } from '@/ai/constants/AgentChatChannelNavigationItems';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
-import { getAgentChatChannelNavigationItem } from '@/ai/utils/getAgentChatChannelNavigationItem';
+import { getAgentChatChannelNavigationItemOrThrow } from '@/ai/utils/getAgentChatChannelNavigationItemOrThrow';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -25,7 +25,8 @@ export const AiChatInboxChannelViewDropdown = ({
   const instanceId = useId();
   const setAgentChatChannelView = useSetAtomState(agentChatChannelViewState);
   const { resetRecordSelection } = useResetRecordSelection();
-  const selectedNavigationItem = getAgentChatChannelNavigationItem(channelView);
+  const selectedNavigationItem =
+    getAgentChatChannelNavigationItemOrThrow(channelView);
   const assignmentOptions = [
     { value: AgentChatChannelAssignmentFilter.ANY, label: t`All` },
     {

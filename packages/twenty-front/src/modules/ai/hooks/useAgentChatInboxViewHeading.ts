@@ -7,7 +7,7 @@ import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
-import { getAgentChatChannelNavigationItem } from '@/ai/utils/getAgentChatChannelNavigationItem';
+import { getAgentChatChannelNavigationItemOrThrow } from '@/ai/utils/getAgentChatChannelNavigationItemOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AgentChatChannelAssignmentFilter } from '~/generated-metadata/graphql';
 
@@ -35,7 +35,7 @@ export const useAgentChatInboxViewHeading = () => {
     };
   }
 
-  const navigationItem = getAgentChatChannelNavigationItem(
+  const navigationItem = getAgentChatChannelNavigationItemOrThrow(
     agentChatShownChannelView,
   );
   const channelHeading = {
