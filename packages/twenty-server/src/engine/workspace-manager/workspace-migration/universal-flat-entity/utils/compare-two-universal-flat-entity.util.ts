@@ -1,15 +1,13 @@
-import { isUndefined } from '@sniptt/guards';
-import isEqual from 'lodash.isequal';
 import diff from 'microdiff';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FromTo } from 'twenty-shared/types';
 import { parseJson } from 'twenty-shared/utils';
 
-import { ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 import { ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-universal-flat-entity-properties-to-compare-and-stringify.constant';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type MetadataUniversalFlatEntityPropertiesToStringify } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-stringify.type';
 import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
+import { findNonUpdatablePropertyDivergences } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/find-non-updatable-property-divergences.util';
 import { transformUniversalFlatEntityForComparison } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/transform-universal-flat-entity-for-comparison.util';
 
 type CompareTwoUniversalFlatEntityArgs<T extends AllMetadataName> = FromTo<
@@ -21,31 +19,6 @@ export type UniversalFlatEntityComparison<T extends AllMetadataName> = {
   update: UniversalFlatEntityUpdate<T>;
   nonUpdatablePropertyDivergences: string[];
 };
-
-const SERVER_MANAGED_PROPERTIES = new Set(['createdAt', 'updatedAt']);
-
-// An undefined incoming property (removed column, workspace-owned value) is not part of the change
-const findNonUpdatablePropertyDivergences = <T extends AllMetadataName>({
-  fromUniversalFlatEntity,
-  toUniversalFlatEntity,
-  metadataName,
-}: CompareTwoUniversalFlatEntityArgs<T>): string[] =>
-  Object.entries(
-    ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME[metadataName],
-  )
-    .filter(
-      ([property, { toCompare }]) =>
-        !toCompare && !SERVER_MANAGED_PROPERTIES.has(property),
-    )
-    .map(([property, { universalProperty }]) => universalProperty ?? property)
-    .filter((universalProperty) => {
-      const key = universalProperty as keyof MetadataUniversalFlatEntity<T>;
-
-      return (
-        !isUndefined(toUniversalFlatEntity[key]) &&
-        !isEqual(fromUniversalFlatEntity[key], toUniversalFlatEntity[key])
-      );
-    });
 
 export const compareTwoFlatEntity = <T extends AllMetadataName>({
   fromUniversalFlatEntity,
