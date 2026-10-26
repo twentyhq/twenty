@@ -527,14 +527,6 @@ export function HalftoneCanvas({
       runCleanupTasks([
         () => renderer.dispose(),
         () => {
-          resourcesReference.current = null;
-        },
-        () => {
-          if (activeSnapshotRef) {
-            activeSnapshotRef.current = null;
-          }
-        },
-        () => {
           if (canvas.parentNode === container) {
             container.removeChild(canvas);
           }

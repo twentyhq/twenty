@@ -33,6 +33,8 @@ class HalftoneTransmissionMaterial extends THREE.MeshPhysicalMaterial {
       distortionScale: { value: 0.5 },
       temporalDistortion: { value: 0 },
       buffer: { value: null },
+      rimIntensity: { value: 0 },
+      rimPower: { value: 1 },
     };
 
     this.customProgramCacheKey = () => 'halftone-transmission-' + samples;

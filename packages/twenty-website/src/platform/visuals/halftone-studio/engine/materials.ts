@@ -29,6 +29,8 @@ class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
   declare distortion: number;
   declare distortionScale: number;
   declare refractionEnvMap: THREE.Texture | null;
+  declare rimIntensity: number;
+  declare rimPower: number;
   declare temporalDistortion: number;
   declare thickness: number;
   declare time: number;
@@ -58,6 +60,8 @@ class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
       distortionScale: { value: 0.5 },
       temporalDistortion: { value: 0 },
       buffer: { value: null },
+      rimIntensity: { value: 0 },
+      rimPower: { value: 1 },
     };
 
     this.customProgramCacheKey = () => `halftone-transmission-${samples}`;
@@ -84,6 +88,8 @@ class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
         uniform float distortionScale;
         uniform float temporalDistortion;
         uniform sampler2D buffer;
+        uniform float rimIntensity;
+        uniform float rimPower;
 
         vec3 random3(vec3 c) {
           float j = 4096.0 * sin(dot(c, vec3(17.0, 59.4, 15.0)));
@@ -433,6 +439,20 @@ class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
 
           transmission /= ${samples}.0;
           totalDiffuse = mix(totalDiffuse, transmission.rgb, material.transmission);
+          float rimGrazing =
+            pow(1.0 - saturate(dot(normal, geometryViewDir)), rimPower);
+          float rimLightFacing = 1.0;
+          #if NUM_DIR_LIGHTS > 0
+            vec2 rimScreenNormal = normal.xy / max(length(normal.xy), 0.0001);
+            vec2 rimLightDirection = directionalLights[0].direction.xy;
+            rimLightDirection /= max(length(rimLightDirection), 0.0001);
+            rimLightFacing = mix(
+              0.15,
+              1.0,
+              pow(abs(dot(rimScreenNormal, rimLightDirection)), 2.0)
+            );
+          #endif
+          totalDiffuse += rimIntensity * rimGrazing * rimLightFacing;
         `,
       );
     };
@@ -468,11 +488,9 @@ function setTextureSampling({
   );
 }
 
-function createGlassTransmissionScene() {
+function createGlassTransmissionScene(environmentTexture: THREE.Texture) {
   const transmissionScene = new THREE.Scene();
-  transmissionScene.background = new THREE.Color(
-    HALFTONE_MATERIAL_CONSTANTS.glassTransmissionBackground,
-  );
+  transmissionScene.background = environmentTexture;
 
   return transmissionScene;
 }
@@ -590,7 +608,7 @@ async function createHalftoneMaterialAssets({
   return {
     ...imageTextureAssets,
     environmentTexture,
-    glassTransmissionScene: createGlassTransmissionScene(),
+    glassTransmissionScene: createGlassTransmissionScene(environmentTexture),
   };
 }
 
@@ -630,6 +648,12 @@ function applyHalftoneMaterialSettings(
     THREE.MathUtils.degToRad(settings.environmentRotation),
     0,
   );
+  assets.glassTransmissionScene.backgroundIntensity =
+    settings.environmentPower *
+    HALFTONE_MATERIAL_CONSTANTS.glassTransmissionBackgroundScale;
+  assets.glassTransmissionScene.backgroundRotation.copy(
+    material.envMapRotation,
+  );
   material.clearcoat = isGlass ? 1 : 0;
   material.clearcoatRoughness = isGlass
     ? Math.max(settings.roughness * 0.25, 0.01)
@@ -654,10 +678,14 @@ function applyHalftoneMaterialSettings(
   material.anisotropicBlur = isGlass
     ? THREE.MathUtils.lerp(0.03, 0.12, settings.roughness)
     : 0.1;
-  material.chromaticAberration = isGlass ? 0 : 0.05;
+  material.chromaticAberration = isGlass ? 0.6 : 0.05;
   material.distortion = 0;
   material.distortionScale = 0.5;
   material.temporalDistortion = 0;
+  material.rimIntensity = isGlass
+    ? HALFTONE_MATERIAL_CONSTANTS.glassRimIntensity
+    : 0;
+  material.rimPower = HALFTONE_MATERIAL_CONSTANTS.glassRimPower;
   material.userData.halftoneIsGlass = isGlass;
 
   material.needsUpdate = true;
@@ -691,6 +719,7 @@ function renderHalftoneMaterialScene(options: {
   if (material.userData.halftoneIsGlass) {
     const thickness = material.thickness;
     const envMapIntensity = material.envMapIntensity;
+    const rimIntensity = material.rimIntensity;
 
     renderer.setRenderTarget(transmissionBacksideTarget);
     renderer.clear();
@@ -698,16 +727,23 @@ function renderHalftoneMaterialScene(options: {
 
     material.buffer = transmissionBacksideTarget.texture;
     material.thickness = 0;
+    material.rimIntensity = 0;
     material.side = THREE.BackSide;
+    material.needsUpdate = true;
     material.envMapIntensity =
       HALFTONE_MATERIAL_CONSTANTS.glassBacksideEnvironmentIntensity;
     renderer.setRenderTarget(transmissionTarget);
     renderer.clear();
+    renderer.render(transmissionScene, camera);
+    renderer.autoClearColor = false;
     renderer.render(scene, camera);
+    renderer.autoClearColor = true;
 
     material.buffer = transmissionTarget.texture;
     material.thickness = thickness;
+    material.rimIntensity = rimIntensity;
     material.side = THREE.FrontSide;
+    material.needsUpdate = true;
     material.envMapIntensity = envMapIntensity;
   }
 

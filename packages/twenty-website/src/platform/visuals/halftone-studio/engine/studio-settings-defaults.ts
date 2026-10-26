@@ -63,14 +63,14 @@ const SOLID_MATERIAL: HalftoneMaterialSettings = {
 
 const GLASS_MATERIAL: HalftoneMaterialSettings = {
   surface: 'glass',
-  color: '#ffffff',
-  roughness: 0.4,
+  color: '#f4f7ff',
+  roughness: 0.05,
   metalness: 0,
-  thickness: 4,
-  refraction: 1.5,
-  environmentPower: 2.2,
+  thickness: 15,
+  refraction: 2,
+  environmentPower: 0.75,
   environmentRotation: 300,
-  texture: 'smudged',
+  texture: 'none',
   textureTiling: 2.5,
 };
 

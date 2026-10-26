@@ -7,6 +7,8 @@ uniform float distortion;
 uniform float distortionScale;
 uniform float temporalDistortion;
 uniform sampler2D buffer;
+uniform float rimIntensity;
+uniform float rimPower;
 
 vec3 random3(vec3 c) {
   float j = 4096.0 * sin(dot(c, vec3(17.0, 59.4, 15.0)));
@@ -351,6 +353,20 @@ for (float i = 0.0; i < __SAMPLES__.0; i++) {
 
 transmission /= __SAMPLES__.0;
 totalDiffuse = mix(totalDiffuse, transmission.rgb, material.transmission);
+float rimGrazing =
+  pow(1.0 - saturate(dot(normal, geometryViewDir)), rimPower);
+float rimLightFacing = 1.0;
+#if NUM_DIR_LIGHTS > 0
+  vec2 rimScreenNormal = normal.xy / max(length(normal.xy), 0.0001);
+  vec2 rimLightDirection = directionalLights[0].direction.xy;
+  rimLightDirection /= max(length(rimLightDirection), 0.0001);
+  rimLightFacing = mix(
+    0.15,
+    1.0,
+    pow(abs(dot(rimScreenNormal, rimLightDirection)), 2.0)
+  );
+#endif
+totalDiffuse += rimIntensity * rimGrazing * rimLightFacing;
 `;
 
 export const HALFTONE_TRANSMISSION_SHADER_SOURCE = {
