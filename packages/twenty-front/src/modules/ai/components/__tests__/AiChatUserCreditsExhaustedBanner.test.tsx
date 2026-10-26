@@ -35,7 +35,6 @@ const renderBanner = ({
     id: 'workspace',
     billingCustomer: {
       id: 'billing-customer',
-      hasUserCredits: true,
       userCreditsFallback,
     },
   } as CurrentWorkspace);

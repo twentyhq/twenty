@@ -49,10 +49,10 @@ const renderSection = ({
 
   store.set(currentWorkspaceState.atom, {
     id: 'workspace',
+    currentBillingSubscription: { hasUserCredits },
     billingCustomer: {
       id: BILLING_CUSTOMER_ID,
       hasPaymentMethod: true,
-      hasUserCredits,
       userCreditsFallback,
     },
   } as CurrentWorkspace);

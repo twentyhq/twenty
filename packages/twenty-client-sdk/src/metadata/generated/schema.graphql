@@ -870,7 +870,6 @@ type Billing {
 
 type BillingCustomer {
   hasPaymentMethod: Boolean
-  hasUserCredits: Boolean!
   id: UUID!
   userCreditsFallback: UserCreditsFallback!
 }
@@ -1022,6 +1021,7 @@ type BillingSubscription {
   cancelAt: DateTime
   collectionMethod: BillingSubscriptionCollectionMethod
   currentPeriodEnd: DateTime
+  hasUserCredits: Boolean
   id: UUID!
   interval: SubscriptionInterval
   metadata: JSON!

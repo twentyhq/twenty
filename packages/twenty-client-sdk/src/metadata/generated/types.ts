@@ -1955,9 +1955,6 @@ export default {
             "hasPaymentMethod": [
                 4
             ],
-            "hasUserCredits": [
-                4
-            ],
             "id": [
                 517
             ],
@@ -2251,6 +2248,9 @@ export default {
             ],
             "currentPeriodEnd": [
                 207
+            ],
+            "hasUserCredits": [
+                4
             ],
             "id": [
                 517

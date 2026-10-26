@@ -37,7 +37,7 @@ export const SettingsBillingUserCreditsSection = () => {
     !hasPermissionToManageBilling ||
     !isDefined(currentWorkspace) ||
     !isDefined(billingCustomer) ||
-    !billingCustomer.hasUserCredits
+    !currentWorkspace.currentBillingSubscription?.hasUserCredits
   ) {
     return null;
   }
