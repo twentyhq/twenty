@@ -1,8 +1,11 @@
 ---
 title: Syncing & recovery
 description: Which command to use when, how to read the sync output, and a recovery ladder for when local metadata drifts — before reaching a full reset.
-icon: 'compass'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Local app development revolves around **syncing**: the CLI rebuilds your manifest and the server applies only the difference between it and the metadata already in your workspace. This page covers which command to reach for, how to read what a sync changed, and what to do — in order — when local state looks inconsistent.
 
@@ -187,3 +190,5 @@ When something goes wrong, the metadata diff and named errors let you place the 
 - **Deferred migration in progress** — the sync is refused because a background data model migration from an earlier sync is still running (`DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS`); wait for it to finish, then sync again.
 - **App code runtime error** — the sync succeeds but your logic functions or components misbehave at runtime; check [function logs](/developers/extend/apps/operations/cli).
 - **Local instance state** — none of the above and the workspace still looks wrong; work down the recovery ladder.
+
+<PageBanner illustration="card-page-sync-recovery" />

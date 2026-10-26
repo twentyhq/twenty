@@ -16,9 +16,14 @@
   "devDependencies": {
     "@mdx-js/mdx": "^3.1.1",
     "@sniptt/guards": "^0.2.0",
+    "mdast-util-mdx-jsx": "^3.0.0",
+    "micromark-extension-mdx-jsx": "^3.0.0",
+    "micromark-extension-mdx-md": "^2.0.0",
     "remark-frontmatter": "^5.0.0",
+    "remark-parse": "^11.0.0",
     "tsx": "^4.19.3",
     "twenty-shared": "workspace:*",
+    "unified": "^11.0.0",
     "unist-util-visit": "^5.0.0",
     "vitest": "^4.1.0"
   },

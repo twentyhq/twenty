@@ -14,7 +14,7 @@
 
 The application authoring and runtime SDK for [Twenty CRM](https://twenty.com).
 
-Use `twenty-sdk/define` to declare app entities, `twenty-sdk/front-component` for UI helpers, and `twenty-sdk/logic-function` for server-side helpers. The `billing` and `utils` exports remain available.
+Use `twenty-sdk/define` to declare app entities, `twenty-sdk/front-component` for UI helpers, and `twenty-sdk/logic-function` for server-side helpers. The SDK also provides `billing`, `utils`, and renderer integration exports.
 
 ## Quick start
 
@@ -30,25 +30,6 @@ twenty app dev --create
 ```
 
 Keep `twenty-sdk` installed in each app. The global `twenty` package owns scaffolding, builds, authentication, sync, and publishing.
-
-## Migration from the SDK CLI
-
-The SDK no longer ships the `twenty` binary, `twenty-sdk/cli`, `twenty-sdk/build`, or the build descriptor. `create-twenty-app` is retired and prints migration instructions.
-
-| Previous entry point                  | Replacement                            |
-| ------------------------------------- | -------------------------------------- |
-| `create-twenty-app`                   | `twenty app init`, then `yarn install` |
-| `yarn twenty dev`                     | `twenty app dev`                       |
-| `yarn twenty apply` / `plan` / `pull` | `twenty app apply` / `plan` / `pull`   |
-| `yarn twenty dev:build`               | `twenty app build`                     |
-| `yarn twenty dev:typecheck`           | `twenty app typecheck`                 |
-| `yarn twenty dev:generate-client`     | `twenty app generate-client`           |
-| `yarn twenty app:publish`             | `twenty app publish`                   |
-| Programmatic CLI/build imports        | Spawn the standalone CLI with `--json` |
-
-Use `twenty auth login` to configure a remote. For scripts, set `TWENTY_API_URL` and `TWENTY_API_KEY`. The standalone CLI does not use the SDK's `config.test.json` file. Run `twenty doctor` if an older SDK binary still shadows your global CLI.
-
-The SDK's renderer integration exports remain available for the Twenty platform.
 
 ## Documentation
 

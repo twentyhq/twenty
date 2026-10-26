@@ -1,8 +1,11 @@
 ---
 title: Extending Objects
 description: Add fields to standard Twenty objects (Person, Company, …) or to objects from other apps using defineField.
-icon: "wand-magic-sparkles"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Use `defineField()` to add a field to an object you don't own — a standard Twenty object like Person or Company, or an object shipped by another installed app. Unlike inline fields declared inside [`defineObject`](/developers/extend/apps/data/objects), standalone fields require an `objectUniversalIdentifier` to specify which object they extend.
 
@@ -49,3 +52,5 @@ export default defineField({
 ## Adding a relation to an existing object
 
 To add a relation field (e.g. linking your custom object to a standard `Person`), use `defineField()` with `FieldType.RELATION`. The pattern is the same as for inline relations but with `objectUniversalIdentifier` set explicitly. See [Relations](/developers/extend/apps/data/relations) for the bidirectional pattern.
+
+<PageBanner illustration="card-page-extending-objects" />

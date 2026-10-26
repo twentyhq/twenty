@@ -26,6 +26,7 @@ const options = {
   region: 'eu-west-1',
   lambdaRole: 'existing-role',
   resourceNamespace: 'instance',
+  resourceTags: { environment: 'test' },
   layerBucket: 'bucket',
   layerBucketRegion: 'eu-west-1',
 };
@@ -84,6 +85,7 @@ describe('Lambda builder deployment', () => {
       expect(command.input).toMatchObject({
         FunctionName: 'workspace-builder',
         Role: options.lambdaRole,
+        Tags: options.resourceTags,
         Layers: dependencyLayerArn
           ? ['existing-layer', dependencyLayerArn]
           : ['existing-layer'],

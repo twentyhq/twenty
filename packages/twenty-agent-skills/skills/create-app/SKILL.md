@@ -22,11 +22,11 @@ cd <app-name>
 yarn install
 ```
 
-`app init` only writes files. It does not install dependencies, initialize Git, start Docker, authenticate, or perform an initial sync. `create-twenty-app` is retired.
+`app init` only writes files. It does not install dependencies, initialize Git, start Docker, authenticate, or perform an initial sync.
 
 Use `--path <directory>` for a different destination and `--display-name` or `--description` for metadata. The positional name is the package name.
 
-Twenty Cloud and self-hosted instances are supported. Ask for the existing Twenty workspace URL when connection is needed. If the user wants a local server, use the documented Docker or repository development environment; the CLI has no `docker:*` commands.
+Twenty Cloud and self-hosted instances are supported. Ask for the existing Twenty workspace URL when connection is needed. If the user wants a local server, use the documented Docker or repository development environment.
 
 ```bash
 twenty auth login --url <twenty-instance-url> --name dev
