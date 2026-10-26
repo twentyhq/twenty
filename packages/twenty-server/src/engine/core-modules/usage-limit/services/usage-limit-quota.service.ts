@@ -16,6 +16,7 @@ import { UsageLimitException } from 'src/engine/core-modules/usage-limit/excepti
 import { UsageLimitDefaultValueService } from 'src/engine/core-modules/usage-limit/services/usage-limit-default-value.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
+import { type AllowanceUsage } from 'src/engine/core-modules/usage-limit/types/allowance-usage.type';
 import { type WorkspaceAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/workspace-allowance-quota-counter.type';
 import { type ExhaustedKind } from 'src/engine/core-modules/usage-limit/types/exhausted-kind.type';
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
@@ -50,7 +51,7 @@ import { isQuotaLimit } from 'src/engine/core-modules/usage-limit/utils/is-quota
 import { splitUserCreditsAcrossEvents } from 'src/engine/core-modules/usage-limit/utils/split-user-credits-across-events.util';
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
@@ -195,11 +196,9 @@ export class UsageLimitQuotaService {
     );
   }
 
-  async getWorkspaceAllowanceUsage(workspaceId: string): Promise<{
-    limitValue: number;
-    consumedValue: number | null;
-    periodEnd: Date;
-  } | null> {
+  async getWorkspaceAllowanceUsage(
+    workspaceId: string,
+  ): Promise<AllowanceUsage | null> {
     const counter = await this.buildWorkspaceAllowanceCounter(workspaceId);
 
     if (!isDefined(counter)) {
@@ -218,6 +217,44 @@ export class UsageLimitQuotaService {
       consumedValue: consumedValue ?? null,
       periodEnd: counter.periodEnd,
     };
+  }
+
+  async getUserAllowanceUsage(
+    scope: QuotaConsumeArgs,
+  ): Promise<AllowanceUsage | null> {
+    const counter = (await this.buildQuotaCountersForScope(scope)).find(
+      (quotaCounter) => quotaCounter.kind === 'userAllowance',
+    );
+
+    if (!isDefined(counter)) {
+      return null;
+    }
+
+    const {
+      consumedValues: [consumedValue],
+    } = await this.readCountersAdmittingOnFailure({
+      workspaceId: scope.workspaceId,
+      counters: [counter],
+    });
+
+    return {
+      limitValue: counter.limitValue,
+      consumedValue: consumedValue ?? null,
+      periodEnd: counter.periodEnd,
+    };
+  }
+
+  async hasUserCredits(workspaceId: string): Promise<boolean> {
+    const quotaLimitDefaults = await this.buildQuotaLimitDefaults({
+      workspaceId,
+      resourceType: UsageResourceType.AI,
+    });
+
+    return quotaLimitDefaults.some(
+      (quotaLimitDefault) =>
+        quotaLimitDefault.unit === UsageUnit.USER_CREDIT &&
+        quotaLimitDefault.limitValue > 0,
+    );
   }
 
   async getWorkspaceAllowanceRemainingMicro(

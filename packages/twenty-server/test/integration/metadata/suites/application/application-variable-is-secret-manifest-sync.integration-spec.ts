@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -90,6 +91,14 @@ const readVariablesByKey = async () => {
   );
 };
 
+const buildExpectedVariablesByKey = (description: string) =>
+  Object.fromEntries(
+    Object.entries(INITIAL_IS_SECRET_BY_KEY).map(([key, isSecret]) => [
+      key,
+      { description, isSecret },
+    ]),
+  );
+
 describe('Manifest sync - variable isSecret', () => {
   beforeAll(async () => {
     await setupApplicationForSync({
@@ -114,12 +123,32 @@ describe('Manifest sync - variable isSecret', () => {
     });
   });
 
-  it('should ignore isSecret changes on existing variables', async () => {
+  it.each([
+    { key: 'SECRET_SETTING', isSecret: false },
+    { key: 'PUBLIC_SETTING', isSecret: true },
+  ] as const)(
+    'should refuse changing isSecret of application variable $key',
+    async ({ key, isSecret }) => {
+      const { errors } = await syncApplication({
+        manifest: buildManifest({
+          isSecretByKey: { ...INITIAL_IS_SECRET_BY_KEY, [key]: isSecret },
+          description: 'Initial description',
+        }),
+        expectToFail: true,
+      });
+
+      expectOneNotInternalServerErrorSnapshot({ errors });
+      expect(await readVariablesByKey()).toEqual(
+        buildExpectedVariablesByKey('Initial description'),
+      );
+    },
+  );
+
+  it('should ignore isSecret changes on server variables', async () => {
     await syncApplication({
       manifest: buildManifest({
         isSecretByKey: {
-          SECRET_SETTING: false,
-          PUBLIC_SETTING: true,
+          ...INITIAL_IS_SECRET_BY_KEY,
           SECRET_SERVER_KEY: false,
           PUBLIC_SERVER_KEY: true,
         },
@@ -129,12 +158,7 @@ describe('Manifest sync - variable isSecret', () => {
     });
 
     expect(await readVariablesByKey()).toEqual(
-      Object.fromEntries(
-        Object.entries(INITIAL_IS_SECRET_BY_KEY).map(([key, isSecret]) => [
-          key,
-          { description: 'Updated description', isSecret },
-        ]),
-      ),
+      buildExpectedVariablesByKey('Updated description'),
     );
   });
 });

@@ -1,5 +1,6 @@
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { compareDropdownElementOrder } from './compareDropdownElementOrder';
 import { getNextDropdownGridItem } from './getNextDropdownGridItem';
 
 export const getNextDropdownItem = ({
@@ -30,12 +31,29 @@ export const getNextDropdownItem = ({
   }
 
   const lastIndex = items.length - 1;
+  const lastItem = items[lastIndex];
+  const isSearchAfterItems =
+    isDefined(search) &&
+    isDefined(lastItem) &&
+    compareDropdownElementOrder({
+      firstElement: lastItem,
+      secondElement: search,
+    }) < 0;
+
+  if (key === 'ArrowDown' && currentIndex === lastIndex && isSearchAfterItems) {
+    return search ?? undefined;
+  }
 
   if (key === 'ArrowDown') {
     return items[currentIndex === lastIndex ? 0 : currentIndex + 1];
   }
 
-  if (key === 'ArrowUp' && currentIndex === 0 && isDefined(search)) {
+  if (
+    key === 'ArrowUp' &&
+    currentIndex === 0 &&
+    isDefined(search) &&
+    !isSearchAfterItems
+  ) {
     return search;
   }
 
