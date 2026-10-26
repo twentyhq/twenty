@@ -18,7 +18,7 @@ This file is the single source of truth for the cross-skill rules. Harness-speci
       twenty app add front-component --name invoice-panel --no-input
       ```
 
-   2. **The CLI is missing**: install the standalone `twenty` package, or ask the user to install it when their environment requires that. The SDK no longer provides a fallback CLI.
+   2. **The CLI is missing**: install the standalone `twenty` package, or ask the user to install it when their environment requires that.
    3. **The entity type is unsupported**: use the corresponding `define*` export directly. The standalone CLI currently generates objects, fields, logic functions and front components.
    4. **Otherwise, write the file by hand.** Follow the example on the matching docs page (append `.md` to its URL), or an existing file of the same kind in the app, check it against the types exported by `twenty-sdk/define`, and generate every identifier with `crypto.randomUUID()` instead of inventing one.
 

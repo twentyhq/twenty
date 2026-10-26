@@ -1,3 +1,8 @@
+import { runInNewContext } from 'node:vm';
+import {
+  getSharedDependenciesShimSource,
+  toSharedDependenciesNamespaceIdentifier,
+} from 'twenty-shared/front-component-build';
 import { createHash } from 'crypto';
 import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 import { buildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-shared-dependencies.util';
@@ -155,6 +160,50 @@ export function Component() {
       }),
     ).resolves.toHaveProperty('outputFiles');
     expect(compiledSource).not.toMatch(/from\s*['"]twenty-ui/);
+  });
+
+  it('exposes every server vendor export through the shared CLI and SDK shim format', async () => {
+    const vendorModule: {
+      exports: Record<string, Record<string, unknown>>;
+    } = { exports: {} };
+    const vendor = await transform(sharedDependencies.source, {
+      format: 'cjs',
+    });
+
+    runInNewContext(vendor.code, {
+      module: vendorModule,
+      exports: vendorModule.exports,
+    });
+
+    for (const [
+      specifier,
+      exportNames,
+    ] of sharedDependencies.exportNamesBySpecifier) {
+      const shim = await transform(
+        getSharedDependenciesShimSource({ specifier, exportNames }),
+        { format: 'cjs' },
+      );
+      const shimModule: { exports: Record<string, unknown> } = { exports: {} };
+
+      runInNewContext(shim.code, {
+        module: shimModule,
+        exports: shimModule.exports,
+        require: () => vendorModule.exports,
+      });
+
+      const namespace =
+        vendorModule.exports[
+          toSharedDependenciesNamespaceIdentifier(specifier)
+        ];
+      const names = [
+        ...exportNames.namedExports,
+        ...(exportNames.hasDefaultExport ? ['default'] : []),
+      ];
+
+      for (const name of names) {
+        expect(shimModule.exports[name]).toBe(namespace[name]);
+      }
+    }
   });
 
   it.each([

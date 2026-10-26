@@ -6,7 +6,6 @@ import {
 } from 'twenty-shared/front-component-build';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getSharedDependenciesShimSource } from '../shared-dependencies-build/utils/get-shared-dependencies-shim-source';
 import { cssInjectionPlugin } from '../css-injection-plugin';
 import { jsxTransformToRemoteDomWorkerFormatPlugin } from '../jsx-transform-to-remote-dom-worker-format-plugin';
 import { createPreactAliasPlugin } from '../preact-alias-plugin';
@@ -24,7 +23,6 @@ export const getFrontComponentBuildPlugins = (
         createSharedDependenciesShimPlugin({
           getSharedDependenciesBuildContext:
             options.getSharedDependenciesBuildContext,
-          getShimSource: getSharedDependenciesShimSource,
         }),
       ]
     : []),

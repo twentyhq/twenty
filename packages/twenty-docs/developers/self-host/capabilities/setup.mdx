@@ -1,9 +1,11 @@
 ---
 title: Setup
-icon: "gear"
+description: Configure Twenty from the admin panel or with environment variables.
 ---
 
-# Configuration Management
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 <Warning>
 **First time installing?** Follow the [Docker Compose installation guide](/developers/self-host/capabilities/docker-compose) to get Twenty running, then return here for configuration.
@@ -508,3 +510,5 @@ With multi-workspace enabled, do not list every workspace subdomain here.
 Instead, route API paths (`/graphql`, `/metadata`, `/rest`, `/auth/`,
 `/client-config`, `/file`) to the back-end on each workspace hostname, so every
 workspace stays same-origin — this is how Twenty Cloud runs.
+
+<PageBanner illustration="dev-self-host" />

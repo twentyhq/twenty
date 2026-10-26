@@ -1,12 +1,13 @@
 ---
 title: CLI
 description: Sign in to a workspace, explore its data and build apps from your terminal with the twenty CLI.
-icon: 'terminal'
 ---
 
-The `twenty` CLI connects to Twenty workspaces from your terminal. Use it to inspect metadata, read records, send API requests, and create, sync and debug apps. It needs **Node.js 24.5 or later**.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Running the CLI
+
+The `twenty` CLI connects to Twenty workspaces from your terminal. Use it to inspect metadata, read records, send API requests, and create, sync and debug apps. It needs **Node.js 24.5 or later**.
 
 Run any command through `npx`, without installing anything:
 
@@ -20,13 +21,6 @@ Or install it once globally and call `twenty` directly:
 npm install -g twenty
 twenty --version
 ```
-
-<Warning>
-  Older versions of `twenty-sdk` include a legacy `twenty` binary. In apps
-  still using those versions, `npx twenty` can run that local binary.
-  Use `npx twenty@latest` to select the standalone CLI explicitly. The current
-  SDK no longer includes a CLI binary.
-</Warning>
 
 The examples below use `twenty`. Prefix them with `npx twenty@latest` if you did not install it globally. Run `twenty commands` for the full command list and `twenty <command> --help` for the options of one command.
 
@@ -173,12 +167,8 @@ twenty doctor --offline
 
 Build output belongs to the CLI. Do not read `.twenty/output/manifest.json` or import internal build code; read `data.manifest` from `twenty app build --json`.
 
-## Migrating from the SDK CLI
-
-The SDK's `twenty` binary, `twenty-sdk/cli`, and `twenty-sdk/build` are removed. `create-twenty-app` is retired; use `twenty app init`, then `yarn install` and `twenty auth login`. Keep `twenty-sdk` installed for application definitions and runtime helpers.
-
-Replace colon commands with the commands above. The standalone CLI does not provide `docker:*` or `dev:catalog-sync`; manage servers through Docker or the repository dev environment. If your app still uses an older SDK version, run `twenty doctor` to diagnose its legacy binary shadowing the global CLI.
-
 ## Full reference
 
 The [command reference](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md) covers every flag, permission, output format and exit code.
+
+<PageBanner illustration="card-page-cli" />

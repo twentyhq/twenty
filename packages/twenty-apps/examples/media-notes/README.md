@@ -23,7 +23,7 @@ on. Serve the front build from the server rather than on its own port:
 
 ```sh
 # from the repo root
-npx nx build twenty-sdk
+npx nx build twenty-cli
 NODE_ENV=production npx nx build twenty-front
 npx nx build twenty-server
 cp -r packages/twenty-front/build packages/twenty-server/dist/front
@@ -31,7 +31,9 @@ cp -r packages/twenty-front/build packages/twenty-server/dist/front
 # start:ci, not start: the watch target would rimraf dist and delete the front
 npx nx start:ci twenty-server &
 
-node packages/twenty-sdk/dist/cli.cjs app:publish --private && node packages/twenty-sdk/dist/cli.cjs app:install
+node packages/twenty-cli/dist/cli.cjs auth login --url http://localhost:3000 --name local
+node packages/twenty-cli/dist/cli.cjs app publish --private --path packages/twenty-apps/examples/media-notes --remote local
+node packages/twenty-cli/dist/cli.cjs app install --path packages/twenty-apps/examples/media-notes --remote local
 
 # then, from this directory
 FRONT_BASE_URL=http://localhost:3000 npx playwright test --project=setup --project=chromium

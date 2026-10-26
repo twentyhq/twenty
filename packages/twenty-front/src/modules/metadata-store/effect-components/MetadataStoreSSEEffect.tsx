@@ -1,5 +1,4 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
-import { useCleanMorphRelationsTargetingObjectMetadataId } from '@/metadata-store/hooks/useCleanMorphRelationsTargetingObjectMetadataId';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
 import { type FlatPageLayoutWidget } from '@/metadata-store/types/FlatPageLayoutWidget';
@@ -23,8 +22,6 @@ const toMetadataStoreItem = (
 export const MetadataStoreSSEEffect = () => {
   const { addToDraft, removeFromDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
-  const { cleanMorphRelations } =
-    useCleanMorphRelationsTargetingObjectMetadataId();
 
   useListenToMetadataOperationBrowserEvent({
     onMetadataOperationBrowserEvent: (eventDetail) => {
@@ -69,10 +66,6 @@ export const MetadataStoreSSEEffect = () => {
             itemIds: [eventDetail.operation.deletedRecordId],
             collectionHash,
           });
-
-          if (entityKey === 'objectMetadataItems') {
-            cleanMorphRelations(eventDetail.operation.deletedRecordId);
-          }
           break;
         }
       }
