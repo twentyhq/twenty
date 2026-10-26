@@ -59,7 +59,7 @@ describe('App installation', () => {
         canUpdateAllSettings: false,
       }),
     );
-    expect(role?.objectPermissions ?? []).toHaveLength(0);
+    expect(role?.objectPermissions ?? []).toHaveLength(7);
     expect(role?.permissionFlags ?? []).toHaveLength(0);
   });
 
