@@ -88,7 +88,10 @@ type AiChatSchedulingPreferencesProps = {
 };
 
 const getOrganizerCalendarDescription = (
-  calendar: AiChatSchedulingCalendar,
+  calendar: Pick<
+    AiChatSchedulingCalendar,
+    'isDisabled' | 'canOrganize' | 'description'
+  >,
 ) => {
   if (calendar.isDisabled) {
     return t`Unavailable`;
