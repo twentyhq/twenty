@@ -35,6 +35,7 @@ import {
   PASSWORD_REGEX,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
+import { MAX_UNPAID_WORKSPACES_PER_USER } from 'src/engine/core-modules/auth/constants/max-unpaid-workspaces-per-user.constant';
 import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-organization-key.constant';
 import { getSignUpWithoutWorkspaceDecision } from 'src/engine/core-modules/auth/utils/get-sign-up-without-workspace-decision.util';
 import { hasProvisionedSignUpDestination } from 'src/engine/core-modules/auth/utils/has-provisioned-sign-up-destination.util';
@@ -506,6 +507,8 @@ export class SignInUpService {
 
     await this.assertWorkspaceCountWithinLimit(workspaceCount);
 
+    await this.assertUnpaidWorkspaceCountWithinLimit(userData);
+
     if (
       !this.twentyConfigService.get(
         'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
@@ -547,6 +550,44 @@ export class SignInUpService {
       AuthExceptionCode.FORBIDDEN_EXCEPTION,
       {
         userFriendlyMessage: msg`Workspace limit reached. A valid Organization key is required to create more workspaces.`,
+      },
+    );
+  }
+
+  // each new workspace starts a trial with free AI credits, so trials cannot be farmed from one account
+  private async assertUnpaidWorkspaceCountWithinLimit(
+    userData: ExistingUserOrPartialUserWithPicture['userData'],
+  ): Promise<void> {
+    if (
+      !this.billingService.isBillingEnabled() ||
+      userData.type !== 'existingUser' ||
+      userData.existingUser.canAccessFullAdminPanel
+    ) {
+      return;
+    }
+
+    const workspaces = await this.workspaceRepository.find({
+      select: { id: true },
+      where: { workspaceUsers: { userId: userData.existingUser.id } },
+    });
+
+    const isPayingByWorkspace = await Promise.all(
+      workspaces.map(({ id }) => this.billingService.isPayingCustomer(id)),
+    );
+
+    const unpaidWorkspaceCount = isPayingByWorkspace.filter(
+      (isPaying) => !isPaying,
+    ).length;
+
+    if (unpaidWorkspaceCount < MAX_UNPAID_WORKSPACES_PER_USER) {
+      return;
+    }
+
+    throw new AuthException(
+      `User ${userData.existingUser.id} already has ${unpaidWorkspaceCount} workspaces without a paid subscription`,
+      AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      {
+        userFriendlyMessage: msg`You already have ${MAX_UNPAID_WORKSPACES_PER_USER} workspaces without a paid subscription. Subscribe in one of them to create another.`,
       },
     );
   }
