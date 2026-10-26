@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
+  IconBolt,
   IconCode,
   IconHeart,
   IconInbox,
@@ -75,6 +76,14 @@ export const NavigationMenuItemAddSectionButton = ({
               id: 'templates',
               label: t`Templates`,
               options: [
+                {
+                  id: 'actions',
+                  label: t`Actions`,
+                  contextualText: t`Search, Ask AI and more`,
+                  Icon: IconBolt,
+                  onClick: () =>
+                    createSection({ parentId, template: 'actions' }),
+                },
                 {
                   id: 'developer-tools',
                   label: t`Developers`,

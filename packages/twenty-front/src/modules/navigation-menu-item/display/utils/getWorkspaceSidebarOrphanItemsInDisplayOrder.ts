@@ -58,7 +58,8 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
 
       if (
         rowSource.type === NavigationMenuItemType.LINK ||
-        rowSource.type === NavigationMenuItemType.PAGE_LAYOUT
+        rowSource.type === NavigationMenuItemType.PAGE_LAYOUT ||
+        rowSource.type === NavigationMenuItemType.COMMAND
       ) {
         acc.push(rowSource);
         return acc;

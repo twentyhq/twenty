@@ -122,6 +122,8 @@ export class AddInboxNavigationMenuTabCommand extends ProvisionedWorkspaceComman
       folderUniversalIdentifier,
       pageLayoutId: null,
       pageLayoutUniversalIdentifier: null,
+      commandMenuItemId: null,
+      commandMenuItemUniversalIdentifier: null,
       name,
       link: null,
       icon,

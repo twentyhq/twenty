@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { TintedIconTile } from 'twenty-ui/components/data-display';
 import {
   IconBox,
+  IconCommand,
   IconFolder,
   IconLink,
   IconPerspective,
@@ -20,10 +21,12 @@ import {
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 
+import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SETTINGS_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorSettingsLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
+import { isCommandMenuItemPinnableToNavigationMenu } from '@/navigation-menu-item/common/utils/isCommandMenuItemPinnableToNavigationMenu';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
@@ -44,6 +47,7 @@ import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectCol
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewKey } from '@/views/types/ViewKey';
+import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type UseNavigationMenuItemAddOptionsParams = {
@@ -90,6 +94,7 @@ export const useNavigationMenuItemAddOptions = ({
   });
 
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
+  const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -265,7 +270,43 @@ export const useNavigationMenuItemAddOptions = ({
           onClick: () => navigateToStep('settings'),
           hasSubMenu: true,
         },
+        {
+          id: 'command',
+          label: t`Command`,
+          icon: (
+            <TintedIconTile icon={<IconCommand size={theme.icon.size.md} />} />
+          ),
+          onClick: () => navigateToStep('command'),
+          hasSubMenu: true,
+        },
       ];
+    }
+    if (targetStep === 'command') {
+      const commandMenuItemIdsAlreadyAdded = new Set(
+        currentItems.map((item) => item.commandMenuItemId),
+      );
+
+      return commandMenuItems
+        .filter(isCommandMenuItemPinnableToNavigationMenu)
+        .sort((first, second) => first.position - second.position)
+        .map((commandMenuItem) => {
+          const isAlreadyInSidebar = commandMenuItemIdsAlreadyAdded.has(
+            commandMenuItem.id,
+          );
+
+          return {
+            id: commandMenuItem.id,
+            label: commandMenuItem.label,
+            Icon: getIcon(commandMenuItem.icon ?? COMMAND_MENU_DEFAULT_ICON),
+            isDisabled: isAlreadyInSidebar,
+            isAlreadyInSidebar,
+            onClick: () =>
+              addItem({
+                type: NavigationMenuItemType.COMMAND,
+                commandMenuItemId: commandMenuItem.id,
+              }),
+          };
+        });
     }
     if (targetStep === 'settings') {
       return getSettingsGroups().flatMap((group) => group.items);

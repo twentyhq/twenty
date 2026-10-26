@@ -42,6 +42,8 @@ export const buildCreateNavigationMenuItemInput = (
     input.pageLayoutId = draftItem.pageLayoutId;
     input.name = draftItem.name ?? undefined;
     input.icon = draftItem.icon ?? null;
+  } else if (isDefined(draftItem.commandMenuItemId)) {
+    input.commandMenuItemId = draftItem.commandMenuItemId;
   } else if (isDefined(draftItem.viewId)) {
     input.viewId = draftItem.viewId;
   } else if (isDefined(draftItem.targetRecordId)) {

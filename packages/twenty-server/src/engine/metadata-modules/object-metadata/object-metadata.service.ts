@@ -655,6 +655,8 @@ export class ObjectMetadataService {
       folderUniversalIdentifier: workspaceSection?.universalIdentifier ?? null,
       pageLayoutId: null,
       pageLayoutUniversalIdentifier: null,
+      commandMenuItemId: null,
+      commandMenuItemUniversalIdentifier: null,
       name: null,
       link: null,
       icon: null,

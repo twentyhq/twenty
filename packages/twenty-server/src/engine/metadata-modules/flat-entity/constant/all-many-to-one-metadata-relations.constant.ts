@@ -135,6 +135,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'pageLayoutUniversalIdentifier',
     },
+    commandMenuItem: {
+      metadataName: 'commandMenuItem',
+      foreignKey: 'commandMenuItemId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'commandMenuItemUniversalIdentifier',
+    },
   },
   fieldMetadata: {
     object: {

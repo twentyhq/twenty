@@ -1422,6 +1422,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'pageLayoutUniversalIdentifier',
     },
+    commandMenuItemId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'commandMenuItemUniversalIdentifier',
+    },
   },
   rolePermissionFlag: {
     permissionFlagId: {

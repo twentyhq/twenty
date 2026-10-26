@@ -11,4 +11,5 @@ export enum NavigationMenuItemType {
   AI_CHAT_FAVORITES = 'AI_CHAT_FAVORITES',
   AI_CHAT_RECENTS = 'AI_CHAT_RECENTS',
   AI_AGENTS = 'AI_AGENTS',
+  COMMAND = 'COMMAND',
 }

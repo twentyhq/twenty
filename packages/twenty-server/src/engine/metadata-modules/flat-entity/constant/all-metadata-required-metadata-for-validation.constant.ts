@@ -75,6 +75,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     objectMetadata: true,
     view: true,
     pageLayout: true,
+    commandMenuItem: true,
   },
   rolePermissionFlag: {
     permissionFlag: true,

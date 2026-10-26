@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -46,6 +47,10 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'pageLayoutId',
   'workspaceId',
 ])
+@Index('IDX_NAVIGATION_MENU_ITEM_COMMAND_MENU_ITEM_ID_WORKSPACE_ID', [
+  'commandMenuItemId',
+  'workspaceId',
+])
 @Check(
   'CHK_navigation_menu_item_type_fields',
   `("type" = 'FOLDER')
@@ -59,7 +64,8 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   OR ("type" = 'VIEW' AND "viewId" IS NOT NULL)
   OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)
   OR ("type" = 'LINK' AND "link" IS NOT NULL)
-  OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL)`,
+  OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL)
+  OR ("type" = 'COMMAND' AND "commandMenuItemId" IS NOT NULL)`,
 )
 export class NavigationMenuItemEntity
   extends SyncableEntity
@@ -139,6 +145,16 @@ export class NavigationMenuItemEntity
 
   @Column({ nullable: true, type: 'uuid' })
   pageLayoutId: string | null;
+
+  @ManyToOne(() => CommandMenuItemEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'commandMenuItemId' })
+  commandMenuItem: Relation<CommandMenuItemEntity> | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  commandMenuItemId: string | null;
 
   @Column({ nullable: false, type: 'double precision' })
   position: number;

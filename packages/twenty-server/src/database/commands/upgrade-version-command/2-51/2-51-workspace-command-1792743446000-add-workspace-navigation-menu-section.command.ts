@@ -104,6 +104,8 @@ export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspa
       folderUniversalIdentifier: null,
       pageLayoutId: null,
       pageLayoutUniversalIdentifier: null,
+      commandMenuItemId: null,
+      commandMenuItemUniversalIdentifier: null,
       name: workspaceSection.name,
       link: null,
       icon: null,

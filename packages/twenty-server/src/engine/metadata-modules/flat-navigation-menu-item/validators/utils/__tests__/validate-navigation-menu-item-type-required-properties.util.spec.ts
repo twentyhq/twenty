@@ -22,6 +22,7 @@ const buildFlatNavigationMenuItem = (
     folderUniversalIdentifier: null,
     viewUniversalIdentifier: null,
     pageLayoutUniversalIdentifier: null,
+    commandMenuItemUniversalIdentifier: null,
     targetObjectMetadataUniversalIdentifier: null,
     ...overrides,
   }) as UniversalFlatNavigationMenuItem;
@@ -75,6 +76,12 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
         'A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type',
       ],
     },
+    {
+      type: NavigationMenuItemType.COMMAND,
+      expectedMessages: [
+        'A valid commandMenuItemUniversalIdentifier is required for COMMAND type',
+      ],
+    },
   ])(
     'should report every missing property for $type type',
     ({ type, expectedMessages }) => {
@@ -117,6 +124,10 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     {
       type: NavigationMenuItemType.PAGE_LAYOUT,
       overrides: { pageLayoutUniversalIdentifier: VALID_UUID },
+    },
+    {
+      type: NavigationMenuItemType.COMMAND,
+      overrides: { commandMenuItemUniversalIdentifier: VALID_UUID },
     },
   ])(
     'should not report any error when $type type properties are valid',

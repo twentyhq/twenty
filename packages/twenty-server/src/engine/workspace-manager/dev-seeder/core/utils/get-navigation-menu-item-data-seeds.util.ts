@@ -52,6 +52,8 @@ export const getNavigationMenuItemFlatEntitySeeds = ({
         workspaceId,
         PAGE_LAYOUT_SEEDS.DOCUMENTATION_STANDALONE_PAGE,
       ),
+      commandMenuItemId: null,
+      commandMenuItemUniversalIdentifier: null,
       createdAt: now,
       updatedAt: now,
     },

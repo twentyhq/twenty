@@ -29,6 +29,7 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
         navigationMenuItemManifest.targetObjectUniversalIdentifier ?? null,
       pageLayoutUniversalIdentifier:
         navigationMenuItemManifest.pageLayoutUniversalIdentifier ?? null,
+      commandMenuItemUniversalIdentifier: null,
       targetRecordId: null,
       userWorkspaceId: null,
       createdAt: now,
