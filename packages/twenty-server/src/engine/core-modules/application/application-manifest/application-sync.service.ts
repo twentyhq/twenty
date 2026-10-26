@@ -2,7 +2,6 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
@@ -30,9 +29,9 @@ import { ApplicationLookupService } from 'src/engine/core-modules/application/ap
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -42,7 +41,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -56,7 +54,7 @@ export class ApplicationSyncService {
     private readonly applicationManifestMigrationService: ApplicationManifestMigrationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly fileStorageService: FileStorageService,
+    private readonly logicFunctionResourceService: LogicFunctionResourceService,
     private readonly applicationTranslationSyncService: ApplicationTranslationSyncService,
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
@@ -262,19 +260,18 @@ export class ApplicationSyncService {
     persistVersion: boolean;
   }): Promise<ApplicationEntity> {
     const name = manifest.application.displayName;
-    const packageJson = JSON.parse(
-      (
-        await streamToBuffer(
-          await this.fileStorageService.readFile({
-            applicationUniversalIdentifier:
-              manifest.application.universalIdentifier,
-            fileFolder: FileFolder.Dependencies,
-            resourcePath: 'package.json',
-            workspaceId,
-          }),
-        )
-      ).toString('utf-8'),
-    ) as PackageJson;
+    const applicationUniversalIdentifier =
+      manifest.application.universalIdentifier;
+
+    const { packageJsonContent, storedFilesChecksums } =
+      await this.logicFunctionResourceService.getVerifiedDependencyContentsOrThrow(
+        {
+          workspaceId,
+          applicationUniversalIdentifier,
+          declaredChecksums: manifest.application,
+        },
+      );
+    const packageJson = JSON.parse(packageJsonContent) as PackageJson;
 
     const application =
       await this.applicationService.findOneApplicationWithRelationsOrThrow({
@@ -298,8 +295,8 @@ export class ApplicationSyncService {
         description: manifest.application.description,
         logo: manifest.application.logo ?? manifest.application.logoUrl ?? null,
         ...(persistVersion ? { version: packageJson.version } : {}),
-        packageJsonChecksum: manifest.application.packageJsonChecksum,
-        yarnLockChecksum: manifest.application.yarnLockChecksum,
+        packageJsonChecksum: storedFilesChecksums.packageJsonChecksum,
+        yarnLockChecksum: storedFilesChecksums.yarnLockChecksum,
         billing: manifest.application.billing ?? {},
         grantedCapabilities: resolveSyncedApplicationCapabilities({
           sourceType: application.sourceType,
