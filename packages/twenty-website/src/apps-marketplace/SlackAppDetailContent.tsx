@@ -51,6 +51,28 @@ const CAPABILITIES: readonly {
   },
 ];
 
+const SETUP_STEPS: readonly {
+  title: MessageDescriptor;
+  body: MessageDescriptor;
+}[] = [
+  {
+    title: msg`Install the app`,
+    body: msg`Click Install on this page and add the Slack app to your Twenty workspace.`,
+  },
+  {
+    title: msg`Connect Slack`,
+    body: msg`In the app's Connections, click Add connection and approve the install in Slack.`,
+  },
+  {
+    title: msg`Link your accounts`,
+    body: msg`Accounts with the same email in Slack and Twenty are linked automatically. An admin can link the rest from the app's Settings tab.`,
+  },
+  {
+    title: msg`Start asking`,
+    body: msg`Invite the bot to a channel with /invite @Twenty, then mention @Twenty with your question or send it a direct message.`,
+  },
+];
+
 const EXAMPLE_QUESTIONS: readonly MessageDescriptor[] = [
   msg`How many open opportunities do we have?`,
   msg`Which deals are closing this month?`,
@@ -134,6 +156,41 @@ const CardTitle = styled.h3`
   margin-bottom: ${spacing(1)};
 `;
 
+const StepGrid = styled.div`
+  display: grid;
+  gap: ${spacing(3)};
+  grid-template-columns: minmax(0, 1fr);
+
+  ${mediaUp('md')} {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  ${mediaUp('lg')} {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+`;
+
+const StepCard = styled.div`
+  background-color: ${color('white')};
+  border: 1px solid ${semanticColor.line};
+  border-radius: ${radius(2)};
+  padding: ${spacing(5)} ${spacing(6)};
+
+  & > * + * {
+    margin-top: ${spacing(2)};
+  }
+`;
+
+const StepNumber = styled.span`
+  color: ${color('blue')};
+  display: block;
+  font-family: ${fontFamily('mono')};
+  font-size: ${fontSize(3)};
+  font-weight: ${FONT_WEIGHT.medium};
+  letter-spacing: 0.08em;
+  line-height: ${fontSize(4)};
+`;
+
 const ExampleGrid = styled.div`
   display: grid;
   gap: ${spacing(3)};
@@ -207,6 +264,30 @@ export function SlackAppDetailContent({
       </SectionShell>
 
       <SectionShell rhythm="section" scheme="light">
+        <SectionStack>
+          <SectionIntro>
+            <Eyebrow>{i18n._(msg`Getting started`)}</Eyebrow>
+            <Heading as="h2" size="lg" weight="light">
+              {i18n._(msg`Set up *in four steps*`)}
+            </Heading>
+          </SectionIntro>
+          <StepGrid>
+            {SETUP_STEPS.map((step, index) => (
+              <StepCard key={step.title.id}>
+                <StepNumber aria-hidden>
+                  {String(index + 1).padStart(2, '0')}
+                </StepNumber>
+                <CardTitle>{i18n._(step.title)}</CardTitle>
+                <Body muted size="sm">
+                  {i18n._(step.body)}
+                </Body>
+              </StepCard>
+            ))}
+          </StepGrid>
+        </SectionStack>
+      </SectionShell>
+
+      <SectionShell rhythm="section" scheme="muted">
         <SectionStack>
           <SectionIntro>
             <Eyebrow>{i18n._(msg`Examples`)}</Eyebrow>

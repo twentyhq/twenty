@@ -4,16 +4,8 @@ import { type FaqQuestion } from './faq.data';
 
 export const SLACK_APP_FAQ_QUESTIONS: readonly FaqQuestion[] = [
   {
-    question: msg`How do I connect my Slack workspace?`,
-    answer: msg`Install the Slack app in your Twenty workspace. In the app's Connections, click Add connection and approve the install in Slack.`,
-  },
-  {
     question: msg`How are Slack accounts linked to Twenty users?`,
-    answer: msg`Accounts with the same email in Slack and Twenty are linked automatically. An admin can link the rest from the app's Settings tab.`,
-  },
-  {
-    question: msg`How do I start using it?`,
-    answer: msg`Invite the bot to a channel with /invite @Twenty, then mention @Twenty with your question. You can also send it a direct message.`,
+    answer: msg`Accounts with the same email in Slack and Twenty are linked automatically. An admin can link the rest from the app's Settings tab, and the Slack user approves the link in a direct message from the bot.`,
   },
   {
     question: msg`Who can use it?`,

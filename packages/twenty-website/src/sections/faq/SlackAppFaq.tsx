@@ -31,10 +31,10 @@ export function SlackAppFaq() {
       <JsonLd data={buildFaqPageJsonLd(i18n, SLACK_APP_FAQ_QUESTIONS)} />
       <SectionStack>
         <SectionIntro>
-          <Eyebrow>{i18n._(msg`Getting started`)}</Eyebrow>
+          <Eyebrow>{i18n._(msg`Questions`)}</Eyebrow>
           <HeadingMeasure>
             <Heading as="h2" size="lg" weight="light">
-              {i18n._(msg`Connect *your Slack workspace*`)}
+              {i18n._(msg`Using Twenty *in Slack*`)}
             </Heading>
           </HeadingMeasure>
         </SectionIntro>
