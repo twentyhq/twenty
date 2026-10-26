@@ -26,15 +26,7 @@ export const oneSucceededWorkflowRunQueryResult = {
                   userId: '{{trigger.userId}}',
                 },
               },
-              outputSchema: {
-                link: {
-                  tab: 'test',
-                  icon: 'IconVariable',
-                  label: 'Generate Function Output',
-                  isLeaf: true,
-                },
-                _outputSchemaType: 'LINK',
-              },
+              outputSchema: {},
               errorHandlingOptions: {
                 retryOnFailure: {
                   value: 0,
@@ -55,15 +47,7 @@ export const oneSucceededWorkflowRunQueryResult = {
                 logicFunctionId: '605efcda-6689-43b3-b24c-2eb76948f523',
                 logicFunctionInput: {},
               },
-              outputSchema: {
-                link: {
-                  tab: 'test',
-                  icon: 'IconVariable',
-                  label: 'Generate Function Output',
-                  isLeaf: true,
-                },
-                _outputSchemaType: 'LINK',
-              },
+              outputSchema: {},
               errorHandlingOptions: {
                 retryOnFailure: {
                   value: 0,
@@ -4500,15 +4484,7 @@ export const oneSucceededWorkflowRunQueryResult = {
                 userId: '{{trigger.userId}}',
               },
             },
-            outputSchema: {
-              link: {
-                tab: 'test',
-                icon: 'IconVariable',
-                label: 'Generate Function Output',
-                isLeaf: true,
-              },
-              _outputSchemaType: 'LINK',
-            },
+            outputSchema: {},
             errorHandlingOptions: {
               retryOnFailure: {
                 value: 0,
@@ -4529,15 +4505,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               logicFunctionId: '605efcda-6689-43b3-b24c-2eb76948f523',
               logicFunctionInput: {},
             },
-            outputSchema: {
-              link: {
-                tab: 'test',
-                icon: 'IconVariable',
-                label: 'Generate Function Output',
-                isLeaf: true,
-              },
-              _outputSchemaType: 'LINK',
-            },
+            outputSchema: {},
             errorHandlingOptions: {
               retryOnFailure: {
                 value: 0,
