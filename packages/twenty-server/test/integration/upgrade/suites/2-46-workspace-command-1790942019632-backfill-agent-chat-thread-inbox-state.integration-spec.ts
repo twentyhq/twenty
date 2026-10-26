@@ -65,7 +65,8 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
   const runCommand = (
     command:
       | AddAgentChatThreadParticipantObjectCommand
-      | BackfillAgentChatThreadInboxStateCommand,
+      | BackfillAgentChatThreadInboxStateCommand
+      | AddAgentChatThreadSubscriptionsCommand,
     direction: 'up' | 'down',
   ) =>
     workspaceOrmManager.executeInWorkspaceContext(
@@ -278,10 +279,8 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
   afterAll(async () => {
     await runCommand(objectCommand, 'up');
     await runCommand(backfillCommand, 'up');
-    await workspaceOrmManager.executeInWorkspaceContext(
-      () => subscriptionsCommand.up(RUN_ON_WORKSPACE_ARGS),
-      buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
-    );
+    // The object's down dropped the subscription fields the suites that follow use
+    await runCommand(subscriptionsCommand, 'up');
     await global.testDataSource.query(
       `DELETE FROM ${SCHEMA}."recordShare" share
        USING ${SCHEMA}."agentChatThreadParticipant" participant
