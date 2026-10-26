@@ -239,16 +239,11 @@ export class ApplicationMessageSendService {
               },
             });
 
-          const recencyByMessageId = new Map(
-            messageIds.map((messageId, index) => [messageId, index]),
-          );
           const byRecency = <TRow extends { messageId: string }>(
             rows: TRow[],
           ): TRow[] =>
-            [...rows].sort(
-              (rowA, rowB) =>
-                (recencyByMessageId.get(rowA.messageId) ?? 0) -
-                (recencyByMessageId.get(rowB.messageId) ?? 0),
+            messageIds.flatMap((messageId) =>
+              rows.filter((row) => row.messageId === messageId),
             );
 
           const threadExternalId = byRecency(associations).find((association) =>

@@ -45,20 +45,18 @@ export class ConnectionProviderAuthorizationStateService {
   }
 
   async verifyOrThrow(state: string): Promise<AppOAuthStateJwtPayload> {
-    let verified: AppOAuthStateJwtPayload;
+    const verified: AppOAuthStateJwtPayload = await this.jwtWrapperService
+      .verifyJwtToken(state)
+      .catch((error: unknown) => {
+        this.logger.warn(
+          `Rejected OAuth state: ${error instanceof Error ? error.message : String(error)}`,
+        );
 
-    try {
-      verified = await this.jwtWrapperService.verifyJwtToken(state);
-    } catch (error) {
-      this.logger.warn(
-        `Rejected OAuth state: ${error instanceof Error ? error.message : String(error)}`,
-      );
-
-      throw new ConnectionProviderException(
-        'OAuth state signature invalid or expired',
-        ConnectionProviderExceptionCode.INVALID_STATE,
-      );
-    }
+        throw new ConnectionProviderException(
+          'OAuth state signature invalid or expired',
+          ConnectionProviderExceptionCode.INVALID_STATE,
+        );
+      });
 
     if (verified.type !== JwtTokenTypeEnum.APP_OAUTH_STATE) {
       throw new ConnectionProviderException(
