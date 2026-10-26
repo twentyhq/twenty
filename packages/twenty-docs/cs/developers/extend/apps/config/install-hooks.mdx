@@ -1,7 +1,6 @@
 ---
 title: Instalační hooky
 description: Spouštějte logiku během životního cyklu instalace, upgradu nebo odinstalace – vložte výchozí data, zálohujte záznamy, ověřte upgrade, vyčistěte externí prostředky.
-icon: wrench
 ---
 
 Instalační hooky jsou speciální logické funkce, které se spouštějí během životního cyklu instalace, upgradu nebo odinstalace. Sdílí stejný runtime handleru jako běžné [logické funkce](/cs/developers/extend/apps/logic/logic-functions), ale deklarují se pomocí vlastních definičních funkcí a fungují mimo běžný model triggerů (HTTP, cron, databázové události). Instalační hooky přijímají `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` je při čisté instalaci `undefined`); hook pro odinstalaci přijímá `UninstallPayload` (`{ version?: string }` — verze, která se odstraňuje).

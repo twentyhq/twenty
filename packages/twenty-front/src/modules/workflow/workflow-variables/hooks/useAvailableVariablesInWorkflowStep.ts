@@ -10,6 +10,7 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOutputSchema';
+import { shouldSuggestTestingStep } from '@/workflow/workflow-variables/utils/shouldSuggestTestingStep';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 export const useAvailableVariablesInWorkflowStep = ({
@@ -47,7 +48,14 @@ export const useAvailableVariablesInWorkflowStep = ({
         fieldTypesToExclude,
       });
 
-      if (!isDefined(outputSchema) || isEmptyObject(outputSchema)) {
+      if (
+        !isDefined(outputSchema) ||
+        (isEmptyObject(outputSchema) &&
+          !shouldSuggestTestingStep({
+            step: stepOutputSchema,
+            currentPath: [],
+          }))
+      ) {
         return undefined;
       }
 

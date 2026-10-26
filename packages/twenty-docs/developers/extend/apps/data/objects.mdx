@@ -1,8 +1,11 @@
 ---
 title: Objects
 description: Declare new record types — custom tables with their own fields — using defineObject.
-icon: "table"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Custom **objects** are new record types your app adds to a workspace — Post Card, Invoice, Subscription, anything specific to your domain. Each object declares its schema (fields, relations, default values) and a stable universal identifier that survives across syncs and deploys.
 
@@ -55,10 +58,30 @@ export default defineObject({
       icon: 'IconSend',
       defaultValue: `'${PostCardStatus.DRAFT}'`,
       options: [
-        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
-        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
-        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
-        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+        {
+          value: PostCardStatus.DRAFT,
+          label: 'Draft',
+          position: 0,
+          color: 'gray',
+        },
+        {
+          value: PostCardStatus.SENT,
+          label: 'Sent',
+          position: 1,
+          color: 'orange',
+        },
+        {
+          value: PostCardStatus.DELIVERED,
+          label: 'Delivered',
+          position: 2,
+          color: 'green',
+        },
+        {
+          value: PostCardStatus.RETURNED,
+          label: 'Returned',
+          position: 3,
+          color: 'orange',
+        },
       ],
     },
     {
@@ -96,25 +119,30 @@ export default defineObject({
 - `isSearchable: true`, on a field, includes its values in the object's full-text search (global search and the command menu). It requires the object itself to be searchable and a text-compatible field type. An omitted value means not searchable, except for the object's label identifier field, which is always searchable and cannot be opted out. Each sync enforces the declared state, so a field toggled searchable from Settings reverts on your app's next sync unless the manifest declares it.
 - `isAuditLogged: false`, on a field, keeps its changes out of the record timeline. It defaults to `true`, except on a `POSITION` field, whose changes render blank in the timeline and are never logged. Set it on fields your app rewrites on a schedule, such as a last-contact timestamp or a rollup relation, so each sync does not add an activity row to every record it touches. An update whose whole diff is made of non audit logged fields produces no timeline activity at all. Like `isSearchable`, each sync enforces the declared state.
 - Inline fields defined here do **not** need an `objectUniversalIdentifier` — it's inherited from the parent object. Use [`defineField()`](/developers/extend/apps/data/extending-objects) to add fields to objects you don't own.
-- You can scaffold new objects with `yarn twenty dev:add object`, which guides you through naming, fields, and relationships. See [Architecture → Scaffolding entities](/developers/extend/apps/getting-started/scaffolding).
+- You can scaffold new objects with `twenty app add object`, which guides you through naming, fields, and relationships. See [Architecture → Scaffolding entities](/developers/extend/apps/getting-started/scaffolding).
 
 <Note>
-**Base fields are added automatically.** When you define a custom object, Twenty creates standard fields like `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy`, and `deletedAt` for you. You don't need to declare them in your `fields` array — only your custom fields. You can override a default field by declaring one with the same name, but this is rarely a good idea.
+  **Base fields are added automatically.** When you define a custom object,
+  Twenty creates standard fields like `id`, `name`, `createdAt`, `updatedAt`,
+  `createdBy`, `updatedBy`, and `deletedAt` for you. You don't need to declare
+  them in your `fields` array — only your custom fields. You can override a
+  default field by declaring one with the same name, but this is rarely a good
+  idea.
 </Note>
 
 ## Field types
 
 The full set of `FieldType` values, exported from `twenty-sdk/define`:
 
-| Category | Types |
-|----------|-------|
-| Text | `TEXT`, `RICH_TEXT`, `ARRAY` (of strings), `RAW_JSON` |
-| Numeric | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (arbitrary precision), `RATING`, `POSITION` |
-| Dates | `DATE`, `DATE_TIME` |
-| Choice | `BOOLEAN`, `SELECT`, `MULTI_SELECT` |
-| Composite | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS` (`universalSettings.type`: `'url'` (default) / `'domain'` — a domain field stores the bare host, so `https://www.acme.com/careers` is written as `acme.com`, and a value that is not a host is rejected), `CURRENCY`, `ACTOR`, `FILES` |
-| Identifiers & relations | `UUID`, `RELATION`, `MORPH_RELATION` (see [Relations](/developers/extend/apps/data/relations)) |
-| System | `TS_VECTOR` (full-text search vector, managed by the server) |
+| Category                | Types                                                                                                                                                                                                                                                                                      |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Text                    | `TEXT`, `RICH_TEXT`, `ARRAY` (of strings), `RAW_JSON`                                                                                                                                                                                                                                      |
+| Numeric                 | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (arbitrary precision), `RATING`, `POSITION`                                                                                                                                                           |
+| Dates                   | `DATE`, `DATE_TIME`                                                                                                                                                                                                                                                                        |
+| Choice                  | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                                                                                                                                                                                        |
+| Composite               | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS` (`universalSettings.type`: `'url'` (default) / `'domain'` — a domain field stores the bare host, so `https://www.acme.com/careers` is written as `acme.com`, and a value that is not a host is rejected), `CURRENCY`, `ACTOR`, `FILES` |
+| Identifiers & relations | `UUID`, `RELATION`, `MORPH_RELATION` (see [Relations](/developers/extend/apps/data/relations))                                                                                                                                                                                             |
+| System                  | `TS_VECTOR` (full-text search vector, managed by the server)                                                                                                                                                                                                                               |
 
 Composite types store multiple sub-fields (e.g. `FULL_NAME` = first + last name; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` and `MULTI_SELECT` require an `options` array as in the example above.
 
@@ -144,7 +172,12 @@ The same convention applies to string sub-fields of composite defaults (e.g. `{ 
 Changes to `isNullable` are applied on every sync, including syncs that update an existing field — so you can flip a field's nullability by editing the manifest and re-syncing.
 
 <Note>
-**Making an existing field non-nullable requires a default value.** When you change a field to `isNullable: false`, you must also provide a non-null `defaultValue`. The default backfills any existing `NULL` rows before the `NOT NULL` constraint is applied; without it the sync fails with `Default value cannot be null for non-nullable fields`. Relation fields and `TS_VECTOR` fields are always nullable, so `isNullable` has no effect on them.
+  **Making an existing field non-nullable requires a default value.** When you
+  change a field to `isNullable: false`, you must also provide a non-null
+  `defaultValue`. The default backfills any existing `NULL` rows before the `NOT
+  NULL` constraint is applied; without it the sync fails with `Default value
+  cannot be null for non-nullable fields`. Relation fields and `TS_VECTOR`
+  fields are always nullable, so `isNullable` has no effect on them.
 </Note>
 
 ```ts
@@ -163,3 +196,5 @@ Changes to `isNullable` are applied on every sync, including syncs that update a
 - **Connect this object to others** — see [Relations](/developers/extend/apps/data/relations) for the bidirectional relation pattern.
 - **Add fields to objects from other apps** — see [Extending Objects](/developers/extend/apps/data/extending-objects) for `defineField()`.
 - **Display this object in the UI** — see [Navigation Menu Items](/developers/extend/apps/layout/navigation-menu-items) to add a sidebar entry; see [Views](/developers/extend/apps/layout/views) to add custom list configurations.
+
+<PageBanner illustration="card-page-objects" />

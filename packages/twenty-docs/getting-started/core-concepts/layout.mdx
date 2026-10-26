@@ -1,10 +1,12 @@
 ---
 title: Layout
 description: How to navigate, browse, and view records in Twenty.
-icon: "table-columns"
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## The main layout
 
@@ -69,8 +71,13 @@ Each view saves its own filters, sorting, and field visibility. Share views with
 
 When you open a record, the detail page is built from configurable **tabs** and **widgets**. Add, remove, reorder, and resize widgets on a grid — fields, related records, emails, timeline, tasks, notes, files, charts, iframes, and more. Each object type has its own layout.
 
-<Card title="Full Layout guide" icon="arrow-right" href="/user-guide/layout/overview">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/user-guide/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+  <CardTitle>Full Layout guide</CardTitle>
   Sidebar, views, record pages — detailed reference and how-tos.
 </Card>
+</CardGroup>
 
 <VimeoEmbed videoId="1185511790" title="Layout" />
+
+<PageBanner illustration="getting-started-layout" />

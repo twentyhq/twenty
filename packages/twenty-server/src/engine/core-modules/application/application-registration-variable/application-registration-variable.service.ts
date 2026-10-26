@@ -138,7 +138,6 @@ export class ApplicationRegistrationVariableService {
       if (existing) {
         await variableRepository.update(existing.id, {
           description: schema.description ?? '',
-          isSecret: schema.isSecret ?? true,
           isRequired,
           isDeprecated,
           type: schema.type ?? FieldMetadataType.TEXT,
