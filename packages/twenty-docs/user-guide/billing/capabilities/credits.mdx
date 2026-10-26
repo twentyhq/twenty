@@ -51,20 +51,38 @@ Cost varies by model: a lightweight model is dramatically cheaper per message th
 
 ## What's included
 
-Every subscription includes credits, and the amount depends on your **billing cycle**, not your plan:
+Every subscription includes **workspace credits**, shared by the whole workspace. The amount depends on your plan and your number of users:
 
-| Billing Cycle | Included Credits | Equivalent Usage |
-|---------------|------------------|------------------|
-| Monthly | 5 / month | ~\$5 of usage each month |
-| Yearly | 50 / year | ~\$50 of usage each year |
+| Plan | Included Credits | Equivalent Usage |
+|------|------------------|------------------|
+| Pro | 1 per user per month | ~\$1 of usage per user each month |
+| Organization | 4 per user per month | ~\$4 of usage per user each month |
+| Legacy plans | 5 per month, or 50 per year on yearly billing | ~\$5 of usage each month |
 
-These credits are designed to cover everyday automation comfortably. Five credits cover tens of thousands of standard automation steps or hundreds of quick AI messages — though a handful of large, multi-step agent tasks can use them up faster. You can top up at any time (see below).
+On yearly billing, the allowance covers the whole year: 12 credits per user on Pro and 48 on Organization.
+
+These credits are designed to cover everyday automation comfortably. One credit covers about 10,000 standard workflow steps or hundreds of quick AI messages, though a handful of large, multi-step agent tasks can use them up faster. You can add a credit pack at any time (see below).
+
+## Personal AI usage
+
+On the Pro and Organization plans, each member also gets a weekly AI allowance of their own. AI chat and web search use it before workspace credits:
+
+| Plan | Personal AI Usage |
+|------|-------------------|
+| Pro | About 100 AI tasks per member per week |
+| Organization | About 500 AI tasks per member per week |
+
+An AI task is one chat request with the default model; smarter models use more. The allowance renews every Monday at 00:00 UTC. AI agents in workflows always run on workspace credits.
+
+When a member runs out, their chats continue on workspace credits until the allowance renews. Members with the **Billing** settings permission can make those chats stop instead, under **Settings → Billing**. Legacy plans have no personal AI usage, so AI chat runs on workspace credits.
 
 ## Credit rollover
 
-Unused credits roll over automatically to the next billing period.
+Included credits on the Pro and Organization plans are spent first and renew each billing period. They don't roll over.
 
-- **Cap**: Rollover is capped at one period's full allocation, so you'll never carry over more than your billing cycle provides per period.
+Unused credits from a credit pack, and the included credits of legacy plans, roll over automatically to the next billing period.
+
+- **Cap**: Rollover is capped at one period's allocation, so these credits never add up to more than twice what a period provides.
 - **Visibility**: When you have rollover credits, they appear as a separate **Rollover Credits** line in **Settings → Billing**, alongside your **Total Available** balance.
 
 ## Monitoring usage
@@ -79,7 +97,7 @@ Reviewing this regularly makes it easy to spot a heavy workflow early and decide
 
 ## Need more credits?
 
-If you run out — or want a buffer before a big automation push — you can buy additional credit packs at any time:
+If you run out, or want a buffer before a big automation push, you can add a credit pack at any time. Packs cost \$1 per credit, from \$20 per month, and renew with your subscription:
 
 1. Go to **Settings → Billing**
 2. Click the **Increase** button

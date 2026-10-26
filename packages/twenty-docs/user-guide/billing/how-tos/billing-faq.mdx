@@ -9,24 +9,21 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 <AccordionGroup>
 <Accordion title="Can I use Twenty for free while self-hosting?">
-Yes, you can use Twenty for free while self-hosting. You will get access to everything included in the Pro (Cloud) plan, except the support from our core team. Support is accessible via our Discord community.
+Yes, you can use Twenty for free while self-hosting. You will get access to everything included in the Pro (Cloud) plan plus custom roles, but not the support from our core team. Support is accessible via our Discord community.
 
 If you want to self-host and need the Premium features (SSO, row-level permissions and more), you can choose the paid Organization (Self-Hosted) license. This also includes support from the Twenty team and removes the requirement to publish custom code as open-source before distributing.
 </Accordion>
 
 <Accordion title="What are the Premium features?">
-Premium features are only available on the Organization plans (Cloud or Self-Hosted):
-- **SSO integration**: Single Sign-On with your identity provider
-- **Row-level permissions**: Fine-grained access control at the record level
-- **AI usage data**: Track AI consumption across the workspace
-- **Audit logs**: Check what each workspace member has been doing
-- **Email campaigns**: Plan which emails should be sent (available soon)
-- **Unlimited workspaces**: Create as many workspaces as you want (self-hosted only)
-- **Private source code**: No requirement to publish changes to a publicly available repository (self-hosted only)
+Premium features are only available on the Organization plans (Cloud or Self-Hosted), for example row-level permissions, SSO and audit logs. On Cloud, custom roles are a Premium feature too. See the full list in [Pricing Plans](/user-guide/billing/capabilities/pricing-plans#premium-features).
 </Accordion>
 
 <Accordion title="Are the Cloud and Self-Hosted Organization plans the same?">
-They offer the same premium features. However, a cloud subscription cannot be used for self-hosted deployments. Self-hosted requires an Organization key.
+They offer the same premium features, and Organization (Cloud) also includes personal AI usage and workspace credits. However, a cloud subscription cannot be used for self-hosted deployments. Self-hosted requires an Organization key.
+</Accordion>
+
+<Accordion title="What is personal AI usage?">
+On the Pro and Organization plans, each member gets a weekly AI allowance for AI chat and web search: about 100 AI tasks per week on Pro and about 500 on Organization. It is used before workspace credits and renews every Monday. See [Credits](/user-guide/billing/capabilities/credits#personal-ai-usage).
 </Accordion>
 
 <Accordion title="Do you offer free seats for view-only users?">
@@ -54,9 +51,10 @@ You will find this under `Settings → Billing`.
 </Accordion>
 
 <Accordion title="How many workflow credits do we have?">
-The number of credits depends on your billing cycle, not your plan:
-- **Monthly subscriptions**: 5 credits per month
-- **Yearly subscriptions**: 50 credits per year
+Workflows use your workspace credits, and the number depends on your plan and your number of users:
+- **Pro**: 1 credit per user per month
+- **Organization**: 4 credits per user per month
+- **Legacy plans**: 5 credits per month, or 50 per year on yearly billing
 </Accordion>
 
 <Accordion title="How does workflow credit consumption work?">
