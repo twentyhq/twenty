@@ -1,10 +1,11 @@
 ---
 title: Concepts
 description: How Twenty apps work — entity model, sandboxing, and the install lifecycle.
-icon: 'sitemap'
 ---
 
-Twenty apps are TypeScript packages that extend your workspace with custom objects, logic, UI components, and AI capabilities. They run on the Twenty platform with full sandboxing and permission controls.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## How apps work
 
@@ -88,36 +89,27 @@ your-app/
 
 ## Next steps
 
-<CardGroup cols={2}>
-  <Card
-    title="Config"
-    icon="screwdriver-wrench"
-    href="/developers/extend/apps/config/overview"
-  >
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/developers/extend/apps/config/overview" img="/images/documentation/section-overview-icons-v1/apps-config.svg">
+    <CardTitle>Config</CardTitle>
     Application identity, default role, and install and uninstall hooks.
   </Card>
-  <Card
-    title="Data"
-    icon="database"
-    href="/developers/extend/apps/data/overview"
-  >
+  <Card href="/developers/extend/apps/data/overview" img="/images/documentation/section-overview-icons-v1/apps-data.svg">
+    <CardTitle>Data</CardTitle>
     Objects, fields, and bidirectional relations.
   </Card>
-  <Card title="Logic" icon="bolt" href="/developers/extend/apps/logic/overview">
+  <Card href="/developers/extend/apps/logic/overview" img="/images/documentation/section-overview-icons-v1/apps-logic.svg">
+    <CardTitle>Logic</CardTitle>
     Logic functions, skills, agents, and OAuth connections.
   </Card>
-  <Card
-    title="Layout"
-    icon="table-columns"
-    href="/developers/extend/apps/layout/overview"
-  >
+  <Card href="/developers/extend/apps/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Layout</CardTitle>
     Views, navigation, page layouts, front components.
   </Card>
-  <Card
-    title="Operations"
-    icon="rocket"
-    href="/developers/extend/apps/operations/overview"
-  >
+  <Card href="/developers/extend/apps/operations/overview" img="/images/documentation/section-overview-icons-v1/apps-operations.svg">
+    <CardTitle>Operations</CardTitle>
     CLI, testing, remotes, CI, and publishing your app.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-apps" />

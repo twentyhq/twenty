@@ -6,7 +6,6 @@ import {
   type ApplicationVariableType,
 } from 'twenty-shared/application';
 
-import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type UniversalFlatApplicationVariable } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-application-variable.type';
 
 export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
@@ -15,7 +14,6 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     universalIdentifier,
     description,
     label,
-    encryptedValue,
     defaultValue,
     isSecret,
     isDeprecated,
@@ -30,7 +28,6 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     universalIdentifier: string;
     description?: string;
     label?: string;
-    encryptedValue: EncryptedString | null;
     defaultValue: string | null;
     isSecret?: boolean;
     isDeprecated?: boolean;
@@ -45,7 +42,6 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       universalIdentifier,
       applicationUniversalIdentifier,
       key,
-      value: encryptedValue,
       description: description ?? '',
       label: label ?? '',
       isSecret: isSecret ?? false,

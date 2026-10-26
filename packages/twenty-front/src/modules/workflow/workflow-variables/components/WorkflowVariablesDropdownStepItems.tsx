@@ -2,6 +2,7 @@ import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { WorkflowVariableSearchResultItems } from '@/workflow/workflow-variables/components/WorkflowVariableSearchResultItems';
+import { WorkflowVariablesDropdownTestStepItem } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownTestStepItem';
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
@@ -9,6 +10,7 @@ import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/g
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
+import { shouldSuggestTestingStep } from '@/workflow/workflow-variables/utils/shouldSuggestTestingStep';
 import { getWorkflowVariableRecordObjectDisplay } from '@/workflow/workflow-variables/utils/getWorkflowVariableRecordObjectDisplay';
 import {
   getWorkflowVariableSpecialItems,
@@ -140,6 +142,9 @@ export const WorkflowVariablesDropdownStepItems = ({
       />
       <Dropdown.Separator />
       <Dropdown.Section scrollable>
+        {shouldSuggestTestingStep({ step, currentPath }) && (
+          <WorkflowVariablesDropdownTestStepItem step={step} />
+        )}
         {isSearching ? (
           <WorkflowVariableSearchResultItems
             searchResults={searchResults}

@@ -3,8 +3,12 @@ title: Storybook helpers
 description: Present component previews and variant catalogs with twenty-ui/testing.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import ComponentStorybookLayoutReference from '/snippets/ui/generated/testing/component-storybook-layout.mdx';
 import GroupedCatalogReference from '/snippets/ui/generated/testing/grouped-catalog.mdx';
+
+## Overview
 
 `twenty-ui/testing` exposes Storybook decorators, preview layout helpers, and media-query overrides. Configure styles and a [ThemeProvider](/ui/theming) in your Storybook preview before rendering themed components.
 
@@ -149,3 +153,5 @@ Stories embedded in the documentation must be presentational and have no `play` 
 Each component guide's first embed must reference a story exported as `Display`. Give every embed a descriptive title for its iframe and enough height to show the example. The shared preview supplies light and dark tabs and a link to Storybook, where readers can use controls to explore props.
 
 Run `npx nx check:ui-stories twenty-docs` to check the required display, preview titles, references, and presentation rules. Run `npx nx check:ui twenty-docs` to validate the generated API references and typecheck copyable examples.
+
+<PageBanner illustration="card-page-testing" />

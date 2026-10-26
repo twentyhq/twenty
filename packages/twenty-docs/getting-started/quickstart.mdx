@@ -1,10 +1,12 @@
 ---
 title: Quickstart
 description: Get Twenty up and running in under 5 minutes — on the cloud or self-hosted.
-icon: "play"
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Signup
 
@@ -55,17 +57,23 @@ Use the Command Menu (`Cmd+K` / `Ctrl+K`) to import People, Companies, Opportuni
 
 ## Next steps
 
-<CardGroup cols={2}>
-  <Card title="Learn the layout" icon="table-columns" href="/getting-started/core-concepts/layout">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/getting-started/core-concepts/layout" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Learn the layout</CardTitle>
     Sidebar, views, command menu, side panel.
   </Card>
-  <Card title="Build Workflows" icon="bolt" href="/user-guide/workflows/overview">
+  <Card href="/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows-belt-v1.svg">
+    <CardTitle>Build Workflows</CardTitle>
     Automate your business processes.
   </Card>
-  <Card title="Create Views" icon="table" href="/user-guide/layout/overview">
+  <Card href="/user-guide/views-pipelines/overview" img="/images/documentation/section-overview-icons-v1/views-pipelines.svg">
+    <CardTitle>Create Views</CardTitle>
     Table, kanban, calendar — filter and sort your data.
   </Card>
-  <Card title="Explore the API" icon="plug" href="/developers/extend/api">
+  <Card href="/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
+    <CardTitle>Explore the API</CardTitle>
     Schema-per-tenant REST and GraphQL.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="getting-started-quickstart" />

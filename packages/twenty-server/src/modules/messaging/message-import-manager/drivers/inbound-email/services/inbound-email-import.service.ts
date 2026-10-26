@@ -136,10 +136,12 @@ export class InboundEmailImportService {
         }
 
         await this.messagingSaveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
-          [message],
-          messageChannel,
-          connectedAccount,
-          workspaceId,
+          {
+            messagesToSave: [message],
+            messageChannel,
+            connectedAccount,
+            workspaceId,
+          },
         );
       },
       buildSystemAuthContext(workspaceId),

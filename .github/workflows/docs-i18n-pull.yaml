@@ -66,18 +66,18 @@ jobs:
       # Install Crowdin CLI for downloading translations
       - name: Install Crowdin CLI
         if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-        run: npm install -g @crowdin/cli
+        run: npm install -g @crowdin/cli@5.5.0
 
       - name: Pre-translate untranslated strings
         if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: |
-          COMMON="--config .github/crowdin-docs.yml --token $CROWDIN_PERSONAL_TOKEN --base-url https://twenty.api.crowdin.com --translate-untranslated-only --no-progress"
+          COMMON="--config .github/crowdin-docs.yml --token $CROWDIN_PERSONAL_TOKEN --base-url https://twenty.api.crowdin.com --scope untranslated --no-progress"
           echo "=== TM pre-translate (perfect matches only) ==="
-          crowdin pre-translate --method tm --translate-with-perfect-match-only $COMMON || echo "::warning::TM pre-translate failed (non-blocking)"
+          crowdin auto-translate --method tm --translate-with-perfect-match-only $COMMON || echo "::warning::TM pre-translate failed (non-blocking)"
           echo "=== MT pre-translate (engine 2: Crowdin Translate) ==="
-          crowdin pre-translate --method mt --engine-id 2 $COMMON || echo "::warning::MT pre-translate failed (non-blocking)"
+          crowdin auto-translate --method mt --engine-id 2 $COMMON || echo "::warning::MT pre-translate failed (non-blocking)"
           echo "=== AI pre-translate (prompt 1; covers ko/tr + markup MT skips) ==="
-          crowdin pre-translate --method ai --ai-prompt 1 $COMMON || echo "::warning::AI pre-translate failed (non-blocking)"
+          crowdin auto-translate --method ai --ai-prompt 1 $COMMON || echo "::warning::AI pre-translate failed (non-blocking)"
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
@@ -100,16 +100,13 @@ jobs:
 
           for lang in $LANGUAGES; do
             echo "=== Pulling translations for $lang ==="
-            if ! crowdin download \
+            if ! crowdin download translations \
               --config .github/crowdin-docs.yml \
               --token "$CROWDIN_PERSONAL_TOKEN" \
               --base-url "https://twenty.api.crowdin.com" \
               --language "$lang" \
-              --skip-untranslated-strings=false \
-              --skip-untranslated-files=false \
-              --export-only-approved=false \
               --verbose; then
-              echo "::warning::Crowdin download failed for $lang (likely a server-side build failure); its translations will be stale until fixed."
+              echo "::warning::Crowdin download failed for $lang; its translations will be stale until fixed."
               FAILED_LANGUAGES="$FAILED_LANGUAGES $lang"
             fi
             echo ""
@@ -123,6 +120,9 @@ jobs:
       - name: Fix file permissions
         if: github.event_name != 'pull_request'
         run: sudo chown -R runner:docker . || true
+
+      - name: Restore translated JSX attributes
+        run: yarn docs:restore-attributes
 
       - name: Fix translated documentation links
         run: yarn docs:fix-links
