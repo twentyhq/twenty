@@ -24,6 +24,13 @@ const UNAUTHENTICATED_RESPONSE = JSON.stringify({
   errors: [{ extensions: { code: 'UNAUTHENTICATED' } }],
 });
 
+const SESSION_SUPERSEDED_RESPONSE = JSON.stringify({
+  data: {},
+  errors: [
+    { extensions: { code: 'UNAUTHENTICATED', subCode: 'SESSION_SUPERSEDED' } },
+  ],
+});
+
 const PERMISSION_DENIED_RESPONSE = JSON.stringify({
   data: { trackAnalytics: null },
   errors: [
@@ -315,37 +322,86 @@ describe('ApolloFactory', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it('should ignore an unauthenticated response from an older session', async () => {
-    let markRequestStarted!: () => void;
-    const requestStarted = new Promise<void>((resolve) => {
-      markRequestStarted = resolve;
-    });
-    let releaseResponse!: (response: { body: string }) => void;
-    const pendingResponse = new Promise<{ body: string }>((resolve) => {
-      releaseResponse = resolve;
-    });
+  const makeSupersededRequest = ({
+    retriedResponse,
+    context,
+  }: {
+    retriedResponse: string;
+    context?: Record<string, unknown>;
+  }) => {
+    fetchMock.mockResponseOnce(SESSION_SUPERSEDED_RESPONSE);
+    fetchMock.mockResponseOnce(retriedResponse);
 
-    fetchMock.mockResponse(() => {
-      markRequestStarted();
+    return makeRequestWithContext(context);
+  };
 
-      return pendingResponse;
-    });
-
-    rotateSessionGeneration();
-    const requestSessionGeneration = getSessionGeneration();
-    const request = makeRequest();
-
-    expect(requestSessionGeneration).not.toBeNull();
-
-    await requestStarted;
+  it('should resend a request rejected because a sign-in superseded its session', async () => {
     rotateSessionGeneration();
 
-    expect(getSessionGeneration()).not.toBe(requestSessionGeneration);
+    await makeSupersededRequest({
+      retriedResponse: JSON.stringify({
+        data: { trackAnalytics: { success: true } },
+      }),
+    });
 
-    releaseResponse({ body: UNAUTHENTICATED_RESPONSE });
-
-    await expect(request).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+  });
+
+  it('should sign out when the resent request is rejected as unauthenticated', async () => {
+    rotateSessionGeneration();
+
+    await expect(
+      makeSupersededRequest({ retriedResponse: UNAUTHENTICATED_RESPONSE }),
+    ).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not sign out when the resent request is superseded again', async () => {
+    rotateSessionGeneration();
+
+    await expect(
+      makeSupersededRequest({ retriedResponse: SESSION_SUPERSEDED_RESPONSE }),
+    ).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+  });
+
+  it('should neither resend nor sign out on a superseded request that must not be retried', async () => {
+    rotateSessionGeneration();
+
+    await expect(
+      makeSupersededRequest({
+        retriedResponse: UNAUTHENTICATED_RESPONSE,
+        context: { skipRetry: true },
+      }),
+    ).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+  });
+
+  it('should not resend a superseded request after sign out', async () => {
+    clearSessionGeneration();
+
+    await expect(
+      makeSupersededRequest({ retriedResponse: UNAUTHENTICATED_RESPONSE }),
+    ).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+  });
+
+  it('should not resend a request rejected for another reason', async () => {
+    rotateSessionGeneration();
+    fetchMock.mockResponseOnce(UNAUTHENTICATED_RESPONSE);
+
+    await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('should leave a permission denial alone', async () => {

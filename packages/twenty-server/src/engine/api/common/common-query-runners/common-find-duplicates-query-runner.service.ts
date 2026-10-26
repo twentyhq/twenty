@@ -227,6 +227,12 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     };
   }
 
+  protected getResultRecords(
+    results: CommonFindDuplicatesOutputItem[],
+  ): ObjectRecord[] {
+    return results.flatMap((duplicates) => duplicates.records);
+  }
+
   async processQueryResult(
     queryResult: CommonFindDuplicatesOutputItem[],
     flatObjectMetadata: FlatObjectMetadata,

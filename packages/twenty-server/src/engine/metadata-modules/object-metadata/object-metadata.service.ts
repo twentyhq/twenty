@@ -12,6 +12,7 @@ import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { computeInitialObjectViewOperationsOnObjectCreation } from 'src/engine/metadata-modules/view/utils/compute-initial-object-view-operations-on-object-creation.util';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -346,7 +347,12 @@ export class ObjectMetadataService {
         )
       ).workspaceCustomFlatApplication;
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
+      flatViewMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -354,6 +360,7 @@ export class ObjectMetadataService {
             'flatObjectMetadataMaps',
             'flatIndexMaps',
             'flatFieldMetadataMaps',
+            'flatViewMaps',
           ],
         },
       );
@@ -368,25 +375,30 @@ export class ObjectMetadataService {
         UniversalFlatObjectMetadata
       >;
       flatIndexToDeleteByUniversalIdentifier: Record<string, FlatIndexMetadata>;
+      flatViewToDeleteByUniversalIdentifier: Record<string, FlatView>;
     } = {
       flatFieldMetadatasToDeleteByUniversalIdentifier: {},
       flatIndexToDeleteByUniversalIdentifier: {},
       flatObjectMetadatasToDeleteByUniversalIdentifier: {},
+      flatViewToDeleteByUniversalIdentifier: {},
     };
 
     const {
       flatFieldMetadatasToDeleteByUniversalIdentifier,
       flatIndexToDeleteByUniversalIdentifier,
       flatObjectMetadatasToDeleteByUniversalIdentifier,
+      flatViewToDeleteByUniversalIdentifier,
     } = deleteObjectInputs.reduce((accumulator, deleteObjectInput) => {
       const {
         flatFieldMetadatasToDelete,
         flatObjectMetadataToDelete,
         flatIndexToDelete,
+        flatViewToDelete,
       } = fromDeleteObjectInputToFlatFieldMetadatasToDelete({
         flatObjectMetadataMaps,
         flatIndexMaps,
         flatFieldMetadataMaps,
+        flatViewMaps,
         deleteObjectInput,
       });
 
@@ -409,6 +421,13 @@ export class ObjectMetadataService {
           ...accumulator.flatObjectMetadatasToDeleteByUniversalIdentifier,
           [flatObjectMetadataToDelete.universalIdentifier]:
             flatObjectMetadataToDelete,
+        },
+        flatViewToDeleteByUniversalIdentifier: {
+          ...accumulator.flatViewToDeleteByUniversalIdentifier,
+          ...fromArrayToUniqueKeyRecord({
+            array: flatViewToDelete,
+            uniqueKey: 'universalIdentifier',
+          }),
         },
       };
     }, initialAccumulator);
@@ -452,6 +471,13 @@ export class ObjectMetadataService {
             fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatFieldMetadatasToDelete,
+              flatEntityToUpdate: [],
+            },
+            view: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: Object.values(
+                flatViewToDeleteByUniversalIdentifier,
+              ),
               flatEntityToUpdate: [],
             },
           },

@@ -215,6 +215,7 @@ export default defineConfig(({ mode }) => {
         '@nivo/arcs',
         '@react-spring/web',
         'd3-shape',
+        '@tiptap/pm/tables',
       ],
     },
 

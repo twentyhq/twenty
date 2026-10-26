@@ -375,6 +375,35 @@ export const activateCoreWorkflowVersion = async ({
   });
 };
 
+export const createDraftFromCoreWorkflowVersion = async ({
+  coreWorkflowId,
+  coreWorkflowVersionIdToCopy,
+  token,
+}: {
+  coreWorkflowId: string;
+  coreWorkflowVersionIdToCopy: string;
+  token?: string;
+}): Promise<{ id: string }> => {
+  const { createDraftFromCoreWorkflowVersion: draft } =
+    await coreWorkflowGraphqlRequest<{
+      createDraftFromCoreWorkflowVersion: { id: string };
+    }>({
+      query: `
+        mutation CreateDraftFromCoreWorkflowVersion(
+          $input: CreateDraftFromCoreWorkflowVersionInput!
+        ) {
+          createDraftFromCoreWorkflowVersion(input: $input) {
+            id
+          }
+        }
+      `,
+      variables: { input: { coreWorkflowId, coreWorkflowVersionIdToCopy } },
+      token,
+    });
+
+  return draft;
+};
+
 export const deactivateCoreWorkflowVersion = async ({
   coreWorkflowVersionId,
   token,

@@ -20,6 +20,7 @@ export const AuthExceptionCode = appendCommonExceptionCode({
   FORBIDDEN_EXCEPTION: 'FORBIDDEN_EXCEPTION',
   INSUFFICIENT_SCOPES: 'INSUFFICIENT_SCOPES',
   UNAUTHENTICATED: 'UNAUTHENTICATED',
+  SESSION_SUPERSEDED: 'SESSION_SUPERSEDED',
   APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED:
     'APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED',
   INVALID_DATA: 'INVALID_DATA',
@@ -62,6 +63,7 @@ const getAuthExceptionUserFriendlyMessage = (
     case AuthExceptionCode.INSUFFICIENT_SCOPES:
       return msg`Insufficient permissions.`;
     case AuthExceptionCode.UNAUTHENTICATED:
+    case AuthExceptionCode.SESSION_SUPERSEDED:
     case AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED:
       return msg`You must be authenticated to perform this action.`;
     case AuthExceptionCode.OAUTH_ACCESS_DENIED:
@@ -123,6 +125,7 @@ const getAuthExceptionStatusCode = (
     case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED:
     case AuthExceptionCode.INVALID_DATA:
     case AuthExceptionCode.UNAUTHENTICATED:
+    case AuthExceptionCode.SESSION_SUPERSEDED:
     case AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED:
     case AuthExceptionCode.USER_NOT_FOUND:
     case AuthExceptionCode.WORKSPACE_NOT_FOUND:

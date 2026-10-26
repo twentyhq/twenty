@@ -5,7 +5,7 @@
     "url": "git+https://github.com/twentyhq/twenty.git",
     "directory": "packages/twenty-client-sdk"
   },
-  "version": "2.51.0",
+  "version": "2.52.0",
   "sideEffects": false,
   "license": "MIT",
   "scripts": {

@@ -103,6 +103,7 @@ export const InviteTeam = () => {
                       type="email"
                       value={value}
                       placeholder={getPlaceholder(index)}
+                      aria-label={t`Teammate's email ${index + 1}`}
                       onBlur={onBlur}
                       error={error?.message}
                       onChange={onChange}
