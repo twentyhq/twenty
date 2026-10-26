@@ -13,4 +13,5 @@ export type NavigationMenuItemSectionListDndKitProps = {
     objectMetadataItem: EnrichedObjectMetadataItem,
     navigationMenuItemId: string,
   ) => void;
+  isAddMenuItemButtonHidden?: boolean;
 };

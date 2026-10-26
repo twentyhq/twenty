@@ -27,7 +27,8 @@ export const isNavigationMenuItemReadable = ({
   if (
     itemType === NavigationMenuItemType.FOLDER ||
     itemType === NavigationMenuItemType.LINK ||
-    itemType === NavigationMenuItemType.PAGE_LAYOUT
+    itemType === NavigationMenuItemType.PAGE_LAYOUT ||
+    itemType === NavigationMenuItemType.COMMAND
   ) {
     return true;
   }

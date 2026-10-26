@@ -111,6 +111,7 @@ export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspa
       link: null,
       icon: null,
       visibleItemLimit: null,
+      commandKey: null,
       color: null,
       position: workspaceSection.position,
       createdAt: now,

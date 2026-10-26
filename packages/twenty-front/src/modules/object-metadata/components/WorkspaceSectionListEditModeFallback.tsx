@@ -16,13 +16,17 @@ const StyledFallback = styled.div`
 
 type WorkspaceSectionListEditModeFallbackProps = Pick<
   NavigationMenuItemSectionListDndKitProps,
-  'filteredItems' | 'folderChildrenById' | 'onActiveObjectMetadataItemClick'
+  | 'filteredItems'
+  | 'folderChildrenById'
+  | 'onActiveObjectMetadataItemClick'
+  | 'isAddMenuItemButtonHidden'
 >;
 
 export const WorkspaceSectionListEditModeFallback = ({
   filteredItems,
   folderChildrenById,
   onActiveObjectMetadataItemClick,
+  isAddMenuItemButtonHidden = false,
 }: WorkspaceSectionListEditModeFallbackProps) => {
   const { containerId } = useContext(NavigationMenuItemContainerContext);
 
@@ -33,10 +37,12 @@ export const WorkspaceSectionListEditModeFallback = ({
         folderChildrenById={folderChildrenById}
         onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
       />
-      <WorkspaceSectionAddMenuItemButton
-        containerId={containerId}
-        position={filteredItems.length}
-      />
+      {!isAddMenuItemButtonHidden && (
+        <WorkspaceSectionAddMenuItemButton
+          containerId={containerId}
+          position={filteredItems.length}
+        />
+      )}
     </StyledFallback>
   );
 };

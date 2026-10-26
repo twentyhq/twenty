@@ -5,6 +5,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconAddressBook,
   IconBox,
+  IconCommand,
   IconHeart,
   IconInbox,
   IconLego,
@@ -53,6 +54,8 @@ export const NavigationMenuItemTypeTooltip = ({
     AI_CHAT_CHANNELS: { label: t`Channels`, Icon: IconHash },
     AI_CHAT_RECENTS: { label: t`Recent chats`, Icon: IconMessage },
     AI_AGENTS: { label: t`Agents`, Icon: IconLego },
+    COMMANDS: { label: t`Commands`, Icon: IconCommand },
+    COMMAND: { label: t`Command`, Icon: IconCommand },
   };
 
   const { label, Icon } = labelsByType[type];

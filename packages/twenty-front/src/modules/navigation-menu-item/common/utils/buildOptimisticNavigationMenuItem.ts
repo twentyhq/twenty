@@ -21,6 +21,7 @@ export const buildOptimisticNavigationMenuItem = (
   icon: input.icon ?? null,
   color: input.color ?? null,
   visibleItemLimit: input.visibleItemLimit ?? null,
+  commandKey: input.commandKey ?? null,
   applicationId: null,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),

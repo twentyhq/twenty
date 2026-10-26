@@ -5,6 +5,18 @@ import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-m
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
+  commandsSection: {
+    universalIdentifier: '20202020-b012-4b12-8b12-c0aba11c0012',
+    type: NavigationMenuItemType.COMMANDS,
+    position: -1,
+  },
+  commandsSectionSearch: {
+    universalIdentifier: '20202020-b013-4b13-8b13-c0aba11c0013',
+    type: NavigationMenuItemType.COMMAND,
+    commandKey: 'SEARCH',
+    folderUniversalIdentifier: '20202020-b012-4b12-8b12-c0aba11c0012',
+    position: 0,
+  },
   inboxSection: {
     universalIdentifier: '20202020-b00d-4b0d-8b0d-c0aba11c000d',
     type: NavigationMenuItemType.AI_CHAT_TRIAGE,
@@ -117,6 +129,26 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     ),
     icon: 'IconMessage',
     position: 0,
+  },
+  chatsTabCommands: {
+    universalIdentifier: '20202020-b014-4b14-8b14-c0aba11c0014',
+    type: NavigationMenuItemType.COMMANDS,
+    folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    position: -1,
+  },
+  chatsTabCommandsNewChat: {
+    universalIdentifier: '20202020-b015-4b15-8b15-c0aba11c0015',
+    type: NavigationMenuItemType.COMMAND,
+    commandKey: 'NEW_CHAT',
+    folderUniversalIdentifier: '20202020-b014-4b14-8b14-c0aba11c0014',
+    position: 0,
+  },
+  chatsTabCommandsSearch: {
+    universalIdentifier: '20202020-b016-4b16-8b16-c0aba11c0016',
+    type: NavigationMenuItemType.COMMAND,
+    commandKey: 'SEARCH',
+    folderUniversalIdentifier: '20202020-b014-4b14-8b14-c0aba11c0014',
+    position: 1,
   },
   chatsTabFavoriteChats: {
     universalIdentifier: '20202020-b00e-4b0e-8b0e-c0aba11c000e',

@@ -218,6 +218,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
   icon: 'IconPaw',
   color: 'green',
   visibleItemLimit: 10,
+  commandKey: 'SEARCH',
   position: 12,
   link: 'https://example.com/pets',
   folderUniversalIdentifier: '88888888-8888-4888-8888-888888888888',

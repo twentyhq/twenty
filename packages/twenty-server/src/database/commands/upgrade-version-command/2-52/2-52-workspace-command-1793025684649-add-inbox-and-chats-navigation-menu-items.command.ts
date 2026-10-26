@@ -132,6 +132,7 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
       icon,
       color: null,
       visibleItemLimit,
+      commandKey: null,
       position,
       createdAt: now,
       updatedAt: now,

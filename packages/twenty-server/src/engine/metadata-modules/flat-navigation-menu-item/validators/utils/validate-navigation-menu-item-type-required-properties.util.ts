@@ -2,6 +2,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg, t } from '@lingui/core/macro';
 import {
   type AssertUnreachable,
+  NAVIGATION_MENU_ITEM_COMMAND_KEYS,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
 import {
@@ -54,6 +55,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     viewUniversalIdentifier,
     pageLayoutUniversalIdentifier,
     agentChatChannelUniversalIdentifier,
+    commandKey,
   } = flatNavigationMenuItem;
 
   if (!isDefined(type)) {
@@ -138,8 +140,20 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     case NavigationMenuItemType.AI_CHAT_FAVORITES:
     case NavigationMenuItemType.AI_CHAT_RECENTS:
     case NavigationMenuItemType.AI_AGENTS:
-    case NavigationMenuItemType.AI_CHAT_CHANNELS: {
+    case NavigationMenuItemType.AI_CHAT_CHANNELS:
+    case NavigationMenuItemType.COMMANDS: {
       return [];
+    }
+    case NavigationMenuItemType.COMMAND: {
+      return isDefined(commandKey) &&
+        NAVIGATION_MENU_ITEM_COMMAND_KEYS.includes(commandKey)
+        ? []
+        : [
+            buildInvalidInputError(
+              t`A valid commandKey is required for COMMAND type`,
+              msg`A valid commandKey is required for COMMAND type`,
+            ),
+          ];
     }
     case NavigationMenuItemType.PAGE_LAYOUT: {
       return validateUuidProperty({

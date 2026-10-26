@@ -28,6 +28,13 @@ const WORKFLOWS_FOLDER_ITEM_NAMES = [
   'workflowsFolderAllWorkflowVersions',
 ] as const;
 
+const HOME_COMMAND_NAMES = ['commandsSectionSearch'] as const;
+
+const CHATS_TAB_COMMAND_NAMES = [
+  'chatsTabCommandsNewChat',
+  'chatsTabCommandsSearch',
+] as const;
+
 const CHATS_TAB_SECTION_NAMES = [
   'chatsTabFavoriteChats',
   'chatsTabChannels',
@@ -51,6 +58,69 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     ...createEmptyFlatEntityMaps(),
     byUserWorkspaceIdAndFolderId: {},
   };
+
+  const addCommandsSection = ({
+    sectionName,
+    commandNames,
+    folderId,
+  }: {
+    sectionName: 'commandsSection' | 'chatsTabCommands';
+    commandNames: readonly (
+      | (typeof HOME_COMMAND_NAMES)[number]
+      | (typeof CHATS_TAB_COMMAND_NAMES)[number]
+    )[];
+    folderId: string | null;
+  }) => {
+    const sectionDefinition = STANDARD_NAVIGATION_MENU_ITEMS[sectionName];
+    const sectionId = v4();
+
+    addFlatNavigationMenuItemToMapsAndUpdateIndex({
+      flatNavigationMenuItem:
+        createStandardNavigationMenuItemContainerFlatMetadata({
+          universalIdentifier: sectionDefinition.universalIdentifier,
+          type: sectionDefinition.type,
+          folderId,
+          folderUniversalIdentifier:
+            'folderUniversalIdentifier' in sectionDefinition
+              ? sectionDefinition.folderUniversalIdentifier
+              : null,
+          position: sectionDefinition.position,
+          navigationMenuItemId: sectionId,
+          workspaceId,
+          twentyStandardApplicationId,
+          now,
+        }),
+      flatNavigationMenuItemMaps,
+    });
+
+    for (const commandName of commandNames) {
+      const commandDefinition = STANDARD_NAVIGATION_MENU_ITEMS[commandName];
+
+      addFlatNavigationMenuItemToMapsAndUpdateIndex({
+        flatNavigationMenuItem:
+          createStandardNavigationMenuItemContainerFlatMetadata({
+            universalIdentifier: commandDefinition.universalIdentifier,
+            type: commandDefinition.type,
+            commandKey: commandDefinition.commandKey,
+            folderId: sectionId,
+            folderUniversalIdentifier:
+              commandDefinition.folderUniversalIdentifier,
+            position: commandDefinition.position,
+            navigationMenuItemId: v4(),
+            workspaceId,
+            twentyStandardApplicationId,
+            now,
+          }),
+        flatNavigationMenuItemMaps,
+      });
+    }
+  };
+
+  addCommandsSection({
+    sectionName: 'commandsSection',
+    commandNames: HOME_COMMAND_NAMES,
+    folderId: null,
+  });
 
   const inboxSectionDefinition = STANDARD_NAVIGATION_MENU_ITEMS.inboxSection;
 
@@ -179,6 +249,12 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
         now,
       }),
     flatNavigationMenuItemMaps,
+  });
+
+  addCommandsSection({
+    sectionName: 'chatsTabCommands',
+    commandNames: CHATS_TAB_COMMAND_NAMES,
+    folderId: chatsTabId,
   });
 
   for (const chatsTabSectionName of CHATS_TAB_SECTION_NAMES) {

@@ -62,5 +62,9 @@ export const buildCreateNavigationMenuItemInput = (
     input.visibleItemLimit = draftItem.visibleItemLimit;
   }
 
+  if (isDefined(draftItem.commandKey)) {
+    input.commandKey = draftItem.commandKey;
+  }
+
   return input;
 };

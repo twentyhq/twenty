@@ -1,5 +1,6 @@
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemCommandDisplay } from '@/navigation-menu-item/display/command/components/NavigationMenuItemCommandDisplay';
 import { NavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolder';
 import { NavigationMenuItemLinkDisplay } from '@/navigation-menu-item/display/link/components/NavigationMenuItemLinkDisplay';
 import { NavigationMenuItemObjectDisplay } from '@/navigation-menu-item/display/object/components/NavigationMenuItemObjectDisplay';
@@ -28,7 +29,21 @@ export const NavigationMenuItemDisplay = ({
     case NavigationMenuItemType.AI_CHAT_FAVORITES:
     case NavigationMenuItemType.AI_CHAT_RECENTS:
     case NavigationMenuItemType.AI_AGENTS:
+    case NavigationMenuItemType.COMMANDS:
       return null;
+    case NavigationMenuItemType.COMMAND:
+      return (
+        <NavigationMenuItemEditable item={item}>
+          <NavigationMenuItemCommandDisplay
+            item={item}
+            editModeProps={editModeProps}
+            isDragging={isDragging}
+            folderChildrenById={folderChildrenById}
+            folderCount={folderCount}
+            rightOptions={rightOptions}
+          />
+        </NavigationMenuItemEditable>
+      );
     case NavigationMenuItemType.FOLDER:
       return (
         <NavigationMenuItemFolder

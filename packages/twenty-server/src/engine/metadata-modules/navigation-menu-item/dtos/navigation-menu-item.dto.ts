@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsUUID,
 } from 'class-validator';
+import { type NavigationMenuItemCommandKey } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -64,6 +65,10 @@ export class NavigationMenuItemDTO {
   @IsOptional()
   @Field(() => Int, { nullable: true })
   visibleItemLimit?: number | null;
+
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  commandKey?: NavigationMenuItemCommandKey | null;
 
   @IsUUID()
   @IsOptional()

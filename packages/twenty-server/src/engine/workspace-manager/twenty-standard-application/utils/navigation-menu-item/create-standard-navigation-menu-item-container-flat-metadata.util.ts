@@ -1,3 +1,5 @@
+import { type NavigationMenuItemCommandKey } from 'twenty-shared/types';
+
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -11,6 +13,7 @@ export const createStandardNavigationMenuItemContainerFlatMetadata = ({
   folderUniversalIdentifier,
   position,
   visibleItemLimit,
+  commandKey,
   navigationMenuItemId,
   workspaceId,
   twentyStandardApplicationId,
@@ -24,6 +27,7 @@ export const createStandardNavigationMenuItemContainerFlatMetadata = ({
   folderUniversalIdentifier?: string | null;
   position: number;
   visibleItemLimit?: number | null;
+  commandKey?: NavigationMenuItemCommandKey | null;
   navigationMenuItemId: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
@@ -53,6 +57,7 @@ export const createStandardNavigationMenuItemContainerFlatMetadata = ({
   icon: icon ?? null,
   color: null,
   visibleItemLimit: visibleItemLimit ?? null,
+  commandKey: commandKey ?? null,
   position,
   createdAt: now,
   updatedAt: now,

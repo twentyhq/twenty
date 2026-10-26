@@ -33,6 +33,7 @@ export const getNavigationMenuItemFlatEntitySeeds = ({
       name: 'Star History',
       icon: 'IconStar',
       visibleItemLimit: null,
+      commandKey: null,
       color: 'yellow',
       position: 9999,
       link: null,

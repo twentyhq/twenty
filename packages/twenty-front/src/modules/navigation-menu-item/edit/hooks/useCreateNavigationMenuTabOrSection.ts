@@ -1,5 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import {
+  type NavigationMenuItemCommandKey,
+  NavigationMenuItemType,
+} from 'twenty-shared/types';
 import { v4 } from 'uuid';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -45,6 +48,18 @@ export const useCreateNavigationMenuTabOrSection = () => {
         .map((item) => item.position),
     ) + 1;
 
+  const getTopSectionPosition = (parentId: string | null) =>
+    Math.min(
+      0,
+      ...workspaceNavigationMenuItems
+        .filter(
+          (item) =>
+            isNavigationMenuItemAnySection(item) &&
+            (item.folderId ?? null) === parentId,
+        )
+        .map((item) => item.position),
+    ) - 1;
+
   const addToDraft = (newItem: NavigationMenuItem) =>
     setNavigationMenuItemsDraft((draft) => [
       ...(draft ?? workspaceNavigationMenuItems),
@@ -61,6 +76,14 @@ export const useCreateNavigationMenuTabOrSection = () => {
     });
 
     addToDraft(tab);
+    addToDraft(
+      buildOptimisticNavigationMenuItem({
+        id: v4(),
+        type: NavigationMenuItemType.COMMANDS,
+        folderId: tab.id,
+        position: getTopSectionPosition(tab.id),
+      }),
+    );
 
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setCurrentNavigationMenuTabId(tab.id);
@@ -100,5 +123,41 @@ export const useCreateNavigationMenuTabOrSection = () => {
     setNavigationMenuItemIdToRename(section.id);
   };
 
-  return { createTab, createSection, createAiSection };
+  const createCommandsSection = (parentId: string | null) =>
+    addToDraft(
+      buildOptimisticNavigationMenuItem({
+        id: v4(),
+        type: NavigationMenuItemType.COMMANDS,
+        folderId: parentId ?? undefined,
+        position: getTopSectionPosition(parentId),
+      }),
+    );
+
+  const pinCommand = ({
+    sectionId,
+    commandKey,
+  }: {
+    sectionId: string;
+    commandKey: NavigationMenuItemCommandKey;
+  }) =>
+    addToDraft(
+      buildOptimisticNavigationMenuItem({
+        id: v4(),
+        type: NavigationMenuItemType.COMMAND,
+        commandKey,
+        folderId: sectionId,
+        position: getNextPosition(
+          (item) => item.type === NavigationMenuItemType.COMMAND,
+          sectionId,
+        ),
+      }),
+    );
+
+  return {
+    createTab,
+    createSection,
+    createAiSection,
+    createCommandsSection,
+    pinCommand,
+  };
 };

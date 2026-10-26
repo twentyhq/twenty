@@ -1,5 +1,6 @@
 import { useStore } from 'jotai';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
@@ -14,6 +15,7 @@ import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { computeDndReorderPosition } from '@/navigation-menu-item/common/utils/computeDndReorderPosition';
 import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
+import { isNavigationMenuItemCommandsSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemCommandsSection';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -154,6 +156,17 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       isNavigationMenuItemFolder(draggedItem) &&
       isDefined(destinationParent) &&
       isNavigationMenuItemFolder(destinationParent)
+    ) {
+      return;
+    }
+
+    const isCommandsSectionDestination =
+      isDefined(destinationParent) &&
+      isNavigationMenuItemCommandsSection(destinationParent);
+
+    if (
+      (draggedItem.type === NavigationMenuItemType.COMMAND) !==
+      isCommandsSectionDestination
     ) {
       return;
     }
