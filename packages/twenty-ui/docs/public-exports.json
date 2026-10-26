@@ -167,7 +167,8 @@
       "Dropdown": "components/navigation/Dropdown/Dropdown",
       "ListItemButton": "components/navigation/ListItemButton/ListItemButton",
       "TabButton": "components/navigation/TabButton/TabButton",
-      "useDropdownPage": "components/navigation/Dropdown/hooks/useDropdownPage"
+      "useDropdownPage": "components/navigation/Dropdown/hooks/useDropdownPage",
+      "useDropdownPlacementOrThrow": "components/navigation/Dropdown/hooks/useDropdownPlacementOrThrow"
     },
     "types": {
       "ColorLabels": "components/navigation/MenuItem/types/ColorLabels",
