@@ -1,10 +1,16 @@
 import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectsPermissions,
+  RelationType,
+  type RestrictedFieldsPermissions,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { omitRestrictedFieldsFromEvent } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
+import { omitRestrictedFieldsFromEvent } from 'src/engine/metadata-modules/permissions/utils/omit-restricted-fields-from-event.util';
 
 const OBJECT_METADATA_ID = 'company-object-id';
 const SALARY_FIELD_ID = 'salary-field-id';
@@ -69,37 +75,69 @@ const updateEvent = {
   },
 } as unknown as ObjectRecordUpdateEvent;
 
+const buildObjectsPermissions = (
+  restrictedFields: RestrictedFieldsPermissions | undefined,
+): ObjectsPermissions => {
+  if (!isDefined(restrictedFields)) {
+    return {};
+  }
+
+  return {
+    [OBJECT_METADATA_ID]: {
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: true,
+      canDestroyObjectRecords: true,
+      restrictedFields,
+      rowLevelPermissionPredicates: [],
+      rowLevelPermissionPredicateGroups: [],
+    },
+  };
+};
+
+const omit = ({
+  event,
+  restrictedFields,
+}: {
+  event: ObjectRecordUpdateEvent;
+  restrictedFields: RestrictedFieldsPermissions | undefined;
+}) =>
+  omitRestrictedFieldsFromEvent({
+    event,
+    objectMetadata: { id: OBJECT_METADATA_ID, nameSingular: 'company' },
+    objectsPermissions: buildObjectsPermissions(restrictedFields),
+    flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+    flatFieldMetadataMaps,
+  });
+
 describe('omitRestrictedFieldsFromEvent', () => {
   it('should return the event untouched when no field is restricted', () => {
     expect(
-      omitRestrictedFieldsFromEvent({
+      omit({
         event: updateEvent,
         restrictedFields: {
           [SALARY_FIELD_ID]: { canRead: true, canUpdate: false },
         },
-        flatFieldMetadataMaps,
       }),
     ).toBe(updateEvent);
   });
 
   it('should return the event untouched without restricted fields', () => {
     expect(
-      omitRestrictedFieldsFromEvent({
+      omit({
         event: updateEvent,
         restrictedFields: undefined,
-        flatFieldMetadataMaps,
       }),
     ).toBe(updateEvent);
   });
 
   it('should drop an unreadable field from every part of the event', () => {
     expect(
-      omitRestrictedFieldsFromEvent({
+      omit({
         event: updateEvent,
         restrictedFields: {
           [SALARY_FIELD_ID]: { canRead: false, canUpdate: false },
         },
-        flatFieldMetadataMaps,
       }),
     ).toEqual({
       recordId: 'record-1',
@@ -124,12 +162,11 @@ describe('omitRestrictedFieldsFromEvent', () => {
     } as unknown as ObjectRecordUpdateEvent;
 
     expect(
-      omitRestrictedFieldsFromEvent({
+      omit({
         event: salaryOnlyUpdateEvent,
         restrictedFields: {
           [SALARY_FIELD_ID]: { canRead: false, canUpdate: false },
         },
-        flatFieldMetadataMaps,
       }).properties,
     ).toEqual({
       updatedFields: [],
@@ -145,12 +182,11 @@ describe('omitRestrictedFieldsFromEvent', () => {
     } as unknown as ObjectRecordUpdateEvent;
 
     expect(
-      omitRestrictedFieldsFromEvent({
+      omit({
         event: deleteEvent,
         restrictedFields: {
           [SALARY_FIELD_ID]: { canRead: false, canUpdate: false },
         },
-        flatFieldMetadataMaps,
       }).properties,
     ).toEqual({ before: { id: 'record-1', name: 'Old' } });
   });
@@ -170,12 +206,11 @@ describe('omitRestrictedFieldsFromEvent', () => {
     } as unknown as ObjectRecordUpdateEvent;
 
     expect(
-      omitRestrictedFieldsFromEvent({
+      omit({
         event: companyUpdateEvent,
         restrictedFields: {
           [COMPANY_FIELD_ID]: { canRead: false, canUpdate: false },
         },
-        flatFieldMetadataMaps,
       }).properties,
     ).toEqual({
       updatedFields: ['name'],
@@ -196,12 +231,11 @@ describe('omitRestrictedFieldsFromEvent', () => {
     } as unknown as ObjectRecordUpdateEvent;
 
     expect(
-      omitRestrictedFieldsFromEvent({
+      omit({
         event: ownerUpdateEvent,
         restrictedFields: {
           [OWNER_FIELD_ID]: { canRead: false, canUpdate: false },
         },
-        flatFieldMetadataMaps,
       }).properties,
     ).toEqual({
       updatedFields: [],
