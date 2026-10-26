@@ -1,14 +1,12 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { type ObjectPermissions } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 type GetPermittedFieldsArgs = {
   fields: FieldMetadataItem[];
   objectPermissions: Pick<ObjectPermissions, 'restrictedFields'>;
 };
-
-type FieldPermission = 'canReadField' | 'canUpdateField';
 
 const getFieldWithPermittedMorphTargets = ({
   field,
@@ -17,18 +15,9 @@ const getFieldWithPermittedMorphTargets = ({
 }: {
   field: FieldMetadataItem;
   objectPermissions: GetPermittedFieldsArgs['objectPermissions'];
-  permission: FieldPermission;
-}): FieldMetadataItem | undefined => {
-  const isFieldPermitted = getFieldPermissions({
-    objectPermissions,
-    fieldMetadataId: field.id,
-  })[permission];
-
-  if (!isFieldPermitted) {
-    return undefined;
-  }
-
-  if (!isNonEmptyArray(field.morphRelations)) {
+  permission: 'canReadField' | 'canUpdateField';
+}): FieldMetadataItem => {
+  if (!isDefined(field.morphRelations)) {
     return field;
   }
 
@@ -40,13 +29,9 @@ const getFieldWithPermittedMorphTargets = ({
       })[permission],
   );
 
-  if (permittedMorphRelations.length === field.morphRelations.length) {
-    return field;
-  }
-
-  return isNonEmptyArray(permittedMorphRelations)
-    ? { ...field, morphRelations: permittedMorphRelations }
-    : undefined;
+  return permittedMorphRelations.length === field.morphRelations.length
+    ? field
+    : { ...field, morphRelations: permittedMorphRelations };
 };
 
 export const getPermittedFields = ({
@@ -57,23 +42,29 @@ export const getPermittedFields = ({
   const updatableFields: FieldMetadataItem[] = [];
 
   for (const field of fields) {
-    const readableField = getFieldWithPermittedMorphTargets({
-      field,
+    const { canReadField, canUpdateField } = getFieldPermissions({
       objectPermissions,
-      permission: 'canReadField',
-    });
-    const updatableField = getFieldWithPermittedMorphTargets({
-      field,
-      objectPermissions,
-      permission: 'canUpdateField',
+      fieldMetadataId: field.id,
     });
 
-    if (isDefined(readableField)) {
-      readableFields.push(readableField);
+    if (canReadField) {
+      readableFields.push(
+        getFieldWithPermittedMorphTargets({
+          field,
+          objectPermissions,
+          permission: 'canReadField',
+        }),
+      );
     }
 
-    if (isDefined(updatableField)) {
-      updatableFields.push(updatableField);
+    if (canUpdateField) {
+      updatableFields.push(
+        getFieldWithPermittedMorphTargets({
+          field,
+          objectPermissions,
+          permission: 'canUpdateField',
+        }),
+      );
     }
   }
 

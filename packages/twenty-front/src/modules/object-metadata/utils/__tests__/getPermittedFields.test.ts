@@ -84,7 +84,7 @@ describe('getPermittedFields', () => {
       ).toEqual({ readableFields: [], updatableFields: [headField] });
     });
 
-    it('should drop the field when no target is readable', () => {
+    it('should keep the field without targets when no target is readable', () => {
       const { readableFields, updatableFields } = getPermittedFields({
         fields: [headField],
         objectPermissions: {
@@ -97,7 +97,7 @@ describe('getPermittedFields', () => {
         },
       });
 
-      expect(readableFields).toEqual([]);
+      expect(getTargetNames(readableFields[0])).toEqual([]);
       expect(updatableFields).toEqual([headField]);
     });
   });
