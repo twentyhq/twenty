@@ -39,6 +39,19 @@ jobs:
         packages/twenty-server/src/database/commands/upgrade-version-command/**
         packages/twenty-server/src/engine/core-modules/upgrade/**
 
+  workspace-dependencies-changed-files-check:
+    if: github.event_name != 'merge_group'
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        .github/workflows/ci-server.yaml
+        packages/twenty-server/project.json
+        packages/twenty-server/scripts/generate-workspace-custom-application-dependencies*
+        packages/twenty-server/src/engine/core-modules/application/application-package/constants/seed-dependencies/**
+        packages/twenty-server/src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies/**
+        packages/twenty-server/src/engine/core-modules/application/application-package/constants/yarn-engine/**
+        packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant.ts
+
   server-build:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
@@ -92,6 +105,34 @@ jobs:
         with:
           tag: scope:backend
           tasks: lingui:compile
+
+  server-workspace-dependencies-drift-check:
+    needs: workspace-dependencies-changed-files-check
+    if: needs.workspace-dependencies-changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Server / Check Workspace dependency defaults
+        run: |
+          DEFAULTS_DIRECTORY=packages/twenty-server/src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies
+
+          npx nx run twenty-server:workspace-dependencies:generate
+
+          if ! git diff --quiet -- "$DEFAULTS_DIRECTORY"; then
+            echo "::error::Workspace dependency defaults are out of date. Please run 'npx nx run twenty-server:workspace-dependencies:generate' and commit the result."
+            echo ""
+            echo "The following changes were detected:"
+            echo "==================================================="
+            git diff -- "$DEFAULTS_DIRECTORY"
+            echo "==================================================="
+            exit 1
+          fi
 
   server-upgrade-mutation-guard:
     if: github.event_name != 'merge_group'
@@ -445,6 +486,7 @@ jobs:
         changed-files-check,
         server-build,
         server-lint-typecheck,
+        server-workspace-dependencies-drift-check,
         server-upgrade-mutation-guard,
         server-validation,
         server-test,
