@@ -4,9 +4,10 @@ import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/driv
 // workspace jobs and outlasts a database failover
 export const AGENT_CHAT_CHANNEL_GRANTS_REWRITE_JOB_OPTIONS = {
   priority: 1,
+  urgent: true,
   retryLimit: 8,
   backoff: { strategy: 'exponential', initialDelayMilliseconds: 5_000 },
 } as const satisfies Pick<
   QueueJobOptions,
-  'priority' | 'retryLimit' | 'backoff'
+  'priority' | 'urgent' | 'retryLimit' | 'backoff'
 >;

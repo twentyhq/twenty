@@ -38,6 +38,7 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
+import { URGENT_FAIR_PRIORITY } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { FairPriorityTagger } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority-tagger';
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -402,7 +403,7 @@ export class BullMQDriver
   }: {
     queueName: MessageQueue;
     jobsData: unknown[];
-    options?: Pick<QueueJobOptions, 'groupKeys' | 'delay'>;
+    options?: Pick<QueueJobOptions, 'groupKeys' | 'urgent' | 'delay'>;
   }): Promise<(number | undefined)[]> {
     const staticPriorities: (number | undefined)[] = jobsData.map(
       () => undefined,
@@ -443,6 +444,10 @@ export class BullMQDriver
         batchSize: jobIndexes.length,
       })),
     });
+
+    if (options?.urgent) {
+      return jobsData.map(() => URGENT_FAIR_PRIORITY);
+    }
 
     if (!isDefined(tickets)) {
       void this.metricsService.incrementCounterForEvent({
