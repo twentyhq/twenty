@@ -16,19 +16,21 @@ export const resolveObjectManifestWritability = ({
 }: Pick<ObjectManifest, 'writability' | 'disabledObjectPermissionActions'>): {
   writability: MetadataWritability;
   disabledObjectPermissionActions: ObjectPermissionAction[] | null;
-} =>
-  writability === MetadataWritability.APPLICATION
-    ? {
-        writability: MetadataWritability.OPEN,
-        disabledObjectPermissionActions: [
-          ...new Set([
-            ...(disabledObjectPermissionActions ?? []),
-            ...APPLICATION_WRITABILITY_DISABLED_ACTIONS,
-          ]),
-        ],
-      }
-    : {
-        writability,
-        disabledObjectPermissionActions:
-          disabledObjectPermissionActions ?? null,
-      };
+} => {
+  if (writability !== MetadataWritability.APPLICATION) {
+    return {
+      writability,
+      disabledObjectPermissionActions: disabledObjectPermissionActions ?? null,
+    };
+  }
+
+  return {
+    writability: MetadataWritability.OPEN,
+    disabledObjectPermissionActions: [
+      ...new Set([
+        ...(disabledObjectPermissionActions ?? []),
+        ...APPLICATION_WRITABILITY_DISABLED_ACTIONS,
+      ]),
+    ],
+  };
+};
