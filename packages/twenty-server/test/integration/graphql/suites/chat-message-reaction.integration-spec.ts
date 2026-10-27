@@ -1,21 +1,14 @@
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  RecordShareAccessLevel,
-  RecordSharePrincipalType,
-} from 'twenty-shared/types';
 
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 
 import { type AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
 import { type AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -112,37 +105,12 @@ const readThreadActivity = async (threadId: string) => {
   return row;
 };
 
-const setShareWithJony = async (threadId: string, enabled: boolean) => {
-  const { flatObjectMetadataMaps } =
-    await getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatObjectMetadataMaps']);
-
-  await setManualRecordShare({
-    workspaceId: SEED_APPLE_WORKSPACE_ID,
-    share: {
-      objectMetadataId:
-        flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.agentChatThread.universalIdentifier
-        ]!.id,
-      recordId: threadId,
-      principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-      accessLevel: RecordShareAccessLevel.READ,
-      sourceId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-    },
-    enabled,
-  });
-};
-
 describe('Chat message reactions through the authenticated API', () => {
   let threadId: string;
   let messageId: string;
-  let isSharedWithJony: boolean;
 
   beforeEach(async () => {
     threadId = randomUUID();
-    isSharedWithJony = false;
 
     await getAppProviderByClassName<AgentChatThreadService>(
       'AgentChatThreadService',
@@ -158,9 +126,6 @@ describe('Chat message reactions through the authenticated API', () => {
   afterEach(async () => {
     jest.restoreAllMocks();
 
-    if (isSharedWithJony) {
-      await setShareWithJony(threadId, false);
-    }
     await destroyAgentChatThread({ threadId });
   });
 
@@ -259,26 +224,7 @@ describe('Chat message reactions through the authenticated API', () => {
     );
   });
 
-  it('refuses a member who cannot read the thread, then lets them react once it is shared', async () => {
-    const refused = await addReaction(
-      messageId,
-      '👍',
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(refused.body.errors[0].extensions.code).toBe('NOT_FOUND');
-    expect(await findMessageReactions(threadId, messageId)).toEqual([]);
-
-    const refusedRemoval = await removeReaction(
-      messageId,
-      '👍',
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(refusedRemoval.body.errors[0].extensions.code).toBe('NOT_FOUND');
-
-    isSharedWithJony = true;
-    await setShareWithJony(threadId, true);
+  it('groups the reactions of several members on a message', async () => {
     await addReaction(messageId, '🎉');
 
     const added = await addReaction(

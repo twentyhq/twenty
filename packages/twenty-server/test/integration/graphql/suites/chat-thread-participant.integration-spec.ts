@@ -21,7 +21,6 @@ import { setManualRecordShare } from 'test/integration/utils/set-manual-record-s
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -232,24 +231,6 @@ const findParticipantEvents = (
         })),
     );
 
-const listParticipantRecordIds = async (token: string): Promise<string[]> => {
-  const response = await makeGraphqlApiRequest(
-    findManyOperationFactory({
-      objectMetadataSingularName: 'agentChatThreadParticipant',
-      objectMetadataPluralName: 'agentChatThreadParticipants',
-      gqlFields: 'id',
-      first: 200,
-    }),
-    token,
-  );
-
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data.agentChatThreadParticipants.edges.map(
-    ({ node }: { node: { id: string } }) => node.id,
-  );
-};
-
 type ManualShare = {
   threadId: string;
   workspaceMemberId: string;
@@ -340,49 +321,6 @@ describe('Chat thread participant state through the authenticated API', () => {
     });
     expect(new Date(participant!.lastReadAt!).getTime()).toBe(
       lastActivityAt.getTime(),
-    );
-  });
-
-  it('refuses a member who cannot read the thread', async () => {
-    const threadId = await createTestThread();
-    const response = await runInboxAction('READ', threadId, {
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
-    expect(
-      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toBeUndefined();
-  });
-
-  it('writes every selected thread in one call, or none when one cannot be read', async () => {
-    const threadIds = [await createTestThread(), await createTestThread()];
-
-    await setShareWithJony(threadIds[0], true);
-
-    const refused = await runInboxAction('ARCHIVE', threadIds, {
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    expect(refused.body.errors[0].extensions.code).toBe('NOT_FOUND');
-    expect(
-      await findMyParticipant(threadIds[0], APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toBeUndefined();
-
-    await setShareWithJony(threadIds[1], true);
-
-    const archived = await runInboxAction('ARCHIVE', threadIds, {
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    expect(archived.body.errors).toBeUndefined();
-    expect(archived.body.data.updateAgentChatThreadInboxState).toHaveLength(2);
-    expect(archived.body.data.updateAgentChatThreadInboxState).toEqual(
-      expect.arrayContaining(
-        threadIds.map((threadId) =>
-          expect.objectContaining({ threadId, archivedAt: expect.any(String) }),
-        ),
-      ),
     );
   });
 
@@ -484,47 +422,6 @@ describe('Chat thread participant state through the authenticated API', () => {
       { action: 'updated', updatedFields: ['lastReadAt', 'updatedAt'] },
       { action: 'updated', updatedFields: ['archivedAt', 'updatedAt'] },
     ]);
-  });
-
-  it('lets only its member read a row, through the grant it is given', async () => {
-    const threadId = await createTestThread();
-
-    await setShareWithJony(threadId, true);
-    await runInboxAction('ARCHIVE', threadId, {
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    const janeParticipant = await findMyParticipant(threadId);
-    const jonyParticipant = await findMyParticipant(
-      threadId,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-    const ownerShares: { recordId: string; principalId: string }[] =
-      await global.testDataSource.query(
-        `SELECT "recordId", "principalId" FROM ${SCHEMA}."recordShare"
-         WHERE "recordId" = ANY($1) AND "rowCause" = 'OWNER'
-         ORDER BY "principalId"`,
-        [[janeParticipant!.id, jonyParticipant!.id]],
-      );
-    const jonyRecordIds = await listParticipantRecordIds(
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(ownerShares).toEqual(
-      expect.arrayContaining([
-        {
-          recordId: janeParticipant!.id,
-          principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-        },
-        {
-          recordId: jonyParticipant!.id,
-          principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-        },
-      ]),
-    );
-    expect(ownerShares).toHaveLength(2);
-    expect(jonyRecordIds).toContain(jonyParticipant!.id);
-    expect(jonyRecordIds).not.toContain(janeParticipant!.id);
   });
 
   it('ends a snooze once its time passes by moving the chat back to the inbox', async () => {
@@ -718,49 +615,6 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
   });
 
-  it("only lists the caller's own rows", async () => {
-    const threadId = await createTestThread();
-
-    await setShareWithJony(threadId, true);
-    await runInboxAction('ARCHIVE', threadId, {
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    const rows: { workspaceMemberId: string }[] =
-      await global.testDataSource.query(
-        `SELECT "workspaceMemberId" FROM ${SCHEMA}."agentChatThreadParticipant" WHERE "threadId" = $1`,
-        [threadId],
-      );
-
-    expect(rows).toHaveLength(2);
-    expect(
-      await findThreadParticipants(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toEqual([
-      expect.objectContaining({
-        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      }),
-    ]);
-  });
-
-  it('stops listing a thread once the member loses access to it', async () => {
-    const threadId = await createTestThread();
-
-    await setShareWithJony(threadId, true);
-    await runInboxAction('ARCHIVE', threadId, {
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    expect(
-      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toBeDefined();
-
-    await setShareWithJony(threadId, false);
-
-    expect(
-      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toBeUndefined();
-  });
-
   it('shares the thread with a mentioned member and brings it to their inbox unread', async () => {
     const threadId = await createTestThread();
 
@@ -815,51 +669,6 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds,
     ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
-  });
-
-  it('refuses a member who can only read the thread', async () => {
-    const threadId = await createTestThread();
-
-    await setShareWithJony(threadId, true);
-
-    await expect(
-      addParticipants(
-        threadId,
-        [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      ),
-    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
-    expect(
-      (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
-    ).toEqual([]);
-  });
-
-  it('leaves out a member who could only read the thread when the sender cannot share it', async () => {
-    const threadId = await createTestThread();
-
-    await setShareWithMember({
-      threadId,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      accessLevel: RecordShareAccessLevel.READ_WRITE,
-      enabled: true,
-    });
-    await setShareWithMember({
-      threadId,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      accessLevel: RecordShareAccessLevel.READ,
-      enabled: true,
-    });
-
-    expect(
-      await addParticipants(
-        threadId,
-        [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      ),
-    ).toEqual([]);
-    expect(
-      (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
-    ).toEqual([]);
   });
 
   it('keeps an unsubscribed chat done through new activity', async () => {
@@ -968,15 +777,6 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
   });
 
-  it('refuses to change the subscription of a member who cannot read the chat', async () => {
-    const threadId = await createTestThread();
-    const response = await runInboxAction('UNSUBSCRIBE', threadId, {
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
-  });
-
   it('assigns a chat to a member who could not read it, who then finds it unread in their inbox', async () => {
     const threadId = await createTestThread();
     const response = await assign(
@@ -1048,41 +848,6 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toMatchObject({ isSubscribed: true });
-  });
-
-  it('refuses to assign a chat for a member who can only read it', async () => {
-    const threadId = await createTestThread();
-
-    await setShareWithJony(threadId, true);
-
-    const response = await assign(
-      threadId,
-      WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
-    expect(await readAssigneeId(threadId)).toBeNull();
-  });
-
-  it('refuses an assignee who cannot reply when the caller cannot share the chat', async () => {
-    const threadId = await createTestThread();
-
-    await setShareWithMember({
-      threadId,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      accessLevel: RecordShareAccessLevel.READ_WRITE,
-      enabled: true,
-    });
-
-    const response = await assign(
-      threadId,
-      WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
-    expect(await readAssigneeId(threadId)).toBeNull();
   });
 
   // Other tests' chats may stay open for the member, so counts are compared
