@@ -74,6 +74,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/messaging-channels',
   DEVELOPERS_EXTEND_APPS_LOGIC_OVERVIEW:
     '/developers/extend/apps/logic/overview',
+  DEVELOPERS_EXTEND_APPS_LOGIC_REALTIME_EVENTS:
+    '/developers/extend/apps/logic/realtime-events',
   DEVELOPERS_EXTEND_APPS_LOGIC_SKILLS_AND_AGENTS:
     '/developers/extend/apps/logic/skills-and-agents',
   DEVELOPERS_EXTEND_APPS_LOGIC_WORKFLOWS:
