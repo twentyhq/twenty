@@ -4,16 +4,19 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { bindFieldsWidgetToExistingView } from 'src/database/commands/upgrade-version-command/2-42/utils/bind-fields-widget-to-existing-view.util';
-import { buildWorkspaceMemberRelationViewFields } from 'src/database/commands/upgrade-version-command/2-53/utils/build-workspace-member-relation-view-fields.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { computeRecordPageViewFieldForExistingObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-page-view-field-for-existing-object.util';
+import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity-property.util';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
@@ -258,24 +261,107 @@ export class SyncWorkspaceMemberRecordPageCommand extends ProvisionedWorkspaceCo
         }),
       );
 
-    const customRelationViewFields = buildWorkspaceMemberRelationViewFields({
-      flatFieldMetadataMaps,
+    const recordPageViewFieldMaps = viewFieldsToCreate.reduce(
+      (maps, flatEntity) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity,
+          flatEntityMaps: maps,
+        }),
       flatViewFieldMaps,
+    );
+    const recordPageViewFieldGroupMaps = viewFieldGroupsToCreate.reduce(
+      (maps, flatEntity) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity,
+          flatEntityMaps: maps,
+        }),
       flatViewFieldGroupMaps,
-      standardViewFields: viewFieldsToCreate,
-      fieldsWidget:
-        flatPageLayoutWidgetMaps.byUniversalIdentifier[
-          FIELDS_WIDGET_UNIVERSAL_IDENTIFIER
-        ] ??
-        standardAllFlatEntityMaps.flatPageLayoutWidgetMaps
-          .byUniversalIdentifier[FIELDS_WIDGET_UNIVERSAL_IDENTIFIER]!,
-      standardRelationsGroup:
-        standardAllFlatEntityMaps.flatViewFieldGroupMaps.byUniversalIdentifier[
-          WORKSPACE_MEMBER.views.workspaceMemberRecordPageFields.viewFieldGroups
-            .relations.universalIdentifier
-        ]!,
-      now: new Date().toISOString(),
-    });
+    );
+    const recordPageWidgetMaps = pageLayoutWidgetsToCreate.reduce(
+      (maps, flatEntity) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity,
+          flatEntityMaps: maps,
+        }),
+      flatPageLayoutWidgetMaps,
+    );
+    const relationsGroupUniversalIdentifier =
+      WORKSPACE_MEMBER.views.workspaceMemberRecordPageFields.viewFieldGroups
+        .relations.universalIdentifier;
+    const recordPageViewMaps = {
+      ...flatViewMaps,
+      byUniversalIdentifier: {
+        ...flatViewMaps.byUniversalIdentifier,
+        [FIELDS_VIEW_UNIVERSAL_IDENTIFIER]: {
+          ...(existingFieldsView ?? viewsToCreate[0]),
+          viewFieldUniversalIdentifiers: Object.values(
+            recordPageViewFieldMaps.byUniversalIdentifier,
+          )
+            .filter(isDefined)
+            .filter(
+              (viewField) =>
+                viewField.viewUniversalIdentifier ===
+                FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
+            )
+            .map((viewField) => viewField.universalIdentifier),
+          viewFieldGroupUniversalIdentifiers: [
+            relationsGroupUniversalIdentifier,
+          ],
+        },
+      },
+    };
+    const customRelations = Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (field) =>
+          field.objectMetadataUniversalIdentifier ===
+            WORKSPACE_MEMBER.universalIdentifier &&
+          field.applicationUniversalIdentifier !==
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER &&
+          (field.type === FieldMetadataType.RELATION ||
+            isMorphRelationHead(field)) &&
+          resolveEffectiveUniversalFlatEntityProperty({
+            metadataName: 'fieldMetadata',
+            universalFlatEntity: field,
+            property: 'isActive',
+          }) &&
+          !existingFieldsViewFieldIdentifiers.has(field.universalIdentifier),
+      )
+      .sort((firstField, secondField) =>
+        firstField.name.localeCompare(secondField.name),
+      );
+    const customRelationViewFields: UniversalFlatViewField[] = [];
+
+    for (const relation of customRelations) {
+      const viewField = computeRecordPageViewFieldForExistingObject({
+        sourceFlatFieldMetadata: relation,
+        recordPageViewUniversalIdentifier: FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
+        flatViewMaps: recordPageViewMaps,
+        flatViewFieldMaps: recordPageViewFieldMaps,
+        flatViewFieldGroupMaps: recordPageViewFieldGroupMaps,
+        flatPageLayoutWidgetMaps: recordPageWidgetMaps,
+      });
+
+      if (
+        !isDefined(viewField) ||
+        viewField.viewFieldGroupUniversalIdentifier !==
+          relationsGroupUniversalIdentifier ||
+        isDefined(
+          flatViewFieldMaps.byUniversalIdentifier[
+            viewField.universalIdentifier
+          ],
+        )
+      ) {
+        continue;
+      }
+
+      customRelationViewFields.push({
+        ...viewField,
+        position: viewField.position + customRelationViewFields.length,
+      });
+    }
 
     const totalOperationCount =
       customRelationViewFields.length +
