@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { type Job } from 'bullmq';
+import { type Job, PRIORITY_LIMIT } from 'bullmq';
 import { type Redis } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import { isDefined } from 'twenty-shared/utils';
@@ -73,10 +73,24 @@ const VIRTUAL_TIME_KEY = `${QUEUE_KEY_PREFIX}fair:vtime`;
 const PRIORITIZED_KEY = `${QUEUE_KEY_PREFIX}prioritized`;
 const DELAYED_KEY = `${QUEUE_KEY_PREFIX}delayed`;
 const ACTIVE_KEY = `${QUEUE_KEY_PREFIX}active`;
-const PRIORITY_LIMIT = 2 ** 21;
 const PRIORITY_SCORE_BASE = 2 ** 32;
 
 const buildJobKey = (jobId: string) => `${QUEUE_KEY_PREFIX}${jobId}`;
+
+const addToPrioritized = async ({
+  jobId,
+  priority,
+  insertionIndex,
+}: {
+  jobId: string;
+  priority: number;
+  insertionIndex: number;
+}) =>
+  mockBullMQ.redis?.zadd(
+    PRIORITIZED_KEY,
+    priority * PRIORITY_SCORE_BASE + insertionIndex,
+    jobId,
+  );
 
 const mockBullMQ: BullMQDouble = {
   now: 0,
@@ -116,11 +130,11 @@ const mockBullMQ: BullMQDouble = {
     if (!job.isPromoted) {
       await mockBullMQ.redis?.zadd(DELAYED_KEY, job.timestamp, job.id);
     } else if (priority > 0) {
-      await mockBullMQ.redis?.zadd(
-        PRIORITIZED_KEY,
-        priority * PRIORITY_SCORE_BASE + job.insertionIndex,
-        job.id,
-      );
+      await addToPrioritized({
+        jobId: job.id,
+        priority,
+        insertionIndex: job.insertionIndex,
+      });
     }
 
     return { id: job.id };
@@ -139,12 +153,11 @@ const mockBullMQ: BullMQDouble = {
         await mockBullMQ.redis?.zrem(DELAYED_KEY, job.id);
 
         if ((job.options.priority ?? 0) > 0) {
-          await mockBullMQ.redis?.zadd(
-            PRIORITIZED_KEY,
-            (job.options.priority ?? 0) * PRIORITY_SCORE_BASE +
-              job.insertionIndex,
-            job.id,
-          );
+          await addToPrioritized({
+            jobId: job.id,
+            priority: job.options.priority ?? 0,
+            insertionIndex: job.insertionIndex,
+          });
         }
       }
     }
@@ -238,7 +251,8 @@ jest.mock('bullmq', () => ({
       },
     ),
   MetricsTime: { ONE_WEEK: 1 },
-  PRIORITY_LIMIT: 2 ** 21,
+  PRIORITY_LIMIT:
+    jest.requireActual<typeof import('bullmq')>('bullmq').PRIORITY_LIMIT,
 }));
 
 const flushAsyncWork = async () => {
