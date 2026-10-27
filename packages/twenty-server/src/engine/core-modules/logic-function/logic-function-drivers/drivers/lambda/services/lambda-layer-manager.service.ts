@@ -11,7 +11,7 @@ import { EMPTY_YARN_LOCK_CONTENT } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
-import { assertPackageJsonMatchesYarnLock } from 'src/engine/core-modules/application/application-package/utils/assert-package-json-matches-yarn-lock.util';
+import { assertPackageJsonMatchesYarnLockOrThrow } from 'src/engine/core-modules/application/application-package/utils/assert-package-json-matches-yarn-lock-or-throw.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
@@ -327,7 +327,7 @@ export class LambdaLayerManagerService {
       );
 
     if (isDefined(yarnLockContent)) {
-      assertPackageJsonMatchesYarnLock({
+      assertPackageJsonMatchesYarnLockOrThrow({
         applicationUniversalIdentifier,
         packageJsonContent,
         yarnLockContent,

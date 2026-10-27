@@ -107,7 +107,7 @@ const isEveryDependencyLocked = ({
 
 // The install follows the package.json wherever it disagrees with the
 // yarn.lock, while the layer name only covers the yarn.lock
-export const assertPackageJsonMatchesYarnLock = ({
+export const assertPackageJsonMatchesYarnLockOrThrow = ({
   applicationUniversalIdentifier,
   packageJsonContent,
   yarnLockContent,

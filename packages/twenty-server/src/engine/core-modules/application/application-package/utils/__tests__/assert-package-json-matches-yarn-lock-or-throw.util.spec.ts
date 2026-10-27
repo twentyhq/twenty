@@ -1,5 +1,5 @@
 import { WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies-directory-name';
-import { assertPackageJsonMatchesYarnLock } from 'src/engine/core-modules/application/application-package/utils/assert-package-json-matches-yarn-lock.util';
+import { assertPackageJsonMatchesYarnLockOrThrow } from 'src/engine/core-modules/application/application-package/utils/assert-package-json-matches-yarn-lock-or-throw.util';
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 
@@ -44,13 +44,13 @@ const assertMatches = (
   packageJson: Record<string, unknown>,
   yarnLockContent = YARN_LOCK,
 ) =>
-  assertPackageJsonMatchesYarnLock({
+  assertPackageJsonMatchesYarnLockOrThrow({
     applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
     packageJsonContent: JSON.stringify(packageJson),
     yarnLockContent,
   });
 
-describe('assertPackageJsonMatchesYarnLock', () => {
+describe('assertPackageJsonMatchesYarnLockOrThrow', () => {
   it.each([
     undefined,
     WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
@@ -59,7 +59,7 @@ describe('assertPackageJsonMatchesYarnLock', () => {
       await getDefaultApplicationPackageFields({ directory });
 
     expect(() =>
-      assertPackageJsonMatchesYarnLock({
+      assertPackageJsonMatchesYarnLockOrThrow({
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         packageJsonContent,
         yarnLockContent,
