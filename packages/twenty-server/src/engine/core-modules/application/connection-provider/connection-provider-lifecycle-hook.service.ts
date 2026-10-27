@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  type AuthorizeConnectionPayload,
+  type ConnectionCallbackPayload,
   type IdentifiedAccount,
   type IdentifyAccountPayload,
 } from 'twenty-shared/application';
@@ -10,6 +12,12 @@ import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/applica
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { type CustomConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-custom-provider.util';
+import { parseAuthorizeConnectionResult } from 'src/engine/core-modules/application/connection-provider/utils/parse-authorize-connection-result.util';
+import {
+  parseConnectionCallbackResult,
+  type ParsedConnectedAccountFromCallback,
+} from 'src/engine/core-modules/application/connection-provider/utils/parse-connection-callback-result.util';
 import { parseIdentifyAccountResult } from 'src/engine/core-modules/application/connection-provider/utils/parse-identify-account-result.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
@@ -22,10 +30,20 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { findApplicationFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/find-application-flat-logic-function.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { CustomException } from 'src/utils/custom-exception';
 
-type ConnectionLifecycleHook = 'identifyAccount' | 'onConnect' | 'onDisconnect';
+type ConnectionLifecycleHook =
+  | 'identifyAccount'
+  | 'authorize'
+  | 'callback'
+  | 'onConnect'
+  | 'onDisconnect';
+
+type ConnectionFlowHook = Extract<
+  ConnectionLifecycleHook,
+  'identifyAccount' | 'authorize' | 'callback'
+>;
 
 type ConnectionLifecycleHookProvider = Pick<
   ConnectionProviderEntity,
@@ -38,11 +56,37 @@ const MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK: Record<
 > = {
   identifyAccount:
     ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_NOT_FOUND,
+  authorize: ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_NOT_FOUND,
+  callback: ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_NOT_FOUND,
   onConnect:
     ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND,
   onDisconnect:
     ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_NOT_FOUND,
 };
+
+const FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_CONNECTION_FLOW_HOOK: Record<
+  ConnectionFlowHook,
+  ConnectionProviderExceptionCode
+> = {
+  identifyAccount:
+    ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
+  authorize: ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_FAILED,
+  callback: ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_FAILED,
+};
+
+const buildConnectionFlowHookFailedException = ({
+  hook,
+  provider,
+  reason,
+}: {
+  hook: ConnectionFlowHook;
+  provider: Pick<ConnectionLifecycleHookProvider, 'id'>;
+  reason: string;
+}): ConnectionProviderException =>
+  new ConnectionProviderException(
+    `${hook} logic function of connection provider ${provider.id} ${reason}`,
+    FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_CONNECTION_FLOW_HOOK[hook],
+  );
 
 @Injectable()
 export class ConnectionProviderLifecycleHookService {
@@ -132,30 +176,122 @@ export class ConnectionProviderLifecycleHookService {
       accessToken,
     };
 
-    const executionResult = await this.executeIdentifyAccount({
+    const data = await this.executeConnectionFlowHook({
+      hook: 'identifyAccount',
       provider,
       logicFunctionId,
       workspaceId,
       payload,
     });
 
-    if (isDefined(executionResult.error)) {
-      throw new ConnectionProviderException(
-        `identifyAccount logic function of connection provider ${provider.id} failed: ${executionResult.error.errorMessage}`,
-        ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
-      );
-    }
-
-    const parsedResult = parseIdentifyAccountResult(executionResult.data);
+    const parsedResult = parseIdentifyAccountResult(data);
 
     if (!parsedResult.isValid) {
-      throw new ConnectionProviderException(
-        `identifyAccount logic function of connection provider ${provider.id} returned an invalid result: ${parsedResult.reason}`,
-        ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
-      );
+      throw buildConnectionFlowHookFailedException({
+        hook: 'identifyAccount',
+        provider,
+        reason: `returned an invalid result: ${parsedResult.reason}`,
+      });
     }
 
     return parsedResult.identifiedAccount;
+  }
+
+  async runAuthorize({
+    provider,
+    workspaceId,
+    callbackUrl,
+  }: {
+    provider: Pick<
+      CustomConnectionProvider,
+      'id' | 'name' | 'applicationId' | 'customConfig'
+    >;
+    workspaceId: string;
+    callbackUrl: string;
+  }): Promise<string> {
+    const logicFunctionId = await this.resolveLogicFunctionIdOrThrow({
+      hook: 'authorize',
+      logicFunctionUniversalIdentifier:
+        provider.customConfig.authorizeLogicFunctionUniversalIdentifier,
+      provider,
+      workspaceId,
+    });
+
+    const payload: AuthorizeConnectionPayload = {
+      connectionProviderId: provider.id,
+      connectionProviderName: provider.name,
+      callbackUrl,
+    };
+
+    const data = await this.executeConnectionFlowHook({
+      hook: 'authorize',
+      provider,
+      logicFunctionId,
+      workspaceId,
+      payload,
+    });
+
+    const parsedResult = parseAuthorizeConnectionResult(data);
+
+    if (!parsedResult.isValid) {
+      throw buildConnectionFlowHookFailedException({
+        hook: 'authorize',
+        provider,
+        reason: `returned an invalid result: ${parsedResult.reason}`,
+      });
+    }
+
+    return parsedResult.authorizationUrl;
+  }
+
+  async runCallback({
+    provider,
+    workspaceId,
+    request,
+  }: {
+    provider: Pick<
+      CustomConnectionProvider,
+      'id' | 'name' | 'applicationId' | 'customConfig'
+    >;
+    workspaceId: string;
+    request: Pick<
+      ConnectionCallbackPayload,
+      'httpMethod' | 'queryStringParameters' | 'headers' | 'body' | 'rawBody'
+    >;
+  }): Promise<ParsedConnectedAccountFromCallback | null> {
+    const logicFunctionId = await this.resolveLogicFunctionIdOrThrow({
+      hook: 'callback',
+      logicFunctionUniversalIdentifier:
+        provider.customConfig.callbackLogicFunctionUniversalIdentifier,
+      provider,
+      workspaceId,
+    });
+
+    const payload: ConnectionCallbackPayload = {
+      connectionProviderId: provider.id,
+      connectionProviderName: provider.name,
+      ...request,
+    };
+
+    const data = await this.executeConnectionFlowHook({
+      hook: 'callback',
+      provider,
+      logicFunctionId,
+      workspaceId,
+      payload,
+    });
+
+    const parsedResult = parseConnectionCallbackResult(data);
+
+    if (!parsedResult.isValid) {
+      throw buildConnectionFlowHookFailedException({
+        hook: 'callback',
+        provider,
+        reason: `returned an invalid result: ${parsedResult.reason}`,
+      });
+    }
+
+    return parsedResult.connectedAccount;
   }
 
   // Runs inline, before the connected account and its token are deleted, so the
@@ -202,34 +338,30 @@ export class ConnectionProviderLifecycleHookService {
     });
   }
 
-  private async executeIdentifyAccount({
+  private async executeConnectionFlowHook({
+    hook,
     provider,
     logicFunctionId,
     workspaceId,
     payload,
   }: {
+    hook: ConnectionFlowHook;
     provider: ConnectionLifecycleHookProvider;
     logicFunctionId: string;
     workspaceId: string;
-    payload: IdentifyAccountPayload;
-  }): Promise<LogicFunctionExecuteResult> {
-    try {
-      return await this.logicFunctionExecutorService.execute({
-        logicFunctionId,
-        workspaceId,
-        payload,
-        shouldEnforceUsageLimits: true,
-      });
-    } catch (error) {
-      if (error instanceof CustomException) {
-        throw error;
-      }
-
-      throw new ConnectionProviderException(
-        `identifyAccount logic function of connection provider ${provider.id} could not be executed: ${error instanceof Error ? error.message : String(error)}`,
-        ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
-      );
-    }
+    payload:
+      | IdentifyAccountPayload
+      | AuthorizeConnectionPayload
+      | ConnectionCallbackPayload;
+  }): Promise<LogicFunctionExecuteResult['data']> {
+    return this.logicFunctionExecutorService.executeOrThrow({
+      logicFunctionId,
+      workspaceId,
+      payload,
+      shouldEnforceUsageLimits: true,
+      toException: (reason) =>
+        buildConnectionFlowHookFailedException({ hook, provider, reason }),
+    });
   }
 
   // Lifecycle hooks are best effort: a failing hook must never surface to the
@@ -262,10 +394,8 @@ export class ConnectionProviderLifecycleHookService {
   }
 
   private async resolveLogicFunctionId({
-    hook,
     logicFunctionUniversalIdentifier,
-    provider,
-    workspaceId,
+    ...logicFunctionLookup
   }: {
     hook: ConnectionLifecycleHook;
     logicFunctionUniversalIdentifier: string | null;
@@ -276,21 +406,35 @@ export class ConnectionProviderLifecycleHookService {
       return undefined;
     }
 
+    return this.resolveLogicFunctionIdOrThrow({
+      ...logicFunctionLookup,
+      logicFunctionUniversalIdentifier,
+    });
+  }
+
+  private async resolveLogicFunctionIdOrThrow({
+    hook,
+    logicFunctionUniversalIdentifier,
+    provider,
+    workspaceId,
+  }: {
+    hook: ConnectionLifecycleHook;
+    logicFunctionUniversalIdentifier: string;
+    provider: Pick<ConnectionLifecycleHookProvider, 'id' | 'applicationId'>;
+    workspaceId: string;
+  }): Promise<string> {
     const { flatLogicFunctionMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
       ]);
 
-    const flatLogicFunction =
-      flatLogicFunctionMaps.byUniversalIdentifier[
-        logicFunctionUniversalIdentifier
-      ];
+    const flatLogicFunction = findApplicationFlatLogicFunction({
+      flatLogicFunctionMaps,
+      universalIdentifier: logicFunctionUniversalIdentifier,
+      applicationId: provider.applicationId,
+    });
 
-    if (
-      !isDefined(flatLogicFunction) ||
-      isDefined(flatLogicFunction.deletedAt) ||
-      flatLogicFunction.applicationId !== provider.applicationId
-    ) {
+    if (!isDefined(flatLogicFunction)) {
       throw new ConnectionProviderException(
         `Connection provider ${provider.id} references ${hook} logic function ${logicFunctionUniversalIdentifier}, which was not found in its application.`,
         MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK[hook],

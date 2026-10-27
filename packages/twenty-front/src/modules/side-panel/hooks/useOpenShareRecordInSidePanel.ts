@@ -23,7 +23,6 @@ export const useOpenShareRecordInSidePanel = () => {
       recordId: string;
     }) => {
       const pageId = v4();
-      const objectLabel = objectMetadataItem.labelSingular;
 
       store.set(
         shareRecordTargetComponentState.atomFamily({ instanceId: pageId }),
@@ -35,7 +34,7 @@ export const useOpenShareRecordInSidePanel = () => {
 
       navigateSidePanelMenu({
         page: SidePanelPages.ShareRecord,
-        pageTitle: t`Share ${objectLabel}`,
+        pageTitle: t`Share`,
         pageIcon: IconShare,
         pageId,
       });

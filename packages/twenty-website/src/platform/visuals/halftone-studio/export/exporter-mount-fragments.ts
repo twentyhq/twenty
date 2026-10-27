@@ -56,6 +56,7 @@ function emitBlurMaterials() {
 
 type HalftoneUniformOverrides = {
   cropToBounds: number;
+  toneMapScene: number;
   hoverHalftoneRadius: string;
   hoverLightRadius: string;
   waveSpeed: string;
@@ -65,6 +66,7 @@ function emitHalftoneMaterial(overrides: HalftoneUniformOverrides) {
   return `
   const halftoneMaterial = new THREE.ShaderMaterial({
     transparent: true,
+    toneMapped: false,
     uniforms: {
       tScene: { value: sceneTarget.texture },
       tGlow: { value: blurTargetB.texture },
@@ -75,8 +77,8 @@ function emitHalftoneMaterial(overrides: HalftoneUniformOverrides) {
         value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
       },
       tile: { value: settings.halftone.scale },
-      s_3: { value: settings.halftone.power },
-      s_4: { value: settings.halftone.width },
+      halftonePower: { value: settings.halftone.power },
+      halftoneWidth: { value: settings.halftone.width },
       applyToDarkAreas: {
         value: settings.halftone.toneTarget === 'dark' ? 1 : 0,
       },
@@ -101,6 +103,7 @@ function emitHalftoneMaterial(overrides: HalftoneUniformOverrides) {
       hoverFlowRadius: { value: 0.18 },
       dragFlowStrength: { value: 0 },
       cropToBounds: { value: ${overrides.cropToBounds} },
+      toneMapScene: { value: ${overrides.toneMapScene} },
     },
     vertexShader: passThroughVertexShader,
     fragmentShader: halftoneFragmentShader,

@@ -88,6 +88,9 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           this.twentyConfigService.get(
             'LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION',
           ) ?? region;
+        const resourceTags =
+          this.twentyConfigService.get('LOGIC_FUNCTION_LAMBDA_RESOURCE_TAGS') ??
+          {};
         const resourceNamespace = getLambdaResourceNamespace({
           lambdaRoleArn: lambdaRole,
         });
@@ -101,11 +104,16 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
             ? { accessKeyId, secretAccessKey }
             : fromNodeProviderChain({ clientConfig: { region } }),
           region,
+          endpoint: this.twentyConfigService.get(
+            'LOGIC_FUNCTION_LAMBDA_ENDPOINT',
+          ),
           lambdaRole,
           subhostingRole,
           layerBucket,
           layerBucketRegion,
           resourceNamespace,
+          resourceTags:
+            Object.keys(resourceTags).length > 0 ? resourceTags : undefined,
           sdkClientArchiveService: this.sdkClientArchiveService,
         });
       }

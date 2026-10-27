@@ -1,8 +1,9 @@
 ---
 title: Publishing
-icon: "upload"
 description: Distribute your Twenty app to the marketplace or deploy it internally.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Overview
 
@@ -19,10 +20,10 @@ Publishing an app creates an **application registration**: the app's identity on
 
 A `universalIdentifier` is unique across the whole instance and a registration belongs to at most one workspace (its owner) — or none until it is claimed — so installing an app and developing one are two different rights:
 
-| Action | Requirement |
-|--------|-------------|
-| Installing an app | The app is listed on the marketplace, pre-installed by the operator, or its registration belongs to your workspace. |
-| Developing an app (`yarn twenty dev`, `apply`, `plan`) | The registration belongs to your workspace. |
+| Action                                                | Requirement                                                                                                         |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Installing an app                                     | The app is listed on the marketplace, pre-installed by the operator, or its registration belongs to your workspace. |
+| Developing an app (`twenty app dev`, `apply`, `plan`) | The registration belongs to your workspace.                                                                         |
 
 Syncing code and a manifest under an identifier is a claim of authorship, so being able to install an app never grants the right to publish code under its identity. A workspace that is not the owner is refused, whether the app is listed, pre-installed, or private.
 
@@ -33,13 +34,13 @@ Two situations lead to that refusal:
 
 ## Building your app
 
-Run the build command to compile your app and generate a distribution-ready `manifest.json`:
+Run the build command to typecheck and bundle your app:
 
 ```bash filename="Terminal"
-yarn twenty dev:build
+twenty app build
 ```
 
-This compiles TypeScript sources, transpiles logic functions and front components, and writes everything to `.twenty/output/`. Add `--tarball` to also produce a `.tgz` package for manual distribution or the publish command.
+This typechecks and bundles the app into a temporary CLI snapshot. Use `--json` to inspect the manifest and artifact metadata. `twenty app publish` creates the package itself; no separate tarball build is required.
 
 ## Deploying to a server (tarball)
 
@@ -52,7 +53,7 @@ Before deploying, you need a configured remote pointing to the target server. Re
 Add a remote:
 
 ```bash filename="Terminal"
-yarn twenty remote:add --url https://your-twenty-server.com --as production
+twenty auth login --url https://your-twenty-server.com --name production
 ```
 
 ### Deploying
@@ -60,9 +61,9 @@ yarn twenty remote:add --url https://your-twenty-server.com --as production
 Build and upload your app to the server in one step:
 
 ```bash filename="Terminal"
-yarn twenty app:publish --private
+twenty app publish --private
 # To deploy to a specific remote:
-# yarn twenty app:publish --private --remote production
+# twenty app publish --private --remote production
 ```
 
 ### Sharing a deployed app
@@ -82,11 +83,14 @@ When updating an already deployed tarball app, the server requires the `version`
 To release an update:
 
 1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
-2. Run `yarn twenty app:publish --private` (or `yarn twenty app:publish --private --remote production`)
+2. Run `twenty app publish --private` (or `twenty app publish --private --remote production`)
 3. Workspaces that have the app installed and enabled auto-upgrade for it (in the app's General tab) are upgraded automatically in the background; the others will see the upgrade available in their settings
 
 <Note>
-Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is allowed, and a final release like `1.0.0` is correctly recognized as higher than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver string.
+  Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is
+  allowed, and a final release like `1.0.0` is correctly recognized as higher
+  than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver
+  string.
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
@@ -108,11 +112,11 @@ If your app uses a feature introduced in a specific Twenty server version (for e
 
 The value is a standard [semver range](https://github.com/npm/node-semver#ranges). Common patterns:
 
-| Range | Meaning |
-|-------|---------|
-| `>=2.3.0` | Any server from 2.3.0 onward |
+| Range            | Meaning                                  |
+| ---------------- | ---------------------------------------- |
+| `>=2.3.0`        | Any server from 2.3.0 onward             |
 | `>=2.3.0 <3.0.0` | 2.3.0 or later, but below the next major |
-| `^2.3.0` | Same as `>=2.3.0 <3.0.0` |
+| `^2.3.0`         | Same as `>=2.3.0 <3.0.0`                 |
 
 **What happens at deploy and install time:**
 
@@ -122,12 +126,14 @@ The value is a standard [semver range](https://github.com/npm/node-semver#ranges
 - If the server has no `APP_VERSION` configured, the check is skipped.
 
 <Note>
-The server is the authoritative check — it validates `engines.twenty` on both tarball upload and workspace install. If you deploy a tarball out-of-band or install from the marketplace, the server still enforces compatibility.
+  The server is the authoritative check — it validates `engines.twenty` on both
+  tarball upload and workspace install. If you deploy a tarball out-of-band or
+  install from the marketplace, the server still enforces compatibility.
 </Note>
 
 ## Automated CI/CD (scaffolded workflows)
 
-Apps generated with `create-twenty-app` ship with three GitHub Actions workflows out of the box, under `.github/workflows/`. CI runs with no setup, CD requires a single secret, and publishing to npm requires a one-time npm trusted-publisher setup.
+Apps generated with `twenty app init` ship with three GitHub Actions workflows out of the box, under `.github/workflows/`. CI runs with no setup, CD requires a single secret, and publishing to npm requires a one-time npm trusted-publisher setup.
 
 ### CI — `ci.yml`
 
@@ -136,9 +142,11 @@ Runs integration tests on every push to `main` and every pull request.
 **What it does:**
 
 1. Checks out your app's source.
-2. Spawns an isolated Twenty test instance using the `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` composite action (the CI equivalent of `yarn twenty docker:start --test`).
-3. Enables Corepack, sets up Node.js from your `.nvmrc`, and installs dependencies with `yarn install --immutable`.
-4. Runs `yarn test`, passing `TWENTY_API_URL` and `TWENTY_API_KEY` from the spawned instance so your tests can talk to a real server.
+2. Spawns an isolated Twenty test instance using the `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` composite action.
+3. Enables Corepack and sets up Node.js from your `.nvmrc`.
+4. Installs the pinned standalone CLI in the **Install Twenty CLI** step.
+5. Installs dependencies with `yarn install --immutable`, then runs lint, typecheck, and unit tests.
+6. Runs `yarn test`, passing `TWENTY_API_URL` and `TWENTY_API_KEY` from the spawned instance so your tests can talk to a real server.
 
 **Config knobs:**
 
@@ -154,18 +162,21 @@ Deploys your app to a configured Twenty server on every push to `main`, and opti
 **What it does:**
 
 1. Checks out the PR head (for labeled PRs) or the pushed commit.
-2. Runs `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — the CI equivalent of `yarn twenty app:publish --private`.
+2. Runs `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — the CI equivalent of `twenty app publish --private`.
 3. Runs `twentyhq/twenty/.github/actions/install-twenty-app@main` so the newly deployed version is installed into the target workspace.
 
 **Required configuration:**
 
-| Setting | Where | Purpose |
-|---------|-------|---------|
-| `TWENTY_DEPLOY_URL` | `env` in `cd.yml` (defaults to `http://localhost:3000`) | The Twenty server to deploy to. Change this to your real server URL before first use. |
-| `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | API key with deploy permission on the target server. |
+| Setting                 | Where                                                      | Purpose                                                                               |
+| ----------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (defaults to `http://localhost:2020`)    | The Twenty server to deploy to. Change this to your real server URL before first use. |
+| `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | API key with deploy permission on the target server.                                  |
 
 <Note>
-The default `TWENTY_DEPLOY_URL` of `http://localhost:3000` is a placeholder — it will not reach anything from a GitHub-hosted runner. Update it to your server's public URL (or use a self-hosted runner with network access) before enabling CD.
+  The default `TWENTY_DEPLOY_URL` of `http://localhost:2020` is a placeholder —
+  it will not reach anything from a GitHub-hosted runner. Update it to your
+  server's public URL (or use a self-hosted runner with network access) before
+  enabling CD.
 </Note>
 
 **Triggering a preview deploy from a PR:**
@@ -179,7 +190,8 @@ Publishes your app to npm with provenance when you push a version tag (e.g. `v1.
 **What it does:**
 
 1. Checks out your app, sets up Node.js, and updates npm (trusted publishing requires npm 11.5.1 or later).
-2. Runs `yarn twenty app:publish`, which builds the app and publishes `.twenty/output` to npm. In CI it automatically adds `--provenance` and `--access public`, so no flags are needed in the workflow.
+2. Installs the pinned standalone CLI in the **Install Twenty CLI** step, then installs app dependencies with `yarn install --immutable`.
+3. Runs `twenty app publish`, which builds and packs an isolated app snapshot, then publishes it to npm. In CI it automatically adds `--provenance` and `--access public`, so no flags are needed in the workflow.
 
 **One-time setup:**
 
@@ -189,14 +201,21 @@ On npmjs.com open your package > **Settings → Trusted Publisher** and register
 npm only accepts provenance from **public** source repositories. If you publish from a private repo, npm rejects the OIDC provenance bundle with an `E422 ... Unsupported GitHub Actions source repository visibility: "private"` error. To publish from a private repo, opt out of provenance by setting `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` in the publish step's `env` (a commented-out hint is included in the scaffolded `publish.yml`):
 
 ```yaml filename=".github/workflows/publish.yml"
-      - name: Publish to npm
-        env:
-          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
-        run: yarn twenty app:publish
+- name: Publish to npm
+  env:
+    TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+  run: twenty app publish
 ```
 
 Without GitHub provenance, the package cannot be claimed through **Claim with GitHub**. Use a public repository with provenance if you need this ownership flow.
+
 </Note>
+
+### Pinning the CLI version
+
+All three generated workflows pin the standalone CLI to the version of `twenty` that ran `twenty app init`. The **Install Twenty CLI** steps in `ci.yml` and `publish.yml` use `npm install -g twenty@<version>`. In `cd.yml`, both the deploy and install actions receive the same version through their `cli-version` input.
+
+To upgrade, update the two installation commands and both `cli-version` inputs together. These pins are separate from the `TWENTY_VERSION` server version used in CI and the reusable action references below.
 
 ### Pinning the reusable actions
 
@@ -209,7 +228,7 @@ Publishing to npm makes your app eligible for the Twenty marketplace. After cata
 ### Requirements
 
 - An [npm](https://www.npmjs.com) account
-- The `twenty-app` keyword in your `package.json` `keywords` array (add it manually — it is not included by default in the `create-twenty-app` template)
+- The `twenty-app` keyword in your `package.json` `keywords` array (add it manually — it is not included by default in the `twenty app init` template)
 
 ```json filename="package.json"
 {
@@ -229,10 +248,7 @@ export default defineApplication({
   displayName: 'My App',
   description: 'A great app',
   logo: 'public/logo.png',
-  galleryImages: [
-    'public/screenshot-1.png',
-    'public/screenshot-2.png',
-  ],
+  galleryImages: ['public/screenshot-1.png', 'public/screenshot-2.png'],
 });
 ```
 
@@ -243,7 +259,9 @@ See the [defineApplication accordion](/developers/extend/apps/config/application
 The marketplace renders `galleryImages` in a fixed `8:5` container (for example, `1600×1000 px`).
 
 <Note>
-Gallery images of any aspect ratio are displayed in full and are never cropped, but anything significantly taller or narrower than `8:5` will show empty bands on the sides.
+  Gallery images of any aspect ratio are displayed in full and are never
+  cropped, but anything significantly taller or narrower than `8:5` will show
+  empty bands on the sides.
 </Note>
 
 #### Image size limit
@@ -253,26 +271,20 @@ The `logo` and each `galleryImages` file must not exceed **10 MB**. Larger files
 ### Publish
 
 ```bash filename="Terminal"
-yarn twenty app:publish
+twenty app publish
 ```
 
 To publish under a specific dist-tag (e.g., `beta` or `next`):
 
 ```bash filename="Terminal"
-yarn twenty app:publish --tag beta
+twenty app publish --tag beta
 ```
 
 ### How marketplace discovery works
 
 The Twenty server syncs its marketplace catalog from the npm registry **every hour**.
 
-You can trigger the sync immediately instead of waiting:
-
-```bash filename="Terminal"
-yarn twenty dev:catalog-sync
-# To target a specific remote:
-# yarn twenty dev:catalog-sync --remote production
-```
+The standalone CLI has no catalog-sync command. Wait for the server catalog sync or use the server administration tools.
 
 The metadata shown in the marketplace comes from your `defineApplication()` config — see [Marketplace metadata](#marketplace-metadata) above.
 
@@ -280,16 +292,21 @@ The metadata shown in the marketplace comes from your `defineApplication()` conf
 If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
 
 The About tab renders markdown text only. Images do not render, whether they use markdown syntax or `<img>` tags, and raw HTML such as badges or `<div align="center">` blocks shows as plain text.
+
 </Note>
 
 ### CI publishing
 
-The scaffolded `publish.yml` workflow described above publishes to npm automatically on version tags, with provenance. Because `yarn twenty app:publish` adds `--provenance` and `--access public` for you when it runs in CI, the workflow needs no npm flags — only the one-time trusted-publisher setup.
+The scaffolded `publish.yml` workflow described above publishes to npm automatically on version tags, with provenance. Because `twenty app publish` adds `--provenance` and `--access public` for you when it runs in CI, the workflow needs no npm flags — only the one-time trusted-publisher setup.
 
-For other CI systems (GitLab CI, CircleCI, etc.), run `yarn install` then `yarn twenty app:publish`. Provenance is emitted when the environment can mint an OIDC token and skipped automatically otherwise.
+For other CI systems (GitLab CI, CircleCI, etc.), run `yarn install` then `twenty app publish`. Provenance is emitted when the environment can mint an OIDC token and skipped automatically otherwise.
 
 <Note>
-**npm provenance** adds a trust badge to your npm listing, letting users verify the package was built from a specific commit in a public CI pipeline. It is also what lets you claim ownership of your app in a Twenty marketplace. See the [npm provenance docs](https://docs.npmjs.com/generating-provenance-statements) for details.
+  **npm provenance** adds a trust badge to your npm listing, letting users
+  verify the package was built from a specific commit in a public CI pipeline.
+  It is also what lets you claim ownership of your app in a Twenty marketplace.
+  See the [npm provenance
+  docs](https://docs.npmjs.com/generating-provenance-statements) for details.
 </Note>
 
 After the package has synced into the catalog, continue with [Claiming your app](#claiming-your-app). The claim flow requires provenance pointing to a **GitHub** repository.
@@ -326,7 +343,11 @@ A [server route](/developers/extend/apps/logic/logic-functions#server-route-trig
 3. Register the server webhook URL with your provider and test an event from a second workspace where the app is installed. Check both the resolver and the target function's logs.
 
 <Warning>
-An unclaimed app, or an app not installed in its owner workspace, has no server-route resolver to run. Requests return `404` (`LOGIC_FUNCTION_NOT_FOUND`), even if the app is installed in other workspaces. These apps stay out of marketplace search until claimed, installed on the owner workspace, and configured with all required server variables.
+  An unclaimed app, or an app not installed in its owner workspace, has no
+  server-route resolver to run. Requests return `404`
+  (`LOGIC_FUNCTION_NOT_FOUND`), even if the app is installed in other
+  workspaces. These apps stay out of marketplace search until claimed, installed
+  on the owner workspace, and configured with all required server variables.
 </Warning>
 
 ### Owner workspace costs and availability
@@ -344,7 +365,12 @@ Moving the GitHub repository to another personal account or organization does no
 If you have trouble claiming your app, contact us on [Discord](https://discord.gg/cx5n4Jzs57) or [open a GitHub issue](https://github.com/twentyhq/twenty/issues/new/choose).
 
 <Accordion title="Self-hosted GitHub claim configuration">
-The server administrator configures `APP_CLAIM_GITHUB_CLIENT_ID` and `APP_CLAIM_GITHUB_CLIENT_SECRET` with a GitHub OAuth app. Set its authorization callback URL to your `SERVER_URL` followed by `/application-registration-claim/github/callback`, for example `https://twenty.example.com/application-registration-claim/github/callback`. This configuration is already managed for you on Twenty Cloud.
+  The server administrator configures `APP_CLAIM_GITHUB_CLIENT_ID` and
+  `APP_CLAIM_GITHUB_CLIENT_SECRET` with a GitHub OAuth app. Set its
+  authorization callback URL to your `SERVER_URL` followed by
+  `/application-registration-claim/github/callback`, for example
+  `https://twenty.example.com/application-registration-claim/github/callback`.
+  This configuration is already managed for you on Twenty Cloud.
 </Accordion>
 
 ## Marketplace visibility and vetting
@@ -352,6 +378,10 @@ The server administrator configures `APP_CLAIM_GITHUB_CLIENT_ID` and `APP_CLAIM_
 Claiming establishes ownership; it does not grant a **Vetted** badge. The marketplace defaults to **Vetted only**. To find community apps, go to **Settings > Applications > Marketplace**, open the filter, and uncheck **Vetted only**. You can also share your app's direct install page using **My apps > your app > Distribution > Copy sharing link**.
 
 The Vetted label currently applies to apps maintained by Twenty, for which the team can vouch for security and quality. Third-party apps can be published and installed without this label.
+
+The proposed [third-party marketplace vetting checklist](/developers/extend/apps/operations/marketplace-vetting)
+is a work in progress. It describes version-specific review criteria and evidence,
+not an available certification program.
 
 If your app is still missing with **Vetted only** turned off, confirm catalog sync has completed, all required server variables are filled in, and any server-route setup is complete.
 
@@ -366,7 +396,7 @@ Go to the **Settings > Applications** page in Twenty, where both marketplace and
 You can also install apps from the command line:
 
 ```bash filename="Terminal"
-yarn twenty app:install
+twenty app install
 ```
 
 <Note>
@@ -375,5 +405,8 @@ The server enforces semver versioning on install, mirroring the rules on deploy:
 - Installing the same version that is already installed in your workspace is rejected with an `APP_ALREADY_INSTALLED` error.
 - Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
 
-To install a newer version, deploy or publish it first, then re-run `yarn twenty app:install`.
+To install a newer version, deploy or publish it first, then re-run `twenty app install`.
+
 </Note>
+
+<PageBanner illustration="card-page-publishing" />

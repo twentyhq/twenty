@@ -1,7 +1,13 @@
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { atom, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -325,10 +331,13 @@ describe('AiChatInboxPage', () => {
     );
   });
 
-  it('opens the first chat beside the list', () => {
+  it('shows the list without selecting a chat on the base inbox route', () => {
     renderInbox('/inbox');
 
-    expect(screen.getByText(`Chat page ${firstThread.id}`)).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: 'Conversation list' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/^Chat page /)).not.toBeInTheDocument();
     expect(
       screen.queryByText('No conversation selected'),
     ).not.toBeInTheDocument();
@@ -613,7 +622,7 @@ describe('AiChatInboxPage', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('moves between chats and back to the list from the chat', () => {
+    it('moves between chats and back to the list from the chat', async () => {
       renderInbox(`/inbox/${secondThread.id}`);
 
       fireEvent.click(screen.getByRole('button', { name: 'Next chat' }));
@@ -625,7 +634,9 @@ describe('AiChatInboxPage', () => {
 
       fireEvent.click(screen.getByRole('link', { name: /Open/ }));
 
-      expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument();
+      await waitFor(() =>
+        expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument(),
+      );
       expect(
         screen.getByRole('button', { name: 'Third chat' }),
       ).toBeInTheDocument();

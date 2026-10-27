@@ -1,12 +1,13 @@
 ---
 title: CLI
 description: Sign in to a workspace, explore its data and build apps from your terminal with the twenty CLI.
-icon: "terminal"
 ---
 
-The `twenty` CLI connects to Twenty workspaces from your terminal. Use it to inspect metadata, read records, send API requests, and create, sync and debug apps. It needs **Node.js 24.5 or later**.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Running the CLI
+
+The `twenty` CLI connects to Twenty workspaces from your terminal. Use it to inspect metadata, read records, send API requests, and create, sync and debug apps. It needs **Node.js 24.5 or later**.
 
 Run any command through `npx`, without installing anything:
 
@@ -21,22 +22,18 @@ npm install -g twenty
 twenty --version
 ```
 
-<Warning>
-Inside an app project, use `npx twenty@latest`, not `npx twenty`. Apps depend on `twenty-sdk`, which still ships an older `twenty` binary, and `npx twenty` runs that local binary instead of this CLI.
-</Warning>
-
 The examples below use `twenty`. Prefix them with `npx twenty@latest` if you did not install it globally. Run `twenty commands` for the full command list and `twenty <command> --help` for the options of one command.
 
-| Command | What it does |
-|---------|--------------|
-| `auth` | Sign in, check and remove credentials |
-| `remote` | List, select, rename and remove saved workspace connections |
-| `metadata` | Inspect objects and fields |
-| `data` | List and read records |
-| `api` | Send raw REST or GraphQL requests |
-| `open` | Open the workspace in your browser |
-| `app` | Create, build, sync, debug and uninstall apps |
-| `doctor` | Diagnose the CLI, app SDK and workspace connection |
+| Command    | What it does                                                |
+| ---------- | ----------------------------------------------------------- |
+| `auth`     | Sign in, check and remove credentials                       |
+| `remote`   | List, select, rename and remove saved workspace connections |
+| `metadata` | Inspect objects and fields                                  |
+| `data`     | List and read records                                       |
+| `api`      | Send raw REST or GraphQL requests                           |
+| `open`     | Open the workspace in your browser                          |
+| `app`      | Create, build, sync, debug and uninstall apps               |
+| `doctor`   | Diagnose the CLI, app SDK and workspace connection          |
 
 Every command that talks to a workspace accepts `--remote <name>` to target a saved connection other than the default one, and `--json` for structured output.
 
@@ -106,18 +103,18 @@ npx twenty@latest app dev
 
 Other app commands:
 
-| Command | What it does |
-|---------|--------------|
-| `app add` | Scaffold an object, field, logic function or other entity |
-| `app build` / `app typecheck` | Build or typecheck the app locally |
-| `app plan` | Preview the metadata changes an apply would make |
-| `app apply` | Build, upload and sync the app |
-| `app generate-client` | Regenerate the typed API client without syncing |
-| `app pull` | Write the installed app's metadata back to local source |
-| `app translations extract` | Extract translatable strings into `locales/` catalogs |
-| `app publish` | Publish the app to npm or to a private Twenty registry |
-| `app install` | Install an already registered app package in the workspace |
-| `app uninstall` | Remove the app and everything it owns from the workspace |
+| Command                       | What it does                                               |
+| ----------------------------- | ---------------------------------------------------------- |
+| `app add`                     | Scaffold an object, field, logic function or other entity  |
+| `app build` / `app typecheck` | Build or typecheck the app locally                         |
+| `app plan`                    | Preview the metadata changes an apply would make           |
+| `app apply`                   | Build, upload and sync the app                             |
+| `app generate-client`         | Regenerate the typed API client without syncing            |
+| `app pull`                    | Write the installed app's metadata back to local source    |
+| `app translations extract`    | Extract translatable strings into `locales/` catalogs      |
+| `app publish`                 | Publish the app to npm or to a private Twenty registry     |
+| `app install`                 | Install an already registered app package in the workspace |
+| `app uninstall`               | Remove the app and everything it owns from the workspace   |
 
 Definitions missing from your source are deleted from the workspace by default. Pass `--no-delete` to keep them. Deleting objects or fields also deletes their data, so it requires confirmation. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery) for details.
 
@@ -166,6 +163,12 @@ twenty doctor --offline
 
 `doctor` checks your Node version, which `twenty` binary is on your `PATH`, your saved connections and the app SDK, then reports what to fix.
 
+## Scripts and tests
+
+Build output belongs to the CLI. Do not read `.twenty/output/manifest.json` or import internal build code; read `data.manifest` from `twenty app build --json`.
+
 ## Full reference
 
 The [command reference](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md) covers every flag, permission, output format and exit code.
+
+<PageBanner illustration="card-page-cli" />

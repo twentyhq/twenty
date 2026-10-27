@@ -1,7 +1,6 @@
 ---
 title: Job in background
 description: Affida il lavoro lungo o soggetto a limitazioni di frequenza ai worker di Twenty accodando un'altra esecuzione di una logic function invece di fare tutto in linea.
-icon: layer-group
 ---
 
 L'esecuzione di una logic function è limitata dal suo `timeoutSeconds` (massimo 900 secondi). Qualsiasi attività che non può essere completata in tale intervallo — una risincronizzazione completa, un fan-out per record, un'API di terze parti che applica limitazioni di frequenza — deve essere suddivisa in esecuzioni più piccole.

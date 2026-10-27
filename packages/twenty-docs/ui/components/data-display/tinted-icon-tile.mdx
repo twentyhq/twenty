@@ -3,9 +3,13 @@ title: TintedIconTile
 description: An icon on a tinted background derived from a theme color.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import TintedIconTileReference from '/snippets/ui/generated/components/data-display/tinted-icon-tile.mdx';
+
+## Overview
 
 Pass icon content through the lowercase `icon` node slot. The tile derives its background and inherited foreground color from the theme palette. Icon content is decorative. Keep a visible label beside it, or give the root `role="img"` and an accessible name for a standalone labeled image.
 
@@ -60,3 +64,5 @@ Replace `Icon={CompanyIcon}` with `icon={<CompanyIcon size={16} />}`. Move the f
 ## Props
 
 <TintedIconTileReference />
+
+<PageBanner illustration="page-cover-palette" />

@@ -40,6 +40,7 @@ export const RecordFormBooleanFieldInput = ({
           variant="transparent"
         >
           <SegmentedControl
+            fullWidth
             variant="rectangle"
             aria-label={isNonEmptyString(label) ? label : t`True or false`}
             options={[

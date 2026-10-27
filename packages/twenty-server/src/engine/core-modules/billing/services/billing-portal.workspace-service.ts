@@ -16,6 +16,8 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
+import { MAX_TRIAL_WORKSPACES_PER_USER } from 'src/engine/core-modules/billing/constants/max-trial-workspaces-per-user.constant';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -25,8 +27,10 @@ import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/se
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
+import { buildBillingTrialLimitLockKey } from 'src/engine/core-modules/billing/utils/build-billing-trial-limit-lock-key.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -47,7 +51,51 @@ export class BillingPortalWorkspaceService {
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly cacheLockService: CacheLockService,
   ) {}
+
+  async hasReachedTrialLimit({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const otherTrialWorkspaceCount = await this.userWorkspaceRepository
+      .createQueryBuilder('userWorkspace')
+      .innerJoin(
+        BillingSubscriptionEntity,
+        'billingSubscription',
+        'billingSubscription.workspaceId = userWorkspace.workspaceId',
+      )
+      .where('userWorkspace.userId = :userId', { userId })
+      .andWhere('userWorkspace.workspaceId != :workspaceId', { workspaceId })
+      .andWhere('billingSubscription.status = :trialingStatus', {
+        trialingStatus: SubscriptionStatus.Trialing,
+      })
+      .getCount();
+
+    return otherTrialWorkspaceCount >= MAX_TRIAL_WORKSPACES_PER_USER;
+  }
+
+  async withTrialLimitLock<TResult>({
+    userId,
+    workspaceId,
+    createSubscription,
+  }: {
+    userId: string;
+    workspaceId: string;
+    createSubscription: (isTrialLimitReached: boolean) => Promise<TResult>;
+  }): Promise<TResult> {
+    return await this.cacheLockService.withLock(
+      async () =>
+        createSubscription(
+          await this.hasReachedTrialLimit({ userId, workspaceId }),
+        ),
+      buildBillingTrialLimitLockKey(userId),
+      BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
+    );
+  }
 
   async computeCheckoutSessionURL({
     user,
@@ -56,6 +104,7 @@ export class BillingPortalWorkspaceService {
     successUrlPath,
     plan,
     requirePaymentMethod,
+    isTrialLimitReached,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const { successUrl, cancelUrl, customer, stripeSubscriptionLineItems } =
       await this.prepareSubscriptionParameters({
@@ -74,7 +123,9 @@ export class BillingPortalWorkspaceService {
         stripeCustomerId: customer?.stripeCustomerId,
         plan,
         requirePaymentMethod,
-        withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
+        withTrialPeriod:
+          !isTrialLimitReached &&
+          this.isCustomerEligibleForTrialPeriod(customer),
       });
 
     assertIsDefinedOrThrow(
@@ -95,6 +146,7 @@ export class BillingPortalWorkspaceService {
     successUrlPath,
     plan,
     requirePaymentMethod,
+    isTrialLimitReached,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const { successUrl, customer, stripeSubscriptionLineItems } =
       await this.prepareSubscriptionParameters({
@@ -123,7 +175,9 @@ export class BillingPortalWorkspaceService {
         stripeCustomerId: customer?.stripeCustomerId,
         plan,
         requirePaymentMethod,
-        withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
+        withTrialPeriod:
+          !isTrialLimitReached &&
+          this.isCustomerEligibleForTrialPeriod(customer),
         idempotencyKey: `${customer?.billingSubscriptions.length ?? 0}`,
       });
 
@@ -140,6 +194,7 @@ export class BillingPortalWorkspaceService {
     workspace,
     billingPricesPerPlan,
     plan,
+    isTrialLimitReached,
     idempotencyKey,
   }: BillingPortalCheckoutSessionParameters & {
     idempotencyKey: string;
@@ -168,7 +223,9 @@ export class BillingPortalWorkspaceService {
           stripeSubscriptionLineItems,
           stripeCustomerId: customer?.stripeCustomerId,
           plan,
-          withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
+          withTrialPeriod:
+            !isTrialLimitReached &&
+            this.isCustomerEligibleForTrialPeriod(customer),
           idempotencyKey,
         },
       );

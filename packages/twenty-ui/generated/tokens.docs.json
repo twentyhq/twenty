@@ -420,6 +420,13 @@
     "isNumber": false
   },
   {
+    "path": "border.radius.lgRound",
+    "cssVariable": "--t-border-radius-lg-round",
+    "light": "12px",
+    "dark": "12px",
+    "isNumber": false
+  },
+  {
     "path": "border.radius.md",
     "cssVariable": "--t-border-radius-md",
     "light": "8px",

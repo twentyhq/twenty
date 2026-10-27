@@ -13,7 +13,10 @@ const buildException = (sendRefusal: UsageRefusal) =>
     sendRefusal,
   });
 
-const buildQuotaRefusal = (exhaustedKind: ExhaustedKind): UsageRefusal => ({
+const buildQuotaRefusal = (
+  exhaustedKind: ExhaustedKind,
+  { isDefault }: { isDefault?: boolean } = {},
+): UsageRefusal => ({
   kind: 'quotaExhausted',
   exhaustedScope: {
     resourceType: UsageResourceType.EMAIL,
@@ -27,6 +30,7 @@ const buildQuotaRefusal = (exhaustedKind: ExhaustedKind): UsageRefusal => ({
     periodCount: 1,
     periodUnit: 'month',
     retryAfterMs: 0,
+    isDefault,
   } satisfies ExhaustedScope,
 });
 
@@ -50,6 +54,21 @@ describe('buildCampaignSendRefusalException', () => {
     );
     expect(exception.message).toBe(
       'Campaign campaign-1 cannot be sent to 12 recipient(s): an email usage limit of 1000 for userWorkspace is reached',
+    );
+  });
+
+  it('tells the sender to contact us when the default daily limit is what the list exceeds', () => {
+    const exception = buildException(
+      buildQuotaRefusal('limit', { isDefault: true }),
+    );
+
+    expect(exception.code).toBe(
+      EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED,
+    );
+    expect(exception.userFriendlyMessage.message).toContain('Contact us');
+    expect(exception.userFriendlyMessage.values).toEqual({ limitValue: 1000 });
+    expect(exception.userFriendlyMessage).not.toEqual(
+      buildException(buildQuotaRefusal('limit')).userFriendlyMessage,
     );
   });
 

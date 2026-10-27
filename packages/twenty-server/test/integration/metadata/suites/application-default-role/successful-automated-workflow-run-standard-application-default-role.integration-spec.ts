@@ -7,11 +7,12 @@ import {
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
-import { findStandardApplicationDefaultRole } from 'test/integration/metadata/suites/application-default-role/utils/find-standard-application-default-role.util';
+import { findApplicationDefaultRole } from 'test/integration/metadata/suites/application-default-role/utils/find-application-default-role.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 type WorkflowRun = {
@@ -102,8 +103,11 @@ describe('An automated workflow run acts with the standard application default r
   });
 
   it('reads records with Admin as the standard application default role', async () => {
-    const standardApplicationDefaultRole =
-      await findStandardApplicationDefaultRole();
+    const standardApplicationDefaultRole = await findApplicationDefaultRole({
+      input: {
+        universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      },
+    });
 
     expect(standardApplicationDefaultRole?.universalIdentifier).toBe(
       STANDARD_ROLE.admin.universalIdentifier,

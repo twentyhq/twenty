@@ -4,10 +4,6 @@
 // tracks the manifest's head entry and is updated with each release.
 export const LATEST_RELEASE: {
   release: string;
-  title: string;
-  previewImage: string;
 } = {
   release: '2.40.0',
-  title: 'Pick an AI model by tier',
-  previewImage: '/images/releases/2.0/2.0.0-ai.webp',
 };

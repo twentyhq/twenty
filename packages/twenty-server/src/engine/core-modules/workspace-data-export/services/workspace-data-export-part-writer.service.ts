@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { Readable } from 'stream';
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  formatRecordExportHeader,
+  formatRecordExportRow,
+  isDefined,
+} from 'twenty-shared/utils';
 import { MoreThan } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -10,8 +14,6 @@ import { buildSystemAuthContext } from 'src/engine/core-modules/auth/utils/build
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { RECORD_EXPORT_PAGE_SIZE } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { formatRecordExportHeader } from 'src/engine/core-modules/record-export/utils/format-record-export-header.util';
-import { formatRecordExportRow } from 'src/engine/core-modules/record-export/utils/format-record-export-row.util';
 import { WORKSPACE_DATA_EXPORT_PART_MAX_SIZE_IN_BYTES } from 'src/engine/core-modules/workspace-data-export/constants/workspace-data-export.constant';
 import { type WorkspaceDataExportCursor } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-cursor.type';
 import { type WorkspaceDataExportObject } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-object.type';

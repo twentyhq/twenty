@@ -167,7 +167,7 @@ export const NewChatSuggestedPrompt: Story = {
       canvas.getByRole('button', { name: 'Create a record' }),
     );
     await waitFor(() => expect(editor).toHaveTextContent('Details:'));
-    await expect(editor).toHaveFocus();
+    await waitFor(() => expect(editor).toHaveFocus());
     await userEvent.type(editor, 'A new partner');
     await expect(editor).toHaveTextContent('A new partner');
     await expect(

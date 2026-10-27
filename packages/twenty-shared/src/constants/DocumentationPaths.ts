@@ -80,6 +80,10 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/workflows',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_CLI:
     '/developers/extend/apps/operations/cli',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_MARKETPLACE_VETTING:
+    '/developers/extend/apps/operations/marketplace-vetting',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_MONITORING:
+    '/developers/extend/apps/operations/monitoring',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_OVERVIEW:
     '/developers/extend/apps/operations/overview',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_PUBLISHING:
@@ -251,6 +255,8 @@ export const DOCUMENTATION_PATHS = {
   USER_GUIDE_BILLING_OVERVIEW: '/user-guide/billing/overview',
   USER_GUIDE_CALENDAR_EMAILS_CAPABILITIES_CALENDAR:
     '/user-guide/calendar-emails/capabilities/calendar',
+  USER_GUIDE_CALENDAR_EMAILS_CAPABILITIES_EMAIL_CHANNELS:
+    '/user-guide/calendar-emails/capabilities/email-channels',
   USER_GUIDE_CALENDAR_EMAILS_CAPABILITIES_MAILBOX:
     '/user-guide/calendar-emails/capabilities/mailbox',
   USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_CAN_I_BOOK_MEETINGS_FROM_TWENTY:
