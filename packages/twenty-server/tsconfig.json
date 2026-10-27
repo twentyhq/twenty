@@ -11,7 +11,6 @@
     "allowUnreachableCode": false,
     "esModuleInterop": true,
     "target": "es2018",
-    "lib": ["es2020", "dom", "dom.asynciterable"],
     "sourceMap": true,
     "inlineSources": true,
     "outDir": "./dist",
