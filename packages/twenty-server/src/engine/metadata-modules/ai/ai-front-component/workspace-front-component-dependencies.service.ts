@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { text } from 'stream/consumers';
 import { z } from 'zod';
-import { FileFolder } from 'twenty-shared/types';
+import { computeDependencyFileChecksum } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
+import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import {
   FrontComponentException,
   FrontComponentExceptionCode,
@@ -20,7 +18,7 @@ const packageSchema = z.object({
 export class WorkspaceFrontComponentDependenciesService {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly fileStorageService: FileStorageService,
+    private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
   ) {}
 
   async readOrThrow(workspaceId: string) {
@@ -28,34 +26,30 @@ export class WorkspaceFrontComponentDependenciesService {
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
-    const [packageJson, yarnLock] = await Promise.all(
-      ['package.json', 'yarn.lock'].map(async (resourcePath) =>
-        text(
-          await this.fileStorageService.readFile({
-            workspaceId,
-            applicationUniversalIdentifier: application.universalIdentifier,
-            fileFolder: FileFolder.Dependencies,
-            resourcePath,
-          }),
-        ),
-      ),
+    const {
+      packageJsonContent: packageJson,
+      yarnLockContent: yarnLock,
+      storedFilesChecksums,
+    } = await this.applicationDependencyFilesService.getVerifiedDependencyContentsOrThrow(
+      {
+        workspaceId,
+        applicationUniversalIdentifier: application.universalIdentifier,
+        declaredChecksums: {
+          packageJsonChecksum: application.packageJsonChecksum,
+          yarnLockChecksum: application.yarnLockChecksum,
+        },
+      },
     );
-    const packageContents = JSON.parse(packageJson);
-    const packageJsonChecksum = logicFunctionCreateHash(
-      JSON.stringify(packageContents),
-    );
-    const yarnLockChecksum = logicFunctionCreateHash(yarnLock);
-    if (
-      packageJsonChecksum !== application.packageJsonChecksum ||
-      yarnLockChecksum !== application.yarnLockChecksum
-    ) {
+
+    if (!isDefined(yarnLock)) {
       throw new FrontComponentException(
-        'Workspace app dependencies changed while reading. Retry the preview.',
+        'Add yarn.lock to the Workspace app before creating a component.',
         FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
       );
     }
-    const { dependencies, devDependencies } =
-      packageSchema.parse(packageContents);
+    const { dependencies, devDependencies } = packageSchema.parse(
+      JSON.parse(packageJson),
+    );
     const missingPackages = ['react', 'react-dom', 'twenty-ui'].filter(
       (name) => !isDefined(dependencies?.[name] ?? devDependencies?.[name]),
     );
@@ -69,8 +63,12 @@ export class WorkspaceFrontComponentDependenciesService {
       applicationId: application.id,
       packageJson,
       yarnLock,
-      revision: logicFunctionCreateHash(
-        JSON.stringify([application.id, packageJsonChecksum, yarnLockChecksum]),
+      revision: computeDependencyFileChecksum(
+        JSON.stringify([
+          application.id,
+          storedFilesChecksums.packageJsonChecksum,
+          storedFilesChecksums.yarnLockChecksum,
+        ]),
       ),
     };
   }
