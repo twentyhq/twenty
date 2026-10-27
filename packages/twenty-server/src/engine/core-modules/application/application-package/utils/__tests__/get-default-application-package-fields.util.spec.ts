@@ -12,9 +12,9 @@ describe('application dependency defaults', () => {
       directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
     });
     expect(standard.packageJsonChecksum).toBe(
-      '19e2309740fef4df0654b2e673626344',
+      '305f7460bdb2bb9d6a0eb1f30dab37ee',
     );
-    expect(standard.yarnLockChecksum).toBe('c17ba0399c57dedf69097e8d3de895c0');
+    expect(standard.yarnLockChecksum).toBe('d16b7574f403050fed73b9471c0469fb');
     const standardPackage = JSON.parse(standard.packageJsonContent);
     const customPackage = JSON.parse(custom.packageJsonContent);
     expect(standardPackage.devDependencies).toBeUndefined();
