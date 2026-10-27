@@ -15,21 +15,31 @@ const buildDriver = (siteverifyResponse: Record<string, unknown>) => {
 
 describe('GoogleRecaptchaDriver', () => {
   it('should accept a token scoring at or above the minimum score', async () => {
-    const driver = buildDriver({ success: true, score: 0.5 });
+    const driver = buildDriver({
+      success: true,
+      score: 0.5,
+      action: 'create_workspace',
+    });
 
     expect(await driver.validate('token')).toEqual({
       success: true,
       score: 0.5,
+      action: 'create_workspace',
     });
   });
 
   it('should reject a valid token scoring below the minimum score', async () => {
-    const driver = buildDriver({ success: true, score: 0.3 });
+    const driver = buildDriver({
+      success: true,
+      score: 0.3,
+      action: 'submit',
+    });
 
     expect(await driver.validate('token')).toEqual({
       success: false,
       error: 'low-score',
       score: 0.3,
+      action: 'submit',
     });
   });
 
@@ -39,6 +49,7 @@ describe('GoogleRecaptchaDriver', () => {
     expect(await driver.validate('token')).toEqual({
       success: true,
       score: undefined,
+      action: undefined,
     });
   });
 

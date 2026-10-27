@@ -109,16 +109,15 @@ describe('useRequestFreshCaptchaToken', () => {
       siteKey: 'google-site-key',
     } as Captcha);
 
-    const { result } = renderHook(() => useRequestFreshCaptchaToken(), {
-      wrapper: createWrapper,
-    });
+    const { result } = renderHook(
+      () => useRequestFreshCaptchaToken('create_workspace'),
+      { wrapper: createWrapper },
+    );
 
     let token: string | undefined;
 
     await act(async () => {
-      token = await result.current.requestFreshCaptchaToken({
-        action: 'create_workspace',
-      });
+      token = await result.current.requestFreshCaptchaToken();
     });
 
     expect(mockGrecaptchaExecute).toHaveBeenCalledWith('google-site-key', {

@@ -8,55 +8,52 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 import { useStore } from 'jotai';
 
-export const useRequestFreshCaptchaToken = () => {
+export const useRequestFreshCaptchaToken = (action = 'submit') => {
   const store = useStore();
   const setCaptchaToken = useSetAtomState(captchaTokenState);
   const setIsRequestingCaptchaToken = useSetAtomState(
     isRequestingCaptchaTokenState,
   );
 
-  const requestFreshCaptchaToken = useCallback(
-    async ({ action = 'submit' }: { action?: string } = {}): Promise<
-      string | undefined
-    > => {
-      if (!isCaptchaRequiredForPath(window.location.pathname)) {
-        return;
-      }
+  const requestFreshCaptchaToken = useCallback(async () => {
+    if (!isCaptchaRequiredForPath(window.location.pathname)) {
+      return;
+    }
 
-      const captcha = store.get(captchaState.atom);
+    const captcha = store.get(captchaState.atom);
 
-      if (!isDefined(captcha)) {
-        return;
-      }
+    if (!isDefined(captcha)) {
+      return;
+    }
 
-      assertIsDefinedOrThrow(captcha);
+    assertIsDefinedOrThrow(captcha);
 
-      setIsRequestingCaptchaToken(true);
+    setIsRequestingCaptchaToken(true);
 
-      let captchaWidget: any;
-      let token: string | undefined;
-      switch (captcha.provider) {
-        case CaptchaDriverType.GOOGLE_RECAPTCHA:
-          token = await window.grecaptcha.execute(captcha.siteKey, {
+    let captchaWidget: any;
+    switch (captcha.provider) {
+      case CaptchaDriverType.GOOGLE_RECAPTCHA:
+        return window.grecaptcha
+          .execute(captcha.siteKey, {
             action,
+          })
+          .then((token: string) => {
+            setCaptchaToken(token);
+            setIsRequestingCaptchaToken(false);
+            return token;
           });
-          break;
-        case CaptchaDriverType.TURNSTILE:
-          captchaWidget = window.turnstile.render('#captcha-widget', {
-            sitekey: captcha.siteKey,
-          });
-          token = await new Promise<string>((resolve) => {
-            window.turnstile.execute(captchaWidget, { callback: resolve });
-          });
-      }
-
-      setCaptchaToken(token);
-      setIsRequestingCaptchaToken(false);
-
-      return token;
-    },
-    [setCaptchaToken, setIsRequestingCaptchaToken, store],
-  );
+      case CaptchaDriverType.TURNSTILE:
+        captchaWidget = window.turnstile.render('#captcha-widget', {
+          sitekey: captcha.siteKey,
+        });
+        window.turnstile.execute(captchaWidget, {
+          callback: (token: string) => {
+            setCaptchaToken(token);
+            setIsRequestingCaptchaToken(false);
+          },
+        });
+    }
+  }, [action, setCaptchaToken, setIsRequestingCaptchaToken, store]);
 
   return { requestFreshCaptchaToken };
 };

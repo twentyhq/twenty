@@ -18,4 +18,5 @@ export type CaptchaValidateResult = {
   success: boolean;
   error?: string;
   score?: number;
+  action?: string;
 };
