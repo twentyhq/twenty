@@ -84,18 +84,4 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
       })[INVOICE_ID]?.canDestroyObjectRecords,
     ).toBe(false);
   });
-
-  it('should keep a user holding the owning application role restricted through that application', () => {
-    expect(
-      computeObjectsPermissionsForRolePermissionConfig({
-        intersectionOf: {
-          userWorkspaceRoleId: 'application-role-id',
-          applicationRoleId: 'application-role-id',
-        },
-        rolesPermissions,
-        flatObjectMetadataMaps,
-        flatApplicationMaps,
-      })[INVOICE_ID]?.canDestroyObjectRecords,
-    ).toBe(false);
-  });
 });

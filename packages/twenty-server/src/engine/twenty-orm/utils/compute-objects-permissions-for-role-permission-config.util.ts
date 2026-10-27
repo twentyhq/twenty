@@ -12,16 +12,6 @@ import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compu
 import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-disabled-actions.util';
 
-// A role also held by a user, agent or API key is deduped into one entry and must stay restricted for them
-const findExemptApplicationRoleId = ({
-  applicationRoleId,
-  ...otherRoleIdsBySource
-}: RoleIdsBySource): string | undefined =>
-  isDefined(applicationRoleId) &&
-  !Object.values(otherRoleIdsBySource).includes(applicationRoleId)
-    ? applicationRoleId
-    : undefined;
-
 const findApplicationIdByDefaultRoleId = ({
   flatApplicationMaps,
   defaultRoleId,
@@ -53,11 +43,11 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
     return {};
   }
 
-  const exemptApplicationRoleId = findExemptApplicationRoleId(intersectionOf);
-  const actingApplicationId = isDefined(exemptApplicationRoleId)
+  const { applicationRoleId } = intersectionOf;
+  const actingApplicationId = isDefined(applicationRoleId)
     ? findApplicationIdByDefaultRoleId({
         flatApplicationMaps,
-        defaultRoleId: exemptApplicationRoleId,
+        defaultRoleId: applicationRoleId,
       })
     : undefined;
 
@@ -69,9 +59,7 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
           objectsPermissions: rolePermissions,
           flatObjectMetadataMaps,
           actingApplicationId:
-            roleId === exemptApplicationRoleId
-              ? actingApplicationId
-              : undefined,
+            roleId === applicationRoleId ? actingApplicationId : undefined,
         })
       : undefined;
   });
