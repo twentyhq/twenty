@@ -1,332 +1,21 @@
-import { Logger } from '@nestjs/common';
-
-import { type Job } from 'bullmq';
-import { type Redis } from 'ioredis';
-import RedisMock from 'ioredis-mock';
-import { isDefined } from 'twenty-shared/utils';
-
 import { ENQUEUE_JOB_PRIORITY } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-priority.constant';
-import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
-import { FAIR_TICKET_OFFSET } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
-import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import {
+  buildLabels,
+  createFairnessHarness,
+  type FairnessHarness,
+  silenceDriverLogs,
+  ticketOf,
+} from 'src/engine/core-modules/message-queue/drivers/__tests__/fairness-harness.test-util';
 import { buildApplicationGroupKey } from 'src/engine/core-modules/message-queue/utils/build-application-group-key.util';
 import { buildWorkspaceGroupKey } from 'src/engine/core-modules/message-queue/utils/build-workspace-group-key.util';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { SERVER_ROUTE_DISPATCH_JOB_PRIORITY } from 'src/engine/core-modules/server-route-trigger/constants/server-route-dispatch-job-priority.constant';
 
-type ScenarioJobData = { label: string; workspaceId?: string };
-
-type StoredJobOptions = { priority?: number };
-
-type StoredJob = {
-  id: string;
-  name: string;
-  data: ScenarioJobData;
-  options: StoredJobOptions;
-  timestamp: number;
-  insertionIndex: number;
-};
-
-type JobToStore = {
-  name: string;
-  data: ScenarioJobData;
-  options: StoredJobOptions;
-};
-
-type RedisClientDouble = {
-  runCommand: (name: string, args: (string | number)[]) => Promise<unknown>;
-};
-
-type BullMQDouble = {
-  jobs: StoredJob[];
-  nextInsertionIndex: number;
-  processor: ((job: Job) => Promise<void>) | undefined;
-  client: RedisClientDouble | undefined;
-  redis: Redis | undefined;
-  store: (jobToStore: JobToStore) => Promise<{ id: string }>;
-  takeNext: () => StoredJob | undefined;
-  reset: (store: { redis: Redis; client: RedisClientDouble }) => void;
-};
-
-const mockBullMQ: BullMQDouble = {
-  jobs: [],
-  nextInsertionIndex: 0,
-  processor: undefined,
-  client: undefined,
-  redis: undefined,
-  store: async ({ name, data, options }) => {
-    const job: StoredJob = {
-      id: `job-${mockBullMQ.nextInsertionIndex}`,
-      name,
-      data,
-      options,
-      timestamp: Date.now(),
-      insertionIndex: mockBullMQ.nextInsertionIndex,
-    };
-
-    mockBullMQ.nextInsertionIndex += 1;
-    mockBullMQ.jobs.push(job);
-
-    await mockBullMQ.redis?.hset(
-      `${KEY_PREFIX}:${QUEUE}:${job.id}`,
-      'priority',
-      options.priority ?? 0,
-    );
-
-    return { id: job.id };
-  },
-  takeNext: () => {
-    const [next] = [...mockBullMQ.jobs].sort(
-      (left, right) =>
-        (left.options.priority ?? 0) - (right.options.priority ?? 0) ||
-        left.insertionIndex - right.insertionIndex,
-    );
-
-    if (!isDefined(next)) {
-      return undefined;
-    }
-
-    mockBullMQ.jobs = mockBullMQ.jobs.filter((job) => job !== next);
-
-    return next;
-  },
-  reset: ({ redis, client }) => {
-    mockBullMQ.jobs = [];
-    mockBullMQ.nextInsertionIndex = 0;
-    mockBullMQ.processor = undefined;
-    mockBullMQ.client = client;
-    mockBullMQ.redis = redis;
-  },
-};
-
-jest.mock('bullmq', () => ({
-  Queue: jest.fn().mockImplementation(() => ({
-    get client() {
-      return Promise.resolve(mockBullMQ.client);
-    },
-    toKey: (type: string) => `${KEY_PREFIX}:${QUEUE}:${type}`,
-    add: async (
-      name: string,
-      data: ScenarioJobData,
-      options: StoredJobOptions,
-    ) => mockBullMQ.store({ name, data, options }),
-    addBulk: async (
-      jobs: { name: string; data: ScenarioJobData; opts: StoredJobOptions }[],
-    ) =>
-      Promise.all(
-        jobs.map(({ name, data, opts }) =>
-          mockBullMQ.store({ name, data, options: opts }),
-        ),
-      ),
-    setGlobalConcurrency: async () => undefined,
-    removeGlobalConcurrency: async () => undefined,
-  })),
-  Worker: jest
-    .fn()
-    .mockImplementation(
-      (_queueName: string, processor: (job: Job) => Promise<void>) => {
-        mockBullMQ.processor = processor;
-
-        return { on: () => undefined };
-      },
-    ),
-  MetricsTime: { ONE_WEEK: 1 },
-  PRIORITY_LIMIT: 2 ** 21,
-}));
-
-const QUEUE = MessageQueue.logicFunctionQueue;
-const KEY_PREFIX = 'bull';
-const JOB_NAME = 'scenario-job';
-const FAIRNESS_FLAG = 'IS_WORKER_FAIRNESS_ENABLED';
-
-const flushAsyncWork = async () => {
-  for (let round = 0; round < 30; round += 1) {
-    await new Promise((resolve) => setImmediate(resolve));
-  }
-};
-
-const buildLabels = ({
-  prefix,
-  count,
-  from = 1,
-}: {
-  prefix: string;
-  count: number;
-  from?: number;
-}) => Array.from({ length: count }, (_, index) => `${prefix}${from + index}`);
-
-const ticketOf = (tag: number) => FAIR_TICKET_OFFSET + tag;
-
-const createRedisClientDouble = (redis: Redis): RedisClientDouble => ({
-  runCommand: async (name, args) => {
-    const [script, numberOfKeys, ...scriptArguments] = args;
-
-    if (name === 'evalsha') {
-      return redis.evalsha(
-        String(script),
-        Number(numberOfKeys),
-        ...scriptArguments,
-      );
-    }
-
-    if (name !== 'eval') {
-      throw new Error(`Unexpected Redis command ${name}`);
-    }
-
-    return redis.eval(String(script), Number(numberOfKeys), ...scriptArguments);
-  },
-});
-
-type EnqueueInput = { label: string; workspaceId?: string } & Pick<
-  QueueJobOptions,
-  'groupKeys' | 'priority'
->;
-
-const createHarness = async ({
-  isFairnessEnabled,
-}: {
-  isFairnessEnabled: boolean;
-}) => {
-  const redis = new RedisMock();
-
-  await redis.flushall();
-  mockBullMQ.reset({ redis, client: createRedisClientDouble(redis) });
-
-  const metricsService = {
-    recordHistogram: jest.fn(),
-    incrementCounterForEvent: jest.fn().mockResolvedValue(undefined),
-  };
-  const driver = new BullMQDriver(
-    { prefix: KEY_PREFIX, connection: {} },
-    metricsService as never,
-    {
-      get: (key: string) =>
-        key === FAIRNESS_FLAG ? isFairnessEnabled : undefined,
-    } as never,
-    { emit: jest.fn() } as never,
-  );
-
-  driver.register(QUEUE);
-
-  const processedLabels: string[] = [];
-
-  driver.work<ScenarioJobData>(QUEUE, async ({ data }) => {
-    processedLabels.push(data.label);
-  });
-  await flushAsyncWork();
-
-  const processOne = async (): Promise<boolean> => {
-    const job = mockBullMQ.takeNext();
-
-    if (!isDefined(job) || !isDefined(mockBullMQ.processor)) {
-      return false;
-    }
-
-    await mockBullMQ.processor({
-      ...job,
-      opts: job.options,
-      priority: job.options.priority ?? 0,
-      attemptsStarted: 1,
-      updateData: jest.fn(),
-      updateProgress: jest.fn(),
-    } as unknown as Job);
-    await flushAsyncWork();
-
-    return true;
-  };
-
-  const enqueue = async ({ label, workspaceId, ...options }: EnqueueInput) => {
-    await driver.add<ScenarioJobData>(
-      QUEUE,
-      JOB_NAME,
-      { label, workspaceId },
-      options,
-    );
-  };
-
-  return {
-    metricsService,
-    enqueue,
-    enqueueMany: async ({
-      labels,
-      ...options
-    }: { labels: string[] } & Omit<EnqueueInput, 'label'>) => {
-      for (const label of labels) {
-        await enqueue({ label, ...options });
-      }
-    },
-    enqueueBulk: async ({
-      labels,
-      workspaceId,
-      groupKeys,
-    }: {
-      labels: string[];
-      workspaceId: string;
-      groupKeys?: string[];
-    }) => {
-      await driver.bulkAdd<ScenarioJobData>(
-        QUEUE,
-        JOB_NAME,
-        labels.map((label) => ({ data: { label, workspaceId } })),
-        isDefined(groupKeys) ? { groupKeys } : undefined,
-      );
-    },
-    processNext: async (count: number) => {
-      const alreadyProcessed = processedLabels.length;
-
-      for (let index = 0; index < count; index += 1) {
-        if (!(await processOne())) {
-          break;
-        }
-      }
-
-      return processedLabels.slice(alreadyProcessed);
-    },
-    processAll: async () => {
-      const alreadyProcessed = processedLabels.length;
-      let hasProcessedJob = await processOne();
-
-      while (hasProcessedJob) {
-        hasProcessedJob = await processOne();
-      }
-
-      return processedLabels.slice(alreadyProcessed);
-    },
-    setWeight: async ({
-      groupKey,
-      weight,
-    }: {
-      groupKey: string;
-      weight: number;
-    }) => {
-      await redis.hset(`${KEY_PREFIX}:${QUEUE}:fair:weights`, groupKey, weight);
-    },
-    readPriority: ({ label }: { label: string }) =>
-      mockBullMQ.jobs.find((job) => job.data.label === label)?.options.priority,
-    breakRedis: () => {
-      const runCommand = jest
-        .fn()
-        .mockRejectedValue(new Error('Redis connection lost'));
-
-      mockBullMQ.client = { runCommand };
-
-      return runCommand;
-    },
-  };
-};
-
-type Harness = Awaited<ReturnType<typeof createHarness>>;
-
 describe('BullMQDriver fairness scenarios', () => {
-  beforeAll(() => {
-    jest.useRealTimers();
-    jest.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
-    jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
-  });
+  beforeAll(silenceDriverLogs);
 
   describe('S1: A enqueues a burst of 10 jobs, then B enqueues 1 job (group keys deduced from workspaceId)', () => {
-    const enqueue = async (harness: Harness) => {
+    const enqueue = async (harness: FairnessHarness) => {
       await harness.enqueueMany({
         labels: buildLabels({ prefix: 'A', count: 10 }),
         workspaceId: 'A',
@@ -335,7 +24,7 @@ describe('BullMQDriver fairness scenarios', () => {
     };
 
     it('flag off: B waits behind the whole burst of A', async () => {
-      const harness = await createHarness({ isFairnessEnabled: false });
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
 
       await enqueue(harness);
 
@@ -346,7 +35,7 @@ describe('BullMQDriver fairness scenarios', () => {
     });
 
     it('flag on: B runs right after the first job of A', async () => {
-      const harness = await createHarness({ isFairnessEnabled: true });
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
 
       await enqueue(harness);
 
@@ -359,7 +48,7 @@ describe('BullMQDriver fairness scenarios', () => {
   });
 
   describe('S2: A and B each enqueue a bulk of 4 jobs', () => {
-    const enqueue = async (harness: Harness) => {
+    const enqueue = async (harness: FairnessHarness) => {
       await harness.enqueueBulk({
         labels: buildLabels({ prefix: 'A', count: 4 }),
         workspaceId: 'A',
@@ -371,7 +60,7 @@ describe('BullMQDriver fairness scenarios', () => {
     };
 
     it('flag off: the bulk of B waits behind the bulk of A', async () => {
-      const harness = await createHarness({ isFairnessEnabled: false });
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
 
       await enqueue(harness);
 
@@ -382,7 +71,7 @@ describe('BullMQDriver fairness scenarios', () => {
     });
 
     it('flag on: the two bulks alternate, each one keeping its internal order', async () => {
-      const harness = await createHarness({ isFairnessEnabled: true });
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
 
       await enqueue(harness);
 
@@ -400,7 +89,7 @@ describe('BullMQDriver fairness scenarios', () => {
   });
 
   describe('S3: A enqueues 5 default jobs, B sends an urgent route dispatch and an app enqueueJobs job', () => {
-    const enqueue = async (harness: Harness) => {
+    const enqueue = async (harness: FairnessHarness) => {
       await harness.enqueueMany({
         labels: buildLabels({ prefix: 'A', count: 5 }),
         workspaceId: 'A',
@@ -418,7 +107,7 @@ describe('BullMQDriver fairness scenarios', () => {
     };
 
     it('flag off: the static priorities decide, the route dispatch first and the app job last', async () => {
-      const harness = await createHarness({ isFairnessEnabled: false });
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
 
       await enqueue(harness);
 
@@ -430,7 +119,7 @@ describe('BullMQDriver fairness scenarios', () => {
     });
 
     it('flag on: the route dispatch still goes first and charges B, whose app job then takes a fair slot instead of the last one', async () => {
-      const harness = await createHarness({ isFairnessEnabled: true });
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
 
       await enqueue(harness);
 
@@ -447,7 +136,7 @@ describe('BullMQDriver fairness scenarios', () => {
   });
 
   describe('S4: W1, W2 and W3 each enqueue 2 jobs of application H, then W4 enqueues 1 job of application X', () => {
-    const enqueue = async (harness: Harness) => {
+    const enqueue = async (harness: FairnessHarness) => {
       await harness.enqueue({
         label: 'W1a',
         workspaceId: 'W1',
@@ -507,7 +196,7 @@ describe('BullMQDriver fairness scenarios', () => {
     };
 
     it('flag off: W4 waits behind the whole herd', async () => {
-      const harness = await createHarness({ isFairnessEnabled: false });
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
 
       await enqueue(harness);
 
@@ -523,7 +212,7 @@ describe('BullMQDriver fairness scenarios', () => {
     });
 
     it('flag on: the application key makes the herd share one clock, W4 runs second', async () => {
-      const harness = await createHarness({ isFairnessEnabled: true });
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
 
       await enqueue(harness);
 
@@ -540,7 +229,7 @@ describe('BullMQDriver fairness scenarios', () => {
   });
 
   describe('S5: C keeps the queue busy with 12 jobs, A gets a burst of 6 processed, then B bursts 5 jobs and A enqueues 1 job', () => {
-    const enqueueFirstPhase = async (harness: Harness) => {
+    const enqueueFirstPhase = async (harness: FairnessHarness) => {
       await harness.enqueueMany({
         labels: buildLabels({ prefix: 'C', count: 12 }),
         workspaceId: 'C',
@@ -550,7 +239,7 @@ describe('BullMQDriver fairness scenarios', () => {
         workspaceId: 'A',
       });
     };
-    const enqueueSecondPhase = async (harness: Harness) => {
+    const enqueueSecondPhase = async (harness: FairnessHarness) => {
       await harness.enqueueMany({
         labels: buildLabels({ prefix: 'B', count: 5 }),
         workspaceId: 'B',
@@ -559,7 +248,7 @@ describe('BullMQDriver fairness scenarios', () => {
     };
 
     it('flag off: A7 runs last, behind the rest of C and the whole burst of B', async () => {
-      const harness = await createHarness({ isFairnessEnabled: false });
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
 
       await enqueueFirstPhase(harness);
 
@@ -577,7 +266,7 @@ describe('BullMQDriver fairness scenarios', () => {
     });
 
     it('flag on: the processed burst of A is forgotten, A7 interleaves with the burst of B', async () => {
-      const harness = await createHarness({ isFairnessEnabled: true });
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
 
       await enqueueFirstPhase(harness);
 
@@ -616,7 +305,7 @@ describe('BullMQDriver fairness scenarios', () => {
   });
 
   describe('S6: A enqueues 5 jobs that get fully processed, then B enqueues 4 jobs and A enqueues 2 jobs', () => {
-    const drainFirstBurst = async (harness: Harness) => {
+    const drainFirstBurst = async (harness: FairnessHarness) => {
       await harness.enqueueMany({
         labels: buildLabels({ prefix: 'A', count: 5 }),
         workspaceId: 'A',
@@ -626,7 +315,7 @@ describe('BullMQDriver fairness scenarios', () => {
         buildLabels({ prefix: 'A', count: 5 }),
       );
     };
-    const enqueueSecondPhase = async (harness: Harness) => {
+    const enqueueSecondPhase = async (harness: FairnessHarness) => {
       await harness.enqueueMany({
         labels: buildLabels({ prefix: 'B', count: 4 }),
         workspaceId: 'B',
@@ -638,7 +327,7 @@ describe('BullMQDriver fairness scenarios', () => {
     };
 
     it('flag off: B first, then A, in arrival order', async () => {
-      const harness = await createHarness({ isFairnessEnabled: false });
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
 
       await drainFirstBurst(harness);
       await enqueueSecondPhase(harness);
@@ -651,7 +340,7 @@ describe('BullMQDriver fairness scenarios', () => {
     });
 
     it('flag on: the virtual time caught up with A while its burst ran, A interleaves with B from the third slot', async () => {
-      const harness = await createHarness({ isFairnessEnabled: true });
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
 
       await drainFirstBurst(harness);
       await enqueueSecondPhase(harness);
@@ -668,7 +357,7 @@ describe('BullMQDriver fairness scenarios', () => {
   });
 
   describe('S7: application P weighs 2, application Q weighs 1, WP enqueues 4 jobs of P and WQ 4 jobs of Q, keyed by workspace and application', () => {
-    const enqueue = async (harness: Harness) => {
+    const enqueue = async (harness: FairnessHarness) => {
       await harness.setWeight({
         groupKey: buildApplicationGroupKey('P'),
         weight: 2,
@@ -692,7 +381,7 @@ describe('BullMQDriver fairness scenarios', () => {
     };
 
     it('flag off: the weight is ignored, Q waits behind P', async () => {
-      const harness = await createHarness({ isFairnessEnabled: false });
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
 
       await enqueue(harness);
 
@@ -703,7 +392,7 @@ describe('BullMQDriver fairness scenarios', () => {
     });
 
     it('flag on: P gets two slots for each slot of Q, the unweighted workspace key does not dilute the weight', async () => {
-      const harness = await createHarness({ isFairnessEnabled: true });
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
 
       await enqueue(harness);
 
@@ -725,7 +414,7 @@ describe('BullMQDriver fairness scenarios', () => {
       buildWorkspaceGroupKey('WP'),
       buildApplicationGroupKey('P'),
     ];
-    const enqueue = async (harness: Harness) => {
+    const enqueue = async (harness: FairnessHarness) => {
       await harness.setWeight({
         groupKey: buildApplicationGroupKey('P'),
         weight: 2,
@@ -751,7 +440,7 @@ describe('BullMQDriver fairness scenarios', () => {
     };
 
     it('flag off: FIFO', async () => {
-      const harness = await createHarness({ isFairnessEnabled: false });
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
 
       await enqueue(harness);
 
@@ -762,7 +451,7 @@ describe('BullMQDriver fairness scenarios', () => {
     });
 
     it('flag on: the bulk is spaced like single jobs of the same weight, P keeps its order and its two slots per slot of Q', async () => {
-      const harness = await createHarness({ isFairnessEnabled: true });
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
 
       await enqueue(harness);
 
@@ -779,7 +468,7 @@ describe('BullMQDriver fairness scenarios', () => {
 
   describe('S7c: application H has 100 jobs waiting from workspaces X1 to X10, then workspace W enqueues 1 job of H and 1 job of application Q', () => {
     const herdLabels = buildLabels({ prefix: 'H', count: 100 });
-    const enqueue = async (harness: Harness) => {
+    const enqueue = async (harness: FairnessHarness) => {
       for (const [index, label] of herdLabels.entries()) {
         const workspaceId = `X${(index % 10) + 1}`;
 
@@ -805,7 +494,7 @@ describe('BullMQDriver fairness scenarios', () => {
     };
 
     it('flag off: W waits behind the whole backlog of H', async () => {
-      const harness = await createHarness({ isFairnessEnabled: false });
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
 
       await enqueue(harness);
 
@@ -813,7 +502,7 @@ describe('BullMQDriver fairness scenarios', () => {
     });
 
     it('flag on: the job of H takes its turn in the backlog of H, the job of Q runs right away because W is only charged for its own jobs', async () => {
-      const harness = await createHarness({ isFairnessEnabled: true });
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
 
       await enqueue(harness);
 
@@ -832,7 +521,7 @@ describe('BullMQDriver fairness scenarios', () => {
       buildWorkspaceGroupKey(workspaceId),
       buildApplicationGroupKey('P'),
     ];
-    const enqueue = async (harness: Harness) => {
+    const enqueue = async (harness: FairnessHarness) => {
       await harness.setWeight({
         groupKey: buildApplicationGroupKey('P'),
         weight: 2,
@@ -860,7 +549,7 @@ describe('BullMQDriver fairness scenarios', () => {
     };
 
     it('flag off: FIFO', async () => {
-      const harness = await createHarness({ isFairnessEnabled: false });
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
 
       await enqueue(harness);
 
@@ -873,7 +562,7 @@ describe('BullMQDriver fairness scenarios', () => {
     });
 
     it('flag on: the bulk fills the half-slots it allocated on P, W is charged those half-slots only, so its job of Q (ticket 2, like P6) overtakes its bulk and the next job of P follows the bulk', async () => {
-      const harness = await createHarness({ isFairnessEnabled: true });
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
 
       await enqueue(harness);
 
@@ -891,7 +580,7 @@ describe('BullMQDriver fairness scenarios', () => {
   });
 
   describe('S8: Redis is unavailable, A enqueues 3 jobs and B enqueues 1 job', () => {
-    const enqueue = async (harness: Harness) => {
+    const enqueue = async (harness: FairnessHarness) => {
       await harness.enqueueMany({
         labels: buildLabels({ prefix: 'A', count: 3 }),
         workspaceId: 'A',
@@ -901,7 +590,7 @@ describe('BullMQDriver fairness scenarios', () => {
     const expectedOrder = [...buildLabels({ prefix: 'A', count: 3 }), 'B1'];
 
     it('flag off: Redis is never called and the order is FIFO', async () => {
-      const harness = await createHarness({ isFairnessEnabled: false });
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
       const runCommand = harness.breakRedis();
 
       await enqueue(harness);
@@ -916,7 +605,7 @@ describe('BullMQDriver fairness scenarios', () => {
     });
 
     it('flag on: every job falls back to FIFO and the fallback is counted', async () => {
-      const harness = await createHarness({ isFairnessEnabled: true });
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
 
       harness.breakRedis();
       await enqueue(harness);
@@ -931,7 +620,7 @@ describe('BullMQDriver fairness scenarios', () => {
   });
 
   describe('S9: 3 jobs without workspaceId, then 1 job of workspace W', () => {
-    const enqueue = async (harness: Harness) => {
+    const enqueue = async (harness: FairnessHarness) => {
       await harness.enqueueMany({
         labels: buildLabels({ prefix: 'S', count: 3 }),
       });
@@ -939,7 +628,7 @@ describe('BullMQDriver fairness scenarios', () => {
     };
 
     it('flag off: the workspace job waits behind the system jobs', async () => {
-      const harness = await createHarness({ isFairnessEnabled: false });
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
 
       await enqueue(harness);
 
@@ -950,7 +639,7 @@ describe('BullMQDriver fairness scenarios', () => {
     });
 
     it('flag on: the system jobs form one group, the workspace job runs second', async () => {
-      const harness = await createHarness({ isFairnessEnabled: true });
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
 
       await enqueue(harness);
 
