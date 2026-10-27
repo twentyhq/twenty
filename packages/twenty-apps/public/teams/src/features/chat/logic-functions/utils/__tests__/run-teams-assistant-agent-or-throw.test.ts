@@ -11,6 +11,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
 const INPUT = {
   requestText: 'how many open deals does Acme have?',
   workspaceMemberId: 'workspace-member-1',
+  history: [],
 };
 
 describe('runTeamsAssistantAgentOrThrow', () => {
@@ -48,6 +49,23 @@ describe('runTeamsAssistantAgentOrThrow', () => {
         ],
       }),
     );
+  });
+
+  it('should replay earlier turns of the conversation before the request', async () => {
+    await runTeamsAssistantAgentOrThrow({
+      ...INPUT,
+      history: [{ requestText: 'list my companies', responseText: '**Acme**' }],
+      deadlineAtMs: Date.now() + 60_000,
+    });
+
+    expect(runAgentMock.mock.calls[0][0].messages).toEqual([
+      { role: 'user', content: 'list my companies' },
+      { role: 'assistant', content: '**Acme**' },
+      expect.objectContaining({
+        role: 'user',
+        content: expect.stringContaining(INPUT.requestText),
+      }),
+    ]);
   });
 
   it('should not start the agent when the deadline has already passed', async () => {

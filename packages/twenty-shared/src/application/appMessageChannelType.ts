@@ -12,4 +12,7 @@ export type AppMessageChannel = {
   connectedAccountId: string;
   // False rejects ingestion without deleting the channel; existing messages stay readable.
   isSyncEnabled: boolean;
+  // Person field participant handles are matched against; null when the app links participants itself.
+  participantHandleFieldUniversalIdentifier: string | null;
+  messagingProviderUniversalIdentifier: string | null;
 };

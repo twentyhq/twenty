@@ -22,7 +22,7 @@ const toPhoneRecord = (phone: {
 };
 
 export const createPhonesFromFieldValue = (
-  fieldValue: FieldPhonesValue,
+  fieldValue: FieldPhonesValue | null | undefined,
 ): PhoneRecord[] => {
   if (!isDefined(fieldValue)) {
     return [];

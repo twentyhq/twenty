@@ -70,8 +70,12 @@ export const useRecordSharing = ({
       if (isDefined(sharing)) {
         setRecordPermissions(recordTarget, sharing.permissions);
       }
+
+      return sharing;
     } catch (mutationError) {
       enqueueToast(getToastOptionsFromError({ error: mutationError }));
+
+      return undefined;
     }
   };
 

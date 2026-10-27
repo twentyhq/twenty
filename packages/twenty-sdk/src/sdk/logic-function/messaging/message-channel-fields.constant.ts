@@ -6,4 +6,6 @@ export const APP_MESSAGE_CHANNEL_SELECTION = `
   visibility
   connectedAccountId
   isSyncEnabled
+  participantHandleFieldUniversalIdentifier
+  messagingProviderUniversalIdentifier
 `;

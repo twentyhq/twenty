@@ -4,6 +4,7 @@ import { type KeysOfUnion } from 'type-fest';
 import { type SegmentedControl } from '../src/components/input/SegmentedControl/SegmentedControl';
 
 export const SEGMENTED_CONTROL_PROP_DESCRIPTIONS = {
+  fullWidth: 'Stretch the control to the width of its container.',
   itemWidth: 'Use equal-width options or size each option to its content.',
   options:
     'Options with a unique string `value`, a `label` or `startIcon`, and optional `disabled`. Icon-only options require an `aria-label`.',

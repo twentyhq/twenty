@@ -3,9 +3,13 @@ title: Tag
 description: Label a category or attribute with a theme color and optional icon.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import TagReference from '/snippets/ui/generated/data-display/tag.mdx';
+
+## Overview
 
 Use `Tag` for categories, priorities, or other short attributes. Keep a text label so the meaning does not depend on color. Use [Status](/ui/primitives/data-display/status) when you need a state indicator and loading feedback.
 
@@ -110,3 +114,5 @@ Node children remain caller-owned content, so compose their text, translations, 
 Types and defaults are generated from the public component types. Native attributes and event handlers are also accepted.
 
 <TagReference />
+
+<PageBanner illustration="page-cover-checkbox" />

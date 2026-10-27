@@ -23,6 +23,7 @@ export type IngestMessage = {
   text: string;
   receivedAt: Date;
   participants: IngestMessageParticipant[];
+  folderExternalIds?: string[];
 };
 
 export type IngestedMessage = {

@@ -148,6 +148,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         body {
           blocknote
           markdown
+          tiptap
         }
       }
       ... on CalendarConfiguration {

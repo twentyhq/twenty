@@ -1,35 +1,54 @@
 ---
 title: Overview
 description: Build, test, and ship your app — CLI commands, integration tests, CI, translations, and publishing to a server or to npm.
-icon: "rocket"
 ---
 
-The **operations layer** is everything you do *to* your app rather than *with* it: invoking CLI commands, running integration tests against a real Twenty server, configuring CI, translating its strings, and shipping releases — either as a tarball deployed to a single server or as an npm package listed in the marketplace.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
-```text
-   develop ─▶ test ─▶ build ─▶ deploy / publish
-   ───────    ────    ─────    ─────────────────
-   yarn       yarn    yarn     yarn twenty app:publish --private  (tarball → one server)
-   twenty     test    twenty
-   dev                dev:build    yarn twenty app:publish         (npm → marketplace)
-```
+## What the operations layer covers
+
+The **operations layer** is everything you do _to_ your app rather than _with_ it: invoking CLI commands, running integration tests against a real Twenty server, configuring CI, translating its strings, and shipping releases — either as a tarball deployed to a single server or as an npm package listed in the marketplace.
+
+| Step | Command |
+| --- | --- |
+| Develop | `twenty app dev` |
+| Test | `yarn test` |
+| Build | `twenty app build` |
+| Publish to one server | `twenty app publish --private` |
+| Publish to npm | `twenty app publish` |
 
 ## In this section
 
-<CardGroup cols={2}>
-  <Card title="CLI" icon="terminal" href="/developers/extend/apps/operations/cli">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/developers/extend/apps/operations/cli" img="/images/user-guide/halftone/card-page-cli.svg">
+    <CardTitle>CLI</CardTitle>
     Sign in, explore data, build apps, exec, logs and uninstall with the `twenty` CLI.
   </Card>
-  <Card title="Syncing & recovery" icon="compass" href="/developers/extend/apps/operations/sync-and-recovery">
+  <Card href="/developers/extend/apps/operations/sync-and-recovery" img="/images/user-guide/halftone/card-page-sync-recovery.svg">
+    <CardTitle>Syncing & recovery</CardTitle>
     Which command when, reading the sync diff, and a recovery ladder.
   </Card>
-  <Card title="Testing" icon="flask" href="/developers/extend/apps/operations/testing">
+  <Card href="/developers/extend/apps/operations/testing" img="/images/user-guide/halftone/card-page-testing.svg">
+    <CardTitle>Testing</CardTitle>
     Vitest setup, integration tests, type checking, CI workflow.
   </Card>
-  <Card title="Translations" icon="language" href="/developers/extend/apps/operations/translations">
+  <Card href="/developers/extend/apps/operations/translations" img="/images/user-guide/halftone/card-page-translations.svg">
+    <CardTitle>Translations</CardTitle>
     Mark strings, extract catalogs, ship your app in several languages.
   </Card>
-  <Card title="Publishing" icon="upload" href="/developers/extend/apps/operations/publishing">
+  <Card href="/developers/extend/apps/operations/publishing" img="/images/user-guide/halftone/card-page-publishing.svg">
+    <CardTitle>Publishing</CardTitle>
     Build, deploy a tarball, publish to npm, install.
   </Card>
+  <Card href="/developers/extend/apps/operations/marketplace-vetting" img="/images/documentation/banner-icons-v2/permissions.svg">
+    <CardTitle>Marketplace vetting (WIP)</CardTitle>
+    Proposed security, quality, and operational checks for third-party app versions.
+  </Card>
+  <Card href="/developers/extend/apps/operations/monitoring" img="/images/user-guide/halftone/card-page-monitoring.svg">
+    <CardTitle>Monitoring</CardTitle>
+    Errors, rate limits, credits and function performance across installs.
+  </Card>
 </CardGroup>
+
+<PageBanner illustration="section-apps-operations" />

@@ -1,0 +1,2 @@
+export const ADD_OBJECT_METADATA_DISABLED_OBJECT_PERMISSION_ACTIONS_UPGRADE_COMMAND_NAME =
+  '2.53.0_AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand_1793111477950';

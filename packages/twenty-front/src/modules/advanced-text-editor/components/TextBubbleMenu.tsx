@@ -5,6 +5,7 @@ import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/Sty
 import { BubbleMenuIconButton } from '@/advanced-text-editor/components/BubbleMenuIconButton';
 import { BubbleMenuSeparator } from '@/advanced-text-editor/components/BubbleMenuSeparator';
 import { EditLinkDropdown } from '@/advanced-text-editor/components/EditLinkDropdown';
+import { RichTextColorDropdown } from '@/advanced-text-editor/components/RichTextColorDropdown';
 import { TurnIntoBlockDropdown } from '@/advanced-text-editor/components/TurnIntoBlockDropdown';
 import { useTextBubbleState } from '@/advanced-text-editor/hooks/useTextBubbleState';
 import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
@@ -14,7 +15,11 @@ import { type Editor } from '@tiptap/core';
 import { NodeSelection } from '@tiptap/pm/state';
 import { BubbleMenu } from '@tiptap/react/menus';
 import {
+  IconAlignCenter,
+  IconAlignLeft,
+  IconAlignRight,
   IconBold,
+  IconCode,
   IconItalic,
   IconList,
   IconListNumbers,
@@ -62,6 +67,38 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
       isActive: state.isStrike,
     },
     {
+      Icon: IconCode,
+      label: t`Code`,
+      extensionName: 'code',
+      group: 'format',
+      onClick: () => editor.chain().focus().toggleCode().run(),
+      isActive: state.isCode,
+    },
+    {
+      Icon: IconAlignLeft,
+      label: t`Align left`,
+      extensionName: 'textAlign',
+      group: 'align',
+      onClick: () => editor.chain().focus().setTextAlign('left').run(),
+      isActive: state.textAlignment === 'left',
+    },
+    {
+      Icon: IconAlignCenter,
+      label: t`Align center`,
+      extensionName: 'textAlign',
+      group: 'align',
+      onClick: () => editor.chain().focus().setTextAlign('center').run(),
+      isActive: state.textAlignment === 'center',
+    },
+    {
+      Icon: IconAlignRight,
+      label: t`Align right`,
+      extensionName: 'textAlign',
+      group: 'align',
+      onClick: () => editor.chain().focus().setTextAlign('right').run(),
+      isActive: state.textAlignment === 'right',
+    },
+    {
       Icon: IconList,
       label: t`Bullet list`,
       extensionName: 'bulletList',
@@ -97,6 +134,17 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
       ? [<TurnIntoBlockDropdown key="turn-into" editor={editor} />]
       : [],
     renderActions('format'),
+    hasEditorExtension(editor, 'richTextColor')
+      ? [
+          <RichTextColorDropdown
+            key="color"
+            editor={editor}
+            textColor={state.textColor}
+            backgroundColor={state.backgroundColor}
+          />,
+        ]
+      : [],
+    renderActions('align'),
     renderActions('list'),
     hasEditorExtension(editor, 'link')
       ? [

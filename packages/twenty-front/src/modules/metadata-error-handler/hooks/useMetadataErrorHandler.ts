@@ -52,12 +52,15 @@ export const useMetadataErrorHandler = () => {
     viewSort: t`view sort`,
     applicationVariable: t`application variable`,
     connectionProvider: t`connection provider`,
+    messagingProvider: t`messaging provider`,
     searchFieldMetadata: t`search field metadata`,
     timelineActivityType: t`timeline activity type`,
     settingsMenuItem: t`settings menu item`,
     validationRule: t`validation rule`,
     workflow: t`workflow`,
     workflowVersion: t`workflow version`,
+    agentChatChannel: t`channel`,
+    agentChatChannelRole: t`channel role`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (

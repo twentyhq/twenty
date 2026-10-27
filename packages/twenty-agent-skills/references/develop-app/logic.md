@@ -77,7 +77,7 @@ When adding AI behavior:
 - Keep instructions grounded in available app data and tools.
 - State when the agent should ask for missing workspace or record context.
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
-- A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `yarn twenty apply` fail otherwise, listing the excess grants.
+- A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `twenty app apply` fail otherwise, listing the excess grants.
 
 ## Inbox Messages
 
@@ -100,7 +100,16 @@ For third-party connections:
 - Document required OAuth or API setup in the app README or listing.
 - Verify failure states for expired or missing credentials.
 - When the provider can say which account a token belongs to (team, organization, user), declare `identifyAccountLogicFunction` so a reconnect that authorizes a different account is refused instead of overwriting the connection. Write the handler as one request to the provider's "who am I" endpoint, return the id as a string, and return `{ externalAccountId: null }` when there is no stable id.
-- Set `scope` on `defineConnectionProvider`: `'WORKSPACE'` (default) when the app uses one connection shared with the workspace, `'USER'` when each member connects their own account. One scope per provider; declare two providers when the app needs both. Members cannot add `USER` connections from settings yet (they will from App preferences). Requires `"engines": { "twenty": ">=2.49.0" }`.
+- Set `scope` on `defineConnectionProvider`: `'WORKSPACE'` (default) when the app uses one connection shared with the workspace, `'USER'` when each member connects their own account. One scope per provider; declare two providers when the app needs both. A provider's scope cannot change in a later version: declare a new provider with a new `universalIdentifier` instead, which deletes the old provider's connections on upgrade, and deletes existing `'USER'` connected accounts left on a `'WORKSPACE'` provider. Members add, reconnect and remove `USER` connections from the app's page under Settings > User > Apps preferences, but that page is not enabled in every workspace yet, so do not rely on a `USER` provider for a feature every workspace needs now. Requires `"engines": { "twenty": ">=2.49.0" }`.
+- For services that connect accounts through their own hosted flow instead of OAuth (Unipile, Plaid, Merge), declare `type: 'custom'` with `custom.authorizeLogicFunction` (return `{ authorizationUrl }` built with the given `callbackUrl`) and `custom.callbackLogicFunction` (receives each `GET` return and `POST` notification to that URL with its query, headers, body and `rawBody`; verify a signed notification over `rawBody`, confirm the account with the service, then return `{ externalAccountId, handle?, accessToken? }`, or `null` when the request carries no account). Both run within 10 seconds. Connections carry `providerType`: an `'oauth'` connection always has an `accessToken`, a `'custom'` one has `null` unless the callback returned one, so call the service with the app's own key and `externalAccountId`. Release upstream state in `onDisconnectLogicFunction`; Twenty does not refresh or revoke custom connections. The `type` cannot change after the first sync; declare a new provider with a new `universalIdentifier` instead. Requires `"engines": { "twenty": ">=2.52.0" }`.
+
+## Messaging Providers
+
+To let members reply to an app's message channels, declare `defineMessagingProvider` with a kebab-case `name`, a `displayName`, the `connectionProvider` it sends through, and a `sendMessageLogicFunction`:
+
+- Bind each channel to it with `messagingProvider: { universalIdentifier }` on `createMessageChannel` or `updateMessageChannel` (`null` unbinds). The provider must use the channel account's connection provider. A channel without one, or whose provider or function is gone, only ingests.
+- The send function receives `{ messagingProviderName, connectedAccountId, messageChannelId, threadExternalId, text, idempotencyKey, recipients }` (type `SendAppMessagePayload`; `recipients` are the latest message's participants), must deliver the reply and return `{ externalId, sentAt? }`. Twenty then records it in the thread, and a later ingestion of the same `externalId` is a no-op. Throw on failure so nothing is recorded. A `sendAppChannelMessage` retry with the same `idempotencyKey` records the delivered reply without calling the function again; forward the key to the provider when it supports idempotent sends.
+- Declare one messaging provider per kind of messaging (LinkedIn, WhatsApp) even when they share a connection provider. Its connection provider cannot change after the first sync; declare a new one with a new `universalIdentifier` instead. Requires `"engines": { "twenty": ">=2.52.0" }`.
 
 ## Post-Install Hooks
 
@@ -115,7 +124,7 @@ Do not write fields Twenty computes elsewhere (workflow `statuses` is computed f
 Dev sync skips install hooks. Invoke locally:
 
 ```bash
-yarn twenty dev:function:exec
+twenty app exec
 ```
 
 Run again after rebuilding to verify idempotency.

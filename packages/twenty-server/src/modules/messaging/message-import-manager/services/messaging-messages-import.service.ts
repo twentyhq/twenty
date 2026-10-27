@@ -203,10 +203,12 @@ export class MessagingMessagesImportService {
 
           if (messagesToSave.length > 0) {
             await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
-              messagesToSave,
-              messageChannel,
-              connectedAccount,
-              workspaceId,
+              {
+                messagesToSave,
+                messageChannel,
+                connectedAccount,
+                workspaceId,
+              },
             );
           }
 

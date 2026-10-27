@@ -8,7 +8,7 @@ const StyledPlaceholderDragAndDropCell = styled.div`
   background-color: ${themeCssVariables.background.primary};
   border-bottom: 1px solid ${themeCssVariables.background.primary};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  left: 0;
+  inset-inline-start: 0;
   overflow: hidden;
   position: sticky;
 `;

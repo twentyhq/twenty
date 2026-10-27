@@ -7,7 +7,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
-import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
+import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';

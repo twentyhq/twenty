@@ -2,6 +2,7 @@ import { type IdentifiedAccount } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { formatLogicFunctionResultIssues } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/format-logic-function-result-issues.util';
 import { EXTERNAL_ACCOUNT_ID_MAX_LENGTH } from 'src/engine/metadata-modules/connected-account/constants/external-account-id-max-length.constant';
 
 const identifyAccountResultSchema = z.object({
@@ -26,9 +27,7 @@ export const parseIdentifyAccountResult = (
   if (!parsed.success) {
     return {
       isValid: false,
-      reason: parsed.error.issues
-        .map((issue) => `${issue.path.join('.') || 'result'}: ${issue.message}`)
-        .join('; '),
+      reason: formatLogicFunctionResultIssues(parsed.error),
     };
   }
 

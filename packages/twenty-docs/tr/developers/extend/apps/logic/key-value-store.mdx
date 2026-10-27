@@ -1,7 +1,6 @@
 ---
 title: Anahtar-Değer Deposu
 description: Yerleşik uygulama anahtar-değer deposuyla ara sonuçları kalıcı hale getirin, verileri önbelleğe alın ve mantık işlevi çalıştırmaları arasında durumu paylaşın.
-icon: database
 ---
 
 Mantık işlevleri, kısa ömürlü, izole Node.js süreçlerinde çalışır — bir çalıştırma tamamlandıktan sonra, bellekte tutulan hiçbir şey kalıcı olmaz. Çalıştırmalar arasında **bir şeyi hatırlamanız** gerektiğinde (maliyetli bir API yanıtını önbelleğe almak, artımlı eşitlemeler için bir imleç saklamak, işleri ertelemek ya da durumu bir işlevden diğerine aktarmak için), bunu yerleşik anahtar-değer deposunda kalıcı hale getirin.

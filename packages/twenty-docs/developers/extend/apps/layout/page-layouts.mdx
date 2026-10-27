@@ -1,15 +1,18 @@
 ---
 title: Page Layouts
 description: Customize record detail pages — tabs, widgets, and where front components render — using definePageLayout, definePageLayoutTab and definePageLayoutWidget.
-icon: 'table-columns'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 A **page layout** controls how a record's detail page is arranged: which tabs appear and what widgets they contain. Use `definePageLayout()` to declare a layout for an object you own, `definePageLayoutTab()` to add a single tab to a layout that already exists (yours or a standard Twenty one), or `definePageLayoutWidget()` to add a single widget to a tab that already exists.
 
-| Use case                                                               | Entity                |
-| ---------------------------------------------------------------------- | --------------------- |
-| Define the entire layout for a record page on an object you own        | `definePageLayout`    |
-| Add one tab to an existing layout (your own object, or a standard one) | `definePageLayoutTab` |
+| Use case                                                                                | Entity                   |
+| --------------------------------------------------------------------------------------- | ------------------------ |
+| Define the entire layout for a record page on an object you own                         | `definePageLayout`       |
+| Add one tab to an existing layout (your own object, or a standard one)                  | `definePageLayoutTab`    |
 | Add one widget to an existing tab (the Home tab of a record page, or a tab you defined) | `definePageLayoutWidget` |
 
 ## definePageLayout
@@ -63,7 +66,7 @@ export default definePageLayout({
 - Each `widget` inside a tab can render a [front component](/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
 - A `FRONT_COMPONENT` widget can set `headerCommandMenuItemUniversalIdentifiers` to an ordered array of command menu item universal identifiers from the same app. These actions appear as icon buttons in the widget card header and keep their command-level availability and permission checks. Identifiers must be unique and must resolve when the app is installed.
 - `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
-- `yarn twenty pull` writes page layouts back with their tabs and widgets inline. A widget the export cannot carry yet, such as one showing your app's own front component or one of the deprecated `VIEW` type, is reported by pull instead of written; see [what pull does not write](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
+- `twenty app pull` writes page layouts back with their tabs and widgets inline. A widget the export cannot carry yet, such as one showing your app's own front component or one of the deprecated `VIEW` type, is reported by pull instead of written; see [what pull does not write](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 
 ### Field widgets
 
@@ -187,7 +190,7 @@ export default definePageLayoutTab({
 - `widgets` are scoped to this tab only — they reference [front components](/developers/extend/apps/layout/front-components), views, etc. exactly like widgets defined inline in `definePageLayout`.
 - `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
 - Use this instead of `definePageLayout` when you only want to add to an existing layout. Use `definePageLayout` when you own the entire layout.
-- `yarn twenty pull` writes a tab you added to a page layout you do not own back as a `definePageLayoutTab()` file, with its widgets inline, under the same limits as widgets of a `definePageLayout()`.
+- `twenty app pull` writes a tab you added to a page layout you do not own back as a `definePageLayoutTab()` file, with its widgets inline, under the same limits as widgets of a `definePageLayout()`.
 
 ## definePageLayoutWidget
 
@@ -234,11 +237,14 @@ export default definePageLayoutWidget({
 
   const EXAMPLE_HOME_TAB_UNIVERSAL_IDENTIFIER =
     getSystemPageLayoutTabUniversalIdentifier({
-      objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      pageLayoutUniversalIdentifier: getSystemRecordPageLayoutUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-        objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
-      }),
+      objectMetadataApplicationUniversalIdentifier:
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+      pageLayoutUniversalIdentifier:
+        getSystemRecordPageLayoutUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier:
+            APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+        }),
       title: 'Home',
     });
   ```
@@ -247,4 +253,6 @@ export default definePageLayoutWidget({
 - For a vertical list, set `position.heightBehavior` to `PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT` to fill one tab viewport, or `PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT` to use the widget's content or configured height. Import this enum from `twenty-sdk/define`, as in the example above. If omitted, the widget keeps its built-in default. Only one active widget per tab can fill the viewport, and its index must place it after all fit-content widgets. `heightBehavior` is not supported in `GRID` or `CANVAS` positions.
 - `configuration` works exactly like a widget defined inline in `definePageLayout` or `definePageLayoutTab`: it references [front components](/developers/extend/apps/layout/front-components), views, fields and so on.
 - Use this instead of `definePageLayoutTab` when the tab already exists and you only want to place one widget on it. Use `definePageLayoutTab` when you want a tab of your own.
-- `yarn twenty pull` writes a widget you added to a tab you do not own back as a `definePageLayoutWidget()` file, under the same limits as widgets of a `definePageLayout()`.
+- `twenty app pull` writes a widget you added to a tab you do not own back as a `definePageLayoutWidget()` file, under the same limits as widgets of a `definePageLayout()`.
+
+<PageBanner illustration="card-page-page-layouts" />

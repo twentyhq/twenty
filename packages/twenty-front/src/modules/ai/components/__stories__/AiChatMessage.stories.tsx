@@ -6,11 +6,21 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 import { Suspense, useEffect } from 'react';
-import { userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
+import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  mockCurrentWorkspace,
+  mockedWorkspaceMemberData,
+} from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
@@ -42,6 +52,7 @@ const mockUserMessage: ExtendedUIMessage = {
   ],
   metadata: {
     createdAt: getMockedDateWithOffset({ minutes: -2 }),
+    senderWorkspaceMemberId: mockedWorkspaceMemberData.id,
   },
 };
 
@@ -271,6 +282,47 @@ const mockAnsweredForm: ExtendedUIMessage = {
   },
 };
 
+const mockTeammate = {
+  ...mockedWorkspaceMemberData,
+  id: 'teammate-marco',
+  name: { firstName: 'Marco', lastName: 'Rossi' },
+  avatarUrl: null,
+};
+
+const mockTeammateMessage: ExtendedUIMessage = {
+  id: 'msg-teammate',
+  role: 'user',
+  parts: [{ type: 'text', text: 'I will handle the security review.' }],
+  metadata: {
+    createdAt: getMockedDateWithOffset({ minutes: -1 }),
+    senderWorkspaceMemberId: mockTeammate.id,
+  },
+};
+
+const mockFormerMemberMessage: ExtendedUIMessage = {
+  ...mockTeammateMessage,
+  id: 'msg-former-member',
+  parts: [{ type: 'text', text: 'The proposal is ready for review.' }],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId: 'former-member',
+  },
+};
+
+const mockUnknownSenderMessage: ExtendedUIMessage = {
+  ...mockTeammateMessage,
+  id: 'msg-unknown-sender',
+  parts: [{ type: 'text', text: 'A message without sender metadata.' }],
+  metadata: { createdAt: MOCKED_DATE },
+};
+
+const mockNamedAssistantMessage: ExtendedUIMessage = {
+  ...mockTeammateMessage,
+  id: 'msg-named-assistant',
+  role: 'assistant',
+  parts: [{ type: 'text', text: 'The recorded sender remains visible.' }],
+};
+
 const allMockMessages = [
   mockUserMessage,
   mockAssistantWithCodeExecution,
@@ -281,32 +333,88 @@ const allMockMessages = [
   mockThinkingStepsStreaming,
   mockThinkingStepsDone,
   mockAnsweredForm,
+  mockTeammateMessage,
+  mockFormerMemberMessage,
+  mockUnknownSenderMessage,
+  mockNamedAssistantMessage,
 ];
 
 const AgentChatMessagesSetterEffect = ({
   messages,
+  isInboxEnabled,
 }: {
   messages: ExtendedUIMessage[];
+  isInboxEnabled: boolean;
 }) => {
   const store = useStore();
 
   useEffect(() => {
-    const currentThreadId = store.get(currentAiChatThreadState.atom);
-
-    store.set(agentChatDisplayedThreadState.atom, currentThreadId);
-
-    store.set(
-      agentChatMessagesFamilyState.atomFamily({ threadId: currentThreadId }),
-      messages,
+    const currentThreadId = 'conversation-presentation-story';
+    const previousCurrentThread = store.get(currentAiChatThreadState.atom);
+    const previousDisplayedThread = store.get(
+      agentChatDisplayedThreadState.atom,
     );
-  }, [messages, store]);
+    const previousWorkspace = store.get(currentWorkspaceState.atom);
+    const previousMember = store.get(currentWorkspaceMemberState.atom);
+    const previousMembers = store.get(currentWorkspaceMembersState.atom);
+    const previousVisit = store.get(agentChatThreadVisitState.atom);
+    const messagesAtom = agentChatMessagesFamilyState.atomFamily({
+      threadId: currentThreadId,
+    });
+    const reactionsAtom = agentChatMessageReactionsFamilyState.atomFamily({
+      messageId: mockTeammateMessage.id,
+    });
+
+    store.set(currentAiChatThreadState.atom, currentThreadId);
+    store.set(agentChatDisplayedThreadState.atom, currentThreadId);
+    store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
+    store.set(currentWorkspaceMembersState.atom, [
+      mockedWorkspaceMemberData,
+      mockTeammate,
+    ]);
+    store.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        { key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED, value: isInboxEnabled },
+      ],
+    });
+    store.set(agentChatThreadVisitState.atom, {
+      threadId: currentThreadId,
+      isUnread: true,
+      isKeptUnread: false,
+      lastReadAt: getMockedDateWithOffset({ seconds: -90 }),
+    });
+    store.set(messagesAtom, messages);
+    store.set(reactionsAtom, [
+      {
+        emoji: '👍',
+        workspaceMemberIds: [mockedWorkspaceMemberData.id],
+        agentIds: [],
+        hasAssistantReacted: false,
+      },
+    ]);
+
+    return () => {
+      store.set(currentAiChatThreadState.atom, previousCurrentThread);
+      store.set(agentChatDisplayedThreadState.atom, previousDisplayedThread);
+      store.set(currentWorkspaceState.atom, previousWorkspace);
+      store.set(currentWorkspaceMemberState.atom, previousMember);
+      store.set(currentWorkspaceMembersState.atom, previousMembers);
+      store.set(agentChatThreadVisitState.atom, previousVisit);
+      store.set(messagesAtom, []);
+      store.set(reactionsAtom, []);
+    };
+  }, [messages, isInboxEnabled, store]);
 
   return null;
 };
 
-const AgentChatMessagesDecorator: Decorator = (Story) => (
+const AgentChatMessagesDecorator: Decorator = (Story, { parameters }) => (
   <>
-    <AgentChatMessagesSetterEffect messages={allMockMessages} />
+    <AgentChatMessagesSetterEffect
+      messages={parameters.messages ?? allMockMessages}
+      isInboxEnabled={parameters.isInboxEnabled ?? false}
+    />
     <Suspense fallback={<MarkdownLoadingSkeleton />}>
       <Story />
     </Suspense>
@@ -381,4 +489,58 @@ export const ThinkingStepsDoneExpanded: Story = {
 
 export const AnsweredForm: Story = {
   render: () => <AiChatMessage messageId={mockAnsweredForm.id} />,
+};
+
+export const MultiplayerConversation: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessage, mockTeammateMessage, mockSimpleTextResponse],
+  },
+  render: () => (
+    <StyledConversationContainer>
+      <AiChatMessage messageId={mockUserMessage.id} />
+      <AiChatMessage messageId={mockTeammateMessage.id} />
+      <AiChatMessage messageId={mockSimpleTextResponse.id} />
+    </StyledConversationContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Marco Rossi')).toBeVisible();
+    await expect(await canvas.findByText('Assistant')).toBeVisible();
+    const unreadSeparator = canvas.getByRole('separator', { name: 'New' });
+    await expect(unreadSeparator).toBeVisible();
+    await expect(unreadSeparator).toHaveAttribute(
+      'aria-orientation',
+      'horizontal',
+    );
+    const selectedReaction = canvas.getByRole('button', { name: '👍 by You' });
+    await expect(selectedReaction).toBeVisible();
+    selectedReaction.focus();
+    await userEvent.tab();
+    const addReactionButton = canvas.getAllByRole('button', {
+      name: 'Add reaction',
+    })[1];
+    await expect(addReactionButton).toHaveFocus();
+    await waitFor(() => expect(addReactionButton).toBeVisible());
+  },
+};
+
+export const SenderFallbacks: Story = {
+  parameters: { isInboxEnabled: true },
+  render: () => (
+    <StyledConversationContainer>
+      <AiChatMessage messageId={mockFormerMemberMessage.id} />
+      <AiChatMessage messageId={mockUnknownSenderMessage.id} />
+      <AiChatMessage messageId={mockNamedAssistantMessage.id} />
+    </StyledConversationContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Former member')).toBeVisible();
+    await expect(canvas.getByText('Unknown sender')).toBeVisible();
+    await expect(canvas.getByText('Marco Rossi')).toBeVisible();
+    await expect(canvas.queryByText('Ada')).not.toBeInTheDocument();
+  },
 };

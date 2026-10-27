@@ -1,0 +1,162 @@
+---
+title: DatePicker
+description: Share the existing calendar engine while browsing months independently from the selected date.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DatePickerReference from '/snippets/ui/generated/components/input/date-picker.mdx';
+
+## Overview
+
+`DatePicker` shares the `react-datepicker` calendar engine used by Twenty's date and date-time inputs. It provides date-only values and independent control over the selected date and viewed month.
+
+<StoryEmbed
+  storyId="ui-components-datepicker--display"
+  title="DatePicker example"
+  height={330}
+/>
+
+## Usage
+
+```tsx
+import { useState } from 'react';
+import { DatePicker } from 'twenty-ui/components/input';
+
+export const ChooseDate = () => {
+  const [value, setValue] = useState<string | null>('2026-10-07');
+  const [viewedMonth, setViewedMonth] = useState('2026-10');
+
+  return (
+    <DatePicker
+      aria-label="Choose a date"
+      value={value}
+      onValueChange={setValue}
+      viewedMonth={viewedMonth}
+      onViewedMonthChange={setViewedMonth}
+      weekStart={1}
+      weekdayLabels={['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']}
+      locale="en-US"
+      previousMonthLabel="Previous month"
+      nextMonthLabel="Next month"
+      monthLabel="Month"
+      yearLabel="Year"
+    />
+  );
+};
+```
+
+## Selection and browsing
+
+Changing the month or year calls `onViewedMonthChange` and leaves `value` unchanged. Choosing an available day calls `onValueChange` when the selected date changes.
+
+Use `onValueSelect` to commit a date or close a product picker. It receives the canonical `YYYY-MM-DD` date even when the user chooses the already-selected day. Keep closing behavior in the application adapter.
+
+Update each controlled prop in its matching callback. Prop changes do not select a replacement date. The default header provides month and year selectors and previous and next buttons; its year selector lists up to 100 years before and after the viewed year.
+
+## Date values and localization
+
+Pass canonical Gregorian date-only strings: `YYYY-MM-DD` for `value` and highlighted range bounds, and `YYYY-MM` for `viewedMonth`. Set `value={null}` for no selection. These values contain no time or timezone. Supported years are 0001 through 9999.
+
+`locale` formats the default month/year header and full weekday titles when custom `weekdayLabels` are supplied. Day labels and the underlying calendar retain the existing `react-datepicker` locale behavior.
+
+`weekStart` sets the first column, using 0 for Sunday through 6 for Saturday. Use `weekdayLabels` for seven short visible labels in Sunday-first order, regardless of `weekStart`. The calendar engine supplies weekday names when this prop is omitted.
+
+Current-day presentation follows the calendar engine's browser-clock behavior. Product adapters own timezone conversion, initial date fallbacks, member preferences, and scheduling data.
+
+## Existing calendar behavior
+
+Day rendering, accessibility markup, keyboard date navigation, and unavailable-date handling use `react-datepicker`. Visible days from neighboring months remain selectable when available.
+
+Set `isDateUnavailable` to prevent selection of dates according to your application's policy. The callback receives a canonical `YYYY-MM-DD` string. Set `disabled` to disable date selection and the default header controls.
+
+`isKeyboardNavigationDisabled` defaults to `false`. Existing product input adapters can set it to preserve their keyboard behavior. Header controls keep their native keyboard interaction.
+
+## Highlighted ranges and read-only views
+
+Pass `highlightedRange={{ start: '2026-10-05', end: '2026-10-11' }}` to highlight an inclusive date range. The application computes the range; highlighting does not select multiple dates or change `value`.
+
+Use `readOnly` to display a computed range or selected date while allowing month and year browsing. Use `isGridHidden` for a month-only navigator that retains the same header.
+
+## Custom headers
+
+Use `renderHeader` to compose an existing product header with date inputs, time inputs, or application-specific controls. Its `DatePickerHeaderProps` argument provides these values and actions:
+
+| Property | Purpose |
+| --- | --- |
+| `viewedMonth` | Current `YYYY-MM` month. |
+| `onPreviousMonth`, `onNextMonth` | Browse to the adjacent month. |
+| `onMonthChange` | Browse to a month number from 1 through 12. |
+| `onYearChange` | Browse to the supplied year. |
+| `isPreviousMonthDisabled`, `isNextMonthDisabled` | Whether each adjacent-month action is unavailable. |
+
+These header actions change the viewed month and leave the selected date unchanged.
+
+```tsx
+import { useState } from 'react';
+import { DatePicker } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const CalendarWithProductHeader = () => {
+  const [value, setValue] = useState<string | null>('2026-10-07');
+  const [viewedMonth, setViewedMonth] = useState('2026-10');
+
+  return (
+    <DatePicker
+      aria-label="Choose a date"
+      value={value}
+      onValueChange={setValue}
+      viewedMonth={viewedMonth}
+      onViewedMonthChange={setViewedMonth}
+      weekStart={1}
+      locale="en-US"
+      previousMonthLabel="Previous month"
+      nextMonthLabel="Next month"
+      monthLabel="Month"
+      yearLabel="Year"
+      renderHeader={({
+        viewedMonth: month,
+        onPreviousMonth,
+        onNextMonth,
+        isPreviousMonthDisabled,
+        isNextMonthDisabled,
+      }) => (
+        <Text
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: themeCssVariables.spacing[2],
+          }}
+        >
+          <Button size="sm" disabled={isPreviousMonthDisabled} onClick={onPreviousMonth}>
+            Previous month
+          </Button>
+          <Text>{month}</Text>
+          <Button size="sm" disabled={isNextMonthDisabled} onClick={onNextMonth}>
+            Next month
+          </Button>
+        </Text>
+      )}
+    />
+  );
+};
+```
+
+## Composition and product adapters
+
+Supply a group name with `aria-label` or `aria-labelledby`. Native attributes, `className`, `style`, and `ref` apply to the root. Use `render` to compose a different root while preserving the supplied props and ref.
+
+Pass `loadingFallback` to preserve a product loading surface while the calendar engine loads. The default fallback is a 300px-high `Skeleton`.
+
+For the default header, `portalContainer` mounts selector popups in a host-provided container. `onNavigationOpenChange` receives `{ open, control }` for `month` or `year`, with `open: true` when opening starts and `open: false` after closing completes. Hosts can retain their popup and focus handling through dismissal. Custom headers own their popup integration.
+
+Keep product headers, text inputs, time editing, timezone conversion, clear actions, and relative-filter computation in `twenty-front`. Date, date-time, and month-only adapters can compose this shared calendar engine with `highlightedRange`, `readOnly`, and `isGridHidden` as needed.
+
+## Props
+
+<DatePickerReference />
+
+<PageBanner illustration="calendar-emails" />
