@@ -22,10 +22,7 @@ import { SidePanelShareRecordSkeleton } from '@/side-panel/pages/share-record/co
 import { useSidePanelShareRecordInvitation } from '@/side-panel/pages/share-record/hooks/useSidePanelShareRecordInvitation';
 import { useSidePanelShareRecordSearch } from '@/side-panel/pages/share-record/hooks/useSidePanelShareRecordSearch';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
-import {
-  ObjectSharingReach,
-  RecordSharingMode,
-} from '~/generated-metadata/graphql';
+import { RecordSharingMode } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -57,14 +54,12 @@ const StyledSeparator = styled.div`
 type SidePanelShareRecordContentProps = {
   recordUrl: string;
   objectLabelPlural: string;
-  sharingReach: ObjectSharingReach;
   sharingState: ReturnType<typeof useRecordSharing>;
 };
 
 export const SidePanelShareRecordContent = ({
   recordUrl,
   objectLabelPlural,
-  sharingReach,
   sharingState,
 }: SidePanelShareRecordContentProps) => {
   const { t } = useLingui();
@@ -202,7 +197,6 @@ export const SidePanelShareRecordContent = ({
                             member={member}
                             roles={sharing.roles}
                             objectLabelPlural={objectLabelPlural}
-                            sharingReach={sharingReach}
                             isSaving={invitation.isSubmitting}
                             setShare={setShare}
                             removeShare={removeShare}
@@ -241,9 +235,7 @@ export const SidePanelShareRecordContent = ({
                   {!sharing.hasManagedGeneralAccess &&
                     sharing.sharingMode !== RecordSharingMode.INHERITED && (
                       <StyledDescription>
-                        {sharingReach === ObjectSharingReach.WORKSPACE
-                          ? t`People you add get this record even if their role can't access ${objectLabelPlural}. Field permissions still apply.`
-                          : t`Role and field permissions still apply.`}
+                        {t`People you add get this record even if their role can't access ${objectLabelPlural}. Field permissions still apply.`}
                       </StyledDescription>
                     )}
                 </>

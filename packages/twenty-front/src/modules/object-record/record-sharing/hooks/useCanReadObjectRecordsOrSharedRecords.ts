@@ -2,10 +2,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isShareableObjectMetadataItem } from '@/object-record/record-sharing/utils/isShareableObjectMetadataItem';
-import {
-  FeatureFlagKey,
-  ObjectSharingReach,
-} from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 // A record shared by name reaches people whose role cannot read its object,
 // so a direct link must still be fetched; the server returns nothing when
@@ -13,7 +10,7 @@ import {
 export const useCanReadObjectRecordsOrSharedRecords = (
   objectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
-    'id' | 'isSystem' | 'readability' | 'sharingReach'
+    'id' | 'isSystem' | 'readability'
   >,
 ): boolean => {
   const objectPermissions = useObjectPermissionsForObject(
@@ -26,7 +23,6 @@ export const useCanReadObjectRecordsOrSharedRecords = (
   return (
     objectPermissions.canReadObjectRecords ||
     (isRecordLevelSharingEnabled &&
-      isShareableObjectMetadataItem(objectMetadataItem) &&
-      objectMetadataItem.sharingReach === ObjectSharingReach.WORKSPACE)
+      isShareableObjectMetadataItem(objectMetadataItem))
   );
 };
