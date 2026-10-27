@@ -45,6 +45,25 @@ describe('defineWorkflow', () => {
     });
   });
 
+  it('accepts the trigger state a workflow built in the workflow builder pulls with', () => {
+    const { universalIdentifier: _universalIdentifier, ...trigger } =
+      workflow.version.trigger;
+    const pulled = {
+      ...workflow,
+      version: {
+        ...workflow.version,
+        trigger: {
+          ...trigger,
+          name: 'Launch manually',
+          position: null,
+          outputSchema: {},
+        },
+      },
+    };
+
+    expect(defineWorkflow(pulled).errors).toEqual([]);
+  });
+
   it.each([
     {
       problem: 'a step type applications cannot use',

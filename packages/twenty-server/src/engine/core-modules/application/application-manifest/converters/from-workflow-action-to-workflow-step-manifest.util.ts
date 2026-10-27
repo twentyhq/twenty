@@ -17,6 +17,23 @@ const DEFAULT_ERROR_HANDLING_OPTIONS = {
   continueOnFailure: { value: false },
 };
 
+// Older builder versions stored the retry count as a boolean, which runs read as a number
+const fromErrorHandlingOptions = (
+  errorHandlingOptions:
+    | WorkflowAction['settings']['errorHandlingOptions']
+    | undefined,
+) =>
+  isDefined(errorHandlingOptions)
+    ? {
+        retryOnFailure: {
+          value: Number(errorHandlingOptions.retryOnFailure.value),
+        },
+        continueOnFailure: {
+          value: errorHandlingOptions.continueOnFailure.value,
+        },
+      }
+    : undefined;
+
 const toRecord = (value: unknown): Record<string, unknown> =>
   isPlainObject(value) ? value : {};
 
@@ -251,7 +268,13 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
     return { reason: unsupportedReason };
   }
 
-  const { outputSchema, errorHandlingOptions } = action.settings;
+  const { outputSchema } = action.settings;
+  const errorHandlingOptions = fromErrorHandlingOptions(
+    action.settings.errorHandlingOptions,
+  );
+  const position = isDefined(action.position)
+    ? { x: action.position.x, y: action.position.y }
+    : null;
   const expectedOutputSchema =
     'expectedOutputSchema' in action.settings
       ? action.settings.expectedOutputSchema
@@ -264,10 +287,7 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
       ? { logicFunctionUniversalIdentifier }
       : {}),
     nextStepIds: action.nextStepIds ?? [],
-    ...(isDefined(action.position) &&
-    !isEqual(action.position, { x: 0, y: (index + 1) * 180 })
-      ? { position: { x: action.position.x, y: action.position.y } }
-      : {}),
+    ...(isEqual(position, { x: 0, y: (index + 1) * 180 }) ? {} : { position }),
     input,
   } as WorkflowStepManifest;
   const isDefaultOutputSchema = isEqual(
@@ -299,16 +319,7 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
       ...(!isDefined(errorHandlingOptions) ||
       isEqual(errorHandlingOptions, DEFAULT_ERROR_HANDLING_OPTIONS)
         ? {}
-        : {
-            errorHandlingOptions: {
-              retryOnFailure: {
-                value: errorHandlingOptions.retryOnFailure.value,
-              },
-              continueOnFailure: {
-                value: errorHandlingOptions.continueOnFailure.value,
-              },
-            },
-          }),
+        : { errorHandlingOptions }),
     },
   };
 };

@@ -84,7 +84,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { version as getUuidVersion, v4 } from 'uuid';
 
 import { type ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
-import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -1788,23 +1787,33 @@ describe('Application export - workflows built in the workflow builder', () => {
   let workflowUniversalIdentifier: string;
   let workflowRunId: string | undefined;
 
+  let stepId: string;
+
+  // What the builder stores comes back in the manifest: no trigger universal identifier, the
+  // builder's trigger name and command icon, and the step position picked in the canvas
   const buildManifest = (url: string): WorkflowManifest => ({
     universalIdentifier: workflowUniversalIdentifier,
     name: workflowName,
     version: {
       trigger: {
-        universalIdentifier: workflowNodeIdentifier(40),
+        name: 'Launch manually',
         type: 'MANUAL',
-        nextStepIds: [workflowNodeIdentifier(41)],
-        settings: { availability: { type: 'GLOBAL' }, isPinned: true },
+        nextStepIds: [stepId],
+        settings: {
+          availability: { type: 'GLOBAL' },
+          icon: 'IconHandMove',
+          isPinned: false,
+        },
       },
       steps: [
         {
-          universalIdentifier: workflowNodeIdentifier(41),
-          name: 'Notify sales',
+          universalIdentifier: stepId,
+          name: 'HTTP Request',
           type: 'HTTP_REQUEST',
           nextStepIds: [],
-          input: { method: 'POST', url },
+          position: { x: 200, y: 0 },
+          input: { method: 'POST', url, headers: {}, body: {} },
+          expectedOutputSchema: {},
         },
       ],
     },
@@ -1835,7 +1844,6 @@ describe('Application export - workflows built in the workflow builder', () => {
   };
 
   beforeAll(async () => {
-    const customFlatApplication = await findWorkspaceCustomFlatApplication();
     const createdWorkflow = await createCoreWorkflow({ name: workflowName });
 
     coreWorkflowId = createdWorkflow.coreWorkflowId;
@@ -1848,38 +1856,57 @@ describe('Application export - workflows built in the workflow builder', () => {
 
     workflowUniversalIdentifier = universalIdentifier;
 
-    // The builder stores whatever trigger and steps it is sent, so it is sent exactly what a manifest produces
-    const { triggers, steps } =
-      fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
-        manifest: buildManifest('http://localhost:1/before'),
-        applicationUniversalIdentifier:
-          customFlatApplication.universalIdentifier,
-        now: new Date().toISOString(),
-        logicFunctionIdByUniversalIdentifier: new Map(),
-      }).flatUniversalWorkflowVersion!;
-    const [trigger] = triggers!;
-    const [step] = steps!;
-
+    // The calls the builder makes: the front's default manual trigger, a step created from its
+    // type, then the step edited in its side panel
     await updateCoreWorkflowVersionTrigger({
       coreWorkflowVersionId: builderVersionId,
-      trigger: { ...trigger, nextStepIds: [] },
+      trigger: {
+        name: 'Launch manually',
+        type: 'MANUAL',
+        position: { x: 0, y: 0 },
+        settings: {
+          availability: { type: 'GLOBAL' },
+          outputSchema: {},
+          icon: 'IconHandMove',
+          isPinned: false,
+        },
+      },
     });
-    await createCoreWorkflowVersionStep({
+
+    const createdStep = await createCoreWorkflowVersionStep({
       coreWorkflowVersionId: builderVersionId,
       stepType: 'HTTP_REQUEST',
-      id: step.id,
     });
-    await updateCoreWorkflowVersionTrigger({
-      coreWorkflowVersionId: builderVersionId,
-      trigger,
-    });
+
+    stepId = createdStep.id;
+
     await updateCoreWorkflowVersionStep({
       coreWorkflowVersionId: builderVersionId,
-      step,
+      step: {
+        ...createdStep,
+        settings: {
+          ...createdStep.settings,
+          input: {
+            ...createdStep.settings.input,
+            method: 'POST',
+            url: 'http://localhost:1/before',
+          },
+        },
+      },
     });
     await activateCoreWorkflowVersion({
       coreWorkflowVersionId: builderVersionId,
     });
+
+    const { triggers, steps } = (
+      await global.testDataSource.query(
+        `SELECT triggers, steps FROM core."workflowVersion" WHERE id = $1`,
+        [builderVersionId],
+      )
+    )[0];
+
+    expect(triggers[0]).not.toHaveProperty('universalIdentifier');
+    expect(steps[0]).toMatchObject({ valid: false });
   }, 60000);
 
   afterAll(async () => {

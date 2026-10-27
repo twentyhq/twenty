@@ -496,19 +496,17 @@ describe('reconstructWorkflowsManifest', () => {
         universalIdentifier: 'e1000000-0000-4000-8000-000000000000',
         versionOverrides: { status: WorkflowVersionStatus.DEACTIVATED },
       });
-      const renamedTrigger = builderWorkflow({
+      const unreproducible = builderWorkflow({
         universalIdentifier: 'e2000000-0000-4000-8000-000000000000',
       });
-      const [trigger] = renamedTrigger.flatWorkflowVersion.triggers ?? [];
 
-      renamedTrigger.flatWorkflowVersion = {
-        ...renamedTrigger.flatWorkflowVersion,
-        triggers: [{ ...trigger, name: 'Launch manually' }],
-      };
+      Object.assign(unreproducible.flatWorkflowVersion.triggers?.[0] ?? {}, {
+        propertyNoManifestFieldHolds: true,
+      });
 
       expect(
         reconstruct({
-          synced: [deactivated, renamedTrigger],
+          synced: [deactivated, unreproducible],
           isWorkspaceCustomApplication: true,
         }),
       ).toEqual({

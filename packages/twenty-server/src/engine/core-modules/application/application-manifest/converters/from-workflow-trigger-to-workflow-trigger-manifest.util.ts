@@ -1,11 +1,17 @@
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
+import isEqual from 'lodash.isequal';
 import {
   isDefined,
   isNonEmptyArray,
+  isPlainObject,
   sortKeysDeeply,
 } from 'twenty-shared/utils';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import {
+  computeWorkflowTriggerManifestDefaults,
+  DEFAULT_WORKFLOW_TRIGGER_POSITION,
+} from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-trigger-manifest-defaults.util';
 import { buildWorkflowManifestInverseReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-inverse-reference-resolvers.util';
 import { type UpdateEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
@@ -180,10 +186,6 @@ export const fromWorkflowTriggerToWorkflowTriggerManifest = ({
   trigger: WorkflowTrigger & { universalIdentifier?: string };
   references: WorkflowManifestReferences;
 }): { manifest: WorkflowTriggerManifest } | { reason: string } => {
-  if (!isDefined(trigger.universalIdentifier)) {
-    return { reason: 'workflow trigger without a universal identifier' };
-  }
-
   const resolvers = buildWorkflowManifestInverseReferenceResolvers(references);
   const settings = fromTriggerSettings({ trigger, resolvers });
   const unsupportedReason = resolvers.getUnsupportedReason();
@@ -192,12 +194,33 @@ export const fromWorkflowTriggerToWorkflowTriggerManifest = ({
     return { reason: unsupportedReason };
   }
 
+  const manifestWithoutBuilderState = {
+    ...(isDefined(trigger.universalIdentifier)
+      ? { universalIdentifier: trigger.universalIdentifier }
+      : {}),
+    type: trigger.type,
+    nextStepIds: trigger.nextStepIds ?? [],
+    ...(isDefined(settings) ? { settings: sortKeysDeeply(settings) } : {}),
+  } as WorkflowTriggerManifest;
+  const defaults = computeWorkflowTriggerManifestDefaults(
+    manifestWithoutBuilderState,
+  );
+  const outputSchema: unknown = trigger.settings.outputSchema;
+  const position = isDefined(trigger.position)
+    ? { x: trigger.position.x, y: trigger.position.y }
+    : null;
+
   return {
     manifest: {
-      universalIdentifier: trigger.universalIdentifier,
-      type: trigger.type,
-      nextStepIds: trigger.nextStepIds ?? [],
-      ...(isDefined(settings) ? { settings: sortKeysDeeply(settings) } : {}),
-    } as WorkflowTriggerManifest,
+      ...manifestWithoutBuilderState,
+      ...(trigger.name !== defaults.name ? { name: trigger.name } : {}),
+      ...(isEqual(position, DEFAULT_WORKFLOW_TRIGGER_POSITION)
+        ? {}
+        : { position }),
+      ...(isPlainObject(outputSchema) &&
+      !isEqual(outputSchema, defaults.outputSchema)
+        ? { outputSchema: sortKeysDeeply(outputSchema) }
+        : {}),
+    },
   };
 };

@@ -26,11 +26,16 @@ import { recordFilterSchema } from '@/workflow/schemas/record-filter-schema';
 import { stepFilterSchema } from '@/workflow/schemas/step-filter-schema';
 import { workflowPickRecordStrategySchema } from '@/workflow/schemas/pick-record-action-settings-schema';
 
+export const workflowManifestPositionSchema = z.strictObject({
+  x: z.number(),
+  y: z.number(),
+});
+
 const baseStepShape = {
   universalIdentifier: z.uuid(),
   name: z.string().min(1),
   nextStepIds: z.array(z.uuid()),
-  position: z.object({ x: z.number(), y: z.number() }).optional(),
+  position: workflowManifestPositionSchema.nullable().optional(),
   outputSchema: z.record(z.string(), z.unknown()).optional(),
   expectedOutputSchema: z.record(z.string(), z.unknown()).optional(),
   errorHandlingOptions:

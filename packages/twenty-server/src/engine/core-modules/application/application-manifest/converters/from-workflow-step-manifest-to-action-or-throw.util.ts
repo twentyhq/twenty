@@ -203,7 +203,9 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
     type: step.type,
     valid: true,
     nextStepIds: step.nextStepIds,
-    position: step.position ?? { x: 0, y: (index + 1) * 180 },
+    ...(step.position === null
+      ? {}
+      : { position: step.position ?? { x: 0, y: (index + 1) * 180 } }),
     settings: {
       input: structuredClone(input),
       outputSchema: structuredClone(

@@ -67,7 +67,7 @@ export default defineWorkflow({
 ```
 
 Key points:
-- The workflow, its trigger and each step need their own `universalIdentifier`. Keep them stable across releases: they are how Twenty matches the installed workflow on the next install.
+- The workflow and each step need their own `universalIdentifier`, and the trigger can have one. Keep them stable across releases: they are how Twenty matches the installed workflow on the next install.
 - `nextStepIds` wires the graph. The trigger points to the first steps, and each step points to the steps that run after it.
 - A step reads earlier output with `{{trigger.<path>}}` or `{{<step universalIdentifier>.<path>}}`.
 - The build validates the whole definition: unsupported trigger or step types, broken step links and references to unknown steps fail it.
@@ -91,6 +91,8 @@ A reference Twenty can't resolve fails the install.
 | `WEBHOOK` | An HTTP request reaches the workflow URL | `httpMethod` (`GET` or `POST`), and `expectedBody` for `POST`. |
 
 A manual workflow without `availability` gets no command menu entry.
+
+Every trigger also takes optional `name`, `position` and `outputSchema`, which only shape how the workflow looks in the builder. Without them, Twenty uses a name such as `Manual trigger`, places the trigger at the top of the canvas and computes the output schema from the settings.
 
 A webhook workflow listens on `https://<your-twenty-domain>/webhooks/workflows/<workspaceId>/<workflowId>`, where `workflowId` is the id of the installed workflow. The request body is available as `{{trigger.<path>}}`.
 
@@ -116,7 +118,8 @@ Their inputs match the steps of the [workflow builder](/user-guide/workflows/cap
 ## Workflows of the workspace Custom application
 
 The workspace Custom application owns the workflows built in the workflow builder, and code is as authoritative for them as the builder:
-- `twenty app pull` writes each one from its active version, the one the builder last published. A workflow whose active version uses settings a `defineWorkflow()` file can't express, such as a Code step or a trigger the builder renamed, is reported and left in place.
+- `twenty app pull` writes each one from its active version, the one the builder last published. A workflow whose active version uses settings a `defineWorkflow()` file can't express, such as a Code step, is reported and left in place.
+- A pulled workflow keeps what the builder stored: a trigger without a `universalIdentifier`, the trigger's builder name, a `position` of `null` for a node the builder never placed, and an `outputSchema` that differs from the computed one.
 - `twenty app apply` publishes like the builder. A workflow whose definition matches its active version is left alone. Otherwise the active version is archived and the definition becomes a new active version, so past runs keep the version they ran.
 - Users keep editing these workflows in the builder, and the next pull brings their changes back.
 
