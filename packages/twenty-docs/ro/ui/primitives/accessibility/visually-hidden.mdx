@@ -1,0 +1,47 @@
+---
+title: Ascuns vizual
+description: Păstrați textul de asistență disponibil pentru tehnologia de asistență fără a-l afișa vizual.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import VisuallyHiddenReference from '/snippets/ui/generated/accessibility/visually-hidden.mdx';
+
+## Prezentare generală
+
+`VisuallyHidden` redă un `span` ascuns vizual. Conținutul său rămâne în arborele de accesibilitate și poate furniza un nume accesibil. Acceptă proprietăți span native, o referință span și compunerea Base UI `render`. Importați `VisuallyHiddenProps` din același punct de intrare.
+
+<StoryEmbed storyId="ui-accessibility-visuallyhidden--display" title="Exemplu ascuns vizual" height={100} />
+
+## Utilizare
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
+import { IconPlus } from 'twenty-ui/icon';
+
+type AddRecordActionProps = { onAdd: () => void };
+
+export const AddRecordAction = ({ onAdd }: AddRecordActionProps) => (
+  <Button onClick={onAdd}>
+    <IconPlus aria-hidden />
+    <VisuallyHidden>Add record</VisuallyHidden>
+  </Button>
+);
+```
+
+Folosiți o etichetă vizibilă atunci când spațiul permite acest lucru. Pentru controalele care acceptă deja `aria-label`, acel atribut reprezintă o altă modalitate de a furniza un nume accesibil.
+
+## Conținut ascuns
+
+Plasați textul de ajutor în interiorul containerului. Evitați plasarea controalelor care pot primi focalizarea în interiorul acestuia: containerul rămâne ascuns vizual atunci când elementele sale copil primesc focalizarea. Nu adaugă o regiune live, nu elimină conținutul din tehnologiile de asistență și nu ascunde date confidențiale.
+
+Folosiți `id` pentru a asocia descrieri ascunse cu `aria-describedby`. Atributele native, `className`, `style` și `ref` vizează elementul span ascuns sau elementul furnizat prin `render`. Consultați [accesibilitatea](/ro/ui/accessibility) pentru tipare de etichetare și anunțare.
+
+## Proprietăți
+
+<VisuallyHiddenReference />
+
+<PageBanner illustration="page-cover-accessibility" />

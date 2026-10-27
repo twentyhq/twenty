@@ -1,0 +1,75 @@
+---
+title: Secțiune
+description: Grupați conținutul cu un titlu, o descriere suplimentară și o acțiune opțională.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SectionReference from '/snippets/ui/generated/components/layout/section.mdx';
+
+## Prezentare generală
+
+`Section.Root` grupează conținut asociat. `Section.Header` combină [Heading](/ro/ui/primitives/typography/heading) cu o descriere și conținut opțional `actions`. Descrierile sunt text obișnuit asociat titlului, deci nu adaugă niveluri la structura documentului.
+
+<StoryEmbed storyId="ui-components-section--display" title="Exemplu de secțiune" height={150} />
+
+## Utilizare
+
+```tsx
+import { Section } from 'twenty-ui/components/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceSection = () => (
+  <Section.Root>
+    <Section.Header
+      title="Workspace settings"
+      description="Manage your workspace name and preferences."
+    />
+    <Text>Workspace preferences appear here.</Text>
+  </Section.Root>
+);
+```
+
+## Adăugați o descriere și o acțiune
+
+```tsx
+import { Section } from 'twenty-ui/components/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceSection = () => (
+  <Section.Root>
+    <Section.Header
+      title="Workspace settings"
+      description="Manage your workspace name and preferences."
+      actions={<Button>Edit workspace</Button>}
+    />
+    <Text>Workspace preferences appear here.</Text>
+  </Section.Root>
+);
+```
+
+`Section.Root` este implicit un `div` pe toată lățimea, cu aliniere la stânga și culoarea principală a textului. Utilizați `align`, `color` și `fullWidth` pentru a ajusta containerul de conținut.
+
+`Section.Header` poate fi utilizat și singur. `level`, `size` și `color` ale acestuia configurează titlul și au implicit valorile `2`, `md` și `primary`. Antetul are după el o margine de spacing-4. Utilizați `style` sau `className` native pentru a ajusta acea spațiere.
+
+## Depășirea descrierii
+
+Descrierile șirurilor afișează până la cinci rânduri. Setați `descriptionLineClamp` la un număr întreg pozitiv pentru a alege o altă limită sau la `false` pentru a afișa descrierea completă fără un indiciu pentru depășire. Trecerea cu cursorul dezvăluie textul care depășește spațiul disponibil. Descrierile nu adaugă implicit o oprire de tabulare; setați `isDescriptionFocusable` pentru a activa accesul prin focalizare la indiciul contextual. Escape închide indiciul contextual.
+
+Titlul acceptă conținut de nod. Alegeți `level` pentru structura documentului independent de `size` și `color` vizuale. Compuneți explicit linkuri și alt conținut îmbogățit într-o descriere de nod.
+
+Transmiteți un nod React pentru conținut suplimentar mai bogat. Descrierile bogate sunt randate așa cum sunt furnizate, fără trunchiere automată sau indicații contextuale.
+
+## Compoziție
+
+Ambele părți redirecționează atributele native, referințele, numele de clase, stilurile și `render` către elementul lor exterior. De exemplu, `Section.Root render={<section aria-label="Workspace settings" />}` oferă o secțiune denumită, iar `Section.Header render={<header />}` utilizează un container de antet.
+
+La migrare, înlocuiți `adornment` cu `actions`. Activați focalizarea descrierii cu `isDescriptionFocusable` atunci când este necesar. `SectionRootProps` și `SectionHeaderProps` sunt exportate din `twenty-ui/components/layout`.
+
+## Proprietăți
+
+<SectionReference />
+
+<PageBanner illustration="layout" />

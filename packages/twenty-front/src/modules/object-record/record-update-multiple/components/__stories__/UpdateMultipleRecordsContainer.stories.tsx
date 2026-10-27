@@ -139,3 +139,35 @@ export const Default: Story = {
     await waitFor(() => expect(applyButton).toHaveFocus());
   },
 };
+
+export const BlocksApplyWhileAFieldIsInError: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    const nameLabel = await canvas.findByText('Name', {}, { timeout: 10000 });
+
+    await userEvent.type(
+      within(nameLabel.parentElement!).getByRole('textbox'),
+      'New Name',
+    );
+
+    const linkedinLabel = await canvas.findByText('Linkedin');
+
+    await userEvent.type(
+      within(linkedinLabel.parentElement!).getByRole('textbox'),
+      'not a url',
+    );
+    await userEvent.tab();
+
+    await expect(await canvas.findByRole('alert')).toHaveTextContent(
+      'Enter a valid URL',
+    );
+
+    await userEvent.click(canvas.getByRole('button', { name: /Apply/i }));
+
+    await expect(
+      body.queryByRole('dialog', { name: 'Update 3 records' }),
+    ).not.toBeInTheDocument();
+  },
+};

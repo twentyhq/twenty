@@ -1,0 +1,64 @@
+---
+title: صف حقل النموذج
+description: محاذاة تسمية حقل والمحتوى وعناصر التحكم الختامية في صف مشترك.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import FormFieldRowReference from '/snippets/ui/generated/components/input/form-field-row.mdx';
+
+## نظرة عامة
+
+`FormFieldRow` يرتب تسمية الحقل والأيقونة الزخرفية الاختيارية ومحتوى الحقل وعناصر التحكم الختامية. استخدمه لحقول المؤلف أو مجموعات الحقول الأخرى المحاذاة. يتحكم تطبيقك في قيم الحقول والتحقق من الصحة والأذونات والاستمرارية.
+
+<StoryEmbed storyId="ui-input-formfieldrow--display" title="صف حقل النموذج" height={110} />
+
+## استخدام
+
+```tsx
+import { useState } from 'react';
+import { FormFieldRow, LightButton } from 'twenty-ui/components/input';
+import { Input } from 'twenty-ui/primitives/input';
+
+export const SubjectField = () => {
+  const [subject, setSubject] = useState('Project update');
+
+  return (
+    <FormFieldRow
+      label="Subject"
+      hasDivider={false}
+      trailing={
+        <LightButton size="sm" onClick={() => setSubject('')}>
+          Clear
+        </LightButton>
+      }
+    >
+      <Input
+        variant="plain"
+        aria-label="Subject"
+        value={subject}
+        onValueChange={setSubject}
+      />
+    </FormFieldRow>
+  );
+};
+```
+
+## التخطيط والتسميات
+
+تكون القيمة الافتراضية لـ `labelWidth` هي 80 بكسل، ويقبل عرض CSS. استخدم القيمة نفسها في الصفوف الشقيقة لمحاذاة تسمياتها. يُحدَّد عمود التسمية بنسبة 40% من الصف، ويمكن أن يلتف المحتوى في التخطيطات الضيقة. `startIcon` للزينة؛ ويحدد المستدعي أبعاده. اضبط `hasDivider={false}` في الصف الأخير عندما يوفر السطح المحيط حدوده.
+
+الجذر هو مجموعة تُسمّى بواسطة `label`. وفّر `aria-label` أو `aria-labelledby` عند حذف التسمية المرئية، وسمِّ كل إدخال متداخل بشكل منفصل. لا ينقل الصف التركيز ولا يعطّل عناصر التحكم المتداخلة. تحتفظ عناصر التحكم هذه بسلوك لوحة المفاتيح وأنماط التركيز الخاصة بها.
+
+## الأحداث والتخصيص
+
+تُطبَّق السمات الأصلية ومعالجات الأحداث و`className` و`style` و`ref` و`render` على جذر المجموعة. مرّر props وref الموفَّرين عند استبدال الجذر عبر `render`. يعرض معالج `onClick` مؤشرًا على شكل سهم. يتحكم المستدعي في سلوك النقر للتركيز، ويحمي الأحداث من عناصر التحكم المتداخلة أو البوابات عند الحاجة. يتيح `isHoverable` بشكل مستقل خلفية تمرير محايدة.
+
+يطبّق `trailingProps` السمات الأصلية والمعالجات وref على الغلاف اللاحق الموجود. يُدمج `className` الخاص به مع فئة التخطيط المشتركة. استخدم معالج `onClick` الخاص به لمنع إجراء لاحق من تشغيل معالج النقر للصف. يوجد الغلاف فقط عندما يحتوي `trailing` على محتوى قابل للعرض.
+
+## الإزاحة
+
+<FormFieldRowReference />
+
+<PageBanner illustration="page-cover-input" />

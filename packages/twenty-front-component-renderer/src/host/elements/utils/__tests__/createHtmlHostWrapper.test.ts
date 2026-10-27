@@ -165,6 +165,23 @@ describe('createHtmlHostWrapper client events', () => {
     );
   });
 
+  it('should keep the host sanitized iframe sandbox when a differently cased one is passed', () => {
+    const Wrapper = createHtmlHostWrapper('iframe');
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, {
+          sandbox: 'allow-scripts',
+          SANDBOX: 'allow-scripts allow-same-origin',
+        }),
+      );
+    });
+
+    const iframe = container.querySelector('iframe');
+
+    expect(iframe?.getAttribute('sandbox')).toBe('allow-scripts');
+  });
+
   it('should forward a click once, from the innermost element listening for it', () => {
     const handleOuterClick = jest.fn();
     const handleInnerClick = jest.fn();

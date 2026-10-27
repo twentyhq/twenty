@@ -1,21 +1,12 @@
-import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { IconChevronLeft } from 'twenty-ui/icon';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { type KeyboardEvent } from 'react';
+import { Key } from 'ts-key-enum';
 
 type MultipleRecordPickerCreateTargetSelectProps = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  selectableListInstanceId: string;
-  focusId: string;
   disabled: boolean;
   onBack: () => void;
   onSelect: (objectMetadataItemId: string) => void;
@@ -23,63 +14,46 @@ type MultipleRecordPickerCreateTargetSelectProps = {
 
 export const MultipleRecordPickerCreateTargetSelect = ({
   objectMetadataItems,
-  selectableListInstanceId,
-  focusId,
   disabled,
   onBack,
   onSelect,
 }: MultipleRecordPickerCreateTargetSelectProps) => {
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    selectableListInstanceId,
-  );
-
-  const handleSelect = (objectMetadataItemId: string) => {
-    if (!disabled) {
-      onSelect(objectMetadataItemId);
+  const handleKeyDownCapture = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== Key.Escape || event.nativeEvent.isComposing) {
+      return;
     }
+
+    event.preventDefault();
+    event.stopPropagation();
+    onBack();
   };
 
   return (
     <>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            Icon={IconChevronLeft}
-            onClick={onBack}
-          />
-        }
-      >
-        {t`Select a record type`}
-      </DropdownMenuHeader>
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        <SelectableList
-          selectableListInstanceId={selectableListInstanceId}
-          selectableItemIdArray={objectMetadataItems.map(({ id }) => id)}
-          focusId={focusId}
-          shouldPreselectFirstItem
-        >
-          {objectMetadataItems.map((objectMetadataItem) => (
-            <SelectableListItem
-              key={objectMetadataItem.id}
-              itemId={objectMetadataItem.id}
-              onEnter={() => handleSelect(objectMetadataItem.id)}
-            >
-              <ListItemButton
-                startIcon={
-                  <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-                }
-                focused={selectedItemId === objectMetadataItem.id}
-                disabled={disabled}
-                onClick={() => handleSelect(objectMetadataItem.id)}
-              >
-                {objectMetadataItem.labelSingular}
-              </ListItemButton>
-            </SelectableListItem>
-          ))}
-        </SelectableList>
-      </DropdownMenuItemsContainer>
+      <Dropdown.Header onKeyDownCapture={handleKeyDownCapture}>
+        <Dropdown.Back
+          onClick={(event) => {
+            event.preventDefault();
+            onBack();
+          }}
+        />
+        <Dropdown.Title>{t`Select a record type`}</Dropdown.Title>
+      </Dropdown.Header>
+      <Dropdown.Section scrollable onKeyDownCapture={handleKeyDownCapture}>
+        {objectMetadataItems.map((objectMetadataItem) => (
+          <Dropdown.ActionItem
+            key={objectMetadataItem.id}
+            startIcon={
+              <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+            }
+            disabled={disabled}
+            closeOnClick={false}
+            onClick={() => onSelect(objectMetadataItem.id)}
+          >
+            {objectMetadataItem.labelSingular}
+          </Dropdown.ActionItem>
+        ))}
+      </Dropdown.Section>
     </>
   );
 };

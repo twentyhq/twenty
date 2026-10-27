@@ -3,6 +3,8 @@ title: Widgets
 description: Explora los tipos de widgets y las opciones de visualización en Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { ChartIcon } from '/snippets/chart-icon.mdx';
 
 ## Widgets disponibles
@@ -138,6 +140,16 @@ Ve los registros filtrados directamente en tu panel.
 * Métricas de tu herramienta de marcación
 * Contenido en tiempo real de tu herramienta de secuencias de ventas
 
+#### Edición de registros
+
+Los widgets de tabla y kanban del tablero son de solo lectura de forma predeterminada. Para permitir que los usuarios editen registros desde un widget:
+
+1. Edita el tablero
+2. Selecciona el widget
+3. Activa **Permitir edición** en la configuración del widget
+
+En las tablas, esto permite editar celdas. En los tableros kanban, permite editar tarjetas, moverlas entre columnas y crear registros. Los permisos de rol siguen aplicándose.
+
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Texto enriquecido</span>
 
 Añade texto con formato y contenido directamente a tu panel.
@@ -167,3 +179,5 @@ Añade texto con formato y contenido directamente a tu panel.
 1. Haz clic en el widget
 2. Abre **Opciones**
 3. Haz clic en **Duplicar widget**
+
+<PageBanner illustration="dashboards" />

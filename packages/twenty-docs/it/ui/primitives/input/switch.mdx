@@ -1,0 +1,119 @@
+---
+title: Cambia
+description: Un controllo etichettato di attivazione o disattivazione con stato controllato e non controllato.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SwitchReference from '/snippets/ui/generated/input/switch.mdx';
+
+## Panoramica
+
+Usa `Switch` per una preferenza di attivazione o disattivazione. Assegna al controllo un'etichetta visibile o un nome accessibile.
+
+<StoryEmbed storyId="ui-input-switch-switch--display" title="Esempio di switch" height={90} />
+
+## Utilizzo
+
+### Stato non controllato
+
+Usa `defaultChecked` per impostare lo stato iniziale di selezione. Lo switch gestisce le modifiche successive.
+
+```tsx
+import { useId } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsPreference = () => {
+  const switchId = useId();
+
+  return (
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Switch id={switchId} name="notifications" />
+      <Text render={<span />}>Email notifications</Text>
+    </label>
+  );
+};
+```
+
+## Opzioni visive
+
+Confronta le due dimensioni negli stati attivato, disattivato, disabilitato, di sola lettura e attivo. Utilizza gli esempi abilitati per provare ad attivare e disattivare.
+
+<StoryEmbed storyId="ui-input-switch-switch--catalog" title="Opzioni visive per l'interruttore" height={440} />
+
+## Stato controllato
+
+Passa `checked` e aggiornalo con `onCheckedChange` per gestire la stessa preferenza nello stato di React.
+
+```tsx
+import { useId, useState } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsPreference = () => {
+  const switchId = useId();
+  const [checked, setChecked] = useState(false);
+
+  return (
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Switch
+        id={switchId}
+        name="notifications"
+        checked={checked}
+        onCheckedChange={setChecked}
+      />
+      <Text render={<span />}>Email notifications</Text>
+    </label>
+  );
+};
+```
+
+`onCheckedChange` riceve il booleano successivo e i dettagli dell'evento. La prop `size` accetta `sm` o `md` e per impostazione predefinita è `md`.
+
+Per una riga a larghezza intera coerente con un'icona, una descrizione e un interruttore, usa [SettingsRow](/it/ui/components/settings/settings-row).
+
+## Tastiera e moduli
+
+Tab sposta lo stato attivo sullo switch; Spazio lo attiva o disattiva. Facendo clic sulla relativa etichetta lo si attiva o disattiva. Usa `disabled` per impedire l'interazione oppure `readOnly` per mantenere un controllo selezionabile il cui valore non può essere modificato.
+
+Uno switch con nome invia il proprio valore quando è selezionato. Usa `value` per personalizzare tale valore e `uncheckedValue` se il modulo deve inviare un valore anche quando è disattivato.
+
+## Parti e contenuto personalizzato
+
+`Switch` assembla la root con stile e il relativo thumb predefinito. Usa `Switch.Root` con `Switch.Thumb` per gestire il contenuto del thumb. Root gestisce lo stato e l'aspetto della traccia; Thumb esegue il rendering del contenuto fornito.
+
+```tsx
+import { Switch } from 'twenty-ui/primitives/input';
+
+export const CustomPreference = () => (
+  <Switch.Root aria-label="Updates" defaultChecked>
+    <Switch.Thumb></Switch.Thumb>
+  </Switch.Root>
+);
+```
+
+`SwitchRootProps` e `SwitchThumbProps` sono tipi pubblici esportati da `twenty-ui/primitives/input`. Entrambe le parti accettano attributi nativi, handler, ref, `render` e callback `className` e `style` basati sullo stato. Il `ref` di Root punta al controllo visibile; `inputRef` punta all'input nativo. Il ref della parte punta al relativo elemento sottoposto a rendering. Passa `nativeButton` con `render={<button />}` quando sostituisci Root con un pulsante. Le prop di aspetto appartengono a Root; classi e stili espliciti vengono uniti con quelli predefiniti.
+
+Thumb riceve lo stato corrente di checked, disabled, readOnly, required e Field. La sua posizione segue la direzione di lettura.
+
+<StoryEmbed storyId="ui-input-switch-parts--composition" title="Composizione delle parti di Switch" height={90} />
+
+L'assembly richiamabile e il relativo tipo `SwitchProps` rimangono supportati. Sostituisci l'assembly con Root e la sua parte quando fornisci contenuto thumb personalizzato anziché aggiungere un'altra parte ai figli dell'assembly.
+
+Per il ripristino controllato del modulo, gestisci l'`onReset` del modulo e ripristina `checked` al valore iniziale. Base UI 1.8 non ripristina lo stato dei componenti non controllati al ripristino nativo del modulo. `required`, `form`, `value` e `uncheckedValue` mantengono il comportamento dell'input nativo upstream.
+
+## Props
+
+Il riferimento include le prop specifiche del componente e le prop Base UI ereditate. Sono accettati anche attributi nativi quali `aria-label` e `data-*`.
+
+<SwitchReference />
+
+<PageBanner illustration="page-cover-switch" />

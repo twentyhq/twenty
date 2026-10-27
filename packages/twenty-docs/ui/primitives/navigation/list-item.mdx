@@ -3,9 +3,13 @@ title: ListItem
 description: Compose consistent rows with icons, descriptions, indicators, and actions.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
+
+## Overview
 
 `ListItem` supplies the visual layout shared by list and menu rows. It renders a `div` by default for passive content. Use [ListItemButton](/ui/components/navigation/list-item-button) for ordinary action rows. Compose `ListItem` with an anchor for navigation or with a custom semantic owner when needed. Use [Dropdown](/ui/components/navigation/dropdown) or [Select](/ui/primitives/input/select) when you need a complete popup or selection owner.
 
@@ -423,3 +427,5 @@ The reference is generated from the public component types. Native `div` attribu
 <ListItemReference />
 
 Pass `shortcut={['Mod', 'Enter']}` for simultaneous keys or `shortcut={[['G'], ['P']]}` for successive presses. See [Shortcut](/ui/primitives/typography/shortcut) for nested combinations and the shared string formatter.
+
+<PageBanner illustration="section-apps-data" />

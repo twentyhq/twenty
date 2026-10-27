@@ -1,0 +1,55 @@
+---
+title: OverflowingTextTooltipModeProvider
+description: Выберите, когда OverflowingTextWithTooltip проверяет усечение для поддерева.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import OverflowingTextTooltipModeProviderReference from '/snippets/ui/generated/typography/overflowing-text-tooltip-mode-provider.mdx';
+
+## Обзор
+
+`OverflowingTextTooltipModeProvider` задаёт, как каждый [OverflowingTextWithTooltip](/ru/ui/primitives/typography/overflowing-text-with-tooltip) внутри него обрабатывает свою подсказку. Он не отображает DOM-элемент.
+
+<StoryEmbed storyId="ui-typography-overflowingtexttooltipmodeprovider--display" title="Пример поставщика режима всплывающих подсказок для переполняющего текста" height={180} />
+
+## Использование
+
+```tsx
+import {
+  OverflowingTextTooltipModeProvider,
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordCell = () => (
+  <OverflowingTextTooltipModeProvider mode="measure-on-hover">
+    <Text style={{ maxWidth: 220 }}>
+      <OverflowingTextWithTooltip
+        text="Quarterly account review and renewal preparation"
+        isFocusable
+      />
+    </Text>
+  </OverflowingTextTooltipModeProvider>
+);
+```
+
+Наведите указатель или установите фокус на усечённой метке, чтобы прочитать её полное значение. Измените `mode` в элементах управления Storybook, чтобы сравнить, когда доступна всплывающая подсказка.
+
+## Режимы
+
+* `measure-on-hover`, используемый по умолчанию без провайдера, проверяет усечение при наведении указателя и фокусировке. Метка, которая помещается целиком, не мешает всплывающей подсказке родительского элемента.
+* `measure-on-open` проверяет усечение, когда всплывающая подсказка пытается открыться. Используйте его для меток, которые монтируются под указателем, например для наложения при наведении, когда наведение указателя не происходит.
+* `disabled` отображает только текст без каких-либо частей всплывающей подсказки. Используйте его для множества меток, на которые пользователь не может навести указатель, например для содержимого, закрытого наложением.
+
+<StoryEmbed storyId="ui-typography-overflowingtexttooltipmodeprovider--disabled" title="Всплывающая подсказка отключена для поддерева" height={90} />
+
+Вложенные провайдеры переопределяют режим для своего поддерева.
+
+## Свойства
+
+<OverflowingTextTooltipModeProviderReference />
+
+<PageBanner illustration="section-document-generator" />

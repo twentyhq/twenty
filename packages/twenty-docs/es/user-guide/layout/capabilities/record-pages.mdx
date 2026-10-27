@@ -3,6 +3,8 @@ title: Páginas de registro
 description: Personaliza el diseño de las páginas de detalle de cada registro con pestañas y widgets.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Resumen
 
 Cuando abres un registro en Twenty, la página de detalle se compone de **pestañas** y **widgets**. Ambos son totalmente personalizables según el tipo de objeto.
@@ -36,6 +38,16 @@ Los widgets son los bloques básicos dentro de cada pestaña. Tipos de widgets d
 | **iFrame**                 | Contenido externo incrustado                            |
 | **Texto enriquecido**      | Contenido estático o descripciones                      |
 
+### Edición de registros relacionados
+
+Los widgets de tabla y kanban de registros relacionados se pueden editar de forma predeterminada. Para que uno sea de solo lectura:
+
+1. Abra el editor de diseño de página de registro
+2. Seleccione el widget de registros relacionados
+3. Desactive **Permitir edición** en **Datos y visualización**
+
+En las tablas, esto impide editar las celdas. En los tableros kanban, impide editar tarjetas, moverlas entre columnas y crear registros. Los permisos de rol siguen aplicándose cuando se permite la edición.
+
 ## Personalizar la página del registro
 
 1. Abre cualquier registro
@@ -59,3 +71,5 @@ o
 ## Visibilidad de campos
 
 Dentro de un widget de Campos, puedes controlar qué campos son visibles y en qué orden. Esto te permite crear diseños enfocados — por ejemplo, mostrar solo los campos más importantes en la pestaña Resumen y colocar los campos detallados en una pestaña separada.
+
+<PageBanner illustration="card-page-page-layouts" />

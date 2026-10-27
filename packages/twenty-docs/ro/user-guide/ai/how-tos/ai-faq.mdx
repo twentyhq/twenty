@@ -3,6 +3,10 @@ title: Întrebări frecvente despre IA
 description: Întrebări frecvente despre funcționalitățile IA din Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Întrebări frecvente
+
 <AccordionGroup>
 
   <Accordion title="Ce capabilități IA sunt disponibile?">
@@ -21,7 +25,11 @@ description: Întrebări frecvente despre funcționalitățile IA din Twenty.
   </Accordion>
 
   <Accordion title="Pot folosi propriile modele IA?">
-    În cloud, poți utiliza doar modelele IA furnizate de Twenty. Pe instanța ta self‑hosted, poți utiliza propriile modele IA după obținerea unei licențe Organization.
+    În cloud, modelele rulează pe propriile conturi de furnizor ale Twenty: alegeți pe care le utilizează spațiul dvs. de lucru în **Setări → AI** și nu există nicio modalitate de a conecta propria cheie API.
+
+    Într-o instanță auto-găzduită, furnizorii integrați (OpenAI, Anthropic, Google, Mistral, xAI) funcționează cu fiecare plan, inclusiv Free. Setați cheia API corespunzătoare (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `MISTRAL_API_KEY`, `XAI_API_KEY`) în **Setări → Panou de administrare → Variabile de configurare** sau în `.env`, apoi reporniți serverul. Modelele apar apoi în **Setări → Panou de administrare → AI**.
+
+    Furnizorii personalizați (endpointuri personalizate, gateway-uri private, modele compatibile cu OpenAI sau locale, regiuni suplimentare), adăugați în **Setări → Panou de administrare → AI → Furnizori personalizați**, sunt în prezent incluși gratuit pentru până la 25 de locuri. Peste acest prag, este necesar un plan Organization. Secțiunea AI din panoul de administrare indică situația instanței dvs.
   </Accordion>
 
   <Accordion title="Nu văd un rol atribuit unui agent AI, unde este?">
@@ -29,3 +37,5 @@ description: Întrebări frecvente despre funcționalitățile IA din Twenty.
   </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="card-page-billing-faq" />

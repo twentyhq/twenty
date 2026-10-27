@@ -1,0 +1,129 @@
+---
+title: "منطقة النصوص العربية "
+description: أدخل عدة أسطر من النصوص مع إمكانية تغيير الحجم تلقائيًا.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TextareaReference from '/snippets/ui/generated/input/textarea.mdx';
+
+## نظرة عامة
+
+استخدم `Textarea` للملاحظات والأوصاف والقيم الأخرى متعددة الأسطر. يتكامل مع [الحقل](/ar/ui/primitives/input/field) للتسميات والتحقق من الصحة.
+
+<StoryEmbed storyId="ui-input-textarea--display" title="مثال على منطقة النصوص" height={190} />
+
+## استخدام
+
+### الحالة غير المتحكم بها
+
+استخدم `defaultValue` لتعيين الملاحظات الأولية. تمتلك منطقة النص التغييرات اللاحقة.
+
+```tsx
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const NotesField = () => (
+  <Field.Root name="notes">
+    <Field.Label>Notes</Field.Label>
+    <Textarea rows={4} defaultValue="Follow up next week." />
+    <Field.Description>Add context for your team.</Field.Description>
+  </Field.Root>
+);
+```
+
+تتوفر سمات منطقة النصوص الأصلية مثل `rows` و`maxLength` و`required` و`readOnly`. يقبل `size` القيمتين `sm` أو `md`، والقيمة الافتراضية هي `md`.
+
+## الخيارات المرئية
+
+قارن بين الحجمين في الحالات الافتراضية، وحالات التركيز، وغير الصالحة، والمعطلة. يتم توضيح تغيير الحجم التلقائي بشكل منفصل أدناه.
+
+<StoryEmbed storyId="ui-input-textarea--catalog" title="الخيارات المرئية لمنطقة النص" height={440} />
+
+## المظهر البسيط
+
+استخدم `variant="plain"` للنص متعدد الأسطر داخل سطح موجود. يزيل التعبئة والحدود والزوايا المستديرة وكل الحشو، مع الاحتفاظ بتنسيق النص والعنصر النائب والحالة المعطلة المشترك. يتبع المخطط الأزرق سلوك `:focus-visible` الأصلي للمتصفح. بالنسبة إلى عناصر التحكم النصية، يمكن أن يشمل ذلك تركيز المؤشر والتركيز التلقائي، بالإضافة إلى تركيز لوحة المفاتيح. تستخدم الحالة غير الصالحة مخطط خطر دون تغيير التخطيط.
+
+```tsx
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const InlineNotes = () => (
+  <Field.Root>
+    <Field.Label>Notes</Field.Label>
+    <Textarea variant="plain" autoResize rows={1} maxRows={6} />
+  </Field.Root>
+);
+```
+
+يوفر العنصر الأصل التباعد. تظل `rows` و`maxRows` والتحجيم التلقائي تتحكم في ارتفاع المحتوى. يستثني حد الصفوف الحشو والحدود في المظهر البسيط. يؤدي تغيير `variant` أثناء تفعيل التحجيم التلقائي إلى قياس التخطيط الجديد.
+
+## الحالة المتحكم بها
+
+مرر `value` وحدّثه باستخدام `onValueChange` لامتلاك الملاحظات نفسها في حالة React. تتلقى دالة رد الاتصال قيمة السلسلة التالية وتفاصيل الحدث؛ ويتوفر أيضًا `onChange` الأصلي.
+
+```tsx
+import { useState } from 'react';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const NotesField = () => {
+  const [notes, setNotes] = useState('Follow up next week.');
+
+  return (
+    <Field.Root name="notes">
+      <Field.Label>Notes</Field.Label>
+      <Textarea rows={4} value={notes} onValueChange={setNotes} />
+      <Field.Description>Add context for your team.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+## تغيير الحجم تلقائيًا
+
+يعمل تغيير الحجم تلقائيًا في أي من وضعي الحالة. يستخدم هذا المثال أيضًا القيمة المتحكم بها لعدّ الأحرف.
+
+```tsx
+import { useState } from 'react';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const DescriptionField = () => {
+  const [description, setDescription] = useState('');
+
+  return (
+    <Field.Root name="description">
+      <Field.Label>Description</Field.Label>
+      <Textarea
+        value={description}
+        onValueChange={setDescription}
+        autoResize
+        rows={2}
+        maxRows={6}
+        maxLength={500}
+      />
+      <Field.Description>
+        {description.length} of 500 characters
+      </Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+يقيس `autoResize` القيمة المعتمدة بعد التحديثات المضبوطة، ويقيس التعديلات غير المضبوطة مباشرةً. لا تغيّر التعديلات المضبوطة المرفوضة الارتفاع. يُحدَّث أيضًا بعد عمليات إعادة تعيين النموذج الأصلية، وبعد تغييرات `rows` و`size` و`variant` و`maxRows` والعرض المتاح. استخدم `maxRows` للحد من التمدد وتمرير المحتوى الأطول.
+
+يتحكم التحجيم التلقائي في `blockSize` المضمّن أثناء تفعيله. يؤدي إيقافه إلى استعادة `style.blockSize` الحالي، أو مسح الحجم التلقائي إذا لم يُوفَّر أيٌّ منهما. عند إيقاف التحجيم التلقائي، تتحكم `rows` والأنماط الأصلية في الارتفاع. يكون تغيير الحجم اليدوي معطّلًا افتراضيًا؛ اضبط `style={{ resize: 'vertical' }}` عندما ينبغي للمتصلين تغيير حجم عنصر التحكم بأنفسهم.
+
+## عنصر التحكم الأصلي وتركيب العرض
+
+تستهدف سمات ومعالجات textarea الأصلية، و`className` و`style` و`ref`، عنصر textarea. يتلقى ref عنصر `HTMLTextAreaElement`. يقبل `render` عنصر textarea أو دالة رد نداء تتلقى خصائص textarea الأصلية وحالة Field. مرّر الخصائص وref الموفَّرين إلى textarea الأصلية لكي تستمر التسميات والتحقق والأحداث والقياس التلقائي في العمل. أضف عنصر تخطيط منفصلًا عند الحاجة إلى تخصيص الغلاف.
+
+يتلقى `onChange` حدث تغيير React لعنصر textarea الأصلي. يحتفظ `onValueChange(value, details)` بتوقيع Base UI، بما في ذلك `event` و`reason` و`cancel` و`allowPropagation` الأصلية. يستهدف الحدث الأصلي textarea. يحافظ إلغاء التفاصيل على سياسة التحقق الخاصة بـ Base UI؛ ولا يتراجع عن القيمة الأصلية. يختار المتصلون المضبوطون القيمة المعتمدة.
+
+تظل `name` و`form` و`required` و`readOnly` و`disabled` الأصلية، وسلوك الإرسال وإعادة التعيين، متاحة. يوفر Field التسمية والوصف والاسم وربط التحقق. يُدرج Enter فاصل أسطر في textarea.
+
+## الخصائص
+
+يتم إنشاء المرجع من أنواع المكونات العامة. تُقبل أيضًا السمات الأصلية، بما في ذلك الأسماء المتاحة ومعالجات الأحداث، في الأجزاء التي تعرض عناصر.
+
+<TextareaReference />
+
+<PageBanner illustration="page-cover-input" />

@@ -29,12 +29,13 @@ import {
   FindOneApplicationDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { SettingsApplicationConnectionMessageFolders } from '~/pages/settings/applications/components/SettingsApplicationConnectionMessageFolders';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import {
   type ApplicationConnectedAccount,
   useApplicationConnectedAccounts,
 } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
-import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
+import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
 import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
 
 const DETAIL_GRID_TEMPLATE = '220px 1fr';
@@ -113,7 +114,9 @@ export const SettingsApplicationConnectionDetail = () => {
 
   const application = data?.findOneApplication;
   const providerIds = new Set(
-    connectionProviders.map((provider) => provider.id),
+    connectionProviders
+      .filter((provider) => provider.scope === 'WORKSPACE')
+      .map((provider) => provider.id),
   );
   const connection = connectedAccounts.find(
     (account) =>
@@ -134,7 +137,7 @@ export const SettingsApplicationConnectionDetail = () => {
     connection.name.trim() !== ''
       ? connection.name
       : (connection?.handle ?? t`Connection`);
-  const deleteModalId = `delete-application-connection-modal-${connectedAccountId}`;
+  const removeDialogId = `remove-application-connection-modal-${connectedAccountId}`;
   const applicationSettingsPath = getSettingsPath(
     SettingsPath.ApplicationDetail,
     { applicationId },
@@ -159,7 +162,7 @@ export const SettingsApplicationConnectionDetail = () => {
     });
   };
 
-  const handleDelete = async () => {
+  const handleRemove = async () => {
     if (connection === undefined) {
       return;
     }
@@ -196,17 +199,6 @@ export const SettingsApplicationConnectionDetail = () => {
         key: 'handle',
         label: t`Handle`,
         value: <StyledMonoText>{connection.handle}</StyledMonoText>,
-      },
-      {
-        key: 'scope',
-        label: t`Visibility`,
-        value: (
-          <Status color={connection.scope === 'WORKSPACE' ? 'blue' : 'gray'}>
-            {connection.scope === 'WORKSPACE'
-              ? t`Workspace shared`
-              : t`Just for me`}
-          </Status>
-        ),
       },
       {
         key: 'status',
@@ -320,10 +312,10 @@ export const SettingsApplicationConnectionDetail = () => {
                 )}
                 <Button
                   startIcon={<IconTrash />}
-                  onClick={() => openDialog(deleteModalId)}
+                  onClick={() => openDialog(removeDialogId)}
                   variant="outline"
                   color="danger"
-                >{t`Disconnect`}</Button>
+                >{t`Remove`}</Button>
               </StyledActions>
             </Section.Root>
             <Section.Root>
@@ -353,16 +345,20 @@ export const SettingsApplicationConnectionDetail = () => {
                 </TableSection>
               </Table>
             </Section.Root>
+            <SettingsApplicationConnectionMessageFolders
+              connectedAccountId={connection.id}
+            />
             <ConfirmationDialog
-              dialogId={deleteModalId}
-              title={t`Disconnect connection?`}
+              dialogId={removeDialogId}
+              title={t`Remove connection?`}
               subtitle={
                 <Trans>
-                  This will disconnect {connectionLabel} from this application.
+                  This permanently removes {connectionLabel}. The app loses
+                  access to it.
                 </Trans>
               }
-              onConfirmClick={handleDelete}
-              confirmButtonText={t`Disconnect`}
+              onConfirmClick={handleRemove}
+              confirmButtonText={t`Remove`}
               loading={isDeleting}
             />
           </>

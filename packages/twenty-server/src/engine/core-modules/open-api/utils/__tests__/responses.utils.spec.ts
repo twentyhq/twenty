@@ -1,4 +1,4 @@
-import { getFindManyResponse200 } from 'src/engine/core-modules/open-api/utils/responses.utils';
+import { getFindManyResponse200 } from 'src/engine/core-modules/open-api/utils/responses.util';
 
 describe('getFindManyResponse200', () => {
   it('documents the direct metadata list envelope and complete page info', () => {
