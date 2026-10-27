@@ -259,6 +259,8 @@ import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/da
 import { AddParticipantHandleFieldToMessageChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1792907887530-add-participant-handle-field-to-message-channel';
 import { AddCustomConfigToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438836-add-custom-config-to-connection-provider';
 import { AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793111477950-add-object-metadata-disabled-object-permission-actions';
+import { DefaultApplicationAutoUpgradeToTrueFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793123790787-default-application-auto-upgrade-to-true';
+import { BackfillApplicationAutoUpgradeSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-slow-1793124310367-backfill-application-auto-upgrade';
 import { AddMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438837-add-messaging-provider';
 
 export const INSTANCE_COMMANDS = [
@@ -522,4 +524,6 @@ export const INSTANCE_COMMANDS = [
   AddCustomConfigToConnectionProviderFastInstanceCommand,
   AddMessagingProviderFastInstanceCommand,
   AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand,
+  DefaultApplicationAutoUpgradeToTrueFastInstanceCommand,
+  BackfillApplicationAutoUpgradeSlowInstanceCommand,
 ];
