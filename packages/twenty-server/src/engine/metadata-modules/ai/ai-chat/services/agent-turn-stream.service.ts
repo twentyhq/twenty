@@ -407,34 +407,19 @@ export class AgentTurnStreamService {
       }
     })();
 
-    const publishReader = publishStream.getReader();
-
-    try {
-      while (true) {
-        const { done, value: chunk } = await publishReader.read();
-
-        if (done) {
-          break;
-        }
-
-        if (chunk.type === 'error') {
-          continue;
-        }
-
-        await this.eventPublisherService.publish({
-          threadId,
-          workspaceId,
-          event: {
-            type: 'stream-chunk',
-            chunk,
-          },
-        });
+    for await (const chunk of publishStream) {
+      if ((chunk as { type?: string }).type === 'error') {
+        continue;
       }
-    } catch (error) {
-      // an unread tee branch would otherwise keep buffering the whole reply
-      await publishReader.cancel(error);
 
-      throw error;
+      await this.eventPublisherService.publish({
+        threadId,
+        workspaceId,
+        event: {
+          type: 'stream-chunk',
+          chunk: chunk as Record<string, unknown>,
+        },
+      });
     }
 
     await ended;
