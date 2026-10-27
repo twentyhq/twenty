@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -8,7 +9,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 export const NON_EXISTENT_UUID = '00000000-0000-4000-8000-000000000000';
 
 export const uniqueSuffix = (): string =>
-  Math.random().toString(36).slice(2, 10);
+  faker.string.alpha({ length: 8, casing: 'lower' });
 
 export type CreateTestObjectInput = {
   nameSingular: string;
