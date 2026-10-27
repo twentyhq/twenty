@@ -95,7 +95,7 @@ export const SettingsAccountGroupTableRow = ({
           account={builtInAccount}
         />
       ) : (
-        <TableCell align="right">
+        <TableCell>
           <SettingsAccountGroupUsedBy group={group} />
         </TableCell>
       )}
