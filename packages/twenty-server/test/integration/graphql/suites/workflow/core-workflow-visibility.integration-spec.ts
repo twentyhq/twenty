@@ -28,6 +28,7 @@ import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -195,6 +196,34 @@ const createActiveManualWorkflow = async (name: string) => {
   await activateManualTrigger(createdWorkflow.coreWorkflowVersionId);
 
   return createdWorkflow;
+};
+
+// The record API the run pages read, not the core workflow API #26243 already gates.
+const findRecordIds = async (
+  requester: (query: string, variables?: object) => request.Test,
+  objectNamePlural: 'workflowRuns',
+  id: string,
+) => {
+  const response = await requester(
+    `
+      query FindRecords($id: UUID!) {
+        ${objectNamePlural}(filter: { id: { eq: $id } }) {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `,
+    { id },
+  );
+
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data[objectNamePlural].edges.map(
+    ({ node }: { node: { id: string } }) => node.id,
+  );
 };
 
 describe('core workflow visibility (e2e)', () => {
@@ -628,6 +657,88 @@ describe('core workflow visibility (e2e)', () => {
     });
   });
 
+  describe('the runs of a workflow', () => {
+    let runsCoreWorkflowId: string;
+    let runsCoreWorkflowVersionId: string;
+    let workflowRunId: string;
+
+    const runWorkflow = () =>
+      runCoreWorkflowVersion({
+        coreWorkflowVersionId: runsCoreWorkflowVersionId,
+      });
+
+    beforeAll(async () => {
+      ({
+        coreWorkflowId: runsCoreWorkflowId,
+        coreWorkflowVersionId: runsCoreWorkflowVersionId,
+      } = await createActiveManualWorkflow('Workflow With Runs'));
+
+      workflowRunId = await runWorkflow();
+    });
+
+    afterAll(async () => {
+      if (isDefined(runsCoreWorkflowId)) {
+        await setVisibility(runsCoreWorkflowId, WorkflowVisibility.WORKSPACE);
+        await deleteCoreWorkflows({ coreWorkflowIds: [runsCoreWorkflowId] });
+      }
+    });
+
+    it('lets another member read them while the workflow is visible to the workspace', async () => {
+      expect(
+        await findRecordIds(asOtherMember, 'workflowRuns', workflowRunId),
+      ).toEqual([workflowRunId]);
+    });
+
+    it('hides them from another member once the workflow is private', async () => {
+      const response = await setVisibility(
+        runsCoreWorkflowId,
+        WorkflowVisibility.PRIVATE,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        await findRecordIds(asOtherMember, 'workflowRuns', workflowRunId),
+      ).toEqual([]);
+    });
+
+    it('keeps them readable by its creator while private', async () => {
+      expect(
+        await findRecordIds(
+          workflowGraphqlRequest,
+          'workflowRuns',
+          workflowRunId,
+        ),
+      ).toEqual([workflowRunId]);
+    });
+
+    it('keeps a run started while private to its creator', async () => {
+      const privateRunId = await runWorkflow();
+
+      expect(
+        await findRecordIds(asOtherMember, 'workflowRuns', privateRunId),
+      ).toEqual([]);
+      expect(
+        await findRecordIds(
+          workflowGraphqlRequest,
+          'workflowRuns',
+          privateRunId,
+        ),
+      ).toEqual([privateRunId]);
+    });
+
+    it('gives them back to another member once the workflow is visible to the workspace again', async () => {
+      const response = await setVisibility(
+        runsCoreWorkflowId,
+        WorkflowVisibility.WORKSPACE,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        await findRecordIds(asOtherMember, 'workflowRuns', workflowRunId),
+      ).toEqual([workflowRunId]);
+    });
+  });
+
   // An agent step's conversation belongs to its recipient, or else the workflow's creator, whatever the workflow's visibility.
   describe('the conversation an agent step records on a run', () => {
     let conversationCoreWorkflowId: string;
@@ -754,6 +865,89 @@ describe('core workflow visibility (e2e)', () => {
 
       expect(response.body.data?.chatThread ?? null).toBeNull();
       expect(response.body.errors).toBeDefined();
+    });
+  });
+
+  // Removing a member deletes the membership, which nulls the creator of every workflow they created.
+  describe('the runs of a private workflow whose creator is removed from the workspace', () => {
+    const removedUserId = randomUUID();
+    const removedUserWorkspaceId = randomUUID();
+    let orphanedCoreWorkflowId: string;
+    let orphanedRunId: string;
+
+    beforeAll(async () => {
+      let orphanedCoreWorkflowVersionId: string;
+
+      ({
+        coreWorkflowId: orphanedCoreWorkflowId,
+        coreWorkflowVersionId: orphanedCoreWorkflowVersionId,
+      } = await createActiveManualWorkflow('Workflow Of A Removed Member'));
+
+      expect(
+        (
+          await setVisibility(
+            orphanedCoreWorkflowId,
+            WorkflowVisibility.PRIVATE,
+          )
+        ).body.errors,
+      ).toBeUndefined();
+
+      orphanedRunId = await runCoreWorkflowVersion({
+        coreWorkflowVersionId: orphanedCoreWorkflowVersionId,
+      });
+
+      await global.testDataSource.query(
+        `INSERT INTO core."user" (id, email) VALUES ($1, $2)`,
+        [removedUserId, `removed-${removedUserId}@apple.dev`],
+      );
+      await global.testDataSource.query(
+        `INSERT INTO core."userWorkspace" (id, "userId", "workspaceId") VALUES ($1, $2, $3)`,
+        [removedUserWorkspaceId, removedUserId, SEED_APPLE_WORKSPACE_ID],
+      );
+      await global.testDataSource.query(
+        `UPDATE core."workflow" SET "createdByUserWorkspaceId" = $2 WHERE id = $1`,
+        [orphanedCoreWorkflowId, removedUserWorkspaceId],
+      );
+    });
+
+    afterAll(async () => {
+      await global.testDataSource.query(
+        `DELETE FROM core."userWorkspace" WHERE id = $1`,
+        [removedUserWorkspaceId],
+      );
+      await global.testDataSource.query(
+        `DELETE FROM core."user" WHERE id = $1`,
+        [removedUserId],
+      );
+
+      if (isDefined(orphanedCoreWorkflowId)) {
+        await deleteCoreWorkflows({
+          coreWorkflowIds: [orphanedCoreWorkflowId],
+        });
+      }
+    });
+
+    it('become readable to the workspace, as core now shows the workflow', async () => {
+      expect(
+        await findRecordIds(asOtherMember, 'workflowRuns', orphanedRunId),
+      ).toEqual([]);
+
+      await getAppProviderByClassName<UserWorkspaceService>(
+        'UserWorkspaceService',
+      ).deleteUserWorkspace({
+        userWorkspaceId: removedUserWorkspaceId,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
+
+      const [coreWorkflow] = await global.testDataSource.query(
+        `SELECT "createdByUserWorkspaceId" FROM core."workflow" WHERE id = $1`,
+        [orphanedCoreWorkflowId],
+      );
+
+      expect(coreWorkflow.createdByUserWorkspaceId).toBeNull();
+      expect(
+        await findRecordIds(asOtherMember, 'workflowRuns', orphanedRunId),
+      ).toEqual([orphanedRunId]);
     });
   });
 });
