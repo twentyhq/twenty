@@ -31,6 +31,31 @@ describe('findRecordKeysChangedByMerge', () => {
     expect(result).toEqual(['emails']);
   });
 
+  it('should treat empty arrays and null sub-fields as the same value', () => {
+    const result = findRecordKeysChangedByMerge({
+      mergedData: {
+        phones: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCountryCode: 'FR',
+          primaryPhoneCallingCode: '+33',
+          additionalPhones: null,
+        },
+      },
+      priorityRecord: {
+        id: 'priority',
+        phones: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCountryCode: 'FR',
+          primaryPhoneCallingCode: '+33',
+          additionalPhones: [],
+        },
+      },
+      recordKeys: ['phones'],
+    });
+
+    expect(result).toEqual([]);
+  });
+
   it('should ignore keys the merge leaves untouched', () => {
     const result = findRecordKeysChangedByMerge({
       mergedData: {},

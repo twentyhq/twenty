@@ -254,7 +254,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           bypassPermissionConfig,
         );
 
-    const fullRecords = (await unrestrictedRepository.find({
+    const fullRecords = await unrestrictedRepository.find({
       where: { id: In(ids) },
       select: getAllSelectableColumnNames({
         restrictedFields: {},
@@ -263,7 +263,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           flatFieldMetadataMaps,
         },
       }),
-    })) as ObjectRecord[];
+    });
 
     const fullPriorityRecord = fullRecords.find(
       (record) => record.id === priorityRecordId,

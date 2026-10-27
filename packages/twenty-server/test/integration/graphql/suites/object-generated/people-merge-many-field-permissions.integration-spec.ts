@@ -25,9 +25,11 @@ describe('people merge with unreadable fields (integration)', () => {
   const createPeoplePair = async ({
     priorityJobTitle,
     duplicateJobTitle,
+    sharedPhones,
   }: {
     priorityJobTitle: string;
     duplicateJobTitle: string;
+    sharedPhones?: object;
   }) => {
     const response = await makeGraphqlApiRequest(
       createManyOperationFactory({
@@ -38,10 +40,12 @@ describe('people merge with unreadable fields (integration)', () => {
           {
             name: { firstName: 'Unreadable', lastName: 'Priority' },
             jobTitle: priorityJobTitle,
+            phones: sharedPhones,
           },
           {
             name: { firstName: 'Unreadable', lastName: 'Duplicate' },
             jobTitle: duplicateJobTitle,
+            phones: sharedPhones,
           },
         ],
       }),
@@ -85,9 +89,13 @@ describe('people merge with unreadable fields (integration)', () => {
     const jobTitleField = personObject?.fieldsList?.find(
       (field) => field.name === 'jobTitle',
     );
+    const phonesField = personObject?.fieldsList?.find(
+      (field) => field.name === 'phones',
+    );
 
     assertIsDefinedOrThrow(personObject);
     assertIsDefinedOrThrow(jobTitleField);
+    assertIsDefinedOrThrow(phonesField);
 
     const { roleId } = await createCustomRoleWithObjectPermissions({
       label: 'MergeUnreadableJobTitleRole',
@@ -101,6 +109,12 @@ describe('people merge with unreadable fields (integration)', () => {
         {
           objectMetadataId: personObject.id,
           fieldMetadataId: jobTitleField.id,
+          canReadFieldValue: false,
+          canUpdateFieldValue: false,
+        },
+        {
+          objectMetadataId: personObject.id,
+          fieldMetadataId: phonesField.id,
           canReadFieldValue: false,
           canUpdateFieldValue: false,
         },
@@ -174,5 +188,30 @@ describe('people merge with unreadable fields (integration)', () => {
     const people = await findPeopleByIds([priorityId, duplicateId]);
 
     expect(people).toEqual([{ id: priorityId, jobTitle: 'Kept job title' }]);
+  });
+
+  it('should merge when records hold the same value in an unreadable composite field', async () => {
+    const { priorityId, duplicateId } = await createPeoplePair({
+      priorityJobTitle: '',
+      duplicateJobTitle: '',
+      sharedPhones: {
+        primaryPhoneNumber: '123456789',
+        primaryPhoneCallingCode: '+33',
+        primaryPhoneCountryCode: 'FR',
+        additionalPhones: [],
+      },
+    });
+
+    const response = await makeGraphqlApiRequestWithMemberRole(
+      mergeManyOperationFactory({
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id',
+        ids: [priorityId, duplicateId],
+        conflictPriorityIndex: 0,
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.mergePeople.id).toBe(priorityId);
   });
 });
