@@ -14,6 +14,7 @@ import {
   getLogicFunctionSeedProjectFiles,
   LogicFunctionSeedProjectFile,
 } from 'src/engine/core-modules/logic-function/logic-function-resource/utils/get-logic-function-seed-project-files.util';
+import { sanitizeApplicationPackageJson } from 'src/engine/core-modules/logic-function/logic-function-resource/utils/sanitize-application-package-json.util';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -310,46 +311,13 @@ export class LogicFunctionResourceService {
 
     await Promise.all(promises);
 
-    await this.removeBuildTimeSdkFromDependencies(
-      join(inMemoryFolderPath, 'package.json'),
-    );
-  }
-
-  // twenty-sdk is build-time only and twenty-client-sdk is injected at runtime
-  // by Twenty (Lambda SDK layer / server-served modules), so neither needs to
-  // be resolved by the Lambda yarn install. Apps should already declare them as
-  // devDependencies (skipped by `yarn workspaces focus --production`); this is a
-  // safety net for apps that still list them under "dependencies".
-  private async removeBuildTimeSdkFromDependencies(
-    packageJsonPath: string,
-  ): Promise<void> {
-    const packageJson = JSON.parse(
-      await fs.readFile(packageJsonPath, 'utf-8'),
-    ) as { dependencies?: Record<string, string> };
-
-    const dependencies = packageJson.dependencies;
-
-    if (!isDefined(dependencies)) {
-      return;
-    }
-
-    const packagesToRemove = ['twenty-sdk', 'twenty-client-sdk'];
-
-    const packagesToRemoveFromDependencies = packagesToRemove.filter(
-      (packageName) => isDefined(dependencies[packageName]),
-    );
-
-    if (packagesToRemoveFromDependencies.length === 0) {
-      return;
-    }
-
-    for (const packageName of packagesToRemoveFromDependencies) {
-      delete dependencies[packageName];
-    }
+    const packageJsonPath = join(inMemoryFolderPath, 'package.json');
 
     await fs.writeFile(
       packageJsonPath,
-      `${JSON.stringify(packageJson, null, 2)}\n`,
+      sanitizeApplicationPackageJson(
+        await fs.readFile(packageJsonPath, 'utf-8'),
+      ),
       'utf-8',
     );
   }

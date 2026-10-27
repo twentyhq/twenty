@@ -85,7 +85,15 @@ export const generateJunctionRelationGqlFields = ({
 }: GenerateJunctionRelationGqlFieldsArgs): RecordGqlFields => {
   const { junctionObjectMetadata, targetFields } = junctionConfig;
 
-  const junctionTargetFields = targetFields.reduce<RecordGqlFields>(
+  const readableTargetFields = targetFields.flatMap((targetField) => {
+    const readableTargetField = junctionObjectMetadata.readableFields.find(
+      (readableField) => readableField.id === targetField.id,
+    );
+
+    return isDefined(readableTargetField) ? [readableTargetField] : [];
+  });
+
+  const junctionTargetFields = readableTargetFields.reduce<RecordGqlFields>(
     (acc, targetField) => ({
       ...acc,
       ...buildTargetFieldGqlFields(targetField, objectMetadataItems),
