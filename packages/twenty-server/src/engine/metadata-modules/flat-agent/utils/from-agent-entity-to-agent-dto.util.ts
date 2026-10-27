@@ -1,6 +1,6 @@
 import { type AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { type FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
-import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
+import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 
 export const fromFlatAgentWithRoleIdToAgentDto = (
   flatAgentWithRoleId: FlatAgentWithRoleId,
@@ -24,10 +24,7 @@ export const fromFlatAgentWithRoleIdToAgentDto = (
     updatedAt,
     workspaceId,
     roleId,
-  } = resolveEffectiveFlatEntity({
-    metadataName: 'agent',
-    flatEntity: flatAgentWithRoleId,
-  });
+  } = resolveEffectiveAgent(flatAgentWithRoleId);
 
   return {
     createdAt: new Date(createdAt),

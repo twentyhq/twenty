@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatAgentWithTrigger } from 'src/engine/metadata-modules/ai/ai-agent-trigger/types/flat-agent-with-trigger.type';
 import { type FlatAgentMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-agent-maps.type';
-import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
+import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 
 export const findActiveAgentTriggers = <TTriggerType extends AgentTriggerType>({
   flatAgentMaps,
@@ -20,10 +20,7 @@ export const findActiveAgentTriggers = <TTriggerType extends AgentTriggerType>({
     .filter(
       (flatAgent) =>
         !isDefined(flatAgent.deletedAt) &&
-        resolveEffectiveFlatEntity({
-          metadataName: 'agent',
-          flatEntity: flatAgent,
-        }).isActive,
+        resolveEffectiveAgent(flatAgent).isActive,
     )
     .flatMap((flatAgent) =>
       flatAgent.triggers
