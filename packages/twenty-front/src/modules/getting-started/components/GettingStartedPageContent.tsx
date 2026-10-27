@@ -1,5 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { GettingStartedKeepPlanButton } from '@/getting-started/components/GettingStartedKeepPlanButton';
 import { GettingStartedStepStack } from '@/getting-started/components/GettingStartedStepStack';
 import { GETTING_STARTED_CONTENT_MAX_WIDTH } from '@/getting-started/constants/GettingStartedContentMaxWidth';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
@@ -7,23 +8,18 @@ import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStarte
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { getGettingStartedCreditsToEarn } from '@/getting-started/utils/getGettingStartedCreditsToEarn';
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
-import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { dateLocaleState } from '@/localization/states/dateLocaleState';
-import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
-import { IconCheck, IconCreditCard, IconListCheck } from 'twenty-ui/icon';
+import { IconCheck, IconListCheck } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
@@ -119,11 +115,9 @@ export const GettingStartedPageContent = () => {
   const currentUser = useAtomStateValue(currentUserState);
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
   const { numberFormat } = useNumberFormat();
-  const { timeZone } = useDateTimeFormat();
-  const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const { progress, loading, error, refetch } = useGettingStartedProgress();
   const { updateGettingStarted, isSaving } = useUpdateGettingStarted();
-  const { trialEnd, daysLeft, isCountdownVisible, canKeepPlan, keepPlanLabel } =
+  const { formattedTrialEnd, daysLeft, isCountdownVisible, canKeepPlan } =
     useGettingStartedTrial();
 
   const steps = progress?.steps ?? [];
@@ -155,15 +149,6 @@ export const GettingStartedPageContent = () => {
     numberFormat,
   );
 
-  const formattedTrialEnd =
-    isCountdownVisible && isDefined(trialEnd)
-      ? formatDateISOStringToCustomUnicodeFormat({
-          date: trialEnd.toISOString(),
-          timeZone,
-          dateFormat: 'EEE, MMM d',
-          localeCatalog,
-        })
-      : undefined;
   const remainingStepCount = remainingSteps.length;
   const remainingStepsLabel = isDefined(formattedTrialEnd)
     ? creditsToEarn > 0
@@ -212,16 +197,7 @@ export const GettingStartedPageContent = () => {
                 : t`Finish your setup`}
             </StyledOnboardingStepTitle>
           </StyledCountdown>
-          {canKeepPlan && (
-            <NavigationButton
-              variant="outline"
-              color="accent"
-              startIcon={<IconCreditCard />}
-              to={getSettingsPath(SettingsPath.Billing)}
-            >
-              {keepPlanLabel}
-            </NavigationButton>
-          )}
+          {canKeepPlan && <GettingStartedKeepPlanButton color="accent" />}
         </StyledHeading>
         {loading && !isDefined(progress) && (
           <Loader role="status" aria-label={t`Loading your progress`} />

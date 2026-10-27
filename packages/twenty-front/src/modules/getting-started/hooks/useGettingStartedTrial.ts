@@ -1,5 +1,8 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 import { BILLING_PLAN_LABELS } from '@/settings/billing/constants/BillingPlanLabels';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
@@ -24,6 +27,8 @@ export const useGettingStartedTrial = () => {
   );
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
   const billing = useAtomStateValue(billingState);
+  const { timeZone } = useDateTimeFormat();
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const currentBillingSubscription =
     currentWorkspace?.currentBillingSubscription;
@@ -50,11 +55,21 @@ export const useGettingStartedTrial = () => {
 
   return {
     trialEnd,
+    formattedTrialEnd:
+      isCountdownVisible && isDefined(trialEnd)
+        ? formatDateISOStringToCustomUnicodeFormat({
+            date: trialEnd.toISOString(),
+            timeZone,
+            dateFormat: 'EEE, MMM d',
+            localeCatalog,
+          })
+        : undefined,
+    planLabel,
     daysLeft,
     trialDays: Math.max(trialDurationInDays, daysLeft),
     isCountdownVisible,
     canKeepPlan:
-      isCountdownVisible && permissionFlagMap[PermissionFlagType.WORKSPACE],
+      isCountdownVisible && permissionFlagMap[PermissionFlagType.BILLING],
     keepPlanLabel: isDefined(planLabel)
       ? t`Keep ${planLabel}`
       : t`Keep your plan`,

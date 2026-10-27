@@ -1,3 +1,4 @@
+import { GettingStartedKeepPlanButton } from '@/getting-started/components/GettingStartedKeepPlanButton';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
 import { getGettingStartedRemainingSteps } from '@/getting-started/utils/getGettingStartedRemainingSteps';
@@ -10,11 +11,10 @@ import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { Link, useMatch } from 'react-router-dom';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { AppPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronRight,
-  IconCreditCard,
   IconHourglassHigh,
   IconRocket,
 } from 'twenty-ui/icon';
@@ -117,13 +117,8 @@ export const GettingStartedSidebarCard = () => {
   const theme = useTheme();
   const { progress } = useGettingStartedProgress();
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
-  const {
-    isCountdownVisible,
-    daysLeft,
-    trialDays,
-    canKeepPlan,
-    keepPlanLabel,
-  } = useGettingStartedTrial();
+  const { isCountdownVisible, daysLeft, trialDays, canKeepPlan } =
+    useGettingStartedTrial();
   const isNavigationDrawerContentExpanded =
     useIsNavigationDrawerContentExpanded();
   const isGettingStartedPageOpen = isDefined(useMatch(AppPath.GettingStarted));
@@ -206,14 +201,7 @@ export const GettingStartedSidebarCard = () => {
             )}
             <StyledButtonLayer>
               {canKeepPlan ? (
-                <NavigationButton
-                  size="sm"
-                  fullWidth
-                  startIcon={<IconCreditCard />}
-                  to={getSettingsPath(SettingsPath.Billing)}
-                >
-                  {keepPlanLabel}
-                </NavigationButton>
+                <GettingStartedKeepPlanButton size="sm" fullWidth />
               ) : (
                 <NavigationButton
                   size="sm"
