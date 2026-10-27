@@ -261,19 +261,17 @@ export const ValidationStep = ({
     try {
       await onSubmit(calculatedData, file);
     } catch (error) {
-      const importedRowCount =
-        error instanceof SpreadsheetImportSubmissionError
-          ? error.importedRowCount
-          : 0;
+      const isSubmissionError =
+        error instanceof SpreadsheetImportSubmissionError;
       const importedRowIndexes = new Set(
         data
           .filter(
             (row) =>
               !Object.values(row.__errors ?? {}).some(
-                (error) => error.level === 'error',
+                (rowError) => rowError.level === 'error',
               ),
           )
-          .slice(0, importedRowCount)
+          .slice(0, isSubmissionError ? error.importedRowCount : 0)
           .map((row) => row.__index),
       );
 
@@ -293,10 +291,7 @@ export const ValidationStep = ({
       }));
       enqueueToast(
         getToastOptionsFromError({
-          error:
-            error instanceof SpreadsheetImportSubmissionError
-              ? error.cause
-              : error,
+          error: isSubmissionError ? error.cause : error,
         }),
       );
       return;
