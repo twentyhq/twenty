@@ -9,15 +9,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-export const createQueueOrderSignal = () => {
-  let resolve!: () => void;
-  const promise = new Promise<void>((resolvePromise) => {
-    resolve = resolvePromise;
-  });
-
-  return { promise, resolve };
-};
-
 export const withQueueOrderTestContext = async (
   run: (driver: BullMQDriver) => Promise<void>,
 ) => {

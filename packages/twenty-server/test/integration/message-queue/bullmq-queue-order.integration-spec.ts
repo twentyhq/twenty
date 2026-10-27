@@ -1,10 +1,8 @@
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
-import {
-  createQueueOrderSignal,
-  withQueueOrderTestContext,
-} from 'test/integration/message-queue/utils/with-queue-order-test-context.util';
+import { createQueueOrderSignal } from 'test/integration/message-queue/utils/create-queue-order-signal.util';
+import { withQueueOrderTestContext } from 'test/integration/message-queue/utils/with-queue-order-test-context.util';
 
 const queue1 = MessageQueue.workflowQueue;
 const queue2 = MessageQueue.delayedJobsQueue;
