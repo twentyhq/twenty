@@ -1,6 +1,6 @@
 {
   "name": "twenty",
-  "version": "2.52.0",
+  "version": "2.53.0",
   "description": "The Twenty command line.",
   "homepage": "https://twenty.com",
   "repository": {
@@ -41,7 +41,7 @@
     "uuid": "^13.0.2",
     "vite": "^8.0.0",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.12"
   },
   "dependencies": {
     "chokidar": "^3.6.0",

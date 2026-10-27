@@ -19,6 +19,8 @@ import { workflowFindRecordsActionSettingsSchema } from '@/workflow/schemas/find
 import { workflowFormActionSettingsSchema } from '@/workflow/schemas/form-action-settings-schema';
 import { workflowFilterActionSettingsSchema } from '@/workflow/schemas/filter-action-settings-schema';
 import { workflowIfElseActionSettingsSchema } from '@/workflow/schemas/if-else-action-settings-schema';
+import { workflowSendEmailActionSettingsSchema } from '@/workflow/schemas/send-email-action-settings-schema';
+import { workflowCreateCalendarEventActionSettingsSchema } from '@/workflow/schemas/create-calendar-event-action-settings-schema';
 import { recordFilterGroupSchema } from '@/workflow/schemas/record-filter-group-schema';
 import { recordFilterSchema } from '@/workflow/schemas/record-filter-schema';
 import { stepFilterSchema } from '@/workflow/schemas/step-filter-schema';
@@ -190,6 +192,12 @@ const workflowStepManifestOptions = [
           }
         }),
     ),
+  ),
+  stepSchema('SEND_EMAIL', workflowSendEmailActionSettingsSchema.shape.input),
+  stepSchema('DRAFT_EMAIL', workflowSendEmailActionSettingsSchema.shape.input),
+  stepSchema(
+    'CREATE_CALENDAR_EVENT',
+    workflowCreateCalendarEventActionSettingsSchema.shape.input,
   ),
   stepSchema(
     'AI_AGENT',

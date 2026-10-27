@@ -23,7 +23,7 @@ const originalPackageJson = {
   frontComponentSharedDependencies: ['react', 'twenty-ui/theme'],
 };
 
-const seedPackageJson = {
+const standardPackageJson = {
   dependencies: { axios: '^1.16.1', uuid: '^11.1.1' },
 };
 
@@ -37,19 +37,19 @@ const readLock = (directory: string) =>
 
 describe('generateWorkspaceCustomApplicationDependencies', () => {
   let dependenciesDirectory: string;
-  let seedDependenciesDirectory: string;
+  let standardDependenciesDirectory: string;
   let installDirectory: string;
 
   beforeEach(() => {
     dependenciesDirectory = mkdtempSync(
       join(tmpdir(), 'workspace-defaults-test-'),
     );
-    seedDependenciesDirectory = mkdtempSync(
-      join(tmpdir(), 'seed-defaults-test-'),
+    standardDependenciesDirectory = mkdtempSync(
+      join(tmpdir(), 'standard-defaults-test-'),
     );
     writeFileSync(
-      join(seedDependenciesDirectory, 'package.json'),
-      JSON.stringify(seedPackageJson),
+      join(standardDependenciesDirectory, 'package.json'),
+      JSON.stringify(standardPackageJson),
     );
     writeFileSync(
       join(dependenciesDirectory, 'package.json'),
@@ -67,7 +67,7 @@ describe('generateWorkspaceCustomApplicationDependencies', () => {
       );
       expect(readLock(installDirectory)).toBe(originalLock);
       expect(readPackageJson(installDirectory).dependencies).toEqual(
-        seedPackageJson.dependencies,
+        standardPackageJson.dependencies,
       );
 
       const version =
@@ -81,7 +81,7 @@ describe('generateWorkspaceCustomApplicationDependencies', () => {
 
   afterEach(() => {
     rmSync(dependenciesDirectory, { recursive: true, force: true });
-    rmSync(seedDependenciesDirectory, { recursive: true, force: true });
+    rmSync(standardDependenciesDirectory, { recursive: true, force: true });
     jest.resetAllMocks();
   });
 
@@ -92,17 +92,17 @@ describe('generateWorkspaceCustomApplicationDependencies', () => {
     },
     { version: '3.14.7', expectedRange: '~3.14.0' },
   ])(
-    'writes a matching pair for $expectedRange using the seed backend dependencies',
+    'writes a matching pair for $expectedRange using the standard backend dependencies',
     ({ version, expectedRange }) => {
       generateWorkspaceCustomApplicationDependencies({
         version,
         dependenciesDirectory,
-        seedDependenciesDirectory,
+        standardDependenciesDirectory,
       });
 
       expect(readPackageJson(dependenciesDirectory)).toEqual({
         ...originalPackageJson,
-        dependencies: seedPackageJson.dependencies,
+        dependencies: standardPackageJson.dependencies,
         devDependencies: {
           ...originalPackageJson.devDependencies,
           'twenty-ui': expectedRange,
@@ -126,7 +126,7 @@ describe('generateWorkspaceCustomApplicationDependencies', () => {
     expect(() =>
       generateWorkspaceCustomApplicationDependencies({
         dependenciesDirectory,
-        seedDependenciesDirectory,
+        standardDependenciesDirectory,
       }),
     ).toThrow('No published version');
     expect(

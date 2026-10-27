@@ -9,7 +9,6 @@ import {
 import { tmpdir } from 'os';
 import { join, resolve } from 'path';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import semver from 'semver';
 
 import { TWENTY_PREVIOUS_VERSIONS } from '../src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
@@ -25,23 +24,23 @@ export const generateWorkspaceCustomApplicationDependencies = ({
     APPLICATION_PACKAGE_CONSTANTS_DIRECTORY,
     'workspace-custom-application-dependencies',
   ),
-  seedDependenciesDirectory = join(
+  standardDependenciesDirectory = join(
     APPLICATION_PACKAGE_CONSTANTS_DIRECTORY,
-    'seed-dependencies',
+    'standard-application-dependencies',
   ),
 }: {
   version?: string;
   dependenciesDirectory?: string;
-  seedDependenciesDirectory?: string;
+  standardDependenciesDirectory?: string;
 } = {}): void => {
   const packageJsonPath = join(dependenciesDirectory, 'package.json');
   const yarnLockPath = join(dependenciesDirectory, 'yarn.lock');
   const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
-  const seedPackageJson = JSON.parse(
-    readFileSync(join(seedDependenciesDirectory, 'package.json'), 'utf8'),
+  const standardPackageJson = JSON.parse(
+    readFileSync(join(standardDependenciesDirectory, 'package.json'), 'utf8'),
   );
 
-  packageJson.dependencies = seedPackageJson.dependencies;
+  packageJson.dependencies = standardPackageJson.dependencies;
 
   // twenty-ui is published after deployment, so defaults use the previous release.
   packageJson.devDependencies['twenty-ui'] =
@@ -56,7 +55,7 @@ export const generateWorkspaceCustomApplicationDependencies = ({
   const yarnConfiguration = readFileSync(yarnConfigurationPath, 'utf8');
   const yarnPath = /^yarnPath:\s*(.+)$/m.exec(yarnConfiguration)?.[1]?.trim();
 
-  if (!isNonEmptyString(yarnPath)) {
+  if (!yarnPath) {
     throw new Error('The application Yarn configuration has no yarnPath');
   }
 

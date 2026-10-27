@@ -414,6 +414,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
           description: 'An object',
           icon: 'IconBox',
           color: 'blue',
+          disabledObjectPermissionActions: ['canDestroyObjectRecords'],
           imageIdentifierFieldMetadataUniversalIdentifier: FIELD_UID,
           labelIdentifierFieldMetadataUniversalIdentifier: FIELD_UID,
         }),

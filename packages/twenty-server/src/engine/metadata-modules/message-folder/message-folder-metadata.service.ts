@@ -121,7 +121,7 @@ export class MessageFolderMetadataService {
     return this.repository.findOne(workspaceId, { where: { id } });
   }
 
-  async verifyOwnership({
+  async verifyAdministrableByCaller({
     id,
     userWorkspaceId,
     workspaceId,
@@ -141,26 +141,11 @@ export class MessageFolderMetadataService {
       );
     }
 
-    const userAccountIds =
-      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
-        userWorkspaceId,
-        workspaceId,
-      });
-
-    const messageChannel = await this.messageChannelMetadataService.findById({
+    await this.messageChannelMetadataService.verifyAdministrableByCaller({
       id: messageFolder.messageChannelId,
+      userWorkspaceId,
       workspaceId,
     });
-
-    if (
-      !messageChannel ||
-      !userAccountIds.includes(messageChannel.connectedAccountId)
-    ) {
-      throw new MessageFolderException(
-        `Message folder ${id} does not belong to user workspace ${userWorkspaceId}`,
-        MessageFolderExceptionCode.MESSAGE_FOLDER_OWNERSHIP_VIOLATION,
-      );
-    }
 
     return messageFolder;
   }
