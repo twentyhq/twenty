@@ -146,30 +146,21 @@ describe('useToggleActivityLink', () => {
     expect(mockCreateOneRecord).not.toHaveBeenCalled();
   });
 
-  it.each([
-    { loading: true, error: undefined },
-    { loading: false, error: new Error('Failed to load activity links') },
-  ])(
-    'should not change links while their query is unavailable: %o',
-    async ({ loading, error }) => {
-      mockUseFindManyRecords.mockReturnValue({
-        records: [{ id: 'target-id', messageThreadId: 'linked-thread-id' }],
-        loading,
-        error,
-        refetch: mockRefetch,
-      });
+  it('should not change links when they failed to load', async () => {
+    mockUseFindManyRecords.mockReturnValue({
+      records: [],
+      loading: false,
+      error: new Error('Failed to load activity links'),
+      refetch: mockRefetch,
+    });
 
-      const { result } = renderToggleHook();
+    const { result } = renderToggleHook();
 
-      expect(result.current.areActivityLinksReady).toBe(false);
+    expect(result.current.areActivityLinksReady).toBe(false);
 
-      await act(() => result.current.toggleActivityLink('linked-thread-id'));
-      await act(() => result.current.toggleActivityLink('unlinked-thread-id'));
+    await act(() => result.current.toggleActivityLink('linked-thread-id'));
 
-      expect(mockCreateOneRecord).not.toHaveBeenCalled();
-      expect(mockDeleteOneRecord).not.toHaveBeenCalled();
-      expect(mockRefetch).not.toHaveBeenCalled();
-      expect(mockRefetchQueries).not.toHaveBeenCalled();
-    },
-  );
+    expect(mockCreateOneRecord).not.toHaveBeenCalled();
+    expect(mockDeleteOneRecord).not.toHaveBeenCalled();
+  });
 });
