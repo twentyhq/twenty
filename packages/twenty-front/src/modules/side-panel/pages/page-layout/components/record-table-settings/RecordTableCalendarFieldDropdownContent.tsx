@@ -1,17 +1,11 @@
+import { t } from '@lingui/core/macro';
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIcons } from 'twenty-ui/icon';
-import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 type RecordTableCalendarFieldDropdownContentProps = {
   pageLayoutId: string;
@@ -34,17 +28,6 @@ export const RecordTableCalendarFieldDropdownContent = ({
       objectMetadataItemToFind.id === objectMetadataId,
   );
 
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
-  const { closeDropdown } = useCloseDropdown();
-
   const { handleCalendarFieldChange } = useRecordTableWidgetLayoutCallbacks({
     pageLayoutId,
     widgetId,
@@ -55,44 +38,24 @@ export const RecordTableCalendarFieldDropdownContent = ({
   );
 
   return (
-    <DropdownMenuItemsContainer hasMaxHeight>
-      <SelectableList
-        selectableListInstanceId={dropdownId}
-        selectableItemIdArray={dateFields.map(
-          (fieldMetadataItem) => fieldMetadataItem.id,
-        )}
-        focusId={dropdownId}
+    <ChartSettingsDropdownSection>
+      <Dropdown.SelectionGroup
+        aria-label={t`Date field`}
+        value={currentCalendarFieldMetadataId}
       >
         {dateFields.map((fieldMetadataItem) => (
-          <SelectableListItem
+          <Dropdown.OptionItem
             key={fieldMetadataItem.id}
-            itemId={fieldMetadataItem.id}
-            onEnter={() => {
-              handleCalendarFieldChange(fieldMetadataItem);
-              closeDropdown();
-            }}
+            value={fieldMetadataItem.id}
+            onSelect={() => handleCalendarFieldChange(fieldMetadataItem)}
+            startIcon={
+              <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+            }
           >
-            <ListItemButton
-              focused={selectedItemId === fieldMetadataItem.id}
-              onClick={() => {
-                handleCalendarFieldChange(fieldMetadataItem);
-                closeDropdown();
-              }}
-              role="option"
-              aria-selected={
-                currentCalendarFieldMetadataId === fieldMetadataItem.id
-              }
-              selected={currentCalendarFieldMetadataId === fieldMetadataItem.id}
-              indicator="check"
-              startIcon={
-                <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
-              }
-            >
-              {fieldMetadataItem.label}
-            </ListItemButton>
-          </SelectableListItem>
+            {fieldMetadataItem.label}
+          </Dropdown.OptionItem>
         ))}
-      </SelectableList>
-    </DropdownMenuItemsContainer>
+      </Dropdown.SelectionGroup>
+    </ChartSettingsDropdownSection>
   );
 };

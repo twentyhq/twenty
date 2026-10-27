@@ -133,6 +133,22 @@ describe('Code step workflow with PREBUILT logic function (e2e)', () => {
     );
   });
 
+  it('refuses source edits on the PREBUILT logic function', async () => {
+    const updateSourceResponse = await updateLogicFunctionSource({
+      input: {
+        id: codeStepLogicFunctionId!,
+        update: {
+          sourceHandlerCode: `export const main = async (): Promise<object> => ({});`,
+        },
+      },
+      expectToFail: true,
+    });
+
+    expect(updateSourceResponse.errors?.[0]?.extensions?.code).toBe(
+      'BAD_USER_INPUT',
+    );
+  });
+
   it('runs the code step from its prebuilt bundle and resolves bare imports', async () => {
     createdWorkflowRunId = await runCoreWorkflowVersion({
       coreWorkflowVersionId: coreWorkflowVersionId!,

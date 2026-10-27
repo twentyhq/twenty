@@ -32,11 +32,13 @@ jobs:
       - name: Deploy
         uses: twentyhq/twenty/.github/actions/deploy-twenty-app@main
         with:
+          cli-version: CLI-VERSION-TO-BE-GENERATED
           api-url: ${{ env.TWENTY_DEPLOY_URL }}
           api-key: ${{ secrets.TWENTY_DEPLOY_API_KEY }}
 
       - name: Install
         uses: twentyhq/twenty/.github/actions/install-twenty-app@main
         with:
+          cli-version: CLI-VERSION-TO-BE-GENERATED
           api-url: ${{ env.TWENTY_DEPLOY_URL }}
           api-key: ${{ secrets.TWENTY_DEPLOY_API_KEY }}

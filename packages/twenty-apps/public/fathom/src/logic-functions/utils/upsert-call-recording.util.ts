@@ -21,7 +21,12 @@ export const upsertCallRecording = async ({
     try {
       await coreApiClient.mutation({
         createCallRecording: {
-          __args: { data: { id: callRecordingId, ...createFields } },
+          __args: {
+            data: {
+              id: callRecordingId,
+              ...createFields,
+            },
+          },
           id: true,
         },
       });

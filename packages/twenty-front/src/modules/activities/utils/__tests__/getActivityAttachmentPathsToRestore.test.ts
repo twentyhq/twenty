@@ -1,13 +1,14 @@
+import { type JSONContent } from '@tiptap/core';
+
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActivityAttachmentPathsToRestore';
 
+const buildDocument = (content: JSONContent[]) =>
+  JSON.stringify({ type: 'doc', attrs: { schemaVersion: 1 }, content });
+
 describe('getActivityAttachmentPathsToRestore', () => {
   it('should not return any attachment paths to restore if there are no paths in body', () => {
-    const newActivityBody = JSON.stringify([
-      {
-        type: 'paragraph',
-      },
-    ]);
+    const newActivityBody = buildDocument([{ type: 'paragraph' }]);
     const oldActivityAttachments = [
       {
         id: '1',
@@ -22,14 +23,14 @@ describe('getActivityAttachmentPathsToRestore', () => {
   });
 
   it('should return the attachment paths to restore if paths in body are not present in attachments', () => {
-    const newActivityBody = JSON.stringify([
+    const newActivityBody = buildDocument([
       {
         type: 'file',
-        props: { url: 'https://example.com/files/images/test.txt' },
+        attrs: { url: 'https://example.com/files/images/test.txt' },
       },
       {
         type: 'file',
-        props: { url: 'https://example.com/files/images/test2.txt' },
+        attrs: { url: 'https://example.com/files/images/test2.txt' },
       },
     ]);
 

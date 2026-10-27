@@ -49,6 +49,11 @@ export class MessageChannelDTO {
   @Field(() => MessageChannelType)
   type: MessageChannelType;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  participantHandleFieldUniversalIdentifier: string | null;
+
   @IsBoolean()
   @Field()
   isContactAutoCreationEnabled: boolean;
@@ -116,6 +121,11 @@ export class MessageChannelDTO {
   @IsNotEmpty()
   @Field(() => UUIDScalarType)
   connectedAccountId: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  messagingProviderUniversalIdentifier: string | null;
 
   @HideField()
   workspaceId: string;

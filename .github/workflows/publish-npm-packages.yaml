@@ -1,0 +1,187 @@
+name: Publish npm packages
+run-name: ${{ github.ref_name }}
+
+on:
+  push:
+    tags: ["npm-release/*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-release-publish
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+jobs:
+  publish:
+    if: vars.NPM_RELEASE_APP_BOT_LOGIN != '' && github.event.sender.login == vars.NPM_RELEASE_APP_BOT_LOGIN
+    environment: npm-release
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout release commit
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: Read infra publishing plan
+        env:
+          RELEASE_REF: ${{ github.ref }}
+        run: |
+          # A shallow checkout can leave the tag ref pointing to its peeled commit.
+          git fetch --no-tags --depth=1 origin "+$RELEASE_REF:$RELEASE_REF"
+          if [[ "$(git cat-file -t "$RELEASE_REF")" != tag ]]; then
+            echo '::error::Expected an annotated publishing tag created by infra'
+            exit 1
+          fi
+          git for-each-ref --format='%(contents)' "$RELEASE_REF" > plan.json
+          jq -e --arg sha "$GITHUB_SHA" '
+            .source_sha == $sha and (.dry_run | type == "boolean")
+            and (.version | type == "string" and test("^[0-9]+[.][0-9]+[.][0-9]+([+-][0-9A-Za-z.-]+)*$"))
+            and (.dist_tag | type == "string" and test("^[a-zA-Z][a-zA-Z0-9._-]*$"))
+            and (.packages == "twenty-client-sdk twenty-ui twenty-sdk twenty create-twenty-app"
+              or .packages == "twenty-ui" or .packages == "twenty")
+            and ((.stage_only // false) | type == "boolean")
+            and (.staging_version == null)
+            and (if .stage_only == true then .dry_run == false else true end)
+          ' plan.json > /dev/null
+          jq -r '"PACKAGES=\(.packages)\nVERSION=\(.version)\nDIST_TAG=\(.dist_tag)\nDRY_RUN=\(.dry_run)\nSTAGE_ONLY=\(.stage_only // false)"' plan.json >> "$GITHUB_ENV"
+
+      - name: Require reviewed release source
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          fail() {
+            echo "::error::$*" >&2
+            exit 1
+          }
+
+          resolve_protected_release_branch() {
+            local branch=$1 branch_data branch_sha rules rule
+            branch_data=$(gh api "repos/twentyhq/twenty/branches/$branch") ||
+              fail "Could not read release branch $branch"
+            branch_sha=$(jq -r '.commit.sha' <<< "$branch_data")
+            [[ "$branch_sha" =~ ^[a-f0-9]{40}$ ]] ||
+              fail "Invalid head commit for release branch $branch"
+
+            rules=$(gh api --paginate --slurp "repos/twentyhq/twenty/rules/branches/$branch?per_page=100" | jq 'add') ||
+              fail "Could not read effective protection rules for $branch"
+            jq -e '
+              any(.[]; .type == "pull_request"
+                and .parameters.required_approving_review_count >= 1)
+            ' <<< "$rules" > /dev/null ||
+              fail "$branch requires at least one PR approval"
+            for rule in creation non_fast_forward deletion; do
+              jq -e --arg rule "$rule" 'any(.[]; .type == $rule)' <<< "$rules" > /dev/null ||
+                fail "$branch is missing its $rule protection"
+            done
+            echo "$branch_sha"
+          }
+
+          verify_release_source() {
+            local source_sha=$1 version=$2 stage_only=$3
+            local branch branch_sha status
+            [[ "$source_sha" =~ ^[a-f0-9]{40}$ ]] || fail 'Expected a full release commit SHA'
+            if ! [[ "$version" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\. ]]; then
+              fail 'Invalid release version in publishing plan'
+            fi
+            branch="v${BASH_REMATCH[1]}.${BASH_REMATCH[2]}"
+
+            status=$(gh api "repos/twentyhq/twenty/compare/main...$source_sha" --jq .status) ||
+              fail 'Could not check release ancestry against main'
+            case "$status" in
+              identical|behind) return ;;
+              ahead|diverged) ;;
+              *) fail 'GitHub returned an unknown main ancestry status' ;;
+            esac
+
+            if [[ "$stage_only" == true ]]; then
+              fail 'Staging validation requires main history'
+            fi
+            branch_sha=$(resolve_protected_release_branch "$branch") ||
+              fail "Could not validate release branch $branch"
+            status=$(gh api "repos/twentyhq/twenty/compare/$branch_sha...$source_sha" --jq .status) ||
+              fail "Could not check release ancestry against $branch"
+            case "$status" in
+              identical|behind) ;;
+              *) fail "Release source must belong to main or protected $branch history" ;;
+            esac
+          }
+
+          verify_release_source "$GITHUB_SHA" "$VERSION" "$STAGE_ONLY"
+
+      - name: Free disk space
+        run: sudo rm -rf /usr/local/lib/android /usr/share/dotnet
+
+      - name: Verify package identity and version
+        run: |
+          for package in $PACKAGES; do
+            directory="packages/$package"
+            if [[ "$package" == twenty ]]; then directory=packages/twenty-cli; fi
+            jq -e --arg name "$package" --arg version "$VERSION" \
+              '.name == $name and .version == $version' "$directory/package.json" > /dev/null
+          done
+
+      - name: Setup Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Build and inspect packages
+        run: |
+          corepack enable
+          yarn install --immutable
+          projects=$(jq -rn --arg packages "$PACKAGES" \
+            '$packages | split(" ") | map(if . == "twenty" then "twenty-cli" else . end) | join(",")')
+          yarn nx run-many --target=build --projects="$projects" --skip-nx-cache
+          for package in $PACKAGES; do
+            yarn workspace "$package" pack --dry-run
+          done
+
+      - name: Stage validation packages without publishing
+        if: env.STAGE_ONLY == 'true'
+        run: |
+          # This test stages the SDK before it is publicly available to the CLI's release-readiness check.
+          jq 'del(.scripts.prepublish)' packages/twenty-cli/package.json > "$RUNNER_TEMP/twenty-cli-staging.json"
+          mv "$RUNNER_TEMP/twenty-cli-staging.json" packages/twenty-cli/package.json
+          for package in $PACKAGES; do
+            yarn workspace "$package" npm publish --staged --provenance --tag "$DIST_TAG" --access public
+            echo "Staged $package@$VERSION for OIDC validation only. Do not approve; reject after verification." >> "$GITHUB_STEP_SUMMARY"
+          done
+
+      - name: Publish packages with provenance
+        if: env.DRY_RUN == 'false' && env.STAGE_ONLY != 'true'
+        run: |
+          # Template lockfiles resolve the released libraries from npm.
+          published_libraries=""
+          for package in $PACKAGES; do
+            if [[ "$package" == twenty ]]; then
+              for dependency in $published_libraries; do
+                for attempt in $(seq 1 60); do
+                  if npm view "$dependency@$VERSION" version > /dev/null 2>&1; then break; fi
+                  if [[ "$attempt" == 60 ]]; then
+                    echo "::error::$dependency@$VERSION was not served within ten minutes"
+                    exit 1
+                  fi
+                  sleep 10
+                done
+              done
+            fi
+
+            if curl --fail --silent --show-error "https://registry.npmjs.org/$package/$VERSION" > /dev/null; then
+              echo "$package@$VERSION already published; skipping"
+            else
+              yarn workspace "$package" npm publish --provenance --tag "$DIST_TAG" --access public
+            fi
+            if [[ "$package" != twenty && "$package" != create-twenty-app ]]; then
+              published_libraries="$published_libraries $package"
+            fi
+          done

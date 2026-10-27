@@ -1,65 +1,33 @@
 ---
 title: Scaffolding
-description: Generate entity files interactively with yarn twenty dev:add — objects, fields, views, logic functions, and more.
-icon: "wand-magic-sparkles"
+description: Generate app entities with twenty app add.
 ---
 
-Instead of creating entity files by hand, use the interactive scaffolder:
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-```bash filename="Terminal"
-yarn twenty dev:add
+## Overview
+
+Use the standalone CLI to generate an object, field, logic function, or front component:
+
+```bash
+twenty app add
+twenty app add object --name invoice --name-plural invoices --no-input
+twenty app add field --name amount --type NUMBER --object <object-uuid> --no-input
+twenty app add logic-function --name send-invoice --no-input
+twenty app add front-component --name invoice-panel --no-input
 ```
 
-It prompts you to pick an entity type and walks you through the required fields, then writes a ready-to-use file with a stable `universalIdentifier` and the correct `defineEntity()` call.
+Without flags, interactive terminals prompt for missing values. For scripts and agents, supply the required fields and use `--no-input` or `--json`.
 
-You can also pass the entity type directly to skip the first prompt:
+Object generation can also create a view, navigation item, and record page layout:
 
-```bash filename="Terminal"
-yarn twenty dev:add object
-yarn twenty dev:add logicFunction
-yarn twenty dev:add frontComponent
+```bash
+twenty app add object --name invoice --name-plural invoices \
+  --create-view --create-navigation-menu-item --create-page-layout --no-input
 ```
 
-## Available entity types
+For other entity types, write the corresponding `define*` file using `twenty-sdk/define` and a valid UUID v4. Run `twenty app typecheck` and `twenty app plan` before syncing.
 
-| Entity type | Command | Generated file |
-|-------------|---------|----------------|
-| Object | `yarn twenty dev:add object` | `src/objects/<name>.ts` |
-| Field | `yarn twenty dev:add field` | `src/fields/<name>.ts` |
-| Logic function | `yarn twenty dev:add logicFunction` | `src/logic-functions/<name>.ts` |
-| Front component | `yarn twenty dev:add frontComponent` | `src/front-components/<name>.tsx` |
-| Role | `yarn twenty dev:add role` | `src/roles/<name>.ts` |
-| Skill | `yarn twenty dev:add skill` | `src/skills/<name>.ts` |
-| Agent | `yarn twenty dev:add agent` | `src/agents/<name>.ts` |
-| View | `yarn twenty dev:add view` | `src/views/<name>.ts` |
-| Navigation menu item | `yarn twenty dev:add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
-| Page layout | `yarn twenty dev:add pageLayout` | `src/page-layouts/<name>.ts` |
-| Page layout tab | `yarn twenty dev:add pageLayoutTab` | `src/page-layout-tabs/<name>.ts` |
-| Page layout widget | `yarn twenty dev:add pageLayoutWidget` | `src/page-layout-widgets/<name>.ts` |
-| Command menu item | `yarn twenty dev:add commandMenuItem` | `src/command-menu-items/<name>.ts` |
-| View field | `yarn twenty dev:add viewField` | `src/view-fields/<name>.ts` |
-| Connection provider | `yarn twenty dev:add connectionProvider` | `src/connection-providers/<name>.ts` |
-| Timeline activity type | `yarn twenty dev:add timelineActivityType` | `src/timeline-activity-types/<name>.ts` |
-| Settings menu item | `yarn twenty dev:add settingsMenuItem` | `src/settings-menu-items/<name>.ts` |
+`--path` selects the app directory, not a custom output folder. Run `twenty app add --help` for supported options.
 
-## What the scaffolder generates
-
-Each entity type has its own template. For example, `yarn twenty dev:add object` asks for:
-
-1. **Name (singular)** — e.g., `invoice`
-2. **Name (plural)** — e.g., `invoices`
-3. **Label (singular)** — auto-populated from the name (e.g., `Invoice`)
-4. **Label (plural)** — auto-populated (e.g., `Invoices`)
-5. **Also create a view, navigation menu item, and record page layout for this object?** — if you answer yes, the scaffolder also generates a table view, a sidebar entry, a record page layout and the fields view it displays, which is what makes the new object usable right away.
-
-Other entity types have simpler prompts — most only ask for a name.
-
-The `field` entity type is more detailed: it asks for the field name, label, type (from a list of all available field types like `TEXT`, `NUMBER`, `SELECT`, `RELATION`, etc.), and the target object's `universalIdentifier`.
-
-## Custom output path
-
-Use the `--path` flag to place the generated file in a custom location:
-
-```bash filename="Terminal"
-yarn twenty dev:add logicFunction --path src/custom-folder
-```
+<PageBanner illustration="dev-contribute" />

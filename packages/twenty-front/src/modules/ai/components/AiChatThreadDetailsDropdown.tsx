@@ -2,29 +2,32 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { DetailsRow } from 'twenty-ui/components/data-display';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {
-  IconBell,
+  IconHash,
   IconLink,
   IconListSearch,
   IconPencil,
   IconPlus,
   IconUsers,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { AiChatThreadDetailsRow } from '@/ai/components/AiChatThreadDetailsRow';
-import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
+import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
+import { AiChatThreadChannelPicker } from '@/ai/components/AiChatThreadChannelPicker';
+import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
+import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { useAiChatThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
-import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
-import { Dropdown as LegacyDropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -34,7 +37,6 @@ import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -43,10 +45,19 @@ const StyledEmptyValue = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-const StyledDetails = styled.div`
+const StyledChannel = styled.span`
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledDetails = styled.dl`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
+  margin: 0;
   padding: ${themeCssVariables.spacing[2]};
 `;
 
@@ -58,6 +69,7 @@ export const AiChatThreadDetailsDropdown = ({
   threadId,
 }: AiChatThreadDetailsDropdownProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const dropdownId = useWorkspaceSurfaceScopedComponentInstanceId(
     `ai-chat-thread-details-${threadId}`,
   );
@@ -65,12 +77,21 @@ export const AiChatThreadDetailsDropdown = ({
     agentChatThreadRecordFamilySelector,
     threadId,
   );
-  const followers = useAgentChatThreadMembers(thread);
+  const permissions = useAtomFamilySelectorValue(
+    agentChatThreadPermissionsFamilySelector,
+    threadId,
+  );
+  const canChangeAssignee =
+    (permissions?.canUpdate ?? false) && !isDefined(thread?.deletedAt);
+  const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
   const assignee = currentWorkspaceMembers.find(
     (workspaceMember) => workspaceMember.id === thread?.assigneeId,
+  );
+  const channel = useAtomStateValue(agentChatChannelsState)?.find(
+    ({ id }) => id === thread?.channelId,
   );
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -79,6 +100,8 @@ export const AiChatThreadDetailsDropdown = ({
   const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
   const { openRecordTarget } = useChatTargetNavigation();
   const dropdownContentRef = useRef<HTMLDivElement>(null);
+  const detailsTriggerRef = useRef<HTMLButtonElement>(null);
+  const recordPickerContentRef = useRef<HTMLDivElement>(null);
   const recordPickerDropdownId = `${dropdownId}-record-picker`;
   const {
     isAvailable: areRecordTargetsAvailable,
@@ -91,11 +114,7 @@ export const AiChatThreadDetailsDropdown = ({
     recordPickerInstanceId: recordPickerDropdownId,
   });
   const { openDropdown } = useOpenDropdown();
-  const setMultipleRecordPickerSearchFilter = useSetAtomComponentState(
-    multipleRecordPickerSearchFilterComponentState,
-    recordPickerDropdownId,
-  );
-  const hasTargetRecords = targetRecords.length > 0;
+  const hasTargetRecords = isNonEmptyArray(targetRecords);
   const editRecordTargetsLabel = hasTargetRecords
     ? t`Edit linked records`
     : t`Link to a record`;
@@ -120,6 +139,7 @@ export const AiChatThreadDetailsDropdown = ({
         <Dropdown.Trigger
           render={
             <LightIconButton
+              ref={detailsTriggerRef}
               aria-label={t`Chat details`}
               title={t`Chat details`}
               emphasis="subtle"
@@ -133,13 +153,14 @@ export const AiChatThreadDetailsDropdown = ({
           // The details are read first, so focus stays off the first chip
           initialFocus={() => dropdownContentRef.current}
           align="start"
-          width={GenericDropdownContentWidth.ExtraLarge}
+          width={GenericDropdownContentWidth.ExtraExtraLarge}
           aria-label={t`Chat details`}
         >
           <StyledDetails>
             {areRecordTargetsAvailable && (
-              <AiChatThreadDetailsRow
-                Icon={IconLink}
+              <DetailsRow
+                labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+                startIcon={<IconLink size={themeCssVariables.icon.size.md} />}
                 label={t`Linked to`}
                 action={
                   canEditRecordTargets && (
@@ -177,59 +198,101 @@ export const AiChatThreadDetailsDropdown = ({
                 ) : (
                   <StyledEmptyValue>{t`None`}</StyledEmptyValue>
                 )}
-              </AiChatThreadDetailsRow>
+              </DetailsRow>
             )}
-            {isAiChatInboxEnabled && (
-              <>
-                <AiChatThreadDetailsRow Icon={IconUsers} label={t`Assignee`}>
-                  {isDefined(assignee) ? (
-                    <RecordChip
-                      objectNameSingular={
-                        CoreObjectNameSingular.WorkspaceMember
-                      }
-                      record={{ ...assignee, __typename: 'WorkspaceMember' }}
-                    />
-                  ) : (
-                    <StyledEmptyValue>{t`None`}</StyledEmptyValue>
-                  )}
-                </AiChatThreadDetailsRow>
-                <AiChatThreadDetailsRow Icon={IconBell} label={t`Following`}>
-                  {followers.map((workspaceMember) => (
-                    <RecordChip
-                      key={workspaceMember.id}
-                      objectNameSingular={
-                        CoreObjectNameSingular.WorkspaceMember
-                      }
-                      record={{
-                        ...workspaceMember,
-                        __typename: 'WorkspaceMember',
-                      }}
-                    />
-                  ))}
-                </AiChatThreadDetailsRow>
-              </>
-            )}
+            <DetailsRow
+              labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+              startIcon={<IconHash size={themeCssVariables.icon.size.md} />}
+              label={t`Channel`}
+              action={
+                isDefined(thread) && (
+                  <AiChatThreadChannelPicker
+                    thread={thread}
+                    dropdownId={`${dropdownId}-channel-picker`}
+                  />
+                )
+              }
+            >
+              {isDefined(channel) ? (
+                <StyledChannel>
+                  <AgentChatChannelIcon
+                    channel={channel}
+                    size={theme.icon.size.sm}
+                  />
+                  {channel.name}
+                </StyledChannel>
+              ) : (
+                <StyledEmptyValue>{t`None`}</StyledEmptyValue>
+              )}
+            </DetailsRow>
+            <DetailsRow
+              labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+              startIcon={<IconUsers size={themeCssVariables.icon.size.md} />}
+              label={t`Assignee`}
+              action={
+                canChangeAssignee && (
+                  <LightIconButton
+                    aria-label={t`Change assignee`}
+                    title={t`Change assignee`}
+                    emphasis="subtle"
+                    onClick={() => {
+                      closeDropdown(dropdownId);
+                      openAssignAiChatInSidePanel([threadId]);
+                    }}
+                  >
+                    <IconPencil />
+                  </LightIconButton>
+                )
+              }
+            >
+              {isDefined(assignee) ? (
+                <RecordChip
+                  objectNameSingular={CoreObjectNameSingular.WorkspaceMember}
+                  record={{ ...assignee, __typename: 'WorkspaceMember' }}
+                />
+              ) : (
+                <StyledEmptyValue>{t`None`}</StyledEmptyValue>
+              )}
+            </DetailsRow>
           </StyledDetails>
         </DropdownContent>
       </DropdownRoot>
       {canEditRecordTargets && (
-        <LegacyDropdown
+        <DropdownRoot
           dropdownId={recordPickerDropdownId}
-          dropdownPlacement="bottom-start"
-          disableClickForClickableComponent
-          clickableComponent={<span />}
-          onClose={() => setMultipleRecordPickerSearchFilter('')}
-          dropdownComponents={
+          type="picker"
+          multiple
+        >
+          <DropdownContent
+            ref={recordPickerContentRef}
+            anchor={detailsTriggerRef}
+            finalFocus={(interaction) => {
+              const detailsTrigger = detailsTriggerRef.current;
+
+              if (interaction !== 'keyboard' || !isDefined(detailsTrigger)) {
+                return false;
+              }
+
+              const ownerDocument = detailsTrigger.ownerDocument;
+              const activeElement = ownerDocument.activeElement;
+              const isFocusStillInsidePicker =
+                activeElement === ownerDocument.body ||
+                (recordPickerContentRef.current?.contains(activeElement) ??
+                  false);
+
+              return isFocusStillInsidePicker ? detailsTrigger : false;
+            }}
+            side="bottom"
+            align="start"
+            aria-label={editRecordTargetsLabel}
+          >
             <MultipleRecordPicker
-              focusId={recordPickerDropdownId}
               componentInstanceId={recordPickerDropdownId}
               onChange={handleRecordPickerChange}
-              onSubmit={() => closeDropdown(recordPickerDropdownId)}
-              onClickOutside={() => closeDropdown(recordPickerDropdownId)}
               layoutDirection="search-bar-on-top"
             />
-          }
-        />
+          </DropdownContent>
+        </DropdownRoot>
       )}
     </>
   );

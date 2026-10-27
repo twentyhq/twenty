@@ -6,6 +6,8 @@ import {
   type MetadataStoreItem,
 } from '@/metadata-store/states/metadataStoreState';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
+import { getDraftOrCurrentMetadataItems } from '@/metadata-store/utils/getDraftOrCurrentMetadataItems';
+import { isMetadataStoreDraftConsistent } from '@/metadata-store/utils/isMetadataStoreDraftConsistent';
 import { useStore, type createStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,19 +19,6 @@ const EMPTY_ENTRY: MetadataStoreItem = {
   current: [],
   draft: [],
   status: 'empty',
-};
-
-const areViewsConsistentWithObjects = (
-  viewsDraft: object[],
-  objectsCurrent: object[],
-): boolean => {
-  const objectIds = new Set(
-    objectsCurrent.map((item) => (item as { id: string }).id),
-  );
-
-  return viewsDraft.every((view) =>
-    objectIds.has((view as { objectMetadataId: string }).objectMetadataId),
-  );
 };
 
 export const resetMetadataStore = (store: JotaiStore) => {
@@ -71,6 +60,18 @@ export const useUpdateMetadataStoreDraft = () => {
         currentEntry.status === 'up-to-date' &&
         isDeeplyEqual(currentEntry.current, data)
       ) {
+        if (
+          isDefined(currentEntry.draftCollectionHash) &&
+          currentEntry.draftCollectionHash !==
+            currentEntry.currentCollectionHash
+        ) {
+          store.set(metadataStoreState.atomFamily(key), {
+            ...currentEntry,
+            currentCollectionHash: currentEntry.draftCollectionHash,
+            draftCollectionHash: undefined,
+          });
+        }
+
         return;
       }
 
@@ -89,34 +90,19 @@ export const useUpdateMetadataStoreDraft = () => {
   const applyChanges = useCallback((): {
     hasPersistedAnyMetadataEntity: boolean;
   } => {
+    if (!isMetadataStoreDraftConsistent(store)) {
+      return { hasPersistedAnyMetadataEntity: false };
+    }
+
     let hasPersistedAnyMetadataEntity = false;
 
     for (const metadataEntityKey of ALL_METADATA_ENTITY_KEYS) {
-      if (metadataEntityKey === 'views') {
-        continue;
-      }
-
       const metadataStoreEntityEntry = store.get(
         metadataStoreState.atomFamily(metadataEntityKey),
       );
 
       if (metadataStoreEntityEntry.status === 'draft-pending') {
         changeMetadataEntityAsUpToDate(store, metadataEntityKey);
-        hasPersistedAnyMetadataEntity = true;
-      }
-    }
-
-    const viewsEntry = store.get(metadataStoreState.atomFamily('views'));
-
-    if (viewsEntry.status === 'draft-pending') {
-      const objectsEntry = store.get(
-        metadataStoreState.atomFamily('objectMetadataItems'),
-      );
-
-      if (
-        areViewsConsistentWithObjects(viewsEntry.draft, objectsEntry.current)
-      ) {
-        changeMetadataEntityAsUpToDate(store, 'views');
         hasPersistedAnyMetadataEntity = true;
       }
     }
@@ -139,24 +125,24 @@ export const useUpdateMetadataStoreDraft = () => {
       }
 
       const entry = store.get(metadataStoreState.atomFamily(key));
-      const baseItems = (
-        entry.status === 'draft-pending' ? entry.draft : entry.current
-      ) as Array<{ id: string }>;
+      const baseItems = getDraftOrCurrentMetadataItems({
+        store,
+        metadataEntityKey: key,
+      });
 
       let newItems = [...baseItems];
 
       for (const item of items) {
-        const newItem = item as unknown as { id: string };
         const existingIndex = newItems.findIndex(
-          (existing) => existing.id === newItem.id,
+          (existing) => existing.id === item.id,
         );
 
         if (existingIndex >= 0) {
-          if (!isDeeplyEqual(newItems[existingIndex], newItem)) {
-            newItems[existingIndex] = newItem;
+          if (!isDeeplyEqual(newItems[existingIndex], item)) {
+            newItems[existingIndex] = item;
           }
         } else {
-          newItems = [...newItems, newItem];
+          newItems = [...newItems, item];
         }
       }
 
@@ -183,15 +169,14 @@ export const useUpdateMetadataStoreDraft = () => {
       }
 
       const entry = store.get(metadataStoreState.atomFamily(key));
-      const baseItems = (
-        entry.status === 'draft-pending' ? entry.draft : entry.current
-      ) as Array<{ id: string }>;
+      const baseItems = getDraftOrCurrentMetadataItems({
+        store,
+        metadataEntityKey: key,
+      });
 
       let hasChanged = false;
       const newItems = baseItems.map((existing) => {
-        const updatedItem = (items as unknown as Array<{ id: string }>).find(
-          (item) => item.id === existing.id,
-        );
+        const updatedItem = items.find((item) => item.id === existing.id);
 
         if (!isDefined(updatedItem)) {
           return existing;
@@ -239,9 +224,10 @@ export const useUpdateMetadataStoreDraft = () => {
       }
 
       const entry = store.get(metadataStoreState.atomFamily(key));
-      const baseItems = (
-        entry.status === 'draft-pending' ? entry.draft : entry.current
-      ) as Array<{ id: string }>;
+      const baseItems = getDraftOrCurrentMetadataItems({
+        store,
+        metadataEntityKey: key,
+      });
 
       const idsToDelete = new Set(itemIds);
       const newItems = baseItems.filter(

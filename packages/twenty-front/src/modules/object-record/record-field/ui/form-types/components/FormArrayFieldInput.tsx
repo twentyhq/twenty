@@ -1,11 +1,13 @@
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldMenuItem';
-import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
+import { MultiItemFieldInputRow } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInputRow';
+import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldTextInput';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ArrayDisplay } from '@/ui/field/display/components/ArrayDisplay';
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
@@ -51,7 +53,7 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled.div`
+const StyledDisplayModeContainer = styled.div<{ hasOutline: boolean }>`
   align-items: center;
   background: transparent;
   border: none;
@@ -60,6 +62,7 @@ const StyledDisplayModeContainer = styled.div`
   display: flex;
   font-family: inherit;
   height: 30px;
+  outline: ${({ hasOutline }) => (hasOutline ? 'revert' : 'none')};
   padding-inline: ${themeCssVariables.spacing[2]};
   width: 100%;
 
@@ -128,6 +131,8 @@ export const FormArrayFieldInput = ({
   const isAddingNewItem = itemToEditIndex === -1;
 
   const dropdownId = `dropdown-${instanceId}`;
+
+  const hasRightElement = isDefined(VariablePicker) && !readonly;
 
   const accessibleLabel = isNonEmptyString(label) ? label : t`Items`;
 
@@ -354,7 +359,8 @@ export const FormArrayFieldInput = ({
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={formFieldInputInstanceId}
           preventFocusStackUpdate={preventContainerFocusStackUpdate}
-          hasRightElement={isDefined(VariablePicker) && !readonly}
+          hasRightElement={hasRightElement}
+          shouldHighlightOnTriggerFocus
         >
           {draftValue.type === 'static' ? (
             readonly ? (
@@ -382,7 +388,15 @@ export const FormArrayFieldInput = ({
             ) : (
               <DropdownRoot dropdownId={dropdownId} type="panel">
                 <Dropdown.Trigger
-                  render={<StyledDisplayModeContainer />}
+                  render={
+                    <StyledDisplayModeContainer
+                      hasOutline={
+                        !hasFullFormFieldBorder({
+                          hasRightElement,
+                        })
+                      }
+                    />
+                  }
                   nativeButton={false}
                   aria-label={accessibleLabel}
                 >
@@ -414,17 +428,18 @@ export const FormArrayFieldInput = ({
                   <Dropdown.Separator />
 
                   {isInputDisplayed ? (
-                    <MultiItemBaseInput
-                      instanceId={newItemInputInstanceId}
-                      autoFocus
-                      placeholder={placeholder}
-                      value={inputValue}
-                      onFocus={handleNewItemInputFocus}
-                      onBlur={handleNewItemInputBlur}
-                      onEscape={handleNewItemInputEscape}
-                      onChange={handleNewItemInputChange}
-                      onEnter={handleNewItemInputSubmit}
-                    />
+                    <MultiItemFieldInputRow hasPadding>
+                      <MultiItemFieldTextInput
+                        autoFocus
+                        placeholder={placeholder}
+                        value={inputValue}
+                        onFocus={handleNewItemInputFocus}
+                        onBlur={handleNewItemInputBlur}
+                        onEscape={handleNewItemInputEscape}
+                        onChange={handleNewItemInputChange}
+                        onEnter={handleNewItemInputSubmit}
+                      />
+                    </MultiItemFieldInputRow>
                   ) : !isLimitReached ? (
                     <Dropdown.Section>
                       <Dropdown.ActionItem

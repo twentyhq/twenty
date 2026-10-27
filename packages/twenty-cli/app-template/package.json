@@ -8,7 +8,7 @@
     "yarn": ">=4.0.2"
   },
   "keywords": [],
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.18.1",
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
@@ -31,6 +31,6 @@
     "twenty-ui": "TO-BE-GENERATED",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^4.0.0"
+    "vitest": "^4.1.12"
   }
 }

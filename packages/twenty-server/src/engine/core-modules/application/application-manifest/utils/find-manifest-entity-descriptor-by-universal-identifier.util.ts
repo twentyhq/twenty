@@ -84,6 +84,14 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
         (connectionProvider) => connectionProvider.displayName,
       ),
   },
+  messagingProvider: {
+    entityKind: 'messaging provider',
+    getCandidates: (manifest) =>
+      toCandidates(
+        manifest.messagingProviders,
+        (messagingProvider) => messagingProvider.displayName,
+      ),
+  },
   timelineActivityType: {
     entityKind: 'timeline activity type',
     getCandidates: (manifest) =>
@@ -285,6 +293,14 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
   },
   validationRule: {
     entityKind: 'validation rule',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
+  agentChatChannel: {
+    entityKind: 'chat channel',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
+  agentChatChannelRole: {
+    entityKind: 'chat channel role',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
 };

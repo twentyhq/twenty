@@ -25,6 +25,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   toAllUniversalFlatEntityMaps,
   existingAllFlatEntityMaps,
   idByUniversalIdentifierByMetadataName,
+  canReferenceOtherApplicationsWorkflowActions,
   now,
 }: {
   workflows: WorkflowManifest[];
@@ -33,6 +34,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
   existingAllFlatEntityMaps: AllFlatEntityMaps;
   idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
+  canReferenceOtherApplicationsWorkflowActions: boolean;
   now: string;
 }): (UniversalFlatWorkflow & { id: string })[] => {
   const applicationUniversalIdentifier =
@@ -45,6 +47,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
       existingAllFlatEntityMaps,
       ownerApplicationId: ownerFlatApplication.id,
       idByUniversalIdentifierByMetadataName,
+      canReferenceOtherApplicationsWorkflowActions,
     });
     const recordFieldErrors: string[] = [];
     for (const workflowManifest of workflows) {

@@ -1,7 +1,6 @@
 ---
 title: Hintergrundjobs
 description: Übergib lang laufende oder rate-limitierte Arbeiten an die Twenty-Worker, indem du einen weiteren Lauf einer Logikfunktion in die Warteschlange stellst, statt alles inline auszuführen.
-icon: layer-group
 ---
 
 Ein Logikfunktionslauf ist durch seine `timeoutSeconds` begrenzt (maximal 900 Sekunden). Alles, was in diesem Zeitfenster nicht abgeschlossen werden kann – ein vollständiger Re-Sync, ein Fan-out pro Datensatz, eine Drittanbieter-API, die dich rate-limitiert – muss in kleinere Läufe aufgeteilt werden.

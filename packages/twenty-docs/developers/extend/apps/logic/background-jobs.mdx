@@ -1,8 +1,11 @@
 ---
 title: Background Jobs
 description: Hand long or rate-limited work to the Twenty workers by enqueuing another logic function run instead of doing everything inline.
-icon: "layer-group"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 A logic function run is capped by its `timeoutSeconds` (900 seconds maximum). Anything that can't finish in that window — a full re-sync, a per-record fan-out, a third-party API that rate-limits you — has to be split into smaller runs.
 
@@ -245,3 +248,5 @@ What makes this hold up:
 - **Persist progress before enqueuing the next run,** so a failed link restarts from the last completed chunk instead of the beginning.
 - **Keep each chunk idempotent.** Reprocessing one chunk after a retry must not double-write — key writes on the record or external id you are processing.
 - **Prefer a chunked chain over one giant fan-out** when the work hits a rate-limited third party: a chain with `delayMs` paces itself, whereas thousands of jobs enqueued at once all become eligible immediately.
+
+<PageBanner illustration="card-page-background-jobs" />
