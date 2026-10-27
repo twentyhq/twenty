@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
@@ -63,7 +65,7 @@ const resolveWithPrincipals = (authContext: WorkspaceAuthContext) =>
 const resolve = (authContext: WorkspaceAuthContext) => {
   const rolePermissionConfig = resolveWithPrincipals(authContext);
 
-  return rolePermissionConfig !== null &&
+  return isDefined(rolePermissionConfig) &&
     'intersectionOf' in rolePermissionConfig
     ? { intersectionOf: rolePermissionConfig.intersectionOf }
     : rolePermissionConfig;

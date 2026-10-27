@@ -16,7 +16,6 @@ const isOwningApplicationPrincipal = ({
   principal?.type === 'application' &&
   principal.applicationId === flatObjectMetadata.applicationId;
 
-// An unknown principal is restricted like any other, only the owning application keeps disabled actions
 export const restrictObjectsPermissionsToDisabledActions = ({
   objectsPermissions,
   flatObjectMetadataMaps,
