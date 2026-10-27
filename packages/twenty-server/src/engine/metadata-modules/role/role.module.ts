@@ -16,7 +16,6 @@ import { WorkspaceRoleIdsWithAllRecordsAccessCacheService } from 'src/engine/met
 import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/role/services/workspace-roles-permissions-cache.service';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
@@ -30,7 +29,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     RolePermissionFlagModule,
     RowLevelPermissionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    WorkspaceCacheModule,
     WorkspaceMigrationModule,
     ApplicationModule,
     FlatAgentModule,

@@ -1,6 +1,6 @@
 import { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
-import { doesRoleRequireCustomRolesEntitlement } from 'src/engine/metadata-modules/role/utils/does-role-require-custom-roles-entitlement.util';
+import { doesRoleRequireCustomRolesEntitlement } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/does-role-require-custom-roles-entitlement.util';
 
 const CUSTOM_ROLE = {
   universalIdentifier: '6f1c2a54-91d3-4b7e-a0f2-3c8d5e7b9a10',

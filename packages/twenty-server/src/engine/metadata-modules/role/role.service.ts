@@ -10,7 +10,6 @@ import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WORKSPACE_CUSTOM_APPLICATION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -36,7 +35,6 @@ import {
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
-import { doesRoleRequireCustomRolesEntitlement } from 'src/engine/metadata-modules/role/utils/does-role-require-custom-roles-entitlement.util';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
 import {
   validateRoleDeletionDoesNotLockOutActorOrThrow,
@@ -44,7 +42,6 @@ import {
 } from 'src/engine/metadata-modules/role/utils/validate-role-mutation-does-not-lock-out-actor.util';
 import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/metadata-modules/role-permission-flag/utils/from-flat-role-permission-flag-to-role-permission-flag-dto.util';
 import { fromCreateRoleTargetInputToFlatRoleTargetToCreate } from 'src/engine/metadata-modules/role-target/utils/from-create-role-target-input-to-flat-role-target-to-create.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -57,7 +54,6 @@ export class RoleService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationService: ApplicationService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async getWorkspaceRoles(workspaceId: string): Promise<RoleDTO[]> {
@@ -193,10 +189,6 @@ export class RoleService {
       flatApplication: ownerFlatApplication,
     });
 
-    if (doesRoleRequireCustomRolesEntitlement(flatRoleToCreate)) {
-      await this.validateCustomRolesEntitlementOrThrow(workspaceId);
-    }
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -281,13 +273,6 @@ export class RoleService {
         actingRoleIds,
         flatRolePermissionFlagMaps,
       });
-
-      if (
-        doesRoleRequireCustomRolesEntitlement(flatRoleToUpdate) &&
-        !doesRoleRequireCustomRolesEntitlement(existingFlatRole)
-      ) {
-        await this.validateCustomRolesEntitlementOrThrow(workspaceId);
-      }
     }
 
     const validateAndBuildResult =
@@ -328,22 +313,6 @@ export class RoleService {
         flatEntityMaps: recomputedFlatRoleMaps,
       }),
     );
-  }
-
-  private async validateCustomRolesEntitlementOrThrow(
-    workspaceId: string,
-  ): Promise<void> {
-    const { billingEntitlements } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingEntitlements',
-      ]);
-
-    if (!billingEntitlements[BillingEntitlementKey.CUSTOM_ROLES]) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.CUSTOM_ROLES_NOT_ENTITLED,
-        PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
-      );
-    }
   }
 
   public async deleteRole({

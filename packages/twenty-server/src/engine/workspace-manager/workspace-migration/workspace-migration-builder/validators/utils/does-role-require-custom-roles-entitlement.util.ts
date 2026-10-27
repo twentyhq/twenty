@@ -1,9 +1,9 @@
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { NON_CUSTOM_ROLE_UNIVERSAL_IDENTIFIERS } from 'src/engine/metadata-modules/role/constants/non-custom-role-universal-identifiers.constant';
+import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 
 export const doesRoleRequireCustomRolesEntitlement = (
   flatRole: Pick<
-    FlatRole,
+    UniversalFlatRole,
     'universalIdentifier' | 'canBeAssignedToUsers' | 'canBeAssignedToApiKeys'
   >,
 ): boolean => {
