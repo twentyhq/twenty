@@ -13,6 +13,5 @@ export const doesRoleRequireCustomRolesEntitlement = (
     return false;
   }
 
-  // Agents can't take Admin or Member, so agent-only roles stay open on every plan
   return flatRole.canBeAssignedToUsers || flatRole.canBeAssignedToApiKeys;
 };

@@ -194,7 +194,7 @@ export class RoleService {
     });
 
     if (doesRoleRequireCustomRolesEntitlement(flatRoleToCreate)) {
-      await this.assertHasCustomRolesEntitlement(workspaceId);
+      await this.validateCustomRolesEntitlementOrThrow(workspaceId);
     }
 
     const validateAndBuildResult =
@@ -286,7 +286,7 @@ export class RoleService {
         doesRoleRequireCustomRolesEntitlement(flatRoleToUpdate) &&
         !doesRoleRequireCustomRolesEntitlement(existingFlatRole)
       ) {
-        await this.assertHasCustomRolesEntitlement(workspaceId);
+        await this.validateCustomRolesEntitlementOrThrow(workspaceId);
       }
     }
 
@@ -330,7 +330,7 @@ export class RoleService {
     );
   }
 
-  private async assertHasCustomRolesEntitlement(
+  private async validateCustomRolesEntitlementOrThrow(
     workspaceId: string,
   ): Promise<void> {
     const { billingEntitlements } =

@@ -10,29 +10,13 @@ const CUSTOM_ROLE = {
 };
 
 describe('doesRoleRequireCustomRolesEntitlement', () => {
-  it.each([
-    ['users', { canBeAssignedToUsers: true, canBeAssignedToApiKeys: false }],
-    ['API keys', { canBeAssignedToUsers: false, canBeAssignedToApiKeys: true }],
-  ])(
-    'should require it for a role assignable to %s',
-    (_target, assignability) => {
-      expect(
-        doesRoleRequireCustomRolesEntitlement({
-          ...CUSTOM_ROLE,
-          ...assignability,
-        }),
-      ).toBe(true);
-    },
-  );
-
-  it('should not require it for an agent-only role', () => {
+  it('should require it for a role only API keys can be assigned', () => {
     expect(
       doesRoleRequireCustomRolesEntitlement({
         ...CUSTOM_ROLE,
         canBeAssignedToUsers: false,
-        canBeAssignedToApiKeys: false,
       }),
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it.each([
