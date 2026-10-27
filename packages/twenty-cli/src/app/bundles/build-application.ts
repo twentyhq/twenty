@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'path';
 import {
+  computeDependencyFileChecksum,
+  computePackageJsonChecksum,
   NODE_ESM_CJS_BANNER,
   OUTPUT_DIR,
   type Manifest,
@@ -259,7 +261,11 @@ const copyStaticFiles = async ({
     });
 
     const content = await readFile(absoluteBuiltPath);
-    const checksum = crypto.createHash('md5').update(content).digest('hex');
+    const checksum = computeStaticFileChecksum({
+      fileFolder,
+      sourcePath,
+      content,
+    });
 
     await collectFileBuilt({
       fileFolder,
@@ -268,4 +274,24 @@ const copyStaticFiles = async ({
       checksum,
     });
   }
+};
+
+const computeStaticFileChecksum = ({
+  fileFolder,
+  sourcePath,
+  content,
+}: {
+  fileFolder: FileFolder;
+  sourcePath: string;
+  content: Buffer;
+}): string => {
+  if (fileFolder !== FileFolder.Dependencies) {
+    return crypto.createHash('md5').update(content).digest('hex');
+  }
+
+  const textContent = content.toString('utf-8');
+
+  return sourcePath === 'package.json'
+    ? computePackageJsonChecksum(textContent)
+    : computeDependencyFileChecksum(textContent);
 };
