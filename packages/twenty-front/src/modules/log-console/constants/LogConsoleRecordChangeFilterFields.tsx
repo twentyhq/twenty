@@ -46,13 +46,15 @@ export const LOG_CONSOLE_RECORD_CHANGE_FILTER_FIELDS: LogConsoleFilterField[] =
       Icon: IconBox,
       serverField: 'objectMetadataId',
       getOptions: ({ activeObjectMetadataItems }) =>
-        activeObjectMetadataItems.map((objectMetadataItem) => ({
-          label: objectMetadataItem.labelPlural,
-          values: [objectMetadataItem.id],
-          startIcon: (
-            <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-          ),
-        })),
+        activeObjectMetadataItems
+          .filter((objectMetadataItem) => objectMetadataItem.isAuditLogged)
+          .map((objectMetadataItem) => ({
+            label: objectMetadataItem.labelPlural,
+            values: [objectMetadataItem.id],
+            startIcon: (
+              <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+            ),
+          })),
     },
     LOG_CONSOLE_ACTOR_FILTER_FIELD,
   ];
