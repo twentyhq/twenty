@@ -102,6 +102,7 @@ const CHAT_OBJECT_METADATA: FlatObjectMetadata = {
   writability: MetadataWritability.OPEN,
   sharingReach: ObjectSharingReach.WORKSPACE,
   readabilityParentFieldUniversalIdentifiers: null,
+  disabledObjectPermissionActions: null,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   shortcut: null,
   duplicateCriteria: null,

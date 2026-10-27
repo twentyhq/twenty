@@ -85,12 +85,14 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "type",
       "scope",
       "oauthConfig",
+      "customConfig",
       "identifyAccountLogicFunctionUniversalIdentifier",
       "onConnectLogicFunctionUniversalIdentifier",
       "onDisconnectLogicFunctionUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "oauthConfig",
+      "customConfig",
     ],
   },
   "fieldMetadata": {
@@ -185,6 +187,15 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "workflowActionTriggerSettings",
     ],
   },
+  "messagingProvider": {
+    "propertiesToCompare": [
+      "name",
+      "displayName",
+      "connectionProviderUniversalIdentifier",
+      "sendMessageLogicFunctionUniversalIdentifier",
+    ],
+    "propertiesToStringify": [],
+  },
   "navigationMenuItem": {
     "propertiesToCompare": [
       "type",
@@ -214,6 +225,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isUIEditable",
       "writability",
       "readability",
+      "disabledObjectPermissionActions",
       "readabilityParentFieldUniversalIdentifiers",
       "sharingReach",
       "isUICreatable",
@@ -222,6 +234,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     ],
     "propertiesToStringify": [
       "overrides",
+      "disabledObjectPermissionActions",
       "readabilityParentFieldUniversalIdentifiers",
       "duplicateCriteria",
     ],

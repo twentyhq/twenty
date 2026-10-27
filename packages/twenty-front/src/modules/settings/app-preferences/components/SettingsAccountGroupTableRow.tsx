@@ -17,9 +17,10 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-const SYNC_STATUSES_NEEDING_ACTION: ReadonlySet<SyncStatus> = new Set([
+const DISPLAYED_SYNC_STATUSES: ReadonlySet<SyncStatus> = new Set([
   SyncStatus.FAILED,
   SyncStatus.PENDING_CONFIGURATION,
+  SyncStatus.IMPORTING,
 ]);
 
 type SettingsAccountGroupTableRowProps = {
@@ -43,10 +44,10 @@ export const SettingsAccountGroupTableRow = ({
   const { messageChannel, calendarChannel } =
     getConnectedAccountSettingsChannels(builtInAccount);
   const hasSettings = isDefined(messageChannel) || isDefined(calendarChannel);
-  const needsAction =
+  const shouldShowSyncStatus =
     isDefined(builtInAccount) &&
     (isDefined(builtInAccount.archivedAt) ||
-      SYNC_STATUSES_NEEDING_ACTION.has(
+      DISPLAYED_SYNC_STATUSES.has(
         computeSyncStatus(
           builtInAccount.messageChannels[0],
           builtInAccount.calendarChannels[0],
@@ -61,7 +62,7 @@ export const SettingsAccountGroupTableRow = ({
     >
       <ProviderIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       <OverflowingTextWithTooltip text={group.handle} />
-      {needsAction && (
+      {shouldShowSyncStatus && (
         <SettingsConnectedAccountSyncStatus account={builtInAccount} />
       )}
     </TableCell>

@@ -24,6 +24,7 @@ import {
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
 
+import { ADD_MESSAGING_PROVIDER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-52/add-messaging-provider-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
@@ -178,6 +179,12 @@ export class MessageChannelEntity extends WorkspaceRelatedEntity {
       '2.52.0_AddParticipantHandleFieldToMessageChannelFastInstanceCommand_1792907887530',
   })
   participantHandleFieldUniversalIdentifier: string | null;
+
+  @Column({ type: 'uuid', nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_MESSAGING_PROVIDER_UPGRADE_COMMAND_NAME,
+  })
+  messagingProviderUniversalIdentifier: string | null;
 
   @Column({ type: 'uuid', nullable: false })
   connectedAccountId: string;

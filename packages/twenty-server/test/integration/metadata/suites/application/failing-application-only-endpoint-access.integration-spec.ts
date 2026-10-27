@@ -103,6 +103,14 @@ const readIngestedMessages: StateReader = ({ target }) =>
     [target.messageChannelId],
   );
 
+const readMessageFolders: StateReader = ({ target }) =>
+  globalThis.testDataSource.query(
+    `SELECT id, "externalId", name, "isSynced"
+       FROM core."messageFolder"
+      WHERE "messageChannelId" = $1 ORDER BY id`,
+    [target.messageChannelId],
+  );
+
 const readNothing: StateReader = async () => null;
 
 const GRAPHQL_STATE_READERS: Partial<
@@ -116,6 +124,7 @@ const GRAPHQL_STATE_READERS: Partial<
   createAppMessageChannel: readMessageChannels,
   updateAppMessageChannel: readMessageChannels,
   deleteAppMessageChannel: readMessageChannels,
+  syncAppMessageFolders: readMessageFolders,
   ingestAppMessages: readIngestedMessages,
 };
 
