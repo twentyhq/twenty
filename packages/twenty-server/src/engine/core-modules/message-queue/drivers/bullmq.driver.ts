@@ -287,6 +287,7 @@ export class BullMQDriver
       async (job, _token, abortSignal) =>
         Sentry.withIsolationScope(async () => {
           applyWorkspaceSentryContextFromJobData(job.data);
+          this.recordFairDispatch({ queueName, job });
 
           const queueWaitMs = computeJobQueueWaitMs({ job, now: Date.now() });
 
@@ -381,6 +382,20 @@ export class BullMQDriver
 
   private isFairnessEnabled(): boolean {
     return this.twentyConfigService.get('IS_WORKER_FAIRNESS_ENABLED');
+  }
+
+  private recordFairDispatch({
+    queueName,
+    job,
+  }: {
+    queueName: MessageQueue;
+    job: Job;
+  }): void {
+    if (!this.isFairnessEnabled() || !isDefined(job.id)) {
+      return;
+    }
+
+    void this.fairPriorityTagger.dispatched({ queueName, jobId: job.id });
   }
 
   private withFairPriority({

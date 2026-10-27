@@ -5,7 +5,11 @@ import { Logger } from '@nestjs/common';
 import { type RedisClient } from 'bullmq';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FAIR_CLOCK_TTL_MS } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
+import { FAIR_DISPATCH_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-dispatch-script.constant';
+import {
+  FAIR_CLOCK_TTL_MS,
+  FAIR_TICKET_OFFSET,
+} from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { FAIR_TAG_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-tag-script.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
@@ -95,6 +99,29 @@ export class FairPriorityTagger {
       this.warn({ queueName, action: 'reserve the fair tickets', error });
 
       return undefined;
+    }
+  }
+
+  // The ticket is read inside the script: the worker's copy of the job may be stale
+  async dispatched({
+    queueName,
+    jobId,
+  }: {
+    queueName: MessageQueue;
+    jobId: string;
+  }): Promise<void> {
+    try {
+      await this.runScript({
+        queueName,
+        script: FAIR_DISPATCH_SCRIPT,
+        keys: [this.buildFairKey({ queueName, suffix: 'vtime' })],
+        args: [
+          this.buildQueueKey({ queueName, suffix: jobId }),
+          FAIR_TICKET_OFFSET,
+        ],
+      });
+    } catch (error) {
+      this.warn({ queueName, action: 'record the fair dispatch', error });
     }
   }
 

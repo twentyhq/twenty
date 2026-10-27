@@ -4,6 +4,10 @@ import { type Redis } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 
 import { FairPriorityTagger } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority-tagger';
+import {
+  FAIR_TICKET_OFFSET,
+  URGENT_FAIR_PRIORITY,
+} from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 const QUEUE = MessageQueue.logicFunctionQueue;
@@ -11,6 +15,8 @@ const KEY_PREFIX = 'bull';
 const QUEUE_KEY_PREFIX = `${KEY_PREFIX}:${QUEUE}:`;
 const VIRTUAL_TIME_KEY = `${QUEUE_KEY_PREFIX}fair:vtime`;
 const WEIGHTS_KEY = `${QUEUE_KEY_PREFIX}fair:weights`;
+
+const ticketOf = (tag: number) => FAIR_TICKET_OFFSET + tag;
 
 // ioredis-mock instances share one store, so each test starts from an empty one
 const createTagger = async () => {
@@ -50,6 +56,9 @@ const createTagger = async () => {
     }),
     readClock: async (groupKey: string) =>
       Number(await redis.get(`${QUEUE_KEY_PREFIX}fair:clock:${groupKey}`)),
+    readVirtualTime: async () => Number(await redis.get(VIRTUAL_TIME_KEY)),
+    seedJob: async ({ jobId, priority }: { jobId: string; priority: number }) =>
+      redis.hset(`${QUEUE_KEY_PREFIX}${jobId}`, 'priority', priority),
   };
 };
 
@@ -130,6 +139,45 @@ describe('FairPriorityTagger', () => {
           reservations: [{ groupKeys: ['workspace:A'], batchSize: 1 }],
         }),
       ).toBeUndefined();
+    });
+  });
+
+  describe('dispatched', () => {
+    it('advances the virtual time from the dispatched job hash and leaves urgent and missing jobs alone', async () => {
+      const { tagger, seedJob, readVirtualTime } = await createTagger();
+
+      await seedJob({ jobId: 'A1', priority: ticketOf(5) });
+      await seedJob({ jobId: 'urgent', priority: URGENT_FAIR_PRIORITY });
+
+      await tagger.dispatched({ queueName: QUEUE, jobId: 'A1' });
+      await tagger.dispatched({ queueName: QUEUE, jobId: 'urgent' });
+      await tagger.dispatched({ queueName: QUEUE, jobId: 'missing' });
+
+      expect(await readVirtualTime()).toBe(5);
+      expect(
+        await tagger.reserve({
+          queueName: QUEUE,
+          reservations: [{ groupKeys: ['workspace:B'], batchSize: 1 }],
+        }),
+      ).toEqual([{ tag: 5, weight: 1 }]);
+    });
+
+    it('never moves the virtual time back', async () => {
+      const { tagger, seedJob, readVirtualTime } = await createTagger();
+
+      await seedJob({ jobId: 'late', priority: ticketOf(9) });
+      await seedJob({ jobId: 'early', priority: ticketOf(3) });
+
+      await tagger.dispatched({ queueName: QUEUE, jobId: 'late' });
+      await tagger.dispatched({ queueName: QUEUE, jobId: 'early' });
+
+      expect(await readVirtualTime()).toBe(9);
+    });
+
+    it('swallows a Redis failure', async () => {
+      await expect(
+        createBrokenTagger().dispatched({ queueName: QUEUE, jobId: 'j' }),
+      ).resolves.toBeUndefined();
     });
   });
 });
