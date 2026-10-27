@@ -51,7 +51,6 @@ export class RecordShareOwnershipTransferService {
     });
   }
 
-  // Private records such as chats stay with their creator
   private async findTransferableObjectMetadataIds(
     workspaceId: string,
   ): Promise<string[]> {
