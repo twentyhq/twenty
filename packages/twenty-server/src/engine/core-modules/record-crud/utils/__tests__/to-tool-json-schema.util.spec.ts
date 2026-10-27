@@ -34,4 +34,32 @@ describe('toToolJsonSchema', () => {
       }),
     ]);
   });
+
+  it('shares only schemas that declare an id', () => {
+    const filterSchema = z
+      .object({ field: z.string() })
+      .meta({ id: 'testFilter' });
+    const schema = z.object({
+      first: filterSchema,
+      second: filterSchema.optional(),
+      label: z.string(),
+    });
+
+    expect(toToolJsonSchema(schema)).toEqual({
+      type: 'object',
+      properties: {
+        first: { $ref: '#/$defs/testFilter' },
+        second: { $ref: '#/$defs/testFilter' },
+        label: { type: 'string' },
+      },
+      required: ['first', 'label'],
+      $defs: {
+        testFilter: {
+          type: 'object',
+          properties: { field: { type: 'string' } },
+          required: ['field'],
+        },
+      },
+    });
+  });
 });
