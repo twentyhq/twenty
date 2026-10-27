@@ -6,7 +6,9 @@ import { z } from 'zod';
 export const parseDisabledRecordOperationsOrThrow = (
   value: unknown,
 ): RecordOperation[] | null => {
-  if (!isDefined(value)) return null;
+  if (!isDefined(value)) {
+    return null;
+  }
 
   return [...new Set(z.array(z.enum(RECORD_OPERATIONS)).parse(value))];
 };

@@ -9361,6 +9361,9 @@ export default {
             "description": [
                 1
             ],
+            "disabledRecordOperations": [
+                1
+            ],
             "duplicateCriteria": [
                 1
             ],
