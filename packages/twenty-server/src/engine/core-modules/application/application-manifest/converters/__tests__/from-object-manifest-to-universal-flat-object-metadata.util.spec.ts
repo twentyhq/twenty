@@ -80,33 +80,13 @@ describe('fromObjectManifestToUniversalFlatObjectMetadata', () => {
     it('carries the manifest value through', () => {
       const result = fromObjectManifestToUniversalFlatObjectMetadata({
         objectManifest: buildObjectManifest({
-          writability: MetadataWritability.SYSTEM,
-        }),
-        applicationUniversalIdentifier: APP_UID,
-        now: NOW,
-      });
-
-      expect(result.writability).toBe(MetadataWritability.SYSTEM);
-    });
-
-    it('turns APPLICATION writability into disabled object permission actions', () => {
-      const result = fromObjectManifestToUniversalFlatObjectMetadata({
-        objectManifest: buildObjectManifest({
           writability: MetadataWritability.APPLICATION,
-          disabledObjectPermissionActions: ['canDestroyObjectRecords'],
         }),
         applicationUniversalIdentifier: APP_UID,
         now: NOW,
       });
 
-      expect(result).toMatchObject({
-        writability: MetadataWritability.OPEN,
-        disabledObjectPermissionActions: [
-          'canDestroyObjectRecords',
-          'canUpdateObjectRecords',
-          'canSoftDeleteObjectRecords',
-        ],
-      });
+      expect(result.writability).toBe(MetadataWritability.APPLICATION);
     });
   });
 

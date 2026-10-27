@@ -10,6 +10,7 @@ import {
   type RowAccessPolicyContext,
   type RowAccessPolicyTarget,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { isObjectOperationDisabled } from 'src/engine/twenty-orm/utils/is-object-operation-disabled.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 
@@ -23,15 +24,24 @@ export const buildRowAccessPolicy = ({
   }
 
   const context = { subject, environment };
+
+  // subjects without object permissions, such as webhook delivery, are bound by disabled actions here
+  if (
+    isObjectOperationDisabled({
+      objectMetadata: target.flatObjectMetadata,
+      operationType: target.operationType,
+    }) &&
+    !subject.isOwningApplication(target.flatObjectMetadata)
+  ) {
+    return { kind: 'denied' };
+  }
+
   // Inherited writes also need the parent's writability, or a child could become writable through a SYSTEM parent
   if (
     target.operationType !== 'select' &&
     !isMetadataWritePermitted({
       writability: target.flatObjectMetadata.writability,
       isSystemContext: false,
-      isOwningApplication: subject.isOwningApplication(
-        target.flatObjectMetadata,
-      ),
     })
   ) {
     return { kind: 'denied' };
