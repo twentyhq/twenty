@@ -13,7 +13,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   formatUpgradeCommandName,
@@ -41,18 +41,27 @@ import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;
   workspaceUpgradeStatus?: GetUpgradeStatusQuery['getUpgradeStatus'][number];
+  workspaceInfoActions?: ReactNode;
 };
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
-  margin-top: ${themeCssVariables.spacing[6]};
+  gap: ${themeCssVariables.spacing[8]};
+`;
+
+const StyledWorkspaceInfoActions = styled.div`
+  column-gap: ${themeCssVariables.spacing[2]};
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: ${themeCssVariables.spacing[3]};
+  row-gap: ${themeCssVariables.spacing[3]};
 `;
 
 export const SettingsAdminWorkspaceContent = ({
   activeWorkspace,
   workspaceUpgradeStatus,
+  workspaceInfoActions,
 }: SettingsAdminWorkspaceContentProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
@@ -149,6 +158,11 @@ export const SettingsAdminWorkspaceContent = ({
           items={workspaceInfoItems}
           gridAutoColumns="1fr 4fr"
         />
+        {isDefined(workspaceInfoActions) && (
+          <StyledWorkspaceInfoActions>
+            {workspaceInfoActions}
+          </StyledWorkspaceInfoActions>
+        )}
       </Section.Root>
       {workspaceUpgradeStatus && (
         <Section.Root>

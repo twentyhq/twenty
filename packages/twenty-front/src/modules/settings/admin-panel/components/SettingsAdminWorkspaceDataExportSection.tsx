@@ -1,11 +1,13 @@
 import { useMutation } from '@apollo/client/react';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { formatBytes, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
-import { IconDownload, IconFileExport } from 'twenty-ui/icon';
-import { Tag } from 'twenty-ui/primitives/data-display';
+import { IconDownload } from 'twenty-ui/icon';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
@@ -35,6 +37,10 @@ type SettingsAdminWorkspaceDataExportSectionProps = {
 type WorkspaceDataExportRow =
   WorkspaceDataExportsQuery['workspaceDataExports'][number];
 
+const StyledCreatedAt = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+`;
+
 export const SettingsAdminWorkspaceDataExportSection = ({
   workspaceId,
   workspaceName,
@@ -51,7 +57,7 @@ export const SettingsAdminWorkspaceDataExportSection = ({
     workspaceId,
   );
 
-  const [createWorkspaceDataExport, { loading: isCreating }] =
+  const [createWorkspaceDataExport] =
     useMutation<CreateWorkspaceDataExportMutation>(
       CREATE_WORKSPACE_DATA_EXPORT,
       {
@@ -69,32 +75,18 @@ export const SettingsAdminWorkspaceDataExportSection = ({
       },
     );
 
-  const hasPendingExport = adminPanelWorkspaceDataExports.some(
-    (workspaceDataExport) =>
-      workspaceDataExport.status === WorkspaceDataExportStatus.PENDING,
-  );
-
   return (
     <>
       <SettingsAdminWorkspaceDataExportsFetchEffect workspaceId={workspaceId} />
       <SettingsTableListSection<WorkspaceDataExportRow>
         title={t`Data export`}
         description={t`Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces.`}
-        headerAdornment={
-          <Button
-            startIcon={<IconFileExport />}
-            size="sm"
-            variant="outline"
-            disabled={isCreating || hasPendingExport}
-            onClick={() => createWorkspaceDataExport()}
-          >{t`Export data`}</Button>
-        }
         items={adminPanelWorkspaceDataExports}
         columns={[
           {
             label: t`Created`,
             Cell: ({ item }) => (
-              <>
+              <StyledCreatedAt>
                 {formatDateTimeString({
                   value: item.createdAt,
                   timeZone,
@@ -102,36 +94,27 @@ export const SettingsAdminWorkspaceDataExportSection = ({
                   timeFormat,
                   localeCatalog,
                 })}
-              </>
+              </StyledCreatedAt>
             ),
           },
           {
-            label: t`Objects`,
+            label: t`Contents`,
             Cell: ({ item }) => {
               if (!isNonEmptyArray(item.objects)) {
                 return <>-</>;
               }
 
-              const { objectCount, fieldCount } = getWorkspaceDataExportSummary(
-                item.objects,
-              );
+              const { objectCount, recordCount } =
+                getWorkspaceDataExportSummary(item.objects);
+
+              if (item.status !== WorkspaceDataExportStatus.COMPLETED) {
+                return <>{t`${formatNumber(objectCount)} objects`}</>;
+              }
 
               return (
-                <>{t`${formatNumber(objectCount)} objects, ${formatNumber(fieldCount)} fields`}</>
+                <>{t`${formatNumber(objectCount)} objects, ${formatNumber(recordCount)} records`}</>
               );
             },
-          },
-          {
-            label: t`Records`,
-            Cell: ({ item }) => (
-              <>
-                {isNonEmptyArray(item.objects)
-                  ? formatNumber(
-                      getWorkspaceDataExportSummary(item.objects).recordCount,
-                    )
-                  : '-'}
-              </>
-            ),
           },
           {
             label: t`Size`,
@@ -144,33 +127,29 @@ export const SettingsAdminWorkspaceDataExportSection = ({
             ),
           },
           {
-            label: t`Status`,
-            Cell: ({ item }) => {
-              if (item.status === WorkspaceDataExportStatus.COMPLETED) {
-                return <Tag color="green">{t`Ready`}</Tag>;
-              }
-
-              if (item.status === WorkspaceDataExportStatus.FAILED) {
-                return <Tag color="red">{t`Failed`}</Tag>;
-              }
-
-              const { objectCount, exportedObjectCount } =
-                getWorkspaceDataExportSummary(item.objects);
-              const progress =
-                objectCount > 0 ? ` ${exportedObjectCount}/${objectCount}` : '';
-
-              return (
-                <Tag color="orange">
-                  {t`In progress`}
-                  {progress}
-                </Tag>
-              );
-            },
-          },
-          {
             label: '',
             align: 'right',
             Cell: ({ item }) => {
+              if (item.status === WorkspaceDataExportStatus.FAILED) {
+                return <Status color="red" weight="medium">{t`Failed`}</Status>;
+              }
+
+              if (item.status === WorkspaceDataExportStatus.PENDING) {
+                const { objectCount, exportedObjectCount } =
+                  getWorkspaceDataExportSummary(item.objects);
+                const progress =
+                  objectCount > 0
+                    ? ` ${exportedObjectCount}/${objectCount}`
+                    : '';
+
+                return (
+                  <Status color="turquoise" weight="medium" loading>
+                    {t`In progress`}
+                    {progress}
+                  </Status>
+                );
+              }
+
               const { downloadUrl } = item;
 
               if (!isDefined(downloadUrl)) {
@@ -193,7 +172,9 @@ export const SettingsAdminWorkspaceDataExportSection = ({
             },
           },
         ]}
-        gridAutoColumns="3fr 3fr 2fr 2fr 2fr 140px"
+        gridAutoColumns="3fr 4fr 2fr 180px"
+        footerButtonLabel={t`Export data`}
+        onFooterButtonClick={() => createWorkspaceDataExport()}
       />
     </>
   );

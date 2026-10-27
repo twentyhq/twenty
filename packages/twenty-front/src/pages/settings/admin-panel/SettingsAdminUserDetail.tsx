@@ -3,7 +3,6 @@ import { Tabs } from 'twenty-ui/primitives/navigation';
 import { useParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client/react';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
@@ -41,16 +40,11 @@ import {
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   type UserLookupAdminPanelQuery,
   UserLookupAdminPanelDocument,
 } from '~/generated-admin/graphql';
-
-const StyledButtonContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[3]};
-`;
 
 export const SettingsAdminUserDetail = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -138,33 +132,28 @@ export const SettingsAdminUserDetail = () => {
       : []),
   ];
 
-  const workspaceContent = (
-    <Section.Root>
-      <SettingsAdminWorkspaceContent activeWorkspace={activeWorkspace} />
-      {currentUser?.canImpersonate &&
-        activeWorkspace &&
-        isDefined(user) &&
-        user.id !== currentUser.id && (
-          <StyledButtonContainer>
-            <Button
-              startIcon={<IconEyeShare />}
-              onClick={() => handleImpersonate(user.id, activeWorkspace.id)}
-              disabled={
-                impersonatingUserId !== null ||
-                activeWorkspace.allowImpersonation === false
-              }
-              variant="outline"
-            >
-              {activeWorkspace.allowImpersonation === false
-                ? t`Impersonation is disabled for this workspace`
-                : t`Impersonate`}
-            </Button>
-          </StyledButtonContainer>
+  const workspaceInfoActions =
+    isDefined(currentUser) &&
+    isDefined(activeWorkspace) &&
+    isDefined(user) &&
+    user.id !== currentUser.id ? (
+      <>
+        {currentUser.canImpersonate && (
+          <Button
+            startIcon={<IconEyeShare />}
+            onClick={() => handleImpersonate(user.id, activeWorkspace.id)}
+            disabled={
+              impersonatingUserId !== null ||
+              activeWorkspace.allowImpersonation === false
+            }
+            variant="outline"
+          >
+            {activeWorkspace.allowImpersonation === false
+              ? t`Impersonation is disabled for this workspace`
+              : t`Impersonate`}
+          </Button>
         )}
-      {currentUser?.canAccessFullAdminPanel &&
-        activeWorkspace &&
-        isDefined(user) &&
-        user.id !== currentUser.id && (
+        {currentUser.canAccessFullAdminPanel && (
           <SettingsAdminTwoFactorAuthenticationRecoveryCode
             key={`${user.id}-${activeWorkspace.id}`}
             userId={user.id}
@@ -172,7 +161,14 @@ export const SettingsAdminUserDetail = () => {
             memberName={displayName}
           />
         )}
-    </Section.Root>
+      </>
+    ) : undefined;
+
+  const workspaceContent = (
+    <SettingsAdminWorkspaceContent
+      activeWorkspace={activeWorkspace}
+      workspaceInfoActions={workspaceInfoActions}
+    />
   );
 
   if (isLoading) {
