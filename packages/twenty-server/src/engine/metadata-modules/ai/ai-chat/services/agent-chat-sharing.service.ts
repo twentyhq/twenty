@@ -7,7 +7,6 @@ import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
-import { isNonEmptyString } from '@sniptt/guards';
 import { In } from 'typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -20,7 +19,6 @@ import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/ut
 import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
-import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
@@ -44,12 +42,11 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type RowAccessPolicy } from 'src/engine/twenty-orm/types/row-access-policy.type';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
+const PARTICIPANT_WORKSPACE_MEMBER_BATCH_SIZE = 1_000;
 
 const EDIT_ACCESS_LEVELS: (RecordShareAccessLevel | null | undefined)[] = [
   RecordShareAccessLevel.READ_WRITE,
@@ -265,12 +262,23 @@ export class AgentChatSharingService {
         'flatObjectMetadataMaps',
       ],
     );
-    const { canShareBeyondRole } = resolveObjectSharing({
-      flatObjectMetadata: objectMetadata,
-      featureFlagsMap: permissionMaps.featureFlagsMap,
+    const userWorkspaceIds = candidateMemberIds.flatMap((memberId) => {
+      const member = permissionMaps.flatWorkspaceMemberMaps.byId[memberId];
+      const userWorkspaceId = isDefined(member)
+        ? permissionMaps.flatWorkspaceMemberMaps.userWorkspaceIdByUserId[
+            member.userId
+          ]
+        : undefined;
+
+      return isDefined(userWorkspaceId) ? [userWorkspaceId] : [];
     });
-    const workspaceSchema = escapeIdentifier(
-      getWorkspaceSchemaName(workspaceId),
+    const memberships =
+      await this.userAuthContextService.findActiveUserWorkspaces({
+        workspaceId,
+        userWorkspaceIds,
+      });
+    const membershipIdsByUserId = new Map(
+      memberships.map(({ userId, id }) => [userId, id]),
     );
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
@@ -282,32 +290,18 @@ export class AgentChatSharingService {
                 'workspaceMember',
                 { shouldBypassPermissionChecks: true },
               );
-            const members = await memberRepository.find({
-              where: { id: In(candidateMemberIds) },
-            });
-            const memberships = await transactionScope.executeRawQuery(
-              doNotTranslate(`SELECT membership.id, membership."userId"
-            FROM core."userWorkspace" membership
-            JOIN core."user" user_record ON user_record.id = membership."userId"
-            JOIN ${workspaceSchema}."workspaceMember" member ON member."userId" = membership."userId"
-            WHERE membership."workspaceId" = $1 AND member.id = ANY($2::uuid[])
-              AND member."deletedAt" IS NULL AND membership."deletedAt" IS NULL
-              AND user_record."deletedAt" IS NULL AND user_record.disabled IS NOT TRUE`),
-              [workspaceId, candidateMemberIds],
-            );
-            const membershipIdsByUserId = new Map<string, string>();
+            const members: WorkspaceMemberWorkspaceEntity[] = [];
 
-            for (const membership of memberships) {
-              if (
-                !isNonEmptyString(membership.id) ||
-                !isNonEmptyString(membership.userId)
-              ) {
-                continue;
-              }
-
-              membershipIdsByUserId.set(membership.userId, membership.id);
+            for (const memberIds of chunk(
+              candidateMemberIds,
+              PARTICIPANT_WORKSPACE_MEMBER_BATCH_SIZE,
+            )) {
+              members.push(
+                ...(await memberRepository.find({
+                  where: { id: In(memberIds) },
+                })),
+              );
             }
-
             const repository = transactionScope.getRepository(
               'agentChatThread',
               {
@@ -371,11 +365,8 @@ export class AgentChatSharingService {
                 buildAgentChatParticipantReplyPolicy({
                   repository,
                   subject,
-                  objectMetadata,
-                  flatFieldMetadataMaps: permissionMaps.flatFieldMetadataMaps,
                   canManageSharing:
                     shouldConsiderNewShares && sharing.canManageSharing,
-                  canShareBeyondRole,
                 }),
               );
             }

@@ -6,6 +6,7 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type ObjectRecord,
   type ObjectsPermissions,
+  type RecordShareAccessLevel,
 } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import {
@@ -2312,9 +2313,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   buildRowAccessPolicy({
     subject,
     operationType,
+    hypotheticalRecordShareAccessLevel,
   }: {
     subject: RowAccessPolicySubject;
     operationType: OperationType;
+    hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
   }): RowAccessPolicy {
     return buildRowAccessPolicy({
       subject,
@@ -2322,6 +2325,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       tableAlias: this.options.tableShape.nameSingular,
       flatObjectMetadata: this.options.flatObjectMetadata,
       operationType,
+      hypotheticalRecordShareAccessLevel,
     });
   }
 

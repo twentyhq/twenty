@@ -327,4 +327,113 @@ describe('buildRowAccessPolicy', () => {
     expect(policy.condition.sql).toContain('recordShare');
     expect(policy.condition.sql).not.toContain('rowCause');
   });
+  describe('with a prospective named share', () => {
+    const prospectiveShareArguments = {
+      subject: readEverything,
+      environment: sharingEnvironment,
+      tableAlias: person.nameSingular,
+      flatObjectMetadata: {
+        ...person,
+        writability: MetadataWritability.OPEN,
+        sharingReach: ObjectSharingReach.ROLE_ACCESS,
+      },
+      operationType: 'update',
+      depth: 0,
+      hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ_WRITE,
+    } satisfies Parameters<typeof buildCompiledRowAccessPolicy>[0];
+
+    it('requires an edit-level share to preview update access', () => {
+      expect(buildCompiledRowAccessPolicy(prospectiveShareArguments)).toEqual({
+        kind: 'open',
+      });
+      const readOnly = buildCompiledRowAccessPolicy({
+        ...prospectiveShareArguments,
+        hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ,
+      });
+
+      expect(readOnly.kind).toBe('gated');
+    });
+
+    it('preserves the member-bound row filter when sharing cannot reach beyond the role', () => {
+      const policy = buildCompiledRowAccessPolicy({
+        ...prospectiveShareArguments,
+        subject: {
+          ...readEverything,
+          resolveRowLevelPermissionRecordFilter: () => NOTE_FILTER,
+        },
+      });
+
+      expect(policy.kind).toBe('gated');
+      if (policy.kind !== 'gated') throw new Error('Expected a role filter');
+      expect(policy.condition.sql).toContain('"person"."title" = :restricted');
+      expect(policy.condition.sql).not.toContain('recordShare');
+    });
+
+    it.each([MetadataWritability.SYSTEM, MetadataWritability.APPLICATION])(
+      'preserves %s metadata write denial',
+      (writability) => {
+        expect(
+          buildCompiledRowAccessPolicy({
+            ...prospectiveShareArguments,
+            flatObjectMetadata: {
+              ...prospectiveShareArguments.flatObjectMetadata,
+              writability,
+            },
+          }),
+        ).toEqual({ kind: 'denied' });
+      },
+    );
+
+    it('honors ownership for application metadata', () => {
+      expect(
+        buildCompiledRowAccessPolicy({
+          ...prospectiveShareArguments,
+          subject: { ...readEverything, isOwningApplication: () => true },
+          flatObjectMetadata: {
+            ...prospectiveShareArguments.flatObjectMetadata,
+            readability: MetadataReadability.APPLICATION,
+            writability: MetadataWritability.APPLICATION,
+          },
+        }),
+      ).toEqual({ kind: 'open' });
+    });
+
+    it('does not use a prospective share to bypass application readability', () => {
+      expect(
+        buildCompiledRowAccessPolicy({
+          ...prospectiveShareArguments,
+          operationType: 'select',
+          flatObjectMetadata: {
+            ...prospectiveShareArguments.flatObjectMetadata,
+            readability: MetadataReadability.APPLICATION,
+            sharingReach: ObjectSharingReach.WORKSPACE,
+          },
+        }),
+      ).toEqual({ kind: 'denied' });
+    });
+
+    it('reaches beyond missing role access only when the standard sharing reach permits it', () => {
+      const withoutObjectPermission: RowAccessPolicySubject = {
+        ...readEverything,
+        objectsPermissions: {},
+      };
+
+      expect(
+        buildCompiledRowAccessPolicy({
+          ...prospectiveShareArguments,
+          subject: withoutObjectPermission,
+        }),
+      ).toEqual({ kind: 'denied' });
+      expect(
+        buildCompiledRowAccessPolicy({
+          ...prospectiveShareArguments,
+          subject: withoutObjectPermission,
+          flatObjectMetadata: {
+            ...prospectiveShareArguments.flatObjectMetadata,
+            sharingReach: ObjectSharingReach.WORKSPACE,
+          },
+        }),
+      ).toEqual({ kind: 'open' });
+    });
+  });
 });
