@@ -18,7 +18,7 @@ const MODEL_CAPABILITIES: Record<keyof ModelConfiguration, true> = {
   twitterSearch: true,
 };
 
-const MODEL_CAPABILITY_NAMES = Object.keys(MODEL_CAPABILITIES);
+const MODEL_CAPABILITY_NAMES = new Set(Object.keys(MODEL_CAPABILITIES));
 
 export const defineAgent: DefineEntity<AgentManifest> = (config) => {
   const errors: string[] = [];
@@ -50,35 +50,40 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
     errors.push(`Agent '${config.name}' isSystem must be a boolean`);
   }
 
-  if (isDefined(config.modelConfiguration)) {
-    if (!isPlainObject(config.modelConfiguration)) {
+  if (
+    isDefined(config.modelConfiguration) &&
+    !isPlainObject(config.modelConfiguration)
+  ) {
+    errors.push(`Agent '${config.name}' modelConfiguration must be an object`);
+  }
+
+  for (const [capability, capabilityConfiguration] of Object.entries(
+    isPlainObject(config.modelConfiguration) ? config.modelConfiguration : {},
+  )) {
+    if (!MODEL_CAPABILITY_NAMES.has(capability)) {
       errors.push(
-        `Agent '${config.name}' modelConfiguration must be an object`,
+        `Agent '${config.name}' modelConfiguration.${capability} is not supported, use one of: ${[...MODEL_CAPABILITY_NAMES].join(', ')}`,
       );
-    } else {
-      for (const [capability, capabilityConfiguration] of Object.entries(
-        config.modelConfiguration,
-      )) {
-        if (!MODEL_CAPABILITY_NAMES.includes(capability)) {
-          errors.push(
-            `Agent '${config.name}' modelConfiguration.${capability} is not supported, use one of: ${MODEL_CAPABILITY_NAMES.join(', ')}`,
-          );
-        } else if (
-          !isPlainObject(capabilityConfiguration) ||
-          !isBoolean(capabilityConfiguration.enabled)
-        ) {
-          errors.push(
-            `Agent '${config.name}' modelConfiguration.${capability}.enabled must be a boolean`,
-          );
-        } else if (
-          isDefined(capabilityConfiguration.configuration) &&
-          !isPlainObject(capabilityConfiguration.configuration)
-        ) {
-          errors.push(
-            `Agent '${config.name}' modelConfiguration.${capability}.configuration must be an object`,
-          );
-        }
-      }
+      continue;
+    }
+
+    if (
+      !isPlainObject(capabilityConfiguration) ||
+      !isBoolean(capabilityConfiguration.enabled)
+    ) {
+      errors.push(
+        `Agent '${config.name}' modelConfiguration.${capability}.enabled must be a boolean`,
+      );
+      continue;
+    }
+
+    if (
+      isDefined(capabilityConfiguration.configuration) &&
+      !isPlainObject(capabilityConfiguration.configuration)
+    ) {
+      errors.push(
+        `Agent '${config.name}' modelConfiguration.${capability}.configuration must be an object`,
+      );
     }
   }
 
