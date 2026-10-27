@@ -97,6 +97,46 @@ describe('assertConnectionProviderLogicFunctionsAreOwn', () => {
     },
   );
 
+  it.each(['authorizeLogicFunction', 'callbackLogicFunction'] as const)(
+    'rejects a custom provider whose %s references a logic function outside the application',
+    (logicFunctionKey) => {
+      const custom = {
+        authorizeLogicFunction: {
+          universalIdentifier: MANIFEST_LOGIC_FUNCTION_IDENTIFIER,
+        },
+        callbackLogicFunction: {
+          universalIdentifier: MANIFEST_LOGIC_FUNCTION_IDENTIFIER,
+        },
+        [logicFunctionKey]: {
+          universalIdentifier: UNKNOWN_LOGIC_FUNCTION_IDENTIFIER,
+        },
+      };
+
+      expect(() =>
+        assertConnectionProviderLogicFunctionsAreOwn({
+          manifest: {
+            connectionProviders: [
+              {
+                universalIdentifier: 'connection-provider',
+                name: 'provider',
+                displayName: 'Provider',
+                type: 'custom',
+                custom,
+              },
+            ],
+          },
+          fromFlatLogicFunctionMaps: buildFlatLogicFunctionMaps(
+            EXISTING_LOGIC_FUNCTION_IDENTIFIER,
+          ),
+          toFlatLogicFunctionMaps: buildFlatLogicFunctionMaps(
+            MANIFEST_LOGIC_FUNCTION_IDENTIFIER,
+          ),
+          inferDeletionFromMissingEntities: true,
+        }),
+      ).toThrow(ApplicationException);
+    },
+  );
+
   it('accepts an existing logic function of the application on a partial sync', () => {
     expect(() =>
       assertHooks({
