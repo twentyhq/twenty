@@ -6,7 +6,6 @@ import {
   ObjectSharingReach,
 } from 'twenty-shared/types';
 
-import { parseDisabledRecordOperationsOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/parse-disabled-record-operations-or-throw.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 export const fromObjectManifestToUniversalFlatObjectMetadata = ({
@@ -40,9 +39,7 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     readability: objectManifest.readability ?? MetadataReadability.OPEN,
     readabilityParentFieldUniversalIdentifiers:
       objectManifest.readabilityParentFieldUniversalIdentifiers ?? null,
-    disabledRecordOperations: parseDisabledRecordOperationsOrThrow(
-      objectManifest.disabledRecordOperations,
-    ),
+    disabledRecordOperations: objectManifest.disabledRecordOperations ?? null,
     sharingReach: objectManifest.sharingReach ?? ObjectSharingReach.WORKSPACE,
     isAuditLogged: true,
     isSearchable: objectManifest.isSearchable ?? true,
