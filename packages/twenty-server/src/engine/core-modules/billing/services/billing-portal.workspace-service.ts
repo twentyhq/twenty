@@ -78,10 +78,15 @@ export class BillingPortalWorkspaceService {
     return otherTrialWorkspaceCount >= MAX_TRIAL_WORKSPACES_PER_USER;
   }
 
-  async withTrialLimitLock<TResult>(
-    { userId, workspaceId }: { userId: string; workspaceId: string },
-    createSubscription: (isTrialLimitReached: boolean) => Promise<TResult>,
-  ): Promise<TResult> {
+  async withTrialLimitLock<TResult>({
+    userId,
+    workspaceId,
+    createSubscription,
+  }: {
+    userId: string;
+    workspaceId: string;
+    createSubscription: (isTrialLimitReached: boolean) => Promise<TResult>;
+  }): Promise<TResult> {
     return await this.cacheLockService.withLock(
       async () =>
         createSubscription(

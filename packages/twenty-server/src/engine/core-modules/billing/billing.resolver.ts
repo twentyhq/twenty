@@ -141,9 +141,10 @@ export class BillingResolver {
         interval: recurringInterval,
       });
 
-    return await this.billingPortalWorkspaceService.withTrialLimitLock(
-      { userId: user.id, workspaceId: workspace.id },
-      async (isTrialLimitReached) => {
+    return await this.billingPortalWorkspaceService.withTrialLimitLock({
+      userId: user.id,
+      workspaceId: workspace.id,
+      createSubscription: async (isTrialLimitReached) => {
         const isPaymentMethodRequired =
           requirePaymentMethod || isTrialLimitReached;
 
@@ -177,7 +178,7 @@ export class BillingResolver {
           };
         }
       },
-    );
+    });
   }
 
   @Mutation(() => BillingPaymentIntentDTO)
@@ -218,9 +219,10 @@ export class BillingResolver {
         interval: recurringInterval,
       });
 
-    return await this.billingPortalWorkspaceService.withTrialLimitLock(
-      { userId: user.id, workspaceId: workspace.id },
-      (isTrialLimitReached) =>
+    return await this.billingPortalWorkspaceService.withTrialLimitLock({
+      userId: user.id,
+      workspaceId: workspace.id,
+      createSubscription: (isTrialLimitReached) =>
         this.billingPortalWorkspaceService.createSubscriptionPaymentIntent({
           user,
           workspace,
@@ -229,7 +231,7 @@ export class BillingResolver {
           isTrialLimitReached,
           idempotencyKey,
         }),
-    );
+    });
   }
 
   @Mutation(() => BillingPaymentIntentDTO)
