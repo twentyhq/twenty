@@ -9,15 +9,19 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { ApplicationMessageChannelsResolver } from 'src/engine/metadata-modules/message-channel/resolvers/application-message-channels.resolver';
 import { ApplicationMessageIngestionResolver } from 'src/engine/metadata-modules/message-channel/resolvers/application-message-ingestion.resolver';
+import { ApplicationMessageSendResolver } from 'src/engine/metadata-modules/message-channel/resolvers/application-message-send.resolver';
 import { MessageChannelResolver } from 'src/engine/metadata-modules/message-channel/resolvers/message-channel.resolver';
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
 import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
+import { ApplicationMessageSendService } from 'src/engine/metadata-modules/message-channel/services/application-message-send.service';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import { MessagingProviderModule } from 'src/engine/metadata-modules/messaging-provider/messaging-provider.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { MatchParticipantModule } from 'src/modules/match-participant/match-participant.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -33,6 +37,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     MessagingCommonModule,
     MatchParticipantModule,
     EmailingDomainModule,
+    WorkspaceCacheModule,
+    MessagingProviderModule,
   ],
   providers: [
     MessageChannelMetadataService,
@@ -41,6 +47,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationMessageChannelsResolver,
     ApplicationMessageIngestionService,
     ApplicationMessageIngestionResolver,
+    ApplicationMessageSendService,
+    ApplicationMessageSendResolver,
     provideWorkspaceScopedRepository(MessageFolderEntity),
   ],
   exports: [MessageChannelMetadataService],
