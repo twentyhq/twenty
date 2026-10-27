@@ -215,6 +215,81 @@ Your app only ever sees channels created against its own connections. Channels b
 
 A channel is also only reachable by the person whose connection it speaks through, when that connection is private to them. A run triggered by another member of the workspace cannot see it, change it or ingest into it; a run with nobody behind it — a cron, a webhook, an install hook — acts as the application and reaches every channel the app owns.
 
+## Folders
+
+Some providers split one account into sub-streams: inboxes in a shared helpdesk, numbers on a WhatsApp account, channels in a Slack workspace. Declare them as **folders** on the channel, the same records Twenty uses for mailbox folders and Gmail labels, and tag each message with the folders it belongs to.
+
+Folders are optional. A channel without folders works exactly as described above.
+
+### Declaring folders
+
+`syncMessageFolders` takes the channel's **full** folder list and makes the stored folders match it, keyed on `externalId`:
+
+- an unknown `externalId` creates a folder
+- a known one is renamed if its `name` changed
+- a stored folder missing from the list is removed, along with its links to messages. The messages themselves stay.
+
+```ts
+import { syncMessageFolders } from 'twenty-sdk/logic-function';
+
+const inboxes = await fetchFrontInboxes(connection.accessToken);
+
+const folders = await syncMessageFolders({
+  messageChannelId: channel.id,
+  folders: inboxes.map((inbox) => ({
+    externalId: inbox.id,
+    name: inbox.name,
+  })),
+});
+```
+
+Call it from `onConnect` after creating the channel, and again whenever the provider's list may have changed (on a cron, or on the provider's "inbox created" webhook). Sending the full list each time is safe: unchanged folders are left alone.
+
+### Choosing which folders to import
+
+Each folder has an `isSynced` flag. A new folder starts synced unless you pass `isSynced: false`, and omitting `isSynced` on a later sync keeps the stored value, so a provider refresh never resets what a member picked. To let members choose, render the list in your app's settings and send the flag they set:
+
+```ts
+import { listMessageFolders, syncMessageFolders } from 'twenty-sdk/logic-function';
+
+const folders = await listMessageFolders(channel.id);
+
+await syncMessageFolders({
+  messageChannelId: channel.id,
+  folders: folders.map((folder) => ({
+    externalId: folder.externalId,
+    name: folder.name,
+    isSynced: selectedInboxIds.includes(folder.externalId),
+  })),
+});
+```
+
+<Note>
+`isSynced` is **advisory** on app channels: Twenty stores it but does not filter ingestion on it, and nothing backfills a folder when it is turned on. Your app reads it with `listMessageFolders`, skips messages from unsynced folders, and backfills a folder when it becomes synced.
+</Note>
+
+### Tagging messages
+
+Pass the folders a message belongs to as `folderExternalIds` when ingesting:
+
+```ts
+await ingestMessages({
+  messageChannelId: channel.id,
+  messages: [
+    {
+      externalId: message.id,
+      threadExternalId: conversation.id,
+      text: message.text,
+      receivedAt: new Date(message.createdAt),
+      participants,
+      folderExternalIds: [conversation.inboxId],
+    },
+  ],
+});
+```
+
+Every id must belong to a folder already declared on the channel; an unknown one rejects the whole batch. Links add up: re-ingesting a message with another folder adds that folder and keeps the earlier ones, so a conversation moved between inboxes ends up in both.
+
 ## Retiring a channel
 
 Call `deleteMessageChannel(id)` from the connection provider's `onDisconnect` hook so a channel never outlives the credential it speaks through.

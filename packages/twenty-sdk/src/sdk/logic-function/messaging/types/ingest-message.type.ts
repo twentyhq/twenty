@@ -23,6 +23,8 @@ export type IngestMessage = {
   text: string;
   receivedAt: Date;
   participants: IngestMessageParticipant[];
+  // Folders declared with syncMessageFolders; re-ingesting adds folders but never removes one
+  folderExternalIds?: string[];
 };
 
 export type IngestedMessage = {

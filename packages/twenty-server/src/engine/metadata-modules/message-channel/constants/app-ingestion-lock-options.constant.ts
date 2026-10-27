@@ -1,0 +1,13 @@
+// the lease must outlast a full batch save, or the next delivery gets in and duplicates
+// withLock does not renew, so waiters must outlast the lease left behind by a crashed holder
+const APP_INGESTION_LOCK_TTL_MS = 60_000;
+const APP_INGESTION_LOCK_RETRY_INTERVAL_MS = 500;
+
+export const APP_INGESTION_LOCK_OPTIONS = {
+  ttl: APP_INGESTION_LOCK_TTL_MS,
+  ms: APP_INGESTION_LOCK_RETRY_INTERVAL_MS,
+  maxRetries:
+    Math.ceil(
+      APP_INGESTION_LOCK_TTL_MS / APP_INGESTION_LOCK_RETRY_INTERVAL_MS,
+    ) + 10,
+};

@@ -374,8 +374,15 @@ enum AppKeyValueScope {
   WORKSPACE
 }
 
+input AppMessageFolderInput {
+  externalId: String!
+  isSynced: Boolean
+  name: String!
+}
+
 input AppMessageInput {
   externalId: String!
+  folderExternalIds: [String!]
   participants: [AppMessageParticipantInput!]!
   receivedAt: DateTime!
   subject: String
@@ -3353,6 +3360,7 @@ type Mutation {
   stopImpersonation: StopImpersonation!
   switchBillingPlan(plan: BillingPlanKey): BillingUpdate!
   switchSubscriptionInterval: BillingUpdate!
+  syncAppMessageFolders(input: SyncAppMessageFoldersInput!): [MessageFolder!]!
   syncApplication(dryRun: Boolean, inferDeletionFromMissingEntities: Boolean, manifest: JSON!): WorkspaceMigration!
   syncMarketplaceCatalog: Boolean!
   trackAnalytics(event: String, name: String, properties: JSON, type: AnalyticsType!): Analytics!
@@ -3963,6 +3971,7 @@ type Query {
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
   appMessageChannels(filter: ListAppMessageChannelsInput): [MessageChannel!]!
+  appMessageFolders(messageChannelId: UUID!): [MessageFolder!]!
   applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   applicationCoreGraphqlSchema(applicationUniversalIdentifier: String!): String!
@@ -4657,6 +4666,11 @@ type Support {
 enum SupportDriver {
   FRONT
   NONE
+}
+
+input SyncAppMessageFoldersInput {
+  folders: [AppMessageFolderInput!]!
+  messageChannelId: UUID!
 }
 
 type TasksConfiguration {
