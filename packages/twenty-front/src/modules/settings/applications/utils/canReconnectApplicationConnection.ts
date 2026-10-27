@@ -3,10 +3,9 @@ import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/
 
 export const canReconnectApplicationConnection = ({
   connection,
-  isClientCredentialsConfigured,
+  canStartAuthorization,
 }: {
   connection: Partial<Pick<ConnectedAccount, 'authFailedAt' | 'archivedAt'>>;
-  isClientCredentialsConfigured: boolean;
+  canStartAuthorization: boolean;
 }): boolean =>
-  isClientCredentialsConfigured &&
-  isApplicationConnectionReconnectNeeded(connection);
+  canStartAuthorization && isApplicationConnectionReconnectNeeded(connection);

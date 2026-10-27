@@ -9,20 +9,20 @@ describe('canReconnectApplicationConnection', () => {
     archivedAt: null,
   };
 
-  it('allows reconnecting an auth-failed connection once OAuth is set up', () => {
+  it('allows reconnecting an auth-failed connection once authorization can start', () => {
     expect(
       canReconnectApplicationConnection({
         connection: authFailedConnection,
-        isClientCredentialsConfigured: true,
+        canStartAuthorization: true,
       }),
     ).toBe(true);
   });
 
-  it('refuses an auth-failed connection without OAuth client credentials', () => {
+  it('refuses an auth-failed connection when authorization cannot start', () => {
     expect(
       canReconnectApplicationConnection({
         connection: authFailedConnection,
-        isClientCredentialsConfigured: false,
+        canStartAuthorization: false,
       }),
     ).toBe(false);
   });
@@ -34,12 +34,15 @@ describe('canReconnectApplicationConnection', () => {
       'archived and auth-failed',
       { authFailedAt: AUTH_FAILED_AT, archivedAt: ARCHIVED_AT },
     ],
-  ])('refuses a %s connection even with OAuth set up', (_, connection) => {
-    expect(
-      canReconnectApplicationConnection({
-        connection,
-        isClientCredentialsConfigured: true,
-      }),
-    ).toBe(false);
-  });
+  ])(
+    'refuses a %s connection even when authorization can start',
+    (_, connection) => {
+      expect(
+        canReconnectApplicationConnection({
+          connection,
+          canStartAuthorization: true,
+        }),
+      ).toBe(false);
+    },
+  );
 });

@@ -7,6 +7,7 @@ import { SettingsApplicationConnectionProviderSection } from '@/settings/applica
 import { SettingsApplicationConnectionName } from '@/settings/applications/components/SettingsApplicationConnectionName';
 import { SettingsApplicationConnectionStatus } from '@/settings/applications/components/SettingsApplicationConnectionStatus';
 import { SettingsApplicationConnectionTableRows } from '@/settings/applications/components/SettingsApplicationConnectionTableRows';
+import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -39,8 +40,8 @@ export const SettingsApplicationConnectionsSection = ({
   return (
     <>
       {connectionProviders.map((provider) => {
-        const isClientCredentialsConfigured =
-          provider.oauth?.isClientCredentialsConfigured ?? false;
+        const canStartAuthorization =
+          canStartConnectionProviderAuthorization(provider);
         const canAddConnection = provider.scope === 'WORKSPACE';
 
         const providerConnections = connectedAccounts.filter(
@@ -58,7 +59,7 @@ export const SettingsApplicationConnectionsSection = ({
             providerLogoUrl={provider.logoUrl}
             description={t`Manage connections used by this app to call ${provider.displayName}.`}
             shouldShowMissingCredentialsBanner={
-              canAddConnection && !isClientCredentialsConfigured
+              canAddConnection && !canStartAuthorization
             }
           >
             {providerConnections.length > 0 && (
@@ -132,7 +133,7 @@ export const SettingsApplicationConnectionsSection = ({
                 </SettingsApplicationConnectionTableRows>
               </Table>
             )}
-            {canAddConnection && isClientCredentialsConfigured && (
+            {canAddConnection && canStartAuthorization && (
               <SettingsApplicationAddConnectionButton
                 applicationId={applicationId}
                 providerName={provider.name}

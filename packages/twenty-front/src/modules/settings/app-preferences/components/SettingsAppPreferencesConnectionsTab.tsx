@@ -5,6 +5,7 @@ import { getApplicationPreferencesConnectionsPath } from '@/settings/app-prefere
 import { SettingsApplicationAddConnectionButton } from '@/settings/applications/components/SettingsApplicationAddConnectionButton';
 import { SettingsApplicationConnectionProviderSection } from '@/settings/applications/components/SettingsApplicationConnectionProviderSection';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
+import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -41,8 +42,8 @@ export const SettingsAppPreferencesConnectionsTab = ({
   return (
     <>
       {connectionProviders.map((provider) => {
-        const isClientCredentialsConfigured =
-          provider.oauth?.isClientCredentialsConfigured ?? false;
+        const canStartAuthorization =
+          canStartConnectionProviderAuthorization(provider);
 
         const providerConnections = personalAccounts.filter(
           (account) => account.connectionProviderId === provider.id,
@@ -54,7 +55,7 @@ export const SettingsAppPreferencesConnectionsTab = ({
             providerDisplayName={provider.displayName}
             providerLogoUrl={provider.logoUrl}
             description={t`Connect your own ${provider.displayName} account for this app to use on your behalf.`}
-            shouldShowMissingCredentialsBanner={!isClientCredentialsConfigured}
+            shouldShowMissingCredentialsBanner={!canStartAuthorization}
           >
             {isDefined(error) ? (
               <SettingsApplicationLoadErrorBanner
@@ -68,17 +69,15 @@ export const SettingsAppPreferencesConnectionsTab = ({
                     applicationId={applicationId}
                     providerName={provider.name}
                     connections={providerConnections}
-                    isClientCredentialsConfigured={
-                      isClientCredentialsConfigured
-                    }
+                    canStartAuthorization={canStartAuthorization}
                     isLoading={loading}
                   />
                 ) : (
-                  isClientCredentialsConfigured && (
+                  canStartAuthorization && (
                     <StyledEmptyState>{t`You have no ${provider.displayName} connection yet.`}</StyledEmptyState>
                   )
                 )}
-                {isClientCredentialsConfigured && (
+                {canStartAuthorization && (
                   <SettingsApplicationAddConnectionButton
                     applicationId={applicationId}
                     providerName={provider.name}

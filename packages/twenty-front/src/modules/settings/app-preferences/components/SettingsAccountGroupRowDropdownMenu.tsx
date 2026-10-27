@@ -13,6 +13,7 @@ import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/ut
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
 import { getInstalledApplicationDisplayName } from '@/settings/app-preferences/utils/getInstalledApplicationDisplayName';
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
+import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
 import { canReconnectApplicationConnection } from '@/settings/applications/utils/canReconnectApplicationConnection';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -131,8 +132,8 @@ export const SettingsAccountGroupRowDropdownMenu = ({
       provider.scope !== 'USER' ||
       !canReconnectApplicationConnection({
         connection,
-        isClientCredentialsConfigured:
-          provider.oauth?.isClientCredentialsConfigured ?? false,
+        canStartAuthorization:
+          canStartConnectionProviderAuthorization(provider),
       })
     ) {
       return [];
