@@ -1,0 +1,947 @@
+import { Logger } from '@nestjs/common';
+
+import { type Job } from 'bullmq';
+import { type Redis } from 'ioredis';
+import RedisMock from 'ioredis-mock';
+import { isDefined } from 'twenty-shared/utils';
+
+import { ENQUEUE_JOB_PRIORITY } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-priority.constant';
+import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
+import { FAIR_TICKET_OFFSET } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
+import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { buildApplicationGroupKey } from 'src/engine/core-modules/message-queue/utils/build-application-group-key.util';
+import { buildWorkspaceGroupKey } from 'src/engine/core-modules/message-queue/utils/build-workspace-group-key.util';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { SERVER_ROUTE_DISPATCH_JOB_PRIORITY } from 'src/engine/core-modules/server-route-trigger/constants/server-route-dispatch-job-priority.constant';
+
+type ScenarioJobData = { label: string; workspaceId?: string };
+
+type StoredJobOptions = { priority?: number };
+
+type StoredJob = {
+  id: string;
+  name: string;
+  data: ScenarioJobData;
+  options: StoredJobOptions;
+  timestamp: number;
+  insertionIndex: number;
+};
+
+type JobToStore = {
+  name: string;
+  data: ScenarioJobData;
+  options: StoredJobOptions;
+};
+
+type RedisClientDouble = {
+  runCommand: (name: string, args: (string | number)[]) => Promise<unknown>;
+};
+
+type BullMQDouble = {
+  jobs: StoredJob[];
+  nextInsertionIndex: number;
+  processor: ((job: Job) => Promise<void>) | undefined;
+  client: RedisClientDouble | undefined;
+  redis: Redis | undefined;
+  store: (jobToStore: JobToStore) => Promise<{ id: string }>;
+  takeNext: () => StoredJob | undefined;
+  reset: (store: { redis: Redis; client: RedisClientDouble }) => void;
+};
+
+const mockBullMQ: BullMQDouble = {
+  jobs: [],
+  nextInsertionIndex: 0,
+  processor: undefined,
+  client: undefined,
+  redis: undefined,
+  store: async ({ name, data, options }) => {
+    const job: StoredJob = {
+      id: `job-${mockBullMQ.nextInsertionIndex}`,
+      name,
+      data,
+      options,
+      timestamp: Date.now(),
+      insertionIndex: mockBullMQ.nextInsertionIndex,
+    };
+
+    mockBullMQ.nextInsertionIndex += 1;
+    mockBullMQ.jobs.push(job);
+
+    await mockBullMQ.redis?.hset(
+      `${KEY_PREFIX}:${QUEUE}:${job.id}`,
+      'priority',
+      options.priority ?? 0,
+    );
+
+    return { id: job.id };
+  },
+  takeNext: () => {
+    const [next] = [...mockBullMQ.jobs].sort(
+      (left, right) =>
+        (left.options.priority ?? 0) - (right.options.priority ?? 0) ||
+        left.insertionIndex - right.insertionIndex,
+    );
+
+    if (!isDefined(next)) {
+      return undefined;
+    }
+
+    mockBullMQ.jobs = mockBullMQ.jobs.filter((job) => job !== next);
+
+    return next;
+  },
+  reset: ({ redis, client }) => {
+    mockBullMQ.jobs = [];
+    mockBullMQ.nextInsertionIndex = 0;
+    mockBullMQ.processor = undefined;
+    mockBullMQ.client = client;
+    mockBullMQ.redis = redis;
+  },
+};
+
+jest.mock('bullmq', () => ({
+  Queue: jest.fn().mockImplementation(() => ({
+    get client() {
+      return Promise.resolve(mockBullMQ.client);
+    },
+    add: async (
+      name: string,
+      data: ScenarioJobData,
+      options: StoredJobOptions,
+    ) => mockBullMQ.store({ name, data, options }),
+    addBulk: async (
+      jobs: { name: string; data: ScenarioJobData; opts: StoredJobOptions }[],
+    ) =>
+      Promise.all(
+        jobs.map(({ name, data, opts }) =>
+          mockBullMQ.store({ name, data, options: opts }),
+        ),
+      ),
+    setGlobalConcurrency: async () => undefined,
+    removeGlobalConcurrency: async () => undefined,
+  })),
+  Worker: jest
+    .fn()
+    .mockImplementation(
+      (_queueName: string, processor: (job: Job) => Promise<void>) => {
+        mockBullMQ.processor = processor;
+
+        return { on: () => undefined };
+      },
+    ),
+  MetricsTime: { ONE_WEEK: 1 },
+  PRIORITY_LIMIT: 2 ** 21,
+}));
+
+const QUEUE = MessageQueue.logicFunctionQueue;
+const KEY_PREFIX = 'bull';
+const JOB_NAME = 'scenario-job';
+const FAIRNESS_FLAG = 'IS_WORKER_FAIRNESS_ENABLED';
+
+const flushAsyncWork = async () => {
+  for (let round = 0; round < 30; round += 1) {
+    await new Promise((resolve) => setImmediate(resolve));
+  }
+};
+
+const buildLabels = ({
+  prefix,
+  count,
+  from = 1,
+}: {
+  prefix: string;
+  count: number;
+  from?: number;
+}) => Array.from({ length: count }, (_, index) => `${prefix}${from + index}`);
+
+const ticketOf = (tag: number) => FAIR_TICKET_OFFSET + tag;
+
+const createRedisClientDouble = (redis: Redis): RedisClientDouble => ({
+  runCommand: async (name, args) => {
+    const [script, numberOfKeys, ...scriptArguments] = args;
+
+    if (name === 'evalsha') {
+      return redis.evalsha(
+        String(script),
+        Number(numberOfKeys),
+        ...scriptArguments,
+      );
+    }
+
+    if (name !== 'eval') {
+      throw new Error(`Unexpected Redis command ${name}`);
+    }
+
+    return redis.eval(String(script), Number(numberOfKeys), ...scriptArguments);
+  },
+});
+
+type EnqueueInput = { label: string; workspaceId?: string } & Pick<
+  QueueJobOptions,
+  'groupKeys' | 'priority'
+>;
+
+const createHarness = async ({
+  isFairnessEnabled,
+}: {
+  isFairnessEnabled: boolean;
+}) => {
+  const redis = new RedisMock();
+
+  await redis.flushall();
+  mockBullMQ.reset({ redis, client: createRedisClientDouble(redis) });
+
+  const metricsService = {
+    recordHistogram: jest.fn(),
+    incrementCounterForEvent: jest.fn().mockResolvedValue(undefined),
+  };
+  const driver = new BullMQDriver(
+    { prefix: KEY_PREFIX, connection: {} },
+    metricsService as never,
+    {
+      get: (key: string) =>
+        key === FAIRNESS_FLAG ? isFairnessEnabled : undefined,
+    } as never,
+    { emit: jest.fn() } as never,
+  );
+
+  driver.register(QUEUE);
+
+  const processedLabels: string[] = [];
+
+  driver.work<ScenarioJobData>(QUEUE, async ({ data }) => {
+    processedLabels.push(data.label);
+  });
+  await flushAsyncWork();
+
+  const processOne = async (): Promise<boolean> => {
+    const job = mockBullMQ.takeNext();
+
+    if (!isDefined(job) || !isDefined(mockBullMQ.processor)) {
+      return false;
+    }
+
+    await mockBullMQ.processor({
+      ...job,
+      opts: job.options,
+      priority: job.options.priority ?? 0,
+      attemptsStarted: 1,
+      updateData: jest.fn(),
+      updateProgress: jest.fn(),
+    } as unknown as Job);
+    await flushAsyncWork();
+
+    return true;
+  };
+
+  const enqueue = async ({ label, workspaceId, ...options }: EnqueueInput) => {
+    await driver.add<ScenarioJobData>(
+      QUEUE,
+      JOB_NAME,
+      { label, workspaceId },
+      options,
+    );
+  };
+
+  return {
+    metricsService,
+    enqueue,
+    enqueueMany: async ({
+      labels,
+      ...options
+    }: { labels: string[] } & Omit<EnqueueInput, 'label'>) => {
+      for (const label of labels) {
+        await enqueue({ label, ...options });
+      }
+    },
+    enqueueBulk: async ({
+      labels,
+      workspaceId,
+      groupKeys,
+    }: {
+      labels: string[];
+      workspaceId: string;
+      groupKeys?: string[];
+    }) => {
+      await driver.bulkAdd<ScenarioJobData>(
+        QUEUE,
+        JOB_NAME,
+        labels.map((label) => ({ data: { label, workspaceId } })),
+        isDefined(groupKeys) ? { groupKeys } : undefined,
+      );
+    },
+    processNext: async (count: number) => {
+      const alreadyProcessed = processedLabels.length;
+
+      for (let index = 0; index < count; index += 1) {
+        if (!(await processOne())) {
+          break;
+        }
+      }
+
+      return processedLabels.slice(alreadyProcessed);
+    },
+    processAll: async () => {
+      const alreadyProcessed = processedLabels.length;
+      let hasProcessedJob = await processOne();
+
+      while (hasProcessedJob) {
+        hasProcessedJob = await processOne();
+      }
+
+      return processedLabels.slice(alreadyProcessed);
+    },
+    setWeight: async ({
+      groupKey,
+      weight,
+    }: {
+      groupKey: string;
+      weight: number;
+    }) => {
+      await redis.hset(`${KEY_PREFIX}:${QUEUE}:fair:weights`, groupKey, weight);
+    },
+    readPriority: ({ label }: { label: string }) =>
+      mockBullMQ.jobs.find((job) => job.data.label === label)?.options.priority,
+    breakRedis: () => {
+      const runCommand = jest
+        .fn()
+        .mockRejectedValue(new Error('Redis connection lost'));
+
+      mockBullMQ.client = { runCommand };
+
+      return runCommand;
+    },
+  };
+};
+
+type Harness = Awaited<ReturnType<typeof createHarness>>;
+
+describe('BullMQDriver fairness scenarios', () => {
+  beforeAll(() => {
+    jest.useRealTimers();
+    jest.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
+    jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+  });
+
+  describe('S1: A enqueues a burst of 10 jobs, then B enqueues 1 job (group keys deduced from workspaceId)', () => {
+    const enqueue = async (harness: Harness) => {
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'A', count: 10 }),
+        workspaceId: 'A',
+      });
+      await harness.enqueue({ label: 'B1', workspaceId: 'B' });
+    };
+
+    it('flag off: B waits behind the whole burst of A', async () => {
+      const harness = await createHarness({ isFairnessEnabled: false });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual([
+        ...buildLabels({ prefix: 'A', count: 10 }),
+        'B1',
+      ]);
+    });
+
+    it('flag on: B runs right after the first job of A', async () => {
+      const harness = await createHarness({ isFairnessEnabled: true });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual([
+        'A1',
+        'B1',
+        ...buildLabels({ prefix: 'A', count: 9, from: 2 }),
+      ]);
+    });
+  });
+
+  describe('S2: A and B each enqueue a bulk of 4 jobs', () => {
+    const enqueue = async (harness: Harness) => {
+      await harness.enqueueBulk({
+        labels: buildLabels({ prefix: 'A', count: 4 }),
+        workspaceId: 'A',
+      });
+      await harness.enqueueBulk({
+        labels: buildLabels({ prefix: 'B', count: 4 }),
+        workspaceId: 'B',
+      });
+    };
+
+    it('flag off: the bulk of B waits behind the bulk of A', async () => {
+      const harness = await createHarness({ isFairnessEnabled: false });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual([
+        ...buildLabels({ prefix: 'A', count: 4 }),
+        ...buildLabels({ prefix: 'B', count: 4 }),
+      ]);
+    });
+
+    it('flag on: the two bulks alternate, each one keeping its internal order', async () => {
+      const harness = await createHarness({ isFairnessEnabled: true });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual([
+        'A1',
+        'B1',
+        'A2',
+        'B2',
+        'A3',
+        'B3',
+        'A4',
+        'B4',
+      ]);
+    });
+  });
+
+  describe('S3: A enqueues 5 default jobs, B sends an urgent route dispatch and an app enqueueJobs job', () => {
+    const enqueue = async (harness: Harness) => {
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'A', count: 5 }),
+        workspaceId: 'A',
+      });
+      await harness.enqueue({
+        label: 'R_B',
+        workspaceId: 'B',
+        priority: SERVER_ROUTE_DISPATCH_JOB_PRIORITY,
+      });
+      await harness.enqueue({
+        label: 'E_B',
+        workspaceId: 'B',
+        priority: ENQUEUE_JOB_PRIORITY,
+      });
+    };
+
+    it('flag off: the static priorities decide, the route dispatch first and the app job last', async () => {
+      const harness = await createHarness({ isFairnessEnabled: false });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual([
+        'R_B',
+        ...buildLabels({ prefix: 'A', count: 5 }),
+        'E_B',
+      ]);
+    });
+
+    it('flag on: the route dispatch still goes first and charges B, whose app job then takes a fair slot instead of the last one', async () => {
+      const harness = await createHarness({ isFairnessEnabled: true });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual([
+        'R_B',
+        'A1',
+        'A2',
+        'E_B',
+        'A3',
+        'A4',
+        'A5',
+      ]);
+    });
+  });
+
+  describe('S4: W1, W2 and W3 each enqueue 2 jobs of application H, then W4 enqueues 1 job of application X', () => {
+    const enqueue = async ({
+      harness,
+      shouldUseApplicationKey,
+    }: {
+      harness: Harness;
+      shouldUseApplicationKey: boolean;
+    }) => {
+      for (const workspaceId of ['W1', 'W2', 'W3']) {
+        for (const suffix of ['a', 'b']) {
+          await harness.enqueue({
+            label: `${workspaceId}${suffix}`,
+            workspaceId,
+            groupKeys: [
+              buildWorkspaceGroupKey(workspaceId),
+              ...(shouldUseApplicationKey
+                ? [buildApplicationGroupKey('H')]
+                : []),
+            ],
+          });
+        }
+      }
+      await harness.enqueue({
+        label: 'W4',
+        workspaceId: 'W4',
+        groupKeys: [
+          buildWorkspaceGroupKey('W4'),
+          ...(shouldUseApplicationKey ? [buildApplicationGroupKey('X')] : []),
+        ],
+      });
+    };
+
+    it('flag off: W4 waits behind the whole herd', async () => {
+      const harness = await createHarness({ isFairnessEnabled: false });
+
+      await enqueue({ harness, shouldUseApplicationKey: true });
+
+      expect(await harness.processAll()).toEqual([
+        'W1a',
+        'W1b',
+        'W2a',
+        'W2b',
+        'W3a',
+        'W3b',
+        'W4',
+      ]);
+    });
+
+    it('flag on: the application key makes the herd share one clock, W4 runs second', async () => {
+      const harness = await createHarness({ isFairnessEnabled: true });
+
+      await enqueue({ harness, shouldUseApplicationKey: true });
+
+      expect(await harness.processAll()).toEqual([
+        'W1a',
+        'W4',
+        'W1b',
+        'W2a',
+        'W2b',
+        'W3a',
+        'W3b',
+      ]);
+    });
+
+    it('flag on, workspace key only: each workspace of the herd gets a slot before W4, which runs fourth', async () => {
+      const harness = await createHarness({ isFairnessEnabled: true });
+
+      await enqueue({ harness, shouldUseApplicationKey: false });
+
+      expect(await harness.processAll()).toEqual([
+        'W1a',
+        'W2a',
+        'W3a',
+        'W4',
+        'W1b',
+        'W2b',
+        'W3b',
+      ]);
+    });
+  });
+
+  describe('S5: C keeps the queue busy with 12 jobs, A gets a burst of 6 processed, then B bursts 5 jobs and A enqueues 1 job', () => {
+    const enqueueFirstPhase = async (harness: Harness) => {
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'C', count: 12 }),
+        workspaceId: 'C',
+      });
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'A', count: 6 }),
+        workspaceId: 'A',
+      });
+    };
+    const enqueueSecondPhase = async (harness: Harness) => {
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'B', count: 5 }),
+        workspaceId: 'B',
+      });
+      await harness.enqueue({ label: 'A7', workspaceId: 'A' });
+    };
+
+    it('flag off: A7 runs last, behind the rest of C and the whole burst of B', async () => {
+      const harness = await createHarness({ isFairnessEnabled: false });
+
+      await enqueueFirstPhase(harness);
+
+      expect(await harness.processNext(12)).toEqual(
+        buildLabels({ prefix: 'C', count: 12 }),
+      );
+
+      await enqueueSecondPhase(harness);
+
+      expect(await harness.processAll()).toEqual([
+        ...buildLabels({ prefix: 'A', count: 6 }),
+        ...buildLabels({ prefix: 'B', count: 5 }),
+        'A7',
+      ]);
+    });
+
+    it('flag on: the processed burst of A is forgotten, A7 interleaves with the burst of B', async () => {
+      const harness = await createHarness({ isFairnessEnabled: true });
+
+      await enqueueFirstPhase(harness);
+
+      expect(await harness.processNext(12)).toEqual([
+        'C1',
+        'A1',
+        'C2',
+        'A2',
+        'C3',
+        'A3',
+        'C4',
+        'A4',
+        'C5',
+        'A5',
+        'C6',
+        'A6',
+      ]);
+
+      await enqueueSecondPhase(harness);
+
+      expect(await harness.processAll()).toEqual([
+        'B1',
+        'C7',
+        'B2',
+        'A7',
+        'C8',
+        'B3',
+        'C9',
+        'B4',
+        'C10',
+        'B5',
+        'C11',
+        'C12',
+      ]);
+    });
+  });
+
+  describe('S6: A enqueues 5 jobs that get fully processed, then B enqueues 4 jobs and A enqueues 2 jobs', () => {
+    const drainFirstBurst = async (harness: Harness) => {
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'A', count: 5 }),
+        workspaceId: 'A',
+      });
+
+      expect(await harness.processAll()).toEqual(
+        buildLabels({ prefix: 'A', count: 5 }),
+      );
+    };
+    const enqueueSecondPhase = async (harness: Harness) => {
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'B', count: 4 }),
+        workspaceId: 'B',
+      });
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'A', count: 2, from: 6 }),
+        workspaceId: 'A',
+      });
+    };
+
+    it('flag off: B first, then A, in arrival order', async () => {
+      const harness = await createHarness({ isFairnessEnabled: false });
+
+      await drainFirstBurst(harness);
+      await enqueueSecondPhase(harness);
+
+      expect(await harness.processAll()).toEqual([
+        ...buildLabels({ prefix: 'B', count: 4 }),
+        'A6',
+        'A7',
+      ]);
+    });
+
+    it('flag on: the virtual time caught up with A while its burst ran, A interleaves with B from the third slot', async () => {
+      const harness = await createHarness({ isFairnessEnabled: true });
+
+      await drainFirstBurst(harness);
+      await enqueueSecondPhase(harness);
+
+      expect(await harness.processAll()).toEqual([
+        'B1',
+        'B2',
+        'A6',
+        'B3',
+        'A7',
+        'B4',
+      ]);
+    });
+  });
+
+  describe('S7: application P weighs 2, application Q weighs 1, WP enqueues 4 jobs of P and WQ 4 jobs of Q, keyed by workspace and application', () => {
+    const enqueue = async (harness: Harness) => {
+      await harness.setWeight({
+        groupKey: buildApplicationGroupKey('P'),
+        weight: 2,
+      });
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'P', count: 4 }),
+        workspaceId: 'WP',
+        groupKeys: [
+          buildWorkspaceGroupKey('WP'),
+          buildApplicationGroupKey('P'),
+        ],
+      });
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'Q', count: 4 }),
+        workspaceId: 'WQ',
+        groupKeys: [
+          buildWorkspaceGroupKey('WQ'),
+          buildApplicationGroupKey('Q'),
+        ],
+      });
+    };
+
+    it('flag off: the weight is ignored, Q waits behind P', async () => {
+      const harness = await createHarness({ isFairnessEnabled: false });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual([
+        ...buildLabels({ prefix: 'P', count: 4 }),
+        ...buildLabels({ prefix: 'Q', count: 4 }),
+      ]);
+    });
+
+    it('flag on: P gets two slots for each slot of Q, the unweighted workspace key does not dilute the weight', async () => {
+      const harness = await createHarness({ isFairnessEnabled: true });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual([
+        'P1',
+        'P2',
+        'Q1',
+        'P3',
+        'P4',
+        'Q2',
+        'Q3',
+        'Q4',
+      ]);
+    });
+  });
+
+  describe('S7b: application P weighs 2; WP bulk-enqueues 4 jobs of P, then WP enqueues 1 more job of P and WQ enqueues 1 job of Q', () => {
+    const groupKeysOfP = [
+      buildWorkspaceGroupKey('WP'),
+      buildApplicationGroupKey('P'),
+    ];
+    const enqueue = async (harness: Harness) => {
+      await harness.setWeight({
+        groupKey: buildApplicationGroupKey('P'),
+        weight: 2,
+      });
+      await harness.enqueueBulk({
+        labels: buildLabels({ prefix: 'P', count: 4 }),
+        workspaceId: 'WP',
+        groupKeys: groupKeysOfP,
+      });
+      await harness.enqueue({
+        label: 'P5',
+        workspaceId: 'WP',
+        groupKeys: groupKeysOfP,
+      });
+      await harness.enqueue({
+        label: 'Q1',
+        workspaceId: 'WQ',
+        groupKeys: [
+          buildWorkspaceGroupKey('WQ'),
+          buildApplicationGroupKey('Q'),
+        ],
+      });
+    };
+
+    it('flag off: FIFO', async () => {
+      const harness = await createHarness({ isFairnessEnabled: false });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual([
+        ...buildLabels({ prefix: 'P', count: 5 }),
+        'Q1',
+      ]);
+    });
+
+    it('flag on: the bulk is spaced like single jobs of the same weight, P keeps its order and its two slots per slot of Q', async () => {
+      const harness = await createHarness({ isFairnessEnabled: true });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual([
+        'P1',
+        'P2',
+        'Q1',
+        'P3',
+        'P4',
+        'P5',
+      ]);
+    });
+  });
+
+  describe('S7c: application H has 100 jobs waiting from workspaces X1 to X10, then workspace W enqueues 1 job of H and 1 job of application Q', () => {
+    const herdLabels = buildLabels({ prefix: 'H', count: 100 });
+    const enqueue = async (harness: Harness) => {
+      for (const [index, label] of herdLabels.entries()) {
+        const workspaceId = `X${(index % 10) + 1}`;
+
+        await harness.enqueue({
+          label,
+          workspaceId,
+          groupKeys: [
+            buildWorkspaceGroupKey(workspaceId),
+            buildApplicationGroupKey('H'),
+          ],
+        });
+      }
+      await harness.enqueue({
+        label: 'W_H',
+        workspaceId: 'W',
+        groupKeys: [buildWorkspaceGroupKey('W'), buildApplicationGroupKey('H')],
+      });
+      await harness.enqueue({
+        label: 'W_Q',
+        workspaceId: 'W',
+        groupKeys: [buildWorkspaceGroupKey('W'), buildApplicationGroupKey('Q')],
+      });
+    };
+
+    it('flag off: W waits behind the whole backlog of H', async () => {
+      const harness = await createHarness({ isFairnessEnabled: false });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual([...herdLabels, 'W_H', 'W_Q']);
+    });
+
+    it('flag on: the job of H takes its turn in the backlog of H, the job of Q runs right away because W is only charged for its own jobs', async () => {
+      const harness = await createHarness({ isFairnessEnabled: true });
+
+      await enqueue(harness);
+
+      expect(harness.readPriority({ label: 'W_H' })).toBe(ticketOf(100));
+      expect(harness.readPriority({ label: 'W_Q' })).toBe(ticketOf(1));
+      expect(await harness.processNext(3)).toEqual(['H1', 'H2', 'W_Q']);
+      expect(await harness.processAll()).toEqual([
+        ...herdLabels.slice(2),
+        'W_H',
+      ]);
+    });
+  });
+
+  describe('S7d: application P weighs 2; X enqueues 6 jobs of P, W bulk-enqueues 4 jobs of P then 1 job of application Q, X enqueues 1 more job of P', () => {
+    const groupKeysOfP = (workspaceId: string) => [
+      buildWorkspaceGroupKey(workspaceId),
+      buildApplicationGroupKey('P'),
+    ];
+    const enqueue = async (harness: Harness) => {
+      await harness.setWeight({
+        groupKey: buildApplicationGroupKey('P'),
+        weight: 2,
+      });
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'P', count: 6 }),
+        workspaceId: 'X',
+        groupKeys: groupKeysOfP('X'),
+      });
+      await harness.enqueueBulk({
+        labels: buildLabels({ prefix: 'B', count: 4 }),
+        workspaceId: 'W',
+        groupKeys: groupKeysOfP('W'),
+      });
+      await harness.enqueue({
+        label: 'Q1',
+        workspaceId: 'W',
+        groupKeys: [buildWorkspaceGroupKey('W'), buildApplicationGroupKey('Q')],
+      });
+      await harness.enqueue({
+        label: 'P7',
+        workspaceId: 'X',
+        groupKeys: groupKeysOfP('X'),
+      });
+    };
+
+    it('flag off: FIFO', async () => {
+      const harness = await createHarness({ isFairnessEnabled: false });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual([
+        ...buildLabels({ prefix: 'P', count: 6 }),
+        ...buildLabels({ prefix: 'B', count: 4 }),
+        'Q1',
+        'P7',
+      ]);
+    });
+
+    it('flag on: the bulk fills the half-slots it allocated on P, W is charged those half-slots only, so its job of Q (ticket 2, like P6) overtakes its bulk and the next job of P follows the bulk', async () => {
+      const harness = await createHarness({ isFairnessEnabled: true });
+
+      await enqueue(harness);
+
+      expect(harness.readPriority({ label: 'B1' })).toBe(ticketOf(3));
+      expect(harness.readPriority({ label: 'B4' })).toBe(ticketOf(4));
+      expect(harness.readPriority({ label: 'Q1' })).toBe(ticketOf(2));
+      expect(harness.readPriority({ label: 'P7' })).toBe(ticketOf(5));
+      expect(await harness.processAll()).toEqual([
+        ...buildLabels({ prefix: 'P', count: 6 }),
+        'Q1',
+        ...buildLabels({ prefix: 'B', count: 4 }),
+        'P7',
+      ]);
+    });
+  });
+
+  describe('S8: Redis is unavailable, A enqueues 3 jobs and B enqueues 1 job', () => {
+    const enqueue = async (harness: Harness) => {
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'A', count: 3 }),
+        workspaceId: 'A',
+      });
+      await harness.enqueue({ label: 'B1', workspaceId: 'B' });
+    };
+    const expectedOrder = [...buildLabels({ prefix: 'A', count: 3 }), 'B1'];
+
+    it('flag off: Redis is never called and the order is FIFO', async () => {
+      const harness = await createHarness({ isFairnessEnabled: false });
+      const runCommand = harness.breakRedis();
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual(expectedOrder);
+      expect(runCommand).not.toHaveBeenCalled();
+      expect(
+        harness.metricsService.incrementCounterForEvent,
+      ).not.toHaveBeenCalledWith(
+        expect.objectContaining({ key: MetricsKeys.JobFairTagFallback }),
+      );
+    });
+
+    it('flag on: every job falls back to FIFO and the fallback is counted', async () => {
+      const harness = await createHarness({ isFairnessEnabled: true });
+
+      harness.breakRedis();
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual(expectedOrder);
+      expect(
+        harness.metricsService.incrementCounterForEvent.mock.calls.filter(
+          ([event]) => event.key === MetricsKeys.JobFairTagFallback,
+        ),
+      ).toHaveLength(4);
+    });
+  });
+
+  describe('S9: 3 jobs without workspaceId, then 1 job of workspace W', () => {
+    const enqueue = async (harness: Harness) => {
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'S', count: 3 }),
+      });
+      await harness.enqueue({ label: 'W1', workspaceId: 'W' });
+    };
+
+    it('flag off: the workspace job waits behind the system jobs', async () => {
+      const harness = await createHarness({ isFairnessEnabled: false });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual([
+        ...buildLabels({ prefix: 'S', count: 3 }),
+        'W1',
+      ]);
+    });
+
+    it('flag on: the system jobs form one group, the workspace job runs second', async () => {
+      const harness = await createHarness({ isFairnessEnabled: true });
+
+      await enqueue(harness);
+
+      expect(await harness.processAll()).toEqual(['S1', 'W1', 'S2', 'S3']);
+    });
+  });
+});
