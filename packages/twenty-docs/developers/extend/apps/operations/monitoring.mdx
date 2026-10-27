@@ -1,13 +1,11 @@
 ---
 title: Monitoring
 description: Follow how your app behaves across every workspace that installs it — errors, rate limits, credits, installs and function performance.
-icon: "chart-line"
 ---
 
-{/* Remove this disclaimer when the IS_APPLICATION_MONITORING_ENABLED feature flag key is removed. */}
-<Warning>
-Monitoring is still behind a feature flag and is not available on every workspace yet. If you don't see the **View monitoring** button, it is not enabled on your workspace.
-</Warning>
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Once your app is installed in other workspaces, you need to know when it breaks. Twenty records what happens to your app on the platform and shows it in two places:
 
@@ -75,3 +73,5 @@ For your own development server, `twenty app logs` streams function logs live in
 - **Jobs are rate limited**: database event or cron triggers fire faster than jobs can be enqueued. Narrow the trigger, for example with `updatedFields` on a `databaseEvent` trigger, or do the work in fewer, larger runs. See [Logic functions](/developers/extend/apps/logic/logic-functions).
 - **Install or upgrade failures**: check your [install hooks](/developers/extend/apps/config/install-hooks). The error message is recorded with the failure.
 - **Slow functions**: a high 95th percentile duration points to a function worth profiling or splitting.
+
+<PageBanner illustration="card-page-monitoring" />

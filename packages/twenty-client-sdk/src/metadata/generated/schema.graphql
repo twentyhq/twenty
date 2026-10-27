@@ -243,6 +243,12 @@ type AiChatUsage {
   periodEnd: DateTime
 }
 
+type AiChatUserCreditsUsage {
+  consumedValue: BigInt
+  limitValue: BigInt!
+  periodEnd: DateTime!
+}
+
 enum AiModelTier {
   balanced
   extraFast
@@ -584,6 +590,7 @@ type ApplicationMonitoringActivityBucket {
 type ApplicationMonitoringCreditBucket {
   bucketStart: DateTime!
   creditsUsed: Float!
+  operationType: String!
 }
 
 type ApplicationMonitoringFunction {
@@ -1016,6 +1023,7 @@ type BillingSubscription {
   cancelAt: DateTime
   collectionMethod: BillingSubscriptionCollectionMethod
   currentPeriodEnd: DateTime
+  hasUserCredits: Boolean
   id: UUID!
   interval: SubscriptionInterval
   metadata: JSON!
@@ -1428,6 +1436,7 @@ input CreateAppMessageChannelInput {
   connectedAccountId: UUID!
   displayName: String
   handle: String!
+  participantHandleFieldUniversalIdentifier: UUID
   visibility: MessageChannelVisibility!
 }
 
@@ -2258,7 +2267,6 @@ type FeatureFlag {
 
 enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED
-  IS_APPLICATION_MONITORING_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
@@ -2953,6 +2961,7 @@ type MessageChannel {
   isContactAutoCreationEnabled: Boolean!
   isSyncEnabled: Boolean!
   messageFolderImportPolicy: MessageFolderImportPolicy!
+  participantHandleFieldUniversalIdentifier: UUID
   pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
   syncStage: MessageChannelSyncStage!
   syncStageStartedAt: DateTime
@@ -3973,6 +3982,7 @@ type Query {
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary!
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
   aiChatUsage: AiChatUsage
+  aiChatUserCreditsUsage: AiChatUserCreditsUsage
   apiKey(input: GetApiKeyInput!): ApiKey
   apiKeys: [ApiKey!]!
   appConnection(id: ID!): AppConnection!

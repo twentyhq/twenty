@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { UserCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-user-credits-fallback.enum';
 import { type FlatBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -58,10 +59,19 @@ export class BillingCreditAllowanceService {
     };
   }
 
-  async getPlanKey(workspaceId: string): Promise<string | null> {
+  async getSubscriptionPlan(
+    workspaceId: string,
+  ): Promise<{ planKey: string | null; isTrialing: boolean } | null> {
     const subscription = await this.findCurrentBillingSubscription(workspaceId);
 
-    return subscription?.planKey ?? null;
+    if (!isDefined(subscription)) {
+      return null;
+    }
+
+    return {
+      planKey: subscription.planKey,
+      isTrialing: subscription.status === SubscriptionStatus.Trialing,
+    };
   }
 
   async getUserCreditsFallback(
