@@ -10,7 +10,6 @@ type CanCreateRecordsForObjectMetadataItemParams = {
   >;
 };
 
-// isSystem only controls Data Model visibility; isUICreatable governs creation.
 // No CREATE permission exists yet, so canUpdateObjectRecords is the proxy (inline creation edits a blank record).
 export const canCreateRecordsForObjectMetadataItem = ({
   objectPermissions,
