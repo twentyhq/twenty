@@ -74,7 +74,7 @@ const CHANNEL_ROLES = parse(
 );
 
 const CHANNELS = parse(
-  `query Channels { agentChatChannels { id name applicationId isAccessible } }`,
+  `query Channels { agentChatChannels { id name applicationId isCustom isAccessible } }`,
 );
 
 const CREATE_THREAD = parse(
@@ -227,6 +227,7 @@ const listChannels = async (
     id: string;
     name: string;
     applicationId: string;
+    isCustom: boolean;
     isAccessible: boolean;
   }[]
 > => {
@@ -621,9 +622,10 @@ describe('Chat channels through the authenticated API', () => {
 
     const createdChannel = channels[channels.length - 1];
 
-    expect(channels[0]).toMatchObject({ name: 'General' });
+    expect(channels[0]).toMatchObject({ name: 'General', isCustom: false });
     expect(createdChannel).toMatchObject({
       id: channelId,
+      isCustom: true,
       isAccessible: true,
     });
     expect(createdChannel.applicationId).not.toBe(channels[0].applicationId);

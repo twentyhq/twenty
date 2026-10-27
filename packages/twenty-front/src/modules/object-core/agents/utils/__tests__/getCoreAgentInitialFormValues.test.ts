@@ -11,6 +11,7 @@ const agent = {
   modelId: 'anthropic/claude-sonnet-5',
   responseFormat: { type: 'json', schema: {} },
   roleId: 'role-id',
+  isCustom: true,
   isSystem: false,
   modelConfiguration: { webSearch: { enabled: true } },
   triggers: [

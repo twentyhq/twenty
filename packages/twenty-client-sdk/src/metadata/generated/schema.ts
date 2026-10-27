@@ -20,6 +20,8 @@ export interface Agent {
     description?: Scalars['String']
     icon?: Scalars['String']
     id: Scalars['UUID']
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
+    isCustom: Scalars['Boolean']
     isSystem: Scalars['Boolean']
     label: Scalars['String']
     modelConfiguration?: Scalars['JSON']
@@ -39,6 +41,8 @@ export interface AgentChatChannel {
     icon?: Scalars['String']
     id: Scalars['UUID']
     isAccessible?: Scalars['Boolean']
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
+    isCustom: Scalars['Boolean']
     name: Scalars['String']
     position: Scalars['Float']
     roleIds: Scalars['UUID'][]
@@ -1747,6 +1751,8 @@ export interface Index {
     indexFieldMetadataList: IndexField[]
     indexType: IndexType
     indexWhereClause?: Scalars['String']
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
+    isCustom?: Scalars['Boolean']
     isSystemSideEffect: Scalars['Boolean']
     isUnique: Scalars['Boolean']
     name: Scalars['String']
@@ -3404,6 +3410,8 @@ export interface Skill {
     icon?: Scalars['String']
     id: Scalars['UUID']
     isActive: Scalars['Boolean']
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
+    isCustom: Scalars['Boolean']
     isSystem: Scalars['Boolean']
     label: Scalars['String']
     name: Scalars['String']
@@ -3842,6 +3850,8 @@ export interface View {
     id: Scalars['UUID']
     isActive: Scalars['Boolean']
     isCompact: Scalars['Boolean']
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
+    isCustom: Scalars['Boolean']
     isSystemSideEffect: Scalars['Boolean']
     kanbanAggregateOperation?: AggregateOperations
     kanbanAggregateOperationFieldMetadataId?: Scalars['UUID']
@@ -4200,6 +4210,8 @@ export interface AgentGenqlSelection{
     description?: boolean | number
     icon?: boolean | number
     id?: boolean | number
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
+    isCustom?: boolean | number
     isSystem?: boolean | number
     label?: boolean | number
     modelConfiguration?: boolean | number
@@ -4220,6 +4232,8 @@ export interface AgentChatChannelGenqlSelection{
     icon?: boolean | number
     id?: boolean | number
     isAccessible?: boolean | number
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
+    isCustom?: boolean | number
     name?: boolean | number
     position?: boolean | number
     roleIds?: boolean | number
@@ -6206,6 +6220,8 @@ export interface IndexGenqlSelection{
     indexFieldMetadataList?: IndexFieldGenqlSelection
     indexType?: boolean | number
     indexWhereClause?: boolean | number
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
+    isCustom?: boolean | number
     isSystemSideEffect?: boolean | number
     isUnique?: boolean | number
     name?: boolean | number
@@ -6234,7 +6250,7 @@ export interface IndexFieldGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface IndexFilter {and?: (IndexFilter[] | null),id?: (UUIDFilterComparison | null),or?: (IndexFilter[] | null)}
+export interface IndexFilter {and?: (IndexFilter[] | null),id?: (UUIDFilterComparison | null),isCustom?: (BooleanFieldComparison | null),or?: (IndexFilter[] | null)}
 
 export interface IngestAppMessagesInput {messageChannelId: Scalars['UUID'],messages: AppMessageInput[]}
 
@@ -7976,6 +7992,8 @@ export interface SkillGenqlSelection{
     icon?: boolean | number
     id?: boolean | number
     isActive?: boolean | number
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
+    isCustom?: boolean | number
     isSystem?: boolean | number
     label?: boolean | number
     name?: boolean | number
@@ -8691,6 +8709,8 @@ export interface ViewGenqlSelection{
     id?: boolean | number
     isActive?: boolean | number
     isCompact?: boolean | number
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
+    isCustom?: boolean | number
     isSystemSideEffect?: boolean | number
     kanbanAggregateOperation?: boolean | number
     kanbanAggregateOperationFieldMetadataId?: boolean | number

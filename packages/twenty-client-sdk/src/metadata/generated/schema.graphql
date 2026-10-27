@@ -17,6 +17,7 @@ type Agent {
   description: String
   icon: String
   id: UUID!
+  isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystem: Boolean!
   label: String!
   modelConfiguration: JSON
@@ -35,6 +36,7 @@ type AgentChatChannel {
   icon: String
   id: UUID!
   isAccessible: Boolean
+  isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   name: String!
   position: Float!
   roleIds: [UUID!]!
@@ -2609,6 +2611,7 @@ type Index {
   indexFieldMetadataList: [IndexField!]!
   indexType: IndexType!
   indexWhereClause: String
+  isCustom: Boolean @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystemSideEffect: Boolean!
   isUnique: Boolean!
   name: String!
@@ -2635,6 +2638,7 @@ type IndexField {
 input IndexFilter {
   and: [IndexFilter!]
   id: UUIDFilterComparison
+  isCustom: BooleanFieldComparison @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   or: [IndexFilter!]
 }
 
@@ -4658,6 +4662,7 @@ type Skill {
   icon: String
   id: UUID!
   isActive: Boolean!
+  isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystem: Boolean!
   label: String!
   name: String!
@@ -5865,6 +5870,7 @@ type View {
   id: UUID!
   isActive: Boolean!
   isCompact: Boolean!
+  isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystemSideEffect: Boolean!
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID

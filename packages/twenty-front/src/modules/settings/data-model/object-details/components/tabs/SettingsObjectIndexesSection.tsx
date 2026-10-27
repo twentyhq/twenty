@@ -95,10 +95,10 @@ export const SettingsObjectIndexesSection = ({
       id: indexMetadataItem.id,
       name: indexMetadataItem.name,
       isUnique: indexMetadataItem.isUnique,
-      isCustom: getIsIndexMetadataItemCustom(
+      isCustom: getIsIndexMetadataItemCustom({
         indexMetadataItem,
         workspaceCustomApplicationId,
-      ),
+      }),
       indexType: indexMetadataItem.indexType,
       indexWhereClause: indexMetadataItem.indexWhereClause,
       indexFields:

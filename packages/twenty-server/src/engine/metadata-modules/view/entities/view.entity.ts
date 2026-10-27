@@ -126,7 +126,7 @@ export class ViewEntity
   isCompact: boolean;
 
   // dropped in 2.54 by DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand
-  @Column({ type: 'boolean', default: false })
+  @Column({ nullable: false, default: false, type: 'boolean' })
   isCustom: WasRemovedInUpgrade<boolean>;
 
   // Deprecated: superseded by objectMetadata.openRecordIn and the member preference.

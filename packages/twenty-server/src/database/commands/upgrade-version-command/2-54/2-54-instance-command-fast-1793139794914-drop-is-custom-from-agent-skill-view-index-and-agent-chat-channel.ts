@@ -6,8 +6,7 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 const TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-64aa-4b6f-b003-9c74b97cee20';
 
-// 2.53 stopped reading isCustom, and 2.52 pods still select it while 2.53
-// rolls out, so the columns are dropped one release later
+// Dropped one release after 2.53 stopped reading isCustom, since 2.52 pods still select it
 @RegisteredInstanceCommand('2.54.0', 1793139794914)
 export class DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand
   implements FastInstanceCommand

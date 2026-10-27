@@ -101,10 +101,11 @@ export const SettingsObjectNewIndex = () => {
 
   const customIndexCount = activeObjectMetadataItem.indexMetadatas.filter(
     (indexMetadata) =>
-      getIsIndexMetadataItemCustom(
-        indexMetadata,
-        currentWorkspace?.workspaceCustomApplication?.id,
-      ),
+      getIsIndexMetadataItemCustom({
+        indexMetadataItem: indexMetadata,
+        workspaceCustomApplicationId:
+          currentWorkspace?.workspaceCustomApplication?.id,
+      }),
   ).length;
   const reachedCap = customIndexCount >= MAX_CUSTOM_INDEXES_PER_OBJECT;
 

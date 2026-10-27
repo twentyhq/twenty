@@ -1,7 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import { BooleanFieldComparisonInput } from 'src/engine/metadata-modules/pagination/dtos/boolean-field-comparison.input';
 import { UUIDFilterComparisonInput } from 'src/engine/metadata-modules/pagination/dtos/uuid-filter-comparison.input';
 import { type MetadataFilterColumn } from 'src/engine/metadata-modules/pagination/types/metadata-filter-column.type';
+import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 
 @InputType('IndexFilter')
 export class IndexFilterInput {
@@ -13,6 +15,12 @@ export class IndexFilterInput {
 
   @Field(() => UUIDFilterComparisonInput, { nullable: true })
   id?: UUIDFilterComparisonInput;
+
+  @Field(() => BooleanFieldComparisonInput, {
+    nullable: true,
+    deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
+  })
+  isCustom?: BooleanFieldComparisonInput;
 }
 
 export const INDEX_FILTER_COLUMN_BY_FILTER_FIELD: Record<
@@ -20,4 +28,5 @@ export const INDEX_FILTER_COLUMN_BY_FILTER_FIELD: Record<
   MetadataFilterColumn
 > = {
   id: { column: 'id', type: 'uuid' },
+  isCustom: { column: 'isCustom', type: 'boolean' },
 };
