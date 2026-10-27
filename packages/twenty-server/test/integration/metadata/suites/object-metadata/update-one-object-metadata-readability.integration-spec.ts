@@ -67,23 +67,22 @@ describe('Object metadata readability update', () => {
     expect(openData.updateOneObject.readability).toBe(MetadataReadability.OPEN);
   });
 
-  it.each([
-    MetadataReadability.SYSTEM,
-    MetadataReadability.APPLICATION,
-    MetadataReadability.INHERITED,
-  ])('should reject setting readability to %s', async (readability) => {
-    const { errors } = await updateOneObjectMetadata({
-      expectToFail: true,
-      input: {
-        idToUpdate: customObjectMetadataId,
-        updatePayload: { readability },
-      },
-    });
+  it.each([MetadataReadability.SYSTEM, MetadataReadability.INHERITED])(
+    'should reject setting readability to %s',
+    async (readability) => {
+      const { errors } = await updateOneObjectMetadata({
+        expectToFail: true,
+        input: {
+          idToUpdate: customObjectMetadataId,
+          updatePayload: { readability },
+        },
+      });
 
-    expect(errors?.[0]?.message).toContain(
-      'readability must be one of the following values',
-    );
-  });
+      expect(errors?.[0]?.message).toContain(
+        'readability must be one of the following values',
+      );
+    },
+  );
 
   it('should reject an unknown readability value', async () => {
     const { errors } = await updateOneObjectMetadata({

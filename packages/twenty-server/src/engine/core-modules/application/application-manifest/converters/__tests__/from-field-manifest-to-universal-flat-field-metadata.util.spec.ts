@@ -170,13 +170,25 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
     it('carries the manifest value through', () => {
       const result = fromFieldManifestToUniversalFlatFieldMetadata({
         fieldManifest: buildFieldManifest({
-          writability: MetadataWritability.APPLICATION,
+          writability: MetadataWritability.SYSTEM,
         }),
         applicationUniversalIdentifier: APP_UID,
         now: NOW,
       });
 
-      expect(result.writability).toBe(MetadataWritability.APPLICATION);
+      expect(result.writability).toBe(MetadataWritability.SYSTEM);
+    });
+
+    it('closes a legacy APPLICATION field', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({
+          writability: 'APPLICATION' as MetadataWritability,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.writability).toBe(MetadataWritability.SYSTEM);
     });
   });
 

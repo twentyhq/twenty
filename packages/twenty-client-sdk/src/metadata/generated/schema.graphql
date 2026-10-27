@@ -3085,7 +3085,6 @@ enum MetadataEventAction {
 }
 
 enum MetadataReadability {
-  APPLICATION
   INHERITED
   OPEN
   PRIVATE
@@ -3126,7 +3125,6 @@ input MetadataTranslationsInput {
 }
 
 enum MetadataWritability {
-  APPLICATION
   OPEN
   SYSTEM
 }

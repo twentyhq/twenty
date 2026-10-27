@@ -35,7 +35,7 @@ const TEXT_FIELD_MANIFEST: Required<
   defaultValue: "'untitled'",
   isNullable: false,
   isUIEditable: false,
-  writability: MetadataWritability.APPLICATION,
+  writability: MetadataWritability.SYSTEM,
   isUnique: true,
   isSearchable: true,
   isAuditLogged: false,

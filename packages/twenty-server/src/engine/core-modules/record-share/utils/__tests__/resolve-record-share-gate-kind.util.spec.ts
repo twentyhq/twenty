@@ -37,16 +37,6 @@ describe('resolveRecordShareGateKind', () => {
       expected: 'deny',
     },
     {
-      readability: MetadataReadability.APPLICATION,
-      isOwningApplication: false,
-      expected: 'deny',
-    },
-    {
-      readability: MetadataReadability.APPLICATION,
-      isOwningApplication: true,
-      expected: 'open',
-    },
-    {
       readability: MetadataReadability.PRIVATE,
       isOwningApplication: false,
       expected: 'private',

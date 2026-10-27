@@ -3263,7 +3263,6 @@ export enum MetadataEventAction {
 }
 
 export enum MetadataReadability {
-  APPLICATION = 'APPLICATION',
   INHERITED = 'INHERITED',
   OPEN = 'OPEN',
   PRIVATE = 'PRIVATE',
@@ -3303,7 +3302,6 @@ export type MetadataTranslationsInput = {
 };
 
 export enum MetadataWritability {
-  APPLICATION = 'APPLICATION',
   OPEN = 'OPEN',
   SYSTEM = 'SYSTEM'
 }

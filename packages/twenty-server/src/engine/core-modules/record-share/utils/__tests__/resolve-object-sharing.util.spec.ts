@@ -27,7 +27,6 @@ describe('resolveObjectSharing', () => {
     [MetadataReadability.OPEN, false, false, RecordSharingMode.ROLE_ONLY],
     [MetadataReadability.OPEN, true, true, RecordSharingMode.ROLE_ONLY],
     [MetadataReadability.SYSTEM, false, true, RecordSharingMode.ROLE_ONLY],
-    [MetadataReadability.APPLICATION, false, true, RecordSharingMode.ROLE_ONLY],
   ])(
     'should resolve a %s object (system: %s) with record sharing %s to %s',
     (readability, isSystem, isRecordSharingEnabled, sharingMode) => {
@@ -75,7 +74,6 @@ describe('resolveObjectSharing', () => {
   it.each([
     { sharingReach: ObjectSharingReach.ROLE_ACCESS },
     { readability: MetadataReadability.SYSTEM },
-    { readability: MetadataReadability.APPLICATION },
     { isSystem: true },
     { readability: MetadataReadability.PRIVATE, isSystem: true },
   ])('should keep grants within the role on %o', (object) => {
