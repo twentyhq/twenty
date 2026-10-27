@@ -701,8 +701,6 @@ export class AuthResolver {
     @AuthUser() currentUser: AuthContextUser,
     @AuthProvider() authProvider: AuthProviderEnum,
     @Args('input', { nullable: true }) input?: SignUpInNewWorkspaceInput,
-    @Args('captchaToken', { type: () => String, nullable: true })
-    _captchaToken?: string,
   ): Promise<SignUpDTO> {
     assertIsDefinedOrThrow(
       authProvider,

@@ -28,7 +28,9 @@ export class CaptchaGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context);
 
-    const { captchaToken: token } = ctx.getArgs();
+    const { captchaToken, input } = ctx.getArgs();
+
+    const token = captchaToken ?? input?.captchaToken;
 
     const result = await this.captchaService.validate(token || '');
 

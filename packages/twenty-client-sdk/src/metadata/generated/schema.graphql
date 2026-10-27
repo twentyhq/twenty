@@ -3343,7 +3343,7 @@ type Mutation {
   signIn(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signOut(refreshToken: String): Boolean!
   signUp(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
-  signUpInNewWorkspace(captchaToken: String, input: SignUpInNewWorkspaceInput): SignUp!
+  signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
   signUpInWorkspace(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String): SignUp!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   snoozeAgentChatThreadInChannel(snoozedUntil: DateTime!, threadId: UUID!): Boolean!
@@ -4584,6 +4584,7 @@ type SignUp {
 }
 
 input SignUpInNewWorkspaceInput {
+  captchaToken: String
   displayName: String
   partner: String
   subdomain: String

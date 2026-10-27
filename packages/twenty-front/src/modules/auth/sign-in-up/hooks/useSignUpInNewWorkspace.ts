@@ -57,8 +57,12 @@ export const useSignUpInNewWorkspace = () => {
 
       const { data } = await signUpInNewWorkspaceMutation({
         variables: {
-          input: { displayName, subdomain, partner: partnerCookie?.partner },
-          captchaToken,
+          input: {
+            displayName,
+            subdomain,
+            partner: partnerCookie?.partner,
+            captchaToken,
+          },
         },
       });
       assertIsDefinedOrThrow(data?.signUpInNewWorkspace);

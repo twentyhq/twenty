@@ -8309,9 +8309,6 @@ export default {
             "signUpInNewWorkspace": [
                 482,
                 {
-                    "captchaToken": [
-                        1
-                    ],
                     "input": [
                         483
                     ]
@@ -12339,6 +12336,9 @@ export default {
             ]
         },
         "SignUpInNewWorkspaceInput": {
+            "captchaToken": [
+                1
+            ],
             "displayName": [
                 1
             ],
