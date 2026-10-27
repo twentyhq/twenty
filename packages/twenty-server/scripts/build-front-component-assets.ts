@@ -1,5 +1,5 @@
 import { mkdir, rm } from 'fs/promises';
-import { join, resolve } from 'path';
+import { resolve } from 'path';
 import { build } from 'esbuild';
 
 const buildAssets = async () => {
@@ -10,13 +10,17 @@ const buildAssets = async () => {
   await rm(directory, { recursive: true, force: true });
   await mkdir(directory, { recursive: true });
   await build({
-    entryPoints: [
-      resolve(
+    entryPoints: {
+      index: resolve(
         __dirname,
         '../src/engine/metadata-modules/ai/ai-front-component/front-component-builder.handler.ts',
       ),
-    ],
-    outfile: join(directory, 'index.js'),
+      local: resolve(
+        __dirname,
+        '../src/engine/metadata-modules/ai/ai-front-component/front-component-builder.local.ts',
+      ),
+    },
+    outdir: directory,
     bundle: true,
     platform: 'node',
     target: 'node22',
