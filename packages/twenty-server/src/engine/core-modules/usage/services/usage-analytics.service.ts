@@ -169,26 +169,34 @@ export class UsageAnalyticsService {
     periodStart: Date;
     periodEnd: Date;
     bucketSizeInSeconds: number;
-  }): Promise<{ bucketStart: Date; creditsUsedMicro: number }[]> {
+  }): Promise<
+    {
+      bucketStart: Date;
+      operationType: string;
+      creditsUsedMicro: number;
+    }[]
+  > {
     if (!isNonEmptyArray(installations)) {
       return [];
     }
 
     const rows = await this.clickHouseService.selectOrThrow<{
       bucketStart: string;
+      operationType: string;
       creditsUsedMicro: string | number;
     }>(
       `SELECT
          toStartOfInterval(timestamp, toIntervalSecond({bucketSizeInSeconds:UInt32})) AS bucketStart,
+         operationType,
          sum(creditsUsedMicro) AS creditsUsedMicro
        FROM usageEvent
        WHERE workspaceId IN {workspaceIds:Array(String)}
          AND applicationId IN {applicationIds:Array(String)}
          AND timestamp >= {periodStart:DateTime64(3, 'UTC')}
          AND timestamp < {periodEnd:DateTime64(3, 'UTC')}
-       GROUP BY bucketStart
+       GROUP BY bucketStart, operationType
        HAVING creditsUsedMicro != 0
-       ORDER BY bucketStart
+       ORDER BY bucketStart, operationType
        SETTINGS max_execution_time = 10`,
       {
         ...buildInstallationFilterParams(installations),
@@ -198,8 +206,9 @@ export class UsageAnalyticsService {
       },
     );
 
-    return rows.map(({ bucketStart, creditsUsedMicro }) => ({
+    return rows.map(({ bucketStart, operationType, creditsUsedMicro }) => ({
       bucketStart: parseClickHouseDateTime(bucketStart),
+      operationType,
       creditsUsedMicro: Number(creditsUsedMicro),
     }));
   }

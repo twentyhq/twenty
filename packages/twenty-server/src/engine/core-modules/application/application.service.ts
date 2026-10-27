@@ -15,6 +15,7 @@ import {
 import { v4 } from 'uuid';
 
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
+import { getDefaultApplicationPackageFieldsForApplication } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields-for-application.util';
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -659,11 +660,9 @@ export class ApplicationService {
       select: ['workspaceCustomApplicationId'],
     });
     const { packageJsonContent, yarnLockContent } =
-      await getDefaultApplicationPackageFields({
-        directory:
-          workspace?.workspaceCustomApplicationId === application.id
-            ? WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME
-            : undefined,
+      await getDefaultApplicationPackageFieldsForApplication({
+        applicationId: application.id,
+        workspaceCustomApplicationId: workspace?.workspaceCustomApplicationId,
       });
 
     await this.uploadPackageFilesAndSetFileIds({

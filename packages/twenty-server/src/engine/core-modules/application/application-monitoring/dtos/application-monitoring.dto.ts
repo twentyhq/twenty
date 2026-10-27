@@ -38,6 +38,10 @@ export class ApplicationMonitoringCreditBucketDTO {
   @Field(() => Date)
   bucketStart: Date;
 
+  // A string, not the enum: apps record operations they declare themselves
+  @Field(() => String)
+  operationType: string;
+
   @Field(() => Float)
   creditsUsed: number;
 }
