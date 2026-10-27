@@ -6,12 +6,10 @@ import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/applica
 import {
   BUILD_LOCK_RETRY_MS,
   BUILD_LOCK_MAX_RETRIES,
-  BUILDER_LAMBDA_MEMORY_MB,
-  BUILDER_LAMBDA_TIMEOUT_SECONDS,
-  YARN_INSTALL_LAMBDA_MEMORY_MB,
-  YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
-  LAMBDA_EPHEMERAL_STORAGE_MB,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-lambda-limits.constant';
+import { FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-vendor-lambda-limits.constant';
+import { ensureFrontComponentLambdaExists } from 'src/engine/metadata-modules/ai/ai-front-component/utils/ensure-front-component-lambda-exists.util';
 import { WorkspaceFrontComponentDependenciesService } from 'src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service';
 import { type FrontComponentBuilderInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-input.type';
 import { frontComponentVendorResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-vendor-result.schema';
@@ -33,6 +31,7 @@ import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enum
 import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
+import { type LambdaConnectionOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { getLambdaConnectionOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-connection-options.util';
 import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name.util';
 import { FRONT_COMPONENT_BUILD_ASSETS_DIRECTORY } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-build-assets-directory.constant';
@@ -47,7 +46,7 @@ import {
 export class FrontComponentCompilerService extends DriverFactoryBase<{
   awsClient: LambdaAwsClientService;
   toolFunctions: LambdaToolFunctionsService;
-  resourceNamespace: string;
+  options: LambdaConnectionOptions;
 }> {
   constructor(
     twentyConfigService: TwentyConfigService,
@@ -71,11 +70,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
       cacheStorageService: this.cacheStorage,
     });
     const toolFunctions = new LambdaToolFunctionsService(options, awsClient);
-    return {
-      awsClient,
-      toolFunctions,
-      resourceNamespace: options.resourceNamespace,
-    };
+    return { awsClient, toolFunctions, options };
   }
   async build({
     workspaceId,
@@ -97,7 +92,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
       ...input,
       query: frontComponentQuerySchema.parse(input.query),
     });
-    const { toolFunctions, resourceNamespace } = this.getCurrentDriver();
+    const { awsClient, toolFunctions, options } = this.getCurrentDriver();
     const dependencies =
       await this.workspaceDependencies.readOrThrow(workspaceId);
     const handlerSource = await fileSystemPromises.readFile(
@@ -106,17 +101,21 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
     );
     const functionName = computeHashedLambdaResourceName({
       resourceNamePrefix: 'twenty-front-component-builder',
-      namespace: resourceNamespace,
+      namespace: options.resourceNamespace,
       contents: [
         workspaceId,
         handlerSource,
-        String(BUILDER_LAMBDA_MEMORY_MB),
-        String(BUILDER_LAMBDA_TIMEOUT_SECONDS),
-        String(LAMBDA_EPHEMERAL_STORAGE_MB),
+        String(FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS.memoryMb),
+        String(FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS.timeoutSeconds),
+        String(FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS.ephemeralStorageMb),
       ],
     });
-    await toolFunctions.ensureBuilderLambdaExists({
+    await ensureFrontComponentLambdaExists({
+      awsClient,
+      toolFunctions,
+      options,
       functionName,
+      limits: FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS,
       copyFiles: (directory) =>
         fileSystemPromises.copyFile(
           join(FRONT_COMPONENT_BUILD_ASSETS_DIRECTORY, 'index.js'),
@@ -184,7 +183,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
     >;
     handlerSource: string;
   }) {
-    const { toolFunctions, resourceNamespace } = this.getCurrentDriver();
+    const { awsClient, toolFunctions, options } = this.getCurrentDriver();
     const yarnEngineFiles = await Promise.all(
       ['.yarnrc.yml', '.yarn/releases/yarn-4.9.2.cjs'].map((file) =>
         fileSystemPromises.readFile(join(YARN_ENGINE_DIRNAME, file), 'utf8'),
@@ -192,14 +191,14 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
     );
     const functionName = computeHashedLambdaResourceName({
       resourceNamePrefix: 'twenty-front-component-vendor',
-      namespace: resourceNamespace,
+      namespace: options.resourceNamespace,
       contents: [
         workspaceId,
         handlerSource,
         ...yarnEngineFiles,
-        String(YARN_INSTALL_LAMBDA_MEMORY_MB),
-        String(YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS),
-        String(LAMBDA_EPHEMERAL_STORAGE_MB),
+        String(FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS.memoryMb),
+        String(FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS.timeoutSeconds),
+        String(FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS.ephemeralStorageMb),
       ],
     });
     const key = `ai-front-component-vendor:${functionName}:${dependencies.revision}`;
@@ -208,10 +207,12 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
         const cached = await this.cacheStorage.get<unknown>(key);
 
         if (!isDefined(cached)) {
-          await toolFunctions.ensureBuilderLambdaExists({
+          await ensureFrontComponentLambdaExists({
+            awsClient,
+            toolFunctions,
+            options,
             functionName,
-            timeoutSeconds: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
-            memoryMb: YARN_INSTALL_LAMBDA_MEMORY_MB,
+            limits: FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS,
             copyFiles: async (directory) => {
               await Promise.all([
                 fileSystemPromises.copyFile(
@@ -262,7 +263,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
       },
       key,
       {
-        ttl: (YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS + 60) * 1000,
+        ttl: (FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS.timeoutSeconds + 60) * 1000,
         ms: BUILD_LOCK_RETRY_MS,
         maxRetries: BUILD_LOCK_MAX_RETRIES,
       },
@@ -286,8 +287,8 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
       {
         abortSignal: AbortSignal.timeout(
           (input.action === 'buildDependencies'
-            ? YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS
-            : BUILDER_LAMBDA_TIMEOUT_SECONDS) * 1000,
+            ? FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS.timeoutSeconds
+            : FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS.timeoutSeconds) * 1000,
         ),
       },
     );
