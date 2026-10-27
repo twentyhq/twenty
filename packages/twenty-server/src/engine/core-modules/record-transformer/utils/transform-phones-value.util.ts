@@ -98,8 +98,6 @@ const parsePhoneNumberExceptionWrapper = ({
   countryCode,
   number,
 }: AdditionalPhoneMetadataWithNumber) => {
-  // libphonenumber-js is lenient: it ignores any text after the digits, so a
-  // value like "088-ABC" would be stored as "088" without any error.
   if (LETTER_REGEX.test(number)) {
     return throwInvalidPhoneNumberException(number);
   }
@@ -117,9 +115,6 @@ const parsePhoneNumberExceptionWrapper = ({
     return throwInvalidPhoneNumberException(number);
   }
 
-  // The parser also accepts numbers of any length. isPossible() checks the
-  // length against what is allowed for the number's country (and E.164's
-  // 15-digit maximum), without being as strict as isValid().
   if (!phone.isPossible()) {
     return throwInvalidPhoneNumberException(number);
   }
