@@ -260,7 +260,7 @@ export class LogicFunctionResourceService {
     });
   }
 
-  async getDependencyContents({
+  private async getDependencyContents({
     workspaceId,
     applicationUniversalIdentifier,
   }: Identifier): Promise<{
