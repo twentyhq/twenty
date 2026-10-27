@@ -14918,8 +14918,8 @@
         "name": "contentPaddingInline",
         "type": "PaddingInline<string | number>",
         "required": false,
-        "defaultValue": "8",
-        "description": "Inline padding around the field content, defaulting to 8 pixels. Numbers use pixels; CSS padding values are also supported. Set 0 to align content with the row inset when no visible label is present."
+        "defaultValue": "var(--t-spacing-2)",
+        "description": "Inline padding around the field content, defaulting to the --t-spacing-2 theme token (8 pixels in the standard theme). Numbers use pixels; CSS padding values are also supported. Set 0 to align content with the row inset when no visible label is present."
       },
       {
         "name": "hasDivider",

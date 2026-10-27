@@ -55,7 +55,7 @@ export const SubjectField = () => {
 
 The root is a group named by `label`. Supply `aria-label` or `aria-labelledby` when the visible label is omitted, and label each nested input separately. The row does not move focus or disable nested controls. Those controls retain their own keyboard behavior and focus styling.
 
-`contentPaddingInline` defaults to 8 pixels and accepts a CSS padding value. Numeric values use pixels. Set `contentPaddingInline={0}` to align recipient chips and an input with the row inset when there is no visible label.
+`contentPaddingInline` defaults to the `--t-spacing-2` theme token, which is 8 pixels in the standard theme, and accepts a CSS padding value. Numeric values use pixels. Set `contentPaddingInline={0}` to align recipient chips and an input with the row inset when there is no visible label.
 
 <StoryEmbed
   storyId="ui-input-formfieldrow--without-label"
