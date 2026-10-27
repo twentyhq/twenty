@@ -9,7 +9,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -20,7 +20,7 @@ const StyledCardsContainer = styled.div`
 `;
 
 type SettingsAppPreferencesListEmptyStateCardProps = {
-  provider?: ConnectedAccountProvider;
+  provider: ConnectedAccountProvider;
 };
 
 export const SettingsAppPreferencesListEmptyStateCard = ({
@@ -51,7 +51,7 @@ export const SettingsAppPreferencesListEmptyStateCard = ({
   );
 
   const isProviderShown = (shownProvider: ConnectedAccountProvider) =>
-    !isDefined(provider) || provider === shownProvider;
+    provider === shownProvider;
 
   return (
     <StyledCardsContainer>

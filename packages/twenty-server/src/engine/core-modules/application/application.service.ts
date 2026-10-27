@@ -1,3 +1,4 @@
+import { WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies-directory-name';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
@@ -13,7 +14,9 @@ import {
 } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { computeApplicationPackageChecksums } from 'src/engine/core-modules/application/application-package/utils/compute-application-package-checksums.util';
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
+import { getDefaultApplicationPackageFieldsForApplication } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields-for-application.util';
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -33,7 +36,6 @@ import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
 import { serializeApplicationForBroadcast } from 'src/engine/core-modules/application/utils/serialize-application-for-broadcast.util';
@@ -565,7 +567,9 @@ export class ApplicationService {
     },
     queryRunner?: QueryRunner,
   ) {
-    const defaultPackageFields = await getDefaultApplicationPackageFields();
+    const defaultPackageFields = await getDefaultApplicationPackageFields({
+      directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
+    });
 
     const applicationRegistration =
       await this.createWorkspaceCustomApplicationRegistration(
@@ -598,10 +602,12 @@ export class ApplicationService {
       queryRunner,
     );
 
-    await this.uploadDefaultPackageFilesAndSetFileIds(
-      workspaceCustomApplication,
+    await this.uploadPackageFilesAndSetFileIds({
+      application: workspaceCustomApplication,
+      packageJsonContent: defaultPackageFields.packageJsonContent,
+      yarnLockContent: defaultPackageFields.yarnLockContent,
       queryRunner,
-    );
+    });
 
     return workspaceCustomApplication;
   }
@@ -646,21 +652,53 @@ export class ApplicationService {
     >,
     queryRunner?: QueryRunner,
   ): Promise<void> {
-    const defaultPackageFields = await getDefaultApplicationPackageFields();
+    const workspaceRepository =
+      queryRunner?.manager.getRepository(WorkspaceEntity) ??
+      this.workspaceRepository;
+    const workspace = await workspaceRepository.findOne({
+      where: { id: application.workspaceId },
+      select: ['workspaceCustomApplicationId'],
+    });
+    const { packageJsonContent, yarnLockContent } =
+      await getDefaultApplicationPackageFieldsForApplication({
+        applicationId: application.id,
+        workspaceCustomApplicationId: workspace?.workspaceCustomApplicationId,
+      });
 
-    const packageJsonChecksum = logicFunctionCreateHash(
-      JSON.stringify(JSON.parse(defaultPackageFields.packageJsonContent)),
-    );
-    const yarnLockChecksum = logicFunctionCreateHash(
-      defaultPackageFields.yarnLockContent,
-    );
+    await this.uploadPackageFilesAndSetFileIds({
+      application,
+      packageJsonContent,
+      yarnLockContent,
+      queryRunner,
+    });
+  }
+
+  async uploadPackageFilesAndSetFileIds({
+    application,
+    packageJsonContent,
+    yarnLockContent,
+    queryRunner,
+  }: {
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'workspaceId'
+    >;
+    packageJsonContent: string;
+    yarnLockContent: string;
+    queryRunner?: QueryRunner;
+  }): Promise<void> {
+    const { packageJsonChecksum, yarnLockChecksum } =
+      computeApplicationPackageChecksums({
+        packageJsonContent,
+        yarnLockContent,
+      });
     const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
-      defaultPackageFields.packageJsonContent,
-      defaultPackageFields.yarnLockContent,
+      packageJsonContent,
+      yarnLockContent,
     );
 
     const packageJsonFile = await this.fileStorageService.writeFile({
-      sourceFile: defaultPackageFields.packageJsonContent,
+      sourceFile: packageJsonContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       applicationId: application.id,
@@ -671,7 +709,7 @@ export class ApplicationService {
     });
 
     const yarnLockFile = await this.fileStorageService.writeFile({
-      sourceFile: defaultPackageFields.yarnLockContent,
+      sourceFile: yarnLockContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       applicationId: application.id,

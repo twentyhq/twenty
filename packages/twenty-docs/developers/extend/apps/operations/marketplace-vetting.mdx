@@ -1,0 +1,62 @@
+---
+title: Marketplace vetting (WIP)
+description: Proposed requirements for third-party apps to receive a Vetted badge.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## How vetting works
+
+<Warning>
+  **Work in progress.** This page and its requirements may evolve. Third-party
+  vetting is not available yet. See
+  [Publishing](/developers/extend/apps/operations/publishing#marketplace-visibility-and-vetting)
+  for current marketplace behavior.
+</Warning>
+
+Vetting applies to an exact app version and package. Each update needs review and
+approval from Twenty. Vetted apps may be reassessed as dependencies or services
+evolve.
+
+## Vetting checklist
+
+All applicable items must pass. We recommend using an agent to self-evaluate
+each criterion with evidence and required fixes before submitting.
+
+- [ ] **Publisher.** [Claim your app](/developers/extend/apps/operations/publishing#claiming-your-app)
+  and [publish with provenance](/developers/extend/apps/operations/publishing#ci-publishing).
+- [ ] **Security.** Pass Twenty's internal security review and resolve blocking
+  findings.
+- [ ] **Permissions.** Request only the
+  [permissions](/developers/extend/apps/config/roles) needed for the app's features.
+- [ ] **Functionality.** Setup and core workflows are easy to follow and work as
+  advertised, without crashes, lost work, or duplicate records. No placeholder
+  features or broken controls.
+- [ ] **Performance.** Respect shared API/job rate limits, handle throttling, and
+  follow the
+  [app development good practices](/developers/extend/apps/getting-started/good-practices).
+- [ ] **Usefulness.** Complete a meaningful CRM task for a broader audience than
+  one customer's setup. Small connectors and headless automations qualify.
+- [ ] **Native experience.** Reuse native objects, views, and workflows where appropriate.
+  If the app has a UI, use
+  [`twenty-ui`](/developers/extend/apps/layout/front-components#using-twenty-ui-components)
+  and match Twenty's layouts, interactions, and accessibility conventions.
+- [ ] **Privacy.** Explain what data leaves the workspace, where it goes and why,
+  including AI providers, how long it is kept, and how it can be deleted.
+- [ ] **Maintenance and compatibility.** Declare supported Twenty versions, keep
+  entity identifiers stable, and fix critical bugs and broken integrations over
+  time.
+- [ ] **Logo and gallery.** Provide an original, recognizable logo and polished
+  images of the actual app. Follow the
+  [image guidelines](/developers/extend/apps/operations/publishing#marketplace-metadata).
+- [ ] **Listing and README.** Accurately describe features and affiliations in
+  the name, description, and screenshots. Keep the README short, well-formatted,
+  and focused on the app's value.
+- [ ] **Pricing.** Clearly state whether the app is free or paid, plan prices,
+  billing frequency, and any required paid third-party services.
+- [ ] **Documentation and support.** Provide setup instructions, a working example,
+  and a support contact. If using shared routes, complete
+  [setup](/developers/extend/apps/operations/publishing#setting-up-server-routes)
+  and verify events reach the correct workspace.
+
+<PageBanner illustration="card-page-marketplace-vetting" />

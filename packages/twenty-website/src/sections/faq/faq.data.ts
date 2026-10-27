@@ -25,7 +25,7 @@ export const FAQ_QUESTIONS: readonly FaqQuestion[] = [
   },
   {
     question: msg`Can developers extend Twenty with code?`,
-    answer: msg`Yes, with our Apps framework. Scaffold an extension with \`npx create-twenty-app\` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace.`,
+    answer: msg`Yes, with our Apps framework. Scaffold an extension with \`npx twenty@latest app init my-app\` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace.`,
   },
   {
     question: msg`Does Twenty work with Claude, ChatGPT, and Cursor?`,
@@ -33,6 +33,6 @@ export const FAQ_QUESTIONS: readonly FaqQuestion[] = [
   },
   {
     question: msg`What does Twenty cost?`,
-    answer: msg`Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control.`,
+    answer: msg`Cloud Pro is $9/user/month and Organization is $39/user/month, billed yearly. Organization adds 5x more AI usage per member, custom roles with field and row-level permissions, and SSO. Self-hosting the open source core is free.`,
   },
 ];

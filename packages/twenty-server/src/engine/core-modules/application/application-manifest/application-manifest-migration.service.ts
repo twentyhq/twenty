@@ -126,7 +126,6 @@ export class ApplicationManifestMigrationService {
         ownerFlatApplication,
         fromAllFlatEntityMaps,
         now,
-        workspaceId,
       });
 
     const dependencyAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
@@ -212,7 +211,6 @@ export class ApplicationManifestMigrationService {
         ownerFlatApplication,
         fromAllFlatEntityMaps,
         now,
-        workspaceId,
       });
 
     assertConnectionProviderLogicFunctionsAreOwn({
@@ -223,13 +221,22 @@ export class ApplicationManifestMigrationService {
       inferDeletionFromMissingEntities,
     });
 
-    const idByUniversalIdentifierByMetadataName =
-      (manifest.workflows ?? []).length > 0
-        ? preallocateWorkflowReferenceIds({
-            fromAllFlatEntityMaps,
-            toAllUniversalFlatEntityMaps,
-          })
-        : {};
+    const hasWorkflows = (manifest.workflows ?? []).length > 0;
+
+    const workspaceCustomFlatApplication = hasWorkflows
+      ? (
+          await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+            { workspaceId },
+          )
+        ).workspaceCustomFlatApplication
+      : undefined;
+
+    const idByUniversalIdentifierByMetadataName = hasWorkflows
+      ? preallocateWorkflowReferenceIds({
+          fromAllFlatEntityMaps,
+          toAllUniversalFlatEntityMaps,
+        })
+      : {};
 
     const applicationWorkflows = addWorkflowManifestsToFlatEntityMapsOrThrow({
       workflows: manifest.workflows ?? [],
@@ -238,6 +245,9 @@ export class ApplicationManifestMigrationService {
       toAllUniversalFlatEntityMaps,
       existingAllFlatEntityMaps,
       idByUniversalIdentifierByMetadataName,
+      // Its workflows run as workspace workflows, which may already call any app's actions
+      canReferenceOtherApplicationsWorkflowActions:
+        ownerFlatApplication.id === workspaceCustomFlatApplication?.id,
       now,
     });
 

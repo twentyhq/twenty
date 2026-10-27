@@ -265,4 +265,34 @@ describe('buildHostReactPropsFromRemoteProps', () => {
     expect('onClick' in result).toBe(false);
     expect(result['data-state']).toBe('open');
   });
+
+  it('should route any casing of sandbox to the sandbox key', () => {
+    const result = buildHostReactPropsFromRemoteProps({
+      remoteProps: { sandbox: 'allow-forms', SANDBOX: 'allow-same-origin' },
+      htmlTag: 'iframe',
+    });
+
+    expect(result).toEqual({ sandbox: 'allow-same-origin' });
+  });
+
+  it('should parse a differently cased style string', () => {
+    const result = buildHostReactPropsFromRemoteProps({
+      remoteProps: { STYLE: 'color: red' },
+      htmlTag: 'div',
+    });
+
+    expect(result).toEqual({ style: { color: 'red' } });
+  });
+
+  it('should drop dangerouslySetInnerHTML', () => {
+    const result = buildHostReactPropsFromRemoteProps({
+      remoteProps: {
+        dangerouslySetInnerHTML: { __html: '<b>x</b>' },
+        id: 'keep',
+      },
+      htmlTag: 'div',
+    });
+
+    expect(result).toEqual({ id: 'keep' });
+  });
 });

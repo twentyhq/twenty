@@ -100,14 +100,17 @@ describe('convertBlockNoteToRichTextDocument', () => {
     ).toBeUndefined();
   });
 
-  it('should nest the children of a list item and keep the children of other blocks after them', () => {
+  it('should nest the children of a list item and indent the children of other blocks', () => {
     expect(
       convert([
         block('bulletListItem', [text('Parent')], {}, [
           block('numberedListItem', [text('Child')]),
         ]),
         block('paragraph', [text('Intro')], {}, [
-          block('paragraph', [text('Indented')]),
+          block('paragraph', [text('Indented')], {}, [
+            block('bulletListItem', [text('Deeper')]),
+            block('image', undefined, { url: 'https://twenty.com/a.png' }),
+          ]),
         ]),
       ]),
     ).toEqual([
@@ -140,7 +143,35 @@ describe('convertBlockNoteToRichTextDocument', () => {
         ],
       },
       { type: 'paragraph', content: [{ type: 'text', text: 'Intro' }] },
-      { type: 'paragraph', content: [{ type: 'text', text: 'Indented' }] },
+      {
+        type: 'paragraph',
+        attrs: { indent: 1 },
+        content: [{ type: 'text', text: 'Indented' }],
+      },
+      {
+        type: 'bulletList',
+        attrs: { indent: 2 },
+        content: [
+          {
+            type: 'listItem',
+            content: [
+              {
+                type: 'paragraph',
+                content: [{ type: 'text', text: 'Deeper' }],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: 'image',
+        attrs: {
+          src: 'https://twenty.com/a.png',
+          alt: null,
+          title: null,
+          width: null,
+        },
+      },
     ]);
   });
 
@@ -159,12 +190,15 @@ describe('convertBlockNoteToRichTextDocument', () => {
     ]);
   });
 
-  it('should convert check list items and toggle list items', () => {
+  it('should convert check list items and keep toggle list items and toggle headings with their id and children', () => {
     expect(
       convert([
         block('checkListItem', [text('Done')], { checked: true }),
         block('checkListItem', [text('Todo')], { checked: false }),
-        block('toggleListItem', [text('Toggle')]),
+        block('toggleListItem', [text('Toggle')], {}, [
+          block('paragraph', [text('Hidden')]),
+        ]),
+        block('heading', [text('Section')], { level: 2, isToggleable: true }),
       ]),
     ).toEqual([
       {
@@ -187,16 +221,21 @@ describe('convertBlockNoteToRichTextDocument', () => {
         ],
       },
       {
-        type: 'bulletList',
+        type: 'toggle',
+        attrs: { id: 'toggleListItem-id' },
+        content: [
+          { type: 'paragraph', content: [{ type: 'text', text: 'Toggle' }] },
+          { type: 'paragraph', content: [{ type: 'text', text: 'Hidden' }] },
+        ],
+      },
+      {
+        type: 'toggle',
+        attrs: { id: 'heading-id' },
         content: [
           {
-            type: 'listItem',
-            content: [
-              {
-                type: 'paragraph',
-                content: [{ type: 'text', text: 'Toggle' }],
-              },
-            ],
+            type: 'heading',
+            attrs: { level: 2 },
+            content: [{ type: 'text', text: 'Section' }],
           },
         ],
       },

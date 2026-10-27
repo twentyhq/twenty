@@ -8,16 +8,18 @@ import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 const buildStep = ({
   id,
   name,
+  logicFunctionId = 'logic-function-id',
 }: {
   id: string;
   name: string;
+  logicFunctionId?: string;
 }): WorkflowCodeAction => ({
   id,
   name,
   valid: true,
   type: 'CODE',
   settings: {
-    input: { logicFunctionId: 'logic-function-id', logicFunctionInput: {} },
+    input: { logicFunctionId, logicFunctionInput: {} },
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: { value: 0 },
@@ -56,6 +58,31 @@ describe('buildFlowWithLocalEdits', () => {
         buildStep({ id: 'b', name: 'server b' }),
       ],
     });
+  });
+
+  it("keeps the server step's logic function when a draft copied it", () => {
+    expect(
+      buildFlowWithLocalEdits({
+        serverFlow: {
+          ...serverFlow,
+          steps: [
+            buildStep({
+              id: 'a',
+              name: 'server a',
+              logicFunctionId: 'draft-logic-function-id',
+            }),
+          ],
+        },
+        localFlow,
+        localFlowKeys: ['a'],
+      }).steps,
+    ).toEqual([
+      buildStep({
+        id: 'a',
+        name: 'local a',
+        logicFunctionId: 'draft-logic-function-id',
+      }),
+    ]);
   });
 
   it('returns the server flow when nothing is edited locally', () => {

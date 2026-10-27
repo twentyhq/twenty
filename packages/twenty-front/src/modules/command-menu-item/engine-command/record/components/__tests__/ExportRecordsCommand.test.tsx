@@ -4,7 +4,6 @@ import { CommandComponentInstanceContext } from '@/command-menu-item/engine-comm
 import { render, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -66,25 +65,14 @@ jest.mock('@/object-record/record-show/hooks/useExportSingleRecord', () => ({
 }));
 
 const renderExport = ({
-  isAsyncCsvExportEnabled,
   isStrictMode = false,
-}: {
-  isAsyncCsvExportEnabled?: boolean;
-  isStrictMode?: boolean;
-}) => {
+}: { isStrictMode?: boolean } = {}) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [],
     onInitializeJotaiStore: (store) => {
       store.set(currentWorkspaceState.atom, {
         ...mockCurrentWorkspace,
-        featureFlags: !isDefined(isAsyncCsvExportEnabled)
-          ? []
-          : [
-              {
-                key: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-                value: isAsyncCsvExportEnabled,
-              },
-            ],
+        featureFlags: [],
       });
     },
   });
@@ -109,39 +97,26 @@ beforeEach(() => {
   mockHasMoreRecords = false;
 });
 
-it.each([undefined, false, true])(
-  'exports a single batch locally when the workspace flag is %s',
-  async (isAsyncCsvExportEnabled) => {
-    renderExport({ isAsyncCsvExportEnabled });
-    await waitFor(() => expect(mockIndexDownload).toHaveBeenCalledTimes(1));
-    expect(mockAsyncDownload).not.toHaveBeenCalled();
-    expect(mockSingleRecordDownload).not.toHaveBeenCalled();
-  },
-);
+it('exports a complete first batch locally without a feature flag', async () => {
+  renderExport();
+  await waitFor(() => expect(mockIndexDownload).toHaveBeenCalledTimes(1));
+  expect(mockAsyncDownload).not.toHaveBeenCalled();
+  expect(mockSingleRecordDownload).not.toHaveBeenCalled();
+});
 
-it.each([undefined, false, true])(
-  'uses the async fallback for additional pages only when the workspace flag is enabled (%s)',
-  async (isAsyncCsvExportEnabled) => {
-    mockHasMoreRecords = true;
-    renderExport({ isAsyncCsvExportEnabled });
-    await waitFor(() => expect(mockIndexDownload).toHaveBeenCalledTimes(1));
-    if (isAsyncCsvExportEnabled) {
-      await waitFor(() => expect(mockAsyncDownload).toHaveBeenCalledTimes(1));
-    } else {
-      expect(mockAsyncDownload).not.toHaveBeenCalled();
-    }
-    expect(mockSingleRecordDownload).not.toHaveBeenCalled();
-  },
-);
+it('uses the async fallback for additional pages without a feature flag', async () => {
+  mockHasMoreRecords = true;
+  renderExport();
+  await waitFor(() => expect(mockIndexDownload).toHaveBeenCalledTimes(1));
+  await waitFor(() => expect(mockAsyncDownload).toHaveBeenCalledTimes(1));
+  expect(mockSingleRecordDownload).not.toHaveBeenCalled();
+});
 
 it.each([false, true])(
   'keeps index export active through StrictMode remounts, hasMoreRecords=%s',
   async (hasMoreRecords) => {
     mockHasMoreRecords = hasMoreRecords;
-    const { unmount } = renderExport({
-      isAsyncCsvExportEnabled: true,
-      isStrictMode: true,
-    });
+    const { unmount } = renderExport({ isStrictMode: true });
 
     await waitFor(() =>
       expect(mockCompletedIndexDownload).toHaveBeenCalledTimes(1),
@@ -157,15 +132,12 @@ it.each([false, true])(
   },
 );
 
-it.each([false, true])(
-  'keeps single-record export when the workspace flag is %s',
-  async (isAsyncCsvExportEnabled) => {
-    mockRecordIndexId = undefined;
-    renderExport({ isAsyncCsvExportEnabled });
-    await waitFor(() =>
-      expect(mockSingleRecordDownload).toHaveBeenCalledTimes(1),
-    );
-    expect(mockAsyncDownload).not.toHaveBeenCalled();
-    expect(mockIndexDownload).not.toHaveBeenCalled();
-  },
-);
+it('keeps single-record exports local', async () => {
+  mockRecordIndexId = undefined;
+  renderExport();
+  await waitFor(() =>
+    expect(mockSingleRecordDownload).toHaveBeenCalledTimes(1),
+  );
+  expect(mockAsyncDownload).not.toHaveBeenCalled();
+  expect(mockIndexDownload).not.toHaveBeenCalled();
+});

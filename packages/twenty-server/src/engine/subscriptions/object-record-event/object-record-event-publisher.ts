@@ -34,7 +34,7 @@ import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-mo
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
 import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
-import { omitRestrictedFieldsFromEvent } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
+import { omitRestrictedFieldsFromEvent } from 'src/engine/metadata-modules/permissions/utils/omit-restricted-fields-from-event.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import {
@@ -227,10 +227,6 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
-    const restrictedFields =
-      objectsPermissions[workspaceEventBatch.objectMetadata.id]
-        ?.restrictedFields ?? {};
-
     for (const event of workspaceEventBatch.events) {
       const { action } = parseEventNameOrThrow(workspaceEventBatch.name);
 
@@ -242,7 +238,9 @@ export class ObjectRecordEventPublisher {
 
       const filteredEvent = omitRestrictedFieldsFromEvent({
         event: eventWithObjectName,
-        restrictedFields,
+        objectMetadata: workspaceEventBatch.objectMetadata,
+        objectsPermissions,
+        flatObjectMetadataMaps: permissionsContext.flatObjectMetadataMaps,
         flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
       });
 

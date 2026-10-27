@@ -104,6 +104,12 @@ export const CommandMenuContextProviderContent = ({
       ? (commandMenuItemsDraft ?? commandMenuItems)
       : commandMenuItems;
 
+    const isAiChatInboxHeader =
+      containerType === CommandMenuItemContainerType.ShowPageHeader &&
+      commandMenuContextApi.objectMetadataItem.nameSingular ===
+        CoreObjectNameSingular.AgentChatThread &&
+      (commandMenuContextApi.featureFlags.IS_AI_CHAT_INBOX_ENABLED ?? false);
+
     const contextCommandMenuItems = commandMenuItemsToDisplay
       .filter(
         (item) =>
@@ -140,7 +146,13 @@ export const CommandMenuContextProviderContent = ({
       )
       .map((item) =>
         resolveCommandMenuItemPinning(
-          item,
+          {
+            ...item,
+            isPinned:
+              item.isPinned ||
+              (isAiChatInboxHeader &&
+                item.engineComponentKey === EngineComponentKey.SHARE_RECORD),
+          },
           commandMenuContextApiForAvailability,
         ),
       );
@@ -154,6 +166,7 @@ export const CommandMenuContextProviderContent = ({
       shouldDisplayGlobalRecordCreationCommands,
     });
   }, [
+    containerType,
     commandMenuContextApi,
     commandMenuContextApiForAvailability,
     globalRecordCreationCommandMenuItems,

@@ -19,6 +19,10 @@ jest.mock('@/workflow/hooks/useCreateDraftFromWorkflowVersion', () => ({
   }),
 }));
 
+jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
+  useApolloCoreClient: () => ({ query: jest.fn() }),
+}));
+
 jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
   () => ({

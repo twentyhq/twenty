@@ -1,6 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isBaseOutputSchemaV2';
-import { isLinkOutputSchema } from '@/workflow/workflow-variables/types/guards/isLinkOutputSchema';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import {
   type OutputSchemaV2,
@@ -102,22 +101,6 @@ export const searchWorkflowVariables = ({
           icon: specialItem.iconName,
           isLeaf: true,
         });
-      }
-
-      if (isLinkOutputSchema(outputSchema)) {
-        const label = outputSchema.link.label;
-
-        if (isDefined(label) && label.toLowerCase().includes(search)) {
-          results.push({
-            stepId: step.id,
-            path,
-            label,
-            breadcrumb,
-            isLeaf: false,
-          });
-        }
-
-        return;
       }
 
       const fields = (() => {

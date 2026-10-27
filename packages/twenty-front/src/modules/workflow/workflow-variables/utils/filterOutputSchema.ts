@@ -9,7 +9,6 @@ import {
 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isBaseOutputSchemaV2';
-import { isLinkOutputSchema } from '@/workflow/workflow-variables/types/guards/isLinkOutputSchema';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { isFieldTypeCompatibleWithRecordId } from '@/workflow/workflow-variables/utils/isFieldTypeCompatibleWithRecordId';
 import { isObject } from '@sniptt/guards';
@@ -254,10 +253,6 @@ const filterOutputSchemaFieldsByType = ({
     });
   }
 
-  if (isLinkOutputSchema(outputSchema)) {
-    return outputSchema;
-  }
-
   return filterNonRecordOutputSchemaFieldsByType({
     outputSchema,
     fieldTypesToExclude,
@@ -290,9 +285,7 @@ export const filterOutputSchema = ({
     return filteredOutputSchema;
   }
 
-  if (isLinkOutputSchema(filteredOutputSchema)) {
-    return filteredOutputSchema;
-  } else if (isRecordOutputSchemaV2(filteredOutputSchema)) {
+  if (isRecordOutputSchemaV2(filteredOutputSchema)) {
     return filterRecordOutputSchema({
       outputSchema: filteredOutputSchema,
       shouldDisplayRecordFields,

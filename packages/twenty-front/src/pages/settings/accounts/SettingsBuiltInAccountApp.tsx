@@ -10,6 +10,7 @@ import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/u
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
 import { getBuiltInAccountAppChannelTabsVisibility } from '@/settings/app-preferences/utils/getBuiltInAccountAppChannelTabsVisibility';
+import { SettingsAccountsMessageChannelsSSEEffect } from '@/settings/accounts/components/SettingsAccountsMessageChannelsSSEEffect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -182,7 +183,7 @@ export const SettingsBuiltInAccountApp = () => {
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
         {
-          children: t`App preferences`,
+          children: t`Apps preferences`,
           href: getSettingsPath(SettingsPath.Accounts),
         },
         { children: appName },
@@ -195,6 +196,7 @@ export const SettingsBuiltInAccountApp = () => {
         />
       }
     >
+      <SettingsAccountsMessageChannelsSSEEffect />
       <SettingsPageContainer>{renderContent()}</SettingsPageContainer>
     </SettingsPageLayout>
   );

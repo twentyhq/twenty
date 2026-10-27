@@ -167,7 +167,8 @@
       "Dropdown": "components/navigation/Dropdown/Dropdown",
       "ListItemButton": "components/navigation/ListItemButton/ListItemButton",
       "TabButton": "components/navigation/TabButton/TabButton",
-      "useDropdownPage": "components/navigation/Dropdown/hooks/useDropdownPage"
+      "useDropdownPage": "components/navigation/Dropdown/hooks/useDropdownPage",
+      "useDropdownPlacementOrThrow": "components/navigation/Dropdown/hooks/useDropdownPlacementOrThrow"
     },
     "types": {
       "ColorLabels": "components/navigation/MenuItem/types/ColorLabels",
@@ -319,6 +320,7 @@
       "IconCodeCircle": "icon/components/TablerIcons",
       "IconCoins": "icon/components/TablerIcons",
       "IconColorSwatch": "icon/components/TablerIcons",
+      "IconColumnInsertLeft": "icon/components/TablerIcons",
       "IconColumnInsertRight": "icon/components/TablerIcons",
       "IconColumns": "icon/components/TablerIcons",
       "IconCommand": "icon/components/TablerIcons",
@@ -436,6 +438,7 @@
       "IconGoogle": "icon/components/IconGoogle",
       "IconGoogleCalendar": "icon/components/IconGoogleCalendar",
       "IconGraph": "icon/components/TablerIcons",
+      "IconGripHorizontal": "icon/components/TablerIcons",
       "IconGripVertical": "icon/components/TablerIcons",
       "IconH1": "icon/components/TablerIcons",
       "IconH2": "icon/components/TablerIcons",

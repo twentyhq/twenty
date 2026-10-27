@@ -8,17 +8,26 @@
   },
   "favicon": "/favicon.png",
   "colors": {
-    "primary": "#141414",
-    "light": "#fafafa",
-    "dark": "#141414"
+    "primary": "#1c1c1c",
+    "light": "#ffffff",
+    "dark": "#1c1c1c"
+  },
+  "icons": {
+    "library": "tabler"
   },
   "interaction": {
     "drilldown": false
   },
   "navbar": {
+    "links": [
+      {
+        "label": "Log in",
+        "href": "https://app.twenty.com/welcome"
+      }
+    ],
     "primary": {
       "type": "button",
-      "label": "Try Twenty",
+      "label": "Get started",
       "href": "https://app.twenty.com/welcome"
     }
   },
@@ -39,7 +48,7 @@
             "tab": "Getting Started",
             "groups": [
               {
-                "group": "Welcome",
+                "group": "Getting Started",
                 "pages": [
                   "getting-started/introduction",
                   "getting-started/key-features",
@@ -65,14 +74,13 @@
             "tab": "User Guide",
             "groups": [
               {
-                "group": "Overview",
+                "group": "User Guide",
                 "pages": [
                   "user-guide/introduction"
                 ]
               },
               {
                 "group": "Data Model",
-                "icon": "database",
                 "pages": [
                   "user-guide/data-model/overview",
                   {
@@ -98,7 +106,6 @@
               },
               {
                 "group": "Data Migration",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "user-guide/data-migration/overview",
                   {
@@ -130,13 +137,13 @@
               },
               {
                 "group": "Calendar & Emails",
-                "icon": "envelope",
                 "pages": [
                   "user-guide/calendar-emails/overview",
                   {
                     "group": "Reference",
                     "pages": [
                       "user-guide/calendar-emails/capabilities/mailbox",
+                      "user-guide/calendar-emails/capabilities/email-channels",
                       "user-guide/calendar-emails/capabilities/calendar"
                     ]
                   },
@@ -158,7 +165,6 @@
               },
               {
                 "group": "Email Campaigns",
-                "icon": "paper-plane",
                 "pages": [
                   "user-guide/email-campaigns/overview",
                   {
@@ -175,7 +181,6 @@
               },
               {
                 "group": "Workflows",
-                "icon": "bolt",
                 "pages": [
                   "user-guide/workflows/overview",
                   {
@@ -238,7 +243,6 @@
               },
               {
                 "group": "AI",
-                "icon": "robot",
                 "pages": [
                   "user-guide/ai/overview",
                   {
@@ -259,7 +263,6 @@
               },
               {
                 "group": "Layout",
-                "icon": "table-columns",
                 "pages": [
                   "user-guide/layout/overview",
                   {
@@ -296,7 +299,6 @@
               },
               {
                 "group": "Dashboards",
-                "icon": "chart-bar",
                 "pages": [
                   "user-guide/dashboards/overview",
                   {
@@ -318,7 +320,6 @@
               },
               {
                 "group": "Permissions & Access",
-                "icon": "lock",
                 "pages": [
                   "user-guide/permissions-access/overview",
                   {
@@ -338,7 +339,6 @@
               },
               {
                 "group": "Billing",
-                "icon": "credit-card",
                 "pages": [
                   "user-guide/billing/overview",
                   {
@@ -359,7 +359,6 @@
               },
               {
                 "group": "Settings",
-                "icon": "gear",
                 "pages": [
                   "user-guide/settings/overview",
                   {
@@ -383,7 +382,6 @@
               },
               {
                 "group": "Legal",
-                "icon": "book",
                 "pages": [
                   "user-guide/legal/overview",
                   {
@@ -400,7 +398,7 @@
             "tab": "Developers",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Developers",
                 "pages": [
                   "developers/introduction"
                 ]
@@ -422,8 +420,8 @@
                   },
                   {
                     "group": "Tutorial",
+                    "root": "developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "developers/extend/apps/tutorials/document-generator/overview",
                       "developers/extend/apps/tutorials/document-generator/data-model",
                       "developers/extend/apps/tutorials/document-generator/generating-documents",
                       "developers/extend/apps/tutorials/document-generator/http-routes",
@@ -434,8 +432,8 @@
                   },
                   {
                     "group": "Config",
+                    "root": "developers/extend/apps/config/overview",
                     "pages": [
-                      "developers/extend/apps/config/overview",
                       "developers/extend/apps/config/application",
                       "developers/extend/apps/config/roles",
                       "developers/extend/apps/config/install-hooks",
@@ -444,8 +442,8 @@
                   },
                   {
                     "group": "Data",
+                    "root": "developers/extend/apps/data/overview",
                     "pages": [
-                      "developers/extend/apps/data/overview",
                       "developers/extend/apps/data/objects",
                       "developers/extend/apps/data/extending-objects",
                       "developers/extend/apps/data/system-fields",
@@ -455,8 +453,8 @@
                   },
                   {
                     "group": "Logic",
+                    "root": "developers/extend/apps/logic/overview",
                     "pages": [
-                      "developers/extend/apps/logic/overview",
                       "developers/extend/apps/logic/logic-functions",
                       "developers/extend/apps/logic/key-value-store",
                       "developers/extend/apps/logic/background-jobs",
@@ -469,8 +467,8 @@
                   },
                   {
                     "group": "Layout",
+                    "root": "developers/extend/apps/layout/overview",
                     "pages": [
-                      "developers/extend/apps/layout/overview",
                       "developers/extend/apps/layout/views",
                       "developers/extend/apps/layout/navigation-menu-items",
                       "developers/extend/apps/layout/page-layouts",
@@ -480,13 +478,14 @@
                   },
                   {
                     "group": "Operations",
+                    "root": "developers/extend/apps/operations/overview",
                     "pages": [
-                      "developers/extend/apps/operations/overview",
                       "developers/extend/apps/operations/cli",
                       "developers/extend/apps/operations/sync-and-recovery",
                       "developers/extend/apps/operations/testing",
                       "developers/extend/apps/operations/translations",
                       "developers/extend/apps/operations/publishing",
+                      "developers/extend/apps/operations/marketplace-vetting",
                       "developers/extend/apps/operations/monitoring"
                     ]
                   }
@@ -536,8 +535,8 @@
                   },
                   {
                     "group": "Primitives",
+                    "root": "ui/primitives/overview",
                     "pages": [
-                      "ui/primitives/overview",
                       {
                         "group": "Accessibility",
                         "pages": [
@@ -624,8 +623,8 @@
                   },
                   {
                     "group": "Components",
+                    "root": "ui/components/overview",
                     "pages": [
-                      "ui/components/overview",
                       {
                         "group": "Data display",
                         "pages": [
@@ -740,7 +739,6 @@
               },
               {
                 "group": "Modèle de données",
-                "icon": "database",
                 "pages": [
                   "fr/user-guide/data-model/overview",
                   {
@@ -766,7 +764,6 @@
               },
               {
                 "group": "Migration de données",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "fr/user-guide/data-migration/overview",
                   {
@@ -798,7 +795,6 @@
               },
               {
                 "group": "Calendrier et e-mails",
-                "icon": "envelope",
                 "pages": [
                   "fr/user-guide/calendar-emails/overview",
                   {
@@ -823,7 +819,6 @@
               },
               {
                 "group": "Flux de travail",
-                "icon": "bolt",
                 "pages": [
                   "fr/user-guide/workflows/overview",
                   {
@@ -886,7 +881,6 @@
               },
               {
                 "group": "IA",
-                "icon": "robot",
                 "pages": [
                   "fr/user-guide/ai/overview",
                   {
@@ -907,7 +901,6 @@
               },
               {
                 "group": "Disposition",
-                "icon": "table-columns",
                 "pages": [
                   "fr/user-guide/layout/overview",
                   {
@@ -944,7 +937,6 @@
               },
               {
                 "group": "Tableaux de bord",
-                "icon": "chart-bar",
                 "pages": [
                   "fr/user-guide/dashboards/overview",
                   {
@@ -966,7 +958,6 @@
               },
               {
                 "group": "Autorisations et accès",
-                "icon": "lock",
                 "pages": [
                   "fr/user-guide/permissions-access/overview",
                   {
@@ -986,7 +977,6 @@
               },
               {
                 "group": "Facturation",
-                "icon": "credit-card",
                 "pages": [
                   "fr/user-guide/billing/overview",
                   {
@@ -1006,7 +996,6 @@
               },
               {
                 "group": "Paramètres",
-                "icon": "gear",
                 "pages": [
                   "fr/user-guide/settings/overview",
                   {
@@ -1030,7 +1019,6 @@
               },
               {
                 "group": "Juridique",
-                "icon": "book",
                 "pages": [
                   "fr/user-guide/legal/overview",
                   {
@@ -1068,8 +1056,8 @@
                   },
                   {
                     "group": "Tutoriel",
+                    "root": "fr/developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "fr/developers/extend/apps/tutorials/document-generator/overview",
                       "fr/developers/extend/apps/tutorials/document-generator/data-model",
                       "fr/developers/extend/apps/tutorials/document-generator/generating-documents",
                       "fr/developers/extend/apps/tutorials/document-generator/http-routes",
@@ -1080,8 +1068,8 @@
                   },
                   {
                     "group": "Configuration",
+                    "root": "fr/developers/extend/apps/config/overview",
                     "pages": [
-                      "fr/developers/extend/apps/config/overview",
                       "fr/developers/extend/apps/config/application",
                       "fr/developers/extend/apps/config/roles",
                       "fr/developers/extend/apps/config/install-hooks",
@@ -1090,8 +1078,8 @@
                   },
                   {
                     "group": "Données",
+                    "root": "fr/developers/extend/apps/data/overview",
                     "pages": [
-                      "fr/developers/extend/apps/data/overview",
                       "fr/developers/extend/apps/data/objects",
                       "fr/developers/extend/apps/data/extending-objects",
                       "fr/developers/extend/apps/data/system-fields",
@@ -1101,8 +1089,8 @@
                   },
                   {
                     "group": "Logique",
+                    "root": "fr/developers/extend/apps/logic/overview",
                     "pages": [
-                      "fr/developers/extend/apps/logic/overview",
                       "fr/developers/extend/apps/logic/logic-functions",
                       "fr/developers/extend/apps/logic/key-value-store",
                       "fr/developers/extend/apps/logic/background-jobs",
@@ -1112,8 +1100,8 @@
                   },
                   {
                     "group": "Disposition",
+                    "root": "fr/developers/extend/apps/layout/overview",
                     "pages": [
-                      "fr/developers/extend/apps/layout/overview",
                       "fr/developers/extend/apps/layout/views",
                       "fr/developers/extend/apps/layout/navigation-menu-items",
                       "fr/developers/extend/apps/layout/page-layouts",
@@ -1123,8 +1111,8 @@
                   },
                   {
                     "group": "Opérations",
+                    "root": "fr/developers/extend/apps/operations/overview",
                     "pages": [
-                      "fr/developers/extend/apps/operations/overview",
                       "fr/developers/extend/apps/operations/cli",
                       "fr/developers/extend/apps/operations/sync-and-recovery",
                       "fr/developers/extend/apps/operations/testing",
@@ -1203,7 +1191,6 @@
               },
               {
                 "group": "نموذج البيانات",
-                "icon": "database",
                 "pages": [
                   "ar/user-guide/data-model/overview",
                   {
@@ -1229,7 +1216,6 @@
               },
               {
                 "group": "ترحيل البيانات",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "ar/user-guide/data-migration/overview",
                   {
@@ -1261,7 +1247,6 @@
               },
               {
                 "group": "التقويم والبريد الإلكتروني",
-                "icon": "envelope",
                 "pages": [
                   "ar/user-guide/calendar-emails/overview",
                   {
@@ -1286,7 +1271,6 @@
               },
               {
                 "group": "سير العمل",
-                "icon": "bolt",
                 "pages": [
                   "ar/user-guide/workflows/overview",
                   {
@@ -1349,7 +1333,6 @@
               },
               {
                 "group": "الذكاء الاصطناعي",
-                "icon": "robot",
                 "pages": [
                   "ar/user-guide/ai/overview",
                   {
@@ -1370,7 +1353,6 @@
               },
               {
                 "group": "التخطيط",
-                "icon": "table-columns",
                 "pages": [
                   "ar/user-guide/layout/overview",
                   {
@@ -1407,7 +1389,6 @@
               },
               {
                 "group": "لوحات القيادة",
-                "icon": "chart-bar",
                 "pages": [
                   "ar/user-guide/dashboards/overview",
                   {
@@ -1429,7 +1410,6 @@
               },
               {
                 "group": "الصلاحيات والوصول",
-                "icon": "lock",
                 "pages": [
                   "ar/user-guide/permissions-access/overview",
                   {
@@ -1449,7 +1429,6 @@
               },
               {
                 "group": "الفوترة",
-                "icon": "credit-card",
                 "pages": [
                   "ar/user-guide/billing/overview",
                   {
@@ -1469,7 +1448,6 @@
               },
               {
                 "group": "\\ا\\ل\\إ\\ع\\د\\ا\\د\\ا\\ت",
-                "icon": "gear",
                 "pages": [
                   "ar/user-guide/settings/overview",
                   {
@@ -1493,7 +1471,6 @@
               },
               {
                 "group": "قانوني",
-                "icon": "book",
                 "pages": [
                   "ar/user-guide/legal/overview",
                   {
@@ -1531,8 +1508,8 @@
                   },
                   {
                     "group": "البرنامج التعليمي",
+                    "root": "ar/developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "ar/developers/extend/apps/tutorials/document-generator/overview",
                       "ar/developers/extend/apps/tutorials/document-generator/data-model",
                       "ar/developers/extend/apps/tutorials/document-generator/generating-documents",
                       "ar/developers/extend/apps/tutorials/document-generator/http-routes",
@@ -1543,8 +1520,8 @@
                   },
                   {
                     "group": "التهيئة",
+                    "root": "ar/developers/extend/apps/config/overview",
                     "pages": [
-                      "ar/developers/extend/apps/config/overview",
                       "ar/developers/extend/apps/config/application",
                       "ar/developers/extend/apps/config/roles",
                       "ar/developers/extend/apps/config/install-hooks",
@@ -1553,8 +1530,8 @@
                   },
                   {
                     "group": "بيانات",
+                    "root": "ar/developers/extend/apps/data/overview",
                     "pages": [
-                      "ar/developers/extend/apps/data/overview",
                       "ar/developers/extend/apps/data/objects",
                       "ar/developers/extend/apps/data/extending-objects",
                       "ar/developers/extend/apps/data/system-fields",
@@ -1564,8 +1541,8 @@
                   },
                   {
                     "group": "المنطق",
+                    "root": "ar/developers/extend/apps/logic/overview",
                     "pages": [
-                      "ar/developers/extend/apps/logic/overview",
                       "ar/developers/extend/apps/logic/logic-functions",
                       "ar/developers/extend/apps/logic/key-value-store",
                       "ar/developers/extend/apps/logic/background-jobs",
@@ -1575,8 +1552,8 @@
                   },
                   {
                     "group": "التخطيط",
+                    "root": "ar/developers/extend/apps/layout/overview",
                     "pages": [
-                      "ar/developers/extend/apps/layout/overview",
                       "ar/developers/extend/apps/layout/views",
                       "ar/developers/extend/apps/layout/navigation-menu-items",
                       "ar/developers/extend/apps/layout/page-layouts",
@@ -1586,8 +1563,8 @@
                   },
                   {
                     "group": "العمليات",
+                    "root": "ar/developers/extend/apps/operations/overview",
                     "pages": [
-                      "ar/developers/extend/apps/operations/overview",
                       "ar/developers/extend/apps/operations/cli",
                       "ar/developers/extend/apps/operations/sync-and-recovery",
                       "ar/developers/extend/apps/operations/testing",
@@ -1666,7 +1643,6 @@
               },
               {
                 "group": "Datový model",
-                "icon": "database",
                 "pages": [
                   "cs/user-guide/data-model/overview",
                   {
@@ -1692,7 +1668,6 @@
               },
               {
                 "group": "Migrace dat",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "cs/user-guide/data-migration/overview",
                   {
@@ -1724,7 +1699,6 @@
               },
               {
                 "group": "Kalendář a e-maily",
-                "icon": "envelope",
                 "pages": [
                   "cs/user-guide/calendar-emails/overview",
                   {
@@ -1749,7 +1723,6 @@
               },
               {
                 "group": "Pracovní postupy",
-                "icon": "bolt",
                 "pages": [
                   "cs/user-guide/workflows/overview",
                   {
@@ -1812,7 +1785,6 @@
               },
               {
                 "group": "AI",
-                "icon": "robot",
                 "pages": [
                   "cs/user-guide/ai/overview",
                   {
@@ -1833,7 +1805,6 @@
               },
               {
                 "group": "Rozvržení",
-                "icon": "table-columns",
                 "pages": [
                   "cs/user-guide/layout/overview",
                   {
@@ -1870,7 +1841,6 @@
               },
               {
                 "group": "Panely",
-                "icon": "chart-bar",
                 "pages": [
                   "cs/user-guide/dashboards/overview",
                   {
@@ -1892,7 +1862,6 @@
               },
               {
                 "group": "Oprávnění a přístup",
-                "icon": "lock",
                 "pages": [
                   "cs/user-guide/permissions-access/overview",
                   {
@@ -1912,7 +1881,6 @@
               },
               {
                 "group": "Fakturace",
-                "icon": "credit-card",
                 "pages": [
                   "cs/user-guide/billing/overview",
                   {
@@ -1932,7 +1900,6 @@
               },
               {
                 "group": "Nastavení",
-                "icon": "gear",
                 "pages": [
                   "cs/user-guide/settings/overview",
                   {
@@ -1956,7 +1923,6 @@
               },
               {
                 "group": "Právní",
-                "icon": "book",
                 "pages": [
                   "cs/user-guide/legal/overview",
                   {
@@ -1994,8 +1960,8 @@
                   },
                   {
                     "group": "Návod",
+                    "root": "cs/developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "cs/developers/extend/apps/tutorials/document-generator/overview",
                       "cs/developers/extend/apps/tutorials/document-generator/data-model",
                       "cs/developers/extend/apps/tutorials/document-generator/generating-documents",
                       "cs/developers/extend/apps/tutorials/document-generator/http-routes",
@@ -2006,8 +1972,8 @@
                   },
                   {
                     "group": "Konfigurace",
+                    "root": "cs/developers/extend/apps/config/overview",
                     "pages": [
-                      "cs/developers/extend/apps/config/overview",
                       "cs/developers/extend/apps/config/application",
                       "cs/developers/extend/apps/config/roles",
                       "cs/developers/extend/apps/config/install-hooks",
@@ -2016,8 +1982,8 @@
                   },
                   {
                     "group": "Data",
+                    "root": "cs/developers/extend/apps/data/overview",
                     "pages": [
-                      "cs/developers/extend/apps/data/overview",
                       "cs/developers/extend/apps/data/objects",
                       "cs/developers/extend/apps/data/extending-objects",
                       "cs/developers/extend/apps/data/system-fields",
@@ -2027,8 +1993,8 @@
                   },
                   {
                     "group": "Logika",
+                    "root": "cs/developers/extend/apps/logic/overview",
                     "pages": [
-                      "cs/developers/extend/apps/logic/overview",
                       "cs/developers/extend/apps/logic/logic-functions",
                       "cs/developers/extend/apps/logic/key-value-store",
                       "cs/developers/extend/apps/logic/background-jobs",
@@ -2038,8 +2004,8 @@
                   },
                   {
                     "group": "Rozvržení",
+                    "root": "cs/developers/extend/apps/layout/overview",
                     "pages": [
-                      "cs/developers/extend/apps/layout/overview",
                       "cs/developers/extend/apps/layout/views",
                       "cs/developers/extend/apps/layout/navigation-menu-items",
                       "cs/developers/extend/apps/layout/page-layouts",
@@ -2049,8 +2015,8 @@
                   },
                   {
                     "group": "Operace",
+                    "root": "cs/developers/extend/apps/operations/overview",
                     "pages": [
-                      "cs/developers/extend/apps/operations/overview",
                       "cs/developers/extend/apps/operations/cli",
                       "cs/developers/extend/apps/operations/sync-and-recovery",
                       "cs/developers/extend/apps/operations/testing",
@@ -2129,7 +2095,6 @@
               },
               {
                 "group": "Datenmodell",
-                "icon": "database",
                 "pages": [
                   "de/user-guide/data-model/overview",
                   {
@@ -2155,7 +2120,6 @@
               },
               {
                 "group": "Datenmigration",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "de/user-guide/data-migration/overview",
                   {
@@ -2187,7 +2151,6 @@
               },
               {
                 "group": "Kalender & E-Mails",
-                "icon": "envelope",
                 "pages": [
                   "de/user-guide/calendar-emails/overview",
                   {
@@ -2212,7 +2175,6 @@
               },
               {
                 "group": "Workflows",
-                "icon": "bolt",
                 "pages": [
                   "de/user-guide/workflows/overview",
                   {
@@ -2275,7 +2237,6 @@
               },
               {
                 "group": "KI",
-                "icon": "robot",
                 "pages": [
                   "de/user-guide/ai/overview",
                   {
@@ -2296,7 +2257,6 @@
               },
               {
                 "group": "Layout",
-                "icon": "table-columns",
                 "pages": [
                   "de/user-guide/layout/overview",
                   {
@@ -2333,7 +2293,6 @@
               },
               {
                 "group": "Dashboards",
-                "icon": "chart-bar",
                 "pages": [
                   "de/user-guide/dashboards/overview",
                   {
@@ -2355,7 +2314,6 @@
               },
               {
                 "group": "Berechtigungen & Zugriff",
-                "icon": "lock",
                 "pages": [
                   "de/user-guide/permissions-access/overview",
                   {
@@ -2375,7 +2333,6 @@
               },
               {
                 "group": "Abrechnung",
-                "icon": "credit-card",
                 "pages": [
                   "de/user-guide/billing/overview",
                   {
@@ -2395,7 +2352,6 @@
               },
               {
                 "group": "Einstellungen",
-                "icon": "gear",
                 "pages": [
                   "de/user-guide/settings/overview",
                   {
@@ -2419,7 +2375,6 @@
               },
               {
                 "group": "Rechtliches",
-                "icon": "book",
                 "pages": [
                   "de/user-guide/legal/overview",
                   {
@@ -2457,8 +2412,8 @@
                   },
                   {
                     "group": "Tutorial",
+                    "root": "de/developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "de/developers/extend/apps/tutorials/document-generator/overview",
                       "de/developers/extend/apps/tutorials/document-generator/data-model",
                       "de/developers/extend/apps/tutorials/document-generator/generating-documents",
                       "de/developers/extend/apps/tutorials/document-generator/http-routes",
@@ -2469,8 +2424,8 @@
                   },
                   {
                     "group": "Konfiguration",
+                    "root": "de/developers/extend/apps/config/overview",
                     "pages": [
-                      "de/developers/extend/apps/config/overview",
                       "de/developers/extend/apps/config/application",
                       "de/developers/extend/apps/config/roles",
                       "de/developers/extend/apps/config/install-hooks",
@@ -2479,8 +2434,8 @@
                   },
                   {
                     "group": "Daten",
+                    "root": "de/developers/extend/apps/data/overview",
                     "pages": [
-                      "de/developers/extend/apps/data/overview",
                       "de/developers/extend/apps/data/objects",
                       "de/developers/extend/apps/data/extending-objects",
                       "de/developers/extend/apps/data/system-fields",
@@ -2490,8 +2445,8 @@
                   },
                   {
                     "group": "Logik",
+                    "root": "de/developers/extend/apps/logic/overview",
                     "pages": [
-                      "de/developers/extend/apps/logic/overview",
                       "de/developers/extend/apps/logic/logic-functions",
                       "de/developers/extend/apps/logic/key-value-store",
                       "de/developers/extend/apps/logic/background-jobs",
@@ -2501,8 +2456,8 @@
                   },
                   {
                     "group": "Layout",
+                    "root": "de/developers/extend/apps/layout/overview",
                     "pages": [
-                      "de/developers/extend/apps/layout/overview",
                       "de/developers/extend/apps/layout/views",
                       "de/developers/extend/apps/layout/navigation-menu-items",
                       "de/developers/extend/apps/layout/page-layouts",
@@ -2512,8 +2467,8 @@
                   },
                   {
                     "group": "Operationen",
+                    "root": "de/developers/extend/apps/operations/overview",
                     "pages": [
-                      "de/developers/extend/apps/operations/overview",
                       "de/developers/extend/apps/operations/cli",
                       "de/developers/extend/apps/operations/sync-and-recovery",
                       "de/developers/extend/apps/operations/testing",
@@ -2592,7 +2547,6 @@
               },
               {
                 "group": "Modelo de datos",
-                "icon": "database",
                 "pages": [
                   "es/user-guide/data-model/overview",
                   {
@@ -2618,7 +2572,6 @@
               },
               {
                 "group": "Migración de datos",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "es/user-guide/data-migration/overview",
                   {
@@ -2650,7 +2603,6 @@
               },
               {
                 "group": "Calendario y correos electrónicos",
-                "icon": "envelope",
                 "pages": [
                   "es/user-guide/calendar-emails/overview",
                   {
@@ -2675,7 +2627,6 @@
               },
               {
                 "group": "Flujos de trabajo",
-                "icon": "bolt",
                 "pages": [
                   "es/user-guide/workflows/overview",
                   {
@@ -2738,7 +2689,6 @@
               },
               {
                 "group": "IA",
-                "icon": "robot",
                 "pages": [
                   "es/user-guide/ai/overview",
                   {
@@ -2759,7 +2709,6 @@
               },
               {
                 "group": "Diseño",
-                "icon": "table-columns",
                 "pages": [
                   "es/user-guide/layout/overview",
                   {
@@ -2796,7 +2745,6 @@
               },
               {
                 "group": "Tableros",
-                "icon": "chart-bar",
                 "pages": [
                   "es/user-guide/dashboards/overview",
                   {
@@ -2818,7 +2766,6 @@
               },
               {
                 "group": "Permisos y acceso",
-                "icon": "lock",
                 "pages": [
                   "es/user-guide/permissions-access/overview",
                   {
@@ -2838,7 +2785,6 @@
               },
               {
                 "group": "Facturación",
-                "icon": "credit-card",
                 "pages": [
                   "es/user-guide/billing/overview",
                   {
@@ -2858,7 +2804,6 @@
               },
               {
                 "group": "Configuración",
-                "icon": "gear",
                 "pages": [
                   "es/user-guide/settings/overview",
                   {
@@ -2882,7 +2827,6 @@
               },
               {
                 "group": "Legal",
-                "icon": "book",
                 "pages": [
                   "es/user-guide/legal/overview",
                   {
@@ -2920,8 +2864,8 @@
                   },
                   {
                     "group": "Tutorial",
+                    "root": "es/developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "es/developers/extend/apps/tutorials/document-generator/overview",
                       "es/developers/extend/apps/tutorials/document-generator/data-model",
                       "es/developers/extend/apps/tutorials/document-generator/generating-documents",
                       "es/developers/extend/apps/tutorials/document-generator/http-routes",
@@ -2932,8 +2876,8 @@
                   },
                   {
                     "group": "Configuración",
+                    "root": "es/developers/extend/apps/config/overview",
                     "pages": [
-                      "es/developers/extend/apps/config/overview",
                       "es/developers/extend/apps/config/application",
                       "es/developers/extend/apps/config/roles",
                       "es/developers/extend/apps/config/install-hooks",
@@ -2942,8 +2886,8 @@
                   },
                   {
                     "group": "Datos",
+                    "root": "es/developers/extend/apps/data/overview",
                     "pages": [
-                      "es/developers/extend/apps/data/overview",
                       "es/developers/extend/apps/data/objects",
                       "es/developers/extend/apps/data/extending-objects",
                       "es/developers/extend/apps/data/system-fields",
@@ -2953,8 +2897,8 @@
                   },
                   {
                     "group": "Lógica",
+                    "root": "es/developers/extend/apps/logic/overview",
                     "pages": [
-                      "es/developers/extend/apps/logic/overview",
                       "es/developers/extend/apps/logic/logic-functions",
                       "es/developers/extend/apps/logic/key-value-store",
                       "es/developers/extend/apps/logic/background-jobs",
@@ -2964,8 +2908,8 @@
                   },
                   {
                     "group": "Diseño",
+                    "root": "es/developers/extend/apps/layout/overview",
                     "pages": [
-                      "es/developers/extend/apps/layout/overview",
                       "es/developers/extend/apps/layout/views",
                       "es/developers/extend/apps/layout/navigation-menu-items",
                       "es/developers/extend/apps/layout/page-layouts",
@@ -2975,8 +2919,8 @@
                   },
                   {
                     "group": "Operaciones",
+                    "root": "es/developers/extend/apps/operations/overview",
                     "pages": [
-                      "es/developers/extend/apps/operations/overview",
                       "es/developers/extend/apps/operations/cli",
                       "es/developers/extend/apps/operations/sync-and-recovery",
                       "es/developers/extend/apps/operations/testing",
@@ -3055,7 +2999,6 @@
               },
               {
                 "group": "Modello dati",
-                "icon": "database",
                 "pages": [
                   "it/user-guide/data-model/overview",
                   {
@@ -3081,7 +3024,6 @@
               },
               {
                 "group": "Migrazione dei dati",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "it/user-guide/data-migration/overview",
                   {
@@ -3113,7 +3055,6 @@
               },
               {
                 "group": "Calendario & Email",
-                "icon": "envelope",
                 "pages": [
                   "it/user-guide/calendar-emails/overview",
                   {
@@ -3138,7 +3079,6 @@
               },
               {
                 "group": "Flussi di Lavoro",
-                "icon": "bolt",
                 "pages": [
                   "it/user-guide/workflows/overview",
                   {
@@ -3201,7 +3141,6 @@
               },
               {
                 "group": "AI",
-                "icon": "robot",
                 "pages": [
                   "it/user-guide/ai/overview",
                   {
@@ -3222,7 +3161,6 @@
               },
               {
                 "group": "Disposizione",
-                "icon": "table-columns",
                 "pages": [
                   "it/user-guide/layout/overview",
                   {
@@ -3259,7 +3197,6 @@
               },
               {
                 "group": "Cruscotti",
-                "icon": "chart-bar",
                 "pages": [
                   "it/user-guide/dashboards/overview",
                   {
@@ -3281,7 +3218,6 @@
               },
               {
                 "group": "Autorizzazioni & Accesso",
-                "icon": "lock",
                 "pages": [
                   "it/user-guide/permissions-access/overview",
                   {
@@ -3301,7 +3237,6 @@
               },
               {
                 "group": "Fatturazione",
-                "icon": "credit-card",
                 "pages": [
                   "it/user-guide/billing/overview",
                   {
@@ -3321,7 +3256,6 @@
               },
               {
                 "group": "Impostazioni",
-                "icon": "gear",
                 "pages": [
                   "it/user-guide/settings/overview",
                   {
@@ -3345,7 +3279,6 @@
               },
               {
                 "group": "Legale",
-                "icon": "book",
                 "pages": [
                   "it/user-guide/legal/overview",
                   {
@@ -3383,8 +3316,8 @@
                   },
                   {
                     "group": "Tutorial",
+                    "root": "it/developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "it/developers/extend/apps/tutorials/document-generator/overview",
                       "it/developers/extend/apps/tutorials/document-generator/data-model",
                       "it/developers/extend/apps/tutorials/document-generator/generating-documents",
                       "it/developers/extend/apps/tutorials/document-generator/http-routes",
@@ -3395,8 +3328,8 @@
                   },
                   {
                     "group": "Configurazione",
+                    "root": "it/developers/extend/apps/config/overview",
                     "pages": [
-                      "it/developers/extend/apps/config/overview",
                       "it/developers/extend/apps/config/application",
                       "it/developers/extend/apps/config/roles",
                       "it/developers/extend/apps/config/install-hooks",
@@ -3405,8 +3338,8 @@
                   },
                   {
                     "group": "Dati",
+                    "root": "it/developers/extend/apps/data/overview",
                     "pages": [
-                      "it/developers/extend/apps/data/overview",
                       "it/developers/extend/apps/data/objects",
                       "it/developers/extend/apps/data/extending-objects",
                       "it/developers/extend/apps/data/system-fields",
@@ -3416,8 +3349,8 @@
                   },
                   {
                     "group": "Logica",
+                    "root": "it/developers/extend/apps/logic/overview",
                     "pages": [
-                      "it/developers/extend/apps/logic/overview",
                       "it/developers/extend/apps/logic/logic-functions",
                       "it/developers/extend/apps/logic/key-value-store",
                       "it/developers/extend/apps/logic/background-jobs",
@@ -3427,8 +3360,8 @@
                   },
                   {
                     "group": "Layout",
+                    "root": "it/developers/extend/apps/layout/overview",
                     "pages": [
-                      "it/developers/extend/apps/layout/overview",
                       "it/developers/extend/apps/layout/views",
                       "it/developers/extend/apps/layout/navigation-menu-items",
                       "it/developers/extend/apps/layout/page-layouts",
@@ -3438,8 +3371,8 @@
                   },
                   {
                     "group": "Operazioni",
+                    "root": "it/developers/extend/apps/operations/overview",
                     "pages": [
-                      "it/developers/extend/apps/operations/overview",
                       "it/developers/extend/apps/operations/cli",
                       "it/developers/extend/apps/operations/sync-and-recovery",
                       "it/developers/extend/apps/operations/testing",
@@ -3518,7 +3451,6 @@
               },
               {
                 "group": "データモデル",
-                "icon": "database",
                 "pages": [
                   "ja/user-guide/data-model/overview",
                   {
@@ -3544,7 +3476,6 @@
               },
               {
                 "group": "データ移行",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "ja/user-guide/data-migration/overview",
                   {
@@ -3576,7 +3507,6 @@
               },
               {
                 "group": "カレンダーとメール",
-                "icon": "envelope",
                 "pages": [
                   "ja/user-guide/calendar-emails/overview",
                   {
@@ -3601,7 +3531,6 @@
               },
               {
                 "group": "ワークフロー",
-                "icon": "bolt",
                 "pages": [
                   "ja/user-guide/workflows/overview",
                   {
@@ -3664,7 +3593,6 @@
               },
               {
                 "group": "AI",
-                "icon": "robot",
                 "pages": [
                   "ja/user-guide/ai/overview",
                   {
@@ -3685,7 +3613,6 @@
               },
               {
                 "group": "レイアウト",
-                "icon": "table-columns",
                 "pages": [
                   "ja/user-guide/layout/overview",
                   {
@@ -3722,7 +3649,6 @@
               },
               {
                 "group": "ダッシュボード",
-                "icon": "chart-bar",
                 "pages": [
                   "ja/user-guide/dashboards/overview",
                   {
@@ -3744,7 +3670,6 @@
               },
               {
                 "group": "権限とアクセス",
-                "icon": "lock",
                 "pages": [
                   "ja/user-guide/permissions-access/overview",
                   {
@@ -3764,7 +3689,6 @@
               },
               {
                 "group": "請求",
-                "icon": "credit-card",
                 "pages": [
                   "ja/user-guide/billing/overview",
                   {
@@ -3784,7 +3708,6 @@
               },
               {
                 "group": "設定",
-                "icon": "gear",
                 "pages": [
                   "ja/user-guide/settings/overview",
                   {
@@ -3808,7 +3731,6 @@
               },
               {
                 "group": "法務",
-                "icon": "book",
                 "pages": [
                   "ja/user-guide/legal/overview",
                   {
@@ -3846,8 +3768,8 @@
                   },
                   {
                     "group": "チュートリアル",
+                    "root": "ja/developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "ja/developers/extend/apps/tutorials/document-generator/overview",
                       "ja/developers/extend/apps/tutorials/document-generator/data-model",
                       "ja/developers/extend/apps/tutorials/document-generator/generating-documents",
                       "ja/developers/extend/apps/tutorials/document-generator/http-routes",
@@ -3858,8 +3780,8 @@
                   },
                   {
                     "group": "設定",
+                    "root": "ja/developers/extend/apps/config/overview",
                     "pages": [
-                      "ja/developers/extend/apps/config/overview",
                       "ja/developers/extend/apps/config/application",
                       "ja/developers/extend/apps/config/roles",
                       "ja/developers/extend/apps/config/install-hooks",
@@ -3868,8 +3790,8 @@
                   },
                   {
                     "group": "データ",
+                    "root": "ja/developers/extend/apps/data/overview",
                     "pages": [
-                      "ja/developers/extend/apps/data/overview",
                       "ja/developers/extend/apps/data/objects",
                       "ja/developers/extend/apps/data/extending-objects",
                       "ja/developers/extend/apps/data/system-fields",
@@ -3879,8 +3801,8 @@
                   },
                   {
                     "group": "ロジック",
+                    "root": "ja/developers/extend/apps/logic/overview",
                     "pages": [
-                      "ja/developers/extend/apps/logic/overview",
                       "ja/developers/extend/apps/logic/logic-functions",
                       "ja/developers/extend/apps/logic/key-value-store",
                       "ja/developers/extend/apps/logic/background-jobs",
@@ -3890,8 +3812,8 @@
                   },
                   {
                     "group": "レイアウト",
+                    "root": "ja/developers/extend/apps/layout/overview",
                     "pages": [
-                      "ja/developers/extend/apps/layout/overview",
                       "ja/developers/extend/apps/layout/views",
                       "ja/developers/extend/apps/layout/navigation-menu-items",
                       "ja/developers/extend/apps/layout/page-layouts",
@@ -3901,8 +3823,8 @@
                   },
                   {
                     "group": "オペレーション",
+                    "root": "ja/developers/extend/apps/operations/overview",
                     "pages": [
-                      "ja/developers/extend/apps/operations/overview",
                       "ja/developers/extend/apps/operations/cli",
                       "ja/developers/extend/apps/operations/sync-and-recovery",
                       "ja/developers/extend/apps/operations/testing",
@@ -3981,7 +3903,6 @@
               },
               {
                 "group": "데이터 모델",
-                "icon": "database",
                 "pages": [
                   "ko/user-guide/data-model/overview",
                   {
@@ -4007,7 +3928,6 @@
               },
               {
                 "group": "데이터 마이그레이션",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "ko/user-guide/data-migration/overview",
                   {
@@ -4039,7 +3959,6 @@
               },
               {
                 "group": "캘린더 및 이메일",
-                "icon": "envelope",
                 "pages": [
                   "ko/user-guide/calendar-emails/overview",
                   {
@@ -4064,7 +3983,6 @@
               },
               {
                 "group": "워크플로우",
-                "icon": "bolt",
                 "pages": [
                   "ko/user-guide/workflows/overview",
                   {
@@ -4127,7 +4045,6 @@
               },
               {
                 "group": "AI",
-                "icon": "robot",
                 "pages": [
                   "ko/user-guide/ai/overview",
                   {
@@ -4148,7 +4065,6 @@
               },
               {
                 "group": "레이아웃",
-                "icon": "table-columns",
                 "pages": [
                   "ko/user-guide/layout/overview",
                   {
@@ -4185,7 +4101,6 @@
               },
               {
                 "group": "대시보드",
-                "icon": "chart-bar",
                 "pages": [
                   "ko/user-guide/dashboards/overview",
                   {
@@ -4207,7 +4122,6 @@
               },
               {
                 "group": "권한 및 접근",
-                "icon": "lock",
                 "pages": [
                   "ko/user-guide/permissions-access/overview",
                   {
@@ -4227,7 +4141,6 @@
               },
               {
                 "group": "청구",
-                "icon": "credit-card",
                 "pages": [
                   "ko/user-guide/billing/overview",
                   {
@@ -4247,7 +4160,6 @@
               },
               {
                 "group": "설정",
-                "icon": "gear",
                 "pages": [
                   "ko/user-guide/settings/overview",
                   {
@@ -4271,7 +4183,6 @@
               },
               {
                 "group": "법무",
-                "icon": "book",
                 "pages": [
                   "ko/user-guide/legal/overview",
                   {
@@ -4309,8 +4220,8 @@
                   },
                   {
                     "group": "튜토리얼",
+                    "root": "ko/developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "ko/developers/extend/apps/tutorials/document-generator/overview",
                       "ko/developers/extend/apps/tutorials/document-generator/data-model",
                       "ko/developers/extend/apps/tutorials/document-generator/generating-documents",
                       "ko/developers/extend/apps/tutorials/document-generator/http-routes",
@@ -4321,8 +4232,8 @@
                   },
                   {
                     "group": "설정",
+                    "root": "ko/developers/extend/apps/config/overview",
                     "pages": [
-                      "ko/developers/extend/apps/config/overview",
                       "ko/developers/extend/apps/config/application",
                       "ko/developers/extend/apps/config/roles",
                       "ko/developers/extend/apps/config/install-hooks",
@@ -4331,8 +4242,8 @@
                   },
                   {
                     "group": "데이터",
+                    "root": "ko/developers/extend/apps/data/overview",
                     "pages": [
-                      "ko/developers/extend/apps/data/overview",
                       "ko/developers/extend/apps/data/objects",
                       "ko/developers/extend/apps/data/extending-objects",
                       "ko/developers/extend/apps/data/system-fields",
@@ -4342,8 +4253,8 @@
                   },
                   {
                     "group": "로직",
+                    "root": "ko/developers/extend/apps/logic/overview",
                     "pages": [
-                      "ko/developers/extend/apps/logic/overview",
                       "ko/developers/extend/apps/logic/logic-functions",
                       "ko/developers/extend/apps/logic/key-value-store",
                       "ko/developers/extend/apps/logic/background-jobs",
@@ -4353,8 +4264,8 @@
                   },
                   {
                     "group": "레이아웃",
+                    "root": "ko/developers/extend/apps/layout/overview",
                     "pages": [
-                      "ko/developers/extend/apps/layout/overview",
                       "ko/developers/extend/apps/layout/views",
                       "ko/developers/extend/apps/layout/navigation-menu-items",
                       "ko/developers/extend/apps/layout/page-layouts",
@@ -4364,8 +4275,8 @@
                   },
                   {
                     "group": "작업",
+                    "root": "ko/developers/extend/apps/operations/overview",
                     "pages": [
-                      "ko/developers/extend/apps/operations/overview",
                       "ko/developers/extend/apps/operations/cli",
                       "ko/developers/extend/apps/operations/sync-and-recovery",
                       "ko/developers/extend/apps/operations/testing",
@@ -4444,7 +4355,6 @@
               },
               {
                 "group": "Modelo de dados",
-                "icon": "database",
                 "pages": [
                   "pt/user-guide/data-model/overview",
                   {
@@ -4470,7 +4380,6 @@
               },
               {
                 "group": "Migração de dados",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "pt/user-guide/data-migration/overview",
                   {
@@ -4502,7 +4411,6 @@
               },
               {
                 "group": "Calendário e E-mails",
-                "icon": "envelope",
                 "pages": [
                   "pt/user-guide/calendar-emails/overview",
                   {
@@ -4527,7 +4435,6 @@
               },
               {
                 "group": "Fluxos de trabalho",
-                "icon": "bolt",
                 "pages": [
                   "pt/user-guide/workflows/overview",
                   {
@@ -4590,7 +4497,6 @@
               },
               {
                 "group": "IA",
-                "icon": "robot",
                 "pages": [
                   "pt/user-guide/ai/overview",
                   {
@@ -4611,7 +4517,6 @@
               },
               {
                 "group": "Layout",
-                "icon": "table-columns",
                 "pages": [
                   "pt/user-guide/layout/overview",
                   {
@@ -4648,7 +4553,6 @@
               },
               {
                 "group": "Painéis",
-                "icon": "chart-bar",
                 "pages": [
                   "pt/user-guide/dashboards/overview",
                   {
@@ -4670,7 +4574,6 @@
               },
               {
                 "group": "Permissões e Acesso",
-                "icon": "lock",
                 "pages": [
                   "pt/user-guide/permissions-access/overview",
                   {
@@ -4690,7 +4593,6 @@
               },
               {
                 "group": "Faturação",
-                "icon": "credit-card",
                 "pages": [
                   "pt/user-guide/billing/overview",
                   {
@@ -4710,7 +4612,6 @@
               },
               {
                 "group": "Configurações",
-                "icon": "gear",
                 "pages": [
                   "pt/user-guide/settings/overview",
                   {
@@ -4734,7 +4635,6 @@
               },
               {
                 "group": "Jurídico",
-                "icon": "book",
                 "pages": [
                   "pt/user-guide/legal/overview",
                   {
@@ -4772,8 +4672,8 @@
                   },
                   {
                     "group": "Tutorial",
+                    "root": "pt/developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "pt/developers/extend/apps/tutorials/document-generator/overview",
                       "pt/developers/extend/apps/tutorials/document-generator/data-model",
                       "pt/developers/extend/apps/tutorials/document-generator/generating-documents",
                       "pt/developers/extend/apps/tutorials/document-generator/http-routes",
@@ -4784,8 +4684,8 @@
                   },
                   {
                     "group": "Configuração",
+                    "root": "pt/developers/extend/apps/config/overview",
                     "pages": [
-                      "pt/developers/extend/apps/config/overview",
                       "pt/developers/extend/apps/config/application",
                       "pt/developers/extend/apps/config/roles",
                       "pt/developers/extend/apps/config/install-hooks",
@@ -4794,8 +4694,8 @@
                   },
                   {
                     "group": "Dados",
+                    "root": "pt/developers/extend/apps/data/overview",
                     "pages": [
-                      "pt/developers/extend/apps/data/overview",
                       "pt/developers/extend/apps/data/objects",
                       "pt/developers/extend/apps/data/extending-objects",
                       "pt/developers/extend/apps/data/system-fields",
@@ -4805,8 +4705,8 @@
                   },
                   {
                     "group": "Lógica",
+                    "root": "pt/developers/extend/apps/logic/overview",
                     "pages": [
-                      "pt/developers/extend/apps/logic/overview",
                       "pt/developers/extend/apps/logic/logic-functions",
                       "pt/developers/extend/apps/logic/key-value-store",
                       "pt/developers/extend/apps/logic/background-jobs",
@@ -4816,8 +4716,8 @@
                   },
                   {
                     "group": "Layout",
+                    "root": "pt/developers/extend/apps/layout/overview",
                     "pages": [
-                      "pt/developers/extend/apps/layout/overview",
                       "pt/developers/extend/apps/layout/views",
                       "pt/developers/extend/apps/layout/navigation-menu-items",
                       "pt/developers/extend/apps/layout/page-layouts",
@@ -4827,8 +4727,8 @@
                   },
                   {
                     "group": "Operações",
+                    "root": "pt/developers/extend/apps/operations/overview",
                     "pages": [
-                      "pt/developers/extend/apps/operations/overview",
                       "pt/developers/extend/apps/operations/cli",
                       "pt/developers/extend/apps/operations/sync-and-recovery",
                       "pt/developers/extend/apps/operations/testing",
@@ -4907,7 +4807,6 @@
               },
               {
                 "group": "Model de date",
-                "icon": "database",
                 "pages": [
                   "ro/user-guide/data-model/overview",
                   {
@@ -4933,7 +4832,6 @@
               },
               {
                 "group": "Migrarea Datelor",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "ro/user-guide/data-migration/overview",
                   {
@@ -4965,7 +4863,6 @@
               },
               {
                 "group": "Calendar & E-mailuri",
-                "icon": "envelope",
                 "pages": [
                   "ro/user-guide/calendar-emails/overview",
                   {
@@ -4990,7 +4887,6 @@
               },
               {
                 "group": "Fluxuri de lucru",
-                "icon": "bolt",
                 "pages": [
                   "ro/user-guide/workflows/overview",
                   {
@@ -5053,7 +4949,6 @@
               },
               {
                 "group": "AI",
-                "icon": "robot",
                 "pages": [
                   "ro/user-guide/ai/overview",
                   {
@@ -5074,7 +4969,6 @@
               },
               {
                 "group": "Aspect",
-                "icon": "table-columns",
                 "pages": [
                   "ro/user-guide/layout/overview",
                   {
@@ -5111,7 +5005,6 @@
               },
               {
                 "group": "Tablouri de Bord",
-                "icon": "chart-bar",
                 "pages": [
                   "ro/user-guide/dashboards/overview",
                   {
@@ -5133,7 +5026,6 @@
               },
               {
                 "group": "Permisiuni & Acces",
-                "icon": "lock",
                 "pages": [
                   "ro/user-guide/permissions-access/overview",
                   {
@@ -5153,7 +5045,6 @@
               },
               {
                 "group": "Facturare",
-                "icon": "credit-card",
                 "pages": [
                   "ro/user-guide/billing/overview",
                   {
@@ -5173,7 +5064,6 @@
               },
               {
                 "group": "Setări",
-                "icon": "gear",
                 "pages": [
                   "ro/user-guide/settings/overview",
                   {
@@ -5197,7 +5087,6 @@
               },
               {
                 "group": "Juridic",
-                "icon": "book",
                 "pages": [
                   "ro/user-guide/legal/overview",
                   {
@@ -5235,8 +5124,8 @@
                   },
                   {
                     "group": "Tutorial",
+                    "root": "ro/developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "ro/developers/extend/apps/tutorials/document-generator/overview",
                       "ro/developers/extend/apps/tutorials/document-generator/data-model",
                       "ro/developers/extend/apps/tutorials/document-generator/generating-documents",
                       "ro/developers/extend/apps/tutorials/document-generator/http-routes",
@@ -5247,8 +5136,8 @@
                   },
                   {
                     "group": "Configurare",
+                    "root": "ro/developers/extend/apps/config/overview",
                     "pages": [
-                      "ro/developers/extend/apps/config/overview",
                       "ro/developers/extend/apps/config/application",
                       "ro/developers/extend/apps/config/roles",
                       "ro/developers/extend/apps/config/install-hooks",
@@ -5257,8 +5146,8 @@
                   },
                   {
                     "group": "Date",
+                    "root": "ro/developers/extend/apps/data/overview",
                     "pages": [
-                      "ro/developers/extend/apps/data/overview",
                       "ro/developers/extend/apps/data/objects",
                       "ro/developers/extend/apps/data/extending-objects",
                       "ro/developers/extend/apps/data/system-fields",
@@ -5268,8 +5157,8 @@
                   },
                   {
                     "group": "Logică",
+                    "root": "ro/developers/extend/apps/logic/overview",
                     "pages": [
-                      "ro/developers/extend/apps/logic/overview",
                       "ro/developers/extend/apps/logic/logic-functions",
                       "ro/developers/extend/apps/logic/key-value-store",
                       "ro/developers/extend/apps/logic/background-jobs",
@@ -5279,8 +5168,8 @@
                   },
                   {
                     "group": "Aspect",
+                    "root": "ro/developers/extend/apps/layout/overview",
                     "pages": [
-                      "ro/developers/extend/apps/layout/overview",
                       "ro/developers/extend/apps/layout/views",
                       "ro/developers/extend/apps/layout/navigation-menu-items",
                       "ro/developers/extend/apps/layout/page-layouts",
@@ -5290,8 +5179,8 @@
                   },
                   {
                     "group": "Operațiuni",
+                    "root": "ro/developers/extend/apps/operations/overview",
                     "pages": [
-                      "ro/developers/extend/apps/operations/overview",
                       "ro/developers/extend/apps/operations/cli",
                       "ro/developers/extend/apps/operations/sync-and-recovery",
                       "ro/developers/extend/apps/operations/testing",
@@ -5370,7 +5259,6 @@
               },
               {
                 "group": "Модель данных",
-                "icon": "database",
                 "pages": [
                   "ru/user-guide/data-model/overview",
                   {
@@ -5396,7 +5284,6 @@
               },
               {
                 "group": "Миграция данных",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "ru/user-guide/data-migration/overview",
                   {
@@ -5428,7 +5315,6 @@
               },
               {
                 "group": "Календарь и электронная почта",
-                "icon": "envelope",
                 "pages": [
                   "ru/user-guide/calendar-emails/overview",
                   {
@@ -5453,7 +5339,6 @@
               },
               {
                 "group": "Рабочие процессы",
-                "icon": "bolt",
                 "pages": [
                   "ru/user-guide/workflows/overview",
                   {
@@ -5516,7 +5401,6 @@
               },
               {
                 "group": "ИИ",
-                "icon": "robot",
                 "pages": [
                   "ru/user-guide/ai/overview",
                   {
@@ -5537,7 +5421,6 @@
               },
               {
                 "group": "Макет",
-                "icon": "table-columns",
                 "pages": [
                   "ru/user-guide/layout/overview",
                   {
@@ -5574,7 +5457,6 @@
               },
               {
                 "group": "Панели управления",
-                "icon": "chart-bar",
                 "pages": [
                   "ru/user-guide/dashboards/overview",
                   {
@@ -5596,7 +5478,6 @@
               },
               {
                 "group": "Разрешения и доступ",
-                "icon": "lock",
                 "pages": [
                   "ru/user-guide/permissions-access/overview",
                   {
@@ -5616,7 +5497,6 @@
               },
               {
                 "group": "Биллинг",
-                "icon": "credit-card",
                 "pages": [
                   "ru/user-guide/billing/overview",
                   {
@@ -5636,7 +5516,6 @@
               },
               {
                 "group": "Настройки",
-                "icon": "gear",
                 "pages": [
                   "ru/user-guide/settings/overview",
                   {
@@ -5660,7 +5539,6 @@
               },
               {
                 "group": "Юридическая информация",
-                "icon": "book",
                 "pages": [
                   "ru/user-guide/legal/overview",
                   {
@@ -5698,8 +5576,8 @@
                   },
                   {
                     "group": "Обучение",
+                    "root": "ru/developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "ru/developers/extend/apps/tutorials/document-generator/overview",
                       "ru/developers/extend/apps/tutorials/document-generator/data-model",
                       "ru/developers/extend/apps/tutorials/document-generator/generating-documents",
                       "ru/developers/extend/apps/tutorials/document-generator/http-routes",
@@ -5710,8 +5588,8 @@
                   },
                   {
                     "group": "Конфигурация",
+                    "root": "ru/developers/extend/apps/config/overview",
                     "pages": [
-                      "ru/developers/extend/apps/config/overview",
                       "ru/developers/extend/apps/config/application",
                       "ru/developers/extend/apps/config/roles",
                       "ru/developers/extend/apps/config/install-hooks",
@@ -5720,8 +5598,8 @@
                   },
                   {
                     "group": "Данные",
+                    "root": "ru/developers/extend/apps/data/overview",
                     "pages": [
-                      "ru/developers/extend/apps/data/overview",
                       "ru/developers/extend/apps/data/objects",
                       "ru/developers/extend/apps/data/extending-objects",
                       "ru/developers/extend/apps/data/system-fields",
@@ -5731,8 +5609,8 @@
                   },
                   {
                     "group": "Логика",
+                    "root": "ru/developers/extend/apps/logic/overview",
                     "pages": [
-                      "ru/developers/extend/apps/logic/overview",
                       "ru/developers/extend/apps/logic/logic-functions",
                       "ru/developers/extend/apps/logic/key-value-store",
                       "ru/developers/extend/apps/logic/background-jobs",
@@ -5742,8 +5620,8 @@
                   },
                   {
                     "group": "Макет",
+                    "root": "ru/developers/extend/apps/layout/overview",
                     "pages": [
-                      "ru/developers/extend/apps/layout/overview",
                       "ru/developers/extend/apps/layout/views",
                       "ru/developers/extend/apps/layout/navigation-menu-items",
                       "ru/developers/extend/apps/layout/page-layouts",
@@ -5753,8 +5631,8 @@
                   },
                   {
                     "group": "Операции",
+                    "root": "ru/developers/extend/apps/operations/overview",
                     "pages": [
-                      "ru/developers/extend/apps/operations/overview",
                       "ru/developers/extend/apps/operations/cli",
                       "ru/developers/extend/apps/operations/sync-and-recovery",
                       "ru/developers/extend/apps/operations/testing",
@@ -5833,7 +5711,6 @@
               },
               {
                 "group": "Veri modeli",
-                "icon": "database",
                 "pages": [
                   "tr/user-guide/data-model/overview",
                   {
@@ -5859,7 +5736,6 @@
               },
               {
                 "group": "Veri Geçişi",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "tr/user-guide/data-migration/overview",
                   {
@@ -5891,7 +5767,6 @@
               },
               {
                 "group": "Takvim ve E-postalar",
-                "icon": "envelope",
                 "pages": [
                   "tr/user-guide/calendar-emails/overview",
                   {
@@ -5916,7 +5791,6 @@
               },
               {
                 "group": "İş Akışları",
-                "icon": "bolt",
                 "pages": [
                   "tr/user-guide/workflows/overview",
                   {
@@ -5979,7 +5853,6 @@
               },
               {
                 "group": "AI",
-                "icon": "robot",
                 "pages": [
                   "tr/user-guide/ai/overview",
                   {
@@ -6000,7 +5873,6 @@
               },
               {
                 "group": "Düzen",
-                "icon": "table-columns",
                 "pages": [
                   "tr/user-guide/layout/overview",
                   {
@@ -6037,7 +5909,6 @@
               },
               {
                 "group": "Gösterge Panelleri",
-                "icon": "chart-bar",
                 "pages": [
                   "tr/user-guide/dashboards/overview",
                   {
@@ -6059,7 +5930,6 @@
               },
               {
                 "group": "İzinler ve Erişim",
-                "icon": "lock",
                 "pages": [
                   "tr/user-guide/permissions-access/overview",
                   {
@@ -6079,7 +5949,6 @@
               },
               {
                 "group": "Faturalandırma",
-                "icon": "credit-card",
                 "pages": [
                   "tr/user-guide/billing/overview",
                   {
@@ -6099,7 +5968,6 @@
               },
               {
                 "group": "Ayarlar",
-                "icon": "gear",
                 "pages": [
                   "tr/user-guide/settings/overview",
                   {
@@ -6123,7 +5991,6 @@
               },
               {
                 "group": "Yasal",
-                "icon": "book",
                 "pages": [
                   "tr/user-guide/legal/overview",
                   {
@@ -6161,8 +6028,8 @@
                   },
                   {
                     "group": "Öğretici",
+                    "root": "tr/developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "tr/developers/extend/apps/tutorials/document-generator/overview",
                       "tr/developers/extend/apps/tutorials/document-generator/data-model",
                       "tr/developers/extend/apps/tutorials/document-generator/generating-documents",
                       "tr/developers/extend/apps/tutorials/document-generator/http-routes",
@@ -6173,8 +6040,8 @@
                   },
                   {
                     "group": "Yapılandırma",
+                    "root": "tr/developers/extend/apps/config/overview",
                     "pages": [
-                      "tr/developers/extend/apps/config/overview",
                       "tr/developers/extend/apps/config/application",
                       "tr/developers/extend/apps/config/roles",
                       "tr/developers/extend/apps/config/install-hooks",
@@ -6183,8 +6050,8 @@
                   },
                   {
                     "group": "Veri",
+                    "root": "tr/developers/extend/apps/data/overview",
                     "pages": [
-                      "tr/developers/extend/apps/data/overview",
                       "tr/developers/extend/apps/data/objects",
                       "tr/developers/extend/apps/data/extending-objects",
                       "tr/developers/extend/apps/data/system-fields",
@@ -6194,8 +6061,8 @@
                   },
                   {
                     "group": "Mantık",
+                    "root": "tr/developers/extend/apps/logic/overview",
                     "pages": [
-                      "tr/developers/extend/apps/logic/overview",
                       "tr/developers/extend/apps/logic/logic-functions",
                       "tr/developers/extend/apps/logic/key-value-store",
                       "tr/developers/extend/apps/logic/background-jobs",
@@ -6205,8 +6072,8 @@
                   },
                   {
                     "group": "Düzen",
+                    "root": "tr/developers/extend/apps/layout/overview",
                     "pages": [
-                      "tr/developers/extend/apps/layout/overview",
                       "tr/developers/extend/apps/layout/views",
                       "tr/developers/extend/apps/layout/navigation-menu-items",
                       "tr/developers/extend/apps/layout/page-layouts",
@@ -6216,8 +6083,8 @@
                   },
                   {
                     "group": "İşlemler",
+                    "root": "tr/developers/extend/apps/operations/overview",
                     "pages": [
-                      "tr/developers/extend/apps/operations/overview",
                       "tr/developers/extend/apps/operations/cli",
                       "tr/developers/extend/apps/operations/sync-and-recovery",
                       "tr/developers/extend/apps/operations/testing",
@@ -6296,7 +6163,6 @@
               },
               {
                 "group": "数据模型",
-                "icon": "database",
                 "pages": [
                   "zh/user-guide/data-model/overview",
                   {
@@ -6322,7 +6188,6 @@
               },
               {
                 "group": "数据迁移",
-                "icon": "cloud-arrow-up",
                 "pages": [
                   "zh/user-guide/data-migration/overview",
                   {
@@ -6354,7 +6219,6 @@
               },
               {
                 "group": "日历与电子邮件",
-                "icon": "envelope",
                 "pages": [
                   "zh/user-guide/calendar-emails/overview",
                   {
@@ -6379,7 +6243,6 @@
               },
               {
                 "group": "工作流",
-                "icon": "bolt",
                 "pages": [
                   "zh/user-guide/workflows/overview",
                   {
@@ -6442,7 +6305,6 @@
               },
               {
                 "group": "AI",
-                "icon": "robot",
                 "pages": [
                   "zh/user-guide/ai/overview",
                   {
@@ -6463,7 +6325,6 @@
               },
               {
                 "group": "布局",
-                "icon": "table-columns",
                 "pages": [
                   "zh/user-guide/layout/overview",
                   {
@@ -6500,7 +6361,6 @@
               },
               {
                 "group": "仪表板",
-                "icon": "chart-bar",
                 "pages": [
                   "zh/user-guide/dashboards/overview",
                   {
@@ -6522,7 +6382,6 @@
               },
               {
                 "group": "权限与访问",
-                "icon": "lock",
                 "pages": [
                   "zh/user-guide/permissions-access/overview",
                   {
@@ -6542,7 +6401,6 @@
               },
               {
                 "group": "账单",
-                "icon": "credit-card",
                 "pages": [
                   "zh/user-guide/billing/overview",
                   {
@@ -6562,7 +6420,6 @@
               },
               {
                 "group": "设置",
-                "icon": "gear",
                 "pages": [
                   "zh/user-guide/settings/overview",
                   {
@@ -6586,7 +6443,6 @@
               },
               {
                 "group": "法律",
-                "icon": "book",
                 "pages": [
                   "zh/user-guide/legal/overview",
                   {
@@ -6624,8 +6480,8 @@
                   },
                   {
                     "group": "教程",
+                    "root": "zh/developers/extend/apps/tutorials/document-generator/overview",
                     "pages": [
-                      "zh/developers/extend/apps/tutorials/document-generator/overview",
                       "zh/developers/extend/apps/tutorials/document-generator/data-model",
                       "zh/developers/extend/apps/tutorials/document-generator/generating-documents",
                       "zh/developers/extend/apps/tutorials/document-generator/http-routes",
@@ -6636,8 +6492,8 @@
                   },
                   {
                     "group": "配置",
+                    "root": "zh/developers/extend/apps/config/overview",
                     "pages": [
-                      "zh/developers/extend/apps/config/overview",
                       "zh/developers/extend/apps/config/application",
                       "zh/developers/extend/apps/config/roles",
                       "zh/developers/extend/apps/config/install-hooks",
@@ -6646,8 +6502,8 @@
                   },
                   {
                     "group": "数据",
+                    "root": "zh/developers/extend/apps/data/overview",
                     "pages": [
-                      "zh/developers/extend/apps/data/overview",
                       "zh/developers/extend/apps/data/objects",
                       "zh/developers/extend/apps/data/extending-objects",
                       "zh/developers/extend/apps/data/system-fields",
@@ -6657,8 +6513,8 @@
                   },
                   {
                     "group": "逻辑",
+                    "root": "zh/developers/extend/apps/logic/overview",
                     "pages": [
-                      "zh/developers/extend/apps/logic/overview",
                       "zh/developers/extend/apps/logic/logic-functions",
                       "zh/developers/extend/apps/logic/key-value-store",
                       "zh/developers/extend/apps/logic/background-jobs",
@@ -6668,8 +6524,8 @@
                   },
                   {
                     "group": "布局",
+                    "root": "zh/developers/extend/apps/layout/overview",
                     "pages": [
-                      "zh/developers/extend/apps/layout/overview",
                       "zh/developers/extend/apps/layout/views",
                       "zh/developers/extend/apps/layout/navigation-menu-items",
                       "zh/developers/extend/apps/layout/page-layouts",
@@ -6679,8 +6535,8 @@
                   },
                   {
                     "group": "操作",
+                    "root": "zh/developers/extend/apps/operations/overview",
                     "pages": [
-                      "zh/developers/extend/apps/operations/overview",
                       "zh/developers/extend/apps/operations/cli",
                       "zh/developers/extend/apps/operations/sync-and-recovery",
                       "zh/developers/extend/apps/operations/testing",
@@ -6724,9 +6580,20 @@
   "footer": {
     "socials": {
       "github": "https://github.com/twentyhq/twenty",
-      "twitter": "https://twitter.com/twentycrm",
-      "discord": "https://discord.gg/cx5n4Jzs57"
-    }
+      "discord": "https://discord.gg/cx5n4Jzs57",
+      "linkedin": "https://www.linkedin.com/company/twenty",
+      "x": "https://x.com/twentycrm"
+    },
+    "links": [
+      {
+        "items": [
+          {
+            "label": "twenty.com",
+            "href": "https://twenty.com"
+          }
+        ]
+      }
+    ]
   },
   "redirects": [
     {
