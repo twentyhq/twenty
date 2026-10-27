@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-12 12:37\n"
+"PO-Revision-Date: 2026-10-27 20:14\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -228,22 +228,22 @@ msgstr "第一年每位用户每月约 $300"
 #. js-lingui-id: QSuM4t
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "≈ 10,000 workflow steps"
-msgstr ""
+msgstr "≈ 10,000 个工作流步骤"
 
 #. js-lingui-id: GiXLJ1
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "≈ 100"
-msgstr ""
+msgstr "约 100"
 
 #. js-lingui-id: ZSX1/c
 #: src/sections/compare/compare-data.ts
 msgid "≈ 2× less"
-msgstr ""
+msgstr "≈ 少 2 倍"
 
 #. js-lingui-id: af5Bta
 #: src/sections/compare/compare-data.ts
 msgid "≈ 3× less"
-msgstr ""
+msgstr "≈ 少 3 倍"
 
 #. js-lingui-id: XEcaNi
 #: src/sections/compare/compare-data.ts
@@ -253,22 +253,22 @@ msgstr "大约降低 4 倍"
 #. js-lingui-id: qjBGD6
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "≈ 40,000 workflow steps"
-msgstr ""
+msgstr "≈ 40,000 个工作流步骤"
 
 #. js-lingui-id: Y/zbvK
 #: src/sections/compare/compare-data.ts
 msgid "≈ 5× less"
-msgstr ""
+msgstr "≈ 少 5 倍"
 
 #. js-lingui-id: zn2aZh
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "≈ 500"
-msgstr ""
+msgstr "约 500"
 
 #. js-lingui-id: PDkwaA
 #: src/sections/compare/compare-data.ts
 msgid "≈ 7× less"
-msgstr ""
+msgstr "≈ 少 7 倍"
 
 #. js-lingui-id: be30i9
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -281,7 +281,7 @@ msgstr "$0"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$1 per credit, from $20/month"
-msgstr ""
+msgstr "每个积分 $1，$20/月起"
 
 #. js-lingui-id: RVS9wF
 #: src/sections/compare/compare-data.ts
@@ -360,7 +360,7 @@ msgstr "$18,960"
 #. js-lingui-id: EkIZkY
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$19"
-msgstr ""
+msgstr "$19"
 
 #. js-lingui-id: buZDJK
 #: src/sections/compare/compare-data.ts
@@ -400,12 +400,12 @@ msgstr "$36,000/年"
 #. js-lingui-id: QBR8AB
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$39"
-msgstr ""
+msgstr "$39"
 
 #. js-lingui-id: kNzyu3
 #: src/sections/compare/compare-data.ts
 msgid "$39 per user per month, SSO included"
-msgstr ""
+msgstr "每位用户每月 $39，包含 SSO"
 
 #. js-lingui-id: azz07D
 #: src/sections/compare/compare-data.ts
@@ -413,7 +413,7 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$39 per user per month, that's it"
-msgstr ""
+msgstr "每位用户每月 $39，就是全部费用"
 
 #. js-lingui-id: q9R8xN
 #: src/sections/compare/compare-data.ts
@@ -459,7 +459,7 @@ msgstr "$500/用户/月"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$50k"
-msgstr ""
+msgstr "$50k"
 
 #. js-lingui-id: rJXDlT
 #: src/sections/compare/compare-data.ts
@@ -484,14 +484,14 @@ msgstr "$79/用户/月"
 #. js-lingui-id: 8r6DgO
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$9"
-msgstr ""
+msgstr "$9"
 
 #. js-lingui-id: RbeSoe
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$9 to $39/user, everything included"
-msgstr ""
+msgstr "每位用户 $9 至 $39，全部功能已包含"
 
 #. js-lingui-id: nliPPd
 #: src/sections/compare/compare-data.ts
@@ -500,7 +500,7 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$9,360"
-msgstr ""
+msgstr "$9,360"
 
 #. js-lingui-id: iH2efm
 #: src/sections/compare/compare-data.ts
@@ -509,7 +509,7 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$9,360/yr"
-msgstr ""
+msgstr "$9,360/年"
 
 #. js-lingui-id: 5QiFtr
 #: src/sections/compare/compare-data.ts
@@ -519,7 +519,7 @@ msgstr "Pro 版每位用户 $9"
 #. js-lingui-id: K42cxp
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "1"
-msgstr ""
+msgstr "1"
 
 #. js-lingui-id: EHNAf2
 #: src/case-studies/case-study-catalog.ts
@@ -577,7 +577,7 @@ msgstr "2,000+"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "20 × Organization ($39)"
-msgstr ""
+msgstr "20 × Organization（$39）"
 
 #. js-lingui-id: t8U4dF
 #: src/sections/compare/compare-data.ts
@@ -645,7 +645,7 @@ msgstr "30+"
 #. js-lingui-id: YqbCZi
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "4"
-msgstr ""
+msgstr "4"
 
 #. js-lingui-id: Pdl2UE
 #: src/case-studies/case-study-catalog.ts
@@ -665,7 +665,7 @@ msgstr "每分钟 50 次"
 #. js-lingui-id: bPBd1a
 #: src/sections/pricing-plans/plans-data.ts
 msgid "5x more personal AI usage"
-msgstr ""
+msgstr "个人 AI 使用量增加 5 倍"
 
 #. js-lingui-id: tZvajW
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -737,7 +737,7 @@ msgstr "一个他们真正拥有的 CRM"
 #. js-lingui-id: Wy0ITC
 #: src/sections/pricing-plans/plans-data.ts
 msgid "A custom agentic CRM for one team."
-msgstr ""
+msgstr "为一个团队定制的智能体 CRM。"
 
 #. js-lingui-id: HSyZ9R
 #: src/sections/problem/Problem.tsx
@@ -870,12 +870,12 @@ msgstr "AC&T 用自托管 Twenty 取代了被关闭的供应商 CRM，将 CRM �
 #. js-lingui-id: Ex+PbS
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Access follows your directory"
-msgstr ""
+msgstr "访问权限随您的目录同步"
 
 #. js-lingui-id: SWc/zk
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Access to our implementation partner network"
-msgstr ""
+msgstr "访问我们的实施合作伙伴网络"
 
 #. js-lingui-id: pd81Qb
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -926,7 +926,7 @@ msgstr "激活的筛选条件"
 #. js-lingui-id: QvulpL
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Add a credit pack to your monthly or yearly plan. Unused pack credits roll over, up to twice the pack."
-msgstr ""
+msgstr "将积分包添加到您的月度或年度套餐中。未使用的套餐积分可结转，最多可结转至套餐额度的两倍。"
 
 #. js-lingui-id: r8W+9y
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -1020,12 +1020,12 @@ msgstr "地址字段类型"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Admin & Member"
-msgstr ""
+msgstr "管理员和成员"
 
 #. js-lingui-id: MY7fuZ
 #: src/sections/compare/compare-data.ts
 msgid "Admin & Member roles on Pro, custom permissions on Organization"
-msgstr ""
+msgstr "Pro 版提供管理员和成员角色，Organization 版提供自定义权限"
 
 #. js-lingui-id: g1in8j
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1106,7 +1106,7 @@ msgstr "Agentforce 标价"
 #. js-lingui-id: vFWpqb
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Agentic workflows"
-msgstr ""
+msgstr "智能体工作流"
 
 #. js-lingui-id: HrtCcp
 #: src/sections/compare/compare-data.ts
@@ -1203,7 +1203,7 @@ msgstr "AI 设置现会显示每个模型的提供商、每百万个令牌的价
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "AI tasks/week"
-msgstr ""
+msgstr "AI 任务/周"
 
 #. js-lingui-id: t97j+F
 #: src/case-studies/case-study-catalog.ts
@@ -1265,7 +1265,7 @@ msgstr "Amrendra Pratap Singh"
 #. js-lingui-id: t4V3jR
 #: src/sections/pricing-plans/plans-data.ts
 msgid "And more apps from our marketplace"
-msgstr ""
+msgstr "以及我们市场中的更多应用"
 
 #. js-lingui-id: Sbiivs
 #: src/partner-application/data/partner-country-options.ts
@@ -1280,7 +1280,7 @@ msgstr "安哥拉 🇦🇴"
 #. js-lingui-id: SOLXKf
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Answers from the team that builds it"
-msgstr ""
+msgstr "来自构建团队的解答"
 
 #. js-lingui-id: qKANz3
 #: src/partner-application/data/partner-country-options.ts
@@ -1478,7 +1478,7 @@ msgstr "自动续约的定期合同"
 #. js-lingui-id: fXf/nR
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Automate the busywork"
-msgstr ""
+msgstr "自动处理繁琐工作"
 
 #. js-lingui-id: FFv0Vh
 #: src/sections/product-stepper/data/product-stepper-data.ts
@@ -1669,12 +1669,12 @@ msgstr "计费周期"
 #. js-lingui-id: fztLkj
 #: src/sections/menu/data/menu.ts
 msgid "Blue code window illustration"
-msgstr ""
+msgstr "蓝色代码窗口插图"
 
 #. js-lingui-id: go4Mpk
 #: src/sections/menu/data/menu.ts
 msgid "Blue megaphone illustration"
-msgstr ""
+msgstr "蓝色扩音器插图"
 
 #. js-lingui-id: TVJDFA
 #: src/partner-application/data/partner-country-options.ts
@@ -1709,7 +1709,7 @@ msgstr "巴西 🇧🇷"
 #. js-lingui-id: ISQOxf
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Bring your own AI models"
-msgstr ""
+msgstr "自带 AI 模型"
 
 #. js-lingui-id: hKAV/O
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
@@ -1835,7 +1835,7 @@ msgstr "没有视频的通话录音现会附带音频播放器，因此点击跳
 #. js-lingui-id: zV3oiN
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Calls recorded, leads enriched"
-msgstr ""
+msgstr "自动记录通话，丰富潜在客户信息"
 
 #. js-lingui-id: 4yFkf9
 #: src/partner-application/data/partner-country-options.ts
@@ -2065,7 +2065,7 @@ msgstr "云端还是自托管？"
 #. js-lingui-id: PQn82X
 #: src/sections/faq/faq.data.ts
 msgid "Cloud Pro is $9/user/month and Organization is $39/user/month, billed yearly. Organization adds 5x more AI usage per member, custom roles with field and row-level permissions, and SSO. Self-hosting the open source core is free."
-msgstr ""
+msgstr "Cloud Pro 的价格为 $9/用户/月，Organization 的价格为 $39/用户/月，均按年计费。Organization 为每位成员提供 5 倍的 AI 使用量、具备字段和行级权限的自定义角色，以及 SSO。自行托管开源核心免费。"
 
 #. js-lingui-id: WYgF8M
 #: src/platform/routing/static-website-routes.ts
@@ -2269,12 +2269,12 @@ msgstr "控制"
 #. js-lingui-id: 4XqT0A
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Control who can see what"
-msgstr ""
+msgstr "控制谁可以查看哪些内容"
 
 #. js-lingui-id: 85Qb5T
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Control who does what"
-msgstr ""
+msgstr "控制谁可以执行哪些操作"
 
 #. js-lingui-id: uiJ97K
 #: src/sections/compare/compare-data.ts
@@ -2445,7 +2445,7 @@ msgstr "创建日期"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Credit packs"
-msgstr ""
+msgstr "积分包"
 
 #. js-lingui-id: KOLvLO
 #: src/sections/compare/compare-data.ts
@@ -2455,12 +2455,12 @@ msgstr "基于额度，无单聊费用"
 #. js-lingui-id: Xv/V2C
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "credit/user/month"
-msgstr ""
+msgstr "积分/用户/月"
 
 #. js-lingui-id: CVe7cK
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "credits/user/month"
-msgstr ""
+msgstr "积分/用户/月"
 
 #. js-lingui-id: NLgmM4
 #: src/partners-marketplace/data/partner-scope-options.ts
@@ -2563,7 +2563,7 @@ msgstr "自定义应用 · 脚本 · AI/代理 集成"
 #. js-lingui-id: DdD8/a
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Custom data model, apps and automations"
-msgstr ""
+msgstr "自定义数据模型、应用和自动化"
 
 #. js-lingui-id: onPW5H
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2634,12 +2634,12 @@ msgstr "基于该平台构建的自定义对象、工作流和应用。"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom roles"
-msgstr ""
+msgstr "自定义角色"
 
 #. js-lingui-id: WN2bYG
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Custom roles, permissions and usage limits"
-msgstr ""
+msgstr "自定义角色、权限和使用限额"
 
 #. js-lingui-id: y5pLQH
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2789,7 +2789,7 @@ msgstr "数据模型"
 #. js-lingui-id: hsPieC
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Data Processing Agreement (DPA)"
-msgstr ""
+msgstr "数据处理协议 (DPA)"
 
 #. js-lingui-id: dfdijQ
 #: src/sections/compare/compare-data.ts
@@ -2849,12 +2849,12 @@ msgstr "决定记录是在侧边栏中打开还是以完整页面打开，可按
 #. js-lingui-id: GOEUlt
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Dedicated compute and custom API rates"
-msgstr ""
+msgstr "专属计算资源和自定义 API 费率"
 
 #. js-lingui-id: 7f0JvT
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Dedicated scale for large companies."
-msgstr ""
+msgstr "面向大型企业的专属扩展能力。"
 
 #. js-lingui-id: 4UlR5Y
 #: src/sections/pricing-plans/plans-data.ts
@@ -2867,7 +2867,7 @@ msgstr "专属支持与 SLA"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Dedicated, with SLA"
-msgstr ""
+msgstr "专属，含 SLA"
 
 #. js-lingui-id: 46Erl4
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -2877,12 +2877,12 @@ msgstr "字段的默认位置/可见性…"
 #. js-lingui-id: s0LyBg
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Delegate 5x more to AI"
-msgstr ""
+msgstr "将更多 5 倍的工作委派给 AI"
 
 #. js-lingui-id: cL6BYo
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Delegate the CRM chores to AI"
-msgstr ""
+msgstr "将 CRM 琐事交给 AI"
 
 #. js-lingui-id: IOhXZ5
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3062,13 +3062,13 @@ msgstr "已完成"
 #. js-lingui-id: SBTQRZ
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "down to fields"
-msgstr ""
+msgstr "细化至字段级别"
 
 #. js-lingui-id: 6ujaBZ
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "down to fields and rows"
-msgstr ""
+msgstr "细化至字段和行级别"
 
 #. js-lingui-id: HDR0en
 #: src/partner-application/data/partner-country-options.ts
@@ -3159,7 +3159,7 @@ msgstr "例如：n8n、Shopify、房地产…"
 #. js-lingui-id: x7z+7U
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Each member's own AI allowance, renewed every Monday. An AI task is one chat request, estimated with the default model; smarter models use more. When it runs out, chat continues on workspace credits unless an admin turns that off."
-msgstr ""
+msgstr "每位成员都有自己的 AI 额度，每周一更新。一个 AI 任务即一次聊天请求，按默认模型估算；更智能的模型消耗更多额度。额度用尽后，聊天将继续使用工作区积分，除非管理员将其关闭。"
 
 #. js-lingui-id: a35sCN
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3254,7 +3254,7 @@ msgstr "邮箱和日历阻止列表"
 #. js-lingui-id: yX/pF3
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Email and chat"
-msgstr ""
+msgstr "邮件与聊天"
 
 #. js-lingui-id: AoN898
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -3305,7 +3305,7 @@ msgstr "关联到 CRM 记录的邮件和事件"
 #. js-lingui-id: a9uuza
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Emails and meetings log themselves"
-msgstr ""
+msgstr "自动记录电子邮件和会议"
 
 #. js-lingui-id: gqv5ZL
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -3422,7 +3422,7 @@ msgstr "仅 Enterprise"
 #. js-lingui-id: g3FvX+
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Enterprise procurement support"
-msgstr ""
+msgstr "企业采购支持"
 
 #. js-lingui-id: /BbcE4
 #: src/sections/compare/compare-data.ts
@@ -3492,12 +3492,12 @@ msgstr "每条对话，都在正确的记录上。"
 #. js-lingui-id: Gy9kTe
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Everything in Organization, plus"
-msgstr ""
+msgstr "包含 Organization 版中的所有内容，另外还有"
 
 #. js-lingui-id: 4Tqp8y
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Everything in Pro, plus"
-msgstr ""
+msgstr "包含 Pro 版中的所有内容，另外还有"
 
 #. js-lingui-id: zoNk7e
 #: src/sections/feature-cards/feature-cards.data.ts
@@ -3580,7 +3580,7 @@ msgstr "延长加演！"
 #. js-lingui-id: 07Wl2A
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Extra credits"
-msgstr ""
+msgstr "额外积分"
 
 #. js-lingui-id: D5e0U+
 #: src/sections/compare/compare-data.ts
@@ -3615,7 +3615,7 @@ msgstr "快速通往行动"
 #. js-lingui-id: 9MAcr1
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Faster answers from our team"
-msgstr ""
+msgstr "我们的团队提供更快的答复"
 
 #. js-lingui-id: /irOkZ
 #: src/sections/compare/compare-data.ts
@@ -3785,7 +3785,7 @@ msgstr "直接从应用市场查找并安装 People Data Labs、Last Contact 和
 #. js-lingui-id: o/pt/x
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Find experts to roll it out"
-msgstr ""
+msgstr "寻找专家来部署"
 
 #. js-lingui-id: wHyJkT
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
@@ -3874,17 +3874,17 @@ msgstr "对于一家曾经靠便利贴运转的公司来说，这不仅仅是升
 #. js-lingui-id: Suco2Z
 #: src/sections/pricing-plans/plans-data.ts
 msgid "For one team, on your servers."
-msgstr ""
+msgstr "面向一个团队，部署在您的服务器上。"
 
 #. js-lingui-id: jCGEo0
 #: src/sections/pricing-plans/plans-data.ts
 msgid "For several teams, in production."
-msgstr ""
+msgstr "面向多个团队，用于生产环境。"
 
 #. js-lingui-id: 761I8E
 #: src/sections/pricing-plans/plans-data.ts
 msgid "For strict compliance, at scale."
-msgstr ""
+msgstr "适用于严格合规要求，可大规模扩展。"
 
 #. js-lingui-id: yAJC9c
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -3933,13 +3933,13 @@ msgstr "法语"
 #. js-lingui-id: GtmO8/
 #: src/sections/pricing-plans/plans-data.ts
 msgid "from"
-msgstr ""
+msgstr "起"
 
 #. js-lingui-id: ejVYRQ
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "From"
-msgstr ""
+msgstr "起价"
 
 #. js-lingui-id: Iuxc00
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3998,7 +3998,7 @@ msgstr "在一个地方查看完整沟通历史"
 #. js-lingui-id: 90Xsa/
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Full customization and custom apps"
-msgstr ""
+msgstr "全面自定义和自定义应用"
 
 #. js-lingui-id: bKjaLJ
 #: src/sections/compare/compare-data.ts
@@ -4138,7 +4138,7 @@ msgstr "不错的选择！"
 #. js-lingui-id: 2Gfu3a
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Google and Microsoft email and calendar sync"
-msgstr ""
+msgstr "Google 和 Microsoft 电子邮件及日历同步"
 
 #. js-lingui-id: opD7oA
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4234,7 +4234,7 @@ msgstr "帮助中心"
 #. js-lingui-id: WorXzH
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Help from the community"
-msgstr ""
+msgstr "来自社区的帮助"
 
 #. js-lingui-id: xJnMnj
 #: src/sections/product-feature/EmailsVisual/data/threads.ts
@@ -4486,7 +4486,7 @@ msgstr "实施项目（第一年，典型情况）"
 #. js-lingui-id: WuWe27
 #: src/client-brief/client-brief-copy.ts
 msgid "Implementation/migration budget range"
-msgstr ""
+msgstr "实施/迁移预算范围"
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4610,7 +4610,7 @@ msgstr "已包含！"
 #. js-lingui-id: 11h9eK
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Includes"
-msgstr ""
+msgstr "包含"
 
 #. js-lingui-id: /c4yUr
 #: src/partner-application/data/partner-country-options.ts
@@ -5075,7 +5075,7 @@ msgstr "与任何常规对象一样，给你的任务和公司添加一些自定
 #. js-lingui-id: qfiYod
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Limited personal AI usage"
-msgstr ""
+msgstr "有限的个人 AI 使用量"
 
 #. js-lingui-id: kvxPie
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5453,7 +5453,7 @@ msgstr "按月"
 #. js-lingui-id: b2GPvZ
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Monthly credits shared by the workspace for workflows, AI agents and apps. 1 credit covers 10,000 workflow steps."
-msgstr ""
+msgstr "工作区每月共享的积分，用于工作流、AI 智能体和应用。1 个积分可覆盖 10,000 个工作流步骤。"
 
 #. js-lingui-id: Ggmdbf
 #: src/sections/compare/compare-data.ts
@@ -5463,7 +5463,7 @@ msgstr "按月或按年计费，随时可取消"
 #. js-lingui-id: W87SCX
 #: src/sections/pricing-plans/plans-data.ts
 msgid "More AI and control for several teams."
-msgstr ""
+msgstr "面向多个团队，提供更多 AI 功能和控制能力。"
 
 #. js-lingui-id: paxFAm
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5483,7 +5483,7 @@ msgstr "更灵活的记录页面"
 #. js-lingui-id: kjrq/8
 #: src/sections/pricing-plan-table/PlanTableInfoTooltip.tsx
 msgid "More information"
-msgstr ""
+msgstr "更多信息"
 
 #. js-lingui-id: VqXuUv
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -6029,7 +6029,7 @@ msgstr "组织激活 | Twenty"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Organization, $39/user"
-msgstr ""
+msgstr "Organization，$39/用户"
 
 #. js-lingui-id: 6yVLtC
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6189,7 +6189,7 @@ msgstr "人员"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "per member"
-msgstr ""
+msgstr "每位成员"
 
 #. js-lingui-id: cSBVtF
 #: src/sections/compare/compare-data.ts
@@ -6218,7 +6218,7 @@ msgstr "性能优化"
 #. js-lingui-id: 9cDpsw
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Permissions"
-msgstr ""
+msgstr "权限"
 
 #. js-lingui-id: JjOHl8
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6238,7 +6238,7 @@ msgstr "个人"
 #. js-lingui-id: Lz7jRL
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Personal AI usage"
-msgstr ""
+msgstr "个人 AI 使用量"
 
 #. js-lingui-id: OzAIDr
 #: src/partner-application/data/partner-country-options.ts
@@ -6293,7 +6293,7 @@ msgstr "销售漏斗、自定义对象、AI 助手，以及构建在 Postgres �
 #. js-lingui-id: h4k6l4
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Plan essentials"
-msgstr ""
+msgstr "套餐要点"
 
 #. js-lingui-id: NjL3pD
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6415,7 +6415,7 @@ msgstr "负责人兼创始人，Alternative Partners"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Priority"
-msgstr ""
+msgstr "优先"
 
 #. js-lingui-id: k62X/2
 #: src/sections/pricing-plans/plans-data.ts
@@ -6584,7 +6584,7 @@ msgstr "读取/编辑/删除 权限"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Ready for your security review"
-msgstr ""
+msgstr "已准备好接受您的安全审查"
 
 #. js-lingui-id: LNWY6D
 #: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
@@ -6795,7 +6795,7 @@ msgstr "资源"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Response times you can count on"
-msgstr ""
+msgstr "值得信赖的响应时间"
 
 #. js-lingui-id: oC2l7f
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -6891,12 +6891,12 @@ msgstr "罗马尼亚语"
 #. js-lingui-id: muOXax
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Room for several teams"
-msgstr ""
+msgstr "容纳多个团队的空间"
 
 #. js-lingui-id: WRJqac
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Room to grow, at any scale"
-msgstr ""
+msgstr "任意规模均有成长空间"
 
 #. js-lingui-id: Wdh41P
 #: src/sections/pricing-plans/plans-data.ts
@@ -6917,7 +6917,7 @@ msgstr "为数百名学生运行模拟面试项目听起来很简单。但在实
 #. js-lingui-id: /wDNXh
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Runs fully offline"
-msgstr ""
+msgstr "完全离线运行"
 
 #. js-lingui-id: T1ut28
 #: src/partner-application/data/partner-country-options.ts
@@ -7038,12 +7038,12 @@ msgstr "SAML SSO 与安全规则"
 #. js-lingui-id: pPyTOz
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "SAML/OIDC"
-msgstr ""
+msgstr "SAML/OIDC"
 
 #. js-lingui-id: oL+5Cq
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "SAML/OIDC + SCIM"
-msgstr ""
+msgstr "SAML/OIDC + SCIM"
 
 #. js-lingui-id: w9QWxz
 #: src/sections/pricing-plans/plans-data.ts
@@ -7053,7 +7053,7 @@ msgstr "SAML/OIDC SSO"
 #. js-lingui-id: 7RCVaA
 #: src/sections/pricing-plans/plans-data.ts
 msgid "SAML/OIDC SSO and audit logs"
-msgstr ""
+msgstr "SAML/OIDC SSO 和审计日志"
 
 #. js-lingui-id: R38ZPo
 #: src/partner-application/data/partner-country-options.ts
@@ -7164,17 +7164,17 @@ msgstr "安全性"
 #. js-lingui-id: y3s3Ok
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Security reviews & custom contracts"
-msgstr ""
+msgstr "安全审查和自定义合同"
 
 #. js-lingui-id: hONkro
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Security reviews and custom contracts"
-msgstr ""
+msgstr "安全审查和自定义合同"
 
 #. js-lingui-id: yGMbZ5
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Security tailored to your IT"
-msgstr ""
+msgstr "为您的 IT 量身定制的安全性"
 
 #. js-lingui-id: nmVU/t
 #: src/sections/customers-hero/CustomersHero.tsx
@@ -7384,7 +7384,7 @@ msgstr "按你的业务塑造记录模型"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Shaped around how you sell"
-msgstr ""
+msgstr "围绕您的销售方式打造"
 
 #. js-lingui-id: 3PvOYS
 #: src/sections/faq/partner-faq.data.ts
@@ -8773,7 +8773,7 @@ msgstr "前期咨询、范围界定与战略规划。"
 #. js-lingui-id: 5DSuOT
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Upgrade on your schedule"
-msgstr ""
+msgstr "按您的计划升级"
 
 #. js-lingui-id: WLb3m4
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8927,7 +8927,7 @@ msgstr "工程副总裁，W3villa Technologies"
 #. js-lingui-id: cLpH4u
 #: src/sections/pricing-plans/plans-data.ts
 msgid "VPN, your own AI providers and more"
-msgstr ""
+msgstr "VPN、自有 AI 提供商等"
 
 #. js-lingui-id: s0tU5h
 #: src/case-studies/case-study-stories.ts
@@ -9416,7 +9416,7 @@ msgstr "工作区"
 #. js-lingui-id: Rg6QK1
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Workspace credits"
-msgstr ""
+msgstr "工作区积分"
 
 #. js-lingui-id: p3ZD6C
 #: src/sections/menu/data/menu.ts
@@ -9496,7 +9496,7 @@ msgstr "是"
 #. js-lingui-id: DLTd8S
 #: src/sections/faq/faq.data.ts
 msgid "Yes, with our Apps framework. Scaffold an extension with `npx twenty@latest app init my-app` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
-msgstr ""
+msgstr "是的，可以通过我们的 Apps 框架实现。使用 `npx twenty@latest app init my-app` 搭建一个扩展脚手架，然后交付自定义对象、服务端逻辑函数、在 Twenty 界面内渲染的 React 组件、AI 技能和智能体、视图和导航，全部使用 TypeScript 编写，并可部署到任意工作区。"
 
 #. js-lingui-id: yIcBW6
 #: src/sections/faq/faq.data.ts
@@ -9651,7 +9651,7 @@ msgstr "你的结账已完成。按照下方步骤，将你的许可证密钥复
 #. js-lingui-id: rcT2v7
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Your data, fully isolated"
-msgstr ""
+msgstr "您的数据，完全隔离"
 
 #. js-lingui-id: pEQiCY
 #: src/partner-application/partner-application-copy.ts
