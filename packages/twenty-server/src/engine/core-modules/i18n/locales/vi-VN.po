@@ -76,7 +76,7 @@ msgstr "{0} phải là một trường quan hệ một-nhiều."
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
 msgid "{action} is disabled on object {0}"
-msgstr ""
+msgstr "{action} bị vô hiệu hóa trên đối tượng {0}"
 
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -152,18 +152,18 @@ msgstr "Một chiến dịch vẫn đang gửi. Hãy chờ chiến dịch hoàn 
 #. js-lingui-id: kZaUc+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
 msgid "A channel named \"{name}\" already exists"
-msgstr ""
+msgstr "Kênh có tên \"{name}\" đã tồn tại"
 
 #. js-lingui-id: y84xpa
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "A channel needs a name."
-msgstr ""
+msgstr "Kênh cần có tên."
 
 #. js-lingui-id: 3bCT2z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
 msgid "A channel with this name already exists."
-msgstr ""
+msgstr "Kênh có tên này đã tồn tại."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -263,12 +263,12 @@ msgstr "Một mục tiêu chuỗi tin nhắn"
 #. js-lingui-id: oP9K0J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "A messaging provider with this name already exists for this application"
-msgstr ""
+msgstr "Nhà cung cấp dịch vụ nhắn tin có tên này đã tồn tại cho ứng dụng này"
 
 #. js-lingui-id: eynBqK
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "A messaging provider with this name already exists for this application."
-msgstr ""
+msgstr "Nhà cung cấp dịch vụ nhắn tin có tên này đã tồn tại cho ứng dụng này."
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -464,7 +464,7 @@ msgstr "Đã tồn tại người dùng với email này."
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type"
-msgstr ""
+msgstr "agentChatChannelUniversalIdentifier hợp lệ là bắt buộc đối với loại AGENT_CHAT_CHANNEL"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -1090,7 +1090,7 @@ msgstr "Một trường xuất không còn khả dụng."
 #. js-lingui-id: zv+Pcr
 #: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 msgid "An export is already running for this workspace."
-msgstr ""
+msgstr "Một lượt xuất đang chạy cho workspace này."
 
 #. js-lingui-id: jiELc8
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -1121,12 +1121,12 @@ msgstr "Một lời mời đã được gửi tới email này."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "An MCP server with this name already exists"
-msgstr ""
+msgstr "Máy chủ MCP có tên này đã tồn tại"
 
 #. js-lingui-id: SeiYVM
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "An MCP server with this name already exists."
-msgstr ""
+msgstr "Máy chủ MCP có tên này đã tồn tại."
 
 #. js-lingui-id: CQ5DXU
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -2601,13 +2601,13 @@ msgstr "Việc thay đổi thời gian lưu giữ nhật ký yêu cầu gói đ�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel"
-msgstr ""
+msgstr "Kênh"
 
 #. js-lingui-id: gPIeS4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel archived at"
-msgstr ""
+msgstr "Kênh được lưu trữ lúc"
 
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -2624,14 +2624,14 @@ msgstr "ID Kênh"
 #. js-lingui-id: G+8qH5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel name is required"
-msgstr ""
+msgstr "Tên kênh là bắt buộc"
 
 #. js-lingui-id: Nd2xnP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel not found"
-msgstr ""
+msgstr "Không tìm thấy kênh"
 
 #. js-lingui-id: ZJRMDQ
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2639,30 +2639,30 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel not found."
-msgstr ""
+msgstr "Không tìm thấy kênh."
 
 #. js-lingui-id: /84Bpj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "Channel role link not found"
-msgstr ""
+msgstr "Không tìm thấy liên kết vai trò kênh"
 
 #. js-lingui-id: 86oa9B
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel snoozed until"
-msgstr ""
+msgstr "Kênh tạm ẩn đến"
 
 #. js-lingui-id: ieLfO5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Channel the thread is triaged in"
-msgstr ""
+msgstr "Kênh mà chuỗi trò chuyện được phân loại vào"
 
 #. js-lingui-id: 7LMBzP
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Channels are not available yet. Try again in a few minutes."
-msgstr ""
+msgstr "Các kênh hiện chưa khả dụng. Hãy thử lại sau vài phút."
 
 #. js-lingui-id: z851aK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -3167,7 +3167,7 @@ msgstr "Không tìm thấy kết nối."
 #. placeholder {0}: flatMessagingProvider.connectionProviderUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Connection provider \"{0}\" was not found in this application"
-msgstr ""
+msgstr "Không tìm thấy nhà cung cấp kết nối \"{0}\" trong ứng dụng này"
 
 #. js-lingui-id: xQ2DfP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3214,22 +3214,22 @@ msgstr "Phạm vi nhà cung cấp kết nối \"{scope}\" không hợp lệ"
 #. js-lingui-id: lOJLh7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider scope cannot be changed"
-msgstr ""
+msgstr "Không thể thay đổi phạm vi của nhà cung cấp kết nối"
 
 #. js-lingui-id: rGTdmC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider scope cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
-msgstr ""
+msgstr "Không thể thay đổi phạm vi của nhà cung cấp kết nối sau khi tạo: hãy khai báo một nhà cung cấp kết nối mới với universalIdentifier mới"
 
 #. js-lingui-id: ouURJJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider type cannot be changed"
-msgstr ""
+msgstr "Không thể thay đổi loại nhà cung cấp kết nối"
 
 #. js-lingui-id: Y4TItr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider type cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
-msgstr ""
+msgstr "Không thể thay đổi loại nhà cung cấp kết nối sau khi tạo: hãy khai báo một nhà cung cấp kết nối mới với universalIdentifier mới"
 
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
@@ -3240,7 +3240,7 @@ msgstr "Nhà cung cấp kết nối có tên {0} đã tồn tại cho ứng dụ
 #. js-lingui-id: pXXjt2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
-msgstr ""
+msgstr "Nhà cung cấp kết nối có loại 'custom' phải tham chiếu đến một hàm logic authorize và callback"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3755,7 +3755,7 @@ msgstr "Mục menu lệnh tùy chỉnh không thể được đặt lại về m
 #. js-lingui-id: eCtxAR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Custom connection provider is missing its authorize or callback logic function"
-msgstr ""
+msgstr "Nhà cung cấp kết nối tùy chỉnh thiếu hàm logic authorize hoặc callback"
 
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -4324,12 +4324,12 @@ msgstr "Hướng"
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Disabled object permission actions must be a list"
-msgstr ""
+msgstr "Các thao tác quyền đối tượng bị vô hiệu hóa phải là một danh sách"
 
 #. js-lingui-id: EtelV5
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Disabled object permission actions must not repeat"
-msgstr ""
+msgstr "Các thao tác quyền đối tượng bị vô hiệu hóa không được lặp lại"
 
 #. js-lingui-id: T/2cxH
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4347,12 +4347,12 @@ msgstr "Bỏ dự thảo"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Disconnect the MCP server before changing its URL"
-msgstr ""
+msgstr "Ngắt kết nối máy chủ MCP trước khi thay đổi URL của máy chủ"
 
 #. js-lingui-id: X9u5qJ
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Disconnect the MCP server before changing its URL."
-msgstr ""
+msgstr "Ngắt kết nối máy chủ MCP trước khi thay đổi URL của máy chủ."
 
 #. js-lingui-id: N4sZ6H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6791,27 +6791,27 @@ msgstr "Đầu vào hàm logic không hợp lệ."
 #. js-lingui-id: U2TpWH
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Invalid MCP server input."
-msgstr ""
+msgstr "Đầu vào máy chủ MCP không hợp lệ."
 
 #. js-lingui-id: PTN/J2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Invalid MCP server name provided"
-msgstr ""
+msgstr "Tên máy chủ MCP được cung cấp không hợp lệ"
 
 #. js-lingui-id: 945sNP
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Invalid MCP server name. Use lowercase letters, digits and underscores, starting with a letter."
-msgstr ""
+msgstr "Tên máy chủ MCP không hợp lệ. Hãy sử dụng chữ cái viết thường, chữ số và dấu gạch dưới, bắt đầu bằng một chữ cái."
 
 #. js-lingui-id: 1pdxfJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Invalid MCP server URL provided"
-msgstr ""
+msgstr "URL máy chủ MCP được cung cấp không hợp lệ"
 
 #. js-lingui-id: YDqREm
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Invalid MCP server URL. Please provide a valid HTTP or HTTPS URL."
-msgstr ""
+msgstr "URL máy chủ MCP không hợp lệ. Vui lòng cung cấp URL HTTP hoặc HTTPS hợp lệ."
 
 #. js-lingui-id: fNaXqL
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
@@ -6826,7 +6826,7 @@ msgstr "Đầu vào thư mục tin nhắn không hợp lệ."
 #. js-lingui-id: u3ER6+
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "Invalid messaging provider input."
-msgstr ""
+msgstr "Đầu vào nhà cung cấp dịch vụ nhắn tin không hợp lệ."
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -8054,12 +8054,12 @@ msgstr "Tháng Năm"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "MCP server not found"
-msgstr ""
+msgstr "Không tìm thấy máy chủ MCP"
 
 #. js-lingui-id: 32QmfJ
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "MCP server not found."
-msgstr ""
+msgstr "Không tìm thấy máy chủ MCP."
 
 #. js-lingui-id: DICk6O
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -8509,28 +8509,28 @@ msgstr "Các tin nhắn được gửi như một phần của chiến dịch n�
 #. js-lingui-id: DR7S+J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider connection provider cannot be changed"
-msgstr ""
+msgstr "Không thể thay đổi nhà cung cấp kết nối của nhà cung cấp dịch vụ nhắn tin"
 
 #. js-lingui-id: S8RYm2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
-msgstr ""
+msgstr "Không thể thay đổi nhà cung cấp kết nối của nhà cung cấp dịch vụ nhắn tin sau khi tạo: hãy khai báo một nhà cung cấp dịch vụ nhắn tin mới với universalIdentifier mới"
 
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
-msgstr ""
+msgstr "Tên hiển thị của nhà cung cấp dịch vụ nhắn tin là bắt buộc"
 
 #. js-lingui-id: PheN1+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider displayName is required"
-msgstr ""
+msgstr "DisplayName của nhà cung cấp dịch vụ nhắn tin là bắt buộc"
 
 #. js-lingui-id: NpU0GW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider name is required"
-msgstr ""
+msgstr "Tên nhà cung cấp dịch vụ nhắn tin là bắt buộc"
 
 #. js-lingui-id: kh1zio
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -8538,17 +8538,17 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider not found"
-msgstr ""
+msgstr "Không tìm thấy nhà cung cấp dịch vụ nhắn tin"
 
 #. js-lingui-id: yyDEl+
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "Messaging provider not found."
-msgstr ""
+msgstr "Không tìm thấy nhà cung cấp dịch vụ nhắn tin."
 
 #. js-lingui-id: Ih/vm6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider with name {name} already exists for this application"
-msgstr ""
+msgstr "Nhà cung cấp dịch vụ nhắn tin có tên {name} đã tồn tại cho ứng dụng này"
 
 #. js-lingui-id: IYFsjL
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -8645,7 +8645,7 @@ msgstr "Trường quan hệ morph phải có một ID morph"
 #. js-lingui-id: /eQ78F
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Move this channel's chats to another channel before deleting it."
-msgstr ""
+msgstr "Hãy chuyển các cuộc trò chuyện của kênh này sang một kênh khác trước khi xóa."
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -8706,7 +8706,7 @@ msgstr "Tên không đồng bộ với nhãn."
 #. js-lingui-id: QrBCC2
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "Name is not valid: it must be camelCase, e.g. \"{camelCasedName}\""
-msgstr ""
+msgstr "Tên không hợp lệ: tên phải ở dạng camelCase, ví dụ: \"{camelCasedName}\""
 
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
@@ -9399,7 +9399,7 @@ msgstr "Một trong các trường đã chọn không thuộc về đối tượ
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "One of these roles no longer exists."
-msgstr ""
+msgstr "Một trong các vai trò này không còn tồn tại."
 
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -9486,13 +9486,13 @@ msgstr "Chỉ có thể thay đổi các giá trị của biểu mẫu này."
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Open chat"
-msgstr ""
+msgstr "Mở trò chuyện"
 
 #. js-lingui-id: 4QVn1g
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Open chat"
-msgstr ""
+msgstr "Mở trò chuyện"
 
 #. js-lingui-id: +ee5JG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10207,7 +10207,7 @@ msgstr "Hãy chọn một trường con cụ thể của \"{0}\" — không th�
 #. js-lingui-id: r+tlvn
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Pick another channel to move the chats to."
-msgstr ""
+msgstr "Chọn một kênh khác để chuyển các cuộc trò chuyện sang."
 
 #. js-lingui-id: TtfDdb
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
@@ -10450,7 +10450,7 @@ msgstr "Lời nhắc không thể để trống"
 #. js-lingui-id: KQ0Ots
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service.ts
 msgid "Property {property} cannot be updated"
-msgstr ""
+msgstr "Không thể cập nhật thuộc tính {property}"
 
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -11672,7 +11672,7 @@ msgstr "Gửi Email"
 #. js-lingui-id: RPQott
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Send message logic function \"{sendMessageLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "Không tìm thấy hàm logic gửi tin nhắn \"{sendMessageLogicFunctionUniversalIdentifier}\" trong ứng dụng này"
 
 #. js-lingui-id: +dLR8z
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12227,7 +12227,7 @@ msgstr "Không thể sửa đổi các tác nhân chuẩn."
 #. js-lingui-id: rQq8lH
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Standard channels cannot be deleted."
-msgstr ""
+msgstr "Không thể xóa các kênh chuẩn."
 
 #. js-lingui-id: Ptv+nG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -12930,22 +12930,22 @@ msgstr "Tài khoản {0} đã kết nối thiếu quyền truy cập lịch ({mi
 #. js-lingui-id: xYqYn7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "The connection provider belongs to another application"
-msgstr ""
+msgstr "Nhà cung cấp kết nối thuộc về một ứng dụng khác"
 
 #. js-lingui-id: 0kfc9m
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "The connection provider must belong to the same application as the MCP server"
-msgstr ""
+msgstr "Nhà cung cấp kết nối phải thuộc về cùng một ứng dụng với máy chủ MCP"
 
 #. js-lingui-id: x9rG77
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "The connection provider must belong to the same application as the MCP server."
-msgstr ""
+msgstr "Nhà cung cấp kết nối phải thuộc về cùng một ứng dụng với máy chủ MCP."
 
 #. js-lingui-id: fDWKx/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The connection provider this messaging provider uses was not found in its application."
-msgstr ""
+msgstr "Không tìm thấy nhà cung cấp kết nối mà nhà cung cấp dịch vụ nhắn tin này sử dụng trong ứng dụng của nó."
 
 #. js-lingui-id: j6q6l+
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13054,7 +13054,7 @@ msgstr "Tệp xuất quá lớn. Vui lòng xuất ít bản ghi hơn."
 #. js-lingui-id: bjRiGF
 #: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 msgid "The export is missing data and could not be completed."
-msgstr ""
+msgstr "Lượt xuất thiếu dữ liệu và không thể hoàn tất."
 
 #. js-lingui-id: RKP94c
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -13162,7 +13162,7 @@ msgstr "Danh sách mà chiến dịch này được gửi tới"
 #. js-lingui-id: pSAncm
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that completes the connection was not found."
-msgstr ""
+msgstr "Không tìm thấy hàm logic hoàn tất kết nối."
 
 #. js-lingui-id: gU/AgL
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13172,12 +13172,12 @@ msgstr "Không tìm thấy hàm logic xác định tài khoản đã kết nối
 #. js-lingui-id: 8gf2aA
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that starts the connection was not found."
-msgstr ""
+msgstr "Không tìm thấy hàm logic bắt đầu kết nối."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider sends with was not found in its application."
-msgstr ""
+msgstr "Không tìm thấy hàm logic mà nhà cung cấp dịch vụ nhắn tin này sử dụng để gửi trong ứng dụng của nó."
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13493,12 +13493,12 @@ msgstr "Lịch chạy quy trình làm việc không hợp lệ."
 #. js-lingui-id: /s75Zz
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
 msgid "The workflow select field must reference a field of the same type."
-msgstr ""
+msgstr "Trường chọn của quy trình làm việc phải tham chiếu đến một trường cùng loại."
 
 #. js-lingui-id: 8xdW5z
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
 msgid "The workflow select field must reference an existing field."
-msgstr ""
+msgstr "Trường chọn của quy trình làm việc phải tham chiếu đến một trường hiện có."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -13739,27 +13739,27 @@ msgstr "Thay đổi này sẽ làm hỏng quy trình làm việc nên không đ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This channel access no longer exists."
-msgstr ""
+msgstr "Quyền truy cập kênh này không còn tồn tại."
 
 #. js-lingui-id: ++E+5T
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This channel is being changed. Try again in a moment."
-msgstr ""
+msgstr "Kênh này đang được thay đổi. Hãy thử lại sau giây lát."
 
 #. js-lingui-id: /mdJSV
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This chat has no owner, so it has to stay in a channel."
-msgstr ""
+msgstr "Cuộc trò chuyện này không có chủ sở hữu, vì vậy phải ở trong một kênh."
 
 #. js-lingui-id: 6zaKtA
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This chat is not in a channel."
-msgstr ""
+msgstr "Cuộc trò chuyện này không nằm trong một kênh."
 
 #. js-lingui-id: TjTe43
 #: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
 msgid "This code belongs to a published workflow version. Edit it from a draft."
-msgstr ""
+msgstr "Mã này thuộc về một phiên bản quy trình làm việc đã được phát hành. Hãy chỉnh sửa từ bản nháp."
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -13961,7 +13961,7 @@ msgstr "Giới hạn này đã thay đổi trong khi bạn đang chỉnh sửa. 
 #. js-lingui-id: STVycN
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This list of chats could not be loaded. Try again."
-msgstr ""
+msgstr "Không thể tải danh sách cuộc trò chuyện này. Hãy thử lại."
 
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
@@ -13991,7 +13991,7 @@ msgstr "Thành viên này chưa thiết lập xác thực hai yếu tố, vì v�
 #. js-lingui-id: NW6Nmf
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
-msgstr ""
+msgstr "Kênh tin nhắn này không thể gửi tin nhắn."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -14081,7 +14081,7 @@ msgstr "Quyền này đã được thiết lập cho vai trò"
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
 msgid "This permission is disabled on the object and cannot be granted"
-msgstr ""
+msgstr "Quyền này bị vô hiệu hóa trên đối tượng và không thể được cấp"
 
 #. js-lingui-id: wJWFt2
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -14141,12 +14141,12 @@ msgstr "Yêu cầu này vẫn đang được chuẩn bị. Hãy thử lại sau 
 #. js-lingui-id: T6c4z3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This role already has access to the channel"
-msgstr ""
+msgstr "Vai trò này đã có quyền truy cập vào kênh"
 
 #. js-lingui-id: ce6Oq+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This role already has access to the channel."
-msgstr ""
+msgstr "Vai trò này đã có quyền truy cập vào kênh."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -14953,7 +14953,7 @@ msgstr "Không rõ"
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Unknown disabled object permission action"
-msgstr ""
+msgstr "Thao tác quyền đối tượng bị vô hiệu hóa không xác định"
 
 #. js-lingui-id: of4ZuG
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -15253,7 +15253,7 @@ msgstr "Dùng cho Python đối với dữ liệu mà các công cụ bản ghi 
 #. js-lingui-id: cW4z4t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Use lowercase letters, digits and underscores, starting with a letter"
-msgstr ""
+msgstr "Sử dụng chữ cái viết thường, chữ số và dấu gạch dưới, bắt đầu bằng một chữ cái"
 
 #. js-lingui-id: Gltw+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -15979,7 +15979,7 @@ msgstr "Chúng tôi đang gặp sự cố tạm thời với cơ sở dữ liệ
 #. js-lingui-id: 1QdT9i
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not complete the connection. Please try again."
-msgstr ""
+msgstr "Chúng tôi không thể hoàn tất kết nối. Vui lòng thử lại."
 
 #. js-lingui-id: SO+/3j
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -15989,12 +15989,12 @@ msgstr "Chúng tôi không thể xác định tài khoản bạn đã ủy quy�
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not send your message. Please try again."
-msgstr ""
+msgstr "Chúng tôi không thể gửi tin nhắn của bạn. Vui lòng thử lại."
 
 #. js-lingui-id: j7daTn
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
-msgstr ""
+msgstr "Chúng tôi không thể bắt đầu kết nối. Vui lòng thử lại."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -16091,7 +16091,7 @@ msgstr "Khi một chuỗi hội thoại đang tạm ẩn quay lại hộp thư �
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "When a thread snoozed in its channel comes back to it"
-msgstr ""
+msgstr "Khi một chuỗi trò chuyện tạm ẩn trong kênh quay lại kênh đó"
 
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -16127,7 +16127,7 @@ msgstr "Khi chuỗi hội thoại được tạo hoặc nhận tin nhắn lần 
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "When the thread was marked as done or snoozed in its channel"
-msgstr ""
+msgstr "Khi chuỗi trò chuyện được đánh dấu là hoàn tất hoặc tạm ẩn trong kênh"
 
 #. js-lingui-id: Kx3ltI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -17233,7 +17233,7 @@ msgstr "Gói đăng ký thanh toán của bạn bị lỗi. Vui lòng liên hệ
 #. js-lingui-id: L8/bmN
 #: src/modules/emailing/utils/build-campaign-send-refusal-exception.util.ts
 msgid "Your daily limit is {limitValue, plural, one {# email} other {# emails}}, and this campaign would go over what's left today. Contact us to raise it."
-msgstr ""
+msgstr "Giới hạn hằng ngày của bạn là {limitValue, plural, other {# email}}, và chiến dịch này sẽ vượt quá số lượng còn lại hôm nay. Hãy liên hệ với chúng tôi để tăng giới hạn."
 
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
