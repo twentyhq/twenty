@@ -216,6 +216,33 @@ describe('Gmail contact auto-creation company domain matching (integration)', ()
     expect(await findCompanyUpdatedAt()).toBe(updatedAtBeforeSync);
   }, 120000);
 
+  it('restores a deleted company matched on its domain', async () => {
+    const domainName = `restored-${randomUUID()}.com`;
+
+    const deletedCompany = await createCompany(domainName);
+
+    await makeGraphqlApiRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        recordId: deletedCompany.id,
+      }),
+    );
+
+    expect(await syncMessageFrom(`sender@${domainName}`)).toBe(
+      deletedCompany.id,
+    );
+
+    const [restoredCompany] = await findRecordNodesByFilter<{ id: string }>(
+      'company',
+      'companies',
+      'id',
+      { id: { eq: deletedCompany.id } },
+    );
+
+    expect(restoredCompany?.id).toBe(deletedCompany.id);
+  }, 120000);
+
   it('attaches a contact to the surviving company on its primary domain', async () => {
     const survivingDomainName = `surviving-${randomUUID()}.com`;
     const mergedCompany = await mergeTwoCompanies({
