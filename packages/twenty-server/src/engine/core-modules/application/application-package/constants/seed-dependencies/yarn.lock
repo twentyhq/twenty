@@ -684,7 +684,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:^1.20.5":
+"body-parser@npm:^1.20.9":
   version: 1.20.9
   resolution: "body-parser@npm:1.20.9"
   dependencies:
@@ -2538,7 +2538,7 @@ __metadata:
     archiver: "npm:^7.0.1"
     axios: "npm:^1.16.1"
     bcrypt: "npm:^6.0.0"
-    body-parser: "npm:^1.20.5"
+    body-parser: "npm:^1.20.9"
     deep-equal: "npm:^2.2.3"
     jsonwebtoken: "npm:^9.0.2"
     lodash.camelcase: "npm:^4.3.0"
