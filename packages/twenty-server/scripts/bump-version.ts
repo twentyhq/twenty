@@ -225,8 +225,9 @@ const bumpVersion = (newVersionArg?: string): void => {
 
   console.log('\nApplying changes:');
 
+  // The release being bumped from only reaches npm in prod CD, after this runs.
   generateWorkspaceCustomApplicationDependencies({
-    version: updatedPreviousVersions[updatedPreviousVersions.length - 1],
+    version: previousVersions[previousVersions.length - 1],
   });
 
   updatePreviousVersions(updatedPreviousVersions);
