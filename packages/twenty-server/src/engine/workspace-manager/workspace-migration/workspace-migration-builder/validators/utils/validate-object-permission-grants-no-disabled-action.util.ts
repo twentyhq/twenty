@@ -19,7 +19,7 @@ export const validateObjectPermissionGrantsNoDisabledAction = ({
     | undefined;
 }): FlatEntityValidationError[] =>
   (flatObjectMetadata?.disabledObjectPermissionActions ?? [])
-    .filter((action) => flatObjectPermission[action] === true)
+    .filter((action) => flatObjectPermission[action])
     .map((action) => ({
       code: PermissionsExceptionCode.INVALID_SETTING,
       message: t`${action} is disabled on object ${flatObjectPermission.objectMetadataUniversalIdentifier}`,
