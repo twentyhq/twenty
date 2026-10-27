@@ -4776,6 +4776,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cacheable/utils@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "@cacheable/utils@npm:2.5.0"
+  dependencies:
+    hashery: "npm:^1.5.1"
+    keyv: "npm:^5.6.0"
+  checksum: 10c0/99e901accd71eeb0bce91484d6c66d7ef2c731b541561eb5dc9ea7fed78bdc0b65e5dd2a80edde50191143bcfc5f238fc4742475b32e82d43b43eea224038e35
+  languageName: node
+  linkType: hard
+
 "@calcom/embed-core@npm:1.5.3":
   version: 1.5.3
   resolution: "@calcom/embed-core@npm:1.5.3"
@@ -9831,6 +9841,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@keyv/redis@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "@keyv/redis@npm:4.6.0"
+  dependencies:
+    "@redis/client": "npm:^1.6.0"
+    cluster-key-slot: "npm:^1.1.2"
+    hookified: "npm:^1.10.0"
+  peerDependencies:
+    keyv: ^5.3.4
+  checksum: 10c0/06b67fad9a0fa994092103c6650715ef87bc554c7c2e6967003727bfa880174f46d494e6a50bde0a0dda9ea051319eb755b138d8f4dfcf1d73a58a16f8633796
+  languageName: node
+  linkType: hard
+
 "@keyv/serialize@npm:^1.1.1":
   version: 1.1.1
   resolution: "@keyv/serialize@npm:1.1.1"
@@ -11558,15 +11581,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/cache-manager@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "@nestjs/cache-manager@npm:2.3.0"
+"@nestjs/cache-manager@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@nestjs/cache-manager@npm:12.0.1"
   peerDependencies:
-    "@nestjs/common": ^9.0.0 || ^10.0.0
-    "@nestjs/core": ^9.0.0 || ^10.0.0
-    cache-manager: <=5
-    rxjs: ^7.0.0
-  checksum: 10c0/5f9a698024098aa4cf565dbf0bfdf8d334e99e11c44e5d2b6cd786f51f1ee658dc2ec67a2b7846a53a9cccb8d4c0ab866b08dc518c8fc75253881a355c6df5c9
+    "@nestjs/common": ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
+    "@nestjs/core": ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
+    cache-manager: ">=6"
+    keyv: ">=5"
+    rxjs: ^7.8.1
+  checksum: 10c0/55005722a634c8ed9dcc1264e64db16760b445336c825251230c3db665a32d44a8ea92c452566ce503514396e40220554e81e6f8d25f36747c2b2657cb2dfea6
   languageName: node
   linkType: hard
 
@@ -16013,7 +16037,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redis/bloom@npm:1.2.0, @redis/bloom@npm:^1.2.0":
+"@redis/bloom@npm:1.2.0":
   version: 1.2.0
   resolution: "@redis/bloom@npm:1.2.0"
   peerDependencies:
@@ -16022,18 +16046,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redis/client@npm:1.6.0, @redis/client@npm:^1.5.14":
-  version: 1.6.0
-  resolution: "@redis/client@npm:1.6.0"
+"@redis/client@npm:1.6.1, @redis/client@npm:^1.6.0":
+  version: 1.6.1
+  resolution: "@redis/client@npm:1.6.1"
   dependencies:
     cluster-key-slot: "npm:1.1.2"
     generic-pool: "npm:3.9.0"
     yallist: "npm:4.0.0"
-  checksum: 10c0/c80a01b4f72d32284515dac6d1aefe0e9c881d08b8db33281f87b51650c1c116b18074a29ca81599d15dccb37b29eef9b26a75a5755150ae27d163e680c34bf6
+  checksum: 10c0/216c61f5aa2fef212386c2ef5b5f6d10f44244f6928682f370e190402d23338e11260377c08e87dd6d678408fa7c0a6b7bb5571ecadb830abfa3d7355b9eff1e
   languageName: node
   linkType: hard
 
-"@redis/graph@npm:1.1.1, @redis/graph@npm:^1.1.1":
+"@redis/graph@npm:1.1.1":
   version: 1.1.1
   resolution: "@redis/graph@npm:1.1.1"
   peerDependencies:
@@ -16042,7 +16066,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redis/json@npm:1.0.7, @redis/json@npm:^1.0.6":
+"@redis/json@npm:1.0.7":
   version: 1.0.7
   resolution: "@redis/json@npm:1.0.7"
   peerDependencies:
@@ -16051,7 +16075,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redis/search@npm:1.2.0, @redis/search@npm:^1.1.6":
+"@redis/search@npm:1.2.0":
   version: 1.2.0
   resolution: "@redis/search@npm:1.2.0"
   peerDependencies:
@@ -16060,7 +16084,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redis/time-series@npm:1.1.0, @redis/time-series@npm:^1.0.5":
+"@redis/time-series@npm:1.1.0":
   version: 1.1.0
   resolution: "@redis/time-series@npm:1.1.0"
   peerDependencies:
@@ -26805,31 +26829,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cache-manager-redis-yet@npm:^4.1.2":
-  version: 4.2.0
-  resolution: "cache-manager-redis-yet@npm:4.2.0"
+"cache-manager@npm:^7.2.9":
+  version: 7.2.9
+  resolution: "cache-manager@npm:7.2.9"
   dependencies:
-    "@redis/bloom": "npm:^1.2.0"
-    "@redis/client": "npm:^1.5.14"
-    "@redis/graph": "npm:^1.1.1"
-    "@redis/json": "npm:^1.0.6"
-    "@redis/search": "npm:^1.1.6"
-    "@redis/time-series": "npm:^1.0.5"
-    cache-manager: "npm:^5.4.0"
-    redis: "npm:^4.6.13"
-  checksum: 10c0/7a9477d4c023e0f83c97fda7df6b056d78bb8cb38d9dfd11501f03e5f73f69b9eb52ca54888238eb3e5792c5918278aad4d9f6549c9f73bb51f06eefbe826f34
-  languageName: node
-  linkType: hard
-
-"cache-manager@npm:^5.4.0":
-  version: 5.7.6
-  resolution: "cache-manager@npm:5.7.6"
-  dependencies:
-    eventemitter3: "npm:^5.0.1"
-    lodash.clonedeep: "npm:^4.5.0"
-    lru-cache: "npm:^10.2.2"
-    promise-coalesce: "npm:^1.1.2"
-  checksum: 10c0/fdf99c4cb3682187fd57f5b7053573dae91800f57f785c7644e5b923d4146833ab600759678eb1a5a94be74db9301850a0ff4391fc97cffd89a0f13ae4358175
+    "@cacheable/utils": "npm:^2.5.0"
+    keyv: "npm:^5.6.0"
+  checksum: 10c0/b4146edb102c7f49f9eb804c48ffb370405594e36f3e391093c35f5589b25fcd51cb33291589e453882745b60d669f7be21411c86864746d74ef9287ef238af8
   languageName: node
   linkType: hard
 
@@ -27610,7 +27616,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cluster-key-slot@npm:1.1.2, cluster-key-slot@npm:^1.1.0":
+"cluster-key-slot@npm:1.1.2, cluster-key-slot@npm:^1.1.0, cluster-key-slot@npm:^1.1.2":
   version: 1.1.2
   resolution: "cluster-key-slot@npm:1.1.2"
   checksum: 10c0/d7d39ca28a8786e9e801eeb8c770e3c3236a566625d7299a47bb71113fb2298ce1039596acb82590e598c52dbc9b1f088c8f587803e697cb58e1867a95ff94d3
@@ -33738,6 +33744,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hashery@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "hashery@npm:1.5.1"
+  dependencies:
+    hookified: "npm:^1.15.0"
+  checksum: 10c0/ab4225b655a7b0d05df99b1a59d5b3a51fe433f82422ca25e6f3f4c4ddd30adb49ebd38e0047ef9bded93319c1e9fc857e16aa382e554929c871cb77d39fc463
+  languageName: node
+  linkType: hard
+
 "hasown@npm:2.0.4, hasown@npm:^2.0.4":
   version: 2.0.4
   resolution: "hasown@npm:2.0.4"
@@ -34177,6 +34192,13 @@ __metadata:
   version: 6.1.1
   resolution: "hookable@npm:6.1.1"
   checksum: 10c0/bb46cd9ffc0a997af21febd97835da4e59a6989adec73dc3c215fcc44c7ac01de4781f251c3d420bf45862d2592a695f5f0de095b6f5df52db8afb5166938212
+  languageName: node
+  linkType: hard
+
+"hookified@npm:^1.10.0, hookified@npm:^1.15.0":
+  version: 1.15.1
+  resolution: "hookified@npm:1.15.1"
+  checksum: 10c0/6b691374fa97ae57169fb29f90e723499fda5e85494654fbe55c4768b3ccbf3e14c0adc8d0f365f32c503b60d7c06f907781f5966c03d41c423575eb5e16860c
   languageName: node
   linkType: hard
 
@@ -38489,7 +38511,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^10.0.0, lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0, lru-cache@npm:^10.2.2, lru-cache@npm:^10.4.3":
+"lru-cache@npm:^10.0.0, lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0, lru-cache@npm:^10.4.3":
   version: 10.4.3
   resolution: "lru-cache@npm:10.4.3"
   checksum: 10c0/ebd04fbca961e6c1d6c0af3799adcc966a1babe798f685bb84e6599266599cd95d94630b10262f5424539bc4640107e8a33aa28585374abf561d30d16f4b39fb
@@ -44001,13 +44023,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"promise-coalesce@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "promise-coalesce@npm:1.1.2"
-  checksum: 10c0/9bcdc954a645b30ccb094ae76e36212af2ee7ecc6b9fc67634d7d4f490d082c1efc39590737d957a32f6df93e7c5f51ca232549095e9e2d7291c0482d1bb1557
-  languageName: node
-  linkType: hard
-
 "promise-polyfill@npm:^8.1.3":
   version: 8.3.0
   resolution: "promise-polyfill@npm:8.3.0"
@@ -45375,17 +45390,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redis@npm:^4.6.13, redis@npm:^4.7.0":
-  version: 4.7.0
-  resolution: "redis@npm:4.7.0"
+"redis@npm:^4.7.1":
+  version: 4.7.1
+  resolution: "redis@npm:4.7.1"
   dependencies:
     "@redis/bloom": "npm:1.2.0"
-    "@redis/client": "npm:1.6.0"
+    "@redis/client": "npm:1.6.1"
     "@redis/graph": "npm:1.1.1"
     "@redis/json": "npm:1.0.7"
     "@redis/search": "npm:1.2.0"
     "@redis/time-series": "npm:1.1.0"
-  checksum: 10c0/a05632a58adbcaa4566238073cd6d00ed008522d2ef015a31aaef200c184a4eff4fa007c514eda91dda1e1205350b5901d0c7b58824dbfa593feb81a0087bf4d
+  checksum: 10c0/36fc11b7b305e73cafd0a32c5e7070aef72d3a33f2b34f609a1c295afb7d1a022d74eeda96e8d887ef596bbe8ce10811450d02b63175a338d2ff258ff34bd237
   languageName: node
   linkType: hard
 
@@ -50543,6 +50558,7 @@ __metadata:
     "@jest/test-result": "npm:29.7.0"
     "@jest/test-sequencer": "npm:29.7.0"
     "@jrmdayn/googleapis-batcher": "npm:^0.10.1"
+    "@keyv/redis": "npm:^4.6.0"
     "@lifeomic/axios-fetch": "npm:^3.1.0"
     "@lingui/cli": "npm:^5.9.5"
     "@lingui/conf": "npm:5.9.5"
@@ -50551,7 +50567,7 @@ __metadata:
     "@microsoft/microsoft-graph-client": "npm:3.0.7"
     "@microsoft/microsoft-graph-types": "npm:^2.40.0"
     "@nestjs/axios": "npm:12.0.1"
-    "@nestjs/cache-manager": "npm:^2.3.0"
+    "@nestjs/cache-manager": "npm:^12.0.1"
     "@nestjs/cli": "npm:^11.0.16"
     "@nestjs/common": "npm:12.3.0"
     "@nestjs/config": "npm:^12.0.1"
@@ -50626,8 +50642,7 @@ __metadata:
     bcrypt: "npm:^6.0.0"
     bullmq: "npm:5.78.0"
     bytes: "npm:3.1.2"
-    cache-manager: "npm:^5.4.0"
-    cache-manager-redis-yet: "npm:^4.1.2"
+    cache-manager: "npm:^7.2.9"
     chalk: "npm:4.1.2"
     class-transformer: "npm:0.5.1"
     class-validator: "npm:0.14.0"
@@ -50663,6 +50678,7 @@ __metadata:
     jsdom: "npm:^30.0.1"
     json-schema: "npm:0.4.0"
     jsonwebtoken: "npm:9.0.2"
+    keyv: "npm:^5.6.0"
     libphonenumber-js: "npm:1.11.5"
     lodash.camelcase: "npm:4.3.0"
     lodash.chunk: "npm:4.2.0"
@@ -50700,7 +50716,7 @@ __metadata:
     psl: "npm:^1.9.0"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
-    redis: "npm:^4.7.0"
+    redis: "npm:^4.7.1"
     reflect-metadata: "npm:0.2.2"
     rimraf: "npm:^5.0.5"
     rxjs: "npm:7.8.1"
