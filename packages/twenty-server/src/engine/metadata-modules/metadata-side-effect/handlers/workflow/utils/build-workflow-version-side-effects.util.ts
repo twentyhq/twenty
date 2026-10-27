@@ -8,9 +8,6 @@ import { type MetadataSideEffectOperationsByMetadataName } from 'src/engine/meta
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
 
-type RelatedFlatEntityMaps =
-  BuildSideEffectsArgs<'workflow'>['relatedFlatEntityMaps'];
-
 export const buildWorkflowVersionSideEffects = ({
   flatEntity,
   relatedFlatEntityMaps,
@@ -65,24 +62,25 @@ export const buildWorkflowVersionSideEffects = ({
           },
       ...buildWorkflowCommandMenuItemOperations({
         flatEntity,
-        relatedFlatEntityMaps,
+        flatCommandMenuItemMaps: relatedFlatEntityMaps.flatCommandMenuItemMaps,
         workflowVersionIds: new Set(workflowVersions.map(({ id }) => id)),
       }),
     },
   };
 };
 
-// One trigger command per workflow, bound to the version the workflow carries: commands the builder
-// bound to other versions of the workflow go, since their binding cannot be updated
+// A command's version binding cannot be updated, so commands bound to other versions are replaced
 const buildWorkflowCommandMenuItemOperations = ({
   flatEntity,
-  relatedFlatEntityMaps: { flatCommandMenuItemMaps },
+  flatCommandMenuItemMaps,
   workflowVersionIds,
 }: {
   flatEntity: UniversalFlatWorkflow;
-  relatedFlatEntityMaps: RelatedFlatEntityMaps;
   workflowVersionIds: Set<string>;
-}): MetadataSideEffectOperationsByMetadataName => {
+} & Pick<
+  BuildSideEffectsArgs<'workflow'>['relatedFlatEntityMaps'],
+  'flatCommandMenuItemMaps'
+>): MetadataSideEffectOperationsByMetadataName => {
   const commandMenuItem = flatEntity.flatUniversalCommandMenuItem;
   const managedUniversalIdentifier =
     getWorkflowCommandMenuItemUniversalIdentifier({

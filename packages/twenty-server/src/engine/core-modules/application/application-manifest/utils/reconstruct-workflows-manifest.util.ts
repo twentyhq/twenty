@@ -18,19 +18,47 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 
-// Other applications only publish the version their manifest manages; the workspace custom application
-// also publishes from the workflow builder, so its active version is exported whatever its identifier
+type ExportedFlatWorkflow = Pick<
+  FlatWorkflow,
+  | 'applicationUniversalIdentifier'
+  | 'universalIdentifier'
+  | 'lastPublishedCoreWorkflowVersionId'
+>;
+
+// The builder publishes workspace custom application workflows too, under any version identifier
+const findPublishedFlatWorkflowVersionCandidate = ({
+  flatWorkflow,
+  lastPublishedCoreWorkflowVersionId,
+  flatWorkflowVersionMaps,
+  isWorkspaceCustomApplication,
+}: {
+  flatWorkflow: ExportedFlatWorkflow;
+  lastPublishedCoreWorkflowVersionId: string;
+  flatWorkflowVersionMaps: AllFlatEntityMaps['flatWorkflowVersionMaps'];
+  isWorkspaceCustomApplication: boolean;
+}): FlatWorkflowVersion | undefined => {
+  if (isWorkspaceCustomApplication) {
+    return findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: lastPublishedCoreWorkflowVersionId,
+      flatEntityMaps: flatWorkflowVersionMaps,
+    });
+  }
+
+  return flatWorkflowVersionMaps.byUniversalIdentifier[
+    getWorkflowVersionUniversalIdentifier({
+      applicationUniversalIdentifier:
+        flatWorkflow.applicationUniversalIdentifier,
+      workflowUniversalIdentifier: flatWorkflow.universalIdentifier,
+    })
+  ];
+};
+
 const findExportedFlatWorkflowVersion = ({
   flatWorkflow,
   allFlatEntityMaps: { flatWorkflowVersionMaps },
   isWorkspaceCustomApplication,
 }: {
-  flatWorkflow: Pick<
-    FlatWorkflow,
-    | 'applicationUniversalIdentifier'
-    | 'universalIdentifier'
-    | 'lastPublishedCoreWorkflowVersionId'
-  >;
+  flatWorkflow: ExportedFlatWorkflow;
   allFlatEntityMaps: Pick<AllFlatEntityMaps, 'flatWorkflowVersionMaps'>;
   isWorkspaceCustomApplication: boolean;
 }): FlatWorkflowVersion | undefined => {
@@ -40,18 +68,12 @@ const findExportedFlatWorkflowVersion = ({
     return undefined;
   }
 
-  const flatWorkflowVersion = isWorkspaceCustomApplication
-    ? findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: lastPublishedCoreWorkflowVersionId,
-        flatEntityMaps: flatWorkflowVersionMaps,
-      })
-    : flatWorkflowVersionMaps.byUniversalIdentifier[
-        getWorkflowVersionUniversalIdentifier({
-          applicationUniversalIdentifier:
-            flatWorkflow.applicationUniversalIdentifier,
-          workflowUniversalIdentifier: flatWorkflow.universalIdentifier,
-        })
-      ];
+  const flatWorkflowVersion = findPublishedFlatWorkflowVersionCandidate({
+    flatWorkflow,
+    lastPublishedCoreWorkflowVersionId,
+    flatWorkflowVersionMaps,
+    isWorkspaceCustomApplication,
+  });
 
   return isDefined(flatWorkflowVersion) &&
     flatWorkflowVersion.status === WorkflowVersionStatus.ACTIVE &&

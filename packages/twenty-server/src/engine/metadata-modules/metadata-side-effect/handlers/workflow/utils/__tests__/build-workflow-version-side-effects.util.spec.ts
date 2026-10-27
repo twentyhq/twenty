@@ -307,7 +307,6 @@ describe('workspace custom application workflow version side effects', () => {
     settings: { availability: { type: 'GLOBAL' }, isPinned: true },
   };
 
-  // A workflow the builder published: random version identifier, user owned, its own trigger command
   const publishedFromBuilder = () => {
     const existing = persisted(convert(manualDefinition));
     const workflow =
@@ -342,10 +341,13 @@ describe('workspace custom application workflow version side effects', () => {
     return { existing, builderVersion };
   };
 
-  const convertForWorkspaceCustomApplication = (
-    definition: WorkflowManifest,
-    existing: ReturnType<typeof persisted>,
-  ) =>
+  const convertForWorkspaceCustomApplication = ({
+    definition,
+    existing,
+  }: {
+    definition: WorkflowManifest;
+    existing: ReturnType<typeof persisted>;
+  }) =>
     fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
       manifest: definition,
       applicationUniversalIdentifier: APPLICATION_ID,
@@ -362,10 +364,10 @@ describe('workspace custom application workflow version side effects', () => {
 
   it('does nothing when the definition matches the active version', () => {
     const { existing } = publishedFromBuilder();
-    const workflow = convertForWorkspaceCustomApplication(
-      manualDefinition,
+    const workflow = convertForWorkspaceCustomApplication({
+      definition: manualDefinition,
       existing,
-    );
+    });
 
     expect(diff(workflow, existing)).toEqual({});
   });
@@ -376,7 +378,10 @@ describe('workspace custom application workflow version side effects', () => {
 
     changed.version.steps[0].name = 'Updated step';
 
-    const workflow = convertForWorkspaceCustomApplication(changed, existing);
+    const workflow = convertForWorkspaceCustomApplication({
+      definition: changed,
+      existing,
+    });
     const version = workflow.flatUniversalWorkflowVersion!;
     const operations = expand(workflow, existing);
 
@@ -408,10 +413,10 @@ describe('workspace custom application workflow version side effects', () => {
 
   it('keeps the builder trigger command of the active version on a rename', () => {
     const { existing, builderVersion } = publishedFromBuilder();
-    const workflow = convertForWorkspaceCustomApplication(
-      { ...manualDefinition, name: 'Renamed workflow' },
+    const workflow = convertForWorkspaceCustomApplication({
+      definition: { ...manualDefinition, name: 'Renamed workflow' },
       existing,
-    );
+    });
     const operations = expand(workflow, existing);
 
     expect(operations.workflowVersion).toEqual({
