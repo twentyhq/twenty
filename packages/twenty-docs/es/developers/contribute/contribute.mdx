@@ -3,6 +3,10 @@ title: Contribuir
 description: Contribuye al desarrollo de código abierto de Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
 ## Resumen
 
 Twenty es de código abierto y da la bienvenida a las contribuciones de la comunidad. Ya sea que estés solucionando errores, agregando funciones o mejorando la documentación, tus contribuciones ayudan a que Twenty sea mejor para todos.
@@ -17,11 +21,15 @@ Twenty es de código abierto y da la bienvenida a las contribuciones de la comun
 
 ## Primeros pasos
 
-<CardGroup cols={2}>
-  <Card title="Informes de errores y solicitudes" icon="bug" href="/es/developers/contribute/capabilities/bug-and-requests">
-    Reporta problemas o solicita funcionalidades
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/es/developers/contribute/capabilities/bug-and-requests" img="/images/user-guide/halftone/card-page-bug-requests.svg">
+    <CardTitle>informes de errores y solicitudes</CardTitle>
+    Informar problemas o solicitar características
   </Card>
-  <Card title="Desarrollo Frontend" icon="browser" href="/es/developers/contribute/capabilities/frontend-development/folder-architecture-front">
+  <Card href="/es/developers/contribute/capabilities/frontend-development/folder-architecture-front" img="/images/user-guide/halftone/card-page-frontend-architecture.svg">
+    <CardTitle>Desarrollo del Frontend</CardTitle>
     Contribuye a la interfaz de usuario
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-contribute" />

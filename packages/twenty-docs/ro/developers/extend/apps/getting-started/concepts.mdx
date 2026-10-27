@@ -3,11 +3,13 @@ title: Concepte
 description: Cum funcționează aplicațiile Twenty — modelul de entități, izolarea (sandboxing) și ciclul de viață al instalării.
 ---
 
-Aplicațiile Twenty sunt pachete TypeScript care vă extind spațiul de lucru cu obiecte personalizate, logică, componente UI și capabilități AI. Acestea rulează pe platforma Twenty, cu izolare completă (sandboxing) și controale de permisiuni.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Cum funcționează aplicațiile
 
-O aplicație este o colecție de **entități** declarate folosind funcțiile `defineEntity()` din pachetul `twenty-sdk`. SDK-ul detectează aceste declarații prin analiză AST în timpul construirii și produce un **manifest** — o descriere completă a ceea ce aplicația dvs. adaugă unui spațiu de lucru. Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
+O aplicație este o colecție de **entități** declarate folosind funcțiile `defineEntity()` din pachetul `twenty-sdk`. CLI detectează aceste declarații prin intermediul analizei AST la momentul creării și produce un **manifest** — o descriere completă a ceea ce aplicația ta adaugă la un spațiu de lucru. Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
 
 ```
 your-app/
@@ -22,13 +24,16 @@ your-app/
 │   ├── agents/                  ← defineAgent
 │   ├── views/                   ← defineView
 │   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   ├── settings-menu-items/     ← defineSettingsMenuItem
 │   └── page-layouts/            ← definePageLayout
 ├── public/                      ← Static assets (images, icons)
 └── package.json
 ```
 
 <Note>
-  **Organizarea fișierelor ține de dvs.** Detectarea entităților este bazată pe AST — SDK-ul găsește apelurile `export default defineEntity(...)` indiferent unde se află fișierul. Structura de foldere de mai sus este o convenție, nu o cerință.
+  **Organizarea fișierelor depinde de tine.** Detectarea entității este bazată pe AST - SDK
+  găsește \`export default defineEntity(. .)" apelează indiferent de locul unde trăieşte fişierul
+  . Structura de foldere de mai sus este o convenție, nu o cerință.
 </Note>
 
 ## Tipuri de entități
@@ -43,29 +48,32 @@ your-app/
 | **Funcție logică**                | TypeScript pe partea de server cu declanșatoare                                            | [Funcții logice](/ro/developers/extend/apps/logic/logic-functions)                                                      |
 | **Abilitate**                     | Instrucțiuni reutilizabile pentru agenți AI                                                | [Abilități și agenți](/ro/developers/extend/apps/logic/skills-and-agents)                                               |
 | **Agent**                         | Agenți AI cu prompturi personalizate                                                       | [Abilități și agenți](/ro/developers/extend/apps/logic/skills-and-agents)                                               |
-| **Furnizor de conexiune**         | Date de autentificare OAuth pentru API-uri terțe                                           | [Connections](/ro/developers/extend/apps/logic/connections)                                                             |
+| **Flux de lucru**                 | Fluxuri de lucru gata făcute cu un declanșator și pași                                     | [Workflows](/ro/developers/extend/apps/logic/workflows)                                                                 |
+| **Furnizor de conexiune**         | OAuth sau conectare personalizată pentru conturi terțe                                     | [Connections](/ro/developers/extend/apps/logic/connections)                                                             |
+| **Furnizor de mesagerie**         | Trimite răspunsuri de pe canalele de mesagerie ale unei aplicații printr-o conexiune       | [Canale de mesagerie](/ro/developers/extend/apps/logic/messaging-channels#sending-replies)                              |
 | **Vizualizare**                   | Vizualizări preconfigurate ale listelor de înregistrări                                    | [Views](/ro/developers/extend/apps/layout/views)                                                                        |
 | **Element de meniu de navigare**  | Intrări personalizate în bara laterală                                                     | [Navigation Menu Items](/ro/developers/extend/apps/layout/navigation-menu-items)                                        |
 | **Layout pagină**                 | File și widgeturi pe pagina de detalii a unei înregistrări                                 | [Page Layouts](/ro/developers/extend/apps/layout/page-layouts)                                                          |
 | **Componentă front-end**          | Interfață React izolată (sandboxed) în Twenty                                              | [Componente front-end](/ro/developers/extend/apps/layout/front-components)                                              |
 | **Dependențe partajate**          | Dependențele partajate de componentele front-end ale aplicației, declarate în package.json | [Dependențe partajate](/ro/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components) |
 | **Element din meniul de comenzi** | Acțiuni rapide și intrări Cmd+K                                                            | [Command Menu Items](/ro/developers/extend/apps/layout/command-menu-items)                                              |
+| **Setari meniu element**          | Intră în meniul de setări al aplicației, fiecare redare a componentei din față             | [Setări meniu elemente](/ro/developers/extend/apps/layout/front-components#settings-menu-items)                         |
 
 ## Izolare (sandboxing)
 
-* **Funcțiile logice** rulează în procese Node.js izolate pe server. Acestea accesează datele numai prin clientul API tipizat, care acționează fie ca persoana care a declanșat execuția, fie ca aplicația în sine. Consultați [Ce acces utilizează un apel](/ro/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
+* **Funcțiile logice** rulează în procese Node.js izolate pe server. Accesează datele doar prin intermediul clientului tastat API, care acționează fie ca persoană care a declanșat rularea, fie ca aplicație în sine. Vezi [Cine accesează un apel utilizat](/ro/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * **Componentele front-end** rulează în Web Workers folosind Remote DOM — izolate de pagina principală, dar randând elemente DOM native (nu iframes). Acestea comunică cu Twenty printr-un API al gazdei bazat pe transmiterea de mesaje.
-* **Permisiunile** sunt aplicate la nivelul API-ului. Sunt injectate două tokenuri de execuție, ambele derivate din rolul declarat cu `defineApplicationRole()`; cel implicit este restrâns suplimentar la ceea ce poate face persoana care a declanșat execuția, ori de câte ori o persoană se află în spatele execuției.
+* **Permisiunile** sunt aplicate la nivelul API-ului. Două tokeni runtime sunt injectaţi, ambele derivate din rolul declarat cu \`defineApplicationRole()"; cea implicită este îngustată și mai mult la ceea ce persoana declanșatoare poate face ori de câte ori cineva se află în spatele rulării.
 
 ## Ciclul de viață al aplicației
 
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ Development                                             │
-│   npx create-twenty-app → yarn twenty dev (live sync)   │
+│   twenty app init → twenty app dev (live sync)   │
 ├─────────────────────────────────────────────────────────┤
 │ Build & Deploy                                          │
-│   yarn twenty dev:build → yarn twenty app:publish        │
+│   twenty app build → twenty app publish        │
 ├─────────────────────────────────────────────────────────┤
 │ Install flow                                            │
 │   upload → [pre-install] → metadata migration →         │
@@ -76,26 +84,33 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`yarn twenty dev`** — monitorizează fișierele sursă și sincronizează în timp real modificările către un server Twenty conectat. Clientul API tipizat este regenerat automat atunci când schema se schimbă.
-* **`yarn twenty dev:build`** — compilează TypeScript, împachetează funcțiile logice și componentele front-end cu esbuild și produce un manifest.
+* **`douăzeci de aplicații dev`** — îți urmărește fișierele sursă și modificările live-syncs la un server conectat. Clientul API tipizat este regenerat automat atunci când schema se schimbă.
+* **`douăzeci de aplicații construite`** — compilează TypeScript, împachetează funcțiile logice și componentele frontale cu esbuild, și produce un manifest.
 * **Hook-uri pre/post-instalare și dezinstalare** — funcții opționale care rulează în timpul instalării sau chiar înainte de eliminare. Vezi [Install Hooks](/ro/developers/extend/apps/config/install-hooks) pentru detalii.
 
 ## Pașii următori
 
-<CardGroup cols={2}>
-  <Card title="Configurare" icon="tools" href="/ro/developers/extend/apps/config/overview">
-    Identitatea aplicației, rolul implicit și hook-urile de instalare și dezinstalare.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ro/developers/extend/apps/config/overview" img="/images/documentation/section-overview-icons-v1/apps-config.svg">
+    <CardTitle>Configurați</CardTitle>
+    Identitatea aplicației, rolul implicit, și instalați și dezinstalați hook-uri.
   </Card>
-  <Card title="Date" icon="database" href="/ro/developers/extend/apps/data/overview">
-    Obiecte, câmpuri și relații bidirecționale.
+  <Card href="/ro/developers/extend/apps/data/overview" img="/images/documentation/section-overview-icons-v1/apps-data.svg">
+    <CardTitle>Date</CardTitle>
+    Obiecte, domenii și relații bidirecționale.
   </Card>
-  <Card title="Logică" icon="bolt" href="/ro/developers/extend/apps/logic/overview">
-    Funcții logice, abilități, agenți și conexiuni OAuth.
+  <Card href="/ro/developers/extend/apps/logic/overview" img="/images/documentation/section-overview-icons-v1/apps-logic.svg">
+    <CardTitle>Logic</CardTitle>
+    Funcții de logică, competențe, agenți, conexiuni și canale de mesagerie.
   </Card>
-  <Card title="Aspect" icon="layout-columns" href="/ro/developers/extend/apps/layout/overview">
-    Vizualizări, navigare, layouturi de pagină, componente front-end.
+  <Card href="/ro/developers/extend/apps/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Layout</CardTitle>
+    vizualizări, navigare, layout-uri de pagini, componente din față.
   </Card>
-  <Card title="Operațiuni" icon="rocket" href="/ro/developers/extend/apps/operations/overview">
-    CLI, testare, remote-uri, CI și publicarea aplicației.
+  <Card href="/ro/developers/extend/apps/operations/overview" img="/images/documentation/section-overview-icons-v1/apps-operations.svg">
+    <CardTitle>Operații</CardTitle>
+    CLI, testare, telecomenzi, CI și publicarea aplicației tale.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-apps" />

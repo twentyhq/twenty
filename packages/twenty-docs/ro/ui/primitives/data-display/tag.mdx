@@ -1,0 +1,106 @@
+---
+title: Etichetă
+description: Etichetați o categorie sau un atribut cu o culoare de temă și o pictogramă opțională.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TagReference from '/snippets/ui/generated/data-display/tag.mdx';
+
+## Prezentare generală
+
+Utilizați `Tag` pentru categorii, priorități sau alte atribute scurte. Păstrați o etichetă text, astfel încât semnificația să nu depindă de culoare. Utilizați [Stare](/ro/ui/primitives/data-display/status) când aveți nevoie de un indicator de stare și de feedback privind încărcarea.
+
+<StoryEmbed storyId="ui-data-display-tag--display" title="Exemplu de etichetă" height={90} />
+
+## Utilizare
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+export const PriorityTag = () => <Tag color="red">Urgent</Tag>;
+```
+
+`color` este obligatoriu și acceptă o culoare de temă sau `transparent`. Elementul implicit este întotdeauna un `span`, inclusiv atunci când este furnizat un gestionar de clic nativ. Adăugați o pictogramă decorativă cu `startIcon`; eticheta îi oferă semnificația accesibilă.
+
+## Variante
+
+<StoryEmbed storyId="ui-data-display-tag--catalog" title="Variante de etichetă" height={140} />
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+export const CategoryTags = () => (
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+    <Tag color="blue" variant="soft">
+      Customer
+    </Tag>
+    <Tag color="green" variant="solid">
+      Partner
+    </Tag>
+    <Tag color="orange" variant="outline">
+      Prospect
+    </Tag>
+    <Tag color="transparent" variant="outline" borderStyle="dashed">
+      Unassigned
+    </Tag>
+  </div>
+);
+```
+
+`soft` este stilul implicit. `solid` evidențiază eticheta, `outline` adaugă o bordură, iar `ghost` elimină fundalul. Utilizați `borderStyle="dashed"` cu `outline` și `weight="medium"` pentru o etichetă mai accentuată.
+
+## Culori
+
+<StoryEmbed storyId="ui-data-display-tag--colors" title="Culori de temă pentru etichete" height={240} />
+
+Păstrați eticheta semnificativă fără a vă baza pe culoarea sa. Catalogul compară stilul discret implicit; aceeași paletă este disponibilă pentru celelalte variante.
+
+## Filtrați după o etichetă
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+type CategoryFilterProps = {
+  selected: boolean;
+  onToggle: () => void;
+};
+
+export const CategoryFilter = ({ selected, onToggle }: CategoryFilterProps) => (
+  <Tag
+    color="blue"
+    variant={selected ? 'solid' : 'outline'}
+    render={<button type="button" aria-pressed={selected} onClick={onToggle} />}
+  >
+    Customer
+  </Tag>
+);
+```
+
+Compune un proprietar interactiv prin `render`. Pune gestionarul său de clic, atributele native, ref și starea dezactivată pe acel proprietar. Un buton real oferă focalizare, activare cu Enter și Space. Starea de selecție aparține aplicației dvs.; utilizați `aria-pressed` pentru un comutator și un stil vizibil pentru starea selectată. Pentru navigare, redați un link cu destinația sa, cum ar fi `<a href="/records" />`. Proprietarii nativi păstrează aspectul Tag.
+
+## Etichete lungi
+
+În mod implicit, `truncate={true}` trunchiază etichetele de șir constrânse și expune textul lor complet într-un indiciu la trecerea cursorului. Setați `truncate={false}` pentru a păstra eticheta completă la lățimea sa naturală, fără o indicație contextuală, chiar și atunci când elementul său părinte este mai îngust. Dispunerea părinte gestionează încadrarea pe rânduri, derularea și decuparea.
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+export const FullCategoryLabel = () => (
+  <Tag color="green" truncate={false}>
+    Enterprise customer
+  </Tag>
+);
+```
+
+Copiii nodului rămân conținut deținut de apelant, așa că compuneți direct textul, traducerile și linkurile intenționate ale acestora.
+
+## Proprietăți
+
+Tipurile și valorile implicite sunt generate din tipurile de componente publice. Sunt acceptate și atributele native, precum și gestionarii de evenimente.
+
+<TagReference />
+
+<PageBanner illustration="page-cover-checkbox" />

@@ -1,17 +1,25 @@
 ---
 title: Биллинг
+sidebarTitle: Обзор
 description: Разберитесь в тарифах Twenty и управляйте своей подпиской.
 ---
 
-Twenty предлагает гибкие тарифные планы, соответствующие потребностям вашей команды. Управляйте подпиской, отслеживайте кредиты рабочих процессов и получайте доступ к счетам — всё в **Настройки → Выставление счетов**.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Что в этом разделе
 
-<CardGroup cols={2}>
-  <Card title="Тарифные планы" icon="tags" href="/ru/user-guide/billing/capabilities/pricing-plans">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ru/user-guide/billing/capabilities/pricing-plans" img="/images/user-guide/halftone/card-page-pricing-plans.svg">
+    <CardTitle>Тарифные планы</CardTitle>
     Узнайте о тарифных планах Twenty и о том, что в них входит.
   </Card>
-  <Card title="Часто задаваемые вопросы" icon="help-circle" href="/ru/user-guide/billing/how-tos/billing-faq">
+  <Card href="/ru/user-guide/billing/capabilities/usage-limits" img="/images/user-guide/halftone/card-page-usage-limits.svg">
+    <CardTitle>Ограничение использования</CardTitle>
+    Приведите то, что ваше рабочее пространство, участники, ключи API и приложения могут тратить.
+  </Card>
+  <Card href="/ru/user-guide/billing/how-tos/billing-faq" img="/images/user-guide/halftone/card-page-billing-faq.svg">
+    <CardTitle>Часто задаваемые вопросы</CardTitle>
     Часто задаваемые вопросы о тарифах и выставлении счетов.
   </Card>
 </CardGroup>
@@ -37,3 +45,5 @@ Twenty предлагает гибкие тарифные планы, соотв
 Перейдите в **Настройки → Выставление счетов** и нажмите **Переключиться на «Организацию»** или **Переключиться на годовой план**.
 
 Подробнее см. в [FAQ по выставлению счетов](/ru/user-guide/billing/how-tos/billing-faq).
+
+<PageBanner illustration="billing" />

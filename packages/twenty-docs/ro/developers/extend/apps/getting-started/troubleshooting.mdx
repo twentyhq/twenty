@@ -3,11 +3,18 @@ title: Depanare
 description: Probleme comune la prima rulare — Docker, versiunea Node, Yarn, dependențe.
 ---
 
-* **Erori Docker** — Asigurați-vă că Docker Desktop (sau daemonul) rulează înainte de `yarn twenty docker:start`. Mesajul de eroare va afișa comanda corectă de pornire pentru sistemul dvs. de operare.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Probleme comune
+
+* **Erori ale serverului local**, verificați mediul de dezvoltare Docker sau al depozitului. CLI-ul autonom nu gestionează containere.
 * **Versiune Node greșită** — Este nevoie de 24.5+ (`engines.node: ^24.5.0`). Verificați cu `node -v`.
 * **Lipsește Yarn 4** — Rulați `corepack enable`.
 * **Dependențe nefuncționale** — `rm -rf node_modules && yarn install`.
+* **`yarn.lock` gol** — Compilarea eșuează cu "yarn.lock is empty" atunci când fișierul de blocare există, dar nu are conținut; rulați `yarn install` pentru a-l regenera.
 * **Erori ale `twenty-sdk` după actualizarea la v2.8.0** — A fost mutat din `dependencies` în `devDependencies` în v2.8.0. Vezi [Structura proiectului → Dependințe](/ro/developers/extend/apps/getting-started/project-structure#dependencies).
-* **`twenty dev:build` afișează un avertisment despre `twenty-client-sdk` aflat în `dependencies`** — Este furnizat în timpul execuției de către Twenty, așa că ar trebui mutat în `devDependencies` alături de `twenty-sdk`. Vezi [Structura proiectului → Dependințe](/ro/developers/extend/apps/getting-started/project-structure#dependencies).
+* **`twenty app build` afișează un avertisment despre `twenty-client-sdk` aflat în `dependencies`** — Este furnizat în timpul execuției de către Twenty, așa că ar trebui mutat în `devDependencies` alături de `twenty-sdk`. Vezi [Structura proiectului → Dependințe](/ro/developers/extend/apps/getting-started/project-structure#dependencies).
 
 Blocat? Întrebați pe [Discordul Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).
+
+<PageBanner illustration="card-page-bug-requests" />

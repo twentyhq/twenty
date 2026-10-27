@@ -3,6 +3,12 @@ title: 4. Costruire l'interfaccia utente
 description: Viste, navigazione della barra laterale, un comando e componenti anteriori.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Panoramica
+
 In questo momento gli oggetti sono raggiungibili solo attraverso le Impostazioni. Diamo all'app una presenza
 reale nell'UI: viste elenco, voci sidebar, un comando con un solo clic
 **Genera documento** un componente frontale della record-page per **anteprima** un documento
@@ -111,10 +117,13 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-Stile con variabili CSS in linea (`var(--t-color-blue)`), non valori importati da
-`twenty-ui`. Gli SDK mocks che il pacchetto durante la build, quindi le importazioni a livello di modulo di costanti del tema
-sarebbero `indefinite`. Vedi il [componente completo]
-(https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
+  Leggi `useTheme()` o `themeCssVariables` da `twenty-ui/theme` all'interno del
+  corpo del componente quando applichi stili con i token di Twenty. La CLI simula `twenty-ui`
+  durante l'estrazione del manifest, quindi il dereferenziamento delle costanti del tema importate nello
+  scope del modulo può causare l'errore della build. Consulta La tematizzazione e i token
+  del tema
+  e il componente
+  completo.
 </Warning>
 
 ## Un comando per aprirlo
@@ -222,7 +231,10 @@ Monta con un [layout pagina](/it/developers/extend/apps/layout/page-layouts). Un
 `FRONT_COMPONENT` ospita il componente a tutta larghezza:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import {
+  definePageLayout,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
@@ -239,6 +251,7 @@ export default definePageLayout({
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',
       type: 'FRONT_COMPONENT',
+      heightBehavior: 'TAB_VIEWPORT',
       configuration: {
         configurationType: 'FRONT_COMPONENT',
         frontComponentUniversalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
@@ -289,7 +302,7 @@ Un campo `RICH_TEXT` memorizza sia il blocco dell'editor JSON che una proiezione
 . La pipeline di generazione legge che Markdown proiezione, quindi
 segnaposti, il PDF, e la pagina web condivisibile tutti continuano a lavorare invariato —
 vedere il completo
-[`template-record. age-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
+[`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
 I widget `FIELD` supportano anche altre modalità di visualizzazione e opzioni, incluso l'elenco dei record di una relazione annidata a due passaggi di distanza — vedi il [riferimento ai widget field](/it/developers/extend/apps/layout/page-layouts#field-widgets).
 Ora gli editori scrivono i modelli in un corretto editor di testo ricco:
 
@@ -300,6 +313,11 @@ Ora gli editori scrivono i modelli in un corretto editor di testo ricco:
 **Dopo questo passaggio:** i documenti in anteprima magnificamente e i modelli sono modificabili
 in-app. Poi, lasciare che un agente AI li generi da una chat.
 
-<Card title="Il prossimo: un agente AI →" icon="robot" href="/it/developers/extend/apps/tutorials/document-generator/ai-agent">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/it/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/user-guide/halftone/card-page-skills-agents.svg">
+  <CardTitle>Avanti: un agente AI →</CardTitle>
   Aggiungi un agente e un'abilità che chiama il tuo strumento.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-ui" />

@@ -1,0 +1,64 @@
+---
+title: Schelet
+description: Afișează forme substitutive tematice în timp ce se încarcă conținutul.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SkeletonReference from '/snippets/ui/generated/feedback/skeleton.mdx';
+
+## Prezentare generală
+
+`Skeleton` oferă o formă substitutivă cu culorile temei și o evidențiere în mișcare. Compune forme în aspectul conținutului care se încarcă. Aplicația gestionează starea de încărcare și aspectele specifice funcționalităților.
+
+<StoryEmbed storyId="ui-feedback-skeleton--display" title="Forme de schelet" height={110} />
+
+## Utilizare
+
+```tsx
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const LoadingProfile = () => (
+  <Text render={<div />} style={{ display: 'flex', gap: 16 }}>
+    <Skeleton width={40} height={40} borderRadius="50%" />
+    <Text
+      render={<div />}
+      style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+    >
+      <Skeleton width={180} height={SKELETON_HEIGHT_SIZES.s} />
+      <Skeleton width={120} height={SKELETON_HEIGHT_SIZES.xs} />
+    </Text>
+  </Text>
+);
+```
+
+Skeleton se redă ca un bloc și nu devine niciodată mai lat decât containerul său. Utilizați `layout="inline"` pentru a plasa un substituent într-un rând de text.
+
+Dimensiunile numerice folosesc pixeli. Lungimile CSS, precum procentele și `em`, sunt de asemenea acceptate. Fără dimensiuni, substituentul umple lățimea disponibilă și folosește înălțimea moștenită a fontului. Folosiți dimensiuni egale și `borderRadius="50%"` pentru un cerc.
+
+`SKELETON_HEIGHT_SIZES` oferă înălțimi partajate pentru `xs` (13px), `s` (16px), `m` (24px), `l` (32px) și `xl` (40px). Păstrați dimensiunile specifice aspectului în aplicație.
+
+Fiecare `Skeleton` redă un substituent. Păstrați liniile repetate, spațierea liniilor de text și regiunile de încărcare în componentele aplicației care încadrează elementul primitiv.
+
+## Mișcare și accesibilitate
+
+Scheletele sunt decorative și au implicit `aria-hidden="true"`. Păstrați anunțurile de încărcare într-o regiune de stare deținută de gazdă, în loc să anunțați fiecare formă. Skeleton nu acceptă elemente copil.
+
+Evidențierea se deplasează de la stânga la dreapta într-o buclă ease-in-out de 1,5 secunde și este ascunsă atunci când utilizatorul preferă mișcare redusă. Transmiteți `animated={false}` pentru un substituent static.
+
+<StoryEmbed storyId="ui-feedback-skeleton--static" title="Schelet static" height={90} />
+
+## Compoziție și temă
+
+Proprietățile native, `className`, `style` și `ref` vizează span-ul substituentului. Folosiți `render` pentru a compune un alt element. Stilurile native explicite suprascriu proprietățile de dimensiune și culoare.
+
+Culorile de bază și de evidențiere folosesc implicit fundalul terțiar al temei și fundalul transparent mai deschis. Folosiți `baseColor`, `highlightColor` și `borderRadius` pentru a le suprascrie. Colțurile rămân rotunjite, inclusiv atunci când tema utilizează squircles. Raza implicită utilizează tokenul de temă `smRound` (4px). Transmite `themeCssVariables.border.radius.mdRound` din `twenty-ui/theme` pentru colțuri de 8px. Razele personalizate în pixeli și CSS rămân acceptate, inclusiv `borderRadius={80}` pentru o capsulă îngustă și `borderRadius="50%"` pentru un cerc. Nu este necesar niciun furnizor specific pentru skeleton sau import de foaie de stil după încărcarea `twenty-ui/style.css` și a temei UI.
+
+## Proprietăți
+
+<SkeletonReference />
+
+<PageBanner illustration="section-ui-primitives" />

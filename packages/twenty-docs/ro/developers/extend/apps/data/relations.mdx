@@ -3,14 +3,16 @@ title: Relații
 description: Conectați obiectele între ele cu relații bidirecționale MANY_TO_ONE / ONE_TO_MANY.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Cum funcționează relațiile
+
 Relațiile conectează două obiecte între ele. În Twenty, relațiile sunt întotdeauna **bidirecționale** — fiecare relație are două părți, iar fiecare parte este declarată ca un câmp ce o referențiază pe cealaltă.
 
 | Tip relație   | Descriere                                                                          | Are cheie străină?    |
 | ------------- | ---------------------------------------------------------------------------------- | --------------------- |
 | `MANY_TO_ONE` | Multe înregistrări ale acestui obiect indică către o singură înregistrare a țintei | Da (`joinColumnName`) |
 | `ONE_TO_MANY` | O înregistrare a acestui obiect are multe înregistrări ale țintei                  | Nu (partea inversă)   |
-
-## Cum funcționează relațiile
 
 Fiecare relație necesită **două câmpuri** care se referențiază reciproc:
 
@@ -108,7 +110,9 @@ export default defineField({
 
 ## Relaționarea cu obiectele standard
 
-Pentru a crea o relație cu un obiect Twenty încorporat (Person, Company etc.), utilizați `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+Pentru a crea o relație cu un obiect Twenty încorporat (Person, Company etc.), utilizați `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`.
+
+O relație este declarată întotdeauna pe ambele obiecte, iar acest lucru nu se schimbă atunci când una dintre părți este un obiect standard: manifestul trebuie să definească și câmpul invers pe obiectul standard, cu `universalIdentifier` al obiectului standard ca `objectUniversalIdentifier`. Dacă lipsește câmpul invers, aplicația nu reușește să se sincronizeze cu `Relation field target metadata not found`.
 
 ```ts src/fields/person-on-self-hosting-user.field.ts
 import {
@@ -138,6 +142,35 @@ export default defineField({
     relationType: RelationType.MANY_TO_ONE,
     onDelete: OnDeleteAction.SET_NULL,
     joinColumnName: 'personId',
+  },
+});
+```
+
+```ts src/fields/self-hosting-users-on-person.field.ts
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
+import {
+  PERSON_FIELD_ID,
+  SELF_HOSTING_USER_REVERSE_FIELD_ID,
+} from './person-on-self-hosting-user.field';
+
+export default defineField({
+  universalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  type: FieldType.RELATION,
+  name: 'selfHostingUsers',
+  label: 'Self hosting users',
+  relationTargetObjectMetadataUniversalIdentifier:
+    SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: PERSON_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
   },
 });
 ```
@@ -181,3 +214,5 @@ export default defineObject({
   ],
 });
 ```
+
+<PageBanner illustration="card-page-relations" />

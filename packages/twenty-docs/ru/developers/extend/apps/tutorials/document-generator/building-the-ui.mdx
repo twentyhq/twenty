@@ -3,6 +3,12 @@ title: 4. Создание пользовательского интерфейс
 description: Виды, боковая навигация, команды и передние компоненты.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Обзор
+
 Сейчас объекты доступны только через Настройки. Давайте придадим приложению
 реальное присутствие в интерфейсе: представления списков, элементы боковой панели, однокнопочную
 команду **Generate document**, фронтенд-компонент на странице записи для **предварительного просмотра**
@@ -113,10 +119,13 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-Стиль с inline CSS переменными (`var(--t-color-blue)`), а не значениями, импортированными из
-`twenty-ui`. SDK моктирует этот пакет во время сборки, поэтому импорт модулей уровня
-констант темы был бы `неопределённым`. См.
-[полный компонент](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
+  Читайте `useTheme()` или `themeCssVariables` из `twenty-ui/theme` внутри
+  тела компонента при стилизации с использованием токенов Twenty. CLI имитирует `twenty-ui`
+  во время извлечения манифеста, поэтому разыменование импортированных констант темы в
+  области видимости модуля может привести к сбою сборки. См. Оформление тем и токены
+  темы
+  и полный
+  компонент.
 </Warning>
 
 ## Команда открытия
@@ -224,7 +233,10 @@ export default defineFrontComponent({
 виджетом `FRONT_COMPONENT` размещает компонент на всю ширину:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import {
+  definePageLayout,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
@@ -241,6 +253,7 @@ export default definePageLayout({
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',
       type: 'FRONT_COMPONENT',
+      heightBehavior: 'TAB_VIEWPORT',
       configuration: {
         configurationType: 'FRONT_COMPONENT',
         frontComponentUniversalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
@@ -291,7 +304,7 @@ export default definePageLayout({
 . Трубопровод поколения гласит, что Markdown проекция, так что
 плейсхолдеров, PDF, и общедоступной веб-страницы все работают без изменений —
 смотрите полную
-[`template-record. age-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
+[`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
 Виджеты `FIELD` также поддерживают другие режимы отображения и параметры, включая
 вывод записей вложенной связи на два шага глубже — см. раздел
 [справочник по виджетам field](/ru/developers/extend/apps/layout/page-layouts#field-widgets).
@@ -304,6 +317,11 @@ export default definePageLayout({
 **После этого шага:** документы просматривают красиво и шаблоны можно редактировать
 в приложении. Далее позвольте агенту ИИ сгенерировать их из чата.
 
-<Card title="Далее: Агент ИИ →" icon="robot" href="/ru/developers/extend/apps/tutorials/document-generator/ai-agent">
-  Добавьте агента и навык, вызывающий ваш инструмент.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ru/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/user-guide/halftone/card-page-skills-agents.svg">
+  <CardTitle>Далее: ИИ-агент →</CardTitle>
+  Добавьте агента и навык, которые вызывают ваш инструмент.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-ui" />
