@@ -313,9 +313,9 @@ export class LambdaLayerManagerService {
     }
   }
 
-  // The layer name comes from the checksums on the application row, so the
-  // bytes sent to the builder must hash to them. Hashing the same read leaves
-  // no window for a swap
+  // Layers are shared by name, which comes from the application row's
+  // yarn.lock checksum, so build from the exact contents checked against
+  // the row rather than reading the files again
   private async getVerifiedDependencies({
     flatApplication,
     applicationUniversalIdentifier,
