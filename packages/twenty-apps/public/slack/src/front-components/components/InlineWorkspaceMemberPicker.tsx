@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
-import { Avatar } from 'twenty-ui/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { InlineWorkspaceMemberPickerPanel } from 'src/front-components/components/InlineWorkspaceMemberPickerPanel';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
@@ -95,9 +95,9 @@ export const InlineWorkspaceMemberPicker = ({
         {isDefined(selectedMember) ? (
           <StyledSelectedValue>
             <Avatar
-              placeholder={getMemberDisplayName(selectedMember)}
-              placeholderColorSeed={selectedMember.id}
-              type="rounded"
+              name={getMemberDisplayName(selectedMember)}
+              colorSeed={selectedMember.id}
+              shape="circle"
               size="sm"
             />
             <StyledValueName>

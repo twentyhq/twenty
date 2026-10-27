@@ -41,7 +41,7 @@ export const SettingsAppPreferencesAppsSection = () => {
 
   return (
     <SettingsTableListSection<AppPreferencesRow>
-      title={t`App preferences`}
+      title={t`Apps`}
       description={t`Choose your preferences for the apps installed on your workspace by the admin`}
       toolbar={
         hasApplicationsLoadError ? (

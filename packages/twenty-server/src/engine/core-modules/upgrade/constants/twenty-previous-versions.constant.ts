@@ -63,4 +63,5 @@ export const TWENTY_PREVIOUS_VERSIONS = [
   '2.49.0',
   '2.50.0',
   '2.51.0',
+  '2.52.0',
 ] as const;
