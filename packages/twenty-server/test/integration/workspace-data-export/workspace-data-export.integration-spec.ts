@@ -9,6 +9,8 @@ import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/servic
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
+import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { createWorkspaceDataExport } from 'test/integration/workspace-data-export/utils/create-workspace-data-export.util';
 import { listWorkspaceDataExports } from 'test/integration/workspace-data-export/utils/list-workspace-data-exports.util';
@@ -39,14 +41,24 @@ const toRelativeUrl = (url: string) => {
 describe('workspace data export (integration)', () => {
   const exportIds: string[] = [];
   let storage: FileStorageService;
+  let companyId: string;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     storage =
       getAppProviderByClassName<FileStorageService>('FileStorageService');
+
+    // Other suites in the same shard may delete the seeded companies
+    const { data } = await createOneOperation({
+      objectMetadataSingularName: 'company',
+      input: { name: 'Data export company' },
+    });
+
+    companyId = data.createOneResponse.id;
   });
 
   afterAll(async () => {
     await setWorkspaceActivationStatus(WorkspaceActivationStatus.ACTIVE);
+    await deleteRecordsByIds('company', [companyId]);
 
     for (const exportId of exportIds) {
       await storage.deleteByFileId({

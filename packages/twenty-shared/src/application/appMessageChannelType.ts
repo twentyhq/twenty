@@ -14,4 +14,5 @@ export type AppMessageChannel = {
   isSyncEnabled: boolean;
   // Person field participant handles are matched against; null when the app links participants itself.
   participantHandleFieldUniversalIdentifier: string | null;
+  messagingProviderUniversalIdentifier: string | null;
 };

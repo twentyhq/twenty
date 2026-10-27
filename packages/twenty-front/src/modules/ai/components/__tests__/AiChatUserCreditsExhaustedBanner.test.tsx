@@ -74,12 +74,9 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
   it.each([
     [
       UserCreditsFallback.WORKSPACE_CREDITS,
-      'Personal usage limit reached. Using workspace credits until it resets in 3 days.',
+      'Using workspace credits for 3 days.',
     ],
-    [
-      UserCreditsFallback.STOP,
-      'Personal usage limit reached. Chats resume in 3 days.',
-    ],
+    [UserCreditsFallback.STOP, 'Personal usage limit resets in 3 days.'],
   ])(
     'tells the member what happens until renewal with fallback %s',
     async (userCreditsFallback, notice) => {
@@ -97,7 +94,7 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
     );
 
     expect(
-      screen.queryByText(/Personal usage limit reached/),
+      screen.queryByText('Using workspace credits for 3 days.'),
     ).not.toBeInTheDocument();
     expect(
       JSON.parse(
@@ -124,9 +121,7 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
     renderBanner();
 
     expect(
-      await screen.findByText(
-        'Personal usage limit reached. Using workspace credits until it resets in 3 days.',
-      ),
+      await screen.findByText('Using workspace credits for 3 days.'),
     ).toBeVisible();
   });
 
@@ -143,9 +138,7 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
     renderBanner(UserCreditsFallback.STOP);
 
     expect(
-      await screen.findByText(
-        'Personal usage limit reached. Chats resume in 3 days.',
-      ),
+      await screen.findByText('Personal usage limit resets in 3 days.'),
     ).toBeVisible();
   });
 });
