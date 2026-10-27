@@ -7,6 +7,7 @@ export type GenerateDepthRecordGqlFieldsFromFields = {
     | 'id'
     | 'fields'
     | 'readableFields'
+    | 'updatableFields'
     | 'labelIdentifierFieldMetadataId'
     | 'imageIdentifierFieldMetadataId'
     | 'nameSingular'
