@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -97,7 +98,12 @@ export class CallWebhookJobsJob {
       await this.messageQueueService.add<CallWebhookJobData[]>(
         CallWebhookJob.name,
         webhookEventsChunk,
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId: workspaceEventBatch.workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       );
     }
   }

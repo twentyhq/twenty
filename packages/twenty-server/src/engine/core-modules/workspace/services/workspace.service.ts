@@ -10,6 +10,7 @@ import { msg } from '@lingui/core/macro';
 import chunk from 'lodash.chunk';
 import { setTimeout } from 'node:timers/promises';
 import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   MAX_ALLOWED_IFRAME_ORIGINS,
   PermissionFlagType,
@@ -814,6 +815,11 @@ export class WorkspaceService {
           await this.deleteCascadeMessageQueueService.add<FileWorkspaceFolderDeletionJobData>(
             FileWorkspaceFolderDeletionJob.name,
             { workspaceId: workspace.id },
+            {
+              workspaceId: workspace.id,
+              applicationUniversalIdentifier:
+                TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            },
           );
 
           const emailingDomains = await this.coreDataSource
@@ -827,6 +833,11 @@ export class WorkspaceService {
               domains: emailingDomains.map(
                 (emailingDomain) => emailingDomain.domain,
               ),
+            },
+            {
+              workspaceId: workspace.id,
+              applicationUniversalIdentifier:
+                TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
             },
           );
 
@@ -869,6 +880,9 @@ export class WorkspaceService {
         id: `${WorkspaceDeletionApplicationUninstallJob.name}-${workspaceId}`,
         retryLimit: WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT,
         backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
       },
     );
   }

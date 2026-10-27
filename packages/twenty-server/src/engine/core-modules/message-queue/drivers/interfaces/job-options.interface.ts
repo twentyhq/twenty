@@ -14,7 +14,22 @@ export type QueueJobRecipient = {
   userWorkspaceId?: string;
 };
 
-export interface QueueJobOptions {
+export type WorkspaceQueueJobScope = {
+  isSystemJob?: never;
+  workspaceId: string;
+  // Core jobs pass TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+  applicationUniversalIdentifier: string;
+};
+
+export type SystemQueueJobScope = {
+  isSystemJob: true;
+  workspaceId?: never;
+  applicationUniversalIdentifier?: never;
+};
+
+export type QueueJobScope = WorkspaceQueueJobScope | SystemQueueJobScope;
+
+export type QueueJobSettings = {
   id?: string;
   doNotCheckDuplicatesBasedOnPrefix?: boolean;
   priority?: number;
@@ -23,13 +38,14 @@ export interface QueueJobOptions {
   delay?: number;
   deduplication?: QueueJobDeduplicationOptions;
   broadcastTo?: QueueJobRecipient;
-  groupKeys?: string[];
-}
+};
 
-export interface QueueCronJobOptions extends QueueJobOptions {
+export type QueueJobOptions = QueueJobSettings & QueueJobScope;
+
+export type QueueCronJobOptions = Pick<QueueJobSettings, 'priority'> & {
   repeat: {
     every?: number;
     pattern?: string;
     limit?: number;
   };
-}
+};

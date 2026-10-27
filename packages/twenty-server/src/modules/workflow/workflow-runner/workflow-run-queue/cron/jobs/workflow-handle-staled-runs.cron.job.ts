@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource, Repository } from 'typeorm';
@@ -125,6 +126,11 @@ export class WorkflowHandleStaledRunsCronJob {
       await this.messageQueueService.add<WorkflowHandleStaledRunsJobData>(
         WorkflowHandleStaledRunsJob.name,
         { workspaceId },
+        {
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       );
 
       return true;

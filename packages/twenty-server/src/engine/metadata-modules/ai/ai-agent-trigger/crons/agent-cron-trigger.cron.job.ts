@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
@@ -117,6 +118,11 @@ export class AgentCronTriggerCronJob {
           agentId: flatAgent.id,
           triggerId: trigger.id,
           payload: { type: 'CRON', firedAt: now.toISOString() },
+        },
+        {
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         },
       );
     }

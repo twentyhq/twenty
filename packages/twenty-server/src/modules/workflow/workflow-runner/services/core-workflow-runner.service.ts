@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -151,7 +152,12 @@ export class CoreWorkflowRunnerService {
       await this.messageQueueService.add<RunWorkflowJobData>(
         RunWorkflowJob.name,
         { workspaceId, workflowRunId: createdWorkflowRunId },
-        buildRunWorkflowJobOptions(createdWorkflowRunId),
+        {
+          ...buildRunWorkflowJobOptions(createdWorkflowRunId),
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       );
     } else {
       await this.workflowThrottlingWorkspaceService.increaseWorkflowRunNotStartedCount(
@@ -160,6 +166,11 @@ export class CoreWorkflowRunnerService {
       await this.messageQueueService.add<WorkflowRunEnqueueJobData>(
         WorkflowRunEnqueueJob.name,
         { workspaceId, isCacheMode: true },
+        {
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       );
     }
 

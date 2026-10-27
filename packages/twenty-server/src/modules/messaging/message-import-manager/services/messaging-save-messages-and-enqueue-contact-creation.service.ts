@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   FieldActorSource,
   MessageChannelContactAutoCreationPolicy,
@@ -203,6 +204,11 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
           connectedAccount,
           contactsToCreate,
           source: FieldActorSource.EMAIL,
+        },
+        {
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         },
       );
     }

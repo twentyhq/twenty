@@ -23,6 +23,7 @@ import {
   type QueueCronJobOptions,
   type QueueJobOptions,
   type QueueJobRecipient,
+  type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
   type InFlightQueueJob,
@@ -485,7 +486,7 @@ export class BullMQDriver
     return broadcastTo;
   }
 
-  private buildJobsOptions(options?: QueueJobOptions): BullMQJobsOptions {
+  private buildJobsOptions(options?: QueueJobSettings): BullMQJobsOptions {
     return {
       jobId: options?.id
         ? buildQueueJobIdWithSuffix({ jobIdPrefix: options.id, suffix: v4() })
@@ -517,7 +518,7 @@ export class BullMQDriver
     queueName: MessageQueue,
     jobName: string,
     data: T,
-    options?: QueueJobOptions,
+    options: QueueJobOptions,
   ): Promise<string | undefined> {
     if (!this.queueMap[queueName]) {
       throw new Error(
@@ -525,7 +526,7 @@ export class BullMQDriver
       );
     }
 
-    if (options?.id && !options?.doNotCheckDuplicatesBasedOnPrefix) {
+    if (options.id && !options.doNotCheckDuplicatesBasedOnPrefix) {
       const waitingJobIds = await this.getWaitingJobIds(queueName);
 
       if (
@@ -538,8 +539,8 @@ export class BullMQDriver
     const queueOptions = this.buildJobsOptions(options);
     const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
       queueName,
-      jobsData: [data],
-      options,
+      scopes: [options],
+      delay: options.delay,
       staticPriority: queueOptions.priority,
     });
 
@@ -580,7 +581,7 @@ export class BullMQDriver
     queueName: MessageQueue,
     jobName: string,
     jobs: QueueJobToAdd<T>[],
-    options?: QueueJobOptions,
+    options?: QueueJobSettings,
   ): Promise<string[]> {
     if (!this.queueMap[queueName]) {
       throw new Error(
@@ -599,8 +600,8 @@ export class BullMQDriver
     const queueOptions = this.buildJobsOptions(options);
     const jobOptions = await this.fairQueueScheduler.computeJobOptions({
       queueName,
-      jobsData: jobsToAdd.map(({ data }) => data),
-      options,
+      scopes: jobsToAdd,
+      delay: options?.delay,
       staticPriority: queueOptions.priority,
     });
 

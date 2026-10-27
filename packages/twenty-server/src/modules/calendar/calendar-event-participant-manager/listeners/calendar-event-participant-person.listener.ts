@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   type ObjectRecordCreateEvent,
   type ObjectRecordDeleteEvent,
@@ -55,6 +56,11 @@ export class CalendarEventParticipantPersonListener {
           workspaceMemberIds: [],
         },
       },
+      {
+        workspaceId: payload.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
   }
 
@@ -89,6 +95,11 @@ export class CalendarEventParticipantPersonListener {
           workspaceMemberIds: [],
         },
       },
+      {
+        workspaceId: payload.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
   }
 
@@ -114,6 +125,11 @@ export class CalendarEventParticipantPersonListener {
           personEmails,
           workspaceMemberIds: [],
         },
+      },
+      {
+        workspaceId: payload.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
       },
     );
   }

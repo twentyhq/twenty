@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { Repository } from 'typeorm';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -35,7 +36,12 @@ export class PreInstalledAppsService {
     await this.messageQueueService.add<InstallPreInstalledAppsJobData>(
       INSTALL_PRE_INSTALLED_APPS_JOB_NAME,
       { workspaceId },
-      { id: `${INSTALL_PRE_INSTALLED_APPS_JOB_NAME}-${workspaceId}` },
+      {
+        id: `${INSTALL_PRE_INSTALLED_APPS_JOB_NAME}-${workspaceId}`,
+        workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
   }
 

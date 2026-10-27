@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   type ObjectRecordCreateEvent,
   type ObjectRecordDeleteEvent,
@@ -38,6 +39,11 @@ export class CalendarBlocklistListener {
     await this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
       BlocklistItemDeleteCalendarEventsJob.name,
       payload,
+      {
+        workspaceId: payload.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
   }
 
@@ -50,6 +56,11 @@ export class CalendarBlocklistListener {
     await this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
       BlocklistReimportCalendarEventsJob.name,
       payload,
+      {
+        workspaceId: payload.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
   }
 
@@ -62,11 +73,21 @@ export class CalendarBlocklistListener {
     await this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
       BlocklistItemDeleteCalendarEventsJob.name,
       payload,
+      {
+        workspaceId: payload.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
 
     await this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
       BlocklistReimportCalendarEventsJob.name,
       payload,
+      {
+        workspaceId: payload.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
   }
 }

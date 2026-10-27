@@ -5,6 +5,7 @@ import {
   type ConnectionCallbackPayload,
   type IdentifiedAccount,
   type IdentifyAccountPayload,
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -135,6 +136,9 @@ export class ConnectionProviderLifecycleHookService {
           payload: this.buildPayload({ provider, connectedAccountId }),
         },
         {
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           retryLimit: 3,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
         },

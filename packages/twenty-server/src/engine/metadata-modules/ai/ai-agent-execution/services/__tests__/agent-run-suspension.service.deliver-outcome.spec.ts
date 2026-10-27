@@ -1,3 +1,5 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+
 import { DELIVER_AGENT_RUN_OUTCOME_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/deliver-agent-run-outcome-job-name.constant';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 
@@ -41,7 +43,12 @@ describe('AgentRunSuspensionService deliverOutcome', () => {
     expect(messageQueueService.add).toHaveBeenCalledWith(
       DELIVER_AGENT_RUN_OUTCOME_JOB_NAME,
       expect.objectContaining({ outcome: delivery.outcome, attempt: 501 }),
-      { delay: 60_000 },
+      {
+        delay: 60_000,
+        workspaceId: 'workspace-id',
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
   });
 

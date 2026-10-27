@@ -1,3 +1,4 @@
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type MessageQueueJobData } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -14,12 +15,13 @@ export const enqueueJobAndDrain = async <TData extends MessageQueueJobData>(
   queue: MessageQueue,
   jobName: string,
   data: TData,
+  scope: QueueJobScope,
 ): Promise<void> => {
   const messageQueueService = global.app.get<MessageQueueService>(
     getQueueToken(queue),
     { strict: false },
   );
 
-  await messageQueueService.add(jobName, data);
+  await messageQueueService.add(jobName, data, scope);
   await waitForAllJobsToFinish();
 };

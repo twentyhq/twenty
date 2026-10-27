@@ -5,6 +5,7 @@ import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-tr
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
@@ -116,7 +117,12 @@ export class WorkflowCronTriggerCronJob {
             ...buildCoreDispatchIds(trigger),
             payload: {},
           },
-          { retryLimit: 3 },
+          {
+            retryLimit: 3,
+            workspaceId: trigger.workspaceId,
+            applicationUniversalIdentifier:
+              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          },
         );
       } catch (error) {
         this.logger.error(`Error processing cached trigger: ${error}`);
@@ -225,7 +231,12 @@ export class WorkflowCronTriggerCronJob {
               ...buildCoreDispatchIds(cachedTrigger),
               payload: {},
             },
-            { retryLimit: 3 },
+            {
+              retryLimit: 3,
+              workspaceId,
+              applicationUniversalIdentifier:
+                TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            },
           );
         }
       }

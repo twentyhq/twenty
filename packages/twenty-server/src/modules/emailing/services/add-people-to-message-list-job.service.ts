@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -64,13 +65,17 @@ export class AddPeopleToMessageListJobService {
 
     return this.cacheLockService.withLock(
       () =>
-        this.enqueueAddPeopleToMessageListJob({
-          workspaceId,
-          userWorkspaceId: authContext.userWorkspaceId,
-          applicationId: authContext.application?.id,
-          messageListId,
-          personFilter,
-        }),
+        this.enqueueAddPeopleToMessageListJob(
+          {
+            workspaceId,
+            userWorkspaceId: authContext.userWorkspaceId,
+            applicationId: authContext.application?.id,
+            messageListId,
+            personFilter,
+          },
+          authContext.application?.universalIdentifier ??
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        ),
       buildAddPeopleToMessageListLockKey({ workspaceId, messageListId }),
     );
   }
@@ -103,6 +108,7 @@ export class AddPeopleToMessageListJobService {
 
   private async enqueueAddPeopleToMessageListJob(
     data: AddPeopleToMessageListJobData,
+    applicationUniversalIdentifier: string,
   ): Promise<{ jobId: string }> {
     const jobIdPrefix = buildAddPeopleToMessageListJobId(data);
     const inFlightJobId = findInFlightQueueJobIdByPrefix({
@@ -125,6 +131,8 @@ export class AddPeopleToMessageListJobService {
           id: jobIdPrefix,
           delay: ADD_PEOPLE_TO_MESSAGE_LIST_JOB_START_DELAY_MS,
           broadcastTo: { workspaceId: data.workspaceId },
+          workspaceId: data.workspaceId,
+          applicationUniversalIdentifier,
         },
       );
 

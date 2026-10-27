@@ -1,3 +1,4 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { MessageChannelSyncStage } from 'twenty-shared/types';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -21,5 +22,10 @@ export const runMessageChannelWebhookSync = async (
     MessageQueue.connectedAccountSyncWebhookQueue,
     MessagingMessageWebhookSyncJob.name,
     { workspaceId, messageChannelId },
+    {
+      workspaceId,
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    },
   );
 };

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -25,6 +27,9 @@ export class OutboundDeliveryEventHandlerService {
         doNotCheckDuplicatesBasedOnPrefix: true,
         retryLimit: DELIVERY_EVENT_RETRY_LIMIT,
         backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
+        workspaceId: event.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
       },
     );
   }

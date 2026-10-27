@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -44,6 +45,11 @@ export class ParticipantTargetPersonListener {
     await this.messageQueueService.add<ReconcilePersonCompanyTargetsJobData>(
       ReconcilePersonCompanyTargetsJob.name,
       { workspaceId: payload.workspaceId, personIds },
+      {
+        workspaceId: payload.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
   }
 }

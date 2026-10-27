@@ -8,6 +8,7 @@ import {
   WarnSuspendedWorkspaceEmail,
   renderEmail,
 } from 'twenty-emails';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -110,7 +111,12 @@ export class CleanerWorkspaceService {
     return this.workspaceDestroyQueueService.add<DestroySoftDeletedWorkspaceJobData>(
       DestroySoftDeletedWorkspaceJob.name,
       { workspaceId },
-      { id: `destroy-soft-deleted-workspace-${workspaceId}` },
+      {
+        id: `destroy-soft-deleted-workspace-${workspaceId}`,
+        workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
   }
 

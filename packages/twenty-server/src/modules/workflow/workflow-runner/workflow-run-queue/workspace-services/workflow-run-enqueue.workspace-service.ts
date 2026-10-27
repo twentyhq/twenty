@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -120,7 +121,12 @@ export class WorkflowRunEnqueueWorkspaceService {
                 workflowRunId,
                 workspaceId,
               },
-              buildRunWorkflowJobOptions(workflowRunId),
+              {
+                ...buildRunWorkflowJobOptions(workflowRunId),
+                workspaceId,
+                applicationUniversalIdentifier:
+                  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+              },
             );
           }
 

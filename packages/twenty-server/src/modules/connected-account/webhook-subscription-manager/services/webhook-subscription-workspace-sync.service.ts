@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   WebhookSubscriptionChannelType,
   WebhookSubscriptionStatus,
@@ -102,7 +103,12 @@ export class WebhookSubscriptionWorkspaceSyncService {
   ): Promise<void> {
     await this.webhookQueueService.bulkAdd(
       jobName,
-      channels.map((data) => ({ data })),
+      channels.map((data) => ({
+        data,
+        workspaceId: data.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      })),
       { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
     );
   }

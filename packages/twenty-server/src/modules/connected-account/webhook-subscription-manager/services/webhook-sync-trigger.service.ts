@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -38,6 +40,9 @@ export class WebhookSyncTriggerService {
           id: `messaging-message-webhook-sync:${workspaceId}:${messageChannelId}`,
           keepLastIfActive: true,
         },
+        workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
       },
     );
   }
@@ -63,6 +68,9 @@ export class WebhookSyncTriggerService {
           id: `calendar-event-webhook-sync:${workspaceId}:${calendarChannelId}`,
           keepLastIfActive: true,
         },
+        workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
       },
     );
   }

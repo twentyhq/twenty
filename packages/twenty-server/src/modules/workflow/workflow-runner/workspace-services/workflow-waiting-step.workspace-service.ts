@@ -1,11 +1,12 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { type QueueJobSettings } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
@@ -168,7 +169,12 @@ export class WorkflowWaitingStepWorkspaceService
           workflowRunId,
           awaitedStepOutput: { stepId, actionOutput },
         },
-        buildRunWorkflowJobOptions(workflowRunId),
+        {
+          ...buildRunWorkflowJobOptions(workflowRunId),
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       );
     } catch (error) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
@@ -182,7 +188,7 @@ export class WorkflowWaitingStepWorkspaceService
     }
   }
 
-  buildResumeJobOptions(workflowRunId: string): QueueJobOptions {
+  buildResumeJobOptions(workflowRunId: string): QueueJobSettings {
     return buildRunWorkflowJobOptions(workflowRunId);
   }
 
@@ -249,7 +255,12 @@ export class WorkflowWaitingStepWorkspaceService
                 : { result: buildDefaultWaitResult(outcome) },
           },
         },
-        buildRunWorkflowJobOptions(workflowRunId),
+        {
+          ...buildRunWorkflowJobOptions(workflowRunId),
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       );
     } catch (error) {
       await this.workflowRunWorkspaceService.endWorkflowRun({

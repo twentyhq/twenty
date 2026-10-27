@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 import { isDefined } from 'twenty-shared/utils';
 import { Raw } from 'typeorm';
@@ -147,6 +148,9 @@ export class PendingWakeUpService {
           .getHandlerOrThrow(wakeUp.ownerType)
           .buildResumeJobOptions?.(wakeUp.ownerId),
         delay: Math.max(delayMs, 0),
+        workspaceId: wakeUp.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         ...(isDefined(deduplicationId)
           ? { deduplication: { id: deduplicationId } }
           : {}),

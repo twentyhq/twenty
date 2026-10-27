@@ -33,6 +33,7 @@ import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/mes
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   MessageCampaignStatus,
   MessageParticipantRole,
@@ -185,7 +186,12 @@ export class MessageCampaignMaterializationService {
 
     await this.messageQueueService.bulkAdd<MaterializeCampaignChunkJobData>(
       MATERIALIZE_CAMPAIGN_CHUNK_JOB,
-      chunks.map((chunk) => ({ data: chunk })),
+      chunks.map((chunk) => ({
+        data: chunk,
+        workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      })),
       { retryLimit: 3, backoff: CAMPAIGN_SEND_RETRY_BACKOFF },
     );
 
@@ -363,6 +369,9 @@ export class MessageCampaignMaterializationService {
             email: recipient.email,
           })),
         },
+        workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
       })),
       {
         retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,

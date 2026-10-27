@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -73,6 +74,11 @@ describe('Channel deletion cleanup (integration)', () => {
       MessageQueue.messagingQueue,
       MessagingMessageChannelDeletionCleanupJob.name,
       { workspaceId, messageChannelId: channel.channelId },
+      {
+        workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
 
     expect(await findImportedMessageSubjects([expectedSubject])).toEqual([]);
@@ -87,6 +93,11 @@ describe('Channel deletion cleanup (integration)', () => {
       MessageQueue.calendarQueue,
       CalendarChannelDeletionCleanupJob.name,
       { workspaceId, calendarChannelId: channel.calendarChannelId },
+      {
+        workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
 
     expect(await findImportedCalendarEventTitles([eventTitle])).toEqual([]);

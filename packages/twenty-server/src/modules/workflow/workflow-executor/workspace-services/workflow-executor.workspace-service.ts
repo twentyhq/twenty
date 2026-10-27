@@ -1,6 +1,7 @@
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { Injectable } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import {
   getWorkflowRunContext,
@@ -780,7 +781,13 @@ export class WorkflowExecutorWorkspaceService {
           workflowRunId,
           stepIdsToRetry: [stepId],
         },
-        { ...buildRunWorkflowJobOptions(workflowRunId), delay: retryDelayMs },
+        {
+          ...buildRunWorkflowJobOptions(workflowRunId),
+          delay: retryDelayMs,
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       );
     } catch (enqueueError) {
       await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
@@ -809,7 +816,12 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunId,
         lastExecutedStepId,
       },
-      buildRunWorkflowJobOptions(workflowRunId),
+      {
+        ...buildRunWorkflowJobOptions(workflowRunId),
+        workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
   }
 }

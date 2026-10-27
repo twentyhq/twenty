@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isString } from '@sniptt/guards';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { msg } from '@lingui/core/macro';
@@ -62,7 +63,12 @@ export class WorkflowRunnerWorkspaceService {
         workflowRunId,
         lastExecutedStepId,
       },
-      buildRunWorkflowJobOptions(workflowRunId),
+      {
+        ...buildRunWorkflowJobOptions(workflowRunId),
+        workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
   }
 
@@ -357,7 +363,12 @@ export class WorkflowRunnerWorkspaceService {
           workflowRunId,
           stepIdsToRetry: stepIdsToRun,
         },
-        buildRunWorkflowJobOptions(workflowRunId),
+        {
+          ...buildRunWorkflowJobOptions(workflowRunId),
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       );
     } catch (error) {
       // Revert so the run isn't left RUNNING without a worker job

@@ -1,6 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -206,7 +208,12 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},
         },
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId: WORKSPACE_1,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       );
     });
 
@@ -232,7 +239,12 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},
         },
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId: WORKSPACE_1,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       );
     });
 
@@ -440,7 +452,12 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},
         },
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId: WORKSPACE_2,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       );
     });
 
@@ -473,7 +490,12 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},
         },
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId: WORKSPACE_2,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       );
     });
   });

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
@@ -528,7 +529,13 @@ export class AgentChatThreadParticipantService {
     await this.delayedJobsQueueService.add<EndAgentChatThreadSnoozeJobData>(
       END_AGENT_CHAT_THREAD_SNOOZE_JOB_NAME,
       data,
-      { delay, ...AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS },
+      {
+        delay,
+        ...AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS,
+        workspaceId: data.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
   }
 

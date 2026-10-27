@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { AllMetadataName } from 'twenty-shared/metadata';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -54,6 +55,9 @@ export class MetadataEventsToDbListener {
       MetadataEventBatch<AllMetadataName, AllMetadataEventType>
     >(CallWebhookJobsForMetadataJob.name, metadataEventBatch, {
       retryLimit: 3,
+      workspaceId: metadataEventBatch.workspaceId,
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     });
 
     if (metadataEventBatch.events.length > 0) {

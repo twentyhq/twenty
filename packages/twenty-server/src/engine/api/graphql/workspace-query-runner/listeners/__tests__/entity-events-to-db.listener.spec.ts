@@ -1,3 +1,4 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type ObjectRecordUpsertEvent } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
@@ -72,7 +73,12 @@ describe('EntityEventsToDbListener', () => {
     expect(triggerQueueService.add).toHaveBeenCalledWith(
       CallAgentDatabaseEventTriggersJob.name,
       UPSERT_BATCH_EVENT,
-      { retryLimit: 3 },
+      {
+        retryLimit: 3,
+        workspaceId: UPSERT_BATCH_EVENT.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
     expect(otherQueueService.add).not.toHaveBeenCalled();
   });

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -139,6 +140,9 @@ export class MessageCampaignScheduleService {
           delay: Math.max(scheduledAt.getTime() - Date.now(), 0),
           retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
           backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         },
       )
       .catch(async (error) => {

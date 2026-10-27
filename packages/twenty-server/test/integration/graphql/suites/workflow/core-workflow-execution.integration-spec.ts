@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 import request from 'supertest';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -430,17 +431,25 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       getQueueToken(MessageQueue.workflowQueue),
     );
 
-    await queue.add('WorkflowTriggerJob', {
-      workspaceId,
-      workflowId: fixture.workflowId as string,
-      payload: { marker: envelope },
-      ...(envelope === 'workspace-version' || envelope === 'backfilled-paired'
-        ? { workspaceWorkflowVersionId: fixture.workflowVersionId }
-        : {}),
-      ...(envelope === 'core-version' || envelope === 'backfilled-paired'
-        ? { coreWorkflowVersionId: fixture.coreWorkflowVersionId }
-        : {}),
-    });
+    await queue.add(
+      'WorkflowTriggerJob',
+      {
+        workspaceId,
+        workflowId: fixture.workflowId as string,
+        payload: { marker: envelope },
+        ...(envelope === 'workspace-version' || envelope === 'backfilled-paired'
+          ? { workspaceWorkflowVersionId: fixture.workflowVersionId }
+          : {}),
+        ...(envelope === 'core-version' || envelope === 'backfilled-paired'
+          ? { coreWorkflowVersionId: fixture.coreWorkflowVersionId }
+          : {}),
+      },
+      {
+        workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
+    );
     for (let attempt = 0; attempt < 100; attempt++) {
       const [run] = await global.testDataSource.query(
         `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
@@ -1947,7 +1956,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           workflowRunId: runId,
           lastExecutedStepId: parallelBranch.id,
         },
-        buildRunWorkflowJobOptions(runId),
+        {
+          ...buildRunWorkflowJobOptions(runId),
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       );
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -2130,7 +2144,15 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     capacity.mockRestore();
     await global.app
       .get<MessageQueueService>(getQueueToken(MessageQueue.workflowQueue))
-      .add('WorkflowRunEnqueueJob', { workspaceId, isCacheMode: false });
+      .add(
+        'WorkflowRunEnqueueJob',
+        { workspaceId, isCacheMode: false },
+        {
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+      );
     await waitForRun(runId, 'COMPLETED');
   });
 

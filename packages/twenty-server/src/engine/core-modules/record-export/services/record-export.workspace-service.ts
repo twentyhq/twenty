@@ -227,7 +227,12 @@ export class RecordExportWorkspaceService {
     const jobId = await this.messageQueueService.add(
       'GenerateRecordExportJob',
       recordExport,
-      { id: recordExport.id },
+      {
+        id: recordExport.id,
+        workspaceId: recordExport.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
     if (!isDefined(jobId)) {
       throw new RecordExportException(

@@ -303,6 +303,9 @@ export class ServerRouteTriggerService {
         retryLimit: QUEUED_TARGET_RETRY_LIMIT,
         backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
         priority: SERVER_ROUTE_DISPATCH_JOB_PRIORITY,
+        workspaceId,
+        applicationUniversalIdentifier:
+          logicFunction.application.universalIdentifier,
       },
     );
 

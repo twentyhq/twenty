@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -53,7 +55,12 @@ export class WebhookSubscriptionWorkspaceActivationListener {
       .add<SyncWorkspaceWebhookSubscriptionsJobData>(
         SyncWorkspaceWebhookSubscriptionsJob.name,
         { workspaceId, action },
-        { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
+        {
+          retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT,
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
       )
       .catch((error) =>
         this.exceptionHandlerService.captureExceptions([error], {

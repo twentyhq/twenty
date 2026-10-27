@@ -236,6 +236,7 @@ export class ApplicationRegistrationService {
       await this.applicationUpgradeQueueService.add<UpgradeApplicationsJobData>(
         UPGRADE_APPLICATIONS_JOB_NAME,
         { applicationRegistrationId, onlyAutoUpgrade: true },
+        { isSystemJob: true },
       );
     } catch (error) {
       this.logger.error(

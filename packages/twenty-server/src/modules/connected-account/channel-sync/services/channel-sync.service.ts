@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { POLLED_MESSAGE_CHANNEL_TYPES } from 'twenty-shared/constants';
 import {
   CalendarChannelSyncStage,
@@ -93,6 +94,11 @@ export class ChannelSyncService {
             workspaceId,
             messageChannelId: messageChannel.id,
           },
+          {
+            workspaceId,
+            applicationUniversalIdentifier:
+              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          },
         );
 
         if (
@@ -111,7 +117,12 @@ export class ChannelSyncService {
               channelId: messageChannel.id,
               workspaceId,
             },
-            { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
+            {
+              retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT,
+              workspaceId,
+              applicationUniversalIdentifier:
+                TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            },
           );
         } catch (error) {
           this.logger.warn(
@@ -154,6 +165,11 @@ export class ChannelSyncService {
             workspaceId,
             calendarChannelId: calendarChannel.id,
           },
+          {
+            workspaceId,
+            applicationUniversalIdentifier:
+              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          },
         );
 
         if (
@@ -172,7 +188,12 @@ export class ChannelSyncService {
               channelId: calendarChannel.id,
               workspaceId,
             },
-            { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
+            {
+              retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT,
+              workspaceId,
+              applicationUniversalIdentifier:
+                TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            },
           );
         } catch (error) {
           this.logger.warn(
