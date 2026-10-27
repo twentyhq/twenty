@@ -29,6 +29,9 @@ export const SettingsAppPreferencesAppStatusCell = ({
         (account) => account.applicationId === application.id,
       ),
     );
+    const hasConfiguredProvider = connectionProviders.some(
+      (provider) => provider.oauth?.isClientCredentialsConfigured ?? false,
+    );
 
     if (applicationAccounts.some(isApplicationConnectionReconnectNeeded)) {
       return <Status color="red">{t`Reconnect needed`}</Status>;
@@ -36,7 +39,7 @@ export const SettingsAppPreferencesAppStatusCell = ({
 
     if (
       loading ||
-      !isNonEmptyArray(connectionProviders) ||
+      !hasConfiguredProvider ||
       isNonEmptyArray(applicationAccounts)
     ) {
       return null;

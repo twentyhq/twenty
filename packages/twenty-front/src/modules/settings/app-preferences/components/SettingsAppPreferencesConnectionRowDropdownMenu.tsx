@@ -1,5 +1,6 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAppPreferencesRemoveConnectionDialog } from '@/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog';
+import { SettingsApplicationConnectionName } from '@/settings/applications/components/SettingsApplicationConnectionName';
 import { getApplicationPreferencesConnectionsPath } from '@/settings/app-preferences/utils/getApplicationPreferencesConnectionsPath';
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
 import { canReconnectApplicationConnection } from '@/settings/applications/utils/canReconnectApplicationConnection';
@@ -72,7 +73,9 @@ export const SettingsAppPreferencesConnectionRowDropdownMenu = ({
       <SettingsAppPreferencesRemoveConnectionDialog
         dialogId={removeDialogId}
         connectedAccountId={connection.id}
-        connectionLabel={connection.name ?? connection.handle}
+        connectionLabel={
+          <SettingsApplicationConnectionName connection={connection} />
+        }
       />
     </>
   );

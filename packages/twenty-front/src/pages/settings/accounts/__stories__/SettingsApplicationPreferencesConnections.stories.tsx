@@ -12,6 +12,7 @@ import { deleteConnectedAccount } from '~/pages/settings/accounts/__stories__/mo
 import {
   APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS,
   APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+  failNextConnectedAccountsRequest,
   findApplicationsGatedQuery,
   seedApplicationPreferencesStory,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
@@ -63,6 +64,11 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
     ).not.toBeInTheDocument();
 
     expect(await canvas.findByText('Work Linear')).toBeVisible();
+    expect(
+      withinTableRowOrThrow({ canvasElement, text: 'Work Linear' }).getByText(
+        'tim@linear.app',
+      ),
+    ).toBeVisible();
     expect(
       withinTableRowOrThrow({ canvasElement, text: 'Work Linear' }).getByText(
         'Connected',
@@ -302,6 +308,44 @@ export const UnconfiguredProviderWithoutConnectionsShowsOnlyTheBanner: Story = {
     ).toBeVisible();
     expect(
       canvas.queryByText('You have no Linear connection yet.'),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const LoadErrorOffersRetryInsteadOfTheEmptyState: Story = {
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    failNextConnectedAccountsRequest();
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Your connections could not be loaded. Check your connection and try again.',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(
+      canvas.queryByText('You have no Linear connection yet.'),
+    ).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('button', { name: 'Add connection' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
+
+    expect(
+      await canvas.findByText('Work Linear', undefined, { timeout: 3000 }),
+    ).toBeVisible();
+    expect(
+      canvas.getByRole('button', { name: 'Add connection' }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByText(
+        'Your connections could not be loaded. Check your connection and try again.',
+      ),
     ).not.toBeInTheDocument();
   },
 };

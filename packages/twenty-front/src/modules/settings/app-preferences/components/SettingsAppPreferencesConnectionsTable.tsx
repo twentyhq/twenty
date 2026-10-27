@@ -1,5 +1,6 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAppPreferencesConnectionRowDropdownMenu } from '@/settings/app-preferences/components/SettingsAppPreferencesConnectionRowDropdownMenu';
+import { SettingsApplicationConnectionName } from '@/settings/applications/components/SettingsApplicationConnectionName';
 import { SettingsApplicationConnectionStatus } from '@/settings/applications/components/SettingsApplicationConnectionStatus';
 import { SettingsApplicationConnectionTableRows } from '@/settings/applications/components/SettingsApplicationConnectionTableRows';
 import { SettingsTableRowsSkeletonLoader } from '@/settings/components/SettingsTableRowsSkeletonLoader';
@@ -57,7 +58,7 @@ export const SettingsAppPreferencesConnectionsTable = ({
                 textOverflow="ellipsis"
                 whiteSpace="nowrap"
               >
-                {connection.name ?? connection.handle}
+                <SettingsApplicationConnectionName connection={connection} />
               </TableCell>
               <TableCell whiteSpace="nowrap">
                 <SettingsApplicationConnectionStatus connection={connection} />

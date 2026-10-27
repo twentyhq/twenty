@@ -11,7 +11,9 @@ export const useMyPersonalConnectedAccounts = ({
   providers: ReadonlySet<ConnectedAccountProvider>;
 }) => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const { accounts, loading } = useMyConnectedAccounts({ providers });
+  const { accounts, loading, error, refetch } = useMyConnectedAccounts({
+    providers,
+  });
 
   const userWorkspaceId = currentWorkspaceMember?.userWorkspaceId;
 
@@ -21,5 +23,5 @@ export const useMyPersonalConnectedAccounts = ({
       )
     : [];
 
-  return { accounts: personalAccounts, loading };
+  return { accounts: personalAccounts, loading, error, refetch };
 };

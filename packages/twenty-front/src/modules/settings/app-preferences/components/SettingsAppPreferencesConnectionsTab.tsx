@@ -4,10 +4,11 @@ import { type ApplicationWithPreferences } from '@/settings/app-preferences/type
 import { getApplicationPreferencesConnectionsPath } from '@/settings/app-preferences/utils/getApplicationPreferencesConnectionsPath';
 import { SettingsApplicationAddConnectionButton } from '@/settings/applications/components/SettingsApplicationAddConnectionButton';
 import { SettingsApplicationConnectionProviderSection } from '@/settings/applications/components/SettingsApplicationConnectionProviderSection';
+import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const APP_CONNECTED_ACCOUNT_PROVIDERS: ReadonlySet<ConnectedAccountProvider> =
@@ -28,10 +29,14 @@ export const SettingsAppPreferencesConnectionsTab = ({
   connectionProviders,
 }: SettingsAppPreferencesConnectionsTabProps) => {
   const { t } = useLingui();
-  const { accounts: personalAccounts, loading } =
-    useMyPersonalConnectedAccounts({
-      providers: APP_CONNECTED_ACCOUNT_PROVIDERS,
-    });
+  const {
+    accounts: personalAccounts,
+    loading,
+    error,
+    refetch,
+  } = useMyPersonalConnectedAccounts({
+    providers: APP_CONNECTED_ACCOUNT_PROVIDERS,
+  });
 
   return (
     <>
@@ -51,27 +56,38 @@ export const SettingsAppPreferencesConnectionsTab = ({
             description={t`Connect your own ${provider.displayName} account for this app to use on your behalf.`}
             shouldShowMissingCredentialsBanner={!isClientCredentialsConfigured}
           >
-            {loading || isNonEmptyArray(providerConnections) ? (
-              <SettingsAppPreferencesConnectionsTable
-                applicationId={applicationId}
-                providerName={provider.name}
-                connections={providerConnections}
-                isClientCredentialsConfigured={isClientCredentialsConfigured}
-                isLoading={loading}
+            {isDefined(error) ? (
+              <SettingsApplicationLoadErrorBanner
+                message={t`Your connections could not be loaded. Check your connection and try again.`}
+                onRetry={() => refetch().catch(() => undefined)}
               />
             ) : (
-              isClientCredentialsConfigured && (
-                <StyledEmptyState>{t`You have no ${provider.displayName} connection yet.`}</StyledEmptyState>
-              )
-            )}
-            {isClientCredentialsConfigured && (
-              <SettingsApplicationAddConnectionButton
-                applicationId={applicationId}
-                providerName={provider.name}
-                redirectLocation={getApplicationPreferencesConnectionsPath(
-                  applicationId,
+              <>
+                {loading || isNonEmptyArray(providerConnections) ? (
+                  <SettingsAppPreferencesConnectionsTable
+                    applicationId={applicationId}
+                    providerName={provider.name}
+                    connections={providerConnections}
+                    isClientCredentialsConfigured={
+                      isClientCredentialsConfigured
+                    }
+                    isLoading={loading}
+                  />
+                ) : (
+                  isClientCredentialsConfigured && (
+                    <StyledEmptyState>{t`You have no ${provider.displayName} connection yet.`}</StyledEmptyState>
+                  )
                 )}
-              />
+                {isClientCredentialsConfigured && (
+                  <SettingsApplicationAddConnectionButton
+                    applicationId={applicationId}
+                    providerName={provider.name}
+                    redirectLocation={getApplicationPreferencesConnectionsPath(
+                      applicationId,
+                    )}
+                  />
+                )}
+              </>
             )}
           </SettingsApplicationConnectionProviderSection>
         );

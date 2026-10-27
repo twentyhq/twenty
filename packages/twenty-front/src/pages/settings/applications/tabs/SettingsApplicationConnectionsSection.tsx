@@ -4,6 +4,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 
 import { SettingsApplicationAddConnectionButton } from '@/settings/applications/components/SettingsApplicationAddConnectionButton';
 import { SettingsApplicationConnectionProviderSection } from '@/settings/applications/components/SettingsApplicationConnectionProviderSection';
+import { SettingsApplicationConnectionName } from '@/settings/applications/components/SettingsApplicationConnectionName';
 import { SettingsApplicationConnectionStatus } from '@/settings/applications/components/SettingsApplicationConnectionStatus';
 import { SettingsApplicationConnectionTableRows } from '@/settings/applications/components/SettingsApplicationConnectionTableRows';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -95,7 +96,9 @@ export const SettingsApplicationConnectionsSection = ({
                         textOverflow="ellipsis"
                         whiteSpace="nowrap"
                       >
-                        {connection.name ?? connection.handle}
+                        <SettingsApplicationConnectionName
+                          connection={connection}
+                        />
                       </TableCell>
                       <TableCell clickable>
                         <SettingsApplicationConnectionStatus

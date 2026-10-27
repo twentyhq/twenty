@@ -1319,6 +1319,33 @@ export const AppPreferencesListFlagsMissingConfiguration: Story = {
         'Missing configuration',
       ),
     ).not.toBeInTheDocument();
+    expect(
+      withinTableRowOrThrow({ canvasElement, text: 'Linear' }).getByText(
+        'Missing account',
+      ),
+    ).toBeVisible();
+  },
+};
+
+export const AppsWhoseProviderIsNotSetUpShowNoMissingAccount: Story = {
+  ...accountGroupsStory,
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    unconfigureLinearClientCredentials();
+  },
+  parameters: {
+    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
+  },
+  play: async ({ canvasElement }) => {
+    await within(canvasElement).findByText('Linear', undefined, {
+      timeout: 3000,
+    });
+
+    expect(
+      withinTableRowOrThrow({ canvasElement, text: 'Linear' }).queryByText(
+        'Missing account',
+      ),
+    ).not.toBeInTheDocument();
   },
 };
 
