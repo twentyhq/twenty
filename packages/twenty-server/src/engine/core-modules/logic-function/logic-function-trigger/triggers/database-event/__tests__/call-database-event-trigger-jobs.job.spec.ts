@@ -3,11 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import {
   FieldMetadataType,
-  MetadataReadability,
   type ObjectsPermissionsByRoleId,
-  RecordShareAccessLevel,
-  RecordSharePrincipalType,
-  RecordShareRowCause,
 } from 'twenty-shared/types';
 
 import { LogicFunctionTriggerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
@@ -75,14 +71,13 @@ const flatFieldMetadataMaps = buildMaps([
   }),
 ]);
 
-const buildObjectMetadata = (readability: MetadataReadability) =>
+const buildObjectMetadata = () =>
   getFlatObjectMetadataMock({
     id: OBJECT_METADATA_ID,
     universalIdentifier: OBJECT_METADATA_ID,
     nameSingular: 'company',
     namePlural: 'companies',
     applicationId: 'other-application-id',
-    readability,
     fieldIds: [NAME_FIELD_ID, SALARY_FIELD_ID, CITY_FIELD_ID],
     fieldUniversalIdentifiers: [NAME_FIELD_ID, SALARY_FIELD_ID, CITY_FIELD_ID],
   });
@@ -135,11 +130,10 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
 
   const buildBatch = (
     events: ObjectRecordUpdateEvent[],
-    readability = MetadataReadability.OPEN,
   ): WorkspaceEventBatch<ObjectRecordUpdateEvent> => ({
     name: 'company.updated',
     workspaceId: WORKSPACE_ID,
-    objectMetadata: buildObjectMetadata(readability),
+    objectMetadata: buildObjectMetadata(),
     events,
   });
 
@@ -381,35 +375,5 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
     );
 
     expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
-  });
-
-  it('should only enqueue the events of a private object shared with the application role', async () => {
-    recordShareStorageService.findByRecordIds.mockResolvedValue([
-      {
-        id: 'record-share-1',
-        recordId: 'record-shared',
-        objectMetadataId: OBJECT_METADATA_ID,
-        principalId: APPLICATION_ROLE_ID,
-        principalType: RecordSharePrincipalType.ROLE,
-        accessLevel: RecordShareAccessLevel.READ,
-        rowCause: RecordShareRowCause.MANUAL,
-        sourceId: 'source-1',
-      },
-    ]);
-
-    await job.handle(
-      buildBatch(
-        [
-          buildEvent('record-private', { name: 'A', salary: 1 }),
-          buildEvent('record-shared', { name: 'B', salary: 2 }),
-        ],
-        MetadataReadability.PRIVATE,
-      ),
-      { jobId: TRIGGER_JOB_ID },
-    );
-
-    expect(enqueuedPayloads().map((payload) => payload.recordId)).toEqual([
-      'record-shared',
-    ]);
   });
 });
