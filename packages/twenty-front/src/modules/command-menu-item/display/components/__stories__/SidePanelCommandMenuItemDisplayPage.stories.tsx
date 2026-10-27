@@ -402,6 +402,13 @@ export const SearchWithoutMatchingItemsOffersAskAi: Story = {
     expect(await canvas.findByText('Use ‘mike’ with...')).toBeVisible();
     expect(canvas.getByText('Search records')).toBeVisible();
     expect(canvas.getByText('Ask AI')).toBeVisible();
+
+    const fallbackLabels = canvas.getAllByText(/^(Ask AI|Search records)$/);
+
+    expect(fallbackLabels.map((label) => label.textContent)).toEqual([
+      'Ask AI',
+      'Search records',
+    ]);
   },
 };
 
