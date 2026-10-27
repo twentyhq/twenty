@@ -21,8 +21,13 @@ const findSyncedFlatWorkflowVersion = ({
   flatWorkflow,
   allFlatEntityMaps,
 }: {
-  flatWorkflow: FlatWorkflow;
-  allFlatEntityMaps: AllFlatEntityMaps;
+  flatWorkflow: Pick<
+    FlatWorkflow,
+    | 'applicationUniversalIdentifier'
+    | 'universalIdentifier'
+    | 'lastPublishedCoreWorkflowVersionId'
+  >;
+  allFlatEntityMaps: Pick<AllFlatEntityMaps, 'flatWorkflowVersionMaps'>;
 }): FlatWorkflowVersion | undefined => {
   const flatWorkflowVersion =
     allFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[

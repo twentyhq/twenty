@@ -116,8 +116,12 @@ export const fromFlatWorkflowToWorkflowManifest = ({
     ) {
       return { reason: WORKFLOW_CHANGED_IN_BUILDER_REASON };
     }
-  } catch {
-    return { reason: 'workflow that is not a valid application workflow' };
+  } catch (error) {
+    return {
+      reason: `workflow that is not a valid application workflow: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    };
   }
 
   return { manifest };

@@ -243,9 +243,9 @@ const syncWorkflow = (manifest: WorkflowManifest) => {
   return { flatWorkflow, flatWorkflowVersion };
 };
 
-const reverseKeysDeeply = (value: unknown): unknown => {
+const reverseKeysDeeply = <TValue>(value: TValue): TValue => {
   if (Array.isArray(value)) {
-    return value.map(reverseKeysDeeply);
+    return value.map(reverseKeysDeeply) as TValue;
   }
 
   if (!isDefined(value) || typeof value !== 'object') {
@@ -256,7 +256,7 @@ const reverseKeysDeeply = (value: unknown): unknown => {
     Object.entries(value)
       .reverse()
       .map(([key, entry]) => [key, reverseKeysDeeply(entry)]),
-  );
+  ) as TValue;
 };
 
 const exportWorkflow = ({
@@ -480,9 +480,7 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       );
       const reordered = {
         ...synced,
-        flatWorkflowVersion: reverseKeysDeeply(
-          synced.flatWorkflowVersion,
-        ) as FlatWorkflowVersion,
+        flatWorkflowVersion: reverseKeysDeeply(synced.flatWorkflowVersion),
       };
 
       expect(JSON.stringify(exportWorkflow(reordered))).toBe(
