@@ -6812,6 +6812,7 @@ export type SignUp = {
 };
 
 export type SignUpInNewWorkspaceInput = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
   partner?: InputMaybe<Scalars['String']['input']>;
   subdomain?: InputMaybe<Scalars['String']['input']>;

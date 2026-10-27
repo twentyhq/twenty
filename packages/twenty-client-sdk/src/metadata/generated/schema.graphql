@@ -4602,6 +4602,7 @@ type SignUp {
 }
 
 input SignUpInNewWorkspaceInput {
+  captchaToken: String
   displayName: String
   partner: String
   subdomain: String

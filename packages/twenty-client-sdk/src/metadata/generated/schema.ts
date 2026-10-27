@@ -7915,7 +7915,7 @@ export interface SignUpGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface SignUpInNewWorkspaceInput {displayName?: (Scalars['String'] | null),partner?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null)}
+export interface SignUpInNewWorkspaceInput {captchaToken?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),partner?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null)}
 
 export interface SkillGenqlSelection{
     applicationId?: boolean | number

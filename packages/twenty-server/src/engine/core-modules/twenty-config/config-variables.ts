@@ -2304,6 +2304,24 @@ export class ConfigVariables {
   CAPTCHA_SECRET_KEY?: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CAPTCHA_CONFIG,
+    description:
+      'Minimum Google reCAPTCHA v3 score, between 0 and 1, required to accept a request',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  CAPTCHA_MIN_SCORE = 0;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CAPTCHA_CONFIG,
+    description: 'Require a valid captcha to create a new workspace',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_WORKSPACE_CREATION_CAPTCHA_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
     description: 'License key for the Enterprise version',

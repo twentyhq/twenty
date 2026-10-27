@@ -49,7 +49,10 @@ export class CaptchaDriverFactory extends DriverFactoryBase<CaptchaDriver | null
     switch (driver) {
       case CaptchaDriverType.GOOGLE_RECAPTCHA:
         return new GoogleRecaptchaDriver(
-          captchaOptions,
+          {
+            ...captchaOptions,
+            minScore: this.twentyConfigService.get('CAPTCHA_MIN_SCORE'),
+          },
           this.secureHttpClientService.getHttpClient({
             baseURL: 'https://www.google.com/recaptcha/api/siteverify',
           }),

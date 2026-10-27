@@ -12385,6 +12385,9 @@ export default {
             ]
         },
         "SignUpInNewWorkspaceInput": {
+            "captchaToken": [
+                1
+            ],
             "displayName": [
                 1
             ],
