@@ -1,8 +1,10 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { TEAMS_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/features/chat/constants/universal-identifiers';
+import {
+  APPLICATION_UNIVERSAL_IDENTIFIER,
+  DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import { describe, expect, it } from 'vitest';
 
 describe('App installation', () => {
@@ -16,7 +18,7 @@ describe('App installation', () => {
     ).toContain('teams-list-organizer-transcripts');
   });
 
-  it('installs the Teams assistant agent bound to a role that grants nothing', async () => {
+  it('installs the Teams assistant agent bound to the app role', async () => {
     const client = new MetadataApiClient();
 
     const { findManyAgents } = await client.query({
@@ -50,7 +52,7 @@ describe('App installation', () => {
 
     expect(role).toEqual(
       expect.objectContaining({
-        universalIdentifier: TEAMS_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER,
+        universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
         canBeAssignedToAgents: true,
         canReadAllObjectRecords: false,
         canUpdateAllObjectRecords: false,
@@ -59,8 +61,8 @@ describe('App installation', () => {
         canUpdateAllSettings: false,
       }),
     );
-    expect(role?.objectPermissions ?? []).toHaveLength(7);
-    expect(role?.permissionFlags ?? []).toHaveLength(0);
+    expect(role?.objectPermissions ?? []).toHaveLength(13);
+    expect(role?.permissionFlags ?? []).toHaveLength(2);
   });
 
   it('registers Microsoft OAuth under Teams without configured credentials', async () => {

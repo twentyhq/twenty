@@ -5,7 +5,6 @@ import {
 } from 'twenty-sdk/define';
 
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { TEAMS_ASSISTANT_CRM_OBJECT_PERMISSIONS } from 'src/features/chat/constants/teams-assistant-crm-object-permissions';
 import {
   TEAMS_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
   TEAMS_USER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -21,7 +20,7 @@ export default defineApplicationRole({
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
-  canBeAssignedToAgents: false,
+  canBeAssignedToAgents: true,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
   objectPermissions: [
@@ -74,7 +73,21 @@ export default defineApplicationRole({
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: true,
     },
-    ...TEAMS_ASSISTANT_CRM_OBJECT_PERMISSIONS,
+    ...[
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note.universalIdentifier,
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget.universalIdentifier,
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget.universalIdentifier,
+    ].map((objectUniversalIdentifier) => ({
+      objectUniversalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: true,
+      canDestroyObjectRecords: false,
+    })),
   ],
   fieldPermissions: [],
   permissionFlagUniversalIdentifiers: [
