@@ -4,7 +4,11 @@ import { Logger } from '@nestjs/common';
 
 import { type RedisClient } from 'bullmq';
 
-import { FAIR_CLOCK_TTL_MS } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
+import { FAIR_DISPATCH_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-dispatch-script.constant';
+import {
+  FAIR_CLOCK_TTL_MS,
+  FAIR_TICKET_OFFSET,
+} from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { FAIR_TAG_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-tag-script.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
@@ -14,12 +18,9 @@ export type FairTicket = { tag: number; weight: number };
 
 type FairTicketAllocatorOptions = {
   getClient: (queueName: MessageQueue) => Promise<RedisClient>;
+  getJobKey: (job: { queueName: MessageQueue; jobId: string }) => string;
   keyPrefix: string;
 };
-
-const FAIR_TAG_SCRIPT_SHA = createHash('sha1')
-  .update(FAIR_TAG_SCRIPT)
-  .digest('hex');
 
 export class FairTicketAllocator {
   private readonly logger = new Logger(FairTicketAllocator.name);
@@ -40,48 +41,30 @@ export class FairTicketAllocator {
     const groupKeyIndexes = new Map(
       distinctGroupKeys.map((groupKey, index) => [groupKey, index + 1]),
     );
-    const keys = [
-      `${fairKeyPrefix}vtime`,
-      `${fairKeyPrefix}weights`,
-      ...distinctGroupKeys.map(
-        (groupKey) => `${fairKeyPrefix}clock:${groupKey}`,
-      ),
-    ];
-    const args = [
-      FAIR_CLOCK_TTL_MS,
-      distinctGroupKeys.length,
-      ...distinctGroupKeys,
-      requests.length,
-      ...requests.flatMap(({ groupKeys, jobCount }) => [
-        jobCount,
-        groupKeys.length,
-        ...groupKeys.map((groupKey) => groupKeyIndexes.get(groupKey) ?? 0),
-      ]),
-    ];
 
     try {
-      const client = await this.options.getClient(queueName);
-      const rawTickets = await client
-        .runCommand('evalsha', [
-          FAIR_TAG_SCRIPT_SHA,
-          keys.length,
-          ...keys,
-          ...args,
-        ])
-        .catch((error: unknown) => {
-          if (
-            !(error instanceof Error && error.message.startsWith('NOSCRIPT'))
-          ) {
-            throw error;
-          }
-
-          return client.runCommand('eval', [
-            FAIR_TAG_SCRIPT,
-            keys.length,
-            ...keys,
-            ...args,
-          ]);
-        });
+      const rawTickets = await this.runScript({
+        queueName,
+        script: FAIR_TAG_SCRIPT,
+        keys: [
+          `${fairKeyPrefix}vtime`,
+          `${fairKeyPrefix}weights`,
+          ...distinctGroupKeys.map(
+            (groupKey) => `${fairKeyPrefix}clock:${groupKey}`,
+          ),
+        ],
+        args: [
+          FAIR_CLOCK_TTL_MS,
+          distinctGroupKeys.length,
+          ...distinctGroupKeys,
+          requests.length,
+          ...requests.flatMap(({ groupKeys, jobCount }) => [
+            jobCount,
+            groupKeys.length,
+            ...groupKeys.map((groupKey) => groupKeyIndexes.get(groupKey) ?? 0),
+          ]),
+        ],
+      });
       const values = String(rawTickets).split(' ').map(Number);
       const tickets = requests.map((_, index) => ({
         tag: values[2 * index],
@@ -103,5 +86,59 @@ export class FairTicketAllocator {
 
       return undefined;
     }
+  }
+
+  async dispatched({
+    queueName,
+    jobId,
+  }: {
+    queueName: MessageQueue;
+    jobId: string;
+  }): Promise<void> {
+    try {
+      await this.runScript({
+        queueName,
+        script: FAIR_DISPATCH_SCRIPT,
+        keys: [
+          `${this.options.keyPrefix}:${queueName}:fair:vtime`,
+          this.options.getJobKey({ queueName, jobId }),
+        ],
+        args: [FAIR_TICKET_OFFSET],
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to record the fair dispatch of job ${jobId} on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  private async runScript({
+    queueName,
+    script,
+    keys,
+    args,
+  }: {
+    queueName: MessageQueue;
+    script: string;
+    keys: string[];
+    args: (string | number)[];
+  }): Promise<unknown> {
+    const client = await this.options.getClient(queueName);
+    const scriptSha = createHash('sha1').update(script).digest('hex');
+
+    return client
+      .runCommand('evalsha', [scriptSha, keys.length, ...keys, ...args])
+      .catch((error: unknown) => {
+        if (!(error instanceof Error && error.message.startsWith('NOSCRIPT'))) {
+          throw error;
+        }
+
+        return client.runCommand('eval', [
+          script,
+          keys.length,
+          ...keys,
+          ...args,
+        ]);
+      });
   }
 }

@@ -15,6 +15,7 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 
 type FairQueueSchedulerOptions = {
   getClient: (queueName: MessageQueue) => Promise<RedisClient>;
+  getJobKey: (job: { queueName: MessageQueue; jobId: string }) => string;
   keyPrefix: string;
   metricsService: MetricsService;
   twentyConfigService: TwentyConfigService;
@@ -26,6 +27,7 @@ export class FairQueueScheduler {
   constructor(private readonly options: FairQueueSchedulerOptions) {
     this.fairTicketAllocator = new FairTicketAllocator({
       getClient: options.getClient,
+      getJobKey: options.getJobKey,
       keyPrefix: options.keyPrefix,
     });
   }
@@ -104,6 +106,20 @@ export class FairQueueScheduler {
     });
 
     return priorities;
+  }
+
+  onJobStarted({
+    queueName,
+    jobId,
+  }: {
+    queueName: MessageQueue;
+    jobId: string;
+  }): void {
+    if (!this.isFairnessEnabled()) {
+      return;
+    }
+
+    void this.fairTicketAllocator.dispatched({ queueName, jobId });
   }
 
   private isFairnessEnabled(): boolean {
