@@ -47,7 +47,7 @@ export class EventLogsService {
   async queryEventLogs(
     workspace: Pick<WorkspaceEntity, 'id' | 'eventLogRetentionDays'>,
     input: EventLogQueryInput,
-    { callingApplicationId }: { callingApplicationId?: string } = {},
+    { reachableApplicationId }: { reachableApplicationId?: string } = {},
   ): Promise<EventLogQueryResult> {
     const workspaceId = workspace.id;
 
@@ -74,10 +74,10 @@ export class EventLogsService {
 
     if (
       input.table === EventLogTable.APPLICATION_LOG &&
-      isDefined(callingApplicationId)
+      isDefined(reachableApplicationId)
     ) {
-      whereClauses.push('"applicationId" = {callingApplicationId:String}');
-      params.callingApplicationId = callingApplicationId;
+      whereClauses.push('"applicationId" = {reachableApplicationId:String}');
+      params.reachableApplicationId = reachableApplicationId;
     }
 
     await this.applyFilters(

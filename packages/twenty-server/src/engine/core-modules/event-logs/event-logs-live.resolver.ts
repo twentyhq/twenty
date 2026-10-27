@@ -148,7 +148,9 @@ export class EventLogsLiveResolver {
               applicationId: isString(row.applicationId)
                 ? row.applicationId
                 : undefined,
-              access: 'manage',
+              access: 'read',
+              workspaceCustomApplicationId:
+                workspace.workspaceCustomApplicationId,
             }),
           );
 

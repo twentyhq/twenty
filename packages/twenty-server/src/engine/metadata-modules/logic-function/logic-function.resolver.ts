@@ -406,7 +406,8 @@ export class LogicFunctionResolver {
         canCallerReachApplication({
           callingApplication,
           applicationId: payload.logicFunctionLogs.applicationId,
-          access: 'manage',
+          access: 'read',
+          workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
         })
           ? payload
           : undefined,
