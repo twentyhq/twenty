@@ -410,14 +410,14 @@ export class AgentTurnStreamService {
     const publishReader = publishStream.getReader();
 
     try {
-      for (
-        let next = await publishReader.read();
-        !next.done;
-        next = await publishReader.read()
-      ) {
-        const chunk = next.value;
+      while (true) {
+        const { done, value: chunk } = await publishReader.read();
 
-        if ((chunk as { type?: string }).type === 'error') {
+        if (done) {
+          break;
+        }
+
+        if (chunk.type === 'error') {
           continue;
         }
 
@@ -426,7 +426,7 @@ export class AgentTurnStreamService {
           workspaceId,
           event: {
             type: 'stream-chunk',
-            chunk: chunk as Record<string, unknown>,
+            chunk,
           },
         });
       }
