@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { Suspense, lazy } from 'react';
 
-import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Section } from 'twenty-ui/components/layout';
 
 const FrontComponentRenderer = lazy(() =>
@@ -9,6 +9,8 @@ const FrontComponentRenderer = lazy(() =>
     (module) => ({ default: module.FrontComponentRenderer }),
   ),
 );
+
+const SKELETON_ROW_COUNT = 5;
 
 const StyledRendererContainer = styled.div`
   display: flex;
@@ -23,13 +25,17 @@ type SettingsApplicationCustomSettingsSectionProps = {
 export const SettingsApplicationCustomSettingsSection = ({
   frontComponentId,
 }: SettingsApplicationCustomSettingsSectionProps) => {
+  const loadingFallback = (
+    <SettingsSectionSkeletonLoader hasHeader rowCount={SKELETON_ROW_COUNT} />
+  );
+
   return (
     <Section.Root>
       <StyledRendererContainer>
-        <Suspense fallback={<FrontComponentSkeletonLoader />}>
+        <Suspense fallback={loadingFallback}>
           <FrontComponentRenderer
             frontComponentId={frontComponentId}
-            loadingFallback={<FrontComponentSkeletonLoader />}
+            loadingFallback={loadingFallback}
           />
         </Suspense>
       </StyledRendererContainer>

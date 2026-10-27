@@ -1,3 +1,4 @@
+import { WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies-directory-name';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
@@ -14,6 +15,7 @@ import {
 import { v4 } from 'uuid';
 
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
+import { getDefaultApplicationPackageFieldsForApplication } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields-for-application.util';
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -565,7 +567,9 @@ export class ApplicationService {
     },
     queryRunner?: QueryRunner,
   ) {
-    const defaultPackageFields = await getDefaultApplicationPackageFields();
+    const defaultPackageFields = await getDefaultApplicationPackageFields({
+      directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
+    });
 
     const applicationRegistration =
       await this.createWorkspaceCustomApplicationRegistration(
@@ -598,10 +602,12 @@ export class ApplicationService {
       queryRunner,
     );
 
-    await this.uploadDefaultPackageFilesAndSetFileIds(
-      workspaceCustomApplication,
+    await this.uploadPackageFilesAndSetFileIds({
+      application: workspaceCustomApplication,
+      packageJsonContent: defaultPackageFields.packageJsonContent,
+      yarnLockContent: defaultPackageFields.yarnLockContent,
       queryRunner,
-    );
+    });
 
     return workspaceCustomApplication;
   }
@@ -646,8 +652,18 @@ export class ApplicationService {
     >,
     queryRunner?: QueryRunner,
   ): Promise<void> {
+    const workspaceRepository =
+      queryRunner?.manager.getRepository(WorkspaceEntity) ??
+      this.workspaceRepository;
+    const workspace = await workspaceRepository.findOne({
+      where: { id: application.workspaceId },
+      select: ['workspaceCustomApplicationId'],
+    });
     const { packageJsonContent, yarnLockContent } =
-      await getDefaultApplicationPackageFields();
+      await getDefaultApplicationPackageFieldsForApplication({
+        applicationId: application.id,
+        workspaceCustomApplicationId: workspace?.workspaceCustomApplicationId,
+      });
 
     await this.uploadPackageFilesAndSetFileIds({
       application,

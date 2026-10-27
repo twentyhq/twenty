@@ -28,8 +28,6 @@ import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/
 import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
-import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
-import { Dropdown as LegacyDropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -39,7 +37,6 @@ import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -103,6 +100,8 @@ export const AiChatThreadDetailsDropdown = ({
   const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
   const { openRecordTarget } = useChatTargetNavigation();
   const dropdownContentRef = useRef<HTMLDivElement>(null);
+  const detailsTriggerRef = useRef<HTMLButtonElement>(null);
+  const recordPickerContentRef = useRef<HTMLDivElement>(null);
   const recordPickerDropdownId = `${dropdownId}-record-picker`;
   const {
     isAvailable: areRecordTargetsAvailable,
@@ -115,10 +114,6 @@ export const AiChatThreadDetailsDropdown = ({
     recordPickerInstanceId: recordPickerDropdownId,
   });
   const { openDropdown } = useOpenDropdown();
-  const setMultipleRecordPickerSearchFilter = useSetAtomComponentState(
-    multipleRecordPickerSearchFilterComponentState,
-    recordPickerDropdownId,
-  );
   const hasTargetRecords = isNonEmptyArray(targetRecords);
   const editRecordTargetsLabel = hasTargetRecords
     ? t`Edit linked records`
@@ -144,6 +139,7 @@ export const AiChatThreadDetailsDropdown = ({
         <Dropdown.Trigger
           render={
             <LightIconButton
+              ref={detailsTriggerRef}
               aria-label={t`Chat details`}
               title={t`Chat details`}
               emphasis="subtle"
@@ -262,23 +258,41 @@ export const AiChatThreadDetailsDropdown = ({
         </DropdownContent>
       </DropdownRoot>
       {canEditRecordTargets && (
-        <LegacyDropdown
+        <DropdownRoot
           dropdownId={recordPickerDropdownId}
-          dropdownPlacement="bottom-start"
-          disableClickForClickableComponent
-          clickableComponent={<span />}
-          onClose={() => setMultipleRecordPickerSearchFilter('')}
-          dropdownComponents={
+          type="picker"
+          multiple
+        >
+          <DropdownContent
+            ref={recordPickerContentRef}
+            anchor={detailsTriggerRef}
+            finalFocus={(interaction) => {
+              const detailsTrigger = detailsTriggerRef.current;
+
+              if (interaction !== 'keyboard' || !isDefined(detailsTrigger)) {
+                return false;
+              }
+
+              const ownerDocument = detailsTrigger.ownerDocument;
+              const activeElement = ownerDocument.activeElement;
+              const isFocusStillInsidePicker =
+                activeElement === ownerDocument.body ||
+                (recordPickerContentRef.current?.contains(activeElement) ??
+                  false);
+
+              return isFocusStillInsidePicker ? detailsTrigger : false;
+            }}
+            side="bottom"
+            align="start"
+            aria-label={editRecordTargetsLabel}
+          >
             <MultipleRecordPicker
-              focusId={recordPickerDropdownId}
               componentInstanceId={recordPickerDropdownId}
               onChange={handleRecordPickerChange}
-              onSubmit={() => closeDropdown(recordPickerDropdownId)}
-              onClickOutside={() => closeDropdown(recordPickerDropdownId)}
               layoutDirection="search-bar-on-top"
             />
-          }
-        />
+          </DropdownContent>
+        </DropdownRoot>
       )}
     </>
   );

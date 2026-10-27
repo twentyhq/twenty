@@ -178,6 +178,10 @@ export const FrontComponentWorkerEffect = ({
               mediaSessionHost?.getRecorderCapabilities(),
           },
         );
+
+        if (!isCancelled) {
+          setReceiver(newReceiver);
+        }
       } catch (error) {
         if (!isCancelled) {
           setError(error instanceof Error ? error : new Error(String(error)));
@@ -187,7 +191,6 @@ export const FrontComponentWorkerEffect = ({
 
     resolveComponentSourceAndRender();
 
-    setReceiver(newReceiver);
     isInitializedRef.current = true;
 
     return () => {
