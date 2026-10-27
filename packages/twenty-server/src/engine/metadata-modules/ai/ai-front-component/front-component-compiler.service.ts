@@ -11,7 +11,7 @@ import { FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS } from 'src/engine/metadata-modul
 import { FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-vendor-lambda-limits.constant';
 import { ensureFrontComponentLambdaExists } from 'src/engine/metadata-modules/ai/ai-front-component/utils/ensure-front-component-lambda-exists.util';
 import { WorkspaceFrontComponentDependenciesService } from 'src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service';
-import { type FrontComponentBuilderInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-input.type';
+import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
 import { frontComponentVendorResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-vendor-result.schema';
 import { FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-max-build-output-bytes.constant';
 import { FRONT_COMPONENT_WRAPPER_NAME } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-wrapper-name.constant';
@@ -280,7 +280,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
     input,
   }: {
     functionName: string;
-    input: FrontComponentBuilderInput;
+    input: FrontComponentBuilderRequest;
   }): Promise<unknown> {
     const { awsClient } = this.getCurrentDriver();
     const lambdaClient = await awsClient.getLambdaClient();
