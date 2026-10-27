@@ -56,7 +56,7 @@ export const ConnectionOnlyAppListsMyConnectionsWithoutTabs: Story = {
       await canvas.findByText('Work Linear', undefined, { timeout: 3000 }),
     ).toBeVisible();
     expect(
-      canvas.queryByRole('link', { name: 'Connections' }),
+      canvas.queryByRole('link', { name: 'General' }),
     ).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('link', { name: 'Variables' }),

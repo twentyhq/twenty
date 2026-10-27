@@ -26,7 +26,7 @@ import {
 } from 'twenty-shared/utils';
 import {
   IconDeviceFloppy,
-  IconPlug,
+  IconSettings,
   IconVariable,
   useIcons,
 } from 'twenty-ui/icon';
@@ -110,8 +110,8 @@ export const SettingsApplicationPreferencesDetail = ({
       ? [
           {
             id: APPLICATION_PREFERENCES_CONNECTIONS_TAB_ID,
-            title: t`Connections`,
-            Icon: IconPlug,
+            title: t`General`,
+            Icon: IconSettings,
           },
         ]
       : []),

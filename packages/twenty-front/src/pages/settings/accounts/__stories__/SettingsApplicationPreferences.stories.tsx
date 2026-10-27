@@ -333,6 +333,7 @@ export const FailedOAuthReturnShowsItsMessage: Story = {
     ).toBeVisible();
     expect(canvas.queryByText('Record my meetings')).not.toBeInTheDocument();
     expect(canvas.getByRole('link', { name: 'Variables' })).toBeVisible();
+    expect(canvas.getByRole('link', { name: 'General' })).toBeVisible();
   },
 };
 
