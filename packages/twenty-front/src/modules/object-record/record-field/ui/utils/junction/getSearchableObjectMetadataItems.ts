@@ -1,15 +1,23 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getTargetObjectMetadataIdsFromField } from './getTargetObjectMetadataIdsFromField';
+import { getPermittedJunctionTargetFields } from '@/object-record/record-field/ui/utils/junction/getPermittedJunctionTargetFields';
+import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
+import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getSearchableObjectMetadataItems = (
-  targetFields: FieldMetadataItem[],
-  objectMetadataItems: EnrichedObjectMetadataItem[],
-): EnrichedObjectMetadataItem[] => {
-  const targetObjectIds = targetFields.flatMap(
-    getTargetObjectMetadataIdsFromField,
-  );
+export const getSearchableObjectMetadataItems = ({
+  junctionConfig: { junctionObjectMetadata, targetFields },
+  objectMetadataItems,
+}: {
+  junctionConfig: Pick<
+    ValidJunctionConfig,
+    'junctionObjectMetadata' | 'targetFields'
+  >;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+}): EnrichedObjectMetadataItem[] => {
+  const targetObjectIds = getPermittedJunctionTargetFields({
+    targetFields,
+    permittedFields: junctionObjectMetadata.updatableFields,
+  }).flatMap(getTargetObjectMetadataIdsFromField);
   const uniqueTargetObjectIds = [...new Set(targetObjectIds)];
 
   return uniqueTargetObjectIds

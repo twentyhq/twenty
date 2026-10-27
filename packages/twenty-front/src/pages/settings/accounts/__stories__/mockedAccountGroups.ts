@@ -18,8 +18,9 @@ import {
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
-const MY_USER_WORKSPACE_ID = '20202020-1a2b-4c3d-8e4f-000000000001';
-const TEAMMATE_USER_WORKSPACE_ID = '20202020-1a2b-4c3d-8e4f-000000000002';
+export const MY_USER_WORKSPACE_ID = '20202020-1a2b-4c3d-8e4f-000000000001';
+export const TEAMMATE_USER_WORKSPACE_ID =
+  '20202020-1a2b-4c3d-8e4f-000000000002';
 export const FATHOM_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000021';
 export const GRANOLA_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000022';
 const CREATED_AT = '2026-09-01T00:00:00.000Z';
@@ -33,12 +34,16 @@ const TEAMMATE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000016';
 const EMAIL_GROUP_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000017';
 const SECOND_GOOGLE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000018';
 
-const buildConnectedAccount = (account: {
+export const buildConnectedAccount = (account: {
   id: string;
   handle: string;
   provider: string;
   userWorkspaceId: string;
   applicationId?: string;
+  connectionProviderId?: string;
+  name?: string;
+  authFailedAt?: string;
+  archivedAt?: string;
   scope?: string;
   scopes?: string[];
 }) => ({
@@ -215,7 +220,12 @@ export const CALENDAR_CHANNELS = [
 
 const deletedAccountIds = new Set<string>();
 
+export const withoutDeletedAccounts = <TAccount extends { id: string }>(
+  accounts: TAccount[],
+) => accounts.filter((account) => !deletedAccountIds.has(account.id));
+
 export const deleteConnectedAccount = fn();
+export const myApplicationPreferencesRequested = fn();
 
 export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
   graphql.query('MyConnectedAccounts', () =>
@@ -258,9 +268,11 @@ export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
       },
     });
   }),
-  graphql.query('MyApplicationPreferences', () =>
-    HttpResponse.json({ data: { myApplicationPreferences: [] } }),
-  ),
+  graphql.query('MyApplicationPreferences', () => {
+    myApplicationPreferencesRequested();
+
+    return HttpResponse.json({ data: { myApplicationPreferences: [] } });
+  }),
   graphql.query('FindManyBlocklists', () =>
     HttpResponse.json({
       data: {
@@ -279,6 +291,7 @@ export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
 export const seedAccountGroupsStory = async () => {
   deletedAccountIds.clear();
   deleteConnectedAccount.mockClear();
+  myApplicationPreferencesRequested.mockClear();
   await mockedApolloClient.clearStore();
 
   jotaiStore.set(isGoogleMessagingEnabledState.atom, true);

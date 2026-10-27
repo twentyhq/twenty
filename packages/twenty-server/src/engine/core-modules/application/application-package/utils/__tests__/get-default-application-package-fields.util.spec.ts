@@ -1,4 +1,4 @@
-import { SEED_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/seed-dependencies-dirname';
+import { STANDARD_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/standard-application-dependencies-directory-name';
 import { getDefaultApplicationPackageFieldsForApplication } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields-for-application.util';
 import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
 
@@ -12,9 +12,9 @@ describe('application dependency defaults', () => {
       directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
     });
     expect(standard.packageJsonChecksum).toBe(
-      '19e2309740fef4df0654b2e673626344',
+      '7a6f26a21a5a95e71afea95f73d91f97',
     );
-    expect(standard.yarnLockChecksum).toBe('c17ba0399c57dedf69097e8d3de895c0');
+    expect(standard.yarnLockChecksum).toBe('b2ad1ca487a0818f3fdba803aa8a8548');
     const standardPackage = JSON.parse(standard.packageJsonContent);
     const customPackage = JSON.parse(custom.packageJsonContent);
     expect(standardPackage.devDependencies).toBeUndefined();
@@ -42,10 +42,18 @@ describe('application default dependency selection', () => {
       'workspace-custom',
       WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
     ],
-    ['standard', 'workspace-custom', SEED_DEPENDENCIES_DIRNAME],
-    ['installed', 'workspace-custom', SEED_DEPENDENCIES_DIRNAME],
-    ['installed', null, SEED_DEPENDENCIES_DIRNAME],
-    ['installed', undefined, SEED_DEPENDENCIES_DIRNAME],
+    [
+      'standard',
+      'workspace-custom',
+      STANDARD_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
+    ],
+    [
+      'installed',
+      'workspace-custom',
+      STANDARD_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
+    ],
+    ['installed', null, STANDARD_APPLICATION_DEPENDENCIES_DIRECTORY_NAME],
+    ['installed', undefined, STANDARD_APPLICATION_DEPENDENCIES_DIRECTORY_NAME],
   ])(
     'loads %s defaults when the Workspace app is %s',
     async (applicationId, workspaceCustomApplicationId, directory) => {

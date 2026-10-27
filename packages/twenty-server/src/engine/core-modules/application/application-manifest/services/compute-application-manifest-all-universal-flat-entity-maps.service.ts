@@ -14,7 +14,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
+import { getConnectionProviderManifestLogicFunctionReferences } from 'src/engine/core-modules/application/application-manifest/utils/get-connection-provider-manifest-logic-function-references.util';
 import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util';
+import { fromMessagingProviderManifestToUniversalFlatMessagingProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-messaging-provider-manifest-to-universal-flat-messaging-provider.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFieldPermissionManifestToUniversalFlatFieldPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-field-permission-manifest-to-universal-flat-field-permission.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/application-manifest/converters/from-front-component-manifest-to-universal-flat-front-component.util';
@@ -52,6 +54,12 @@ import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-e
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
+
+const CONNECTION_FLOW_HOOKS = new Set([
+  'identifyAccount',
+  'authorize',
+  'callback',
+]);
 
 @Injectable()
 export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
@@ -204,14 +212,12 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    const identifyAccountLogicFunctionUniversalIdentifiers = new Set(
-      (manifest.connectionProviders ?? [])
-        .map(
-          (connectionProviderManifest) =>
-            connectionProviderManifest.identifyAccountLogicFunction
-              ?.universalIdentifier,
-        )
-        .filter(isDefined),
+    const connectionFlowLogicFunctionUniversalIdentifiers = new Set(
+      (manifest.connectionProviders ?? []).flatMap((connectionProvider) =>
+        getConnectionProviderManifestLogicFunctionReferences(connectionProvider)
+          .filter(({ hook }) => CONNECTION_FLOW_HOOKS.has(hook))
+          .map(({ universalIdentifier }) => universalIdentifier),
+      ),
     );
 
     for (const logicFunctionManifest of manifest.logicFunctions) {
@@ -223,7 +229,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             applicationSourceType,
             existingFlatLogicFunctionMaps:
               fromAllFlatEntityMaps.flatLogicFunctionMaps,
-            identifyAccountLogicFunctionUniversalIdentifiers,
+            connectionFlowLogicFunctionUniversalIdentifiers,
             now,
           }),
         universalFlatEntityMapsToMutate:
@@ -269,6 +275,19 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           }),
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatConnectionProviderMaps,
+      });
+    }
+
+    for (const messagingProviderManifest of manifest.messagingProviders ?? []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromMessagingProviderManifestToUniversalFlatMessagingProvider({
+            messagingProviderManifest,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatMessagingProviderMaps,
       });
     }
 

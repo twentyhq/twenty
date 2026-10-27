@@ -132,8 +132,8 @@ export class GraphqlQueryFilterFieldParser {
 
     assertFieldIsReadableOrThrow({
       objectsPermissions: outerQueryBuilder.objectRecordsPermissions,
-      objectMetadataId: this.flatObjectMetadata.id,
-      fieldMetadataId: fieldMetadata.id,
+      flatObjectMetadata: this.flatObjectMetadata,
+      flatFieldMetadata: fieldMetadata,
     });
 
     if (
@@ -382,8 +382,8 @@ export class GraphqlQueryFilterFieldParser {
 
     assertFieldIsReadableOrThrow({
       objectsPermissions: outerQueryBuilder.objectRecordsPermissions,
-      objectMetadataId: referencedScope.flatObjectMetadata.id,
-      fieldMetadataId: referencedFieldMetadata.id,
+      flatObjectMetadata: referencedScope.flatObjectMetadata,
+      flatFieldMetadata: referencedFieldMetadata,
     });
 
     const fieldColumnReference = useDirectTableReference

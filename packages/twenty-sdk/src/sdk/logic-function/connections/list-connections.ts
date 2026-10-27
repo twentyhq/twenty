@@ -2,7 +2,10 @@ import { CONNECTION_SCOPE_BY_LEGACY_VISIBILITY } from 'twenty-shared/application
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
-import { withLegacyConnectionVisibility } from '@/sdk/logic-function/connections/utils/with-legacy-connection-visibility.util';
+import {
+  type AppConnectionWithoutVisibility,
+  withLegacyConnectionVisibility,
+} from '@/sdk/logic-function/connections/utils/with-legacy-connection-visibility.util';
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
 
 const LIST_APP_CONNECTIONS_QUERY = `
@@ -16,6 +19,7 @@ const LIST_APP_CONNECTIONS_QUERY = `
       scope
       userWorkspaceId
       workspaceMemberId
+      providerType
       accessToken
       scopes
       authFailedAt
@@ -38,7 +42,7 @@ export const listConnections = async ({
 }: ListConnectionsFilter = {}): Promise<AppConnection[]> => {
   const { appConnections } = await postGraphqlRequest<
     { filter: Omit<ListConnectionsFilter, 'visibility'> },
-    { appConnections: Omit<AppConnection, 'visibility'>[] }
+    { appConnections: AppConnectionWithoutVisibility[] }
   >({
     query: LIST_APP_CONNECTIONS_QUERY,
     variables: {
