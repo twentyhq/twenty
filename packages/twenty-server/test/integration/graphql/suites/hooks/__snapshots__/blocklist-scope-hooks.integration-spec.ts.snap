@@ -136,10 +136,10 @@ exports[`blocklist scope hooks refuses every bulk mutation of blocklist entries 
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "subCode": "INVALID_QUERY_INPUT",
-    "userFriendlyMessage": "This type of record cannot be merged.",
+    "subCode": "BAD_REQUEST",
+    "userFriendlyMessage": "Merging blocklist entries is not allowed.",
   },
-  "message": "Merge is only available for objects with duplicate criteria. Object 'blocklist' does not have duplicate criteria defined.",
+  "message": "Method not allowed.",
 }
 `;
 
