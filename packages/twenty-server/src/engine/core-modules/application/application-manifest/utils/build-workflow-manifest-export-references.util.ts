@@ -16,6 +16,7 @@ export const buildWorkflowManifestExportReferences = ({
   allFlatEntityMaps,
   exportedObjectUniversalIdentifiers,
   resolvableFieldUniversalIdentifiers,
+  canReferenceOtherApplicationsWorkflowActions,
 }: {
   applicationAllFlatEntityMaps: Pick<
     AllFlatEntityMaps,
@@ -26,10 +27,11 @@ export const buildWorkflowManifestExportReferences = ({
   >;
   allFlatEntityMaps: Pick<
     AllFlatEntityMaps,
-    'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+    'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatLogicFunctionMaps'
   >;
   exportedObjectUniversalIdentifiers: ReadonlySet<string>;
   resolvableFieldUniversalIdentifiers: ReadonlySet<string>;
+  canReferenceOtherApplicationsWorkflowActions: boolean;
 }): WorkflowManifestReferences => {
   const objectByUniversalIdentifier = new Map<
     string,
@@ -90,9 +92,19 @@ export const buildWorkflowManifestExportReferences = ({
     }
   }
 
+  // Mirrors the sync rule: only the workspace custom application may call other apps' actions
+  const referenceableFlatLogicFunctionMaps =
+    canReferenceOtherApplicationsWorkflowActions
+      ? allFlatEntityMaps.flatLogicFunctionMaps
+      : applicationAllFlatEntityMaps.flatLogicFunctionMaps;
+
   for (const flatLogicFunction of Object.values(
-    applicationAllFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier,
+    referenceableFlatLogicFunctionMaps.byUniversalIdentifier,
   ).filter(isDefined)) {
+    if (isDefined(flatLogicFunction.deletedAt)) {
+      continue;
+    }
+
     const { universalIdentifier, workflowActionTriggerSettings } =
       flatLogicFunction;
 

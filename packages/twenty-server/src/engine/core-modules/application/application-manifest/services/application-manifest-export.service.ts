@@ -22,6 +22,7 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -45,6 +46,7 @@ export class ApplicationManifestExportService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async exportApplication({
@@ -145,12 +147,18 @@ export class ApplicationManifestExportService {
             metadataName: 'pageLayout',
           }),
       });
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
     const { workflows, coverage: workflowsCoverage } =
       reconstructWorkflowsManifest({
         applicationAllFlatEntityMaps,
         allFlatEntityMaps,
         exportedObjectUniversalIdentifiers,
         resolvableFieldUniversalIdentifiers,
+        canReferenceOtherApplicationsWorkflowActions:
+          flatApplication.id === workspaceCustomFlatApplication.id,
       });
     const translations = isDefined(flatApplication.applicationRegistrationId)
       ? await this.applicationTranslationCacheService.getCatalogsByLocale(

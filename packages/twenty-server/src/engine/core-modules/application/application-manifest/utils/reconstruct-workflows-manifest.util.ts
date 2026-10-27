@@ -45,11 +45,13 @@ export const reconstructWorkflowsManifest = ({
   allFlatEntityMaps,
   exportedObjectUniversalIdentifiers,
   resolvableFieldUniversalIdentifiers,
+  canReferenceOtherApplicationsWorkflowActions,
 }: {
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
   allFlatEntityMaps: AllFlatEntityMaps;
   exportedObjectUniversalIdentifiers: ReadonlySet<string>;
   resolvableFieldUniversalIdentifiers: ReadonlySet<string>;
+  canReferenceOtherApplicationsWorkflowActions: boolean;
 }): {
   workflows: WorkflowManifest[];
   coverage: ApplicationExportCoverageEntry[];
@@ -61,6 +63,7 @@ export const reconstructWorkflowsManifest = ({
     allFlatEntityMaps,
     exportedObjectUniversalIdentifiers,
     resolvableFieldUniversalIdentifiers,
+    canReferenceOtherApplicationsWorkflowActions,
   });
 
   const getExclusionReason = (flatWorkflow: FlatWorkflow) => {

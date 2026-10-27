@@ -10,6 +10,7 @@ import {
   StepLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { fromFlatWorkflowToWorkflowManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-workflow-to-workflow-manifest.util';
@@ -228,7 +229,7 @@ const reverseKeysDeeply = (value: unknown): unknown => {
     return value.map(reverseKeysDeeply);
   }
 
-  if (typeof value !== 'object' || value === null) {
+  if (!isDefined(value) || typeof value !== 'object') {
     return value;
   }
 

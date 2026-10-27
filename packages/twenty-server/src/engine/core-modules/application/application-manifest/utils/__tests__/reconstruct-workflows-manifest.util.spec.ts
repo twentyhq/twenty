@@ -25,6 +25,7 @@ const UNEXPORTED_OBJECT_UID = '33333333-3333-4333-8333-333333333333';
 const COMPANY_UID = '44444444-4444-4444-8444-444444444444';
 const ACTION_FUNCTION_UID = '55555555-5555-4555-8555-555555555555';
 const PLAIN_FUNCTION_UID = '66666666-6666-4666-8666-666666666666';
+const OTHER_APPLICATION_FUNCTION_UID = '99999999-9999-4999-8999-999999999999';
 const TRIGGER_UID = '77777777-7777-4777-8777-777777777777';
 const STEP_UID = '88888888-8888-4888-8888-888888888888';
 
@@ -64,14 +65,16 @@ const companyObject = buildObject({
 const buildLogicFunction = ({
   universalIdentifier,
   isWorkflowAction,
+  applicationId = APP_ID,
 }: {
   universalIdentifier: string;
   isWorkflowAction: boolean;
+  applicationId?: string;
 }) =>
   ({
     id: `${universalIdentifier}-id`,
     universalIdentifier,
-    applicationId: APP_ID,
+    applicationId,
     applicationUniversalIdentifier: APP_UID,
     workflowActionTriggerSettings: isWorkflowAction ? {} : null,
   }) as FlatLogicFunction;
@@ -86,6 +89,11 @@ const logicFunctions = [
     isWorkflowAction: false,
   }),
 ];
+const otherApplicationActionFunction = buildLogicFunction({
+  universalIdentifier: OTHER_APPLICATION_FUNCTION_UID,
+  isWorkflowAction: true,
+  applicationId: OTHER_APP_ID,
+});
 
 const createRecordWorkflow = ({
   universalIdentifier,
@@ -160,10 +168,9 @@ const syncWorkflow = ({
       applicationUniversalIdentifier: APP_UID,
       now: NOW,
       logicFunctionIdByUniversalIdentifier: new Map(
-        logicFunctions.map(({ universalIdentifier, id }) => [
-          universalIdentifier,
-          id,
-        ]),
+        [...logicFunctions, otherApplicationActionFunction].map(
+          ({ universalIdentifier, id }) => [universalIdentifier, id],
+        ),
       ),
       objectByUniversalIdentifier: new Map(
         [ticketObject, unexportedObject, companyObject].map((object) => [
@@ -195,9 +202,11 @@ const syncWorkflow = ({
 
 const buildMaps = ({
   objects = [],
+  flatLogicFunctions = logicFunctions,
   synced,
 }: {
   objects?: FlatObjectMetadata[];
+  flatLogicFunctions?: FlatLogicFunction[];
   synced: ReturnType<typeof syncWorkflow>[];
 }): AllFlatEntityMaps => {
   const maps = createEmptyAllFlatEntityMaps();
@@ -209,7 +218,7 @@ const buildMaps = ({
       flatEntityMaps: maps.flatObjectMetadataMaps,
     }),
     flatLogicFunctionMaps: addAllFlatEntitiesToFlatEntityMaps({
-      flatEntities: logicFunctions,
+      flatEntities: flatLogicFunctions,
       flatEntityMaps: maps.flatLogicFunctionMaps,
     }),
     flatWorkflowMaps: addAllFlatEntitiesToFlatEntityMaps({
@@ -225,7 +234,13 @@ const buildMaps = ({
   };
 };
 
-const reconstruct = (synced: ReturnType<typeof syncWorkflow>[]) =>
+const reconstruct = ({
+  synced,
+  canReferenceOtherApplicationsWorkflowActions = false,
+}: {
+  synced: ReturnType<typeof syncWorkflow>[];
+  canReferenceOtherApplicationsWorkflowActions?: boolean;
+}) =>
   reconstructWorkflowsManifest({
     applicationAllFlatEntityMaps: buildMaps({
       objects: [ticketObject, unexportedObject],
@@ -233,10 +248,12 @@ const reconstruct = (synced: ReturnType<typeof syncWorkflow>[]) =>
     }),
     allFlatEntityMaps: buildMaps({
       objects: [ticketObject, unexportedObject, companyObject],
+      flatLogicFunctions: [...logicFunctions, otherApplicationActionFunction],
       synced,
     }),
     exportedObjectUniversalIdentifiers: new Set([TICKET_UID]),
     resolvableFieldUniversalIdentifiers: new Set(),
+    canReferenceOtherApplicationsWorkflowActions,
   });
 
 describe('reconstructWorkflowsManifest', () => {
@@ -256,9 +273,9 @@ describe('reconstructWorkflowsManifest', () => {
       }),
     ];
 
-    const { workflows, coverage } = reconstruct(
-      manifests.map((manifest) => syncWorkflow({ manifest })),
-    );
+    const { workflows, coverage } = reconstruct({
+      synced: manifests.map((manifest) => syncWorkflow({ manifest })),
+    });
 
     expect(workflows).toEqual(manifests);
     expect(coverage).toEqual(
@@ -315,7 +332,7 @@ describe('reconstructWorkflowsManifest', () => {
       }),
     ];
 
-    expect(reconstruct(synced)).toEqual({
+    expect(reconstruct({ synced })).toEqual({
       workflows: [],
       coverage: [
         {
@@ -363,6 +380,30 @@ describe('reconstructWorkflowsManifest', () => {
     });
   });
 
+  it('exports a step on another application action only from the workspace custom application', () => {
+    const manifest = logicFunctionWorkflow({
+      universalIdentifier: 'd0000000-0000-4000-8000-000000000000',
+      logicFunctionUniversalIdentifier: OTHER_APPLICATION_FUNCTION_UID,
+    });
+    const synced = [syncWorkflow({ manifest })];
+
+    expect(reconstruct({ synced }).coverage).toEqual([
+      {
+        metadataName: 'workflow',
+        universalIdentifier: 'd0000000-0000-4000-8000-000000000000',
+        status: ApplicationExportCoverageStatus.UNSUPPORTED,
+        reason:
+          'workflow step on a logic function that is not a workflow action of this application',
+      },
+    ]);
+    expect(
+      reconstruct({
+        synced,
+        canReferenceOtherApplicationsWorkflowActions: true,
+      }).workflows,
+    ).toEqual([manifest]);
+  });
+
   it('reports a workflow whose synced version is missing', () => {
     const { flatWorkflow } = syncWorkflow({
       manifest: createRecordWorkflow({
@@ -385,6 +426,7 @@ describe('reconstructWorkflowsManifest', () => {
         allFlatEntityMaps: mapsWithWorkflow,
         exportedObjectUniversalIdentifiers: new Set([TICKET_UID]),
         resolvableFieldUniversalIdentifiers: new Set(),
+        canReferenceOtherApplicationsWorkflowActions: false,
       }).coverage,
     ).toEqual([
       {

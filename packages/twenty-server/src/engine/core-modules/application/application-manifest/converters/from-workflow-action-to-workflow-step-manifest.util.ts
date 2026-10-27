@@ -40,6 +40,34 @@ const fromFindRecordsOrderBy = ({
     : rest;
 };
 
+const fromFindRecordsFilter = ({
+  filter,
+  resolvers,
+}: {
+  filter: Record<string, unknown>;
+  resolvers: WorkflowManifestInverseReferenceResolvers;
+}) => {
+  if (!isDefined(filter.recordFilters)) {
+    return filter;
+  }
+
+  return {
+    ...filter,
+    recordFilters: toArray(filter.recordFilters).map((recordFilter) => {
+      const { relationTargetFieldMetadataId, ...reference } =
+        toRecord(recordFilter);
+
+      if (isDefined(relationTargetFieldMetadataId)) {
+        resolvers.markUnsupported(
+          'workflow filtering on a field of a related record',
+        );
+      }
+
+      return resolvers.fieldReference(reference);
+    }),
+  };
+};
+
 const fromFindRecordsInput = ({
   input,
   resolvers,
@@ -53,29 +81,7 @@ const fromFindRecordsInput = ({
     ...rest,
     objectUniversalIdentifier: resolvers.objectUniversalIdentifier(objectName),
     ...(isPlainObject(filter)
-      ? {
-          filter: {
-            ...filter,
-            ...(isDefined(filter.recordFilters)
-              ? {
-                  recordFilters: toArray(filter.recordFilters).map(
-                    (recordFilter) => {
-                      const { relationTargetFieldMetadataId, ...reference } =
-                        toRecord(recordFilter);
-
-                      if (isDefined(relationTargetFieldMetadataId)) {
-                        resolvers.markUnsupported(
-                          'workflow filtering on a field of a related record',
-                        );
-                      }
-
-                      return resolvers.fieldReference(reference);
-                    },
-                  ),
-                }
-              : {}),
-          },
-        }
+      ? { filter: fromFindRecordsFilter({ filter, resolvers }) }
       : {}),
     ...(isPlainObject(orderBy)
       ? { orderBy: fromFindRecordsOrderBy({ orderBy, resolvers }) }
