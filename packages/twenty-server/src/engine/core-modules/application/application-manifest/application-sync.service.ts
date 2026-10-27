@@ -26,12 +26,12 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
+import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -54,7 +54,7 @@ export class ApplicationSyncService {
     private readonly applicationManifestMigrationService: ApplicationManifestMigrationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly logicFunctionResourceService: LogicFunctionResourceService,
+    private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
     private readonly applicationTranslationSyncService: ApplicationTranslationSyncService,
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
@@ -264,7 +264,7 @@ export class ApplicationSyncService {
       manifest.application.universalIdentifier;
 
     const { packageJsonContent, storedFilesChecksums } =
-      await this.logicFunctionResourceService.getVerifiedDependencyContentsOrThrow(
+      await this.applicationDependencyFilesService.getVerifiedDependencyContentsOrThrow(
         {
           workspaceId,
           applicationUniversalIdentifier,

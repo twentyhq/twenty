@@ -1,6 +1,7 @@
 import { type LambdaClientConfig } from '@aws-sdk/client-lambda';
 import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
 
+import { type ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
@@ -39,6 +40,7 @@ export type BuilderLambdaResult = {
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   logicFunctionResourceService: LogicFunctionResourceService;
+  applicationDependencyFilesService: ApplicationDependencyFilesService;
   sdkClientArchiveService: SdkClientArchiveService;
   cacheLockService: CacheLockService;
   cacheStorageService: CacheStorageService;

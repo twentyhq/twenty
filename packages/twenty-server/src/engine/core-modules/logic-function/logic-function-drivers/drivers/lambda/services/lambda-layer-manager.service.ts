@@ -9,6 +9,7 @@ import {
 import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
@@ -25,7 +26,6 @@ import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/l
 import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name.util';
 import { reprefixLambdaZipEntries } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/reprefix-lambda-zip-entries.util';
 import { EMPTY_YARN_LOCK_CONTENT } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/empty-yarn-lock-content.constant';
-import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { sanitizeApplicationPackageJson } from 'src/engine/core-modules/logic-function/logic-function-resource/utils/sanitize-application-package-json.util';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -56,7 +56,7 @@ export class LambdaLayerManagerService {
     >,
     private readonly awsClient: LambdaAwsClientService,
     private readonly toolFunctions: LambdaToolFunctionsService,
-    private readonly logicFunctionResourceService: LogicFunctionResourceService,
+    private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
     private readonly sdkClientArchiveService: SdkClientArchiveService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -321,7 +321,7 @@ export class LambdaLayerManagerService {
     applicationUniversalIdentifier,
   }: LayerAppContext): Promise<{ packageJson: string; yarnLock: string }> {
     const { packageJsonContent, yarnLockContent } =
-      await this.logicFunctionResourceService.getVerifiedDependencyContentsOrThrow(
+      await this.applicationDependencyFilesService.getVerifiedDependencyContentsOrThrow(
         {
           workspaceId: flatApplication.workspaceId,
           applicationUniversalIdentifier,
