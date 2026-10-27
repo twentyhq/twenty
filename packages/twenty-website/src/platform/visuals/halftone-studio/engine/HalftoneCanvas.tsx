@@ -31,6 +31,7 @@ import type {
   HalftoneExportPose,
   HalftoneStudioSettings,
 } from './studio-settings-types';
+import { syncMaterialTextures } from './sync-material-textures';
 import { useLatestRef } from './use-latest-ref';
 
 const MAX_PREVIEW_PIXEL_RATIO = 2;
@@ -120,11 +121,20 @@ type PixelBounds = {
   minY: number;
 };
 
-function createRenderTarget(width: number, height: number) {
+function createRenderTarget({
+  height,
+  type = THREE.UnsignedByteType,
+  width,
+}: {
+  height: number;
+  type?: THREE.TextureDataType;
+  width: number;
+}) {
   return new THREE.WebGLRenderTarget(width, height, {
     minFilter: THREE.LinearFilter,
     magFilter: THREE.LinearFilter,
     format: THREE.RGBAFormat,
+    type,
   });
 }
 
@@ -266,8 +276,10 @@ function updateHalftone(
   settings: HalftoneStudioSettings,
 ) {
   resources.halftoneMaterial.uniforms.tile.value = settings.halftone.scale;
-  resources.halftoneMaterial.uniforms.s_3.value = settings.halftone.power;
-  resources.halftoneMaterial.uniforms.s_4.value = settings.halftone.width;
+  resources.halftoneMaterial.uniforms.halftonePower.value =
+    settings.halftone.power;
+  resources.halftoneMaterial.uniforms.halftoneWidth.value =
+    settings.halftone.width;
   resources.halftoneMaterial.uniforms.applyToDarkAreas.value =
     settings.halftone.toneTarget === 'dark' ? 1 : 0;
   (resources.halftoneMaterial.uniforms.dashColor.value as THREE.Color).set(
@@ -378,6 +390,7 @@ export function HalftoneCanvas({
 
     animationReference.current = settings.animation;
     syncResources(resources, settings);
+    syncMaterialTextures({ resources, resourcesReference, settingsReference });
     resources.canvas.style.cursor = getCanvasCursor(
       settings,
       interactionReference.current.dragging,
@@ -470,6 +483,12 @@ export function HalftoneCanvas({
     }
 
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    const hdrTargetType =
+      renderer.extensions.has('EXT_color_buffer_float') ||
+      renderer.extensions.has('EXT_color_buffer_half_float')
+        ? THREE.HalfFloatType
+        : THREE.UnsignedByteType;
     renderer.setPixelRatio(1);
     renderer.setClearColor(0x000000, 0);
     renderer.setSize(getRenderWidth(), getRenderHeight(), false);
@@ -490,14 +509,6 @@ export function HalftoneCanvas({
       runCleanupTasks([
         () => renderer.dispose(),
         () => {
-          resourcesReference.current = null;
-        },
-        () => {
-          if (activeSnapshotRef) {
-            activeSnapshotRef.current = null;
-          }
-        },
-        () => {
           if (canvas.parentNode === container) {
             container.removeChild(canvas);
           }
@@ -506,7 +517,10 @@ export function HalftoneCanvas({
     };
 
     void (async () => {
-      const materialAssets = await HALFTONE_MATERIALS.createAssets(renderer);
+      const materialAssets = await HALFTONE_MATERIALS.createAssets({
+        renderer,
+        texture: settingsReference.current.material.texture,
+      });
 
       if (cancelled) {
         HALFTONE_MATERIALS.disposeAssets(materialAssets);
@@ -555,26 +569,29 @@ export function HalftoneCanvas({
       const mesh = new THREE.Mesh(currentGeometry, material);
       scene3d.add(mesh);
 
-      const sceneTarget = createRenderTarget(
-        getRenderWidth(),
-        getRenderHeight(),
-      );
-      const transmissionBacksideTarget = createRenderTarget(
-        getRenderWidth(),
-        getRenderHeight(),
-      );
-      const transmissionTarget = createRenderTarget(
-        getRenderWidth(),
-        getRenderHeight(),
-      );
-      const blurTargetA = createRenderTarget(
-        getRenderWidth(),
-        getRenderHeight(),
-      );
-      const blurTargetB = createRenderTarget(
-        getRenderWidth(),
-        getRenderHeight(),
-      );
+      const sceneTarget = createRenderTarget({
+        width: getRenderWidth(),
+        height: getRenderHeight(),
+        type: hdrTargetType,
+      });
+      const transmissionBacksideTarget = createRenderTarget({
+        width: getRenderWidth(),
+        height: getRenderHeight(),
+        type: hdrTargetType,
+      });
+      const transmissionTarget = createRenderTarget({
+        width: getRenderWidth(),
+        height: getRenderHeight(),
+        type: hdrTargetType,
+      });
+      const blurTargetA = createRenderTarget({
+        width: getRenderWidth(),
+        height: getRenderHeight(),
+      });
+      const blurTargetB = createRenderTarget({
+        width: getRenderWidth(),
+        height: getRenderHeight(),
+      });
       const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
       const orthographicCamera = new THREE.OrthographicCamera(
         -1,
@@ -611,6 +628,7 @@ export function HalftoneCanvas({
 
       const halftoneMaterial = new THREE.ShaderMaterial({
         transparent: true,
+        toneMapped: false,
         uniforms: {
           tScene: { value: sceneTarget.texture },
           tGlow: { value: blurTargetB.texture },
@@ -621,8 +639,8 @@ export function HalftoneCanvas({
             value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
           },
           tile: { value: initialSettings.halftone.scale },
-          s_3: { value: initialSettings.halftone.power },
-          s_4: { value: initialSettings.halftone.width },
+          halftonePower: { value: initialSettings.halftone.power },
+          halftoneWidth: { value: initialSettings.halftone.width },
           applyToDarkAreas: {
             value: initialSettings.halftone.toneTarget === 'dark' ? 1 : 0,
           },
@@ -649,6 +667,7 @@ export function HalftoneCanvas({
           hoverFlowRadius: { value: 0.18 },
           dragFlowStrength: { value: 0 },
           cropToBounds: { value: 0 },
+          toneMapScene: { value: 1 },
         },
         vertexShader: HALFTONE_SHADERS.passThroughVertex,
         fragmentShader: HALFTONE_SHADERS.halftoneFragment,
@@ -668,6 +687,7 @@ export function HalftoneCanvas({
       postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
 
       const imageMaterial = new THREE.ShaderMaterial({
+        toneMapped: false,
         uniforms: {
           tImage: { value: null },
           imageSize: { value: new THREE.Vector2(1, 1) },
@@ -797,6 +817,11 @@ export function HalftoneCanvas({
       }
 
       syncResources(resources, settingsReference.current);
+      syncMaterialTextures({
+        resources,
+        resourcesReference,
+        settingsReference,
+      });
       syncImageElementTexture(resources, imageElementReference.current);
 
       const captureSnapshot: HalftoneSnapshotFn = async (
@@ -812,17 +837,29 @@ export function HalftoneCanvas({
         const backgroundColor =
           options?.backgroundColor ?? activeSettings.background.color;
 
-        const snapScene = createRenderTarget(snapshotWidth, snapshotHeight);
-        const snapTransmissionBackside = createRenderTarget(
-          snapshotWidth,
-          snapshotHeight,
-        );
-        const snapTransmission = createRenderTarget(
-          snapshotWidth,
-          snapshotHeight,
-        );
-        const snapBlurA = createRenderTarget(snapshotWidth, snapshotHeight);
-        const snapBlurB = createRenderTarget(snapshotWidth, snapshotHeight);
+        const snapScene = createRenderTarget({
+          width: snapshotWidth,
+          height: snapshotHeight,
+          type: hdrTargetType,
+        });
+        const snapTransmissionBackside = createRenderTarget({
+          width: snapshotWidth,
+          height: snapshotHeight,
+          type: hdrTargetType,
+        });
+        const snapTransmission = createRenderTarget({
+          width: snapshotWidth,
+          height: snapshotHeight,
+          type: hdrTargetType,
+        });
+        const snapBlurA = createRenderTarget({
+          width: snapshotWidth,
+          height: snapshotHeight,
+        });
+        const snapBlurB = createRenderTarget({
+          width: snapshotWidth,
+          height: snapshotHeight,
+        });
 
         const prevSize = renderer.getSize(new THREE.Vector2());
 
@@ -843,6 +880,7 @@ export function HalftoneCanvas({
         halftoneMaterial.uniforms.interactionVelocity.value.set(0, 0);
         halftoneMaterial.uniforms.dragOffset.value.set(0, 0);
         halftoneMaterial.uniforms.cropToBounds.value = isImage ? 1 : 0;
+        halftoneMaterial.uniforms.toneMapScene.value = isImage ? 0 : 1;
 
         if (isImage) {
           imageMaterial.uniforms.zoom.value =
@@ -873,11 +911,9 @@ export function HalftoneCanvas({
             camera,
             elapsedTime: halftoneMaterial.uniforms.time.value as number,
             material,
-            mesh,
             outputTarget: snapScene,
             renderer,
             scene: scene3d,
-            transmissionBackground: materialAssets.glassBackgroundTexture,
             transmissionScene: materialAssets.glassTransmissionScene,
             transmissionBacksideTarget: snapTransmissionBackside,
             transmissionTarget: snapTransmission,
@@ -904,7 +940,10 @@ export function HalftoneCanvas({
 
         halftoneMaterial.uniforms.tGlow.value = snapBlurB.texture;
 
-        const outputTarget = createRenderTarget(snapshotWidth, snapshotHeight);
+        const outputTarget = createRenderTarget({
+          width: snapshotWidth,
+          height: snapshotHeight,
+        });
         renderer.setRenderTarget(outputTarget);
         renderer.clear();
         renderer.render(postScene, orthographicCamera);
@@ -1326,6 +1365,7 @@ export function HalftoneCanvas({
         }
 
         halftoneMaterial.uniforms.cropToBounds.value = isImageMode ? 1 : 0;
+        halftoneMaterial.uniforms.toneMapScene.value = isImageMode ? 0 : 1;
 
         if (isImageMode) {
           const imageInteractionSettings = imageInteractionReference.current;
@@ -1667,11 +1707,9 @@ export function HalftoneCanvas({
               camera,
               elapsedTime,
               material,
-              mesh,
               outputTarget: null,
               renderer,
               scene: scene3d,
-              transmissionBackground: materialAssets.glassBackgroundTexture,
               transmissionScene: materialAssets.glassTransmissionScene,
               transmissionBacksideTarget,
               transmissionTarget,
@@ -1683,11 +1721,9 @@ export function HalftoneCanvas({
             camera,
             elapsedTime,
             material,
-            mesh,
             outputTarget: sceneTarget,
             renderer,
             scene: scene3d,
-            transmissionBackground: materialAssets.glassBackgroundTexture,
             transmissionScene: materialAssets.glassTransmissionScene,
             transmissionBacksideTarget,
             transmissionTarget,

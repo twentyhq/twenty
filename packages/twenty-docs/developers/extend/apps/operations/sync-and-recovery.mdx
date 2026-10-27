@@ -1,37 +1,37 @@
 ---
 title: Syncing & recovery
 description: Which command to use when, how to read the sync output, and a recovery ladder for when local metadata drifts — before reaching a full reset.
-icon: "compass"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Local app development revolves around **syncing**: the CLI rebuilds your manifest and the server applies only the difference between it and the metadata already in your workspace. This page covers which command to reach for, how to read what a sync changed, and what to do — in order — when local state looks inconsistent.
 
 ## Which command, when
 
 <Note>
-For day-to-day local iteration you almost always want `yarn twenty dev`. Deploying and publishing are for shipping releases, **not** for the local loop.
+  For day-to-day local iteration you almost always want `twenty app dev`.
+  Deploying and publishing are for shipping releases, **not** for the local
+  loop.
 </Note>
 
-| You want to… | Command | Notes |
-| --- | --- | --- |
-| Iterate locally with live sync | `yarn twenty dev` | Watches your files and syncs on every change. |
-| Sync once and exit (CI, scripts, hooks) | `yarn twenty apply` | One build + sync, then exits. Add `--force` to skip the destructive-change confirmation. |
-| Preview changes **without applying them** | `yarn twenty plan` | Computes and prints the diff; writes nothing. |
-| Sync without deleting anything | `yarn twenty apply --no-delete` | Creates and updates only: entities that exist in the workspace but not in your source are left alone. Also accepted by `plan` and `dev`. |
-| Regenerate local source from the workspace | `yarn twenty pull` | **Experimental.** Writes the installed app back to define files. See below. |
-| Remove the app from the workspace | `yarn twenty app:uninstall` | Add `--yes` to skip the prompt. |
-| Ship a tarball to a server | `yarn twenty app:publish --private` | Requires a **strictly higher** `package.json` version — see [Publishing](/developers/extend/apps/operations/publishing). |
-| Publish to the marketplace (npm) | `yarn twenty app:publish` | — |
-| Install / upgrade a deployed version | `yarn twenty app:install` | Installs the version currently deployed. |
-| Wipe the local server and start clean | `yarn twenty docker:reset` | Deletes **all** local data — last resort. |
-
-<Note>
-`yarn twenty dev --once` and `yarn twenty dev --once --dry-run` still work as deprecated aliases for `yarn twenty apply` and `yarn twenty plan`.
-</Note>
+| You want to…                               | Command                        | Notes                                                                                                                                    |
+| ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Iterate locally with live sync             | `twenty app dev`               | Watches your files and syncs on every change.                                                                                            |
+| Sync once and exit (CI, scripts, hooks)    | `twenty app apply`             | One build + sync, then exits. Add `--yes` to skip the destructive-change confirmation.                                                   |
+| Preview changes **without applying them**  | `twenty app plan`              | Computes and prints the diff; writes nothing.                                                                                            |
+| Sync without deleting anything             | `twenty app apply --no-delete` | Creates and updates only: entities that exist in the workspace but not in your source are left alone. Also accepted by `plan` and `dev`. |
+| Regenerate local source from the workspace | `twenty app pull`              | **Experimental.** Writes the installed app back to define files. See below.                                                              |
+| Remove the app from the workspace          | `twenty app uninstall`         | Add `--yes` to skip the prompt.                                                                                                          |
+| Ship a tarball to a server                 | `twenty app publish --private` | Requires a **strictly higher** `package.json` version — see [Publishing](/developers/extend/apps/operations/publishing).                 |
+| Publish to the marketplace (npm)           | `twenty app publish`           | —                                                                                                                                        |
+| Install / upgrade a deployed version       | `twenty app install`           | Installs the version currently deployed.                                                                                                 |
 
 ### Local sync does not need a version bump
 
-The strictly-increasing `version` rule (`VERSION_ALREADY_EXISTS` on deploy, `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION` on install) applies to **`app:publish` / `app:install`** — the release path. `yarn twenty dev` syncs your manifest in place and never requires a version change, so you don't need to touch `package.json` to iterate. If you find yourself bumping the version to test a local change, you're using the release path when you want the dev loop.
+The strictly-increasing `version` rule (`VERSION_ALREADY_EXISTS` on deploy, `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION` on install) applies to **`twenty app publish` / `twenty app install`** — the release path. `twenty app dev` syncs your manifest in place and never requires a version change, so you don't need to touch `package.json` to iterate. If you find yourself bumping the version to test a local change, you're using the release path when you want the dev loop.
 
 ## Reading the sync output
 
@@ -53,7 +53,7 @@ Plan: 2 to add, 1 to change, 1 to destroy.
 
 This is your first diagnostic: it tells you exactly which objects, fields, and layouts changed, so you can confirm a sync did what you expected before checking the UI.
 
-Destructive changes (`to destroy`) are listed with what they drop (e.g. `objectMetadata "auditNote" — drops the table and all its rows`) and require interactive confirmation, or `--force` in scripts.
+Destructive changes (`to destroy`) are listed with what they drop (e.g. `objectMetadata "auditNote" — drops the table and all its rows`) and require interactive confirmation, or `--yes` in scripts.
 
 A sync deletes every entity your app owns that your source no longer declares. When a plan contains destroys it says so and points at `--no-delete`, which makes the sync additive: creates and updates are applied, nothing missing from your source is deleted, and the settings component and uninstall hook bindings of the app stay as they are when your source does not declare them. Use it when your source is intentionally partial, for example while adopting an app that was built in the UI.
 
@@ -67,10 +67,10 @@ Use that identifier to find the entity in your manifest (and, if needed, in the 
 
 ## Previewing changes (plan)
 
-`yarn twenty plan` builds your manifest, asks the server for the migration plan, and prints it — **without applying anything**. It's the safe way to answer "what would this sync change?" before committing to it.
+`twenty app plan` builds your manifest, asks the server for the migration plan, and prints it — **without applying anything**. It's the safe way to answer "what would this sync change?" before committing to it.
 
 ```bash filename="Terminal"
-yarn twenty plan
+twenty app plan
 ```
 
 ```text filename="Terminal"
@@ -92,22 +92,29 @@ A plan:
 - Is useful before a risky change, when reviewing an AI-generated change, or in a script that should fail if an unexpected change is about to land.
 
 <Note>
-A plan only previews **metadata** changes. It also works for an app that was never synced: the server evaluates the manifest against an empty application, so the plan lists everything your source would create.
+  A plan only previews **metadata** changes. It also works for an app that was
+  never synced: the server evaluates the manifest against an empty application,
+  so the plan lists everything your source would create.
 </Note>
 
 ## Pulling an installed app back to source
 
 <Warning>
-`yarn twenty pull` is **experimental**. It covers only part of an application today, its output shape may change between releases, and it overwrites the files that define the entities it pulls. It restores published translations into `locales/`, keeping the entries whose source strings are not in your tree yet in `locales/compiled/` so that a push does not lose them. Commit your work before running it, and review the diff.
+  `twenty app pull` is **experimental**. It covers only part of an application
+  today, its output shape may change between releases, and it overwrites the
+  files that define the entities it pulls. It restores published translations
+  into `locales/`, keeping the entries whose source strings are not in your tree
+  yet in `locales/compiled/` so that a push does not lose them. Commit your work
+  before running it, and review the diff.
 </Warning>
 
-`yarn twenty pull` is the inverse of `apply`: it reads an application out of the workspace and writes it back as define files.
+`twenty app pull` is the inverse of `apply`: it reads an application out of the workspace and writes it back as define files.
 
 ```bash
-yarn twenty pull -u <universalIdentifier>
+twenty app pull --universal-identifier <universalIdentifier>
 ```
 
-Pull needs an existing project — scaffold one with `npx create-twenty-app@latest` first, then pull into it. Without `-u`, pull targets the application your local `defineApplication()` file declares. If `-u` names a different application than the one your project declares, pull refuses rather than leaving two applications in one tree: pull that one into its own directory. If the project has an application file whose identifier cannot be read, usually because dependencies are not installed, pull refuses too and asks you to run `yarn install` first. Add `-v` to expand the coverage sections of the report, which then name up to 20 identifiers per metadata type instead of only the totals.
+Pull needs an existing project — scaffold one with `twenty app init` first, then pull into it. Without `--universal-identifier`, pull targets the application your local `defineApplication()` file declares. If `--universal-identifier` names a different application than the one your project declares, pull refuses rather than leaving two applications in one tree: pull that one into its own directory. If the project has an application file whose identifier cannot be read, usually because dependencies are not installed, pull refuses too and asks you to run `yarn install` first. Add `--verbose` to expand the coverage sections of the report, which then name up to 20 identifiers per metadata type instead of only the totals.
 
 **What it writes:**
 
@@ -137,7 +144,7 @@ Each entity goes to the file that already defines it, so a second pull rewrites 
 - **Workspace runtime state** — member and API-key role assignments, webhooks, per-user navigation and navigation items pinned to a record, all excluded by design.
 - **Owned by another application** — reported, never pulled.
 
-The report at the end of a pull lists all of it, grouped by kind and reason. Everything it names as not written is still in your workspace, so push a pulled tree back with `yarn twenty apply --no-delete` until the missing kinds are covered. A pruning `yarn twenty apply` would delete them, and `yarn twenty plan` lists exactly which.
+The report at the end of a pull lists all of it, grouped by kind and reason. Everything it names as not written is still in your workspace, so push a pulled tree back with `twenty app apply --no-delete` until the missing kinds are covered. A pruning `twenty app apply` would delete them, and `twenty app plan` lists exactly which.
 
 **Workspace-local state.** An entity deactivated in the workspace is written as an active definition, and the overrides the workspace made on an entity, such as a renamed label, are not written. The report lists those rows under "Written without their workspace-local state". Applying the tree back to the same workspace leaves that state untouched; another workspace gets the entity active and without the overrides.
 
@@ -147,18 +154,23 @@ The report at the end of a pull lists all of it, grouped by kind and reason. Eve
 
 When local metadata looks wrong, escalate in this order and stop as soon as you're unblocked. Each step is more disruptive than the last.
 
-1. **Re-sync.** Run `yarn twenty apply` again. Syncs are idempotent — re-running a clean manifest is safe and often resolves a transient hiccup.
-2. **Preview the plan.** Run `yarn twenty plan` to see exactly what the next sync intends to change, without applying it.
+1. **Re-sync.** Run `twenty app apply` again. Syncs are idempotent — re-running a clean manifest is safe and often resolves a transient hiccup.
+2. **Preview the plan.** Run `twenty app plan` to see exactly what the next sync intends to change, without applying it.
 3. **Read the named error.** If a sync fails, note the metadata type and `universalIdentifier` in the message (see above) and locate that entity in your manifest. A conflict usually points to a duplicated or re-used identifier.
-4. **Uninstall and reinstall.** `yarn twenty app:uninstall`, then sync again (`yarn twenty dev`). This rebuilds the app's metadata from a clean slate while keeping the rest of your workspace intact.
-5. **Full reset (last resort).** `yarn twenty docker:reset`, then re-seed and re-sync.
+4. **Uninstall and reinstall.** `twenty app uninstall`, then sync again (`twenty app dev`). This rebuilds the app's metadata from a clean slate while keeping the rest of your workspace intact.
+5. **Full reset (last resort).** resetting your Docker or repository development database, then re-seed and re-sync.
 
 <Warning>
-`yarn twenty docker:reset` deletes **all** data in your local instance — every workspace, record, and app. Only use it once the earlier steps have failed.
+  resetting your Docker or repository development database deletes **all** data
+  in your local instance — every workspace, record, and app. Only use it once
+  the earlier steps have failed.
 </Warning>
 
 <Note>
-Hit a metadata error? Please [open an issue](https://github.com/twentyhq/twenty/issues/new/choose) and include the failing migration message (with its metadata type and `universalIdentifier`), the `Metadata changes` output from the sync, and the commands you ran.
+  Hit a metadata error? Please [open an
+  issue](https://github.com/twentyhq/twenty/issues/new/choose) and include the
+  failing migration message (with its metadata type and `universalIdentifier`),
+  the `Metadata changes` output from the sync, and the commands you ran.
 </Note>
 
 ## Avoid concurrent syncs on one workspace
@@ -178,3 +190,5 @@ When something goes wrong, the metadata diff and named errors let you place the 
 - **Deferred migration in progress** — the sync is refused because a background data model migration from an earlier sync is still running (`DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS`); wait for it to finish, then sync again.
 - **App code runtime error** — the sync succeeds but your logic functions or components misbehave at runtime; check [function logs](/developers/extend/apps/operations/cli).
 - **Local instance state** — none of the above and the workspace still looks wrong; work down the recovery ladder.
+
+<PageBanner illustration="card-page-sync-recovery" />

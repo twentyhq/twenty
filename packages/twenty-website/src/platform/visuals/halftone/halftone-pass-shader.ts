@@ -10,8 +10,8 @@ export const HALFTONE_PASS_SHADER = {
   uniform vec2 effectResolution;
   uniform vec2 logicalResolution;
   uniform float tile;
-  uniform float s_3;
-  uniform float s_4;
+  uniform float halftonePower;
+  uniform float halftoneWidth;
   uniform float applyToDarkAreas;
   uniform float minimumTone;
   uniform vec3 dashColor;
@@ -37,20 +37,10 @@ export const HALFTONE_PASS_SHADER = {
 
   varying vec2 vUv;
 
-  float distSegment(in vec2 p, in vec2 a, in vec2 b) {
-    vec2 pa = p - a;
-    vec2 ba = b - a;
-    float denom = max(dot(ba, ba), 0.000001);
-    float h = clamp(dot(pa, ba) / denom, 0.0, 1.0);
-    return length(pa - ba * h);
-  }
-
-  float lineSimpleEt(in vec2 p, in float r, in float thickness) {
-    vec2 a = vec2(0.5) + vec2(-r, 0.0);
-    vec2 b = vec2(0.5) + vec2(r, 0.0);
-    float distToSegment = distSegment(p, a, b);
-    float halfThickness = thickness * r;
-    return distToSegment - halfThickness;
+  float dashDistance(vec2 cellPosition, float halfLength, float widthRatio) {
+    vec2 offset = cellPosition - 0.5;
+    offset.x -= clamp(offset.x, -halfLength, halfLength);
+    return length(offset) - widthRatio * halfLength;
   }
 
   void main() {
@@ -123,12 +113,12 @@ export const HALFTONE_PASS_SHADER = {
     vec4 sceneSample = texture2D(tScene, sampleUv);
     float mask = smoothstep(0.02, 0.08, sceneSample.a);
     float localPower = clamp(
-      s_3 + hoverHalftonePowerShift * hoverHalftoneMask,
+      halftonePower + hoverHalftonePowerShift * hoverHalftoneMask,
       -1.5,
       1.5
     );
     float localWidth = clamp(
-      s_4 + hoverHalftoneWidthShift * hoverHalftoneMask,
+      halftoneWidth + hoverHalftoneWidthShift * hoverHalftoneMask,
       0.05,
       1.4
     );
@@ -141,7 +131,7 @@ export const HALFTONE_PASS_SHADER = {
     }
     // Preserve the pre-toneTarget light-mode response by keeping the power
     // bias inside the averaged tone calculation.
-    float powerBias = localPower * length(vec2(0.5)) * (1.0 / 3.0);
+    float powerBias = localPower * 0.2357;
     float bandRadius = clamp(
       max(toneValue + powerBias + lightLift, minimumTone),
       0.0,
@@ -150,7 +140,7 @@ export const HALFTONE_PASS_SHADER = {
 
     float alpha = 0.0;
     if (bandRadius > 0.0001) {
-      float signedDistance = lineSimpleEt(cellUv, bandRadius, localWidth);
+      float signedDistance = dashDistance(cellUv, bandRadius, localWidth);
       float edge = 0.02;
       alpha = (1.0 - smoothstep(0.0, edge, signedDistance)) * mask;
     }

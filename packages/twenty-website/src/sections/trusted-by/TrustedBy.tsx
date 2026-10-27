@@ -137,6 +137,7 @@ function Logo({
           '--logo-h': heightPx,
         } as CSSProperties
       }
+      title={name}
     >
       <NextImage
         alt={name}

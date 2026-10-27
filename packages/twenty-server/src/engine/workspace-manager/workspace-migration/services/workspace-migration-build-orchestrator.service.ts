@@ -1,3 +1,5 @@
+import { WorkspaceMigrationAgentChatChannelActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel/workspace-migration-agent-chat-channel-actions-builder.service';
+import { WorkspaceMigrationAgentChatChannelRoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel-role/workspace-migration-agent-chat-channel-role-actions-builder.service';
 import { WorkspaceMigrationSettingsMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/settings-menu-item/workspace-migration-settings-menu-item-actions-builder.service';
 import { WorkspaceMigrationWorkflowVersionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow-version/workspace-migration-workflow-version-actions-builder.service';
 import { WorkspaceMigrationWorkflowActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow/workspace-migration-workflow-actions-builder.service';
@@ -31,6 +33,7 @@ import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspa
 import { WorkspaceMigrationApplicationVariableActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/application-variable/workspace-migration-application-variable-actions-builder.service';
 import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/workspace-migration-command-menu-item-actions-builder.service';
 import { WorkspaceMigrationConnectionProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/workspace-migration-connection-provider-actions-builder.service';
+import { WorkspaceMigrationMessagingProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/messaging-provider/workspace-migration-messaging-provider-actions-builder.service';
 import { WorkspaceMigrationTimelineActivityTypeActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/workspace-migration-timeline-activity-type-actions-builder.service';
 import { WorkspaceMigrationValidationRuleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/validation-rule/workspace-migration-validation-rule-actions-builder.service';
 import { WorkspaceMigrationFieldPermissionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-permission/workspace-migration-field-permission-actions-builder.service';
@@ -159,12 +162,15 @@ export class WorkspaceMigrationBuildOrchestratorService {
     workspaceMigrationWebhookActionsBuilderService: WorkspaceMigrationWebhookActionsBuilderService,
     workspaceMigrationApplicationVariableActionsBuilderService: WorkspaceMigrationApplicationVariableActionsBuilderService,
     workspaceMigrationConnectionProviderActionsBuilderService: WorkspaceMigrationConnectionProviderActionsBuilderService,
+    workspaceMigrationMessagingProviderActionsBuilderService: WorkspaceMigrationMessagingProviderActionsBuilderService,
     workspaceMigrationTimelineActivityTypeActionsBuilderService: WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
     workspaceMigrationValidationRuleActionsBuilderService: WorkspaceMigrationValidationRuleActionsBuilderService,
     workspaceMigrationSearchFieldMetadataActionsBuilderService: WorkspaceMigrationSearchFieldMetadataActionsBuilderService,
     workspaceMigrationWorkflowActionsBuilderService: WorkspaceMigrationWorkflowActionsBuilderService,
     workspaceMigrationWorkflowVersionActionsBuilderService: WorkspaceMigrationWorkflowVersionActionsBuilderService,
     workspaceMigrationSettingsMenuItemActionsBuilderService: WorkspaceMigrationSettingsMenuItemActionsBuilderService,
+    workspaceMigrationAgentChatChannelActionsBuilderService: WorkspaceMigrationAgentChatChannelActionsBuilderService,
+    workspaceMigrationAgentChatChannelRoleActionsBuilderService: WorkspaceMigrationAgentChatChannelRoleActionsBuilderService,
   ) {
     // Execution order: builders mutate optimisticAllFlatEntityMaps that downstream builders read, so do not reorder
     this.entityActionsBuilderTasksInExecutionOrder = [
@@ -293,6 +299,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
         workspaceMigrationConnectionProviderActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.messagingProvider,
+        workspaceMigrationMessagingProviderActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
         ALL_METADATA_NAME.timelineActivityType,
         workspaceMigrationTimelineActivityTypeActionsBuilderService,
       ),
@@ -311,6 +321,14 @@ export class WorkspaceMigrationBuildOrchestratorService {
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.settingsMenuItem,
         workspaceMigrationSettingsMenuItemActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.agentChatChannel,
+        workspaceMigrationAgentChatChannelActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.agentChatChannelRole,
+        workspaceMigrationAgentChatChannelRoleActionsBuilderService,
       ),
     ];
   }

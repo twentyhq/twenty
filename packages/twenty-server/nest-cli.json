@@ -49,6 +49,10 @@
         "outDir": "dist/assets"
       },
       {
+        "include": "database/commands/upgrade-version-command/2-52/workspace-frontend-dependencies/**",
+        "outDir": "dist/assets"
+      },
+      {
         "include": "database/clickhouse/migrations/*.sql",
         "outDir": "dist"
       },
@@ -63,6 +67,10 @@
       {
         "include": "engine/core-modules/dpa/constants/subprocessors.json",
         "outDir": "dist"
+      },
+      {
+        "include": "engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies/**",
+        "outDir": "dist/assets"
       }
     ]
   },

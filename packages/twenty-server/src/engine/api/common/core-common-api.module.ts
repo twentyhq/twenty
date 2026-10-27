@@ -2,11 +2,13 @@ import { Module } from '@nestjs/common';
 
 import { CommonArgsProcessors } from 'src/engine/api/common/common-args-processors/common-args-processors';
 import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
+import { CommonRecordVisibilityModule } from 'src/engine/api/common/common-record-visibility/common-record-visibility.module';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonQueryRunners } from 'src/engine/api/common/common-query-runners/common-query-runners';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
+import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
@@ -22,6 +24,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     WorkspaceQueryHookModule,
+    CommonRecordVisibilityModule,
+    EventLogEmitterModule,
     FileModule,
     ViewModule,
     ViewFilterModule,

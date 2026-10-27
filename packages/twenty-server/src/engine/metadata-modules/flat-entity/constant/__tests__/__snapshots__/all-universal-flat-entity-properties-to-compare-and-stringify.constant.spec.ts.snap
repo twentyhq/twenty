@@ -21,12 +21,27 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "triggers",
     ],
   },
+  "agentChatChannel": {
+    "propertiesToCompare": [
+      "name",
+      "icon",
+      "color",
+      "position",
+    ],
+    "propertiesToStringify": [],
+  },
+  "agentChatChannelRole": {
+    "propertiesToCompare": [
+      "channelUniversalIdentifier",
+      "roleUniversalIdentifier",
+    ],
+    "propertiesToStringify": [],
+  },
   "applicationVariable": {
     "propertiesToCompare": [
       "key",
       "description",
       "label",
-      "isSecret",
       "isDeprecated",
       "isRequired",
       "type",
@@ -70,12 +85,14 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "type",
       "scope",
       "oauthConfig",
+      "customConfig",
       "identifyAccountLogicFunctionUniversalIdentifier",
       "onConnectLogicFunctionUniversalIdentifier",
       "onDisconnectLogicFunctionUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "oauthConfig",
+      "customConfig",
     ],
   },
   "fieldMetadata": {
@@ -170,6 +187,15 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "workflowActionTriggerSettings",
     ],
   },
+  "messagingProvider": {
+    "propertiesToCompare": [
+      "name",
+      "displayName",
+      "connectionProviderUniversalIdentifier",
+      "sendMessageLogicFunctionUniversalIdentifier",
+    ],
+    "propertiesToStringify": [],
+  },
   "navigationMenuItem": {
     "propertiesToCompare": [
       "type",
@@ -208,6 +234,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToStringify": [
       "overrides",
       "readabilityParentFieldUniversalIdentifiers",
+      "duplicateCriteria",
     ],
   },
   "objectPermission": {
@@ -261,6 +288,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "universalOverrides",
     ],
     "propertiesToStringify": [
+      "gridPosition",
       "position",
       "universalConfiguration",
       "conditionalDisplay",
@@ -284,6 +312,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "icon",
       "canUpdateAllSettings",
       "canAccessAllTools",
+      "canAccessAllAgentChatChannels",
       "canReadAllObjectRecords",
       "canUpdateAllObjectRecords",
       "canSoftDeleteAllObjectRecords",

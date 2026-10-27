@@ -11,10 +11,13 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { updateMyUserApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-my-user-application-variable.util';
 import { uploadBuiltFrontComponentFile } from 'test/integration/metadata/suites/application/utils/upload-built-front-component-file.util';
+import { type ConnectionProviderManifest } from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type ApplicationPreferencesDTO } from 'src/engine/core-modules/application/application-preferences/dtos/application-preferences.dto';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
+import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = uuidv4();
 const ROLE_UNIVERSAL_IDENTIFIER = uuidv4();
@@ -23,7 +26,52 @@ const WORKSPACE_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER = uuidv4();
 const USER_SETTINGS_MENU_ITEM_UNIVERSAL_IDENTIFIER = uuidv4();
 const WORKSPACE_SETTINGS_MENU_ITEM_UNIVERSAL_IDENTIFIER = uuidv4();
 
+const CONNECTION_ONLY_APPLICATION_UNIVERSAL_IDENTIFIER = uuidv4();
+const CONNECTION_ONLY_ROLE_UNIVERSAL_IDENTIFIER = uuidv4();
+
 const APPLICATION_NAME = 'Application preferences A';
+
+const buildOAuthConnectionProvider = ({
+  name,
+  displayName,
+  scope,
+  logo,
+}: Pick<
+  ConnectionProviderManifest,
+  'name' | 'displayName' | 'scope' | 'logo'
+>): ConnectionProviderManifest => ({
+  universalIdentifier: uuidv4(),
+  name,
+  displayName,
+  type: 'oauth',
+  scope,
+  logo,
+  oauth: {
+    authorizationEndpoint: `https://${name}.example.com/oauth/authorize`,
+    tokenEndpoint: `https://${name}.example.com/oauth/token`,
+    scopes: ['read'],
+    clientIdVariable: `${name.toUpperCase()}_CLIENT_ID`,
+    clientSecretVariable: `${name.toUpperCase()}_CLIENT_SECRET`,
+  },
+});
+
+const buildExpectedUserConnectionProvider = ({
+  name,
+  displayName,
+  logoUrl = null,
+}: {
+  name: string;
+  displayName: string;
+  logoUrl?: string | null;
+}) => ({
+  id: expect.any(String),
+  name,
+  displayName,
+  scope: 'USER',
+  type: 'oauth',
+  logoUrl,
+  oauth: { scopes: ['read'], isClientCredentialsConfigured: false },
+});
 
 const findPreferencesOf = (
   applicationPreferences: ApplicationPreferencesDTO[],
@@ -42,6 +90,7 @@ const sortByApplicationId = <PreferencesLike extends { applicationId: string }>(
 
 describe('My application preferences should succeed', () => {
   let applicationId: string;
+  let connectionOnlyApplicationId: string;
   let otherUserApplication: ApplicationWithVariable;
   let workspaceOnlyApplication: ApplicationWithVariable;
 
@@ -125,6 +174,18 @@ describe('My application preferences should succeed', () => {
               position: 2,
             },
           ],
+          connectionProviders: [
+            buildOAuthConnectionProvider({
+              name: 'linear',
+              displayName: 'Linear',
+              scope: 'USER',
+            }),
+            buildOAuthConnectionProvider({
+              name: 'slack',
+              displayName: 'Slack',
+              scope: 'WORKSPACE',
+            }),
+          ],
         },
       }),
       expectToFail: false,
@@ -147,6 +208,50 @@ describe('My application preferences should succeed', () => {
       name: 'Application preferences C',
       variableKey: 'RECORD_ALL_MEETINGS',
     });
+
+    await setupApplicationForSync({
+      applicationUniversalIdentifier:
+        CONNECTION_ONLY_APPLICATION_UNIVERSAL_IDENTIFIER,
+      name: 'Application preferences D',
+      description: 'App whose only user preference is a connection',
+      sourcePath: 'application-preferences-connection-only',
+    });
+    await syncApplication({
+      manifest: buildBaseManifest({
+        appId: CONNECTION_ONLY_APPLICATION_UNIVERSAL_IDENTIFIER,
+        roleId: CONNECTION_ONLY_ROLE_UNIVERSAL_IDENTIFIER,
+        overrides: {
+          roles: [
+            {
+              universalIdentifier: CONNECTION_ONLY_ROLE_UNIVERSAL_IDENTIFIER,
+              label: 'Application preferences D role',
+              description: 'A test role',
+            },
+          ],
+          connectionProviders: [
+            buildOAuthConnectionProvider({
+              name: 'github',
+              displayName: 'GitHub',
+              scope: 'USER',
+              logo: 'public/github-logomark.svg',
+            }),
+          ],
+        },
+      }),
+      expectToFail: false,
+    });
+    jest.useRealTimers();
+
+    const { data: connectionOnlyApplicationData } = await findOneApplication({
+      input: {
+        universalIdentifier: CONNECTION_ONLY_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
+      gqlFields: 'id',
+      expectToFail: false,
+    });
+
+    connectionOnlyApplicationId =
+      connectionOnlyApplicationData.findOneApplication.id;
   }, 180000);
 
   afterAll(async () => {
@@ -159,6 +264,10 @@ describe('My application preferences should succeed', () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier:
         workspaceOnlyApplication.universalIdentifier,
+    });
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier:
+        CONNECTION_ONLY_APPLICATION_UNIVERSAL_IDENTIFIER,
     });
   });
 
@@ -173,6 +282,7 @@ describe('My application preferences should succeed', () => {
       applicationId,
       otherUserApplication.id,
       workspaceOnlyApplication.id,
+      connectionOnlyApplicationId,
     ];
 
     expect(
@@ -201,12 +311,31 @@ describe('My application preferences should succeed', () => {
             { key: 'PERSONAL_API_KEY', value: '', isSecret: true },
             { key: 'LANGUAGE', value: 'en', isSecret: false },
           ]),
+          connectionProviders: [
+            buildExpectedUserConnectionProvider({
+              name: 'linear',
+              displayName: 'Linear',
+            }),
+          ],
         },
         {
           applicationId: otherUserApplication.id,
           settingsMenuItems: [],
           variables: [
             { key: 'RECORD_MY_MEETINGS', value: '', isSecret: false },
+          ],
+          connectionProviders: [],
+        },
+        {
+          applicationId: connectionOnlyApplicationId,
+          settingsMenuItems: [],
+          variables: [],
+          connectionProviders: [
+            buildExpectedUserConnectionProvider({
+              name: 'github',
+              displayName: 'GitHub',
+              logoUrl: `${process.env.SERVER_URL ?? new ConfigVariables().SERVER_URL}/public-assets/${SEED_APPLE_WORKSPACE_ID}/${connectionOnlyApplicationId}/public/github-logomark.svg`,
+            }),
           ],
         },
       ]),

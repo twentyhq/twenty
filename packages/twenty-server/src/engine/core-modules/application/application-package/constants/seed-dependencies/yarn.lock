@@ -684,9 +684,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:^1.20.5":
-  version: 1.20.8
-  resolution: "body-parser@npm:1.20.8"
+"body-parser@npm:^1.20.9":
+  version: 1.20.9
+  resolution: "body-parser@npm:1.20.9"
   dependencies:
     bytes: "npm:~3.1.2"
     content-type: "npm:~1.0.5"
@@ -700,7 +700,7 @@ __metadata:
     raw-body: "npm:~2.5.3"
     type-is: "npm:~1.6.18"
     unpipe: "npm:~1.0.0"
-  checksum: 10c0/7edc8c4762d52ff685af081b1d5ccad860edcec662c25893be452b16042fd55b9c9869a194bd282e0ad936c34eb07866b2b33f0cc02ff916597058fd229c13d2
+  checksum: 10c0/685d3208335377a3dfc6d7bc8b2af6d40d38b9a72e25bab4d9f7aff19d059729d5b1b3a9f5561274f460020bb9166c211d5302abe0b45452665420ca5e16013b
   languageName: node
   linkType: hard
 
@@ -1231,12 +1231,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.16.0":
-  version: 1.16.0
-  resolution: "follow-redirects@npm:1.16.0"
+  version: 1.16.1
+  resolution: "follow-redirects@npm:1.16.1"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 10c0/a1e2900163e6f1b4d1ed5c221b607f41decbab65534c63fe7e287e40a5d552a6496e7d9d7d976fa4ba77b4c51c11e5e9f683f10b43011ea11e442ff128d0e181
+  checksum: 10c0/544e24ccb93b7afb5dd5a2199bd556e167b84de2af7c13b2ced08494239677359d7883bae56ae43a9ca98ac5451e75cf4834a5fadd6fa79053b9248fac5447a4
   languageName: node
   linkType: hard
 
@@ -2225,10 +2225,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:^10.0.12":
-  version: 10.0.12
-  resolution: "nodemailer@npm:10.0.12"
-  checksum: 10c0/1d816272d9b611f3dde6b9b25cb69a54dba558cc4655b60c620d96fee6bedda3c30ae1c002a30c6e45690559324f06a35b7e585d18ae64c303dc2eebc5e6a184
+"nodemailer@npm:^10.1.4":
+  version: 10.2.1
+  resolution: "nodemailer@npm:10.2.1"
+  checksum: 10c0/c5268903736b8070e8b421142ff8f18229018e7c80da76f5593a796398537d3badd3091484303a084431cfd147b7315f2570b9087f26f63b966972cdff86c9d0
   languageName: node
   linkType: hard
 
@@ -2538,7 +2538,7 @@ __metadata:
     archiver: "npm:^7.0.1"
     axios: "npm:^1.16.1"
     bcrypt: "npm:^6.0.0"
-    body-parser: "npm:^1.20.5"
+    body-parser: "npm:^1.20.9"
     deep-equal: "npm:^2.2.3"
     jsonwebtoken: "npm:^9.0.2"
     lodash.camelcase: "npm:^4.3.0"
@@ -2556,7 +2556,7 @@ __metadata:
     lodash.pickby: "npm:^4.6.0"
     lodash.snakecase: "npm:^4.1.1"
     lodash.upperfirst: "npm:^4.3.1"
-    nodemailer: "npm:^10.0.12"
+    nodemailer: "npm:^10.1.4"
     psl: "npm:^1.15.0"
     sharp: "npm:^0.35.5"
     uuid: "npm:^11.1.1"

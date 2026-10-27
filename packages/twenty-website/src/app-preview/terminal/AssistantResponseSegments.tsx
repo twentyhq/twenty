@@ -204,7 +204,7 @@ const WRAPUP_PARAGRAPH: StreamingSegment[] = [
     <InlineCode>vitest run schema.integration-test.ts</InlineCode>,
   ),
   text(', and '),
-  node('w-dev', <InlineCode>yarn twenty dev --once</InlineCode>),
+  node('w-dev', <InlineCode>twenty app apply</InlineCode>),
   text('. Reference: '),
   node(
     'w-docs',

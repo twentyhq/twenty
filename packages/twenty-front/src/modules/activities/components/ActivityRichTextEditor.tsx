@@ -5,10 +5,9 @@ import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { type Note } from '@/activities/types/Note';
 import { type Task } from '@/activities/types/Task';
-import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
-import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { RichTextFieldEditor } from '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor';
+import { RICH_TEXT_FIELD_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/object-record/record-field/ui/meta-types/input/constants/RichTextFieldEditorGlobalHotkeysConfig';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isTitleCellInEditModeComponentState } from '@/object-record/record-title-cell/states/isTitleCellInEditModeComponentState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
@@ -17,6 +16,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { type Editor } from '@tiptap/core';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -34,7 +34,7 @@ export const ActivityRichTextEditor = ({
   const store = useStore();
 
   // oxlint-disable-next-line twenty/no-state-useref
-  const editorRef = useRef<typeof BLOCK_SCHEMA.BlockNoteEditor | null>(null);
+  const editorRef = useRef<Editor | null>(null);
 
   const { upsertActivity } = useUpsertActivity({
     activityObjectNameSingular,
@@ -60,7 +60,7 @@ export const ActivityRichTextEditor = ({
   });
 
   const handlePersistBody = useCallback(
-    (blocknote: string) => {
+    (tiptap: string) => {
       if (!canCreateActivity) {
         setCanCreateActivity(true);
       }
@@ -73,7 +73,7 @@ export const ActivityRichTextEditor = ({
         upsertActivity({
           activity,
           input: {
-            bodyV2: { blocknote, markdown: null },
+            bodyV2: { blocknote: null, markdown: null, tiptap },
           },
         });
       }
@@ -95,7 +95,7 @@ export const ActivityRichTextEditor = ({
     );
 
     if (isRecordTitleCellOpen) {
-      editorRef.current?.domElement?.blur();
+      editorRef.current?.commands.blur();
       return;
     }
 
@@ -105,7 +105,7 @@ export const ActivityRichTextEditor = ({
         type: FocusComponentType.ACTIVITY_RICH_TEXT_EDITOR,
       },
       focusId: activityId,
-      globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
+      globalHotkeysConfig: RICH_TEXT_FIELD_EDITOR_GLOBAL_HOTKEYS_CONFIG,
     });
   }, [recordTitleCellId, activityId, pushFocusItemToFocusStack, store]);
 

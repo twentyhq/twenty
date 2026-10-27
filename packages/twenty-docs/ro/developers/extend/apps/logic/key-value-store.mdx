@@ -1,7 +1,6 @@
 ---
 title: Stocare cheie-valoare
 description: Păstrați rezultatele intermediare, puneți datele în cache și partajați starea între rulările funcțiilor logice cu spațiul de stocare cheie-valoare integrat al aplicației.
-icon: database
 ---
 
 Funcțiile logice rulează în sandbox în procese Node.js de scurtă durată — odată ce o rulare se termină, nimic din ce a fost păstrat în memorie nu supraviețuiește. Când ai nevoie să **îți amintești ceva între rulări** (să pui în cache un răspuns API costisitor, să stochezi un cursor pentru sincronizări incrementale, să aplici debounce sau să transmiți starea de la o funcție la alta), salvează-l în spațiul de stocare cheie-valoare integrat.
