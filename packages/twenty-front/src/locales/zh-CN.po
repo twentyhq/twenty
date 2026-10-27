@@ -390,12 +390,18 @@ msgstr "{0} 布局编辑"
 msgid "{0} MB"
 msgstr "{0} MB"
 
-#. js-lingui-id: mmjR0w
+#. js-lingui-id: gx/V/r
 #. placeholder {0}: formatNumber(objectCount)
-#. placeholder {1}: formatNumber(fieldCount)
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
-msgid "{0} objects, {1} fields"
-msgstr "{0} 个对象，{1} 个字段"
+msgid "{0} objects"
+msgstr ""
+
+#. js-lingui-id: Z70Dyr
+#. placeholder {0}: formatNumber(objectCount)
+#. placeholder {1}: formatNumber(recordCount)
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
+msgid "{0} objects, {1} records"
+msgstr ""
 
 #. js-lingui-id: FGOUAP
 #. placeholder {0}: formatNumber(displayedRecords.length)
@@ -7033,6 +7039,11 @@ msgstr "包含"
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBlockInsertList.tsx
 msgid "Content"
 msgstr "内容"
+
+#. js-lingui-id: SVyf2o
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
+msgid "Contents"
+msgstr ""
 
 #. js-lingui-id: M73whl
 #: src/modules/settings/admin-panel/components/SettingsAdminChatMessage.tsx
@@ -14372,9 +14383,9 @@ msgid "imap.example.com"
 msgstr "imap.example.com"
 
 #. js-lingui-id: tSVr6t
+#: src/modules/settings/admin-panel/components/SettingsAdminUserWorkspaceActions.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
-#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Impersonate"
 msgstr "假装"
@@ -14418,7 +14429,7 @@ msgid "Impersonation failed"
 msgstr "模拟登录失败"
 
 #. js-lingui-id: yImXof
-#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminUserWorkspaceActions.tsx
 msgid "Impersonation is disabled for this workspace"
 msgstr "工作区不支持代理功能"
 
@@ -19676,7 +19687,6 @@ msgstr "对象级别"
 
 #. js-lingui-id: B3toQF
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
@@ -21850,11 +21860,6 @@ msgstr "读取、写入和删除 {target}"
 msgid "Read/Edit/Delete permissions"
 msgstr "读取/编辑/删除权限"
 
-#. js-lingui-id: ckH3fT
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
-msgid "Ready"
-msgstr "就绪"
-
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -22173,7 +22178,6 @@ msgstr "记录"
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -25906,7 +25910,6 @@ msgstr "统计"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
