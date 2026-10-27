@@ -10474,7 +10474,7 @@ export default {
                 }
             ],
             "billingPlans": [
-                105
+                106
             ],
             "billingPortalSession": [
                 116,
