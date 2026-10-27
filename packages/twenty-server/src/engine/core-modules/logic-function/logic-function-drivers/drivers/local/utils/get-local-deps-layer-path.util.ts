@@ -7,10 +7,10 @@ import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-funct
 export const getLocalDepsLayerPath = (
   flatApplication: FlatApplication,
 ): string => {
-  // Hashed because the application row stored whatever checksum a manifest
-  // declared, so the raw value could contain path segments
   const folderName = logicFunctionCreateHash(
-    flatApplication.yarnLockChecksum ?? 'default',
+    flatApplication.yarnLockChecksum ??
+      flatApplication.packageJsonChecksum ??
+      'default',
   );
 
   return join(LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER, 'deps', folderName);
