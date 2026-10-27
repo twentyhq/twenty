@@ -1618,6 +1618,15 @@ export class ConfigVariables {
   WORKER_EXCLUDED_QUEUES: string[] = [];
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Order the jobs of each queue by tenant virtual clocks (workspace and application group keys) so that a burst from one tenant does not delay the others. Off: jobs of a queue are processed in FIFO order.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_WORKER_FAIRNESS_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Node environment (development, production, etc.)',
     type: ConfigVariableType.ENUM,
