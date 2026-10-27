@@ -13,32 +13,31 @@ const FULL_OBJECT_PERMISSIONS: ObjectPermissions = {
 };
 
 describe('restrictObjectPermissionsToMetadataWritability', () => {
-  it.each([MetadataWritability.OPEN, null, undefined])(
-    'should keep permissions when writability is %s',
-    (writability) => {
-      expect(
-        restrictObjectPermissionsToMetadataWritability({
-          objectPermissions: FULL_OBJECT_PERMISSIONS,
-          writability,
-        }),
-      ).toBe(FULL_OBJECT_PERMISSIONS);
-    },
-  );
+  it.each([
+    MetadataWritability.OPEN,
+    MetadataWritability.APPLICATION,
+    null,
+    undefined,
+  ])('should keep permissions when writability is %s', (writability) => {
+    expect(
+      restrictObjectPermissionsToMetadataWritability({
+        objectPermissions: FULL_OBJECT_PERMISSIONS,
+        writability,
+      }),
+    ).toBe(FULL_OBJECT_PERMISSIONS);
+  });
 
-  it.each([MetadataWritability.APPLICATION, MetadataWritability.SYSTEM])(
-    'should revoke write permissions when writability is %s',
-    (writability) => {
-      expect(
-        restrictObjectPermissionsToMetadataWritability({
-          objectPermissions: FULL_OBJECT_PERMISSIONS,
-          writability,
-        }),
-      ).toEqual({
-        ...FULL_OBJECT_PERMISSIONS,
-        canUpdateObjectRecords: false,
-        canSoftDeleteObjectRecords: false,
-        canDestroyObjectRecords: false,
-      });
-    },
-  );
+  it('should revoke write permissions when writability is SYSTEM', () => {
+    expect(
+      restrictObjectPermissionsToMetadataWritability({
+        objectPermissions: FULL_OBJECT_PERMISSIONS,
+        writability: MetadataWritability.SYSTEM,
+      }),
+    ).toEqual({
+      ...FULL_OBJECT_PERMISSIONS,
+      canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    });
+  });
 });

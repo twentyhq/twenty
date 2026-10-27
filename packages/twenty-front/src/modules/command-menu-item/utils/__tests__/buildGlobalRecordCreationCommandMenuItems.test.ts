@@ -24,11 +24,6 @@ const objects = [
     labelSingular: 'system',
     writability: MetadataWritability.SYSTEM,
   },
-  {
-    id: 'application',
-    labelSingular: 'application',
-    writability: MetadataWritability.APPLICATION,
-  },
 ].map((objectMetadataItem) => ({
   icon: null,
   writability: MetadataWritability.OPEN,

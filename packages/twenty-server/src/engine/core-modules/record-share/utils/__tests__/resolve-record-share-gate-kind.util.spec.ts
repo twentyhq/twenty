@@ -39,7 +39,7 @@ describe('resolveRecordShareGateKind', () => {
     {
       readability: MetadataReadability.APPLICATION,
       isOwningApplication: false,
-      expected: 'deny',
+      expected: 'open',
     },
     {
       readability: MetadataReadability.APPLICATION,

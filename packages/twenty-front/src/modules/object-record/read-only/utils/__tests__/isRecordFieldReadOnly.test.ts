@@ -127,7 +127,7 @@ describe('isRecordFieldReadOnly', () => {
     ).toBe(true);
   });
 
-  it('should return true when the field writability is APPLICATION', () => {
+  it('should ignore an APPLICATION field writability', () => {
     expect(
       isRecordFieldReadOnly({
         ...baseParams,
@@ -136,7 +136,7 @@ describe('isRecordFieldReadOnly', () => {
           writability: MetadataWritability.APPLICATION,
         },
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('should treat a missing field writability as OPEN', () => {
