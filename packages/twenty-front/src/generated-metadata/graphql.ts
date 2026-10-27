@@ -5644,6 +5644,7 @@ export type Query = {
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
   barChartData: BarChartData;
+  billingPlans: Array<BillingPlan>;
   billingPortalSession: BillingSession;
   callRecordingIdForCalendarEvent?: Maybe<Scalars['UUID']['output']>;
   chatMessages: Array<AgentMessage>;
@@ -5735,6 +5736,7 @@ export type Query = {
   githubClaimAuthorizationUrl: Scalars['String']['output'];
   isApplicationStopped: Scalars['Boolean']['output'];
   lineChartData: LineChartData;
+  /** @deprecated Use billingPlans instead. */
   listPlans: Array<BillingPlan>;
   messageSuppressions: MessageSuppressionList;
   metadataTranslations: Array<MetadataTranslation>;
