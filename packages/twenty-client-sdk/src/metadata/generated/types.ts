@@ -163,9 +163,6 @@ export default {
             "id": [
                 524
             ],
-            "isCustom": [
-                4
-            ],
             "isSystem": [
                 4
             ],
@@ -202,6 +199,9 @@ export default {
         },
         "Boolean": {},
         "AgentChatChannel": {
+            "applicationId": [
+                524
+            ],
             "color": [
                 1
             ],
@@ -212,9 +212,6 @@ export default {
                 524
             ],
             "isAccessible": [
-                4
-            ],
-            "isCustom": [
                 4
             ],
             "name": [
@@ -5387,6 +5384,9 @@ export default {
             ]
         },
         "Index": {
+            "applicationId": [
+                524
+            ],
             "createdAt": [
                 209
             ],
@@ -5402,7 +5402,7 @@ export default {
             "indexWhereClause": [
                 1
             ],
-            "isCustom": [
+            "isSystemSideEffect": [
                 4
             ],
             "isUnique": [
@@ -5458,9 +5458,6 @@ export default {
             ],
             "id": [
                 525
-            ],
-            "isCustom": [
-                125
             ],
             "or": [
                 303
@@ -12565,9 +12562,6 @@ export default {
             "isActive": [
                 4
             ],
-            "isCustom": [
-                4
-            ],
             "isSystem": [
                 4
             ],
@@ -15202,9 +15196,6 @@ export default {
                 4
             ],
             "isCompact": [
-                4
-            ],
-            "isCustom": [
                 4
             ],
             "isSystemSideEffect": [

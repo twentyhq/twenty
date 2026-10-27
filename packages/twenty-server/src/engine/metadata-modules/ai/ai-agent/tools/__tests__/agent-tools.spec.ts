@@ -33,7 +33,6 @@ const buildAgent = (overrides: Record<string, unknown> = {}) => ({
   roleId,
   triggers: [],
   applicationId: 'application-id',
-  isCustom: true,
   isSystem: false,
   ...overrides,
 });

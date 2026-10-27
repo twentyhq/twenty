@@ -177,7 +177,7 @@ describe('NavigationDrawerAiChatContent', () => {
         color: null,
         position: 1,
         roleIds: [],
-        isCustom: true,
+        applicationId: 'workspace-custom-application-id',
         isAccessible: true,
       },
     ]);
@@ -207,7 +207,7 @@ describe('NavigationDrawerAiChatContent', () => {
         color: null,
         position: 1,
         roleIds: [],
-        isCustom: true,
+        applicationId: 'workspace-custom-application-id',
         isAccessible: true,
       },
     ]);

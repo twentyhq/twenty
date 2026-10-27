@@ -18,6 +18,7 @@ import { CoreAgentDeleteConfirmationModal } from '@/object-core/agents/component
 import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -61,6 +62,7 @@ export const CoreAgentSettingsTab = ({
 }: CoreAgentSettingsTabProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
   const aiModels = useAtomStateValue(aiModelsState);
   const noModelsAvailable = aiModels.length === 0;
@@ -145,7 +147,7 @@ export const CoreAgentSettingsTab = ({
           disabled={disabled}
         />
       </StyledFormContainer>
-      {!disabled && agent && formValues.isCustom && (
+      {!disabled && isDefined(agent) && getIsMetadataItemCustom(agent) && (
         <Section.Root>
           <Section.Header
             title={t`Danger zone`}

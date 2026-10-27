@@ -20,6 +20,7 @@ import {
   IndexMetadataExceptionCode,
 } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
+import { isWorkspaceCustomIndex } from 'src/engine/metadata-modules/index-metadata/utils/is-workspace-custom-index.util';
 import { validateIndexTypeAgainstFieldsOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util';
 import { validateNoDuplicateUniqueIndexOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -200,6 +201,11 @@ export class IndexMetadataService {
       objectMetadataId: createIndexInput.objectMetadataId,
     });
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const existingCustomIndexCount = Object.values(
       existingFlatIndexMaps.byUniversalIdentifier,
     )
@@ -207,7 +213,10 @@ export class IndexMetadataService {
       .filter(
         (flatIndex) =>
           flatIndex.objectMetadataId === createIndexInput.objectMetadataId &&
-          flatIndex.isCustom,
+          isWorkspaceCustomIndex({
+            flatIndex,
+            workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+          }),
       ).length;
 
     if (existingCustomIndexCount >= MAX_CUSTOM_INDEXES_PER_OBJECT) {
@@ -219,11 +228,6 @@ export class IndexMetadataService {
         },
       );
     }
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
 
     const indexMetadataUniversalIdentifier = v4();
     const createdAt = new Date().toISOString();
@@ -238,7 +242,6 @@ export class IndexMetadataService {
           indexType: createIndexInput.indexType,
           // WHERE clause is system-only — see CreateIndexInput for rationale.
           indexWhereClause: null,
-          isCustom: true,
           isUnique: false,
           isSystemSideEffect: false,
           objectMetadataUniversalIdentifier:
@@ -338,9 +341,19 @@ export class IndexMetadataService {
       );
     }
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     // Protect system indexes — they back uniqueness constraints, FK lookups,
     // and search performance. Dropping one corrupts the data model.
-    if (!flatIndexToDelete.isCustom) {
+    if (
+      !isWorkspaceCustomIndex({
+        flatIndex: flatIndexToDelete,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      })
+    ) {
       throw new IndexMetadataException(
         `Index ${id} is a system index and cannot be deleted`,
         IndexMetadataExceptionCode.CANNOT_DELETE_SYSTEM_INDEX,
@@ -349,11 +362,6 @@ export class IndexMetadataService {
         },
       );
     }
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(

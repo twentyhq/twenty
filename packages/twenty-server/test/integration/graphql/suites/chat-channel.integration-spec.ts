@@ -58,7 +58,7 @@ type ChannelThreadMutationName =
   | 'reopenAgentChatThreadInChannel';
 
 const CREATE_CHANNEL = parse(
-  `mutation CreateChannel($input: CreateAgentChatChannelInput!) { createAgentChatChannel(input: $input) { id name icon color roleIds isCustom } }`,
+  `mutation CreateChannel($input: CreateAgentChatChannelInput!) { createAgentChatChannel(input: $input) { id name icon color roleIds applicationId } }`,
 );
 
 const UPDATE_CHANNEL = parse(
@@ -74,7 +74,7 @@ const CHANNEL_ROLES = parse(
 );
 
 const CHANNELS = parse(
-  `query Channels { agentChatChannels { id name isCustom isAccessible } }`,
+  `query Channels { agentChatChannels { id name applicationId isAccessible } }`,
 );
 
 const CREATE_THREAD = parse(
@@ -226,7 +226,7 @@ const listChannels = async (
   {
     id: string;
     name: string;
-    isCustom: boolean;
+    applicationId: string;
     isAccessible: boolean;
   }[]
 > => {
@@ -619,12 +619,14 @@ describe('Chat channels through the authenticated API', () => {
 
     const channels = await listChannels(APPLE_JONY_MEMBER_ACCESS_TOKEN);
 
-    expect(channels[0]).toMatchObject({ name: 'General', isCustom: false });
-    expect(channels[channels.length - 1]).toMatchObject({
+    const createdChannel = channels[channels.length - 1];
+
+    expect(channels[0]).toMatchObject({ name: 'General' });
+    expect(createdChannel).toMatchObject({
       id: channelId,
-      isCustom: true,
       isAccessible: true,
     });
+    expect(createdChannel.applicationId).not.toBe(channels[0].applicationId);
   });
 
   it('refuses a channel without a name, or with the name of another one', async () => {
@@ -679,7 +681,7 @@ describe('Chat channels through the authenticated API', () => {
   it('keeps General and its chats, as the standard sync would bring it back', async () => {
     const [general] = await listChannels();
 
-    expect(general).toMatchObject({ name: 'General', isCustom: false });
+    expect(general).toMatchObject({ name: 'General' });
 
     const destinationChannelId = await createChannel();
     const threadId = await createThreadInChannel(general.id);

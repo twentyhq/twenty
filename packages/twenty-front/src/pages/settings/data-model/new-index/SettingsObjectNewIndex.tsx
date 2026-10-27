@@ -1,7 +1,9 @@
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useCreateOneIndexMetadataItem } from '@/object-metadata/hooks/useCreateOneIndexMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { getIsIndexMetadataItemCustom } from '@/object-metadata/utils/getIsIndexMetadataItemCustom';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SEARCH_VECTOR_FIELD_NAME } from '@/object-record/constants/SearchVectorFieldName';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -81,6 +83,7 @@ export const SettingsObjectNewIndex = () => {
   }, [activeObjectMetadataItem, navigateApp, workspaceSurface.type]);
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const indexableFields = useMemo(
     () =>
@@ -97,7 +100,11 @@ export const SettingsObjectNewIndex = () => {
   }
 
   const customIndexCount = activeObjectMetadataItem.indexMetadatas.filter(
-    (indexMetadata) => indexMetadata.isCustom,
+    (indexMetadata) =>
+      getIsIndexMetadataItemCustom(
+        indexMetadata,
+        currentWorkspace?.workspaceCustomApplication?.id,
+      ),
   ).length;
   const reachedCap = customIndexCount >= MAX_CUSTOM_INDEXES_PER_OBJECT;
 

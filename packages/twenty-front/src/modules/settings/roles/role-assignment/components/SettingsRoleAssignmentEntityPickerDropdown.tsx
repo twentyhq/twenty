@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@apollo/client/react';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   type Agent,
@@ -25,6 +26,7 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
 }: SettingsRoleAssignmentEntityPickerDropdownProps) => {
   const [searchFilter, setSearchFilter] = useState('');
   const { t } = useLingui();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
   const isAgent = entityType === 'agent';
   const shouldShowSystemAgents = searchFilter !== '';
@@ -48,7 +50,8 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
     return ((isAgent
       ? agentsData?.findManyAgents.filter(
           (agent) =>
-            agent.isCustom && (!agent.isSystem || shouldShowSystemAgents),
+            getIsMetadataItemCustom(agent) &&
+            (!agent.isSystem || shouldShowSystemAgents),
         )
       : apiKeysData?.apiKeys) || []) as EntityData[];
   }, [
@@ -56,6 +59,7 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
     agentsData?.findManyAgents,
     apiKeysData?.apiKeys,
     shouldShowSystemAgents,
+    getIsMetadataItemCustom,
   ]);
 
   const placeholder = isAgent ? t`Search agents` : t`Search API keys`;

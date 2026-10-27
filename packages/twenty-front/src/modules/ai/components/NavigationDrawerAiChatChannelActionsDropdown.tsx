@@ -14,6 +14,7 @@ import { NavigationDrawerAiChatChannelRolesSubmenu } from '@/ai/components/Navig
 import { useAddAgentChatChannelToFavorites } from '@/ai/hooks/useAddAgentChatChannelToFavorites';
 import { useIsAgentChatChannelFavorite } from '@/ai/hooks/useIsAgentChatChannelFavorite';
 import { useRemoveAgentChatChannelFromFavorites } from '@/ai/hooks/useRemoveAgentChatChannelFromFavorites';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import {
@@ -43,6 +44,7 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
   onDelete,
 }: NavigationDrawerAiChatChannelActionsDropdownProps) => {
   const { t } = useLingui();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const isAgentChatChannelFavorite = useIsAgentChatChannelFavorite(channel.id);
   const { addAgentChatChannelToFavorites } =
     useAddAgentChatChannelToFavorites();
@@ -91,7 +93,7 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
                 roleIds={channel.roleIds}
                 onChange={(roleIds) => onUpdate({ roleIds })}
               />
-              {channel.isCustom &&
+              {getIsMetadataItemCustom(channel) &&
                 (destinationChannels.length === 0 ? (
                   <Dropdown.ActionItem
                     color="danger"

@@ -20,7 +20,6 @@ export interface Agent {
     description?: Scalars['String']
     icon?: Scalars['String']
     id: Scalars['UUID']
-    isCustom: Scalars['Boolean']
     isSystem: Scalars['Boolean']
     label: Scalars['String']
     modelConfiguration?: Scalars['JSON']
@@ -35,11 +34,11 @@ export interface Agent {
 }
 
 export interface AgentChatChannel {
+    applicationId: Scalars['UUID']
     color?: Scalars['String']
     icon?: Scalars['String']
     id: Scalars['UUID']
     isAccessible?: Scalars['Boolean']
-    isCustom: Scalars['Boolean']
     name: Scalars['String']
     position: Scalars['Float']
     roleIds: Scalars['UUID'][]
@@ -1742,12 +1741,13 @@ export interface Impersonate {
 }
 
 export interface Index {
+    applicationId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     id: Scalars['UUID']
     indexFieldMetadataList: IndexField[]
     indexType: IndexType
     indexWhereClause?: Scalars['String']
-    isCustom?: Scalars['Boolean']
+    isSystemSideEffect: Scalars['Boolean']
     isUnique: Scalars['Boolean']
     name: Scalars['String']
     updatedAt: Scalars['DateTime']
@@ -3404,7 +3404,6 @@ export interface Skill {
     icon?: Scalars['String']
     id: Scalars['UUID']
     isActive: Scalars['Boolean']
-    isCustom: Scalars['Boolean']
     isSystem: Scalars['Boolean']
     label: Scalars['String']
     name: Scalars['String']
@@ -3843,7 +3842,6 @@ export interface View {
     id: Scalars['UUID']
     isActive: Scalars['Boolean']
     isCompact: Scalars['Boolean']
-    isCustom: Scalars['Boolean']
     isSystemSideEffect: Scalars['Boolean']
     kanbanAggregateOperation?: AggregateOperations
     kanbanAggregateOperationFieldMetadataId?: Scalars['UUID']
@@ -4202,7 +4200,6 @@ export interface AgentGenqlSelection{
     description?: boolean | number
     icon?: boolean | number
     id?: boolean | number
-    isCustom?: boolean | number
     isSystem?: boolean | number
     label?: boolean | number
     modelConfiguration?: boolean | number
@@ -4218,11 +4215,11 @@ export interface AgentGenqlSelection{
 }
 
 export interface AgentChatChannelGenqlSelection{
+    applicationId?: boolean | number
     color?: boolean | number
     icon?: boolean | number
     id?: boolean | number
     isAccessible?: boolean | number
-    isCustom?: boolean | number
     name?: boolean | number
     position?: boolean | number
     roleIds?: boolean | number
@@ -6203,12 +6200,13 @@ export interface ImpersonateGenqlSelection{
 }
 
 export interface IndexGenqlSelection{
+    applicationId?: boolean | number
     createdAt?: boolean | number
     id?: boolean | number
     indexFieldMetadataList?: IndexFieldGenqlSelection
     indexType?: boolean | number
     indexWhereClause?: boolean | number
-    isCustom?: boolean | number
+    isSystemSideEffect?: boolean | number
     isUnique?: boolean | number
     name?: boolean | number
     updatedAt?: boolean | number
@@ -6236,7 +6234,7 @@ export interface IndexFieldGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface IndexFilter {and?: (IndexFilter[] | null),id?: (UUIDFilterComparison | null),isCustom?: (BooleanFieldComparison | null),or?: (IndexFilter[] | null)}
+export interface IndexFilter {and?: (IndexFilter[] | null),id?: (UUIDFilterComparison | null),or?: (IndexFilter[] | null)}
 
 export interface IngestAppMessagesInput {messageChannelId: Scalars['UUID'],messages: AppMessageInput[]}
 
@@ -7978,7 +7976,6 @@ export interface SkillGenqlSelection{
     icon?: boolean | number
     id?: boolean | number
     isActive?: boolean | number
-    isCustom?: boolean | number
     isSystem?: boolean | number
     label?: boolean | number
     name?: boolean | number
@@ -8694,7 +8691,6 @@ export interface ViewGenqlSelection{
     id?: boolean | number
     isActive?: boolean | number
     isCompact?: boolean | number
-    isCustom?: boolean | number
     isSystemSideEffect?: boolean | number
     kanbanAggregateOperation?: boolean | number
     kanbanAggregateOperationFieldMetadataId?: boolean | number

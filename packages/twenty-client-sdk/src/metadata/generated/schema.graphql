@@ -17,7 +17,6 @@ type Agent {
   description: String
   icon: String
   id: UUID!
-  isCustom: Boolean!
   isSystem: Boolean!
   label: String!
   modelConfiguration: JSON
@@ -31,11 +30,11 @@ type Agent {
 }
 
 type AgentChatChannel {
+  applicationId: UUID!
   color: String
   icon: String
   id: UUID!
   isAccessible: Boolean
-  isCustom: Boolean!
   name: String!
   position: Float!
   roleIds: [UUID!]!
@@ -2604,12 +2603,13 @@ type Impersonate {
 }
 
 type Index {
+  applicationId: UUID!
   createdAt: DateTime!
   id: UUID!
   indexFieldMetadataList: [IndexField!]!
   indexType: IndexType!
   indexWhereClause: String
-  isCustom: Boolean
+  isSystemSideEffect: Boolean!
   isUnique: Boolean!
   name: String!
   updatedAt: DateTime!
@@ -2635,7 +2635,6 @@ type IndexField {
 input IndexFilter {
   and: [IndexFilter!]
   id: UUIDFilterComparison
-  isCustom: BooleanFieldComparison
   or: [IndexFilter!]
 }
 
@@ -4659,7 +4658,6 @@ type Skill {
   icon: String
   id: UUID!
   isActive: Boolean!
-  isCustom: Boolean!
   isSystem: Boolean!
   label: String!
   name: String!
@@ -5867,7 +5865,6 @@ type View {
   id: UUID!
   isActive: Boolean!
   isCompact: Boolean!
-  isCustom: Boolean!
   isSystemSideEffect: Boolean!
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID

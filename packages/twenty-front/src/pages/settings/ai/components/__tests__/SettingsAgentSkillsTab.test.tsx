@@ -61,7 +61,6 @@ const buildSkill = ({
   description: null,
   icon: 'IconBook',
   content: 'Some skill content',
-  isCustom: false,
   isSystem,
   isActive: true,
   applicationId,

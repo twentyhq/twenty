@@ -25,7 +25,6 @@ export const getFlatIndexMetadataMock = (
     id: faker.string.uuid(),
     indexType: IndexType.BTREE,
     indexWhereClause: null,
-    isCustom: false,
     isUnique: false,
     isSystemSideEffect: false,
     name: 'defaultFlatIndexMetadataName',

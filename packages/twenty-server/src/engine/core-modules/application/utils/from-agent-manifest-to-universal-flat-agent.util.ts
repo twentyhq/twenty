@@ -35,7 +35,6 @@ export const fromAgentManifestToUniversalFlatAgent = ({
         instructions: isDefined(instructions) ? instructions : null,
       }),
     ),
-    isCustom: false,
     isSystem: true,
     createdAt: now,
     updatedAt: now,
