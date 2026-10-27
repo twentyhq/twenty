@@ -1,10 +1,9 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { type AccountGroupAction } from '@/settings/app-preferences/types/AccountGroupAction';
 import { type AccountGroupActionTarget } from '@/settings/app-preferences/types/AccountGroupActionTarget';
 import { type ConnectedAccountGroup } from '@/settings/app-preferences/types/ConnectedAccountGroup';
-import { t } from '@lingui/core/macro';
+import { getInstalledApplicationDisplayName } from '@/settings/app-preferences/utils/getInstalledApplicationDisplayName';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getAccountGroupActionTargets = <
@@ -37,18 +36,13 @@ export const getAccountGroupActionTargets = <
 
   const appAccountTargets = group.appAccounts
     .filter(isTargeted)
-    .map(({ id, applicationId }) => {
-      const application = currentWorkspace?.installedApplications.find(
-        (installedApplication) => installedApplication.id === applicationId,
-      );
-
-      return {
-        id,
-        label: isDefined(application)
-          ? getApplicationDisplayName({ application, currentWorkspace })
-          : t`Application`,
-      };
-    });
+    .map(({ id, applicationId }) => ({
+      id,
+      label: getInstalledApplicationDisplayName({
+        applicationId,
+        currentWorkspace,
+      }),
+    }));
 
   return [...builtInAccountTargets, ...appAccountTargets];
 };
