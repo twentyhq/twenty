@@ -17,24 +17,32 @@ export const SettingsAppPreferencesAppStatusCell = ({
   const { groups, loading } = useMyAccountGroups();
 
   if (item.type === 'installed') {
-    const { missingRequiredVariables, application } =
+    const { application, connectionProviders, missingRequiredVariables } =
       item.applicationWithPreferences;
 
     if (isNonEmptyArray(missingRequiredVariables)) {
       return <Status color="red">{t`Missing configuration`}</Status>;
     }
 
-    const hasConnectionNeedingReconnect = groups.some((group) =>
-      group.appAccounts.some(
-        (account) =>
-          account.applicationId === application.id &&
-          isApplicationConnectionReconnectNeeded(account),
+    const applicationAccounts = groups.flatMap((group) =>
+      group.appAccounts.filter(
+        (account) => account.applicationId === application.id,
       ),
     );
 
-    return hasConnectionNeedingReconnect ? (
-      <Status color="red">{t`Reconnect needed`}</Status>
-    ) : null;
+    if (applicationAccounts.some(isApplicationConnectionReconnectNeeded)) {
+      return <Status color="red">{t`Reconnect needed`}</Status>;
+    }
+
+    if (
+      loading ||
+      !isNonEmptyArray(connectionProviders) ||
+      isNonEmptyArray(applicationAccounts)
+    ) {
+      return null;
+    }
+
+    return <Status color="red">{t`Missing account`}</Status>;
   }
 
   const hasAccount = groups.some((group) =>

@@ -1316,7 +1316,7 @@ export const AppPreferencesListFlagsMissingConfiguration: Story = {
     ).not.toBeInTheDocument();
     expect(
       withinTableRowOrThrow({ canvasElement, text: 'Linear' }).queryByText(
-        /Missing/,
+        'Missing configuration',
       ),
     ).not.toBeInTheDocument();
   },
