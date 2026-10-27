@@ -105,6 +105,7 @@ jest.mock('bullmq', () => ({
     get client() {
       return Promise.resolve(mockBullMQ.client);
     },
+    toKey: (type: string) => `${KEY_PREFIX}:${QUEUE}:${type}`,
     add: async (
       name: string,
       data: ScenarioJobData,
