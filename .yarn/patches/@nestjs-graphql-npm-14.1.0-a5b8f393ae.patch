@@ -173,10 +173,10 @@ index 0182114..73e6f36 100644
  OrphanedReferenceRegistry = __decorate([
      Injectable()
 diff --git a/dist/schema-builder/storages/type-definitions.storage.js b/dist/schema-builder/storages/type-definitions.storage.js
-index 610a938..6c98fcc 100644
+index 9a8156d..b7291d8 100644
 --- a/dist/schema-builder/storages/type-definitions.storage.js
 +++ b/dist/schema-builder/storages/type-definitions.storage.js
-@@ -100,13 +100,9 @@ let TypeDefinitionsStorage = class TypeDefinitionsStorage {
+@@ -108,15 +108,10 @@ let TypeDefinitionsStorage = class TypeDefinitionsStorage {
       * Used when generating multiple schemas with different module configurations.
       */
      clear() {
@@ -185,11 +185,13 @@ index 610a938..6c98fcc 100644
 -        this.unionTypeDefinitions.clear();
 -        this.objectTypeDefinitions.clear();
 -        this.inputTypeDefinitions.clear();
--        this.inputTypeDefinitionsLinks = undefined;
--        this.outputTypeDefinitionsLinks = undefined;
-+        // Only invalidate the lazy link caches, NOT the type Maps.
+-        this.outputTypesByName.clear();
++        // Only invalidate the lazy link caches and the per-schema root types, NOT the type Maps.
 +        this.inputTypeDefinitionsLinks = null;
 +        this.outputTypeDefinitionsLinks = null;
+         this.rootTypesByName.clear();
+-        this.inputTypeDefinitionsLinks = undefined;
+-        this.outputTypeDefinitionsLinks = undefined;
      }
  };
  TypeDefinitionsStorage = __decorate([
@@ -242,10 +244,10 @@ index 13d1cc2..ecbf8d3 100644
          const inputTypeMetadata = metadata ?? TypeMetadataStorage.getInputTypesMetadata();
          const inputTypeDefs = inputTypeMetadata.map((item) => this.inputTypeDefinitionFactory.create(item, options));
 diff --git a/dist/services/resolvers-explorer.service.js b/dist/services/resolvers-explorer.service.js
-index f5282d6..ad78aa2 100644
+index c7499cb..1644e20 100644
 --- a/dist/services/resolvers-explorer.service.js
 +++ b/dist/services/resolvers-explorer.service.js
-@@ -26,6 +26,7 @@ const ROOT_RESOLVER_TYPES = new Set([
+@@ -28,6 +28,7 @@ const ROOT_RESOLVER_TYPES = new Set([
      Resolver.QUERY,
      Resolver.SUBSCRIPTION,
  ]);
@@ -253,7 +255,7 @@ index f5282d6..ad78aa2 100644
  let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplorerService extends BaseExplorerService {
      constructor(modulesContainer, metadataScanner, externalContextCreator, gqlOptions, moduleRef, serializedGraph, resolverDecoratorHost) {
          super();
-@@ -53,6 +54,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
+@@ -55,6 +56,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
          if (!instance) {
              return undefined;
          }
@@ -268,7 +270,7 @@ index f5282d6..ad78aa2 100644
          const prototype = Object.getPrototypeOf(instance);
          const predicate = (resolverType, isReferenceResolver, isPropertyResolver) => isUndefined(resolverType) ||
              (!isReferenceResolver &&
-@@ -188,6 +197,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
+@@ -215,6 +224,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
      getAllCtors() {
          const modules = this.getModules(this.modulesContainer, this.gqlOptions.include || []);
          const resolvers = this.flatMap(modules, this.mapToCtor).filter(Boolean);

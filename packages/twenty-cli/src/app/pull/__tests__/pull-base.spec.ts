@@ -37,7 +37,7 @@ const MANIFEST: Manifest = {
     displayName: 'App',
     description: '',
     defaultRoleUniversalIdentifier: 'c8c1213a-e037-41e6-bd76-2f5c828f58cd',
-    packageJsonChecksum: null,
+    packageJsonChecksum: 'package-json-checksum',
     yarnLockChecksum: null,
   },
   objects: [],

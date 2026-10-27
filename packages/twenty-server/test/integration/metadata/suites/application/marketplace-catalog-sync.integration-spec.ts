@@ -1,14 +1,11 @@
 import crypto from 'crypto';
-import { promises as fs } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
 
 import { gql } from 'graphql-tag';
 import request from 'supertest';
-import * as tar from 'tar';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildNpmRegistryPackage } from 'test/integration/metadata/suites/application/utils/build-npm-registry-package.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
 import { findApplicationRegistrationByUniversalIdentifier } from 'test/integration/metadata/suites/application/utils/find-application-registration-by-universal-identifier.util';
 import { insertCatalogApplicationRegistration } from 'test/integration/metadata/suites/application/utils/insert-catalog-application-registration.util';
 import { stubNpmRegistry } from 'test/integration/metadata/suites/application/utils/stub-npm-registry.util';
@@ -1092,23 +1089,10 @@ describe('Marketplace Catalog Sync (integration)', () => {
         version: '1.0.0',
       });
 
-      const tempId = crypto.randomUUID();
-      const sourceDir = join(tmpdir(), `test-tarball-src-${tempId}`);
-      const tarballPath = join(tmpdir(), `test-tarball-${tempId}.tar.gz`);
-
-      await fs.mkdir(sourceDir, { recursive: true });
-      await fs.writeFile(join(sourceDir, 'manifest.json'), manifest);
-      await fs.writeFile(join(sourceDir, 'package.json'), packageJson);
-
-      await tar.create({ file: tarballPath, gzip: true, cwd: sourceDir }, [
-        'manifest.json',
-        'package.json',
-      ]);
-
-      const tarballBuffer = await fs.readFile(tarballPath);
-
-      await fs.rm(sourceDir, { recursive: true, force: true });
-      await fs.rm(tarballPath, { force: true });
+      const tarballBuffer = await createAppTarball({
+        'manifest.json': manifest,
+        'package.json': packageJson,
+      });
 
       const UPLOAD_MUTATION = `
         mutation UploadAppTarball($file: Upload!, $universalIdentifier: String) {

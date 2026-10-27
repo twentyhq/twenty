@@ -423,8 +423,15 @@ export enum AppKeyValueScope {
   WORKSPACE = 'WORKSPACE'
 }
 
+export type AppMessageFolderInput = {
+  externalId: Scalars['String']['input'];
+  isSynced?: InputMaybe<Scalars['Boolean']['input']>;
+  name: Scalars['String']['input'];
+};
+
 export type AppMessageInput = {
   externalId: Scalars['String']['input'];
+  folderExternalIds?: InputMaybe<Array<Scalars['String']['input']>>;
   participants: Array<AppMessageParticipantInput>;
   receivedAt: Scalars['DateTime']['input'];
   subject?: InputMaybe<Scalars['String']['input']>;
@@ -2942,6 +2949,10 @@ export type ListAppMessageChannelsInput = {
   connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
+export type ListAppMessageFoldersInput = {
+  messageChannelId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
 export type Location = {
   __typename?: 'Location';
   lat?: Maybe<Scalars['Float']['output']>;
@@ -3569,6 +3580,7 @@ export type Mutation = {
   stopImpersonation: StopImpersonation;
   switchBillingPlan: BillingUpdate;
   switchSubscriptionInterval: BillingUpdate;
+  syncAppMessageFolders: Array<MessageFolder>;
   syncApplication: WorkspaceMigration;
   syncMarketplaceCatalog: Scalars['Boolean']['output'];
   trackAnalytics: Analytics;
@@ -4688,6 +4700,11 @@ export type MutationSwitchBillingPlanArgs = {
 };
 
 
+export type MutationSyncAppMessageFoldersArgs = {
+  input: SyncAppMessageFoldersInput;
+};
+
+
 export type MutationSyncApplicationArgs = {
   dryRun?: InputMaybe<Scalars['Boolean']['input']>;
   inferDeletionFromMissingEntities?: InputMaybe<Scalars['Boolean']['input']>;
@@ -5676,6 +5693,7 @@ export type Query = {
   appConnections: Array<AppConnection>;
   appKeyValue?: Maybe<AppKeyValue>;
   appMessageChannels: Array<MessageChannel>;
+  appMessageFolders: Array<MessageFolder>;
   applicationConnectedAccounts: Array<ApplicationConnectedAccountDto>;
   applicationConnectionProviders: Array<ApplicationConnectionProvider>;
   applicationCoreGraphqlSchema: Scalars['String']['output'];
@@ -5852,6 +5870,11 @@ export type QueryAppKeyValueArgs = {
 
 export type QueryAppMessageChannelsArgs = {
   filter?: InputMaybe<ListAppMessageChannelsInput>;
+};
+
+
+export type QueryAppMessageFoldersArgs = {
+  filter?: InputMaybe<ListAppMessageFoldersInput>;
 };
 
 
@@ -6960,6 +6983,11 @@ export enum SupportDriver {
   FRONT = 'FRONT',
   NONE = 'NONE'
 }
+
+export type SyncAppMessageFoldersInput = {
+  folders: Array<AppMessageFolderInput>;
+  messageChannelId: Scalars['UUID']['input'];
+};
 
 export type TasksConfiguration = {
   __typename?: 'TasksConfiguration';
