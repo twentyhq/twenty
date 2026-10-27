@@ -49,6 +49,7 @@ runComponentConformance({
 describe('Avatar composition', () => {
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllGlobals();
   });
 
   it('omits shorthand click handlers while retaining the Root contract', () => {
@@ -412,11 +413,32 @@ describe('Avatar composition', () => {
     expect(screen.getByRole('img', { name: 'Jane' })).toBe(image);
     expect(screen.queryByText('J')).not.toBeInTheDocument();
 
+    const preloadedImages: { src: string; onload: (() => void) | null }[] = [];
+
+    vi.stubGlobal(
+      'Image',
+      class {
+        src = '';
+        onload = null;
+        onerror = null;
+        crossOrigin = null;
+        constructor() {
+          preloadedImages.push(this);
+        }
+      },
+    );
+
     rerender(
       <ThemeProvider colorScheme="light">
         <Avatar name="Jane" src="/replacement.png" imageProps={imageProps} />
       </ThemeProvider>,
     );
+
+    expect(image).toHaveAttribute('src', '/jane.png');
+    expect(screen.getByRole('img', { name: 'Jane' })).toBe(image);
+    expect(preloadedImages[0]?.src).toBe('/replacement.png');
+
+    act(() => preloadedImages[0]?.onload?.());
 
     expect(imageRef.current).toBe(image);
     expect(image).toHaveAttribute('src', '/replacement.png');

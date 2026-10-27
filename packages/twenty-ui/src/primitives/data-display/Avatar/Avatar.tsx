@@ -6,6 +6,7 @@ import { AvatarFallback } from './internal/AvatarFallback';
 import { AvatarImage } from './internal/AvatarImage';
 import { AvatarRoot } from './internal/AvatarRoot';
 import { getAvatarInitial } from './internal/getAvatarInitial';
+import { useSettledImageSrc } from './internal/useSettledImageSrc';
 import { type AvatarProps } from './types/AvatarProps';
 
 const AvatarAssembly = ({
@@ -31,6 +32,8 @@ const AvatarAssembly = ({
     !hasImageLabel &&
     !hasFallbackSemantics &&
     !isDefined(fallbackAttributes.render);
+  // Signed URLs change on every fetch, so swapping src eagerly would flash the fallback.
+  const settledSrc = useSettledImageSrc(src ?? undefined, imageProps);
 
   return (
     <AvatarRoot
@@ -39,7 +42,7 @@ const AvatarAssembly = ({
       backgroundColor={hasIcon ? 'inherit' : backgroundColor}
     >
       {!hasIcon && (
-        <AvatarImage src={src ?? undefined} {...imageProps} alt={imageLabel} />
+        <AvatarImage src={settledSrc} {...imageProps} alt={imageLabel} />
       )}
       <AvatarFallback
         role={hasImageLabel ? 'img' : undefined}
