@@ -195,13 +195,13 @@ export const APPLICATION_ONLY_GRAPHQL_OPERATION_FACTORIES = {
     messageChannelId,
   }: Pick<ApplicationOnlyEndpointTarget, 'messageChannelId'>) => ({
     query: gql`
-      query AppMessageFolders($messageChannelId: UUID!) {
-        appMessageFolders(messageChannelId: $messageChannelId) {
+      query AppMessageFolders($filter: ListAppMessageFoldersInput) {
+        appMessageFolders(filter: $filter) {
           id
         }
       }
     `,
-    variables: { messageChannelId },
+    variables: { filter: { messageChannelId } },
   }),
   syncAppMessageFolders: ({
     messageChannelId,

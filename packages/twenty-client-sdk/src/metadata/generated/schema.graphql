@@ -2759,6 +2759,10 @@ input ListAppMessageChannelsInput {
   connectedAccountId: UUID
 }
 
+input ListAppMessageFoldersInput {
+  messageChannelId: UUID
+}
+
 type Location {
   lat: Float
   lng: Float
@@ -3971,7 +3975,7 @@ type Query {
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
   appMessageChannels(filter: ListAppMessageChannelsInput): [MessageChannel!]!
-  appMessageFolders(messageChannelId: UUID!): [MessageFolder!]!
+  appMessageFolders(filter: ListAppMessageFoldersInput): [MessageFolder!]!
   applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   applicationCoreGraphqlSchema(applicationUniversalIdentifier: String!): String!

@@ -6317,6 +6317,8 @@ export interface ListAppConnectionsInput {providerName?: (Scalars['String'] | nu
 
 export interface ListAppMessageChannelsInput {connectedAccountId?: (Scalars['UUID'] | null)}
 
+export interface ListAppMessageFoldersInput {messageChannelId?: (Scalars['UUID'] | null)}
+
 export interface LocationGenqlSelection{
     lat?: boolean | number
     lng?: boolean | number
@@ -7392,7 +7394,7 @@ export interface QueryGenqlSelection{
     appConnections?: (AppConnectionGenqlSelection & { __args?: {filter?: (ListAppConnectionsInput | null)} })
     appKeyValue?: (AppKeyValueGenqlSelection & { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} })
     appMessageChannels?: (MessageChannelGenqlSelection & { __args?: {filter?: (ListAppMessageChannelsInput | null)} })
-    appMessageFolders?: (MessageFolderGenqlSelection & { __args: {messageChannelId: Scalars['UUID']} })
+    appMessageFolders?: (MessageFolderGenqlSelection & { __args?: {filter?: (ListAppMessageFoldersInput | null)} })
     applicationConnectedAccounts?: (ApplicationConnectedAccountDTOGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     applicationCoreGraphqlSchema?: { __args: {applicationUniversalIdentifier: Scalars['String']} }

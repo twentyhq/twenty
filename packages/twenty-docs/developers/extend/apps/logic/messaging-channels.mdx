@@ -252,7 +252,7 @@ Each folder has an `isSynced` flag. A new folder starts synced unless you pass `
 ```ts
 import { listMessageFolders, syncMessageFolders } from 'twenty-sdk/logic-function';
 
-const folders = await listMessageFolders(channel.id);
+const folders = await listMessageFolders({ messageChannelId: channel.id });
 
 await syncMessageFolders({
   messageChannelId: channel.id,
@@ -265,7 +265,7 @@ await syncMessageFolders({
 ```
 
 <Note>
-`isSynced` is **advisory** on app channels: Twenty stores it but does not filter ingestion on it, and nothing backfills a folder when it is turned on. Your app reads it with `listMessageFolders`, skips messages from unsynced folders, and backfills a folder when it becomes synced.
+`isSynced` is **advisory** on app channels: Twenty stores it but does not filter ingestion on it, and nothing backfills a folder when it is turned on. Your app reads it with `listMessageFolders` (filtered by `messageChannelId`, or across all its channels when called without a filter), skips messages from unsynced folders, and backfills a folder when it becomes synced.
 </Note>
 
 ### Tagging messages

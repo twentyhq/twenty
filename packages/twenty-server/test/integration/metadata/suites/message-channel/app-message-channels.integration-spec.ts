@@ -90,8 +90,8 @@ const INGEST_MESSAGES_MUTATION = gql`
 `;
 
 const LIST_FOLDERS_QUERY = gql`
-  query AppMessageFolders($messageChannelId: UUID!) {
-    appMessageFolders(messageChannelId: $messageChannelId) {
+  query AppMessageFolders($filter: ListAppMessageFoldersInput) {
+    appMessageFolders(filter: $filter) {
       id
       externalId
       name
@@ -1039,7 +1039,7 @@ describe('app message channels API (e2e)', () => {
 
       const response = await request({
         query: LIST_FOLDERS_QUERY,
-        variables: { messageChannelId: channel.id },
+        variables: { filter: { messageChannelId: channel.id } },
       });
 
       expect(response.body.errors).toBeUndefined();
@@ -1052,13 +1052,47 @@ describe('app message channels API (e2e)', () => {
       ]);
     });
 
+    it("lists folders across the application's channels and nothing else without a filter", async () => {
+      const channel = await createChannelOrThrow();
+      const otherHandleChannel = await createChannelOrThrow({
+        handle: 'second-bot@linkedin.test',
+      });
+      const foreignChannel = await createChannelOrThrow({
+        connectedAccountId: otherAppConnectionId,
+        token: otherApplicationToken,
+      });
+
+      await syncFolders({
+        messageChannelId: channel.id,
+        folders: [{ externalId: 'inb_support', name: 'Support' }],
+      });
+      await syncFolders({
+        messageChannelId: otherHandleChannel.id,
+        folders: [{ externalId: 'inb_sales', name: 'Sales' }],
+      });
+      await syncFolders({
+        messageChannelId: foreignChannel.id,
+        folders: [{ externalId: 'inb_foreign', name: 'Foreign' }],
+        token: otherApplicationToken,
+      });
+
+      const response = await request({ query: LIST_FOLDERS_QUERY });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.appMessageFolders.map(
+          (folder: { externalId: string }) => folder.externalId,
+        ),
+      ).toEqual(['inb_sales', 'inb_support']);
+    });
+
     it("refuses another application's channel", async () => {
       const channel = await createChannelOrThrow();
 
       const response = await request(
         {
           query: LIST_FOLDERS_QUERY,
-          variables: { messageChannelId: channel.id },
+          variables: { filter: { messageChannelId: channel.id } },
         },
         otherApplicationToken,
       );

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -21,10 +22,13 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
 
-type ChannelScope = {
+type ApplicationScope = {
   applicationId: string;
   workspaceId: string;
   requestUserWorkspaceId: string | null;
+};
+
+type ChannelScope = ApplicationScope & {
   messageChannelId: string;
 };
 
@@ -38,10 +42,31 @@ export class ApplicationMessageFoldersService {
     private readonly cacheLockService: CacheLockService,
   ) {}
 
-  async list(scope: ChannelScope): Promise<MessageFolderDTO[]> {
-    await this.findOwnedChannelOrThrow(scope);
+  async list({
+    messageChannelId,
+    ...applicationScope
+  }: ApplicationScope & {
+    messageChannelId?: string;
+  }): Promise<MessageFolderDTO[]> {
+    if (isDefined(messageChannelId)) {
+      await this.findOwnedChannelOrThrow({
+        ...applicationScope,
+        messageChannelId,
+      });
 
-    return this.findChannelFolders(scope);
+      return this.findFolders({
+        workspaceId: applicationScope.workspaceId,
+        messageChannelIds: [messageChannelId],
+      });
+    }
+
+    const reachableChannels =
+      await this.applicationMessageChannelsService.list(applicationScope);
+
+    return this.findFolders({
+      workspaceId: applicationScope.workspaceId,
+      messageChannelIds: reachableChannels.map((channel) => channel.id),
+    });
   }
 
   async sync({
@@ -63,7 +88,10 @@ export class ApplicationMessageFoldersService {
       APP_INGESTION_LOCK_OPTIONS,
     );
 
-    return this.findChannelFolders(scope);
+    return this.findFolders({
+      workspaceId,
+      messageChannelIds: [messageChannelId],
+    });
   }
 
   private async applySync({
@@ -152,14 +180,19 @@ export class ApplicationMessageFoldersService {
     });
   }
 
-  private findChannelFolders({
+  private async findFolders({
     workspaceId,
-    messageChannelId,
-  }: Pick<ChannelScope, 'workspaceId' | 'messageChannelId'>): Promise<
-    MessageFolderDTO[]
-  > {
+    messageChannelIds,
+  }: {
+    workspaceId: string;
+    messageChannelIds: string[];
+  }): Promise<MessageFolderDTO[]> {
+    if (messageChannelIds.length === 0) {
+      return [];
+    }
+
     return this.messageFolderRepository.find(workspaceId, {
-      where: { messageChannelId },
+      where: { messageChannelId: In(messageChannelIds) },
       order: { name: 'ASC', id: 'ASC' },
     });
   }

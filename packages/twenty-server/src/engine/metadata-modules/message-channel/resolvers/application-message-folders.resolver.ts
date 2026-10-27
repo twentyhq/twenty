@@ -7,7 +7,6 @@ import {
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -17,6 +16,7 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { ListAppMessageFoldersInput } from 'src/engine/metadata-modules/message-channel/dtos/list-app-message-folders.input';
 import { SyncAppMessageFoldersInput } from 'src/engine/metadata-modules/message-channel/dtos/sync-app-message-folders.input';
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
 import { ApplicationMessageFoldersService } from 'src/engine/metadata-modules/message-channel/services/application-message-folders.service';
@@ -46,14 +46,13 @@ export class ApplicationMessageFoldersResolver {
     @AuthWorkspace() workspace: FlatWorkspace,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
-    @Args('messageChannelId', { type: () => UUIDScalarType })
-    messageChannelId: string,
+    @Args('filter', { nullable: true }) filter?: ListAppMessageFoldersInput,
   ): Promise<MessageFolderDTO[]> {
     return this.applicationMessageFoldersService.list({
       applicationId: application.id,
       workspaceId: workspace.id,
       requestUserWorkspaceId: userWorkspaceId ?? null,
-      messageChannelId,
+      messageChannelId: filter?.messageChannelId,
     });
   }
 

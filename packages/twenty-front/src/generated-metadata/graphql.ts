@@ -2920,6 +2920,10 @@ export type ListAppMessageChannelsInput = {
   connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
+export type ListAppMessageFoldersInput = {
+  messageChannelId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
 export type Location = {
   __typename?: 'Location';
   lat?: Maybe<Scalars['Float']['output']>;
@@ -5819,7 +5823,7 @@ export type QueryAppMessageChannelsArgs = {
 
 
 export type QueryAppMessageFoldersArgs = {
-  messageChannelId: Scalars['UUID']['input'];
+  filter?: InputMaybe<ListAppMessageFoldersInput>;
 };
 
 
