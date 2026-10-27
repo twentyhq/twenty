@@ -1,3 +1,4 @@
+import { GETTING_STARTED_HIDDEN_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-hidden-user-var-key.constant';
 import { GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-selected-step-user-var-key.constant';
 import { GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-snoozed-until-user-var-key.constant';
 import { GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX } from 'src/engine/core-modules/getting-started/constants/getting-started-step-user-var-key-prefix.constant';
@@ -21,5 +22,6 @@ export type GettingStartedKeyValueTypeMap = {
 } & {
   [GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY]: GettingStartedStep;
   [GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY]: string | null;
+  [GETTING_STARTED_HIDDEN_USER_VAR_KEY]: boolean;
   [GETTING_STARTED_TRACK_USER_VAR_KEY]: GettingStartedTrack;
 };

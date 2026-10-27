@@ -32,6 +32,7 @@ export const useShouldOpenGettingStarted = ({
         permissionFlagMap,
       }),
       snoozedUntil: progress.snoozedUntil,
+      isHidden: progress.isHidden,
       now: new Date(),
     }),
     isLoading: false,

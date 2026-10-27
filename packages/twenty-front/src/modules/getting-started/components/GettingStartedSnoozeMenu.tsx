@@ -8,9 +8,11 @@ import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/f
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -19,6 +21,7 @@ import {
   IconClock,
   type IconComponent,
   IconDotsVertical,
+  IconEyeOff,
   IconZzz,
 } from 'twenty-ui/icon';
 
@@ -29,6 +32,8 @@ export const GettingStartedSnoozeMenu = () => {
   const { trialEnd } = useGettingStartedTrial();
   const { timeZone, dateFormat, timeFormat } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
+  const navigate = useNavigate();
+  const { defaultHomePagePath } = useDefaultHomePagePath();
 
   const snoozeOptions: {
     option: GettingStartedSnoozeOption;
@@ -48,14 +53,20 @@ export const GettingStartedSnoozeMenu = () => {
       trialEnd,
     });
 
-  const snooze = (option: GettingStartedSnoozeOption) => {
+  const snooze = async (option: GettingStartedSnoozeOption) => {
     const snoozedUntil = getSnoozedUntil(option);
 
     if (!isDefined(snoozedUntil)) {
       return;
     }
 
-    void updateGettingStarted({ snoozedUntil });
+    await updateGettingStarted({ snoozedUntil });
+    navigate(defaultHomePagePath);
+  };
+
+  const hideForGood = async () => {
+    await updateGettingStarted({ isHidden: true });
+    navigate(defaultHomePagePath);
   };
 
   return (
@@ -95,12 +106,22 @@ export const GettingStartedSnoozeMenu = () => {
                 }
                 descriptionPlacement="inline"
                 disabled={isSaving || !isDefined(snoozedUntil)}
-                onClick={() => snooze(option)}
+                onClick={() => void snooze(option)}
               >
                 {label}
               </Dropdown.ActionItem>
             );
           })}
+        </Dropdown.Section>
+        <Dropdown.Separator />
+        <Dropdown.Section>
+          <Dropdown.ActionItem
+            startIcon={<IconEyeOff />}
+            disabled={isSaving}
+            onClick={() => void hideForGood()}
+          >
+            {t`Hide for good`}
+          </Dropdown.ActionItem>
         </Dropdown.Section>
       </DropdownContent>
     </DropdownRoot>

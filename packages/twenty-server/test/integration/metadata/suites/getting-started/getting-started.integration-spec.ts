@@ -30,6 +30,7 @@ const UPDATE_GETTING_STARTED_MUTATION = gql`
     updateGettingStarted(input: $input) {
       selectedStep
       snoozedUntil
+      isHidden
     }
   }
 `;
@@ -93,13 +94,14 @@ describe('gettingStarted (e2e)', () => {
   });
 
   describe('updateGettingStarted', () => {
-    it('persists the selected step and the snooze', async () => {
+    it('persists the selected step, the snooze and the hide', async () => {
       const response = await makeMetadataApiRequest({
         query: UPDATE_GETTING_STARTED_MUTATION,
         variables: {
           input: {
             selectedStep: 'INVITE_TEAM',
             snoozedUntil: '2099-01-01T00:00:00.000Z',
+            isHidden: true,
           },
         },
       });
@@ -108,6 +110,7 @@ describe('gettingStarted (e2e)', () => {
       expect(response.body.data.updateGettingStarted).toEqual({
         selectedStep: 'INVITE_TEAM',
         snoozedUntil: '2099-01-01T00:00:00.000Z',
+        isHidden: true,
       });
     });
 

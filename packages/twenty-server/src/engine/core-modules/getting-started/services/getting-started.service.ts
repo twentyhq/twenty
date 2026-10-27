@@ -14,6 +14,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { GETTING_STARTED_HIDDEN_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-hidden-user-var-key.constant';
 import { GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-selected-step-user-var-key.constant';
 import { GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-snoozed-until-user-var-key.constant';
 import { GETTING_STARTED_STEP_DEFINITIONS } from 'src/engine/core-modules/getting-started/constants/getting-started-step-definitions.constant';
@@ -126,6 +127,7 @@ export class GettingStartedService {
       selectedStep:
         trackSteps.find((step) => step === savedSelectedStep) ?? null,
       snoozedUntil: typeof snoozedUntil === 'string' ? snoozedUntil : null,
+      isHidden: userVars.get(GETTING_STARTED_HIDDEN_USER_VAR_KEY) === true,
     };
   }
 
@@ -152,6 +154,15 @@ export class GettingStartedService {
         workspaceId,
         key: GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY,
         value: input.snoozedUntil,
+      });
+    }
+
+    if (isDefined(input.isHidden)) {
+      await this.userVarsService.set({
+        userId,
+        workspaceId,
+        key: GETTING_STARTED_HIDDEN_USER_VAR_KEY,
+        value: input.isHidden,
       });
     }
 

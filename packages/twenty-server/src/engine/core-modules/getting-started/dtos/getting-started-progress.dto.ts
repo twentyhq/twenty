@@ -19,4 +19,7 @@ export class GettingStartedProgressDTO {
 
   @Field(() => String, { nullable: true })
   snoozedUntil: string | null;
+
+  @Field(() => Boolean)
+  isHidden: boolean;
 }

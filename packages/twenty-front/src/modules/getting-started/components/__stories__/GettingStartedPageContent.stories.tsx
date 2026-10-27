@@ -42,6 +42,7 @@ const TRIAL_PROGRESS: GettingStartedProgressQuery['gettingStartedProgress'] = {
   completedSteps: [],
   selectedStep: null,
   snoozedUntil: null,
+  isHidden: false,
 };
 
 const meta: Meta<typeof GettingStartedPageContent> = {

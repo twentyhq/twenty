@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsEnum, IsISO8601, IsOptional } from 'class-validator';
+import { IsBoolean, IsEnum, IsISO8601, IsOptional } from 'class-validator';
 
 import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
 
@@ -15,4 +15,9 @@ export class UpdateGettingStartedInput {
   @IsOptional()
   @IsISO8601()
   snoozedUntil?: string | null;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isHidden?: boolean | null;
 }

@@ -123,7 +123,11 @@ export const GettingStartedSidebarCard = () => {
     useIsNavigationDrawerContentExpanded();
   const isGettingStartedPageOpen = isDefined(useMatch(AppPath.GettingStarted));
 
-  if (!isNavigationDrawerContentExpanded || !isDefined(progress)) {
+  if (
+    !isNavigationDrawerContentExpanded ||
+    !isDefined(progress) ||
+    progress.isHidden
+  ) {
     return null;
   }
 
