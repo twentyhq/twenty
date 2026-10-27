@@ -46,7 +46,7 @@
     "@types/node": "^24.7.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
-    "electron": "44.1.0",
+    "electron": "44.9.1",
     "esbuild": "^0.28.1",
     "jsdom": "^30.0.1",
     "sass": "^1.83.0",
