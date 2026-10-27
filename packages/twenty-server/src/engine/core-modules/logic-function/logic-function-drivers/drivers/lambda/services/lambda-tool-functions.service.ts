@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import * as fs from 'fs/promises';
 import { join } from 'path';
 
 import {
@@ -62,12 +62,10 @@ export class LambdaToolFunctionsService {
   async transpile(
     params: Omit<BuilderLambdaPayload, 'action'>,
   ): Promise<BuilderLambdaResult> {
+    await this.ensureBuilderLambdaExists();
+
     const lambdaClient = await this.awsClient.getLambdaClient();
     const builderFunctionName = await this.getBuilderFunctionName();
-    await this.ensureBuilderLambdaExists({
-      functionName: builderFunctionName,
-      copyFiles: copyBuilder,
-    });
 
     const payload: BuilderLambdaPayload = {
       action: 'transpile',
@@ -265,19 +263,16 @@ export class LambdaToolFunctionsService {
     await this.awsClient.waitFunctionActive(yarnInstallFunctionName);
   }
 
-  async ensureBuilderLambdaExists({
-    functionName,
-    copyFiles,
-  }: {
-    functionName: string;
-    copyFiles: (directory: string) => Promise<void>;
-  }): Promise<void> {
+  private async ensureBuilderLambdaExists(): Promise<void> {
+    const builderFunctionName = await this.getBuilderFunctionName();
     const lambdaClient = await this.awsClient.getLambdaClient();
 
-    const existing = await this.awsClient.getFunction(functionName);
-    if (isDefined(existing)) {
-      if (existing.Configuration?.State !== 'Active') {
-        await this.awsClient.waitFunctionActive(functionName);
+    const existingBuilder =
+      await this.awsClient.getFunction(builderFunctionName);
+
+    if (isDefined(existingBuilder)) {
+      if (existingBuilder.Configuration?.State !== 'Active') {
+        await this.awsClient.waitFunctionActive(builderFunctionName);
       }
 
       return;
@@ -290,7 +285,7 @@ export class LambdaToolFunctionsService {
       await temporaryDirManager.init();
 
     try {
-      await copyFiles(sourceTemporaryDir);
+      await copyBuilder(sourceTemporaryDir);
 
       await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
@@ -298,7 +293,7 @@ export class LambdaToolFunctionsService {
         Code: {
           ZipFile: await fs.readFile(lambdaZipPath),
         },
-        FunctionName: functionName,
+        FunctionName: builderFunctionName,
         Layers: [commonLayerArn],
         Handler: 'index.handler',
         Role: this.options.lambdaRole,
@@ -320,7 +315,7 @@ export class LambdaToolFunctionsService {
       await temporaryDirManager.clean();
     }
 
-    await this.awsClient.waitFunctionActive(functionName);
+    await this.awsClient.waitFunctionActive(builderFunctionName);
   }
 
   private async getCommonLayerName(): Promise<string> {
