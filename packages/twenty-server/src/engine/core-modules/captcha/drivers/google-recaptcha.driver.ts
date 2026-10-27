@@ -13,10 +13,10 @@ export class GoogleRecaptchaDriver implements CaptchaDriver {
   private readonly _siteKey: string;
   private readonly secretKey: string;
   private readonly minScore: number;
-  private readonly httpService: AxiosInstance;
+  private readonly httpService: Pick<AxiosInstance, 'post'>;
   constructor(
     private _options: CaptchaDriverOptions & { minScore: number },
-    httpClient: AxiosInstance,
+    httpClient: Pick<AxiosInstance, 'post'>,
   ) {
     this._siteKey = _options.siteKey;
     this.secretKey = _options.secretKey;

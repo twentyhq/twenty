@@ -2312,7 +2312,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @Max(1)
   @IsOptional()
-  CAPTCHA_MIN_SCORE = 0.5;
+  CAPTCHA_MIN_SCORE = 0;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

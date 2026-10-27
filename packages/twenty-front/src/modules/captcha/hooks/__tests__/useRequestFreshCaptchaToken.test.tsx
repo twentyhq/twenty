@@ -107,7 +107,7 @@ describe('useRequestFreshCaptchaToken', () => {
     jotaiStore.set(captchaState.atom, {
       provider: CaptchaDriverType.GOOGLE_RECAPTCHA,
       siteKey: 'google-site-key',
-    } as Captcha);
+    });
 
     const { result } = renderHook(
       () => useRequestFreshCaptchaToken('create_workspace'),

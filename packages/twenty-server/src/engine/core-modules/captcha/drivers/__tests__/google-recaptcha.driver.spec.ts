@@ -1,11 +1,9 @@
-import { type AxiosInstance } from 'axios';
-
 import { GoogleRecaptchaDriver } from 'src/engine/core-modules/captcha/drivers/google-recaptcha.driver';
 
 const buildDriver = (siteverifyResponse: Record<string, unknown>) => {
   const httpClient = {
     post: jest.fn().mockResolvedValue({ data: siteverifyResponse }),
-  } as unknown as AxiosInstance;
+  };
 
   return new GoogleRecaptchaDriver(
     { siteKey: 'site-key', secretKey: 'secret-key', minScore: 0.5 },
