@@ -19,7 +19,7 @@ const StyledActionRow = styled.div`
 
 type SettingsAdminUserWorkspaceActionsProps = {
   userId: string;
-  workspace: WorkspaceInfo;
+  workspace: Pick<WorkspaceInfo, 'id' | 'allowImpersonation'>;
   memberName: string;
 };
 
