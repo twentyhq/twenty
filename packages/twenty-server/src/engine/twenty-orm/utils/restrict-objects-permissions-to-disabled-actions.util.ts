@@ -11,7 +11,7 @@ const isOwningApplicationPrincipal = ({
   flatObjectMetadata,
 }: {
   principal: PermissionPrincipal | undefined;
-  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'applicationId'>;
 }): boolean =>
   principal?.type === 'application' &&
   principal.applicationId === flatObjectMetadata.applicationId;

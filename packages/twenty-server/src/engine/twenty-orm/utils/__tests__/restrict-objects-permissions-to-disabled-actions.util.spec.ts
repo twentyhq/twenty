@@ -42,15 +42,12 @@ const restrict = (
   principal: Parameters<
     typeof restrictObjectsPermissionsToDisabledActions
   >[0]['principal'],
-  disabledObjectPermissionActions: FlatObjectMetadata['disabledObjectPermissionActions'] = [
-    'canDestroyObjectRecords',
-  ],
 ) =>
   restrictObjectsPermissionsToDisabledActions({
     objectsPermissions: { [INVOICE_ID]: FULL_ACCESS },
-    flatObjectMetadataMaps: buildFlatObjectMetadataMaps(
-      disabledObjectPermissionActions,
-    ),
+    flatObjectMetadataMaps: buildFlatObjectMetadataMaps([
+      'canDestroyObjectRecords',
+    ]),
     principal,
   });
 
