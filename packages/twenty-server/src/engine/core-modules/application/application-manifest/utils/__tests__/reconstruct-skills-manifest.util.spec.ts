@@ -7,12 +7,16 @@ import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/applica
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 
-const APP_UID = '10000000-0000-4000-8000-000000000001';
+const APP_UNIVERSAL_IDENTIFIER = '10000000-0000-4000-8000-000000000001';
 const NOW = '2026-09-14T10:00:00.000Z';
-const OUTREACH_SKILL_UID = '20000000-0000-4000-8000-000000000001';
-const DEACTIVATED_SKILL_UID = '20000000-0000-4000-8000-000000000002';
-const SYSTEM_SKILL_UID = '20000000-0000-4000-8000-000000000003';
-const WORKSPACE_SKILL_UID = '20000000-0000-4000-8000-000000000004';
+const OUTREACH_SKILL_UNIVERSAL_IDENTIFIER =
+  '20000000-0000-4000-8000-000000000001';
+const DEACTIVATED_SKILL_UNIVERSAL_IDENTIFIER =
+  '20000000-0000-4000-8000-000000000002';
+const SYSTEM_SKILL_UNIVERSAL_IDENTIFIER =
+  '20000000-0000-4000-8000-000000000003';
+const WORKSPACE_SKILL_UNIVERSAL_IDENTIFIER =
+  '20000000-0000-4000-8000-000000000004';
 
 const buildSkillManifest = (universalIdentifier: string): SkillManifest => ({
   universalIdentifier,
@@ -27,7 +31,7 @@ const buildFlatSkill = (
 ): FlatSkill => ({
   ...fromSkillManifestToUniversalFlatSkill({
     skillManifest: buildSkillManifest(universalIdentifier),
-    applicationUniversalIdentifier: APP_UID,
+    applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
     now: NOW,
   }),
   id: `${universalIdentifier}-id`,
@@ -40,10 +44,14 @@ const { skills, coverage } = reconstructSkillsManifest({
   applicationAllFlatEntityMaps: {
     flatSkillMaps: addAllFlatEntitiesToFlatEntityMaps({
       flatEntities: [
-        buildFlatSkill(OUTREACH_SKILL_UID),
-        buildFlatSkill(DEACTIVATED_SKILL_UID, { isActive: false }),
-        buildFlatSkill(SYSTEM_SKILL_UID, { isSystem: true }),
-        buildFlatSkill(WORKSPACE_SKILL_UID, { isCustom: true }),
+        buildFlatSkill(OUTREACH_SKILL_UNIVERSAL_IDENTIFIER),
+        buildFlatSkill(DEACTIVATED_SKILL_UNIVERSAL_IDENTIFIER, {
+          isActive: false,
+        }),
+        buildFlatSkill(SYSTEM_SKILL_UNIVERSAL_IDENTIFIER, { isSystem: true }),
+        buildFlatSkill(WORKSPACE_SKILL_UNIVERSAL_IDENTIFIER, {
+          isCustom: true,
+        }),
       ],
       flatEntityMaps: createEmptyAllFlatEntityMaps().flatSkillMaps,
     }),
@@ -52,19 +60,24 @@ const { skills, coverage } = reconstructSkillsManifest({
 
 describe('reconstructSkillsManifest', () => {
   it('should export an active application skill', () => {
-    expect(skills).toEqual([buildSkillManifest(OUTREACH_SKILL_UID)]);
+    expect(skills).toEqual([
+      buildSkillManifest(OUTREACH_SKILL_UNIVERSAL_IDENTIFIER),
+    ]);
     expect(coverage).toContainEqual({
       metadataName: 'skill',
-      universalIdentifier: OUTREACH_SKILL_UID,
+      universalIdentifier: OUTREACH_SKILL_UNIVERSAL_IDENTIFIER,
       status: ApplicationExportCoverageStatus.EXPORTED,
     });
   });
 
   it.each([
-    [WORKSPACE_SKILL_UID, 'skill created in the workspace'],
-    [DEACTIVATED_SKILL_UID, 'skill deactivated in this workspace'],
+    [WORKSPACE_SKILL_UNIVERSAL_IDENTIFIER, 'skill created in the workspace'],
     [
-      SYSTEM_SKILL_UID,
+      DEACTIVATED_SKILL_UNIVERSAL_IDENTIFIER,
+      'skill deactivated in this workspace',
+    ],
+    [
+      SYSTEM_SKILL_UNIVERSAL_IDENTIFIER,
       'skill with values a definition cannot express: isSystem',
     ],
   ])(

@@ -19,24 +19,41 @@ const APP_ID = 'application-id';
 const STANDARD_APP_ID = 'standard-application-id';
 const WORKSPACE_ID = 'workspace-id';
 const NOW = '2026-09-14T10:00:00.000Z';
-const APP_UID = '10000000-0000-4000-8000-000000000001';
-const SUPPORT_ROLE_UID = '20000000-0000-4000-8000-000000000001';
-const UNSUPPORTED_ROLE_UID = '20000000-0000-4000-8000-000000000002';
-const STANDARD_ROLE_UID = '20000000-0000-4000-8000-000000000003';
-const MISSING_ROLE_UID = '20000000-0000-4000-8000-000000000004';
-const SUPPORT_AGENT_UID = '30000000-0000-4000-8000-000000000001';
-const STANDARD_ROLE_AGENT_UID = '30000000-0000-4000-8000-000000000002';
-const UNSUPPORTED_ROLE_AGENT_UID = '30000000-0000-4000-8000-000000000003';
-const MISSING_ROLE_AGENT_UID = '30000000-0000-4000-8000-000000000004';
-const TWO_ROLES_AGENT_UID = '30000000-0000-4000-8000-000000000005';
-const WORKSPACE_ROLE_AGENT_UID = '30000000-0000-4000-8000-000000000006';
-const CONFIGURED_AGENT_UID = '30000000-0000-4000-8000-000000000007';
-const DELETED_AGENT_UID = '30000000-0000-4000-8000-000000000008';
-const FOREIGN_AGENT_UID = '30000000-0000-4000-8000-000000000009';
-const UNASSIGNED_AGENT_UID = '30000000-0000-4000-8000-00000000000a';
-const WORKSPACE_AGENT_UID = '30000000-0000-4000-8000-00000000000b';
-const WORKSPACE_ROLE_TARGET_UID = '40000000-0000-4000-8000-000000000001';
-const SECOND_ROLE_TARGET_UID = '40000000-0000-4000-8000-000000000002';
+const APP_UNIVERSAL_IDENTIFIER = '10000000-0000-4000-8000-000000000001';
+const SUPPORT_ROLE_UNIVERSAL_IDENTIFIER =
+  '20000000-0000-4000-8000-000000000001';
+const UNSUPPORTED_ROLE_UNIVERSAL_IDENTIFIER =
+  '20000000-0000-4000-8000-000000000002';
+const STANDARD_ROLE_UNIVERSAL_IDENTIFIER =
+  '20000000-0000-4000-8000-000000000003';
+const MISSING_ROLE_UNIVERSAL_IDENTIFIER =
+  '20000000-0000-4000-8000-000000000004';
+const SUPPORT_AGENT_UNIVERSAL_IDENTIFIER =
+  '30000000-0000-4000-8000-000000000001';
+const STANDARD_ROLE_AGENT_UNIVERSAL_IDENTIFIER =
+  '30000000-0000-4000-8000-000000000002';
+const UNSUPPORTED_ROLE_AGENT_UNIVERSAL_IDENTIFIER =
+  '30000000-0000-4000-8000-000000000003';
+const MISSING_ROLE_AGENT_UNIVERSAL_IDENTIFIER =
+  '30000000-0000-4000-8000-000000000004';
+const TWO_ROLES_AGENT_UNIVERSAL_IDENTIFIER =
+  '30000000-0000-4000-8000-000000000005';
+const WORKSPACE_ROLE_AGENT_UNIVERSAL_IDENTIFIER =
+  '30000000-0000-4000-8000-000000000006';
+const CONFIGURED_AGENT_UNIVERSAL_IDENTIFIER =
+  '30000000-0000-4000-8000-000000000007';
+const DELETED_AGENT_UNIVERSAL_IDENTIFIER =
+  '30000000-0000-4000-8000-000000000008';
+const FOREIGN_AGENT_UNIVERSAL_IDENTIFIER =
+  '30000000-0000-4000-8000-000000000009';
+const UNASSIGNED_AGENT_UNIVERSAL_IDENTIFIER =
+  '30000000-0000-4000-8000-00000000000a';
+const WORKSPACE_AGENT_UNIVERSAL_IDENTIFIER =
+  '30000000-0000-4000-8000-00000000000b';
+const WORKSPACE_ROLE_TARGET_UNIVERSAL_IDENTIFIER =
+  '40000000-0000-4000-8000-000000000001';
+const SECOND_ROLE_TARGET_UNIVERSAL_IDENTIFIER =
+  '40000000-0000-4000-8000-000000000002';
 
 const buildAgentManifest = (universalIdentifier: string): AgentManifest => ({
   universalIdentifier,
@@ -52,7 +69,7 @@ const buildFlatAgent = (
 ): FlatAgent => ({
   ...fromAgentManifestToUniversalFlatAgent({
     agentManifest: buildAgentManifest(universalIdentifier),
-    applicationUniversalIdentifier: APP_UID,
+    applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
     now: NOW,
   }),
   id: `${universalIdentifier}-id`,
@@ -61,14 +78,17 @@ const buildFlatAgent = (
   ...overrides,
 });
 
-const buildFlatRole = (
-  universalIdentifier: string,
+const buildFlatRole = ({
+  universalIdentifier,
   applicationId = APP_ID,
-): FlatRole =>
+}: {
+  universalIdentifier: string;
+  applicationId?: string;
+}): FlatRole =>
   ({
     ...fromRoleManifestToUniversalFlatRole({
       roleManifest: { universalIdentifier, label: 'Role' },
-      applicationUniversalIdentifier: APP_UID,
+      applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
       now: NOW,
     }),
     id: `${universalIdentifier}-id`,
@@ -88,7 +108,7 @@ const buildFlatRoleTarget = ({
   const universalFlatRoleTarget = fromAgentManifestToUniversalFlatRoleTarget({
     agentUniversalIdentifier,
     roleUniversalIdentifier,
-    applicationUniversalIdentifier: APP_UID,
+    applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
     now: NOW,
   });
 
@@ -133,7 +153,7 @@ const buildMaps = ({
 };
 
 const applicationAgents = [
-  buildFlatAgent(SUPPORT_AGENT_UID, {
+  buildFlatAgent(SUPPORT_AGENT_UNIVERSAL_IDENTIFIER, {
     icon: 'IconRobot',
     triggers: [
       {
@@ -145,60 +165,63 @@ const applicationAgents = [
       },
     ],
   }),
-  buildFlatAgent(STANDARD_ROLE_AGENT_UID),
-  buildFlatAgent(UNSUPPORTED_ROLE_AGENT_UID),
-  buildFlatAgent(MISSING_ROLE_AGENT_UID),
-  buildFlatAgent(TWO_ROLES_AGENT_UID),
-  buildFlatAgent(WORKSPACE_ROLE_AGENT_UID),
-  buildFlatAgent(CONFIGURED_AGENT_UID, {
+  buildFlatAgent(STANDARD_ROLE_AGENT_UNIVERSAL_IDENTIFIER),
+  buildFlatAgent(UNSUPPORTED_ROLE_AGENT_UNIVERSAL_IDENTIFIER),
+  buildFlatAgent(MISSING_ROLE_AGENT_UNIVERSAL_IDENTIFIER),
+  buildFlatAgent(TWO_ROLES_AGENT_UNIVERSAL_IDENTIFIER),
+  buildFlatAgent(WORKSPACE_ROLE_AGENT_UNIVERSAL_IDENTIFIER),
+  buildFlatAgent(CONFIGURED_AGENT_UNIVERSAL_IDENTIFIER, {
     modelConfiguration: { webSearch: { enabled: true } },
   }),
-  buildFlatAgent(DELETED_AGENT_UID, { deletedAt: NOW }),
-  buildFlatAgent(UNASSIGNED_AGENT_UID),
-  buildFlatAgent(WORKSPACE_AGENT_UID, { isCustom: true, isSystem: false }),
+  buildFlatAgent(DELETED_AGENT_UNIVERSAL_IDENTIFIER, { deletedAt: NOW }),
+  buildFlatAgent(UNASSIGNED_AGENT_UNIVERSAL_IDENTIFIER),
+  buildFlatAgent(WORKSPACE_AGENT_UNIVERSAL_IDENTIFIER, {
+    isCustom: true,
+    isSystem: false,
+  }),
 ];
 const applicationRoles = [
-  buildFlatRole(SUPPORT_ROLE_UID),
-  buildFlatRole(UNSUPPORTED_ROLE_UID),
+  buildFlatRole({ universalIdentifier: SUPPORT_ROLE_UNIVERSAL_IDENTIFIER }),
+  buildFlatRole({ universalIdentifier: UNSUPPORTED_ROLE_UNIVERSAL_IDENTIFIER }),
 ];
 const applicationRoleTargets = [
   buildFlatRoleTarget({
-    agentUniversalIdentifier: SUPPORT_AGENT_UID,
-    roleUniversalIdentifier: SUPPORT_ROLE_UID,
+    agentUniversalIdentifier: SUPPORT_AGENT_UNIVERSAL_IDENTIFIER,
+    roleUniversalIdentifier: SUPPORT_ROLE_UNIVERSAL_IDENTIFIER,
   }),
   buildFlatRoleTarget({
-    agentUniversalIdentifier: STANDARD_ROLE_AGENT_UID,
-    roleUniversalIdentifier: STANDARD_ROLE_UID,
+    agentUniversalIdentifier: STANDARD_ROLE_AGENT_UNIVERSAL_IDENTIFIER,
+    roleUniversalIdentifier: STANDARD_ROLE_UNIVERSAL_IDENTIFIER,
   }),
   buildFlatRoleTarget({
-    agentUniversalIdentifier: UNSUPPORTED_ROLE_AGENT_UID,
-    roleUniversalIdentifier: UNSUPPORTED_ROLE_UID,
+    agentUniversalIdentifier: UNSUPPORTED_ROLE_AGENT_UNIVERSAL_IDENTIFIER,
+    roleUniversalIdentifier: UNSUPPORTED_ROLE_UNIVERSAL_IDENTIFIER,
   }),
   buildFlatRoleTarget({
-    agentUniversalIdentifier: MISSING_ROLE_AGENT_UID,
-    roleUniversalIdentifier: MISSING_ROLE_UID,
+    agentUniversalIdentifier: MISSING_ROLE_AGENT_UNIVERSAL_IDENTIFIER,
+    roleUniversalIdentifier: MISSING_ROLE_UNIVERSAL_IDENTIFIER,
   }),
   buildFlatRoleTarget({
-    agentUniversalIdentifier: TWO_ROLES_AGENT_UID,
-    roleUniversalIdentifier: SUPPORT_ROLE_UID,
+    agentUniversalIdentifier: TWO_ROLES_AGENT_UNIVERSAL_IDENTIFIER,
+    roleUniversalIdentifier: SUPPORT_ROLE_UNIVERSAL_IDENTIFIER,
   }),
   buildFlatRoleTarget({
-    agentUniversalIdentifier: TWO_ROLES_AGENT_UID,
-    roleUniversalIdentifier: STANDARD_ROLE_UID,
-    universalIdentifier: SECOND_ROLE_TARGET_UID,
+    agentUniversalIdentifier: TWO_ROLES_AGENT_UNIVERSAL_IDENTIFIER,
+    roleUniversalIdentifier: STANDARD_ROLE_UNIVERSAL_IDENTIFIER,
+    universalIdentifier: SECOND_ROLE_TARGET_UNIVERSAL_IDENTIFIER,
   }),
   buildFlatRoleTarget({
-    agentUniversalIdentifier: WORKSPACE_ROLE_AGENT_UID,
-    roleUniversalIdentifier: SUPPORT_ROLE_UID,
-    universalIdentifier: WORKSPACE_ROLE_TARGET_UID,
+    agentUniversalIdentifier: WORKSPACE_ROLE_AGENT_UNIVERSAL_IDENTIFIER,
+    roleUniversalIdentifier: SUPPORT_ROLE_UNIVERSAL_IDENTIFIER,
+    universalIdentifier: WORKSPACE_ROLE_TARGET_UNIVERSAL_IDENTIFIER,
   }),
   buildFlatRoleTarget({
-    agentUniversalIdentifier: DELETED_AGENT_UID,
-    roleUniversalIdentifier: SUPPORT_ROLE_UID,
+    agentUniversalIdentifier: DELETED_AGENT_UNIVERSAL_IDENTIFIER,
+    roleUniversalIdentifier: SUPPORT_ROLE_UNIVERSAL_IDENTIFIER,
   }),
   buildFlatRoleTarget({
-    agentUniversalIdentifier: FOREIGN_AGENT_UID,
-    roleUniversalIdentifier: SUPPORT_ROLE_UID,
+    agentUniversalIdentifier: FOREIGN_AGENT_UNIVERSAL_IDENTIFIER,
+    roleUniversalIdentifier: SUPPORT_ROLE_UNIVERSAL_IDENTIFIER,
   }),
 ];
 
@@ -211,7 +234,10 @@ const allFlatEntityMaps = buildMaps({
   agents: applicationAgents,
   roles: [
     ...applicationRoles,
-    buildFlatRole(STANDARD_ROLE_UID, STANDARD_APP_ID),
+    buildFlatRole({
+      universalIdentifier: STANDARD_ROLE_UNIVERSAL_IDENTIFIER,
+      applicationId: STANDARD_APP_ID,
+    }),
   ],
   roleTargets: applicationRoleTargets,
 });
@@ -219,12 +245,14 @@ const allFlatEntityMaps = buildMaps({
 const { agents, coverage } = reconstructAgentsManifest({
   applicationAllFlatEntityMaps,
   allFlatEntityMaps,
-  resolvableRoleUniversalIdentifiers: new Set([SUPPORT_ROLE_UID]),
+  resolvableRoleUniversalIdentifiers: new Set([
+    SUPPORT_ROLE_UNIVERSAL_IDENTIFIER,
+  ]),
 });
 
 const roleTargetUniversalIdentifierOf = (agentUniversalIdentifier: string) =>
   getRoleTargetUniversalIdentifier({
-    applicationUniversalIdentifier: APP_UID,
+    applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
     agentUniversalIdentifier,
   });
 
@@ -239,12 +267,13 @@ describe('reconstructAgentsManifest', () => {
   it('should export an agent with its exported role and triggers', () => {
     expect(
       agents.find(
-        ({ universalIdentifier }) => universalIdentifier === SUPPORT_AGENT_UID,
+        ({ universalIdentifier }) =>
+          universalIdentifier === SUPPORT_AGENT_UNIVERSAL_IDENTIFIER,
       ),
     ).toEqual({
-      ...buildAgentManifest(SUPPORT_AGENT_UID),
+      ...buildAgentManifest(SUPPORT_AGENT_UNIVERSAL_IDENTIFIER),
       icon: 'IconRobot',
-      roleUniversalIdentifier: SUPPORT_ROLE_UID,
+      roleUniversalIdentifier: SUPPORT_ROLE_UNIVERSAL_IDENTIFIER,
       triggers: [
         {
           universalIdentifier: '50000000-0000-4000-8000-000000000001',
@@ -253,13 +282,13 @@ describe('reconstructAgentsManifest', () => {
         },
       ],
     });
-    expect(findCoverage('agent', SUPPORT_AGENT_UID)?.status).toBe(
-      ApplicationExportCoverageStatus.EXPORTED,
-    );
+    expect(
+      findCoverage('agent', SUPPORT_AGENT_UNIVERSAL_IDENTIFIER)?.status,
+    ).toBe(ApplicationExportCoverageStatus.EXPORTED);
     expect(
       findCoverage(
         'roleTarget',
-        roleTargetUniversalIdentifierOf(SUPPORT_AGENT_UID),
+        roleTargetUniversalIdentifierOf(SUPPORT_AGENT_UNIVERSAL_IDENTIFIER),
       )?.status,
     ).toBe(ApplicationExportCoverageStatus.EXPORTED);
   });
@@ -268,35 +297,41 @@ describe('reconstructAgentsManifest', () => {
     expect(
       agents.map(({ universalIdentifier }) => universalIdentifier),
     ).toEqual([
-      SUPPORT_AGENT_UID,
-      STANDARD_ROLE_AGENT_UID,
-      UNASSIGNED_AGENT_UID,
+      SUPPORT_AGENT_UNIVERSAL_IDENTIFIER,
+      STANDARD_ROLE_AGENT_UNIVERSAL_IDENTIFIER,
+      UNASSIGNED_AGENT_UNIVERSAL_IDENTIFIER,
     ]);
     expect(
       agents.find(
         ({ universalIdentifier }) =>
-          universalIdentifier === STANDARD_ROLE_AGENT_UID,
+          universalIdentifier === STANDARD_ROLE_AGENT_UNIVERSAL_IDENTIFIER,
       )?.roleUniversalIdentifier,
-    ).toBe(STANDARD_ROLE_UID);
+    ).toBe(STANDARD_ROLE_UNIVERSAL_IDENTIFIER);
     expect(
       agents.find(
         ({ universalIdentifier }) =>
-          universalIdentifier === UNASSIGNED_AGENT_UID,
+          universalIdentifier === UNASSIGNED_AGENT_UNIVERSAL_IDENTIFIER,
       ),
     ).not.toHaveProperty('roleUniversalIdentifier');
   });
 
   it.each([
-    [WORKSPACE_AGENT_UID, 'agent created in the workspace'],
-    [UNSUPPORTED_ROLE_AGENT_UID, 'agent on an unsupported role'],
-    [MISSING_ROLE_AGENT_UID, 'agent on a role that does not exist'],
-    [TWO_ROLES_AGENT_UID, 'agent with more than one role'],
+    [WORKSPACE_AGENT_UNIVERSAL_IDENTIFIER, 'agent created in the workspace'],
     [
-      WORKSPACE_ROLE_AGENT_UID,
+      UNSUPPORTED_ROLE_AGENT_UNIVERSAL_IDENTIFIER,
+      'agent on an unsupported role',
+    ],
+    [
+      MISSING_ROLE_AGENT_UNIVERSAL_IDENTIFIER,
+      'agent on a role that does not exist',
+    ],
+    [TWO_ROLES_AGENT_UNIVERSAL_IDENTIFIER, 'agent with more than one role'],
+    [
+      WORKSPACE_ROLE_AGENT_UNIVERSAL_IDENTIFIER,
       'agent whose role was assigned outside its definition',
     ],
     [
-      CONFIGURED_AGENT_UID,
+      CONFIGURED_AGENT_UNIVERSAL_IDENTIFIER,
       'agent with values a definition cannot express: modelConfiguration',
     ],
   ])(
@@ -312,22 +347,32 @@ describe('reconstructAgentsManifest', () => {
   );
 
   it('should leave a soft-deleted agent to the classifier', () => {
-    expect(findCoverage('agent', DELETED_AGENT_UID)).toBeUndefined();
+    expect(
+      findCoverage('agent', DELETED_AGENT_UNIVERSAL_IDENTIFIER),
+    ).toBeUndefined();
   });
 
   it.each([
     [
-      roleTargetUniversalIdentifierOf(UNSUPPORTED_ROLE_AGENT_UID),
-      'role target of an agent that is not exported',
-    ],
-    [SECOND_ROLE_TARGET_UID, 'role target of an agent that is not exported'],
-    [WORKSPACE_ROLE_TARGET_UID, 'role target of an agent that is not exported'],
-    [
-      roleTargetUniversalIdentifierOf(DELETED_AGENT_UID),
+      roleTargetUniversalIdentifierOf(
+        UNSUPPORTED_ROLE_AGENT_UNIVERSAL_IDENTIFIER,
+      ),
       'role target of an agent that is not exported',
     ],
     [
-      roleTargetUniversalIdentifierOf(FOREIGN_AGENT_UID),
+      SECOND_ROLE_TARGET_UNIVERSAL_IDENTIFIER,
+      'role target of an agent that is not exported',
+    ],
+    [
+      WORKSPACE_ROLE_TARGET_UNIVERSAL_IDENTIFIER,
+      'role target of an agent that is not exported',
+    ],
+    [
+      roleTargetUniversalIdentifierOf(DELETED_AGENT_UNIVERSAL_IDENTIFIER),
+      'role target of an agent that is not exported',
+    ],
+    [
+      roleTargetUniversalIdentifierOf(FOREIGN_AGENT_UNIVERSAL_IDENTIFIER),
       'role target of an agent outside the application',
     ],
   ])(
