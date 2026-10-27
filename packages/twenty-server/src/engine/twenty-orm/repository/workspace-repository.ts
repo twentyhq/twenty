@@ -1998,6 +1998,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     isMainAlias,
     flatObjectMetadata,
     operationType,
+  }: {
+    alias: string;
+    isMainAlias: boolean;
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
   }): RowAccessPolicy {
     if (
       isMainAlias &&
