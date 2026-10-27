@@ -1,3 +1,4 @@
+import { Test } from '@nestjs/testing';
 import {
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   getSystemViewFieldUniversalIdentifier,
@@ -7,15 +8,17 @@ import {
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { SyncWorkspaceMemberRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793117418686-sync-workspace-member-record-page.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
 const APPLICATION_ID = '20202020-2222-4222-8222-222222222222';
@@ -31,6 +34,9 @@ const createMaps = () =>
     twentyStandardApplicationId: APPLICATION_ID,
   }).allFlatEntityMaps;
 const args = { workspaceId: WORKSPACE_ID, options: {}, index: 0, total: 1 };
+type MigrationResult = ReturnType<
+  WorkspaceMigrationValidateBuildAndRunService['validateBuildAndRunLegacyWorkspaceMigration']
+>;
 type MigrationArgs = Parameters<
   WorkspaceMigrationValidateBuildAndRunService['validateBuildAndRunLegacyWorkspaceMigration']
 >[0];
@@ -38,64 +44,92 @@ type MigrationArgs = Parameters<
 describe('SyncWorkspaceMemberRecordPageCommand', () => {
   let maps: ReturnType<typeof createMaps>;
   let command: SyncWorkspaceMemberRecordPageCommand;
-  let migrate: jest.Mock<Promise<{ status: 'success' }>, [MigrationArgs]>;
+  let migrate: jest.Mock<MigrationResult, [MigrationArgs]>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     maps = createMaps();
-    migrate = jest.fn().mockResolvedValue({ status: 'success' });
-    command = new SyncWorkspaceMemberRecordPageCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: {
-              id: APPLICATION_ID,
-              universalIdentifier:
-                TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-            },
-          }),
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: jest.fn().mockImplementation(async () => maps),
-      } as unknown as WorkspaceCacheService,
-      {
-        validateBuildAndRunLegacyWorkspaceMigration: migrate,
-      } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-    );
+    migrate = jest.fn<MigrationResult, [MigrationArgs]>().mockResolvedValue({
+      status: 'success',
+      workspaceMigration: {
+        actions: [],
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
+      hasSchemaMetadataChanged: false,
+    });
+    const applicationService = {
+      findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+        .fn()
+        .mockResolvedValue({
+          twentyStandardFlatApplication: {
+            id: APPLICATION_ID,
+            universalIdentifier:
+              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          },
+        }),
+    } satisfies Pick<
+      ApplicationService,
+      'findWorkspaceTwentyStandardAndCustomApplicationOrThrow'
+    >;
+    const workspaceCacheService = {
+      getOrRecompute: jest.fn().mockImplementation(async () => maps),
+    } satisfies Pick<WorkspaceCacheService, 'getOrRecompute'>;
+    const workspaceMigrationService = {
+      validateBuildAndRunLegacyWorkspaceMigration: migrate,
+    } satisfies Pick<
+      WorkspaceMigrationValidateBuildAndRunService,
+      'validateBuildAndRunLegacyWorkspaceMigration'
+    >;
+    const module = await Test.createTestingModule({
+      providers: [
+        SyncWorkspaceMemberRecordPageCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        { provide: ApplicationService, useValue: applicationService },
+        { provide: WorkspaceCacheService, useValue: workspaceCacheService },
+        {
+          provide: WorkspaceMigrationValidateBuildAndRunService,
+          useValue: workspaceMigrationService,
+        },
+      ],
+    }).compile();
+    command = module.get(SyncWorkspaceMemberRecordPageCommand);
   });
 
   const removePage = () => {
-    delete maps.flatPageLayoutMaps.byUniversalIdentifier[
-      PAGE.universalIdentifier
-    ];
-    delete maps.flatPageLayoutTabMaps.byUniversalIdentifier[
-      PAGE.tabs.home.universalIdentifier
-    ];
-    delete maps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
-      PAGE.tabs.home.widgets.fields.universalIdentifier
-    ];
-    delete maps.flatViewMaps.byUniversalIdentifier[VIEW.universalIdentifier];
-    for (const field of Object.values(
-      maps.flatViewFieldMaps.byUniversalIdentifier,
-    ).filter(isDefined)) {
-      if (field.viewUniversalIdentifier === VIEW.universalIdentifier)
-        delete maps.flatViewFieldMaps.byUniversalIdentifier[
-          field.universalIdentifier
-        ];
-    }
-    for (const group of Object.values(
-      maps.flatViewFieldGroupMaps.byUniversalIdentifier,
-    ).filter(isDefined)) {
-      if (group.viewUniversalIdentifier === VIEW.universalIdentifier)
-        delete maps.flatViewFieldGroupMaps.byUniversalIdentifier[
-          group.universalIdentifier
-        ];
-    }
+    maps.flatPageLayoutMaps.byUniversalIdentifier = removePropertiesFromRecord(
+      maps.flatPageLayoutMaps.byUniversalIdentifier,
+      [PAGE.universalIdentifier],
+    );
+    maps.flatPageLayoutTabMaps.byUniversalIdentifier =
+      removePropertiesFromRecord(
+        maps.flatPageLayoutTabMaps.byUniversalIdentifier,
+        [PAGE.tabs.home.universalIdentifier],
+      );
+    maps.flatPageLayoutWidgetMaps.byUniversalIdentifier =
+      removePropertiesFromRecord(
+        maps.flatPageLayoutWidgetMaps.byUniversalIdentifier,
+        [PAGE.tabs.home.widgets.fields.universalIdentifier],
+      );
+    maps.flatViewMaps.byUniversalIdentifier = removePropertiesFromRecord(
+      maps.flatViewMaps.byUniversalIdentifier,
+      [VIEW.universalIdentifier],
+    );
+    maps.flatViewFieldMaps.byUniversalIdentifier = Object.fromEntries(
+      Object.entries(maps.flatViewFieldMaps.byUniversalIdentifier).filter(
+        ([, field]) =>
+          field?.viewUniversalIdentifier !== VIEW.universalIdentifier,
+      ),
+    );
+    maps.flatViewFieldGroupMaps.byUniversalIdentifier = Object.fromEntries(
+      Object.entries(maps.flatViewFieldGroupMaps.byUniversalIdentifier).filter(
+        ([, group]) =>
+          group?.viewUniversalIdentifier !== VIEW.universalIdentifier,
+      ),
+    );
   };
 
   const addRelation = (overrides: Partial<FlatFieldMetadata> = {}) => {
-    const field = {
+    const field = getFlatFieldMetadataMock({
       ...maps.flatFieldMetadataMaps.byUniversalIdentifier[
         MEMBER.fields.assignedTasks.universalIdentifier
       ]!,
@@ -105,7 +139,7 @@ describe('SyncWorkspaceMemberRecordPageCommand', () => {
       applicationUniversalIdentifier: CUSTOM_APPLICATION,
       name: 'assignedTickets',
       ...overrides,
-    } as FlatFieldMetadata;
+    });
     maps.flatFieldMetadataMaps.byUniversalIdentifier[
       field.universalIdentifier
     ] = field;
@@ -183,9 +217,11 @@ describe('SyncWorkspaceMemberRecordPageCommand', () => {
   });
 
   it('binds a missing widget to the existing fields view', async () => {
-    delete maps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
-      PAGE.tabs.home.widgets.fields.universalIdentifier
-    ];
+    maps.flatPageLayoutWidgetMaps.byUniversalIdentifier =
+      removePropertiesFromRecord(
+        maps.flatPageLayoutWidgetMaps.byUniversalIdentifier,
+        [PAGE.tabs.home.widgets.fields.universalIdentifier],
+      );
     await command.up(args);
     const widget =
       migrate.mock.calls[0][0].allFlatEntityOperationByMetadataName
@@ -198,23 +234,21 @@ describe('SyncWorkspaceMemberRecordPageCommand', () => {
     });
   });
 
-  it.each(['inactive', 'otherObject', 'notRelation'] as const)(
-    'skips %s custom fields',
-    async (kind) => {
-      addRelation(
-        kind === 'inactive'
-          ? { isActive: false }
-          : kind === 'otherObject'
-            ? {
-                objectMetadataUniversalIdentifier:
-                  STANDARD_OBJECTS.company.universalIdentifier,
-              }
-            : { type: FieldMetadataType.TEXT },
-      );
-      await command.up(args);
-      expect(migrate).not.toHaveBeenCalled();
+  it.each([
+    { name: 'inactive', overrides: { isActive: false } },
+    {
+      name: 'other object',
+      overrides: {
+        objectMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.company.universalIdentifier,
+      },
     },
-  );
+    { name: 'non-relation', overrides: { type: FieldMetadataType.TEXT } },
+  ])('skips $name custom fields', async ({ overrides }) => {
+    addRelation(overrides);
+    await command.up(args);
+    expect(migrate).not.toHaveBeenCalled();
+  });
 
   it.each([true, false])(
     'preserves a deleted relation view field, canonical identifier: %s',
@@ -241,28 +275,31 @@ describe('SyncWorkspaceMemberRecordPageCommand', () => {
   );
 
   it.each([
-    'flatPageLayoutMaps',
-    'flatPageLayoutTabMaps',
-    'flatViewMaps',
-  ] as const)('preserves a deleted parent in %s', async (mapName) => {
-    const identifier =
-      mapName === 'flatPageLayoutMaps'
-        ? PAGE.universalIdentifier
-        : mapName === 'flatPageLayoutTabMaps'
-          ? PAGE.tabs.home.universalIdentifier
-          : VIEW.universalIdentifier;
-    maps[mapName].byUniversalIdentifier[identifier]!.deletedAt =
-      '2026-10-26T00:00:00.000Z';
-    addRelation();
-    await command.up(args);
-    expect(migrate).not.toHaveBeenCalled();
-  });
+    { mapName: 'flatPageLayoutMaps', identifier: PAGE.universalIdentifier },
+    {
+      mapName: 'flatPageLayoutTabMaps',
+      identifier: PAGE.tabs.home.universalIdentifier,
+    },
+    { mapName: 'flatViewMaps', identifier: VIEW.universalIdentifier },
+  ] as const)(
+    'preserves a deleted parent in $mapName',
+    async ({ mapName, identifier }) => {
+      maps[mapName].byUniversalIdentifier[identifier]!.deletedAt =
+        '2026-10-26T00:00:00.000Z';
+      addRelation();
+      await command.up(args);
+      expect(migrate).not.toHaveBeenCalled();
+    },
+  );
 
   it('preserves an existing standard field with another identifier', async () => {
     const identifier = VIEW.viewFields.assignedTasks.universalIdentifier;
     const existingField =
       maps.flatViewFieldMaps.byUniversalIdentifier[identifier]!;
-    delete maps.flatViewFieldMaps.byUniversalIdentifier[identifier];
+    maps.flatViewFieldMaps.byUniversalIdentifier = removePropertiesFromRecord(
+      maps.flatViewFieldMaps.byUniversalIdentifier,
+      [identifier],
+    );
     const replacementIdentifier = '20202020-8888-4888-8888-888888888888';
     maps.flatViewFieldMaps.byUniversalIdentifier[replacementIdentifier] = {
       ...existingField,
@@ -280,9 +317,10 @@ describe('SyncWorkspaceMemberRecordPageCommand', () => {
         PAGE.tabs.home.widgets.fields.universalIdentifier
       ]!;
     widget.universalConfiguration = {
-      ...widget.universalConfiguration,
+      configurationType: WidgetConfigurationType.FIELDS,
+      viewUniversalIdentifier: VIEW.universalIdentifier,
       newFieldDefaultVisibility: false,
-    } as typeof widget.universalConfiguration;
+    };
     await command.up(args);
     expect(
       migrate.mock.calls[0][0].allFlatEntityOperationByMetadataName.viewField
@@ -295,9 +333,10 @@ describe('SyncWorkspaceMemberRecordPageCommand', () => {
     maps.flatViewFieldGroupMaps.byUniversalIdentifier[
       VIEW.viewFieldGroups.relations.universalIdentifier
     ]!.deletedAt = '2026-10-26T00:00:00.000Z';
-    delete maps.flatViewFieldMaps.byUniversalIdentifier[
-      VIEW.viewFields.assignedTasks.universalIdentifier
-    ];
+    maps.flatViewFieldMaps.byUniversalIdentifier = removePropertiesFromRecord(
+      maps.flatViewFieldMaps.byUniversalIdentifier,
+      [VIEW.viewFields.assignedTasks.universalIdentifier],
+    );
     await command.up(args);
     expect(migrate).not.toHaveBeenCalled();
   });
@@ -308,6 +347,11 @@ describe('SyncWorkspaceMemberRecordPageCommand', () => {
       universalIdentifier: '20202020-9999-4999-8999-999999999999',
       applicationUniversalIdentifier: '20202020-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
       type: FieldMetadataType.MORPH_RELATION,
+      morphId: '20202020-9999-4999-8999-999999999999',
+      relationTargetObjectMetadataId: null,
+      relationTargetFieldMetadataId: null,
+      relationTargetObjectMetadataUniversalIdentifier: null,
+      relationTargetFieldMetadataUniversalIdentifier: null,
       name: 'assignedWork',
     });
     await command.up(args);
@@ -329,6 +373,96 @@ describe('SyncWorkspaceMemberRecordPageCommand', () => {
     ).toEqual([3, 4]);
   });
 
+  const addMorphRelation = () => {
+    const headIdentifier = '20202020-cccc-4ccc-8ccc-cccccccccccc';
+    const head = addRelation({
+      universalIdentifier: headIdentifier,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: headIdentifier,
+      isSystemSideEffect: true,
+      relationTargetObjectMetadataId: null,
+      relationTargetFieldMetadataId: null,
+      relationTargetObjectMetadataUniversalIdentifier: null,
+      relationTargetFieldMetadataUniversalIdentifier: null,
+      name: 'assignedWork',
+    });
+    addRelation({
+      universalIdentifier: '20202020-dddd-4ddd-8ddd-dddddddddddd',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: headIdentifier,
+      isSystemSideEffect: false,
+      name: 'assignedWorkTask',
+    });
+    addRelation({
+      universalIdentifier: '20202020-eeee-4eee-8eee-eeeeeeeeeeee',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: headIdentifier,
+      isSystemSideEffect: true,
+      name: 'assignedWorkCompany',
+      relationTargetObjectMetadataUniversalIdentifier:
+        STANDARD_OBJECTS.company.universalIdentifier,
+    });
+    return head;
+  };
+
+  it('backfills one field for a morph head and keeps ordinary relations', async () => {
+    removePage();
+    const relation = addRelation();
+    const head = addMorphRelation();
+    await command.up(args);
+    const customFields =
+      migrate.mock.calls[1][0].allFlatEntityOperationByMetadataName.viewField
+        ?.flatEntityToCreate;
+    expect(customFields).toEqual([
+      expect.objectContaining({
+        fieldMetadataUniversalIdentifier: relation.universalIdentifier,
+        position: 3,
+      }),
+      expect.objectContaining({
+        fieldMetadataUniversalIdentifier: head.universalIdentifier,
+        universalIdentifier: getSystemViewFieldUniversalIdentifier({
+          fieldMetadataApplicationUniversalIdentifier: CUSTOM_APPLICATION,
+          viewUniversalIdentifier: VIEW.universalIdentifier,
+          fieldMetadataUniversalIdentifier: head.universalIdentifier,
+        }),
+        position: 4,
+      }),
+    ]);
+  });
+
+  it('does not create target rows when the morph head is already displayed', async () => {
+    const head = addMorphRelation();
+    const identifier = getSystemViewFieldUniversalIdentifier({
+      fieldMetadataApplicationUniversalIdentifier: CUSTOM_APPLICATION,
+      viewUniversalIdentifier: VIEW.universalIdentifier,
+      fieldMetadataUniversalIdentifier: head.universalIdentifier,
+    });
+    maps.flatViewFieldMaps.byUniversalIdentifier[identifier] = {
+      ...maps.flatViewFieldMaps.byUniversalIdentifier[
+        VIEW.viewFields.assignedTasks.universalIdentifier
+      ]!,
+      universalIdentifier: identifier,
+      fieldMetadataUniversalIdentifier: head.universalIdentifier,
+    };
+    await command.up(args);
+    expect(migrate).not.toHaveBeenCalled();
+  });
+
+  it('ignores inactive fields when positioning backfilled relations', async () => {
+    addRelation();
+    const inactiveField =
+      maps.flatViewFieldMaps.byUniversalIdentifier[
+        VIEW.viewFields.assignedTasks.universalIdentifier
+      ]!;
+    inactiveField.isActive = false;
+    inactiveField.position = 100;
+    await command.up(args);
+    expect(
+      migrate.mock.calls[0][0].allFlatEntityOperationByMetadataName.viewField
+        ?.flatEntityToCreate,
+    ).toEqual([expect.objectContaining({ position: 3 })]);
+  });
+
   it('does not migrate on dry run', async () => {
     removePage();
     addRelation();
@@ -337,9 +471,11 @@ describe('SyncWorkspaceMemberRecordPageCommand', () => {
   });
 
   it('does not touch workspaces without the member object', async () => {
-    delete maps.flatObjectMetadataMaps.byUniversalIdentifier[
-      MEMBER.universalIdentifier
-    ];
+    maps.flatObjectMetadataMaps.byUniversalIdentifier =
+      removePropertiesFromRecord(
+        maps.flatObjectMetadataMaps.byUniversalIdentifier,
+        [MEMBER.universalIdentifier],
+      );
     await command.up(args);
     expect(migrate).not.toHaveBeenCalled();
   });

@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
@@ -16,6 +16,7 @@ import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
+// Keep this backfill stable when the runtime side-effect rules change.
 export const buildWorkspaceMemberRelationViewFields = ({
   flatFieldMetadataMaps,
   flatViewFieldMaps,
@@ -87,7 +88,15 @@ export const buildWorkspaceMemberRelationViewFields = ({
   );
   let position =
     [...existingViewFields, ...standardViewFields]
-      .filter((viewField) => !isDefined(viewField.deletedAt))
+      .filter(
+        (viewField) =>
+          !isDefined(viewField.deletedAt) &&
+          resolveEffectiveUniversalFlatEntityProperty({
+            metadataName: 'viewField',
+            universalFlatEntity: viewField,
+            property: 'isActive',
+          }),
+      )
       .filter(
         (viewField) =>
           resolveEffectiveUniversalFlatEntityProperty({
@@ -118,7 +127,7 @@ export const buildWorkspaceMemberRelationViewFields = ({
         field.applicationUniversalIdentifier !==
           TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER &&
         (field.type === FieldMetadataType.RELATION ||
-          field.type === FieldMetadataType.MORPH_RELATION) &&
+          isMorphRelationHead(field)) &&
         resolveEffectiveUniversalFlatEntityProperty({
           metadataName: 'fieldMetadata',
           universalFlatEntity: field,
