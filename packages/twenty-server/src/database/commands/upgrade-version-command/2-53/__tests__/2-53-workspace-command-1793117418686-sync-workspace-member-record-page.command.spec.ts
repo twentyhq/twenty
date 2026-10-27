@@ -10,7 +10,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { SyncWorkspaceMemberRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-workspace-command-1793093738366-sync-workspace-member-record-page.command';
+import { SyncWorkspaceMemberRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793117418686-sync-workspace-member-record-page.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';

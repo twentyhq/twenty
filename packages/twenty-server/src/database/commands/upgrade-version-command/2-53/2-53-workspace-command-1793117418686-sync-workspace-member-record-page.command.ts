@@ -11,7 +11,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { bindFieldsWidgetToExistingView } from 'src/database/commands/upgrade-version-command/2-42/utils/bind-fields-widget-to-existing-view.util';
-import { buildWorkspaceMemberRelationViewFields } from 'src/database/commands/upgrade-version-command/2-52/utils/build-workspace-member-relation-view-fields.util';
+import { buildWorkspaceMemberRelationViewFields } from 'src/database/commands/upgrade-version-command/2-53/utils/build-workspace-member-relation-view-fields.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -57,9 +57,9 @@ const PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
   FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
 ];
 
-@RegisteredWorkspaceCommand('2.52.0', 1793093738366)
+@RegisteredWorkspaceCommand('2.53.0', 1793117418686)
 @Command({
-  name: 'upgrade:2-52:sync-workspace-member-record-page',
+  name: 'upgrade:2-53:sync-workspace-member-record-page',
   description:
     'Create the Workspace member record page layout and its fields view in existing workspaces, including existing custom relations.',
 })
