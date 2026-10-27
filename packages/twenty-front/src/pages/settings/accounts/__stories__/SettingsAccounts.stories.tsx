@@ -1320,7 +1320,7 @@ export const AppPreferencesListFlagsMissingConfiguration: Story = {
       ),
     ).not.toBeInTheDocument();
     expect(
-      withinTableRowOrThrow({ canvasElement, text: 'Linear' }).getByText(
+      await withinTableRowOrThrow({ canvasElement, text: 'Linear' }).findByText(
         'Missing account',
       ),
     ).toBeVisible();
@@ -1337,9 +1337,10 @@ export const AppsWhoseProviderIsNotSetUpShowNoMissingAccount: Story = {
     msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
   },
   play: async ({ canvasElement }) => {
-    await within(canvasElement).findByText('Linear', undefined, {
-      timeout: 3000,
-    });
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Linear', undefined, { timeout: 3000 });
+    await canvas.findByText('tim@apple.dev');
 
     expect(
       withinTableRowOrThrow({ canvasElement, text: 'Linear' }).queryByText(
