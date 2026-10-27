@@ -89,7 +89,10 @@ await test(
     });
     const prepareDependencies = async (appPath) => {
       // These fixtures use dependencies from the checkout.
-      await rm(join(appPath, 'yarn.lock'), { force: true });
+      await writeFile(
+        join(appPath, 'yarn.lock'),
+        '__metadata:\n  version: 8\n',
+      );
       const modules = join(appPath, 'node_modules');
       await mkdir(modules);
       for (const name of [

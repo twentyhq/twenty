@@ -376,8 +376,15 @@ enum AppKeyValueScope {
   WORKSPACE
 }
 
+input AppMessageFolderInput {
+  externalId: String!
+  isSynced: Boolean
+  name: String!
+}
+
 input AppMessageInput {
   externalId: String!
+  folderExternalIds: [String!]
   participants: [AppMessageParticipantInput!]!
   receivedAt: DateTime!
   subject: String
@@ -2756,6 +2763,10 @@ input ListAppMessageChannelsInput {
   connectedAccountId: UUID
 }
 
+input ListAppMessageFoldersInput {
+  messageChannelId: UUID
+}
+
 type Location {
   lat: Float
   lng: Float
@@ -3359,6 +3370,7 @@ type Mutation {
   stopImpersonation: StopImpersonation!
   switchBillingPlan(plan: BillingPlanKey): BillingUpdate!
   switchSubscriptionInterval: BillingUpdate!
+  syncAppMessageFolders(input: SyncAppMessageFoldersInput!): [MessageFolder!]!
   syncApplication(dryRun: Boolean, inferDeletionFromMissingEntities: Boolean, manifest: JSON!): WorkspaceMigration!
   syncMarketplaceCatalog: Boolean!
   trackAnalytics(event: String, name: String, properties: JSON, type: AnalyticsType!): Analytics!
@@ -3485,6 +3497,7 @@ type Object {
   color: String
   createdAt: DateTime!
   description: String
+  disabledObjectPermissionActions: [String!]
   duplicateCriteria: [[String!]!]
   fields(
     """Specify to filter the records returned."""
@@ -3969,12 +3982,14 @@ type Query {
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
   appMessageChannels(filter: ListAppMessageChannelsInput): [MessageChannel!]!
+  appMessageFolders(filter: ListAppMessageFoldersInput): [MessageFolder!]!
   applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   applicationCoreGraphqlSchema(applicationUniversalIdentifier: String!): String!
   applicationRegistrationTarballUrl(id: String!): String
   applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
   barChartData(input: BarChartDataInput!): BarChartData!
+  billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
   chatMessages(threadId: UUID!): [AgentMessage!]!
@@ -4075,7 +4090,7 @@ type Query {
   githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
   isApplicationStopped(applicationUniversalIdentifier: String!): Boolean!
   lineChartData(input: LineChartDataInput!): LineChartData!
-  listPlans: [BillingPlan!]!
+  listPlans: [BillingPlan!]! @deprecated(reason: "Use billingPlans instead.")
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
   minimalMetadata: MinimalMetadata!
@@ -4602,6 +4617,7 @@ type SignUp {
 }
 
 input SignUpInNewWorkspaceInput {
+  captchaToken: String
   displayName: String
   partner: String
   subdomain: String
@@ -4675,6 +4691,11 @@ type Support {
 enum SupportDriver {
   FRONT
   NONE
+}
+
+input SyncAppMessageFoldersInput {
+  folders: [AppMessageFolderInput!]!
+  messageChannelId: UUID!
 }
 
 type TasksConfiguration {
