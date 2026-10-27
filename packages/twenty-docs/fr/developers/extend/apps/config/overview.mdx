@@ -1,7 +1,6 @@
 ---
 title: Vue d'ensemble
 description: Configurer l'application elle-même — son identité, ses autorisations par défaut et ce qui s'exécute au moment de l'installation.
-icon: screwdriver-wrench
 ---
 
 La **couche de configuration** d'une application Twenty est ce qui décrit l'application *à la plateforme* — son identité, les autorisations qu'elle détient et le code qui s'exécute lors de l'installation ou de la mise à niveau. Ces déclarations n'ajoutent pas de nouvelles structures de données ni de comportement à l'exécution ; elles indiquent à Twenty *qui est l'application* et *comment la configurer*.
@@ -37,10 +36,10 @@ La **couche de configuration** d'une application Twenty est ce qui décrit l'app
   <Card title="Configuration de l'application" icon="rocket" href="/fr/developers/extend/apps/config/application">
     `defineApplication` — identité, rôle par défaut, variables, métadonnées de la marketplace.
   </Card>
-  <Card title="Rôles et autorisations" icon="shield-halved" href="/fr/developers/extend/apps/config/roles">
+  <Card title="Rôles et autorisations" icon="shield-half" href="/fr/developers/extend/apps/config/roles">
     `defineRole` — déclarez ce que les fonctions logiques de votre application peuvent lire et écrire.
   </Card>
-  <Card title="Hooks d'installation" icon="wrench" href="/fr/developers/extend/apps/config/install-hooks">
+  <Card title="Hooks d'installation" icon="tool" href="/fr/developers/extend/apps/config/install-hooks">
     `definePreInstallLogicFunction`, `definePostInstallLogicFunction` et `defineUninstallLogicFunction` — sauvegarder les données, préremplir les valeurs par défaut, valider les mises à niveau, nettoyer lors de la suppression.
   </Card>
 </CardGroup>

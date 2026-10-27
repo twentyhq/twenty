@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -16,11 +17,13 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     TypeOrmModule.forFeature([FileEntity, ApplicationEntity]),
   ],
   providers: [
+    ApplicationDependencyFilesService,
     ApplicationPackageFetcherService,
     ApplicationVersionValidationService,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [
+    ApplicationDependencyFilesService,
     ApplicationPackageFetcherService,
     ApplicationVersionValidationService,
   ],

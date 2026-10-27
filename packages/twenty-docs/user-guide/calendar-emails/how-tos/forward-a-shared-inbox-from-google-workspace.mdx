@@ -3,6 +3,10 @@ title: Forward a Shared Inbox from Google Workspace
 description: Send mail from a Google Group into a Twenty email channel.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
 An email channel gives your workspace a shared address, like `sales@yourcompany.com`. Mail sent to that address has to reach Twenty somehow.
 
 On Google Workspace that address is almost always a **Google Group**. You connect it by adding Twenty's private forwarding address as a member of the group. Every message the group receives is then copied to Twenty, and your team continues to receive it as before.
@@ -145,7 +149,11 @@ Send an email from an outside address (a personal Gmail works) to `sales@yourcom
 <Accordion title="The channel receives mail but cannot send">
   Receiving and sending are separate. Sending requires your domain to be
   verified under the channel's **Sending domain** section, which means adding
-  the DNS records Twenty lists there.
+  the **Domain authentication** records Twenty lists there. See [Email
+  Channels](/user-guide/calendar-emails/capabilities/email-channels) for which
+  records each use needs.
 </Accordion>
 
 Using a different provider? See [Microsoft 365](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365) or [any other mail provider](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider).
+
+<PageBanner illustration="page-cover-email" />

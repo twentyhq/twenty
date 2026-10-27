@@ -1,0 +1,84 @@
+---
+title: Limiti di utilizzo
+description: Limita quanto possono spendere il tuo spazio di lavoro, i membri, le chiavi API e le app.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+Imposta limiti per AI, flussi di lavoro, funzioni logiche ed email in **Impostazioni → Fatturazione → Limiti**. I [Crediti](/it/user-guide/billing/capabilities/credits) definiscono quanto può spendere in totale il tuo spazio di lavoro; un limite definisce quanto può spendere un determinato ambito e con quale frequenza viene reimpostato.
+
+Per visualizzare e modificare i limiti è necessaria l'autorizzazione alle impostazioni **Spazio di lavoro**.
+
+## Cosa puoi limitare
+
+| Utilizzo             | Operazioni                                    | Misurato in          | Ambiti                                    |
+| -------------------- | --------------------------------------------- | -------------------- | ----------------------------------------- |
+| **AI**               | Chat, agenti, ricerca web                     | Crediti o operazioni | Spazio di lavoro, membro, chiave API, app |
+| **Flussi di lavoro** | Esecuzione del workflow                       | Crediti o esecuzioni | Spazio di lavoro, app                     |
+| **Funzioni logiche** | Esecuzione del codice                         | Crediti o esecuzioni | Spazio di lavoro, app, funzione logica    |
+| **Email**            | Invio email                                   | Crediti o email      | Spazio di lavoro, membro                  |
+| **Tutto l'utilizzo** | Tutto quanto sopra, più gli addebiti dell'app | Crediti              | App                                       |
+
+<Note>
+**Tutte le operazioni** impone un limite a tutte le spese di utilizzo, indipendentemente dall'operazione da cui provengono. È disponibile ovunque l'utilizzo possa essere misurato in crediti.
+</Note>
+
+**L'utilizzo complessivo** impone un unico limite a tutto ciò che un'app spende: le sue funzioni logiche, i workflow, gli agenti, le chiamate IA e i crediti che addebita direttamente. È il modo per limitare il costo totale di un'app. Non è offerto per l'intero spazio di lavoro, il cui totale è già limitato dai suoi crediti.
+
+## Misuratori e periodi
+
+Un limite conteggia **crediti**, la stessa unità del tuo saldo, oppure **operazioni**, un conteggio semplice di messaggi, ricerche, esecuzioni o email. Limita i crediti per controllare il costo, le operazioni per controllare il volume.
+
+| Periodo                             | Reimpostazioni                                                                  |
+| ----------------------------------- | ------------------------------------------------------------------------------- |
+| **Giorno**, **Settimana**, **Mese** | All'inizio del periodo di calendario successivo                                 |
+| **Periodo di fatturazione**         | Con il tuo abbonamento, nello stesso momento in cui i tuoi crediti si rinnovano |
+
+Il **periodo di fatturazione** è disponibile solo quando lo spazio di lavoro ha un abbonamento a cui fare riferimento.
+
+## Requisiti del piano
+
+| Cosa limiti                                                             | Piano                                |
+| ----------------------------------------------------------------------- | ------------------------------------ |
+| L'intero **spazio di lavoro**                                           | Qualsiasi piano                      |
+| Un **membro**, una **chiave API**, un'**app** o una **funzione logica** | Organizzazione (Cloud o self-hosted) |
+
+Senza il [piano Organization](/it/user-guide/billing/capabilities/pricing-plans), tali ambiti non possono essere selezionati e un limite già salvato per uno di essi risulta **Disattivato** e non viene applicato. Viene applicato di nuovo non appena lo spazio di lavoro passa a un piano che lo include, senza dover ricreare nulla.
+
+## Crea un limite
+
+1. Vai a **Impostazioni → Fatturazione → Limiti**
+2. Fai clic su **Nuovo limite**
+3. In **Ambito**, scegli l'utilizzo e a chi si applica
+4. In **Limite**, inserisci l'importo, scegli crediti o operazioni e seleziona il periodo
+5. Fai clic su **Salva**
+
+Il limite si applica immediatamente e conteggia l'utilizzo già registrato nel periodo corrente.
+
+### Modifica o elimina un limite
+
+Fai clic su una riga del limite per modificarne l'importo, il periodo o l'ambito. **Elimina limite** si trova nella sezione pericolosa della pagina di modifica. L'eliminazione di un limite non estende mai la tua spesa: l'assegnazione di crediti e gli altri limiti si applicano comunque.
+
+## Quando viene raggiunto un limite
+
+Il lavoro viene rifiutato anziché accodato, e solo in quell'ambito. Il resto dello spazio di lavoro continua a funzionare.
+
+La spesa riprende automaticamente quando il periodo si reimposta. Per sbloccare prima, aumenta il limite o eliminalo.
+
+<Note>
+Un limite viene verificato prima dell'avvio di un'operazione e addebitato al suo completamento, quindi un'operazione già in corso può portare un contatore leggermente oltre il suo limite. Il lavoro in batch, come l'invio di una campagna, può superare il limite di un batch.
+</Note>
+
+## Monitoraggio
+
+La tabella **Limiti** mostra l'utilizzo di ciascun limite nel periodo corrente. Il consumo complessivo, inclusa la ripartizione per workflow e azione AI, rimane in **Impostazioni → Fatturazione**.
+
+## Correlati
+
+* [Crediti](/it/user-guide/billing/capabilities/credits)
+* [Piani tariffari](/it/user-guide/billing/capabilities/pricing-plans)
+* [FAQ sulla fatturazione](/it/user-guide/billing/how-tos/billing-faq)
+
+<PageBanner illustration="card-page-usage-limits" />

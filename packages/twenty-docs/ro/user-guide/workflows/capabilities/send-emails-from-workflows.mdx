@@ -3,7 +3,7 @@ title: Trimiterea e-mailurilor prin fluxuri de lucru
 description: Trimiteți automat e-mailuri personalizate folosind acțiunile fluxurilor de lucru.
 ---
 
-Trimiteți automat e-mailuri atunci când au loc evenimente specifice în CRM—întâmpinați noile contacte, urmăriți oportunitățile sau notificați membrii echipei.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Cerințe
 
@@ -29,11 +29,11 @@ Trimiteți automat e-mailuri atunci când au loc evenimente specifice în CRM—
    * Selectați **Send Email**
    * Configurați e-mailul:
 
-| Câmp        | Valoare                                |
-| ----------- | -------------------------------------- |
-| **Către**   | `{{trigger.object.email}}`             |
-| **Subiect** | `Bun venit la {{Your Company Name}}`   |
-| **Corp**    | `Hi {{trigger.object.firstName}}, ...` |
+| Câmp        | Valoare                                               |
+| ----------- | ----------------------------------------------------- |
+| **Către**   | `{{trigger.properties.after.emails.primaryEmail}}`    |
+| **Subiect** | `Bun venit la {{Your Company Name}}`                  |
+| **Corp**    | `Hi {{trigger.properties.after.name.firstName}}, ...` |
 
 4. **Testați și activați**: Testați cu o înregistrare de probă, apoi activați
 
@@ -42,11 +42,9 @@ Trimiteți automat e-mailuri atunci când au loc evenimente specifice în CRM—
 Faceți referire la date din pașii anteriori folosind sintaxa `{{variable}}`:
 
 ```text
-Hi {{trigger.object.firstName}},
+Hi {{trigger.properties.after.name.firstName}},
 
 Thank you for connecting with us!
-
-Your company, {{trigger.object.company.name}}, is now in our system.
 
 Best regards,
 The Team
@@ -54,11 +52,14 @@ The Team
 
 ### Variabile disponibile din declanșatoare
 
-| Tipul Trigger-ului                  | Variabile comune                       |
-| ----------------------------------- | -------------------------------------- |
-| **Înregistrare creată/actualizată** | `{{trigger.object.fieldName}}`         |
-| **Manual**                          | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook**                         | `{{trigger.body.fieldName}}`           |
+| Tipul Trigger-ului                           | Variabile comune                          |
+| -------------------------------------------- | ----------------------------------------- |
+| **Înregistrare creată/actualizată**          | `{{trigger.properties.after.fieldName}}`  |
+| **Înregistrare ștearsă**                     | `{{trigger.properties.before.fieldName}}` |
+| **Manual** (pentru o înregistrare selectată) | `{{trigger.payload.fieldName}}`           |
+| **Webhook**                                  | `{{trigger.fieldName}}`                   |
+
+Câmpurile de relație expun doar ID-ul înregistrării asociate, de exemplu `{{trigger.properties.after.companyId}}`. Pentru a utiliza alte câmpuri ale înregistrării asociate, adăugați mai întâi un pas **Căutare înregistrări**. Cea mai ușoară modalitate de a obține calea corectă este să inserați variabila din selector.
 
 ## Avansat: e-mailuri condiționale
 
@@ -71,7 +72,7 @@ The Team
 1. **Declanșator**: Record is Created (People)
 
 2. **Adăugați acțiunea de filtrare**:
-   * Condiție: `{{trigger.object.source}}` este egal cu `"Website"`
+   * Condiție: `{{trigger.properties.after.source}}` este egal cu `"Website"`
    * Dacă este adevărat → continuați către e-mailul de bun venit pentru website
 
 3. **Ramificație pentru alte surse**:
@@ -88,15 +89,19 @@ The Team
 
 1. **Declanșator**: Record is Updated (Opportunities, Stage = "Closed Won")
 
-2. **Search Records**: Găsiți managerul proprietarului oportunității
+2. **Căutare înregistrări** (denumiți-l "Găsește proprietarul"): găsiți proprietarul oportunității
+   * Obiect: Membrii spațiului de lucru
+   * Filtru: ID egal cu `{{trigger.properties.after.ownerId}}`
 
-3. **Send Email #1**: Către proprietarul oportunității
-   * Către: `{{trigger.object.owner.email}}`
-   * Subiect: `Felicitări pentru închiderea {{trigger.object.name}}!`
+3. **Search Records**: Găsiți managerul proprietarului oportunității
 
-4. **Send Email #2**: Către manager
+4. **Send Email #1**: Către proprietarul oportunității
+   * Către: `{{Find Owner.first.userEmail}}` (selectați-o din selectorul de variabile; introducerea numelui pasului nu funcționează)
+   * Subiect: `Felicitări pentru închiderea {{trigger.properties.after.name}}!`
+
+5. **Send Email #2**: Către manager
    * Către: `{{searchRecords.manager.email}}`
-   * Subiect: `Tranzacție câștigată: {{trigger.object.name}}`
+   * Subiect: `Tranzacție câștigată: {{trigger.properties.after.name}}`
 
 ## E-mailuri de urmărire programate
 
@@ -165,3 +170,5 @@ Atașamentele sunt statice — același fișier este trimis tuturor destinataril
 
 * [Declanșatoare ale fluxurilor de lucru](/ro/user-guide/workflows/capabilities/workflow-triggers)
 * [Acțiuni ale fluxurilor de lucru](/ro/user-guide/workflows/capabilities/workflow-actions)
+
+<PageBanner illustration="page-cover-email" />

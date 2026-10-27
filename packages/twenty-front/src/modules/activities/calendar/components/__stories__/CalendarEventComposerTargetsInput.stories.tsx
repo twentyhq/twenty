@@ -81,17 +81,26 @@ export const OverflowAndPicker: Story = {
     await userEvent.keyboard('{Escape}');
     await userEvent.click(canvas.getByText('Jeffery Griffin'));
 
-    expect(await body.findByRole('textbox')).toBeVisible();
+    const picker = await body.findByRole('dialog', {
+      name: 'Add a related record',
+    });
+
+    expect(await within(picker).findByRole('searchbox')).toBeVisible();
     expect(pickerButton).toHaveAttribute('aria-expanded', 'true');
     await userEvent.click(
       await body.findByRole('option', { name: /Jeffery Griffin/ }),
     );
     expect(args.onTargetChange).toHaveBeenCalled();
+    expect(picker).toBeVisible();
 
     await userEvent.click(
       canvas.getByRole('button', { name: 'Outside calendar field' }),
     );
-    await waitFor(() => expect(body.queryAllByRole('listbox')).toHaveLength(0));
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Add a related record' }),
+      ).not.toBeInTheDocument(),
+    );
   },
 };
 
@@ -108,10 +117,19 @@ export const EmptyKeyboardActivation: Story = {
     expect(pickerButton).toHaveFocus();
     await userEvent.keyboard('{Enter}');
 
-    expect(await body.findByRole('textbox')).toBeVisible();
+    const picker = await body.findByRole('dialog', {
+      name: 'Add a related record',
+    });
+
+    expect(await within(picker).findByRole('searchbox')).toBeVisible();
     expect(pickerButton).toHaveAttribute('aria-expanded', 'true');
 
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(body.queryAllByRole('listbox')).toHaveLength(0));
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Add a related record' }),
+      ).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(pickerButton).toHaveFocus());
   },
 };

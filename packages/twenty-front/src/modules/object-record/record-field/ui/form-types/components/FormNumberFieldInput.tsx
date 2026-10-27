@@ -153,7 +153,11 @@ export const FormNumberFieldInput = ({
       </FormFieldInputRowContainer>
 
       {hint ? <Field.Description>{hint}</Field.Description> : null}
-      {error && <Field.Error match>{error}</Field.Error>}
+      {error && (
+        <Field.Error match role="alert">
+          {error}
+        </Field.Error>
+      )}
     </FormFieldInputContainer>
   );
 };

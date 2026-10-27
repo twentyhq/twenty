@@ -11,12 +11,14 @@ const {
   resolveSenderMock,
   runAgentMock,
   sendActivityMock,
+  findHistoryMock,
 } = vi.hoisted(() => ({
   claimMock: vi.fn(),
   updateMock: vi.fn(),
   resolveSenderMock: vi.fn(),
   runAgentMock: vi.fn(),
   sendActivityMock: vi.fn(),
+  findHistoryMock: vi.fn(),
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
@@ -28,6 +30,11 @@ vi.mock('twenty-client-sdk/core', () => ({
 vi.mock(
   'src/features/chat/logic-functions/data/claim-teams-assistant-request',
   () => ({ claimTeamsAssistantRequest: claimMock }),
+);
+
+vi.mock(
+  'src/features/chat/logic-functions/data/find-teams-assistant-history',
+  () => ({ findTeamsAssistantHistory: findHistoryMock }),
 );
 
 vi.mock(
@@ -88,6 +95,7 @@ describe('answerTeamsAssistantRequest', () => {
     sendActivityMock.mockResolvedValue({ id: 'activity-1' });
     resolveSenderMock.mockResolvedValue('workspace-member-1');
     runAgentMock.mockResolvedValue('Acme has 3 open deals.');
+    findHistoryMock.mockResolvedValue([]);
   });
 
   it('should answer as the matched workspace member and mark the request done', async () => {
@@ -108,6 +116,38 @@ describe('answerTeamsAssistantRequest', () => {
         responseText: 'Acme has 3 open deals.',
       }),
     );
+  });
+
+  it('should pass the earlier turns of the sender in this conversation to the agent', async () => {
+    const history = [{ requestText: 'hi', responseText: 'Hi!' }];
+    findHistoryMock.mockResolvedValue(history);
+
+    await answer();
+
+    expect(findHistoryMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        teamsConversationId: REQUEST.teamsConversationId,
+        workspaceMemberId: 'workspace-member-1',
+      }),
+    );
+    expect(runAgentMock).toHaveBeenCalledWith(
+      expect.objectContaining({ history }),
+    );
+  });
+
+  it('should still answer without history when it cannot be loaded', async () => {
+    const warnSpy = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+    findHistoryMock.mockRejectedValue(new Error('Core API unavailable'));
+
+    await expect(answer()).resolves.toEqual({ status: 'answered' });
+    expect(runAgentMock).toHaveBeenCalledWith(
+      expect.objectContaining({ history: [] }),
+    );
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+
+    warnSpy.mockRestore();
   });
 
   it('should not send a failure reply when only the status write fails after answering', async () => {

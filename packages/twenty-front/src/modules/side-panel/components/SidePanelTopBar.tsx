@@ -234,7 +234,11 @@ export const SidePanelTopBar = ({
               data-testid={SIDE_PANEL_FOCUS_ID}
               ref={inputRef}
               value={sidePanelSearch}
-              placeholder={t`Type anything...`}
+              placeholder={
+                sidePanelPage === SidePanelPages.SearchAiChats
+                  ? t`Search chat titles...`
+                  : t`Type anything...`
+              }
               onChange={handleSearchChange}
               onKeyDownCapture={handleInputKeyDownCapture}
               onFocus={handleInputFocus}

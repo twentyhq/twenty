@@ -3,8 +3,12 @@ title: Section
 description: Group content with a heading, supporting description, and optional action.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import SectionReference from '/snippets/ui/generated/components/layout/section.mdx';
+
+## Overview
 
 `Section.Root` groups related content. `Section.Header` combines [Heading](/ui/primitives/typography/heading) with a description and optional `actions` content. Descriptions are ordinary text associated with the heading, so they do not add levels to the document outline.
 
@@ -71,3 +75,5 @@ When migrating, replace `adornment` with `actions`. Opt into description focus w
 ## Props
 
 <SectionReference />
+
+<PageBanner illustration="layout" />

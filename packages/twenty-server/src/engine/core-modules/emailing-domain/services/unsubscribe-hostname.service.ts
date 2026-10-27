@@ -8,7 +8,7 @@ import {
   DnsManagerException,
   DnsManagerExceptionCode,
 } from 'src/engine/core-modules/dns-manager/exceptions/dns-manager.exception';
-import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
+import { RECIPIENT_LINKS_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/recipient-links-hostname-prefix.constant';
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
@@ -212,6 +212,6 @@ export class UnsubscribeHostnameService {
   }
 
   private buildHostname(domain: string): string {
-    return `${UNSUBSCRIBE_HOSTNAME_PREFIX}.${domain}`;
+    return `${RECIPIENT_LINKS_HOSTNAME_PREFIX}.${domain}`;
   }
 }

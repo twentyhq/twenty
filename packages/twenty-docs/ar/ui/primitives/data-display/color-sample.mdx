@@ -1,0 +1,63 @@
+---
+title: ColorSample
+description: اعرض لون سمة أو لونًا مخصصًا بجانب تسمية نصية.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ColorSampleReference from '/snippets/ui/generated/data-display/color-sample.mdx';
+
+## نظرة عامة
+
+`ColorSample` عبارة عن عينة لون غير تفاعلية. استخدمه بجانب تسمية حتى لا يعتمد المعنى على اللون وحده. ينتمي التحديد إلى عنصر التحكم المحيط.
+
+<StoryEmbed storyId="ui-data-display-colorsample--display" title="مثال على ColorSample" height={90} />
+
+## استخدام
+
+```tsx
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PriorityColor = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ColorSample colorName="red" render={<span />} aria-hidden="true" />
+    High priority
+  </Text>
+);
+```
+
+يحدد `colorName` إدخالًا من لوحة ألوان السمة للتعبئة والحدود. تقبل `variant` القيمتين `default` أو `circle`. يؤدي حذفه إلى استخدام الشكل الافتراضي.
+
+## ألوان مخصصة
+
+```tsx
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const BrandColor = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ColorSample
+      colorName="blue"
+      color="#2563eb"
+      render={<span />}
+      aria-hidden="true"
+    />
+    Brand blue
+  </Text>
+);
+```
+
+يتجاوز `color` مخصص لون التعبئة؛ يظل `colorName` مطلوبًا ولا يزال يحدد لون الحدود. تستهدف الخصائص الأصلية و`className` و`style` و`ref` عنصر div الخاص بعينة اللون. تقبل `render` عنصرًا أو دالة رد نداء عبر التركيب في Base UI، مثل span داخل نص. تتجاوز أنماط المستهلك التعبئة أو الحدود أو الهندسة الافتراضية. تستخدم عينات الألوان الزخرفية `aria-hidden="true"`؛ وتستخدم عينة ألوان مستقلة ذات معنى `role="img"` مع `aria-label` أو `aria-labelledby`. لتوفير ألوان قابلة للتحديد، ضع عينة اللون داخل [ListItem](/ar/ui/primitives/navigation/list-item) ذي تسمية.
+
+## الترحيل
+
+يبقى `ColorSampleProps` و`ColorSampleVariant` متاحين من مجموعة عرض البيانات. تُزال صيغة `pipeline` غير المستخدمة. تنتمي المؤشرات الخاصة بالمنتج إلى التطبيق، باستخدام الأنماط الأصلية أو التركيب. تحافظ عينات الألوان الافتراضية والدائرية على مظهرها الحالي.
+
+## الإزاحة
+
+<ColorSampleReference />
+
+<PageBanner illustration="page-cover-palette" />

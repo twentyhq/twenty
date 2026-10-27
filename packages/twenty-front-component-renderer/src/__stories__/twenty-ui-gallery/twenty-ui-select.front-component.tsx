@@ -58,7 +58,7 @@ const SelectExample = () => {
                 collisionAvoidance={{ side: 'flip', align: 'shift' }}
                 data-select-positioner="stage"
               >
-                <Select.Popup>
+                <Select.Popup data-testid="stage-popup">
                   <Select.List render={<ul />}>
                     <Select.Group>
                       <Select.GroupLabel>Active stages</Select.GroupLabel>

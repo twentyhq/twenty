@@ -6,6 +6,7 @@ export enum MetricsKeys {
   CalendarEventSyncJobFailedInsufficientPermissions = 'calendar-event-sync-job/failed-insufficient-permissions',
   CalendarEventSyncJobFailedUnknown = 'calendar-event-sync-job/failed-unknown',
   InvalidCaptcha = 'invalid-captcha',
+  CaptchaScore = 'captcha/score',
   GraphqlOperation200 = 'graphql-operation/200',
   GraphqlOperation400 = 'graphql-operation/400',
   GraphqlOperation401 = 'graphql-operation/401',

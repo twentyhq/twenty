@@ -24,7 +24,7 @@ import {
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { DELETE_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/deleteConnectedAccount';
 import { DISCONNECT_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/disconnectConnectedAccount';
 import { isConnectedAccountEligibleForProviderReconnect } from '@/settings/accounts/utils/isConnectedAccountEligibleForProviderReconnect';
@@ -52,6 +52,7 @@ export const SettingsAppPreferencesRowDropdownMenu = ({
     DISCONNECT_CONNECTED_ACCOUNT,
   );
   const { triggerProviderReconnect } = useTriggerProviderReconnect();
+  const { pathname, hash } = useLocation();
 
   const hasPendingConfiguration =
     account.messageChannels.some(
@@ -125,6 +126,7 @@ export const SettingsAppPreferencesRowDropdownMenu = ({
                 onClick={() => {
                   triggerProviderReconnect(account.provider, account.id, {
                     loginHint: account.handle,
+                    redirectLocation: `${pathname}${hash}`,
                   });
                 }}
               >{t`Reconnect`}</Dropdown.ActionItem>

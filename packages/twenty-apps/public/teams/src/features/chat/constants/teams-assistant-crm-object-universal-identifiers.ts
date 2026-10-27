@@ -1,0 +1,11 @@
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+export const TEAMS_ASSISTANT_CRM_OBJECT_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note.universalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget.universalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget.universalIdentifier,
+];

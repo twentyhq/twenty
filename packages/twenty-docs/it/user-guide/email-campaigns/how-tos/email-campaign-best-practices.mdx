@@ -1,0 +1,94 @@
+---
+title: Best practice per le campagne email.
+description: Invia email che le persone si aspettano e mantieni il tuo dominio in regola.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+I provider di posta elettronica considerano a chi invii le email e come reagiscono. Invia email utili alle persone che se le aspettano e avrai maggiori probabilità di raggiungere la posta in arrivo. Invia a una lista acquistata o obsoleta e avrai maggiori probabilità di finire nello spam. Un numero eccessivo di segnalazioni di spam può sospendere l'invio dal tuo dominio.
+
+Ecco cosa gestisce Twenty, cosa deve fare il tuo team e i numeri da tenere sotto controllo.
+
+## Cosa gestisce Twenty per te
+
+* **Controlli del dominio**: dopo aver [verificato il tuo dominio di invio](/it/user-guide/email-campaigns/how-tos/set-up-a-sending-domain), ogni campagna viene firmata con DKIM e supera SPF sul tuo dominio.
+* **Annullamenti dell'iscrizione**: ogni campagna include un link per annullare l'iscrizione e le intestazioni di annullamento dell'iscrizione con un clic richieste da Gmail e Yahoo. Le rinunce hanno effetto immediato.
+* **Lista di esclusione**: le persone per cui si verifica un bounce, che segnalano spam o annullano l'iscrizione vengono saltate nelle campagne successive.
+* **Nessun duplicato**: ogni persona riceve una sola email, anche se compare due volte in una lista.
+
+## Cosa dipende da te
+
+Twenty non può sapere come hai ottenuto l'indirizzo email di una persona né quale sia il tuo indirizzo postale. Il tuo team deve fare in modo che siano corretti.
+
+### Cosa fare
+
+* **Invia email solo alle persone che hanno accettato di riceverle da te.** Si sono iscritte, hanno acquistato da te o ti hanno dato il consenso. Conserva una registrazione di quando e come.
+* **Includi il tuo indirizzo postale.** La legge statunitense (CAN-SPAM) richiede un indirizzo fisico in ogni email di marketing. Aggiungilo in fondo alla tua campagna.
+* **Inizia in piccolo con un nuovo dominio.** Invia prima ai contatti più coinvolti, poi aumenta il volume nell'arco di alcune settimane. Vedi [Riscaldare un nuovo dominio](#warm-up-a-new-domain).
+* **Usa un mittente riconoscibile.** Mantieni lo stesso indirizzo **Da** e nome visualizzato da una campagna all'altra, così i destinatari sanno chi sei.
+* **Scrivi un oggetto che corrisponda al contenuto.** Gli oggetti fuorvianti sono illegali in molti paesi e generano segnalazioni di spam ovunque.
+* **Pulisci le tue liste.** Smetti di inviare email alle persone che non hanno risposto, acquistato o effettuato l'accesso per sei-dodici mesi.
+* **Invia prima un test.** Controlla il layout, i link e il mittente prima di ogni campagna.
+* **Usa gli argomenti di annullamento dell'iscrizione.** Consenti alle persone di abbandonare un tipo di email, come una newsletter, senza abbandonare tutte le liste. Vedi [Gestire gli annullamenti dell'iscrizione e gli argomenti](/it/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics).
+
+### Cosa non fare
+
+* **Non acquistare, noleggiare o estrarre liste.** Spesso contengono trappole spam: indirizzi usati per individuare i mittenti che non hanno mai avuto il consenso. Anche pochi possono danneggiare il tuo dominio.
+* **Non inviare email a tutti nel tuo CRM.** Twenty può creare persone dalle email e dai calendari sincronizzati. Uno scambio di email non costituisce il consenso all'invio di marketing.
+* **Non inviare una campagna enorme da un nuovo dominio.** Un improvviso aumento del volume sembra spam, anche quando la tua lista è pulita.
+* **Non usare una sola immagine grande come email.** Le email composte principalmente da immagini e con poco testo hanno maggiori probabilità di essere filtrate. Usa testo reale per il messaggio.
+* **Non usare abbreviazioni di link pubbliche** come bit.ly. Gli spammer le usano per nascondere i link, quindi i filtri le considerano sospette.
+* **Non aggiungere di nuovo le persone che hanno annullato l'iscrizione o segnalato spam.** Twenty le blocca per un motivo.
+
+<Note>
+  Non esiste un elenco magico di parole che rende un'email spam. I provider tengono molto
+  più conto della reputazione del tuo dominio e di come le persone reagiscono alle tue email.
+</Note>
+
+## Numeri da tenere sotto controllo
+
+Dopo ogni campagna, confronta **Rimbalzi** e **Reclami** con **Inviati**.
+
+| Metrica                   | Obiettivo           | Perché è importante                                                                                                                                                               |
+| ------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tasso di reclami per spam | Inferiore allo 0,1% | Gmail chiede ai mittenti di grandi volumi di rimanere sotto lo 0,1% e di non raggiungere mai lo 0,3%. Al di sopra di tale soglia, le email vengono rifiutate o inviate allo spam. |
+| Tasso di bounce           | Inferiore al 2%     | Un tasso di bounce elevato significa che la lista non è aggiornata. Al 5% o più, il tuo provider di posta elettronica inizia a esaminare i tuoi invii.                            |
+
+Un tasso di reclami dello 0,1% corrisponde a una segnalazione di spam ogni 1.000 email. Se ne vedi di più, sospendi e analizza il tuo pubblico prima della campagna successiva.
+
+<Warning>
+  Se troppe persone generano un bounce o contrassegnano le tue email come spam, l'invio dal tuo
+  dominio può essere sospeso.
+</Warning>
+
+## Riscaldare un nuovo dominio
+
+I provider si fidano di un dominio che aumenta il volume gradualmente. Un nuovo dominio che invia improvvisamente una campagna di grandi dimensioni sembra rischioso. Se il tuo dominio non ha mai inviato campagne:
+
+| Fase                              | Cosa inviare                                                                                         |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Prima settimana                   | Da 50 a 100 email al giorno, ai tuoi contatti più coinvolti                                          |
+| Seconda e terza settimana         | Raddoppia all'incirca il volume ogni pochi giorni, a condizione che bounce e reclami rimangano bassi |
+| Dalla quarta alla sesta settimana | Raggiungi il tuo volume normale, quindi mantienilo costante da un invio all'altro                    |
+
+Suddividi una lista grande in liste più piccole e invia in fasi. Il tuo workspace può inviare fino a 1.000 email di campagne al giorno.
+
+## Leggi da conoscere
+
+Queste sono linee guida generali, non consulenza legale.
+
+* **Stati Uniti (CAN-SPAM)**: includi un indirizzo postale, un link funzionante per annullare l'iscrizione e un oggetto onesto. Le rinunce devono essere rispettate entro 10 giorni lavorativi. Twenty le gestisce immediatamente.
+* **Unione europea e Regno Unito (GDPR, ePrivacy, PECR)**: le email di marketing richiedono generalmente il consenso preventivo. Devi dimostrare quando e come lo hai ottenuto.
+* **Canada (CASL)**: prima dell'invio hai bisogno di un consenso esplicito o implicito e devi poterlo dimostrare.
+
+## Ulteriori letture
+
+* [Linee guida di Gmail per i mittenti di email](https://support.google.com/a/answer/81126)
+* [Best practice di Yahoo per i mittenti](https://senders.yahooinc.com/best-practices/)
+* [Requisiti Microsoft per i mittenti ad alto volume](https://techcommunity.microsoft.com/blog/microsoftdefenderforoffice365blog/strengthening-email-ecosystem-outlook%E2%80%99s-new-requirements-for-high%E2%80%90volume-senders/4399730)
+* [Guida alla conformità al CAN-SPAM Act](https://www.ftc.gov/business-guidance/resources/can-spam-act-compliance-guide-business)
+* [Google Postmaster Tools](https://postmaster.google.com), per monitorare la reputazione del tuo dominio su Gmail
+
+<PageBanner illustration="card-page-campaign-practices" />

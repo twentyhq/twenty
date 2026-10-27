@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import crypto from 'crypto';
 
 import { v4 } from 'uuid';
@@ -216,6 +217,19 @@ export class LogicFunctionFromSourceService {
 
     const sourceHandlerCode =
       updateLogicFunctionFromSourceInput.update.sourceHandlerCode;
+
+    if (
+      isDefined(sourceHandlerCode) &&
+      flatLogicFunction.executionMode === LogicFunctionExecutionMode.PREBUILT
+    ) {
+      throw new LogicFunctionException(
+        'Cannot edit the source of a prebuilt logic function: create a draft of its workflow version and edit the draft step logic function instead',
+        LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        {
+          userFriendlyMessage: msg`This code belongs to a published workflow version. Edit it from a draft.`,
+        },
+      );
+    }
 
     if (sourceHandlerCode) {
       await this.logicFunctionResourceService.uploadSourceFile({

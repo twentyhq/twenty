@@ -3,7 +3,7 @@ title: استخدم المكرّر
 description: قم بالتكرار عبر مصفوفات السجلات لتنفيذ إجراءات على كل عنصر.
 ---
 
-يتيح لك المكرّر التكرار عبر مصفوفة من السجلات وتنفيذ إجراءات على كلٍ منها. وهو ضروري لتدفّقات العمل التي تحتاج إلى معالجة سجلات متعددة أُرجعت بواسطة Search Records أو استُلِمت عبر ربط الويب.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## متى تستخدم المكرّر
 
@@ -108,12 +108,12 @@ description: قم بالتكرار عبر مصفوفات السجلات لتنف
 ```
 1. Webhook Trigger (receives items array)
 2. Filter (items.length > 0)
-3. Iterator (trigger.body.items)
+3. Iterator (trigger.items)
    └── Create Record
        - Object: Order Items
        - Name: {{iterator.currentItem.name}}
        - Quantity: {{iterator.currentItem.qty}}
-       - Related Order: {{trigger.body.orderId}}
+       - Related Order: {{trigger.orderId}}
 ```
 
 ### معالجة مشروطة داخل الحلقة
@@ -181,3 +181,5 @@ Filter: {{searchRecords.length}} > 0
 * [إجراءات سير العمل](/ar/user-guide/workflows/capabilities/workflow-actions)
 * [كيفية استخدام التفرعات](/ar/user-guide/workflows/capabilities/use-branches-in-workflows)
 * [الأسئلة الشائعة حول سير العمل](/ar/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+
+<PageBanner illustration="card-page-sync-recovery" />

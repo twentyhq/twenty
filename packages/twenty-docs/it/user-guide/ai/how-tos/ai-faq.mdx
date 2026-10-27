@@ -3,6 +3,10 @@ title: FAQ sull'IA
 description: Domande frequenti sulle funzionalità di IA in Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Domande comuni
+
 <AccordionGroup>
 
   <Accordion title="Quali capacità di IA sono disponibili?">
@@ -21,7 +25,11 @@ description: Domande frequenti sulle funzionalità di IA in Twenty.
   </Accordion>
 
   <Accordion title="Posso usare i miei modelli di IA?">
-    Nel cloud, puoi utilizzare solo i modelli di IA forniti da Twenty. Nella tua istanza self-hosted, puoi utilizzare i tuoi modelli di IA dopo aver ottenuto una licenza Organization.
+    Nel cloud, i modelli vengono eseguiti sugli account dei fornitori di Twenty: scegli quali usare per il tuo spazio di lavoro in **Impostazioni → IA** e non è possibile collegare la propria chiave API.
+
+    In un'istanza self-hosted, i fornitori integrati (OpenAI, Anthropic, Google, Mistral, xAI) funzionano con tutti i piani, incluso Free. Imposta la chiave API corrispondente (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `MISTRAL_API_KEY`, `XAI_API_KEY`) in **Impostazioni → Pannello di amministrazione → Variabili di configurazione**, oppure nel tuo `.env`, quindi riavvia il server. I modelli vengono quindi visualizzati in **Impostazioni → Pannello di amministrazione → IA**.
+
+    I fornitori personalizzati (endpoint personalizzati, gateway privati, modelli compatibili con OpenAI o locali, regioni aggiuntive), aggiunti in **Impostazioni → Pannello di amministrazione → AI → Fornitori personalizzati**, sono attualmente gratuiti fino a 25 postazioni. Oltre tale soglia, è richiesto un piano Organization. La sezione AI del pannello di amministrazione indica lo stato della tua istanza.
   </Accordion>
 
   <Accordion title="Non vedo un ruolo che ho assegnato ad un agente di intelligenza artificiale, dove?">
@@ -29,3 +37,5 @@ description: Domande frequenti sulle funzionalità di IA in Twenty.
   </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="card-page-billing-faq" />
