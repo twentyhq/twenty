@@ -30,6 +30,7 @@
         "src/instrument.ts",
         "src/engine/metadata-modules/ai/ai-front-component/front-component-builder.handler.ts",
         "src/engine/metadata-modules/ai/ai-front-component/front-component-builder.local.ts",
+        "src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service.ts",
         "src/engine/metadata-modules/ai/ai-front-component/constants/front-component-build-assets-directory.constant.ts",
         "src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-lambda-limits.constant.ts",
         "src/engine/metadata-modules/ai/ai-front-component/constants/front-component-vendor-lambda-limits.constant.ts",
