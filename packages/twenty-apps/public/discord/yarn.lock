@@ -931,7 +931,7 @@ __metadata:
     twenty-sdk: "npm:2.37.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
-    vitest: "npm:^4.0.0"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -3055,7 +3055,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^4.0.0":
+"vitest@npm:^4.1.12":
   version: 4.1.12
   resolution: "vitest@npm:4.1.12"
   dependencies:

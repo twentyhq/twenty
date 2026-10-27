@@ -1363,7 +1363,7 @@ __metadata:
     typescript: "npm:^5.9.3"
     use-debounce: "npm:^10.0.0"
     vite-tsconfig-paths: "npm:^4.2.1"
-    vitest: "npm:^4.1.9"
+    vitest: "npm:^4.1.12"
     zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -3816,7 +3816,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^4.1.9":
+"vitest@npm:^4.1.12":
   version: 4.1.12
   resolution: "vitest@npm:4.1.12"
   dependencies:

@@ -20379,7 +20379,7 @@ __metadata:
     typescript: "npm:^5.9.3"
     vite: "npm:^7.3.7"
     vite-plugin-svgr: "npm:^4.3.0"
-    vitest: "npm:^4.1.0"
+    vitest: "npm:^4.1.12"
     zod: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
@@ -49930,7 +49930,7 @@ __metadata:
     typescript: "npm:^5.9.3"
     vite: "npm:^8.0.0"
     vite-plugin-dts: "npm:^4.5.4"
-    vitest: "npm:^4.1.0"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -49950,7 +49950,7 @@ __metadata:
     twenty-shared: "workspace:*"
     unified: "npm:^11.0.0"
     unist-util-visit: "npm:^5.0.0"
-    vitest: "npm:^4.1.0"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -50597,7 +50597,7 @@ __metadata:
     vite-plugin-dts: "npm:^4.5.4"
     vite-plugin-sass-dts: "npm:^1.3.31"
     vite-plugin-svgr: "npm:^4.3.0"
-    vitest: "npm:^4.1.0"
+    vitest: "npm:^4.1.12"
     zod: "npm:^4.1.11"
   peerDependencies:
     "@monaco-editor/react": ^4.7.0
@@ -50716,7 +50716,7 @@ __metadata:
     uuid: "npm:^13.0.2"
     vite: "npm:^8.0.0"
     vite-tsconfig-paths: "npm:^4.2.1"
-    vitest: "npm:^4.1.0"
+    vitest: "npm:^4.1.12"
   bin:
     twenty: dist/cli.cjs
   languageName: unknown
@@ -52454,7 +52454,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^4.1.0":
+"vitest@npm:^4.1.12":
   version: 4.1.12
   resolution: "vitest@npm:4.1.12"
   dependencies:
