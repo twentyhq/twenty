@@ -1,3 +1,4 @@
+import { TEST_APPLICATION_PACKAGE_JSON_CHECKSUM } from 'test/integration/metadata/suites/application/constants/test-application-package-json.constant';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -69,7 +70,7 @@ export const setupApplicationWithVariable = async ({
               ...(isSecret || !isDefined(value) ? {} : { value }),
             },
           },
-          packageJsonChecksum: null,
+          packageJsonChecksum: TEST_APPLICATION_PACKAGE_JSON_CHECKSUM,
           yarnLockChecksum: null,
         },
         roles: [

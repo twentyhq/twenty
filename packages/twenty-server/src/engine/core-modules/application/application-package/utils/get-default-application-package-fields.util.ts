@@ -1,6 +1,10 @@
-import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { readFile } from 'fs/promises';
 import path from 'path';
+
+import {
+  computeDependencyFileChecksum,
+  computePackageJsonChecksum,
+} from 'twenty-shared/application';
 
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { STANDARD_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/standard-application-dependencies-directory-name';
@@ -27,10 +31,8 @@ export const getDefaultApplicationPackageFields = async ({
   );
 
   return {
-    packageJsonChecksum: logicFunctionCreateHash(
-      JSON.stringify(JSON.parse(packageJsonContent)),
-    ),
-    yarnLockChecksum: logicFunctionCreateHash(yarnLockContent),
+    packageJsonChecksum: computePackageJsonChecksum(packageJsonContent),
+    yarnLockChecksum: computeDependencyFileChecksum(yarnLockContent),
     availablePackages,
     packageJsonContent,
     yarnLockContent,
