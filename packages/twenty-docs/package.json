@@ -5,6 +5,7 @@
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
+    "mintlify": "npx --yes mintlify@4.2.1125",
     "dev": "nx run twenty-docs:dev",
     "validate": "nx run twenty-docs:validate",
     "fix-links": "tsx scripts/fix-translated-links.ts",
