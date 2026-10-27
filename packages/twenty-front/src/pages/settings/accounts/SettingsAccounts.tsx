@@ -1,11 +1,9 @@
-import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsLegacySections } from '@/settings/accounts/components/SettingsAccountsLegacySections';
 import { SettingsAccountsMessageChannelsSSEEffect } from '@/settings/accounts/components/SettingsAccountsMessageChannelsSSEEffect';
-import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
+import { SettingsAppPreferencesAccountsTab } from '@/settings/app-preferences/components/SettingsAppPreferencesAccountsTab';
 import { SettingsAppPreferencesAppsSection } from '@/settings/app-preferences/components/SettingsAppPreferencesAppsSection';
 import { SETTINGS_APP_PREFERENCES_TAB_IDS } from '@/settings/app-preferences/constants/SettingsAppPreferencesTabIds';
 import { SETTINGS_APP_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsAppPreferencesTabListComponentId';
-import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -13,7 +11,7 @@ import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isNonEmptyArray } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconApps, IconAt } from 'twenty-ui/icon';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -24,7 +22,6 @@ export const SettingsAccounts = () => {
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
   const pageTitle = isAppPreferencesEnabled ? t`Apps preferences` : t`Account`;
-  const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
 
   const tabs = [
     {
@@ -43,21 +40,6 @@ export const SettingsAccounts = () => {
     SETTINGS_APP_PREFERENCES_TAB_LIST_COMPONENT_ID,
     tabs.map((tab) => tab.id),
   );
-
-  const renderAppPreferencesContent = () => {
-    if (activeTabId === SETTINGS_APP_PREFERENCES_TAB_IDS.ACCOUNTS) {
-      return (
-        <>
-          <SettingsAccountGroupsSection />
-          {!isNonEmptyArray(enabledBuiltInAccountApps) && (
-            <SettingsAccountsBlocklistSection />
-          )}
-        </>
-      );
-    }
-
-    return <SettingsAppPreferencesAppsSection />;
-  };
 
   return (
     <SettingsPageLayout
@@ -81,10 +63,12 @@ export const SettingsAccounts = () => {
     >
       <SettingsAccountsMessageChannelsSSEEffect />
       <SettingsPageContainer>
-        {isAppPreferencesEnabled ? (
-          renderAppPreferencesContent()
-        ) : (
+        {!isAppPreferencesEnabled ? (
           <SettingsAccountsLegacySections />
+        ) : activeTabId === SETTINGS_APP_PREFERENCES_TAB_IDS.ACCOUNTS ? (
+          <SettingsAppPreferencesAccountsTab />
+        ) : (
+          <SettingsAppPreferencesAppsSection />
         )}
       </SettingsPageContainer>
     </SettingsPageLayout>

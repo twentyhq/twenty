@@ -1,5 +1,5 @@
 import { SettingsAccountGroupTableRow } from '@/settings/app-preferences/components/SettingsAccountGroupTableRow';
-import { SettingsAppPreferencesListEmptyStateCard } from '@/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard';
+import { SettingsAccountGroupsEmptyState } from '@/settings/app-preferences/components/SettingsAccountGroupsEmptyState';
 import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsAccountGroupTableGridTemplateColumns';
 import { SETTINGS_BUILT_IN_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsBuiltInAccountAppAccountGroupTableGridTemplateColumns';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
@@ -30,11 +30,6 @@ const StyledAddAccountContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   padding-top: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
 `;
 
 type SettingsAccountGroupsSectionProps = {
@@ -82,14 +77,6 @@ export const SettingsAccountGroupsSection = ({
     triggerApisOAuth(app.provider);
   };
 
-  const emptyState = isDefined(builtInAccountApp) ? (
-    <SettingsAppPreferencesListEmptyStateCard
-      provider={builtInAccountApp.provider}
-    />
-  ) : (
-    <StyledEmptyState>{t`No accounts yet`}</StyledEmptyState>
-  );
-
   return (
     <Section.Root>
       <Section.Header
@@ -111,7 +98,9 @@ export const SettingsAccountGroupsSection = ({
           />
         </Table>
       ) : groups.length === 0 ? (
-        emptyState
+        <SettingsAccountGroupsEmptyState
+          builtInAccountApp={builtInAccountApp}
+        />
       ) : (
         <>
           <Table>
