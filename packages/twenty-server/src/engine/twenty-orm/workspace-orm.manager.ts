@@ -16,7 +16,6 @@ import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/wo
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { ExecuteInWorkspaceContextOptions } from 'src/engine/twenty-orm/types/execute-in-workspace-context-options.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
@@ -150,7 +149,7 @@ export class WorkspaceOrmManager {
       userWorkspaceRoleMap,
       apiKeyRoleMap,
       flatRoleTargetByAgentIdMaps,
-      flatRoleMaps,
+      flatApplicationMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -164,7 +163,7 @@ export class WorkspaceOrmManager {
       'userWorkspaceRoleMap',
       'apiKeyRoleMap',
       'flatRoleTargetByAgentIdMaps',
-      'flatRoleMaps',
+      'flatApplicationMaps',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);
@@ -201,7 +200,7 @@ export class WorkspaceOrmManager {
       userWorkspaceRoleMap,
       apiKeyRoleMap,
       flatRoleTargetByAgentIdMaps,
-      flatRoleMaps,
+      flatApplicationMaps,
     };
   }
 
@@ -250,7 +249,7 @@ export class WorkspaceOrmManager {
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
       flatRoleTargetByAgentIdMaps: {},
-      flatRoleMaps: createEmptyFlatEntityMaps(),
+      flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
     };
   }
 }

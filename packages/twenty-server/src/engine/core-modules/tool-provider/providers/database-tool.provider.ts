@@ -70,11 +70,11 @@ export class DatabaseToolProvider implements ToolProvider {
     const toolNames = options?.toolNames;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const { rolesPermissions, flatObjectPermissionMaps, flatRoleMaps } =
+    const { rolesPermissions, flatObjectPermissionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
         'rolesPermissions',
         'flatObjectPermissionMaps',
-        'flatRoleMaps',
+        'flatApplicationMaps',
       ]);
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -88,7 +88,7 @@ export class DatabaseToolProvider implements ToolProvider {
       rolesPermissions,
       rolePermissionConfig: context.rolePermissionConfig,
       flatObjectMetadataMaps,
-      flatRoleMaps,
+      flatApplicationMaps,
     });
 
     if (Object.keys(objectPermissions).length === 0) {

@@ -147,11 +147,11 @@ export class CommonApiContextBuilderService {
   }): Promise<ObjectsPermissions> {
     const workspaceId = authContext.workspace.id;
 
-    const { rolesPermissions, flatObjectMetadataMaps, flatRoleMaps } =
+    const { rolesPermissions, flatObjectMetadataMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'rolesPermissions',
         'flatObjectMetadataMaps',
-        'flatRoleMaps',
+        'flatApplicationMaps',
       ]);
 
     if (isDefined(rolePermissionConfig)) {
@@ -159,25 +159,26 @@ export class CommonApiContextBuilderService {
         rolesPermissions,
         rolePermissionConfig,
         flatObjectMetadataMaps,
-        flatRoleMaps,
+        flatApplicationMaps,
       });
     }
 
-    let roleId: string;
-    let roleSource: keyof RoleIdsBySource;
+    let intersectionOf: RoleIdsBySource;
 
     if (isApiKeyAuthContext(authContext)) {
-      roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
-        authContext.apiKey.id,
-        workspaceId,
-      );
-      roleSource = 'apiKeyRoleId';
+      intersectionOf = {
+        apiKeyRoleId: await this.apiKeyRoleService.getRoleIdForApiKeyId(
+          authContext.apiKey.id,
+          workspaceId,
+        ),
+      };
     } else if (
       isApplicationAuthContext(authContext) &&
       isDefined(authContext.application.defaultRoleId)
     ) {
-      roleId = authContext.application.defaultRoleId;
-      roleSource = 'applicationRoleId';
+      intersectionOf = {
+        applicationRoleId: authContext.application.defaultRoleId,
+      };
     } else if (isUserAuthContext(authContext)) {
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({
@@ -192,8 +193,7 @@ export class CommonApiContextBuilderService {
         );
       }
 
-      roleId = userWorkspaceRoleId;
-      roleSource = 'userWorkspaceRoleId';
+      intersectionOf = { userWorkspaceRoleId };
     } else {
       throw new RecordCrudException(
         'Invalid auth context - no authentication mechanism found',
@@ -202,10 +202,10 @@ export class CommonApiContextBuilderService {
     }
 
     return computeObjectsPermissionsForRolePermissionConfig({
-      intersectionOf: { [roleSource]: roleId },
+      intersectionOf,
       rolesPermissions,
       flatObjectMetadataMaps,
-      flatRoleMaps,
+      flatApplicationMaps,
     });
   }
 }

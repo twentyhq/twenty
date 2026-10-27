@@ -1,11 +1,11 @@
 import { type ObjectPermissions } from 'twenty-shared/types';
 
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
 
 const INVOICE_ID = 'invoice-id';
@@ -39,19 +39,15 @@ const rolesPermissions = {
   'application-role-id': { [INVOICE_ID]: FULL_ACCESS },
 };
 
-const flatRoleMaps: FlatRoleMaps = createEmptyFlatEntityMaps();
-
-for (const [roleId, applicationId] of [
-  ['user-role-id', OWNING_APPLICATION_ID],
-  ['application-role-id', OWNING_APPLICATION_ID],
-]) {
-  flatRoleMaps.byUniversalIdentifier[`${roleId}-universal-identifier`] = {
-    id: roleId,
-    applicationId,
-  } as FlatRole;
-  flatRoleMaps.universalIdentifierById[roleId] =
-    `${roleId}-universal-identifier`;
-}
+const flatApplicationMaps: FlatApplicationCacheMaps = {
+  byId: {
+    [OWNING_APPLICATION_ID]: {
+      id: OWNING_APPLICATION_ID,
+      defaultRoleId: 'application-role-id',
+    } as FlatApplication,
+  },
+  idByUniversalIdentifier: {},
+};
 
 describe('computeObjectsPermissionsForRolePermissionConfig', () => {
   it('should let the owning application alone run a disabled action', () => {
@@ -60,7 +56,7 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
         intersectionOf: { applicationRoleId: 'application-role-id' },
         rolesPermissions,
         flatObjectMetadataMaps,
-        flatRoleMaps,
+        flatApplicationMaps,
       })[INVOICE_ID]?.canDestroyObjectRecords,
     ).toBe(true);
   });
@@ -74,18 +70,18 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
         },
         rolesPermissions,
         flatObjectMetadataMaps,
-        flatRoleMaps,
+        flatApplicationMaps,
       })[INVOICE_ID]?.canDestroyObjectRecords,
     ).toBe(false);
   });
 
-  it('should restrict a user whose role belongs to the owning application', () => {
+  it('should restrict a user assigned the owning application role', () => {
     expect(
       computeObjectsPermissionsForRolePermissionConfig({
-        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+        intersectionOf: { userWorkspaceRoleId: 'application-role-id' },
         rolesPermissions,
         flatObjectMetadataMaps,
-        flatRoleMaps,
+        flatApplicationMaps,
       })[INVOICE_ID]?.canDestroyObjectRecords,
     ).toBe(false);
   });

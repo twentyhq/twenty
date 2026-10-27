@@ -113,7 +113,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         userWorkspaceRoleMap: {},
         apiKeyRoleMap: {},
         flatRoleTargetByAgentIdMaps: {},
-        flatRoleMaps: createEmptyFlatEntityMaps(),
+        flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
         roleIdsWithAllRecordsAccess: [],
         eventEmitterService: { emitDatabaseBatchEvent },
         recordStock: {

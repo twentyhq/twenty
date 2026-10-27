@@ -1,10 +1,11 @@
 import { type ObjectPermissions } from 'twenty-shared/types';
 
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-disabled-actions.util';
 
 const INVOICE_ID = 'invoice-id';
@@ -39,61 +40,41 @@ const buildFlatObjectMetadataMaps = (
   return flatObjectMetadataMaps;
 };
 
-const restrict = ({
-  roleSource,
-  roleApplicationId,
-}: {
-  roleSource: keyof RoleIdsBySource;
-  roleApplicationId: string;
-}) =>
+const OWNING_APPLICATION_ROLE_ID = 'owning-application-role-id';
+
+const FLAT_APPLICATION_MAPS: FlatApplicationCacheMaps = {
+  byId: {
+    [OWNING_APPLICATION_ID]: {
+      id: OWNING_APPLICATION_ID,
+      defaultRoleId: OWNING_APPLICATION_ROLE_ID,
+    } as FlatApplication,
+  },
+  idByUniversalIdentifier: {},
+};
+
+const restrict = (applicationRoleId: string | undefined) =>
   restrictObjectsPermissionsToDisabledActions({
     objectsPermissions: { [INVOICE_ID]: FULL_ACCESS },
     flatObjectMetadataMaps: buildFlatObjectMetadataMaps([
       'canDestroyObjectRecords',
     ]),
-    roleSource,
-    flatRole: { applicationId: roleApplicationId },
+    flatApplicationMaps: FLAT_APPLICATION_MAPS,
+    applicationRoleId,
   });
 
 describe('restrictObjectsPermissionsToDisabledActions', () => {
-  it.each([
-    {
-      roleSource: 'userWorkspaceRoleId',
-      roleApplicationId: OWNING_APPLICATION_ID,
+  it.each([undefined, 'other-application-role-id'])(
+    'should turn off disabled actions for application role %s',
+    (applicationRoleId) => {
+      expect(restrict(applicationRoleId)[INVOICE_ID]).toEqual({
+        ...FULL_ACCESS,
+        canDestroyObjectRecords: false,
+      });
     },
-    { roleSource: 'apiKeyRoleId', roleApplicationId: OWNING_APPLICATION_ID },
-    { roleSource: 'agentRoleId', roleApplicationId: OWNING_APPLICATION_ID },
-    {
-      roleSource: 'applicationRoleId',
-      roleApplicationId: 'other-application-id',
-    },
-  ] as const)('should turn off disabled actions for %o', (role) => {
-    expect(restrict(role)[INVOICE_ID]).toEqual({
-      ...FULL_ACCESS,
-      canDestroyObjectRecords: false,
-    });
-  });
+  );
 
   it('should keep disabled actions for the role of the application that owns the object', () => {
-    expect(
-      restrict({
-        roleSource: 'applicationRoleId',
-        roleApplicationId: OWNING_APPLICATION_ID,
-      })[INVOICE_ID],
-    ).toBe(FULL_ACCESS);
-  });
-
-  it('should restrict an application role that cannot be found', () => {
-    expect(
-      restrictObjectsPermissionsToDisabledActions({
-        objectsPermissions: { [INVOICE_ID]: FULL_ACCESS },
-        flatObjectMetadataMaps: buildFlatObjectMetadataMaps([
-          'canDestroyObjectRecords',
-        ]),
-        roleSource: 'applicationRoleId',
-        flatRole: undefined,
-      })[INVOICE_ID]?.canDestroyObjectRecords,
-    ).toBe(false);
+    expect(restrict(OWNING_APPLICATION_ROLE_ID)[INVOICE_ID]).toBe(FULL_ACCESS);
   });
 
   it('should return the same permissions when nothing is disabled', () => {
@@ -103,8 +84,8 @@ describe('restrictObjectsPermissionsToDisabledActions', () => {
       restrictObjectsPermissionsToDisabledActions({
         objectsPermissions,
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps(null),
-        roleSource: 'userWorkspaceRoleId',
-        flatRole: { applicationId: OWNING_APPLICATION_ID },
+        flatApplicationMaps: FLAT_APPLICATION_MAPS,
+        applicationRoleId: undefined,
       }),
     ).toBe(objectsPermissions);
   });

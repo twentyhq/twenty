@@ -1,6 +1,7 @@
 import { type DataSource } from 'typeorm';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/billing-entitlements.type';
 import { type WorkspaceRecordStockService } from 'src/engine/core-modules/usage-limit/services/workspace-record-stock.service';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
@@ -8,7 +9,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { type FlatValidationRuleMaps } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
@@ -30,7 +30,7 @@ export interface WorkspaceInternalContext {
   roleIdsWithAllRecordsAccess: string[];
   apiKeyRoleMap: Record<string, string>;
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
-  flatRoleMaps: FlatRoleMaps;
+  flatApplicationMaps: FlatApplicationCacheMaps;
   eventEmitterService: Pick<WorkspaceEventEmitter, 'emitDatabaseBatchEvent'>;
   recordStock: Pick<
     WorkspaceRecordStockService,

@@ -53,12 +53,14 @@ export class PermissionsService {
       flatRolePermissionFlagMaps,
       rolesPermissions,
       flatObjectMetadataMaps,
+      flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'userWorkspaceRoleMap',
       'flatRoleMaps',
       'flatRolePermissionFlagMaps',
       'rolesPermissions',
       'flatObjectMetadataMaps',
+      'flatApplicationMaps',
     ]);
 
     const flatRole = this.findUserWorkspaceFlatRoleOrThrow({
@@ -83,8 +85,8 @@ export class PermissionsService {
       objectsPermissions: restrictObjectsPermissionsToDisabledActions({
         objectsPermissions: rolesPermissions[flatRole.id] ?? {},
         flatObjectMetadataMaps,
-        roleSource: 'userWorkspaceRoleId',
-        flatRole,
+        flatApplicationMaps,
+        applicationRoleId: undefined,
       }),
     };
   }
