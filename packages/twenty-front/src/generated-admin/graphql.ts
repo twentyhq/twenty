@@ -131,6 +131,7 @@ export type AdminPanelRecentUser = {
   email: Scalars['String']['output'];
   firstName?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
+  isAdmin?: Maybe<Scalars['Boolean']['output']>;
   lastName?: Maybe<Scalars['String']['output']>;
   workspaceId?: Maybe<Scalars['UUID']['output']>;
   workspaceLogo?: Maybe<Scalars['String']['output']>;
