@@ -57,4 +57,22 @@ describe('resolveObjectSharing', () => {
       }).operationTypesGrantedBeyondRole,
     ).toEqual(['select']);
   });
+
+  it('should not share beyond the role when the object disables every operation a share could grant', () => {
+    expect(
+      resolveObjectSharing({
+        flatObjectMetadata: {
+          ...OBJECT,
+          disabledObjectPermissionActions: [
+            'canReadObjectRecords',
+            'canUpdateObjectRecords',
+          ],
+        },
+        featureFlagsMap: RECORD_SHARING,
+      }),
+    ).toMatchObject({
+      canShareBeyondRole: false,
+      operationTypesGrantedBeyondRole: [],
+    });
+  });
 });

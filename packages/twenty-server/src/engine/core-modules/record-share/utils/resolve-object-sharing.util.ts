@@ -3,6 +3,8 @@
 import { type ObjectPermissionAction } from 'twenty-shared/application';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { isNonEmptyArray } from 'twenty-shared/utils';
+
 import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
@@ -56,7 +58,7 @@ export const resolveObjectSharing = ({
 
   return {
     sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
-    canShareBeyondRole: true,
+    canShareBeyondRole: isNonEmptyArray(operationTypesGrantedBeyondRole),
     operationTypesGrantedBeyondRole,
   };
 };
