@@ -3,7 +3,6 @@ import { createHash } from 'node:crypto';
 import { Logger } from '@nestjs/common';
 
 import { type RedisClient } from 'bullmq';
-import { isDefined } from 'twenty-shared/utils';
 
 import { FAIR_CLOCK_TTL_MS } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { FAIR_TAG_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-tag-script.constant';
@@ -18,21 +17,9 @@ type FairPriorityTaggerOptions = {
   keyPrefix: string;
 };
 
-const scriptShaByScript = new Map<string, string>();
-
-const getScriptSha = (script: string): string => {
-  const cachedSha = scriptShaByScript.get(script);
-
-  if (isDefined(cachedSha)) {
-    return cachedSha;
-  }
-
-  const sha = createHash('sha1').update(script).digest('hex');
-
-  scriptShaByScript.set(script, sha);
-
-  return sha;
-};
+const FAIR_TAG_SCRIPT_SHA = createHash('sha1')
+  .update(FAIR_TAG_SCRIPT)
+  .digest('hex');
 
 export class FairPriorityTagger {
   private readonly logger = new Logger(FairPriorityTagger.name);
@@ -46,147 +33,66 @@ export class FairPriorityTagger {
     queueName: MessageQueue;
     reservations: FairReservation[];
   }): Promise<FairTicket[] | undefined> {
+    const fairKeyPrefix = `${this.options.keyPrefix}:${queueName}:fair:`;
+    const distinctGroupKeys = [
+      ...new Set(reservations.flatMap(({ groupKeys }) => groupKeys)),
+    ];
+    const keys = [
+      `${fairKeyPrefix}vtime`,
+      `${fairKeyPrefix}weights`,
+      ...distinctGroupKeys.map(
+        (groupKey) => `${fairKeyPrefix}clock:${groupKey}`,
+      ),
+    ];
+    const args = [
+      FAIR_CLOCK_TTL_MS,
+      distinctGroupKeys.length,
+      ...distinctGroupKeys,
+      reservations.length,
+      ...reservations.flatMap(({ groupKeys, batchSize }) => [
+        batchSize,
+        groupKeys.length,
+        ...groupKeys.map((groupKey) => distinctGroupKeys.indexOf(groupKey) + 1),
+      ]),
+    ];
+
     try {
-      const distinctGroupKeys = [
-        ...new Set(reservations.flatMap(({ groupKeys }) => groupKeys)),
-      ];
-      const indexByGroupKey = new Map(
-        distinctGroupKeys.map((groupKey, index) => [groupKey, index + 1]),
-      );
-      const rawTickets = await this.runScript({
-        queueName,
-        script: FAIR_TAG_SCRIPT,
-        keys: [
-          this.buildFairKey({ queueName, suffix: 'vtime' }),
-          this.buildFairKey({ queueName, suffix: 'weights' }),
-          ...distinctGroupKeys.map((groupKey) =>
-            this.buildFairKey({ queueName, suffix: `clock:${groupKey}` }),
-          ),
-        ],
-        args: [
-          FAIR_CLOCK_TTL_MS,
-          distinctGroupKeys.length,
-          ...distinctGroupKeys,
-          reservations.length,
-          ...reservations.flatMap(({ groupKeys, batchSize }) => [
-            batchSize,
-            groupKeys.length,
-            ...groupKeys.map((groupKey) => {
-              const keyIndex = indexByGroupKey.get(groupKey);
-
-              if (!isDefined(keyIndex)) {
-                throw new Error(`Group key ${groupKey} has no clock`);
-              }
-
-              return keyIndex;
-            }),
+      const client = await this.options.getClient(queueName);
+      const rawTickets = await client
+        .runCommand('evalsha', [
+          FAIR_TAG_SCRIPT_SHA,
+          keys.length,
+          ...keys,
+          ...args,
+        ])
+        .catch(() =>
+          client.runCommand('eval', [
+            FAIR_TAG_SCRIPT,
+            keys.length,
+            ...keys,
+            ...args,
           ]),
-        ],
-      });
-      const tickets = this.parseTickets({
-        rawTickets,
-        count: reservations.length,
-      });
+        );
+      const values = String(rawTickets).split(' ').map(Number);
+      const tickets = reservations.map((_, index) => ({
+        tag: values[2 * index],
+        weight: values[2 * index + 1],
+      }));
+      const hasValidTickets =
+        values.length === 2 * reservations.length &&
+        tickets.every(({ tag, weight }) => Number.isFinite(tag) && weight > 0);
 
-      if (!isDefined(tickets)) {
-        this.warn({
-          queueName,
-          action: 'parse the fair tickets',
-          error: rawTickets,
-        });
-
-        return undefined;
+      if (!hasValidTickets) {
+        throw new Error(`unexpected tickets "${String(rawTickets)}"`);
       }
 
       return tickets;
     } catch (error) {
-      this.warn({ queueName, action: 'reserve the fair tickets', error });
+      this.logger.warn(
+        `Failed to reserve the fair tickets on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
+      );
 
       return undefined;
     }
-  }
-
-  private async runScript({
-    queueName,
-    script,
-    keys,
-    args,
-  }: {
-    queueName: MessageQueue;
-    script: string;
-    keys: string[];
-    args: (string | number)[];
-  }): Promise<unknown> {
-    const client = await this.options.getClient(queueName);
-
-    try {
-      return await client.runCommand('evalsha', [
-        getScriptSha(script),
-        keys.length,
-        ...keys,
-        ...args,
-      ]);
-    } catch {
-      return client.runCommand('eval', [script, keys.length, ...keys, ...args]);
-    }
-  }
-
-  private parseTickets({
-    rawTickets,
-    count,
-  }: {
-    rawTickets: unknown;
-    count: number;
-  }): FairTicket[] | undefined {
-    const values = String(rawTickets).split(' ');
-
-    if (values.length !== 2 * count) {
-      return undefined;
-    }
-
-    const tickets = Array.from({ length: count }, (_, index) => ({
-      tag: Number(values[2 * index]),
-      weight: Number(values[2 * index + 1]),
-    }));
-
-    return tickets.every(
-      ({ tag, weight }) => Number.isFinite(tag) && weight > 0,
-    )
-      ? tickets
-      : undefined;
-  }
-
-  private warn({
-    queueName,
-    action,
-    error,
-  }: {
-    queueName: MessageQueue;
-    action: string;
-    error: unknown;
-  }): void {
-    this.logger.warn(
-      `Failed to ${action} on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
-
-  private buildFairKey({
-    queueName,
-    suffix,
-  }: {
-    queueName: MessageQueue;
-    suffix: string;
-  }): string {
-    return this.buildQueueKey({ queueName, suffix: `fair:${suffix}` });
-  }
-
-  private buildQueueKey({
-    queueName,
-    suffix,
-  }: {
-    queueName: MessageQueue;
-    suffix: string;
-  }): string {
-    return `${this.options.keyPrefix}:${queueName}:${suffix}`;
   }
 }

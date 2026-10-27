@@ -12,7 +12,6 @@ const QUEUE_KEY_PREFIX = `${KEY_PREFIX}:${QUEUE}:`;
 const VIRTUAL_TIME_KEY = `${QUEUE_KEY_PREFIX}fair:vtime`;
 const WEIGHTS_KEY = `${QUEUE_KEY_PREFIX}fair:weights`;
 
-// ioredis-mock instances share one store, so each test starts from an empty one
 const createTagger = async () => {
   const redis: Redis = new RedisMock();
 

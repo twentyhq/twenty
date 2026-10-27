@@ -1,4 +1,3 @@
-// KEYS: virtual time, weights hash, one clock per distinct group key. ARGV: clock TTL, key count, the keys, reservation count, then per reservation its batch size, key count and 1-based key indexes. Returns the tag and weight of each reservation, space separated
 export const FAIR_TAG_SCRIPT = `
 local virtualTime = tonumber(redis.call('GET', KEYS[1]) or '0')
 local distinctKeyCount = tonumber(ARGV[2])
