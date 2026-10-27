@@ -408,6 +408,7 @@ describe('Field permissions restrictions', () => {
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
       gqlFields: COMPANY_GQL_FIELDS_WITH_PEOPLE_JOB_TITLE,
+      filter: { id: { eq: companyId } },
     });
     const response =
       await makeGraphqlApiRequestWithMemberRole(graphqlOperation);

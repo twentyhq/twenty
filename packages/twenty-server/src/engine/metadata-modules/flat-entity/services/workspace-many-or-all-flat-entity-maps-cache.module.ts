@@ -5,6 +5,7 @@ import { WorkspaceFlatFieldMetadataMapCacheService } from 'src/engine/metadata-m
 import { WorkspaceOrmFlatFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-field-metadata/services/workspace-orm-flat-field-metadata-map-cache.service';
 import { WorkspaceFlatFieldPermissionMapCacheService } from 'src/engine/metadata-modules/flat-field-permission/services/workspace-flat-field-permission-map-cache.service';
 import { WorkspaceFlatIndexMapCacheService } from 'src/engine/metadata-modules/flat-index-metadata/services/workspace-flat-index-map-cache.service';
+import { WorkspaceFlatMcpServerMapCacheService } from 'src/engine/metadata-modules/flat-mcp-server/services/workspace-flat-mcp-server-map-cache.service';
 import { WorkspaceFlatObjectMetadataMapCacheService } from 'src/engine/metadata-modules/flat-object-metadata/services/workspace-flat-object-metadata-map-cache.service';
 import { WorkspaceFlatObjectPermissionMapCacheService } from 'src/engine/metadata-modules/flat-object-permission/services/workspace-flat-object-permission-map-cache.service';
 import { WorkspaceFlatPageLayoutTabMapCacheService } from 'src/engine/metadata-modules/flat-page-layout-tab/services/workspace-flat-page-layout-tab-map-cache.service';
@@ -59,6 +60,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatAgentChatChannelMapCacheService,
     WorkspaceFlatAgentChatChannelRoleMapCacheService,
     WorkspaceFlatValidationRuleMapCacheService,
+    WorkspaceFlatMcpServerMapCacheService,
   ],
   exports: [WorkspaceManyOrAllFlatEntityMapsCacheService],
 })
