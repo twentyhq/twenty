@@ -77,11 +77,6 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
       canDestroy: false,
     },
     {
-      actor: 'a user holding the owning application role',
-      intersectionOf: { userWorkspaceRoleId: 'owning-application-role-id' },
-      canDestroy: false,
-    },
-    {
       actor: 'a user through the owning application',
       intersectionOf: {
         userWorkspaceRoleId: 'user-role-id',

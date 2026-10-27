@@ -12,19 +12,17 @@ import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compu
 import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-disabled-actions.util';
 
-const findApplicationIdByDefaultRoleId = ({
-  flatApplicationMaps,
-  defaultRoleId,
-}: {
-  flatApplicationMaps: ApplicationDefaultRoleMaps;
-  defaultRoleId: string;
-}): string | undefined =>
-  Object.values(flatApplicationMaps.byId).find(
-    (flatApplication) =>
-      isDefined(flatApplication) &&
-      !isDefined(flatApplication.deletedAt) &&
-      flatApplication.defaultRoleId === defaultRoleId,
-  )?.id;
+const buildApplicationIdByDefaultRoleId = (
+  flatApplicationMaps: ApplicationDefaultRoleMaps,
+): Partial<Record<string, string>> =>
+  Object.fromEntries(
+    Object.values(flatApplicationMaps.byId).flatMap((flatApplication) =>
+      isDefined(flatApplication?.defaultRoleId) &&
+      !isDefined(flatApplication.deletedAt)
+        ? [[flatApplication.defaultRoleId, flatApplication.id]]
+        : [],
+    ),
+  );
 
 export const computeObjectsPermissionsForRolePermissionConfig = ({
   intersectionOf,
@@ -43,13 +41,8 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
     return {};
   }
 
-  const { applicationRoleId } = intersectionOf;
-  const actingApplicationId = isDefined(applicationRoleId)
-    ? findApplicationIdByDefaultRoleId({
-        flatApplicationMaps,
-        defaultRoleId: applicationRoleId,
-      })
-    : undefined;
+  const applicationIdByDefaultRoleId =
+    buildApplicationIdByDefaultRoleId(flatApplicationMaps);
 
   const permissionsPerRole = roleIds.map((roleId) => {
     const rolePermissions = rolesPermissions[roleId];
@@ -58,8 +51,7 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
       ? restrictObjectsPermissionsToDisabledActions({
           objectsPermissions: rolePermissions,
           flatObjectMetadataMaps,
-          actingApplicationId:
-            roleId === applicationRoleId ? actingApplicationId : undefined,
+          actingApplicationId: applicationIdByDefaultRoleId[roleId],
         })
       : undefined;
   });
