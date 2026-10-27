@@ -74,7 +74,10 @@ export const TabBarAndHeadersStayWhileLoading: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('MyConnectedAccounts', async () => {
+        graphql.query('MyMessageChannels', async () => {
+          await delay('infinite');
+        }),
+        graphql.query('MyCalendarChannels', async () => {
           await delay('infinite');
         }),
         ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
@@ -257,6 +260,7 @@ export const OutlookWithoutAccountOffersMicrosoftOnly: Story = {
       }),
     ).toBeVisible();
     expect(canvas.queryByText('Connect with Google')).not.toBeInTheDocument();
+    expect(canvas.queryByTestId('tab-general')).not.toBeInTheDocument();
     expect(canvas.getByText('Blocklist')).toBeVisible();
   },
 };
