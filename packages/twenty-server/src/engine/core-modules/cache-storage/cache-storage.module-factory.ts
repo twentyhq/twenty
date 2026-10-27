@@ -38,16 +38,15 @@ export const cacheStorageModuleFactory = async (
         pingInterval: REDIS_PING_INTERVAL_MS,
       });
 
-      redisClient.on('error', (err) => {
-        cacheStorageLogger.error('Redis cache-storage client error', err);
+      redisClient.on('error', (error) => {
+        cacheStorageLogger.error('Redis cache-storage client error', error);
       });
 
       await redisClient.connect();
 
       return {
         ...cacheModuleOptions,
-        // Same raw keys and plain JSON values as cache-manager-redis-yet, which
-        // CacheStorageService reads and writes directly through the Redis client
+        // CacheStorageService also reads these keys raw, so no Keyv prefix or wrapping
         stores: [
           new Keyv({
             store: new KeyvRedis(

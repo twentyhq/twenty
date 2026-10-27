@@ -22,13 +22,24 @@ describe('Cache storage prefix', () => {
     cacheModule = await Test.createTestingModule({
       imports: [
         CacheModule.registerAsync({
-          useFactory: () =>
-            cacheStorageModuleFactory({
-              get: (key: string) =>
-                ({ CACHE_STORAGE_TTL: 60, REDIS_URL: process.env.REDIS_URL })[
-                  key
-                ],
-            } as TwentyConfigService),
+          useFactory: cacheStorageModuleFactory,
+          inject: [TwentyConfigService],
+          extraProviders: [
+            {
+              provide: ConfigService,
+              useValue: new ConfigService({
+                REDIS_URL: process.env.REDIS_URL,
+                CACHE_STORAGE_TTL: 60,
+                IS_CONFIG_VARIABLES_IN_DB_ENABLED: false,
+              }),
+            },
+            {
+              provide: CONFIG_VARIABLES_INSTANCE_TOKEN,
+              useValue: new ConfigVariables(),
+            },
+            EnvironmentConfigDriver,
+            TwentyConfigService,
+          ],
         }),
       ],
     }).compile();
