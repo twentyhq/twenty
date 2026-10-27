@@ -226,7 +226,7 @@ const bumpVersion = (newVersionArg?: string): void => {
   console.log('\nApplying changes:');
 
   generateWorkspaceCustomApplicationDependencies({
-    version: updatedPreviousVersions[updatedPreviousVersions.length - 1],
+    version: previousVersions[previousVersions.length - 1],
   });
 
   updatePreviousVersions(updatedPreviousVersions);
