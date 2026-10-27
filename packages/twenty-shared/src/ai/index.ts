@@ -8,6 +8,9 @@
  */
 
 export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
+export { AGENT_CHAT_INBOX_TAB_ACTIONS } from './constants/agent-chat-inbox-tab-actions.const';
+export type { AgentChatThreadFilterStatus } from './constants/agent-chat-thread-filter-status.const';
+export { AGENT_CHAT_THREAD_FILTER_STATUS } from './constants/agent-chat-thread-filter-status.const';
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
 export type { AiEvaluationQuestionType } from './constants/ai-evaluation-question-type.const';
 export { AI_EVALUATION_QUESTION_TYPES } from './constants/ai-evaluation-question-type.const';
@@ -105,6 +108,7 @@ export {
 } from './types/ToolWidget';
 export { applyAgentChatInboxAction } from './utils/apply-agent-chat-inbox-action.util';
 export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-tool-call.util';
+export { computeAgentChatThreadFilterStatusGqlFilter } from './utils/compute-agent-chat-thread-filter-status-gql-filter.util';
 export { extractRecordReferenceIds } from './utils/extract-record-reference-ids.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';

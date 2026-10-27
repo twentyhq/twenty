@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { aiChatPickerOpenErrorComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpenErrorComponentState';
@@ -20,7 +20,7 @@ import { logError } from '~/utils/logError';
 export const useOpenAiChatFromPicker = () => {
   const store = useStore();
   const { pathname } = useLocation();
-  const { loadAgentChatThread } = useRefreshAgentChatThreads();
+  const { loadAgentChatThread } = useLoadAgentChatThread();
   const { handleThreadClick } = useAiChatThreadClick();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const setAiChatPickerOpeningThreadId = useSetAtomComponentState(

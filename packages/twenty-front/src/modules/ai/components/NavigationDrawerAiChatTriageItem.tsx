@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
+import { type AgentChatThreadFilterStatus } from 'twenty-shared/ai';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,7 +9,6 @@ import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChat
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
-import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';

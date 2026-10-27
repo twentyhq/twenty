@@ -5,7 +5,7 @@ import {
   CoreObjectNameSingular,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_THREAD_LIST_FILTER } from '@/ai/constants/AgentChatThreadListFilter';
 import { AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS } from '@/ai/constants/AgentChatThreadListRecordGqlFields';
@@ -29,10 +29,10 @@ export const useFetchAgentChatThreadsPage = () => {
   const fetchAgentChatThreadsPage = useCallback(
     async ({
       lastCursor,
-      threadIdFilter,
+      filter,
     }: {
       lastCursor: string | null;
-      threadIdFilter?: RecordGqlOperationFilter;
+      filter?: RecordGqlOperationFilter;
     }) => {
       const chatObjectMetadataItem = store.get(
         objectMetadataItemFamilySelector.selectorFamily({
@@ -43,7 +43,7 @@ export const useFetchAgentChatThreadsPage = () => {
 
       if (
         !isDefined(chatObjectMetadataItem) ||
-        chatObjectMetadataItem.readableFields.length === 0
+        !isNonEmptyArray(chatObjectMetadataItem.readableFields)
       ) {
         return undefined;
       }
@@ -61,8 +61,8 @@ export const useFetchAgentChatThreadsPage = () => {
             objectPermissionsByObjectMetadataId,
           }),
           variables: {
-            filter: isDefined(threadIdFilter)
-              ? { and: [AGENT_CHAT_THREAD_LIST_FILTER, threadIdFilter] }
+            filter: isDefined(filter)
+              ? { and: [AGENT_CHAT_THREAD_LIST_FILTER, filter] }
               : AGENT_CHAT_THREAD_LIST_FILTER,
             orderBy: [{ lastActivityAt: 'DescNullsLast' }],
             limit: QUERY_MAX_RECORDS,
@@ -96,6 +96,7 @@ export const useFetchAgentChatThreadsPage = () => {
           .map(getAgentChatThreadParticipantFromRecord),
         hasNextPage: connection.pageInfo.hasNextPage ?? false,
         endCursor: connection.pageInfo.endCursor ?? null,
+        totalCount: connection.totalCount ?? records.length,
       };
     },
     [apolloCoreClient, objectPermissionsByObjectMetadataId, store],

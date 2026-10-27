@@ -110,6 +110,15 @@ type AgentChatThread {
   updatedAt: DateTime!
 }
 
+enum AgentChatThreadFilterStatus {
+  ACTIVE
+  ASSIGNED
+  DONE
+  MENTIONS
+  NEEDS_INPUT
+  SNOOZED
+}
+
 type AgentChatThreadParticipant {
   archivedAt: DateTime
   id: UUID!
@@ -3372,6 +3381,7 @@ type Mutation {
   uninstallApplication(universalIdentifier: String!): Boolean!
   updateAgentChatChannel(channelId: UUID!, input: UpdateAgentChatChannelInput!): AgentChatChannel!
   updateAgentChatThreadInboxState(action: AgentChatInboxAction!, snoozedUntil: DateTime, threadIds: [UUID!]!): [AgentChatThreadParticipant!]!
+  updateAgentChatThreadInboxStateInFilterStatus(action: AgentChatInboxAction!, excludedThreadIds: [UUID!]!, filterStatus: AgentChatThreadFilterStatus!, snoozedUntil: DateTime): [AgentChatThreadParticipant!]!
   updateApiKey(input: UpdateApiKeyInput!): ApiKey
   updateAppMessageChannel(input: UpdateAppMessageChannelInput!): MessageChannel!
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!

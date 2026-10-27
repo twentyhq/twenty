@@ -9,6 +9,7 @@ import { graphql, HttpResponse } from 'msw';
 import { MotionGlobalConfig } from 'framer-motion';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
 import {
   AppPath,
   CoreObjectNameSingular,
@@ -24,7 +25,6 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 as uuidv4 } from 'uuid';
 
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
 import { AI_CHAT_INBOX_LIST_PANE_WIDTH } from '@/ai/constants/AiChatInboxListPaneWidth';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';

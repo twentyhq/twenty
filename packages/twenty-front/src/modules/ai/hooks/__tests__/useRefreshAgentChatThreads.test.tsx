@@ -2,6 +2,8 @@ import { act, renderHook } from '@testing-library/react';
 import { atom, createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
+import { useFetchMoreAgentChatThreads } from '@/ai/hooks/useFetchMoreAgentChatThreads';
+import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
@@ -79,12 +81,15 @@ const getWrapper = (store: ReturnType<typeof createStore>) =>
     return <JotaiProvider store={store}>{children}</JotaiProvider>;
   };
 
-const renderRefresh = (store: ReturnType<typeof createStore>) =>
-  renderHook(() => useRefreshAgentChatThreads(), {
-    wrapper: getWrapper(store),
-  }).result;
+const renderChatThreadLoadingHook = <THookResult,>({
+  store,
+  hook,
+}: {
+  store: ReturnType<typeof createStore>;
+  hook: () => THookResult;
+}) => renderHook(hook, { wrapper: getWrapper(store) }).result;
 
-describe('useRefreshAgentChatThreads', () => {
+describe('agent chat thread loading', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     refreshAgentChatThreadPermissions.mockResolvedValue(undefined);
@@ -105,7 +110,10 @@ describe('useRefreshAgentChatThreads', () => {
     const store = buildStore();
     const thread = buildThread('thread-1', 'Loaded thread');
     queryMock.mockResolvedValue(buildPage([thread], { hasNextPage: true }));
-    const result = renderRefresh(store);
+    const result = renderChatThreadLoadingHook({
+      store,
+      hook: useRefreshAgentChatThreads,
+    });
 
     await act(async () => {
       await result.current.refreshAgentChatThreads();
@@ -203,7 +211,10 @@ describe('useRefreshAgentChatThreads', () => {
         } as AgentChatThreadRecord,
       ]),
     );
-    const result = renderRefresh(store);
+    const result = renderChatThreadLoadingHook({
+      store,
+      hook: useRefreshAgentChatThreads,
+    });
 
     await act(async () => {
       await result.current.refreshAgentChatThreads();
@@ -239,10 +250,17 @@ describe('useRefreshAgentChatThreads', () => {
       .mockResolvedValueOnce(
         buildPage([buildThread('thread-2', 'Second')], { endCursor: 'page-2' }),
       );
-    const result = renderRefresh(store);
+    const refreshResult = renderChatThreadLoadingHook({
+      store,
+      hook: useRefreshAgentChatThreads,
+    });
+    const result = renderChatThreadLoadingHook({
+      store,
+      hook: useFetchMoreAgentChatThreads,
+    });
 
     await act(async () => {
-      await result.current.refreshAgentChatThreads();
+      await refreshResult.current.refreshAgentChatThreads();
       await result.current.fetchMoreAgentChatThreads();
     });
 
@@ -279,7 +297,10 @@ describe('useRefreshAgentChatThreads', () => {
         }),
       )
       .mockResolvedValueOnce(buildPage(serverThreads));
-    const result = renderRefresh(store);
+    const result = renderChatThreadLoadingHook({
+      store,
+      hook: useRefreshAgentChatThreads,
+    });
 
     const refreshPromise = result.current.refreshAgentChatThreads();
 
@@ -323,7 +344,10 @@ describe('useRefreshAgentChatThreads', () => {
       .mockResolvedValueOnce(
         buildPage([buildThread('thread-1', 'Renamed meanwhile')]),
       );
-    const result = renderRefresh(store);
+    const result = renderChatThreadLoadingHook({
+      store,
+      hook: useRefreshAgentChatThreads,
+    });
 
     const refreshPromise = result.current.refreshAgentChatThreads();
 
@@ -354,7 +378,10 @@ describe('useRefreshAgentChatThreads', () => {
       });
       return buildPage([buildThread('thread-1', 'Stale title')]);
     });
-    const result = renderRefresh(store);
+    const result = renderChatThreadLoadingHook({
+      store,
+      hook: useRefreshAgentChatThreads,
+    });
 
     await act(async () => {
       expect(await result.current.refreshAgentChatThreads()).toBeUndefined();
@@ -376,7 +403,10 @@ describe('useRefreshAgentChatThreads', () => {
     queryMock.mockResolvedValue(
       buildPage([buildThread('thread-1', 'Refreshed title')]),
     );
-    const result = renderRefresh(store);
+    const result = renderChatThreadLoadingHook({
+      store,
+      hook: useRefreshAgentChatThreads,
+    });
 
     await act(async () => {
       await result.current.refreshAgentChatThreads();
@@ -390,7 +420,10 @@ describe('useRefreshAgentChatThreads', () => {
   it('leaves the list unloaded so initialization can retry a failed request', async () => {
     const store = buildStore();
     queryMock.mockRejectedValue(new Error('Network error'));
-    const result = renderRefresh(store);
+    const result = renderChatThreadLoadingHook({
+      store,
+      hook: useRefreshAgentChatThreads,
+    });
 
     await act(async () => {
       await result.current.refreshAgentChatThreads();
@@ -406,7 +439,10 @@ describe('useRefreshAgentChatThreads', () => {
       hasNextPage: true,
       endCursor: 'page-1',
     });
-    const result = renderRefresh(store);
+    const result = renderChatThreadLoadingHook({
+      store,
+      hook: useLoadAgentChatThread,
+    });
 
     queryMock.mockResolvedValueOnce(
       buildPage([buildThread('old-thread', 'Old chat')]),
@@ -455,7 +491,10 @@ describe('useRefreshAgentChatThreads', () => {
         },
       ]),
     );
-    const result = renderRefresh(store);
+    const result = renderChatThreadLoadingHook({
+      store,
+      hook: useLoadAgentChatThread,
+    });
 
     await act(async () => {
       await result.current.loadAgentChatThread('old-thread');
@@ -487,7 +526,10 @@ describe('useRefreshAgentChatThreads', () => {
       hasNextPage: true,
       endCursor: 'page-1',
     });
-    const result = renderRefresh(store);
+    const result = renderChatThreadLoadingHook({
+      store,
+      hook: useLoadAgentChatThread,
+    });
 
     const loadPromise = result.current.loadAgentChatThread('old-thread');
 

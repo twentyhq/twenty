@@ -3,8 +3,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
+import { useFetchMoreAgentChatThreadsInFilterStatus } from '@/ai/hooks/useFetchMoreAgentChatThreadsInFilterStatus';
 import { useLoadAgentChatChannelThreads } from '@/ai/hooks/useLoadAgentChatChannelThreads';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatShownChannelThreadListSelector } from '@/ai/states/selectors/agentChatShownChannelThreadListSelector';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
@@ -24,7 +25,11 @@ export const AiChatInboxThreadPagination = ({
 }: AiChatInboxThreadPaginationProps) => {
   const { t } = useLingui();
   const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
-  const { fetchMoreAgentChatThreads } = useRefreshAgentChatThreads();
+  const agentChatThreadFilterStatus = useAtomStateValue(
+    agentChatThreadFilterStatusState,
+  );
+  const { fetchMoreAgentChatThreadsInFilterStatus } =
+    useFetchMoreAgentChatThreadsInFilterStatus();
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
   );
@@ -41,11 +46,12 @@ export const AiChatInboxThreadPagination = ({
 
   const hasMoreThreads = isDefined(agentChatShownChannelView)
     ? (agentChatShownChannelThreadList?.hasNextPage ?? false)
-    : isDefined(agentChatThreadList) && agentChatThreadList.hasNextPage;
+    : (agentChatThreadList?.filterStatusPages?.[agentChatThreadFilterStatus]
+        ?.hasNextPage ?? false);
   const fetchMoreThreads = () =>
     isDefined(agentChatShownChannelView)
       ? loadAgentChatChannelThreads('fetch-more')
-      : fetchMoreAgentChatThreads();
+      : fetchMoreAgentChatThreadsInFilterStatus(agentChatThreadFilterStatus);
   const previousThreadId = index > 0 ? threads[index - 1].id : undefined;
   const nextThreadId =
     index < threads.length - 1 ? threads[index + 1].id : undefined;

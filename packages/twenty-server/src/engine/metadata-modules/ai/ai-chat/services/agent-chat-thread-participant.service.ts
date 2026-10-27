@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import {
+  type AgentChatThreadFilterStatus,
+  computeAgentChatThreadFilterStatusGqlFilter,
+} from 'twenty-shared/ai';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
+
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { AGENT_CHAT_INBOX_TAB_ACTION_MAX_THREAD_COUNT } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-inbox-tab-action-max-thread-count.constant';
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
 import { AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-job-retry-options.constant';
 import { AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-recheck-minimum-delay-ms.constant';
@@ -25,6 +32,7 @@ import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modul
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { findAgentChatSnoozeRemainingDelay } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-snooze-remaining-delay.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -202,6 +210,39 @@ export class AgentChatThreadParticipantService {
         ? assertIsNotAssignee
         : writeThread,
     );
+  }
+
+  async updateInboxStateInFilterStatus({
+    filterStatus,
+    excludedThreadIds,
+    action,
+    snoozedUntil,
+    workspaceId,
+    workspaceMemberId,
+  }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
+    filterStatus: AgentChatThreadFilterStatus;
+    excludedThreadIds: string[];
+    action: AgentChatInboxAction;
+    snoozedUntil: Date | null;
+  }): Promise<AgentChatThreadParticipantDTO[]> {
+    const threadIds = await this.findThreadIdsInFilterStatus({
+      filterStatus,
+      excludedThreadIds,
+      workspaceId,
+      workspaceMemberId,
+    });
+
+    if (threadIds.length === 0) {
+      return [];
+    }
+
+    return this.updateInboxState({
+      threadIds,
+      action,
+      snoozedUntil,
+      workspaceId,
+      workspaceMemberId,
+    });
   }
 
   // A mention brings the chat back unread for the mentioned member, who the
@@ -517,6 +558,79 @@ export class AgentChatThreadParticipantService {
       });
 
     return summary;
+  }
+
+  private async findThreadIdsInFilterStatus({
+    filterStatus,
+    excludedThreadIds,
+    workspaceId,
+    workspaceMemberId,
+  }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
+    filterStatus: AgentChatThreadFilterStatus;
+    excludedThreadIds: string[];
+  }): Promise<string[]> {
+    const authContext = await this.sharingService.getAuthContext({
+      workspaceId,
+      workspaceMemberId,
+    });
+
+    const rows = await this.workspaceOrmManager.executeInWorkspaceContext(
+      () => {
+        const repository =
+          this.workspaceOrmManager.getRepositoryWithContextPermissions(
+            'agentChatThread',
+          );
+        const {
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          objectIdByNameSingular,
+        } = repository.internalContext;
+        const threadObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: objectIdByNameSingular.agentChatThread,
+          flatEntityMaps: flatObjectMetadataMaps,
+        });
+
+        if (!isDefined(threadObjectMetadata)) {
+          throw new AiException(
+            'Chat thread object metadata not found',
+            AiExceptionCode.THREAD_NOT_FOUND,
+          );
+        }
+
+        const queryBuilder = repository.createQueryBuilder('agentChatThread');
+
+        new GraphqlQueryParser(
+          threadObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        ).applyFilterToBuilder(queryBuilder, 'agentChatThread', {
+          and: [
+            computeAgentChatThreadFilterStatusGqlFilter({
+              filterStatus,
+              workspaceMemberId,
+            }),
+            ...(isNonEmptyArray(excludedThreadIds)
+              ? [{ not: { id: { in: excludedThreadIds } } }]
+              : []),
+          ],
+        });
+
+        return queryBuilder
+          .select('"agentChatThread"."id"', 'id')
+          .limit(AGENT_CHAT_INBOX_TAB_ACTION_MAX_THREAD_COUNT + 1)
+          .getRawMany<{ id: string }>();
+      },
+      authContext,
+    );
+
+    if (rows.length > AGENT_CHAT_INBOX_TAB_ACTION_MAX_THREAD_COUNT) {
+      throw new AiException(
+        `More than ${AGENT_CHAT_INBOX_TAB_ACTION_MAX_THREAD_COUNT} chats are selected`,
+        AiExceptionCode.CHAT_INBOX_TAB_ACTION_TOO_LARGE,
+      );
+    }
+
+    return rows.map(({ id }) => id);
   }
 
   private async scheduleSnoozeEnd({

@@ -1,7 +1,13 @@
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { atom, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -17,7 +23,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
+import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
@@ -32,6 +38,10 @@ import {
   resetJotaiStore,
   jotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { agentChatInboxTabSelectionState } from '@/ai/states/agentChatInboxTabSelectionState';
+import { PageFocusId } from '@/types/PageFocusId';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { messages } from '~/locales/generated/en';
 import { AiChatInboxPage } from '~/pages/ai-chat/AiChatInboxPage';
 
@@ -113,6 +123,20 @@ jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
   AgentChatThreadsFetchMoreTrigger: () => null,
 }));
 
+const refreshAgentChatThreadsInFilterStatus = jest.fn();
+
+jest.mock('@/ai/hooks/useRefreshAgentChatThreadsInFilterStatus', () => ({
+  useRefreshAgentChatThreadsInFilterStatus: () => ({
+    refreshAgentChatThreadsInFilterStatus,
+  }),
+}));
+
+jest.mock('@/ai/hooks/useFetchMoreAgentChatThreadsInFilterStatus', () => ({
+  useFetchMoreAgentChatThreadsInFilterStatus: () => ({
+    fetchMoreAgentChatThreadsInFilterStatus: jest.fn(),
+  }),
+}));
+
 jest.mock('@/ai/components/AgentChatChannelThreadsLoadEffect', () => ({
   AgentChatChannelThreadsLoadEffect: () => null,
 }));
@@ -125,10 +149,6 @@ jest.mock('@/ai/hooks/useLoadAgentChatChannelThreads', () => ({
   useLoadAgentChatChannelThreads: () => ({
     loadAgentChatChannelThreads: jest.fn(),
   }),
-}));
-
-jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
-  useRefreshAgentChatThreads: () => ({ fetchMoreAgentChatThreads: jest.fn() }),
 }));
 
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
@@ -263,6 +283,7 @@ describe('AiChatInboxPage', () => {
     // The list filter is kept in local storage
     localStorage.clear();
     resetJotaiStore();
+    refreshAgentChatThreadsInFilterStatus.mockClear();
     THREADS.forEach((thread) =>
       jotaiStore.set(recordStoreFamilyState.atomFamily(thread.id), thread),
     );
@@ -300,6 +321,14 @@ describe('AiChatInboxPage', () => {
     renderInbox();
 
     expect(screen.getByText('Chat page without the inbox')).toBeInTheDocument();
+  });
+
+  it("loads the chats of the member's inbox tab from the server", () => {
+    renderInbox();
+
+    expect(refreshAgentChatThreadsInFilterStatus).toHaveBeenCalledWith(
+      AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+    );
   });
 
   it('shows the list without selecting a chat on the base inbox route', () => {
@@ -643,6 +672,170 @@ describe('AiChatInboxPage', () => {
         mode: 'selection',
         selectedRecordIds: [secondThread.id],
       });
+    });
+  });
+
+  describe('selecting every chat with cmd+a', () => {
+    beforeEach(() => {
+      jotaiStore.set(focusStackState.atom, [
+        {
+          focusId: PageFocusId.AiChatInbox,
+          componentInstance: {
+            componentType: FocusComponentType.PAGE,
+            componentInstanceId: PageFocusId.AiChatInbox,
+          },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysWithModifiers: true,
+            enableGlobalHotkeysConflictingWithKeyboard: true,
+          },
+        },
+      ]);
+    });
+
+    it('checks every chat, and clears them on a second press', async () => {
+      renderInbox();
+
+      await userEvent.keyboard('{Meta>}a{/Meta}');
+
+      expect(screen.getByText('3 chats selected')).toBeInTheDocument();
+      expect(getRowCheckbox('First chat')).toBeChecked();
+      expect(getRowCheckbox('Second chat')).toBeChecked();
+      expect(getRowCheckbox('Third chat')).toBeChecked();
+      expect(jotaiStore.get(agentChatInboxTabSelectionState.atom)).toBeNull();
+
+      await userEvent.keyboard('{Control>}a{/Control}');
+
+      expect(getRowCheckbox('First chat')).not.toBeChecked();
+      expect(screen.queryByText(/chats selected/)).not.toBeInTheDocument();
+    });
+
+    it('covers the chats of the tab not loaded yet, minus the ones unchecked', async () => {
+      jotaiStore.set(agentChatThreadListState.atom, {
+        threadIds: THREADS.map(({ id }) => id),
+        hasNextPage: false,
+        endCursor: null,
+        filterStatusPages: {
+          active: {
+            hasNextPage: true,
+            endCursor: 'tab-page-1',
+            totalCount: 40,
+          },
+        },
+      });
+      renderInbox();
+
+      await userEvent.keyboard('{Meta>}a{/Meta}');
+
+      expect(screen.getByText('40 chats selected')).toBeInTheDocument();
+
+      fireEvent.click(getRowCheckbox('Second chat'));
+
+      expect(screen.getByText('39 chats selected')).toBeInTheDocument();
+      expect(jotaiStore.get(agentChatInboxTabSelectionState.atom)).toEqual({
+        filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+        selectedThreadIds: [firstThread.id, thirdThread.id],
+        excludedThreadIds: [secondThread.id],
+      });
+    });
+
+    it('starts a plain selection once every chat is unchecked', async () => {
+      jotaiStore.set(agentChatThreadListState.atom, {
+        threadIds: THREADS.map(({ id }) => id),
+        hasNextPage: false,
+        endCursor: null,
+        filterStatusPages: {
+          active: {
+            hasNextPage: true,
+            endCursor: 'tab-page-1',
+            totalCount: 40,
+          },
+        },
+      });
+      renderInbox();
+
+      await userEvent.keyboard('{Meta>}a{/Meta}');
+      fireEvent.click(getRowCheckbox('First chat'));
+      fireEvent.click(getRowCheckbox('Second chat'));
+      fireEvent.click(getRowCheckbox('Third chat'));
+      fireEvent.click(getRowCheckbox('First chat'));
+
+      expect(screen.getByText('1 chat selected')).toBeInTheDocument();
+      expect(jotaiStore.get(agentChatInboxTabSelectionState.atom)).toBeNull();
+    });
+
+    it('starts with nothing checked after switching to another tab and back', async () => {
+      jotaiStore.set(agentChatThreadParticipantsState.atom, (participants) =>
+        Object.fromEntries(
+          Object.entries(participants ?? {}).map(([threadId, participant]) => [
+            threadId,
+            threadId === thirdThread.id
+              ? { ...participant, archivedAt: '2099-01-01T00:00:00.000Z' }
+              : participant,
+          ]),
+        ),
+      );
+      jotaiStore.set(
+        aiChatInboxLayoutState.atom,
+        AI_CHAT_INBOX_LAYOUT.RECORD_PAGE,
+      );
+      renderInbox('/inbox');
+
+      await userEvent.keyboard('{Meta>}a{/Meta}');
+
+      expect(getRowCheckbox('First chat')).toBeChecked();
+
+      act(() =>
+        jotaiStore.set(
+          agentChatThreadFilterStatusState.atom,
+          AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+        ),
+      );
+
+      expect(getRowCheckbox('Third chat')).not.toBeChecked();
+
+      act(() =>
+        jotaiStore.set(
+          agentChatThreadFilterStatusState.atom,
+          AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+        ),
+      );
+
+      expect(getRowCheckbox('First chat')).not.toBeChecked();
+      expect(screen.queryByText(/chats? selected/)).not.toBeInTheDocument();
+    });
+
+    it('stops checking chats that come back once every checked one has left', async () => {
+      const setArchivedAt = (archivedAt: string | null) =>
+        jotaiStore.set(agentChatThreadParticipantsState.atom, (participants) =>
+          Object.fromEntries(
+            Object.entries(participants ?? {}).map(
+              ([threadId, participant]) => [
+                threadId,
+                { ...participant, archivedAt },
+              ],
+            ),
+          ),
+        );
+
+      // With no chat on screen nothing navigates, so the selection stays the same
+      jotaiStore.set(
+        aiChatInboxLayoutState.atom,
+        AI_CHAT_INBOX_LAYOUT.RECORD_PAGE,
+      );
+      renderInbox('/inbox');
+
+      await userEvent.keyboard('{Meta>}a{/Meta}');
+
+      expect(getRowCheckbox('First chat')).toBeChecked();
+
+      act(() => setArchivedAt('2099-01-01T00:00:00.000Z'));
+
+      expect(screen.queryByText('First chat')).not.toBeInTheDocument();
+
+      act(() => setArchivedAt(null));
+
+      expect(getRowCheckbox('First chat')).not.toBeChecked();
+      expect(screen.queryByText(/chats? selected/)).not.toBeInTheDocument();
     });
   });
 

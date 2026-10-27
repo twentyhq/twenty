@@ -22,10 +22,12 @@ import { messages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const fetchMoreAgentChatThreads = jest.fn();
+const fetchMoreAgentChatThreadsInFilterStatus = jest.fn();
 
-jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
-  useRefreshAgentChatThreads: () => ({ fetchMoreAgentChatThreads }),
+jest.mock('@/ai/hooks/useFetchMoreAgentChatThreadsInFilterStatus', () => ({
+  useFetchMoreAgentChatThreadsInFilterStatus: () => ({
+    fetchMoreAgentChatThreadsInFilterStatus,
+  }),
 }));
 
 const loadAgentChatChannelThreads = jest.fn();
@@ -47,8 +49,11 @@ const renderPagination = ({
 }) => {
   jotaiStore.set(agentChatThreadListState.atom, {
     threadIds: THREADS.map(({ id }) => id),
-    hasNextPage,
+    hasNextPage: false,
     endCursor: null,
+    filterStatusPages: {
+      active: { hasNextPage, endCursor: null, totalCount: THREADS.length },
+    },
   });
 
   return render(
@@ -67,7 +72,7 @@ const renderPagination = ({
 describe('AiChatInboxThreadPagination', () => {
   beforeEach(() => {
     resetJotaiStore();
-    fetchMoreAgentChatThreads.mockClear();
+    fetchMoreAgentChatThreadsInFilterStatus.mockClear();
     loadAgentChatChannelThreads.mockClear();
   });
 
@@ -86,7 +91,7 @@ describe('AiChatInboxThreadPagination', () => {
     expect(onThreadSelect).toHaveBeenCalledTimes(2);
     expect(onThreadSelect).toHaveBeenNthCalledWith(1, 'thread-1');
     expect(onThreadSelect).toHaveBeenNthCalledWith(2, 'thread-3');
-    expect(fetchMoreAgentChatThreads).not.toHaveBeenCalled();
+    expect(fetchMoreAgentChatThreadsInFilterStatus).not.toHaveBeenCalled();
   });
 
   it('stops at the last chat once every chat is loaded', () => {
@@ -108,7 +113,7 @@ describe('AiChatInboxThreadPagination', () => {
 
     expect(onThreadSelect).toHaveBeenCalledTimes(1);
     expect(onThreadSelect).toHaveBeenCalledWith('thread-3');
-    expect(fetchMoreAgentChatThreads).toHaveBeenCalledTimes(1);
+    expect(fetchMoreAgentChatThreadsInFilterStatus).toHaveBeenCalledTimes(1);
   });
 
   it('loads more chats from the last loaded one while more exist', () => {
@@ -123,7 +128,7 @@ describe('AiChatInboxThreadPagination', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next chat' }));
 
     expect(onThreadSelect).not.toHaveBeenCalled();
-    expect(fetchMoreAgentChatThreads).toHaveBeenCalledTimes(1);
+    expect(fetchMoreAgentChatThreadsInFilterStatus).toHaveBeenCalledTimes(1);
   });
 
   it('shows nothing for a chat that is not listed', () => {
@@ -156,6 +161,6 @@ describe('AiChatInboxThreadPagination', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next chat' }));
 
     expect(loadAgentChatChannelThreads).toHaveBeenCalledWith('fetch-more');
-    expect(fetchMoreAgentChatThreads).not.toHaveBeenCalled();
+    expect(fetchMoreAgentChatThreadsInFilterStatus).not.toHaveBeenCalled();
   });
 });

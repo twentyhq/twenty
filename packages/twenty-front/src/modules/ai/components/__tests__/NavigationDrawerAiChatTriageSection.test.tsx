@@ -9,7 +9,7 @@ import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
+import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';

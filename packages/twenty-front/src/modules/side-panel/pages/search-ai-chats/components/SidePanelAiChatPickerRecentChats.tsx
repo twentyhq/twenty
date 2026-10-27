@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useFetchMoreAgentChatThreads } from '@/ai/hooks/useFetchMoreAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { SidePanelAiChatPickerList } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList';
@@ -26,7 +26,7 @@ export const SidePanelAiChatPickerRecentChats = ({
   const aiChatPickerOpeningThreadId = useAtomComponentStateValue(
     aiChatPickerOpeningThreadIdComponentState,
   );
-  const { fetchMoreAgentChatThreads } = useRefreshAgentChatThreads();
+  const { fetchMoreAgentChatThreads } = useFetchMoreAgentChatThreads();
   const [isLoadingMoreChats, setIsLoadingMoreChats] = useState(false);
   const hasNextPage = agentChatThreadList?.hasNextPage ?? false;
 
