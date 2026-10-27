@@ -8,7 +8,7 @@ import {
 } from 'src/engine/core-modules/application/application-manifest/types/stored-workflow-version-definition.type';
 import { normalizeStoredWorkflowErrorHandlingOptions } from 'src/engine/core-modules/application/application-manifest/utils/normalize-stored-workflow-error-handling-options.util';
 
-// Builder state no run reads: typenames, valid, manual objectType, null next steps or position, boolean retries
+// Only state no run reads is normalized, so a manifest edit is never compared away
 const normalizeSettings = ({
   type,
   settings: { objectType, errorHandlingOptions, ...rest },
