@@ -1424,7 +1424,7 @@ export default {
                 517
             ],
             "connectionProviders": [
-                41
+                48
             ],
             "settingsMenuItems": [
                 477
