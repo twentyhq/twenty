@@ -1,8 +1,11 @@
 ---
 title: Logic Functions
 description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
-icon: 'bolt'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
 
@@ -1169,3 +1172,5 @@ Key points:
 You do **not** need to pass these to the clients — they read from `process.env` automatically, and [Whose access a call uses](#whose-access-a-call-uses) covers picking between them. Your application's own permissions are determined by the role declared with `defineApplicationRole()` (or referenced via `defaultRoleUniversalIdentifier` in `application-config.ts`); a run acting as a person can never exceed that role, nor theirs.
 
 </Note>
+
+<PageBanner illustration="card-page-logic-functions" />

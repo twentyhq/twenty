@@ -26,6 +26,8 @@ export const getLambdaConnectionOptions = (
   const layerBucketRegion =
     twentyConfigService.get('LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION') ??
     region;
+  const resourceTags =
+    twentyConfigService.get('LOGIC_FUNCTION_LAMBDA_RESOURCE_TAGS') ?? {};
   const resourceNamespace = getLambdaResourceNamespace({
     lambdaRoleArn: lambdaRole,
   });
@@ -41,5 +43,7 @@ export const getLambdaConnectionOptions = (
     layerBucket,
     layerBucketRegion,
     resourceNamespace,
+    resourceTags:
+      Object.keys(resourceTags).length > 0 ? resourceTags : undefined,
   };
 };

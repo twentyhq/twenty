@@ -1,10 +1,11 @@
 ---
 title: Style Guide
-icon: "paintbrush"
+description: Rules to follow when writing code for Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-This document includes the rules to follow when writing code.
+## Overview
 
 The goal here is to have a consistent codebase, which is easy to read and easy to maintain.
 
@@ -289,3 +290,5 @@ An Oxlint rule, `typescript/consistent-type-imports`, enforces the no-type impor
 Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). In most situations, you should not need to use type-only imports.
 
 To ensure your code complies with this rule, make sure to run Oxlint as part of your development workflow.
+
+<PageBanner illustration="card-page-campaign-practices" />

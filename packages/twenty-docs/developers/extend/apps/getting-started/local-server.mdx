@@ -1,10 +1,13 @@
 ---
 title: Local Server
 description: Connect the standalone CLI to a local Twenty server.
-icon: 'server'
 ---
 
-The standalone CLI connects to a running Twenty server. It does not start or manage Docker containers, and the SDK's `docker:*` commands have been removed.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Setup
+
+The standalone CLI connects to a running Twenty server. It does not start or manage Docker containers.
 
 Use the [self-hosting guide](/developers/self-host/self-host) to run Twenty with Docker. In a Twenty repository checkout, the existing development environment also works:
 
@@ -28,6 +31,8 @@ Use a separate disposable server or workspace. Integration test setup installs a
 
 The generated CI workflow provisions an isolated instance through `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` and installs the standalone CLI separately.
 
-## Existing projects
+## Project dependencies
 
-Keep `twenty-sdk` and `twenty-client-sdk` installed per project. Install the `twenty` CLI globally, then run `twenty app typecheck`, `twenty app build`, and `twenty app apply` from the app directory.
+Install `twenty-sdk` and `twenty-client-sdk` as project dependencies. Install the `twenty` CLI globally, then run `twenty app typecheck`, `twenty app build`, and `twenty app apply` from the app directory.
+
+<PageBanner illustration="dev-self-host" />
