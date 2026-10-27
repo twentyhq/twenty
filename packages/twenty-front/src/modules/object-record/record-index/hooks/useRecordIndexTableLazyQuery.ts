@@ -18,8 +18,6 @@ export const useRecordIndexTableLazyQuery = (objectNameSingular: string) => {
     useLazyFindManyRecords({
       ...params,
       recordGqlFields,
-      // The table drops its SSE subscription when it unmounts, so records created meanwhile never
-      // reach the cache: the initial load on remount has to go to the network
       fetchPolicy: 'network-only',
     });
 
