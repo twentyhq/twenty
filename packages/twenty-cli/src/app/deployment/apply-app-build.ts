@@ -42,7 +42,7 @@ export const applyAppBuild = async ({
   build: ToolingBuild;
   appPath: string;
   context: TargetCommandContext;
-  inferDeletionFromMissingEntities: boolean;
+  inferDeletionFromMissingEntities: boolean | undefined;
   isCreationApproved: boolean;
   isDeletionApproved: boolean;
   approvalSignal?: AbortSignal;

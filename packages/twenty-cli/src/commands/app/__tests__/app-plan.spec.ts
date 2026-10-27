@@ -160,11 +160,14 @@ describe('app plan', () => {
   afterEach(() => vi.unstubAllEnvs());
   afterAll(() => server.close());
 
-  it.each([true, false])(
-    'requests only a dry run with deletion inference %s',
-    async (inferDeletion) => {
-      const options = inferDeletion ? [] : ['--no-delete'];
-      const { envelope, exitCode, stdout } = await runJson(...options);
+  it.each([
+    { flags: [], inferDeletion: undefined },
+    { flags: ['--prune'], inferDeletion: true },
+    { flags: ['--no-delete'], inferDeletion: false },
+  ])(
+    'requests only a dry run with $flags',
+    async ({ flags, inferDeletion }) => {
+      const { envelope, exitCode, stdout } = await runJson(...flags);
 
       expect(exitCode).toBe(0);
       expect(envelope).toMatchObject({
@@ -173,7 +176,7 @@ describe('app plan', () => {
         data: {
           application: APPLICATION,
           plan: true,
-          inferDeletionFromMissingEntities: options.length === 0,
+          inferDeletionFromMissingEntities: inferDeletion ?? null,
           actions: ACTIONS,
           summary: { create: 1, update: 1, delete: 2, destructive: 1 },
         },
@@ -192,11 +195,13 @@ describe('app plan', () => {
       });
       expect(readGraphqlRequest(server.requests[0])).toMatchObject({
         query: expect.stringContaining('mutation PreviewApplication'),
-        arguments: {
-          dryRun: true,
-          manifest: MANIFEST,
-          inferDeletionFromMissingEntities: options.length === 0,
-        },
+      });
+      expect(readGraphqlRequest(server.requests[0]).arguments).toEqual({
+        dryRun: true,
+        manifest: MANIFEST,
+        ...(isDefined(inferDeletion) && {
+          inferDeletionFromMissingEntities: inferDeletion,
+        }),
       });
       expect(await readFile(join(appPath, 'builds.txt'), 'utf8')).toBe(
         'built\n',
@@ -234,6 +239,14 @@ describe('app plan', () => {
       expect(stdout).toContain(text);
     }
     expect(stdout).not.toContain('project output');
+  });
+
+  it('does not offer --no-delete when deletions were requested with --prune', async () => {
+    const { stdout, exitCode } = await run('--prune');
+
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain('Plan: 1 to add, 1 to change, 2 to destroy.');
+    expect(stdout).not.toContain('--no-delete');
   });
 
   it('reports an empty plan as a success', async () => {
@@ -496,7 +509,7 @@ describe('app plan', () => {
         needsProject: true,
         needsTarget: true,
         requiredPermissions: ['APPLICATIONS'],
-        flags: expect.arrayContaining(['--no-delete']),
+        flags: expect.arrayContaining(['--no-delete', '--prune']),
       }),
     );
     expect(server.requests).toHaveLength(0);

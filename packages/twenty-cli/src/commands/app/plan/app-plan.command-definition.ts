@@ -14,10 +14,16 @@ export const APP_PLAN_COMMAND_DEFINITION: TargetCommandDefinition = {
       flags: '--no-delete',
       description: 'Keep remote entities missing from the app source',
     },
+    {
+      flags: '--prune',
+      description:
+        'Delete remote entities missing from the app source (the default, except for the workspace custom application)',
+    },
   ],
   examples: [
     'twenty app plan --remote dev',
     'twenty app plan --path ./apps/billing --no-delete --json',
+    'twenty app plan --prune',
   ],
   outputModes: ['human', 'json'],
   writes: false,

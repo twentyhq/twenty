@@ -15,6 +15,11 @@ export const APP_APPLY_COMMAND_DEFINITION: TargetCommandDefinition = {
       description: 'Keep remote entities missing from the app source',
     },
     {
+      flags: '--prune',
+      description:
+        'Delete remote entities missing from the app source (the default, except for the workspace custom application)',
+    },
+    {
       flags: '--create',
       description:
         'Register the app and install it in the workspace if it has no registration yet',
@@ -29,6 +34,7 @@ export const APP_APPLY_COMMAND_DEFINITION: TargetCommandDefinition = {
     'twenty app apply --remote dev',
     'twenty app apply --create --json',
     'twenty app apply --no-delete',
+    'twenty app apply --prune',
   ],
   outputModes: ['human', 'json'],
   writes: true,

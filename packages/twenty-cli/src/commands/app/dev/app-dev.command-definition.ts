@@ -15,6 +15,11 @@ export const APP_DEV_COMMAND_DEFINITION: TargetCommandDefinition = {
       description: 'Keep remote entities missing from the app source',
     },
     {
+      flags: '--prune',
+      description:
+        'Delete remote entities missing from the app source (the default, except for the workspace custom application)',
+    },
+    {
       flags: '--create',
       description:
         'Allow registering and installing an app with no registration',
