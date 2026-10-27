@@ -5,6 +5,13 @@ import { OUTSIDE_PRESS_EVENT_TYPES } from '@/constants/OutsidePressEventTypes';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 import { type OutsidePressEventData } from '@/types/OutsidePressEventData';
 
+const isOutsidePressEventType = (
+  eventType: string,
+): eventType is OutsidePressEventData['type'] =>
+  OUTSIDE_PRESS_EVENT_TYPES.some(
+    (outsidePressEventType) => outsidePressEventType === eventType,
+  );
+
 export const trackHostOutsidePress = ({
   documentTarget,
   findRemoteElementIdContainingNode,
@@ -18,6 +25,7 @@ export const trackHostOutsidePress = ({
 }): (() => void) => {
   const handleOutsidePress = (event: MouseEvent) => {
     if (
+      !isOutsidePressEventType(event.type) ||
       hasActivePointerCaptureForEvent(event) ||
       isDefined(findRemoteElementIdContainingNode(event.target)) ||
       event
@@ -28,7 +36,7 @@ export const trackHostOutsidePress = ({
     }
 
     pushOutsidePressEvent({
-      type: event.type as OutsidePressEventData['type'],
+      type: event.type,
       button: event.button,
       buttons: event.buttons,
       detail: event.detail,

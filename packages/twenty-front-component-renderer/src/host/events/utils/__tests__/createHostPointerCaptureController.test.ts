@@ -1,8 +1,28 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { wrapEventHandler } from '@/host/events/utils/wrapEventHandler';
 import { trackHostOutsidePress } from '@/host/events/utils/trackHostOutsidePress';
 import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
 
 import { createHostPointerCaptureController } from '../createHostPointerCaptureController';
+
+const findRegisteredListener = ({
+  addEventListenerCalls,
+  eventType,
+}: {
+  addEventListenerCalls: Parameters<EventTarget['addEventListener']>[];
+  eventType: string;
+}): EventListener => {
+  const listener = addEventListenerCalls.find(
+    ([registeredEventType]) => registeredEventType === eventType,
+  )?.[1];
+
+  if (!isDefined(listener) || 'handleEvent' in listener) {
+    throw new Error(`Expected a ${eventType} listener function`);
+  }
+
+  return listener;
+};
 
 const createCaptureFixture = () => {
   const element = Object.assign(document.createElement('div'), {
@@ -34,35 +54,25 @@ const startCapturedGesture = ({
 
   controller.startPointerCapture({ element, pointerId });
 
-  const findListener = ({
-    addListener,
-    eventType,
-  }: {
-    addListener: typeof addDocumentListener | typeof addElementListener;
-    eventType: string;
-  }) =>
-    addListener.mock.calls.find(
-      ([listenedEventType]) => listenedEventType === eventType,
-    )![1] as (event: PointerEvent) => void;
   const capturedGestureListeners = {
-    handlePointerMove: findListener({
-      addListener: addDocumentListener,
+    handlePointerMove: findRegisteredListener({
+      addEventListenerCalls: addDocumentListener.mock.calls,
       eventType: 'pointermove',
     }),
-    handlePointerUp: findListener({
-      addListener: addDocumentListener,
+    handlePointerUp: findRegisteredListener({
+      addEventListenerCalls: addDocumentListener.mock.calls,
       eventType: 'pointerup',
     }),
-    handleCapturingElementPointerMove: findListener({
-      addListener: addElementListener,
+    handleCapturingElementPointerMove: findRegisteredListener({
+      addEventListenerCalls: addElementListener.mock.calls,
       eventType: 'pointermove',
     }),
-    handleCapturingElementPointerUp: findListener({
-      addListener: addElementListener,
+    handleCapturingElementPointerUp: findRegisteredListener({
+      addEventListenerCalls: addElementListener.mock.calls,
       eventType: 'pointerup',
     }),
-    handleCaptureLoss: findListener({
-      addListener: addElementListener,
+    handleCaptureLoss: findRegisteredListener({
+      addEventListenerCalls: addElementListener.mock.calls,
       eventType: 'lostpointercapture',
     }),
   };
@@ -108,9 +118,10 @@ describe('createHostPointerCaptureController', () => {
         controller.hasActivePointerCaptureForEvent,
       pushOutsidePressEvent,
     });
-    const outsidePointerUp = addDocumentListener.mock.calls.find(
-      ([eventType, , capture]) => eventType === 'pointerup' && capture === true,
-    )![1] as (event: PointerEvent) => void;
+    const outsidePointerUp = findRegisteredListener({
+      addEventListenerCalls: addDocumentListener.mock.calls,
+      eventType: 'pointerup',
+    });
     addDocumentListener.mockRestore();
 
     try {
