@@ -1,5 +1,6 @@
 import { addHours, isAfter, subHours } from 'date-fns';
 import { Temporal } from 'temporal-polyfill';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { getNextPeriodStart, isDefined } from 'twenty-shared/utils';
 
 import { GETTING_STARTED_LAST_DAYS_SNOOZE_HOURS } from '@/getting-started/constants/GettingStartedLastDaysSnoozeHours';
@@ -39,7 +40,7 @@ export const getGettingStartedSnoozedUntil = ({
     Temporal.Instant.fromEpochMilliseconds(now.getTime()).toZonedDateTimeISO(
       timeZone,
     ),
-    'DAY',
+    doNotTranslate('DAY'),
   );
 
   return new Date(nextLocalMidnight.epochMilliseconds).toISOString();

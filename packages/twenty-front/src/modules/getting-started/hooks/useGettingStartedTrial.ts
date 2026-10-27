@@ -11,6 +11,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
 import { differenceInCalendarDays } from 'date-fns';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -60,7 +61,7 @@ export const useGettingStartedTrial = () => {
         ? formatDateISOStringToCustomUnicodeFormat({
             date: trialEnd.toISOString(),
             timeZone,
-            dateFormat: 'EEE, MMM d',
+            dateFormat: doNotTranslate('EEE, MMM d'),
             localeCatalog,
           })
         : undefined,

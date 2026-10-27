@@ -1,13 +1,17 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { GettingStartedKeepPlanButton } from '@/getting-started/components/GettingStartedKeepPlanButton';
+import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
 import { GettingStartedStepStack } from '@/getting-started/components/GettingStartedStepStack';
+import { GETTING_STARTED_AUTO_ADVANCE_DELAY_MS } from '@/getting-started/constants/GettingStartedAutoAdvanceDelayMs';
 import { GETTING_STARTED_CONTENT_MAX_WIDTH } from '@/getting-started/constants/GettingStartedContentMaxWidth';
+import { useGettingStartedJustCompletedStep } from '@/getting-started/hooks/useGettingStartedJustCompletedStep';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { getGettingStartedCreditsToEarn } from '@/getting-started/utils/getGettingStartedCreditsToEarn';
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
+import { getNextGettingStartedStep } from '@/getting-started/utils/getNextGettingStartedStep';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
@@ -17,12 +21,15 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { useEffect, useEffectEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
 import { IconCheck, IconListCheck } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+
+import { type GettingStartedStep } from '~/generated-metadata/graphql';
 
 const StyledScroll = styled.div`
   flex: 1;
@@ -119,6 +126,8 @@ export const GettingStartedPageContent = () => {
   const { updateGettingStarted, isSaving } = useUpdateGettingStarted();
   const { formattedTrialEnd, daysLeft, isCountdownVisible, canKeepPlan } =
     useGettingStartedTrial();
+  const { justCompletedStep, clearJustCompletedStep } =
+    useGettingStartedJustCompletedStep({ progress, permissionFlagMap });
 
   const steps = progress?.steps ?? [];
   const completedSteps = progress?.completedSteps ?? [];
@@ -126,12 +135,14 @@ export const GettingStartedPageContent = () => {
     .map(({ key }) => key)
     .filter((step) => !completedSteps.includes(step));
   const isComplete = remainingSteps.length === 0;
-  const { selectedStep, stepAfterSkip } = getGettingStartedStepSelection({
-    steps,
-    completedSteps,
-    savedSelectedStep: progress?.selectedStep,
-    permissionFlagMap,
-  });
+  const { selectedStep: currentSelectedStep, stepAfterSkip } =
+    getGettingStartedStepSelection({
+      steps,
+      completedSteps,
+      savedSelectedStep: progress?.selectedStep,
+      permissionFlagMap,
+    });
+  const selectedStep = justCompletedStep ?? currentSelectedStep;
   const selectedStepDefinition = steps.find(({ key }) => key === selectedStep);
   const isSelectedStepCompleted = completedSteps.includes(selectedStep);
   const creditsEarned = progress?.creditsEarned ?? 0;
@@ -172,6 +183,35 @@ export const GettingStartedPageContent = () => {
   const completedLabel =
     creditsEarned > 0 ? t`All steps done, you earned` : t`All steps done`;
   const goalLabel = isComplete ? completedLabel : remainingStepsLabel;
+
+  const selectStep = (step: GettingStartedStep) => {
+    clearJustCompletedStep();
+    void updateGettingStarted({ selectedStep: step });
+  };
+
+  const advanceFromCompletedStep = useEffectEvent(
+    (completedStep: GettingStartedStep) =>
+      selectStep(
+        getNextGettingStartedStep({
+          steps: steps.map(({ key }) => key),
+          selectedStep: completedStep,
+          completedSteps,
+        }),
+      ),
+  );
+
+  useEffect(() => {
+    if (!isDefined(justCompletedStep)) {
+      return;
+    }
+
+    const timeoutId = setTimeout(
+      () => advanceFromCompletedStep(justCompletedStep),
+      GETTING_STARTED_AUTO_ADVANCE_DELAY_MS,
+    );
+
+    return () => clearTimeout(timeoutId);
+  }, [justCompletedStep]);
 
   return (
     <StyledScroll>
@@ -228,7 +268,7 @@ export const GettingStartedPageContent = () => {
                   color={theme.font.color.tertiary}
                 />
               )}
-              <span>{goalLabel}</span>
+              <GettingStartedRollingText text={goalLabel} />
               {goalCredits > 0 && (
                 <OnboardingCreditsRewardChip
                   formattedCreditsReward={plural(goalCredits, {
@@ -243,10 +283,9 @@ export const GettingStartedPageContent = () => {
                 steps={steps}
                 selectedStep={selectedStepDefinition}
                 completedSteps={completedSteps}
+                justCompletedStep={justCompletedStep}
                 isSaving={isSaving}
-                onSelectStep={(step) =>
-                  updateGettingStarted({ selectedStep: step })
-                }
+                onSelectStep={selectStep}
               />
             )}
             {!isComplete && (
@@ -254,9 +293,7 @@ export const GettingStartedPageContent = () => {
                 <Button
                   variant="ghost"
                   disabled={isSaving}
-                  onClick={() =>
-                    updateGettingStarted({ selectedStep: stepAfterSkip })
-                  }
+                  onClick={() => selectStep(stepAfterSkip)}
                 >
                   {isSelectedStepCompleted ? t`Back to current step` : t`Skip`}
                 </Button>

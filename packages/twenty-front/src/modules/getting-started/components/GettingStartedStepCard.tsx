@@ -1,7 +1,9 @@
 import { GettingStartedStepRewardChip } from '@/getting-started/components/GettingStartedStepRewardChip';
+import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
 import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
 import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedStepContent';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
+import { AnimatedCheckmark } from '@/ui/navigation/step-bar/components/internal/AnimatedCheckmark/AnimatedCheckmark';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -22,6 +24,17 @@ const StyledHeading = styled.div<{ isCompleted: boolean }>`
   display: flex;
   gap: ${themeCssVariables.spacing[3]};
   padding: ${themeCssVariables.spacing[4]};
+  transition: background
+    calc(${themeCssVariables.animation.duration.normal} * 1s) ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
+
+const StyledAnimatedCheckmark = styled.span`
+  display: flex;
+  margin: calc(-1 * ${themeCssVariables.spacing[1]});
 `;
 
 const StyledTitle = styled.div`
@@ -48,11 +61,13 @@ const StyledPermissionNotice = styled.span`
 type GettingStartedStepCardProps = {
   step: GettingStartedStepDefinition;
   isCompleted: boolean;
+  isJustCompleted: boolean;
 };
 
 export const GettingStartedStepCard = ({
   step,
   isCompleted,
+  isJustCompleted,
 }: GettingStartedStepCardProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -68,14 +83,20 @@ export const GettingStartedStepCard = ({
       aria-label={t(content.title)}
     >
       <StyledHeading isCompleted={isCompleted}>
-        {isCompleted ? (
+        {isCompleted && isJustCompleted ? (
+          <StyledAnimatedCheckmark>
+            <AnimatedCheckmark isAnimating color={theme.font.color.primary} />
+          </StyledAnimatedCheckmark>
+        ) : isCompleted ? (
           <IconCheck size={theme.icon.size.lg} />
         ) : (
           <content.Icon size={theme.icon.size.lg} color={content.iconColor} />
         )}
         <StyledTitle>
           <Heading size="lg">
-            {t(isCompleted ? content.doneTitle : content.title)}
+            <GettingStartedRollingText
+              text={t(isCompleted ? content.doneTitle : content.title)}
+            />
           </Heading>
           <StyledDescription>{t(content.description)}</StyledDescription>
         </StyledTitle>

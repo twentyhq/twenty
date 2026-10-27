@@ -1,11 +1,16 @@
 import { type MockedResponse } from '@apollo/client/testing';
+import { useApolloClient } from '@apollo/client/react';
 import { MockedProvider } from '@apollo/client/testing/react';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { GettingStartedPageContent } from '@/getting-started/components/GettingStartedPageContent';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   FeatureFlagKey,
   GettingStartedProgressDocument,
@@ -13,8 +18,10 @@ import {
   GettingStartedStep,
   SubscriptionStatus,
   UpdateGettingStartedDocument,
+  type UpdateGettingStartedMutationVariables,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockGettingStartedSteps } from '~/testing/mock-data/gettingStartedSteps';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
@@ -49,6 +56,7 @@ const meta: Meta<typeof GettingStartedPageContent> = {
   title: 'Modules/GettingStarted/GettingStartedPageContent',
   component: GettingStartedPageContent,
   decorators: [
+    ToastDecorator,
     (Story, { parameters }) => {
       const { apolloMocks }: { apolloMocks?: MockedResponse[] } = parameters;
 
@@ -106,9 +114,11 @@ export const Trial: Story = {
         }),
       ).getByRole('button', { name: 'Invite your team' }),
     );
-    await expect(
-      await canvas.findByRole('region', { name: 'Invite your team' }),
-    ).toBeVisible();
+    const inviteStepCard = await canvas.findByRole('region', {
+      name: 'Invite your team',
+    });
+
+    await waitFor(() => expect(inviteStepCard).toBeVisible());
   },
 };
 
@@ -133,7 +143,7 @@ export const AllDone: Story = {
   },
   play: async ({ canvasElement }) => {
     await expect(
-      await within(canvasElement).findByText('All steps done'),
+      await within(canvasElement).findByText('All steps done, you earned'),
     ).toBeVisible();
   },
 };
@@ -171,4 +181,100 @@ export const LoadError: Story = {
       await within(canvasElement).findByText('Could not load Getting started.'),
     ).toBeVisible();
   },
+};
+
+const createAnimationPreviewProgress =
+  (): GettingStartedProgressQuery['gettingStartedProgress'] => ({
+    ...TRIAL_PROGRESS,
+    completedSteps: [GettingStartedStep.CONNECT_MAILBOX],
+  });
+
+let animationPreviewProgress = createAnimationPreviewProgress();
+
+const StyledAnimationPreviewToolbar = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: center;
+  padding: ${themeCssVariables.spacing[3]};
+`;
+
+const GettingStartedAnimationPreview = () => {
+  const apolloClient = useApolloClient();
+
+  const writeProgress = (
+    progress: GettingStartedProgressQuery['gettingStartedProgress'],
+  ) => {
+    animationPreviewProgress = progress;
+    apolloClient.writeQuery({
+      query: GettingStartedProgressDocument,
+      data: { gettingStartedProgress: progress },
+    });
+  };
+
+  const completeCurrentStep = () => {
+    const { steps, completedSteps, selectedStep } = animationPreviewProgress;
+    const stepToComplete =
+      isDefined(selectedStep) && !completedSteps.includes(selectedStep)
+        ? selectedStep
+        : steps.find(({ key }) => !completedSteps.includes(key))?.key;
+
+    if (!isDefined(stepToComplete)) {
+      return;
+    }
+
+    writeProgress({
+      ...animationPreviewProgress,
+      completedSteps: [...completedSteps, stepToComplete],
+    });
+  };
+
+  return (
+    <>
+      <StyledAnimationPreviewToolbar>
+        <Button variant="solid" color="accent" onClick={completeCurrentStep}>
+          Complete the current step
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => writeProgress(createAnimationPreviewProgress())}
+        >
+          Reset
+        </Button>
+      </StyledAnimationPreviewToolbar>
+      <GettingStartedPageContent />
+    </>
+  );
+};
+
+export const StepAnimations: Story = {
+  beforeEach: () => {
+    animationPreviewProgress = createAnimationPreviewProgress();
+  },
+  parameters: {
+    apolloMocks: [
+      {
+        request: { query: GettingStartedProgressDocument },
+        maxUsageCount: Infinity,
+        result: () => ({
+          data: { gettingStartedProgress: animationPreviewProgress },
+        }),
+      },
+      {
+        request: { query: UpdateGettingStartedDocument, variables: () => true },
+        maxUsageCount: Infinity,
+        result: ({ input }: UpdateGettingStartedMutationVariables) => {
+          animationPreviewProgress = {
+            ...animationPreviewProgress,
+            selectedStep:
+              input.selectedStep ?? animationPreviewProgress.selectedStep,
+          };
+
+          return {
+            data: { updateGettingStarted: animationPreviewProgress },
+          };
+        },
+      },
+    ],
+  },
+  render: () => <GettingStartedAnimationPreview />,
 };

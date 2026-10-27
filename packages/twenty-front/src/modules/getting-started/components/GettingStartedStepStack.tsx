@@ -1,8 +1,10 @@
 import { GettingStartedStepCard } from '@/getting-started/components/GettingStartedStepCard';
 import { GettingStartedStepRewardChip } from '@/getting-started/components/GettingStartedStepRewardChip';
 import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedStepContent';
+import { EASE_OUT } from '@/ui/theme/constants/EaseOut';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import {
@@ -34,7 +36,14 @@ const StyledTick = styled.button`
   cursor: pointer;
   height: ${themeCssVariables.spacing[0.5]};
   padding: 0;
+  transition:
+    background calc(${themeCssVariables.animation.duration.fast} * 1s) ease-out,
+    width calc(${themeCssVariables.animation.duration.fast} * 1s) ease-out;
   width: ${themeCssVariables.spacing[3]};
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 
   &[data-completed] {
     background: ${themeCssVariables.font.color.tertiary};
@@ -54,7 +63,7 @@ const StyledTick = styled.button`
   }
 `;
 
-const StyledStackedStep = styled.button<{ depth: number }>`
+const StyledStackedStepBase = styled.button<{ depth: number }>`
   align-items: center;
   background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.light};
@@ -73,13 +82,22 @@ const StyledStackedStep = styled.button<{ depth: number }>`
   height: ${themeCssVariables.spacing[11]};
   margin: 0 auto calc(-1 * ${themeCssVariables.spacing['1.5']});
   padding: 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing['1.5']};
+  transition:
+    color calc(${themeCssVariables.animation.duration.normal} * 1s) ease-out,
+    width calc(${themeCssVariables.animation.duration.normal} * 1s) ease-out;
   width: ${({ depth }) =>
     `calc(100% - ${depth} * ${themeCssVariables.spacing[8]})`};
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 
   &:hover {
     color: ${themeCssVariables.font.color.primary};
   }
 `;
+
+const StyledStackedStep = motion.create(StyledStackedStepBase);
 
 const StyledStackedStepTitle = styled.span`
   flex: 1;
@@ -90,6 +108,7 @@ type GettingStartedStepStackProps = {
   steps: GettingStartedStepDefinition[];
   selectedStep: GettingStartedStepDefinition;
   completedSteps: GettingStartedStep[];
+  justCompletedStep: GettingStartedStep | null;
   isSaving: boolean;
   onSelectStep: (step: GettingStartedStep) => void;
 };
@@ -98,11 +117,19 @@ export const GettingStartedStepStack = ({
   steps,
   selectedStep,
   completedSteps,
+  justCompletedStep,
   isSaving,
   onSelectStep,
 }: GettingStartedStepStackProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const shouldReduceMotion = useReducedMotion();
+  const stepTransition = {
+    duration: theme.animation.duration.normal,
+    ease: EASE_OUT,
+  };
+  const stackOffset = shouldReduceMotion ? 0 : 8;
+  const cardOffset = shouldReduceMotion ? 0 : 16;
 
   const selectedStepIndex = steps.indexOf(selectedStep);
   const stackedSteps = [3, 2, 1]
@@ -115,26 +142,33 @@ export const GettingStartedStepStack = ({
 
   return (
     <div>
-      {stackedSteps.map(({ depth, step }) => {
-        const { Icon, iconColor, title } = GETTING_STARTED_STEP_CONTENT[step];
+      <AnimatePresence initial={false} mode="popLayout">
+        {stackedSteps.map(({ depth, step }) => {
+          const { Icon, iconColor, title } = GETTING_STARTED_STEP_CONTENT[step];
 
-        return (
-          <StyledStackedStep
-            key={step}
-            type="button"
-            depth={depth}
-            disabled={isSaving}
-            onClick={() => onSelectStep(step)}
-          >
-            <Icon size={theme.icon.size.md} color={iconColor} />
-            <StyledStackedStepTitle>{t(title)}</StyledStackedStepTitle>
-            <GettingStartedStepRewardChip
-              step={step}
-              isCompleted={completedSteps.includes(step)}
-            />
-          </StyledStackedStep>
-        );
-      })}
+          return (
+            <StyledStackedStep
+              key={step}
+              layout="position"
+              initial={{ opacity: 0, y: stackOffset }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -stackOffset }}
+              transition={stepTransition}
+              type="button"
+              depth={depth}
+              disabled={isSaving}
+              onClick={() => onSelectStep(step)}
+            >
+              <Icon size={theme.icon.size.md} color={iconColor} />
+              <StyledStackedStepTitle>{t(title)}</StyledStackedStepTitle>
+              <GettingStartedStepRewardChip
+                step={step}
+                isCompleted={completedSteps.includes(step)}
+              />
+            </StyledStackedStep>
+          );
+        })}
+      </AnimatePresence>
       <StyledActiveStep>
         <StyledSteps aria-label={t`Getting started steps`}>
           {steps.map(({ key }) => (
@@ -149,10 +183,29 @@ export const GettingStartedStepStack = ({
             />
           ))}
         </StyledSteps>
-        <GettingStartedStepCard
-          step={selectedStep}
-          isCompleted={completedSteps.includes(selectedStep.key)}
-        />
+        <AnimatePresence initial={false} mode="wait">
+          <motion.div
+            key={selectedStep.key}
+            initial={{ opacity: 0, y: cardOffset }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{
+              opacity: 0,
+              y: -stackOffset,
+              scale: 0.98,
+              transition: {
+                duration: theme.animation.duration.fast,
+                ease: EASE_OUT,
+              },
+            }}
+            transition={stepTransition}
+          >
+            <GettingStartedStepCard
+              step={selectedStep}
+              isCompleted={completedSteps.includes(selectedStep.key)}
+              isJustCompleted={justCompletedStep === selectedStep.key}
+            />
+          </motion.div>
+        </AnimatePresence>
       </StyledActiveStep>
     </div>
   );
