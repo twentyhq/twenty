@@ -8,7 +8,6 @@ import { waitForTimelineActivities } from 'test/integration/utils/wait-for-timel
 const OPPORTUNITY_GQL_FIELDS = `
   id
   name
-  deletedAt
 `;
 
 describe('opportunities merge resolvers (integration)', () => {
@@ -58,13 +57,10 @@ describe('opportunities merge resolvers (integration)', () => {
       findOneOperationFactory({
         objectMetadataSingularName: 'opportunity',
         gqlFields: OPPORTUNITY_GQL_FIELDS,
-        filter: {
-          id: { eq: opportunityB.id },
-          deletedAt: { is: 'NOT_NULL' },
-        },
+        filter: { id: { eq: opportunityB.id } },
       }),
     );
 
-    expect(findMergedAwayResponse.body.data.opportunity.deletedAt).toBeTruthy();
+    expect(findMergedAwayResponse.body.data.opportunity).toBeNull();
   });
 });
