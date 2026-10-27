@@ -22,7 +22,7 @@ export const toToolJsonSchema = (schema: z.ZodTypeAny): object => {
         delete ctx.jsonSchema.pattern;
       }
 
-      // zod 4.6 emits oneOf for discriminated unions; strict tool-calling providers only accept anyOf
+      // Since zod 4.4, discriminated unions emit oneOf; strict tool-calling providers only accept anyOf
       if (isDefined(ctx.jsonSchema.oneOf)) {
         ctx.jsonSchema.anyOf = ctx.jsonSchema.oneOf;
         delete ctx.jsonSchema.oneOf;

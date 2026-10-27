@@ -3,17 +3,11 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 type JsonSchemaNode = Record<string, unknown>;
 
-type DefsRewrite = {
-  defs: JsonSchemaNode;
-  inlinableNames: Set<string>;
-  renamedNames: Map<string, string>;
-};
-
 const DEFS_REF_PREFIX = '#/$defs/';
 
-const getDefName = (ref: unknown): string | undefined =>
-  isString(ref) && ref.startsWith(DEFS_REF_PREFIX)
-    ? ref.slice(DEFS_REF_PREFIX.length)
+const getDefName = (node: JsonSchemaNode): string | undefined =>
+  isString(node.$ref) && node.$ref.startsWith(DEFS_REF_PREFIX)
+    ? node.$ref.slice(DEFS_REF_PREFIX.length)
     : undefined;
 
 const countDefReferences = ({
@@ -33,7 +27,7 @@ const countDefReferences = ({
     return;
   }
 
-  const defName = getDefName(value['$ref']);
+  const defName = getDefName(value);
 
   if (isDefined(defName)) {
     counts.set(defName, (counts.get(defName) ?? 0) + 1);
@@ -44,57 +38,13 @@ const countDefReferences = ({
   );
 };
 
-const rewriteValue = ({
-  value,
-  rewrite,
-}: {
-  value: unknown;
-  rewrite: DefsRewrite;
-}): unknown => {
-  if (Array.isArray(value)) {
-    return value.map((item) => rewriteValue({ value: item, rewrite }));
-  }
-
-  return isPlainObject(value) ? rewriteNode({ node: value, rewrite }) : value;
-};
-
-const rewriteNode = ({
-  node,
-  rewrite,
-}: {
-  node: JsonSchemaNode;
-  rewrite: DefsRewrite;
-}): JsonSchemaNode => {
-  const { $ref: ref, ...siblings } = node;
-  const defName = getDefName(ref);
-
-  if (!isDefined(defName)) {
-    return Object.fromEntries(
-      Object.entries(node).map(([key, value]) => [
-        key,
-        rewriteValue({ value, rewrite }),
-      ]),
-    );
-  }
-
-  const rewrittenSiblings = rewriteNode({ node: siblings, rewrite });
-  const def = rewrite.defs[defName];
-
-  if (rewrite.inlinableNames.has(defName) && isPlainObject(def)) {
-    return { ...rewriteNode({ node: def, rewrite }), ...rewrittenSiblings };
-  }
-
-  return {
-    $ref: `${DEFS_REF_PREFIX}${rewrite.renamedNames.get(defName) ?? defName}`,
-    ...rewrittenSiblings,
-  };
-};
-
-// TODO: remove once zod stops hoisting the inner schema of `.optional().describe()` into $defs (seen in 4.6)
+// Since zod 4.4, reused: 'ref' also hoists the inner schema of a described wrapper
+// (e.g. `.optional().describe()`) into $defs. Inline every def used once and renumber
+// the shared ones, so the output matches what reused: 'ref' produced before.
 export const inlineSingleUseJsonSchemaDefs = (
   schema: JsonSchemaNode,
 ): JsonSchemaNode => {
-  const { $defs: defs, ...rest } = schema;
+  const { $defs: defs, ...root } = schema;
 
   if (!isPlainObject(defs)) {
     return schema;
@@ -104,34 +54,54 @@ export const inlineSingleUseJsonSchemaDefs = (
 
   countDefReferences({ value: schema, counts });
 
-  const inlinableNames = new Set(
-    Object.keys(defs).filter((name) => counts.get(name) === 1),
+  const sharedDefNames = Object.keys(defs).filter(
+    (name) => counts.get(name) !== 1 || !isPlainObject(defs[name]),
+  );
+  const renamedDefNames = new Map(
+    sharedDefNames.map((name, index) => [name, `__schema${index}`]),
   );
 
-  const remainingNames = Object.keys(defs).filter(
-    (name) => !inlinableNames.has(name),
-  );
+  const rewrite = (value: unknown): unknown => {
+    if (Array.isArray(value)) {
+      return value.map(rewrite);
+    }
 
-  const rewrite: DefsRewrite = {
-    defs,
-    inlinableNames,
-    renamedNames: new Map(
-      remainingNames.map((name, index) => [name, `__schema${index}`]),
-    ),
+    if (!isPlainObject(value)) {
+      return value;
+    }
+
+    const defName = getDefName(value);
+    const node = Object.fromEntries(
+      Object.entries(value)
+        .filter(([key]) => !isDefined(defName) || key !== '$ref')
+        .map(([key, child]) => [key, rewrite(child)]),
+    );
+
+    if (!isDefined(defName)) {
+      return node;
+    }
+
+    const renamedDefName = renamedDefNames.get(defName);
+
+    if (isDefined(renamedDefName)) {
+      return { $ref: `${DEFS_REF_PREFIX}${renamedDefName}`, ...node };
+    }
+
+    return { ...(rewrite(defs[defName]) as JsonSchemaNode), ...node };
   };
 
-  const inlined = rewriteNode({ node: rest, rewrite });
+  const rewrittenRoot = rewrite(root) as JsonSchemaNode;
 
-  if (remainingNames.length === 0) {
-    return inlined;
+  if (sharedDefNames.length === 0) {
+    return rewrittenRoot;
   }
 
   return {
-    ...inlined,
+    ...rewrittenRoot,
     $defs: Object.fromEntries(
-      remainingNames.map((name) => [
-        rewrite.renamedNames.get(name),
-        rewriteValue({ value: defs[name], rewrite }),
+      sharedDefNames.map((name) => [
+        renamedDefNames.get(name),
+        rewrite(defs[name]),
       ]),
     ),
   };
