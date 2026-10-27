@@ -72,6 +72,7 @@ export {
   DEFAULT_APPLICATION_VARIABLE_SCOPE,
 } from './applicationVariablesType';
 export type { AppMessageChannel } from './appMessageChannelType';
+export type { AppMessageFolder } from './appMessageFolderType';
 export type { AssetManifest } from './assetManifestType';
 export type {
   BillableOperationManifest,

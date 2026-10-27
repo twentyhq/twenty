@@ -508,10 +508,10 @@ Each connection has one of two scopes:
 The provider's `scope` decides which one its new connections get:
 
 - `scope: 'WORKSPACE'` (the default) — the app works with connections shared with the workspace. **Add connection** in the app's workspace settings creates a workspace-shared connection.
-- `scope: 'USER'` — each member connects their own account, creating personal connections. Members add, reconnect and remove them from the app's page under **Settings > User > App preferences**, which requires the `CONNECTED_ACCOUNTS` (User Apps) permission. The app's workspace settings have no **Add connection** button for a `USER` provider.
+- `scope: 'USER'` — each member connects their own account, creating personal connections. Members add, reconnect and remove them from the app's page under **Settings > User > Apps preferences**, which requires the `CONNECTED_ACCOUNTS` (User Apps) permission. The app's workspace settings have no **Add connection** button for a `USER` provider.
 
 <Note>
-  **App preferences** is not enabled in every workspace yet: where it is not,
+  **Apps preferences** is not enabled in every workspace yet: where it is not,
   members have no place to add a `USER` connection, so do not rely on one for
   a feature every workspace needs now.
 </Note>
