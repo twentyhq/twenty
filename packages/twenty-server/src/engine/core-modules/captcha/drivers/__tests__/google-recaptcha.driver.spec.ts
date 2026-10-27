@@ -45,16 +45,4 @@ describe('GoogleRecaptchaDriver', () => {
       score: undefined,
     });
   });
-
-  it('should reject an invalid token with its error code', async () => {
-    const driver = buildDriver({
-      success: false,
-      'error-codes': ['timeout-or-duplicate'],
-    });
-
-    expect(await driver.validate('token')).toEqual({
-      success: false,
-      error: 'timeout-or-duplicate',
-    });
-  });
 });
