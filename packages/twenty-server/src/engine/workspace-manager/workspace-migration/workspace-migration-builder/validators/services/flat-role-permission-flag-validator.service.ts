@@ -10,6 +10,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { getPermissionFlagNotFoundError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 
 @Injectable()
@@ -87,11 +88,11 @@ export class FlatRolePermissionFlagValidatorService {
     });
 
     if (!isDefined(referencedPermissionFlag)) {
-      validationResult.errors.push({
-        code: PermissionsExceptionCode.INVALID_SETTING,
-        message: t`Permission flag not found`,
-        userFriendlyMessage: msg`Invalid permission setting`,
-      });
+      validationResult.errors.push(
+        getPermissionFlagNotFoundError(
+          flatRolePermissionFlagToValidate.permissionFlagUniversalIdentifier,
+        ),
+      );
     }
 
     const duplicateForSameRole = Object.values(
@@ -195,11 +196,11 @@ export class FlatRolePermissionFlagValidatorService {
       });
 
       if (!isDefined(referencedPermissionFlag)) {
-        validationResult.errors.push({
-          code: PermissionsExceptionCode.INVALID_SETTING,
-          message: t`Permission flag not found`,
-          userFriendlyMessage: msg`Invalid permission setting`,
-        });
+        validationResult.errors.push(
+          getPermissionFlagNotFoundError(
+            flatEntityUpdate.permissionFlagUniversalIdentifier as string,
+          ),
+        );
       }
     }
 
