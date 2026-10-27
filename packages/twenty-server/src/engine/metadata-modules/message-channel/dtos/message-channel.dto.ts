@@ -122,6 +122,11 @@ export class MessageChannelDTO {
   @Field(() => UUIDScalarType)
   connectedAccountId: string;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  messagingProviderUniversalIdentifier: string | null;
+
   @HideField()
   workspaceId: string;
 
