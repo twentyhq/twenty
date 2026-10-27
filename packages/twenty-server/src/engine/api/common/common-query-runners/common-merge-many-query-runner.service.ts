@@ -602,14 +602,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     assertMutationNotOnRemoteObject(flatObjectMetadata);
 
-    if (!isDefined(flatObjectMetadata.duplicateCriteria)) {
-      throw new CommonQueryRunnerException(
-        `Merge is only available for objects with duplicate criteria. Object '${flatObjectMetadata.nameSingular}' does not have duplicate criteria defined.`,
-        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        { userFriendlyMessage: msg`This type of record cannot be merged.` },
-      );
-    }
-
     const { ids, conflictPriorityIndex } = args;
 
     if (!ids || ids.length < 2) {
