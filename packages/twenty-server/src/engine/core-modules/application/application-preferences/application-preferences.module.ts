@@ -4,6 +4,7 @@ import { ApplicationPreferencesResolver } from 'src/engine/core-modules/applicat
 import { ApplicationPreferencesService } from 'src/engine/core-modules/application/application-preferences/application-preferences.service';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/application/application-variable/application-variable.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ConnectionProviderModule } from 'src/engine/core-modules/application/connection-provider/connection-provider.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -11,6 +12,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   imports: [
     ApplicationModule,
     ApplicationVariableEntityModule,
+    ConnectionProviderModule,
     PermissionsModule,
     WorkspaceCacheModule,
   ],

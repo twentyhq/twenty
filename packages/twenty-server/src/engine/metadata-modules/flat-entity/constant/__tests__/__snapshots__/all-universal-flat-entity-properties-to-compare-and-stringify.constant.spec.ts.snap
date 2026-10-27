@@ -85,12 +85,14 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "type",
       "scope",
       "oauthConfig",
+      "customConfig",
       "identifyAccountLogicFunctionUniversalIdentifier",
       "onConnectLogicFunctionUniversalIdentifier",
       "onDisconnectLogicFunctionUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "oauthConfig",
+      "customConfig",
     ],
   },
   "fieldMetadata": {
@@ -184,6 +186,15 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "toolTriggerSettings",
       "workflowActionTriggerSettings",
     ],
+  },
+  "messagingProvider": {
+    "propertiesToCompare": [
+      "name",
+      "displayName",
+      "connectionProviderUniversalIdentifier",
+      "sendMessageLogicFunctionUniversalIdentifier",
+    ],
+    "propertiesToStringify": [],
   },
   "navigationMenuItem": {
     "propertiesToCompare": [

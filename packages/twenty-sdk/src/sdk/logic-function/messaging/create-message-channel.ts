@@ -22,17 +22,29 @@ export type CreateMessageChannelInput = {
   visibility: MessageChannelVisibility;
   // Person field to match participant handles against (handles are then stored in its canonical form); set once
   participantHandleFieldUniversalIdentifier?: string;
+  messagingProvider?: { universalIdentifier: string };
 };
 
-export const createMessageChannel = async (
-  input: CreateMessageChannelInput,
-): Promise<AppMessageChannel> => {
+export const createMessageChannel = async ({
+  messagingProvider,
+  ...input
+}: CreateMessageChannelInput): Promise<AppMessageChannel> => {
   const { createAppMessageChannel } = await postGraphqlRequest<
-    { input: CreateMessageChannelInput },
+    {
+      input: Omit<CreateMessageChannelInput, 'messagingProvider'> & {
+        messagingProviderUniversalIdentifier?: string;
+      };
+    },
     { createAppMessageChannel: AppMessageChannel }
   >({
     query: CREATE_APP_MESSAGE_CHANNEL_MUTATION,
-    variables: { input },
+    variables: {
+      input: {
+        ...input,
+        messagingProviderUniversalIdentifier:
+          messagingProvider?.universalIdentifier,
+      },
+    },
     caller: 'createMessageChannel',
   });
 

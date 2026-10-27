@@ -50,7 +50,7 @@ describe('defineWorkflow', () => {
       problem: 'a step type applications cannot use',
       definition: withStep({ type: 'CODE' }),
       error:
-        'version.steps.0.type: Unsupported step type. Application workflows support: LOGIC_FUNCTION, HTTP_REQUEST, CLASSIFY, ITERATOR, DELAY, WAIT_FOR_EVENT, EMPTY, CREATE_RECORD, UPDATE_RECORD, UPSERT_RECORD, DELETE_RECORD, FIND_RECORDS, PICK_RECORD, FILTER, IF_ELSE, FORM, AI_AGENT',
+        'version.steps.0.type: Unsupported step type. Application workflows support: LOGIC_FUNCTION, HTTP_REQUEST, CLASSIFY, ITERATOR, DELAY, WAIT_FOR_EVENT, EMPTY, CREATE_RECORD, UPDATE_RECORD, UPSERT_RECORD, DELETE_RECORD, FIND_RECORDS, PICK_RECORD, FILTER, IF_ELSE, FORM, SEND_EMAIL, DRAFT_EMAIL, CREATE_CALENDAR_EVENT, AI_AGENT',
     },
     {
       problem: 'an unknown trigger type',

@@ -25,7 +25,7 @@
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/application/application-package/constants/seed-dependencies/**",
+        "include": "engine/core-modules/application/application-package/constants/standard-application-dependencies/**",
         "outDir": "dist/assets"
       },
       {

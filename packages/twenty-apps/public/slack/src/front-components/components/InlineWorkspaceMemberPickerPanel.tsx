@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useWorkspaceMemberSearch } from 'src/front-components/hooks/use-workspace-member-search';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
@@ -115,24 +117,26 @@ export const InlineWorkspaceMemberPickerPanel = ({
         <StyledOptions role="listbox" aria-label="Workspace members">
           {options.map((member) => (
             <div key={member.id} role="option" aria-selected={false}>
-              <MenuItemAvatar
-                avatar={{
-                  type: 'rounded',
-                  size: 'md',
-                  placeholder: getMemberDisplayName(member),
-                  placeholderColorSeed: member.id,
-                }}
-                text={getMemberDisplayName(member)}
-                contextualText={member.userEmail ?? undefined}
+              <ListItemButton
+                startIcon={
+                  <Avatar
+                    name={getMemberDisplayName(member)}
+                    colorSeed={member.id}
+                    size="md"
+                    shape="circle"
+                  />
+                }
+                description={member.userEmail}
                 onClick={() => onSelect(member)}
-              />
+              >
+                {getMemberDisplayName(member)}
+              </ListItemButton>
             </div>
           ))}
           {options.length === 0 && (
-            <MenuItem
-              disabled
-              text={getEmptyStateText({ isSearching, searchErrorMessage })}
-            />
+            <ListItem disabled>
+              {getEmptyStateText({ isSearching, searchErrorMessage })}
+            </ListItem>
           )}
         </StyledOptions>
       </StyledDropdownPanel>
