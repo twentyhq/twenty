@@ -174,6 +174,18 @@ export const Snoozed: Story = {
   },
 };
 
+export const ChannelsLoading: Story = {
+  beforeEach: () => {
+    jotaiStore.set(agentChatChannelsState.atom, null);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByText('Open')).toBeVisible();
+    await expect(canvas.queryByText('→')).not.toBeInTheDocument();
+  },
+};
+
 export const EveryView: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

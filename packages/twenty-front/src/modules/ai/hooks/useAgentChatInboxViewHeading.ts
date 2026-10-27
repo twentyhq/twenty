@@ -34,9 +34,21 @@ export const useAgentChatInboxViewHeading = () => {
     };
   }
 
+  const channelViewLabel = getAgentChatChannelViewLabel(
+    agentChatShownChannelView,
+  );
+
+  if (!isDefined(channel)) {
+    return {
+      HeadingIcon: ChannelIcon,
+      headingLabel: channelViewLabel,
+      channelViewLabel: undefined,
+    };
+  }
+
   return {
     HeadingIcon: ChannelIcon,
-    headingLabel: channel?.name ?? '',
-    channelViewLabel: getAgentChatChannelViewLabel(agentChatShownChannelView),
+    headingLabel: channel.name,
+    channelViewLabel,
   };
 };
