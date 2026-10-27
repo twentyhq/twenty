@@ -59,7 +59,10 @@ const toJsonValue = ({
   );
 };
 
-export const isSameWorkflowVersionDefinition = (
-  left: StoredWorkflowVersionDefinition,
-  right: StoredWorkflowVersionDefinition,
-): boolean => isEqual(toJsonValue(left), toJsonValue(right));
+export const isSameWorkflowVersionDefinition = ({
+  left,
+  right,
+}: {
+  left: StoredWorkflowVersionDefinition;
+  right: StoredWorkflowVersionDefinition;
+}): boolean => isEqual(toJsonValue(left), toJsonValue(right));

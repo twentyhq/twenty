@@ -74,9 +74,9 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
 
   const keptActiveVersion =
     isDefined(activeVersion) &&
-    isSameWorkflowVersionDefinition(activeVersion, {
-      triggers: [trigger],
-      steps,
+    isSameWorkflowVersionDefinition({
+      left: activeVersion,
+      right: { triggers: [trigger], steps },
     })
       ? activeVersion
       : undefined;

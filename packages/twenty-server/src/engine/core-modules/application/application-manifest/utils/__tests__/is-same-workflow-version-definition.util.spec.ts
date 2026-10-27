@@ -81,19 +81,19 @@ describe('isSameWorkflowVersionDefinition', () => {
     },
   ])('ignores $description, which no run reads', ({ trigger, step }) => {
     expect(
-      isSameWorkflowVersionDefinition(
-        buildDefinition({}),
-        buildDefinition({ trigger, step }),
-      ),
+      isSameWorkflowVersionDefinition({
+        left: buildDefinition({}),
+        right: buildDefinition({ trigger, step }),
+      }),
     ).toBe(true);
   });
 
   it('treats a null position as a missing one', () => {
     expect(
-      isSameWorkflowVersionDefinition(
-        buildDefinition({ step: { position: null } }),
-        buildDefinition({ step: { position: undefined } }),
-      ),
+      isSameWorkflowVersionDefinition({
+        left: buildDefinition({ step: { position: null } }),
+        right: buildDefinition({ step: { position: undefined } }),
+      }),
     ).toBe(true);
   });
 
@@ -115,10 +115,10 @@ describe('isSameWorkflowVersionDefinition', () => {
     },
   ])('tells apart $description', ({ trigger, step }) => {
     expect(
-      isSameWorkflowVersionDefinition(
-        buildDefinition({}),
-        buildDefinition({ trigger, step }),
-      ),
+      isSameWorkflowVersionDefinition({
+        left: buildDefinition({}),
+        right: buildDefinition({ trigger, step }),
+      }),
     ).toBe(false);
   });
 });

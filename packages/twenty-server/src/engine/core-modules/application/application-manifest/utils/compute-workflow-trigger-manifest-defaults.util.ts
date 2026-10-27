@@ -1,22 +1,8 @@
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
+import { WORKFLOW_TRIGGER_DEFAULT_NAMES } from 'twenty-shared/workflow';
 
 import { assertNever } from 'src/utils/assert';
-
-type DatabaseEventTriggerManifest = Extract<
-  WorkflowTriggerManifest,
-  { type: 'DATABASE_EVENT' }
->;
-
-const DATABASE_EVENT_TRIGGER_NAME_BY_ACTION: Record<
-  DatabaseEventTriggerManifest['settings']['action'],
-  string
-> = {
-  created: 'Record is created',
-  updated: 'Record is updated',
-  deleted: 'Record is deleted',
-  upserted: 'Record is created or updated',
-};
 
 export const DEFAULT_WORKFLOW_TRIGGER_POSITION = { x: 0, y: 0 };
 
@@ -25,17 +11,20 @@ export const computeWorkflowTriggerManifestDefaults = (
 ): { name: string; outputSchema: Record<string, unknown> } => {
   switch (trigger.type) {
     case 'MANUAL':
+      // Not the builder's 'Launch manually', which would rename the manual trigger of every synced app
       return { name: 'Manual trigger', outputSchema: {} };
     case 'CRON':
-      return { name: 'On a schedule', outputSchema: {} };
+      return { name: WORKFLOW_TRIGGER_DEFAULT_NAMES.CRON, outputSchema: {} };
     case 'DATABASE_EVENT':
       return {
-        name: DATABASE_EVENT_TRIGGER_NAME_BY_ACTION[trigger.settings.action],
+        name: WORKFLOW_TRIGGER_DEFAULT_NAMES.DATABASE_EVENT[
+          trigger.settings.action
+        ],
         outputSchema: {},
       };
     case 'WEBHOOK':
       return {
-        name: 'Webhook',
+        name: WORKFLOW_TRIGGER_DEFAULT_NAMES.WEBHOOK,
         outputSchema:
           trigger.settings.httpMethod === 'POST'
             ? getOutputSchemaFromValue(trigger.settings.expectedBody)
