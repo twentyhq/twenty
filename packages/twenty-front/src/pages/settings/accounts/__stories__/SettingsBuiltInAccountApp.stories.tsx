@@ -7,6 +7,7 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 
+import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SettingsBuiltInAccountApp } from '~/pages/settings/accounts/SettingsBuiltInAccountApp';
@@ -17,6 +18,8 @@ import {
   CALENDAR_CHANNELS,
   CONNECTED_ACCOUNTS,
   GOOGLE_ACCOUNT_ID,
+  GOOGLE_MESSAGE_CHANNEL_ID,
+  MESSAGE_CHANNELS,
   MICROSOFT_ACCOUNT_ID,
   seedAccountGroupsStory,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
@@ -327,5 +330,50 @@ export const ReconnectReturnsToTheAppPage: Story = {
     expect(redirectUrl.searchParams.get('redirectLocation')).toBe(
       '/settings/accounts/apps/google#general',
     );
+  },
+};
+
+export const ImportingAccountShowsLiveProgress: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyMessageChannels', () =>
+          HttpResponse.json({
+            data: {
+              myMessageChannels: MESSAGE_CHANNELS.map((channel) =>
+                channel.connectedAccountId === GOOGLE_ACCOUNT_ID
+                  ? { ...channel, syncStatus: 'ONGOING', importProgress: 42 }
+                  : channel,
+              ),
+            },
+          }),
+        ),
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByTestId('tab-general', undefined, { timeout: 3000 }),
+    );
+
+    expect(await canvas.findByText('Importing 42%')).toBeVisible();
+
+    dispatchMetadataOperationBrowserEvent({
+      metadataName: 'messageChannel',
+      operation: {
+        type: 'update',
+        updatedRecord: {
+          id: GOOGLE_MESSAGE_CHANNEL_ID,
+          syncStatus: 'ONGOING',
+          syncStage: 'MESSAGES_IMPORT_ONGOING',
+          importProgress: 43,
+        },
+      },
+    });
+
+    expect(await canvas.findByText('Importing 43%')).toBeVisible();
   },
 };
