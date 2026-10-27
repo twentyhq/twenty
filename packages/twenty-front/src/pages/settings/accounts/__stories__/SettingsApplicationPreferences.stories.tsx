@@ -259,28 +259,30 @@ export const SavedSecretCanBeCleared: Story = {
   },
 };
 
-export const SettingsTabReplacesVariablesTab: Story = {
+export const SettingsOnlyAppShowsItsSettingsWithoutTabs: Story = {
   args: {
     routeParams: { ':applicationId': GRANOLA_APPLICATION_ID },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    await waitFor(
+      () =>
+        expect(findOneFrontComponent).toHaveBeenCalledWith(
+          GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
+        ),
+      { timeout: 3000 },
+    );
     expect(
-      await canvas.findByRole('link', { name: 'My notes' }, { timeout: 3000 }),
-    ).toBeVisible();
+      canvas.queryByRole('link', { name: 'My notes' }),
+    ).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('link', { name: 'Variables' }),
     ).not.toBeInTheDocument();
+    expect(canvas.queryByText('Language')).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('button', { name: 'Save settings' }),
     ).not.toBeInTheDocument();
-
-    await waitFor(() =>
-      expect(findOneFrontComponent).toHaveBeenCalledWith(
-        GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
-      ),
-    );
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
   },
 };

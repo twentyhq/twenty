@@ -47,23 +47,21 @@ export default meta;
 
 export type Story = StoryObj<typeof SettingsApplicationPreferences>;
 
-export const ConnectionOnlyAppListsMyConnections: Story = {
+export const ConnectionOnlyAppListsMyConnectionsWithoutTabs: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
     expect(
-      await canvas.findByRole(
-        'link',
-        { name: 'Connections' },
-        { timeout: 3000 },
-      ),
+      await canvas.findByText('Work Linear', undefined, { timeout: 3000 }),
     ).toBeVisible();
+    expect(
+      canvas.queryByRole('link', { name: 'Connections' }),
+    ).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('link', { name: 'Variables' }),
     ).not.toBeInTheDocument();
 
-    expect(await canvas.findByText('Work Linear')).toBeVisible();
     expect(
       withinTableRowOrThrow({ canvasElement, text: 'Work Linear' }).getByText(
         'tim@linear.app',
