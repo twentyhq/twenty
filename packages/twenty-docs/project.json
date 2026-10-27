@@ -9,14 +9,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "mintlify dev"
+        "command": "npx --yes mintlify@4.2.1125 dev"
       }
     },
     "validate": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "mintlify validate"
+        "command": "npx --yes mintlify@4.2.1125 validate"
       }
     },
     "lint": {
