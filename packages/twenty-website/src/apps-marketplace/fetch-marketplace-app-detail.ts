@@ -73,6 +73,7 @@ export async function fetchMarketplaceAppDetailBySlug(
       sourcePackage: detail.sourcePackage ?? undefined,
       isVetted: detail.isVetted,
       description: detail.aboutDescription ?? detail.description ?? app.tagline,
+      aboutDescription: detail.aboutDescription ?? undefined,
       screenshots: detail.galleryImages ?? [],
       websiteUrl: detail.websiteUrl ?? undefined,
       latestAvailableVersion: detail.latestAvailableVersion ?? undefined,

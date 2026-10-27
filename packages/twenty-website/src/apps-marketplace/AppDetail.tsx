@@ -14,11 +14,11 @@ import {
 import { Body, Button, ExternalLink, Heading, SectionShell } from '@/ui';
 
 import { AppLogo } from './AppLogo';
+import { AppReadmeBlocks } from './AppReadmeBlocks';
+import { AppReadmeSections } from './AppReadmeSections';
 import { buildAppInstallUrl } from './build-app-install-url';
 import { type MarketplaceAppDetail } from './marketplace-app';
-import { SlackAppDetailContent } from './SlackAppDetailContent';
-
-const SLACK_APP_UNIVERSAL_IDENTIFIER = 'a8c47f21-3b9e-4d2a-8f61-9c0e7d4a2b51';
+import { parseAppReadme } from './parse-app-readme';
 
 const HeroRow = styled.div`
   align-items: flex-start;
@@ -161,6 +161,7 @@ type AppDetailProps = {
 export function AppDetail({ app }: AppDetailProps) {
   const i18n = getServerI18n();
   const installUrl = buildAppInstallUrl(app.universalIdentifier);
+  const readme = parseAppReadme(app.aboutDescription ?? '');
 
   return (
     <>
@@ -209,6 +210,7 @@ export function AppDetail({ app }: AppDetailProps) {
                 ))}
               </ScreenshotList>
             )}
+            <AppReadmeBlocks blocks={readme.intro} listLayout="stack" />
           </MainColumn>
 
           <Sidebar>
@@ -244,9 +246,7 @@ export function AppDetail({ app }: AppDetailProps) {
         </ContentGrid>
       </SectionShell>
 
-      {app.universalIdentifier === SLACK_APP_UNIVERSAL_IDENTIFIER && (
-        <SlackAppDetailContent />
-      )}
+      <AppReadmeSections sections={readme.sections} />
     </>
   );
 }
