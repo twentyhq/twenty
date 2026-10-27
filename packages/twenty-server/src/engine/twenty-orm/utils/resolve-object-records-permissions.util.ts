@@ -4,16 +4,19 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
+import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
 
 export const resolveObjectRecordsPermissions = ({
   rolePermissionConfig,
   objectPermissionsByRoleId,
+  flatObjectMetadataMaps,
 }: {
   rolePermissionConfig?: RolePermissionConfig;
   objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 }): {
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
@@ -33,23 +36,13 @@ export const resolveObjectRecordsPermissions = ({
     };
   }
 
-  const roleIds = getRoleIdsToIntersect(rolePermissionConfig.intersectionOf);
-
-  if (!isDefined(roleIds)) {
-    return {
-      objectRecordsPermissions: {},
-      shouldBypassPermissionChecks: false,
-    };
-  }
-
-  const allRolePermissions = roleIds.map(
-    (roleId) => objectPermissionsByRoleId[roleId],
-  );
-
   return {
-    objectRecordsPermissions: allRolePermissions.every(isDefined)
-      ? computePermissionIntersection(allRolePermissions)
-      : {},
+    objectRecordsPermissions: computeObjectsPermissionsForRolePermissionConfig({
+      intersectionOf: rolePermissionConfig.intersectionOf,
+      principalBySource: rolePermissionConfig.principalBySource,
+      rolesPermissions: objectPermissionsByRoleId,
+      flatObjectMetadataMaps,
+    }),
     shouldBypassPermissionChecks: false,
   };
 };

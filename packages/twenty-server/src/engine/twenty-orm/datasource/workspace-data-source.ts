@@ -210,6 +210,7 @@ export class WorkspaceDataSource {
       resolveObjectRecordsPermissions({
         rolePermissionConfig: repositoryRolePermissionConfig,
         objectPermissionsByRoleId: this.objectPermissionsByRoleId,
+        flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
       });
 
     return new WorkspaceRepository<T>({

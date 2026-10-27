@@ -12,6 +12,7 @@ import {
 import { buildAgentRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-agent-role-ids-by-source.util';
 import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
 import { resolveApplicationRoleId } from 'src/engine/twenty-orm/utils/resolve-application-role-id.util';
+import { resolvePrincipalBySourceFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-by-source-from-auth-context.util';
 import { isDenyingRoleIdsBySource } from 'src/engine/twenty-orm/utils/is-denying-role-ids-by-source.util';
 
 const resolveRoleIdsBySourceFromAuthContext = ({
@@ -83,5 +84,12 @@ export const resolveRolePermissionConfig = ({
 
   return isDenyingRoleIdsBySource(roleIdsBySource)
     ? null
-    : { intersectionOf: roleIdsBySource };
+    : {
+        intersectionOf: roleIdsBySource,
+        principalBySource: Object.fromEntries(
+          Object.entries(
+            resolvePrincipalBySourceFromAuthContext(authContext),
+          ).filter(([source]) => source in roleIdsBySource),
+        ),
+      };
 };

@@ -163,6 +163,7 @@ export class DashboardDuplicationService {
       resolveObjectRecordsPermissions({
         rolePermissionConfig,
         objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
+        flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
       });
 
     if (shouldBypassPermissionChecks) {

@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-disabled-actions.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import {
   ApplicationException,
@@ -51,11 +52,13 @@ export class PermissionsService {
       flatRoleMaps,
       flatRolePermissionFlagMaps,
       rolesPermissions,
+      flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'userWorkspaceRoleMap',
       'flatRoleMaps',
       'flatRolePermissionFlagMaps',
       'rolesPermissions',
+      'flatObjectMetadataMaps',
     ]);
 
     const flatRole = this.findUserWorkspaceFlatRoleOrThrow({
@@ -77,7 +80,11 @@ export class PermissionsService {
 
     return {
       permissionFlags,
-      objectsPermissions: rolesPermissions[flatRole.id] ?? {},
+      objectsPermissions: restrictObjectsPermissionsToDisabledActions({
+        objectsPermissions: rolesPermissions[flatRole.id] ?? {},
+        flatObjectMetadataMaps,
+        principal: { type: 'userWorkspace', userWorkspaceId },
+      }),
     };
   }
 
