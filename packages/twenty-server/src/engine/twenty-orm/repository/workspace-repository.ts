@@ -48,6 +48,7 @@ import {
 } from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
 import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-role-filter.util';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
+import { isObjectOperationDisabled } from 'src/engine/twenty-orm/utils/is-object-operation-disabled.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -2210,6 +2211,19 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       operationType,
       objectsPermissions: this.options.objectRecordsPermissions,
     });
+  }
+
+  isReadDisabled(): boolean {
+    const subject = this.resolveRowAccessPolicySubject();
+
+    return (
+      !subject.isSystemContext &&
+      isObjectOperationDisabled({
+        objectMetadata: this.options.flatObjectMetadata,
+        operationType: 'select',
+      }) &&
+      !subject.isOwningApplication(this.options.flatObjectMetadata)
+    );
   }
 
   buildRowAccessPolicy({
