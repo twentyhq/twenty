@@ -9,7 +9,7 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 Connections are credentials a user holds for an external service (Linear, GitHub, Slack, ...). Your app declares **how** those credentials are obtained — a **connection provider** — and consumes them at runtime to make authenticated calls to the third-party API.
 
-Today only OAuth 2.0 is supported. Future credential types (personal access tokens, API keys, basic auth) will plug into the same surface — apps already using `defineConnectionProvider({ type: 'oauth', ... })` won't need to migrate.
+OAuth 2.0 is built in. Services with their own connection flow — a hosted login page, an account id delivered by webhook — use a `custom` provider, where your app drives the flow and Twenty keeps the user, the workspace and the saved connection. Future credential types (personal access tokens, API keys, basic auth) will plug into the same surface — apps already using `defineConnectionProvider({ type: 'oauth', ... })` won't need to migrate.
 
 <AccordionGroup>
 
@@ -96,13 +96,146 @@ Key points:
 - `clientIdVariable` / `clientSecretVariable` are **names**, not values — they must match keys declared in `defineApplication.serverVariables`. The actual `client_id` and `client_secret` are entered by the server admin through the app registration UI, never committed to your repo.
 - Use `serverVariables` (not `applicationVariables`) — OAuth credentials are server-wide and one OAuth app per Twenty server.
 - Until both `serverVariables` are filled in, the app's General tab shows a "needs server admin" hint and the "Add connection" button is disabled.
-- `type: 'oauth'` is the only supported value today. The discriminator is forward-compatible: future types (`'pat'`, `'api-key'`, ...) will add new sub-config blocks alongside `oauth`.
+- `type` is `'oauth'` (with an `oauth` block) or `'custom'` (with a `custom` block, see "Custom connection flows"). The discriminator is forward-compatible: future types (`'pat'`, `'api-key'`, ...) will add new sub-config blocks alongside these.
 
 The OAuth callback URL your provider needs to whitelist is:
 
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="Custom connection flows" description="Connect services that are not OAuth providers">
+
+Some services connect accounts through their own flow rather than OAuth: Unipile, Plaid or Merge send the user to a hosted page and then report the connected account to a URL you gave them, sometimes from their servers rather than the browser. Declare these with `type: 'custom'` and two logic functions:
+
+```ts src/connection-providers/linkedin-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+export default defineConnectionProvider({
+  universalIdentifier: '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
+  name: 'linkedin',
+  displayName: 'LinkedIn',
+  type: 'custom',
+  scope: 'USER',
+  custom: {
+    authorizeLogicFunction: {
+      universalIdentifier: 'c4a1e2b3-6d5f-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    callbackLogicFunction: {
+      universalIdentifier: 'd5b2f3c4-7e6a-4b8c-9d0e-1f2a3b4c5d6e',
+    },
+  },
+  onConnectLogicFunction: {
+    universalIdentifier: 'e6c3a4d5-8f7b-4c9d-0e1f-2a3b4c5d6e7f',
+  },
+});
+```
+
+**Add connection** and **Reconnect** work as for OAuth. Twenty checks the member may connect, signs a short-lived state for the attempt, and runs `authorizeLogicFunction` with a `callbackUrl` that carries it. Return where to send the user:
+
+```ts src/logic-functions/handlers/linkedin-authorize-handler.ts
+import { type AuthorizeConnectionPayload } from 'twenty-sdk/logic-function';
+
+export const linkedinAuthorizeHandler = async ({
+  callbackUrl,
+}: AuthorizeConnectionPayload) => {
+  const response = await fetch(
+    `${process.env.UNIPILE_DSN}/api/v1/hosted/accounts/link`,
+    {
+      method: 'POST',
+      headers: {
+        'X-API-KEY': process.env.UNIPILE_API_KEY ?? '',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        type: 'create',
+        providers: ['LINKEDIN'],
+        api_url: process.env.UNIPILE_DSN,
+        expiresOn: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+        // The browser comes back here, and the account id is posted here.
+        success_redirect_url: callbackUrl,
+        failure_redirect_url: callbackUrl,
+        notify_url: callbackUrl,
+      }),
+    },
+  );
+
+  const { url } = await response.json();
+
+  return { authorizationUrl: url };
+};
+```
+
+Hand `callbackUrl` to the service unchanged. Twenty accepts it as a browser redirect (`GET`) and as a server notification (`POST`), and runs `callbackLogicFunction` for each request with its method, query parameters (without `state`), headers, parsed body and `rawBody` (the exact request bytes, `null` on `GET`). Return the account the request proves, or `null` when it carries none — typically the browser coming back while the account id travels by notification:
+
+```ts src/logic-functions/handlers/linkedin-callback-handler.ts
+import { type ConnectionCallbackPayload } from 'twenty-sdk/logic-function';
+
+export const linkedinCallbackHandler = async ({
+  httpMethod,
+  body,
+}: ConnectionCallbackPayload) => {
+  if (httpMethod !== 'POST') {
+    return null;
+  }
+
+  const { account_id: accountId } = body as { account_id: string };
+
+  // Never trust the payload alone: confirm the account with the service.
+  const account = await fetchUnipileAccount(accountId);
+
+  return { externalAccountId: account.id, handle: account.name };
+};
+```
+
+The signed state in `callbackUrl` only proves the request carries that URL, not that the service sent it. When the service signs its notifications, verify the signature over `rawBody` before trusting the body. Headers are lowercased, and `cookie`, `authorization` and `proxy-authorization` are never passed on:
+
+```ts src/logic-functions/handlers/hosted-callback-handler.ts
+import { createHmac, timingSafeEqual } from 'node:crypto';
+
+import { type ConnectionCallbackPayload } from 'twenty-sdk/logic-function';
+
+export const hostedCallbackHandler = async ({
+  httpMethod,
+  headers,
+  rawBody,
+}: ConnectionCallbackPayload) => {
+  if (httpMethod !== 'POST' || rawBody === null) {
+    return null;
+  }
+
+  const expected = createHmac('sha256', process.env.WEBHOOK_SECRET ?? '')
+    .update(rawBody)
+    .digest();
+  const received = Buffer.from(headers['x-signature'] ?? '', 'hex');
+
+  if (received.length !== expected.length || !timingSafeEqual(received, expected)) {
+    throw new Error('Invalid notification signature');
+  }
+
+  const { account_id: accountId } = JSON.parse(rawBody) as { account_id: string };
+
+  return { externalAccountId: accountId };
+};
+```
+
+The callback returns:
+
+| Field               | Description                                                                                                                                     |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `externalAccountId` | The service's id for the account. A later callback for the same id and member updates that connection instead of adding a second one.          |
+| `handle`            | Optional label shown for the connection. Defaults to the member's email.                                                                       |
+| `accessToken`       | Optional per-account token, stored encrypted and returned by `getConnection`. Leave it out when your app calls the service with its own key. |
+
+Both functions run while the member waits on a redirect, so their timeout is capped at 10 seconds. A failure or an invalid return aborts the connection: nothing is saved and `onConnectLogicFunction` does not run. `onConnectLogicFunction` runs when a connection is created, reconnected or restored, not again when the service reports an account that is already connected. The state expires after an hour, so a notification arriving later is refused. Services commonly retry notifications: a repeat for an account already connected updates that connection, so returning the same account again is safe.
+
+Twenty does not refresh or revoke custom connections. Release what the service holds for the account in `onDisconnectLogicFunction`.
+
+A provider's `type`, like its `scope`, cannot change once it is synced: to move a service between `oauth` and `custom`, declare a new provider with a new `universalIdentifier`.
+
+Custom providers ship with Twenty 2.52.0.
 
 </Accordion>
 
@@ -327,7 +460,8 @@ Each connection has:
 | `scopes`            | OAuth permissions granted by the upstream provider (distinct from `scope` — those are unrelated)                                                                                                                           |
 | `userWorkspaceId`   | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers                                                                                                                   |
 | `workspaceMemberId` | The owner's workspace member id, or `null` if they've since left the workspace                                                                                                                                             |
-| `accessToken`       | Fresh OAuth access token (refreshed automatically if expired)                                                                                                                                                              |
+| `providerType`      | `'oauth'` or `'custom'`, the type of the connection provider. Check it to narrow `accessToken`                                                                                                                       |
+| `accessToken`       | Fresh OAuth access token (refreshed automatically if expired), always set when `providerType` is `'oauth'`. For `'custom'`, `null` unless the callback returned one                                                   |
 | `name`              | The connection's display name (auto-derived at OAuth callback, user-renameable)                                                                                                                                            |
 | `handle`            | The connected upstream account's label, refreshed on each reconnect: the `handle` returned by the identify function when there is one, otherwise the email from the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email |
 | `externalAccountId` | Stable id of the upstream account returned by the identify function, or `null` when the provider declares none or the connection predates it. Not unique: use it to deduplicate connections yourself                         |
