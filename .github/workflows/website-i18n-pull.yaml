@@ -7,7 +7,7 @@ name: 'Pull website translations from Crowdin'
 
 permissions:
   contents: write
-  pull-requests: write
+  pull-requests: read
 
 on:
   schedule:
@@ -30,17 +30,31 @@ jobs:
     name: Pull website translations
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    outputs:
+      pushed: ${{ steps.push_changes.outcome == 'success' }}
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ github.token }}
           ref: ${{ github.head_ref || github.ref_name }}
+          # Merging main into the i18n branch needs their shared history
+          fetch-depth: 0
+          filter: blob:none
 
       - name: Setup website i18n branch
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git fetch origin i18n-website || true
-          git checkout -B i18n-website origin/i18n-website || git checkout -b i18n-website
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
+          # Without an open PR, whatever the branch holds is regenerable, so restart it from main
+          if [ "$(gh pr list --head i18n-website --base main --state open --json number --jq length)" = 0 ]; then
+            git checkout -B i18n-website origin/main
+          else
+            git checkout -B i18n-website origin/i18n-website
+            git merge --no-edit origin/main
+          fi
 
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
@@ -50,8 +64,6 @@ jobs:
 
       - name: Stash any changes before pulling translations
         run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@twenty.com'
           git add .
           git stash
 
@@ -112,23 +124,43 @@ jobs:
           fi
 
       - name: Push changes
+        id: push_changes
         if: steps.compile_translations.outputs.changes_detected == 'true'
-        run: git push origin HEAD:i18n-website
+        run: git push --force-with-lease origin HEAD:i18n-website
+
+  # Actions may not open PRs in this repo, so the Twenty PR app does. Its key stays
+  # out of the job above, which runs yarn install and third-party actions.
+  open_pull_request:
+    name: Open website translations pull request
+    needs: pull_website_translations
+    if: needs.pull_website_translations.outputs.pushed == 'true'
+    runs-on: ubuntu-latest
+    permissions: {}
+    environment:
+      name: i18n
+      deployment: false
+    steps:
+      - name: Mint Twenty PR token
+        id: twenty-pr-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_PR_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_PR_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: twenty
+          permission-pull-requests: write
 
       - name: Create pull request
-        if: steps.compile_translations.outputs.changes_detected == 'true'
-        run: |
-          if git diff --name-only origin/main..HEAD | grep -q .; then
-            gh pr create -B main -H i18n-website --title 'i18n - website translations' --body 'Created by Github action' || true
-          else
-            echo "No file differences between branches, skipping PR creation"
-          fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.twenty-pr-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if [ "$(gh pr list --head i18n-website --base main --state open --json number --jq length)" = 0 ]; then
+            gh pr create -B main -H i18n-website --title 'i18n - website translations' --body 'Created by Github action'
+          fi
 
       - name: Mint twenty-infra dispatch token
         id: app-token
-        if: steps.compile_translations.outputs.changes_detected == 'true'
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
@@ -138,7 +170,6 @@ jobs:
           permission-actions: write
 
       - name: Trigger i18n automerge
-        if: steps.compile_translations.outputs.changes_detected == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
