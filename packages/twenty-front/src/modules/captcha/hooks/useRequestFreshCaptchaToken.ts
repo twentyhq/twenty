@@ -8,7 +8,7 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 import { useStore } from 'jotai';
 
-export const useRequestFreshCaptchaToken = (action = 'submit') => {
+export const useRequestFreshCaptchaToken = () => {
   const store = useStore();
   const setCaptchaToken = useSetAtomState(captchaTokenState);
   const setIsRequestingCaptchaToken = useSetAtomState(
@@ -33,15 +33,15 @@ export const useRequestFreshCaptchaToken = (action = 'submit') => {
     let captchaWidget: any;
     switch (captcha.provider) {
       case CaptchaDriverType.GOOGLE_RECAPTCHA:
-        return window.grecaptcha
+        window.grecaptcha
           .execute(captcha.siteKey, {
-            action,
+            action: 'submit',
           })
           .then((token: string) => {
             setCaptchaToken(token);
             setIsRequestingCaptchaToken(false);
-            return token;
           });
+        break;
       case CaptchaDriverType.TURNSTILE:
         captchaWidget = window.turnstile.render('#captcha-widget', {
           sitekey: captcha.siteKey,
@@ -53,7 +53,7 @@ export const useRequestFreshCaptchaToken = (action = 'submit') => {
           },
         });
     }
-  }, [action, setCaptchaToken, setIsRequestingCaptchaToken, store]);
+  }, [setCaptchaToken, setIsRequestingCaptchaToken, store]);
 
   return { requestFreshCaptchaToken };
 };

@@ -16,13 +16,11 @@ describe('GoogleRecaptchaDriver', () => {
     const driver = buildDriver({
       success: true,
       score: 0.5,
-      action: 'create_workspace',
     });
 
     expect(await driver.validate('token')).toEqual({
       success: true,
       score: 0.5,
-      action: 'create_workspace',
     });
   });
 
@@ -30,14 +28,12 @@ describe('GoogleRecaptchaDriver', () => {
     const driver = buildDriver({
       success: true,
       score: 0.3,
-      action: 'submit',
     });
 
     expect(await driver.validate('token')).toEqual({
       success: false,
-      error: 'low-score',
+      error: 'score-below-threshold',
       score: 0.3,
-      action: 'submit',
     });
   });
 
@@ -47,7 +43,6 @@ describe('GoogleRecaptchaDriver', () => {
     expect(await driver.validate('token')).toEqual({
       success: true,
       score: undefined,
-      action: undefined,
     });
   });
 

@@ -2,7 +2,6 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { partnerCookieState } from '@/auth/states/partnerCookieState';
 import { useUploadNewWorkspaceLogo } from '@/auth/sign-in-up/hooks/useUploadNewWorkspaceLogo';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
@@ -33,8 +32,6 @@ export const useSignUpInNewWorkspace = () => {
   const { uploadNewWorkspaceLogo } = useUploadNewWorkspaceLogo();
   const [partnerCookie, setPartnerCookie] = useAtomState(partnerCookieState);
   const { isCaptchaReady } = useCaptcha();
-  const { requestFreshCaptchaToken } =
-    useRequestFreshCaptchaToken('create_workspace');
   const { readCaptchaToken } = useReadCaptchaToken();
 
   const createWorkspace = async ({
@@ -56,8 +53,7 @@ export const useSignUpInNewWorkspace = () => {
     }
 
     try {
-      const captchaToken =
-        (await requestFreshCaptchaToken()) ?? readCaptchaToken();
+      const captchaToken = readCaptchaToken();
 
       const { data } = await signUpInNewWorkspaceMutation({
         variables: {

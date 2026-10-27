@@ -40,13 +40,12 @@ export class GoogleRecaptchaDriver implements CaptchaDriver {
       };
     }
 
-    const { score, action } = responseData;
+    const { score } = responseData;
 
-    // v2 keys return no score, and v3 marks any valid token as success whatever its score
     if (isDefined(score) && score < this.minScore) {
-      return { success: false, error: 'low-score', score, action };
+      return { success: false, error: 'score-below-threshold', score };
     }
 
-    return { success: true, score, action };
+    return { success: true, score };
   }
 }

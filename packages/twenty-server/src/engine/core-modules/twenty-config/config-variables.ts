@@ -2310,7 +2310,6 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  @Max(1)
   @IsOptional()
   CAPTCHA_MIN_SCORE = 0;
 

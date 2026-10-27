@@ -6,6 +6,7 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
+import { type GraphQLResolveInfo } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -35,7 +36,7 @@ export class CaptchaGuard implements CanActivate {
       this.metricsService.recordHistogram({
         key: MetricsKeys.CaptchaScore,
         value: result.score,
-        attributes: { action: result.action },
+        attributes: { operation: ctx.getInfo<GraphQLResolveInfo>().fieldName },
         bucketBoundaries: CAPTCHA_SCORE_BUCKET_BOUNDARIES,
       });
     }
