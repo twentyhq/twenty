@@ -137,7 +137,7 @@ describe('Skill update should succeed', () => {
       gqlFields: 'id label isCustom',
     });
 
-    const standardSkill = data.skills.find((skill) => skill.isCustom === false);
+    const standardSkill = data.skills.find((skill) => !skill.isCustom);
 
     expect(standardSkill).toBeDefined();
 

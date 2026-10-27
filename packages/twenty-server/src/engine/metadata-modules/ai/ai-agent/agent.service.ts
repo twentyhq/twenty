@@ -8,7 +8,7 @@ import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/d
 import { fromCreateAgentInputToFlatAgent } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util';
 import { fromUpdateAgentInputToFlatAgentToUpdate } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util';
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
-import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -47,7 +47,10 @@ export class AgentService {
         const roleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
 
         return {
-          ...resolveEffectiveAgent(flatAgent),
+          ...resolveEffectiveFlatEntity({
+            metadataName: 'agent',
+            flatEntity: flatAgent,
+          }),
           roleId: roleId ?? null,
         };
       });
@@ -77,7 +80,13 @@ export class AgentService {
 
     const roleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
 
-    return { ...resolveEffectiveAgent(flatAgent), roleId: roleId ?? null };
+    return {
+      ...resolveEffectiveFlatEntity({
+        metadataName: 'agent',
+        flatEntity: flatAgent,
+      }),
+      roleId: roleId ?? null,
+    };
   }
 
   async createOneAgent(

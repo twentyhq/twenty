@@ -5,7 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
-import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { WORKSPACE_LOCAL_STATE_PROPERTIES } from 'src/engine/metadata-modules/overrides/constants/workspace-local-state-properties.constant';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
@@ -181,7 +181,10 @@ export class FlatAgentValidatorService {
       ...flatEntityUpdate,
     };
     const effectiveOptimisticFlatAgent = isDefined(flatEntityUpdate.overrides)
-      ? resolveEffectiveAgent(optimisticFlatAgent)
+      ? resolveEffectiveFlatEntity({
+          metadataName: 'agent',
+          flatEntity: optimisticFlatAgent,
+        })
       : undefined;
 
     const existingAgents = Object.values(

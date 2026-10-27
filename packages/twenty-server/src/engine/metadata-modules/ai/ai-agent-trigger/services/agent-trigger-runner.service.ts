@@ -22,7 +22,7 @@ import { AGENT_TRIGGER_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai
 import { type RunAgentTriggerJobData } from 'src/engine/metadata-modules/ai/ai-agent-trigger/types/run-agent-trigger-job-data.type';
 import { buildAgentTriggerMessages } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/build-agent-trigger-messages.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import {
   AiException,
   AiExceptionCode,
@@ -153,7 +153,10 @@ export class AgentTriggerRunnerService
       return null;
     }
 
-    const agent = resolveEffectiveAgent(agentRow);
+    const agent = resolveEffectiveFlatEntity({
+      metadataName: 'agent',
+      flatEntity: agentRow,
+    });
     const trigger = agent.triggers.find(
       (agentTrigger) => agentTrigger.id === triggerId,
     );
