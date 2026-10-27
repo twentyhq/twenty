@@ -172,6 +172,17 @@ describe('buildRowAccessPolicy', () => {
     ).toEqual({ kind: 'open' });
   });
 
+  it('denies an operation the object disables, even to its owning application', () => {
+    const object = {
+      ...note,
+      disabledRecordOperations: ['read' as const],
+    };
+
+    expect(
+      build({ ...readEverything, isOwningApplication: () => true }, object),
+    ).toEqual({ kind: 'denied' });
+  });
+
   it('opens an OPEN object to a subject without predicate', () => {
     expect(build(readEverything, note)).toEqual({ kind: 'open' });
   });

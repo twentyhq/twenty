@@ -35,6 +35,9 @@ export const fromFlatObjectMetadataToObjectManifest = ({
   readability: flatObjectMetadata.readability,
   readabilityParentFieldUniversalIdentifiers:
     flatObjectMetadata.readabilityParentFieldUniversalIdentifiers,
+  ...(isDefined(flatObjectMetadata.disabledRecordOperations)
+    ? { disabledRecordOperations: flatObjectMetadata.disabledRecordOperations }
+    : {}),
   sharingReach: flatObjectMetadata.sharingReach,
   openRecordIn: flatObjectMetadata.openRecordIn,
   labelIdentifierFieldMetadataUniversalIdentifier,

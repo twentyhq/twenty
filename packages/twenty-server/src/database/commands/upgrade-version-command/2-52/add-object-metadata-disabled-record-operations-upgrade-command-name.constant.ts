@@ -1,0 +1,2 @@
+export const ADD_OBJECT_METADATA_DISABLED_RECORD_OPERATIONS_UPGRADE_COMMAND_NAME =
+  '2.52.0_AddObjectMetadataDisabledRecordOperationsFastInstanceCommand_1793104347154';

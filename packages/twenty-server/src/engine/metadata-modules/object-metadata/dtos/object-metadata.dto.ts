@@ -10,6 +10,7 @@ import {
   MetadataWritability,
   ObjectOpenRecordIn,
   ObjectSharingReach,
+  type RecordOperation,
 } from 'twenty-shared/types';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
@@ -89,6 +90,9 @@ export class ObjectMetadataDTO {
 
   @Field(() => [UUIDScalarType], { nullable: true })
   readabilityParentFieldUniversalIdentifiers: string[] | null;
+
+  @Field(() => [String], { nullable: true })
+  disabledRecordOperations?: RecordOperation[] | null;
 
   @Field(() => ObjectSharingReach)
   sharingReach: ObjectSharingReach;

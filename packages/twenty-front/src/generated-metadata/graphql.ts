@@ -5123,6 +5123,7 @@ export type Object = {
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
+  disabledRecordOperations?: Maybe<Array<Scalars['String']['output']>>;
   duplicateCriteria?: Maybe<Array<Array<Scalars['String']['output']>>>;
   fields: ObjectFieldsConnection;
   fieldsList: Array<Field>;

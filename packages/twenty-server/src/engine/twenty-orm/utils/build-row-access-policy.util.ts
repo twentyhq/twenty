@@ -1,3 +1,4 @@
+import { RECORD_OPERATION_BY_OPERATION_TYPE } from 'src/engine/twenty-orm/constants/record-operation-by-operation-type.constant';
 import { isMetadataWritePermitted } from 'src/engine/twenty-orm/utils/is-metadata-write-permitted.util';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -20,6 +21,14 @@ export const buildRowAccessPolicy = ({
 }: RowAccessPolicyContext & RowAccessPolicyTarget): RowAccessPolicy => {
   if (subject.isSystemContext) {
     return { kind: 'open' };
+  }
+
+  if (
+    target.flatObjectMetadata.disabledRecordOperations?.includes(
+      RECORD_OPERATION_BY_OPERATION_TYPE[target.operationType],
+    )
+  ) {
+    return { kind: 'denied' };
   }
 
   const context = { subject, environment };

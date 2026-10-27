@@ -219,4 +219,47 @@ describe('validateOperationIsPermittedOrThrow - system objects permissions', () 
       ).not.toThrow();
     });
   });
+
+  describe('when the object disables some record operations', () => {
+    const objectsPermissions: ObjectsPermissions = {
+      [SYSTEM_OBJECT_ID]: baseObjectPermissions,
+    };
+
+    const executeValidationOnObjectDisabling = (
+      operationType: OperationType,
+    ) =>
+      validateOperationIsPermittedOrThrow({
+        entityName: SYSTEM_OBJECT_NAME,
+        operationType,
+        objectsPermissions,
+        flatObjectMetadataMaps: {
+          ...mockFlatObjectMetadataMaps,
+          byUniversalIdentifier: {
+            [SYSTEM_OBJECT_UNIVERSAL_ID]: {
+              ...mockFlatObjectMetadataMaps.byUniversalIdentifier[
+                SYSTEM_OBJECT_UNIVERSAL_ID
+              ],
+              disabledRecordOperations: ['destroy'],
+            } as FlatObjectMetadata,
+          },
+        },
+        flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
+        objectIdByNameSingular,
+        selectedColumns: [],
+        updatedColumns: [],
+      });
+
+    it('should deny a disabled operation despite the role permission', () => {
+      expect(() => executeValidationOnObjectDisabling('delete')).toThrow(
+        new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        ),
+      );
+    });
+
+    it('should allow operations the object does not disable', () => {
+      expect(() => executeValidationOnObjectDisabling('select')).not.toThrow();
+    });
+  });
 });
