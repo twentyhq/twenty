@@ -1,7 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import type { ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
