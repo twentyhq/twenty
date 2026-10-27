@@ -91,7 +91,7 @@ export const SettingsAccountDetail = () => {
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
         {
-          children: t`App preferences`,
+          children: t`Apps preferences`,
           href: getSettingsPath(SettingsPath.Accounts),
         },
         { children: builtInAccount.handle },

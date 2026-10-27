@@ -31,6 +31,11 @@ const StyledAddAccountContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledEmptyState = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
+`;
+
 type SettingsAccountGroupsSectionProps = {
   builtInAccountApp?: BuiltInAccountApp;
 };
@@ -66,6 +71,14 @@ export const SettingsAccountGroupsSection = ({
     </TableRow>
   );
 
+  const emptyState = isDefined(builtInAccountApp) ? (
+    <SettingsAppPreferencesListEmptyStateCard
+      provider={builtInAccountApp.provider}
+    />
+  ) : (
+    <StyledEmptyState>{t`No accounts yet`}</StyledEmptyState>
+  );
+
   return (
     <Section.Root>
       <Section.Header
@@ -87,9 +100,7 @@ export const SettingsAccountGroupsSection = ({
           />
         </Table>
       ) : groups.length === 0 ? (
-        <SettingsAppPreferencesListEmptyStateCard
-          provider={builtInAccountApp?.provider}
-        />
+        emptyState
       ) : (
         <>
           <Table>
@@ -105,14 +116,16 @@ export const SettingsAccountGroupsSection = ({
               ))}
             </StyledTableRows>
           </Table>
-          <StyledAddAccountContainer>
-            <Button
-              startIcon={<IconPlus />}
-              size="sm"
-              onClick={() => navigateSettings(SettingsPath.NewAccount)}
-              variant="outline"
-            >{t`Add account`}</Button>
-          </StyledAddAccountContainer>
+          {isDefined(builtInAccountApp) && (
+            <StyledAddAccountContainer>
+              <Button
+                startIcon={<IconPlus />}
+                size="sm"
+                onClick={() => navigateSettings(SettingsPath.NewAccount)}
+                variant="outline"
+              >{t`Add account`}</Button>
+            </StyledAddAccountContainer>
+          )}
         </>
       )}
     </Section.Root>

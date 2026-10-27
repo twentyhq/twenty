@@ -56,6 +56,7 @@ export const GoogleGeneralShowsAccountsAndBlocklist: Story = {
       canvas.getByText('Read emails, Send emails, Manage events'),
     ).toBeVisible();
     expect(canvas.getByText('Read emails')).toBeVisible();
+    expect(canvas.getByRole('button', { name: 'Add account' })).toBeVisible();
     expect(canvas.getByTestId('tab-emails')).toBeVisible();
     expect(canvas.getByTestId('tab-calendar')).toBeVisible();
   },

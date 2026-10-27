@@ -163,7 +163,7 @@ A variable's scope is set when it is created and cannot change. To change it, de
 
 User variables can be `isSecret`, `isRequired`, or both. For example, a personal API key can declare `scope: 'USER', isSecret: true, isRequired: true`. Values are encrypted at rest.
 
-For user variables, `isRequired` describes a per-member requirement. A member with no value for it, their own or a default, sees your app marked **Missing configuration** in App preferences, with a banner naming the variables. It does not affect the workspace configuration warning, and nothing enforces it at runtime: your code still decides what an unset value means.
+For user variables, `isRequired` describes a per-member requirement. A member with no value for it, their own or a default, sees your app marked **Missing configuration** in Apps preferences, with a banner naming the variables. It does not affect the workspace configuration warning, and nothing enforces it at runtime: your code still decides what an unset value means.
 
 A user variable is injected with the value of the member your code runs for, or its default until they set their own:
 
