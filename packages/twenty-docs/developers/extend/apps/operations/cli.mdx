@@ -1,12 +1,13 @@
 ---
 title: CLI
 description: Sign in to a workspace, explore its data and build apps from your terminal with the twenty CLI.
-icon: 'terminal'
 ---
 
-The `twenty` CLI connects to Twenty workspaces from your terminal. Use it to inspect metadata, read records, send API requests, and create, sync and debug apps. It needs **Node.js 24.5 or later**.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Running the CLI
+
+The `twenty` CLI connects to Twenty workspaces from your terminal. Use it to inspect metadata, read records, send API requests, and create, sync and debug apps. It needs **Node.js 24.5 or later**.
 
 Run any command through `npx`, without installing anything:
 
@@ -169,3 +170,5 @@ Build output belongs to the CLI. Do not read `.twenty/output/manifest.json` or i
 ## Full reference
 
 The [command reference](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md) covers every flag, permission, output format and exit code.
+
+<PageBanner illustration="card-page-cli" />

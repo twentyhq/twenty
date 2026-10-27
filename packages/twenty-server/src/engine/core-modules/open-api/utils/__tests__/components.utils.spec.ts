@@ -10,7 +10,7 @@ import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata
 import {
   computeMetadataSchemaComponents,
   computeSchemaComponents,
-} from 'src/engine/core-modules/open-api/utils/components.utils';
+} from 'src/engine/core-modules/open-api/utils/components.util';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 

@@ -59,6 +59,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for logicFunction 1`] = `[]`;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for messagingProvider 1`] = `[]`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for navigationMenuItem 1`] = `
 [
   "objectMetadata",

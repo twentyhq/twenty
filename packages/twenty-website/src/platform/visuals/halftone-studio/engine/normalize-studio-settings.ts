@@ -1,8 +1,8 @@
+import type { HalftoneMaterialTexture } from './material-texture';
+import { HALFTONE_MATERIAL_TEXTURE_LAYERS } from './material-texture-layers';
 import { HALFTONE_STUDIO_DEFAULTS } from './studio-settings-defaults';
 import {
-  type HalftoneBackgroundSettings,
   type HalftoneEffectSettings,
-  type HalftoneLightingSettings,
   type HalftoneMaterialSettings,
   type HalftoneMaterialSurface,
   type HalftoneSourceMode,
@@ -10,26 +10,21 @@ import {
   type HalftoneStudioSettingsOverrides,
 } from './studio-settings-types';
 
-function getDefaultLightingSettings(
-  surface: HalftoneMaterialSurface,
-): HalftoneLightingSettings {
-  return surface === 'glass'
-    ? HALFTONE_STUDIO_DEFAULTS.glassLighting
-    : HALFTONE_STUDIO_DEFAULTS.solidLighting;
+const MATERIAL_TEXTURES = new Set<string>([
+  'none',
+  ...Object.keys(HALFTONE_MATERIAL_TEXTURE_LAYERS),
+]);
+
+const MATERIAL_SURFACES = new Set<string>(
+  Object.keys(HALFTONE_STUDIO_DEFAULTS.materialBySurface),
+);
+
+function isMaterialTexture(value: unknown): value is HalftoneMaterialTexture {
+  return typeof value === 'string' && MATERIAL_TEXTURES.has(value);
 }
 
-function getDefaultBackgroundSettings(
-  surface: HalftoneMaterialSurface,
-): HalftoneBackgroundSettings {
-  return surface === 'glass'
-    ? HALFTONE_STUDIO_DEFAULTS.glassBackground
-    : HALFTONE_STUDIO_DEFAULTS.solidBackground;
-}
-
-function getDefaultAnimationSettings(surface: HalftoneMaterialSurface) {
-  return surface === 'glass'
-    ? HALFTONE_STUDIO_DEFAULTS.glassAnimation
-    : HALFTONE_STUDIO_DEFAULTS.solidAnimation;
+function isMaterialSurface(value: unknown): value is HalftoneMaterialSurface {
+  return typeof value === 'string' && MATERIAL_SURFACES.has(value);
 }
 
 function getDefaultHalftoneSettings(sourceMode: HalftoneSourceMode) {
@@ -57,11 +52,12 @@ function normalizeHalftoneEffectSettings(
 function normalizeMaterialSettings(
   settings?: Partial<HalftoneMaterialSettings>,
 ): HalftoneMaterialSettings {
-  const surface = settings?.surface === 'glass' ? 'glass' : 'solid';
-  const defaults =
-    surface === 'glass'
-      ? HALFTONE_STUDIO_DEFAULTS.glassMaterial
-      : HALFTONE_STUDIO_DEFAULTS.solidMaterial;
+  const surface = isMaterialSurface(settings?.surface)
+    ? settings.surface
+    : 'solid';
+  const defaults = HALFTONE_STUDIO_DEFAULTS.materialBySurface[surface];
+  const hasEnvironmentRotation =
+    typeof settings?.environmentRotation === 'number';
 
   return {
     surface,
@@ -84,9 +80,20 @@ function normalizeMaterialSettings(
         ? settings.refraction
         : defaults.refraction,
     environmentPower:
-      typeof settings?.environmentPower === 'number'
+      hasEnvironmentRotation && typeof settings?.environmentPower === 'number'
         ? settings.environmentPower
         : defaults.environmentPower,
+    environmentRotation:
+      typeof settings?.environmentRotation === 'number'
+        ? settings.environmentRotation
+        : defaults.environmentRotation,
+    texture: isMaterialTexture(settings?.texture)
+      ? settings.texture
+      : defaults.texture,
+    textureTiling:
+      typeof settings?.textureTiling === 'number'
+        ? settings.textureTiling
+        : defaults.textureTiling,
   };
 }
 
@@ -119,9 +126,12 @@ export function normalizeHalftoneStudioSettings(
     )
       ? { ...HALFTONE_STUDIO_DEFAULTS.glassMaterial }
       : mergedMaterial;
-  const lightingDefaults = getDefaultLightingSettings(material.surface);
-  const backgroundDefaults = getDefaultBackgroundSettings(material.surface);
-  const animationDefaults = getDefaultAnimationSettings(material.surface);
+  const lightingDefaults =
+    HALFTONE_STUDIO_DEFAULTS.lightingBySurface[material.surface];
+  const backgroundDefaults =
+    HALFTONE_STUDIO_DEFAULTS.backgroundBySurface[material.surface];
+  const animationDefaults =
+    HALFTONE_STUDIO_DEFAULTS.animationBySurface[material.surface];
 
   return {
     ...HALFTONE_STUDIO_DEFAULTS.settings,

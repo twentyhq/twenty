@@ -59,6 +59,10 @@ const record = {
   objectUniversalIdentifier: REFERENCE_ID,
   objectRecord: { name: 'Company' },
 };
+const email = {
+  connectedAccountId: '{{trigger.accountId}}',
+  recipients: { to: 'test@example.com' },
+};
 const filters = { stepFilterGroups: [], stepFilters: [] };
 const inputs = {
   LOGIC_FUNCTION: { value: 'Hello' },
@@ -99,6 +103,17 @@ const inputs = {
       objectUniversalIdentifier: REFERENCE_ID,
       fieldUniversalIdentifier: FIELD_ID,
     },
+  },
+  SEND_EMAIL: email,
+  DRAFT_EMAIL: email,
+  CREATE_CALENDAR_EVENT: {
+    connectedAccountId: '{{trigger.accountId}}',
+    title: 'Meeting',
+    startsAt: '2026-10-01T10:00:00Z',
+    endsAt: '2026-10-01T11:00:00Z',
+    isFullDay: false,
+    sendInvitations: false,
+    addConferencing: false,
   },
   FORM: [
     {
@@ -202,9 +217,6 @@ describe('application workflow actions', () => {
     Object.values(WorkflowActionType).filter(
       (type) =>
         type !== WorkflowActionType.CODE &&
-        type !== WorkflowActionType.SEND_EMAIL &&
-        type !== WorkflowActionType.DRAFT_EMAIL &&
-        type !== WorkflowActionType.CREATE_CALENDAR_EVENT &&
         type !== WorkflowActionType.SEND_CHAT_MESSAGE,
     ),
   )('converts %s to its runtime action', (type) => {
