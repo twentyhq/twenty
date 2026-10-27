@@ -19,7 +19,7 @@ import { FEATURE_TRANSITION_TIMING } from './feature-transition-timing';
 import { getPlanFeatureKey } from './get-plan-feature-key';
 import { PLAN_FEATURE_ROW_METRICS } from './plan-feature-row-metrics';
 import { PlanFeatureLogoStack } from './PlanFeatureLogoStack';
-import { type PlanFeature } from './plans-data';
+import { type PlanFeature, type PlanFeatureVisual } from './plans-data';
 import { type FeatureTransitionPhase } from './use-feature-transition';
 
 const FEATURE_SWITCH_ANIMATION_MS =
@@ -51,7 +51,7 @@ const FeatureList = styled.ul`
   padding: 0;
 `;
 
-const FeatureVisual = styled.span`
+const FeatureVisualFrame = styled.span`
   align-items: center;
   color: ${color('blue')};
   display: flex;
@@ -146,6 +146,16 @@ const FeatureRow = styled.div`
   min-height: 0;
 `;
 
+function FeatureVisual({ visual }: { visual: PlanFeatureVisual }) {
+  if (visual.kind === 'logos') {
+    return <PlanFeatureLogoStack logos={visual.logos} />;
+  }
+
+  const FeatureIcon = visual.icon;
+
+  return <FeatureIcon aria-hidden size={FEATURE_ICON_SIZE_PX} />;
+}
+
 export function PlanFeatureList({
   className,
   comparisonItemKeys,
@@ -169,8 +179,6 @@ export function PlanFeatureList({
       <FeatureList data-state={phase}>
         {visibleFeatures.map((feature, featureNumber) => {
           const featureKey = getPlanFeatureKey(feature, featureNumber);
-          const FeatureIcon =
-            feature.visual.kind === 'icon' ? feature.visual.icon : null;
 
           return (
             <FeatureItem
@@ -184,13 +192,9 @@ export function PlanFeatureList({
               key={featureKey}
             >
               <FeatureRow>
-                <FeatureVisual>
-                  {feature.visual.kind === 'logos' ? (
-                    <PlanFeatureLogoStack logos={feature.visual.logos} />
-                  ) : FeatureIcon !== null ? (
-                    <FeatureIcon aria-hidden size={FEATURE_ICON_SIZE_PX} />
-                  ) : null}
-                </FeatureVisual>
+                <FeatureVisualFrame>
+                  <FeatureVisual visual={feature.visual} />
+                </FeatureVisualFrame>
                 <FeatureText>
                   <Body as="span" size="sm">
                     {i18n._(feature.title)}
