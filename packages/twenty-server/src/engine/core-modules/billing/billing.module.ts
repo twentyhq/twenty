@@ -102,6 +102,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(BillingSubscriptionEntity),
   ],
   exports: [
+    BillingPortalWorkspaceService,
     BillingSubscriptionService,
     BillingCreditAllowanceService,
     BillingSubscriptionUpdateService,

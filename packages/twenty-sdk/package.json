@@ -5,7 +5,7 @@
     "url": "git+https://github.com/twentyhq/twenty.git",
     "directory": "packages/twenty-sdk"
   },
-  "version": "2.52.0",
+  "version": "2.53.0",
   "sideEffects": false,
   "files": [
     "dist",
@@ -82,7 +82,7 @@
     "tsc-alias": "^1.8.16",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
-    "vite": "^8.1.6",
+    "vite": "^8.0.0",
     "vite-plugin-dts": "^4.5.4"
   },
   "engines": {

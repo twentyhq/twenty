@@ -63,14 +63,14 @@ export const SettingsBillingUserCreditsSection = () => {
   return (
     <Section.Root>
       <Section.Header
-        title={t`User credits`}
-        description={t`Each member spends their own AI credits before workspace credits`}
+        title={t`Personal AI usage`}
+        description={t`Each member gets an AI allowance, used before workspace credits`}
       />
       <Card.Root>
         <SettingsOptionCardContentSwitch
           Icon={IconCoins}
-          title={t`Use workspace credits when a member runs out`}
-          description={t`When off, a member's AI chats stop until their credits renew`}
+          title={t`Use workspace credits after a member reaches their limit`}
+          description={t`When off, a member's AI chats pause until their personal usage resets`}
           checked={
             billingCustomer.userCreditsFallback ===
             UserCreditsFallback.WORKSPACE_CREDITS
