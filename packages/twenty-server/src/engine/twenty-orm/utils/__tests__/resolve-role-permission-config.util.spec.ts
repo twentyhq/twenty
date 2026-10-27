@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
@@ -52,7 +50,7 @@ const withAgent = (
 ): WorkspaceAuthContext =>
   ({ ...authContext, agentId }) as WorkspaceAuthContext;
 
-const resolveWithPrincipals = (authContext: WorkspaceAuthContext) =>
+const resolve = (authContext: WorkspaceAuthContext) =>
   resolveRolePermissionConfig({
     authContext,
     userWorkspaceRoleMap: { [USER_WORKSPACE_ID]: USER_ROLE_ID },
@@ -62,15 +60,6 @@ const resolveWithPrincipals = (authContext: WorkspaceAuthContext) =>
     } as unknown as FlatRoleTargetByAgentIdMaps,
   });
 
-const resolve = (authContext: WorkspaceAuthContext) => {
-  const rolePermissionConfig = resolveWithPrincipals(authContext);
-
-  return isDefined(rolePermissionConfig) &&
-    'intersectionOf' in rolePermissionConfig
-    ? { intersectionOf: rolePermissionConfig.intersectionOf }
-    : rolePermissionConfig;
-};
-
 describe('resolveRolePermissionConfig', () => {
   it('bypasses permission checks for a system request', () => {
     expect(
@@ -79,24 +68,6 @@ describe('resolveRolePermissionConfig', () => {
         workspace: { id: 'workspace-1' },
       } as unknown as WorkspaceAuthContext),
     ).toEqual({ shouldBypassPermissionChecks: true });
-  });
-
-  it('records the principal behind each role it intersects', () => {
-    expect(
-      resolveWithPrincipals(
-        buildUserContext({
-          application: { defaultRoleId: APPLICATION_ROLE_ID },
-        }),
-      ),
-    ).toMatchObject({
-      principalBySource: {
-        userWorkspaceRoleId: {
-          type: 'userWorkspace',
-          userWorkspaceId: USER_WORKSPACE_ID,
-        },
-        applicationRoleId: { type: 'application' },
-      },
-    });
   });
 
   it('restricts a user request to the user role', () => {
@@ -123,9 +94,7 @@ describe('resolveRolePermissionConfig', () => {
   it('adds no application restriction when the application has no role', () => {
     expect(
       resolve(buildUserContext({ application: { defaultRoleId: null } })),
-    ).toEqual({
-      intersectionOf: { userWorkspaceRoleId: USER_ROLE_ID },
-    });
+    ).toEqual({ intersectionOf: { userWorkspaceRoleId: USER_ROLE_ID } });
   });
 
   it('allows nothing for a user without a role, even with an application', () => {

@@ -4,26 +4,32 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type PermissionPrincipal } from 'src/engine/twenty-orm/types/permission-principal.type';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
-const isOwningApplicationPrincipal = ({
-  principal,
+// An application's role is always one of its own, so the role's owner is the acting application
+const isOwningApplicationRole = ({
+  roleSource,
+  flatRole,
   flatObjectMetadata,
 }: {
-  principal: PermissionPrincipal | undefined;
+  roleSource: keyof RoleIdsBySource;
+  flatRole: Pick<FlatRole, 'applicationId'> | undefined;
   flatObjectMetadata: Pick<FlatObjectMetadata, 'applicationId'>;
 }): boolean =>
-  principal?.type === 'application' &&
-  principal.applicationId === flatObjectMetadata.applicationId;
+  roleSource === 'applicationRoleId' &&
+  flatRole?.applicationId === flatObjectMetadata.applicationId;
 
 export const restrictObjectsPermissionsToDisabledActions = ({
   objectsPermissions,
   flatObjectMetadataMaps,
-  principal,
+  roleSource,
+  flatRole,
 }: {
   objectsPermissions: ObjectsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  principal: PermissionPrincipal | undefined;
+  roleSource: keyof RoleIdsBySource;
+  flatRole: Pick<FlatRole, 'applicationId'> | undefined;
 }): ObjectsPermissions => {
   let restrictedObjectsPermissions: ObjectsPermissions | undefined;
 
@@ -40,7 +46,7 @@ export const restrictObjectsPermissionsToDisabledActions = ({
     if (
       !isDefined(flatObjectMetadata) ||
       !isNonEmptyArray(disabledObjectPermissionActions) ||
-      isOwningApplicationPrincipal({ principal, flatObjectMetadata })
+      isOwningApplicationRole({ roleSource, flatRole, flatObjectMetadata })
     ) {
       continue;
     }

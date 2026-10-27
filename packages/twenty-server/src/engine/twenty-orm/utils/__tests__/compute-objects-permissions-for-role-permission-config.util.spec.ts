@@ -4,6 +4,8 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
 
 const INVOICE_ID = 'invoice-id';
@@ -37,19 +39,28 @@ const rolesPermissions = {
   'application-role-id': { [INVOICE_ID]: FULL_ACCESS },
 };
 
-const APPLICATION_PRINCIPAL = {
-  type: 'application',
-  applicationId: OWNING_APPLICATION_ID,
-} as const;
+const flatRoleMaps: FlatRoleMaps = createEmptyFlatEntityMaps();
+
+for (const [roleId, applicationId] of [
+  ['user-role-id', OWNING_APPLICATION_ID],
+  ['application-role-id', OWNING_APPLICATION_ID],
+]) {
+  flatRoleMaps.byUniversalIdentifier[`${roleId}-universal-identifier`] = {
+    id: roleId,
+    applicationId,
+  } as FlatRole;
+  flatRoleMaps.universalIdentifierById[roleId] =
+    `${roleId}-universal-identifier`;
+}
 
 describe('computeObjectsPermissionsForRolePermissionConfig', () => {
   it('should let the owning application alone run a disabled action', () => {
     expect(
       computeObjectsPermissionsForRolePermissionConfig({
         intersectionOf: { applicationRoleId: 'application-role-id' },
-        principalBySource: { applicationRoleId: APPLICATION_PRINCIPAL },
         rolesPermissions,
         flatObjectMetadataMaps,
+        flatRoleMaps,
       })[INVOICE_ID]?.canDestroyObjectRecords,
     ).toBe(true);
   });
@@ -61,25 +72,20 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
           userWorkspaceRoleId: 'user-role-id',
           applicationRoleId: 'application-role-id',
         },
-        principalBySource: {
-          userWorkspaceRoleId: {
-            type: 'userWorkspace',
-            userWorkspaceId: 'user-workspace-id',
-          },
-          applicationRoleId: APPLICATION_PRINCIPAL,
-        },
         rolesPermissions,
         flatObjectMetadataMaps,
+        flatRoleMaps,
       })[INVOICE_ID]?.canDestroyObjectRecords,
     ).toBe(false);
   });
 
-  it('should restrict a role whose principal is unknown', () => {
+  it('should restrict a user whose role belongs to the owning application', () => {
     expect(
       computeObjectsPermissionsForRolePermissionConfig({
-        intersectionOf: { applicationRoleId: 'application-role-id' },
+        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
         rolesPermissions,
         flatObjectMetadataMaps,
+        flatRoleMaps,
       })[INVOICE_ID]?.canDestroyObjectRecords,
     ).toBe(false);
   });

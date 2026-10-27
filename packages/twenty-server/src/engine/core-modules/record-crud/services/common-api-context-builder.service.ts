@@ -23,10 +23,12 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import {
+  type RoleIdsBySource,
+  type RolePermissionConfig,
+} from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
-import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-disabled-actions.util';
-import { type PermissionPrincipal } from 'src/engine/twenty-orm/types/permission-principal.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export type CommonApiContext = {
@@ -145,10 +147,11 @@ export class CommonApiContextBuilderService {
   }): Promise<ObjectsPermissions> {
     const workspaceId = authContext.workspace.id;
 
-    const { rolesPermissions, flatObjectMetadataMaps } =
+    const { rolesPermissions, flatObjectMetadataMaps, flatRoleMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'rolesPermissions',
         'flatObjectMetadataMaps',
+        'flatRoleMaps',
       ]);
 
     if (isDefined(rolePermissionConfig)) {
@@ -156,27 +159,25 @@ export class CommonApiContextBuilderService {
         rolesPermissions,
         rolePermissionConfig,
         flatObjectMetadataMaps,
+        flatRoleMaps,
       });
     }
 
     let roleId: string;
-    let principal: PermissionPrincipal;
+    let roleSource: keyof RoleIdsBySource;
 
     if (isApiKeyAuthContext(authContext)) {
       roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         authContext.apiKey.id,
         workspaceId,
       );
-      principal = { type: 'apiKey', apiKeyId: authContext.apiKey.id };
+      roleSource = 'apiKeyRoleId';
     } else if (
       isApplicationAuthContext(authContext) &&
       isDefined(authContext.application.defaultRoleId)
     ) {
       roleId = authContext.application.defaultRoleId;
-      principal = {
-        type: 'application',
-        applicationId: authContext.application.id,
-      };
+      roleSource = 'applicationRoleId';
     } else if (isUserAuthContext(authContext)) {
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({
@@ -192,10 +193,7 @@ export class CommonApiContextBuilderService {
       }
 
       roleId = userWorkspaceRoleId;
-      principal = {
-        type: 'userWorkspace',
-        userWorkspaceId: authContext.userWorkspaceId,
-      };
+      roleSource = 'userWorkspaceRoleId';
     } else {
       throw new RecordCrudException(
         'Invalid auth context - no authentication mechanism found',
@@ -203,10 +201,11 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    return restrictObjectsPermissionsToDisabledActions({
-      objectsPermissions: rolesPermissions[roleId] ?? {},
+    return computeObjectsPermissionsForRolePermissionConfig({
+      intersectionOf: { [roleSource]: roleId },
+      rolesPermissions,
       flatObjectMetadataMaps,
-      principal,
+      flatRoleMaps,
     });
   }
 }

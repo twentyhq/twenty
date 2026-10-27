@@ -5,48 +5,49 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { ROLE_SOURCES_IN_INTERSECTION_ORDER } from 'src/engine/twenty-orm/constants/role-sources-in-intersection-order.constant';
-import {
-  type PrincipalBySource,
-  type RoleIdsBySource,
-} from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { isDenyingRoleIdsBySource } from 'src/engine/twenty-orm/utils/is-denying-role-ids-by-source.util';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-disabled-actions.util';
 
-// Each role is restricted with its own principal before the intersection, so only the source the exemption belongs to keeps it
+// Each role is restricted before the intersection, so a user acting through the owning application stays restricted
 export const computeObjectsPermissionsForRolePermissionConfig = ({
   intersectionOf,
-  principalBySource = {},
   rolesPermissions,
   flatObjectMetadataMaps,
+  flatRoleMaps,
 }: {
   intersectionOf: RoleIdsBySource;
-  principalBySource?: PrincipalBySource;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatRoleMaps: FlatRoleMaps;
 }): ObjectsPermissions => {
   if (isDenyingRoleIdsBySource(intersectionOf)) {
     return {};
   }
 
   const permissionsPerSource = ROLE_SOURCES_IN_INTERSECTION_ORDER.flatMap(
-    (source) => {
-      const roleId = intersectionOf[source];
+    (roleSource) => {
+      const roleId = intersectionOf[roleSource];
 
-      return isDefined(roleId)
-        ? [{ roleId, principal: principalBySource[source] }]
-        : [];
+      return isDefined(roleId) ? [{ roleSource, roleId }] : [];
     },
-  ).map(({ roleId, principal }) => {
+  ).map(({ roleSource, roleId }) => {
     const rolePermissions = rolesPermissions[roleId];
 
     return isDefined(rolePermissions)
       ? restrictObjectsPermissionsToDisabledActions({
           objectsPermissions: rolePermissions,
           flatObjectMetadataMaps,
-          principal,
+          roleSource,
+          flatRole: findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: roleId,
+            flatEntityMaps: flatRoleMaps,
+          }),
         })
       : undefined;
   });

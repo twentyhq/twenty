@@ -45,6 +45,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatRoleMaps: createEmptyFlatEntityMaps(),
         rolePermissionConfig: {
           intersectionOf: { agentRoleId: 'agent-role-id' },
         },
@@ -57,6 +58,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatRoleMaps: createEmptyFlatEntityMaps(),
         rolePermissionConfig: {
           intersectionOf: {
             userWorkspaceRoleId: 'default-role-id',
@@ -72,6 +74,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatRoleMaps: createEmptyFlatEntityMaps(),
         rolePermissionConfig: {
           intersectionOf: {
             agentRoleId: 'agent-role-id',
@@ -87,6 +90,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatRoleMaps: createEmptyFlatEntityMaps(),
         rolePermissionConfig: {
           intersectionOf: {
             userWorkspaceRoleId: 'default-role-id',
@@ -102,6 +106,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatRoleMaps: createEmptyFlatEntityMaps(),
         rolePermissionConfig: {
           intersectionOf: {
             agentRoleId: 'agent-role-id',
@@ -117,6 +122,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatRoleMaps: createEmptyFlatEntityMaps(),
         rolePermissionConfig: { shouldBypassPermissionChecks: true },
       }),
     ).toEqual({});
@@ -127,6 +133,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatRoleMaps: createEmptyFlatEntityMaps(),
         rolePermissionConfig: {
           intersectionOf: { apiKeyRoleId: 'missing-role-id' },
         },
@@ -139,6 +146,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatRoleMaps: createEmptyFlatEntityMaps(),
         rolePermissionConfig: {
           intersectionOf: {
             agentRoleId: null,
@@ -154,6 +162,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatRoleMaps: createEmptyFlatEntityMaps(),
         rolePermissionConfig: { intersectionOf: {} },
       }),
     ).toEqual({});

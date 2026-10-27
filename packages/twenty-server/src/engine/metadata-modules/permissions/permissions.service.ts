@@ -83,7 +83,8 @@ export class PermissionsService {
       objectsPermissions: restrictObjectsPermissionsToDisabledActions({
         objectsPermissions: rolesPermissions[flatRole.id] ?? {},
         flatObjectMetadataMaps,
-        principal: { type: 'userWorkspace', userWorkspaceId },
+        roleSource: 'userWorkspaceRoleId',
+        flatRole,
       }),
     };
   }
