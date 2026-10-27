@@ -392,7 +392,10 @@ A trusted primary press on a slider control, the innermost pressed element that 
 
 Outside presses use a separate transport that forwards only the event type,
 button state, click count and pointer type to worker document listeners. It does
-not expose external DOM nodes, control values or pointer coordinates. Events on
+not expose external DOM nodes, control values or pointer coordinates. The worker
+reports when its document, `<html>` or `<body>` has listeners for these press
+types, such as the dismiss listeners of an open Base UI popup, and the host
+listens for outside presses only while it does. Events on
 owned controls and portals keep their existing delivery path, and active pointer
 capture sessions are excluded from this outside-press path. Dropdown and Popover
 stories verify the dismissal behavior described above; other components still

@@ -4,13 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { OUTSIDE_PRESS_EVENT_TYPES } from '@/constants/OutsidePressEventTypes';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 import { type OutsidePressEventData } from '@/types/OutsidePressEventData';
-
-const isOutsidePressEventType = (
-  eventType: string,
-): eventType is OutsidePressEventData['type'] =>
-  OUTSIDE_PRESS_EVENT_TYPES.some(
-    (outsidePressEventType) => outsidePressEventType === eventType,
-  );
+import { isOutsidePressEventType } from '@/utils/isOutsidePressEventType';
 
 export const trackHostOutsidePress = ({
   documentTarget,

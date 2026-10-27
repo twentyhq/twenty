@@ -1,6 +1,7 @@
 import { ROOT_CONTAINER_STYLE } from '@/host/constants/RootContainerStyle';
 import { FrontComponentRemoteRootRenderer } from '@/host/components/FrontComponentRemoteRootRenderer';
 import { FrontComponentPointerCaptureControllerContext } from '@/host/events/contexts/FrontComponentPointerCaptureControllerContext';
+import { createHostOutsidePressController } from '@/host/events/utils/createHostOutsidePressController';
 import { createHostPointerCaptureController } from '@/host/events/utils/createHostPointerCaptureController';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
@@ -85,6 +86,12 @@ export const FrontComponentRenderer = ({
   const [pointerCaptureController] = useState(() =>
     createHostPointerCaptureController({ geometryTracker }),
   );
+  const [outsidePressController] = useState(() =>
+    createHostOutsidePressController({
+      geometryTracker,
+      pointerCaptureController,
+    }),
+  );
   const [initialExecutionContext] = useState(executionContext);
 
   const isReady = isDefined(receiver) && isExecutionContextInitialized;
@@ -105,6 +112,7 @@ export const FrontComponentRenderer = ({
           geometryTracker={geometryTracker}
           hostFocusController={hostFocusController}
           hostScrollController={hostScrollController}
+          outsidePressController={outsidePressController}
           mediaSessionHost={mediaSessionHost}
           setReceiver={setReceiver}
           setThread={setThread}
@@ -143,8 +151,7 @@ export const FrontComponentRenderer = ({
             />
             <FrontComponentOutsidePressEffect
               thread={thread}
-              geometryTracker={geometryTracker}
-              pointerCaptureController={pointerCaptureController}
+              outsidePressController={outsidePressController}
             />
             {isDefined(mediaSessionHost) && (
               <FrontComponentMediaSessionEffect

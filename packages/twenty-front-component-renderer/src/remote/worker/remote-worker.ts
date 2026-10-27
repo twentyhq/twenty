@@ -41,6 +41,7 @@ import { resolvePolyfillHooks } from '@/polyfills/dom/utils/resolvePolyfillHooks
 import { installPointerCapturePolyfill } from '@/polyfills/events/utils/installPointerCapturePolyfill';
 import { installEventConstructorPolyfills } from '@/polyfills/events/utils/installEventConstructorPolyfills';
 import { installHostEventRetargetingPolyfill } from '@/polyfills/events/utils/installHostEventRetargetingPolyfill';
+import { installOutsidePressObservation } from '@/polyfills/events/utils/installOutsidePressObservation';
 import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
@@ -133,10 +134,11 @@ const workerPointerCapture = installPointerCapturePolyfill({
   elementPrototype: HTMLElement.prototype,
   documentTarget: document,
 });
+const polyfillHooks = resolvePolyfillHooks(
+  resolveGlobalScopeInstallTargets(toGlobalScopeRecord(globalThis)),
+);
 installActiveElementDetachmentHook({
-  hooks: resolvePolyfillHooks(
-    resolveGlobalScopeInstallTargets(toGlobalScopeRecord(globalThis)),
-  ),
+  hooks: polyfillHooks,
   activeElementStore: workerActiveElementStore,
   onRemoveSubtree: (node) => {
     workerFocusTransport.blurFocusedElementWithinSubtree(node);
@@ -144,6 +146,10 @@ installActiveElementDetachmentHook({
     workerScrollStore.scheduleDetachedElementSweep();
     workerPointerCapture.scheduleDetachedCaptureSweep();
   },
+});
+const workerOutsidePressObservation = installOutsidePressObservation({
+  hooks: polyfillHooks,
+  documentTarget: document,
 });
 installHostEventRetargetingPolyfill(HTMLElement.prototype);
 installElementClickMethodPolyfill(HTMLElement.prototype);
@@ -320,6 +326,7 @@ self.addEventListener('message', (event) => {
 
   workerGeometryStore.connectTransport(nextHostThread.imports);
   workerMediaBridge.connectTransport(nextHostThread.imports);
+  workerOutsidePressObservation.connectTransport(nextHostThread.imports);
 
   transferredPort.start();
 });
