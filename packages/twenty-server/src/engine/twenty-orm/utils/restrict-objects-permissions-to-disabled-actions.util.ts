@@ -1,22 +1,18 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type ApplicationDefaultRoleMaps } from 'src/engine/twenty-orm/types/application-default-role-maps.type';
 
 export const restrictObjectsPermissionsToDisabledActions = ({
   objectsPermissions,
   flatObjectMetadataMaps,
-  flatApplicationMaps,
-  applicationRoleId,
+  actingApplicationId,
 }: {
   objectsPermissions: ObjectsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatApplicationMaps: ApplicationDefaultRoleMaps;
-  applicationRoleId: string | undefined;
+  actingApplicationId: string | undefined;
 }): ObjectsPermissions => {
   let restrictedObjectsPermissions: ObjectsPermissions | undefined;
 
@@ -32,19 +28,9 @@ export const restrictObjectsPermissionsToDisabledActions = ({
 
     if (
       !isDefined(flatObjectMetadata) ||
-      !isNonEmptyArray(disabledObjectPermissionActions)
+      !isNonEmptyArray(disabledObjectPermissionActions) ||
+      flatObjectMetadata.applicationId === actingApplicationId
     ) {
-      continue;
-    }
-
-    const isOwningApplicationRole =
-      isDefined(applicationRoleId) &&
-      findActiveFlatApplicationById(
-        flatApplicationMaps,
-        flatObjectMetadata.applicationId,
-      )?.defaultRoleId === applicationRoleId;
-
-    if (isOwningApplicationRole) {
       continue;
     }
 

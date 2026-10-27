@@ -41,6 +41,7 @@ const rolesPermissions = {
 const flatApplicationMaps: ApplicationDefaultRoleMaps = {
   byId: {
     [OWNING_APPLICATION_ID]: {
+      id: OWNING_APPLICATION_ID,
       defaultRoleId: 'application-role-id',
       deletedAt: null,
     },

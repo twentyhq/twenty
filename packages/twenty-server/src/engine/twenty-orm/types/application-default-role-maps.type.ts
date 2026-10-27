@@ -2,6 +2,6 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 
 export type ApplicationDefaultRoleMaps = {
   byId: Partial<
-    Record<string, Pick<FlatApplication, 'defaultRoleId' | 'deletedAt'>>
+    Record<string, Pick<FlatApplication, 'id' | 'defaultRoleId' | 'deletedAt'>>
   >;
 };

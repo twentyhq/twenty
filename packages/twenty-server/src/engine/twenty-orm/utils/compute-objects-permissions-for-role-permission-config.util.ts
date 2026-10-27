@@ -22,6 +22,20 @@ const findExemptApplicationRoleId = ({
     ? applicationRoleId
     : undefined;
 
+const findApplicationIdByDefaultRoleId = ({
+  flatApplicationMaps,
+  defaultRoleId,
+}: {
+  flatApplicationMaps: ApplicationDefaultRoleMaps;
+  defaultRoleId: string;
+}): string | undefined =>
+  Object.values(flatApplicationMaps.byId).find(
+    (flatApplication) =>
+      isDefined(flatApplication) &&
+      !isDefined(flatApplication.deletedAt) &&
+      flatApplication.defaultRoleId === defaultRoleId,
+  )?.id;
+
 export const computeObjectsPermissionsForRolePermissionConfig = ({
   intersectionOf,
   rolesPermissions,
@@ -40,6 +54,12 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
   }
 
   const exemptApplicationRoleId = findExemptApplicationRoleId(intersectionOf);
+  const actingApplicationId = isDefined(exemptApplicationRoleId)
+    ? findApplicationIdByDefaultRoleId({
+        flatApplicationMaps,
+        defaultRoleId: exemptApplicationRoleId,
+      })
+    : undefined;
 
   const permissionsPerRole = roleIds.map((roleId) => {
     const rolePermissions = rolesPermissions[roleId];
@@ -48,9 +68,10 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
       ? restrictObjectsPermissionsToDisabledActions({
           objectsPermissions: rolePermissions,
           flatObjectMetadataMaps,
-          flatApplicationMaps,
-          applicationRoleId:
-            roleId === exemptApplicationRoleId ? roleId : undefined,
+          actingApplicationId:
+            roleId === exemptApplicationRoleId
+              ? actingApplicationId
+              : undefined,
         })
       : undefined;
   });

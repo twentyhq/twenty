@@ -5,7 +5,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-disabled-actions.util';
-import { type ApplicationDefaultRoleMaps } from 'src/engine/twenty-orm/types/application-default-role-maps.type';
 
 const INVOICE_ID = 'invoice-id';
 const OWNING_APPLICATION_ID = 'owning-application-id';
@@ -39,40 +38,28 @@ const buildFlatObjectMetadataMaps = (
   return flatObjectMetadataMaps;
 };
 
-const OWNING_APPLICATION_ROLE_ID = 'owning-application-role-id';
-
-const FLAT_APPLICATION_MAPS: ApplicationDefaultRoleMaps = {
-  byId: {
-    [OWNING_APPLICATION_ID]: {
-      defaultRoleId: OWNING_APPLICATION_ROLE_ID,
-      deletedAt: null,
-    },
-  },
-};
-
-const restrict = (applicationRoleId: string | undefined) =>
+const restrict = (actingApplicationId: string | undefined) =>
   restrictObjectsPermissionsToDisabledActions({
     objectsPermissions: { [INVOICE_ID]: FULL_ACCESS },
     flatObjectMetadataMaps: buildFlatObjectMetadataMaps([
       'canDestroyObjectRecords',
     ]),
-    flatApplicationMaps: FLAT_APPLICATION_MAPS,
-    applicationRoleId,
+    actingApplicationId,
   });
 
 describe('restrictObjectsPermissionsToDisabledActions', () => {
-  it.each([undefined, 'other-application-role-id'])(
-    'should turn off disabled actions for application role %s',
-    (applicationRoleId) => {
-      expect(restrict(applicationRoleId)[INVOICE_ID]).toEqual({
+  it.each([undefined, 'other-application-id'])(
+    'should turn off disabled actions for acting application %s',
+    (actingApplicationId) => {
+      expect(restrict(actingApplicationId)[INVOICE_ID]).toEqual({
         ...FULL_ACCESS,
         canDestroyObjectRecords: false,
       });
     },
   );
 
-  it('should keep disabled actions for the role of the application that owns the object', () => {
-    expect(restrict(OWNING_APPLICATION_ROLE_ID)[INVOICE_ID]).toBe(FULL_ACCESS);
+  it('should keep disabled actions for the application that owns the object', () => {
+    expect(restrict(OWNING_APPLICATION_ID)[INVOICE_ID]).toBe(FULL_ACCESS);
   });
 
   it('should return the same permissions when nothing is disabled', () => {
@@ -82,8 +69,7 @@ describe('restrictObjectsPermissionsToDisabledActions', () => {
       restrictObjectsPermissionsToDisabledActions({
         objectsPermissions,
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps(null),
-        flatApplicationMaps: FLAT_APPLICATION_MAPS,
-        applicationRoleId: undefined,
+        actingApplicationId: undefined,
       }),
     ).toBe(objectsPermissions);
   });

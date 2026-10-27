@@ -1,13 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
-export const findActiveFlatApplicationById = <
-  TFlatApplication extends Pick<FlatApplication, 'deletedAt'>,
->(
-  flatApplicationMaps: { byId: Partial<Record<string, TFlatApplication>> },
+export const findActiveFlatApplicationById = (
+  flatApplicationMaps: FlatApplicationCacheMaps,
   applicationId: string,
-): TFlatApplication | undefined => {
+): FlatApplication | undefined => {
   const application = flatApplicationMaps.byId[applicationId];
 
   if (!isDefined(application) || isDefined(application.deletedAt)) {
