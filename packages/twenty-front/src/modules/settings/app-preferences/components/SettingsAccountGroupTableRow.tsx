@@ -62,9 +62,6 @@ export const SettingsAccountGroupTableRow = ({
     >
       <ProviderIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       <OverflowingTextWithTooltip text={group.handle} />
-      {shouldShowSyncStatus && (
-        <SettingsConnectedAccountSyncStatus account={builtInAccount} />
-      )}
     </TableCell>
   );
 
@@ -102,7 +99,14 @@ export const SettingsAccountGroupTableRow = ({
           <SettingsAccountGroupUsedBy group={group} />
         </TableCell>
       )}
-      <TableCell align="right" onClick={(event) => event.stopPropagation()}>
+      <TableCell
+        align="right"
+        gap={themeCssVariables.spacing[4]}
+        onClick={(event) => event.stopPropagation()}
+      >
+        {shouldShowSyncStatus && (
+          <SettingsConnectedAccountSyncStatus account={builtInAccount} />
+        )}
         {isDefined(builtInAccount) && (
           <SettingsAppPreferencesRowDropdownMenu account={builtInAccount} />
         )}
