@@ -205,6 +205,24 @@ export const failNextApplicationPreferencesRequest = () => {
   );
 };
 
+export const failNextConnectedAccountsRequest = () => {
+  getWorker().use(
+    graphql.query(
+      'MyConnectedAccounts',
+      () =>
+        HttpResponse.json({
+          errors: [
+            {
+              message: 'Internal server error',
+              extensions: { code: 'INTERNAL_SERVER_ERROR' },
+            },
+          ],
+        }),
+      { once: true },
+    ),
+  );
+};
+
 export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
   graphql.query('MyApplicationPreferences', () => {
     myApplicationPreferencesRequested();
