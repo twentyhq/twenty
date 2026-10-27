@@ -1,20 +1,26 @@
-// KEYS: virtual time, weights hash, one clock per distinct group key. ARGV: clock TTL, key count, the keys, reservation count, then per reservation its batch size, key count and 1-based key indexes. Returns the tag and weight of each reservation, space separated
+// KEYS: virtual time, rebase base, weights hash, one clock per distinct group key. ARGV: clock TTL, key count, the keys, reservation count, then per reservation its batch size, key count and 1-based key indexes. Returns the tag and weight of each reservation, space separated
 export const FAIR_TAG_SCRIPT = `
 local virtualTime = tonumber(redis.call('GET', KEYS[1]) or '0')
+local base = tonumber(redis.call('GET', KEYS[2]) or '0')
 local distinctKeyCount = tonumber(ARGV[2])
 local clocks = {}
 local weights = {}
 
 for i = 1, distinctKeyCount do
-  local clock = tonumber(redis.call('GET', KEYS[2 + i]))
+  local raw = redis.call('GET', KEYS[3 + i]) or ''
+  local clockBase, clock = string.match(raw, '^([^:]+):(.+)$')
 
   clocks[i] = virtualTime
 
-  if clock ~= nil and clock > virtualTime then
-    clocks[i] = clock
+  if clockBase ~= nil then
+    local shiftedClock = tonumber(clock) - (base - tonumber(clockBase))
+
+    if shiftedClock > virtualTime then
+      clocks[i] = shiftedClock
+    end
   end
 
-  local weight = tonumber(redis.call('HGET', KEYS[2], ARGV[2 + i]))
+  local weight = tonumber(redis.call('HGET', KEYS[3], ARGV[2 + i]))
 
   if weight == nil or weight <= 0 then
     weight = 1
@@ -56,7 +62,7 @@ for _ = 1, tonumber(ARGV[3 + distinctKeyCount]) do
 end
 
 for i = 1, distinctKeyCount do
-  redis.call('SET', KEYS[2 + i], tostring(clocks[i]), 'PX', ARGV[1])
+  redis.call('SET', KEYS[3 + i], string.format('%d', base) .. ':' .. clocks[i], 'PX', ARGV[1])
 end
 
 return table.concat(tickets, ' ')
