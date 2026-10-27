@@ -77,7 +77,6 @@ export { QUERY_MAX_RECORDS } from './QueryMaxRecords';
 export { QUERY_MAX_RECORDS_FROM_RELATION } from './QueryMaxRecordsFromRelation';
 export { QUOTED_STRING_REGEX } from './QuotedStringRegex';
 export { RATING_VALUES } from './RatingValues';
-export { RECORD_OPERATIONS } from './RecordOperations';
 export { RELATION_NESTED_QUERY_KEYWORDS } from './RelationNestedQueriesKeyword';
 export { RESERVED_SUBDOMAINS } from './ReservedSubdomains';
 export { RICH_TEXT_BLOCKNOTE_DEPRECATION_REASON } from './RichTextBlocknoteDeprecationReason';

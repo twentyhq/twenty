@@ -301,7 +301,6 @@ export type {
 export type { RecordGqlOperationOrderBy } from './RecordGqlOperationOrderBy';
 export type { RecordGqlOperationSignature } from './RecordGqlOperationSignature';
 export type { RecordGqlOperationVariables } from './RecordGqlOperationVariables';
-export type { RecordOperation } from './RecordOperation';
 export { RecordShareAccessLevel } from './RecordShareAccessLevel';
 export { RecordSharePrincipalType } from './RecordSharePrincipalType';
 export { RecordShareRowCause } from './RecordShareRowCause';

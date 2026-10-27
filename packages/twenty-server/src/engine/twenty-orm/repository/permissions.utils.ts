@@ -21,7 +21,6 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { validateWritabilityOrThrow } from 'src/engine/twenty-orm/repository/validate-writability-or-throw.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
-import { RECORD_OPERATION_BY_OPERATION_TYPE } from 'src/engine/twenty-orm/constants/record-operation-by-operation-type.constant';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
 export type OperationType =
@@ -72,17 +71,6 @@ export const validateOperationIsPermittedOrThrow = ({
   });
 
   if (!isDefined(objectMetadata)) {
-    throw new PermissionsException(
-      PermissionsExceptionMessage.PERMISSION_DENIED,
-      PermissionsExceptionCode.PERMISSION_DENIED,
-    );
-  }
-
-  if (
-    objectMetadata.disabledRecordOperations?.includes(
-      RECORD_OPERATION_BY_OPERATION_TYPE[operationType],
-    )
-  ) {
     throw new PermissionsException(
       PermissionsExceptionMessage.PERMISSION_DENIED,
       PermissionsExceptionCode.PERMISSION_DENIED,

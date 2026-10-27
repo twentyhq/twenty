@@ -24,7 +24,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     openRecordIn,
     readability,
     readabilityParentFieldUniversalIdentifiers,
-    disabledRecordOperations,
+    disabledObjectPermissionActions,
     sharingReach,
     writability,
     isSystem,
@@ -54,7 +54,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     openRecordIn,
     readability,
     readabilityParentFieldUniversalIdentifiers,
-    disabledRecordOperations,
+    disabledObjectPermissionActions,
     // Metadata cached before the column existed lacks it until recomputed,
     // and the access policy treats that as staying within the role
     sharingReach: sharingReach ?? ObjectSharingReach.WORKSPACE,

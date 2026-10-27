@@ -10,8 +10,8 @@ import {
   MetadataWritability,
   ObjectOpenRecordIn,
   ObjectSharingReach,
-  type RecordOperation,
 } from 'twenty-shared/types';
+import { type ObjectPermissionAction } from 'twenty-shared/application';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
@@ -92,7 +92,7 @@ export class ObjectMetadataDTO {
   readabilityParentFieldUniversalIdentifiers: string[] | null;
 
   @Field(() => [String], { nullable: true })
-  disabledRecordOperations?: RecordOperation[] | null;
+  disabledObjectPermissionActions?: ObjectPermissionAction[] | null;
 
   @Field(() => ObjectSharingReach)
   sharingReach: ObjectSharingReach;

@@ -3485,7 +3485,7 @@ type Object {
   color: String
   createdAt: DateTime!
   description: String
-  disabledRecordOperations: [String!]
+  disabledObjectPermissionActions: [String!]
   duplicateCriteria: [[String!]!]
   fields(
     """Specify to filter the records returned."""

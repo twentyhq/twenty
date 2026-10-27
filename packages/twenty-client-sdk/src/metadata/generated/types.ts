@@ -9361,7 +9361,7 @@ export default {
             "description": [
                 1
             ],
-            "disabledRecordOperations": [
+            "disabledObjectPermissionActions": [
                 1
             ],
             "duplicateCriteria": [

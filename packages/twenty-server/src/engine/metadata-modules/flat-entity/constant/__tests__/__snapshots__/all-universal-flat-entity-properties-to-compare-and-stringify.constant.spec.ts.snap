@@ -225,7 +225,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isUIEditable",
       "writability",
       "readability",
-      "disabledRecordOperations",
+      "disabledObjectPermissionActions",
       "readabilityParentFieldUniversalIdentifiers",
       "sharingReach",
       "isUICreatable",
@@ -234,7 +234,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     ],
     "propertiesToStringify": [
       "overrides",
-      "disabledRecordOperations",
+      "disabledObjectPermissionActions",
       "readabilityParentFieldUniversalIdentifiers",
       "duplicateCriteria",
     ],

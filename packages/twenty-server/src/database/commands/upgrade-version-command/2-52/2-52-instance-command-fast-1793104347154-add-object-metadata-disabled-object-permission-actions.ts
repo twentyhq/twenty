@@ -4,12 +4,12 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.52.0', 1793104347154)
-export class AddObjectMetadataDisabledRecordOperationsFastInstanceCommand implements FastInstanceCommand {
+export class AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('ALTER TABLE "core"."objectMetadata" ADD "disabledRecordOperations" jsonb');
+    await queryRunner.query('ALTER TABLE "core"."objectMetadata" ADD "disabledObjectPermissionActions" jsonb');
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('ALTER TABLE "core"."objectMetadata" DROP COLUMN "disabledRecordOperations"');
+    await queryRunner.query('ALTER TABLE "core"."objectMetadata" DROP COLUMN "disabledObjectPermissionActions"');
   }
 }

@@ -4,7 +4,6 @@ import {
 } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -218,48 +217,6 @@ describe('validateOperationIsPermittedOrThrow - system objects permissions', () 
       expect(() =>
         executeValidation({ operationType: 'select', objectsPermissions }),
       ).not.toThrow();
-    });
-  });
-
-  describe('when the object disables some record operations', () => {
-    const objectsPermissions: ObjectsPermissions = {
-      [SYSTEM_OBJECT_ID]: baseObjectPermissions,
-    };
-
-    const executeValidationOnObjectDisabling = (operationType: OperationType) =>
-      validateOperationIsPermittedOrThrow({
-        entityName: SYSTEM_OBJECT_NAME,
-        operationType,
-        objectsPermissions,
-        flatObjectMetadataMaps: {
-          ...mockFlatObjectMetadataMaps,
-          byUniversalIdentifier: {
-            [SYSTEM_OBJECT_UNIVERSAL_ID]: getFlatObjectMetadataMock({
-              id: SYSTEM_OBJECT_ID,
-              nameSingular: SYSTEM_OBJECT_NAME,
-              universalIdentifier: SYSTEM_OBJECT_UNIVERSAL_ID,
-              isSystem: true,
-              disabledRecordOperations: ['destroy'],
-            }),
-          },
-        },
-        flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
-        objectIdByNameSingular,
-        selectedColumns: [],
-        updatedColumns: [],
-      });
-
-    it('should deny a disabled operation despite the role permission', () => {
-      expect(() => executeValidationOnObjectDisabling('delete')).toThrow(
-        new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        ),
-      );
-    });
-
-    it('should allow operations the object does not disable', () => {
-      expect(() => executeValidationOnObjectDisabling('select')).not.toThrow();
     });
   });
 });

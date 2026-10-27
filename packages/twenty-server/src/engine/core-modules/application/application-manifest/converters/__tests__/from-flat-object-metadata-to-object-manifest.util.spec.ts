@@ -34,7 +34,7 @@ const OBJECT_MANIFEST: Required<ObjectManifest> = {
   writability: MetadataWritability.APPLICATION,
   readability: MetadataReadability.INHERITED,
   readabilityParentFieldUniversalIdentifiers: [PARENT_FIELD_UID],
-  disabledRecordOperations: ['destroy'],
+  disabledObjectPermissionActions: ['canDestroyObjectRecords'],
   sharingReach: ObjectSharingReach.WORKSPACE,
   openRecordIn: ObjectOpenRecordIn.RECORD_PAGE,
   labelIdentifierFieldMetadataUniversalIdentifier: LABEL_FIELD_UID,

@@ -5,7 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { validateFlatObjectMetadataDisabledRecordOperations } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-record-operations.util';
+import { validateFlatObjectMetadataDisabledObjectPermissionActions } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util';
 import { validateFlatObjectMetadataNameAndLabels } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
@@ -83,7 +83,7 @@ export class FlatObjectMetadataValidatorService {
         universalFlatObjectMetadataToValidate: updatedFlatObjectMetadata,
         buildOptions,
       }),
-      ...validateFlatObjectMetadataDisabledRecordOperations(
+      ...validateFlatObjectMetadataDisabledObjectPermissionActions(
         updatedFlatObjectMetadata,
       ),
     );
@@ -221,7 +221,7 @@ export class FlatObjectMetadataValidatorService {
         universalFlatObjectMetadataToValidate: flatObjectMetadataToValidate,
         buildOptions,
       }),
-      ...validateFlatObjectMetadataDisabledRecordOperations(
+      ...validateFlatObjectMetadataDisabledObjectPermissionActions(
         flatObjectMetadataToValidate,
       ),
     );

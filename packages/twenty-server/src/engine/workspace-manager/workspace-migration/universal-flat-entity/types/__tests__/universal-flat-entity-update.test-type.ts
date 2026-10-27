@@ -48,7 +48,7 @@ type Assertions = [
       | 'writability'
       | 'readability'
       | 'readabilityParentFieldUniversalIdentifiers'
-      | 'disabledRecordOperations'
+      | 'disabledObjectPermissionActions'
       | 'sharingReach'
     >
   >,
