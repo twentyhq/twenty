@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { HttpResponse, delay, graphql } from 'msw';
+import { HttpResponse, delay, graphql, http } from 'msw';
 import { expect, userEvent, within } from 'storybook/test';
 
 import {
@@ -12,6 +12,7 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SettingsBuiltInAccountApp } from '~/pages/settings/accounts/SettingsBuiltInAccountApp';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { mockedClientConfig } from '~/testing/mock-data/config';
 import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
@@ -92,7 +93,7 @@ export const TabBarAndHeadersStayWhileLoading: Story = {
         timeout: 3000,
       }),
     ).toBeVisible();
-    expect(canvas.getByTestId('tab-general')).toBeVisible();
+    expect(await canvas.findByTestId('tab-general')).toBeVisible();
     expect(canvas.getByTestId('tab-emails')).toBeVisible();
     expect(canvas.getByTestId('tab-calendar')).toBeVisible();
     expect(canvas.getByText('Blocklist')).toBeVisible();
@@ -168,6 +169,19 @@ export const OutlookHasEmailsAndCalendarTabs: Story = {
 export const OutlookWithoutCalendarServiceHasNoCalendarTab: Story = {
   args: {
     routeParams: { ':builtInAccountAppId': 'outlook' },
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        http.get(`${REACT_APP_SERVER_BASE_URL}/client-config`, () =>
+          HttpResponse.json({
+            ...mockedClientConfig,
+            isMicrosoftCalendarEnabled: false,
+          }),
+        ),
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
   },
   beforeEach: async () => {
     await seedAccountGroupsStory();
