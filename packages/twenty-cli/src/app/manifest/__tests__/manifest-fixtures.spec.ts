@@ -252,7 +252,7 @@ describe('CLI manifest fixtures and worker transport', () => {
       signal: new AbortController().signal,
     });
     await symlink(join(root, 'node_modules'), join(appPath, 'node_modules'));
-    await rm(join(appPath, 'yarn.lock'));
+    await writeFile(join(appPath, 'yarn.lock'), '__metadata:\n  version: 8\n');
     const result = await compareManifest(appPath);
     const packageJson = JSON.parse(
       await readFile(join(appPath, 'package.json'), 'utf8'),

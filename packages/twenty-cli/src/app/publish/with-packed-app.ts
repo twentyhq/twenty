@@ -1,6 +1,6 @@
 import { mkdtemp, rm } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
-import { isDefined } from 'twenty-shared/utils';
+import { APPLICATION_PACKAGE_YARN_LOCK_PATH } from 'twenty-shared/application';
 
 import { readSnapshotFile } from '@/app/deployment/read-snapshot-file';
 import { resolveSnapshotDirectory } from '@/app/deployment/resolve-snapshot-directory';
@@ -32,10 +32,7 @@ export const withPackedApp = async <TResult>({
     await readSnapshotFile({ snapshotDirectory, artifact });
   }
 
-  const packagedYarnLockPath = await copyYarnLockIntoPackage({
-    snapshotDirectory,
-    build,
-  });
+  await copyYarnLockIntoPackage(snapshotDirectory);
 
   const packageDirectory = await mkdtemp(
     join(dirname(snapshotDirectory), 'package-'),
@@ -64,7 +61,7 @@ export const withPackedApp = async <TResult>({
       ...build.files
         .map((file) => file.path)
         .filter((path) => path !== 'yarn.lock'),
-      ...(isDefined(packagedYarnLockPath) ? [packagedYarnLockPath] : []),
+      APPLICATION_PACKAGE_YARN_LOCK_PATH,
     ];
     const missingPaths = [...new Set(requiredPaths)].filter(
       (path) => !includedPaths.has(path),

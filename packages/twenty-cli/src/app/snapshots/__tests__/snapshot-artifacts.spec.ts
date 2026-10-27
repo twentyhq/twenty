@@ -393,7 +393,7 @@ describe('CLI snapshots produce repeatable artifacts', () => {
       signal: new AbortController().signal,
     });
     await symlink(join(root, 'node_modules'), join(appPath, 'node_modules'));
-    await rm(join(appPath, 'yarn.lock'));
+    await writeFile(join(appPath, 'yarn.lock'), '__metadata:\n  version: 8\n');
     const configPath = join(appPath, 'tsconfig.json');
     const config = JSON.parse(await readFile(configPath, 'utf8'));
     config.exclude.push('vitest*.config.ts');
