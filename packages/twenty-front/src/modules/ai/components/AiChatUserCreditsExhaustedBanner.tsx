@@ -64,7 +64,7 @@ export const AiChatUserCreditsExhaustedBanner = () => {
     >
       {isFallingBackToWorkspaceCredits
         ? t`Using workspace credits for ${plural(daysUntilReset, { one: '# day', other: '# days' })}.`
-        : t`Your AI credits renew in ${plural(daysUntilReset, { one: '# day', other: '# days' })}.`}
+        : t`Personal usage limit resets in ${plural(daysUntilReset, { one: '# day', other: '# days' })}.`}
     </AiChatInlineBanner>
   );
 };

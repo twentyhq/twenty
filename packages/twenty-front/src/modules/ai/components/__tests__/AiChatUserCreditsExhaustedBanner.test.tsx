@@ -76,7 +76,7 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
       UserCreditsFallback.WORKSPACE_CREDITS,
       'Using workspace credits for 3 days.',
     ],
-    [UserCreditsFallback.STOP, 'Your AI credits renew in 3 days.'],
+    [UserCreditsFallback.STOP, 'Personal usage limit resets in 3 days.'],
   ])(
     'tells the member what happens until renewal with fallback %s',
     async (userCreditsFallback, notice) => {
@@ -138,7 +138,7 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
     renderBanner(UserCreditsFallback.STOP);
 
     expect(
-      await screen.findByText('Your AI credits renew in 3 days.'),
+      await screen.findByText('Personal usage limit resets in 3 days.'),
     ).toBeVisible();
   });
 });
