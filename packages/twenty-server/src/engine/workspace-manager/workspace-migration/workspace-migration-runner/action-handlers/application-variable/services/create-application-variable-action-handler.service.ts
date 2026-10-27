@@ -4,6 +4,8 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import {
   FlatCreateApplicationVariableAction,
@@ -19,7 +21,9 @@ export class CreateApplicationVariableActionHandlerService extends WorkspaceMigr
   'create',
   'applicationVariable',
 ) {
-  constructor() {
+  constructor(
+    private readonly secretEncryptionService: SecretEncryptionService,
+  ) {
     super();
   }
 
@@ -33,10 +37,20 @@ export class CreateApplicationVariableActionHandlerService extends WorkspaceMigr
         metadataName: 'applicationVariable',
       });
 
+    const { scope, defaultValue } = action.flatEntity;
+
     return {
       ...action,
       flatEntity: {
         ...action.flatEntity,
+        // A user variable's values belong to each member, so it has no workspace value
+        value:
+          scope === 'USER'
+            ? null
+            : this.secretEncryptionService.encryptVersioned(
+                (defaultValue ?? '') as PlaintextString,
+                { workspaceId },
+              ),
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,

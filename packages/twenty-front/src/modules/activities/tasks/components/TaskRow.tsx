@@ -3,7 +3,6 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { LinkifiedText } from '@/ui/field/display/components/LinkifiedText/LinkifiedText';
-import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
@@ -17,6 +16,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { getRichTextFieldTextLines } from '@/object-record/record-field/ui/utils/getRichTextFieldTextLines';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCalendar } from 'twenty-ui/icon';
@@ -99,7 +99,7 @@ export const TaskRow = ({
   const theme = useTheme();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const body = getActivitySummary(task?.bodyV2?.blocknote ?? null);
+  const body = getRichTextFieldTextLines(task?.bodyV2)[0] ?? '';
 
   const { completeTask } = useCompleteTask(task);
 

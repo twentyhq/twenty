@@ -83,6 +83,7 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
         SidePanelPages.EmailPageStyle,
         SidePanelPages.EmailBlockStyle,
         SidePanelPages.AddToMessageList,
+        SidePanelPages.ShareRecord,
       ].includes(pageChip.page.page)
     : false;
 

@@ -80,7 +80,7 @@ describe('buildDraftPageLayoutWidget', () => {
       type: WidgetType.STANDALONE_RICH_TEXT,
       configuration: {
         configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
-        body: { blocknote: '', markdown: null },
+        body: { tiptap: '', markdown: null },
       },
       position: {
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
@@ -103,7 +103,7 @@ describe('buildDraftPageLayoutWidget', () => {
       type: WidgetType.STANDALONE_RICH_TEXT,
       configuration: {
         configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
-        body: { blocknote: '[]' },
+        body: { tiptap: '' },
       },
       position: gridPosition,
       objectMetadataId: 'object-1',

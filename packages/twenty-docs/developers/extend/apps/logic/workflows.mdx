@@ -1,12 +1,13 @@
 ---
 title: Workflows
 description: Ship ready-made workflows with your app.
-icon: "diagram-project"
 ---
 
-Apps can ship workflows. Each `defineWorkflow()` call describes one workflow: a trigger and the steps it runs. On install, Twenty creates it as an active workflow in the workspace, ready to run.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Define a workflow
+
+Apps can ship workflows. Each `defineWorkflow()` call describes one workflow: a trigger and the steps it runs. On install, Twenty creates it as an active workflow in the workspace, ready to run.
 
 This workflow runs when a company is created. It calls one of the app's logic functions, then writes the result on the company:
 
@@ -75,7 +76,7 @@ Key points:
 
 Steps and triggers point at metadata by universal identifier, never by name or id:
 - **Objects and fields**: your app's own, or standard ones through `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`. The example above assumes the app also defines a `leadScore` number field on Company with [`defineField()`](/developers/extend/apps/data/extending-objects): a record step that writes a field missing from the workspace fails the install.
-- **Logic functions**: your app's own, exposed as a [workflow action](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) with `workflowActionTriggerSettings`.
+- **Logic functions**: your app's own, exposed as a [workflow action](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) with `workflowActionTriggerSettings`. The workspace Custom application can also reference the workflow actions of the other apps installed in the workspace, as workflows built in the app can.
 - **Agents**: your app's own, from [`defineAgent()`](/developers/extend/apps/logic/skills-and-agents).
 
 A reference Twenty can't resolve fails the install.
@@ -107,3 +108,5 @@ Their inputs match the steps of the [workflow builder](/user-guide/workflows/cap
 - The workflow is active as soon as the app is installed, and its runs appear with the workspace's other workflow runs.
 - Installing a new version of the app updates the workflow in place.
 - Users can't edit an installed workflow. To customize one, they duplicate it: the copy is theirs to edit.
+
+<PageBanner illustration="card-page-workflows" />

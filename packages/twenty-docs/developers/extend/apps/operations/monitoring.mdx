@@ -1,0 +1,77 @@
+---
+title: Monitoring
+description: Follow how your app behaves across every workspace that installs it — errors, rate limits, credits, installs and function performance.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
+Once your app is installed in other workspaces, you need to know when it breaks. Twenty records what happens to your app on the platform and shows it in two places:
+
+- **The monitoring page** of your app registration, for you as the app owner, aggregated across every install.
+- **The workspace logs**, for the admins of each workspace that installed your app, limited to their own workspace.
+
+```text
+   your app runs in workspace A, B, C …
+              │
+              ▼
+   platform events (function runs, installs, rate limits, route failures)
+              │
+      ┌───────┴────────────────────────┐
+      ▼                                ▼
+   Monitoring page (app owner)      Logs (each workspace admin)
+   all installs, aggregated         one workspace, row by row
+```
+
+## Open the monitoring page
+
+Go to **Settings → Developers → Apps**, open your app, then click **View monitoring** in the **General** tab. You need the **API keys & webhooks** permission in the workspace that owns the app registration.
+
+Pick a period in the header: last 2 hours, 24 hours, 7 days, 30 days or 90 days. Data is kept for **90 days**. Without the **Audit logs** entitlement, only the last 2 hours are visible.
+
+## What the page shows
+
+| Section | What it tells you |
+| --- | --- |
+| **Health** | Headline numbers for the period and a chart of errors over time. |
+| **Rate limits** | API requests your app sent that were rejected, and trigger jobs that were skipped because the enqueue limit was reached. |
+| **Credits used** | Credits your app consumed over time. Only shown on servers with billing enabled. |
+| **Top errors and warnings** | The most frequent problems, grouped by error code and function, with the number of installs affected. |
+| **Installs, upgrades and uninstalls** | Lifecycle runs over time and how many of them failed. |
+| **Versions** | Runs and failures per app version, to spot a bad release. |
+| **Functions** | Runs, failures and 95th percentile duration for each logic function. |
+
+Counts are exact: every rejected request and every skipped job is counted, even when the logs below only keep one row per minute.
+
+## What gets recorded
+
+Every event below is counted on the monitoring page. Each one also writes app logs in the workspace where it happened, with a **source** that says where it came from:
+
+| Source | Logged when |
+| --- | --- |
+| `LOGIC_FUNCTION` | A logic function writes a log line or fails, from any trigger. Runs that log nothing and succeed are counted on the monitoring page but leave no log row. |
+| `INSTALL` | Your app is installed, with the outcome of the install hooks. |
+| `UPGRADE` | Your app is upgraded to a new version. |
+| `UNINSTALL` | Your app is uninstalled. |
+| `API_RATE_LIMIT` | A request from your app to the API is rejected by rate limiting. |
+| `JOB_RATE_LIMIT` | Trigger jobs for your logic functions are skipped because the job enqueue limit was reached. |
+| `SERVER_ROUTE` | A request to one of your [HTTP routes](/developers/extend/apps/tutorials/document-generator/http-routes) is refused or fails outside your function, for example a wrong method, failed authentication or a platform error. Errors thrown by your function are logged under `LOGIC_FUNCTION`. |
+
+Rate limit and server route failures can repeat many times a second, so the logs keep **one row per minute** for each install, function and error code. The monitoring page still counts every occurrence.
+
+## Workspace logs
+
+Admins of a workspace that installed your app see the same events, for their workspace only, in **Settings → General → Logs**. They can filter by source, for example to list only `INSTALL` failures or rate limits. Point your users there when they report a problem: the error code and message tell you where to look.
+
+For your own development server, `twenty app logs` streams function logs live in the terminal. See [CLI](/developers/extend/apps/operations/cli#watching-function-logs).
+
+## Reading the signals
+
+- **Errors climb right after a release**: compare versions in the **Versions** table, then fix and publish a higher version. See [Publishing](/developers/extend/apps/operations/publishing).
+- **API requests are rate limited**: your app calls the API too often. Batch reads and writes, and avoid calling the API in tight loops.
+- **Jobs are rate limited**: database event or cron triggers fire faster than jobs can be enqueued. Narrow the trigger, for example with `updatedFields` on a `databaseEvent` trigger, or do the work in fewer, larger runs. See [Logic functions](/developers/extend/apps/logic/logic-functions).
+- **Install or upgrade failures**: check your [install hooks](/developers/extend/apps/config/install-hooks). The error message is recorded with the failure.
+- **Slow functions**: a high 95th percentile duration points to a function worth profiling or splitting.
+
+<PageBanner illustration="card-page-monitoring" />

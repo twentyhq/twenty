@@ -11,6 +11,17 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
   width: 100%;
+
+  &[data-variant='compact'] {
+    align-items: center;
+    backdrop-filter: blur(${themeCssVariables.spacing[5]});
+    background: ${themeCssVariables.background.transparent.primary};
+    border-top-color: ${themeCssVariables.border.color.medium};
+    display: flex;
+    flex-shrink: 0;
+    height: ${themeCssVariables.spacing[10]};
+    padding: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledActionsRow = styled(NodeDimension)`
@@ -23,9 +34,13 @@ const StyledActionsRow = styled(NodeDimension)`
 
 type SidePanelFooterProps = {
   actions: React.ReactNode[];
+  variant?: 'default' | 'compact';
 };
 
-export const SidePanelFooter = ({ actions }: SidePanelFooterProps) => {
+export const SidePanelFooter = ({
+  actions,
+  variant = 'default',
+}: SidePanelFooterProps) => {
   const [actionsRowWidth, setActionsRowWidth] = useState(0);
 
   const handleActionsRowDimensionChange = useCallback(
@@ -36,7 +51,7 @@ export const SidePanelFooter = ({ actions }: SidePanelFooterProps) => {
   );
 
   return (
-    <StyledContainer>
+    <StyledContainer data-variant={variant}>
       <SidePanelFooterWidthContext.Provider value={actionsRowWidth}>
         <StyledActionsRow onDimensionChange={handleActionsRowDimensionChange}>
           {actions.map((action, index) => (

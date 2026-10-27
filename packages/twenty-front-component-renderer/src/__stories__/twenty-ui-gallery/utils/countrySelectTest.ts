@@ -1,6 +1,7 @@
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+import { createWaitForFrontComponentInteraction } from '@/__stories__/shared/test-utils/createWaitForFrontComponentInteraction';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
@@ -67,13 +68,21 @@ const selectCountry = async ({
   optionName: string;
 }) => {
   const trigger = canvas.getByRole('button', { name: triggerName });
+  const waitForInteraction = createWaitForFrontComponentInteraction(
+    trigger.ownerDocument.body,
+  );
 
   await userEvent.click(trigger);
-  await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'true'));
-  await userEvent.click(await page.findByRole('option', { name: optionName }));
-  await waitFor(() =>
-    expect(trigger).toHaveAttribute('aria-expanded', 'false'),
-  );
+  await waitForInteraction(() => {
+    expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    expect(page.getByRole('option', { name: optionName })).toBeVisible();
+  });
+  const popup = page.getByRole('dialog');
+  await userEvent.click(page.getByRole('option', { name: optionName }));
+  await waitForInteraction(() => {
+    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    expect(popup).not.toBeInTheDocument();
+  });
 };
 
 export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
@@ -81,6 +90,9 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
 ) => {
   const canvas = within(context.canvasElement);
   const page = within(context.canvasElement.ownerDocument.body);
+  const waitForInteraction = createWaitForFrontComponentInteraction(
+    context.canvasElement.ownerDocument.body,
+  );
   await expectFrontComponentMounted(canvas);
 
   expectTriggersShowSavedCountriesWithDecorativeFlags(canvas);
@@ -97,7 +109,7 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
   });
 
   await userEvent.click(billingTrigger);
-  await waitFor(() => {
+  await waitForInteraction(() => {
     expect(
       page.getByRole('dialog', { name: 'Billing countries' }),
     ).toBeVisible();
@@ -119,6 +131,8 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
     );
     const search = page.getByRole('searchbox', { name: 'Search' });
     expect(search.tagName).toBe('INPUT');
+    expect(search).toBeVisible();
+    expect(search).toHaveFocus();
     expect(search).toHaveAttribute('title', 'Search billing countries');
     expect(search).toHaveAttribute('data-ref-target', 'billing-country-search');
     expect(
@@ -135,7 +149,7 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
   expect(billingTrigger).toHaveAttribute('aria-expanded', 'true');
 
   await userEvent.click(page.getByRole('option', { name: 'Brésil' }));
-  await waitFor(() => {
+  await waitForInteraction(() => {
     expect(billingTrigger).toHaveTextContent('Brésil');
     expect(billingTrigger).toHaveAttribute('aria-expanded', 'false');
     expect(savedCountries).toHaveTextContent('Billing: BR; Shipping: JP');
@@ -151,7 +165,7 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
     triggerName: BILLING_COUNTRY_TRIGGER_NAME,
     optionName: 'No country',
   });
-  await waitFor(() => {
+  await waitForInteraction(() => {
     expect(billingTrigger).toHaveTextContent('No country');
     expect(savedCountries).toHaveTextContent('Billing: null; Shipping: JP');
     expect(
@@ -171,7 +185,7 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
     triggerName: 'Shipping country',
     optionName: 'No country',
   });
-  await waitFor(() => {
+  await waitForInteraction(() => {
     expect(shippingTrigger).toHaveTextContent('No country');
     expect(savedCountries).toHaveTextContent('Billing: JP; Shipping: null');
   });
@@ -181,7 +195,7 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
     triggerName: 'Shipping country',
     optionName: 'Brésil',
   });
-  await waitFor(() => {
+  await waitForInteraction(() => {
     expect(shippingTrigger).toHaveTextContent('Brésil');
     expect(savedCountries).toHaveTextContent('Billing: JP; Shipping: BR');
   });
@@ -192,7 +206,7 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
     triggerName: 'Default country',
     optionName: 'No country',
   });
-  await waitFor(() =>
+  await waitForInteraction(() =>
     expect(savedCountries).toHaveTextContent('Default: null'),
   );
   await selectCountry({
@@ -201,14 +215,19 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
     triggerName: 'Default country',
     optionName: 'Japon',
   });
-  await waitFor(() => expect(savedCountries).toHaveTextContent('Default: JP'));
+  await waitForInteraction(() =>
+    expect(savedCountries).toHaveTextContent('Default: JP'),
+  );
 
   const cancelableTrigger = canvas.getByRole('button', {
     name: 'Cancelable country',
   });
   await userEvent.click(cancelableTrigger);
-  await userEvent.click(await page.findByRole('option', { name: 'Brésil' }));
-  await waitFor(() => {
+  await waitForInteraction(() =>
+    expect(page.getByRole('option', { name: 'Brésil' })).toBeVisible(),
+  );
+  await userEvent.click(page.getByRole('option', { name: 'Brésil' }));
+  await waitForInteraction(() => {
     expect(cancelableTrigger).toHaveTextContent('France');
     expect(cancelableTrigger).toHaveAttribute('aria-expanded', 'true');
     expect(savedCountries).toHaveTextContent('Cancelable: FR');
@@ -219,9 +238,10 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
       'aria-selected',
       'true',
     );
+    expect(page.getByRole('option', { name: 'Japon' })).toBeVisible();
   });
   await userEvent.click(page.getByRole('option', { name: 'Japon' }));
-  await waitFor(() => {
+  await waitForInteraction(() => {
     expect(cancelableTrigger).toHaveTextContent('Japon');
     expect(cancelableTrigger).toHaveAttribute('aria-expanded', 'false');
     expect(savedCountries).toHaveTextContent('Cancelable: JP');
@@ -230,7 +250,7 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
   await userEvent.click(
     canvas.getByRole('button', { name: 'Set countries externally' }),
   );
-  await waitFor(() => {
+  await waitForInteraction(() => {
     expect(billingTrigger).toHaveTextContent('Brésil');
     expect(shippingTrigger).toHaveTextContent('Brésil');
     expect(savedCountries).toHaveTextContent('Billing: BR; Shipping: BR');
@@ -238,25 +258,30 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
   await userEvent.click(
     canvas.getByRole('button', { name: 'Clear countries externally' }),
   );
-  await waitFor(() => {
+  await waitForInteraction(() => {
     expect(billingTrigger).toHaveTextContent('No country');
     expect(shippingTrigger).toHaveTextContent('No country');
     expect(savedCountries).toHaveTextContent('Billing: null; Shipping: null');
   });
 
   await userEvent.click(billingTrigger);
-  expect(
-    await page.findByRole('option', { name: 'No country' }),
-  ).toHaveAttribute('aria-selected', 'true');
-  const search = page.getByRole('searchbox', { name: 'Search' });
-  await userEvent.type(search, 'jap');
-  await waitFor(() => {
+  await waitForInteraction(() => {
+    expect(page.getByRole('option', { name: 'No country' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    const search = page.getByRole('searchbox', { name: 'Search' });
+    expect(search).toBeVisible();
+    expect(search).toHaveFocus();
+  });
+  await userEvent.type(page.getByRole('searchbox', { name: 'Search' }), 'jap');
+  await waitForInteraction(() => {
     expect(page.getByRole('option', { name: 'Japon' })).toBeVisible();
     expect(page.queryByRole('option', { name: 'France' })).toBeNull();
     expect(page.queryByRole('option', { name: 'Brésil' })).toBeNull();
   });
   await userEvent.click(page.getByRole('option', { name: 'Japon' }));
-  await waitFor(() => {
+  await waitForInteraction(() => {
     expect(billingTrigger).toHaveTextContent('Japon');
     expect(savedCountries).toHaveTextContent('Billing: JP; Shipping: null');
   });

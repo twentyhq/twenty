@@ -291,15 +291,16 @@ describe('Event Logs (integration)', () => {
     it('should expose the registration, version, source and error code of application logs', async () => {
       const response = await makeEventLogsQuery({
         table: 'APPLICATION_LOG',
-        first: 10,
+        first: 50,
       });
 
       expect(response.status).toBe(200);
       expect(response.body.errors).toBeUndefined();
 
+      // Apps that earlier suites ran log into the same workspace
       const errorRecord = response.body.data.eventLogs.records.find(
-        (record: { properties: { level: string } }) =>
-          record.properties.level === 'ERROR',
+        (record: { properties: { executionId: string } }) =>
+          record.properties.executionId === 'exec-1',
       );
 
       expect(errorRecord.properties).toMatchObject({
@@ -558,6 +559,43 @@ describe('Event Logs (integration)', () => {
             expect(record.userId).toBe(testUserWorkspaceId);
           },
         );
+      });
+    });
+
+    describe('application log specific filters', () => {
+      it('should filter application logs by source', async () => {
+        const logicFunctionResponse = await makeEventLogsQuery({
+          table: 'APPLICATION_LOG',
+          first: 50,
+          filters: {
+            fieldFilters: [
+              { field: 'source', operand: 'IS', values: ['LOGIC_FUNCTION'] },
+            ],
+          },
+        });
+
+        expect(logicFunctionResponse.body.errors).toBeUndefined();
+        expect(
+          logicFunctionResponse.body.data.eventLogs.records.length,
+        ).toBeGreaterThan(0);
+
+        const upgradeResponse = await makeEventLogsQuery({
+          table: 'APPLICATION_LOG',
+          first: 50,
+          filters: {
+            fieldFilters: [
+              { field: 'source', operand: 'IS', values: ['UPGRADE'] },
+            ],
+          },
+        });
+
+        expect(upgradeResponse.body.errors).toBeUndefined();
+        expect(
+          upgradeResponse.body.data.eventLogs.records.filter(
+            (record: { properties: { source: string } }) =>
+              record.properties.source !== 'UPGRADE',
+          ),
+        ).toEqual([]);
       });
     });
 

@@ -3,6 +3,10 @@ title: Accessibility
 description: Label controls, preserve keyboard behavior, and test accessible Twenty UI interfaces.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
 Migrated interactive components use Base UI primitives for semantics and keyboard behavior. Your application still supplies meaningful labels, descriptions, error messages, and focus order.
 
 ## Label every control
@@ -39,3 +43,5 @@ A disabled control cannot be changed and is generally excluded from keyboard nav
 Check keyboard navigation, labels, error announcements, focus movement in overlays, and zoom in the context where the component is used. Verify contrast in both palettes and after applying custom token overrides.
 
 Twenty UI's stories contain interaction and automated accessibility checks. Some stories still defer color-contrast checks, so those checks do not establish full accessibility conformance for an application.
+
+<PageBanner illustration="page-cover-accessibility" />

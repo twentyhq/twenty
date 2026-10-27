@@ -4,12 +4,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildHostReactEventHandlerProp } from '@/host/elements/utils/buildHostReactEventHandlerProp';
 import { hasDangerousUrlScheme } from '@/host/elements/utils/hasDangerousUrlScheme';
 import { isNavigationUrlAttribute } from '@/host/elements/utils/isNavigationUrlAttribute';
+import { isNonForwardedRemotePropName } from '@/host/elements/utils/isNonForwardedRemotePropName';
+import { normalizeHostSanitizedPropName } from '@/host/elements/utils/normalizeHostSanitizedPropName';
 import { parseCssString } from '@/host/elements/utils/parseCssString';
 import { type ClaimPointerEventForwarding } from '@/host/events/types/ClaimPointerEventForwarding';
 import { isEventHandlerKey } from '@/host/events/utils/isEventHandlerKey';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 
-const INTERNAL_PROPS = new Set(['element', 'receiver', 'components', 'ref']);
 const FORM_OWNER_ATTRIBUTE = 'form';
 
 export const buildHostReactPropsFromRemoteProps = ({
@@ -25,10 +26,15 @@ export const buildHostReactPropsFromRemoteProps = ({
 }): Record<string, unknown> => {
   const hostReactProps: Record<string, unknown> = {};
 
-  for (const [remotePropName, remotePropValue] of Object.entries(remoteProps)) {
-    if (INTERNAL_PROPS.has(remotePropName) || isUndefined(remotePropValue)) {
+  for (const [wirePropName, remotePropValue] of Object.entries(remoteProps)) {
+    if (
+      isNonForwardedRemotePropName(wirePropName) ||
+      isUndefined(remotePropValue)
+    ) {
       continue;
     }
+
+    const remotePropName = normalizeHostSanitizedPropName(wirePropName);
 
     if (remotePropName.toLowerCase() === FORM_OWNER_ATTRIBUTE) {
       continue;

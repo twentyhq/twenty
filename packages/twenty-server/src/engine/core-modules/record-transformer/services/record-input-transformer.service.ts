@@ -80,7 +80,7 @@ export class RecordInputTransformerService {
       case FieldMetadataType.NUMBER:
         return value === null ? null : Number(value);
       case FieldMetadataType.RICH_TEXT:
-        return await transformRichTextValue(value);
+        return transformRichTextValue(value);
       case FieldMetadataType.LINKS:
         return transformLinksValue({
           input: value,

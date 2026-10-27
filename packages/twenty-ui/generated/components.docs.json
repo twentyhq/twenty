@@ -2109,6 +2109,13 @@
         "description": "Identifies the form that owns the radio inputs.\nUseful when the radio group is rendered outside the form."
       },
       {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Stretch the control to the width of its container."
+      },
+      {
         "name": "inputRef",
         "type": "Ref<HTMLInputElement>",
         "required": false,
@@ -3240,6 +3247,90 @@
     ]
   },
   {
+    "name": "EmojiPicker",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/emoji-picker",
+    "props": [
+      {
+        "name": "autoFocus",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Focuses the search input when the picker mounts."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Additional class name applied to the picker root div."
+      },
+      {
+        "name": "emojibaseUrl",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Base URL for caller-hosted Emojibase data. The picker loads data.json and messages.json from the selected locale directory."
+      },
+      {
+        "name": "emptyLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Caller-supplied message displayed when no emoji matches the search."
+      },
+      {
+        "name": "loadingLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Caller-supplied message displayed while emoji data loads."
+      },
+      {
+        "name": "locale",
+        "type": "string",
+        "required": false,
+        "defaultValue": "en",
+        "description": "Emoji catalogue locale. The caller must host its data and message files. Interface labels are supplied separately."
+      },
+      {
+        "name": "onEmojiSelect",
+        "type": "(emoji: string) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Called with the selected Unicode emoji string. The application owns the selected value, persistence, and popup visibility."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref for the picker root div."
+      },
+      {
+        "name": "searchLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name for the search input. Also supplies its placeholder unless searchPlaceholder is set."
+      },
+      {
+        "name": "searchPlaceholder",
+        "type": "string",
+        "required": false,
+        "defaultValue": "searchLabel",
+        "description": "Optional placeholder overriding the search label."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native inline styles applied to the picker root div."
+      }
+    ]
+  },
+  {
     "name": "ReactionButton",
     "entryPoint": "twenty-ui/components/input",
     "slug": "components/input/reaction-button",
@@ -3832,6 +3923,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "textAlign",
+        "type": "\"end\" | \"start\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Aligns text to the logical start or end of the input. Follows the text direction."
       },
       {
         "name": "value",
@@ -7889,6 +7987,13 @@
         "description": "Trailing content, such as buttons, rendered after the content."
       },
       {
+        "name": "actionsPlacement",
+        "type": "\"auto\" | \"end\"",
+        "required": false,
+        "defaultValue": "auto",
+        "description": "Keeps actions beside the content at every width when set to `end`. The default `auto` preserves responsive wrapping. Hidden end actions do not reserve width on devices without touch."
+      },
+      {
         "name": "actionsVisibility",
         "type": "\"always\" | \"hover\"",
         "required": false,
@@ -8323,6 +8428,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Native styles applied to the rendered part."
+          },
+          {
+            "name": "variant",
+            "type": "\"compact\" | \"default\"",
+            "required": false,
+            "defaultValue": "default",
+            "description": "default keeps the standard section appearance. compact uses secondary section backgrounds, 8px header and footer padding, 8px horizontal content padding without vertical padding, and no header divider."
           }
         ]
       },
@@ -12761,6 +12873,13 @@
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           },
           {
+            "name": "textAlign",
+            "type": "\"end\" | \"start\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Aligns text to the logical start or end of the input. Follows the text direction."
+          },
+          {
             "name": "value",
             "type": "string | number | readonly string[]",
             "required": false,
@@ -13289,6 +13408,48 @@
     ]
   },
   {
+    "name": "LabeledSeparator",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/labeled-separator",
+    "props": [
+      {
+        "name": "children",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Text naming the separator. Supplied and localized by the caller."
+      },
+      {
+        "name": "hasStartMarker",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Show a decorative cap at the beginning of the rule."
+      },
+      {
+        "name": "labelPosition",
+        "type": "\"center\" | \"end\"",
+        "required": false,
+        "defaultValue": "center",
+        "description": "Place the label between two lines or at the end of one line."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "tone",
+        "type": "\"danger\" | \"neutral\"",
+        "required": false,
+        "defaultValue": "neutral",
+        "description": "Neutral divider or red marker with a thicker rule."
+      }
+    ]
+  },
+  {
     "name": "Section",
     "entryPoint": "twenty-ui/components/layout",
     "slug": "components/layout/section",
@@ -13793,6 +13954,104 @@
         "required": false,
         "defaultValue": null,
         "description": "Icon rendered before the content."
+      }
+    ]
+  },
+  {
+    "name": "CountPager",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/count-pager",
+    "props": [
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the root element."
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "required": true,
+        "defaultValue": null,
+        "description": "Number of items in the collection. Empty collections and invalid or noninteger counts disable navigation."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables both navigation buttons without changing the position text."
+      },
+      {
+        "name": "index",
+        "type": "number",
+        "required": true,
+        "defaultValue": null,
+        "description": "Controlled zero-based item index. Navigation is disabled when the index is not an integer within the collection bounds."
+      },
+      {
+        "name": "nextLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the Next button."
+      },
+      {
+        "name": "onIndexChange",
+        "type": "(index: number) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Requests the neighboring index after activating Previous or Next. Prop changes do not call this callback or select a replacement item."
+      },
+      {
+        "name": "positionPlacement",
+        "type": "\"between\" | \"start\"",
+        "required": false,
+        "defaultValue": "between",
+        "description": "Places the position text between the buttons or at the start of the row. Start placement lets the text fill the available width."
+      },
+      {
+        "name": "positionText",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Caller-formatted position text, announced politely when it changes. The caller also supplies text for empty collections."
+      },
+      {
+        "name": "previousLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the Previous button."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the root element while preserving its props and contents."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": "group",
+        "description": "Root semantics. Defaults to a group; the caller supplies its accessible name."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root element."
       }
     ]
   },
@@ -14938,6 +15197,216 @@
     ]
   },
   {
+    "name": "DatePicker",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/date-picker",
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name of the calendar group."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the element that labels the calendar group."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the root element."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables date selection and the default header controls."
+      },
+      {
+        "name": "highlightedRange",
+        "type": "{ start: string; end: string; }",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inclusive YYYY-MM-DD start and end dates to highlight. The application computes the range independently from the selected date."
+      },
+      {
+        "name": "isDateUnavailable",
+        "type": "((date: string) => boolean)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Returns whether a canonical YYYY-MM-DD date cannot be selected. The calendar engine handles unavailable-date presentation and navigation."
+      },
+      {
+        "name": "isGridHidden",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Hides weekday and date rows while retaining the header for a month-only navigator."
+      },
+      {
+        "name": "isKeyboardNavigationDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables keyboard date navigation in the calendar engine for compatibility with existing input wrappers. Header controls retain their native keyboard behavior."
+      },
+      {
+        "name": "loadingFallback",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": "300px-high Skeleton",
+        "description": "Custom Suspense fallback while the calendar engine loads. Defaults to a 300px-high Skeleton."
+      },
+      {
+        "name": "locale",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Locale for the default month/year header and custom weekday titles. Engine day labels retain their existing locale behavior; values remain Gregorian date-only strings."
+      },
+      {
+        "name": "monthLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the default month selector."
+      },
+      {
+        "name": "nextMonthLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the default next-month button."
+      },
+      {
+        "name": "onNavigationOpenChange",
+        "type": "((args: { open: boolean; control: \"month\" | \"year\"; }) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Reports { open, control } when a default month or year popup starts opening, and when it finishes closing or its selector unmounts. Header arrow actions do not call this callback."
+      },
+      {
+        "name": "onValueChange",
+        "type": "(date: string) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Called when choosing an available day changes the selected date. Month and year browsing does not select another date."
+      },
+      {
+        "name": "onValueSelect",
+        "type": "((date: string) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the selected YYYY-MM-DD date after choosing an available day, including the already-selected day. Use it to commit or close a product picker."
+      },
+      {
+        "name": "onViewedMonthChange",
+        "type": "(month: string) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Requests the month shown by calendar navigation without changing the selected date."
+      },
+      {
+        "name": "portalContainer",
+        "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Mount container for the default month and year selector popups. Accepts the shared Select portal container contract."
+      },
+      {
+        "name": "previousMonthLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the default previous-month button."
+      },
+      {
+        "name": "readOnly",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Prevents date selection while allowing month and year browsing and displaying the selected date or highlighted range."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Composes the root element while preserving its props and contents."
+      },
+      {
+        "name": "renderHeader",
+        "type": "((props: DatePickerHeaderProps) => ReactNode)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Renders a product header with the viewed month, previous/next actions, month numbers from 1 through 12, year change actions, and navigation-disabled states. Header actions only browse months."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": "group",
+        "description": "Root semantics. Defaults to a group; the caller supplies its accessible name."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root element."
+      },
+      {
+        "name": "value",
+        "type": "string | null",
+        "required": true,
+        "defaultValue": null,
+        "description": "Controlled selected Gregorian date in YYYY-MM-DD form, or null for no selection."
+      },
+      {
+        "name": "viewedMonth",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Controlled Gregorian month in YYYY-MM form. It is independent from the selected date."
+      },
+      {
+        "name": "weekdayLabels",
+        "type": "readonly [string, string, string, string, string, string, string]",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional short weekday labels in Sunday-first order. The calendar engine supplies weekday names when omitted."
+      },
+      {
+        "name": "weekStart",
+        "type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
+        "required": true,
+        "defaultValue": null,
+        "description": "First weekday column: 0 for Sunday through 6 for Saturday."
+      },
+      {
+        "name": "yearLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the default year selector."
+      }
+    ]
+  },
+  {
     "name": "SearchInput",
     "entryPoint": "twenty-ui/components/input",
     "slug": "components/input/search-input",
@@ -15053,6 +15522,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "textAlign",
+        "type": "\"end\" | \"start\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Aligns text to the logical start or end of the input. Follows the text direction."
       },
       {
         "name": "value",

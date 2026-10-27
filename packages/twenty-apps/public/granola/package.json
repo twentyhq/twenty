@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/granola",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sync Granola meeting notes into Twenty Call Recordings",
   "license": "MIT",
   "engines": {
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
-    "zod": "^4.1.11"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@emotion/react": "^11.14.0",

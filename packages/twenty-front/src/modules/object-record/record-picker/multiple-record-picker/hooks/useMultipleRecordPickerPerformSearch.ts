@@ -352,6 +352,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
         ...paginationState,
         endCursor: pageInfo.endCursor,
         hasNextPage: pageInfo.hasNextPage,
+        searchFilter,
       });
 
       store.set(

@@ -554,8 +554,6 @@ describe('Conversation sharing through the authenticated API', () => {
     const cache = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
-    const chatService =
-      getAppProviderByClassName<AgentChatService>('AgentChatService');
     const command = new EnableCommonRecordSharingCommand(
       {} as never,
       cache,
@@ -610,8 +608,8 @@ describe('Conversation sharing through the authenticated API', () => {
       );
       expect((await readThread(owner.threadId)).body.errors).toBeUndefined();
       const restoredTwice = await Promise.all([
-        chatService.restoreThread(owner),
-        chatService.restoreThread(owner),
+        getAgentChatThreadService().restoreThread(owner),
+        getAgentChatThreadService().restoreThread(owner),
       ]);
       for (const restored of restoredTwice) {
         expect(restored.deletedAt).toBeNull();
