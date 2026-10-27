@@ -188,6 +188,71 @@ There is no way to *clear* an identity yet: a null is treated as "leave it alone
 
 Participants you leave unlinked are still stored and still render in the thread — they simply do not pull the conversation onto a record.
 
+## Sending replies
+
+A messaging provider declares how an app sends on a channel. It names the connection provider whose accounts it speaks through and the logic function that delivers a reply, so one connection (a Unipile account, say) can back several kinds of messaging, each with its own handler:
+
+```ts src/messaging-providers/linkedin-messaging.ts
+import { defineMessagingProvider } from 'twenty-sdk/define';
+
+export default defineMessagingProvider({
+  universalIdentifier: '8a9b0c1d-2e3f-4a5b-8c6d-7e8f9a0b1c2d',
+  name: 'linkedin-messaging',
+  displayName: 'LinkedIn Messages',
+  connectionProvider: {
+    universalIdentifier: '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
+  },
+  sendMessageLogicFunction: {
+    universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
+  },
+});
+```
+
+Bind a channel to it when you create the channel, or later with `updateMessageChannel` (passing `null` unbinds it):
+
+```ts
+await createMessageChannel({
+  connectedAccountId: connection.id,
+  handle: profile.memberUrn,
+  visibility: 'METADATA',
+  messagingProvider: {
+    universalIdentifier: '8a9b0c1d-2e3f-4a5b-8c6d-7e8f9a0b1c2d',
+  },
+});
+```
+
+The messaging provider must belong to your app and use the connection provider of the channel's account; its connection provider cannot change after the first sync. Changing the send function in a later version applies to every channel bound to the provider.
+
+Replies are sent with the `sendAppChannelMessage` mutation, which takes the channel, the thread, the text and an `idempotencyKey` (a UUID the client generates per reply and reuses when retrying it), and runs the provider's function:
+
+```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
+import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
+
+export const linkedinSendMessageHandler = async ({
+  connectedAccountId,
+  threadExternalId,
+  text,
+  idempotencyKey,
+}: SendAppMessagePayload) => {
+  const sent = await sendLinkedinMessage({
+    connectedAccountId,
+    conversationUrn: threadExternalId,
+    text,
+    idempotencyKey,
+  });
+
+  return { externalId: sent.messageUrn, sentAt: sent.createdAt };
+};
+```
+
+The payload carries the `messagingProviderName`, the conversation's `threadExternalId` as you ingested it, the `text`, the `idempotencyKey`, and the `recipients`: the participants of the thread's latest message other than the channel's own handle, so someone who only took part in an earlier exchange is not messaged. Prefer the provider's own conversation over `recipients` when its API sends to a conversation id. Return the provider's id for the sent message as `externalId`.
+
+Twenty then records the reply in the thread as an outgoing message from the channel, with the same recipients, so it shows immediately. When your webhook later delivers the same message, ingesting it with that `externalId` changes nothing.
+
+The function runs inside the `sendAppChannelMessage` request. If it throws or returns no `externalId`, the mutation fails and nothing is recorded.
+
+Once your function returns, Twenty keeps the delivery for 24 hours under the member, the channel, the thread and the `idempotencyKey`. If recording the reply then fails, the mutation fails, and retrying it with the same key records the delivered reply without calling your function again; a retry of a reply already recorded returns it. A retry while the first call is still sending waits for it. A new key is a new reply. Your function can still be called twice for one reply if the client retries with a new key or after those 24 hours, or if your function itself fails after the provider accepted the message, so forward `idempotencyKey` to the provider when its API supports idempotent sends. A channel with `isSyncEnabled: false` refuses replies without calling your function. A channel with no messaging provider, or whose provider has no `sendMessageLogicFunction` or no longer exists, cannot send; its conversations stay as they are. Requires `"engines": { "twenty": ">=2.52.0" }`.
+
 ## Listing and updating channels
 
 ```ts
@@ -241,7 +306,7 @@ Deleting a channel deletes the messages ingested through it, and any thread left
 ## What a channel does not do
 
 - **It is not polled.** Twenty's import pipeline polls mailbox providers on a cron. App channels are push-only: nothing fetches on your behalf, so your app is responsible for getting messages in, via a webhook route or a cron logic function.
-- **It does not send.** Outbound delivery is not yet routed to apps; a reply composed in Twenty cannot reach your provider. Until it is, link out to the provider's own UI for replies.
+- **It does not start conversations.** Replies go to an existing thread through a [messaging provider](#sending-replies); a first message to someone new has to be started from your app.
 - **It only resolves contacts through a declared field.** Without one, Twenty cannot tell who a LinkedIn URN belongs to, so app channels [link participants explicitly at ingestion](#resolve-the-person-yourself).
 - **It does not create contacts.** Twenty's auto-creation derives people and companies from email domains, which is meaningless for most providers, so it is off for app channels. Create the Person yourself, then pass its `personId`.
 

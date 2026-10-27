@@ -51,7 +51,7 @@ export const Default: Story = {
       );
     }
     await userEvent.tab();
-    expect(closeButton).toHaveFocus();
+    await waitFor(() => expect(closeButton).toHaveFocus());
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());

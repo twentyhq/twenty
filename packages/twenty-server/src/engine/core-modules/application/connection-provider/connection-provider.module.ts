@@ -3,6 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppConnectionAccessService } from 'src/engine/core-modules/application/connection-provider/app-connection-access.service';
 import { ApplicationConnectionProviderResolver } from 'src/engine/core-modules/application/connection-provider/application-connection-provider.resolver';
+import { ConnectionProviderAuthorizationStateService } from 'src/engine/core-modules/application/connection-provider/connection-provider-authorization-state.service';
+import { ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
+import { ConnectionProviderCustomFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-custom-flow.service';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
@@ -20,6 +23,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 
@@ -35,6 +39,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
       ConnectedAccountEntity,
       UserEntity,
     ]),
+    CacheLockModule,
     JwtModule,
     SecretEncryptionModule,
     SecureHttpClientModule,
@@ -47,14 +52,19 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     provideWorkspaceScopedRepository(ConnectionProviderEntity),
     AppConnectionAccessService,
     ConnectionProviderService,
+    ConnectionProviderAuthorizationStateService,
+    ConnectionProviderConnectedAccountService,
     ConnectionProviderOAuthFlowService,
+    ConnectionProviderCustomFlowService,
     ConnectionProviderLifecycleHookService,
     ApplicationConnectionProviderResolver,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [
     ConnectionProviderService,
+    ConnectionProviderAuthorizationStateService,
     ConnectionProviderOAuthFlowService,
+    ConnectionProviderCustomFlowService,
     ConnectionProviderLifecycleHookService,
   ],
 })

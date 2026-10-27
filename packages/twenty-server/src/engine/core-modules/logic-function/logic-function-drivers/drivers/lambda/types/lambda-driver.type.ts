@@ -37,12 +37,15 @@ export type BuilderLambdaResult = {
   builtCode: string;
 };
 
-export interface LambdaDriverOptions extends LambdaClientConfig {
+export type LambdaDriverOptions = LambdaConnectionOptions & {
   logicFunctionResourceService: LogicFunctionResourceService;
   sdkClientArchiveService: SdkClientArchiveService;
   cacheLockService: CacheLockService;
   cacheStorageService: CacheStorageService;
   workspaceCacheService: WorkspaceCacheService;
+};
+
+export type LambdaConnectionOptions = LambdaClientConfig & {
   region: string;
   lambdaRole: string;
   subhostingRole?: string;
@@ -50,7 +53,7 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   layerBucketRegion: string;
   resourceNamespace: string;
   resourceTags?: Record<string, string>;
-}
+};
 
 export enum LambdaExecutionPhase {
   BUILD = 'build',

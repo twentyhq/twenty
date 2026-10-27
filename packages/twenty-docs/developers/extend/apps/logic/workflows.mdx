@@ -76,7 +76,7 @@ Key points:
 
 Steps and triggers point at metadata by universal identifier, never by name or id:
 - **Objects and fields**: your app's own, or standard ones through `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`. The example above assumes the app also defines a `leadScore` number field on Company with [`defineField()`](/developers/extend/apps/data/extending-objects): a record step that writes a field missing from the workspace fails the install.
-- **Logic functions**: your app's own, exposed as a [workflow action](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) with `workflowActionTriggerSettings`.
+- **Logic functions**: your app's own, exposed as a [workflow action](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) with `workflowActionTriggerSettings`. The workspace Custom application can also reference the workflow actions of the other apps installed in the workspace, as workflows built in the app can.
 - **Agents**: your app's own, from [`defineAgent()`](/developers/extend/apps/logic/skills-and-agents).
 
 A reference Twenty can't resolve fails the install.
@@ -96,12 +96,14 @@ A webhook workflow listens on `https://<your-twenty-domain>/webhooks/workflows/<
 
 ## Steps
 
-Application workflows support these step types: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT` and `EMPTY`.
+Application workflows support these step types: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT` and `EMPTY`.
 
 Their inputs match the steps of the [workflow builder](/user-guide/workflows/capabilities/workflow-actions), with universal identifiers in place of names:
 - Record steps take `objectUniversalIdentifier` instead of an object name.
 - Filters and sorts point at fields with `fieldMetadataUniversalIdentifier`.
-- To run your own code, use a `LOGIC_FUNCTION` step. The builder's Code step is not available, and neither are the email and calendar steps.
+- To run your own code, use a `LOGIC_FUNCTION` step. The builder's Code step is not available.
+- Email and calendar steps run only if your app's role has the matching permission flag: `SystemPermissionFlag.SEND_EMAIL_TOOL` for `SEND_EMAIL` and `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` for `CREATE_CALENDAR_EVENT`. The workspace grants it by installing the app, and the step can then use any connected account in the workspace, like a workflow built in the app.
+- Connected account ids are local to each workspace, so don't hardcode one. Pass the account as a variable. Email steps also take a workspace member id, such as `{{trigger.properties.after.assigneeId}}`, which resolves to that member's first account able to send.
 
 ## After install
 

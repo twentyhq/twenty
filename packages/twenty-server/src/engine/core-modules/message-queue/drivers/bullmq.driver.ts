@@ -36,9 +36,9 @@ import {
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
+import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
-import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
@@ -457,19 +457,12 @@ export class BullMQDriver
     return broadcastTo;
   }
 
-  private buildJobsOptions({
-    queueName,
-    options,
-  }: {
-    queueName: MessageQueue;
-    options?: QueueJobOptions;
-  }): BullMQJobsOptions {
+  private buildJobsOptions(options?: QueueJobOptions): BullMQJobsOptions {
     return {
       jobId: options?.id
         ? buildQueueJobIdWithSuffix({ jobIdPrefix: options.id, suffix: v4() })
         : undefined,
-      priority:
-        options?.priority ?? MESSAGE_QUEUE_WORKER_CONFIG[queueName].priority,
+      priority: options?.priority ?? DEFAULT_JOB_PRIORITY,
       attempts: 1 + (options?.retryLimit || 0),
       backoff: options?.backoff
         ? {
@@ -514,7 +507,7 @@ export class BullMQDriver
       }
     }
 
-    const queueOptions = this.buildJobsOptions({ queueName, options });
+    const queueOptions = this.buildJobsOptions(options);
 
     const job = await this.queueMap[queueName].add(jobName, data, queueOptions);
 
@@ -566,7 +559,7 @@ export class BullMQDriver
       return [];
     }
 
-    const queueOptions = this.buildJobsOptions({ queueName, options });
+    const queueOptions = this.buildJobsOptions(options);
 
     const addedJobs = await this.queueMap[queueName].addBulk(
       jobsToAdd.map(({ data, jobId }, index) => ({
