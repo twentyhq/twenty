@@ -258,6 +258,7 @@ import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/datab
 import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792686749823-add-agent-chat-channel-navigation-menu-item';
 import { AddParticipantHandleFieldToMessageChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1792907887530-add-participant-handle-field-to-message-channel';
 import { AddCustomConfigToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438836-add-custom-config-to-connection-provider';
+import { AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793111477950-add-object-metadata-disabled-object-permission-actions';
 import { AddMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438837-add-messaging-provider';
 
 export const INSTANCE_COMMANDS = [
@@ -520,4 +521,5 @@ export const INSTANCE_COMMANDS = [
   AddParticipantHandleFieldToMessageChannelFastInstanceCommand,
   AddCustomConfigToConnectionProviderFastInstanceCommand,
   AddMessagingProviderFastInstanceCommand,
+  AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand,
 ];

@@ -2525,6 +2525,7 @@ export interface Object {
     color?: Scalars['String']
     createdAt: Scalars['DateTime']
     description?: Scalars['String']
+    disabledObjectPermissionActions?: Scalars['String'][]
     duplicateCriteria?: Scalars['String'][][]
     fields: ObjectFieldsConnection
     fieldsList: Field[]
@@ -6967,6 +6968,7 @@ export interface ObjectGenqlSelection{
     color?: boolean | number
     createdAt?: boolean | number
     description?: boolean | number
+    disabledObjectPermissionActions?: boolean | number
     duplicateCriteria?: boolean | number
     fields?: (ObjectFieldsConnectionGenqlSelection & { __args: {
     /** Specify to filter the records returned. */
