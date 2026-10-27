@@ -3,6 +3,8 @@ title: Setări profil
 description: Gestionează setările personale ale profilului și setările de securitate.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Informații personale
 
 ### Nume și adresă de email
@@ -21,6 +23,16 @@ Activează 2FA pentru a adăuga un strat suplimentar de securitate contului tău
 2. Faceți clic pe **Aplicație de autentificare**
 3. Scanează codul QR cu aplicația ta de autentificare
 4. Introdu codul de verificare pentru a confirma
+
+### Ai pierdut aplicația de autentificare
+
+Dacă nu poți accesa aplicația de autentificare, cere unui administrator al spațiului de lucru un cod de recuperare. Codul poate fi folosit o singură dată și expiră implicit după 1 oră. Apoi:
+
+1. Conectați-vă folosind adresa de e-mail și parola
+2. Pe ecranul de verificare, faceți clic pe **V-ați pierdut aplicația de autentificare? Folosiți un cod de recuperare**
+3. Introduceți codul de recuperare și faceți clic pe **Continuați**
+
+Aplicația actuală de autentificare pentru acel spațiu de lucru este eliminată și sunteți deconectat din celelalte sesiuni. Configurați din nou autentificarea cu doi factori din **Setări → Profil**.
 
 ### Gestionarea parolelor
 
@@ -41,3 +53,5 @@ Pentru a șterge contul tău:
 2. Derulează până la **Zona de pericol**
 3. Apasă pe **Șterge contul**
 4. Confirmă introducând adresa ta de email
+
+<PageBanner illustration="page-cover-profile" />

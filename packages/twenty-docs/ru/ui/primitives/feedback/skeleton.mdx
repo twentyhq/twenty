@@ -1,0 +1,64 @@
+---
+title: Каркас
+description: Отображайте тематические формы-заполнители во время загрузки контента.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SkeletonReference from '/snippets/ui/generated/feedback/skeleton.mdx';
+
+## Обзор
+
+`Skeleton` предоставляет форму-заполнитель с цветами темы и движущимся бликом. Создавайте формы в макете загружаемого содержимого. Приложение управляет состоянием загрузки и макетами, специфичными для функций.
+
+<StoryEmbed storyId="ui-feedback-skeleton--display" title="Формы скелетона" height={110} />
+
+## Использование
+
+```tsx
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const LoadingProfile = () => (
+  <Text render={<div />} style={{ display: 'flex', gap: 16 }}>
+    <Skeleton width={40} height={40} borderRadius="50%" />
+    <Text
+      render={<div />}
+      style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+    >
+      <Skeleton width={180} height={SKELETON_HEIGHT_SIZES.s} />
+      <Skeleton width={120} height={SKELETON_HEIGHT_SIZES.xs} />
+    </Text>
+  </Text>
+);
+```
+
+Skeleton отображается как блок и никогда не становится шире своего контейнера. Используйте `layout="inline"`, чтобы разместить заполнитель внутри строки текста.
+
+Для числовых размеров используются пиксели. Также поддерживаются длины CSS, например проценты и `em`. Без указания размеров заполнитель занимает доступную ширину и использует унаследованную высоту шрифта. Для круга используйте одинаковые размеры и `borderRadius="50%"`.
+
+`SKELETON_HEIGHT_SIZES` предоставляет общие значения высоты для `xs` (13px), `s` (16px), `m` (24px), `l` (32px) и `xl` (40px). Храните размеры, зависящие от макета, в приложении.
+
+Каждый `Skeleton` отображает один заполнитель. Храните повторяющиеся строки, интервалы между строками текста и области загрузки в компонентах приложения, которые оборачивают примитив.
+
+## Анимация и доступность
+
+Скелетоны являются декоративными и по умолчанию имеют `aria-hidden="true"`. Размещайте объявления о загрузке в области статуса, управляемой хостом, вместо объявления каждой формы. Skeleton не принимает дочерние элементы.
+
+Подсветка перемещается слева направо в цикле ease-in-out длительностью 1,5 секунды и скрывается, если пользователь предпочитает уменьшенную анимацию. Передайте `animated={false}` для статического заполнителя.
+
+<StoryEmbed storyId="ui-feedback-skeleton--static" title="Статический скелетон" height={90} />
+
+## Композиция и тема
+
+Нативные свойства, `className`, `style` и `ref` применяются к span заполнителя. Используйте `render` для компоновки другого элемента. Явно заданные нативные стили переопределяют свойства размеров и цвета.
+
+По умолчанию для основного цвета и цвета подсветки используются третичный фон темы и более светлый прозрачный фон. Используйте `baseColor`, `highlightColor` и `borderRadius`, чтобы переопределить их. Углы остаются скруглёнными, в том числе когда тема использует сквирклы. Радиус по умолчанию использует токен темы `smRound` (4px). Передайте `themeCssVariables.border.radius.mdRound` из `twenty-ui/theme` для углов с радиусом 8px. Пользовательские радиусы в пикселях и CSS по-прежнему поддерживаются, включая `borderRadius={80}` для узкой капсулы и `borderRadius="50%"` для круга. После загрузки `twenty-ui/style.css` и темы UI не требуется специальный для скелетона провайдер или импорт таблицы стилей.
+
+## Свойства
+
+<SkeletonReference />
+
+<PageBanner illustration="section-ui-primitives" />

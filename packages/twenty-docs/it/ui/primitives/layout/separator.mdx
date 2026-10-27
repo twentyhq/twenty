@@ -1,0 +1,57 @@
+---
+title: Separatore
+description: Separa i contenuti adiacenti con un divisore orizzontale o verticale.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SeparatorReference from '/snippets/ui/generated/layout/separator.mdx';
+
+## Panoramica
+
+`Separator` esegue il rendering di un `div` con `role="separator"` e un orientamento accessibile. Utilizza il contratto del separatore di Base UI, incluse le proprietà native, i ref e la composizione `render`. Importa `SeparatorProps` dallo stesso punto di ingresso.
+
+<StoryEmbed storyId="ui-layout-separator--display" title="Separatore orizzontale" height={130} />
+
+## Utilizzo
+
+```tsx
+import { Separator } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSources = () => (
+  <Text style={{ display: 'grid', gap: 'var(--t-spacing-3)' }}>
+    <Text>Import records from a CSV file.</Text>
+    <Separator />
+    <Text>Connect an external data source.</Text>
+  </Text>
+);
+```
+
+## Orientamento e aspetto
+
+`orientation` è impostato su `horizontal` per impostazione predefinita. I margini sono impostati su zero per impostazione predefinita in entrambi gli orientamenti. I separatori orizzontali occupano tutta la larghezza disponibile. I separatori verticali si estendono lungo il relativo contenitore flex. Assegna un'altezza a un separatore verticale autonomo. Controlla la spaziatura tramite il layout padre oppure usa `style` o `className` nativi per margini espliciti e il colore della linea. Base UI accetta anche funzioni dell'orientamento per queste proprietà.
+
+<StoryEmbed storyId="ui-layout-separator--vertical-documentation" title="Separatore verticale" height={150} />
+
+## Divisori con etichetta
+
+Usa [LabeledSeparator](/it/ui/components/layout/labeled-separator) per un'etichetta di testo tra le linee di divisione o alla fine di un separatore. Fornisce il layout e un unico nome accessibile per il separatore.
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+
+export const SignInDivider = () => <LabeledSeparator>Or</LabeledSeparator>;
+```
+
+## Migrazione
+
+Sostituisci il precedente helper orizzontale con `Separator`. Rimuovi `noMargin`, poiché ora i margini sono impostati su zero per impostazione predefinita. Per mantenere la precedente spaziatura predefinita, aggiungi `style={{ marginBlock: 'var(--t-spacing-3)' }}`. Sostituisci `color` con `style={{ backgroundColor: color }}`. Usa `LabeledSeparator` per i separatori con etichetta, passa l'etichetta come children e rinomina `textPosition` in `labelPosition`. Sostituisci i separatori utilizzati solo per la spaziatura invisibile con la spaziatura del layout.
+
+## Props
+
+<SeparatorReference />
+
+<PageBanner illustration="layout" />

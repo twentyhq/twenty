@@ -3,7 +3,7 @@ title: Impostazioni del dominio
 description: Configura il dominio dello spazio di lavoro, i domini di accesso approvati e i domini personalizzati dell'app.
 ---
 
-Le impostazioni di dominio si trovano in tre posizioni, a seconda di ciò che stai configurando.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Dominio del workspace
 
@@ -38,7 +38,7 @@ Questo è utile per consentire a tutto il tuo team di registrarsi autonomamente,
 
 ## Domini personalizzati dell'app
 
-Configura in **Impostazioni → App → la tua app → Impostazioni → URL dell'app**.
+Configura in **Impostazioni → App → la tua app → Generali → URL dell'app**. La sezione **URL dell'app** viene visualizzata quando l'app dispone di funzioni attivate da HTTP.
 
 Le app che espongono route sul web vengono servite da un URL dedicato, mostrato nella sezione **URL dell'app**. Puoi invece servire un'app da un dominio di tua proprietà.
 
@@ -50,3 +50,5 @@ Le app che espongono route sul web vengono servite da un URL dedicato, mostrato 
 4. Verifica il dominio
 
 Solo le route di quell'app sono raggiungibili sul dominio. I certificati SSL vengono emessi automaticamente.
+
+<PageBanner illustration="card-page-tutorial-http" />

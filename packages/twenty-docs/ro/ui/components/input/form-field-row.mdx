@@ -1,0 +1,64 @@
+---
+title: FormFieldRow
+description: Aliniază o etichetă de câmp, conținutul și controalele de final într-un rând comun.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import FormFieldRowReference from '/snippets/ui/generated/components/input/form-field-row.mdx';
+
+## Prezentare generală
+
+`FormFieldRow` aranjează o etichetă de câmp, o pictogramă decorativă opțională, conținutul câmpului și controalele de final. Utilizează-l pentru câmpuri de compunere sau alte grupuri de câmpuri aliniate. Aplicația dvs. gestionează valorile câmpurilor, validarea, permisiunile și persistența.
+
+<StoryEmbed storyId="ui-input-formfieldrow--display" title="Rând de câmpuri de formular" height={110} />
+
+## Utilizare
+
+```tsx
+import { useState } from 'react';
+import { FormFieldRow, LightButton } from 'twenty-ui/components/input';
+import { Input } from 'twenty-ui/primitives/input';
+
+export const SubjectField = () => {
+  const [subject, setSubject] = useState('Project update');
+
+  return (
+    <FormFieldRow
+      label="Subject"
+      hasDivider={false}
+      trailing={
+        <LightButton size="sm" onClick={() => setSubject('')}>
+          Clear
+        </LightButton>
+      }
+    >
+      <Input
+        variant="plain"
+        aria-label="Subject"
+        value={subject}
+        onValueChange={setSubject}
+      />
+    </FormFieldRow>
+  );
+};
+```
+
+## Aspect și etichete
+
+`labelWidth` are implicit 80 de pixeli și acceptă o lățime CSS. Utilizați aceeași valoare pe rândurile înrudite pentru a le alinia etichetele. Coloana etichetelor este limitată la 40% din rând, iar conținutul se poate încadra pe mai multe rânduri în aspecte înguste. `startIcon` este decorativ; apelantul îi furnizează dimensiunile. Setați `hasDivider={false}` pe un rând final atunci când suprafața înconjurătoare îi oferă chenarul.
+
+Rădăcina este un grup denumit prin `label`. Furnizați `aria-label` sau `aria-labelledby` atunci când eticheta vizibilă este omisă și etichetați separat fiecare intrare imbricată. Rândul nu mută focalizarea și nu dezactivează controalele imbricate. Aceste controale își păstrează propriul comportament de la tastatură și propriul stil de focalizare.
+
+## Evenimente și personalizare
+
+Atributele native, gestionarii de evenimente, `className`, `style`, `ref` și `render` se aplică rădăcinii grupului. Transmiteți mai departe props și ref furnizate atunci când înlocuiți rădăcina prin `render`. Un gestionar `onClick` afișează un cursor indicator. Apelantul gestionează comportamentul de focalizare la clic și, când este necesar, protejează evenimentele provenite de la controale imbricate sau portaluri. `isHoverable` activează independent un fundal neutru la trecerea cursorului.
+
+`trailingProps` aplică atribute native, gestionari și ref containerului final existent. `className` al acestuia este îmbinat cu clasa de aspect partajată. Utilizați gestionarul său `onClick` pentru a împiedica o acțiune finală să declanșeze un gestionar de clic al rândului. Containerul există numai atunci când `trailing` are conținut care poate fi redat.
+
+## Proprietăți
+
+<FormFieldRowReference />
+
+<PageBanner illustration="page-cover-input" />

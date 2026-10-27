@@ -1,0 +1,167 @@
+---
+title: Радио
+description: Отображает один вариант во взаимоисключающей группе радиокнопок.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import RadioReference from '/snippets/ui/generated/input/radio.mdx';
+
+## Обзор
+
+`Radio` представляет один вариант внутри [RadioGroup](/ru/ui/primitives/input/radio-group). Задайте для каждого варианта уникальное значение `value` и видимую метку. Группа управляет выбранным значением.
+
+<StoryEmbed storyId="ui-input-radio--display" title="Пример переключателя" height={140} />
+
+## Использование
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const ContactMethod = () => (
+  <RadioGroup
+    name="contactMethod"
+    defaultValue="email"
+    aria-label="Preferred contact method"
+  >
+    <Radio value="email">Email</Radio>
+    <Radio value="phone">Phone</Radio>
+    <Radio value="post" disabled>
+      Postal mail (unavailable)
+    </Radio>
+  </RadioGroup>
+);
+```
+
+Свойство `size` принимает `sm` или `md`; по умолчанию используется `sm`. Используйте одинаковый размер для параметров в группе.
+
+## Визуальные варианты
+
+Сравните выбранное и отключенное состояния, размеры, а также стандартный вид и вид в виде карточек. Для фактического выбора используйте группу вариантов с меткой.
+
+<StoryEmbed storyId="ui-input-radio--catalog" title="Визуальные варианты для радиокнопок" height={380} />
+
+## Готовые компоненты
+
+`Radio.Root` и `Radio.Indicator` предоставляют установленные части Base UI без стилизованной сборки. Комбинируйте их, когда требуется пользовательское содержимое или размещение индикатора. Вызываемый `Radio` предоставляет внешний вид переключателя и индикатор Twenty для распространённых вариантов.
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const StorageChoice = () => (
+  <RadioGroup aria-label="Storage" defaultValue="ssd">
+    <Radio.Root value="ssd">
+      <Radio.Indicator keepMounted render={<span />}>
+        ✓
+      </Radio.Indicator>
+      SSD
+    </Radio.Root>
+    <Radio.Root value="hdd">HDD</Radio.Root>
+  </RadioGroup>
+);
+```
+
+Стандартные переключатели и `Radio.Root` отображают span с семантикой переключателя и расположенный рядом скрытый нативный input. Радиокнопки-карточки рендерят div. `ref` указывает на отрендеренный корневой элемент; `inputRef` указывает на поле ввода. `Radio.Indicator` рендерит span, и его ref указывает на этот элемент. `render`, зависящие от состояния `className` и `style`, нативные атрибуты и обработчики событий сохраняют свои исходные контракты. Публичные типы включают `RadioProps`, `RadioRootProps`, `RadioRootState`, `RadioIndicatorProps` и `RadioIndicatorState`.
+
+## Параметры карточки
+
+Используйте `variant="card"` для вариантов на всю ширину со встроенным индикатором радиокнопки. По умолчанию радиокнопки-карточки сохраняют корневой div. Используйте `render`, чтобы явно выбрать другой элемент. Если этот элемент является нативной кнопкой, также установите `nativeButton`. Размещайте интерактивные элементы управления за пределами содержимого карточки.
+
+Предоставьте группе достаточно ширины для ее содержимого и оставьте место для индикатора в правом верхнем углу. Заголовок, значок и краткое описание помогают пояснить каждый вариант.
+
+<StoryEmbed storyId="ui-input-radio--cards-documentation" title="Варианты радиокнопок в виде карточек" height={290} />
+
+```tsx
+import { IconLayoutKanban, IconTable } from 'twenty-ui/icon';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+const VIEWS = [
+  {
+    value: 'table',
+    title: 'Table view',
+    description: 'Browse records in rows.',
+    Icon: IconTable,
+  },
+  {
+    value: 'board',
+    title: 'Board view',
+    description: 'Track progress across columns.',
+    Icon: IconLayoutKanban,
+  },
+];
+
+export const ViewChoice = () => (
+  <RadioGroup
+    aria-label="Default view"
+    defaultValue="table"
+    style={{ width: 280 }}
+  >
+    {VIEWS.map(({ value, title, description, Icon }) => (
+      <Radio key={value} variant="card" value={value}>
+        <span style={{ display: 'grid', gap: 8, paddingInlineEnd: 24 }}>
+          <Icon size={20} aria-hidden />
+          <Text
+            render={<span />}
+            style={{ fontWeight: 'var(--t-font-weight-medium)' }}
+          >
+            {title}
+          </Text>
+          <Text
+            render={<span />}
+            style={{ color: 'var(--t-font-color-secondary)', lineHeight: 1.5 }}
+          >
+            {description}
+          </Text>
+        </span>
+      </Radio>
+    ))}
+  </RadioGroup>
+);
+```
+
+## Явная нативная композиция
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingChoice = () => (
+  <RadioGroup aria-label="Billing interval" defaultValue="monthly">
+    <Radio
+      variant="card"
+      value="monthly"
+      nativeButton
+      render={<button type="button" />}
+    >
+      Monthly
+    </Radio>
+    <Radio
+      variant="card"
+      value="yearly"
+      nativeButton
+      render={<button type="button" />}
+    >
+      Yearly
+    </Radio>
+  </RadioGroup>
+);
+```
+
+Ссылка ref указывает на составную кнопку. Для пользовательских корневых элементов, не являющихся кнопками, оставьте `nativeButton` со значением false и перенаправьте предоставленные свойства рендеринга и ref на фактический элемент.
+
+## Клавиатура и выбор
+
+Tab позволяет войти в группу или выйти из неё. Клавиши со стрелками перемещаются между доступными параметрами и выбирают параметр в фокусе. Пробел выбирает переключатель в фокусе. Установленная радиокнопка Base UI подавляет выбор по Enter как для корневых элементов по умолчанию, так и для скомпонованных нативных кнопок. Обработчики выбора и изменения должны находиться в `RadioGroup`; см. его [неконтролируемый пример](/ru/ui/primitives/input/radio-group#uncontrolled-state) и [контролируемый пример](/ru/ui/primitives/input/radio-group#controlled-state).
+
+Стрелки радиокнопки изменяют выбор при перемещении фокуса. [Dropdown.SelectionGroup](/ru/ui/components/navigation/dropdown) перемещает фокус стрелками и подтверждает выбор клавишей Enter или Space.
+
+`Radio` и `Radio.Root` являются обобщёнными по типу значения. Согласуйте этот тип с типом его группы. Нативные атрибуты, такие как `aria-describedby`, могут связывать параметр с дополнительным справочным текстом.
+
+## Свойства
+
+Справочник генерируется на основе публичных типов компонентов. Нативные атрибуты, включая доступные имена и обработчики событий, также принимаются для частей, отображающих элементы.
+
+<RadioReference />
+
+<PageBanner illustration="page-cover-switch" />

@@ -3,6 +3,11 @@ title: "Учебник: Генератор документов"
 description: Создайте реальное приложение Twenty, которое генерирует персонализированные документы из ваших данных CRM.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Что вы строили
+
 В этом учебнике вы создадите **Document Generator** — приложение, которое преобразует многоразовые шаблоны в персонализированные документы, используя данные, уже находящиеся в вашей CRM.
 
 Один раз напишите шаблон с `{{placeholders}}`, затем генерируйте заполненный документ для любого Контакта или Компании в один клик — из командного меню, от агента ИИ или из рабочего процесса.
@@ -26,21 +31,23 @@ description: Создайте реальное приложение Twenty, ко
 
 ## Требования
 
-К этому моменту вы уже должны были пройти [быстрый старт](/ru/developers/extend/apps/getting-started/quick-start):
-локальный сервер Twenty, запущенный на порту `2020`, и CLI, аутентифицированный в нем.
+К этому моменту вы должны были пройти [быстрый старт](/ru/developers/extend/apps/getting-started/quick-start):
+рабочее пространство Twenty (облачное или локальное) и CLI, аутентифицированный в нем.
 
-Если нет, разверните и запустите его сейчас:
+Если сервер или аутентификация не готовы, сначала пройдите [быстрый старт](/ru/developers/extend/apps/getting-started/quick-start). Затем создайте и установите приложение из руководства:
 
 ```bash filename="Terminal"
-npx create-twenty-app@latest document-generator
+twenty app init document-generator
 cd document-generator
-yarn twenty dev
+yarn install
+twenty app apply --create
+twenty app dev
 ```
 
 <Note>
-Предпочитаете читать готовый код? Полное приложение находится в
-[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
-Каждый фрагмент кода ниже скопирован из него.
+  Предпочитаете читать готовый код? Полное приложение находится в
+  [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+  Каждый фрагмент кода ниже скопирован из него.
 </Note>
 
 ## Как устроено приложение
@@ -57,10 +64,15 @@ yarn twenty dev
 
 ## Поддерживайте этот цикл
 
-Оставьте `yarn twenty dev` запущенной в терминале на протяжении всего учебника. Каждый раз, когда
+Оставьте `twenty app dev` запущенной в терминале на протяжении всего руководства. Каждый раз, когда
 вы добавляете или изменяете файл в `src/`, он заново синхронизируется с вашим сервером в течение нескольких
 секунд, так что вы можете наблюдать, как каждая новая возможность появляется в интерфейсе по мере ее создания.
 
-<Card title="Начните разработку →" icon="database" href="/ru/developers/extend/apps/tutorials/document-generator/data-model">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ru/developers/extend/apps/tutorials/document-generator/data-model" img="/images/documentation/banner-icons-v2/data-model.svg">
+  <CardTitle>Начните создавать →</CardTitle>
   Глава 1: моделируем документы и шаблоны.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="section-document-generator" />

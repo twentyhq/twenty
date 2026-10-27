@@ -3,6 +3,10 @@ title: Oggetti
 description: Dichiara nuovi tipi di record — tabelle personalizzate con i propri campi — usando defineObject.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 Gli **oggetti** personalizzati sono nuovi tipi di record che la tua app aggiunge a uno spazio di lavoro — Cartolina, Fattura, Abbonamento, qualsiasi cosa specifica per il tuo dominio. Ogni oggetto dichiara il proprio schema (campi, relazioni, valori predefiniti) e un identificatore universale stabile che persiste tra le sincronizzazioni e le distribuzioni.
 
 ```ts src/objects/post-card.object.ts
@@ -54,10 +58,30 @@ export default defineObject({
       icon: 'IconSend',
       defaultValue: `'${PostCardStatus.DRAFT}'`,
       options: [
-        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
-        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
-        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
-        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+        {
+          value: PostCardStatus.DRAFT,
+          label: 'Draft',
+          position: 0,
+          color: 'gray',
+        },
+        {
+          value: PostCardStatus.SENT,
+          label: 'Sent',
+          position: 1,
+          color: 'orange',
+        },
+        {
+          value: PostCardStatus.DELIVERED,
+          label: 'Delivered',
+          position: 2,
+          color: 'green',
+        },
+        {
+          value: PostCardStatus.RETURNED,
+          label: 'Returned',
+          position: 3,
+          color: 'orange',
+        },
       ],
     },
     {
@@ -80,28 +104,56 @@ export default defineObject({
 * L'array `fields` è facoltativo: puoi definire oggetti senza campi personalizzati.
 * `openRecordIn` imposta dove si aprono i record di questo oggetto quando vengono cliccati: `ObjectOpenRecordIn.USER_CHOICE` (l'impostazione predefinita, che segue la preferenza di ciascun membro dell'area di lavoro da Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL` oppure `ObjectOpenRecordIn.RECORD_PAGE`. Fissalo su `RECORD_PAGE` per i record che devono occupare un'intera pagina per essere usabili, come avviene per i workflow e le dashboard, oppure su `SIDE_PANEL` per i record che hanno senso solo come pannello rapido, come avviene per gli eventi di calendario.
 * `writability` controlla chi può scrivere i record dell'oggetto in generale, prima che si applichino le autorizzazioni basate sui ruoli: `MetadataWritability.OPEN` (impostazione predefinita — i ruoli dello spazio di lavoro decidono), `MetadataWritability.APPLICATION` (solo le funzioni logiche della tua app possono creare, aggiornare o eliminare record; usa questa impostazione per oggetti simili a configurazioni i cui record determinano il comportamento, in modo che i membri dello spazio di lavoro con un ampio accesso ai record non possano modificarli tramite l'API) oppure `MetadataWritability.SYSTEM` (riservato ai dati gestiti dalla piattaforma). Le letture non sono influenzate — questo è applicato lato server, diversamente da `isUIEditable`, che si limita a nascondere gli elementi dell'interfaccia utente. Esiste anche per singolo campo, dove può essere soltanto più restrittivo rispetto al livello dell'oggetto.
+* `readability` dichiara chi può leggere i record dell'oggetto: `MetadataReadability.OPEN` (l'impostazione predefinita — decidono i ruoli dell'area di lavoro), `MetadataReadability.PRIVATE` (solo i principali con cui è stato condiviso il record), `MetadataReadability.INHERITED` (chiunque legga il record padre), `MetadataReadability.APPLICATION` (solo le funzioni logiche della tua app) o `MetadataReadability.SYSTEM` (dati gestiti dalla piattaforma). Tutti i criteri di leggibilità vengono sempre applicati.
+* `readabilityParentFieldUniversalIdentifiers` va con `MetadataReadability.INHERITED`: gli identificatori universali dei campi di relazione che conducono ai record padre.
+  * Un campo molti-a-uno denomina il record a cui punta la riga. La dichiarazione di un campo di una relazione morfica copre ogni destinazione di tale relazione.
+  * Un campo uno-a-molti denomina un oggetto figlio le cui righe puntano al record, come le righe di collegamento di una relazione molti-a-molti. Il record è quindi leggibile quando almeno una di tali righe conduce a un record leggibile: una nota segue le persone, le aziende e le opportunità a cui la collegano le destinazioni della nota.
+  * Più elementi padre si combinano come un'unione: è sufficiente un elemento padre leggibile.
+  * Un elemento padre concede l'accesso in base alla sua policy completa, quella applicata da una query dell'elemento padre: l'autorizzazione del lettore sull'oggetto padre, le restrizioni a livello di riga del suo ruolo e la leggibilità dell'elemento padre stesso. Un record non viene mai mostrato tramite un elemento padre su cui il suo lettore non potrebbe eseguire una query. Le sottoscrizioni, i webhook, i flussi di lavoro e le funzioni logiche determinano cosa raggiunge un evento di un record `INHERITED` secondo quella stessa policy.
+  * Le righe di condivisione sul record stesso concedono l'accesso esattamente come su un record `PRIVATE`. Il suo creatore ne riceve una quando il record viene creato mentre la condivisione dei record è abilitata, quindi chiunque abbia creato un record continua a vederlo e un record i cui campi padre sono tutti vuoti è visibile a coloro con cui è stato condiviso direttamente.
+  * Un oggetto `INHERITED` che non specifica alcun campo padre utilizzabile si comporta come uno `PRIVATE`.
+* `sharingReach` imposta fino a che punto un record dell'oggetto può essere condiviso per nome: `ObjectSharingReach.WORKSPACE` (il valore predefinito: un record può essere condiviso con chiunque nello spazio di lavoro, anche con qualcuno il cui ruolo non può accedere all'oggetto o il cui filtro a livello di riga nasconde il record; questa persona ottiene solo quel record, da visualizzare o modificare) oppure `ObjectSharingReach.ROLE_ACCESS` (le condivisioni non vanno mai oltre le autorizzazioni del ruolo e a livello di riga). Scegli `ROLE_ACCESS` per gli oggetti sensibili per i quali nessun accesso deve significare nessun accesso. I ruoli che possono aggiornare tutte le impostazioni vedono ogni record di un oggetto `OPEN`, indipendentemente dalle relative restrizioni di condivisione; si applicano comunque le loro autorizzazioni per gli oggetti e i filtri a livello di riga. Si applica solo quando la condivisione dei record è abilitata nello spazio di lavoro e solo agli oggetti i cui record possono essere condivisi: oggetti `MetadataReadability.OPEN`, `PRIVATE` e `INHERITED` che non sono oggetti di sistema. Gli oggetti `APPLICATION` e `SYSTEM` non vengono mai condivisi.
+* `disabledObjectPermissionActions` elenca le autorizzazioni degli oggetti che non possono essere concesse sull'oggetto: una qualsiasi tra `'canReadObjectRecords'`, `'canUpdateObjectRecords'`, `'canSoftDeleteObjectRecords'` e `'canDestroyObjectRecords'`, gli stessi flag che un ruolo imposta per ciascun oggetto. Il salvataggio di un'autorizzazione dell'oggetto che concede una di esse su questo oggetto non riesce; ad esempio, `disabledObjectPermissionActions: ['canDestroyObjectRecords']` impedisce che a qualsiasi ruolo venga concessa l'eliminazione definitiva specificamente su di esso. Non modifica ciò che possono fare i ruoli che concedono un'azione su tutti gli oggetti.
+* `color` imposta il colore di accento dell'oggetto nell'interfaccia utente. Omettilo e Twenty ne sceglierà uno per l'oggetto.
+* `imageIdentifierFieldMetadataUniversalIdentifier` denomina il campo il cui valore viene mostrato come avatar del record. Omettilo per consentire a Twenty di scegliere quello predefinito.
+* `isLabelSyncedWithName`, su un oggetto o su un campo, mantiene il nome API sincronizzato con l'etichetta quando quest'ultima viene modificata in Impostazioni. Per impostazione predefinita è `false`, quindi un'etichetta rinominata lascia invariato il nome.
+* `isSearchable: true`, su un campo, include i relativi valori nella ricerca full-text dell'oggetto (ricerca globale e menu dei comandi). Richiede che l'oggetto stesso sia ricercabile e un tipo di campo compatibile con il testo. Un valore omesso indica che non è ricercabile, ad eccezione del campo identificatore dell'etichetta dell'oggetto, che è sempre ricercabile e non può essere escluso. Ogni sincronizzazione applica lo stato dichiarato, quindi un campo reso ricercabile da Impostazioni viene ripristinato alla successiva sincronizzazione dell'app, a meno che il manifest non lo dichiari.
+* `isAuditLogged: false`, su un campo, mantiene le relative modifiche fuori dalla cronologia del record. Per impostazione predefinita è `true`, tranne che su un campo `POSITION`, le cui modifiche vengono visualizzate vuote nella cronologia e non vengono mai registrate. Impostalo sui campi che la tua app riscrive periodicamente, ad esempio un timestamp dell'ultimo contatto o una relazione di rollup, in modo che ogni sincronizzazione non aggiunga una riga di attività a ogni record che modifica. Un aggiornamento la cui intera differenza è costituita da campi non registrati nell'audit non produce alcuna attività nella cronologia. Come `isSearchable`, ogni sincronizzazione applica lo stato dichiarato.
 * I campi inline definiti qui **non** hanno bisogno di un `objectUniversalIdentifier` — viene ereditato dall'oggetto padre. Usa [`defineField()`](/it/developers/extend/apps/data/extending-objects) per aggiungere campi a oggetti che non possiedi.
-* Puoi generare nuovi oggetti con `yarn twenty dev:add object`, che ti guida nella denominazione, nei campi e nelle relazioni. Vedi [Architettura → Scaffolding delle entità](/it/developers/extend/apps/getting-started/scaffolding).
+* Puoi generare nuovi oggetti con `twenty app add object`, che ti guida nella denominazione, nei campi e nelle relazioni. Vedi [Architettura → Scaffolding delle entità](/it/developers/extend/apps/getting-started/scaffolding).
 
 <Note>
-**I campi base vengono aggiunti automaticamente.** Quando definisci un oggetto personalizzato, Twenty crea per te campi standard come `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt`. Non è necessario dichiararli nel tuo array `fields` — solo i tuoi campi personalizzati. Puoi sovrascrivere un campo predefinito dichiarandone uno con lo stesso nome, ma è raramente una buona idea.
+  **I campi base vengono aggiunti automaticamente.** Quando definisci un oggetto personalizzato,
+  Twenty crea per te campi standard come `id`, `name`, `createdAt`, `updatedAt`,
+  `createdBy`, `updatedBy` e `deletedAt`. Non è necessario dichiararli
+  nel tuo array `fields` — solo i tuoi campi personalizzati. Puoi sovrascrivere un
+  campo predefinito dichiarandone uno con lo stesso nome, ma è raramente una buona
+  idea.
 </Note>
 
 ## Tipi di campo
 
 L’insieme completo dei valori di `FieldType`, esportati da `twenty-sdk/define`:
 
-| Categoria                  | Tipi                                                                                                                               |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Testo                      | `TEXT`, `RICH_TEXT`, `ARRAY` (di stringhe), `RAW_JSON`                                                                             |
-| Numerico                   | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (precisione arbitraria), `RATING`, `POSITION` |
-| Date                       | `DATE`, `DATE_TIME`                                                                                                                |
-| Scelta                     | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                                |
-| Compositi                  | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                                  |
-| Identificatori e relazioni | `UUID`, `RELATION`, `MORPH_RELATION` (vedi [Relazioni](/it/developers/extend/apps/data/relations))                                    |
-| Sistema                    | `TS_VECTOR` (vettore per la ricerca full-text, gestito dal server)                                                                 |
+| Categoria                  | Tipi                                                                                                                                                                                                                                                                                                                        |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Testo                      | `TEXT`, `RICH_TEXT`, `ARRAY` (di stringhe), `RAW_JSON`                                                                                                                                                                                                                                                                      |
+| Numerico                   | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (precisione arbitraria), `RATING`, `POSITION`                                                                                                                                                                                          |
+| Date                       | `DATE`, `DATE_TIME`                                                                                                                                                                                                                                                                                                         |
+| Scelta                     | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                                                                                                                                                                                                                         |
+| Compositi                  | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS` (`universalSettings.type`: `'url'` (predefinito) / `'domain'` — un campo di dominio memorizza l'host senza prefisso, pertanto `https://www.acme.com/careers` viene scritto come `acme.com` e un valore che non è un host viene rifiutato), `CURRENCY`, `ACTOR`, `FILES` |
+| Identificatori e relazioni | `UUID`, `RELATION`, `MORPH_RELATION` (vedi [Relazioni](/it/developers/extend/apps/data/relations))                                                                                                                                                                                                                             |
+| Sistema                    | `TS_VECTOR` (vettore per la ricerca full-text, gestito dal server)                                                                                                                                                                                                                                                          |
 
 I tipi compositi memorizzano più sotto-campi (ad es. `FULL_NAME` = nome + cognome; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` e `MULTI_SELECT` richiedono un array `options` come nell’esempio sopra.
+
+### Seleziona opzioni
+
+Per `SELECT` e `MULTI_SELECT`, fornisci un array `options` non vuoto di oggetti. Ogni opzione ha un `value`, un `label` e una `position`. Il relativo `color` è facoltativo e, se omesso o null, il valore predefinito è `gray`.
+
+Se fornito, `color` deve essere uno dei seguenti: `red`, `ruby`, `crimson`, `tomato`, `orange`, `amber`, `yellow`, `lime`, `grass`, `green`, `jade`, `mint`, `turquoise`, `cyan`, `sky`, `blue`, `iris`, `violet`, `purple`, `plum`, `pink`, `bronze`, `gold`, `brown`, `gray`.
+
+Sia `defineObject()` sia `defineField()` restituiscono errori di convalida per colori non supportati o voci di opzione che sono null, primitive o array.
 
 ## Valori predefiniti
 
@@ -121,7 +173,12 @@ La stessa convenzione si applica ai sotto-campi stringa dei valori compositi pre
 Le modifiche a `isNullable` vengono applicate a ogni sincronizzazione, incluse quelle che aggiornano un campo esistente — quindi puoi cambiare la nullabilità di un campo modificando il manifest e rieseguendo la sincronizzazione.
 
 <Note>
-**Rendere un campo esistente che non ammette `NULL` richiede un valore predefinito.** Quando imposti `isNullable: false` per un campo, devi anche fornire un `defaultValue` non nullo. Il valore predefinito esegue il backfill di tutte le righe `NULL` esistenti prima che venga applicato il vincolo `NOT NULL`; senza di esso la sincronizzazione non riesce con l'errore `Default value cannot be null for non-nullable fields`. I campi di relazione e i campi `TS_VECTOR` ammettono sempre `NULL`, quindi `isNullable` non ha alcun effetto su di essi.
+  **Rendere un campo esistente non nullable richiede un valore predefinito.** Quando
+  modifichi un campo impostando `isNullable: false`, devi anche fornire un
+  `defaultValue` non nullo. Il valore predefinito riempie tutte le righe `NULL` esistenti prima che venga applicato il vincolo `NOT
+    NULL`; senza di esso la sincronizzazione non riesce con `Default value
+    cannot be null for non-nullable fields`. I campi di relazione e i campi `TS_VECTOR`
+  ammettono sempre `NULL`, quindi `isNullable` non ha alcun effetto su di essi.
 </Note>
 
 ```ts
@@ -140,3 +197,5 @@ Le modifiche a `isNullable` vengono applicate a ogni sincronizzazione, incluse q
 * **Collega questo oggetto ad altri** — vedi [Relazioni](/it/developers/extend/apps/data/relations) per il pattern di relazione bidirezionale.
 * **Aggiungi campi a oggetti di altre app** — vedi [Estendere gli oggetti](/it/developers/extend/apps/data/extending-objects) per `defineField()`.
 * **Visualizza questo oggetto nell'interfaccia utente (UI)** — vedi [Voci del menu di navigazione](/it/developers/extend/apps/layout/navigation-menu-items) per aggiungere una voce nella barra laterale; vedi [Viste](/it/developers/extend/apps/layout/views) per aggiungere configurazioni di elenco personalizzate.
+
+<PageBanner illustration="card-page-objects" />

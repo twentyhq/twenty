@@ -1,0 +1,141 @@
+---
+title: Campo
+description: Collega un controllo di modulo alla relativa etichetta, descrizione e feedback di convalida.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import FieldReference from '/snippets/ui/generated/input/field.mdx';
+
+## Panoramica
+
+Usa `Field` per raggruppare un controllo con la relativa etichetta accessibile e il testo di supporto. Componenti come [Input](/it/ui/primitives/input/input) si integrano direttamente con il campo.
+
+<StoryEmbed storyId="ui-input-field--display" title="Esempio di campo" height={180} />
+
+## Utilizzo
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root name="email" validationMode="onBlur">
+    <Field.Label>Work email</Field.Label>
+    <Input type="email" required placeholder="you@example.com" />
+    <Field.Description>
+      We send account updates to this address.
+    </Field.Description>
+    <Field.Error match="valueMissing">Enter your email address.</Field.Error>
+    <Field.Error match="typeMismatch">Enter a valid email address.</Field.Error>
+  </Field.Root>
+);
+```
+
+`Field.Root` gestisce il nome del controllo, lo stato disabilitato e la validità. `Field.Label` e `Field.Description` collegano il loro contenuto al controllo. Imposta la tempistica della convalida con `validationMode`; usa `validate` per la convalida personalizzata.
+
+## Anatomia
+
+Inserisci un controllo e le relative parti di supporto all'interno di `Field.Root`. Questo albero mostra un campo creato con il componente `Input` stilizzato.
+
+```text
+Field.Root
+├── Field.Label
+├── Input
+├── Field.Description
+└── Field.Error
+```
+
+| Parte                                  | Requisito                | Scopo                                                                                        |
+| -------------------------------------- | ------------------------ | -------------------------------------------------------------------------------------------- |
+| `Root`                                 | Obbligatorio             | Condivide il nome, lo stato disabilitato e la convalida con il controllo.                    |
+| `Item`                                 | Facoltativo per i gruppi | Associa ogni pulsante di scelta o casella di controllo alla propria etichetta e descrizione. |
+| `Label`                                | Consigliato              | Fornisce un'etichetta visibile associata. Un nome accessibile è sempre obbligatorio.         |
+| `Input` o un altro controllo integrato | Obbligatorio             | Riceve l'input dell'utente e si collega al campo.                                            |
+| `Control`                              | Controllo alternativo    | Fornisce un input senza stile quando non utilizzi un controllo integrato.                    |
+| `Description`                          | Facoltativo              | Aggiunge testo di supporto persistente associato al controllo.                               |
+| `Errore`                               | Facoltativo              | Mostra feedback per uno stato di convalida corrispondente.                                   |
+| `Validity`                             | Facoltativo              | Espone la validità tramite una funzione di rendering children.                               |
+
+`Input` e `Textarea` si integrano già con il campo. Inseriscili direttamente all'interno di `Root`; forniscono autonomamente il comportamento del controllo. I controlli composti come [Select](/it/ui/primitives/input/select#compose-with-a-field) mantengono la propria radice e le proprie parti all'interno del campo.
+
+## Errori esterni
+
+Usa `invalid` quando la tua applicazione gestisce lo stato di errore. Un `match` esplicito rende visibile il messaggio di errore.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+type UsernameFieldProps = { error?: string };
+
+export const UsernameField = ({ error }: UsernameFieldProps) => (
+  <Field.Root name="username" invalid={Boolean(error)}>
+    <Field.Label>Username</Field.Label>
+    <Input autoComplete="username" />
+    <Field.Error match={Boolean(error)}>{error}</Field.Error>
+  </Field.Root>
+);
+```
+
+Mantieni i messaggi di errore orientati all'azione e fornisci un'etichetta visibile anche quando il controllo ha un segnaposto.
+
+## Controlli raggruppati
+
+Usa `Field.Item` all'interno di un gruppo di pulsanti di opzione o caselle di controllo per associare ogni scelta alla relativa etichetta e descrizione. Mantieni l'etichetta del gruppo al di fuori degli elementi. Un elemento può essere disabilitato indipendentemente; un `Field.Root` disabilitato disabilita ogni elemento.
+
+<StoryEmbed storyId="ui-input-field--grouped-items" title="Elementi del campo" height={220} />
+
+```tsx
+import { Field, Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsField = () => (
+  <Field.Root name="notifications">
+    <Field.Label>Notifications</Field.Label>
+    <RadioGroup defaultValue="important" style={{ gap: 16, marginTop: 12 }}>
+      <Field.Item style={{ display: 'flex', alignItems: 'start', gap: 12 }}>
+        <Radio value="important" />
+        <Text>
+          <Field.Label>Important updates</Field.Label>
+          <Field.Description>
+            Only messages that need your attention
+          </Field.Description>
+        </Text>
+      </Field.Item>
+      <Field.Item style={{ display: 'flex', alignItems: 'start', gap: 12 }}>
+        <Radio value="all" />
+        <Text>
+          <Field.Label>All updates</Field.Label>
+          <Field.Description>Every change to your records</Field.Description>
+        </Text>
+      </Field.Item>
+      <Field.Item
+        disabled
+        style={{ display: 'flex', alignItems: 'start', gap: 12 }}
+      >
+        <Radio value="digest" />
+        <Text>
+          <Field.Label>Daily digest</Field.Label>
+          <Field.Description>Coming soon</Field.Description>
+        </Text>
+      </Field.Item>
+    </RadioGroup>
+  </Field.Root>
+);
+```
+
+## Integrazione nativa e tipi
+
+Field preserva la tempistica di convalida di Base UI, la convalida personalizzata, i valori dei controlli gestiti e non gestiti e i dettagli dell'evento di modifica del valore. `Validity` espone il risultato della convalida tramite la sua funzione children. I controlli integrati mantengono il loro comportamento nativo nei moduli.
+
+`Root`, `Item`, `Label`, `Control`, `Description` e `Error` inoltrano props native, refs e composizione `render`. I relativi elementi predefiniti sono rispettivamente un div, div, label, input, paragrafo e div. `Validity` non esegue il rendering del proprio elemento.
+
+Importa `FieldRootProps`, `FieldItemProps`, `FieldLabelProps`, `FieldControlProps`, `FieldDescriptionProps`, `FieldErrorProps` e `FieldValidityProps` da `twenty-ui/primitives/input` per i contratti delle parti upstream corrispondenti.
+
+## Props
+
+Il riferimento è generato dai tipi di componenti pubblici. Gli attributi nativi, inclusi i nomi accessibili e i gestori di eventi, sono accettati anche nelle parti che eseguono il rendering di elementi.
+
+<FieldReference />
+
+<PageBanner illustration="page-cover-input" />

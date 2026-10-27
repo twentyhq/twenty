@@ -1,9 +1,12 @@
 ---
 title: Architettura delle Cartelle
+description: Come il codice del frontend è organizzato.
 info: Uno sguardo dettagliato all'architettura delle nostre cartelle
 ---
 
-In questa guida, esplorerai i dettagli della struttura delle directory del progetto e come contribuisce all'organizzazione e alla manutenibilità di Twenty.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
 
 Seguendo questa convenzione di architettura delle cartelle, è più facile trovare i file relativi a funzionalità specifiche e garantire che l'applicazione sia scalabile e manutenibile.
 
@@ -107,3 +110,5 @@ Puoi importare codice di altri moduli da qualsiasi modulo, tranne la cartella `u
 ### Interni
 
 Ogni parte (hook, stati, ...) di un modulo può avere una cartella `internal`, che contiene le parti utilizzate solo all'interno del modulo.
+
+<PageBanner illustration="card-page-frontend-architecture" />
