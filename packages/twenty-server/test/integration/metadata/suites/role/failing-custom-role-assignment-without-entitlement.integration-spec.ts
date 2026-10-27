@@ -105,25 +105,6 @@ describe('Custom role assignment without the custom roles entitlement', () => {
     expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
-  it('should still create a role only agents can be assigned', async () => {
-    const { data, errors } = await createOneRole({
-      expectToFail: false,
-      input: {
-        label: 'Unentitled agent role',
-        canBeAssignedToUsers: false,
-        canBeAssignedToAgents: true,
-        canBeAssignedToApiKeys: false,
-      },
-    });
-
-    expect(errors).toBeUndefined();
-
-    await deleteOneRole({
-      expectToFail: false,
-      input: { idToDelete: data.createOneRole.id },
-    });
-  });
-
   it('should refuse making an agent-only role assignable to members', async () => {
     const { data } = await createOneRole({
       expectToFail: false,
