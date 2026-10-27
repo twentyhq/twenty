@@ -74,16 +74,21 @@ export const resolveObjectSharing = ({
     !flatObjectMetadata.isSystem &&
     flatObjectMetadata.sharingReach === ObjectSharingReach.WORKSPACE;
 
-  return {
-    sharingMode,
-    canShareBeyondRole,
-    operationTypesGrantedBeyondRole: canShareBeyondRole
-      ? OPERATIONS_GRANTABLE_BEYOND_ROLE.filter(
-          ({ objectPermissionAction }) =>
-            !flatObjectMetadata.disabledObjectPermissionActions?.includes(
-              objectPermissionAction,
-            ),
-        ).map(({ operationType }) => operationType)
-      : [],
-  };
+  if (!canShareBeyondRole) {
+    return {
+      sharingMode,
+      canShareBeyondRole,
+      operationTypesGrantedBeyondRole: [],
+    };
+  }
+
+  const operationTypesGrantedBeyondRole =
+    OPERATIONS_GRANTABLE_BEYOND_ROLE.filter(
+      ({ objectPermissionAction }) =>
+        !flatObjectMetadata.disabledObjectPermissionActions?.includes(
+          objectPermissionAction,
+        ),
+    ).map(({ operationType }) => operationType);
+
+  return { sharingMode, canShareBeyondRole, operationTypesGrantedBeyondRole };
 };
