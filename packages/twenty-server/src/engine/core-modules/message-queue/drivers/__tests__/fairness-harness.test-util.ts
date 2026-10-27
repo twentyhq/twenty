@@ -126,6 +126,11 @@ const mockBullMQ: BullMQDouble = {
     mockBullMQ.jobs.push(job);
 
     await mockBullMQ.redis?.hset(buildJobKey(job.id), 'priority', priority);
+    await mockBullMQ.redis?.hset(
+      buildJobKey(job.id),
+      'opts',
+      JSON.stringify(options),
+    );
 
     if (!job.isPromoted) {
       await mockBullMQ.redis?.zadd(DELAYED_KEY, job.timestamp, job.id);
