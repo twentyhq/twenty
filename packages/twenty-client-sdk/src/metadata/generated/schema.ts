@@ -4026,6 +4026,7 @@ export interface Workspace {
     isPasswordAuthBypassEnabled: Scalars['Boolean']
     isPasswordAuthEnabled: Scalars['Boolean']
     isPublicInviteLinkEnabled: Scalars['Boolean']
+    isTrialAvailable: Scalars['Boolean']
     isTwoFactorAuthenticationEnforced: Scalars['Boolean']
     logo?: Scalars['String']
     logoFileId?: Scalars['UUID']
@@ -8850,6 +8851,7 @@ export interface WorkspaceGenqlSelection{
     isPasswordAuthBypassEnabled?: boolean | number
     isPasswordAuthEnabled?: boolean | number
     isPublicInviteLinkEnabled?: boolean | number
+    isTrialAvailable?: boolean | number
     isTwoFactorAuthenticationEnforced?: boolean | number
     logo?: boolean | number
     logoFileId?: boolean | number

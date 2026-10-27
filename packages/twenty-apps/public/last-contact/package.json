@@ -34,7 +34,7 @@
     "twenty-ui": "^2.41.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^4.0.0"
+    "vitest": "^4.1.12"
   },
   "dependencies": {
     "semver": "^7.8.5"

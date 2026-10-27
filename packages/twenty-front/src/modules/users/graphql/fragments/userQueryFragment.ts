@@ -109,6 +109,7 @@ export const USER_QUERY_FRAGMENT = gql`
         key
         value
       }
+      isTrialAvailable
       workspaceMembersCount
       defaultRole {
         ...RoleFragment
