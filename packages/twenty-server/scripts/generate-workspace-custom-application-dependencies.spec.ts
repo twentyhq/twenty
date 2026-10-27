@@ -88,7 +88,7 @@ describe('generateWorkspaceCustomApplicationDependencies', () => {
   it.each([
     {
       version: undefined,
-      expectedRange: `~${TWENTY_PREVIOUS_VERSIONS[TWENTY_PREVIOUS_VERSIONS.length - 1]}`,
+      expectedRange: `~${TWENTY_PREVIOUS_VERSIONS[TWENTY_PREVIOUS_VERSIONS.length - 2]}`,
     },
     { version: '3.14.7', expectedRange: '~3.14.0' },
   ])(

@@ -19,7 +19,7 @@ const APPLICATION_PACKAGE_CONSTANTS_DIRECTORY = resolve(
 );
 
 export const generateWorkspaceCustomApplicationDependencies = ({
-  version = TWENTY_PREVIOUS_VERSIONS[TWENTY_PREVIOUS_VERSIONS.length - 1],
+  version = TWENTY_PREVIOUS_VERSIONS[TWENTY_PREVIOUS_VERSIONS.length - 2],
   dependenciesDirectory = join(
     APPLICATION_PACKAGE_CONSTANTS_DIRECTORY,
     'workspace-custom-application-dependencies',
@@ -42,7 +42,7 @@ export const generateWorkspaceCustomApplicationDependencies = ({
 
   packageJson.dependencies = standardPackageJson.dependencies;
 
-  // twenty-ui is published after deployment, so defaults use the previous release.
+  // twenty-ui is published after deployment, so defaults pin the release already on npm.
   packageJson.devDependencies['twenty-ui'] =
     `~${semver.major(version)}.${semver.minor(version)}.0`;
 
