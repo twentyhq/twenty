@@ -8,10 +8,7 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 // so a direct link must still be fetched; the server returns nothing when
 // the record was not shared with them
 export const useCanReadObjectRecordsOrSharedRecords = (
-  objectMetadataItem: Pick<
-    EnrichedObjectMetadataItem,
-    'id' | 'isSystem' | 'readability'
-  >,
+  objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'id' | 'isSystem'>,
 ): boolean => {
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,

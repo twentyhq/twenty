@@ -229,23 +229,17 @@ export const SidePanelShareRecordContent = ({
                   {sharing.hasManagedGeneralAccess && (
                     <StyledDescription>{t`Workspace access is also managed by an application.`}</StyledDescription>
                   )}
-                  {sharing.sharingMode === RecordSharingMode.INHERITED && (
-                    <StyledDescription>{t`Access is also inherited from related records.`}</StyledDescription>
+                  {!sharing.hasManagedGeneralAccess && (
+                    <StyledDescription>
+                      {t`People you add get this record even if their role can't access ${objectLabelPlural}. Field permissions still apply.`}
+                    </StyledDescription>
                   )}
-                  {!sharing.hasManagedGeneralAccess &&
-                    sharing.sharingMode !== RecordSharingMode.INHERITED && (
-                      <StyledDescription>
-                        {t`People you add get this record even if their role can't access ${objectLabelPlural}. Field permissions still apply.`}
-                      </StyledDescription>
-                    )}
                 </>
               ) : (
                 <StyledDescription>
                   {sharing.sharingMode === RecordSharingMode.ROLE_ONLY
                     ? t`Access to ${objectLabelPlural} is set by roles, not record by record.`
-                    : sharing.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT
-                      ? t`Only the creator of this record, people with full access to it and admins can change who has access.`
-                      : t`Only the creator of this record and people with full access to it can change who has access.`}
+                    : t`Only the creator of this record, people with full access to it and admins can change who has access.`}
                 </StyledDescription>
               ))
             )}

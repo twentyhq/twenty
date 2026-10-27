@@ -1,14 +1,9 @@
 /* @license Enterprise */
 
 import { type ObjectPermissionAction } from 'twenty-shared/application';
-import {
-  FeatureFlagKey,
-  MetadataReadability,
-  ObjectSharingReach,
-} from 'twenty-shared/types';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
-import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
 
@@ -29,55 +24,24 @@ export type ObjectSharing = {
   operationTypesGrantedBeyondRole: OperationType[];
 };
 
-const resolveSharingMode = ({
-  flatObjectMetadata,
-  isRecordSharingEnabled,
-}: {
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'readability' | 'isSystem'>;
-  isRecordSharingEnabled: boolean;
-}): RecordSharingMode => {
-  switch (flatObjectMetadata.readability) {
-    case MetadataReadability.PRIVATE:
-      return RecordSharingMode.PRIVATE;
-    case MetadataReadability.INHERITED:
-      return RecordSharingMode.INHERITED;
-    default:
-      return isRecordSharingEnabled &&
-        isRecordShareExceptionObject(flatObjectMetadata)
-        ? RecordSharingMode.OPEN_BY_DEFAULT
-        : RecordSharingMode.ROLE_ONLY;
-  }
-};
-
 export const resolveObjectSharing = ({
   flatObjectMetadata,
   featureFlagsMap,
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
-    | 'readability'
-    | 'isSystem'
-    | 'sharingReach'
-    | 'disabledObjectPermissionActions'
+    'isSystem' | 'disabledObjectPermissionActions'
   >;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 }): ObjectSharing => {
   const isRecordSharingEnabled =
     featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
-  const sharingMode = resolveSharingMode({
-    flatObjectMetadata,
-    isRecordSharingEnabled,
-  });
-  const canShareBeyondRole =
-    isRecordSharingEnabled &&
-    sharingMode !== RecordSharingMode.ROLE_ONLY &&
-    !flatObjectMetadata.isSystem &&
-    flatObjectMetadata.sharingReach === ObjectSharingReach.WORKSPACE;
 
-  if (!canShareBeyondRole) {
+  // System objects stay out since nobody shares them from the product
+  if (!isRecordSharingEnabled || flatObjectMetadata.isSystem) {
     return {
-      sharingMode,
-      canShareBeyondRole,
+      sharingMode: RecordSharingMode.ROLE_ONLY,
+      canShareBeyondRole: false,
       operationTypesGrantedBeyondRole: [],
     };
   }
@@ -90,5 +54,9 @@ export const resolveObjectSharing = ({
         ),
     ).map(({ operationType }) => operationType);
 
-  return { sharingMode, canShareBeyondRole, operationTypesGrantedBeyondRole };
+  return {
+    sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+    canShareBeyondRole: true,
+    operationTypesGrantedBeyondRole,
+  };
 };

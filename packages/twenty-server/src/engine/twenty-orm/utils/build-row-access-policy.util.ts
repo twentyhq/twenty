@@ -1,4 +1,3 @@
-import { isMetadataWritePermitted } from 'src/engine/twenty-orm/utils/is-metadata-write-permitted.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildNamedRecordGrantExpression } from 'src/engine/core-modules/record-share/utils/build-named-record-grant-expression.util';
@@ -36,17 +35,6 @@ export const buildRowAccessPolicy = ({
     return { kind: 'denied' };
   }
 
-  // Inherited writes also need the parent's writability, or a child could become writable through a SYSTEM parent
-  if (
-    target.operationType !== 'select' &&
-    !isMetadataWritePermitted({
-      writability: target.flatObjectMetadata.writability,
-      isSystemContext: false,
-    })
-  ) {
-    return { kind: 'denied' };
-  }
-
   const namedRecordGrant = resolveObjectSharing({
     flatObjectMetadata: target.flatObjectMetadata,
     featureFlagsMap: environment.featureFlagsMap,
@@ -67,16 +55,7 @@ export const buildRowAccessPolicy = ({
       : { kind: 'denied' };
   }
 
-  const recordShareGate = buildRecordShareGate({
-    context,
-    target,
-    buildParentPolicy: (parentTarget) =>
-      buildRowAccessPolicy({ ...context, ...parentTarget }),
-  });
-
-  if (recordShareGate.kind === 'denied') {
-    return { kind: 'denied' };
-  }
+  const recordShareGate = buildRecordShareGate(context, target);
 
   const roleFilter = buildRoleFilterExpression(context, target);
   const operands = [

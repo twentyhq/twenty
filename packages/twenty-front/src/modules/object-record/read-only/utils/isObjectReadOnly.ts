@@ -7,7 +7,7 @@ type IsObjectReadOnlyParams = {
   objectPermissions: Pick<ObjectPermissions, 'canUpdateObjectRecords'>;
   objectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
-    'isUIEditable' | 'isRemote' | 'writability'
+    'isUIEditable' | 'isRemote'
   >;
 };
 

@@ -28,8 +28,6 @@ const buildEveryoneShare = (
 describe('resolveRecordGeneralAccessLevel', () => {
   it.each([
     [RecordSharingMode.OPEN_BY_DEFAULT, RecordShareAccessLevel.READ_WRITE],
-    [RecordSharingMode.PRIVATE, RecordShareAccessLevel.NONE],
-    [RecordSharingMode.INHERITED, RecordShareAccessLevel.NONE],
     [RecordSharingMode.ROLE_ONLY, null],
   ])(
     'should fall back to the default of a %s object',
@@ -49,19 +47,10 @@ describe('resolveRecordGeneralAccessLevel', () => {
     ).toBe(RecordShareAccessLevel.NONE);
   });
 
-  it('should read a manual opening of a private record', () => {
-    expect(
-      resolveRecordGeneralAccessLevel({
-        sharingMode: RecordSharingMode.PRIVATE,
-        recordShares: [buildEveryoneShare(RecordShareAccessLevel.READ)],
-      }),
-    ).toBe(RecordShareAccessLevel.READ);
-  });
-
   it('should ignore everyone grants managed by a rule', () => {
     expect(
       resolveRecordGeneralAccessLevel({
-        sharingMode: RecordSharingMode.PRIVATE,
+        sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
         recordShares: [
           buildEveryoneShare(
             RecordShareAccessLevel.FULL,
@@ -69,7 +58,7 @@ describe('resolveRecordGeneralAccessLevel', () => {
           ),
         ],
       }),
-    ).toBe(RecordShareAccessLevel.NONE);
+    ).toBe(RecordShareAccessLevel.READ_WRITE);
   });
 
   it('should report no general access when records are not shared', () => {

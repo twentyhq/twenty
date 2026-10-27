@@ -11,7 +11,6 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SidePanelShareRecordContent } from '@/side-panel/pages/share-record/components/SidePanelShareRecordContent';
 import {
-  ObjectSharingReach,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -55,7 +54,7 @@ const MEMBERS = [
 ];
 
 const SHARING = {
-  sharingMode: RecordSharingMode.PRIVATE,
+  sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
   canManageSharing: true,
   generalAccessLevel: RecordShareAccessLevel.NONE,
   defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
@@ -139,7 +138,6 @@ const meta: Meta<typeof SidePanelShareRecordContent> = {
   args: {
     recordUrl: 'https://example.com/chat/shared-chat',
     objectLabelPlural: 'Chats',
-    sharingReach: ObjectSharingReach.WORKSPACE,
     sharingState: {
       sharing: SHARING,
       loading: false,
@@ -354,7 +352,6 @@ export const ChangeAccessWithoutMovingRecipients: Story = {
       <SidePanelShareRecordContent
         recordUrl={args.recordUrl}
         objectLabelPlural={args.objectLabelPlural}
-        sharingReach={args.sharingReach}
         sharingState={{
           ...args.sharingState,
           sharing,
@@ -522,7 +519,6 @@ export const DefaultGeneralAccess: Story = {
     sharingState: {
       sharing: {
         ...SHARING,
-        sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
         generalAccessLevel: RecordShareAccessLevel.READ_WRITE,
         defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
       },
@@ -699,7 +695,7 @@ export const ReadOnly: Story = {
     const page = within(canvasElement.ownerDocument.body);
     await expect(
       await page.findByText(
-        'Only the creator of this record and people with full access to it can change who has access.',
+        'Only the creator of this record, people with full access to it and admins can change who has access.',
       ),
     ).toBeVisible();
     await expect(page.queryByText('Everyone')).not.toBeInTheDocument();

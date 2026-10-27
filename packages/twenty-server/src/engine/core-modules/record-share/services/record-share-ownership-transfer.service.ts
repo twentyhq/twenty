@@ -4,7 +4,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -51,8 +50,6 @@ export class RecordShareOwnershipTransferService {
     });
   }
 
-  // Only records that access to all records already reaches change hands:
-  // private objects such as chats and workflow runs stay with their creator
   private async findTransferableObjectMetadataIds(
     workspaceId: string,
   ): Promise<string[]> {
@@ -63,7 +60,7 @@ export class RecordShareOwnershipTransferService {
 
     return Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
       .filter(isDefined)
-      .filter(isRecordShareExceptionObject)
+      .filter((flatObjectMetadata) => !flatObjectMetadata.isSystem)
       .map((flatObjectMetadata) => flatObjectMetadata.id);
   }
 

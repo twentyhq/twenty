@@ -15,7 +15,7 @@ import {
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const RESTRICTED_SHARING: RecordSharingFieldsFragment = {
-  sharingMode: RecordSharingMode.PRIVATE,
+  sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
   canManageSharing: true,
   permissions: {
     canRead: true,

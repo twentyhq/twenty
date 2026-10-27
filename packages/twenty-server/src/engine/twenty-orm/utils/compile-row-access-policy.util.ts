@@ -1,6 +1,5 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { buildInheritedReadabilityCondition } from 'src/engine/core-modules/record-share/utils/build-inherited-readability-condition.util';
 import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
 import { buildRecordShareExceptionCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-exception-condition.util';
 import {
@@ -56,42 +55,6 @@ export const compileRowAccessExpression = ({
       return buildRecordShareExceptionCondition({
         ...expression,
         recordShareTableExpression: environment.recordShareTableExpression,
-      });
-    case 'inheritedReadability':
-      return buildInheritedReadabilityCondition({
-        tableAlias: expression.tableAlias,
-        objectMetadataId: expression.objectMetadataId,
-        principalIds: expression.principalIds,
-        accessLevels: expression.accessLevels,
-        isOpenWhenDetached: expression.isOpenWhenDetached,
-        recordShareTableExpression: environment.recordShareTableExpression,
-        parents: expression.parents.map((parent) =>
-          parent.kind === 'column'
-            ? {
-                kind: 'column',
-                joinColumnName: parent.joinColumnName,
-                parentTableAlias: parent.parentTableAlias,
-                parentTableExpression: environment.resolveTableExpression(
-                  parent.parentFlatObjectMetadata.id,
-                ),
-                policy: compileRowAccessPolicy({
-                  policy: parent.policy,
-                  environment,
-                }),
-              }
-            : {
-                kind: 'children',
-                childTableAlias: parent.childTableAlias,
-                childJoinColumnName: parent.childJoinColumnName,
-                childTableExpression: environment.resolveTableExpression(
-                  parent.childFlatObjectMetadata.id,
-                ),
-                policy: compileRowAccessPolicy({
-                  policy: parent.policy,
-                  environment,
-                }),
-              },
-        ),
       });
     default:
       return assertUnreachable(expression);

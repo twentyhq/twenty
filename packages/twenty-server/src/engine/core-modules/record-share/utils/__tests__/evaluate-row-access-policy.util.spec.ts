@@ -83,8 +83,8 @@ const recordShares: RecordShareGrant[] = [
 ];
 
 const buildContext = (
-  overrides: Partial<RowAccessEvaluationContext<RowAccessRecord>> = {},
-): RowAccessEvaluationContext<RowAccessRecord> => ({
+  overrides: Partial<RowAccessEvaluationContext> = {},
+): RowAccessEvaluationContext => ({
   flatFieldMetadataMaps,
   shouldIgnoreSoftDeleteDefaultFilter: false,
   fetchRecordShares: jest.fn(async ({ recordIds }) =>

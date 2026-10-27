@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { assertUnreachable, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
@@ -17,7 +17,7 @@ export const resolveShareWithToWrite = ({
   sharingMode: RecordSharingMode;
   shareWith?: ShareWithInput[] | null;
 }): ShareWithInput[] | null => {
-  if (sharingMode === RecordSharingMode.ROLE_ONLY) {
+  if (sharingMode !== RecordSharingMode.OPEN_BY_DEFAULT) {
     return null;
   }
 
@@ -29,13 +29,5 @@ export const resolveShareWithToWrite = ({
       shareWithEntry.accessLevel !== defaultGeneralAccessLevel,
   );
 
-  switch (sharingMode) {
-    case RecordSharingMode.OPEN_BY_DEFAULT:
-      return isNonEmptyArray(shareWithToWrite) ? shareWithToWrite : null;
-    case RecordSharingMode.PRIVATE:
-    case RecordSharingMode.INHERITED:
-      return shareWithToWrite;
-    default:
-      return assertUnreachable(sharingMode);
-  }
+  return isNonEmptyArray(shareWithToWrite) ? shareWithToWrite : null;
 };
