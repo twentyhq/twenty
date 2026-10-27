@@ -11,7 +11,7 @@ export const GATED_MERGE_AVAILABILITY_EXPRESSION =
   'not isSelectAll and numberOfSelectedRecords >= 2 and isDefined(objectMetadataItem.duplicateCriteria) and objectPermissions.canUpdateObjectRecords and objectPermissions.canDestroyObjectRecords and numberOfSelectedRecords <= 9';
 
 export const UNGATED_MERGE_AVAILABILITY_EXPRESSION =
-  'not isSelectAll and numberOfSelectedRecords >= 2 and objectPermissions.canUpdateObjectRecords and objectPermissions.canDestroyObjectRecords and numberOfSelectedRecords <= 9';
+  'not isSelectAll and numberOfSelectedRecords >= 2 and not objectMetadataItem.isSystem and objectMetadataItem.nameSingular != "workflow" and objectMetadataItem.nameSingular != "dashboard" and objectPermissions.canUpdateObjectRecords and objectPermissions.canDestroyObjectRecords and numberOfSelectedRecords <= 9';
 
 export const buildUngateMergeCommandMenuItemUpdate = ({
   flatCommandMenuItemMaps,
