@@ -51,7 +51,10 @@ const ChannelNavigationStory = ({
   summary,
   isExpandable,
   rightOptions,
-}: ComponentProps<typeof NavigationDrawerAiChatChannelNavigation>) => {
+}: Pick<
+  ComponentProps<typeof NavigationDrawerAiChatChannelNavigation>,
+  'channel' | 'summary' | 'isExpandable' | 'rightOptions'
+>) => {
   const channelView = useAtomStateValue(agentChatChannelViewState);
 
   return (
