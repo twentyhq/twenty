@@ -1,12 +1,11 @@
 import { type ObjectPermissions } from 'twenty-shared/types';
 
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-disabled-actions.util';
+import { type ApplicationDefaultRoleMaps } from 'src/engine/twenty-orm/types/application-default-role-maps.type';
 
 const INVOICE_ID = 'invoice-id';
 const OWNING_APPLICATION_ID = 'owning-application-id';
@@ -42,14 +41,13 @@ const buildFlatObjectMetadataMaps = (
 
 const OWNING_APPLICATION_ROLE_ID = 'owning-application-role-id';
 
-const FLAT_APPLICATION_MAPS: FlatApplicationCacheMaps = {
+const FLAT_APPLICATION_MAPS: ApplicationDefaultRoleMaps = {
   byId: {
     [OWNING_APPLICATION_ID]: {
-      id: OWNING_APPLICATION_ID,
       defaultRoleId: OWNING_APPLICATION_ROLE_ID,
-    } as FlatApplication,
+      deletedAt: null,
+    },
   },
-  idByUniversalIdentifier: {},
 };
 
 const restrict = (applicationRoleId: string | undefined) =>

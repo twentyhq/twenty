@@ -3,11 +3,11 @@ import {
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
 
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
+import { type ApplicationDefaultRoleMaps } from 'src/engine/twenty-orm/types/application-default-role-maps.type';
 
 export const getObjectsPermissionsFromRolePermissionConfig = ({
   rolesPermissions,
@@ -18,7 +18,7 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
   rolesPermissions: ObjectsPermissionsByRoleId;
   rolePermissionConfig: RolePermissionConfig;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatApplicationMaps: FlatApplicationCacheMaps;
+  flatApplicationMaps: ApplicationDefaultRoleMaps;
 }): ObjectsPermissions => {
   if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
     return {};

@@ -4,11 +4,11 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
+import { type ApplicationDefaultRoleMaps } from 'src/engine/twenty-orm/types/application-default-role-maps.type';
 
 export const resolveObjectRecordsPermissions = ({
   rolePermissionConfig,
@@ -19,7 +19,7 @@ export const resolveObjectRecordsPermissions = ({
   rolePermissionConfig?: RolePermissionConfig;
   objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatApplicationMaps: FlatApplicationCacheMaps;
+  flatApplicationMaps: ApplicationDefaultRoleMaps;
 }): {
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
