@@ -99,7 +99,6 @@ export class ApplicationMessageIngestionService {
     const savedMessages = await this.cacheLockService.withLock(
       async () =>
         this.saveMessagesService.saveMessagesAndEnqueueContactCreation({
-          // resolved under the lock so a concurrent folder sync cannot remove a folder this batch links to
           messagesToSave: await this.withMessageFolderIdsOrThrow({
             workspaceId,
             messageChannelId,
@@ -222,7 +221,6 @@ export class ApplicationMessageIngestionService {
       ]),
     );
 
-    // email import drops unknown folders silently; an app sending one has a bug worth surfacing
     const unknownFolderExternalIds = folderExternalIds.filter(
       (folderExternalId) => !messageFolderIdByExternalId.has(folderExternalId),
     );

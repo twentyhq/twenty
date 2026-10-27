@@ -31,7 +31,6 @@ export class AppMessageFolderInput {
   @MaxLength(255)
   name: string;
 
-  // omitted keeps the stored value, so a provider refresh does not reset what a member selected
   @Field({ nullable: true })
   @IsOptional()
   @IsBoolean()

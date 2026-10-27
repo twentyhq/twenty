@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -81,7 +81,6 @@ export class ApplicationMessageFoldersService {
 
     const { workspaceId, messageChannelId } = scope;
 
-    // shares the ingestion lock so a batch never links to a folder being removed
     await this.cacheLockService.withLock(
       () => this.applySync({ workspaceId, messageChannelId, folders }),
       buildAppIngestionLockKey({ workspaceId, messageChannelId }),
@@ -145,7 +144,6 @@ export class ApplicationMessageFoldersService {
     }
   }
 
-  // messages stay: only the link to the folder goes, so removing an inbox never deletes history
   private async deleteFolderMessageLinks({
     workspaceId,
     messageFolderIds,
@@ -187,7 +185,7 @@ export class ApplicationMessageFoldersService {
     workspaceId: string;
     messageChannelIds: string[];
   }): Promise<MessageFolderDTO[]> {
-    if (messageChannelIds.length === 0) {
+    if (!isNonEmptyArray(messageChannelIds)) {
       return [];
     }
 

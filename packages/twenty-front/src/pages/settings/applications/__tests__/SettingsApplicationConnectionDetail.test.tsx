@@ -34,6 +34,13 @@ jest.mock(
   }),
 );
 
+jest.mock(
+  '~/pages/settings/applications/components/SettingsApplicationConnectionMessageFolders',
+  () => ({
+    SettingsApplicationConnectionMessageFolders: () => null,
+  }),
+);
+
 jest.mock('@/settings/applications/hooks/useTriggerAppOAuth', () => ({
   useTriggerAppOAuth: jest.fn(() => ({
     triggerAppOAuth: mockTriggerAppOAuth,

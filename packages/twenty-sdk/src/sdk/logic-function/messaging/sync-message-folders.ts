@@ -12,12 +12,9 @@ const SYNC_APP_MESSAGE_FOLDERS_MUTATION = `
 
 export type SyncMessageFoldersInput = {
   messageChannelId: string;
-  // The channel's full folder list: unknown externalIds are created, known ones renamed, missing ones removed
-  // along with their message links (the messages themselves stay)
   folders: {
     externalId: string;
     name: string;
-    // Omitted keeps the stored value (true for a new folder), so a provider refresh keeps members' choices
     isSynced?: boolean;
   }[];
 };

@@ -286,7 +286,7 @@ Some providers split one account into sub-streams: inboxes in a shared helpdesk,
 
 Folders are optional. A channel without folders works exactly as described above.
 
-### Declaring folders
+### Declaring folders on connect
 
 `syncMessageFolders` takes the channel's **full** folder list and makes the stored folders match it, keyed on `externalId`:
 
@@ -294,50 +294,123 @@ Folders are optional. A channel without folders works exactly as described above
 - a known one is renamed if its `name` changed
 - a stored folder missing from the list is removed, along with its links to messages. The messages themselves stay.
 
-```ts
-import { syncMessageFolders } from 'twenty-sdk/logic-function';
+The natural place to call it is the connection provider's `onConnect` hook, right after creating the channel. Here is a complete setup for a helpdesk app, where each inbox becomes a folder:
 
-const inboxes = await fetchFrontInboxes(connection.accessToken);
+```ts src/connection-providers/helpdesk-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
 
-const folders = await syncMessageFolders({
-  messageChannelId: channel.id,
-  folders: inboxes.map((inbox) => ({
-    externalId: inbox.id,
-    name: inbox.name,
-  })),
+import {
+  HELPDESK_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+export default defineConnectionProvider({
+  universalIdentifier: HELPDESK_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  name: 'helpdesk',
+  displayName: 'Helpdesk',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  onConnectLogicFunction: {
+    universalIdentifier: HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+  },
 });
 ```
 
-Call it from `onConnect` after creating the channel, and again whenever the provider's list may have changed (on a cron, or on the provider's "inbox created" webhook). Sending the full list each time is safe: unchanged folders are left alone.
+```ts src/logic-functions/helpdesk-on-connect.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import {
+  createMessageChannel,
+  enqueueJobs,
+  getConnection,
+  listMessageChannels,
+  syncMessageFolders,
+} from 'twenty-sdk/logic-function';
+import { MessageChannelVisibility } from 'twenty-shared/types';
+
+import {
+  HELPDESK_BACKFILL_FOLDER_UNIVERSAL_IDENTIFIER,
+  HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+export default defineLogicFunction({
+  universalIdentifier: HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+  name: 'helpdesk-on-connect',
+  timeoutSeconds: 60,
+  handler: async ({ connectedAccountId }: { connectedAccountId: string }) => {
+    const connection = await getConnection(connectedAccountId);
+    const inboxes = await fetchHelpdeskInboxes(connection.accessToken);
+
+    const [existingChannel] = await listMessageChannels({ connectedAccountId });
+
+    const channel =
+      existingChannel ??
+      (await createMessageChannel({
+        connectedAccountId,
+        handle: connection.handle,
+        visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      }));
+
+    const folders = await syncMessageFolders({
+      messageChannelId: channel.id,
+      folders: inboxes.map((inbox) => ({
+        externalId: inbox.id,
+        name: inbox.name,
+      })),
+    });
+
+    const syncedFolders = folders.filter((folder) => folder.isSynced);
+
+    if (syncedFolders.length > 0) {
+      await enqueueJobs({
+        logicFunctionUniversalIdentifier:
+          HELPDESK_BACKFILL_FOLDER_UNIVERSAL_IDENTIFIER,
+        jobs: syncedFolders.map((folder) => ({
+          payload: {
+            messageChannelId: channel.id,
+            folderExternalId: folder.externalId,
+          },
+        })),
+      });
+    }
+  },
+});
+```
+
+A few things this example relies on:
+
+- **One channel per connection.** The hook reuses the connection's channel when it already has one, since `onConnect` is enqueued and may run again. Settings shows the folders of that single channel, so don't split one connection across several channels.
+- **Repeatable sync.** Sending the full list again is safe: unchanged folders are left alone. Call `syncMessageFolders` again whenever the provider's list may have changed, on a cron or on the provider's "inbox created" webhook.
+- **Backfill per folder.** Each synced folder gets its own [background job](/developers/extend/apps/logic/background-jobs), which pages through the provider's history and calls `ingestMessages`.
 
 ### Choosing which folders to import
 
-Each folder has an `isSynced` flag. A new folder starts synced unless you pass `isSynced: false`, and omitting `isSynced` on a later sync keeps the stored value, so a provider refresh never resets what a member picked. To let members choose, render the list in your app's settings and send the flag they set:
+Each folder has an `isSynced` flag. Members turn folders on and off under **Folders** on the connection's page (**Settings → Applications →** your app **→** the connection), which appears once the channel has folders.
 
-```ts
-import { listMessageFolders, syncMessageFolders } from 'twenty-sdk/logic-function';
-
-const folders = await listMessageFolders({ messageChannelId: channel.id });
-
-await syncMessageFolders({
-  messageChannelId: channel.id,
-  folders: folders.map((folder) => ({
-    externalId: folder.externalId,
-    name: folder.name,
-    isSynced: selectedInboxIds.includes(folder.externalId),
-  })),
-});
-```
+A new folder starts synced unless you pass `isSynced: false`. Omitting `isSynced` on a later sync keeps the stored value, so a provider refresh never resets what a member picked. Your app can still set the flag itself by passing it to `syncMessageFolders`.
 
 <Note>
 `isSynced` is **advisory** on app channels: Twenty stores it but does not filter ingestion on it, and nothing backfills a folder when it is turned on. Your app reads it with `listMessageFolders` (filtered by `messageChannelId`, or across all its channels when called without a filter), skips messages from unsynced folders, and backfills a folder when it becomes synced.
 </Note>
+
+```ts
+import { listMessageFolders } from 'twenty-sdk/logic-function';
+
+const folders = await listMessageFolders({ messageChannelId: channel.id });
+
+const syncedInboxIds = new Set(
+  folders.filter((folder) => folder.isSynced).map((folder) => folder.externalId),
+);
+```
 
 ### Tagging messages
 
 Pass the folders a message belongs to as `folderExternalIds` when ingesting:
 
 ```ts
+import { ingestMessages } from 'twenty-sdk/logic-function';
+
 await ingestMessages({
   messageChannelId: channel.id,
   messages: [

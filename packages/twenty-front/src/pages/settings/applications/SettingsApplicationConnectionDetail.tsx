@@ -29,6 +29,7 @@ import {
   FindOneApplicationDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { SettingsApplicationConnectionMessageFolders } from '~/pages/settings/applications/components/SettingsApplicationConnectionMessageFolders';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import {
   type ApplicationConnectedAccount,
@@ -353,6 +354,9 @@ export const SettingsApplicationConnectionDetail = () => {
                 </TableSection>
               </Table>
             </Section.Root>
+            <SettingsApplicationConnectionMessageFolders
+              connectedAccountId={connection.id}
+            />
             <ConfirmationDialog
               dialogId={deleteModalId}
               title={t`Disconnect connection?`}

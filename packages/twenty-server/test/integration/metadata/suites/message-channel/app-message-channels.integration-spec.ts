@@ -113,6 +113,15 @@ const SYNC_FOLDERS_MUTATION = gql`
   }
 `;
 
+const UPDATE_MESSAGE_FOLDERS_MUTATION = gql`
+  mutation UpdateMessageFolders($input: UpdateMessageFoldersInput!) {
+    updateMessageFolders(input: $input) {
+      id
+      isSynced
+    }
+  }
+`;
+
 const buildManifestWithProvider = ({
   appId,
   roleId,
@@ -223,6 +232,7 @@ describe('app message channels API (e2e)', () => {
   let ownConnectionId: string;
   let otherAppConnectionId: string;
   let foreignMemberConnectionId: string;
+  let foreignWorkspaceConnectionId: string;
 
   const insertAppConnection = async ({
     id,
@@ -331,10 +341,13 @@ describe('app message channels API (e2e)', () => {
       token,
     );
 
-  const findFolder = (
-    folders: { id: string; externalId: string }[],
-    externalId: string,
-  ) => {
+  const findFolder = ({
+    folders,
+    externalId,
+  }: {
+    folders: { id: string; externalId: string }[];
+    externalId: string;
+  }) => {
     const folder = folders.find(
       (candidate) => candidate.externalId === externalId,
     );
@@ -443,6 +456,7 @@ describe('app message channels API (e2e)', () => {
     ownConnectionId = uuidv4();
     otherAppConnectionId = uuidv4();
     foreignMemberConnectionId = uuidv4();
+    foreignWorkspaceConnectionId = uuidv4();
 
     await insertAppConnection({
       id: ownConnectionId,
@@ -465,6 +479,14 @@ describe('app message channels API (e2e)', () => {
       applicationId: owningApplicationDbId,
       connectionProviderId: owningProviderDbId,
       scope: 'USER',
+      userWorkspaceId: uuidv4(),
+    });
+
+    await insertAppConnection({
+      id: foreignWorkspaceConnectionId,
+      applicationId: owningApplicationDbId,
+      connectionProviderId: owningProviderDbId,
+      scope: 'WORKSPACE',
       userWorkspaceId: uuidv4(),
     });
   }, 180000);
@@ -524,7 +546,14 @@ describe('app message channels API (e2e)', () => {
 
     await globalThis.testDataSource.query(
       `DELETE FROM core."messageChannel" WHERE "connectedAccountId" = ANY($1)`,
-      [[ownConnectionId, otherAppConnectionId, foreignMemberConnectionId]],
+      [
+        [
+          ownConnectionId,
+          otherAppConnectionId,
+          foreignMemberConnectionId,
+          foreignWorkspaceConnectionId,
+        ],
+      ],
     );
   });
 
@@ -951,7 +980,6 @@ describe('app message channels API (e2e)', () => {
       });
 
       expect(response.body.errors).toBeUndefined();
-      // Ordered by name, so a settings page can render the list as is.
       expect(response.body.data.syncAppMessageFolders).toEqual([
         expect.objectContaining({
           externalId: 'inb_sales',
@@ -978,10 +1006,10 @@ describe('app message channels API (e2e)', () => {
         ],
       });
 
-      const supportFolder = findFolder(
-        first.body.data.syncAppMessageFolders,
-        'inb_support',
-      );
+      const supportFolder = findFolder({
+        folders: first.body.data.syncAppMessageFolders,
+        externalId: 'inb_support',
+      });
 
       const second = await syncFolders({
         messageChannelId: channel.id,
@@ -991,7 +1019,6 @@ describe('app message channels API (e2e)', () => {
       expect(second.body.errors).toBeUndefined();
       expect(second.body.data.syncAppMessageFolders).toEqual([
         expect.objectContaining({
-          // Same row, so ids the app or Twenty already hold stay valid.
           id: supportFolder.id,
           name: 'Customer support',
           isSynced: false,
@@ -1114,14 +1141,14 @@ describe('app message channels API (e2e)', () => {
         ],
       });
 
-      const supportFolder = findFolder(
-        syncResponse.body.data.syncAppMessageFolders,
-        'inb_support',
-      );
-      const salesFolder = findFolder(
-        syncResponse.body.data.syncAppMessageFolders,
-        'inb_sales',
-      );
+      const supportFolder = findFolder({
+        folders: syncResponse.body.data.syncAppMessageFolders,
+        externalId: 'inb_support',
+      });
+      const salesFolder = findFolder({
+        folders: syncResponse.body.data.syncAppMessageFolders,
+        externalId: 'inb_sales',
+      });
 
       const message = buildMessage({
         externalId: 'in-support',
@@ -1216,6 +1243,77 @@ describe('app message channels API (e2e)', () => {
       expect(await findAssociation(messageId)).toMatchObject({
         messageExternalId: 'outlives-its-folder',
       });
+    });
+  });
+
+  describe('updateMessageFolders on an app channel', () => {
+    const createFolderOnForeignWorkspaceConnection = async () => {
+      const channel = await createChannelOrThrow({
+        connectedAccountId: foreignWorkspaceConnectionId,
+      });
+
+      const response = await syncFolders({
+        messageChannelId: channel.id,
+        folders: [{ externalId: 'inb_support', name: 'Support' }],
+      });
+
+      return findFolder({
+        folders: response.body.data.syncAppMessageFolders,
+        externalId: 'inb_support',
+      });
+    };
+
+    const updateFolders = ({
+      messageFolderIds,
+      isSynced,
+      token,
+    }: {
+      messageFolderIds: string[];
+      isSynced: boolean;
+      token: string;
+    }) =>
+      makeMetadataApiRequest(
+        {
+          query: UPDATE_MESSAGE_FOLDERS_MUTATION,
+          variables: {
+            input: { ids: messageFolderIds, update: { isSynced } },
+          },
+        },
+        token,
+      );
+
+    it("lets a workspace admin toggle a folder on a workspace-shared connection they don't own", async () => {
+      const folder = await createFolderOnForeignWorkspaceConnection();
+
+      const response = await updateFolders({
+        messageFolderIds: [folder.id],
+        isSynced: false,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateMessageFolders).toEqual([
+        { id: folder.id, isSynced: false },
+      ]);
+    });
+
+    it('refuses a member without the applications permission', async () => {
+      const folder = await createFolderOnForeignWorkspaceConnection();
+
+      const response = await updateFolders({
+        messageFolderIds: [folder.id],
+        isSynced: false,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+
+      const [storedFolder] = await globalThis.testDataSource.query(
+        `SELECT "isSynced" FROM core."messageFolder" WHERE id = $1`,
+        [folder.id],
+      );
+
+      expect(storedFolder.isSynced).toBe(true);
     });
   });
 });

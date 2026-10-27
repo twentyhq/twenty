@@ -102,7 +102,6 @@ export class AppMessageInput {
   @Type(() => AppMessageParticipantInput)
   participants: AppMessageParticipantInput[];
 
-  // folders already declared through syncAppMessageFolders; links add up across re-ingestions
   @Field(() => [String], { nullable: true })
   @IsOptional()
   @IsArray()
