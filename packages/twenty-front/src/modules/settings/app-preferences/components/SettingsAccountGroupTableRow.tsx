@@ -103,9 +103,11 @@ export const SettingsAccountGroupTableRow = ({
         </TableCell>
       )}
       <TableCell align="right" onClick={(event) => event.stopPropagation()}>
-        {isDefined(builtInAccount) && (
-          <SettingsAppPreferencesRowDropdownMenu account={builtInAccount} />
-        )}
+        <SettingsAppPreferencesRowDropdownMenu
+          group={group}
+          hasAccountSettings={hasSettings}
+          builtInAccountApp={builtInAccountApp}
+        />
       </TableCell>
     </TableRow>
   );
