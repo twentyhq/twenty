@@ -224,8 +224,7 @@ export const SettingsBillingPlanComparisonTable = ({
       <StyledPlanName>{t(BILLING_PLAN_LABELS[planKey])}</StyledPlanName>
       {isLegacy && (
         <Tooltip
-          content={t`Early plan`}
-          description={t`You keep this price as long as you stay on it. It can't be picked again after you switch.`}
+          content={t`Early plan - You keep this price as long as you stay on it. It can't be picked again after you switch.`}
         >
           <Tag color="purple" truncate={false}>{t`Early`}</Tag>
         </Tooltip>
