@@ -74,8 +74,6 @@ export class LambdaLayerManagerService {
       return existingArn;
     }
 
-    // Verified before locking so files that do not match cannot hold the lock
-    // of a layer name other applications share
     const { packageJson, yarnLock } =
       await this.getVerifiedDependencies(context);
 

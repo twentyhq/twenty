@@ -10,8 +10,6 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-// Like the CLI build, the manifest declares the checksums of the dependency
-// files packed next to it, which the server verifies on install
 const declareDependencyChecksums = (
   files: Record<string, string>,
 ): Record<string, string> => {

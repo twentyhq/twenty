@@ -12,7 +12,6 @@ export type DependencyChecksums = {
   yarnLockChecksum: string | null;
 };
 
-// Installs store no yarn.lock, so it is only compared when one is stored
 const isMatchingDependencyChecksums = ({
   declaredChecksums,
   storedFilesChecksums,

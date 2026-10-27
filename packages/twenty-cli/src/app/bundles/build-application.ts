@@ -276,8 +276,6 @@ const copyStaticFiles = async ({
   }
 };
 
-// The server verifies dependency files against its own formula, shared with
-// the CLI, before naming a dependency layer after them
 const computeStaticFileChecksum = ({
   fileFolder,
   sourcePath,
