@@ -205,7 +205,7 @@ export const fromWorkflowTriggerToWorkflowTriggerManifest = ({
   const defaults = computeWorkflowTriggerManifestDefaults(
     manifestWithoutBuilderState,
   );
-  const outputSchema: unknown = trigger.settings.outputSchema;
+  const { outputSchema } = trigger.settings;
   const position = isDefined(trigger.position)
     ? { x: trigger.position.x, y: trigger.position.y }
     : null;
