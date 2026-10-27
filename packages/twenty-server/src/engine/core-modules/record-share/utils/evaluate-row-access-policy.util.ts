@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
-import { assertUnreachable } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
 import { resolveRecordIdsRestrictedForPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-restricted-for-principals.util';
@@ -149,6 +150,37 @@ const evaluateRowAccessExpression = async <TRecord extends RowAccessRecord>({
       const admittedRecordIds = recordIds.filter(
         (id) => !restrictedRecordIds.has(id),
       );
+
+      return new Set(admittedRecordIds);
+    }
+    case 'parentRecordShared': {
+      const parentRecordIdByRecordId = new Map<string, string>();
+
+      for (const record of records) {
+        const parentRecordId = record[expression.joinColumnName];
+
+        if (isNonEmptyString(parentRecordId)) {
+          parentRecordIdByRecordId.set(record.id, parentRecordId);
+        }
+      }
+
+      const sharedParentRecordIds = resolveRecordIdsSharedWithPrincipals({
+        recordShares: await context.fetchRecordShares({
+          objectMetadataId: expression.objectMetadataId,
+          recordIds: [...new Set(parentRecordIdByRecordId.values())],
+        }),
+        principalIds: expression.principalIds,
+        accessLevels: expression.accessLevels,
+      });
+
+      const admittedRecordIds = recordIds.filter((id) => {
+        const parentRecordId = parentRecordIdByRecordId.get(id);
+
+        return (
+          !isDefined(parentRecordId) ||
+          sharedParentRecordIds.has(parentRecordId)
+        );
+      });
 
       return new Set(admittedRecordIds);
     }

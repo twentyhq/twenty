@@ -39,6 +39,11 @@ describe('isRowAccessExpressionReadingRoleFilter', () => {
         operands: [
           recordShared,
           { ...recordShared, kind: 'recordNotRestricted' },
+          {
+            ...recordShared,
+            kind: 'parentRecordShared',
+            joinColumnName: 'threadId',
+          },
         ],
       }),
     ).toBe(false);
