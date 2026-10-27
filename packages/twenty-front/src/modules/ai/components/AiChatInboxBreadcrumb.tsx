@@ -6,28 +6,21 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 
-const StyledBreadcrumbContainer = styled.div`
-  min-width: 0;
-`;
-
-const StyledBreadcrumb = styled.div`
+const StyledBreadcrumb = styled(UndecoratedLink)`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
   white-space: nowrap;
 `;
 
 export const AiChatInboxBreadcrumb = () => {
   return (
-    <StyledBreadcrumbContainer>
-      <UndecoratedLink to={getAppPath(AppPath.AiChatInbox, { threadId: null })}>
-        <StyledBreadcrumb>
-          <AiChatInboxViewHeading />
-          <span aria-hidden>/</span>
-        </StyledBreadcrumb>
-      </UndecoratedLink>
-    </StyledBreadcrumbContainer>
+    <StyledBreadcrumb to={getAppPath(AppPath.AiChatInbox, { threadId: null })}>
+      <AiChatInboxViewHeading />
+      <span aria-hidden>/</span>
+    </StyledBreadcrumb>
   );
 };
