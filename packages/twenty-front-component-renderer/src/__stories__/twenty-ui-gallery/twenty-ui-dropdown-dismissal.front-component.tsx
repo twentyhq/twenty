@@ -10,8 +10,10 @@ const DropdownDismissalExample = () => {
   const [selectionCount, setSelectionCount] = useState(0);
   const [outsideActionCount, setOutsideActionCount] = useState(0);
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
-  const [useCustomContainer, setUseCustomContainer] = useState(false);
-  const [preventOutsideDismissal, setPreventOutsideDismissal] = useState(false);
+  const [shouldUseCustomContainer, setShouldUseCustomContainer] =
+    useState(false);
+  const [shouldPreventOutsideDismissal, setShouldPreventOutsideDismissal] =
+    useState(false);
   const [outsidePressCount, setOutsidePressCount] = useState(0);
 
   return (
@@ -24,7 +26,7 @@ const DropdownDismissalExample = () => {
         onInteractOutside={(event) => {
           setOutsidePressCount((count) => count + 1);
 
-          if (preventOutsideDismissal) {
+          if (shouldPreventOutsideDismissal) {
             event.preventDefault();
           }
         }}
@@ -32,7 +34,7 @@ const DropdownDismissalExample = () => {
         <Dropdown.Trigger render={<Button>Open actions</Button>} />
         <Dropdown.Content
           aria-label="Record actions"
-          container={useCustomContainer ? container : undefined}
+          container={shouldUseCustomContainer ? container : undefined}
         >
           <Dropdown.ActionItem
             onClick={() => setSelectionCount((count) => count + 1)}
@@ -45,10 +47,10 @@ const DropdownDismissalExample = () => {
         </Dropdown.Content>
       </Dropdown.Root>
       <div ref={setContainer} />
-      <Button onClick={() => setUseCustomContainer(true)}>
+      <Button onClick={() => setShouldUseCustomContainer(true)}>
         Render inside widget
       </Button>
-      <Button onClick={() => setPreventOutsideDismissal(true)}>
+      <Button onClick={() => setShouldPreventOutsideDismissal(true)}>
         Prevent outside dismissal
       </Button>
       <Text role="status" aria-label="Selections">

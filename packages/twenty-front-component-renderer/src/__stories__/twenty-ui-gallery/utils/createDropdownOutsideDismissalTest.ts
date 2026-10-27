@@ -8,10 +8,10 @@ import { createDropdownTestContext } from '@/__stories__/twenty-ui-gallery/utils
 export const createDropdownOutsideDismissalTest =
   ({
     target,
-    useCustomContainer = false,
+    shouldUseCustomContainer = false,
   }: {
     target: 'worker' | 'host';
-    useCustomContainer?: boolean;
+    shouldUseCustomContainer?: boolean;
   }): TwentyUiGalleryPlayFunction =>
   async ({ canvasElement }) => {
     const { canvas, trigger, openMenu, expectMenuClosed } =
@@ -21,7 +21,7 @@ export const createDropdownOutsideDismissalTest =
     const actionStatusName =
       target === 'worker' ? 'Outside actions' : 'Host actions';
 
-    if (useCustomContainer) {
+    if (shouldUseCustomContainer) {
       await userEvent.click(
         canvas.getByRole('button', { name: 'Render inside widget' }),
       );

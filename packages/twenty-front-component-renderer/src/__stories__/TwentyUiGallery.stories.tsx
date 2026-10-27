@@ -500,7 +500,7 @@ export const DropdownCustomContainerReact: Story = createGalleryStory({
   decorators: [PortalBoundsDecorator],
   play: createDropdownOutsideDismissalTest({
     target: 'host',
-    useCustomContainer: true,
+    shouldUseCustomContainer: true,
   }),
 });
 
@@ -510,7 +510,7 @@ export const DropdownCustomContainerPreact: Story = createGalleryStory({
   decorators: [PortalBoundsDecorator],
   play: createDropdownOutsideDismissalTest({
     target: 'host',
-    useCustomContainer: true,
+    shouldUseCustomContainer: true,
   }),
 });
 
