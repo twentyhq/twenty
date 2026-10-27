@@ -14,6 +14,7 @@ import { getPositionWordLabel } from '@/object-record/record-merge/utils/getPosi
 const MERGE_REVIEW_ICON_SIZE = 16;
 const MERGE_REVIEW_HEADER_HEIGHT = 40;
 const TAB_FOCUS_RING_OUTSET = 3;
+const SOURCE_TAB_VALUES = ['first', 'second'] as const;
 
 const StyledReview = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -159,7 +160,7 @@ export const AiChatApprovalMergeReviewContent = ({
               return (
                 <Tabs.Tab
                   key={source.id}
-                  value={index === 0 ? 'first' : 'second'}
+                  value={SOURCE_TAB_VALUES[index]}
                   size="compact"
                   startIcon={<Icon size={MERGE_REVIEW_ICON_SIZE} />}
                 >
@@ -183,7 +184,7 @@ export const AiChatApprovalMergeReviewContent = ({
           )}
         </Tabs.Panel>
         {pair.sources.map((source, index) => (
-          <Tabs.Panel key={source.id} value={index === 0 ? 'first' : 'second'}>
+          <Tabs.Panel key={source.id} value={SOURCE_TAB_VALUES[index]}>
             <StyledContent>
               <StyledFields>{source.content}</StyledFields>
             </StyledContent>
