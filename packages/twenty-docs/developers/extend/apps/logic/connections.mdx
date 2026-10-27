@@ -369,7 +369,7 @@ From there use `getConnection(connectedAccountId)` to read the fresh access toke
 
 <Accordion title="Run a logic function on disconnect" description="Clean up when a connection is disconnected or removed">
 
-Anything an app claims at connect time has to be released when the connection goes away. A Slack integration that claims a `team_id` on connect, for instance, has to release that claim so another workspace can connect the same Slack team. Set `onDisconnectLogicFunction` to reference a logic function in the same app. It runs before a disconnect clears the stored credentials or a deletion removes the `ConnectedAccount` row.
+Anything an app claims at connect time has to be released when the connection goes away. A Slack integration that claims a `team_id` on connect, for instance, has to release that claim so another workspace can connect the same Slack team. Set `onDisconnectLogicFunction` to reference a logic function in the same app, and it runs when the connection is disconnected and again when it is deleted.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -387,7 +387,7 @@ export default defineConnectionProvider({
 });
 ```
 
-Unlike the on-connect hook it runs **inline in the disconnecting workspace**, once per disconnect or delete request, without retries. A hook failure is captured and does not block the disconnect or deletion. The handler receives the same payload shape:
+Unlike the on-connect hook it runs **inline in the disconnecting workspace**, without retries: a failure is captured and the disconnect or delete still completes. The handler receives the same payload shape:
 
 ```ts
 type OnDisconnectPayload = {
@@ -397,11 +397,9 @@ type OnDisconnectPayload = {
 };
 ```
 
-The `ConnectedAccount` row still exists when the hook runs. When usable credentials remain, the handler can call `getConnection(connectedAccountId)` to clean up remote registrations. Deleting an already disconnected connection invokes the hook again after its credentials have been cleared, so cleanup must be idempotent and tolerate missing credentials.
+On a disconnect the `ConnectedAccount` and its token are still present, so `getConnection(connectedAccountId)` resolves and the handler can release whatever it registered remotely. On a delete the credentials may already be gone (a member can delete a connection they disconnected earlier), so make the handler idempotent and keep the state it needs (a `team_id`, an external subscription id) in the [key-value store](/developers/extend/apps/logic/key-value-store), written at connect time and keyed by `connectedAccountId`. Keep it short: it runs inside the request, so its `timeoutSeconds` is the upper bound on how long that request can take.
 
-Persist cleanup state (a `team_id`, an external subscription id) in the [key-value store](/developers/extend/apps/logic/key-value-store) at connect time, keyed by `connectedAccountId`, so cleanup does not depend on retrieving credentials later. Keep the handler short: it runs inside the disconnect or delete request, which waits for the hook to finish or reach its `timeoutSeconds`.
-
-The hook runs when a connection is disconnected or removed on its own. Uninstalling the app drops its connections through a database cascade instead, so the hook does not run there. Declare an `uninstallLogicFunction` on `defineApplication` for that path: it runs before the app's metadata is deleted, so it can still call `listConnections` and clean up whatever is left.
+The hook fires when a connection is disconnected or removed on its own. Uninstalling the app drops its connections through a database cascade instead, so the hook does not run there. Declare an `uninstallLogicFunction` on `defineApplication` for that path: it runs before the app's metadata is deleted, so it can still call `listConnections` and clean up whatever is left.
 
 </Accordion>
 
