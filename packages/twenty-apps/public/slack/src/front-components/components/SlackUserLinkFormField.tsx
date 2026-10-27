@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledField = styled.div`
   display: flex;

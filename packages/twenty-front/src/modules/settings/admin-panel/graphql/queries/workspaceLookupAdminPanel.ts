@@ -27,6 +27,7 @@ export const WORKSPACE_LOOKUP_ADMIN_PANEL = gql`
           firstName
           lastName
           avatarUrl
+          isAdmin
         }
         featureFlags {
           key

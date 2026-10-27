@@ -280,6 +280,7 @@ enum AllMetadataName {
   frontComponent
   index
   logicFunction
+  messagingProvider
   navigationMenuItem
   objectMetadata
   objectPermission
@@ -345,7 +346,7 @@ type ApiKeyToken {
 }
 
 type AppConnection {
-  accessToken: String!
+  accessToken: String
   authFailedAt: String
   authFailedReason: String
   externalAccountId: String
@@ -353,6 +354,7 @@ type AppConnection {
   id: ID!
   name: String!
   providerName: String!
+  providerType: String!
   scope: ConnectedAccountScope!
   scopes: [String!]!
   userWorkspaceId: String!
@@ -374,8 +376,15 @@ enum AppKeyValueScope {
   WORKSPACE
 }
 
+input AppMessageFolderInput {
+  externalId: String!
+  isSynced: Boolean
+  name: String!
+}
+
 input AppMessageInput {
   externalId: String!
+  folderExternalIds: [String!]
   participants: [AppMessageParticipantInput!]!
   receivedAt: DateTime!
   subject: String
@@ -627,6 +636,7 @@ type ApplicationMonitoringVersion {
 
 type ApplicationPreferences {
   applicationId: UUID!
+  connectionProviders: [ApplicationConnectionProvider!]!
   settingsMenuItems: [SettingsMenuItem!]!
   variables: [UserApplicationVariableValue!]!
 }
@@ -1436,6 +1446,7 @@ input CreateAppMessageChannelInput {
   connectedAccountId: UUID!
   displayName: String
   handle: String!
+  messagingProviderUniversalIdentifier: UUID
   participantHandleFieldUniversalIdentifier: UUID
   visibility: MessageChannelVisibility!
 }
@@ -2768,6 +2779,10 @@ input ListAppMessageChannelsInput {
   connectedAccountId: UUID
 }
 
+input ListAppMessageFoldersInput {
+  messageChannelId: UUID
+}
+
 type Location {
   lat: Float
   lng: Float
@@ -2954,6 +2969,7 @@ type MessageChannel {
   isContactAutoCreationEnabled: Boolean!
   isSyncEnabled: Boolean!
   messageFolderImportPolicy: MessageFolderImportPolicy!
+  messagingProviderUniversalIdentifier: UUID
   participantHandleFieldUniversalIdentifier: UUID
   pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
   syncStage: MessageChannelSyncStage!
@@ -3345,6 +3361,7 @@ type Mutation {
   runAgent(input: RunAgentInput!): RunAgentResult!
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   saveImapSmtpCaldavAccount(connectionParameters: EmailAccountConnectionParameters!, handle: String!, id: UUID): ImapSmtpCaldavConnectionSuccess!
+  sendAppChannelMessage(input: SendAppChannelMessageInput!): SendAppChannelMessageOutput!
   sendChatMessage(browsingContext: JSON, channelId: UUID, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, shouldAssistantReply: Boolean, text: String!, threadId: UUID!): SendChatMessageResult!
   sendEmail(input: SendEmailInput!): SendEmailOutput!
   sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
@@ -3369,6 +3386,7 @@ type Mutation {
   stopImpersonation: StopImpersonation!
   switchBillingPlan(plan: BillingPlanKey): BillingUpdate!
   switchSubscriptionInterval: BillingUpdate!
+  syncAppMessageFolders(input: SyncAppMessageFoldersInput!): [MessageFolder!]!
   syncApplication(dryRun: Boolean, inferDeletionFromMissingEntities: Boolean, manifest: JSON!): WorkspaceMigration!
   syncMarketplaceCatalog: Boolean!
   trackAnalytics(event: String, name: String, properties: JSON, type: AnalyticsType!): Analytics!
@@ -3495,6 +3513,7 @@ type Object {
   color: String
   createdAt: DateTime!
   description: String
+  disabledObjectPermissionActions: [String!]
   duplicateCriteria: [[String!]!]
   fields(
     """Specify to filter the records returned."""
@@ -3979,12 +3998,14 @@ type Query {
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
   appMessageChannels(filter: ListAppMessageChannelsInput): [MessageChannel!]!
+  appMessageFolders(filter: ListAppMessageFoldersInput): [MessageFolder!]!
   applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   applicationCoreGraphqlSchema(applicationUniversalIdentifier: String!): String!
   applicationRegistrationTarballUrl(id: String!): String
   applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
   barChartData(input: BarChartDataInput!): BarChartData!
+  billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
   chatMessages(threadId: UUID!): [AgentMessage!]!
@@ -4085,7 +4106,7 @@ type Query {
   githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
   isApplicationStopped(applicationUniversalIdentifier: String!): Boolean!
   lineChartData(input: LineChartDataInput!): LineChartData!
-  listPlans: [BillingPlan!]!
+  listPlans: [BillingPlan!]! @deprecated(reason: "Use billingPlans instead.")
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
   minimalMetadata: MinimalMetadata!
@@ -4458,6 +4479,18 @@ type SearchField {
   updatedAt: DateTime!
 }
 
+input SendAppChannelMessageInput {
+  idempotencyKey: UUID!
+  messageChannelId: UUID!
+  messageThreadId: UUID!
+  text: String!
+}
+
+type SendAppChannelMessageOutput {
+  messageId: UUID!
+  messageThreadId: UUID!
+}
+
 type SendChatMessageResult {
   mentionedParticipantWorkspaceMemberIds: [UUID!]
   messageId: String
@@ -4600,6 +4633,7 @@ type SignUp {
 }
 
 input SignUpInNewWorkspaceInput {
+  captchaToken: String
   displayName: String
   partner: String
   subdomain: String
@@ -4673,6 +4707,11 @@ type Support {
 enum SupportDriver {
   FRONT
   NONE
+}
+
+input SyncAppMessageFoldersInput {
+  folders: [AppMessageFolderInput!]!
+  messageChannelId: UUID!
 }
 
 type TasksConfiguration {
@@ -4873,6 +4912,7 @@ input UpdateAppMessageChannelInput {
   displayName: String
   id: UUID!
   isSyncEnabled: Boolean
+  messagingProviderUniversalIdentifier: UUID
   visibility: MessageChannelVisibility
 }
 
@@ -6106,6 +6146,7 @@ type Workspace {
   isPasswordAuthBypassEnabled: Boolean!
   isPasswordAuthEnabled: Boolean!
   isPublicInviteLinkEnabled: Boolean!
+  isTrialAvailable: Boolean!
   isTwoFactorAuthenticationEnforced: Boolean!
   logo: String
   logoFileId: UUID

@@ -26,6 +26,8 @@ import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/fla
 import { type FlatCommandMenuItemMaps } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item-maps.type';
 import { type FlatConnectionProviderMaps } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider-maps.type';
 import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider.type';
+import { type FlatMessagingProviderMaps } from 'src/engine/metadata-modules/flat-messaging-provider/types/flat-messaging-provider-maps.type';
+import { type FlatMessagingProvider } from 'src/engine/metadata-modules/flat-messaging-provider/types/flat-messaging-provider.type';
 import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
 import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
 import { type FlatValidationRuleMaps } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule-maps.type';
@@ -92,6 +94,7 @@ import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-module
 import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
+import { type UniversalFlatMessagingProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-messaging-provider.type';
 import { type UniversalFlatTimelineActivityType } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-timeline-activity-type.type';
 import { type UniversalFlatValidationRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-validation-rule.type';
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
@@ -146,6 +149,14 @@ import {
   type UniversalDeleteConnectionProviderAction,
   type UniversalUpdateConnectionProviderAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/types/workspace-migration-connection-provider-action.type';
+import {
+  type FlatCreateMessagingProviderAction,
+  type FlatDeleteMessagingProviderAction,
+  type FlatUpdateMessagingProviderAction,
+  type UniversalCreateMessagingProviderAction,
+  type UniversalDeleteMessagingProviderAction,
+  type UniversalUpdateMessagingProviderAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/messaging-provider/types/workspace-migration-messaging-provider-action.type';
 import {
   type FlatCreateTimelineActivityTypeAction,
   type FlatDeleteTimelineActivityTypeAction,
@@ -903,6 +914,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatConnectionProvider;
     universalFlatEntity: UniversalFlatConnectionProvider;
     entity: MetadataEntity<'connectionProvider'>;
+  };
+  messagingProvider: {
+    flatEntityMaps: FlatMessagingProviderMaps;
+    universalActions: {
+      create: UniversalCreateMessagingProviderAction;
+      update: UniversalUpdateMessagingProviderAction;
+      delete: UniversalDeleteMessagingProviderAction;
+    };
+    flatActions: {
+      create: FlatCreateMessagingProviderAction;
+      update: FlatUpdateMessagingProviderAction;
+      delete: FlatDeleteMessagingProviderAction;
+    };
+    flatEntity: FlatMessagingProvider;
+    universalFlatEntity: UniversalFlatMessagingProvider;
+    entity: MetadataEntity<'messagingProvider'>;
   };
   searchFieldMetadata: {
     flatEntityMaps: FlatSearchFieldMetadataMaps;

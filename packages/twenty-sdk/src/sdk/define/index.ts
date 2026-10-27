@@ -143,6 +143,7 @@ export type { InputJsonSchema } from 'twenty-shared/logic-function';
 
 export { defineConnectionProvider } from '@/sdk/define/connection-providers/define-connection-provider';
 export type { ConnectionProviderScope } from 'twenty-shared/application';
+export { defineMessagingProvider } from '@/sdk/define/messaging-providers/define-messaging-provider';
 
 export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
 

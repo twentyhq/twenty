@@ -3,6 +3,8 @@ import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplic
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { PageCommandEffect } from '@/command-menu-item/page-command/components/PageCommandEffect';
+import { SettingsAppPreferencesConnectionsTab } from '@/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab';
+import { APPLICATION_PREFERENCES_CONNECTIONS_TAB_ID } from '@/settings/app-preferences/constants/ApplicationPreferencesConnectionsTabId';
 import { SETTINGS_APPLICATION_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsApplicationPreferencesTabListComponentId';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { APPLICATION_VARIABLES_TAB_ID } from '@/settings/applications/constants/ApplicationVariablesTabId';
@@ -23,7 +25,7 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { IconVariable, useIcons } from 'twenty-ui/icon';
+import { IconSettings, IconVariable, useIcons } from 'twenty-ui/icon';
 import {
   ApplicationVariableScope,
   EngineComponentKey,
@@ -45,6 +47,7 @@ export const SettingsApplicationPreferencesDetail = ({
     settingsMenuItems,
     variables,
     missingRequiredVariables,
+    connectionProviders,
   },
   refetchApplicationsWithPreferences,
 }: SettingsApplicationPreferencesDetailProps) => {
@@ -99,6 +102,15 @@ export const SettingsApplicationPreferencesDetail = ({
       title: settingsMenuItem.title,
       Icon: getIcon(settingsMenuItem.icon, 'IconAdjustments'),
     })),
+    ...(isNonEmptyArray(connectionProviders)
+      ? [
+          {
+            id: APPLICATION_PREFERENCES_CONNECTIONS_TAB_ID,
+            title: t`General`,
+            Icon: IconSettings,
+          },
+        ]
+      : []),
   ];
 
   const tabListComponentInstanceId = `${SETTINGS_APPLICATION_PREFERENCES_TAB_LIST_COMPONENT_ID}-${application.id}`;
@@ -133,7 +145,7 @@ export const SettingsApplicationPreferencesDetail = ({
             href: getSettingsPath(SettingsPath.ProfilePage),
           },
           {
-            children: t`App preferences`,
+            children: t`Apps preferences`,
             href: getSettingsPath(SettingsPath.Accounts),
           },
           { children: appName },
@@ -150,11 +162,13 @@ export const SettingsApplicationPreferencesDetail = ({
           ) : undefined
         }
         secondaryBar={
-          <SettingsTabBar
-            aria-label={t`${appName} preferences`}
-            tabs={tabs}
-            componentInstanceId={tabListComponentInstanceId}
-          />
+          tabs.length > 1 ? (
+            <SettingsTabBar
+              aria-label={t`${appName} preferences`}
+              tabs={tabs}
+              componentInstanceId={tabListComponentInstanceId}
+            />
+          ) : undefined
         }
       >
         <SettingsPageContainer overflow="visible">
@@ -179,6 +193,12 @@ export const SettingsApplicationPreferencesDetail = ({
               applicationVariables={draftApplicationVariables}
               onVariableChange={setApplicationVariableValue}
               onVariableClear={clearApplicationVariableValue}
+            />
+          )}
+          {activeTabId === APPLICATION_PREFERENCES_CONNECTIONS_TAB_ID && (
+            <SettingsAppPreferencesConnectionsTab
+              applicationId={application.id}
+              connectionProviders={connectionProviders}
             />
           )}
           {isDefined(activeSettingsMenuItem) && (
