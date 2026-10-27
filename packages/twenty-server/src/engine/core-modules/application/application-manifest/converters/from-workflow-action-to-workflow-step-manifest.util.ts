@@ -132,6 +132,25 @@ const fromFormInput = ({
   toArray(input).map((formField) => {
     const field = toRecord(formField);
 
+    if (field.type === 'SELECT' || field.type === 'MULTI_SELECT') {
+      const { selectedFieldId, selectType, ...settings } = toRecord(
+        field.settings,
+      );
+
+      return {
+        ...field,
+        settings: {
+          // EXISTING_FIELD is what sync writes when the manifest omits it
+          ...(isDefined(selectType) && selectType !== 'EXISTING_FIELD'
+            ? { selectType }
+            : {}),
+          ...settings,
+          selectedFieldUniversalIdentifier:
+            resolvers.fieldUniversalIdentifier(selectedFieldId),
+        },
+      };
+    }
+
     if (field.type !== 'RECORD') {
       return field;
     }

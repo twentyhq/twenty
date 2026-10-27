@@ -28,6 +28,7 @@ const THIRD_STEP_ID = '42000000-0000-4000-8000-000000000000';
 const OBJECT_ID = '50000000-0000-4000-8000-000000000000';
 const STATUS_FIELD_ID = '60000000-0000-4000-8000-000000000000';
 const COMPANY_FIELD_ID = '61000000-0000-4000-8000-000000000000';
+const PRIORITY_FIELD_ID = '62000000-0000-4000-8000-000000000000';
 const FUNCTION_ID = '70000000-0000-4000-8000-000000000000';
 const AGENT_ID = '80000000-0000-4000-8000-000000000000';
 const RECORD_FILTER_ID = '90000000-0000-4000-8000-000000000000';
@@ -62,6 +63,17 @@ const references: WorkflowManifestReferences = {
         settings: null,
         universalSettings: { relationType: RelationType.MANY_TO_ONE },
         relationTargetObjectMetadataUniversalIdentifier: OBJECT_ID,
+      },
+    ],
+    [
+      PRIORITY_FIELD_ID,
+      {
+        id: 'priority-field-id',
+        name: 'priority',
+        objectUniversalIdentifier: OBJECT_ID,
+        type: FieldMetadataType.SELECT,
+        settings: null,
+        relationTargetObjectMetadataUniversalIdentifier: null,
       },
     ],
   ]),
@@ -144,6 +156,13 @@ const STEP_INPUTS = {
       label: 'Ticket',
       type: 'RECORD',
       settings: { objectUniversalIdentifier: OBJECT_ID },
+    },
+    {
+      id: 'priority',
+      name: 'priority',
+      label: 'Priority',
+      type: 'SELECT',
+      settings: { selectedFieldUniversalIdentifier: PRIORITY_FIELD_ID },
     },
   ],
   HTTP_REQUEST: {
