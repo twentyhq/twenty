@@ -169,11 +169,13 @@ export const SettingsApplicationPreferencesDetail = ({
           ) : undefined
         }
         secondaryBar={
-          <SettingsTabBar
-            aria-label={t`${appName} preferences`}
-            tabs={tabs}
-            componentInstanceId={tabListComponentInstanceId}
-          />
+          tabs.length > 1 ? (
+            <SettingsTabBar
+              aria-label={t`${appName} preferences`}
+              tabs={tabs}
+              componentInstanceId={tabListComponentInstanceId}
+            />
+          ) : undefined
         }
       >
         <SettingsPageContainer overflow="visible">
