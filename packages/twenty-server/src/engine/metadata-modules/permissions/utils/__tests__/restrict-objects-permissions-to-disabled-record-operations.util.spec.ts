@@ -1,6 +1,7 @@
 import { type ObjectPermissions } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { restrictObjectsPermissionsToDisabledRecordOperations } from 'src/engine/metadata-modules/permissions/utils/restrict-objects-permissions-to-disabled-record-operations.util';
 
@@ -18,10 +19,11 @@ const buildFlatObjectMetadataMaps = (
   disabledRecordOperations: FlatObjectMetadata['disabledRecordOperations'],
 ): FlatEntityMaps<FlatObjectMetadata> => ({
   byUniversalIdentifier: {
-    'invoice-universal-identifier': {
+    'invoice-universal-identifier': getFlatObjectMetadataMock({
       id: 'invoice',
+      universalIdentifier: 'invoice-universal-identifier',
       disabledRecordOperations,
-    } as FlatObjectMetadata,
+    }),
   },
   universalIdentifierById: { invoice: 'invoice-universal-identifier' },
   universalIdentifiersByApplicationId: {},

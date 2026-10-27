@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -225,9 +226,7 @@ describe('validateOperationIsPermittedOrThrow - system objects permissions', () 
       [SYSTEM_OBJECT_ID]: baseObjectPermissions,
     };
 
-    const executeValidationOnObjectDisabling = (
-      operationType: OperationType,
-    ) =>
+    const executeValidationOnObjectDisabling = (operationType: OperationType) =>
       validateOperationIsPermittedOrThrow({
         entityName: SYSTEM_OBJECT_NAME,
         operationType,
@@ -235,12 +234,13 @@ describe('validateOperationIsPermittedOrThrow - system objects permissions', () 
         flatObjectMetadataMaps: {
           ...mockFlatObjectMetadataMaps,
           byUniversalIdentifier: {
-            [SYSTEM_OBJECT_UNIVERSAL_ID]: {
-              ...mockFlatObjectMetadataMaps.byUniversalIdentifier[
-                SYSTEM_OBJECT_UNIVERSAL_ID
-              ],
+            [SYSTEM_OBJECT_UNIVERSAL_ID]: getFlatObjectMetadataMock({
+              id: SYSTEM_OBJECT_ID,
+              nameSingular: SYSTEM_OBJECT_NAME,
+              universalIdentifier: SYSTEM_OBJECT_UNIVERSAL_ID,
+              isSystem: true,
               disabledRecordOperations: ['destroy'],
-            } as FlatObjectMetadata,
+            }),
           },
         },
         flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
