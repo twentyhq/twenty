@@ -1,6 +1,8 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { partnerCookieState } from '@/auth/states/partnerCookieState';
 import { useUploadNewWorkspaceLogo } from '@/auth/sign-in-up/hooks/useUploadNewWorkspaceLogo';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -29,6 +31,8 @@ export const useSignUpInNewWorkspace = () => {
   );
   const { uploadNewWorkspaceLogo } = useUploadNewWorkspaceLogo();
   const [partnerCookie, setPartnerCookie] = useAtomState(partnerCookieState);
+  const { isCaptchaReady } = useCaptcha();
+  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
 
   const createWorkspace = async ({
     displayName,
@@ -39,10 +43,24 @@ export const useSignUpInNewWorkspace = () => {
     subdomain?: string;
     logo?: File;
   } = {}): Promise<boolean> => {
+    if (!isCaptchaReady) {
+      enqueueToast({
+        status: 'error',
+        children: t`Captcha (anti-bot check) is still loading, try again`,
+      });
+
+      return false;
+    }
+
     try {
+      const captchaToken = await requestFreshCaptchaToken({
+        action: 'create_workspace',
+      });
+
       const { data } = await signUpInNewWorkspaceMutation({
         variables: {
           input: { displayName, subdomain, partner: partnerCookie?.partner },
+          captchaToken,
         },
       });
       assertIsDefinedOrThrow(data?.signUpInNewWorkspace);

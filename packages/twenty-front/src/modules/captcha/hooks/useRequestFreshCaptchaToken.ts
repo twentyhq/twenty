@@ -15,45 +15,48 @@ export const useRequestFreshCaptchaToken = () => {
     isRequestingCaptchaTokenState,
   );
 
-  const requestFreshCaptchaToken = useCallback(async () => {
-    if (!isCaptchaRequiredForPath(window.location.pathname)) {
-      return;
-    }
+  const requestFreshCaptchaToken = useCallback(
+    async ({ action = 'submit' }: { action?: string } = {}): Promise<
+      string | undefined
+    > => {
+      if (!isCaptchaRequiredForPath(window.location.pathname)) {
+        return;
+      }
 
-    const captcha = store.get(captchaState.atom);
+      const captcha = store.get(captchaState.atom);
 
-    if (!isDefined(captcha)) {
-      return;
-    }
+      if (!isDefined(captcha)) {
+        return;
+      }
 
-    assertIsDefinedOrThrow(captcha);
+      assertIsDefinedOrThrow(captcha);
 
-    setIsRequestingCaptchaToken(true);
+      setIsRequestingCaptchaToken(true);
 
-    let captchaWidget: any;
-    switch (captcha.provider) {
-      case CaptchaDriverType.GOOGLE_RECAPTCHA:
-        window.grecaptcha
-          .execute(captcha.siteKey, {
-            action: 'submit',
-          })
-          .then((token: string) => {
-            setCaptchaToken(token);
-            setIsRequestingCaptchaToken(false);
+      let captchaWidget: any;
+      let token: string | undefined;
+      switch (captcha.provider) {
+        case CaptchaDriverType.GOOGLE_RECAPTCHA:
+          token = await window.grecaptcha.execute(captcha.siteKey, {
+            action,
           });
-        break;
-      case CaptchaDriverType.TURNSTILE:
-        captchaWidget = window.turnstile.render('#captcha-widget', {
-          sitekey: captcha.siteKey,
-        });
-        window.turnstile.execute(captchaWidget, {
-          callback: (token: string) => {
-            setCaptchaToken(token);
-            setIsRequestingCaptchaToken(false);
-          },
-        });
-    }
-  }, [setCaptchaToken, setIsRequestingCaptchaToken, store]);
+          break;
+        case CaptchaDriverType.TURNSTILE:
+          captchaWidget = window.turnstile.render('#captcha-widget', {
+            sitekey: captcha.siteKey,
+          });
+          token = await new Promise<string>((resolve) => {
+            window.turnstile.execute(captchaWidget, { callback: resolve });
+          });
+      }
+
+      setCaptchaToken(token);
+      setIsRequestingCaptchaToken(false);
+
+      return token;
+    },
+    [setCaptchaToken, setIsRequestingCaptchaToken, store],
+  );
 
   return { requestFreshCaptchaToken };
 };

@@ -103,6 +103,30 @@ describe('useRequestFreshCaptchaToken', () => {
     });
   });
 
+  it('should return a Google reCAPTCHA token requested for the given action', async () => {
+    jotaiStore.set(captchaState.atom, {
+      provider: CaptchaDriverType.GOOGLE_RECAPTCHA,
+      siteKey: 'google-site-key',
+    } as Captcha);
+
+    const { result } = renderHook(() => useRequestFreshCaptchaToken(), {
+      wrapper: createWrapper,
+    });
+
+    let token: string | undefined;
+
+    await act(async () => {
+      token = await result.current.requestFreshCaptchaToken({
+        action: 'create_workspace',
+      });
+    });
+
+    expect(mockGrecaptchaExecute).toHaveBeenCalledWith('google-site-key', {
+      action: 'create_workspace',
+    });
+    expect(token).toBe('google-recaptcha-token');
+  });
+
   it('should request a token from Turnstile when provider is TURNSTILE', async () => {
     jotaiStore.set(isRequestingCaptchaTokenState.atom, false);
     jotaiStore.set(captchaState.atom, {
