@@ -31,6 +31,7 @@ import {
   failNextApplicationPreferencesRequest,
   seedApplicationPreferencesStory,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
+import { unconfigureLinearClientCredentials } from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsAccounts',
@@ -355,6 +356,7 @@ export const AppPreferencesListInstalledApps: Story = {
       `/settings/accounts/applications/${FATHOM_APPLICATION_ID}`,
     );
     expect(canvas.getByText('Granola')).toBeVisible();
+    expect(canvas.getByText('Linear')).toBeVisible();
     expect(canvas.queryByText('Blocklist')).not.toBeInTheDocument();
 
     const outlookRow = canvas
@@ -413,6 +415,33 @@ export const AppPreferencesListFlagsMissingConfiguration: Story = {
       getTableRow(canvasElement, 'Granola').queryByText(
         'Missing configuration',
       ),
+    ).not.toBeInTheDocument();
+    expect(
+      getTableRow(canvasElement, 'Linear').queryByText('Missing configuration'),
+    ).not.toBeInTheDocument();
+    expect(
+      await getTableRow(canvasElement, 'Linear').findByText('Missing account'),
+    ).toBeVisible();
+  },
+};
+
+export const AppsWhoseProviderIsNotSetUpShowNoMissingAccount: Story = {
+  ...accountGroupsStory,
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    unconfigureLinearClientCredentials();
+  },
+  parameters: {
+    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Linear', undefined, { timeout: 3000 });
+    await canvas.findByText('tim@apple.dev');
+
+    expect(
+      getTableRow(canvasElement, 'Linear').queryByText('Missing account'),
     ).not.toBeInTheDocument();
   },
 };

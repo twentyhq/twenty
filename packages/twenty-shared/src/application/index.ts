@@ -97,6 +97,14 @@ export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
+export type {
+  AuthorizeConnectionPayload,
+  AuthorizeConnectionResult,
+  ConnectionCallbackPayload,
+  ConnectedAccountFromCallback,
+  ConnectionCallbackResult,
+} from './customConnectionFlowType';
+export type { CustomConnectionProviderConfig } from './customConnectionProviderConfigType';
 export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
 export type { DeterministicEntityNamespace } from './deterministic-identifier/deterministic-entity-namespace.type';
 export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';
@@ -185,6 +193,7 @@ export type {
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
+export type { MessagingProviderManifest } from './messagingProviderManifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type {
   NormalizedPageLayoutWidgetManifest,
@@ -225,6 +234,11 @@ export type {
   RunAgentInput,
   RunAgentResult,
 } from './runAgentType';
+export type {
+  SendAppMessageRecipient,
+  SendAppMessagePayload,
+  SendAppMessageResult,
+} from './sendAppMessageType';
 export type { SendInboxMessageInput } from './sendInboxMessageInputType';
 export type { SendInboxMessageResult } from './sendInboxMessageResultType';
 export type { SendInboxMessageToolCall } from './sendInboxMessageToolCallType';
@@ -242,6 +256,7 @@ export {
   DEFAULT_SETTINGS_MENU_ITEM_SCOPE,
 } from './settingsMenuItemManifestType';
 export type { SkillManifest } from './skillManifestType';
+export type { StoredCustomConnectionProviderConfig } from './storedCustomConnectionProviderConfigType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type {
