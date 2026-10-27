@@ -1,11 +1,11 @@
 import { join } from 'path';
 import { installAndBuildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/install-and-build-front-component-shared-dependencies.util';
-import { type FrontComponentBuilderInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-input.type';
+import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 import { buildFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
 import { frontComponentSharedDependenciesManifestSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-shared-dependencies-manifest.schema';
 
-export const handler = async (event: FrontComponentBuilderInput) => {
+export const handler = async (event: FrontComponentBuilderRequest) => {
   try {
     if (event.action === 'buildDependencies') {
       const vendor = await installAndBuildFrontComponentSharedDependencies({
