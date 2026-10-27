@@ -66,6 +66,11 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
     expect(await canvas.findByText('Work Linear')).toBeVisible();
     expect(
       withinTableRowOrThrow({ canvasElement, text: 'Work Linear' }).getByText(
+        'tim@linear.app',
+      ),
+    ).toBeVisible();
+    expect(
+      withinTableRowOrThrow({ canvasElement, text: 'Work Linear' }).getByText(
         'Connected',
       ),
     ).toBeVisible();

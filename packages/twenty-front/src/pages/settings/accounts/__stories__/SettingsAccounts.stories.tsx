@@ -31,6 +31,7 @@ import {
   failNextApplicationPreferencesRequest,
   seedApplicationPreferencesStory,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
+import { unconfigureLinearClientCredentials } from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsAccounts',
@@ -417,6 +418,29 @@ export const AppPreferencesListFlagsMissingConfiguration: Story = {
     ).not.toBeInTheDocument();
     expect(
       getTableRow(canvasElement, 'Linear').queryByText('Missing configuration'),
+    ).not.toBeInTheDocument();
+    expect(
+      getTableRow(canvasElement, 'Linear').getByText('Missing account'),
+    ).toBeVisible();
+  },
+};
+
+export const AppsWhoseProviderIsNotSetUpShowNoMissingAccount: Story = {
+  ...accountGroupsStory,
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    unconfigureLinearClientCredentials();
+  },
+  parameters: {
+    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
+  },
+  play: async ({ canvasElement }) => {
+    await within(canvasElement).findByText('Linear', undefined, {
+      timeout: 3000,
+    });
+
+    expect(
+      getTableRow(canvasElement, 'Linear').queryByText('Missing account'),
     ).not.toBeInTheDocument();
   },
 };

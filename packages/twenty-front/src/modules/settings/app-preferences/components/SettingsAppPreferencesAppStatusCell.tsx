@@ -23,16 +23,19 @@ export const SettingsAppPreferencesAppStatusCell = ({
       return <Status color="red">{t`Missing configuration`}</Status>;
     }
 
-    const hasPersonalConnection = groups.some((group) =>
-      group.appAccounts.some(
+    const applicationAccounts = groups.flatMap((group) =>
+      group.appAccounts.filter(
         (account) => account.applicationId === application.id,
       ),
+    );
+    const hasConfiguredProvider = connectionProviders.some(
+      (provider) => provider.oauth?.isClientCredentialsConfigured ?? false,
     );
 
     if (
       loading ||
-      !isNonEmptyArray(connectionProviders) ||
-      hasPersonalConnection
+      !hasConfiguredProvider ||
+      isNonEmptyArray(applicationAccounts)
     ) {
       return null;
     }

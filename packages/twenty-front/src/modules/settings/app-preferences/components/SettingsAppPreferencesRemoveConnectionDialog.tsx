@@ -4,12 +4,13 @@ import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/g
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useMutation } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 
 type SettingsAppPreferencesRemoveConnectionDialogProps = {
   dialogId: string;
   connectedAccountId: string;
-  connectionLabel: string;
+  connectionLabel: ReactNode;
 };
 
 export const SettingsAppPreferencesRemoveConnectionDialog = ({
