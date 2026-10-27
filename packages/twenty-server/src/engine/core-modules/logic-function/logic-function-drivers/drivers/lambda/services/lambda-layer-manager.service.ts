@@ -313,9 +313,6 @@ export class LambdaLayerManagerService {
     }
   }
 
-  // Layers are shared by name, which comes from the application row's
-  // yarn.lock checksum, so build from the exact contents checked against
-  // the row rather than reading the files again
   private async getVerifiedDependencies({
     flatApplication,
     applicationUniversalIdentifier,
