@@ -17,6 +17,7 @@ type Agent {
   description: String
   icon: String
   id: UUID!
+  isActive: Boolean!
   isCustom: Boolean!
   isSystem: Boolean!
   label: String!
@@ -4903,6 +4904,7 @@ input UpdateAgentInput {
   description: String
   icon: String
   id: UUID!
+  isActive: Boolean
   label: String
   modelConfiguration: JSON
   modelId: String

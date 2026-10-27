@@ -36,6 +36,7 @@ export const fromCreateSkillInputToUniversalFlatSkillToCreate = ({
     isCustom: true,
     isSystem: false,
     isActive: true,
+    overrides: null,
     createdAt: now,
     updatedAt: now,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,

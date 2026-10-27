@@ -4,6 +4,8 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FLAT_SKILL_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-skill/constants/flat-skill-editable-properties.constant';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { type UpdateSkillInput } from 'src/engine/metadata-modules/skill/dtos/update-skill.input';
 import {
   SkillException,
@@ -14,9 +16,13 @@ import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-
 export const fromUpdateSkillInputToFlatSkillToUpdateOrThrow = ({
   flatSkillMaps,
   updateSkillInput,
+  callerApplicationUniversalIdentifier,
+  workspaceCustomApplicationUniversalIdentifier,
 }: {
   flatSkillMaps: FlatEntityMaps<FlatSkill>;
   updateSkillInput: UpdateSkillInput;
+  callerApplicationUniversalIdentifier: string;
+  workspaceCustomApplicationUniversalIdentifier: string;
 }): FlatSkill => {
   const existingFlatSkill = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: updateSkillInput.id,
@@ -30,21 +36,49 @@ export const fromUpdateSkillInputToFlatSkillToUpdateOrThrow = ({
     );
   }
 
-  if (!existingFlatSkill.isCustom) {
+  const shouldOverride = isCallerOverridingEntity({
+    callerApplicationUniversalIdentifier,
+    entityApplicationUniversalIdentifier:
+      existingFlatSkill.applicationUniversalIdentifier,
+    workspaceCustomApplicationUniversalIdentifier,
+    isSystemSideEffect: false,
+  });
+
+  if (!shouldOverride && !existingFlatSkill.isCustom) {
     throw new SkillException(
       'Cannot update standard skill',
       SkillExceptionCode.SKILL_IS_STANDARD,
     );
   }
 
-  const { id: _id, ...updates } = updateSkillInput;
+  const { id: _id, name, ...updates } = updateSkillInput;
+
+  if (shouldOverride && isDefined(name) && name !== existingFlatSkill.name) {
+    throw new SkillException(
+      'Cannot rename a skill owned by another application',
+      SkillExceptionCode.INVALID_SKILL_INPUT,
+    );
+  }
+
+  const { overrides, updatedEditableProperties } =
+    sanitizeOverridableEntityInput({
+      metadataName: 'skill',
+      existingFlatEntity: existingFlatSkill,
+      updatedEditableProperties: shouldOverride
+        ? updates
+        : { ...updates, name },
+      shouldOverride,
+      callerApplicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier,
+    });
 
   return {
     ...mergeUpdateInExistingRecord({
       existing: existingFlatSkill,
       properties: [...FLAT_SKILL_EDITABLE_PROPERTIES],
-      update: updates,
+      update: updatedEditableProperties,
     }),
+    overrides,
     updatedAt: new Date().toISOString(),
   };
 };

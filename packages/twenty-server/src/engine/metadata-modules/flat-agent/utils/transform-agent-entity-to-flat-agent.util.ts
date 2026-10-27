@@ -40,6 +40,8 @@ export const transformAgentEntityToFlatAgent = ({
     applicationId: agentEntity.applicationId,
     modelConfiguration: agentEntity.modelConfiguration,
     triggers: agentEntity.triggers,
+    isActive: agentEntity.isActive,
+    overrides: agentEntity.overrides,
     applicationUniversalIdentifier,
   };
 };

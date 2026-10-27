@@ -27,13 +27,18 @@ const buildCronTrigger = (isActive = true): AgentTrigger => ({
   settings: { pattern: '0 9 * * 1' },
 });
 
-const buildFlatAgentMaps = (triggers: AgentTrigger[]) =>
+const buildFlatAgentMaps = (
+  triggers: AgentTrigger[],
+  agentOverrides: Record<string, unknown> | null = null,
+) =>
   addFlatEntityToFlatEntityMapsOrThrow({
     flatEntity: {
       id: AGENT_ID,
       universalIdentifier: AGENT_ID,
       workspaceId: WORKSPACE_ID,
       triggers,
+      isActive: true,
+      overrides: agentOverrides,
       deletedAt: null,
     } as never,
     flatEntityMaps: createEmptyFlatEntityMaps(),
@@ -130,6 +135,16 @@ describe('AgentCronTriggerCronJob', () => {
     expect(
       cronTriggerDeduplicationService.shouldDispatch,
     ).not.toHaveBeenCalled();
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
+
+  it('should ignore the triggers of an agent the workspace archived', async () => {
+    flatAgentMaps = buildFlatAgentMaps([buildCronTrigger()], {
+      'workspace-custom-application-universal-identifier': { isActive: false },
+    });
+
+    await job.handle();
+
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 

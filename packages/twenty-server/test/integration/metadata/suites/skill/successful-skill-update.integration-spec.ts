@@ -1,5 +1,6 @@
 import { createSkill } from 'test/integration/metadata/suites/skill/utils/create-skill.util';
 import { deleteSkill } from 'test/integration/metadata/suites/skill/utils/delete-skill.util';
+import { findSkills } from 'test/integration/metadata/suites/skill/utils/find-skills.util';
 import { updateSkill } from 'test/integration/metadata/suites/skill/utils/update-skill.util';
 
 describe('Skill update should succeed', () => {
@@ -127,5 +128,41 @@ describe('Skill update should succeed', () => {
       id: testSkillId,
       label: 'Unique Updated Label',
     });
+  });
+
+  it('should store an update of a standard skill as a workspace override', async () => {
+    const { data } = await findSkills({
+      expectToFail: false,
+      input: undefined,
+      gqlFields: 'id label isCustom',
+    });
+
+    const standardSkill = data.skills.find((skill) => skill.isCustom === false);
+
+    expect(standardSkill).toBeDefined();
+
+    const { data: updateData } = await updateSkill({
+      expectToFail: false,
+      input: { id: standardSkill!.id, label: 'Workspace label' },
+    });
+
+    expect(updateData.updateSkill.label).toBe('Workspace label');
+
+    const [skillRow] = await global.testDataSource.query(
+      `SELECT label, overrides FROM core."skill" WHERE id = $1`,
+      [standardSkill!.id],
+    );
+
+    expect(skillRow.label).toBe(standardSkill!.label);
+    expect(Object.values(skillRow.overrides)).toEqual([
+      { label: 'Workspace label' },
+    ]);
+
+    const { data: revertData } = await updateSkill({
+      expectToFail: false,
+      input: { id: standardSkill!.id, label: standardSkill!.label },
+    });
+
+    expect(revertData.updateSkill.label).toBe(standardSkill!.label);
   });
 });

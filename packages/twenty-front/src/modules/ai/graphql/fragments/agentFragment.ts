@@ -13,6 +13,7 @@ export const AGENT_FRAGMENT = gql`
     roleId
     isCustom
     isSystem
+    isActive
     modelConfiguration
     triggers
     applicationId

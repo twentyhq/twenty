@@ -34,6 +34,7 @@ const buildAgent = ({
   roleId: null,
   isCustom: true,
   isSystem,
+  isActive: true,
   modelConfiguration: null,
   triggers: [],
   applicationId: null,

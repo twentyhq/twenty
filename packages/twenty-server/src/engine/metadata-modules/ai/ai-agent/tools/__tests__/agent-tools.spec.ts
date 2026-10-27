@@ -35,6 +35,7 @@ const buildAgent = (overrides: Record<string, unknown> = {}) => ({
   applicationId: 'application-id',
   isCustom: true,
   isSystem: false,
+  isActive: true,
   ...overrides,
 });
 
@@ -205,12 +206,13 @@ describe('Agent tools', () => {
   });
 
   describe('list_agents', () => {
-    it('leaves out system agents', async () => {
+    it('leaves out system and archived agents', async () => {
       const { executeTool, agentService } = buildAgentTools();
 
       agentService.findManyAgents.mockResolvedValue([
         buildAgent(),
         buildAgent({ id: 'workflow-step-agent-id', isSystem: true }),
+        buildAgent({ id: 'archived-agent-id', isActive: false }),
       ]);
 
       const output = await executeTool({ toolName: 'list_agents', args: {} });

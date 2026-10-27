@@ -13,6 +13,7 @@ const agent = {
   roleId: 'role-id',
   isCustom: true,
   isSystem: false,
+  isActive: true,
   modelConfiguration: { webSearch: { enabled: true } },
   triggers: [
     {

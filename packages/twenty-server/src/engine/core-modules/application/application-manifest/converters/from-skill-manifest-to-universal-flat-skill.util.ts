@@ -22,6 +22,7 @@ export const fromSkillManifestToUniversalFlatSkill = ({
     isCustom: false,
     isSystem: false,
     isActive: true,
+    overrides: null,
     createdAt: now,
     updatedAt: now,
   };

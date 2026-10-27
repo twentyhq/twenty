@@ -5,6 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
@@ -18,6 +19,8 @@ import { validateAgentRequiredProperties } from 'src/engine/workspace-manager/wo
 import { validateAgentResponseFormat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util';
 import { validateAgentTriggersCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util';
 import { validateAgentTriggers } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util';
+
+const WORKSPACE_LOCAL_STATE_PROPERTIES = new Set(['overrides', 'isActive']);
 
 @Injectable()
 export class FlatAgentValidatorService {
@@ -154,8 +157,13 @@ export class FlatAgentValidatorService {
       return validationResult;
     }
 
+    const isWorkspaceLocalStateUpdate = Object.keys(flatEntityUpdate).every(
+      (key) => WORKSPACE_LOCAL_STATE_PROPERTIES.has(key),
+    );
+
     if (
       !isCallerTwentyStandardApp(buildOptions) &&
+      !isWorkspaceLocalStateUpdate &&
       belongsToTwentyStandardApp({
         universalIdentifier: fromFlatAgent.universalIdentifier,
         applicationUniversalIdentifier:
@@ -173,6 +181,10 @@ export class FlatAgentValidatorService {
       ...fromFlatAgent,
       ...flatEntityUpdate,
     };
+    const effectiveOptimisticFlatAgent =
+      flatEntityUpdate.overrides !== undefined
+        ? resolveEffectiveAgent(optimisticFlatAgent)
+        : undefined;
 
     const existingAgents = Object.values(
       optimisticFlatAgentMaps.byUniversalIdentifier,
@@ -185,6 +197,11 @@ export class FlatAgentValidatorService {
         flatAgent: optimisticFlatAgent,
         updatedProperties: flatEntityUpdate,
       }),
+      ...(isDefined(effectiveOptimisticFlatAgent)
+        ? validateAgentRequiredProperties({
+            flatAgent: effectiveOptimisticFlatAgent,
+          })
+        : []),
     );
 
     if (isDefined(flatEntityUpdate.name)) {
@@ -196,11 +213,14 @@ export class FlatAgentValidatorService {
       );
     }
 
-    if (isDefined(flatEntityUpdate.responseFormat)) {
+    const responseFormatsToValidate = [
+      flatEntityUpdate.responseFormat,
+      effectiveOptimisticFlatAgent?.responseFormat,
+    ].filter(isDefined);
+
+    for (const responseFormat of responseFormatsToValidate) {
       validationResult.errors.push(
-        ...validateAgentResponseFormat({
-          responseFormat: flatEntityUpdate.responseFormat,
-        }),
+        ...validateAgentResponseFormat({ responseFormat }),
       );
     }
 

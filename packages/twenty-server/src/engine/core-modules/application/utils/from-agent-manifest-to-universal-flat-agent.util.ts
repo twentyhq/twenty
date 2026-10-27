@@ -37,6 +37,8 @@ export const fromAgentManifestToUniversalFlatAgent = ({
     ),
     isCustom: false,
     isSystem: true,
+    isActive: true,
+    overrides: null,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

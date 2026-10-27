@@ -6,6 +6,7 @@ import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
+import { findAgents } from 'test/integration/metadata/suites/agent/utils/find-agents.util';
 import { updateOneAgent } from 'test/integration/metadata/suites/agent/utils/update-one-agent.util';
 
 describe('Agent update should succeed', () => {
@@ -319,5 +320,43 @@ describe('Agent update should succeed', () => {
       id: testAgentId,
       triggers: [],
     });
+  });
+
+  it('should archive a standard agent through a workspace override', async () => {
+    const { data } = await findAgents({
+      expectToFail: false,
+      input: undefined,
+      gqlFields: 'id name isCustom isActive',
+    });
+
+    const helperAgent = data.findManyAgents.find(
+      (agent) => agent.name === 'helper' && agent.isCustom === false,
+    );
+
+    expect(helperAgent).toBeDefined();
+
+    const { data: archiveData } = await updateOneAgent({
+      expectToFail: false,
+      input: { id: helperAgent!.id, isActive: false },
+      gqlFields: 'id isActive',
+    });
+
+    expect(archiveData.updateOneAgent.isActive).toBe(false);
+
+    const [agentRow] = await global.testDataSource.query(
+      `SELECT "isActive", overrides FROM core."agent" WHERE id = $1`,
+      [helperAgent!.id],
+    );
+
+    expect(agentRow.isActive).toBe(true);
+    expect(Object.values(agentRow.overrides)).toEqual([{ isActive: false }]);
+
+    const { data: unarchiveData } = await updateOneAgent({
+      expectToFail: false,
+      input: { id: helperAgent!.id, isActive: true },
+      gqlFields: 'id isActive',
+    });
+
+    expect(unarchiveData.updateOneAgent.isActive).toBe(true);
   });
 });
