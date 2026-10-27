@@ -23,25 +23,25 @@ const ACCESS_MOVES = [
   {
     column: 'writability',
     value: 'APPLICATION',
-    openAfterMove: true,
+    shouldOpenAfterMove: true,
     disabledActions: WRITE_ACTIONS,
   },
   {
     column: 'readability',
     value: 'APPLICATION',
-    openAfterMove: true,
+    shouldOpenAfterMove: true,
     disabledActions: READ_ACTIONS,
   },
   {
     column: 'writability',
     value: 'SYSTEM',
-    openAfterMove: false,
+    shouldOpenAfterMove: false,
     disabledActions: WRITE_ACTIONS,
   },
   {
     column: 'readability',
     value: 'SYSTEM',
-    openAfterMove: false,
+    shouldOpenAfterMove: false,
     disabledActions: READ_ACTIONS,
   },
 ] as const;
@@ -83,10 +83,10 @@ export class MoveApplicationAndSystemAccessToDisabledActionsCommand extends Prov
 
     let movedObjectCount = 0;
 
-    for (const { column, value, openAfterMove, disabledActions } of ACCESS_MOVES) {
+    for (const { column, value, shouldOpenAfterMove, disabledActions } of ACCESS_MOVES) {
       const [movedObjects] = await this.coreDataSource.query(
         `UPDATE "core"."objectMetadata"
-         SET ${openAfterMove ? `"${column}" = 'OPEN',` : ''}
+         SET ${shouldOpenAfterMove ? `"${column}" = 'OPEN',` : ''}
              "disabledObjectPermissionActions" = (
                SELECT jsonb_agg(DISTINCT "action" ORDER BY "action")
                FROM jsonb_array_elements_text(
@@ -95,7 +95,7 @@ export class MoveApplicationAndSystemAccessToDisabledActionsCommand extends Prov
              )
          WHERE "workspaceId" = $1
            AND "${column}" = $2
-           ${openAfterMove ? '' : `AND NOT COALESCE("disabledObjectPermissionActions", '[]'::jsonb) @> $3::jsonb`}
+           ${shouldOpenAfterMove ? '' : `AND NOT COALESCE("disabledObjectPermissionActions", '[]'::jsonb) @> $3::jsonb`}
          RETURNING "id"`,
         [workspaceId, value, JSON.stringify(disabledActions)],
       );

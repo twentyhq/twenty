@@ -54,7 +54,13 @@ export const buildStandardFlatCommandMenuItemMaps = ({
     flatObjectMetadataMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
-    .filter((flatObject) => flatObject.isActive)
+    .filter(
+      (flatObject) =>
+        flatObject.isActive &&
+        !flatObject.disabledObjectPermissionActions?.includes(
+          'canReadObjectRecords',
+        ),
+    )
     .sort(seedCompareObjectMetadataForNavigationPosition);
 
   const maxStandardPosition = Object.values(
