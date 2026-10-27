@@ -16,7 +16,7 @@
           "mkdir -p dist/assets/twenty-client-sdk && cp ../twenty-client-sdk/package.json dist/assets/twenty-client-sdk/ && cp -r ../twenty-client-sdk/dist dist/assets/twenty-client-sdk/dist"
         ]
       },
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build", "build:front-component-assets"]
     },
     "test:integration:secure": {
       "executor": "nx:run-commands",
@@ -70,7 +70,7 @@
     "start": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "build:front-component-assets"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "rimraf dist && NODE_ENV=development nest start --watch"
@@ -81,7 +81,8 @@
       "options": {
         "cwd": "packages/twenty-server",
         "command": "NODE_ENV=development nest start"
-      }
+      },
+      "dependsOn": ["build:front-component-assets"]
     },
     "start:ci-if-needed": {
       "executor": "nx:run-commands",
@@ -93,7 +94,7 @@
     },
     "start:debug": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "build:front-component-assets"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "rimraf dist && NODE_ENV=development nest start --watch --debug"
@@ -136,7 +137,7 @@
     },
     "worker": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "build:front-component-assets"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "NODE_ENV=development nest start --watch --entryFile queue-worker/queue-worker"
@@ -329,6 +330,18 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "npx tsx scripts/bump-version.ts"
+      }
+    },
+    "build:front-component-assets": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["^build"],
+      "outputs": [
+        "{projectRoot}/src/engine/metadata-modules/ai/ai-front-component/generated"
+      ],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "tsx --tsconfig tsconfig.json scripts/build-front-component-assets.ts"
       }
     }
   }
