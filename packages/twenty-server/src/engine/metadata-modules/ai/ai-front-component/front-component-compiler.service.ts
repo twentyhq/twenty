@@ -113,6 +113,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
     await ensureFrontComponentLambdaExists({
       awsClient,
       toolFunctions,
+      cacheLockService: this.cacheLockService,
       options,
       functionName,
       limits: FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS,
@@ -210,6 +211,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
           await ensureFrontComponentLambdaExists({
             awsClient,
             toolFunctions,
+            cacheLockService: this.cacheLockService,
             options,
             functionName,
             limits: FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS,

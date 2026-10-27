@@ -1,11 +1,14 @@
 import { promises as fs } from 'fs';
 
-import {
-  CreateFunctionCommand,
-  ResourceConflictException,
-} from '@aws-sdk/client-lambda';
+import { CreateFunctionCommand } from '@aws-sdk/client-lambda';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import {
+  BUILD_LOCK_MAX_RETRIES,
+  BUILD_LOCK_RETRY_MS,
+  BUILD_LOCK_TTL_MS,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { type LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
 import { type LambdaConnectionOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
@@ -17,6 +20,7 @@ import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function
 export const ensureFrontComponentLambdaExists = async ({
   awsClient,
   toolFunctions,
+  cacheLockService,
   options,
   functionName,
   limits,
@@ -24,6 +28,7 @@ export const ensureFrontComponentLambdaExists = async ({
 }: {
   awsClient: LambdaAwsClientService;
   toolFunctions: LambdaToolFunctionsService;
+  cacheLockService: CacheLockService;
   options: Pick<LambdaConnectionOptions, 'lambdaRole' | 'resourceTags'>;
   functionName: string;
   limits: FrontComponentLambdaLimits;
@@ -31,50 +36,56 @@ export const ensureFrontComponentLambdaExists = async ({
 }): Promise<void> => {
   const existingFunction = await awsClient.getFunction(functionName);
 
-  if (isDefined(existingFunction)) {
-    if (existingFunction.Configuration?.State !== 'Active') {
-      await awsClient.waitFunctionActive(functionName);
-    }
-
+  if (existingFunction?.Configuration?.State === 'Active') {
     return;
   }
 
-  const commonLayerArn = await toolFunctions.ensureCommonLayerExists();
+  await cacheLockService.withLock(
+    async () => {
+      if (isDefined(await awsClient.getFunction(functionName))) {
+        await awsClient.waitFunctionActive(functionName);
 
-  const temporaryDirManager = new TemporaryDirManager();
-  const { sourceTemporaryDir, lambdaZipPath } =
-    await temporaryDirManager.init();
-
-  try {
-    await copyFiles(sourceTemporaryDir);
-
-    await createZipFile(sourceTemporaryDir, lambdaZipPath);
-
-    const lambdaClient = await awsClient.getLambdaClient();
-
-    try {
-      await lambdaClient.send(
-        new CreateFunctionCommand({
-          Code: { ZipFile: await fs.readFile(lambdaZipPath) },
-          FunctionName: functionName,
-          Layers: [commonLayerArn],
-          Handler: 'index.handler',
-          Role: options.lambdaRole,
-          Tags: options.resourceTags,
-          Runtime: LogicFunctionRuntime.NODE22,
-          Timeout: limits.timeoutSeconds,
-          MemorySize: limits.memoryMb,
-          EphemeralStorage: { Size: limits.ephemeralStorageMb },
-        }),
-      );
-    } catch (error) {
-      if (!(error instanceof ResourceConflictException)) {
-        throw error;
+        return;
       }
-    }
-  } finally {
-    await temporaryDirManager.clean();
-  }
 
-  await awsClient.waitFunctionActive(functionName);
+      const commonLayerArn = await toolFunctions.ensureCommonLayerExists();
+
+      const temporaryDirManager = new TemporaryDirManager();
+      const { sourceTemporaryDir, lambdaZipPath } =
+        await temporaryDirManager.init();
+
+      try {
+        await copyFiles(sourceTemporaryDir);
+
+        await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+        const lambdaClient = await awsClient.getLambdaClient();
+
+        await lambdaClient.send(
+          new CreateFunctionCommand({
+            Code: { ZipFile: await fs.readFile(lambdaZipPath) },
+            FunctionName: functionName,
+            Layers: [commonLayerArn],
+            Handler: 'index.handler',
+            Role: options.lambdaRole,
+            Tags: options.resourceTags,
+            Runtime: LogicFunctionRuntime.NODE22,
+            Timeout: limits.timeoutSeconds,
+            MemorySize: limits.memoryMb,
+            EphemeralStorage: { Size: limits.ephemeralStorageMb },
+          }),
+        );
+      } finally {
+        await temporaryDirManager.clean();
+      }
+
+      await awsClient.waitFunctionActive(functionName);
+    },
+    `front-component-lambda-build:${functionName}`,
+    {
+      ttl: BUILD_LOCK_TTL_MS,
+      ms: BUILD_LOCK_RETRY_MS,
+      maxRetries: BUILD_LOCK_MAX_RETRIES,
+    },
+  );
 };
