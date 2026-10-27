@@ -3,6 +3,8 @@ title: Pagine dei record
 description: Personalizza il layout delle singole pagine di dettaglio dei record con schede e widget.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Panoramica
 
 Quando apri un record in Twenty, la pagina di dettaglio è composta da **schede** e **widget**. Entrambi sono completamente personalizzabili per ciascun tipo di oggetto.
@@ -36,6 +38,16 @@ I widget sono gli elementi costitutivi all'interno di ogni scheda. Tipi di widge
 | **iFrame**             | Contenuto esterno incorporato                     |
 | **Testo formattato**   | Contenuto statico o descrizioni                   |
 
+### Modifica dei record correlati
+
+I widget della tabella dei record correlati e della bacheca kanban sono modificabili per impostazione predefinita. Per renderne uno di sola lettura:
+
+1. Apri l'editor del layout della pagina del record
+2. Seleziona il widget dei record correlati
+3. Disattiva **Consenti modifica** in **Dati e visualizzazione**
+
+Per le tabelle, questa opzione impedisce la modifica delle celle. Per le bacheche kanban, impedisce la modifica delle schede, il loro spostamento tra le colonne e la creazione di record. Le autorizzazioni del ruolo continuano ad applicarsi quando la modifica è consentita.
+
 ## Personalizzazione di una pagina del record
 
 1. Apri un record qualsiasi
@@ -59,3 +71,5 @@ o
 ## Visibilità dei campi
 
 All'interno di un widget Campi, puoi controllare quali campi sono visibili e in quale ordine. Questo ti consente di creare layout mirati — ad esempio, mostrando solo i campi più importanti nella scheda Panoramica e inserendo i campi dettagliati in una scheda separata.
+
+<PageBanner illustration="card-page-page-layouts" />

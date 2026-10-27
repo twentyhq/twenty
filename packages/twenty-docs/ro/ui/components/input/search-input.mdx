@@ -1,0 +1,95 @@
+---
+title: SearchInput
+description: Text de căutare controlat cu acțiuni opționale, cum ar fi o fereastră pop-up de filtrare.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SearchInputReference from '/snippets/ui/generated/components/input/search-input.mdx';
+
+## Prezentare generală
+
+`SearchInput` oferă o pictogramă de căutare și o intrare de text. `onValueChange` primește noul șir; `onChange` primește evenimentul React nativ de modificare. Filtrarea, preluarea și eliminarea revenirilor revin aplicației dvs.
+
+<StoryEmbed storyId="ui-input-searchinput--display" title="Exemplu SearchInput" height={110} />
+
+## Utilizare
+
+```tsx
+import { useState } from 'react';
+import { SearchInput } from 'twenty-ui/components/input';
+
+export const RecordSearch = () => {
+  const [value, setValue] = useState('');
+
+  return (
+    <SearchInput
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search..."
+    />
+  );
+};
+```
+
+Folosiți `aria-label` sau `aria-labelledby` pentru un nume accesibil.
+
+Proprietățile native ale intrării, `className`, `style` și `ref` se aplică intrării propriu-zise. `InputGroup` partajat gestionează elementul decorativ de căutare și tratarea focalizării. Învelișul care aranjează câmpul și acțiunile sale nu acceptă props; plasați `SearchInput` în propriul container pentru a-i stabili dimensiunea sau poziția. Folosiți `size="sm"` pentru un câmp de căutare compact.
+
+## Acțiuni
+
+`actions` redă controale după câmpul de căutare. Compune o fereastră pop-up de filtrare cu un [Dropdown](/ro/ui/components/navigation/dropdown) al cărui declanșator este un `IconButton` și oferă acelui buton un nume accesibil.
+
+```tsx
+import { useState } from 'react';
+import { IconButton, SearchInput } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconFilter } from 'twenty-ui/icon';
+
+export const FilteredPeopleSearch = () => {
+  const [search, setSearch] = useState('');
+  const [includeInactive, setIncludeInactive] = useState(false);
+
+  return (
+    <SearchInput
+      aria-label="Search people"
+      placeholder="Name or email"
+      value={search}
+      onValueChange={setSearch}
+      actions={
+        <Dropdown.Root type="panel">
+          <Dropdown.Trigger
+            render={
+              <IconButton aria-label="Filter people">
+                <IconFilter />
+              </IconButton>
+            }
+          />
+          <Dropdown.Content align="end">
+            <Dropdown.Section>
+              <SettingsRow
+                checked={includeInactive}
+                onCheckedChange={setIncludeInactive}
+              >
+                Include inactive people
+              </SettingsRow>
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Root>
+      }
+    />
+  );
+};
+```
+
+`disabled` dezactivează doar introducerea de text; dezactivează separat controalele de acțiune. Cu `size="sm"`, transmite și controalelor de acțiune `size="sm"`.
+
+<StoryEmbed storyId="ui-input-searchinput--with-filter" title="SearchInput cu o fereastră pop-up de filtrare" height={320} />
+
+## Proprietăți
+
+<SearchInputReference />
+
+<PageBanner illustration="page-cover-search" />

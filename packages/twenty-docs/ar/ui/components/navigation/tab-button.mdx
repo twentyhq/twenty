@@ -1,0 +1,107 @@
+---
+title: TabButton
+description: اعرض روابط المسارات والإجراءات بجانب علامات التبويب بتنسيق متسق.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TabButtonReference from '/snippets/ui/generated/components/navigation/tab-button.mdx';
+
+## نظرة عامة
+
+استخدم `TabButton` لروابط المسارات والإجراءات، مثل إضافة علامة تبويب أو فتح قائمة الفائض. يتشارك مظهر [علامات التبويب](/ar/ui/primitives/navigation/tabs) ويستخدم [الزر](/ar/ui/primitives/input/button) للتفاعل.
+
+<StoryEmbed storyId="ui-components-tabbutton--display" title="مثال TabButton" height={120} />
+
+## استخدام
+
+```tsx
+import { TabButton } from 'twenty-ui/components/navigation';
+import { IconSettings } from 'twenty-ui/icon';
+
+export const GeneralAction = ({ onOpen }: { onOpen: () => void }) => (
+  <TabButton startIcon={<IconSettings />} onClick={onOpen}>
+    General
+  </TabButton>
+);
+```
+
+## الحالة والدلالات
+
+يوفر تطبيقك `active` من حالة المسار أو القائمة الحالية. تُبرز هذه الخاصية عنصر التحكم. عيّن `aria-current="page"` على رابط المسار الحالي. تحتفظ روابط المسارات والإجراءات المجاورة بدلالاتها كروابط أو أزرار، من دون دور علامة تبويب أو `aria-selected` أو علاقة بلوحة.
+
+استخدم `Tabs.Root` و`Tabs.List` و`Tabs.Tab` و`Tabs.Panel` و`Tabs.Indicator` الاختياري للتبديل بين لوحات المحتوى ذات الصلة. أبقِ عناصر التحكم في المسار والإجراء خارج `Tabs.List`.
+
+## التنقل
+
+عيّن `href` لعرض رابط أصلي. يمتلك المسار الحالي مظهر `active` وقيمة `aria-current` الخاصة به.
+
+```tsx
+import { TabButton } from 'twenty-ui/components/navigation';
+import { IconCreditCard } from 'twenty-ui/icon';
+
+export const BillingLink = () => (
+  <TabButton
+    href="/billing"
+    active
+    aria-current="page"
+    startIcon={<IconCreditCard />}
+  >
+    Billing
+  </TabButton>
+);
+```
+
+للتوجيه من جانب العميل، وفّر رابط الموجّه عبر `render`، وعيّن `nativeButton={false}` و`role="link"`، ومرّر الوجهة المحلولة باعتبارها `href`. احتفظ بحالة المسار وخيارات السجل على رابط الموجّه. يجب أن تمرّر الأغلفة المخصصة الخصائص والمرجع الموفَّرين إلى رابطها.
+
+```tsx
+import { TabButton } from 'twenty-ui/components/navigation';
+
+export const ComposedBillingLink = () => (
+  <TabButton
+    nativeButton={false}
+    role="link"
+    href="/billing"
+    render={<a />}
+    aria-current="page"
+    active
+  >
+    Billing
+  </TabButton>
+);
+```
+
+يتحكم `nativeButton` الصريح في عقد التفاعل حتى عند وجود `href`. طابقه مع العنصر المعروض فعليًا. تحتفظ الروابط المعطلة بدور الرابط وتمنع التفعيل.
+
+## الإجراءات
+
+من دون `href`، يعرض عنصر التحكم زرًا أصليًا مع `type="button"`. تمرّ السمات الأصلية والمراجع والأنماط وأسماء الفئات ومعالجات الأحداث كما هي. يقبل `render` عنصرًا أو دالةً تتلقى خصائص Button وحالته. تشير المراجع إلى الزر أو الرابط المعروض فعليًا، بما في ذلك المراجع الموفَّرة على عنصر مركب.
+
+```tsx
+import { useState } from 'react';
+import { TabButton } from 'twenty-ui/components/navigation';
+import { IconPlus } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const AddTabAction = () => {
+  const [count, setCount] = useState(1);
+
+  return (
+    <>
+      <TabButton startIcon={<IconPlus />} onClick={() => setCount(count + 1)}>
+        New Tab
+      </TabButton>
+      <Text role="status">Tabs: {count}</Text>
+    </>
+  );
+};
+```
+
+استخدم `startIcon` و`endIcon` و`badge` للمحتوى الداعم. تكون الصورة الرمزية الممررة إلى موضع الأيقونة للزينة عندما يسمّي النص الوجهة. يحافظ `size` على عقد حجم Button العام. يأخذ الحجم الصريح الأولوية على حجم `ButtonGroup` المحيط؛ وإلا فسيكون المكوّن افتراضيًا بحجم `sm`.
+
+## الإزاحة
+
+<TabButtonReference />
+
+<PageBanner illustration="layout" />

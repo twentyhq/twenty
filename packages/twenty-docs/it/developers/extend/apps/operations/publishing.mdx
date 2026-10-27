@@ -3,24 +3,44 @@ title: Pubblicazione
 description: Distribuisci la tua app Twenty nel marketplace oppure distribuiscila internamente.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Panoramica
 
 Una volta che la tua app è stata [compilata e testata localmente](/it/developers/extend/apps/getting-started/concepts), hai due modalità per distribuirla:
 
 * **Distribuisci un tarball** — carica la tua app direttamente su un server Twenty specifico per uso interno o privato.
-* **Pubblica su npm** — elenca la tua app nel marketplace di Twenty affinché qualsiasi spazio di lavoro possa scoprirla e installarla.
+* **Pubblica su npm** — pubblica il tuo pacchetto, [rivendicalo in Twenty](#claiming-your-app) e completa la configurazione affinché altri spazi di lavoro possano scoprirlo e installarlo.
 
 Entrambi i percorsi partono dalla stessa fase di **build**.
 
+## Proprietà della registrazione
+
+La pubblicazione di un'app crea una **registrazione dell'applicazione**: l'identità dell'app sull'istanza, condivisa da ogni area di lavoro che la installa. Contiene la voce dell'app nel marketplace, il relativo client OAuth e il relativo stato lato server: le `serverVariables` configurate da un operatore e le voci con ambito `server` dell'[archivio chiave-valore](/it/developers/extend/apps/logic/key-value-store).
+
+Un `universalIdentifier` è univoco nell'intera istanza e una registrazione appartiene al massimo a un'area di lavoro (il relativo proprietario) oppure a nessuna finché non viene rivendicata, quindi installare un'app e svilupparne una sono due diritti diversi:
+
+| Azione                                                 | Requisito                                                                                                               |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| Installazione di un'app                                | L'app è elencata nel marketplace, preinstallata dall'operatore oppure la sua registrazione appartiene al tuo workspace. |
+| Sviluppo di un'app (`twenty app dev`, `apply`, `plan`) | La registrazione appartiene al tuo workspace.                                                                           |
+
+Sincronizzare il codice e un manifest con un identificatore equivale a rivendicarne la paternità, quindi poter installare un'app non concede mai il diritto di pubblicare codice con la sua identità. A un workspace che non è il proprietario viene negato l'accesso, sia che l'app sia elencata, preinstallata o privata.
+
+Due situazioni portano a questo rifiuto:
+
+* **L'identificatore appartiene a un altro workspace.** Modifica `universalIdentifier` nella configurazione della tua app: è la soluzione usuale quando hai effettuato il fork dell'app di qualcun altro. Se devi mantenere l'identificatore, il workspace proprietario deve trasferire la registrazione al tuo.
+* **L'identificatore non appartiene ad alcun workspace.** Le app importate dalla sincronizzazione del catalogo del marketplace inizialmente non hanno un proprietario. [Rivendica il tuo con GitHub](#claiming-your-app) prima di svilupparci sopra. La pubblicazione con provenienza fornisce una prova della paternità; non assegna automaticamente uno spazio di lavoro proprietario in Twenty.
+
 ## Compilazione della tua app
 
-Esegui il comando di build per compilare la tua app e generare un `manifest.json` pronto per la distribuzione:
+Esegui il comando di build per controllare i tipi e raggruppare la tua app:
 
 ```bash filename="Terminal"
-yarn twenty dev:build
+twenty app build
 ```
 
-Questo compila i sorgenti TypeScript, transpila le funzioni di logica e i componenti front-end e scrive tutto in `.twenty/output/`. Aggiungi `--tarball` per produrre anche un pacchetto `.tgz` per la distribuzione manuale o per il comando di publish.
+Esegue il controllo dei tipi e raggruppa l'app in uno snapshot temporaneo della CLI. Usa `--json` per esaminare il manifest e i metadati dell'artefatto. `twenty app publish` crea il pacchetto stesso; non è necessaria una build separata del tarball.
 
 ## Distribuzione su un server (tarball)
 
@@ -33,7 +53,7 @@ Prima della distribuzione, ti serve un remote configurato che punti al server di
 Aggiungi un remote:
 
 ```bash filename="Terminal"
-yarn twenty remote:add --url https://your-twenty-server.com --as production
+twenty auth login --url https://your-twenty-server.com --name production
 ```
 
 ### Distribuzione
@@ -41,16 +61,16 @@ yarn twenty remote:add --url https://your-twenty-server.com --as production
 Compila e carica la tua app sul server in un solo passaggio:
 
 ```bash filename="Terminal"
-yarn twenty app:publish --private
+twenty app publish --private
 # To deploy to a specific remote:
-# yarn twenty app:publish --private --remote production
+# twenty app publish --private --remote production
 ```
 
 ### Condivisione di un'app distribuita
 
 Le app in formato tarball non sono elencate nel marketplace pubblico, quindi altri spazi di lavoro sullo stesso server non le troveranno navigando. Per condividere un'app distribuita:
 
-1. Vai su **Impostazioni > Applicazioni > Registrazioni** e apri la tua app
+1. Vai a **Impostazioni > Sviluppatori > App** e apri la tua app in **Le mie app**
 2. Nella scheda **Distribuzione**, fai clic su **Copia link di condivisione**
 3. Condividi questo link con utenti su altri spazi di lavoro — li porterà direttamente alla pagina di installazione dell'app
 
@@ -58,16 +78,19 @@ Il link di condivisione utilizza l'URL di base del server (senza alcun sottodomi
 
 ### Gestione delle versioni
 
-Quando si aggiorna un'app in formato tarball già distribuita, il server richiede che la `version` in `package.json` sia **strettamente superiore** (per l'ordinamento [semver](https://semver.org)) rispetto alla versione attualmente distribuita. Eseguire nuovamente il deploy della stessa versione, o pubblicarne una inferiore, viene rifiutato prima che il tarball venga archiviato — vedrai un errore `VERSION_ALREADY_EXISTS` nella CLI.
+Quando si aggiorna un'app in formato tarball già distribuita, il server richiede che la `version` in `package.json` sia **strettamente superiore** (per l'ordinamento [semver](https://semver.org)) rispetto alla versione attualmente distribuita. La ridistribuzione della stessa versione, o il caricamento di una versione precedente, viene rifiutata quando il server registra il tarball caricato, che viene quindi nuovamente eliminato. Vedrai un errore `VERSION_ALREADY_EXISTS` dalla CLI.
 
 Per rilasciare un aggiornamento:
 
 1. Incrementa il campo `version` nel tuo `package.json` (ad es. `1.2.3` → `1.2.4`, `1.3.0` o `2.0.0`).
-2. Esegui `yarn twenty app:publish --private` (oppure `yarn twenty app:publish --private --remote production`)
-3. Gli spazi di lavoro che hanno installato l'app e abilitato l'aggiornamento automatico (nella scheda Impostazioni dell'app) vengono aggiornati automaticamente in secondo piano; gli altri vedranno l'aggiornamento disponibile nelle loro impostazioni
+2. Esegui `twenty app publish --private` (oppure `twenty app publish --private --remote production`)
+3. Gli spazi di lavoro che hanno installato l'app e abilitato l'aggiornamento automatico (nella scheda Generale dell'app) vengono aggiornati automaticamente in secondo piano; gli altri vedranno l'aggiornamento disponibile nelle loro impostazioni
 
 <Note>
-I tag di pre-release funzionano come previsto: incrementare `1.0.0-rc.1` → `1.0.0-rc.2` è consentito e una release finale come `1.0.0` viene correttamente riconosciuta come superiore a `1.0.0-rc.5`. La versione in `package.json` deve essere essa stessa una stringa semver valida.
+  I tag di pre-release funzionano come previsto: incrementare `1.0.0-rc.1` → `1.0.0-rc.2` è
+  consentito e una release finale come `1.0.0` viene correttamente riconosciuta come superiore
+  a `1.0.0-rc.5`. La versione in `package.json` deve essere essa stessa una stringa semver
+  valida.
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
@@ -98,16 +121,19 @@ Il valore è un [intervallo semver](https://github.com/npm/node-semver#ranges) s
 **Cosa succede durante il deploy e l'installazione:**
 
 * Se `engines.twenty` è impostato e la versione del server di destinazione non soddisfa l'intervallo, il deploy (caricamento del tarball) o l'installazione vengono rifiutati con un errore `SERVER_VERSION_INCOMPATIBLE` e un messaggio che indica sia l'intervallo richiesto sia la versione effettiva del server.
-* Se `engines.twenty` **non è impostato**, l'app è accettata su qualsiasi versione del server (retrocompatibile con le app esistenti).
+* Se `engines.twenty` **non è impostato**, non viene eseguito alcun controllo della versione e l'app è accettata su qualsiasi versione del server (retrocompatibile con le app esistenti). Un valore vuoto viene rifiutato come intervallo non valido.
+* Il marketplace non elenca un'app la cui versione più recente dichiara un intervallo `engines.twenty` che il server non soddisfa, oppure un intervallo non valido. L'app rimane registrata e visibile nel pannello di amministrazione.
 * Se sul server non è configurata `APP_VERSION`, il controllo viene ignorato.
 
 <Note>
-Il server è l'autorità di controllo — convalida `engines.twenty` sia durante il caricamento del tarball sia durante l'installazione nello spazio di lavoro. Se distribuisci un tarball out-of-band o installi dal marketplace, il server continua comunque a imporre la compatibilità.
+  Il server è l'autorità di controllo — convalida `engines.twenty` sia durante il
+  caricamento del tarball sia durante l'installazione nello spazio di lavoro. Se distribuisci un tarball out-of-band o
+  installi dal marketplace, il server continua comunque a imporre la compatibilità.
 </Note>
 
 ## CI/CD automatizzati (workflow preconfigurati)
 
-Le app generate con `create-twenty-app` includono tre workflow di GitHub Actions pronti all'uso, nella cartella `.github/workflows/`. L'esecuzione della CI non richiede alcuna configurazione, la CD richiede un solo secret e la pubblicazione su npm richiede una configurazione una tantum di npm trusted-publisher.
+Le app generate con `twenty app init` includono tre workflow di GitHub Actions pronti all'uso, nella cartella `.github/workflows/`. L'esecuzione della CI non richiede alcuna configurazione, la CD richiede un solo secret e la pubblicazione su npm richiede una configurazione una tantum di npm trusted-publisher.
 
 ### CI — `ci.yml`
 
@@ -116,9 +142,11 @@ Esegue automaticamente i test di integrazione a ogni push su `main` e sulle pull
 **Cosa fa:**
 
 1. Esegue il checkout del codice sorgente della tua app.
-2. Avvia un'istanza di test isolata di Twenty utilizzando l'azione composita `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (l'equivalente per la CI di `yarn twenty docker:start --test`).
-3. Abilita Corepack, configura Node.js dal tuo `.nvmrc` e installa le dipendenze con `yarn install --immutable`.
-4. Esegue `yarn test`, passando `TWENTY_API_URL` e `TWENTY_API_KEY` dall'istanza avviata affinché i tuoi test possano comunicare con un server reale.
+2. Avvia un'istanza di test isolata di Twenty utilizzando l'azione composita `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main`.
+3. Abilita Corepack e configura Node.js in base al tuo `.nvmrc`.
+4. Installa la CLI standalone con versione fissata nel passaggio **Install Twenty CLI**.
+5. Installa le dipendenze con `yarn install --immutable`, quindi esegue lint, controllo dei tipi e test unitari.
+6. Esegue `yarn test`, passando `TWENTY_API_URL` e `TWENTY_API_KEY` dall'istanza avviata affinché i tuoi test possano comunicare con un server reale.
 
 **Opzioni di configurazione:**
 
@@ -134,18 +162,21 @@ Esegue il deploy della tua app su un server Twenty configurato a ogni push su `m
 **Cosa fa:**
 
 1. Esegue il checkout della testa della PR (per le PR etichettate) oppure del commit inviato.
-2. Esegue `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — l'equivalente per la CI di `yarn twenty app:publish --private`.
+2. Esegue `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — l'equivalente per la CI di `twenty app publish --private`.
 3. Esegue `twentyhq/twenty/.github/actions/install-twenty-app@main` in modo che la versione appena distribuita venga installata nello spazio di lavoro di destinazione.
 
 **Configurazione richiesta:**
 
 | Impostazione            | Dove                                                             | Scopo                                                                                                             |
 | ----------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (predefinito `http://localhost:3000`)          | Il server Twenty su cui effettuare il deploy. Modificalo con l'URL reale del tuo server prima del primo utilizzo. |
+| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (predefinito `http://localhost:2020`)          | Il server Twenty su cui effettuare il deploy. Modificalo con l'URL reale del tuo server prima del primo utilizzo. |
 | `TWENTY_DEPLOY_API_KEY` | Repository GitHub **Settings → Secrets and variables → Actions** | Chiave API con autorizzazione di deploy sul server di destinazione.                                               |
 
 <Note>
-Il valore predefinito di `TWENTY_DEPLOY_URL`, `http://localhost:3000`, è un segnaposto — non raggiungerà alcuna risorsa da un runner ospitato su GitHub. Aggiornalo all'URL pubblico del tuo server (oppure usa un runner self-hosted con accesso di rete) prima di abilitare il CD.
+  Il valore predefinito di `TWENTY_DEPLOY_URL`, `http://localhost:2020`, è un segnaposto —
+  non raggiungerà alcuna risorsa da un runner ospitato su GitHub. Aggiornalo all'URL pubblico del tuo
+  server (oppure usa un runner self-hosted con accesso di rete) prima di
+  abilitare il CD.
 </Note>
 
 **Attivare un deploy di anteprima da una PR:**
@@ -159,22 +190,32 @@ Pubblica la tua app su npm con attestazione di provenienza quando esegui il push
 **Cosa fa:**
 
 1. Clona la tua app, configura Node.js e aggiorna npm (la pubblicazione attendibile richiede npm 11.5.1 o versioni successive).
-2. Esegue `yarn twenty app:publish`, che crea la build dell'app e pubblica `.twenty/output` su npm. In CI aggiunge automaticamente `--provenance` e `--access public`, quindi non sono necessari flag nel workflow.
+2. Installa la CLI standalone con versione fissata nel passaggio **Install Twenty CLI**, quindi installa le dipendenze dell'app con `yarn install --immutable`.
+3. Esegue `twenty app publish`, che compila e crea un pacchetto di uno snapshot isolato dell'app, quindi lo pubblica su npm. In CI aggiunge automaticamente `--provenance` e `--access public`, quindi non sono necessari flag nel workflow.
 
 **Impostazione una tantum:**
 
-Su npmjs.com apri il tuo pacchetto > **Settings → Trusted Publisher** e registra questo repository con il workflow `publish.yml` (consulta la [documentazione su npm trusted publishing](https://docs.npmjs.com/trusted-publishers)). La pubblicazione con provenance certifica quale repository GitHub ha creato il pacchetto ed è anche il modo in cui dichiari la proprietà della tua app in un marketplace Twenty.
+Su npmjs.com apri il tuo pacchetto > **Settings → Trusted Publisher** e registra questo repository con il workflow `publish.yml` (consulta la [documentazione su npm trusted publishing](https://docs.npmjs.com/trusted-publishers)). La pubblicazione con provenienza certifica quale repository GitHub ha compilato il pacchetto. Dopo la pubblicazione, [rivendica la proprietà in Twenty](#claiming-your-app).
 
 <Note>
 npm accetta la provenienza solo da repository di origine **pubblici**. Se esegui la pubblicazione da un repository privato, npm rifiuta il bundle di provenienza OIDC con un `E422 ... Errore "Unsupported GitHub Actions source repository visibility: \"private\"`." Per pubblicare da un repository privato, escludi la provenienza impostando `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` nella `env` dello step di pubblicazione (nel `publish.yml` generato è incluso un suggerimento commentato):
 
 ```yaml filename=".github/workflows/publish.yml"
-      - name: Publish to npm
-        env:
-          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
-        run: yarn twenty app:publish
+- name: Publish to npm
+  env:
+    TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+  run: twenty app publish
 ```
+
+Senza la provenienza GitHub, il pacchetto non può essere rivendicato tramite **Rivendica con GitHub**. Usa un repository pubblico con provenienza se hai bisogno di questo flusso di proprietà.
+
 </Note>
+
+### Fissare la versione della CLI
+
+Tutti e tre i workflow generati fissano la CLI standalone alla versione di `twenty` che ha eseguito `twenty app init`. I passaggi **Install Twenty CLI** in `ci.yml` e `publish.yml` usano `npm install -g twenty@\<version>`. In `cd.yml`, sia l'azione di deploy sia quella di installazione ricevono la stessa versione tramite il loro input `cli-version`.
+
+Per aggiornare, aggiorna insieme i due comandi di installazione ed entrambi gli input `cli-version`. Questi vincoli sono separati dalla versione del server `TWENTY_VERSION` usata nella CI e dai riferimenti alle azioni riutilizzabili riportati di seguito.
 
 ### Bloccare le azioni riutilizzabili
 
@@ -182,12 +223,12 @@ I workflow `ci.yml` e `cd.yml` fanno riferimento ad azioni riutilizzabili a `@ma
 
 ## Pubblicazione su npm
 
-La pubblicazione su npm rende la tua app scopribile nel marketplace di Twenty. Qualsiasi spazio di lavoro Twenty può sfogliare, installare e aggiornare le app del marketplace direttamente dall'interfaccia utente.
+La pubblicazione su npm rende la tua app idonea per il marketplace di Twenty. Dopo la sincronizzazione del catalogo e l'eventuale [configurazione delle route del server](#setting-up-server-routes) richiesta, gli spazi di lavoro possono sfogliarla, installarla e aggiornarla dall'interfaccia utente. Le app della community vengono visualizzate quando gli utenti disattivano il filtro **Solo verificate**.
 
 ### Requisiti
 
 * Un account [npm](https://www.npmjs.com)
-* La parola chiave `twenty-app` nell'array `keywords` del tuo `package.json` (aggiungila manualmente — non è inclusa per impostazione predefinita nel template `create-twenty-app`)
+* La parola chiave `twenty-app` nell'array `keywords` del tuo `package.json` (aggiungila manualmente — non è inclusa per impostazione predefinita nel template `twenty app init`)
 
 ```json filename="package.json"
 {
@@ -207,10 +248,7 @@ export default defineApplication({
   displayName: 'My App',
   description: 'A great app',
   logo: 'public/logo.png',
-  galleryImages: [
-    'public/screenshot-1.png',
-    'public/screenshot-2.png',
-  ],
+  galleryImages: ['public/screenshot-1.png', 'public/screenshot-2.png'],
 });
 ```
 
@@ -221,7 +259,9 @@ Vedi l'[accordion defineApplication](/it/developers/extend/apps/config/applicati
 Il marketplace visualizza le `galleryImages` in un contenitore `8:5` fisso (ad esempio, `1600×1000 px`).
 
 <Note>
-Le immagini della galleria di qualsiasi rapporto d'aspetto vengono visualizzate per intero e non vengono mai ritagliate, ma tutto ciò che è significativamente più alto o più stretto di `8:5` mostrerà bande vuote ai lati.
+  Le immagini della galleria di qualsiasi rapporto d'aspetto vengono visualizzate per intero e non vengono mai
+  ritagliate, ma quelle significativamente più alte o più strette di `8:5` mostreranno
+  bande vuote ai lati.
 </Note>
 
 #### Limite dimensione immagine
@@ -231,42 +271,119 @@ Il file `logo` e ciascun file di `galleryImages` non devono superare **10 MB**. 
 ### Pubblica
 
 ```bash filename="Terminal"
-yarn twenty app:publish
+twenty app publish
 ```
 
 Per pubblicare con un dist-tag specifico (ad es. `beta` o `next`):
 
 ```bash filename="Terminal"
-yarn twenty app:publish --tag beta
+twenty app publish --tag beta
 ```
 
 ### Come funziona l'individuazione nel marketplace
 
 Il server Twenty sincronizza il proprio catalogo del marketplace dal registro npm **ogni ora**.
 
-Puoi attivare la sincronizzazione immediatamente invece di aspettare:
-
-```bash filename="Terminal"
-yarn twenty dev:catalog-sync
-# To target a specific remote:
-# yarn twenty dev:catalog-sync --remote production
-```
+La CLI standalone non dispone di un comando di sincronizzazione del catalogo. Attendi la sincronizzazione del catalogo del server oppure usa gli strumenti di amministrazione del server.
 
 I metadati mostrati nel marketplace provengono dalla configurazione di `defineApplication()` — vedi [Metadati del marketplace](#marketplace-metadata) sopra.
 
 <Note>
 Se la tua app non definisce un `aboutDescription` in `defineApplication()`, il marketplace userà automaticamente il `README.md` del tuo pacchetto su npm come contenuto della pagina Informazioni. Questo significa che puoi mantenere un unico README sia per npm sia per il marketplace di Twenty. Se desideri una descrizione diversa nel marketplace, imposta esplicitamente `aboutDescription`.
+
+La scheda Informazioni visualizza solo testo Markdown. Le immagini non vengono visualizzate, sia che utilizzino la sintassi Markdown sia i tag `<img>`, e l'HTML non elaborato, come badge o blocchi `\<div align="center">`, viene mostrato come testo semplice.
+
 </Note>
 
 ### Pubblicazione con CI
 
-Il workflow `publish.yml` generato dallo scaffold descritto sopra pubblica automaticamente su npm sui tag di versione, con provenance. Poiché `yarn twenty app:publish` aggiunge `--provenance` e `--access public` per te quando viene eseguito in CI, il workflow non ha bisogno di flag npm — serve solo l'impostazione una tantum del trusted publisher.
+Il workflow `publish.yml` generato dallo scaffold descritto sopra pubblica automaticamente su npm sui tag di versione, con provenance. Poiché `twenty app publish` aggiunge `--provenance` e `--access public` per te quando viene eseguito in CI, il workflow non richiede flag npm — serve solo la configurazione una tantum del trusted publisher.
 
-Per altri sistemi CI (GitLab CI, CircleCI, ecc.), esegui `yarn install` e poi `yarn twenty app:publish`. La provenance viene emessa quando l'ambiente può generare un token OIDC e, in caso contrario, viene saltata automaticamente.
+Per altri sistemi CI (GitLab CI, CircleCI, ecc.), esegui `yarn install` e poi `twenty app publish`. La provenance viene emessa quando l'ambiente può generare un token OIDC e, in caso contrario, viene saltata automaticamente.
 
 <Note>
-La **npm provenance** aggiunge un badge di attendibilità alla tua scheda npm, consentendo agli utenti di verificare che il pacchetto sia stato creato a partire da uno specifico commit in una pipeline CI pubblica. È anche ciò che ti permette di dichiarare la proprietà della tua app in un marketplace Twenty. Consulta la [documentazione su npm provenance](https://docs.npmjs.com/generating-provenance-statements) per maggiori dettagli.
+  **npm provenance** aggiunge un badge di attendibilità alla tua scheda npm, consentendo agli utenti
+  di verificare che il pacchetto sia stato creato a partire da uno specifico commit in una pipeline CI pubblica.
+  È anche ciò che ti permette di dichiarare la proprietà della tua app in un marketplace Twenty.
+  Consulta la documentazione su npm provenance
+  &#x20;per maggiori dettagli.
 </Note>
+
+Dopo che il pacchetto è stato sincronizzato nel catalogo, continua con [Rivendicare la tua app](#claiming-your-app). Il flusso di rivendicazione richiede una provenienza che punti a un repository **GitHub**.
+
+## Rivendicare la tua app
+
+La rivendicazione assegna la registrazione della tua app allo spazio di lavoro Twenty che la gestirà. La rivendicazione dell'app è disponibile per tutti gli spazi di lavoro. Il tuo ruolo richiede le autorizzazioni **App dello spazio di lavoro** e **Sviluppatori** per rivendicare tramite la scheda **App** di **Impostazioni > Sviluppatori**.
+
+La proprietà è per istanza di Twenty: la rivendicazione su Twenty Cloud non rivendica l'app su un server self-hosted separato. Gli altri spazi di lavoro sulla stessa istanza installano la tua app senza doverla rivendicare personalmente.
+
+### Prima di rivendicare
+
+* Pubblica il tuo pacchetto da un **repository GitHub pubblico** usando GitHub Actions e la [pubblicazione attendibile npm con provenienza](#ci-publishing). La versione importata nel catalogo di Twenty deve includere l'attestazione di provenienza.
+* Includi la parola chiave `twenty-app` in `package.json` e attendi la [sincronizzazione del catalogo](#how-marketplace-discovery-works).
+* Scegli lo spazio di lavoro che sarà proprietario dell'app. Per le app con route del server, questo spazio di lavoro esegue e paga anche il resolver condiviso.
+* Accedi a GitHub come **account personale proprietario del repository di origine** oppure come **proprietario dell'organizzazione** che ne è proprietaria. Il solo accesso come collaboratore al repository o come manutentore del pacchetto npm non è sufficiente.
+
+### Rivendica con GitHub
+
+1. Nello spazio di lavoro del proprietario previsto, vai a **Impostazioni > Sviluppatori > App** (`/settings/developers#apps`).
+2. In **Rivendica un'applicazione**, inserisci il nome esatto del pacchetto npm, incluso il relativo ambito (ad esempio, `@your-org/twenty-app`), oppure l'`universalIdentifier` dell'app.
+3. Fai clic su **Cerca** e verifica che il risultato sia la tua app. Se non viene trovata, fai clic su **Sincronizza catalogo** se disponibile, attendi il completamento della sincronizzazione, quindi cercala di nuovo.
+4. Fai clic su **Rivendica con GitHub** e autorizza Twenty. Per un repository di proprietà di un'organizzazione, concedi l'accesso a tale organizzazione nella sezione **Accesso all'organizzazione** di GitHub. I repository personali non richiedono un'autorizzazione dell'organizzazione.
+5. Quando torni in Twenty, verifica che l'app appaia in **Le mie app** con tipo **NPM**. Aprila e verifica **Distribuzione > Proprietà** per **Rivendicata da questo spazio di lavoro**.
+
+La rivendicazione non installa l'app. Se espone route del server, completa la configurazione seguente prima che altri spazi di lavoro dipendano dai relativi webhook.
+
+### Configurazione delle route del server
+
+Una [route del server](/it/developers/extend/apps/logic/logic-functions#server-route-trigger) riceve eventi per più spazi di lavoro a un unico URL. Il relativo resolver viene eseguito nello **spazio di lavoro proprietario** della registrazione, quindi distribuisce il lavoro allo spazio di lavoro installato appropriato.
+
+1. Apri la tua app in **Le mie app** e compila tutte le **Variabili del server** richieste nella scheda **Configurazione**.
+2. In **Distribuzione**, fai clic su **Visualizza nel marketplace** per aprire la pagina dell'app e installarla nello **spazio di lavoro proprietario**. Puoi aprire questa pagina anche prima che l'app appaia nella ricerca del marketplace.
+3. Registra l'URL del webhook del server presso il tuo provider e testa un evento da un secondo spazio di lavoro in cui l'app è installata. Controlla i log sia del resolver sia della funzione di destinazione.
+
+<Warning>
+  Un'app non rivendicata, o un'app non installata nello spazio di lavoro del proprietario, non dispone di
+  alcun resolver di route del server da eseguire. Le richieste restituiscono `404`
+  (`LOGIC_FUNCTION_NOT_FOUND`), anche se l'app è installata in altri
+  spazi di lavoro. Queste app non vengono visualizzate nella ricerca del marketplace finché non vengono rivendicate, installate
+  nello spazio di lavoro del proprietario e configurate con tutte le variabili del server richieste.
+</Warning>
+
+### Costi e disponibilità dello spazio di lavoro proprietario
+
+Consulta [come vengono misurate le esecuzioni delle funzioni logiche](/it/user-guide/billing/capabilities/credits#how-logic-function-runs-are-metered) per informazioni sul consumo di crediti, sui prezzi e su quale spazio di lavoro viene fatturato.
+
+La disinstallazione dell'app dallo spazio di lavoro proprietario o l'eliminazione di tale spazio di lavoro rimuove il resolver condiviso e interrompe i webhook del server per ogni installazione su quell'istanza.
+
+### Proprietà dopo lo spostamento di un repository
+
+Lo spostamento del repository GitHub a un altro account personale o a un'altra organizzazione non trasferisce né rimuove una rivendicazione Twenty esistente. La registrazione rimane associata al proprio spazio di lavoro proprietario. Mantieni lo stesso pacchetto npm e l'`universalIdentifier` dell'app; per modificare lo spazio di lavoro proprietario di Twenty è necessario un trasferimento di proprietà separato.
+
+### Risoluzione dei problemi relativi a una rivendicazione
+
+Se riscontri problemi nel rivendicare la tua app, contattaci su [Discord](https://discord.gg/cx5n4Jzs57) oppure [apri una segnalazione su GitHub](https://github.com/twentyhq/twenty/issues/new/choose).
+
+<Accordion title="Configurazione della rivendicazione GitHub self-hosted">
+  L'amministratore del server configura `APP_CLAIM_GITHUB_CLIENT_ID` e
+  `APP_CLAIM_GITHUB_CLIENT_SECRET` con un'app OAuth di GitHub. Imposta il relativo
+  URL di callback per l'autorizzazione sul tuo `SERVER_URL` seguito da
+  `/application-registration-claim/github/callback`, ad esempio
+  `https://twenty.example.com/application-registration-claim/github/callback`.
+  Questa configurazione è già gestita per te su Twenty Cloud.
+</Accordion>
+
+## Visibilità e verifica nel marketplace
+
+La rivendicazione stabilisce la proprietà; non assegna un badge **Verificata**. Il marketplace usa per impostazione predefinita **Solo verificate**. Per trovare le app della community, vai a **Impostazioni > Applicazioni > Marketplace**, apri il filtro e deseleziona **Solo verificate**. Puoi anche condividere la pagina di installazione diretta della tua app usando **Le mie app > la tua app > Distribuzione > Copia link di condivisione**.
+
+L'etichetta Verificata si applica attualmente alle app gestite da Twenty, per le quali il team può garantire sicurezza e qualità. Le app di terze parti possono essere pubblicate e installate senza questa etichetta.
+
+La [checklist di valutazione del marketplace di terze parti](/it/developers/extend/apps/operations/marketplace-vetting)
+proposta è un lavoro in corso. Descrive criteri di revisione ed evidenze specifici della versione,
+non un programma di certificazione disponibile.
+
+Se la tua app continua a non essere visibile con **Solo verificate** disattivato, verifica che la sincronizzazione del catalogo sia stata completata, che tutte le variabili del server richieste siano compilate e che l'eventuale configurazione delle route del server sia completa.
 
 ## Installazione delle app
 
@@ -279,7 +396,7 @@ Vai alla pagina **Impostazioni > Applicazioni** in Twenty, dove è possibile sfo
 Puoi anche installare le app dalla riga di comando:
 
 ```bash filename="Terminal"
-yarn twenty app:install
+twenty app install
 ```
 
 <Note>
@@ -288,5 +405,8 @@ Il server applica il versioning semver durante l’installazione, rispecchiando 
 * L’installazione della stessa versione già installata nel tuo spazio di lavoro viene rifiutata con un errore `APP_ALREADY_INSTALLED`.
 * L’installazione di una versione inferiore rispetto a quella attualmente installata viene rifiutata con un errore `CANNOT_DOWNGRADE_APPLICATION`.
 
-Per installare una versione più recente, effettua prima il deploy o la pubblicazione, quindi riesegui `yarn twenty app:install`.
+Per installare una versione più recente, effettua prima il deploy o la pubblicazione, quindi riesegui `twenty app install`.
+
 </Note>
+
+<PageBanner illustration="card-page-publishing" />

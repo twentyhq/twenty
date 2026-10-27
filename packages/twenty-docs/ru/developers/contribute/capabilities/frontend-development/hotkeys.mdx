@@ -2,6 +2,8 @@
 title: Горячие клавиши
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Введение
 
 Когда вам нужно прослушивать горячую клавишу, вы обычно используете обработчик событий `onKeyDown`.
@@ -176,3 +178,5 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 Мы сделали тонкую обертку поверх [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro), которая делает его более производительным и избегает ненужных повторных рендеров.
 
 Мы также создаем атом Jotai, чтобы управлять состоянием области действия горячих клавиш и сделать его доступным везде в приложении.
+
+<PageBanner illustration="card-page-command-menu" />

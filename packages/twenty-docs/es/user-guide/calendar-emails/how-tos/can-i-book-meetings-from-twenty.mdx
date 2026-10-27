@@ -3,13 +3,33 @@ title: ¿Puedo programar reuniones desde Twenty?
 description: Información sobre la programación de reuniones directamente desde Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Estado actual
 
-La integración de calendario de Twenty está diseñada para **sincronizar y mostrar** tus eventos de calendario existentes.
+Sí. La integración de calendario de Twenty sincroniza y muestra tus eventos existentes, y también puedes crear un evento nuevo directamente desde una página de registro. El evento se crea en tu calendario conectado, no solo dentro de Twenty.
+
+## Cómo crear una reunión desde Twenty
+
+Requisito previo: una cuenta de Google, Microsoft o CalDAV conectada con la sincronización de calendario habilitada
+
+1. Abre un registro de Persona, Empresa u Oportunidad.
+2. Haz clic en la acción **Crear evento de calendario**
+3. Selecciona la cuenta de calendario en la que crear el evento
+4. Añade invitados, un título, una ubicación y una descripción
+5. Establece el inicio y el final (o activa **Todo el día**) y comprueba la zona horaria
+6. Activa **Invitaciones** para enviar un correo electrónico a los invitados y **Videollamada** para añadir un enlace de reunión
+7. Haz clic en **Crear evento**
+
+El registro desde el que empezaste se vincula automáticamente al evento, por lo que la reunión aparece en su cronología.
+
+<Note>
+La acción se oculta si tu rol no tiene el permiso "Crear evento de calendario" y se desactiva si el registro no tiene una dirección de correo electrónico para invitar.
+</Note>
 
 ## Programar reuniones mediante flujos de trabajo
 
-Aunque no es posible programar reuniones manualmente, puede programarlas en Veinte usando flujos de trabajo.
+También puedes crear eventos automáticamente con flujos de trabajo:
 
 1. Crear un nuevo flujo de trabajo
 2. Selecciona cualquier desencadenador según tus necesidades
@@ -19,7 +39,10 @@ Aunque no es posible programar reuniones manualmente, puede programarlas en Vein
 
 ## Lo que puedes hacer
 
+* **Crear eventos** en tu calendario conectado desde un registro
 * **Ver el historial de reuniones** en los registros de Personas, Empresas y Oportunidades
 * **Ver las próximas reuniones** con contactos en tu CRM
 * **Hacer seguimiento del contexto de las reuniones** junto con las comunicaciones por correo electrónico
 * **Crear contactos automáticamente** a partir de los participantes de la reunión
+
+<PageBanner illustration="calendar-emails" />

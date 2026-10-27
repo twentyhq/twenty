@@ -3,11 +3,13 @@ title: Понятия
 description: Как работают приложения Twenty — модель сущностей, изоляция в песочнице и жизненный цикл установки.
 ---
 
-Приложения Twenty — это пакеты TypeScript, которые расширяют ваше рабочее пространство пользовательскими объектами, логикой, компонентами интерфейса и возможностями ИИ. Они работают на платформе Twenty с полной изоляцией в песочнице и контролем прав доступа.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Как работают приложения
 
-Приложение — это набор **сущностей**, объявленных с помощью функций `defineEntity()` из пакета `twenty-sdk`. SDK обнаруживает эти объявления посредством анализа AST на этапе сборки и формирует **манифест** — полное описание того, что ваше приложение добавляет в рабочее пространство. Эти функции проверяют вашу конфигурацию на этапе сборки и обеспечивают автодополнение в IDE и безопасность типов.
+Приложение — это набор **сущностей**, объявленных с помощью функций `defineEntity()` из пакета `twenty-sdk`. CLI обнаруживает эти объявления по AST анализу во время сборки и дает **проявление** — полное описание того, что добавляет ваше приложение в рабочую область. Эти функции проверяют вашу конфигурацию на этапе сборки и обеспечивают автодополнение в IDE и безопасность типов.
 
 ```
 your-app/
@@ -22,13 +24,16 @@ your-app/
 │   ├── agents/                  ← defineAgent
 │   ├── views/                   ← defineView
 │   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   ├── settings-menu-items/     ← defineSettingsMenuItem
 │   └── page-layouts/            ← definePageLayout
 ├── public/                      ← Static assets (images, icons)
 └── package.json
 ```
 
 <Note>
-  **Организация файлов — на ваше усмотрение.** Обнаружение сущностей основано на AST — SDK находит вызовы `export default defineEntity(...)` независимо от расположения файла. Структура папок выше — это соглашение, а не требование.
+  **Выбрана файловая организация.** Определение сущности — на основе AST, SDK
+  находит `export default defineEntity(. .)` вызовы, независимо от того, где находится файл
+  . Структура папок выше — это соглашение, а не требование.
 </Note>
 
 ## Типы сущностей
@@ -37,35 +42,38 @@ your-app/
 | ------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | **Приложение**            | Идентификация приложения, роль по умолчанию, переменные                          | [Конфигурация приложения](/ru/developers/extend/apps/config/application)                                             |
 | **Роль**                  | Наборы прав для объектов и полей                                                 | [Роли и разрешения](/ru/developers/extend/apps/config/roles)                                                         |
-| **Объект**                | Пользовательские типы записей с полями                                           | [Объекты](/ru/developers/extend/apps/data/objects)                                                                   |
+| **Object**                | Пользовательские типы записей с полями                                           | [Объекты](/ru/developers/extend/apps/data/objects)                                                                   |
 | **Поле**                  | Добавляйте поля к объектам из других приложений                                  | [Расширение объектов](/ru/developers/extend/apps/data/extending-objects)                                             |
 | **Связь**                 | Двунаправленные связи между объектами                                            | [Связи](/ru/developers/extend/apps/data/relations)                                                                   |
 | **Логическая функция**    | Серверный TypeScript с триггерами                                                | [Логические функции](/ru/developers/extend/apps/logic/logic-functions)                                               |
 | **Навык**                 | Повторно используемые инструкции для ИИ-агента                                   | [Навыки и агенты](/ru/developers/extend/apps/logic/skills-and-agents)                                                |
 | **Агент**                 | ИИ-агенты с пользовательскими промптами                                          | [Навыки и агенты](/ru/developers/extend/apps/logic/skills-and-agents)                                                |
-| **Провайдер подключения** | Учётные данные OAuth для сторонних API                                           | [Подключения](/ru/developers/extend/apps/logic/connections)                                                          |
+| **Рабочий процесс**       | Готовые рабочие процессы с триггером и шагами                                    | [Рабочие процессы](/ru/developers/extend/apps/logic/workflows)                                                       |
+| **Провайдер подключения** | OAuth или пользовательский вход для сторонних учетных записей                    | [Подключения](/ru/developers/extend/apps/logic/connections)                                                          |
+| **Поставщик сообщений**   | Отправляет ответы из каналов сообщений приложения через подключение              | [Каналы сообщений](/ru/developers/extend/apps/logic/messaging-channels#sending-replies)                              |
 | **Представление**         | Преднастроенные представления списков записей                                    | [Представления](/ru/developers/extend/apps/layout/views)                                                             |
 | **Пункт меню навигации**  | Пользовательские элементы боковой панели                                         | [Элементы меню навигации](/ru/developers/extend/apps/layout/navigation-menu-items)                                   |
 | **Макет страницы**        | Вкладки и виджеты на странице сведений о записи                                  | [Макеты страниц](/ru/developers/extend/apps/layout/page-layouts)                                                     |
 | **Компонент фронтенда**   | Изолированный в песочнице интерфейс React внутри Twenty                          | [Компоненты фронтенда](/ru/developers/extend/apps/layout/front-components)                                           |
 | **Общие зависимости**     | Зависимости, общие для фронтенд-компонентов приложения, указанные в package.json | [Общие зависимости](/ru/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components) |
 | **Элемент меню команд**   | Быстрые действия и элементы Cmd+K                                                | [Элементы меню команд](/ru/developers/extend/apps/layout/command-menu-items)                                         |
+| **Пункт меню настроек**   | Записи в меню настроек приложения, каждое отображение фронтального компонента    | [Настройки пунктов меню](/ru/developers/extend/apps/layout/front-components#settings-menu-items)                     |
 
 ## Изоляция в песочнице
 
-* **Логические функции** выполняются в изолированных процессах Node.js на сервере. Они получают доступ к данным только через типизированный API-клиент, который действует либо от имени человека, запустившего выполнение, либо от имени самого приложения. См. [Чей доступ использует вызов](/ru/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
+* **Логические функции** выполняются в изолированных процессах Node.js на сервере. Они имеют доступ к данным только через напечатанный API-клиент, который действует либо как человек, который инициировал запуск, либо как само приложение. Смотрите [Чей доступ к звонкам](/ru/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * **Компоненты фронтенда** запускаются в Web Workers с использованием Remote DOM — изолированы от основной страницы, но при этом рендерят нативные элементы DOM (не iframes). Они взаимодействуют с Twenty через хостовый API обмена сообщениями.
-* **Права доступа** применяются на уровне API. Внедряются два токена времени выполнения, оба производные от роли, объявленной с помощью `defineApplicationRole()`; область действия токена по умолчанию дополнительно ограничивается тем, что может делать человек, запустивший выполнение, когда за выполнением стоит человек.
+* **Права доступа** применяются на уровне API. Два токена во время выполнения вводятся в действие - оба из этих токенов, полученных от роли, заявленной с помощью `defineApplicationRole()`; по умолчанию один сужен дальше к тому, что запускающий человек может делать, когда кто-то находится за бегом.
 
 ## Жизненный цикл приложения
 
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ Development                                             │
-│   npx create-twenty-app → yarn twenty dev (live sync)   │
+│   twenty app init → twenty app dev (live sync)   │
 ├─────────────────────────────────────────────────────────┤
 │ Build & Deploy                                          │
-│   yarn twenty dev:build → yarn twenty app:publish        │
+│   twenty app build → twenty app publish        │
 ├─────────────────────────────────────────────────────────┤
 │ Install flow                                            │
 │   upload → [pre-install] → metadata migration →         │
@@ -76,26 +84,33 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`yarn twenty dev`** — следит за исходными файлами и синхронизирует изменения в реальном времени с подключённым сервером Twenty. Типизированный клиент API автоматически пересоздаётся при изменении схемы.
-* **`yarn twenty dev:build`** — компилирует TypeScript, упаковывает логические функции и фронтенд-компоненты с помощью esbuild и формирует манифест.
+* **`twenty app dev`** — смотрит на исходные файлы и live-синхронизирует изменения на подключенный Twenty сервер. Типизированный клиент API автоматически пересоздаётся при изменении схемы.
+* **`twenty app build`** — компилирует TypeScript, упаковывает логические функции и передние компоненты с esbuild, и производит манифест.
 * **Хуки до/после установки и удаления** — необязательные функции, которые выполняются во время установки или непосредственно перед удалением. См. раздел [Install Hooks](/ru/developers/extend/apps/config/install-hooks) для подробностей.
 
 ## Следующие шаги
 
-<CardGroup cols={2}>
-  <Card title="Конфигурация" icon="tools" href="/ru/developers/extend/apps/config/overview">
-    Идентификация приложения, роль по умолчанию, а также хуки установки и удаления.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ru/developers/extend/apps/config/overview" img="/images/documentation/section-overview-icons-v1/apps-config.svg">
+    <CardTitle>Конфигурация</CardTitle>
+    Идентификатор приложения, роль по умолчанию и установка и удаление хуков.
   </Card>
-  <Card title="Данные" icon="database" href="/ru/developers/extend/apps/data/overview">
+  <Card href="/ru/developers/extend/apps/data/overview" img="/images/documentation/section-overview-icons-v1/apps-data.svg">
+    <CardTitle>Данные</CardTitle>
     Объекты, поля и двунаправленные связи.
   </Card>
-  <Card title="Логика" icon="bolt" href="/ru/developers/extend/apps/logic/overview">
-    Логические функции, навыки, агенты и OAuth-подключения.
+  <Card href="/ru/developers/extend/apps/logic/overview" img="/images/documentation/section-overview-icons-v1/apps-logic.svg">
+    <CardTitle>Логика</CardTitle>
+    Функции логики, навыки, агенты, подключения и каналы сообщений.
   </Card>
-  <Card title="Макет" icon="layout-columns" href="/ru/developers/extend/apps/layout/overview">
-    Представления, навигация, макеты страниц, фронтенд-компоненты.
+  <Card href="/ru/developers/extend/apps/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Макет</CardTitle>
+    просмотра, навигация, макеты страниц, передние компоненты.
   </Card>
-  <Card title="Операции" icon="rocket" href="/ru/developers/extend/apps/operations/overview">
-    CLI, тестирование, удаленные окружения, CI и публикация вашего приложения.
+  <Card href="/ru/developers/extend/apps/operations/overview" img="/images/documentation/section-overview-icons-v1/apps-operations.svg">
+    <CardTitle>Операции</CardTitle>
+    CLI, тестирование, удаление, CI и публикация вашего приложения.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-apps" />

@@ -3,9 +3,10 @@ title: Модель данных
 description: Разберитесь, как Twenty структурирует ваши данные с помощью объектов, полей и связей.
 ---
 
-import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-В Twenty всё построено вокруг **объектов** и **полей** — строительных блоков вашей модели данных.
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Объекты
 
@@ -39,8 +40,13 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 В отличие от традиционных CRM-систем, в которых вы ограничены предопределёнными полями на предопределённых объектах, Twenty позволяет моделировать данные именно так, как устроен ваш бизнес. Пользовательские объекты получают такой же статус, как и встроенные, — включая конечные точки API, представления, права доступа и триггеры рабочих процессов.
 
-<Card title="Подробно о модели данных" icon="arrow-right" href="/ru/user-guide/data-model/overview">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ru/user-guide/data-model/overview" img="/images/documentation/banner-icons-v2/data-model.svg">
+  <CardTitle>Подробное изучение модели данных</CardTitle>
   Полная справка по объектам, полям, связям и их настройке.
 </Card>
+</CardGroup>
 
 <VimeoEmbed videoId="1185511827" title="Модель данных" />
+
+<PageBanner illustration="getting-started-data-model" />

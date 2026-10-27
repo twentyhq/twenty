@@ -3,6 +3,10 @@ title: Abilități și agenți
 description: Definiți abilități și agenți AI pentru aplicația dvs.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 <Warning>
   Abilitățile și agenții sunt în prezent în stadiu alfa. Caracteristica funcționează, dar este încă în dezvoltare.
 </Warning>
@@ -63,7 +67,8 @@ Puncte cheie:
 * `description` (opțional) oferă context despre ce face agentul.
 * `icon` (opțional) setează pictograma afișată în UI.
 * `modelId` (opțional) suprascrie modelul AI implicit utilizat de agent.
-* `responseFormat` (opțional) controlează forma ieșirii agentului. Valoarea implicită este `{ type: 'text' }` pentru text liber. Folosește `{ type: 'json', schema }` pentru a impune ieșire JSON structurată.
+* `responseFormat` (opțional) stabilește formatul implicit al ieșirii agentului. Valoarea implicită este `{ type: 'text' }` pentru text liber. Folosește `{ type: 'json', schema }` pentru a impune ieșire JSON structurată. Un apel `runAgent()` sau un pas AI dintr-un flux de lucru poate solicita un format diferit, care are prioritate.
+* `roleUniversalIdentifier` (opțional) leagă agentul de un rol definit de aplicația ta. Acel rol nu trebuie să acorde mai multe permisiuni decât rolul aplicației, altfel compilarea eșuează; consultați [Roluri de agent](/ro/developers/extend/apps/config/roles#agent-roles).
 
 În mod implicit, un agent returnează text liber. Pentru a obține o ieșire structurată, setează `responseFormat` la `{ type: 'json' }` și furnizează `schema`:
 
@@ -99,43 +104,46 @@ Note despre schemă:
 </Accordion>
 <Accordion title="runAgent" description="Rulează un agent dintr-o funcție logică">
 
-`runAgent()` permite unei funcții logice să ruleze unul dintre agenții aplicației tale (cu abilitățile și instrumentele sale). Identifică agentul prin `universalIdentifier` pe care l-ai transmis către `defineAgent()`. Transmite fie un șir `prompt`, fie un istoric de conversație `messages`,
-nu ambele:
+`runAgent()` permite unei funcții logice să ruleze unul dintre agenții aplicației tale (cu abilitățile și instrumentele sale). Identifică agentul prin `universalIdentifier` pe care l-ai transmis
+către `defineAgent()` și transmite ca `input` ceea ce vrei să proceseze:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { result, error, success } = await runAgent({
+const { threadId, status, result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  prompt: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
-});
-```
-
-Pentru boți multi-turn (Slack, Discord, Teams, …), transmite istoricul firului de discuție ca
-`messages` în loc de un singur `prompt`:
-
-```ts src/logic-functions/reply-in-thread.ts
-import { runAgent } from 'twenty-sdk/logic-function';
-
-const { result, error, success } = await runAgent({
-  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  messages: [
-    { role: 'user', content: 'Who owns Acme?' },
-    { role: 'assistant', content: 'Sarah owns the Acme account.' },
-    { role: 'user', content: 'What was the last touchpoint?' },
-  ],
+  input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
 ```
 
 Puncte cheie:
-* Furnizează **exact unul** dintre `prompt` (șir) sau `messages` (1 până la 100 de intrări
-  de `{ role: 'user' | 'assistant', content: string }`).
-* Agentul rulează **sincron** și poate citi/actualiza direct înregistrări prin propriile sale instrumente — `runAgent()` este rezolvat după ce rularea se încheie.
+* `input` este un șir sau o listă de 1 până la 100 de mesaje
+  (`{ role: 'user' | 'assistant', content: string }`). Un mesaj `user` poate
+  include și atașamente de fișiere (vezi mai jos). Pentru a menține o conversație, transmiteți un
+  `thread` în loc să reluați dvs. rândurile anterioare.
+* În mod implicit, apelul așteaptă agentul, care poate citi/actualiza înregistrări
+  direct prin propriile sale instrumente — `runAgent()` se finalizează după ce execuția se încheie.
+  Transmiteți `waitForCompletion: false` pentru a se finaliza de îndată ce începe execuția:
+  `status` este apoi `RUNNING` și `result: null`, iar răspunsul ajunge în conversația
+  `threadId`. O execuție care depășește 15 minute se finalizează, de asemenea, ca
+  `RUNNING`.
+* Agentul poate, de asemenea, să se întrerupă până când se modifică o înregistrare sau a trecut un anumit timp.
+  `runAgent()` se rezolvă apoi cu `success: true`, `status: 'SUSPENDED'` și
+  `result: null`; agentul continuă singur mai târziu, iar răspunsul său ajunge în
+  conversația `threadId`. Un apel către un `thread` al cărui agent încă așteaptă
+  eșuează până când acesta se finalizează.
+* Fiecare apel este stocat împreună cu intrarea și starea sa, precum și cu răspunsul și utilizarea sa
+  atunci când se finalizează, astfel încât să apară în execuțiile agentului. Fără un `thread`, un apel primește o conversație proprie:
+  `threadId` o denumește, iar un apel ulterior nu o vede niciodată.
 * O aplicație poate rula doar propriii săi agenți.
 * [Rolul implicit](/ro/developers/extend/apps/config/roles) al aplicației trebuie să acorde indicatorul de permisiune `AI` — adaugă `SystemPermissionFlag.AI` la `permissionFlagUniversalIdentifiers` (sau setează `canAccessAllTools: true`).
   Fără acesta, `runAgent()` eșuează cu o eroare de permisiune.
 * Setează un `timeoutSeconds` generos pentru funcția logică — rulările agentului pot dura câteva secunde.
-* `success` este `true` și `result` este nenul când rularea se încheie; în caz de eșec `success` este `false`, `result` este `null`, iar `error` conține motivul (de exemplu, când spațiul de lucru rămâne fără credite AI în timpul rulării).
+* `status` este `COMPLETED` cu un `result` care nu este null atunci când execuția se finalizează
+  fără a aștepta; `SUSPENDED` cu `success: true` și `result: null` cât timp
+  așteaptă; `RUNNING` cu `success: true` și `result: null` atunci când apelul nu
+  a așteptat execuția; `FAILED` cu `success: false` și `error` care conține
+  motivul (de exemplu, când spațiul de lucru rămâne fără credite AI în timpul execuției).
 
 ```ts src/roles/default-role.ts
 import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
@@ -152,6 +160,91 @@ export default defineApplicationRole({
   **Evită buclele:** dacă apelezi `runAgent()` dintr-un declanșator de tip eveniment de bază de date `*.updated`, iar agentul actualizează aceeași înregistrare, restrânge declanșatorul cu `updatedFields` la un câmp pe care agentul nu îl scrie niciodată (de exemplu, URL-ul sursă) sau verifică dacă vreun câmp țintă este încă gol înainte de a apela `runAgent()`.
 </Warning>
 
+### Trimiterea fișierelor cu un mesaj
+
+Un mesaj `user` poate include `attachments`, astfel încât agentul vede o captură de ecran sau un
+PDF în loc să vadă doar numele acestuia. Fiecare intrare face referire la un fișier pe care aplicația dvs. l-a
+încărcat deja în folderul `agent-chat`:
+
+```ts src/logic-functions/describe-screenshot.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: [
+    {
+      role: 'user',
+      content: 'What does this error screen say?',
+      attachments: [{ fileId: uploadedFileId, filename: 'error.png' }],
+    },
+  ],
+});
+```
+
+Încărcarea necesită indicatorul de permisiune `UPLOAD_FILE` în rolul implicit al aplicației,
+alături de `AI`. `filename` este opțional și doar etichetează fișierul pentru model.
+
+* Doar mesajele `user` pot include atașamente. Acestea nu pot fi reprezentate într-un
+  tur al asistentului, astfel încât `runAgent()` le respinge acolo, în loc să le elimine.
+* Cel mult **10** atașamente per mesaj.
+* `fileId` trebuie să indice un fișier încărcat complet în același spațiu de lucru, în folderul
+  `agent-chat`. Orice altceva face ca apelul să eșueze, în loc să
+  răspundă în mod discret fără fișier.
+
+### Solicitarea unui rezultat structurat
+
+Transmiteți `responseFormat` pentru a obține un format numai pentru acest apel. Are prioritate față de
+propriul `responseFormat` al agentului, astfel încât un agent poate deservi apelanți care au nevoie de
+ieșiri diferite. Folosește aceeași schemă ca `defineAgent()`:
+
+```ts src/logic-functions/score-lead.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: `Score this lead: ${JSON.stringify(lead)}`,
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: {
+        score: { type: 'number', description: 'Lead score from 0 to 100' },
+      },
+      required: ['score'],
+    },
+  },
+});
+```
+
+### Continuarea unei conversații
+
+Transmiteți un `thread`, iar Twenty păstrează conversația pentru dvs.: fiecare apel trimite doar
+noua intrare, iar agentul vede rândurile anterioare, inclusiv ceea ce au
+returnat instrumentele sale. Utilizați ca cheie orice identificator stabil din partea dvs., cum ar fi un canal Slack
+și marca temporală a firului de discuție:
+
+```ts src/logic-functions/reply-in-thread.ts
+const { result, threadId } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: 'What was the last touchpoint?',
+  additionalInstructions: 'Answer in Slack markdown.',
+  thread: { key: `${channelId}:${threadTs}`, title: 'Acme renewal' },
+});
+```
+
+* Cheile sunt limitate la aplicația și agentul dvs., astfel încât două aplicații nu partajează niciodată o
+  conversație. Numai tokenurile de acces ale aplicației pot transmite un `thread`.
+* `input` poate conține numai mesaje `user`: conversația conține deja răspunsurile
+  agentului.
+* `additionalInstructions` sunt oferite modelului numai pentru acest apel și nu sunt
+  stocate, ceea ce este potrivit pentru instrucțiuni per solicitare, cum ar fi reguli de formatare sau un
+  termen-limită. Acestea funcționează și fără un `thread`.
+* Fiecare rulare este stocată ca un tur cu starea sa, inclusiv cele eșuate. Utilizarea sa
+  este stocată când agentul revine, chiar dacă a rămas fără credite. O
+  rulare eșuată nu face parte din conversație, astfel încât următorul apel nu
+  o vede.
+* Apelurile din același fir de discuție rulează pe rând: un al doilea apel așteaptă ca
+  primul să se termine, astfel încât fiecare îl vede pe cel dinaintea sa.
+* Când rândurile rulează ca membri diferiți (vedeți mai jos), fiecare vede numai textul
+  rândurilor celorlalți, niciodată rezultatele instrumentelor lor, deoarece acestea au fost citite cu
+  permisiunile altcuiva.
+
 ### Rulare în numele unui membru al spațiului de lucru
 
 Transmite `runAsWorkspaceMemberId` atunci când rularea este declanșată de o persoană — de exemplu, un chatbot care răspunde la un mesaj — astfel încât agentul să acționeze ca acel membru în loc să acționeze ca aplicația:
@@ -159,7 +252,7 @@ Transmite `runAsWorkspaceMemberId` atunci când rularea este declanșată de o p
 ```ts src/logic-functions/answer-question.ts
 const { result } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  prompt: 'How many open opportunities do we have?',
+  input: 'How many open opportunities do we have?',
   runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
 });
 ```
@@ -183,4 +276,62 @@ Orice altceva — o sesiune simplă de utilizator, o cheie API fără un token a
 </Warning>
 
 </Accordion>
+<Accordion title="sendInboxMessage" description="Începeți sau continuați o conversație în chaturile membrilor">
+
+`sendInboxMessage()` postează un mesaj din aplicația dvs. în chaturile unuia sau mai multor
+membri ai spațiului de lucru. Aceasta se poate încheia cu un apel de instrument la care membrul răspunde din chat, după care conversația continuă cu asistentul Twenty.
+
+```ts src/logic-functions/notify-first-recording.ts
+import { sendInboxMessage } from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: 'first-call-recording',
+  idempotencyKey: 'first-call-recording',
+  title: 'Your first call recording is ready',
+  text: 'Your first call was recorded: **Weekly sync**.',
+  toolCall: {
+    toolName: 'ask_question',
+    input: {
+      header: 'Share',
+      question: 'Do you want to share it with the other attendees?',
+      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+    },
+  },
+});
+```
+
+Puncte cheie:
+* `workspaceMemberIds` enumeră membrii care primesc conversația, cel puțin
+  unul. Primul membru al unei conversații noi este proprietarul acesteia, iar ceilalți o urmăresc
+  ca participanți. O trimitere ulterioară cu aceeași cheie care enumeră membri noi îi adaugă;
+  membrii omiși păstrează conversația.
+* `threadKey` selectează conversația pentru această aplicație, partajată de fiecare membru către care
+  este trimisă. O cheie nouă începe o conversație cu titlul `title`; o cheie pe care ați folosit-o înainte
+  adaugă mesajul la conversația respectivă.
+* `idempotencyKey` identifică mesajul în cadrul conversației. Trimiterea din nou cu aceleași chei nu scrie nimic nou, astfel încât reîncercările și rulările simultane nu dublează niciodată un mesaj.
+* `toolCall` (opțional) încheie mesajul cu unul dintre următoarele:
+  * un apel la care răspunde membrul, care întrerupe conversația: `ask_question`
+    (o întrebare cu alegere multiplă), `request_form` (câmpuri de completat) sau
+    `propose_tool_call` (un apel de aprobat). Elementul său `input` primește `toolName`,
+    `arguments` cu care ați apela instrumentul și un `summary` dintr-o singură propoziție.
+    Instrumentul trebuie să fie unul pe care rolul implicit al aplicației dvs. l-ar putea executa singur, cum ar fi
+    `create_one_person` sau `update_one_opportunity` (cu `id` al înregistrării); un
+    e-mail (`send_email` sau `draft_email`, cu `recipients`, `subject` și un
+    `body` în HTML) nu necesită permisiunea aplicației dvs. Membrul examinează apelul
+    în același card ca un apel propus de asistent, îl editează dacă dorește, iar
+    apelul aprobat se execută cu propriul său acces;
+  * unul dintre instrumentele proprii ale aplicației dvs., prin `logicFunctionUniversalIdentifier`, redat de componenta sa front-end cu `input` și `output` pe care le transmiteți. Nu întrerupe conversația.
+* Doar un apel la care membrul răspunde poate aștepta într-o conversație la un moment dat: trimiterea altuia înainte ca acesta să răspundă eșuează cu `THREAD_AWAITING_ANSWER`. Mesajele simple și apelurile instrumentelor aplicației sunt în continuare acceptate.
+* Doar membrul care deține o conversație o poate șterge, iar o conversație ștearsă
+  dispare pentru fiecare membru: nu este recreată și nu i se
+  adaugă nimic. Ceilalți membri se pot dezabona pentru a o elimina din propria
+  căsuță de intrare.
+* Fiecare membru trebuie să aibă permisiunea `AI`, iar apelul eșuează fără
+  a scrie mesajul atunci când unul dintre ei nu poate avea conversația. [Rolul implicit](/ro/developers/extend/apps/config/roles) al aplicației dvs. trebuie să acorde
+  `SystemPermissionFlag.AI`.
+
+</Accordion>
 </AccordionGroup>
+
+<PageBanner illustration="card-page-skills-agents" />
