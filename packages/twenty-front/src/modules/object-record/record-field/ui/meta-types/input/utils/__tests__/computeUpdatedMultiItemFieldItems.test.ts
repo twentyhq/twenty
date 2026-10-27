@@ -52,7 +52,7 @@ describe('computeUpdatedMultiItemFieldItems', () => {
 
     it('should use formatInput to transform the value', () => {
       type Link = { url: string; label: string };
-      const formatInput = jest.fn((input: string) => ({
+      const formatInput = jest.fn(({ input }: { input: string }) => ({
         url: input,
         label: input,
       }));
@@ -65,7 +65,10 @@ describe('computeUpdatedMultiItemFieldItems', () => {
         formatInput,
       });
 
-      expect(formatInput).toHaveBeenCalledWith('example.com', undefined);
+      expect(formatInput).toHaveBeenCalledWith({
+        input: 'example.com',
+        itemIndex: undefined,
+      });
       expect(result).toEqual([{ url: 'example.com', label: 'example.com' }]);
     });
   });
@@ -83,7 +86,7 @@ describe('computeUpdatedMultiItemFieldItems', () => {
     });
 
     it('should pass editingIndex to formatInput', () => {
-      const formatInput = jest.fn((input: string) => input);
+      const formatInput = jest.fn(({ input }: { input: string }) => input);
 
       computeUpdatedMultiItemFieldItems({
         sanitizedInput: 'edited',
@@ -93,7 +96,10 @@ describe('computeUpdatedMultiItemFieldItems', () => {
         formatInput,
       });
 
-      expect(formatInput).toHaveBeenCalledWith('edited', 2);
+      expect(formatInput).toHaveBeenCalledWith({
+        input: 'edited',
+        itemIndex: 2,
+      });
     });
   });
 });

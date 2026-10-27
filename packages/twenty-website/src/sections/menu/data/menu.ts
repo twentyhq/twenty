@@ -17,6 +17,8 @@ import { SITE_URLS } from '@/platform/site-urls';
 import { type MenuNavItem } from '../types/menu-nav-item';
 import { type MenuSocialLink } from '../types/menu-social-link';
 
+const PREVIEW_DRAWING_SCALE = 1.15;
+
 export const MENU: {
   appUrl: string;
   navItems: readonly MenuNavItem[];
@@ -37,6 +39,7 @@ export const MENU: {
             image: '/images/menu/why.webp',
             imageAlt: msg`Why Twenty illustration`,
             imagePosition: 'center',
+            imageScale: PREVIEW_DRAWING_SCALE,
             title: msg`Why teams choose Twenty`,
             description: msg`The principles and product philosophy behind the open source CRM.`,
           },
@@ -51,6 +54,7 @@ export const MENU: {
             image: '/images/menu/user-guide.webp',
             imageAlt: msg`Twenty user guide preview`,
             imagePosition: 'center',
+            imageScale: PREVIEW_DRAWING_SCALE,
             title: msg`Master every corner of Twenty`,
             description: msg`Step-by-step guides and playbooks to help your team get the most out of their workspace.`,
           },
@@ -63,9 +67,9 @@ export const MENU: {
           icon: IconCode,
           preview: {
             image: '/images/menu/developers.webp',
-            imageAlt: msg`Blue developer illustration with branching arrows`,
+            imageAlt: msg`Blue code window illustration`,
             imagePosition: 'center',
-            imageScale: 1.6,
+            imageScale: PREVIEW_DRAWING_SCALE,
             title: msg`Build on an open platform`,
             description: msg`APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data.`,
           },
@@ -76,10 +80,10 @@ export const MENU: {
           href: '/apps',
           icon: IconApps,
           preview: {
-            image: '/images/menu/developers.webp',
+            image: '/images/menu/apps.webp',
             imageAlt: msg`Twenty apps marketplace`,
             imagePosition: 'center',
-            imageScale: 1.6,
+            imageScale: PREVIEW_DRAWING_SCALE,
             title: msg`Vetted apps for your workspace`,
             description: msg`Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty.`,
           },
@@ -93,6 +97,7 @@ export const MENU: {
             image: '/images/menu/partners.webp',
             imageAlt: msg`Twenty partner ecosystem`,
             imagePosition: 'center',
+            imageScale: PREVIEW_DRAWING_SCALE,
             title: msg`Team up with a Twenty expert`,
             description: msg`Meet the certified agencies and consultants implementing Twenty for teams worldwide.`,
           },
@@ -103,9 +108,10 @@ export const MENU: {
           href: '/releases',
           icon: IconTag,
           preview: {
-            image: LATEST_RELEASE.previewImage,
-            imageAlt: msg`Twenty release ${LATEST_RELEASE.release} — ${LATEST_RELEASE.title}`,
-            imageScale: 1.04,
+            image: '/images/menu/releases.webp',
+            imageAlt: msg`Blue megaphone illustration`,
+            imagePosition: 'center',
+            imageScale: PREVIEW_DRAWING_SCALE,
             title: msg`See what shipped in ${LATEST_RELEASE.release}`,
             description: msg`Track every release with changelogs, highlights and demos of the newest features.`,
           },

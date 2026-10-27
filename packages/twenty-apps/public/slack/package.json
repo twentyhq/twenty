@@ -46,6 +46,7 @@
     "twenty-ui": "^1.0.0-alpha.1",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^4.0.0"
+    "vitest": "^4.0.0",
+    "zod": "^4.1.11"
   }
 }

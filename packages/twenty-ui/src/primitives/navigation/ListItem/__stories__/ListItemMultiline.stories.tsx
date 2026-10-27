@@ -10,10 +10,13 @@ import {
   ComponentDecorator,
   type CatalogStory,
 } from '@ui/testing';
+import { themeCssVariables } from '@ui/theme';
 
 import { ListItem } from '../ListItem';
 import { type ListItemProps } from '../types/ListItemProps';
 import { ListItemMultilineExample } from './ListItemMultilineExample';
+
+const onEndAction = fn();
 
 const meta: Meta<typeof ListItem> = {
   title: 'UI/Navigation/ListItem/Multiline',
@@ -81,6 +84,87 @@ export const NarrowControlInteractions: Story = {
       description.getBoundingClientRect().bottom,
     );
     await expect(row?.scrollWidth).toBe(row?.clientWidth);
+  },
+};
+
+export const EndActionInteractions: Story = {
+  tags: ['!autodocs', '!dev'],
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 400 } },
+  args: {
+    render: <div role="group" aria-label="Planning document" />,
+    onClick: fn(),
+    actionsPlacement: 'end',
+    children: (
+      <Text
+        render={<span />}
+        style={{ display: 'block', lineHeight: themeCssVariables.spacing[4] }}
+        truncate
+      >
+        Quarterly planning and the proposed timeline for every team
+      </Text>
+    ),
+    description: (
+      <Text
+        render={<span />}
+        style={{
+          display: 'block',
+          lineHeight: `calc(${themeCssVariables.spacing[4]} - ${themeCssVariables.spacing[0.5]})`,
+        }}
+        truncate
+      >
+        Review the proposed timeline and confirm the next steps with the team.
+      </Text>
+    ),
+    actions: (
+      <Button
+        size="sm"
+        variant="ghost"
+        onClick={(event) => {
+          event.stopPropagation();
+          onEndAction();
+        }}
+      >
+        Archive
+      </Button>
+    ),
+  },
+  play: async ({ canvasElement, args }) => {
+    const { userEvent: trustedUserEvent } = await import('vitest/browser');
+    const canvas = within(canvasElement);
+    const row = canvas.getByRole('group', { name: 'Planning document' });
+    const archive = canvas.getByRole('button', { name: 'Archive' });
+    const title = canvas.getByText(
+      'Quarterly planning and the proposed timeline for every team',
+    );
+    const description = canvas.getByText(
+      'Review the proposed timeline and confirm the next steps with the team.',
+    );
+    await trustedUserEvent.unhover(row);
+    const initialHeight = row.getBoundingClientRect().height;
+    const initialTitleWidth = title.clientWidth;
+
+    await trustedUserEvent.hover(row);
+    await waitFor(() => expect(archive).toBeVisible());
+    await expect(row.getBoundingClientRect().height).toBe(initialHeight);
+    await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
+    await trustedUserEvent.unhover(row);
+    await userEvent.tab();
+    await expect(archive).toHaveFocus();
+    await waitFor(() =>
+      expect(archive.parentElement).toHaveStyle({ opacity: '1' }),
+    );
+    await expect(row.getBoundingClientRect().height).toBe(initialHeight);
+    await expect(archive.getBoundingClientRect().top).toBeLessThan(
+      description.getBoundingClientRect().bottom,
+    );
+    await expect(title.clientWidth).toBeLessThan(initialTitleWidth);
+    await expect(title).toHaveStyle({ textOverflow: 'ellipsis' });
+    await expect(description).toHaveStyle({ textOverflow: 'ellipsis' });
+    await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
+    await userEvent.keyboard('{Enter}');
+    await expect(onEndAction).toHaveBeenCalledTimes(1);
+    await expect(args.onClick).not.toHaveBeenCalled();
   },
 };
 

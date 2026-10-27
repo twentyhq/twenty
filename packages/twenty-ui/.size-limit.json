@@ -13,7 +13,7 @@
   {
     "name": "components",
     "path": "dist/components.mjs",
-    "limit": "161 kB"
+    "limit": "215 kB"
   },
   {
     "name": "components/code-editor",
@@ -44,6 +44,12 @@
     "name": "primitives/input",
     "path": "dist/primitives/input.mjs",
     "limit": "230 kB"
+  },
+  {
+    "name": "components (DatePicker)",
+    "path": "dist/components.mjs",
+    "limit": "150 kB",
+    "import": "{ DatePicker }"
   },
   {
     "name": "components (JsonTree)",

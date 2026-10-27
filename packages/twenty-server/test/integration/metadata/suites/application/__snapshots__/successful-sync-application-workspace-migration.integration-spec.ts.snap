@@ -85,6 +85,7 @@ exports[`syncApplication should create a TEXT field on the standard Company obje
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "canAccessAllAgentChatChannels": false,
           "canAccessAllTools": false,
           "canBeAssignedToAgents": true,
           "canBeAssignedToApiKeys": true,
@@ -1294,6 +1295,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "canAccessAllAgentChatChannels": false,
           "canAccessAllTools": false,
           "canBeAssignedToAgents": true,
           "canBeAssignedToApiKeys": true,
@@ -3038,6 +3040,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "canAccessAllAgentChatChannels": false,
           "canAccessAllTools": false,
           "canBeAssignedToAgents": true,
           "canBeAssignedToApiKeys": true,

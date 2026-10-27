@@ -1,3 +1,5 @@
+import { CustomError, isDefined } from 'twenty-shared/utils';
+
 import { HALFTONE_FOOTPRINT } from '../engine/footprint';
 import { HALFTONE_IMAGE_CONSTANTS } from '../engine/image-constants';
 import { HALFTONE_SHADERS } from '../engine/shaders';
@@ -7,6 +9,7 @@ import type {
   HalftoneStudioSettings,
 } from '../engine/studio-settings-types';
 
+import { blobToDataUrl } from './blob-to-data-url';
 import { HALFTONE_EXPORT_NAMES } from './export-names';
 import { HALFTONE_MOUNT_FRAGMENTS } from './exporter-mount-fragments';
 import { HALFTONE_EXPORT_PARSING } from './exporter-parsing';
@@ -14,6 +17,7 @@ import { HALFTONE_EXPORT_SOURCE } from './exporter-source';
 import {
   DEFAULT_REACT_EXPORT_SETTINGS,
   type ExportedShapeDescriptor,
+  type HalftoneMaterialExportImages,
   type ReactExportOptions,
   type ReactExportSettings,
 } from './exporter-types';
@@ -39,7 +43,6 @@ function normalizeReactExportSettings(
 
 function getReactImportBlock(
   exportSettings: ReactExportSettings,
-  isImageMode: boolean,
   shape: ExportedShapeDescriptor,
 ) {
   const imports = new Set<string>();
@@ -49,12 +52,6 @@ function getReactImportBlock(
 
   if (exportSettings.includeStyledMount) {
     imports.add("import { styled } from '@linaria/react';");
-  }
-
-  if (!isImageMode) {
-    imports.add(
-      "import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';",
-    );
   }
 
   const loader = HALFTONE_EXPORT_SOURCE.getExportedShapeLoader(shape);
@@ -85,10 +82,7 @@ function getStandaloneThreeImports(
     return `import * as THREE from 'three';`;
   }
 
-  const imports = [
-    `import * as THREE from 'three';`,
-    `import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';`,
-  ];
+  const imports = [`import * as THREE from 'three';`];
 
   const loader = HALFTONE_EXPORT_SOURCE.getExportedShapeLoader(shape);
 
@@ -193,32 +187,30 @@ async function fileToDataUrl(
     type: getModelMimeType(file, loader),
   });
 
-  return await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.addEventListener('error', () => {
-      reject(reader.error ?? new Error(`Unable to read ${file.name}.`));
-    });
-    reader.addEventListener('load', () => {
-      if (typeof reader.result !== 'string') {
-        reject(new Error(`Unable to encode ${file.name}.`));
-        return;
-      }
-
-      resolve(reader.result);
-    });
-
-    reader.readAsDataURL(blob);
-  });
+  return await blobToDataUrl({ blob, label: file.name });
 }
 
-function serializeRuntimeSource(
-  settings: HalftoneStudioSettings,
-  shape: ExportedShapeDescriptor,
-  initialPose: HalftoneExportPose,
-  previewDistance: number | undefined,
-) {
+function serializeRuntimeSource({
+  initialPose,
+  materialImages,
+  previewDistance,
+  settings,
+  shape,
+}: {
+  initialPose: HalftoneExportPose;
+  materialImages: HalftoneMaterialExportImages | undefined;
+  previewDistance: number | undefined;
+  settings: HalftoneStudioSettings;
+  shape: ExportedShapeDescriptor;
+}) {
   const isImageMode = settings.sourceMode === 'image';
+
+  if (!isImageMode && !isDefined(materialImages)) {
+    throw new CustomError(
+      'Material images are required to export a 3D shape.',
+      'MISSING_MATERIAL_IMAGES',
+    );
+  }
   const normalizedPreviewDistance =
     HALFTONE_EXPORT_PARSING.normalizePreviewDistance(previewDistance);
 
@@ -239,13 +231,14 @@ ${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.geometryRuntime}
 
 ${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.createImportedGeometryRuntime(shape)}
 
-${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.glassMaterialRuntime}
+${isImageMode || !isDefined(materialImages) ? '' : HALFTONE_EXPORT_SOURCE.createMaterialRuntime({ materialImages, texture: settings.material.texture })}
 
-function createRenderTarget(width, height) {
+function createRenderTarget({ width, height, type = THREE.UnsignedByteType }) {
   return new THREE.WebGLRenderTarget(width, height, {
     minFilter: THREE.LinearFilter,
     magFilter: THREE.LinearFilter,
     format: THREE.RGBAFormat,
+    type,
   });
 }
 
@@ -328,6 +321,12 @@ ${HALFTONE_MOUNT_FRAGMENTS.sizingHelpers()}
   }
 
 ${HALFTONE_MOUNT_FRAGMENTS.rendererSetup("settings.animation.followDragEnabled ? 'grab' : 'default'")}
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  const hdrTargetType =
+    renderer.extensions.has('EXT_color_buffer_float') ||
+    renderer.extensions.has('EXT_color_buffer_half_float')
+      ? THREE.HalfFloatType
+      : THREE.UnsignedByteType;
 
   const materialAssets = await createHalftoneMaterialAssets(renderer);
 
@@ -365,14 +364,21 @@ ${HALFTONE_MOUNT_FRAGMENTS.rendererSetup("settings.animation.followDragEnabled ?
   const mesh = new THREE.Mesh(geometry, material);
   scene3d.add(mesh);
 
-  const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetA = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetB = createRenderTarget(getVirtualWidth(), getVirtualHeight());
+  const sceneTarget = createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight(), type: hdrTargetType });
+  const isGlass = settings.material.surface === 'glass';
+  const transmissionBacksideTarget = isGlass
+    ? createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight(), type: hdrTargetType })
+    : null;
+  const transmissionTarget = isGlass
+    ? createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight(), type: hdrTargetType })
+    : null;
+  const blurTargetA = createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight() });
+  const blurTargetB = createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight() });
   const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
   const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
 ${HALFTONE_MOUNT_FRAGMENTS.blurMaterials()}
-${HALFTONE_MOUNT_FRAGMENTS.halftoneMaterial({ cropToBounds: 0, hoverHalftoneRadius: '0.2', hoverLightRadius: '0.2', waveSpeed: '1' })}
+${HALFTONE_MOUNT_FRAGMENTS.halftoneMaterial({ cropToBounds: 0, toneMapScene: 1, hoverHalftoneRadius: '0.2', hoverLightRadius: '0.2', waveSpeed: '1' })}
 ${HALFTONE_MOUNT_FRAGMENTS.postScenes()}
 
   const updateViewportUniforms = (
@@ -431,6 +437,8 @@ ${HALFTONE_MOUNT_FRAGMENTS.postScenes()}
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     sceneTarget.setSize(virtualWidth, virtualHeight);
+    transmissionBacksideTarget?.setSize(virtualWidth, virtualHeight);
+    transmissionTarget?.setSize(virtualWidth, virtualHeight);
     blurTargetA.setSize(virtualWidth, virtualHeight);
     blurTargetB.setSize(virtualWidth, virtualHeight);
     updateViewportUniforms(
@@ -766,22 +774,27 @@ ${HALFTONE_MOUNT_FRAGMENTS.postScenes()}
       lookAtTarget,
     );
 
+    renderHalftoneMaterialScene({
+      camera,
+      material,
+      outputTarget: settings.halftone.enabled ? sceneTarget : null,
+      renderer,
+      scene: scene3d,
+      transmissionScene: materialAssets.glassTransmissionScene,
+      transmissionBacksideTarget,
+      transmissionTarget,
+    });
+
     if (!settings.halftone.enabled) {
-      renderer.setRenderTarget(null);
-      renderer.clear();
-      renderer.render(scene3d, camera);
       return;
     }
-
-    renderer.setRenderTarget(sceneTarget);
-    renderer.render(scene3d, camera);
 ${HALFTONE_MOUNT_FRAGMENTS.blurPasses()}
   };
 
   renderFrame();
 
 ${HALFTONE_MOUNT_FRAGMENTS.cleanup(
-  `    material.dispose();\n    disposeHalftoneMaterialAssets(materialAssets);`,
+  `    material.dispose();\n    transmissionBacksideTarget?.dispose();\n    transmissionTarget?.dispose();\n    disposeHalftoneMaterialAssets(materialAssets);`,
   `    canvas.removeEventListener('pointermove', handlePointerMove);\n    canvas.removeEventListener('pointerleave', handlePointerLeave);\n    window.removeEventListener('pointerup', handlePointerUp);\n    window.removeEventListener('pointermove', handleWindowPointerMove);\n    canvas.removeEventListener('pointercancel', handlePointerCancel);\n    window.removeEventListener('blur', handleWindowBlur);\n    canvas.removeEventListener('pointerdown', handlePointerDown);`,
 )}
 }
@@ -812,9 +825,9 @@ ${HALFTONE_MOUNT_FRAGMENTS.rendererSetup('default')}
   imageTexture.colorSpace = THREE.SRGBColorSpace;
   imageTexture.needsUpdate = true;
 
-  const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetA = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetB = createRenderTarget(getVirtualWidth(), getVirtualHeight());
+  const sceneTarget = createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight() });
+  const blurTargetA = createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight() });
+  const blurTargetB = createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight() });
   const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
   const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
@@ -834,7 +847,7 @@ ${HALFTONE_MOUNT_FRAGMENTS.rendererSetup('default')}
   imageScene.add(new THREE.Mesh(fullScreenGeometry, imageMaterial));
 
 ${HALFTONE_MOUNT_FRAGMENTS.blurMaterials()}
-${HALFTONE_MOUNT_FRAGMENTS.halftoneMaterial({ cropToBounds: 1, hoverHalftoneRadius: 'settings.animation.hoverHalftoneRadius', hoverLightRadius: 'settings.animation.hoverLightRadius', waveSpeed: 'settings.animation.waveSpeed' })}
+${HALFTONE_MOUNT_FRAGMENTS.halftoneMaterial({ cropToBounds: 1, toneMapScene: 0, hoverHalftoneRadius: 'settings.animation.hoverHalftoneRadius', hoverLightRadius: 'settings.animation.hoverLightRadius', waveSpeed: 'settings.animation.waveSpeed' })}
 ${HALFTONE_MOUNT_FRAGMENTS.postScenes()}
 
   const updateViewportUniforms = (
@@ -1115,7 +1128,7 @@ function generateReactComponent(
   const defaultImageFilename = options.imageFilename ?? 'image.png';
   const defaultModelUrl = assetUrl ?? `./${defaultModelFilename}`;
   const defaultImageUrl = assetUrl ?? `./${defaultImageFilename}`;
-  const importBlock = getReactImportBlock(exportSettings, isImageMode, shape);
+  const importBlock = getReactImportBlock(exportSettings, shape);
   const headerComment = exportSettings.includeRegistryComment
     ? getTwentyReactHeaderComment(
         normalizedComponentName,
@@ -1128,12 +1141,13 @@ function generateReactComponent(
   const mountScript = isImageMode
     ? createImageMountScript()
     : createMountScript();
-  const serializedRuntime = serializeRuntimeSource(
+  const serializedRuntime = serializeRuntimeSource({
+    initialPose: pose,
+    materialImages: options.materialImages,
+    previewDistance: options.previewDistance,
     settings,
     shape,
-    pose,
-    options.previewDistance,
-  );
+  });
   const generatedBanner = exportSettings.includeTsNoCheck
     ? `/**
  * @generated halftone-studio
@@ -1389,7 +1403,7 @@ async function generateStandaloneHtml(
     <script type="module">
       ${threeImports}
 
-      ${serializeRuntimeSource(settings, shape, pose, options.previewDistance)}
+      ${serializeRuntimeSource({ initialPose: pose, materialImages: options.materialImages, previewDistance: options.previewDistance, settings, shape })}
 
       ${mountScript}
 

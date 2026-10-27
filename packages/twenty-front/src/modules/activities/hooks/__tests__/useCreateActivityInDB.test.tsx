@@ -24,10 +24,12 @@ const mockedDate = '2024-03-15T12:00:00.000Z';
 const toISOStringMock = jest.fn(() => mockedDate);
 global.Date.prototype.toISOString = toISOStringMock;
 
-const { id, title, bodyV2, status, dueAt } = mockedTasks[0];
-const bodyV2WithoutTypename = isDefined(bodyV2)
-  ? { blocknote: bodyV2.blocknote, markdown: bodyV2.markdown }
-  : bodyV2;
+const { id, title, status, dueAt } = mockedTasks[0];
+const bodyV2 = {
+  markdown: null,
+  tiptap:
+    '{"type":"doc","attrs":{"schemaVersion":1},"content":[{"type":"paragraph","content":[{"type":"text","text":"Arrange a follow-up call"}]}]}',
+};
 const mockedActivity = {
   id,
   title,
@@ -79,7 +81,7 @@ const mocks: MockedResponse[] = [
       variables: {
         input: {
           ...mockedActivity,
-          bodyV2: bodyV2WithoutTypename,
+          bodyV2,
         },
       },
     },

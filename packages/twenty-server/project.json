@@ -316,6 +316,14 @@
         "command": "lingui compile --typescript"
       }
     },
+    "workspace-dependencies:generate": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsx scripts/generate-workspace-custom-application-dependencies.ts"
+      }
+    },
     "version:bump": {
       "executor": "nx:run-commands",
       "options": {

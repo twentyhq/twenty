@@ -75,6 +75,13 @@ const classifyFlatEntity = ({
         status: ApplicationExportCoverageStatus.EXCLUDED,
         reason: 'runtime configuration',
       };
+    case 'role':
+      return 'isEditable' in flatEntity && flatEntity.isEditable === false
+        ? {
+            status: ApplicationExportCoverageStatus.EXCLUDED,
+            reason: 'non-editable role',
+          }
+        : { status: ApplicationExportCoverageStatus.UNSUPPORTED };
     case 'searchFieldMetadata':
       return { status: ApplicationExportCoverageStatus.ENGINE_DERIVED };
     case 'roleTarget':

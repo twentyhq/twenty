@@ -109,7 +109,7 @@ export const DateTimePickerInput = ({
       )
     : null;
 
-  const { ref, setValue } = useIMask(
+  const { ref, setValue } = useIMask<HTMLInputElement>(
     {
       mask: Date,
       pattern,
@@ -189,7 +189,7 @@ export const DateTimePickerInput = ({
         disabled={shouldDisplayReadOnly}
         type="text"
         aria-label={t`Date and time`}
-        ref={ref as any}
+        ref={ref}
         onFocus={!shouldDisplayReadOnly ? onFocus : undefined}
       />
       <TimeZoneAbbreviation
