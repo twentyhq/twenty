@@ -6,7 +6,7 @@ import {
 
 import { type WorkflowConnectedAccountStepType } from 'src/engine/core-modules/application/application-manifest/types/workflow-connected-account-step-type.type';
 import { type WorkflowManifestConnectedAccountReference } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
-import { isCalendarCreationSupportedProvider } from 'src/modules/calendar/calendar-event-creation-manager/utils/is-calendar-creation-supported-provider.util';
+import { canConnectedAccountCreateCalendarEvents } from 'src/modules/calendar/calendar-event-creation-manager/utils/can-connected-account-create-calendar-events.util';
 
 const canConnectedAccountRunStep = ({
   stepType,
@@ -27,7 +27,7 @@ const canConnectedAccountRunStep = ({
         operation: EmailOperation.DRAFT,
       });
     case 'CREATE_CALENDAR_EVENT':
-      return isCalendarCreationSupportedProvider(connectedAccount.provider);
+      return canConnectedAccountCreateCalendarEvents(connectedAccount);
   }
 };
 

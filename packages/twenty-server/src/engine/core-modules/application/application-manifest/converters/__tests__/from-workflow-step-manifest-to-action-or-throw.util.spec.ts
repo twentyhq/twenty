@@ -383,6 +383,8 @@ describe('application workflow actions', () => {
   });
 
   describe('connected accounts', () => {
+    const GOOGLE_CALENDAR_EVENTS_SCOPE =
+      'https://www.googleapis.com/auth/calendar.events';
     const connectedAccount = (
       overrides: Partial<WorkflowManifestConnectedAccountReference>,
     ): WorkflowManifestConnectedAccountReference => ({
@@ -391,9 +393,11 @@ describe('application workflow actions', () => {
       provider: ConnectedAccountProvider.GOOGLE,
       connectionParameters: null,
       archivedAt: null,
+      scopes: [GOOGLE_CALENDAR_EVENTS_SCOPE],
+      calendarChannels: [{ isSyncEnabled: true }],
       ...overrides,
     });
-    // Oldest first: an archived account, then an IMAP-only mailbox, then a Google account
+    // Oldest first: an archived account, then an IMAP-only mailbox without CalDAV, then a Google account
     const connectedAccounts = [
       connectedAccount({ id: 'archived-id', archivedAt: new Date() }),
       connectedAccount({
@@ -402,13 +406,20 @@ describe('application workflow actions', () => {
         connectionParameters: {
           IMAP: { host: 'imap.example.com', port: 993 },
         } as WorkflowManifestConnectedAccountReference['connectionParameters'],
+        scopes: null,
+        calendarChannels: [],
       }),
       connectedAccount({ id: 'google-id', handle: 'Sales@Example.com' }),
     ];
-    const convertWithHandle = (
-      type: 'SEND_EMAIL' | 'DRAFT_EMAIL' | 'CREATE_CALENDAR_EVENT',
-      handle: string,
-    ) => {
+    const convertWithHandle = ({
+      type,
+      handle,
+      accounts = connectedAccounts,
+    }: {
+      type: 'SEND_EMAIL' | 'DRAFT_EMAIL' | 'CREATE_CALENDAR_EVENT';
+      handle: string;
+      accounts?: WorkflowManifestConnectedAccountReference[];
+    }) => {
       const { connectedAccountId: _connectedAccountId, ...input } =
         inputs[type];
 
@@ -421,21 +432,48 @@ describe('application workflow actions', () => {
           nextStepIds: [],
         }),
         index: 0,
-        references: { ...references, connectedAccounts },
+        references: { ...references, connectedAccounts: accounts },
       }).settings.input;
     };
 
     it.each([
       { type: 'SEND_EMAIL' as const, connectedAccountId: 'google-id' },
       { type: 'DRAFT_EMAIL' as const, connectedAccountId: 'imap-id' },
-      { type: 'CREATE_CALENDAR_EVENT' as const, connectedAccountId: 'imap-id' },
+      {
+        type: 'CREATE_CALENDAR_EVENT' as const,
+        connectedAccountId: 'google-id',
+      },
     ])(
       'resolves a $type handle to the oldest active account able to run it',
       ({ type, connectedAccountId }) => {
-        const input = convertWithHandle(type, 'sales@example.com');
+        const input = convertWithHandle({ type, handle: 'sales@example.com' });
 
         expect(input).toMatchObject({ connectedAccountId });
         expect(input).not.toHaveProperty('connectedAccountHandle');
+      },
+    );
+
+    it.each([
+      {
+        case: 'calendar sync is disabled',
+        account: connectedAccount({
+          calendarChannels: [{ isSyncEnabled: false }],
+        }),
+      },
+      {
+        case: 'the calendar scope is missing',
+        account: connectedAccount({ scopes: [] }),
+      },
+    ])(
+      'does not create calendar events with an account whose $case',
+      ({ account }) => {
+        expect(() =>
+          convertWithHandle({
+            type: 'CREATE_CALENDAR_EVENT',
+            handle: 'sales@example.com',
+            accounts: [account],
+          }),
+        ).toThrow('can create calendar events');
       },
     );
 
@@ -460,7 +498,10 @@ describe('application workflow actions', () => {
 
     it('fails on a handle no account of the workspace can send from', () => {
       expect(() =>
-        convertWithHandle('SEND_EMAIL', 'unknown@example.com'),
+        convertWithHandle({
+          type: 'SEND_EMAIL',
+          handle: 'unknown@example.com',
+        }),
       ).toThrow(
         'Workflow step Reach out: no connected account unknown@example.com in this workspace can send email',
       );

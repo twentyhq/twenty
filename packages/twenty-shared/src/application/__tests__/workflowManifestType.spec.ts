@@ -169,7 +169,13 @@ describe('workflow manifest step types', () => {
       sendInvitations: true,
       addConferencing: false,
     };
-    const withStep = (type: string, input: Record<string, unknown>) => {
+    const withStep = ({
+      type,
+      input,
+    }: {
+      type: string;
+      input: Record<string, unknown>;
+    }) => {
       const definition = structuredClone(workflow);
       Object.assign(getStep(definition, 2), { type, input });
       return workflowManifestSchema.safeParse(definition);
@@ -185,9 +191,9 @@ describe('workflow manifest step types', () => {
     ])(
       'accepts a $type step naming its account by handle',
       ({ type, input }) => {
-        const result = withStep(type, {
-          ...input,
-          connectedAccountHandle: ' sales@example.com ',
+        const result = withStep({
+          type,
+          input: { ...input, connectedAccountHandle: ' sales@example.com ' },
         });
 
         expect(result.success).toBe(true);
@@ -208,9 +214,9 @@ describe('workflow manifest step types', () => {
       { case: 'neither', reference: {} },
       { case: 'an empty handle', reference: { connectedAccountHandle: ' ' } },
     ])('rejects $case of the account id and handle', ({ reference }) => {
-      const result = withStep('CREATE_CALENDAR_EVENT', {
-        ...CALENDAR_EVENT,
-        ...reference,
+      const result = withStep({
+        type: 'CREATE_CALENDAR_EVENT',
+        input: { ...CALENDAR_EVENT, ...reference },
       });
 
       expect(result.success).toBe(false);

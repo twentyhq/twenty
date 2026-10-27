@@ -22,11 +22,16 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
   index: number;
   references: WorkflowManifestReferences;
 }): WorkflowAction => {
-  const { resolve, objectName, field, fieldReference, connectedAccountId } =
-    buildWorkflowManifestReferenceResolvers({
-      references,
-      subject: `Workflow step ${step.name}`,
-    });
+  const {
+    resolve,
+    objectName,
+    field,
+    fieldReference,
+    connectedAccountIdOrThrow,
+  } = buildWorkflowManifestReferenceResolvers({
+    references,
+    subject: `Workflow step ${step.name}`,
+  });
   let input: unknown;
   switch (step.type) {
     case 'LOGIC_FUNCTION':
@@ -201,7 +206,7 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
       input = isDefined(connectedAccountHandle)
         ? {
             ...rest,
-            connectedAccountId: connectedAccountId({
+            connectedAccountId: connectedAccountIdOrThrow({
               stepType: step.type,
               handle: connectedAccountHandle,
             }),

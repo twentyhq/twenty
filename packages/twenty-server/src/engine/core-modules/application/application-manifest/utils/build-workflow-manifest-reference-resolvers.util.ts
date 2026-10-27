@@ -77,7 +77,7 @@ export const buildWorkflowManifestReferenceResolvers = ({
     };
   };
 
-  const connectedAccountId = ({
+  const connectedAccountIdOrThrow = ({
     stepType,
     handle,
   }: {
@@ -101,5 +101,11 @@ export const buildWorkflowManifestReferenceResolvers = ({
     return connectedAccount.id;
   };
 
-  return { resolve, objectName, field, fieldReference, connectedAccountId };
+  return {
+    resolve,
+    objectName,
+    field,
+    fieldReference,
+    connectedAccountIdOrThrow,
+  };
 };

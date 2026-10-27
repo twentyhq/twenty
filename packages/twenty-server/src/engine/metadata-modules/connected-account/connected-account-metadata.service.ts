@@ -318,19 +318,29 @@ export class ConnectedAccountMetadataService {
   }: {
     workspaceId: string;
   }): Promise<
-    Pick<
+    (Pick<
       ConnectedAccountEntity,
-      'id' | 'handle' | 'provider' | 'connectionParameters' | 'archivedAt'
-    >[]
+      | 'id'
+      | 'handle'
+      | 'provider'
+      | 'connectionParameters'
+      | 'archivedAt'
+      | 'scopes'
+    > & {
+      calendarChannels: Pick<CalendarChannelEntity, 'isSyncEnabled'>[];
+    })[]
   > {
     return this.repository.find({
       where: { workspaceId },
+      relations: { calendarChannels: true },
       select: {
         id: true,
         handle: true,
         provider: true,
         connectionParameters: true,
         archivedAt: true,
+        scopes: true,
+        calendarChannels: { id: true, isSyncEnabled: true },
       },
       order: { createdAt: 'ASC', id: 'ASC' },
     });

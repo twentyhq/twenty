@@ -48,6 +48,8 @@ const connectedAccount = (
   provider: ConnectedAccountProvider.GOOGLE,
   connectionParameters: null,
   archivedAt: null,
+  scopes: ['https://www.googleapis.com/auth/calendar.events'],
+  calendarChannels: [{ isSyncEnabled: true }],
   ...overrides,
 });
 
@@ -741,6 +743,30 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
           exportReferences: { ...references, connectedAccounts: [account] },
         }),
       ).toEqual({ reason });
+    });
+
+    it('reports a calendar step on an account whose calendar sync is disabled', () => {
+      const synced = syncWorkflow(
+        buildWorkflow({
+          steps: [buildStep({ type: 'CREATE_CALENDAR_EVENT' })],
+        }),
+      );
+
+      expect(
+        exportWorkflow({
+          ...synced,
+          exportReferences: {
+            ...references,
+            connectedAccounts: [
+              connectedAccount({
+                calendarChannels: [{ isSyncEnabled: false }],
+              }),
+            ],
+          },
+        }),
+      ).toEqual({
+        reason: `workflow step on connected account ${SALES_HANDLE}, which cannot create calendar events`,
+      });
     });
 
     it('reports a step on an account whose handle names an older account', () => {
