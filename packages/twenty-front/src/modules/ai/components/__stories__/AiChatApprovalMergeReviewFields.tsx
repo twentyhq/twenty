@@ -19,12 +19,11 @@ import { TextDisplay } from '@/ui/field/display/components/TextDisplay/TextDispl
 
 const MERGE_FIELD_ICON_SIZE = 14;
 const MERGE_FIELD_LABEL_WIDTH = 112;
-const MERGE_FIELD_ROW_GAP = 8;
 
 const StyledFields = styled.dl`
   display: flex;
   flex-direction: column;
-  gap: ${MERGE_FIELD_ROW_GAP}px;
+  gap: ${themeCssVariables.spacing[2]};
   margin: 0;
   min-width: 0;
 `;
