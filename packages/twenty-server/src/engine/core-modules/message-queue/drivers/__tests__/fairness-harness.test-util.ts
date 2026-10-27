@@ -73,7 +73,7 @@ const VIRTUAL_TIME_KEY = `${QUEUE_KEY_PREFIX}fair:vtime`;
 const PRIORITIZED_KEY = `${QUEUE_KEY_PREFIX}prioritized`;
 const DELAYED_KEY = `${QUEUE_KEY_PREFIX}delayed`;
 const ACTIVE_KEY = `${QUEUE_KEY_PREFIX}active`;
-const PRIORITY_SCORE_BASE = 2 ** 32;
+export const PRIORITY_SCORE_BASE = 2 ** 32;
 
 const buildJobKey = (jobId: string) => `${QUEUE_KEY_PREFIX}${jobId}`;
 
@@ -215,6 +215,7 @@ jest.mock('bullmq', () => ({
     get client() {
       return Promise.resolve(mockBullMQ.client);
     },
+    toKey: (type: string) => `${QUEUE_KEY_PREFIX}${type}`,
     add: async (
       name: string,
       data: ScenarioJobData,
