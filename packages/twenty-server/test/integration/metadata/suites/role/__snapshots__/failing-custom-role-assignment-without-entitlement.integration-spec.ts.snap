@@ -82,3 +82,15 @@ exports[`Custom role assignment without the custom roles entitlement should refu
   "name": "GraphQLError",
 }
 `;
+
+exports[`Custom role assignment without the custom roles entitlement should refuse making an agent-only role assignable to members 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "CUSTOM_ROLES_NOT_ENTITLED",
+    "userFriendlyMessage": "Custom roles are part of the Organization plan.",
+  },
+  "message": "Custom roles require the Organization plan",
+  "name": "ForbiddenError",
+}
+`;
