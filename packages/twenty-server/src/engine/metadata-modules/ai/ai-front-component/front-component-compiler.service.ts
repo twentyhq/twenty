@@ -1,3 +1,4 @@
+import { invokeFrontComponentBuilderLocally } from 'src/engine/metadata-modules/ai/ai-front-component/utils/invoke-front-component-builder-locally.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -43,11 +44,15 @@ import {
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
 
 @Injectable()
-export class FrontComponentCompilerService extends DriverFactoryBase<{
-  awsClient: LambdaAwsClientService;
-  toolFunctions: LambdaToolFunctionsService;
-  options: LambdaConnectionOptions;
-}> {
+export class FrontComponentCompilerService extends DriverFactoryBase<
+  | { type: LogicFunctionDriverType.LOCAL }
+  | {
+      type: LogicFunctionDriverType.LAMBDA;
+      awsClient: LambdaAwsClientService;
+      toolFunctions: LambdaToolFunctionsService;
+      options: LambdaConnectionOptions;
+    }
+> {
   constructor(
     twentyConfigService: TwentyConfigService,
     configGroupHashService: ConfigGroupHashService,
@@ -64,13 +69,24 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
     );
   }
   protected createDriver() {
+    if (
+      this.twentyConfigService.get('LOGIC_FUNCTION_TYPE') ===
+      LogicFunctionDriverType.LOCAL
+    ) {
+      return { type: LogicFunctionDriverType.LOCAL as const };
+    }
     const options = getLambdaConnectionOptions(this.twentyConfigService);
     const awsClient = new LambdaAwsClientService({
       ...options,
       cacheStorageService: this.cacheStorage,
     });
     const toolFunctions = new LambdaToolFunctionsService(options, awsClient);
-    return { awsClient, toolFunctions, options };
+    return {
+      type: LogicFunctionDriverType.LAMBDA as const,
+      awsClient,
+      toolFunctions,
+      options,
+    };
   }
   async build({
     workspaceId,
@@ -79,12 +95,14 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
     workspaceId: string;
     input: FrontComponentBuildInput;
   }) {
+    const driverType = this.twentyConfigService.get('LOGIC_FUNCTION_TYPE');
+
     if (
-      this.twentyConfigService.get('LOGIC_FUNCTION_TYPE') !==
-      LogicFunctionDriverType.LAMBDA
+      driverType !== LogicFunctionDriverType.LOCAL &&
+      driverType !== LogicFunctionDriverType.LAMBDA
     ) {
       throw new FrontComponentException(
-        'AI component compilation requires the Lambda logic-function driver.',
+        'AI component compilation requires the LOCAL or LAMBDA logic-function driver.',
         FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
       );
     }
@@ -92,16 +110,22 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
       ...input,
       query: frontComponentQuerySchema.parse(input.query),
     });
-    const { awsClient, toolFunctions, options } = this.getCurrentDriver();
+    const driver = this.getCurrentDriver();
     const dependencies =
       await this.workspaceDependencies.readOrThrow(workspaceId);
     const handlerSource = await fileSystemPromises.readFile(
-      join(FRONT_COMPONENT_BUILD_ASSETS_DIRECTORY, 'index.js'),
+      join(
+        FRONT_COMPONENT_BUILD_ASSETS_DIRECTORY,
+        driver.type === LogicFunctionDriverType.LOCAL ? 'local.js' : 'index.js',
+      ),
       'utf8',
     );
     const functionName = computeHashedLambdaResourceName({
       resourceNamePrefix: 'twenty-front-component-builder',
-      namespace: options.resourceNamespace,
+      namespace:
+        driver.type === LogicFunctionDriverType.LAMBDA
+          ? driver.options.resourceNamespace
+          : 'local',
       contents: [
         workspaceId,
         handlerSource,
@@ -110,19 +134,21 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
         String(FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS.ephemeralStorageMb),
       ],
     });
-    await ensureFrontComponentLambdaExists({
-      awsClient,
-      toolFunctions,
-      cacheLockService: this.cacheLockService,
-      options,
-      functionName,
-      limits: FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS,
-      copyFiles: (directory) =>
-        fileSystemPromises.copyFile(
-          join(FRONT_COMPONENT_BUILD_ASSETS_DIRECTORY, 'index.js'),
-          join(directory, 'index.js'),
-        ),
-    });
+    if (driver.type === LogicFunctionDriverType.LAMBDA) {
+      await ensureFrontComponentLambdaExists({
+        awsClient: driver.awsClient,
+        toolFunctions: driver.toolFunctions,
+        cacheLockService: this.cacheLockService,
+        options: driver.options,
+        functionName,
+        limits: FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS,
+        copyFiles: (directory) =>
+          fileSystemPromises.copyFile(
+            join(FRONT_COMPONENT_BUILD_ASSETS_DIRECTORY, 'index.js'),
+            join(directory, 'index.js'),
+          ),
+      });
+    }
     const vendor = await this.getSharedDependencies({
       workspaceId,
       dependencies,
@@ -187,7 +213,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
     >;
     handlerSource: string;
   }) {
-    const { awsClient, toolFunctions, options } = this.getCurrentDriver();
+    const driver = this.getCurrentDriver();
     const yarnEngineFiles = await Promise.all(
       ['.yarnrc.yml', '.yarn/releases/yarn-4.9.2.cjs'].map((file) =>
         fileSystemPromises.readFile(join(YARN_ENGINE_DIRNAME, file), 'utf8'),
@@ -195,7 +221,10 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
     );
     const functionName = computeHashedLambdaResourceName({
       resourceNamePrefix: 'twenty-front-component-vendor',
-      namespace: options.resourceNamespace,
+      namespace:
+        driver.type === LogicFunctionDriverType.LAMBDA
+          ? driver.options.resourceNamespace
+          : 'local',
       contents: [
         workspaceId,
         handlerSource,
@@ -205,17 +234,20 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
         String(FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS.ephemeralStorageMb),
       ],
     });
-    const key = `ai-front-component-vendor:${functionName}:${dependencies.revision}`;
+    const key = `ai-front-component-vendor:${driver.type === LogicFunctionDriverType.LOCAL ? 'local:' : ''}${functionName}:${dependencies.revision}`;
     return this.cacheLockService.withLock(
       async () => {
         const cached = await this.cacheStorage.get<unknown>(key);
 
-        if (!isDefined(cached)) {
+        if (
+          !isDefined(cached) &&
+          driver.type === LogicFunctionDriverType.LAMBDA
+        ) {
           await ensureFrontComponentLambdaExists({
-            awsClient,
-            toolFunctions,
+            awsClient: driver.awsClient,
+            toolFunctions: driver.toolFunctions,
             cacheLockService: this.cacheLockService,
-            options,
+            options: driver.options,
             functionName,
             limits: FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS,
             copyFiles: async (directory) => {
@@ -282,19 +314,28 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
     functionName: string;
     input: FrontComponentBuilderRequest;
   }): Promise<unknown> {
-    const { awsClient } = this.getCurrentDriver();
-    const lambdaClient = await awsClient.getLambdaClient();
+    const driver = this.getCurrentDriver();
+    const timeoutMs =
+      (input.action === 'buildDependencies'
+        ? FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS.timeoutSeconds
+        : FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS.timeoutSeconds) * 1000;
+
+    if (driver.type === LogicFunctionDriverType.LOCAL) {
+      return invokeFrontComponentBuilderLocally({
+        input,
+        buildAssetsDirectory: FRONT_COMPONENT_BUILD_ASSETS_DIRECTORY,
+        yarnEngineDirectory: YARN_ENGINE_DIRNAME,
+        timeoutMs,
+      });
+    }
+    const lambdaClient = await driver.awsClient.getLambdaClient();
     const result = await lambdaClient.send(
       new InvokeCommand({
         FunctionName: functionName,
         Payload: JSON.stringify(input),
       }),
       {
-        abortSignal: AbortSignal.timeout(
-          (input.action === 'buildDependencies'
-            ? FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS.timeoutSeconds
-            : FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS.timeoutSeconds) * 1000,
-        ),
+        abortSignal: AbortSignal.timeout(timeoutMs),
       },
     );
     if (result.FunctionError || !isDefined(result.Payload)) {
