@@ -43,9 +43,14 @@ export type PlanFeatureLogo = {
   src: string;
 };
 
+export type PlanFeatureLogos =
+  | [PlanFeatureLogo]
+  | [PlanFeatureLogo, PlanFeatureLogo]
+  | [PlanFeatureLogo, PlanFeatureLogo, PlanFeatureLogo];
+
 export type PlanFeatureVisual =
   | { icon: IconComponent; kind: 'icon' }
-  | { kind: 'logos'; logos: PlanFeatureLogo[] };
+  | { kind: 'logos'; logos: PlanFeatureLogos };
 
 export type PlanFeature = {
   description: MessageDescriptor;

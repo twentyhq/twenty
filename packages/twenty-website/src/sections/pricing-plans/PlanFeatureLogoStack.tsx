@@ -2,24 +2,28 @@ import { styled } from '@linaria/react';
 
 import { color, radius } from '@/tokens';
 
-import { type PlanFeatureLogo } from './plans-data';
+import { type PlanFeatureLogos } from './plans-data';
 
 const STACK_SIZE_PX = 28;
 const LOGO_SIZE_PX = 18;
 
-const LOGO_POSITIONS_BY_COUNT = [
-  [],
-  [{ x: 5, y: 5 }],
-  [
+type LogoPosition = { x: number; y: number };
+
+const LOGO_POSITIONS_BY_COUNT: Record<
+  PlanFeatureLogos['length'],
+  LogoPosition[]
+> = {
+  1: [{ x: 5, y: 5 }],
+  2: [
     { x: 1.5, y: 8.5 },
     { x: 8.5, y: 1.5 },
   ],
-  [
+  3: [
     { x: 0, y: 9 },
     { x: 10, y: 4.5 },
     { x: 2, y: 0 },
   ],
-];
+};
 
 const Stack = styled.span`
   display: block;
@@ -46,17 +50,13 @@ const StackedLogo = styled.img`
   }
 `;
 
-export function PlanFeatureLogoStack({ logos }: { logos: PlanFeatureLogo[] }) {
-  const positions = LOGO_POSITIONS_BY_COUNT[logos.length] ?? [];
+export function PlanFeatureLogoStack({ logos }: { logos: PlanFeatureLogos }) {
+  const positions = LOGO_POSITIONS_BY_COUNT[logos.length];
 
   return (
     <Stack>
       {logos.map((logo, depth) => {
         const position = positions[depth];
-
-        if (position === undefined) {
-          return null;
-        }
 
         return (
           <StackedLogo
