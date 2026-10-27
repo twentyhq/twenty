@@ -313,6 +313,29 @@ export class ConnectedAccountMetadataService {
     return connectedAccount;
   }
 
+  async findAllForWorkflowStepResolution({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<
+    Pick<
+      ConnectedAccountEntity,
+      'id' | 'handle' | 'provider' | 'connectionParameters' | 'archivedAt'
+    >[]
+  > {
+    return this.repository.find({
+      where: { workspaceId },
+      select: {
+        id: true,
+        handle: true,
+        provider: true,
+        connectionParameters: true,
+        archivedAt: true,
+      },
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
+  }
+
   async getUserConnectedAccountIds({
     userWorkspaceId,
     workspaceId,

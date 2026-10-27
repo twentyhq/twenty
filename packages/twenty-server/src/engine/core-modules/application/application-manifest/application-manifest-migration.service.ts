@@ -238,6 +238,12 @@ export class ApplicationManifestMigrationService {
         })
       : {};
 
+    const connectedAccounts = hasWorkflows
+      ? await this.connectedAccountMetadataService.findAllForWorkflowStepResolution(
+          { workspaceId },
+        )
+      : [];
+
     const applicationWorkflows = addWorkflowManifestsToFlatEntityMapsOrThrow({
       workflows: manifest.workflows ?? [],
       ownerFlatApplication,
@@ -248,6 +254,7 @@ export class ApplicationManifestMigrationService {
       // Its workflows run as workspace workflows, which may already call any app's actions
       canReferenceOtherApplicationsWorkflowActions:
         ownerFlatApplication.id === workspaceCustomFlatApplication?.id,
+      connectedAccounts,
       now,
     });
 

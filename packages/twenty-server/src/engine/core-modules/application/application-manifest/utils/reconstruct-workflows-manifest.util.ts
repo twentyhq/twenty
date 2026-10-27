@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WORKFLOW_CHANGED_IN_BUILDER_REASON } from 'src/engine/core-modules/application/application-manifest/constants/workflow-changed-in-builder-reason.constant';
 import { fromFlatWorkflowToWorkflowManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-workflow-to-workflow-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
+import { type WorkflowManifestConnectedAccountReference } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
 import { buildWorkflowManifestExportReferences } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-export-references.util';
 import { sortFlatEntitiesByUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/sort-flat-entities-by-universal-identifier.util';
@@ -51,25 +52,30 @@ export const reconstructWorkflowsManifest = ({
   exportedObjectUniversalIdentifiers,
   resolvableFieldUniversalIdentifiers,
   canReferenceOtherApplicationsWorkflowActions,
+  connectedAccounts,
 }: {
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
   allFlatEntityMaps: AllFlatEntityMaps;
   exportedObjectUniversalIdentifiers: ReadonlySet<string>;
   resolvableFieldUniversalIdentifiers: ReadonlySet<string>;
   canReferenceOtherApplicationsWorkflowActions: boolean;
+  connectedAccounts: readonly WorkflowManifestConnectedAccountReference[];
 }): {
   workflows: WorkflowManifest[];
   coverage: ApplicationExportCoverageEntry[];
 } => {
   const workflows: WorkflowManifest[] = [];
   const coverage: ApplicationExportCoverageEntry[] = [];
-  const references = buildWorkflowManifestExportReferences({
-    applicationAllFlatEntityMaps,
-    allFlatEntityMaps,
-    exportedObjectUniversalIdentifiers,
-    resolvableFieldUniversalIdentifiers,
-    canReferenceOtherApplicationsWorkflowActions,
-  });
+  const references = {
+    ...buildWorkflowManifestExportReferences({
+      applicationAllFlatEntityMaps,
+      allFlatEntityMaps,
+      exportedObjectUniversalIdentifiers,
+      resolvableFieldUniversalIdentifiers,
+      canReferenceOtherApplicationsWorkflowActions,
+    }),
+    connectedAccounts,
+  };
 
   const getExclusionReason = (flatWorkflow: FlatWorkflow) => {
     if (flatWorkflow.isSystem) {

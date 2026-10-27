@@ -64,6 +64,7 @@ const compute = ({
     existingAllFlatEntityMaps: fromAllFlatEntityMaps,
     idByUniversalIdentifierByMetadataName: {},
     canReferenceOtherApplicationsWorkflowActions: false,
+    connectedAccounts: [],
     now: '2026-09-28T00:00:00.000Z',
   });
 

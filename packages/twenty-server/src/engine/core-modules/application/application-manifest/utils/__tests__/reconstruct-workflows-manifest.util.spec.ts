@@ -254,6 +254,7 @@ const reconstruct = ({
     exportedObjectUniversalIdentifiers: new Set([TICKET_UID]),
     resolvableFieldUniversalIdentifiers: new Set(),
     canReferenceOtherApplicationsWorkflowActions,
+    connectedAccounts: [],
   });
 
 describe('reconstructWorkflowsManifest', () => {
@@ -427,6 +428,7 @@ describe('reconstructWorkflowsManifest', () => {
         exportedObjectUniversalIdentifiers: new Set([TICKET_UID]),
         resolvableFieldUniversalIdentifiers: new Set(),
         canReferenceOtherApplicationsWorkflowActions: false,
+        connectedAccounts: [],
       }).coverage,
     ).toEqual([
       {

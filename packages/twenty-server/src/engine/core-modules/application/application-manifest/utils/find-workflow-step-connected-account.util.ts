@@ -1,0 +1,49 @@
+import { EmailOperation } from 'twenty-shared/types';
+import {
+  canConnectedAccountPerformEmailOperation,
+  isDefined,
+} from 'twenty-shared/utils';
+
+import { type WorkflowConnectedAccountStepType } from 'src/engine/core-modules/application/application-manifest/types/workflow-connected-account-step-type.type';
+import { type WorkflowManifestConnectedAccountReference } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { isCalendarCreationSupportedProvider } from 'src/modules/calendar/calendar-event-creation-manager/utils/is-calendar-creation-supported-provider.util';
+
+const canConnectedAccountRunStep = ({
+  stepType,
+  connectedAccount,
+}: {
+  stepType: WorkflowConnectedAccountStepType;
+  connectedAccount: WorkflowManifestConnectedAccountReference;
+}): boolean => {
+  switch (stepType) {
+    case 'SEND_EMAIL':
+      return canConnectedAccountPerformEmailOperation({
+        connectedAccount,
+        operation: EmailOperation.SEND,
+      });
+    case 'DRAFT_EMAIL':
+      return canConnectedAccountPerformEmailOperation({
+        connectedAccount,
+        operation: EmailOperation.DRAFT,
+      });
+    case 'CREATE_CALENDAR_EVENT':
+      return isCalendarCreationSupportedProvider(connectedAccount.provider);
+  }
+};
+
+// Members can connect the same mailbox, or one address through two providers: the oldest account able to run the step wins
+export const findWorkflowStepConnectedAccount = ({
+  stepType,
+  handle,
+  connectedAccounts,
+}: {
+  stepType: WorkflowConnectedAccountStepType;
+  handle: string;
+  connectedAccounts: readonly WorkflowManifestConnectedAccountReference[];
+}): WorkflowManifestConnectedAccountReference | undefined =>
+  connectedAccounts.find(
+    (connectedAccount) =>
+      !isDefined(connectedAccount.archivedAt) &&
+      connectedAccount.handle.toLowerCase() === handle.toLowerCase() &&
+      canConnectedAccountRunStep({ stepType, connectedAccount }),
+  );

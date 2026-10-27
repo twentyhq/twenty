@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/application';
 
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
+import { type WorkflowManifestConnectedAccountReference } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { prepareWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/prepare-workflow-manifest-references.util';
 import { validateWorkflowManifestRecordFields } from 'src/engine/core-modules/application/application-manifest/utils/validate-workflow-manifest-record-fields.util';
 import {
@@ -26,6 +27,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   existingAllFlatEntityMaps,
   idByUniversalIdentifierByMetadataName,
   canReferenceOtherApplicationsWorkflowActions,
+  connectedAccounts,
   now,
 }: {
   workflows: WorkflowManifest[];
@@ -35,6 +37,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   existingAllFlatEntityMaps: AllFlatEntityMaps;
   idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
   canReferenceOtherApplicationsWorkflowActions: boolean;
+  connectedAccounts: readonly WorkflowManifestConnectedAccountReference[];
   now: string;
 }): (UniversalFlatWorkflow & { id: string })[] => {
   const applicationUniversalIdentifier =
@@ -42,13 +45,16 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   const applicationWorkflows: (UniversalFlatWorkflow & { id: string })[] = [];
 
   if (workflows.length > 0) {
-    const references = prepareWorkflowManifestReferences({
-      toAllUniversalFlatEntityMaps,
-      existingAllFlatEntityMaps,
-      ownerApplicationId: ownerFlatApplication.id,
-      idByUniversalIdentifierByMetadataName,
-      canReferenceOtherApplicationsWorkflowActions,
-    });
+    const references = {
+      ...prepareWorkflowManifestReferences({
+        toAllUniversalFlatEntityMaps,
+        existingAllFlatEntityMaps,
+        ownerApplicationId: ownerFlatApplication.id,
+        idByUniversalIdentifierByMetadataName,
+        canReferenceOtherApplicationsWorkflowActions,
+      }),
+      connectedAccounts,
+    };
     const recordFieldErrors: string[] = [];
     for (const workflowManifest of workflows) {
       const existingWorkflow =

@@ -1429,6 +1429,9 @@ const ESCALATION_WORKFLOW_ID = '7e3d1c2b-0110-4a7b-8c9d-0e1f2a3b4c5d';
 const NOTIFY_WORKFLOW_ID = '7e3d1c2b-0111-4a7b-8c9d-0e1f2a3b4c5d';
 const NIGHTLY_WORKFLOW_ID = '7e3d1c2b-0112-4a7b-8c9d-0e1f2a3b4c5d';
 const INTAKE_WORKFLOW_ID = '7e3d1c2b-0113-4a7b-8c9d-0e1f2a3b4c5d';
+const OUTREACH_WORKFLOW_ID = '7e3d1c2b-0114-4a7b-8c9d-0e1f2a3b4c5d';
+// Seeded Google account of the test workspace
+const SEEDED_CONNECTED_ACCOUNT_HANDLE = 'tim@apple.dev';
 const workflowNodeIdentifier = (suffix: number) =>
   `7e3d1c2b-${(200 + suffix).toString().padStart(4, '0')}-4a7b-8c9d-0e1f2a3b4c5d`;
 
@@ -1625,6 +1628,47 @@ const EXPORTED_WORKFLOWS: WorkflowManifest[] = [
       ],
     },
   },
+  {
+    universalIdentifier: OUTREACH_WORKFLOW_ID,
+    name: 'Reach out to the incident reporter',
+    version: {
+      trigger: {
+        universalIdentifier: workflowNodeIdentifier(40),
+        type: 'MANUAL',
+        nextStepIds: [workflowNodeIdentifier(41)],
+      },
+      steps: [
+        {
+          universalIdentifier: workflowNodeIdentifier(41),
+          name: 'Email the reporter',
+          type: 'SEND_EMAIL',
+          nextStepIds: [workflowNodeIdentifier(42)],
+          input: {
+            connectedAccountHandle: SEEDED_CONNECTED_ACCOUNT_HANDLE,
+            recipients: { to: 'reporter@example.com', cc: '', bcc: '' },
+            subject: 'We are on it',
+            files: [],
+          },
+        },
+        {
+          universalIdentifier: workflowNodeIdentifier(42),
+          name: 'Book a review',
+          type: 'CREATE_CALENDAR_EVENT',
+          nextStepIds: [],
+          input: {
+            connectedAccountId: '{{trigger.connectedAccountId}}',
+            title: 'Incident review',
+            startsAt: '2026-11-02T09:00:00.000Z',
+            endsAt: '2026-11-02T09:30:00.000Z',
+            isFullDay: false,
+            attendees: '',
+            sendInvitations: false,
+            addConferencing: false,
+          },
+        },
+      ],
+    },
+  },
 ];
 
 const workflowsManifest = buildBaseManifest({
@@ -1736,5 +1780,39 @@ describe('Application export - workflows', () => {
 
     expect(dryRun.errors).toBeUndefined();
     expect(dryRun.data.syncApplication.actions).toEqual([]);
+  }, 60000);
+
+  it('refuses a step whose connected account handle is not connected in the workspace', async () => {
+    const unknownHandle = 'nobody@apple.dev';
+    const { errors } = await syncApplication({
+      manifest: {
+        ...workflowsManifest,
+        workflows: EXPORTED_WORKFLOWS.map((workflow) =>
+          workflow.universalIdentifier === OUTREACH_WORKFLOW_ID
+            ? {
+                ...workflow,
+                version: {
+                  ...workflow.version,
+                  steps: workflow.version.steps.map((step) =>
+                    step.type === 'SEND_EMAIL'
+                      ? {
+                          ...step,
+                          input: {
+                            ...step.input,
+                            connectedAccountHandle: unknownHandle,
+                          },
+                        }
+                      : step,
+                  ),
+                },
+              }
+            : workflow,
+        ),
+      },
+      dryRun: true,
+      expectToFail: true,
+    });
+
+    expect(errors?.[0]?.message).toContain(unknownHandle);
   }, 60000);
 });
