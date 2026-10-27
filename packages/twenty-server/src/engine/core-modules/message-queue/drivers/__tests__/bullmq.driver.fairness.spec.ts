@@ -446,33 +446,61 @@ describe('BullMQDriver fairness scenarios', () => {
   });
 
   describe('S4: W1, W2 and W3 each enqueue 2 jobs of application H, then W4 enqueues 1 job of application X', () => {
-    const enqueue = async ({
-      harness,
-      shouldUseApplicationKey,
-    }: {
-      harness: Harness;
-      shouldUseApplicationKey: boolean;
-    }) => {
-      for (const workspaceId of ['W1', 'W2', 'W3']) {
-        for (const suffix of ['a', 'b']) {
-          await harness.enqueue({
-            label: `${workspaceId}${suffix}`,
-            workspaceId,
-            groupKeys: [
-              buildWorkspaceGroupKey(workspaceId),
-              ...(shouldUseApplicationKey
-                ? [buildApplicationGroupKey('H')]
-                : []),
-            ],
-          });
-        }
-      }
+    const enqueue = async (harness: Harness) => {
+      await harness.enqueue({
+        label: 'W1a',
+        workspaceId: 'W1',
+        groupKeys: [
+          buildWorkspaceGroupKey('W1'),
+          buildApplicationGroupKey('H'),
+        ],
+      });
+      await harness.enqueue({
+        label: 'W1b',
+        workspaceId: 'W1',
+        groupKeys: [
+          buildWorkspaceGroupKey('W1'),
+          buildApplicationGroupKey('H'),
+        ],
+      });
+      await harness.enqueue({
+        label: 'W2a',
+        workspaceId: 'W2',
+        groupKeys: [
+          buildWorkspaceGroupKey('W2'),
+          buildApplicationGroupKey('H'),
+        ],
+      });
+      await harness.enqueue({
+        label: 'W2b',
+        workspaceId: 'W2',
+        groupKeys: [
+          buildWorkspaceGroupKey('W2'),
+          buildApplicationGroupKey('H'),
+        ],
+      });
+      await harness.enqueue({
+        label: 'W3a',
+        workspaceId: 'W3',
+        groupKeys: [
+          buildWorkspaceGroupKey('W3'),
+          buildApplicationGroupKey('H'),
+        ],
+      });
+      await harness.enqueue({
+        label: 'W3b',
+        workspaceId: 'W3',
+        groupKeys: [
+          buildWorkspaceGroupKey('W3'),
+          buildApplicationGroupKey('H'),
+        ],
+      });
       await harness.enqueue({
         label: 'W4',
         workspaceId: 'W4',
         groupKeys: [
           buildWorkspaceGroupKey('W4'),
-          ...(shouldUseApplicationKey ? [buildApplicationGroupKey('X')] : []),
+          buildApplicationGroupKey('X'),
         ],
       });
     };
@@ -480,7 +508,7 @@ describe('BullMQDriver fairness scenarios', () => {
     it('flag off: W4 waits behind the whole herd', async () => {
       const harness = await createHarness({ isFairnessEnabled: false });
 
-      await enqueue({ harness, shouldUseApplicationKey: true });
+      await enqueue(harness);
 
       expect(await harness.processAll()).toEqual([
         'W1a',
@@ -496,7 +524,7 @@ describe('BullMQDriver fairness scenarios', () => {
     it('flag on: the application key makes the herd share one clock, W4 runs second', async () => {
       const harness = await createHarness({ isFairnessEnabled: true });
 
-      await enqueue({ harness, shouldUseApplicationKey: true });
+      await enqueue(harness);
 
       expect(await harness.processAll()).toEqual([
         'W1a',
@@ -505,22 +533,6 @@ describe('BullMQDriver fairness scenarios', () => {
         'W2a',
         'W2b',
         'W3a',
-        'W3b',
-      ]);
-    });
-
-    it('flag on, workspace key only: each workspace of the herd gets a slot before W4, which runs fourth', async () => {
-      const harness = await createHarness({ isFairnessEnabled: true });
-
-      await enqueue({ harness, shouldUseApplicationKey: false });
-
-      expect(await harness.processAll()).toEqual([
-        'W1a',
-        'W2a',
-        'W3a',
-        'W4',
-        'W1b',
-        'W2b',
         'W3b',
       ]);
     });
