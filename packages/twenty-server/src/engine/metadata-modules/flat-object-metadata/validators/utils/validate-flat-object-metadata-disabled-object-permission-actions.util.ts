@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
-// Manifests are untrusted, so the stored value is checked as data rather than trusted as its type
 export const validateFlatObjectMetadataDisabledObjectPermissionActions = ({
   disabledObjectPermissionActions,
 }: {
