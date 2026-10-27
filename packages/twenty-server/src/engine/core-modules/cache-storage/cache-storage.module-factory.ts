@@ -2,7 +2,8 @@ import { Logger } from '@nestjs/common';
 
 import { type CacheModuleOptions } from '@nestjs/cache-manager';
 
-import { redisInsStore } from 'cache-manager-redis-yet';
+import KeyvRedis from '@keyv/redis';
+import { Keyv } from 'keyv';
 import { createClient } from 'redis';
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
@@ -13,9 +14,9 @@ const cacheStorageLogger = new Logger('CacheStorage');
 
 const REDIS_PING_INTERVAL_MS = 60_000;
 
-export const cacheStorageModuleFactory = (
+export const cacheStorageModuleFactory = async (
   twentyConfigService: TwentyConfigService,
-): CacheModuleOptions => {
+): Promise<CacheModuleOptions> => {
   const cacheStorageType = CacheStorageType.Redis;
   const cacheStorageTtl = twentyConfigService.get('CACHE_STORAGE_TTL');
   const cacheModuleOptions: CacheModuleOptions = {
@@ -33,25 +34,31 @@ export const cacheStorageModuleFactory = (
         );
       }
 
+      const redisClient = createClient({
+        ...getNodeRedisConnectionOptions(redisUrl),
+        pingInterval: REDIS_PING_INTERVAL_MS,
+      });
+
+      redisClient.on('error', (error) => {
+        cacheStorageLogger.error('Redis cache-storage client error', error);
+      });
+
+      await redisClient.connect();
+
       return {
         ...cacheModuleOptions,
-        store: async () => {
-          const redisClient = createClient({
-            ...getNodeRedisConnectionOptions(redisUrl),
-            pingInterval: REDIS_PING_INTERVAL_MS,
-          });
-
-          redisClient.on('error', (err) => {
-            cacheStorageLogger.error('Redis cache-storage client error', err);
-          });
-
-          await redisClient.connect();
-
-          return redisInsStore(
-            redisClient as Parameters<typeof redisInsStore>[0],
-            { ttl: cacheStorageTtl * 1000 },
-          );
-        },
+        // CacheStorageService also reads these keys raw, so no Keyv prefix or wrapping
+        stores: [
+          new Keyv({
+            store: new KeyvRedis(
+              redisClient as ConstructorParameters<typeof KeyvRedis>[0],
+            ),
+            namespace: undefined,
+            useKeyPrefix: false,
+            serialize: ({ value }) => JSON.stringify(value),
+            deserialize: (data) => ({ value: JSON.parse(data) }),
+          }),
+        ],
       };
     }
     default:

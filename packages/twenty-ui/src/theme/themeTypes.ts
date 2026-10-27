@@ -183,6 +183,7 @@ export type ThemeType = {
       md: string;
       smRound: string;
       mdRound: string;
+      lgRound: string;
       lg: string;
       xl: string;
       xxl: string;

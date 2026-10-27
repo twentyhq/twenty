@@ -1,10 +1,10 @@
 import { Injectable, type OnModuleDestroy } from '@nestjs/common';
 
-import type IORedis from 'ioredis';
+import IORedis from 'ioredis';
 import { isDefined } from 'twenty-shared/utils';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
-import { createIORedisClient } from 'src/engine/core-modules/redis-client/utils/create-ioredis-client.util';
+import { parseRedisUnixSocketUrl } from 'src/engine/core-modules/redis-client/utils/parse-redis-unix-socket-url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -25,9 +25,7 @@ export class RedisClientService implements OnModuleDestroy {
         throw new Error('REDIS_QUEUE_URL or REDIS_URL must be defined');
       }
 
-      this.redisQueueClient = createIORedisClient(redisQueueUrl, {
-        maxRetriesPerRequest: null,
-      });
+      this.redisQueueClient = this.createIORedisClient(redisQueueUrl);
     }
 
     return this.redisQueueClient;
@@ -45,9 +43,7 @@ export class RedisClientService implements OnModuleDestroy {
         throw new Error('REDIS_URL must be defined');
       }
 
-      this.redisClient = createIORedisClient(redisUrl, {
-        maxRetriesPerRequest: null,
-      });
+      this.redisClient = this.createIORedisClient(redisUrl);
     }
 
     return this.redisClient;
@@ -64,6 +60,14 @@ export class RedisClientService implements OnModuleDestroy {
     }
 
     return this.redisPubSubClient;
+  }
+
+  private createIORedisClient(url: string) {
+    const unixSocket = parseRedisUnixSocketUrl(url);
+
+    return isDefined(unixSocket)
+      ? new IORedis({ ...unixSocket, maxRetriesPerRequest: null })
+      : new IORedis(url, { maxRetriesPerRequest: null });
   }
 
   async onModuleDestroy() {

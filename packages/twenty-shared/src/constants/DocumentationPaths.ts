@@ -255,6 +255,8 @@ export const DOCUMENTATION_PATHS = {
   USER_GUIDE_BILLING_OVERVIEW: '/user-guide/billing/overview',
   USER_GUIDE_CALENDAR_EMAILS_CAPABILITIES_CALENDAR:
     '/user-guide/calendar-emails/capabilities/calendar',
+  USER_GUIDE_CALENDAR_EMAILS_CAPABILITIES_EMAIL_CHANNELS:
+    '/user-guide/calendar-emails/capabilities/email-channels',
   USER_GUIDE_CALENDAR_EMAILS_CAPABILITIES_MAILBOX:
     '/user-guide/calendar-emails/capabilities/mailbox',
   USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_CAN_I_BOOK_MEETINGS_FROM_TWENTY:

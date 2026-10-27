@@ -23,6 +23,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 
+import { IsLambdaResourceTags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/decorators/is-lambda-resource-tags.decorator';
 import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -52,7 +53,6 @@ import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-confi
 import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
-import { IsRedisUrl } from 'src/engine/core-modules/twenty-config/decorators/is-redis-url.decorator';
 import { DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW } from 'src/engine/core-modules/auth/constants/default-workspace-auto-login-window.constant';
 import { IsNonNegativeDuration } from 'src/engine/core-modules/twenty-config/decorators/is-non-negative-duration.decorator';
 import { IsPositiveDuration } from 'src/engine/core-modules/twenty-config/decorators/is-positive-duration.decorator';
@@ -805,6 +805,18 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description:
+      'Resource tags applied when creating AWS Lambda functions (JSON object with up to 48 string values)',
+    type: ConfigVariableType.JSON,
+  })
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
+  )
+  @IsLambdaResourceTags()
+  LOGIC_FUNCTION_LAMBDA_RESOURCE_TAGS: Record<string, string> = {};
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     isSensitive: true,
     description: 'Access key ID for AWS Lambda functions',
     type: ConfigVariableType.STRING,
@@ -1048,7 +1060,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'Quota and stock usage limit default values per billing plan, keyed by plan key then by the default\'s config variable, as {"PRO":{"WORKSPACE_RECORD_LIMIT":1000000},"ENTERPRISE":{"WORKSPACE_RECORD_LIMIT":null}}. null means no limit, and a variable left out keeps its own value',
+      'Quota and stock usage limit default values per billing plan, keyed by plan key then by the default\'s config variable, as {"PRO":{"WORKSPACE_RECORD_LIMIT":1000000},"ENTERPRISE":{"WORKSPACE_RECORD_LIMIT":null},"TRIAL":{"AI_USER_CREDITS_LIMIT":null}}. TRIAL applies to every trialing subscription and wins over its plan. null means no limit, and a variable left out keeps its own value',
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.JSON,
   })
@@ -1390,7 +1402,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
     description:
-      'Share of sampled server traces that are also profiled, between 0 and 1. Read before the config store is available, so it cannot be overridden from the database.',
+      'Share of server processes that profile their sampled traces, between 0 and 1. Read before the config store is available, so it cannot be overridden from the database.',
     type: ConfigVariableType.NUMBER,
     isEnvOnly: true,
   })
@@ -1532,7 +1544,12 @@ export class ConfigVariables {
     isEnvOnly: true,
     type: ConfigVariableType.STRING,
   })
-  @IsRedisUrl()
+  @ValidateIf((env) => !env.REDIS_URL?.startsWith('unix:///'))
+  @IsUrl({
+    protocols: ['redis', 'rediss'],
+    require_tld: false,
+    allow_underscores: true,
+  })
   REDIS_URL: string;
 
   @ConfigVariablesMetadata({
@@ -1555,7 +1572,12 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  @IsRedisUrl()
+  @ValidateIf((env) => !env.REDIS_QUEUE_URL?.startsWith('unix:///'))
+  @IsUrl({
+    protocols: ['redis', 'rediss'],
+    require_tld: false,
+    allow_underscores: true,
+  })
   REDIS_QUEUE_URL: string;
 
   @ConfigVariablesMetadata({
@@ -2283,6 +2305,24 @@ export class ConfigVariables {
   })
   @IsOptional()
   CAPTCHA_SECRET_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CAPTCHA_CONFIG,
+    description:
+      'Minimum Google reCAPTCHA v3 score, between 0 and 1, required to accept a request',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  CAPTCHA_MIN_SCORE = 0;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CAPTCHA_CONFIG,
+    description: 'Require a valid captcha to create a new workspace',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_WORKSPACE_CREATION_CAPTCHA_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

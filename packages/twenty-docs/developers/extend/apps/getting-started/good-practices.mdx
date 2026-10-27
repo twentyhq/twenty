@@ -1,8 +1,11 @@
 ---
 title: Good practices
 description: How to develop an app that works and scales well across many workspaces.
-icon: "gauge-high"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 The Twenty API accepts **500 requests per minute per application registration** for the requests an app makes in its own name: runs with no person behind them (cron, webhooks, install hooks) and clients created with `runAs: 'application'`. The budget is shared by every workspace that installed the app, and requests beyond it are refused with a `429`. Requests made as the person who triggered a run count against that person's limits instead. The practices below keep an app inside that budget as its number of installs grows, and inside the limits of the services it calls.
 
@@ -79,3 +82,5 @@ With a random delay over a one-hour window, the same runs are spread out:
 - **Batch requests to external APIs.** An external service has its own rate limit and a logic function has a timeout, so `n` requests per run multiply both. When the provider offers a batch endpoint, send one request for the whole batch instead of one per record, and chunk the batch to the provider's maximum.
 
 - **Make default parameters editable by the user.** A value hardcoded in a logic function or a workflow, such as a threshold, a batch size or a default option, fits one workspace and forces a new release for every other. Declare it as an application variable with a default and read it at run time, so workspace admins can adjust it from the app settings. See [Application config](/developers/extend/apps/config/application).
+
+<PageBanner illustration="card-page-campaign-practices" />

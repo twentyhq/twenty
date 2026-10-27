@@ -1,8 +1,11 @@
 ---
 title: Roles & Permissions
 description: Declare what objects and fields your app's logic functions and front components can read and write.
-icon: 'shield-halved'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 A **role** is a permission set: which objects an app can read or write, which fields it can see, and which platform-level capabilities it can use. Every app's logic functions and front components inherit the permissions of the role marked with `defineApplicationRole()` (see [The default function role](#the-default-function-role) below).
 
@@ -226,3 +229,5 @@ The application role is what a workspace reviews when it installs your app, so i
 - `permissionFlagUniversalIdentifiers` control access to platform-level capabilities. Keep them minimal.
 - A permission flag your app declares with `definePermissionFlag()` carries a `permissionType`: `'tool'` (the default) for a capability an agent or a user can be granted, `'settings'` for a flag that unlocks a settings area.
 - See a working example: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
+
+<PageBanner illustration="card-page-roles" />

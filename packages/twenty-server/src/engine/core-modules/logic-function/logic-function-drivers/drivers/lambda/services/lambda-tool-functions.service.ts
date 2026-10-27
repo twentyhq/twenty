@@ -53,7 +53,7 @@ export class LambdaToolFunctionsService {
   constructor(
     private readonly options: Pick<
       LambdaDriverOptions,
-      'lambdaRole' | 'resourceNamespace'
+      'lambdaRole' | 'resourceNamespace' | 'resourceTags'
     >,
     private readonly awsClient: LambdaAwsClientService,
   ) {}
@@ -247,6 +247,7 @@ export class LambdaToolFunctionsService {
         Layers: [commonLayerArn],
         Handler: 'index.handler',
         Role: this.options.lambdaRole,
+        Tags: this.options.resourceTags,
         Runtime: LogicFunctionRuntime.NODE22,
         Timeout: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: YARN_INSTALL_LAMBDA_MEMORY_MB,
@@ -288,6 +289,7 @@ export class LambdaToolFunctionsService {
         Layers: [commonLayerArn],
         Handler: 'index.handler',
         Role: this.options.lambdaRole,
+        Tags: this.options.resourceTags,
         Runtime: LogicFunctionRuntime.NODE22,
         Timeout: BUILDER_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: BUILDER_LAMBDA_MEMORY_MB,

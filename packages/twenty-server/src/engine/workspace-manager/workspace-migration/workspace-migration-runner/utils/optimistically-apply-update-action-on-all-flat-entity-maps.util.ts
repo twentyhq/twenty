@@ -66,10 +66,12 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = ({
     case 'objectPermission':
     case 'fieldPermission':
     case 'webhook':
+    case 'mcpServer':
     case 'applicationVariable':
     case 'workflow':
     case 'workflowVersion':
     case 'connectionProvider':
+    case 'messagingProvider':
     case 'timelineActivityType':
     case 'agentChatChannel':
     case 'agentChatChannelRole':
