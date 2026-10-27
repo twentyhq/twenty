@@ -54,7 +54,7 @@ export const buildRowAccessPolicy = ({
       : { kind: 'denied' };
   }
 
-  const recordShareGate = buildRecordShareGate(context, target);
+  const recordShareGate = buildRecordShareGate({ ...context, ...target });
 
   const roleFilter = buildRoleFilterExpression(context, target);
   const operands = [

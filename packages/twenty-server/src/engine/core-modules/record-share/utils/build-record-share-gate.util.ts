@@ -11,11 +11,17 @@ import {
   type RowAccessPolicyTarget,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
 
-// Records open by default stay open unless one restricts the subject
-export const buildRecordShareGate = (
-  { subject, environment }: RowAccessPolicyContext,
-  { tableAlias, flatObjectMetadata, operationType }: RowAccessPolicyTarget,
-): RowAccessPolicy => {
+export const buildRecordShareGate = ({
+  subject,
+  environment,
+  tableAlias,
+  flatObjectMetadata,
+  operationType,
+}: RowAccessPolicyContext &
+  Pick<
+    RowAccessPolicyTarget,
+    'tableAlias' | 'flatObjectMetadata' | 'operationType'
+  >): RowAccessPolicy => {
   const { sharingMode } = resolveObjectSharing({
     flatObjectMetadata,
     featureFlagsMap: environment.featureFlagsMap,

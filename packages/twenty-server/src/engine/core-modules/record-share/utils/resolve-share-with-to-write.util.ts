@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { assertUnreachable, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
@@ -17,17 +17,23 @@ export const resolveShareWithToWrite = ({
   sharingMode: RecordSharingMode;
   shareWith?: ShareWithInput[] | null;
 }): ShareWithInput[] | null => {
-  if (sharingMode !== RecordSharingMode.OPEN_BY_DEFAULT) {
-    return null;
+  switch (sharingMode) {
+    case RecordSharingMode.ROLE_ONLY:
+    case RecordSharingMode.PRIVATE:
+    case RecordSharingMode.INHERITED:
+      return null;
+    case RecordSharingMode.OPEN_BY_DEFAULT: {
+      const defaultGeneralAccessLevel =
+        resolveDefaultGeneralAccessLevel(sharingMode);
+      const shareWithToWrite = (shareWith ?? []).filter(
+        (shareWithEntry) =>
+          shareWithEntry.everyone !== true ||
+          shareWithEntry.accessLevel !== defaultGeneralAccessLevel,
+      );
+
+      return isNonEmptyArray(shareWithToWrite) ? shareWithToWrite : null;
+    }
+    default:
+      return assertUnreachable(sharingMode);
   }
-
-  const defaultGeneralAccessLevel =
-    resolveDefaultGeneralAccessLevel(sharingMode);
-  const shareWithToWrite = (shareWith ?? []).filter(
-    (shareWithEntry) =>
-      shareWithEntry.everyone !== true ||
-      shareWithEntry.accessLevel !== defaultGeneralAccessLevel,
-  );
-
-  return isNonEmptyArray(shareWithToWrite) ? shareWithToWrite : null;
 };

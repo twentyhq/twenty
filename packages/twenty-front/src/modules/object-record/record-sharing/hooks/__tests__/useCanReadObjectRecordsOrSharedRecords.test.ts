@@ -1,3 +1,4 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { renderHook } from '@testing-library/react';
 
 import { useCanReadObjectRecordsOrSharedRecords } from '@/object-record/record-sharing/hooks/useCanReadObjectRecordsOrSharedRecords';
@@ -15,7 +16,9 @@ jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
 }));
 
 const renderCanRead = (
-  objectMetadataItem: Partial<{ isSystem: boolean }> = {},
+  objectMetadataItem: Partial<
+    Pick<EnrichedObjectMetadataItem, 'isSystem'>
+  > = {},
 ) =>
   renderHook(() =>
     useCanReadObjectRecordsOrSharedRecords({
