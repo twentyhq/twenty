@@ -6091,6 +6091,7 @@ type Workspace {
   isPasswordAuthBypassEnabled: Boolean!
   isPasswordAuthEnabled: Boolean!
   isPublicInviteLinkEnabled: Boolean!
+  isTrialAvailable: Boolean!
   isTwoFactorAuthenticationEnforced: Boolean!
   logo: String
   logoFileId: UUID
