@@ -7,10 +7,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildFieldSelection } from 'src/engine/api/common/common-select-fields/utils/build-field-selection.util';
 import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
-import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
   RecordCrudException,
@@ -22,12 +18,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import {
-  type RoleIdsBySource,
-  type RolePermissionConfig,
-} from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -45,8 +37,6 @@ export class CommonApiContextBuilderService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly userRoleService: UserRoleService,
-    private readonly apiKeyRoleService: ApiKeyRoleService,
   ) {}
 
   async build({
@@ -145,65 +135,44 @@ export class CommonApiContextBuilderService {
     authContext: WorkspaceAuthContext;
     rolePermissionConfig?: RolePermissionConfig;
   }): Promise<ObjectsPermissions> {
-    const workspaceId = authContext.workspace.id;
-
-    const { rolesPermissions, flatObjectMetadataMaps, flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+    const {
+      rolesPermissions,
+      flatObjectMetadataMaps,
+      flatApplicationMaps,
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
+      flatRoleTargetByAgentIdMaps,
+    } = await this.workspaceCacheService.getOrRecompute(
+      authContext.workspace.id,
+      [
         'rolesPermissions',
         'flatObjectMetadataMaps',
         'flatApplicationMaps',
-      ]);
+        'userWorkspaceRoleMap',
+        'apiKeyRoleMap',
+        'flatRoleTargetByAgentIdMaps',
+      ],
+    );
 
-    if (isDefined(rolePermissionConfig)) {
-      return getObjectsPermissionsFromRolePermissionConfig({
-        rolesPermissions,
-        rolePermissionConfig,
-        flatObjectMetadataMaps,
-        flatApplicationMaps,
+    const resolvedRolePermissionConfig =
+      rolePermissionConfig ??
+      resolveRolePermissionConfig({
+        authContext,
+        userWorkspaceRoleMap,
+        apiKeyRoleMap,
+        flatRoleTargetByAgentIdMaps,
       });
-    }
 
-    let intersectionOf: RoleIdsBySource;
-
-    if (isApiKeyAuthContext(authContext)) {
-      intersectionOf = {
-        apiKeyRoleId: await this.apiKeyRoleService.getRoleIdForApiKeyId(
-          authContext.apiKey.id,
-          workspaceId,
-        ),
-      };
-    } else if (
-      isApplicationAuthContext(authContext) &&
-      isDefined(authContext.application.defaultRoleId)
-    ) {
-      intersectionOf = {
-        applicationRoleId: authContext.application.defaultRoleId,
-      };
-    } else if (isUserAuthContext(authContext)) {
-      const userWorkspaceRoleId =
-        await this.userRoleService.getRoleIdForUserWorkspace({
-          userWorkspaceId: authContext.userWorkspaceId,
-          workspaceId,
-        });
-
-      if (!isDefined(userWorkspaceRoleId)) {
-        throw new RecordCrudException(
-          'No role found for user workspace',
-          RecordCrudExceptionCode.INVALID_REQUEST,
-        );
-      }
-
-      intersectionOf = { userWorkspaceRoleId };
-    } else {
+    if (!isDefined(resolvedRolePermissionConfig)) {
       throw new RecordCrudException(
-        'Invalid auth context - no authentication mechanism found',
+        'No role found for this auth context',
         RecordCrudExceptionCode.INVALID_REQUEST,
       );
     }
 
-    return computeObjectsPermissionsForRolePermissionConfig({
-      intersectionOf,
+    return getObjectsPermissionsFromRolePermissionConfig({
       rolesPermissions,
+      rolePermissionConfig: resolvedRolePermissionConfig,
       flatObjectMetadataMaps,
       flatApplicationMaps,
     });
