@@ -66,6 +66,8 @@ describe('fromFlatObjectMetadataToObjectManifest', () => {
       description: null,
       icon: null,
       color: 'red',
+      shortcut: null,
+      targetTableName: 'DEPRECATED',
       isLabelSyncedWithName: true,
       isSearchable: false,
       writability: MetadataWritability.APPLICATION,

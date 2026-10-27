@@ -218,7 +218,14 @@ export class ApplicationMonitoringService {
       'applicationRegistrationId' | 'workspaceId'
     >;
     period: ApplicationMonitoringPeriod;
-  }): Promise<{ bucketStart: Date; creditsUsedMicro: number }[] | null> {
+  }): Promise<
+    | {
+        bucketStart: Date;
+        operationType: string;
+        creditsUsedMicro: number;
+      }[]
+    | null
+  > {
     try {
       const installations =
         await this.applicationRegistrationService.findInstallations({

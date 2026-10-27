@@ -1,3 +1,4 @@
+import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerShouldShowInitialLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowInitialLoadingComponentState';
 import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
 import { useCallback } from 'react';
@@ -19,6 +20,12 @@ export const useMultipleRecordPickerOpen = () => {
 
   const openMultipleRecordPicker = useCallback(
     (recordPickerComponentInstanceId: string) => {
+      store.set(
+        multipleRecordPickerSearchFilterComponentState.atomFamily({
+          instanceId: recordPickerComponentInstanceId,
+        }),
+        '',
+      );
       setInitialLoading(recordPickerComponentInstanceId, true);
       store.set(
         multipleRecordPickerShouldShowSkeletonComponentState.atomFamily({

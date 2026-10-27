@@ -53,10 +53,6 @@ export class ResendApiClientService {
     await this.performRequest('POST', `/domains/${domainId}/verify`);
   }
 
-  async deleteDomain(domainId: string): Promise<void> {
-    await this.performRequest('DELETE', `/domains/${domainId}`);
-  }
-
   async getSentEmail(emailId: string): Promise<ResendSentEmail> {
     return this.requestJson<ResendSentEmail>('GET', `/emails/${emailId}`);
   }

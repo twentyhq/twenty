@@ -3,6 +3,8 @@ import { resolve } from 'path';
 
 import semver from 'semver';
 
+import { generateWorkspaceCustomApplicationDependencies } from './generate-workspace-custom-application-dependencies';
+
 const CONSTANTS_DIR = resolve(
   __dirname,
   '../src/engine/core-modules/upgrade/constants',
@@ -222,6 +224,10 @@ const bumpVersion = (newVersionArg?: string): void => {
       : [incrementMinorVersion(newVersion)];
 
   console.log('\nApplying changes:');
+
+  generateWorkspaceCustomApplicationDependencies({
+    version: updatedPreviousVersions[updatedPreviousVersions.length - 1],
+  });
 
   updatePreviousVersions(updatedPreviousVersions);
   updateCurrentVersion(newVersion);
