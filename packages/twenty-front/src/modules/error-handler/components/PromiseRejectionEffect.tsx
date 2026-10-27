@@ -2,6 +2,7 @@ import { useCallback, useEffect } from 'react';
 
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { isMonacoCancellationError } from '@/error-handler/utils/isMonacoCancellationError';
 import {
   CombinedGraphQLErrors,
   CombinedProtocolErrors,
@@ -35,13 +36,8 @@ export const PromiseRejectionEffect = () => {
   const handlePromiseRejection = useCallback(
     async (event: PromiseRejectionEvent) => {
       const error = event.reason;
-      const isAbortError =
-        error?.networkError?.name === 'AbortError' ||
-        error?.name === 'AbortError' ||
-        ((error instanceof TypeError || error instanceof Error) &&
-          /^cancel+ed$/i.test(error.message));
 
-      if (isAbortError) {
+      if (error instanceof Error && isMonacoCancellationError(error)) {
         return;
       }
 
@@ -50,11 +46,17 @@ export const PromiseRejectionEffect = () => {
         return; // already handled by apolloLink
       }
 
+      const isAbortError =
+        error?.networkError?.name === 'AbortError' ||
+        error?.name === 'AbortError' ||
+        (error instanceof TypeError &&
+          error.message.toLowerCase() === 'cancelled');
+
       const isViteStaleChunkLazyLoadingError =
         error instanceof Error &&
         checkIfItsAViteStaleChunkLazyLoadingError(error);
 
-      if (!isViteStaleChunkLazyLoadingError) {
+      if (!isAbortError && !isViteStaleChunkLazyLoadingError) {
         enqueueToast(getToastOptionsFromError({ error }));
       }
 

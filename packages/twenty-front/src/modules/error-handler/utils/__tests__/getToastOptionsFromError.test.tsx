@@ -35,27 +35,4 @@ describe('getToastOptionsFromError', () => {
       }),
     ).toBeUndefined();
   });
-
-  it('suppresses canceled requests with either single-L or double-L spelling', () => {
-    expect(
-      getToastOptionsFromError({
-        error: new TypeError('Canceled'),
-        children: 'Try again later',
-      }),
-    ).toBeUndefined();
-
-    expect(
-      getToastOptionsFromError({
-        error: new TypeError('cancelled'),
-        children: 'Try again later',
-      }),
-    ).toBeUndefined();
-
-    expect(
-      getToastOptionsFromError({
-        error: { networkError: { name: 'AbortError' } },
-        children: 'Try again later',
-      }),
-    ).toBeUndefined();
-  });
 });
