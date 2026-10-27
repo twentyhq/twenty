@@ -331,15 +331,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
           "type": "string",
         },
         "folderId": {
-          "anyOf": [
-            {
-              "type": "string",
-            },
-            {
-              "type": "null",
-            },
-          ],
           "description": "Move into a different folder. Pass null to move to the top level.",
+          "type": [
+            "string",
+            "null",
+          ],
         },
         "icon": {
           "description": "New icon identifier",
