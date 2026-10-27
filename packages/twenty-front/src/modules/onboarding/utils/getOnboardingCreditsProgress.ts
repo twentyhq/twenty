@@ -17,7 +17,7 @@ type GetOnboardingCreditsProgressArgs = {
   onboardingStatus: OnboardingStatus | null | undefined;
   isWorkspaceCreator: boolean;
   isPlanRequired: boolean;
-  isTrialAvailable?: boolean;
+  isTrialAvailable: boolean;
   profileName: FullNameMetadata | null | undefined;
   inviteTeamValidEmailsCount: number;
   upgradeTrialLostCredits?: number;
@@ -29,7 +29,7 @@ export const getOnboardingCreditsProgress = ({
   onboardingStatus,
   isWorkspaceCreator,
   isPlanRequired,
-  isTrialAvailable = true,
+  isTrialAvailable,
   profileName,
   inviteTeamValidEmailsCount,
   upgradeTrialLostCredits = 0,
