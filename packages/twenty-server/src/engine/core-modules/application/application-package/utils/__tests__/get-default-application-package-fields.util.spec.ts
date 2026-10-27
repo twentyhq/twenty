@@ -22,7 +22,7 @@ describe('application dependency defaults', () => {
     expect(customPackage.devDependencies).toEqual({
       react: '19.2.0',
       'react-dom': '19.2.0',
-      'twenty-ui': `~${TWENTY_PREVIOUS_VERSIONS[TWENTY_PREVIOUS_VERSIONS.length - 1]}`,
+      'twenty-ui': `~${TWENTY_PREVIOUS_VERSIONS[TWENTY_PREVIOUS_VERSIONS.length - 2]}`,
     });
     expect(customPackage.frontComponentSharedDependencies).toEqual(
       expect.arrayContaining([
