@@ -291,6 +291,7 @@ export interface AppConnection {
     id: Scalars['ID']
     name: Scalars['String']
     providerName: Scalars['String']
+    providerType: Scalars['String']
     scope: ConnectedAccountScope
     scopes: Scalars['String'][]
     userWorkspaceId: Scalars['String']
@@ -4458,6 +4459,7 @@ export interface AppConnectionGenqlSelection{
     id?: boolean | number
     name?: boolean | number
     providerName?: boolean | number
+    providerType?: boolean | number
     scope?: boolean | number
     scopes?: boolean | number
     userWorkspaceId?: boolean | number

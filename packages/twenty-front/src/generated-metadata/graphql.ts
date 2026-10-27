@@ -400,6 +400,7 @@ export type AppConnection = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   providerName: Scalars['String']['output'];
+  providerType: Scalars['String']['output'];
   scope: ConnectedAccountScope;
   scopes: Array<Scalars['String']['output']>;
   userWorkspaceId: Scalars['String']['output'];

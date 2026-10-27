@@ -1,12 +1,18 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
-import { type AppConnection } from 'twenty-shared/application';
+import {
+  type AppConnection,
+  type ConnectionProviderType,
+} from 'twenty-shared/application';
 
 import { type ConnectedAccountScope } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountScopeEnum } from 'src/engine/metadata-modules/connected-account/enums/connected-account-scope.enum';
 
 @ObjectType('AppConnection')
-export class AppConnectionObjectDto implements AppConnection {
+export class AppConnectionObjectDto implements Omit<
+  AppConnection,
+  'providerType' | 'accessToken'
+> {
   @Field(() => ID)
   id: string;
 
@@ -33,6 +39,9 @@ export class AppConnectionObjectDto implements AppConnection {
 
   @Field(() => String, { nullable: true })
   workspaceMemberId: string | null;
+
+  @Field(() => String)
+  providerType: ConnectionProviderType;
 
   @Field(() => String, { nullable: true })
   accessToken: string | null;

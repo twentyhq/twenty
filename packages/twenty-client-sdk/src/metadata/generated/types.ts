@@ -784,6 +784,9 @@ export default {
             "providerName": [
                 1
             ],
+            "providerType": [
+                1
+            ],
             "scope": [
                 157
             ],

@@ -354,6 +354,7 @@ type AppConnection {
   id: ID!
   name: String!
   providerName: String!
+  providerType: String!
   scope: ConnectedAccountScope!
   scopes: [String!]!
   userWorkspaceId: String!
