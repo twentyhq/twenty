@@ -79,6 +79,18 @@ export type { AppMessageChannel } from '@/sdk/logic-function/messaging/types/app
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
 export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
 
+export { emitEvent } from '@/sdk/logic-function/events/emit-event';
+export type {
+  EmitEventInput,
+  EmitEventResult,
+} from 'twenty-shared/application';
+
+export { createVisitorEventToken } from '@/sdk/logic-function/events/create-visitor-event-token';
+export type {
+  CreateVisitorEventTokenInput,
+  CreateVisitorEventTokenResult,
+} from 'twenty-shared/application';
+
 export { sendInboxMessage } from '@/sdk/logic-function/inbox/send-inbox-message';
 export type { SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';
 export type { SendInboxMessageResult } from 'twenty-shared/application';

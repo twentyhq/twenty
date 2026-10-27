@@ -18,6 +18,7 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { FlatEntityMapsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-graphql-api-exception.filter';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
+import { EventMetadataModule } from 'src/engine/metadata-modules/event-metadata/event-metadata.module';
 import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
@@ -50,6 +51,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     LogicFunctionModule,
     LogicFunctionLayerModule,
     SkillModule,
+    EventMetadataModule,
     CommandMenuItemModule,
     MetadataTranslationModule,
     NavigationMenuItemModule,

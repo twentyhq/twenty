@@ -1,0 +1,157 @@
+---
+title: Realtime Events
+description: Declare your app's own events, emit them from logic functions and push them live to front components or to visitors on an external website.
+---
+
+## Overview
+
+An **event** is something your app declares once, emits from a logic function, and delivers in real time to whoever is allowed to receive it:
+
+- a **front component** inside Twenty, for example a conversation widget that shows new messages as they arrive;
+- a **visitor** on an external website, for example a support chat widget waiting for an agent's reply.
+
+Logic functions never hold a connection open. They emit, and Twenty's server keeps the connections and delivers the event over Server-Sent Events.
+
+<Note>
+**Beta.** Events currently support realtime delivery only. Storing events and triggering logic functions, agents or workflows from them are planned.
+</Note>
+
+## Declaring an event
+
+```ts src/events/message-added.event.ts
+import { defineEvent } from 'twenty-sdk/define';
+
+import { CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/conversation.object';
+
+export default defineEvent({
+  universalIdentifier: '3c1d2a4b-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+  name: 'messageAdded',
+  label: 'Message added',
+  properties: [
+    {
+      name: 'conversationId',
+      type: 'RECORD_REFERENCE',
+      objectUniversalIdentifier: CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      isRequired: true,
+    },
+    { name: 'messageId', type: 'UUID', isRequired: true },
+    { name: 'text', type: 'TEXT' },
+  ],
+  capabilities: {
+    realtime: {
+      scopes: [
+        { kind: 'record', property: 'conversationId' },
+        { kind: 'visitor' },
+      ],
+    },
+  },
+});
+```
+
+`name` and property names are camelCase. An event name is unique within your app.
+
+| Property type | Accepted value |
+|---|---|
+| `TEXT` | string |
+| `NUMBER` | finite number |
+| `BOOLEAN` | boolean |
+| `DATE_TIME` | ISO 8601 string |
+| `UUID` | UUID string |
+| `RAW_JSON` | any JSON value |
+| `RECORD_REFERENCE` | UUID of a record of `objectUniversalIdentifier` (any object, including standard ones) |
+
+## Who receives an event
+
+The `realtime.scopes` of an event decide who receives each occurrence. The emitter never picks the audience: the server derives it from the occurrence, so changing who receives an event is a change to its definition.
+
+| Scope | Receives the occurrence | Example |
+|---|---|---|
+| `{ kind: 'record', property }` | front components of your app whose viewer can read the record that `property` points to | a conversation widget on the conversation's record page |
+| `{ kind: 'visitor' }` | holders of a visitor token for the occurrence's `anonymousId` | the visitor who opened the chat |
+
+Everything in an occurrence is readable by everyone allowed on its scope, because Twenty cannot filter fields inside your payload. For record scopes, prefer **thin events** (ids and what changed) and let the front component refetch through the usual APIs, where field and row permissions apply.
+
+## Emitting
+
+```ts src/logic-functions/handlers/post-message-handler.ts
+import { emitEvent } from 'twenty-sdk/logic-function';
+
+await emitEvent({
+  event: 'messageAdded',
+  properties: { conversationId, messageId, text },
+  anonymousId: conversation.visitorId,
+});
+```
+
+The server checks the properties against the definition and refuses anything undeclared or mistyped. `anonymousId` is only needed for visitor delivery.
+
+## Receiving in a front component
+
+```tsx src/front-components/conversation-transcript.tsx
+import { useEvent, useSelectedRecordIds } from 'twenty-sdk/front-component';
+
+export const ConversationTranscript = () => {
+  const [conversationId = null] = useSelectedRecordIds();
+  const { messages, refetch } = useConversationMessages(conversationId);
+
+  useEvent({
+    event: 'messageAdded',
+    recordId: conversationId,
+    onEvent: () => refetch(),
+    onConnected: () => refetch(),
+  });
+
+  return <MessageList messages={messages} />;
+};
+```
+
+The stream is authenticated as the person viewing the component, intersected with your app's role, and is refused if they cannot read the record. Read access is checked again every minute while the stream is open.
+
+When an event declares several record scopes, pass `property` to say which one the `recordId` belongs to.
+
+## Receiving on an external website
+
+A visitor has no Twenty account, so your app vouches for them with a short-lived **visitor token**. Mint it from one of your logic functions, typically the public route your widget calls when it starts:
+
+```ts src/logic-functions/handlers/start-chat-handler.ts
+import { createVisitorEventToken } from 'twenty-sdk/logic-function';
+
+const { token, expiresAt } = await createVisitorEventToken({
+  anonymousId: visitorId,
+  events: ['messageAdded'],
+  expiresInSeconds: 900,
+});
+```
+
+The widget then opens a standard `EventSource`:
+
+```js
+const stream = new EventSource(
+  `https://your-twenty-server/app-events/stream?token=${token}`,
+);
+
+stream.addEventListener('occurrence', (event) => {
+  const occurrence = JSON.parse(event.data);
+  // { id, event, occurredAt, properties }
+});
+```
+
+- The token only works on the stream endpoint, never as an API credential.
+- The stream closes when the token expires. Mint a new one from your route and reconnect.
+- `anonymousId` is not a secret. Holding it is not enough to receive anything; only a token your logic function minted grants access, so decide in your route who gets one.
+
+## Delivery
+
+Delivery is best effort: an occurrence emitted while a client is disconnected is not replayed. Keep the source of truth in your records and refetch when a stream (re)connects, which is what `onConnected` is for. Every message carries the occurrence `id` so you can ignore duplicates.
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| Properties per event | 50 |
+| Occurrence payload | 32 KB |
+| Events per visitor token | 20 |
+| Visitor token lifetime | 15 minutes by default, 24 hours at most |
+| Open streams per visitor token | 3 |
+| Subscriptions per front component stream | 20 |
+| `anonymousId` | 1 to 128 characters among `A-Z a-z 0-9 _ -` |

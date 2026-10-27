@@ -101,6 +101,9 @@ import { UpdateConnectionProviderActionHandlerService } from 'src/engine/workspa
 import { CreateMessagingProviderActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/messaging-provider/services/create-messaging-provider-action-handler.service';
 import { DeleteMessagingProviderActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/messaging-provider/services/delete-messaging-provider-action-handler.service';
 import { UpdateMessagingProviderActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/messaging-provider/services/update-messaging-provider-action-handler.service';
+import { CreateEventMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/event-metadata/services/create-event-metadata-action-handler.service';
+import { DeleteEventMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/event-metadata/services/delete-event-metadata-action-handler.service';
+import { UpdateEventMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/event-metadata/services/update-event-metadata-action-handler.service';
 import { CreateTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/create-timeline-activity-type-action-handler.service';
 import { DeleteTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/delete-timeline-activity-type-action-handler.service';
 import { UpdateTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/update-timeline-activity-type-action-handler.service';
@@ -265,6 +268,9 @@ import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/w
     CreateMessagingProviderActionHandlerService,
     UpdateMessagingProviderActionHandlerService,
     DeleteMessagingProviderActionHandlerService,
+    CreateEventMetadataActionHandlerService,
+    UpdateEventMetadataActionHandlerService,
+    DeleteEventMetadataActionHandlerService,
     CreateTimelineActivityTypeActionHandlerService,
     UpdateTimelineActivityTypeActionHandlerService,
     DeleteTimelineActivityTypeActionHandlerService,

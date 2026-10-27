@@ -30,6 +30,7 @@ export const ALL_METADATA_NAME = {
   applicationVariable: 'applicationVariable',
   connectionProvider: 'connectionProvider',
   messagingProvider: 'messagingProvider',
+  eventMetadata: 'eventMetadata',
   searchFieldMetadata: 'searchFieldMetadata',
   timelineActivityType: 'timelineActivityType',
   settingsMenuItem: 'settingsMenuItem',

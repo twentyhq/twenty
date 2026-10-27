@@ -17,6 +17,7 @@ import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/e
 import { getConnectionProviderManifestLogicFunctionReferences } from 'src/engine/core-modules/application/application-manifest/utils/get-connection-provider-manifest-logic-function-references.util';
 import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util';
 import { fromMessagingProviderManifestToUniversalFlatMessagingProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-messaging-provider-manifest-to-universal-flat-messaging-provider.util';
+import { fromEventManifestToUniversalFlatEventMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-event-manifest-to-universal-flat-event-metadata.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFieldPermissionManifestToUniversalFlatFieldPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-field-permission-manifest-to-universal-flat-field-permission.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/application-manifest/converters/from-front-component-manifest-to-universal-flat-front-component.util';
@@ -288,6 +289,18 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           }),
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatMessagingProviderMaps,
+      });
+    }
+
+    for (const eventManifest of manifest.events ?? []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity: fromEventManifestToUniversalFlatEventMetadata({
+          eventManifest,
+          applicationUniversalIdentifier,
+          now,
+        }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatEventMetadataMaps,
       });
     }
 

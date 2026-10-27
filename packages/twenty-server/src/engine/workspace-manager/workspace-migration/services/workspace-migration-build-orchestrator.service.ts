@@ -34,6 +34,7 @@ import { WorkspaceMigrationApplicationVariableActionsBuilderService } from 'src/
 import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/workspace-migration-command-menu-item-actions-builder.service';
 import { WorkspaceMigrationConnectionProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/workspace-migration-connection-provider-actions-builder.service';
 import { WorkspaceMigrationMessagingProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/messaging-provider/workspace-migration-messaging-provider-actions-builder.service';
+import { WorkspaceMigrationEventMetadataActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/event-metadata/workspace-migration-event-metadata-actions-builder.service';
 import { WorkspaceMigrationTimelineActivityTypeActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/workspace-migration-timeline-activity-type-actions-builder.service';
 import { WorkspaceMigrationValidationRuleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/validation-rule/workspace-migration-validation-rule-actions-builder.service';
 import { WorkspaceMigrationFieldPermissionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-permission/workspace-migration-field-permission-actions-builder.service';
@@ -163,6 +164,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     workspaceMigrationApplicationVariableActionsBuilderService: WorkspaceMigrationApplicationVariableActionsBuilderService,
     workspaceMigrationConnectionProviderActionsBuilderService: WorkspaceMigrationConnectionProviderActionsBuilderService,
     workspaceMigrationMessagingProviderActionsBuilderService: WorkspaceMigrationMessagingProviderActionsBuilderService,
+    workspaceMigrationEventMetadataActionsBuilderService: WorkspaceMigrationEventMetadataActionsBuilderService,
     workspaceMigrationTimelineActivityTypeActionsBuilderService: WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
     workspaceMigrationValidationRuleActionsBuilderService: WorkspaceMigrationValidationRuleActionsBuilderService,
     workspaceMigrationSearchFieldMetadataActionsBuilderService: WorkspaceMigrationSearchFieldMetadataActionsBuilderService,
@@ -301,6 +303,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.messagingProvider,
         workspaceMigrationMessagingProviderActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.eventMetadata,
+        workspaceMigrationEventMetadataActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.timelineActivityType,

@@ -145,6 +145,14 @@ export { defineConnectionProvider } from '@/sdk/define/connection-providers/defi
 export type { ConnectionProviderScope } from 'twenty-shared/application';
 export { defineMessagingProvider } from '@/sdk/define/messaging-providers/define-messaging-provider';
 
+export { defineEvent } from '@/sdk/define/events/define-event';
+export type {
+  EventManifest,
+  EventPropertyManifest,
+  EventPropertyType,
+  EventRealtimeScopeManifest,
+} from 'twenty-shared/application';
+
 export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
 
 export { defineObject } from '@/sdk/define/objects/define-object';

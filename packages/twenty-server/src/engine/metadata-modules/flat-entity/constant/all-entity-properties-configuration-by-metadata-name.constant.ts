@@ -1996,6 +1996,40 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
+  eventMetadata: {
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    properties: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    capabilities: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
   searchFieldMetadata: {
     isSystemSideEffect: {
       toCompare: false,

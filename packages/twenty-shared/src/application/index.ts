@@ -83,11 +83,16 @@ export type { ConnectionProviderType } from './connectionProviderType';
 export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventNamePattern';
 export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';
 export { AGENT_TRIGGER_TYPES } from './constants/AgentTriggerTypes';
+export { ANONYMOUS_ID_PATTERN } from './constants/AnonymousIdPattern';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
 export { ASSETS_DIR } from './constants/AssetDirectory';
 export { CONNECTION_PROVIDER_SCOPES } from './constants/ConnectionProviderScopes';
 export { DEFAULT_CONNECTION_PROVIDER_SCOPE } from './constants/DefaultConnectionProviderScope';
 export { DEFAULT_SETTINGS_MENU_ITEM_POSITION } from './constants/DefaultSettingsMenuItemPosition';
+export { EVENT_LIMITS } from './constants/EventLimits';
+export { EVENT_NAME_PATTERN } from './constants/EventNamePattern';
+export { EVENT_PROPERTY_TYPES } from './constants/EventPropertyTypes';
+export { EVENT_REALTIME_SCOPE_KINDS } from './constants/EventRealtimeScopeKinds';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
 export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontComponentWidgetPageLayoutTypes';
@@ -154,6 +159,7 @@ export { getViewSortUniversalIdentifier } from './deterministic-identifier/get-v
 export { getViewUniversalIdentifier } from './deterministic-identifier/get-view-universal-identifier.util';
 export { getWorkflowCommandMenuItemUniversalIdentifier } from './deterministic-identifier/get-workflow-command-menu-item-universal-identifier.util';
 export { getWorkflowVersionUniversalIdentifier } from './deterministic-identifier/get-workflow-version-universal-identifier.util';
+export type { EmitEventInput, EmitEventResult } from './emitEventType';
 export type {
   EnqueueJobOptions,
   EnqueueJobInput,
@@ -165,6 +171,14 @@ export type {
   JobStatusResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
+export type {
+  EventPropertyType,
+  EventPropertyManifest,
+  EventRealtimeScopeManifest,
+  EventCapabilitiesManifest,
+  EventManifest,
+} from './eventManifestType';
+export type { EventOccurrence } from './eventOccurrenceType';
 export type { FieldManifestOptions } from './fieldManifestOptionsType';
 export type {
   RegularFieldManifest,
@@ -280,6 +294,8 @@ export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   getEffectiveObjectPermissionsFromRoleManifest,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export { getEventDefinitionErrors } from './utils/getEventDefinitionErrors';
+export { getEventPropertyValuesErrors } from './utils/getEventPropertyValuesErrors';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
@@ -300,6 +316,10 @@ export type {
   ViewSortManifest,
   ViewManifest,
 } from './viewManifestType';
+export type {
+  CreateVisitorEventTokenInput,
+  CreateVisitorEventTokenResult,
+} from './visitorEventTokenType';
 export type { WorkflowActionTriggerSettings } from './workflowActionTriggerSettingsType';
 export type { WorkflowManifest } from './workflowManifestType';
 export { workflowManifestSchema } from './workflowManifestType';

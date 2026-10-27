@@ -20,6 +20,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "isActive",
   ],
   "connectionProvider": [],
+  "eventMetadata": [],
   "fieldMetadata": [
     "description",
     "icon",

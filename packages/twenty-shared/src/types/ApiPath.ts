@@ -3,6 +3,7 @@
 export enum ApiPath {
   AdminPanel = 'admin-panel',
   App = 'app',
+  AppEvents = 'app-events',
   ApplicationRegistrationClaim = 'application-registration-claim',
   Apps = 'apps',
   Auth = 'auth',

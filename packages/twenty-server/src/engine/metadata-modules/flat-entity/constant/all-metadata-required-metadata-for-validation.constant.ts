@@ -127,6 +127,9 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     connectionProvider: true,
     logicFunction: true,
   },
+  eventMetadata: {
+    objectMetadata: true,
+  },
   searchFieldMetadata: {
     objectMetadata: true,
     fieldMetadata: true,

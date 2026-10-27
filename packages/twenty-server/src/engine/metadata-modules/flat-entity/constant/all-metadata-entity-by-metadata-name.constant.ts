@@ -7,6 +7,7 @@ import { type EntityTarget, type ObjectLiteral } from 'typeorm';
 
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { MessagingProviderEntity } from 'src/engine/metadata-modules/messaging-provider/entities/messaging-provider.entity';
+import { EventMetadataEntity } from 'src/engine/metadata-modules/event-metadata/entities/event-metadata.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
@@ -73,6 +74,7 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   viewSort: ViewSortEntity,
   connectionProvider: ConnectionProviderEntity,
   messagingProvider: MessagingProviderEntity,
+  eventMetadata: EventMetadataEntity,
   searchFieldMetadata: SearchFieldMetadataEntity,
   timelineActivityType: TimelineActivityTypeEntity,
   settingsMenuItem: SettingsMenuItemEntity,
