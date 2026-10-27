@@ -50,12 +50,10 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[8]};
 `;
 
-const StyledWorkspaceInfoActions = styled.div`
-  column-gap: ${themeCssVariables.spacing[2]};
+const StyledWorkspaceInfo = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  margin-top: ${themeCssVariables.spacing[3]};
-  row-gap: ${themeCssVariables.spacing[3]};
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 export const SettingsAdminWorkspaceContent = ({
@@ -154,15 +152,13 @@ export const SettingsAdminWorkspaceContent = ({
           title={t`Workspace Info`}
           description={t`About this workspace`}
         />
-        <SettingsTableCard
-          items={workspaceInfoItems}
-          gridAutoColumns="1fr 4fr"
-        />
-        {isDefined(workspaceInfoActions) && (
-          <StyledWorkspaceInfoActions>
-            {workspaceInfoActions}
-          </StyledWorkspaceInfoActions>
-        )}
+        <StyledWorkspaceInfo>
+          <SettingsTableCard
+            items={workspaceInfoItems}
+            gridAutoColumns="1fr 4fr"
+          />
+          {workspaceInfoActions}
+        </StyledWorkspaceInfo>
       </Section.Root>
       {workspaceUpgradeStatus && (
         <Section.Root>

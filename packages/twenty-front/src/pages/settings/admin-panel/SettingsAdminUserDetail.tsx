@@ -16,10 +16,9 @@ import {
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminServerAdminAccess } from '@/settings/admin-panel/components/SettingsAdminServerAdminAccess';
-import { SettingsAdminTwoFactorAuthenticationRecoveryCode } from '@/settings/admin-panel/components/SettingsAdminTwoFactorAuthenticationRecoveryCode';
+import { SettingsAdminUserWorkspaceActions } from '@/settings/admin-panel/components/SettingsAdminUserWorkspaceActions';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
-import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
@@ -32,14 +31,12 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { Section } from 'twenty-ui/components/layout';
 import {
   IconCalendar,
-  IconEyeShare,
   IconId,
   IconLock,
   IconMail,
   IconUser,
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { Button } from 'twenty-ui/primitives/input';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   type UserLookupAdminPanelQuery,
@@ -65,7 +62,6 @@ export const SettingsAdminUserDetail = () => {
   const userLookupResult = userLookupData?.userLookupAdminPanel;
 
   const currentUser = useAtomStateValue(currentUserState);
-  const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
 
   const effectiveTabId = activeTabId || userLookupResult?.workspaces?.[0]?.id;
   const user = userLookupResult?.user;
@@ -132,42 +128,19 @@ export const SettingsAdminUserDetail = () => {
       : []),
   ];
 
-  const workspaceInfoActions =
-    isDefined(currentUser) &&
-    isDefined(activeWorkspace) &&
-    isDefined(user) &&
-    user.id !== currentUser.id ? (
-      <>
-        {currentUser.canImpersonate && (
-          <Button
-            startIcon={<IconEyeShare />}
-            onClick={() => handleImpersonate(user.id, activeWorkspace.id)}
-            disabled={
-              impersonatingUserId !== null ||
-              activeWorkspace.allowImpersonation === false
-            }
-            variant="outline"
-          >
-            {activeWorkspace.allowImpersonation === false
-              ? t`Impersonation is disabled for this workspace`
-              : t`Impersonate`}
-          </Button>
-        )}
-        {currentUser.canAccessFullAdminPanel && (
-          <SettingsAdminTwoFactorAuthenticationRecoveryCode
-            key={`${user.id}-${activeWorkspace.id}`}
-            userId={user.id}
-            workspaceId={activeWorkspace.id}
-            memberName={displayName}
-          />
-        )}
-      </>
-    ) : undefined;
-
   const workspaceContent = (
     <SettingsAdminWorkspaceContent
       activeWorkspace={activeWorkspace}
-      workspaceInfoActions={workspaceInfoActions}
+      workspaceInfoActions={
+        isDefined(activeWorkspace) &&
+        isDefined(user) && (
+          <SettingsAdminUserWorkspaceActions
+            userId={user.id}
+            workspace={activeWorkspace}
+            memberName={displayName}
+          />
+        )
+      }
     />
   );
 
