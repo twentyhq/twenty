@@ -82,7 +82,7 @@
     "tsc-alias": "^1.8.16",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
-    "vite": "^8.0.0",
+    "vite": "^8.1.6",
     "vite-plugin-dts": "^4.5.4"
   },
   "engines": {

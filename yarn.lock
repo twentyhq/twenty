@@ -28232,7 +28232,7 @@ __metadata:
     jest: "npm:29.7.0"
     jest-environment-node: "npm:^29.4.1"
     typescript: "npm:^5.9.3"
-    vite: "npm:^8.0.0"
+    vite: "npm:^8.1.6"
   bin:
     create-twenty-app: dist/cli.cjs
   languageName: unknown
@@ -50089,7 +50089,7 @@ __metadata:
     tsc-alias: "npm:^1.8.16"
     twenty-shared: "workspace:*"
     typescript: "npm:^5.9.3"
-    vite: "npm:^8.0.0"
+    vite: "npm:^8.1.6"
     vite-plugin-dts: "npm:^4.5.4"
     vitest: "npm:^4.1.0"
   languageName: unknown
@@ -50429,7 +50429,7 @@ __metadata:
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
     uuid: "npm:^13.0.2"
-    vite: "npm:^8.0.0"
+    vite: "npm:^8.1.6"
     vite-plugin-dts: "npm:^4.5.4"
   languageName: unknown
   linkType: soft
@@ -50697,7 +50697,7 @@ __metadata:
     tsx: "npm:^4.19.3"
     typescript: "npm:^5.9.3"
     uuid: "npm:^11.1.1"
-    vite: "npm:^8.0.0"
+    vite: "npm:^8.1.6"
     vite-plugin-dts: "npm:^4.5.4"
     zod: "npm:^4.1.11"
   languageName: unknown
@@ -50844,7 +50844,7 @@ __metadata:
     rimraf: "npm:^3.0.2"
     ts-jest: "npm:^29.1.1"
     twenty-shared: "workspace:*"
-    vite: "npm:^8.0.0"
+    vite: "npm:^8.1.6"
     vite-plugin-dts: "npm:^4.5.4"
     zapier-platform-cli: "npm:^19.0.0"
     zapier-platform-core: "npm:19.0.0"
@@ -50875,7 +50875,7 @@ __metadata:
     typescript: "npm:^5.9.3"
     undici: "npm:^7.30.1"
     uuid: "npm:^13.0.2"
-    vite: "npm:^8.0.0"
+    vite: "npm:^8.1.6"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.1.0"
   bin:
@@ -52503,7 +52503,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^6.0.0 || ^7.0.0 || ^8.0.0, vite@npm:^8.0.0":
+"vite@npm:^6.0.0 || ^7.0.0 || ^8.0.0, vite@npm:^8.1.6":
   version: 8.3.5
   resolution: "vite@npm:8.3.5"
   dependencies:
