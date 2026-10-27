@@ -126,7 +126,7 @@ export const InlineWorkspaceMemberPickerPanel = ({
                     shape="circle"
                   />
                 }
-                description={member.userEmail ?? undefined}
+                description={member.userEmail}
                 onClick={() => onSelect(member)}
               >
                 {getMemberDisplayName(member)}

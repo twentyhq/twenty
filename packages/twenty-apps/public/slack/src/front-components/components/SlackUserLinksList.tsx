@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
-import { Avatar, Tag } from 'twenty-ui/primitives/data-display';
+import { Avatar, Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -57,8 +57,6 @@ const StyledEmptyState = styled.div`
   font-size: ${() => themeCssVariables.font.size.sm};
   padding: ${() => themeCssVariables.spacing[2]};
 `;
-
-type TagColor = 'blue' | 'green' | 'orange' | 'red' | 'gray';
 
 const getSourceLabel = (source: string | null): string =>
   source === SLACK_USER_LINK_SOURCE.MANUAL
