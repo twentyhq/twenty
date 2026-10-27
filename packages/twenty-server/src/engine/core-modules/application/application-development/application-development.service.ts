@@ -156,7 +156,8 @@ export class ApplicationDevelopmentService {
 
     const shouldInferDeletionFromMissingEntities =
       await this.resolveDeletionInference({
-        manifest,
+        applicationUniversalIdentifier:
+          manifest.application.universalIdentifier,
         inferDeletionFromMissingEntities,
         workspaceId,
         workspaceCustomApplicationId,
@@ -303,12 +304,12 @@ export class ApplicationDevelopmentService {
   // Pull cannot export everything the workspace custom application owns yet,
   // so applying a pulled project must only delete what is missing on request.
   private async resolveDeletionInference({
-    manifest,
+    applicationUniversalIdentifier,
     inferDeletionFromMissingEntities,
     workspaceId,
     workspaceCustomApplicationId,
   }: {
-    manifest: ApplicationInput['manifest'];
+    applicationUniversalIdentifier: string;
     inferDeletionFromMissingEntities?: boolean | null;
     workspaceId: string;
     workspaceCustomApplicationId: string;
@@ -319,7 +320,7 @@ export class ApplicationDevelopmentService {
 
     const application =
       await this.applicationLookupService.findByUniversalIdentifier({
-        universalIdentifier: manifest.application.universalIdentifier,
+        universalIdentifier: applicationUniversalIdentifier,
         workspaceId,
       });
 
