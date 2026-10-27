@@ -18,19 +18,11 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { isActiveUserWorkspace } from 'src/engine/core-modules/user-workspace/utils/is-active-user-workspace.util';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const ACTIVE_USER_WORKSPACE_BATCH_SIZE = 1_000;
-
-const isActiveUserWorkspace = (
-  userWorkspace: UserWorkspaceEntity | null | undefined,
-): userWorkspace is UserWorkspaceEntity =>
-  isDefined(userWorkspace) &&
-  !isDefined(userWorkspace.deletedAt) &&
-  isDefined(userWorkspace.user) &&
-  !userWorkspace.user.disabled &&
-  !isDefined(userWorkspace.user.deletedAt);
 
 @Injectable()
 export class UserWorkspaceAuthContextService {
