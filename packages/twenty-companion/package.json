@@ -34,7 +34,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "twenty-ui": "workspace:*",
-    "zod": "^4.1.0"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@electron/packager": "^20.3.0",
