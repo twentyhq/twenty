@@ -17,7 +17,7 @@ type SettingsAppPreferencesConnectionsTableProps = {
   applicationId: string;
   providerName: string;
   connections: ConnectedAccount[];
-  isClientCredentialsConfigured: boolean;
+  canStartAuthorization: boolean;
   isLoading: boolean;
 };
 
@@ -25,7 +25,7 @@ export const SettingsAppPreferencesConnectionsTable = ({
   applicationId,
   providerName,
   connections,
-  isClientCredentialsConfigured,
+  canStartAuthorization,
   isLoading,
 }: SettingsAppPreferencesConnectionsTableProps) => {
   const { t } = useLingui();
@@ -68,7 +68,7 @@ export const SettingsAppPreferencesConnectionsTable = ({
                   applicationId={applicationId}
                   providerName={providerName}
                   connection={connection}
-                  isClientCredentialsConfigured={isClientCredentialsConfigured}
+                  canStartAuthorization={canStartAuthorization}
                 />
               </TableCell>
             </TableRow>

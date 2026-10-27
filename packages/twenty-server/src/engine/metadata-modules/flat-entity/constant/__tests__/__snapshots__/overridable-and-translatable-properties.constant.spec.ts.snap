@@ -30,6 +30,7 @@ exports[`registry-derived override property maps derives the overridable propert
   "frontComponent": [],
   "index": [],
   "logicFunction": [],
+  "messagingProvider": [],
   "navigationMenuItem": [],
   "objectMetadata": [
     "openRecordIn",

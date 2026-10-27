@@ -320,6 +320,7 @@ export enum AllMetadataName {
   frontComponent = 'frontComponent',
   index = 'index',
   logicFunction = 'logicFunction',
+  messagingProvider = 'messagingProvider',
   navigationMenuItem = 'navigationMenuItem',
   objectMetadata = 'objectMetadata',
   objectPermission = 'objectPermission',
@@ -391,7 +392,7 @@ export type ApiKeyToken = {
 
 export type AppConnection = {
   __typename?: 'AppConnection';
-  accessToken: Scalars['String']['output'];
+  accessToken?: Maybe<Scalars['String']['output']>;
   authFailedAt?: Maybe<Scalars['String']['output']>;
   authFailedReason?: Maybe<Scalars['String']['output']>;
   externalAccountId?: Maybe<Scalars['String']['output']>;
@@ -399,6 +400,7 @@ export type AppConnection = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   providerName: Scalars['String']['output'];
+  providerType: Scalars['String']['output'];
   scope: ConnectedAccountScope;
   scopes: Array<Scalars['String']['output']>;
   userWorkspaceId: Scalars['String']['output'];
@@ -1558,6 +1560,7 @@ export type CreateAppMessageChannelInput = {
   connectedAccountId: Scalars['UUID']['input'];
   displayName?: InputMaybe<Scalars['String']['input']>;
   handle: Scalars['String']['input'];
+  messagingProviderUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
   participantHandleFieldUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
   visibility: MessageChannelVisibility;
 };
@@ -3113,6 +3116,7 @@ export type MessageChannel = {
   isContactAutoCreationEnabled: Scalars['Boolean']['output'];
   isSyncEnabled: Scalars['Boolean']['output'];
   messageFolderImportPolicy: MessageFolderImportPolicy;
+  messagingProviderUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
   participantHandleFieldUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
   pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction;
   syncStage: MessageChannelSyncStage;
@@ -3513,6 +3517,7 @@ export type Mutation = {
   runAgent: RunAgentResult;
   runApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
+  sendAppChannelMessage: SendAppChannelMessageOutput;
   sendChatMessage: SendChatMessageResult;
   sendEmail: SendEmailOutput;
   sendInboxMessage: SendInboxMessageResult;
@@ -4499,6 +4504,11 @@ export type MutationSaveImapSmtpCaldavAccountArgs = {
   connectionParameters: EmailAccountConnectionParameters;
   handle: Scalars['String']['input'];
   id?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+
+export type MutationSendAppChannelMessageArgs = {
+  input: SendAppChannelMessageInput;
 };
 
 
@@ -6638,6 +6648,19 @@ export type SearchField = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type SendAppChannelMessageInput = {
+  idempotencyKey: Scalars['UUID']['input'];
+  messageChannelId: Scalars['UUID']['input'];
+  messageThreadId: Scalars['UUID']['input'];
+  text: Scalars['String']['input'];
+};
+
+export type SendAppChannelMessageOutput = {
+  __typename?: 'SendAppChannelMessageOutput';
+  messageId: Scalars['UUID']['output'];
+  messageThreadId: Scalars['UUID']['output'];
+};
+
 export type SendChatMessageResult = {
   __typename?: 'SendChatMessageResult';
   mentionedParticipantWorkspaceMemberIds?: Maybe<Array<Scalars['UUID']['output']>>;
@@ -7112,6 +7135,7 @@ export type UpdateAppMessageChannelInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['UUID']['input'];
   isSyncEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  messagingProviderUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
   visibility?: InputMaybe<MessageChannelVisibility>;
 };
 

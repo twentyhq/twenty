@@ -42,4 +42,9 @@ export class CreateAppMessageChannelInput {
   @IsOptional()
   @IsUUID()
   participantHandleFieldUniversalIdentifier?: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  messagingProviderUniversalIdentifier?: string;
 }

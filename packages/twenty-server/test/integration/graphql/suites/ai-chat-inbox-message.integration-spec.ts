@@ -1,5 +1,8 @@
 import { parse } from 'graphql';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithResources,
@@ -410,8 +413,17 @@ describe('Proposing a record call as an application', () => {
   let application: ApplicationWithResources;
   let applicationToken: string;
   let threadId: string | undefined;
+  const opportunityId = uuidv4();
 
   beforeAll(async () => {
+    await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'opportunity',
+        gqlFields: 'id',
+        data: { id: opportunityId, name: 'Inbox proposal deal' },
+      }),
+    );
+
     application = await setupApplicationWithResources({
       name: 'Inbox Record Application',
       permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
@@ -428,6 +440,14 @@ describe('Proposing a record call as an application', () => {
   });
 
   afterAll(async () => {
+    await makeGraphqlApiRequest(
+      destroyOneOperationFactory({
+        objectMetadataSingularName: 'opportunity',
+        gqlFields: 'id',
+        recordId: opportunityId,
+      }),
+    );
+
     if (threadId !== undefined) {
       await destroyAgentChatThread({ threadId });
     }
@@ -452,7 +472,7 @@ describe('Proposing a record call as an application', () => {
               toolName: 'propose_tool_call',
               input: {
                 toolName: 'update_one_opportunity',
-                arguments: { id: OPPORTUNITY_DATA_SEED_IDS.ID_1, stage: 'WON' },
+                arguments: { id: opportunityId, stage: 'WON' },
                 summary: 'Mark the deal as won',
               },
             },
@@ -474,7 +494,7 @@ describe('Proposing a record call as an application', () => {
 
     const [opportunity] = await global.testDataSource.query(
       `SELECT stage FROM "${schema}"."opportunity" WHERE id = $1`,
-      [OPPORTUNITY_DATA_SEED_IDS.ID_1],
+      [opportunityId],
     );
 
     expect(part.toolOutput.result).toMatchObject({
@@ -483,7 +503,7 @@ describe('Proposing a record call as an application', () => {
         toolName: 'update_one_opportunity',
         template: 'recordUpdate',
         objectNameSingular: 'opportunity',
-        recordId: OPPORTUNITY_DATA_SEED_IDS.ID_1,
+        recordId: opportunityId,
         currentValues: { stage: opportunity.stage },
       },
     });

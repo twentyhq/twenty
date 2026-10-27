@@ -16,14 +16,14 @@ type SettingsAppPreferencesConnectionRowDropdownMenuProps = {
   applicationId: string;
   providerName: string;
   connection: ConnectedAccount;
-  isClientCredentialsConfigured: boolean;
+  canStartAuthorization: boolean;
 };
 
 export const SettingsAppPreferencesConnectionRowDropdownMenu = ({
   applicationId,
   providerName,
   connection,
-  isClientCredentialsConfigured,
+  canStartAuthorization,
 }: SettingsAppPreferencesConnectionRowDropdownMenuProps) => {
   const { t } = useLingui();
   const { triggerAppOAuth } = useTriggerAppOAuth();
@@ -45,7 +45,7 @@ export const SettingsAppPreferencesConnectionRowDropdownMenu = ({
         />
         <DropdownContent side="right" align="start">
           <Dropdown.Section>
-            {isClientCredentialsConfigured &&
+            {canStartAuthorization &&
               isApplicationConnectionReconnectNeeded(connection) && (
                 <Dropdown.ActionItem
                   startIcon={<IconRefresh />}

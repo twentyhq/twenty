@@ -1,6 +1,7 @@
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { type AppPreferencesRow } from '@/settings/app-preferences/types/AppPreferencesRow';
 import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
+import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
@@ -29,7 +30,7 @@ export const SettingsAppPreferencesAppStatusCell = ({
       ),
     );
     const hasConfiguredProvider = connectionProviders.some(
-      (provider) => provider.oauth?.isClientCredentialsConfigured ?? false,
+      canStartConnectionProviderAuthorization,
     );
 
     if (
