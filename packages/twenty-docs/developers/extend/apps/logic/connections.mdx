@@ -367,9 +367,9 @@ From there use `getConnection(connectedAccountId)` to read the fresh access toke
 
 </Accordion>
 
-<Accordion title="Run a logic function on disconnect" description="Clean up when a connection is removed">
+<Accordion title="Run a logic function on disconnect" description="Clean up when a connection is disconnected or removed">
 
-Anything an app claims at connect time has to be released when the connection goes away. A Slack integration that claims a `team_id` on connect, for instance, has to release that claim so another workspace can connect the same Slack team. Set `onDisconnectLogicFunction` to reference a logic function in the same app, and it runs right before the `ConnectedAccount` and its token are deleted, so the handler can still call the provider with `getConnection` to release anything the on-connect hook set up remotely.
+Anything an app claims at connect time has to be released when the connection goes away. A Slack integration that claims a `team_id` on connect, for instance, has to release that claim so another workspace can connect the same Slack team. Set `onDisconnectLogicFunction` to reference a logic function in the same app, and it runs when the connection is disconnected and again when it is deleted.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -387,7 +387,7 @@ export default defineConnectionProvider({
 });
 ```
 
-Unlike the on-connect hook it runs **inline in the disconnecting workspace**, once, without retries: a failure is captured and the disconnect still completes. The handler receives the same payload shape:
+Unlike the on-connect hook it runs **inline in the disconnecting workspace**, without retries: a failure is captured and the disconnect or delete still completes. The handler receives the same payload shape:
 
 ```ts
 type OnDisconnectPayload = {
@@ -397,9 +397,9 @@ type OnDisconnectPayload = {
 };
 ```
 
-The `ConnectedAccount` and its token are still present when the hook runs, so `getConnection(connectedAccountId)` resolves with a fresh access token and the handler can delete whatever it registered remotely. State the provider cannot give back (a `team_id`, an external subscription id) still belongs in the [key-value store](/developers/extend/apps/logic/key-value-store), written at connect time and keyed by `connectedAccountId`. Keep the handler short: it runs inside the disconnect request, so its `timeoutSeconds` is the upper bound on how long that request can take.
+On a disconnect the `ConnectedAccount` and its token are still present, so `getConnection(connectedAccountId)` resolves and the handler can release whatever it registered remotely. On a delete the credentials may already be gone (a member can delete a connection they disconnected earlier), so make the handler idempotent and keep the state it needs (a `team_id`, an external subscription id) in the [key-value store](/developers/extend/apps/logic/key-value-store), written at connect time and keyed by `connectedAccountId`. Keep it short: it runs inside the request, so its `timeoutSeconds` is the upper bound on how long that request can take.
 
-The hook fires when a connection is removed on its own. Uninstalling the app drops its connections through a database cascade instead, so the hook does not run there. Declare an `uninstallLogicFunction` on `defineApplication` for that path: it runs before the app's metadata is deleted, so it can still call `listConnections` and clean up whatever is left.
+The hook fires when a connection is disconnected or removed on its own. Uninstalling the app drops its connections through a database cascade instead, so the hook does not run there. Declare an `uninstallLogicFunction` on `defineApplication` for that path: it runs before the app's metadata is deleted, so it can still call `listConnections` and clean up whatever is left.
 
 </Accordion>
 
@@ -508,10 +508,10 @@ Each connection has one of two scopes:
 The provider's `scope` decides which one its new connections get:
 
 - `scope: 'WORKSPACE'` (the default) — the app works with connections shared with the workspace. **Add connection** in the app's workspace settings creates a workspace-shared connection.
-- `scope: 'USER'` — each member connects their own account, creating personal connections. Members add, reconnect and remove them from the app's page under **Settings > User > App preferences**, which requires the `CONNECTED_ACCOUNTS` (User Apps) permission. The app's workspace settings have no **Add connection** button for a `USER` provider.
+- `scope: 'USER'` — each member connects their own account, creating personal connections. Members add, reconnect and remove them from the app's page under **Settings > User > Apps preferences**, which requires the `CONNECTED_ACCOUNTS` (User Apps) permission. The app's workspace settings have no **Add connection** button for a `USER` provider.
 
 <Note>
-  **App preferences** is not enabled in every workspace yet: where it is not,
+  **Apps preferences** is not enabled in every workspace yet: where it is not,
   members have no place to add a `USER` connection, so do not rely on one for
   a feature every workspace needs now.
 </Note>

@@ -1,4 +1,5 @@
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
+import { SETTINGS_APP_PREFERENCES_TAB_IDS } from '@/settings/app-preferences/constants/SettingsAppPreferencesTabIds';
 import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
 import { SETTINGS_ACCOUNT_GROUP_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsAccountGroupTabListComponentId';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
@@ -91,8 +92,13 @@ export const SettingsAccountDetail = () => {
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
         {
-          children: t`App preferences`,
-          href: getSettingsPath(SettingsPath.Accounts),
+          children: t`Apps preferences`,
+          href: getSettingsPath(
+            SettingsPath.Accounts,
+            undefined,
+            undefined,
+            SETTINGS_APP_PREFERENCES_TAB_IDS.ACCOUNTS,
+          ),
         },
         { children: builtInAccount.handle },
       ]}

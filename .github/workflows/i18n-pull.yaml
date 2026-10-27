@@ -7,7 +7,7 @@ name: 'Pull translations from Crowdin'
 
 permissions:
   contents: write
-  pull-requests: write
+  pull-requests: read
 
 on:
   schedule:
@@ -30,17 +30,32 @@ jobs:
     name: Pull translations
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    outputs:
+      pushed: ${{ steps.push_changes.outcome == 'success' }}
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ github.token }}
           ref: ${{ github.head_ref || github.ref_name }}
+          # Merging main into the i18n branch needs their shared history
+          fetch-depth: 0
+          filter: blob:none
 
       - name: Setup i18n branch
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git fetch origin i18n || true
-          git checkout -B i18n origin/i18n || git checkout -b i18n
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
+          # The branch only holds regenerable output, so restart it from main when
+          # there is no open PR to keep or when keeping it would conflict with main
+          if [ "$(gh pr list --head i18n --base main --state open --json number --jq length)" = 0 ]; then
+            git checkout -B i18n origin/main
+          else
+            git checkout -B i18n origin/i18n
+            git merge --no-edit origin/main || { git merge --abort && git checkout -B i18n origin/main; }
+          fi
 
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
@@ -50,8 +65,6 @@ jobs:
 
       - name: Stash any changes before pulling translations
         run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@twenty.com'
           git add .
           git stash
 
@@ -117,37 +130,22 @@ jobs:
           fi
 
       - name: Push changes
+        id: push_changes
         if: steps.compile_translations.outputs.changes_detected == 'true'
-        run: git push origin HEAD:i18n
-
-      - name: Create pull request
-        if: steps.compile_translations.outputs.changes_detected == 'true'
-        run: |
-          if git diff --name-only origin/main..HEAD | grep -q .; then
-            gh pr create -B main -H i18n --title 'i18n - translations' --body 'Created by Github action' || true
-          else
-            echo "No file differences between branches, skipping PR creation"
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git push --force-with-lease origin HEAD:i18n
 
       - name: Lint translations
         run: npx nx run twenty-front:lint:i18n || echo "::warning::translation lint failed (non-blocking)"
 
-      - name: Mint twenty-infra dispatch token
-        id: app-token
-        if: steps.compile_translations.outputs.changes_detected == 'true'
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
-          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
-          owner: twentyhq
-          repositories: twenty-infra
-          permission-actions: write
-
-      - name: Trigger i18n automerge
-        if: steps.compile_translations.outputs.changes_detected == 'true'
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          gh workflow run automerge-i18n.yaml --repo twentyhq/twenty-infra --ref main
+  open_pull_request:
+    name: Open translations pull request
+    needs: pull_translations
+    if: needs.pull_translations.outputs.pushed == 'true'
+    permissions: {}
+    uses: ./.github/workflows/i18n-open-pull-request.yaml
+    with:
+      branch: i18n
+      title: 'i18n - translations'
+    secrets:
+      TWENTY_PR_PRIVATE_KEY: ${{ secrets.TWENTY_PR_PRIVATE_KEY }}
+      TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}

@@ -12,6 +12,7 @@ const REFERENCE_ID = '22222222-2222-4222-8222-222222222222';
 const FIELD_ID = '33333333-3333-4333-8333-333333333333';
 const LOCAL_ID = '44444444-4444-4444-8444-444444444444';
 const RECORD_FILTER_ID = '55555555-5555-4555-8555-555555555555';
+const SELECT_FIELD_ID = '66666666-6666-4666-8666-666666666666';
 const references = {
   logicFunctionIdByUniversalIdentifier: new Map([[REFERENCE_ID, LOCAL_ID]]),
   agentIdByUniversalIdentifier: new Map([[REFERENCE_ID, LOCAL_ID]]),
@@ -37,6 +38,17 @@ const references = {
         name: 'owner',
         objectUniversalIdentifier: REFERENCE_ID,
         type: FieldMetadataType.TEXT,
+        settings: null,
+        relationTargetObjectMetadataUniversalIdentifier: null,
+      },
+    ],
+    [
+      SELECT_FIELD_ID,
+      {
+        id: 'stage-id',
+        name: 'stage',
+        objectUniversalIdentifier: REFERENCE_ID,
+        type: FieldMetadataType.SELECT,
         settings: null,
         relationTargetObjectMetadataUniversalIdentifier: null,
       },
@@ -110,6 +122,13 @@ const inputs = {
       label: 'Company',
       type: 'RECORD',
       settings: { objectUniversalIdentifier: REFERENCE_ID },
+    },
+    {
+      id: SELECT_FIELD_ID,
+      name: 'stage',
+      label: 'Stage',
+      type: 'SELECT',
+      settings: { selectedFieldUniversalIdentifier: SELECT_FIELD_ID },
     },
   ],
   HTTP_REQUEST: {
@@ -241,9 +260,45 @@ describe('application workflow actions', () => {
     ).toMatchObject({
       loadBalance: { objectNameSingular: 'company', fieldName: 'owner' },
     });
-    expect(convert(WorkflowActionType.FORM).settings.input).toMatchObject([
-      { settings: { objectName: 'company' } },
+    expect(convert(WorkflowActionType.FORM).settings.input).toEqual([
+      { ...inputs.FORM[0], settings: { objectName: 'company' } },
+      {
+        ...inputs.FORM[1],
+        settings: { selectType: 'EXISTING_FIELD', selectedFieldId: 'stage-id' },
+      },
     ]);
+  });
+
+  it('rejects a select form field whose source field is unavailable or of another type', () => {
+    const formStepWith = (formField: Record<string, unknown>) =>
+      workflowStepManifestSchema.parse({
+        universalIdentifier: STEP_ID,
+        name: 'Form',
+        type: WorkflowActionType.FORM,
+        input: [{ id: 'stage', name: 'stage', label: 'Stage', ...formField }],
+        nextStepIds: [],
+      });
+
+    expect(() =>
+      fromWorkflowStepManifestToActionOrThrow({
+        step: formStepWith({
+          type: 'SELECT',
+          settings: { selectedFieldUniversalIdentifier: RECORD_FILTER_ID },
+        }),
+        index: 0,
+        references,
+      }),
+    ).toThrow('missing field');
+    expect(() =>
+      fromWorkflowStepManifestToActionOrThrow({
+        step: formStepWith({
+          type: 'MULTI_SELECT',
+          settings: { selectedFieldUniversalIdentifier: SELECT_FIELD_ID },
+        }),
+        index: 0,
+        references,
+      }),
+    ).toThrow('must reference a MULTI_SELECT field');
   });
 
   it('accepts record filters declared without an id or a value', () => {

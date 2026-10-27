@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_MCP_SERVER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-52/add-mcp-server-upgrade-command-name.constant';
+import { ADD_MCP_SERVER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-53/add-mcp-server-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';

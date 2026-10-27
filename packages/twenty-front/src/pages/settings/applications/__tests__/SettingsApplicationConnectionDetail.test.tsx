@@ -34,6 +34,13 @@ jest.mock(
   }),
 );
 
+jest.mock(
+  '~/pages/settings/applications/components/SettingsApplicationConnectionMessageFolders',
+  () => ({
+    SettingsApplicationConnectionMessageFolders: () => null,
+  }),
+);
+
 jest.mock('@/settings/applications/hooks/useTriggerAppOAuth', () => ({
   useTriggerAppOAuth: jest.fn(() => ({
     triggerAppOAuth: mockTriggerAppOAuth,
@@ -143,7 +150,7 @@ describe('SettingsApplicationConnectionDetail', () => {
           __typename: 'ApplicationConnectedAccountDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
-          authFailedAt: null,
+          authFailedAt: '2026-05-01T00:00:00.000Z',
           scopes: ['calendar.readonly'],
           lastSignedInAt: null,
           connectionProviderId: 'provider-1',
@@ -159,7 +166,7 @@ describe('SettingsApplicationConnectionDetail', () => {
     });
   });
 
-  it('offers reconnect and disconnect on a failed workspace shared connection', () => {
+  it('offers reconnect and remove on a failed workspace shared connection', () => {
     mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [
         {
@@ -183,7 +190,6 @@ describe('SettingsApplicationConnectionDetail', () => {
 
     renderDetailPage();
 
-    expect(screen.getByText('Workspace shared')).toBeVisible();
     expect(screen.getByText('Reconnect needed')).toBeVisible();
 
     fireEvent.click(screen.getByText('Reconnect'));
@@ -196,13 +202,13 @@ describe('SettingsApplicationConnectionDetail', () => {
       redirectLocation: '/settings/applications/app-1/connections/account-1',
     });
 
-    const [disconnectButton] = screen.getAllByText('Disconnect');
+    const [removeButton] = screen.getAllByRole('button', { name: 'Remove' });
 
-    fireEvent.click(disconnectButton);
+    fireEvent.click(removeButton);
 
     expect(mockOpenModal).toHaveBeenCalledTimes(1);
     expect(mockOpenModal).toHaveBeenCalledWith(
-      'delete-application-connection-modal-account-1',
+      'remove-application-connection-modal-account-1',
     );
   });
 });
