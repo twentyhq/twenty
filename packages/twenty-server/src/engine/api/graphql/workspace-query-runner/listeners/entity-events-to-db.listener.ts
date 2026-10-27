@@ -105,6 +105,7 @@ export class EntityEventsToDbListener {
       return;
     }
 
+    const isAuditLogBatchEvent = batchEvent.objectMetadata?.isAuditLogged;
     const shouldCreateTimelineActivity =
       action !== DatabaseEventAction.DESTROYED &&
       (await this.timelineActivityRoutingPlanService.shouldProcessEvent({
@@ -139,7 +140,7 @@ export class EntityEventsToDbListener {
       );
     }
 
-    if (this.workspaceEventSinkService.isEnabled()) {
+    if (isAuditLogBatchEvent && this.workspaceEventSinkService.isEnabled()) {
       promises.push(
         this.eventLogQueueService.add<WorkspaceEventBatch<T>>(
           CreateEventLogFromInternalEvent.name,

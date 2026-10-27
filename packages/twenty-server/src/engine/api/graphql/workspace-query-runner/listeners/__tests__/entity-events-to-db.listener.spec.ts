@@ -1,11 +1,7 @@
-import {
-  type ObjectRecordCreateEvent,
-  type ObjectRecordUpsertEvent,
-} from 'twenty-shared/database-events';
+import { type ObjectRecordUpsertEvent } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { EntityEventsToDbListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/entity-events-to-db.listener';
-import { CreateEventLogFromInternalEvent } from 'src/engine/core-modules/event-logs/ingest/create-event-log-from-internal-event';
 import { type WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { CallAgentDatabaseEventTriggersJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/call-agent-database-event-triggers.job';
@@ -45,48 +41,25 @@ const UPSERT_BATCH_EVENT = {
   events: [],
 } as unknown as WorkspaceEventBatch<ObjectRecordUpsertEvent>;
 
-const NON_AUDIT_LOGGED_CREATE_BATCH_EVENT = {
-  name: 'callRecording.created',
-  workspaceId: WORKSPACE_ID,
-  objectMetadata: {
-    id: 'object-id',
-    nameSingular: 'callRecording',
-    isAuditLogged: false,
-  },
-  events: [],
-} as unknown as WorkspaceEventBatch<ObjectRecordCreateEvent>;
-
 const buildListener = (triggerEventName: string) => {
   const triggerQueueService = { add: jest.fn().mockResolvedValue(undefined) };
-  const eventLogQueueService = { add: jest.fn().mockResolvedValue(undefined) };
   const otherQueueService = { add: jest.fn().mockResolvedValue(undefined) };
   const flatAgentMaps = buildFlatAgentMaps(triggerEventName);
 
   const listener = new EntityEventsToDbListener(
     otherQueueService as unknown as MessageQueueService,
-    eventLogQueueService as unknown as MessageQueueService,
+    otherQueueService as unknown as MessageQueueService,
     otherQueueService as unknown as MessageQueueService,
     triggerQueueService as unknown as MessageQueueService,
     { publish: jest.fn() } as unknown as ObjectRecordEventPublisher,
+    {} as TimelineActivityRoutingPlanService,
     {
-      shouldProcessEvent: jest.fn().mockResolvedValue(false),
-    } as unknown as TimelineActivityRoutingPlanService,
-    {
-      getOrRecompute: jest.fn().mockResolvedValue({
-        flatAgentMaps,
-        flatWebhookMaps: createEmptyFlatEntityMaps(),
-        flatLogicFunctionMaps: createEmptyFlatEntityMaps(),
-      }),
+      getOrRecompute: jest.fn().mockResolvedValue({ flatAgentMaps }),
     } as unknown as WorkspaceCacheService,
     { isEnabled: () => true } as unknown as WorkspaceEventSinkService,
   );
 
-  return {
-    listener,
-    triggerQueueService,
-    eventLogQueueService,
-    otherQueueService,
-  };
+  return { listener, triggerQueueService, otherQueueService };
 };
 
 describe('EntityEventsToDbListener', () => {
@@ -100,20 +73,6 @@ describe('EntityEventsToDbListener', () => {
       CallAgentDatabaseEventTriggersJob.name,
       UPSERT_BATCH_EVENT,
       { retryLimit: 3 },
-    );
-    expect(otherQueueService.add).not.toHaveBeenCalled();
-  });
-
-  it('should forward events of non-audit-logged objects to the event log', async () => {
-    const { listener, eventLogQueueService, otherQueueService } =
-      buildListener('person.created');
-
-    await listener.handleCreate(NON_AUDIT_LOGGED_CREATE_BATCH_EVENT);
-
-    expect(eventLogQueueService.add).toHaveBeenCalledWith(
-      CreateEventLogFromInternalEvent.name,
-      NON_AUDIT_LOGGED_CREATE_BATCH_EVENT,
-      { retryLimit: 1 },
     );
     expect(otherQueueService.add).not.toHaveBeenCalled();
   });
