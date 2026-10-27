@@ -5,7 +5,7 @@ import { baseEventSchema } from 'src/engine/core-modules/event-logs/emit/events/
 export const genericTrackSchema = baseEventSchema.extend({
   type: z.literal('track'),
   event: z.string(),
-  properties: z.any().optional(),
+  properties: z.any(),
 });
 
 export type GenericTrackEvent<E extends string = string> = {
