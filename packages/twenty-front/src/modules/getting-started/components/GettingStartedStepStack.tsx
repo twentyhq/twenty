@@ -136,8 +136,7 @@ export const GettingStartedStepStack = ({
     .filter((depth) => depth < steps.length)
     .map((depth) => ({
       depth,
-      step: steps[(selectedStepIndex - depth + steps.length) % steps.length]
-        .key,
+      step: steps[(selectedStepIndex + depth) % steps.length].key,
     }));
 
   return (
@@ -150,9 +149,9 @@ export const GettingStartedStepStack = ({
             <StyledStackedStep
               key={step}
               layout="position"
-              initial={{ opacity: 0, y: stackOffset }}
+              initial={{ opacity: 0, y: -stackOffset }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -stackOffset }}
+              exit={{ opacity: 0, y: stackOffset }}
               transition={stepTransition}
               type="button"
               depth={depth}
@@ -186,11 +185,11 @@ export const GettingStartedStepStack = ({
         <AnimatePresence initial={false} mode="wait">
           <motion.div
             key={selectedStep.key}
-            initial={{ opacity: 0, y: cardOffset }}
+            initial={{ opacity: 0, y: -cardOffset }}
             animate={{ opacity: 1, y: 0 }}
             exit={{
               opacity: 0,
-              y: -stackOffset,
+              y: cardOffset,
               scale: 0.98,
               transition: {
                 duration: theme.animation.duration.fast,
