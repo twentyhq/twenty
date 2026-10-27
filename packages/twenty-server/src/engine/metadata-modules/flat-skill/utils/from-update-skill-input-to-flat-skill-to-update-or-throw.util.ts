@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -57,6 +58,9 @@ export const fromUpdateSkillInputToFlatSkillToUpdateOrThrow = ({
     throw new SkillException(
       'Cannot rename a skill owned by another application',
       SkillExceptionCode.INVALID_SKILL_INPUT,
+      {
+        userFriendlyMessage: msg`A skill installed by an application cannot be renamed.`,
+      },
     );
   }
 

@@ -322,41 +322,58 @@ describe('Agent update should succeed', () => {
     });
   });
 
-  it('should archive a standard agent through a workspace override', async () => {
+  it('should store edits and the archive of another application agent as workspace overrides', async () => {
     const { data } = await findAgents({
       expectToFail: false,
       input: undefined,
-      gqlFields: 'id name isCustom isActive',
+      gqlFields: 'id name prompt isCustom isActive',
     });
 
     const helperAgent = data.findManyAgents.find(
-      (agent) => agent.name === 'helper' && agent.isCustom === false,
+      (agent) => agent.name === 'helper' && !agent.isCustom,
     );
 
     expect(helperAgent).toBeDefined();
 
-    const { data: archiveData } = await updateOneAgent({
+    const { data: editData } = await updateOneAgent({
       expectToFail: false,
-      input: { id: helperAgent!.id, isActive: false },
-      gqlFields: 'id isActive',
+      input: {
+        id: helperAgent!.id,
+        prompt: 'Workspace prompt',
+        isActive: false,
+      },
+      gqlFields: 'id prompt isActive',
     });
 
-    expect(archiveData.updateOneAgent.isActive).toBe(false);
+    expect(editData.updateOneAgent).toMatchObject({
+      prompt: 'Workspace prompt',
+      isActive: false,
+    });
 
     const [agentRow] = await global.testDataSource.query(
-      `SELECT "isActive", overrides FROM core."agent" WHERE id = $1`,
+      `SELECT prompt, "isActive", overrides FROM core."agent" WHERE id = $1`,
       [helperAgent!.id],
     );
 
+    expect(agentRow.prompt).toBe(helperAgent!.prompt);
     expect(agentRow.isActive).toBe(true);
-    expect(Object.values(agentRow.overrides)).toEqual([{ isActive: false }]);
+    expect(Object.values(agentRow.overrides)).toEqual([
+      { prompt: 'Workspace prompt', isActive: false },
+    ]);
 
-    const { data: unarchiveData } = await updateOneAgent({
+    const { data: revertData } = await updateOneAgent({
       expectToFail: false,
-      input: { id: helperAgent!.id, isActive: true },
-      gqlFields: 'id isActive',
+      input: {
+        id: helperAgent!.id,
+        prompt: helperAgent!.prompt,
+        isActive: true,
+      },
+      gqlFields: 'id prompt isActive',
     });
 
-    expect(unarchiveData.updateOneAgent.isActive).toBe(true);
+    expect(revertData.updateOneAgent).toMatchObject({
+      prompt: helperAgent!.prompt,
+      isActive: true,
+    });
   });
 });

@@ -167,6 +167,9 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
     throw new AiException(
       'Cannot rename an agent owned by another application',
       AiExceptionCode.INVALID_AGENT_INPUT,
+      {
+        userFriendlyMessage: msg`An agent installed by an application cannot be renamed.`,
+      },
     );
   }
 
