@@ -52,8 +52,6 @@ const StyledMessageBubble = styled.div<{ isRightAligned: boolean }>`
   }
 `;
 
-const USER_MESSAGE_BORDER_RADIUS = '12px';
-
 const StyledMessageText = styled.div<{
   isUser?: boolean;
   isOtherMember?: boolean;
@@ -73,7 +71,8 @@ const StyledMessageText = styled.div<{
     isOtherMember
       ? `1px solid ${themeCssVariables.border.color.medium}`
       : 'none'};
-  border-radius: ${({ isUser }) => (isUser ? USER_MESSAGE_BORDER_RADIUS : '0')};
+  border-radius: ${({ isUser }) =>
+    isUser ? themeCssVariables.border.radius.lgRound : '0'};
   color: ${({ isUser }) =>
     isUser
       ? themeCssVariables.font.color.secondary
