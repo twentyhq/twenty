@@ -5,6 +5,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { buildWorkflowManifestInverseReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-inverse-reference-resolvers.util';
+import { normalizeStoredWorkflowErrorHandlingOptions } from 'src/engine/core-modules/application/application-manifest/utils/normalize-stored-workflow-error-handling-options.util';
 import { computeWorkflowManifestOutputSchema } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-output-schema.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -16,23 +17,6 @@ const DEFAULT_ERROR_HANDLING_OPTIONS = {
   retryOnFailure: { value: 0 },
   continueOnFailure: { value: false },
 };
-
-// Older builder versions stored the retry count as a boolean, which runs read as a number
-const fromErrorHandlingOptions = (
-  errorHandlingOptions:
-    | WorkflowAction['settings']['errorHandlingOptions']
-    | undefined,
-) =>
-  isDefined(errorHandlingOptions)
-    ? {
-        retryOnFailure: {
-          value: Number(errorHandlingOptions.retryOnFailure.value),
-        },
-        continueOnFailure: {
-          value: errorHandlingOptions.continueOnFailure.value,
-        },
-      }
-    : undefined;
 
 const toRecord = (value: unknown): Record<string, unknown> =>
   isPlainObject(value) ? value : {};
@@ -269,9 +253,11 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
   }
 
   const { outputSchema } = action.settings;
-  const errorHandlingOptions = fromErrorHandlingOptions(
-    action.settings.errorHandlingOptions,
-  );
+  const errorHandlingOptions = isDefined(action.settings.errorHandlingOptions)
+    ? normalizeStoredWorkflowErrorHandlingOptions(
+        action.settings.errorHandlingOptions,
+      )
+    : undefined;
   const position = isDefined(action.position)
     ? { x: action.position.x, y: action.position.y }
     : null;

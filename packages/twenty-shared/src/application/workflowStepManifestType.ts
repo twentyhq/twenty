@@ -26,7 +26,7 @@ import { recordFilterSchema } from '@/workflow/schemas/record-filter-schema';
 import { stepFilterSchema } from '@/workflow/schemas/step-filter-schema';
 import { workflowPickRecordStrategySchema } from '@/workflow/schemas/pick-record-action-settings-schema';
 
-export const workflowManifestPositionSchema = z.strictObject({
+export const workflowManifestPositionSchema = z.object({
   x: z.number(),
   y: z.number(),
 });

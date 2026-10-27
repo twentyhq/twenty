@@ -56,8 +56,6 @@ type TriggerBase = Pick<
   'name' | 'nextStepIds' | 'position'
 > & { universalIdentifier?: string };
 
-// The workflow builder stores no universal identifier, its own names, moved or missing positions
-// and its own output schemas; a manifest states them only when they differ from these defaults
 const fromTriggerManifestBase = (
   trigger: WorkflowTriggerManifest,
 ): { base: TriggerBase; outputSchema: OutputSchema } => {
@@ -210,6 +208,26 @@ const fromDatabaseEventTriggerManifestOrThrow = ({
   } satisfies WorkflowDatabaseEventTrigger;
 };
 
+const fromWebhookTriggerManifestSettings = ({
+  settings,
+  outputSchema,
+}: {
+  settings: WebhookTriggerManifest['settings'];
+  outputSchema: OutputSchema;
+}): WorkflowWebhookTrigger['settings'] => {
+  if (settings.httpMethod === 'GET') {
+    return { httpMethod: 'GET', authentication: null, outputSchema };
+  }
+
+  return {
+    httpMethod: 'POST',
+    authentication: null,
+    expectedBody: settings.expectedBody,
+    expectedOutputSchema: settings.expectedBody,
+    outputSchema,
+  };
+};
+
 const fromWebhookTriggerManifest = (
   trigger: WebhookTriggerManifest,
 ): WorkflowWebhookTrigger => {
@@ -219,16 +237,7 @@ const fromWebhookTriggerManifest = (
   return {
     ...base,
     type: WorkflowTriggerType.WEBHOOK,
-    settings:
-      settings.httpMethod === 'GET'
-        ? { httpMethod: 'GET', authentication: null, outputSchema }
-        : {
-            httpMethod: 'POST',
-            authentication: null,
-            expectedBody: settings.expectedBody,
-            expectedOutputSchema: settings.expectedBody,
-            outputSchema,
-          },
+    settings: fromWebhookTriggerManifestSettings({ settings, outputSchema }),
   } satisfies WorkflowWebhookTrigger;
 };
 

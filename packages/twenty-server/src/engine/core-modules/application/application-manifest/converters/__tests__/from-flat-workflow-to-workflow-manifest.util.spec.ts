@@ -18,6 +18,7 @@ import {
 
 import { fromFlatWorkflowToWorkflowManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-workflow-to-workflow-manifest.util';
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
+import { type StoredWorkflowNode } from 'src/engine/core-modules/application/application-manifest/types/stored-workflow-version-definition.type';
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
@@ -664,8 +665,6 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
   });
 });
 
-// Shaped like what the workflow builder writes (trigger defaults from the front, steps from
-// workflow-version-step-operations) and like active versions read from a production workspace
 describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow builder', () => {
   const DECLARED_OUTPUT_SCHEMA: BaseOutputSchemaV2 = {
     ok: { isLeaf: true, type: 'boolean', label: 'ok', value: true },
@@ -681,7 +680,9 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     retryOnFailure: { value: 0 },
   };
 
-  const recordCreatedTrigger = (overrides: Record<string, unknown> = {}) => ({
+  const recordCreatedTrigger = (
+    overrides: Partial<StoredWorkflowNode> = {},
+  ): StoredWorkflowNode => ({
     name: 'Record is created',
     type: 'DATABASE_EVENT',
     position: { x: 0, y: 0 },
@@ -690,7 +691,9 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     ...overrides,
   });
 
-  const createRecordStep = (overrides: Record<string, unknown> = {}) => ({
+  const createRecordStep = (
+    overrides: Partial<StoredWorkflowNode> = {},
+  ): StoredWorkflowNode => ({
     id: STEP_ID,
     name: 'Create Record',
     type: 'CREATE_RECORD',
@@ -709,10 +712,11 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     triggers,
     steps,
   }: {
-    triggers: Record<string, unknown>[];
-    steps: Record<string, unknown>[];
+    triggers: StoredWorkflowNode[];
+    steps: StoredWorkflowNode[];
   }) => {
     const synced = syncWorkflow(buildWorkflow({}));
+    // The entity types its jsonb as the current builder writes it; rows also hold older shapes
     const flatWorkflowVersion = {
       ...synced.flatWorkflowVersion,
       triggers,

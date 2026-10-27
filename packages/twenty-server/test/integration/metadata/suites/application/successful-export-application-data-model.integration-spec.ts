@@ -1789,8 +1789,6 @@ describe('Application export - workflows built in the workflow builder', () => {
 
   let stepId: string;
 
-  // What the builder stores comes back in the manifest: no trigger universal identifier, the
-  // builder's trigger name and command icon, and the step position picked in the canvas
   const buildManifest = (url: string): WorkflowManifest => ({
     universalIdentifier: workflowUniversalIdentifier,
     name: workflowName,
@@ -1856,8 +1854,7 @@ describe('Application export - workflows built in the workflow builder', () => {
 
     workflowUniversalIdentifier = universalIdentifier;
 
-    // The calls the builder makes: the front's default manual trigger, a step created from its
-    // type, then the step edited in its side panel
+    // Same calls and payloads as the builder front, so the stored version is a real builder one
     await updateCoreWorkflowVersionTrigger({
       coreWorkflowVersionId: builderVersionId,
       trigger: {

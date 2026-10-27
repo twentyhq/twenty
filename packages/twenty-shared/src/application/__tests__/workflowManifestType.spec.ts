@@ -562,10 +562,6 @@ describe('workflow manifest state stored by the workflow builder', () => {
   it.each([
     { problem: 'an empty name', trigger: { name: '' } },
     { problem: 'a position without coordinates', trigger: { position: {} } },
-    {
-      problem: 'a position with extra keys',
-      trigger: { position: { x: 0, y: 0, __typename: 'WorkflowStepPosition' } },
-    },
   ])('rejects $problem', ({ trigger }) => {
     expect(
       workflowManifestSchema.safeParse(

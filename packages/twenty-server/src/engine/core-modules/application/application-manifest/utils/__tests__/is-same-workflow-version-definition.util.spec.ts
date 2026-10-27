@@ -1,10 +1,8 @@
+import {
+  type StoredWorkflowNode,
+  type StoredWorkflowVersionDefinition,
+} from 'src/engine/core-modules/application/application-manifest/types/stored-workflow-version-definition.type';
 import { isSameWorkflowVersionDefinition } from 'src/engine/core-modules/application/application-manifest/utils/is-same-workflow-version-definition.util';
-import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
-
-type WorkflowVersionDefinition = Pick<
-  UniversalFlatWorkflowVersion,
-  'triggers' | 'steps'
->;
 
 const STEP_ID = '40000000-0000-4000-8000-000000000000';
 
@@ -12,40 +10,39 @@ const buildDefinition = ({
   trigger = {},
   step = {},
 }: {
-  trigger?: Record<string, unknown>;
-  step?: Record<string, unknown>;
-}) =>
-  ({
-    triggers: [
-      {
-        name: 'Launch manually',
-        type: 'MANUAL',
-        position: { x: 0, y: 0 },
-        nextStepIds: [STEP_ID],
-        settings: { outputSchema: {}, availability: { type: 'GLOBAL' } },
-        ...trigger,
-      },
-    ],
-    steps: [
-      {
-        id: STEP_ID,
-        name: 'Create Record',
-        type: 'CREATE_RECORD',
-        valid: true,
-        position: { x: 0, y: 180 },
-        nextStepIds: [],
-        settings: {
-          outputSchema: {},
-          errorHandlingOptions: {
-            retryOnFailure: { value: 0 },
-            continueOnFailure: { value: false },
-          },
-          input: { objectName: 'ticket', objectRecord: {} },
+  trigger?: Partial<StoredWorkflowNode>;
+  step?: Partial<StoredWorkflowNode>;
+}): StoredWorkflowVersionDefinition => ({
+  triggers: [
+    {
+      name: 'Launch manually',
+      type: 'MANUAL',
+      position: { x: 0, y: 0 },
+      nextStepIds: [STEP_ID],
+      settings: { outputSchema: {}, availability: { type: 'GLOBAL' } },
+      ...trigger,
+    },
+  ],
+  steps: [
+    {
+      id: STEP_ID,
+      name: 'Create Record',
+      type: 'CREATE_RECORD',
+      valid: true,
+      position: { x: 0, y: 180 },
+      nextStepIds: [],
+      settings: {
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: 0 },
+          continueOnFailure: { value: false },
         },
-        ...step,
+        input: { objectName: 'ticket', objectRecord: {} },
       },
-    ],
-  }) as unknown as WorkflowVersionDefinition;
+      ...step,
+    },
+  ],
+});
 
 describe('isSameWorkflowVersionDefinition', () => {
   it.each([

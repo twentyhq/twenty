@@ -1,97 +1,65 @@
 import isEqual from 'lodash.isequal';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
+import {
+  type StoredWorkflowNode,
+  type StoredWorkflowNodeSettings,
+  type StoredWorkflowVersionDefinition,
+} from 'src/engine/core-modules/application/application-manifest/types/stored-workflow-version-definition.type';
+import { normalizeStoredWorkflowErrorHandlingOptions } from 'src/engine/core-modules/application/application-manifest/utils/normalize-stored-workflow-error-handling-options.util';
 
-type WorkflowVersionDefinition = Pick<
-  UniversalFlatWorkflowVersion,
-  'triggers' | 'steps'
->;
-
-const withoutTypenames = (value: unknown): unknown => {
-  if (Array.isArray(value)) {
-    return value.map(withoutTypenames);
-  }
-
-  if (!isPlainObject(value)) {
-    return value;
-  }
-
-  return Object.fromEntries(
-    Object.entries(value)
-      .filter(([key]) => key !== '__typename')
-      .map(([key, entry]) => [key, withoutTypenames(entry)]),
-  );
-};
-
-// Builder state no run reads: Apollo typenames, the step valid flag, the manual trigger objectType,
-// null next steps or position, and retry counts older builders stored as booleans
+// Builder state no run reads: typenames, valid, manual objectType, null next steps or position, boolean retries
 const normalizeSettings = ({
   type,
-  settings,
+  settings: { objectType, errorHandlingOptions, ...rest },
 }: {
-  type: unknown;
-  settings: Record<string, unknown>;
-}) => {
-  const { objectType, errorHandlingOptions, ...rest } = settings;
-  const retryOnFailure = isPlainObject(errorHandlingOptions)
-    ? errorHandlingOptions.retryOnFailure
-    : undefined;
+  type: string;
+  settings: StoredWorkflowNodeSettings;
+}) => ({
+  ...rest,
+  ...(type === 'MANUAL' ? {} : { objectType }),
+  ...(isDefined(errorHandlingOptions)
+    ? {
+        errorHandlingOptions:
+          normalizeStoredWorkflowErrorHandlingOptions(errorHandlingOptions),
+      }
+    : {}),
+});
 
-  return {
-    ...rest,
-    ...(type === 'MANUAL' ? {} : { objectType }),
-    errorHandlingOptions:
-      isPlainObject(errorHandlingOptions) && isPlainObject(retryOnFailure)
-        ? {
-            ...errorHandlingOptions,
-            retryOnFailure: {
-              ...retryOnFailure,
-              value: Number(retryOnFailure.value),
-            },
-          }
-        : errorHandlingOptions,
-  };
-};
-
-const normalizeNode = (node: unknown): unknown => {
-  if (!isPlainObject(node)) {
-    return node;
-  }
-
-  const { valid: _valid, position, nextStepIds, settings, ...rest } = node;
-  const normalizedSettings = isPlainObject(settings)
-    ? normalizeSettings({ type: rest.type, settings })
-    : settings;
-
-  return {
-    ...rest,
-    nextStepIds: nextStepIds ?? [],
-    ...(isDefined(position) ? { position } : {}),
-    ...(isDefined(normalizedSettings) ? { settings: normalizedSettings } : {}),
-  };
-};
+const normalizeNode = ({
+  valid: _valid,
+  position,
+  nextStepIds,
+  settings,
+  ...rest
+}: StoredWorkflowNode) => ({
+  ...rest,
+  nextStepIds: nextStepIds ?? [],
+  ...(isDefined(position) ? { position } : {}),
+  ...(isDefined(settings)
+    ? { settings: normalizeSettings({ type: rest.type, settings }) }
+    : {}),
+});
 
 // Compared as stored in jsonb, where undefined properties are dropped
 const toJsonValue = ({
   triggers,
   steps,
-}: WorkflowVersionDefinition): unknown => {
-  const json = withoutTypenames(
-    JSON.parse(
-      JSON.stringify({ triggers: triggers ?? null, steps: steps ?? null }),
-    ),
-  ) as { triggers: unknown[] | null; steps: unknown[] | null };
+}: StoredWorkflowVersionDefinition): unknown => {
+  const stored: StoredWorkflowVersionDefinition = JSON.parse(
+    JSON.stringify({ triggers: triggers ?? null, steps: steps ?? null }),
+    (key, value) => (key === '__typename' ? undefined : value),
+  );
 
   return JSON.parse(
     JSON.stringify({
-      triggers: json.triggers?.map(normalizeNode) ?? null,
-      steps: json.steps?.map(normalizeNode) ?? null,
+      triggers: stored.triggers?.map(normalizeNode) ?? null,
+      steps: stored.steps?.map(normalizeNode) ?? null,
     }),
   );
 };
 
 export const isSameWorkflowVersionDefinition = (
-  left: WorkflowVersionDefinition,
-  right: WorkflowVersionDefinition,
+  left: StoredWorkflowVersionDefinition,
+  right: StoredWorkflowVersionDefinition,
 ): boolean => isEqual(toJsonValue(left), toJsonValue(right));
