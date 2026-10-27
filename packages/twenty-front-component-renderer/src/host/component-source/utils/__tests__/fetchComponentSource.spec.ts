@@ -208,9 +208,12 @@ describe('fetchComponentSource', () => {
 
       setupCaches(cache);
 
-      const fetchMock = jest.fn();
+      const fetchMock = jest.fn<
+        ReturnType<typeof fetch>,
+        Parameters<typeof fetch>
+      >();
 
-      globalThis.fetch = fetchMock as unknown as typeof fetch;
+      globalThis.fetch = fetchMock;
 
       const cachedSource = await fetchComponentSource({ url });
 
