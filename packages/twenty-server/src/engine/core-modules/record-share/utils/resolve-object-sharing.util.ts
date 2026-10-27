@@ -39,7 +39,6 @@ export const resolveObjectSharing = ({
   const isRecordSharingEnabled =
     featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
 
-  // System objects stay out since nobody shares them from the product
   if (!isRecordSharingEnabled || flatObjectMetadata.isSystem) {
     return {
       sharingMode: RecordSharingMode.ROLE_ONLY,
