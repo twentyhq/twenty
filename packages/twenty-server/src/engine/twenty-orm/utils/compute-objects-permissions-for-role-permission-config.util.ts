@@ -6,14 +6,22 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { ROLE_SOURCES_IN_INTERSECTION_ORDER } from 'src/engine/twenty-orm/constants/role-sources-in-intersection-order.constant';
+import { type ApplicationDefaultRoleMaps } from 'src/engine/twenty-orm/types/application-default-role-maps.type';
 import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
-import { isDenyingRoleIdsBySource } from 'src/engine/twenty-orm/utils/is-denying-role-ids-by-source.util';
+import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-disabled-actions.util';
-import { type ApplicationDefaultRoleMaps } from 'src/engine/twenty-orm/types/application-default-role-maps.type';
 
-// Each role is restricted before the intersection, so a user acting through the owning application stays restricted
+// A role also held by a user, agent or API key is deduped into one entry and must stay restricted for them
+const findExemptApplicationRoleId = ({
+  applicationRoleId,
+  ...otherRoleIdsBySource
+}: RoleIdsBySource): string | undefined =>
+  isDefined(applicationRoleId) &&
+  !Object.values(otherRoleIdsBySource).includes(applicationRoleId)
+    ? applicationRoleId
+    : undefined;
+
 export const computeObjectsPermissionsForRolePermissionConfig = ({
   intersectionOf,
   rolesPermissions,
@@ -25,37 +33,31 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
 }): ObjectsPermissions => {
-  if (isDenyingRoleIdsBySource(intersectionOf)) {
+  const roleIds = getRoleIdsToIntersect(intersectionOf);
+
+  if (!isDefined(roleIds)) {
     return {};
   }
 
-  const permissionsPerRole = ROLE_SOURCES_IN_INTERSECTION_ORDER.flatMap(
-    (roleIdKey) => {
-      const roleId = intersectionOf[roleIdKey];
+  const exemptApplicationRoleId = findExemptApplicationRoleId(intersectionOf);
 
-      if (!isDefined(roleId)) {
-        return [];
-      }
+  const permissionsPerRole = roleIds.map((roleId) => {
+    const rolePermissions = rolesPermissions[roleId];
 
-      const rolePermissions = rolesPermissions[roleId];
-
-      return [
-        isDefined(rolePermissions)
-          ? restrictObjectsPermissionsToDisabledActions({
-              objectsPermissions: rolePermissions,
-              flatObjectMetadataMaps,
-              flatApplicationMaps,
-              applicationRoleId:
-                roleIdKey === 'applicationRoleId' ? roleId : undefined,
-            })
-          : undefined,
-      ];
-    },
-  );
+    return isDefined(rolePermissions)
+      ? restrictObjectsPermissionsToDisabledActions({
+          objectsPermissions: rolePermissions,
+          flatObjectMetadataMaps,
+          flatApplicationMaps,
+          applicationRoleId:
+            roleId === exemptApplicationRoleId ? roleId : undefined,
+        })
+      : undefined;
+  });
 
   if (!permissionsPerRole.every(isDefined)) {
     return {};
   }
 
-  return computePermissionIntersection([...new Set(permissionsPerRole)]);
+  return computePermissionIntersection(permissionsPerRole);
 };
