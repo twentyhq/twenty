@@ -455,7 +455,7 @@ Each connection has:
 | Field               | Description                                                                                                                                                                                                                |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `id`                | Unique row id; pass to `getConnection(id)` to refetch a single one                                                                                                                                                         |
-| `scope`             | `'USER'` (private to one workspace member) or `'WORKSPACE'` (shared with all members)                                                                                                                                      |
+| `scope`             | `'USER'` (belongs to the connecting member) or `'WORKSPACE'` (shared with all members)                                                                                                                                     |
 | `visibility`        | Deprecated: `scope` in lowercase (`'user'` or `'workspace'`). Use `scope` instead                                                                                                                                         |
 | `scopes`            | OAuth permissions granted by the upstream provider (distinct from `scope` — those are unrelated)                                                                                                                           |
 | `userWorkspaceId`   | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers                                                                                                                   |
@@ -503,12 +503,18 @@ The mutation behind this helper ships with Twenty 2.40.0, so calling it against 
 Each connection has one of two scopes:
 
 - **Workspace shared** (`'WORKSPACE'`) — any workspace member can use the credential. Cron / database triggers also see it, since they have no request user.
-- **Just for me** (`'USER'`) — the credential is private to the connecting member. Any logic function called on their behalf (HTTP-route trigger with `isAuthRequired: true`) sees it; cron triggers and database events do not.
+- **Just for me** (`'USER'`) — the credential belongs to the connecting member. In runs made on a member's behalf (HTTP-route trigger with `isAuthRequired: true`), `listConnections` returns the shared connections plus that member's own, and `findConnectionForRequest` picks the member's personal connection, falling back to a shared one when they have none. In runs without a request user (cron triggers, for example), `listConnections` returns every connection, including every member's personal ones.
 
 The provider's `scope` decides which one its new connections get:
 
-- `scope: 'WORKSPACE'` (the default) — the app works with connections shared with the workspace. **Add connection** in the app's settings creates a workspace-shared connection.
-- `scope: 'USER'` — each member connects their own account, creating personal connections. Members will connect from their **App preferences**, which is not available yet: until then a `USER` provider has no **Add connection** button, and the app's settings only list the connections a member can already see.
+- `scope: 'WORKSPACE'` (the default) — the app works with connections shared with the workspace. **Add connection** in the app's workspace settings creates a workspace-shared connection.
+- `scope: 'USER'` — each member connects their own account, creating personal connections. Members add, reconnect and remove them from the app's page under **Settings > User > App preferences**, which requires the `CONNECTED_ACCOUNTS` (User Apps) permission. The app's workspace settings have no **Add connection** button for a `USER` provider.
+
+<Note>
+  **App preferences** is not enabled in every workspace yet: where it is not,
+  members have no place to add a `USER` connection, so do not rely on one for
+  a feature every workspace needs now.
+</Note>
 
 A provider has exactly one scope. If your app needs both a shared credential and one per member for the same service (a bot token and each member's own account, say), declare two providers.
 
