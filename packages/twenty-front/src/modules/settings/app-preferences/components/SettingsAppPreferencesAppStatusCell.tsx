@@ -16,13 +16,28 @@ export const SettingsAppPreferencesAppStatusCell = ({
   const { groups, loading } = useMyAccountGroups();
 
   if (item.type === 'installed') {
+    const { application, connectionProviders, missingRequiredVariables } =
+      item.applicationWithPreferences;
+
+    if (isNonEmptyArray(missingRequiredVariables)) {
+      return <Status color="red">{t`Missing configuration`}</Status>;
+    }
+
+    const hasPersonalConnection = groups.some((group) =>
+      group.appAccounts.some(
+        (account) => account.applicationId === application.id,
+      ),
+    );
+
     if (
-      !isNonEmptyArray(item.applicationWithPreferences.missingRequiredVariables)
+      loading ||
+      !isNonEmptyArray(connectionProviders) ||
+      hasPersonalConnection
     ) {
       return null;
     }
 
-    return <Status color="red">{t`Missing configuration`}</Status>;
+    return <Status color="red">{t`Missing account`}</Status>;
   }
 
   const hasAccount = groups.some((group) =>

@@ -416,7 +416,7 @@ export const AppPreferencesListFlagsMissingConfiguration: Story = {
       ),
     ).not.toBeInTheDocument();
     expect(
-      getTableRow(canvasElement, 'Linear').queryByText(/Missing/),
+      getTableRow(canvasElement, 'Linear').queryByText('Missing configuration'),
     ).not.toBeInTheDocument();
   },
 };
