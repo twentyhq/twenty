@@ -3,7 +3,7 @@
 exports[`MCP agent tools (integration) should describe the agent tools to the model 1`] = `
 [
   {
-    "description": "List the AI agents of the workspace with their prompt, model, role and triggers. System agents (those backing workflow AI steps or installed by an application) are not included.",
+    "description": "List the AI agents of the workspace with their prompt, model, role and triggers. System agents (those backing workflow AI steps or installed by an application) and archived agents are not included.",
     "inputSchema": {
       "properties": {},
       "type": "object",
