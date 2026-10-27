@@ -14,12 +14,16 @@ import { sortFlatEntitiesByUniversalIdentifier } from 'src/engine/core-modules/a
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 
-const findSyncedFlatWorkflowVersion = ({
+// Other applications only publish the version their manifest manages; the workspace custom application
+// also publishes from the workflow builder, so its active version is exported whatever its identifier
+const findExportedFlatWorkflowVersion = ({
   flatWorkflow,
-  allFlatEntityMaps,
+  allFlatEntityMaps: { flatWorkflowVersionMaps },
+  isWorkspaceCustomApplication,
 }: {
   flatWorkflow: Pick<
     FlatWorkflow,
@@ -28,19 +32,30 @@ const findSyncedFlatWorkflowVersion = ({
     | 'lastPublishedCoreWorkflowVersionId'
   >;
   allFlatEntityMaps: Pick<AllFlatEntityMaps, 'flatWorkflowVersionMaps'>;
+  isWorkspaceCustomApplication: boolean;
 }): FlatWorkflowVersion | undefined => {
-  const flatWorkflowVersion =
-    allFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
-      getWorkflowVersionUniversalIdentifier({
-        applicationUniversalIdentifier:
-          flatWorkflow.applicationUniversalIdentifier,
-        workflowUniversalIdentifier: flatWorkflow.universalIdentifier,
+  const { lastPublishedCoreWorkflowVersionId } = flatWorkflow;
+
+  if (!isDefined(lastPublishedCoreWorkflowVersionId)) {
+    return undefined;
+  }
+
+  const flatWorkflowVersion = isWorkspaceCustomApplication
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: lastPublishedCoreWorkflowVersionId,
+        flatEntityMaps: flatWorkflowVersionMaps,
       })
-    ];
+    : flatWorkflowVersionMaps.byUniversalIdentifier[
+        getWorkflowVersionUniversalIdentifier({
+          applicationUniversalIdentifier:
+            flatWorkflow.applicationUniversalIdentifier,
+          workflowUniversalIdentifier: flatWorkflow.universalIdentifier,
+        })
+      ];
 
   return isDefined(flatWorkflowVersion) &&
     flatWorkflowVersion.status === WorkflowVersionStatus.ACTIVE &&
-    flatWorkflowVersion.id === flatWorkflow.lastPublishedCoreWorkflowVersionId
+    flatWorkflowVersion.id === lastPublishedCoreWorkflowVersionId
     ? flatWorkflowVersion
     : undefined;
 };
@@ -50,13 +65,13 @@ export const reconstructWorkflowsManifest = ({
   allFlatEntityMaps,
   exportedObjectUniversalIdentifiers,
   resolvableFieldUniversalIdentifiers,
-  canReferenceOtherApplicationsWorkflowActions,
+  isWorkspaceCustomApplication,
 }: {
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
   allFlatEntityMaps: AllFlatEntityMaps;
   exportedObjectUniversalIdentifiers: ReadonlySet<string>;
   resolvableFieldUniversalIdentifiers: ReadonlySet<string>;
-  canReferenceOtherApplicationsWorkflowActions: boolean;
+  isWorkspaceCustomApplication: boolean;
 }): {
   workflows: WorkflowManifest[];
   coverage: ApplicationExportCoverageEntry[];
@@ -68,7 +83,7 @@ export const reconstructWorkflowsManifest = ({
     allFlatEntityMaps,
     exportedObjectUniversalIdentifiers,
     resolvableFieldUniversalIdentifiers,
-    canReferenceOtherApplicationsWorkflowActions,
+    canReferenceOtherApplicationsWorkflowActions: isWorkspaceCustomApplication,
   });
 
   const getExclusionReason = (flatWorkflow: FlatWorkflow) => {
@@ -84,23 +99,30 @@ export const reconstructWorkflowsManifest = ({
   const convertFlatWorkflow = (
     flatWorkflow: FlatWorkflow,
   ): { manifest: WorkflowManifest } | { reason: string } => {
-    if (isDefined(flatWorkflow.workspaceWorkflowId)) {
-      return { reason: 'workflow created in the workspace' };
-    }
-
-    const flatWorkflowVersion = findSyncedFlatWorkflowVersion({
+    const flatWorkflowVersion = findExportedFlatWorkflowVersion({
       flatWorkflow,
       allFlatEntityMaps,
+      isWorkspaceCustomApplication,
     });
 
     if (!isDefined(flatWorkflowVersion)) {
-      return { reason: WORKFLOW_CHANGED_IN_BUILDER_REASON };
+      return {
+        reason: isWorkspaceCustomApplication
+          ? 'workflow without an active version'
+          : WORKFLOW_CHANGED_IN_BUILDER_REASON,
+      };
     }
 
     return fromFlatWorkflowToWorkflowManifest({
       flatWorkflow,
       flatWorkflowVersion,
       references,
+      ...(isWorkspaceCustomApplication
+        ? {
+            unreproducibleReason:
+              'workflow with settings a manifest cannot reproduce',
+          }
+        : {}),
     });
   };
 

@@ -4,6 +4,7 @@ import {
   getWorkflowVersionUniversalIdentifier,
   type WorkflowManifest,
 } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { prepareWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/prepare-workflow-manifest-references.util';
@@ -13,10 +14,33 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
 import { type IdByUniversalIdentifierByMetadataName } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
+
+const findActiveFlatWorkflowVersionByWorkflowId = (
+  flatWorkflowVersionMaps: AllFlatEntityMaps['flatWorkflowVersionMaps'],
+): Map<string, FlatWorkflowVersion> =>
+  new Map(
+    Object.values(flatWorkflowVersionMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(
+        (
+          flatWorkflowVersion,
+        ): flatWorkflowVersion is FlatWorkflowVersion & {
+          coreWorkflowId: string;
+        } =>
+          flatWorkflowVersion.status === WorkflowVersionStatus.ACTIVE &&
+          isDefined(flatWorkflowVersion.coreWorkflowId),
+      )
+      .map((flatWorkflowVersion) => [
+        flatWorkflowVersion.coreWorkflowId,
+        flatWorkflowVersion,
+      ]),
+  );
 
 export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   workflows,
@@ -25,7 +49,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   toAllUniversalFlatEntityMaps,
   existingAllFlatEntityMaps,
   idByUniversalIdentifierByMetadataName,
-  canReferenceOtherApplicationsWorkflowActions,
+  isWorkspaceCustomApplication,
   now,
 }: {
   workflows: WorkflowManifest[];
@@ -34,7 +58,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
   existingAllFlatEntityMaps: AllFlatEntityMaps;
   idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
-  canReferenceOtherApplicationsWorkflowActions: boolean;
+  isWorkspaceCustomApplication: boolean;
   now: string;
 }): (UniversalFlatWorkflow & { id: string })[] => {
   const applicationUniversalIdentifier =
@@ -47,26 +71,38 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
       existingAllFlatEntityMaps,
       ownerApplicationId: ownerFlatApplication.id,
       idByUniversalIdentifierByMetadataName,
-      canReferenceOtherApplicationsWorkflowActions,
+      // Its workflows run as workspace workflows, which may already call any app's actions
+      canReferenceOtherApplicationsWorkflowActions:
+        isWorkspaceCustomApplication,
     });
+    const activeVersionByWorkflowId = isWorkspaceCustomApplication
+      ? findActiveFlatWorkflowVersionByWorkflowId(
+          fromAllFlatEntityMaps.flatWorkflowVersionMaps,
+        )
+      : new Map<string, FlatWorkflowVersion>();
     const recordFieldErrors: string[] = [];
     for (const workflowManifest of workflows) {
       const existingWorkflow =
         fromAllFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier[
           workflowManifest.universalIdentifier
         ];
-      const existingVersion =
-        fromAllFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
-          getWorkflowVersionUniversalIdentifier({
-            applicationUniversalIdentifier,
-            workflowUniversalIdentifier: workflowManifest.universalIdentifier,
-          })
-        ];
+      const existingVersion = isWorkspaceCustomApplication
+        ? undefined
+        : fromAllFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
+            getWorkflowVersionUniversalIdentifier({
+              applicationUniversalIdentifier,
+              workflowUniversalIdentifier: workflowManifest.universalIdentifier,
+            })
+          ];
       const workflow = fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
         manifest: workflowManifest,
         applicationUniversalIdentifier,
         existingWorkflow,
         existingVersion,
+        activeVersion: isDefined(existingWorkflow)
+          ? activeVersionByWorkflowId.get(existingWorkflow.id)
+          : undefined,
+        isWorkspaceCustomApplication,
         ...references,
         now,
       });
