@@ -7,11 +7,17 @@ import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { GET_MY_CALENDAR_CHANNELS } from '@/settings/accounts/graphql/queries/getMyCalendarChannels';
 import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
+import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
+import { BUILT_IN_ACCOUNT_APPS } from '@/settings/app-preferences/constants/BuiltInAccountApps';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
-import { StartChannelSyncDocument } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  StartChannelSyncDocument,
+} from '~/generated-metadata/graphql';
 import { SettingsAccountsConfigurationSelectedMessageChannelEffect } from '~/pages/settings/accounts/SettingsAccountsConfigurationSelectedMessageChannelEffect';
 import { SettingsAccountsConfigurationStepCalendar } from '~/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar';
 import { SettingsAccountsConfigurationStepEmail } from '~/pages/settings/accounts/SettingsAccountsConfigurationStepEmail';
@@ -31,6 +37,10 @@ export const SettingsAccountsConfiguration = () => {
   const [startChannelSyncMutation, { loading: isSubmitting }] = useMutation(
     StartChannelSyncDocument,
   );
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+  );
+  const { accounts } = useMyConnectedAccounts();
 
   const [currentStep, setCurrentStep] =
     useState<SettingsAccountsConfigurationStep>(
@@ -59,6 +69,19 @@ export const SettingsAccountsConfiguration = () => {
   const messageChannel = messageChannels[0];
   const calendarChannel = calendarChannels[0];
 
+  const connectedAccount = accounts.find(
+    (account) => account.id === connectedAccountId,
+  );
+  const builtInAccountApp = BUILT_IN_ACCOUNT_APPS.find(
+    (app) => app.provider === connectedAccount?.provider,
+  );
+  const completionPath =
+    isAppPreferencesEnabled && isDefined(builtInAccountApp)
+      ? getSettingsPath(SettingsPath.BuiltInAccountApp, {
+          builtInAccountAppId: builtInAccountApp.id,
+        })
+      : getSettingsPath(SettingsPath.Accounts);
+
   const handleNext = () => {
     setCurrentStep(SettingsAccountsConfigurationStep.Calendar);
   };
@@ -75,7 +98,7 @@ export const SettingsAccountsConfiguration = () => {
           status: 'success',
           children: t`Account added successfully. Sync started.`,
         });
-        navigate(getSettingsPath(SettingsPath.Accounts));
+        navigate(completionPath);
       },
       onError: (error) => {
         enqueueToast(getToastOptionsFromError({ error }));

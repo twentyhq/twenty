@@ -5,13 +5,14 @@ import { SETTINGS_BUILT_IN_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
+import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsTableRowsSkeletonLoader } from '@/settings/components/SettingsTableRowsSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
+import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
@@ -45,6 +46,7 @@ export const SettingsAccountGroupsSection = ({
 }: SettingsAccountGroupsSectionProps) => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
+  const { triggerApisOAuth } = useTriggerApisOAuth();
   const { groups: allGroups, loading } = useMyAccountGroups();
 
   const groups = isDefined(builtInAccountApp)
@@ -70,6 +72,15 @@ export const SettingsAccountGroupsSection = ({
       <TableHeader />
     </TableRow>
   );
+
+  const addBuiltInAccount = (app: BuiltInAccountApp) => {
+    if (app.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV) {
+      navigateSettings(SettingsPath.NewImapSmtpCaldavConnection);
+      return;
+    }
+
+    triggerApisOAuth(app.provider);
+  };
 
   const emptyState = isDefined(builtInAccountApp) ? (
     <SettingsAppPreferencesListEmptyStateCard
@@ -121,7 +132,7 @@ export const SettingsAccountGroupsSection = ({
               <Button
                 startIcon={<IconPlus />}
                 size="sm"
-                onClick={() => navigateSettings(SettingsPath.NewAccount)}
+                onClick={() => addBuiltInAccount(builtInAccountApp)}
                 variant="outline"
               >{t`Add account`}</Button>
             </StyledAddAccountContainer>

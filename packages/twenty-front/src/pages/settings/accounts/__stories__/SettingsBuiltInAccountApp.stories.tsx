@@ -10,13 +10,18 @@ import {
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SettingsBuiltInAccountApp } from '~/pages/settings/accounts/SettingsBuiltInAccountApp';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
   CALENDAR_CHANNELS,
   CONNECTED_ACCOUNTS,
+  GOOGLE_ACCOUNT_ID,
   MICROSOFT_ACCOUNT_ID,
   seedAccountGroupsStory,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
+import { GENERATE_TRANSIENT_TOKEN_GRAPHQL_HANDLER } from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
+import { withinTableRowOrThrow } from '~/testing/utils/withinTableRowOrThrow';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsBuiltInAccountApp',
@@ -250,5 +255,77 @@ export const OutlookWithoutAccountOffersMicrosoftOnly: Story = {
     ).toBeVisible();
     expect(canvas.queryByText('Connect with Google')).not.toBeInTheDocument();
     expect(canvas.getByText('Blocklist')).toBeVisible();
+  },
+};
+
+export const AddAccountStartsTheProviderSignIn: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        GENERATE_TRANSIENT_TOKEN_GRAPHQL_HANDLER,
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByTestId('tab-general', undefined, { timeout: 3000 }),
+    );
+
+    const redirectUrl = await clickAndCaptureOAuthRedirect(
+      await canvas.findByRole('button', { name: 'Add account' }),
+    );
+
+    expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe(
+      `${REACT_APP_SERVER_BASE_URL}/auth/google-apis`,
+    );
+    expect(redirectUrl.searchParams.has('redirectLocation')).toBe(false);
+  },
+};
+
+export const ReconnectReturnsToTheAppPage: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        GENERATE_TRANSIENT_TOKEN_GRAPHQL_HANDLER,
+        graphql.query('MyConnectedAccounts', () =>
+          HttpResponse.json({
+            data: {
+              myConnectedAccounts: CONNECTED_ACCOUNTS.map((account) =>
+                account.id === GOOGLE_ACCOUNT_ID
+                  ? { ...account, authFailedAt: '2026-10-01T00:00:00.000Z' }
+                  : account,
+              ),
+            },
+          }),
+        ),
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await canvas.findByTestId('tab-general', undefined, { timeout: 3000 }),
+    );
+    await canvas.findByText('tim@apple.dev');
+    await userEvent.click(
+      withinTableRowOrThrow({ canvasElement, text: 'tim@apple.dev' }).getByRole(
+        'button',
+        { name: 'More options' },
+      ),
+    );
+
+    const redirectUrl = await clickAndCaptureOAuthRedirect(
+      await body.findByRole('menuitem', { name: 'Reconnect' }),
+    );
+
+    expect(redirectUrl.searchParams.get('redirectLocation')).toBe(
+      '/settings/accounts/apps/google#general',
+    );
   },
 };
