@@ -17,10 +17,8 @@ import { useRemoveAgentChatChannelFromFavorites } from '@/ai/hooks/useRemoveAgen
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import {
-  type AgentChatChannel,
-  type UpdateAgentChatChannelInput,
-} from '~/generated-metadata/graphql';
+import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { type UpdateAgentChatChannelInput } from '~/generated-metadata/graphql';
 
 type NavigationDrawerAiChatChannelActionsDropdownProps = {
   channel: AgentChatChannel;

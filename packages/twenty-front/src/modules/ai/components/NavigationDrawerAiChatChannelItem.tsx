@@ -24,7 +24,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type AgentChatChannel } from '~/generated-metadata/graphql';
+import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
 import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
 const StyledIconPickerTrigger = styled.div`

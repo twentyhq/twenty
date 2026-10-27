@@ -125,7 +125,6 @@ export class ViewEntity
   @Column({ nullable: false, default: false, type: 'boolean' })
   isCompact: boolean;
 
-  // dropped in 2.54 by DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand
   @Column({ nullable: false, default: false, type: 'boolean' })
   isCustom: WasRemovedInUpgrade<boolean>;
 

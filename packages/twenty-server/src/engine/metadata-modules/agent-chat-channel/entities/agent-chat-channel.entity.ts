@@ -50,7 +50,6 @@ export class AgentChatChannelEntity
   @Column({ nullable: false, type: 'float', default: 0 })
   position: number;
 
-  // dropped in 2.54 by DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand
   @Column({ nullable: false, default: false, type: 'boolean' })
   isCustom: WasRemovedInUpgrade<boolean>;
 

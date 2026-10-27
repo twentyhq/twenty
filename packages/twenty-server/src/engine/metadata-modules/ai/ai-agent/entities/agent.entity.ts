@@ -60,7 +60,6 @@ export class AgentEntity
   @Column({ nullable: true, type: 'jsonb', default: { type: 'text' } })
   responseFormat: JsonbProperty<AgentResponseFormat>;
 
-  // dropped in 2.54 by DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand
   @Column({ type: 'boolean', default: false })
   isCustom: WasRemovedInUpgrade<boolean>;
 

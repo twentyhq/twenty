@@ -66,7 +66,6 @@ export class IndexMetadataEntity
   )
   indexFieldMetadatas: Relation<IndexFieldMetadataEntity[]>;
 
-  // dropped in 2.54 by DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand
   @Column({ type: 'boolean', default: false })
   isCustom: WasRemovedInUpgrade<boolean>;
 

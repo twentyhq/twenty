@@ -41,7 +41,6 @@ export class SkillEntity
   @Column({ nullable: false, type: 'text' })
   content: string;
 
-  // dropped in 2.54 by DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand
   @Column({ type: 'boolean', default: false })
   isCustom: WasRemovedInUpgrade<boolean>;
 

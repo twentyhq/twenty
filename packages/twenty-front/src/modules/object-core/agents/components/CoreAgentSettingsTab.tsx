@@ -13,7 +13,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { type Agent } from '~/generated-metadata/graphql';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 import { CoreAgentDeleteConfirmationModal } from '@/object-core/agents/components/CoreAgentDeleteConfirmationModal';
 import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
@@ -51,7 +51,7 @@ type CoreAgentSettingsTabProps = {
     value: CoreAgentFormValues[keyof CoreAgentFormValues],
   ) => void;
   disabled: boolean;
-  agent?: Agent;
+  agent?: FlatAgent;
 };
 
 export const CoreAgentSettingsTab = ({
