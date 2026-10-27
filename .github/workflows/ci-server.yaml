@@ -47,7 +47,7 @@ jobs:
         .github/workflows/ci-server.yaml
         packages/twenty-server/project.json
         packages/twenty-server/scripts/generate-workspace-custom-application-dependencies*
-        packages/twenty-server/src/engine/core-modules/application/application-package/constants/seed-dependencies/**
+        packages/twenty-server/src/engine/core-modules/application/application-package/constants/standard-application-dependencies/**
         packages/twenty-server/src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies/**
         packages/twenty-server/src/engine/core-modules/application/application-package/constants/yarn-engine/**
         packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant.ts
