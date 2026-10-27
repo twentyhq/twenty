@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
+import { WORKSPACE_LOCAL_STATE_PROPERTIES } from 'src/engine/metadata-modules/overrides/constants/workspace-local-state-properties.constant';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
@@ -19,8 +20,6 @@ import { validateAgentRequiredProperties } from 'src/engine/workspace-manager/wo
 import { validateAgentResponseFormat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util';
 import { validateAgentTriggersCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util';
 import { validateAgentTriggers } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util';
-
-const WORKSPACE_LOCAL_STATE_PROPERTIES = new Set(['overrides', 'isActive']);
 
 @Injectable()
 export class FlatAgentValidatorService {
@@ -181,10 +180,9 @@ export class FlatAgentValidatorService {
       ...fromFlatAgent,
       ...flatEntityUpdate,
     };
-    const effectiveOptimisticFlatAgent =
-      flatEntityUpdate.overrides !== undefined
-        ? resolveEffectiveAgent(optimisticFlatAgent)
-        : undefined;
+    const effectiveOptimisticFlatAgent = isDefined(flatEntityUpdate.overrides)
+      ? resolveEffectiveAgent(optimisticFlatAgent)
+      : undefined;
 
     const existingAgents = Object.values(
       optimisticFlatAgentMaps.byUniversalIdentifier,

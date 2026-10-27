@@ -93,6 +93,26 @@ const computeAgentFlatRoleTargetToUpdate = ({
   };
 };
 
+const computeUpdatedAgentName = ({
+  shouldOverride,
+  name,
+  label,
+}: {
+  shouldOverride: boolean;
+  name: string | undefined;
+  label: string | undefined;
+}): string | undefined => {
+  if (shouldOverride) {
+    return undefined;
+  }
+
+  if (isDefined(name) || !isDefined(label)) {
+    return name;
+  }
+
+  return computeMetadataNameFromLabelOrThrow(label);
+};
+
 export type FromUpdateAgentInputToFlatAgentToUpdateArgs = {
   updateAgentInput: UpdateAgentInput;
   flatAgentMaps: FlatAgentMaps;
@@ -150,14 +170,11 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
     );
   }
 
-  const updatedName = shouldOverride
-    ? undefined
-    : (name ??
-      (isDefined(updatedEditableAgentProperties.label)
-        ? computeMetadataNameFromLabelOrThrow(
-            updatedEditableAgentProperties.label,
-          )
-        : undefined));
+  const updatedName = computeUpdatedAgentName({
+    shouldOverride,
+    name,
+    label: updatedEditableAgentProperties.label,
+  });
 
   const { overrides, updatedEditableProperties } =
     sanitizeOverridableEntityInput({

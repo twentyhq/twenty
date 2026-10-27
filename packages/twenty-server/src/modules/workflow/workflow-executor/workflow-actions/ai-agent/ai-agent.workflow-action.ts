@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
@@ -103,9 +104,12 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     const effectiveAgent = resolveEffectiveAgent(agent);
 
     if (!effectiveAgent.isActive) {
+      const { label } = effectiveAgent;
+
       throw new WorkflowStepExecutorException(
-        `Agent "${effectiveAgent.label}" is archived`,
+        `Agent "${label}" is archived`,
         WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+        { userFriendlyMessage: msg`Agent "${label}" is archived.` },
       );
     }
 

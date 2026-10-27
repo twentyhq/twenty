@@ -4,6 +4,7 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { WORKSPACE_LOCAL_STATE_PROPERTIES } from 'src/engine/metadata-modules/overrides/constants/workspace-local-state-properties.constant';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { SkillExceptionCode } from 'src/engine/metadata-modules/skill/skill.exception';
@@ -19,8 +20,6 @@ import {
   validateSkillLabelIsDefined,
   validateSkillRequiredProperties,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-required-properties.util';
-
-const WORKSPACE_LOCAL_STATE_PROPERTIES = new Set(['overrides', 'isActive']);
 
 @Injectable()
 export class FlatSkillValidatorService {
@@ -179,7 +178,7 @@ export class FlatSkillValidatorService {
       );
     }
 
-    if (flatEntityUpdate.overrides !== undefined) {
+    if (isDefined(flatEntityUpdate.overrides)) {
       validationResult.errors.push(
         ...validateSkillRequiredProperties({
           flatSkill: resolveEffectiveFlatEntity({

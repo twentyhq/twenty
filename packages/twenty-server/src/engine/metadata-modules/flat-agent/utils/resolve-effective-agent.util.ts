@@ -1,33 +1,14 @@
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/overrides/constants/all-overridable-properties-by-metadata-name.constant';
-import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
+import { type OverridableFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 
-type AgentWithOverrides = Pick<AgentEntity, 'overrides'> & {
-  isActive?: boolean;
-  applicationUniversalIdentifier?: string;
-};
-
-// Takes repository rows as well as flat agents: a row has no application
-// universal identifier, which only orders the owner's own entry last. The
-// isActive column stays hidden until its 2.53 instance command has run.
-export const resolveEffectiveAgent = <TAgent extends AgentWithOverrides>(
+// isActive is undefined until the 2.53 instance command adds the column
+export const resolveEffectiveAgent = <
+  TAgent extends OverridableFlatEntity & Partial<Pick<AgentEntity, 'isActive'>>,
+>(
   agent: TAgent,
 ): TAgent =>
-  ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.agent.reduce<TAgent>(
-    (effectiveAgent, property) => {
-      const overrideValue = readAuthoredOverrideProperty({
-        metadataName: 'agent',
-        overrides: agent.overrides,
-        path: [property],
-        authorContext: {
-          ownerApplicationUniversalIdentifier:
-            agent.applicationUniversalIdentifier,
-        },
-      });
-
-      return overrideValue === undefined
-        ? effectiveAgent
-        : { ...effectiveAgent, [property]: overrideValue };
-    },
-    { ...agent, isActive: agent.isActive ?? true },
-  );
+  resolveEffectiveFlatEntity({
+    metadataName: 'agent',
+    flatEntity: { ...agent, isActive: agent.isActive ?? true },
+  });

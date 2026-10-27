@@ -8,6 +8,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AgentCronTriggerCronJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/crons/agent-cron-trigger.cron.job';
 import { RunAgentTriggerJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/run-agent-trigger.job';
 import { AgentTriggerThrottlerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-throttler.service';
@@ -29,7 +30,7 @@ const buildCronTrigger = (isActive = true): AgentTrigger => ({
 
 const buildFlatAgentMaps = (
   triggers: AgentTrigger[],
-  agentOverrides: Record<string, unknown> | null = null,
+  agentOverrides: AgentEntity['overrides'] = null,
 ) =>
   addFlatEntityToFlatEntityMapsOrThrow({
     flatEntity: {
