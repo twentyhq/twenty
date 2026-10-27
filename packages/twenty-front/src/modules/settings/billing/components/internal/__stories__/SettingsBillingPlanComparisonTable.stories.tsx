@@ -105,7 +105,7 @@ export const WithLegacyPlan: Story = {
       {
         action: { disabled: true, title: 'Current', variant: 'outline' },
         isLegacy: true,
-        planKey: BillingPlanKey.PRO,
+        planKey: BillingPlanKey.ENTERPRISE,
       },
       {
         action: {
@@ -130,10 +130,13 @@ export const WithLegacyPlan: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getAllByText('Legacy')[0]).toBeVisible();
+    await expect(canvas.getAllByText('Early')[0]).toBeVisible();
     await expect(
       canvas.getAllByRole('button', { name: 'Upgrade' }),
     ).toHaveLength(2);
+    await expect(canvas.getByText('Plan essentials')).toBeVisible();
+    await expect(canvas.getByText('5 credits/month')).toBeVisible();
+    await expect(canvas.getByText('≈ 100 AI tasks/week')).toBeVisible();
   },
 };
 

@@ -3,6 +3,8 @@ title: Migración desde otros CRM
 description: Guía paso a paso para migrar tus datos desde cualquier CRM a Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Resumen
 
 Esta guía te lleva paso a paso para migrar tus datos desde cualquier CRM a Twenty. El proceso implica auditar tus datos, preparar tu espacio de trabajo de Twenty, exportar desde tu sistema actual e importar en Twenty.
@@ -235,7 +237,7 @@ Después de importar los datos, completa la configuración de tu espacio de trab
 | **Errores de duplicados**          | El correo electrónico/dominio ya existe | Elimina los duplicados del archivo o incluye un identificador único para actualizar los registros existentes |
 | **Relación no encontrada**         | El registro padre no existe             | Importa primero los objetos padre (Empresas antes que Personas)                                              |
 | **Campos faltantes**               | El campo personalizado no existe        | Crea el campo en Configuración → Modelo de datos antes de importar                                           |
-| **Errores en campos de selección** | Uso de etiquetas visibles               | Usa los nombres de la API (habilita el modo Avanzado en Configuración para encontrarlos)                     |
+| **Errores en campos de selección** | Uso de etiquetas visibles               | Utilice nombres de API (elija **Mostrar valores de API** en el menú de opciones del campo para encontrarlos) |
 | **Relación de usuario vacía**      | El usuario no ha aceptado la invitación | Asegúrate de que todos los usuarios acepten las invitaciones antes de importar                               |
 
 Consulta [Cómo corregir errores de importación](/es/user-guide/data-migration/how-tos/fix-import-errors) para obtener pasos detallados de solución de problemas.
@@ -287,3 +289,5 @@ Consulta [Cómo corregir errores de importación](/es/user-guide/data-migration/
 <Tip>
   ¿Quieres ayuda con tu migración? [Encuentra un Veinte socio certificado](https://twenty.com/partners/list?categories=SOLUTIONING\&ref=docs-migrate-crm) para mover tus datos, tuberías y usuarios de extremo a extremo.
 </Tip>
+
+<PageBanner illustration="data-migration" />

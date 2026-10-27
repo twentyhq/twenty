@@ -1,0 +1,139 @@
+---
+title: OverflowingList
+description: Ajuste una fila de elementos al espacio disponible y muestre la lista completa en una ventana emergente.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import OverflowingListReference from '/snippets/ui/generated/components/layout/overflowing-list.mdx';
+
+## Resumen
+
+`OverflowingList` mide el ancho disponible, mantiene los elementos que caben en una fila compacta y ofrece un botón `+N` que abre la lista completa en una ventana emergente. El recuento se actualiza cuando cambia el contenedor, el contenido de los elementos o la lista ordenada. Las listas vacías y las listas que caben no tienen botón de desbordamiento ni ventana emergente expuesta.
+
+<StoryEmbed storyId="ui-components-overflowinglist--display" title="Ejemplo de lista con desbordamiento" height={280} />
+
+Proporciona la lista ordenada completa como elementos con clave. Su aplicación controla el contenido, las acciones y los datos de cada elemento. La fila compacta permanece visible cuando se abre la ventana emergente. La ventana emergente repite la lista completa, incluidos los elementos que caben en la fila.
+
+## "Uso"
+
+```tsx
+import { OverflowingList, Section } from 'twenty-ui/components/layout';
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+const TAGS = ['Customer', 'Partner', 'Priority', 'Renewal'];
+
+export const CompanyTags = () => (
+  <Section.Root>
+    <Section.Header
+      title="Company tags"
+      description="Open the count to see all tags."
+    />
+    <OverflowingList
+      style={{ width: 180 }}
+      showOverflowCount
+      overflowLabel="Show all company tags"
+    >
+      {TAGS.map((label) => (
+        <Tag
+          key={label}
+          color="blue"
+          truncate={false}
+          style={{ width: 80, minWidth: 'fit-content' }}
+        >
+          {label}
+        </Tag>
+      ))}
+    </OverflowingList>
+  </Section.Root>
+);
+```
+
+## Visibilidad del contador
+
+| `showOverflowCount` | Comportamiento cuando los elementos se desbordan                                                                 |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Omitido             | Muestra el recuento al pasar el puntero, al enfocar con el teclado o mientras la ventana emergente está abierta. |
+| `true`              | Mantiene visible el recuento.                                                                                    |
+| `falso`             | Oculta el recuento y recorta la fila. Una ventana emergente abierta permanece abierta hasta que se descarta.     |
+
+El modo predeterminado mantiene la visibilidad actual del recuento mientras se enfoca un elemento en línea, para que mostrar el recuento no expulse ese elemento de la fila. Enfocar el botón de recuento hace visible el recuento.
+
+Use `false` cuando la interfaz circundante proporcione otra forma de acceder a los elementos ocultos. Cambiarlo a `false` oculta el recuento sin descartar una ventana emergente que ya esté abierta. `open` y `defaultOpen` aún pueden exponer la lista completa cuando los elementos se desbordan. Quitar los elementos desbordados o ensanchar la lista hasta que todo quepa cierra la ventana emergente y elimina el botón de recuento. El recuento siempre describe los elementos fuera de la fila compacta.
+
+`maxInlineCount` limita el número de elementos visibles de la fila. El ancho disponible puede reducir aún más ese número. La ventana emergente sigue conteniendo la lista completa. No obtiene los elementos faltantes ni virtualiza la ventana emergente.
+
+## Estado de la ventana emergente
+
+La lista gestiona el estado de su ventana emergente cuando se omite `open`. Use `defaultOpen` para su estado inicial. El valor predeterminado es `false`; una ventana emergente inicialmente abierta sigue requiriendo elementos desbordados.
+
+Pase `open` y actualícelo en `onOpenChange` para gestionar el estado de la ventana emergente. La devolución de llamada recibe el valor booleano solicitado y los detalles de evento de [Popover](/es/ui/primitives/surfaces/popover) instalado, incluidos `reason`, `event`, `trigger`, `cancel()` y `preventUnmountOnClose()`. Llamar a `cancel()` evita el cambio de estado solicitado. En el uso controlado, actualice su estado solo para los cambios que acepte.
+
+Pase `actionsRef` para recibir los métodos `close()` y `unmount()` de Popover. `close()` solicita el cierre mediante `onOpenChange` y respeta la cancelación. Si su devolución de llamada invoca `preventUnmountOnClose()` para ejecutar una salida controlada por quien realiza la llamada, invoque `actionsRef.current?.unmount()` cuando finalice esa salida. Esto libera la ventana emergente retenida sin eliminar la lista y permite abrirla de nuevo.
+
+```tsx
+import { useState } from 'react';
+import { OverflowingList } from 'twenty-ui/components/layout';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+const TEAMS = ['Design', 'Engineering', 'Support', 'Operations'];
+
+export const ControlledTeamList = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <OverflowingList
+      open={open}
+      onOpenChange={setOpen}
+      showOverflowCount
+      overflowLabel="Show all teams"
+      style={{ width: 220 }}
+      triggerProps={{ render: <Button variant="outline" size="sm" /> }}
+    >
+      {TEAMS.map((team) => (
+        <Tag key={team} color="blue">
+          {team}
+        </Tag>
+      ))}
+    </OverflowingList>
+  );
+};
+```
+
+<StoryEmbed storyId="ui-components-overflowinglist--controlled" title="Estado controlado con un activador personalizado" height={280} />
+
+## Destinos nativos y composición
+
+Los atributos, controladores, estilos, nombres de clase y referencias nativos de `div` en `OverflowingList` se dirigen a la raíz de la fila compacta. Use `triggerProps` para el botón de recuento y `popupProps` para el div de contenido de la ventana emergente. Ambos conservan las props nativas, los controladores, la referencia y la composición `render` de elemento/función de su parte de Popover.
+
+Personalice el activador con `triggerProps.render`, como en el ejemplo controlado, o proporcione `triggerProps.children` para reemplazar `+N`. Los componentes personalizados deben [reenviar las props y la referencia proporcionadas](/es/ui/primitives/overview#custom-components). Los componentes personalizados de ventana emergente también deben renderizar los elementos secundarios proporcionados; OverflowingList gestiona el contenido de los elementos. `overflowLabel` tiene como valor predeterminado "Mostrar todos los elementos". El nombre accesible del botón predeterminado combina su recuento y esa etiqueta, por ejemplo, "+3 Mostrar todos los equipos". Anule `triggerProps['aria-label']` o `popupProps['aria-label']` cuando su contenido necesite un nombre diferente.
+
+`OverflowingList` detiene de forma predeterminada la propagación de `click`, `mousedown`, `pointerdown`, `keydown` y `keyup` en el activador y la ventana emergente. Esto evita que abrir la ventana emergente e interactuar con sus elementos active un campo o selector circundante. Un controlador proporcionado mediante `triggerProps` o `popupProps` reemplaza el predeterminado para ese evento. Llame a `event.stopPropagation()` en su controlador para conservar el bloqueo u omítalo para permitir que ese evento se propague. Los demás eventos conservan sus valores predeterminados. Los controladores en un elemento `render` personalizado se componen con las props proporcionadas como de costumbre.
+
+Cuando una anulación de clic de ventana emergente permite la propagación, el portal de Base UI instalado puede enviar ese clic a un ancestro de React circundante dos veces con el mismo evento nativo. Esto también ocurre con un `Popover` simple. OverflowingList conserva ese comportamiento ascendente; no garantiza una devolución de llamada de ancestro por evento nativo de ventana emergente cuando la propagación está habilitada.
+
+## Teclado y foco
+
+Enter, Espacio y la activación con puntero abren una ventana emergente no modal. Escape y la interacción externa la descartan. El descarte normal restaura el foco al botón de recuento. Se conserva el foco que ya está en un elemento en línea visible o en un control externo. La ventana emergente admite contenido, enlaces y botones con su comportamiento de teclado nativo; no los convierte en elementos de menú ni agrega navegación con flechas de menú.
+
+Use `popupProps.initialFocus` y `popupProps.finalFocus` para personalizar el foco al abrir y descartar mediante el contrato de Popover instalado.
+
+Cada lista gestiona sus mediciones adaptativas de forma independiente. Desmontar una lista libera sus observadores y deja que las demás listas sigan funcionando.
+
+## Renderizado del servidor e hidratación
+
+El marcado del servidor incluye los primeros elementos de `maxInlineCount`, o todos los elementos cuando se omite el límite. La medición de ancho y el contenido de la ventana emergente están disponibles después del montaje del cliente.
+
+La hidratación reutiliza la fila provisional y aplica la medición adaptativa después del montaje del cliente. Los elementos secundarios de la fila y de la ventana emergente son instancias renderizadas independientes. Mantenga el estado compartido entre esas ubicaciones en quien realiza la llamada.
+
+## Migración
+
+La ventana emergente continúa mostrando la lista completa y usa "Mostrar todos los elementos" de forma predeterminada. `showOverflowCount={false}` conserva la fila recortada y oculta el recuento. No descarta una ventana emergente que ya esté abierta. El activador y la ventana emergente conservan su bloqueo predeterminado para click, mousedown, pointerdown, keydown y keyup. Anule un controlador individual mediante `triggerProps` o `popupProps` cuando la interfaz circundante deba recibir ese evento.
+
+## "Props"
+
+<OverflowingListReference />
+
+<PageBanner illustration="section-apps-data" />

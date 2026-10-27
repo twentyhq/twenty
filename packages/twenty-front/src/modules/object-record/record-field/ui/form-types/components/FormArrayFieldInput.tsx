@@ -1,4 +1,5 @@
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
@@ -52,7 +53,7 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled.div`
+const StyledDisplayModeContainer = styled.div<{ hasOutline: boolean }>`
   align-items: center;
   background: transparent;
   border: none;
@@ -61,6 +62,7 @@ const StyledDisplayModeContainer = styled.div`
   display: flex;
   font-family: inherit;
   height: 30px;
+  outline: ${({ hasOutline }) => (hasOutline ? 'revert' : 'none')};
   padding-inline: ${themeCssVariables.spacing[2]};
   width: 100%;
 
@@ -129,6 +131,8 @@ export const FormArrayFieldInput = ({
   const isAddingNewItem = itemToEditIndex === -1;
 
   const dropdownId = `dropdown-${instanceId}`;
+
+  const hasRightElement = isDefined(VariablePicker) && !readonly;
 
   const accessibleLabel = isNonEmptyString(label) ? label : t`Items`;
 
@@ -355,7 +359,8 @@ export const FormArrayFieldInput = ({
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={formFieldInputInstanceId}
           preventFocusStackUpdate={preventContainerFocusStackUpdate}
-          hasRightElement={isDefined(VariablePicker) && !readonly}
+          hasRightElement={hasRightElement}
+          shouldHighlightOnTriggerFocus
         >
           {draftValue.type === 'static' ? (
             readonly ? (
@@ -383,7 +388,15 @@ export const FormArrayFieldInput = ({
             ) : (
               <DropdownRoot dropdownId={dropdownId} type="panel">
                 <Dropdown.Trigger
-                  render={<StyledDisplayModeContainer />}
+                  render={
+                    <StyledDisplayModeContainer
+                      hasOutline={
+                        !hasFullFormFieldBorder({
+                          hasRightElement,
+                        })
+                      }
+                    />
+                  }
                   nativeButton={false}
                   aria-label={accessibleLabel}
                 >

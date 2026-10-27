@@ -7,6 +7,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Any, In, Repository } from 'typeorm';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -14,6 +15,9 @@ import { getWorkspaceRepositoryWithOptionalTransaction } from 'src/engine/twenty
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { ParticipantTargetReconciliationService } from 'src/modules/match-participant/participant-target-reconciliation.service';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
+import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
+import { addPersonHandleFiltersToQueryBuilder } from 'src/modules/match-participant/person-handle-field/utils/add-person-handle-filters-to-query-builder.util';
+import { findPersonByCanonicalHandle } from 'src/modules/match-participant/person-handle-field/utils/find-person-by-canonical-handle.util';
 import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -32,6 +36,14 @@ type MatchParticipantsForWorkspaceMembersArgs = {
     workspaceMemberIds: string[];
   };
   objectMetadataName: ObjectMetadataName;
+  workspaceId: string;
+};
+
+type MatchParticipantsForPersonHandlesArgs = {
+  personHandleField: PersonHandleField;
+  messageChannelIds: string[];
+  handles: string[];
+  changedPersonIds: string[];
   workspaceId: string;
 };
 
@@ -62,6 +74,8 @@ export type MatchParticipantsArgs<
     | 'personOnly'
     | 'workspaceMemberAndPerson'
     | 'targetsOnly';
+  // handles are canonical values of this person field
+  personHandleField?: PersonHandleField;
   transactionScope?: WorkspaceTransactionScope;
 };
 
@@ -97,6 +111,7 @@ export class MatchParticipantService<
     sourceRecordIds,
     objectMetadataName,
     matchWith = 'workspaceMemberAndPerson',
+    personHandleField,
     transactionScope,
   }: MatchParticipantsArgs<ParticipantWorkspaceEntity>) {
     // Targets derive from personId only, so a workspaceMemberOnly rematch cannot change them
@@ -153,6 +168,15 @@ export class MatchParticipantService<
         },
       );
 
+    const shouldMatchWithPerson =
+      matchWith === 'workspaceMemberAndPerson' || matchWith === 'personOnly';
+
+    // workspace members are only known by email
+    const shouldMatchWithWorkspaceMember =
+      (matchWith === 'workspaceMemberAndPerson' ||
+        matchWith === 'workspaceMemberOnly') &&
+      !isDefined(personHandleField);
+
     const chunkSize = 200;
     const chunkedParticipants = chunk(participants, chunkSize);
 
@@ -161,20 +185,21 @@ export class MatchParticipantService<
         ...new Set(participants.map((participant) => participant.handle)),
       ].filter(isDefined);
 
-      const queryBuilder = addPersonEmailFiltersToQueryBuilder({
+      const people = await this.buildPersonQueryBuilder({
         queryBuilder: personRepository.createQueryBuilder('person'),
-        emails: uniqueParticipantsHandles,
-      });
-
-      const people = await queryBuilder
+        personHandleField,
+        handles: uniqueParticipantsHandles,
+      })
         .orderBy('person.createdAt', 'ASC')
         .getMany<PersonWorkspaceEntity>();
 
-      const workspaceMembers = await workspaceMemberRepository.find({
-        where: {
-          userEmail: Any(uniqueParticipantsHandles),
-        },
-      });
+      const workspaceMembers = shouldMatchWithWorkspaceMember
+        ? await workspaceMemberRepository.find({
+            where: {
+              userEmail: Any(uniqueParticipantsHandles),
+            },
+          })
+        : [];
 
       const partipantsToBeUpdated = participants
         .map((participant) => ({
@@ -182,23 +207,21 @@ export class MatchParticipantService<
           handle: participant.handle ?? '',
         }))
         .map((participant) => {
-          const person = findPersonByPrimaryOrAdditionalEmail({
-            people,
-            email: participant.handle,
-          });
+          const person = isDefined(personHandleField)
+            ? findPersonByCanonicalHandle({
+                people,
+                personHandleField,
+                handle: participant.handle,
+              })
+            : findPersonByPrimaryOrAdditionalEmail({
+                people,
+                email: participant.handle,
+              });
 
           const workspaceMember = workspaceMembers.find(
             (workspaceMember) =>
               workspaceMember.userEmail === participant.handle,
           );
-
-          const shouldMatchWithPerson =
-            matchWith === 'workspaceMemberAndPerson' ||
-            matchWith === 'personOnly';
-
-          const shouldMatchWithWorkspaceMember =
-            matchWith === 'workspaceMemberAndPerson' ||
-            matchWith === 'workspaceMemberOnly';
 
           const newParticipant = {
             ...participant,
@@ -276,6 +299,68 @@ export class MatchParticipantService<
             participants: rematchedParticipants,
             sourceRecordIds: this.getSourceRecordIds(rematchedParticipants),
             objectMetadataName,
+            transactionScope,
+          });
+        },
+      );
+    }, authContext);
+  }
+
+  // participants of channels matching on this person field, whose handle is one of the person's values before or after the change
+  public async matchParticipantsForPersonHandles({
+    personHandleField,
+    messageChannelIds,
+    handles,
+    changedPersonIds,
+    workspaceId,
+  }: MatchParticipantsForPersonHandlesArgs) {
+    if (!isNonEmptyArray(messageChannelIds) || !isNonEmptyArray(handles)) {
+      return;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.workspaceOrmManager.runInWorkspaceTransaction(
+        async (transactionScope) => {
+          const participantRepository = this.getParticipantRepository({
+            objectMetadataName: 'messageParticipant',
+            transactionScope,
+          });
+
+          const participantsWithHandle = await participantRepository
+            .createQueryBuilder('participant')
+            .where('"participant"."handle" = ANY(:handles)', { handles })
+            .getMany<ParticipantWorkspaceEntity>();
+
+          if (!isNonEmptyArray(participantsWithHandle)) {
+            return;
+          }
+
+          // the same handle can sit on a channel that matches another field, which this change does not concern
+          const messageIdsOnMatchingChannels =
+            await this.findMessageIdsOnChannels({
+              participants: participantsWithHandle,
+              messageChannelIds,
+              transactionScope,
+            });
+
+          // a link the app passed to someone else stands: only unlinked participants and those of the changed people move
+          const participantsToRematch = participantsWithHandle.filter(
+            (participant) =>
+              messageIdsOnMatchingChannels.has(
+                this.getSourceRecordId(participant),
+              ) &&
+              (!isDefined(participant.personId) ||
+                changedPersonIds.includes(participant.personId)),
+          );
+
+          await this.matchParticipants({
+            matchWith: 'personOnly',
+            participants: participantsToRematch,
+            sourceRecordIds: this.getSourceRecordIds(participantsToRematch),
+            objectMetadataName: 'messageParticipant',
+            personHandleField,
             transactionScope,
           });
         },
@@ -364,7 +449,53 @@ export class MatchParticipantService<
       return participants;
     }
 
-    const appChannelAssociations =
+    const appChannelMessageIds = await this.findMessageIdsOnChannels({
+      participants,
+      messageChannelIds: appMessageChannels.map(
+        (messageChannel) => messageChannel.id,
+      ),
+      transactionScope,
+    });
+
+    return participants.filter(
+      (participant) =>
+        !appChannelMessageIds.has(this.getSourceRecordId(participant)),
+    );
+  }
+
+  private buildPersonQueryBuilder({
+    queryBuilder,
+    personHandleField,
+    handles,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    personHandleField: PersonHandleField | undefined;
+    handles: string[];
+  }): WorkspaceSelectQueryBuilder {
+    if (!isDefined(personHandleField)) {
+      return addPersonEmailFiltersToQueryBuilder({
+        queryBuilder,
+        emails: handles,
+      });
+    }
+
+    return addPersonHandleFiltersToQueryBuilder({
+      queryBuilder,
+      personHandleField,
+      handles,
+    });
+  }
+
+  private async findMessageIdsOnChannels({
+    participants,
+    messageChannelIds,
+    transactionScope,
+  }: {
+    participants: ParticipantWorkspaceEntity[];
+    messageChannelIds: string[];
+    transactionScope: WorkspaceTransactionScope;
+  }): Promise<Set<string>> {
+    const associations =
       await getWorkspaceRepositoryWithOptionalTransaction<MessageChannelMessageAssociationWorkspaceEntity>(
         {
           objectMetadataName: 'messageChannelMessageAssociation',
@@ -375,21 +506,12 @@ export class MatchParticipantService<
       ).find({
         where: {
           messageId: Any([...new Set(this.getSourceRecordIds(participants))]),
-          messageChannelId: Any(
-            appMessageChannels.map((messageChannel) => messageChannel.id),
-          ),
+          messageChannelId: Any(messageChannelIds),
         },
         select: { messageId: true },
       });
 
-    const appChannelMessageIds = new Set(
-      appChannelAssociations.map((association) => association.messageId),
-    );
-
-    return participants.filter(
-      (participant) =>
-        !appChannelMessageIds.has(this.getSourceRecordId(participant)),
-    );
+    return new Set(associations.map((association) => association.messageId));
   }
 
   private getSourceRecordIds(

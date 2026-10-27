@@ -1,0 +1,215 @@
+---
+title: AlertDialog
+description: اطلب التأكيد قبل إجراء يتطلب قرارًا صريحًا.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AlertDialogReference from '/snippets/ui/generated/surfaces/alert-dialog.mdx';
+
+## نظرة عامة
+
+استخدم `AlertDialog` لقرار يقطع سير العمل الحالي، مثل تأكيد الحذف. يوفّر دلالات `alertdialog`، وإدارة التركيز، وتأكيدًا أو إلغاءً صريحًا.
+
+هذا المكوّن الأساسي مخصّص لواجهات Twenty UI المستقلة والواجهات التي يملكها المضيف. يجب على مكوّنات الواجهة طلب تأكيد عبر [واجهة برمجة تطبيقات مربع حوار المضيف SDK](/ar/developers/extend/apps/layout/front-components#host-communication-api). يُحظر استخدام `Dialog` و`AlertDialog` ومربعات حوار المتصفح الأصلية مباشرةً داخل عارض المكوّن الأمامي.
+
+<StoryEmbed storyId="ui-surfaces-alertdialog--display" title="مثال AlertDialog" height={440} />
+
+## استخدام
+
+### حالة غير متحكم بها
+
+استخدم `defaultOpen` لتعيين مستوى الظهور الأولي. يتولى مربع الحوار التغييرات اللاحقة من المشغّل وعناصر التحكم في الإغلاق وتفاعلات الرفض.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
+  <AlertDialog.Root defaultOpen={false}>
+    <AlertDialog.Trigger
+      render={<Button variant="solid">Delete record</Button>}
+    />
+    <AlertDialog.Portal>
+      <AlertDialog.Backdrop />
+      <AlertDialog.Viewport>
+        <AlertDialog.Popup>
+          <AlertDialog.Header>
+            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This record will be permanently deleted. This action cannot be
+              undone.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialog.Close render={<Button>Cancel</Button>} />
+            <AlertDialog.Close
+              onClick={onDelete}
+              render={<Button color="danger">Delete</Button>}
+            />
+          </AlertDialog.Footer>
+        </AlertDialog.Popup>
+      </AlertDialog.Viewport>
+    </AlertDialog.Portal>
+  </AlertDialog.Root>
+);
+```
+
+القيمة الافتراضية لـ `defaultOpen` هي `false`، لذا يمكن حذفه. يستخدم هذا المثال دالة رد اتصال تأكيد متزامنة ويُغلق بعد تنفيذ الإجراء.
+
+## البنية التشريحية
+
+أبقِ الأجزاء ذات الصلة داخل `AlertDialog.Root`، أو صِل المشغّلات المنفصلة عبر مقبض. أنشئ البوابة والخلفية ومنفذ العرض والنافذة المنبثقة بصورة منفصلة.
+
+```text
+AlertDialog.Root
+├── AlertDialog.Trigger
+└── AlertDialog.Portal
+    ├── AlertDialog.Backdrop
+    └── AlertDialog.Viewport
+        └── AlertDialog.Popup
+            ├── AlertDialog.Header
+            │   ├── AlertDialog.Title
+            │   └── AlertDialog.Description
+            ├── AlertDialog.Body
+            └── AlertDialog.Footer
+                ├── AlertDialog.Close
+                └── Confirmation action
+```
+
+| الجزء                      | المتطلبة                         | الغرض                                                                         |
+| -------------------------- | -------------------------------- | ----------------------------------------------------------------------------- |
+| `Root`                     | مطلوب                            | ينسق حالة الفتح وسلوك النافذة المشروطة.                                       |
+| `المشغّل`                  | اختياري لمربع حوار يُفتح برمجيًا | يفتح مربع الحوار ويوفر هدفًا لإعادة التركيز.                                  |
+| `Portal`                   | مُوصى به                         | ينقل التراكب إلى حاويته ويتحكم في تركيبه.                                     |
+| `Backdrop`                 | اختياري                          | يفصل التنبيه بصريًا عن الصفحة المحيطة.                                        |
+| `Viewport`                 | مُوصى به                         | يحدّد موضع النافذة المنبثقة ويوفر المنطقة المحيطة القابلة للتمرير الخاصة بها. |
+| `Popup`                    | مطلوب                            | يعرض محتوى التنبيه مع إدارة التركيز.                                          |
+| `العنوان`                  | مُوصى به                         | يوفّر الاسم المرئي للتنبيه. الاسم المتاح مطلوب دائمًا.                        |
+| `Description`              | موصى به للتأكيد                  | يشرح القرار وعواقبه.                                                          |
+| `Header`، `Body`، `Footer` | أجزاء تخطيط اختيارية             | رتّب العناوين والمحتوى الإضافي والإجراءات.                                    |
+| `إغلاق`                    | موصى به للإلغاء                  | يوفر إجراء إغلاق صريحًا.                                                      |
+
+عيّن `container` و`keepMounted` على `Portal`، وسمات الخلفية على `Backdrop`، وسمات التخطيط على `Viewport`، وخصائص `size` والتركيز على `Popup`. يقبل كل جزء من العنصر سماته الأصلية ومعالجاته ومرجعه وتركيب `render` الخاص به. يشير `Popup.ref` إلى عنصر محتوى التنبيه. ينشئ `Title` و`Description` العلاقات المتاحة؛ وفّر `aria-label` على `Popup` عند حذف العنوان.
+
+إجراء التأكيد هو محتوى للتطبيق، وليس جزءًا مُصدّرًا. استخدم `Close` مع معالج متزامن أو `Button` مع حالة فتح خاضعة للتحكم للتأكيد غير المتزامن.
+
+## حالة متحكم بها
+
+مرر `open` وحدّثه باستخدام `onOpenChange` للتحكم في ظهور مربع الحوار نفسه ضمن حالة React. تتلقى دالة الاستدعاء القيمة المنطقية المطلوبة وتفاصيل الحدث المصدر، بما في ذلك `reason` و`event` و`cancel()`. استدعِ `eventDetails.cancel()` لرفض تغيير مطلوب. يُشغَّل `onOpenChangeComplete` بعد انتهاء انتقالات الفتح أو الإغلاق.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <AlertDialog.Root open={open} onOpenChange={setOpen}>
+      <AlertDialog.Trigger
+        render={<Button variant="solid">Delete record</Button>}
+      />
+      <AlertDialog.Portal>
+        <AlertDialog.Backdrop />
+        <AlertDialog.Viewport>
+          <AlertDialog.Popup>
+            <AlertDialog.Header>
+              <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+              <AlertDialog.Description>
+                This record will be permanently deleted. This action cannot be
+                undone.
+              </AlertDialog.Description>
+            </AlertDialog.Header>
+            <AlertDialog.Footer>
+              <AlertDialog.Close render={<Button>Cancel</Button>} />
+              <AlertDialog.Close
+                onClick={onDelete}
+                render={<Button color="danger">Delete</Button>}
+              />
+            </AlertDialog.Footer>
+          </AlertDialog.Popup>
+        </AlertDialog.Viewport>
+      </AlertDialog.Portal>
+    </AlertDialog.Root>
+  );
+};
+```
+
+للتأكيد غير المتزامن، استخدم `Button` مع معالج الإجراء بدلاً من `AlertDialog.Close`. أبقِ `open` بالقيمة true أثناء انتظار الإجراء، واستدعِ `setOpen(false)` بعد نجاحه، واعرض خطأً داخل مربع الحوار إذا فشل.
+
+## التركيب باستخدام الأزرار
+
+استخدم `render` لمنح عناصر التحكم في التشغيل والإغلاق تنسيق أزرار Twenty UI. توفر أجزاء مربع الحوار معالجات التفاعل وrefs الخاصة بها للأزرار.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
+  <AlertDialog.Root>
+    <AlertDialog.Trigger
+      render={<Button variant="solid">Delete record</Button>}
+    />
+    <AlertDialog.Portal>
+      <AlertDialog.Backdrop />
+      <AlertDialog.Viewport>
+        <AlertDialog.Popup>
+          <AlertDialog.Header>
+            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This record will be permanently deleted. This action cannot be
+              undone.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialog.Close render={<Button>Cancel</Button>} />
+            <AlertDialog.Close
+              onClick={onDelete}
+              render={<Button color="danger">Delete</Button>}
+            />
+          </AlertDialog.Footer>
+        </AlertDialog.Popup>
+      </AlertDialog.Viewport>
+    </AlertDialog.Portal>
+  </AlertDialog.Root>
+);
+```
+
+أبقِ كل إجراء كعنصر تحكم تفاعلي واحد. إذا غلّفت `Button` في مكوّنك الخاص، [مرّر props وref المقدّمين](/ar/ui/primitives/overview#custom-components).
+
+## المشغّلات المنفصلة والإجراءات الحتمية
+
+أنشئ مقبضًا مرة واحدة باستخدام `AlertDialog.createHandle\<Payload>()` ومرّره إلى `handle` على `Root` وكل `Trigger` منفصل. تكون `payload` المكتوبة للمشغّل متاحة لدالة عرض الطفل الخاصة بالجذر. يدعم المقبض أيضًا `open(triggerId)` و`openWithPayload(payload)` و`close()` والخاصية الجالبة `isOpen` أثناء تركيب جذره. مرّر معرّف مشغّل مطابقًا إلى `open`، أو `null` للفتح دون مشغّل. استدعِ الأساليب الحتمية من معالجات الأحداث أو التأثيرات.
+
+يكشف `Root.actionsRef` عن `close()` و`unmount()`. للحصول على حركة إغلاق متحكَّم بها خارجيًا، استدعِ `eventDetails.preventUnmountOnClose()` في `onOpenChange`، ثم استدعِ `actionsRef.current?.unmount()` بعد انتهاء الحركة. تدير الأجزاء المنسقة العادية انتقالاتها الخاصة دون هذه الإجراءات الحتمية.
+
+## التحجيم والبوابات
+
+يقبل `Popup.size` القيم `sm` و`md` و`lg` و`xl` و`fullscreen`، وتكون قيمته الافتراضية `md`. ينتمي الحجم والمظهر إلى سطح AlertDialog ولا يلزم أن يطابقا إعدادات Dialog المسبقة.
+
+تكون القيمة الافتراضية لـ `Portal.container` هي حاوية البوابة لأقرب سمة. من دون واحدة، يستخدم Base UI وجهة البوابة الافتراضية الخاصة به، وهي عادةً `document.body`. يتجاوز عنصر صريح أو جذر ظل أو مرجع تلك الوجهة. يؤجّل `null` صريح التركيب إلى أن تصبح الحاوية متاحة. يعالج Base UI مرجعًا تكون `current` فيه `null` باستخدام وجهته الافتراضية؛ استخدم `container={null}` عندما يجب أن ينتظر التركيب.
+
+يحتفظ المحتوى المُمرَّر عبر البوابة بسياق السمة. يرث `Portal` و`Viewport` اتجاه النص المقدَّم ما لم تعيّن `dir` صراحةً. عيّن `Portal.keepMounted` للاحتفاظ بالمحتوى المركّب وحالة النموذج أثناء الإغلاق.
+
+## التركيز والإغلاق
+
+يحصر التنبيه التركيز، ويحظر التفاعل الخارجي، ويقفل تمرير الصفحة أثناء الفتح. يطلب مفتاح Escape الإغلاق؛ أما النقر خارجًا فلا يفعل ذلك. لمنع الإغلاق بمفتاح Escape، ألغِ تغيير `escape-key` في `onOpenChange`. وفّر دائمًا إجراءً مرئيًا للإلغاء أو الإغلاق.
+
+افتراضيًا، ينتقل التركيز إلى أول عنصر تحكم قابل للتبويب، أو إلى النافذة المنبثقة عند الفتح باللمس. ضع الإجراء الأقل تدميرًا أولًا، أو استخدم `Popup.initialFocus` لتحديده. يعود التركيز إلى المشغّل أو العنصر الذي كان عليه التركيز سابقًا عند إغلاق التنبيه. استخدم `Popup.finalFocus` عندما يزيل إجراء ناجح ذلك الهدف. تقبل كلتا خاصيتي التركيز قيمة منطقية أو مرجع عنصر أو دالة استدعاء لنوع التفاعل وفقًا للعقد المصدر.
+
+## الإزاحة
+
+يُنشأ المرجع من أنواع المكونات العامة. تُقبل أيضًا السمات الأصلية، بما في ذلك الأسماء المتاحة ومعالجات الأحداث، في الأجزاء التي تعرض عناصر.
+
+<AlertDialogReference />
+
+<PageBanner illustration="card-page-billing-faq" />

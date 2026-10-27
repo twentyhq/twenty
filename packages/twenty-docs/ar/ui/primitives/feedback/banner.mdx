@@ -1,0 +1,109 @@
+---
+title: لافتة
+description: محتوى ملاحظات بحالة ومظهر ولوحة ألوان مستقلة.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import BannerReference from '/snippets/ui/generated/feedback/banner.mdx';
+
+## نظرة عامة
+
+ينسّق `Banner` المحتوى الذي يوفّره المستدعي، وعقدة `icon` اختيارية وعقدة `action` اختيارية. تصف `status` معنى الملاحظات: `neutral` أو `info` أو `success` أو `warning` أو `error`. تحدد `variant` المظهر `solid` أو `soft`. تتجاوز `color` الصريحة لوحة ألوان الحالة دون تغيير معناها.
+
+القيم الافتراضية هي `status="info"` و`variant="solid"`. لوحات ألوان الحالة الافتراضية هي الرمادي والأزرق والأخضر والبرتقالي والأحمر، على الترتيب.
+
+<StoryEmbed storyId="ui-feedback-banner--display" title="مثال على اللافتة" height={130} />
+
+## استخدام
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const SyncBanner = () => (
+  <Banner status="info" variant="solid">
+    Contact sync is temporarily paused. Your saved records remain available.
+  </Banner>
+);
+```
+
+## الإجراءات والمظهر
+
+<StoryEmbed storyId="ui-feedback-banner--catalog" title="لوحات ألوان ومتغيرات لافتة الملاحظات" height={560} />
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+import { IconInfoCircle } from 'twenty-ui/icon';
+
+export const SyncBanner = ({ onRetry }: { onRetry: () => void }) => (
+  <Banner
+    status="error"
+    variant="soft"
+    color="blue"
+    icon={<IconInfoCircle aria-hidden="true" />}
+    action={<Banner.Action onClick={onRetry}>Retry sync</Banner.Action>}
+  >
+    Contact sync could not finish.
+  </Banner>
+);
+```
+
+يوفر `Banner.Action` زرًا صغيرًا بإطار يرث اللون المعروض للشعار، بما في ذلك تجاوزات لوحة الألوان الصريحة والمظاهر الصلبة. وهو يدعم تفاعلات Button والروابط وrefs والعرض المخصص. تقبل خانة `action` أيضًا عناصر تحكم عشوائية.
+
+الهدف الجذري هو `div`. تنطبق السمات الأصلية ومعالجات الأحداث و`className` و`style` و`ref` على ذلك الجذر. يقبل `render` عنصر Base UI أو دالة رد نداء؛ وتتلقى دالة رد النداء الخصائص الأصلية وref، بالإضافة إلى حالة `status` و`variant` و`color` المحلولة. حافظ على الخصائص وref المزوّدين عند تكوين عنصر آخر.
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const SyncResult = () => (
+  <Banner
+    status="success"
+    variant="soft"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    render={<section aria-label="Sync result" />}
+  >
+    Contacts are up to date.
+  </Banner>
+);
+```
+
+لا تعيّن الحالة تلقائيًا `role` أو `aria-live` أو الإعلانات. اخترها لدى المستدعي عندما ينبغي الإعلان عن التحديثات. وفّر أسماء يمكن الوصول إليها لعناصر التحكم، وعلّم عقد الأيقونات الزخرفية باستخدام `aria-hidden`. يتحكم المستدعي في الرؤية والإغلاق.
+
+## الإغلاق
+
+مرّر `onDismiss` لعرض عنصر تحكم إغلاق شفاف بحجم 24px عند النهاية المنطقية للسطر. يرث عنصر التحكم لون اللافتة ويتضمن `type="button"`. القيمة الافتراضية لـ `closeLabel` هي `Close`؛ وفّر نصًا مترجمًا في تطبيقك. تحافظ المسافات المتوازنة ضمن السطر على وضوح المحتوى والإجراءات المتمركزة بعيدًا عن عنصر التحكم.
+
+يتولى المستدعي التحكم في الظهور. يؤدي تفعيل عنصر التحكم بالإغلاق إلى استدعاء `onDismiss` ويُبقي اللافتة مركّبة حتى يُحدّث مستدعيها الحالة. تبقى الإجراءات الأخرى في خانة `action`.
+
+```tsx
+import { useState } from 'react';
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const DismissibleSyncBanner = () => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  return isVisible ? (
+    <Banner
+      onDismiss={() => setIsVisible(false)}
+      closeLabel="Dismiss sync message"
+    >
+      Contacts are syncing in the background.
+    </Banner>
+  ) : null;
+};
+```
+
+<StoryEmbed storyId="ui-feedback-banner--dismissible" title="لافتة قابلة للإغلاق" height={160} />
+
+## الترحيل
+
+استبدل `variant="primary"` بـ `variant="solid"` و`variant="secondary"` بـ `variant="soft"`. استبدل `color="danger"` بـ `status="error"`، أو بـ `color="red"` عندما ينبغي تغيير لوحة الألوان فقط. يمكن لشعارات المعلومات الزرقاء استخدام `status="info"`.
+
+## الخصائص
+
+<BannerReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

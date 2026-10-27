@@ -1,0 +1,163 @@
+---
+title: IconButton
+description: Activa acciones con botones de icono accesibles.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import IconButtonReference from '/snippets/ui/generated/components/input/icon-button.mdx';
+
+## Resumen
+
+`IconButton` compone [Button](/es/ui/primitives/input/button) con una superficie cuadrada o redonda. Pase el icono como elemento secundario y proporcione un nombre accesible con `aria-label` o `aria-labelledby`. El contenido del icono es decorativo y está oculto para la tecnología de asistencia.
+
+<StoryEmbed storyId="ui-components-iconbutton--display" title="Botón de icono con un nombre accesible" height={110} />
+
+## Uso
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchButton = () => (
+  <IconButton aria-label="Search">
+    <IconSearch />
+  </IconButton>
+);
+```
+
+Los tamaños son `xs` (20px), `sm` (24px) y `md` (32px). Los valores predeterminados son `md`, `outline` y `neutral`. Las variantes y los colores coinciden con Button. Usa `shape="round"` para un botón circular; la forma predeterminada es `square`.
+
+## Opciones visuales
+
+Compare una opción visual a la vez. Use los ejemplos de tooltip con nombre, elevado y agrupado para la composición.
+
+<StoryEmbed storyId="ui-components-iconbutton--catalog" title="Variantes, colores, tamaños, formas, elevación y estados de botones de icono" height={810} />
+
+## Nombres accesibles
+
+Use `aria-label` para un nombre proporcionado directamente en el control. Cuando el texto visible ya nombra la acción, use `aria-labelledby` para hacer referencia a él en su lugar. Se requiere al menos una prop de nombre.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const LabelledSearchButton = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <Text render={<span />} id="records-search-label">
+      Search records
+    </Text>
+    <IconButton aria-labelledby="records-search-label" tooltip="Find a record">
+      <IconSearch />
+    </IconButton>
+  </Text>
+);
+```
+
+<StoryEmbed title="Botón de icono nombrado por texto visible" storyId="ui-components-iconbutton--labelled-by" height={140} />
+
+## Información sobre herramientas
+
+Añade `tooltip` para mostrar texto al pasar el cursor y al enfocar con el teclado. Mantenga `aria-label` o `aria-labelledby` como el nombre accesible de la acción. Los botones deshabilitados y en carga conservan la información sobre herramientas al pasar el cursor.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchRecordsButton = () => (
+  <IconButton aria-label="Search" tooltip="Search records">
+    <IconSearch />
+  </IconButton>
+);
+```
+
+<StoryEmbed title="Botón de icono con información sobre herramientas" storyId="ui-components-iconbutton--tooltip-documentation" height={140} />
+
+La información sobre herramientas se muestra de forma predeterminada abajo, con un retraso de 1000ms y un desplazamiento de 5px. Usa `tooltipPlace`, `tooltipDelay` y `tooltipOffset` para ajustarla. Al omitir `tooltip`, el botón se muestra directamente.
+
+## Propiedad del estado
+
+Tu aplicación proporciona `loading` y `disabled`. Ambos impiden la activación. El estado de carga conserva las dimensiones cuadradas y la etiqueta accesible. El botón no realiza seguimiento de un valor seleccionado ni establece la carga automáticamente después de un clic. El enfoque nativo con el teclado sigue al navegador; usa `aria-pressed` cuando tu aplicación controle un estado de alternancia.
+
+## Acciones elevadas
+
+Usa `elevated` para añadir una sombra y desenfoque de fondo. El botón de contorno neutro predeterminado también obtiene una superficie con borde y colores de icono e interacción a juego. Otras variantes y colores semánticos conservan su paleta actual.
+
+`elevated` tiene como valor predeterminado `false`. No cambia la posición, la visibilidad ni el tamaño. El tamaño sigue siendo `md` (32px) de forma predeterminada; establece `size="sm"` para un control de 24px.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const AddWidgetButton = () => (
+  <IconButton elevated size="sm" aria-label="Add widget">
+    <IconPlus />
+  </IconButton>
+);
+```
+
+<StoryEmbed title="Acción de icono elevada" storyId="ui-components-iconbutton--elevated" height={100} />
+
+Omite `elevated` o establécelo en `false` para restaurar la apariencia estándar. Los botones elevados admiten las mismas descripciones emergentes, estados de carga, enlaces e interacciones de teclado.
+
+<StoryEmbed title="Acción de icono elevada con descripción emergente" storyId="ui-components-iconbutton--elevated-tooltip" height={140} />
+
+Sustituye los controles `FloatingIconButton` existentes por `IconButton elevated`. Pasa el icono como elementos secundarios, usa `aria-label` nativo y asigna `small` a `sm` y `medium` a `md`. Proporciona `size="sm"` cuando el control anterior usaba su tamaño predeterminado. El foco nativo y `aria-pressed` sustituyen el foco sintético y los indicadores activos.
+
+Se elimina `FloatingIconButtonGroup`. Combina ButtonGroup con IconButton para acciones agrupadas y conserva cualquier superficie flotante compartida en tu diseño.
+
+## Acciones agrupadas
+
+```tsx
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus, IconSearch } from 'twenty-ui/icon';
+
+export const RecordActions = () => (
+  <ButtonGroup
+    aria-label="Record actions"
+    size="sm"
+    variant="solid"
+    color="accent"
+  >
+    <IconButton
+      aria-label="Search records"
+      tooltip="Search records"
+      variant="outline"
+      color="neutral"
+    >
+      <IconSearch />
+    </IconButton>
+    <IconButton aria-label="Create record" tooltip="Create record">
+      <IconPlus />
+    </IconButton>
+  </ButtonGroup>
+);
+```
+
+[ButtonGroup](/es/ui/primitives/input/button-group) proporciona valores predeterminados para el tamaño, la variante y el color, además de esquinas contiguas. Las props explícitas de los elementos secundarios tienen prioridad de forma independiente, incluido `size="xs"`. Los botones individuales no necesitan una propiedad position.
+
+Mantenga los botones unidos del mismo tamaño para que sus bordes queden alineados. Establezca el tamaño en el grupo y deje que cada botón lo herede.
+
+<StoryEmbed storyId="ui-components-iconbutton--grouped-overrides" title="Apariencia individual del botón de icono en un grupo" height={140} />
+
+## Enlaces y formularios
+
+Sin un `render` personalizado, `href` representa un ancla, a menos que `nativeButton` sea explícitamente verdadero. Para un ancla de navegación personalizada o un enlace de enrutador, establezca `nativeButton={false}` y `role="link"`. El renderizador puede gestionar su destino sin un `href` de IconButton. Mantenga `nativeButton` en verdadero para un botón nativo personalizado y use falso para un elemento de acción no nativo. Se conservan las props explícitas de nativeButton y role. Los enlaces deshabilitados y en carga no se pueden activar. El enrutamiento permanece en la aplicación.
+
+Los atributos de botones nativos y anclas, los controladores de eventos, los detalles de eventos, las referencias y la composición de renderizado se transfieren a Button. La referencia recibe el elemento raíz real. La composición de Tooltip conserva esa raíz y su nombre accesible. El valor predeterminado es `type="button"`; establece `type="submit"` explícitamente para el envío de formularios.
+
+## Controles compactos y redondos
+
+Usa `size="xs"` para un control de 20px y `shape="round"` para bordes circulares. Los controles `RoundedIconButton` existentes pasan a ser `IconButton` con `shape="round"`, `variant="solid"` y `color="accent"`. Asigna su antiguo tamaño `small` a `xs` y el tamaño `medium` a `sm`. Proporciona elementos secundarios de icono y un nombre accesible.
+
+<StoryEmbed storyId="ui-components-iconbutton--round-documentation" title="Botones de icono redondos en tamaños compacto y regular" height={140} />
+
+## "Props"
+
+<IconButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

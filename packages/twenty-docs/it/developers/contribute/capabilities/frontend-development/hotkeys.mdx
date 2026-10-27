@@ -2,6 +2,8 @@
 title: Tasti di scelta rapida
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Introduzione
 
 Quando hai bisogno di ascoltare un tasto di scelta rapida, normalmente useresti l'evento `onKeyDown`.
@@ -176,3 +178,5 @@ Ma questo atomo non dovrebbe mai essere gestito manualmente! Vedremo come usarlo
 Abbiamo creato un sottile wrapper su [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) che lo rende più performante ed evita rendering non necessari.
 
 Creiamo anche un atomo Jotai per gestire lo stato dell'ambito del tasto di scelta rapida e renderlo disponibile ovunque nell'applicazione.
+
+<PageBanner illustration="card-page-command-menu" />

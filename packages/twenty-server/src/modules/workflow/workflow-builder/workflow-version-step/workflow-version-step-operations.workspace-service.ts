@@ -216,15 +216,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             type: WorkflowActionType.CODE,
             settings: {
               ...BASE_STEP_DEFINITION,
-              outputSchema: {
-                link: {
-                  isLeaf: true,
-                  icon: 'IconVariable',
-                  tab: 'test',
-                  label: 'Generate Function Output',
-                },
-                _outputSchemaType: 'LINK',
-              },
+              outputSchema: {},
               expectedOutputSchema: {},
               input: {
                 logicFunctionId: newLogicFunction.id,
@@ -279,15 +271,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           declaredOutputSchema,
         )
           ? inputSchemaToOutputSchema(declaredOutputSchema)
-          : {
-              link: {
-                isLeaf: true,
-                icon: 'IconVariable',
-                tab: 'test',
-                label: 'Generate Function Output',
-              },
-              _outputSchemaType: 'LINK',
-            };
+          : {};
 
         return {
           builtStep: {
