@@ -1,6 +1,5 @@
 /** @jest-environment node */
 
-import { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from '@/application/constants/ApplicationWorkflowUnavailableStepTypes';
 import { isDefined } from '@/utils/validation/isDefined';
 
 import {
@@ -124,24 +123,51 @@ describe('workflow manifest iterator cycles', () => {
 });
 
 describe('workflow manifest step types', () => {
-  it.each(APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES)(
-    'rejects %s steps',
-    (type) => {
-      const invalid = structuredClone(workflow);
-      Object.assign(getStep(invalid, 2), { type });
-      const result = workflowManifestSchema.safeParse(invalid);
-      expect(result.success).toBe(false);
-      expect(result.error?.issues[0]?.path).toEqual([
-        'version',
-        'steps',
-        2,
-        'type',
-      ]);
-      expect(result.error?.issues[0]?.message).toContain(
-        'Unsupported step type',
-      );
+  const ASSIGNEE = '{{trigger.properties.after.assigneeId}}';
+
+  it.each([
+    {
+      type: 'SEND_EMAIL',
+      input: {
+        connectedAccountId: ASSIGNEE,
+        recipients: { to: '{{trigger.properties.after.email}}' },
+        subject: 'Hello',
+      },
     },
-  );
+    {
+      type: 'DRAFT_EMAIL',
+      input: {
+        connectedAccountId: ASSIGNEE,
+        recipients: { to: 'jane@example.com' },
+      },
+    },
+    {
+      type: 'CREATE_CALENDAR_EVENT',
+      input: {
+        connectedAccountId: '{{trigger.properties.after.connectedAccountId}}',
+        title: 'Kick-off',
+        startsAt: '2026-11-02T09:00:00.000Z',
+        endsAt: '2026-11-02T09:30:00.000Z',
+        isFullDay: false,
+        sendInvitations: true,
+        addConferencing: false,
+      },
+    },
+  ])('accepts $type steps', ({ type, input }) => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), { type, input });
+
+    expect(workflowManifestSchema.safeParse(definition).success).toBe(true);
+  });
+
+  it('rejects a step type applications cannot use', () => {
+    const invalid = structuredClone(workflow);
+    Object.assign(getStep(invalid, 2), { type: 'CODE' });
+    const result = workflowManifestSchema.safeParse(invalid);
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toContain('Unsupported step type');
+  });
 });
 
 describe('workflow manifest manual trigger', () => {

@@ -1,6 +1,8 @@
+import { APPLICATION_CONNECTION_PROVIDER_FRAGMENT } from '@/settings/applications/graphql/fragments/applicationConnectionProviderFragment';
 import { gql } from '@apollo/client';
 
 export const MY_APPLICATION_PREFERENCES = gql`
+  ${APPLICATION_CONNECTION_PROVIDER_FRAGMENT}
   query MyApplicationPreferences {
     myApplicationPreferences {
       applicationId
@@ -26,17 +28,7 @@ export const MY_APPLICATION_PREFERENCES = gql`
         options
       }
       connectionProviders {
-        id
-        applicationId
-        type
-        name
-        displayName
-        scope
-        logoUrl
-        oauth {
-          scopes
-          isClientCredentialsConfigured
-        }
+        ...ApplicationConnectionProviderFragment
       }
     }
   }
