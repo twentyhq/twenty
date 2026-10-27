@@ -25,30 +25,40 @@ export const getApplicationsWithPreferences = ({
     getApplicationDisplayName({ application, currentWorkspace });
 
   return applicationPreferences
-    .flatMap(({ applicationId, settingsMenuItems, variables }) => {
-      const application = installedApplications.find(
-        (installedApplication) => installedApplication.id === applicationId,
-      );
-      const displayedVariables = getDisplayedApplicationVariables(variables);
+    .flatMap(
+      ({
+        applicationId,
+        settingsMenuItems,
+        variables,
+        connectionProviders,
+      }) => {
+        const application = installedApplications.find(
+          (installedApplication) => installedApplication.id === applicationId,
+        );
+        const displayedVariables = getDisplayedApplicationVariables(variables);
 
-      if (
-        !isDefined(application) ||
-        (!isNonEmptyArray(settingsMenuItems) &&
-          !isNonEmptyArray(displayedVariables))
-      ) {
-        return [];
-      }
+        if (
+          !isDefined(application) ||
+          (!isNonEmptyArray(settingsMenuItems) &&
+            !isNonEmptyArray(displayedVariables) &&
+            !isNonEmptyArray(connectionProviders))
+        ) {
+          return [];
+        }
 
-      return [
-        {
-          application,
-          settingsMenuItems: sortSettingsMenuItemsByPosition(settingsMenuItems),
-          variables: displayedVariables,
-          missingRequiredVariables:
-            getMissingRequiredApplicationVariables(displayedVariables),
-        },
-      ];
-    })
+        return [
+          {
+            application,
+            settingsMenuItems:
+              sortSettingsMenuItemsByPosition(settingsMenuItems),
+            variables: displayedVariables,
+            missingRequiredVariables:
+              getMissingRequiredApplicationVariables(displayedVariables),
+            connectionProviders,
+          },
+        ];
+      },
+    )
     .sort(
       (applicationWithPreferencesA, applicationWithPreferencesB) =>
         getDisplayName(applicationWithPreferencesA).localeCompare(

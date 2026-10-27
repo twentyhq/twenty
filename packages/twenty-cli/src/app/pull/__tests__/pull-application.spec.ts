@@ -69,7 +69,7 @@ const createExport = ({
       displayName: 'Pets',
       description: '',
       defaultRoleUniversalIdentifier: OTHER_IDENTIFIER,
-      packageJsonChecksum: null,
+      packageJsonChecksum: 'package-json-checksum',
       yarnLockChecksum: null,
     },
     objects: includeObject
