@@ -10,7 +10,6 @@ import chunk from 'lodash.chunk';
 import { In } from 'typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
