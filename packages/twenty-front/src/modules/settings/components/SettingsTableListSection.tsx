@@ -63,6 +63,7 @@ type SettingsTableListSectionProps<Item extends { id: string }> = {
   onRowClick?: (item: Item) => void;
   footerButtonLabel?: string;
   onFooterButtonClick?: () => void;
+  isFooterButtonDisabled?: boolean;
 };
 
 export const SettingsTableListSection = <
@@ -79,6 +80,7 @@ export const SettingsTableListSection = <
   onRowClick,
   footerButtonLabel,
   onFooterButtonClick,
+  isFooterButtonDisabled,
 }: SettingsTableListSectionProps<Item>) => {
   const resolvedGridAutoColumns = showRowChevron
     ? `${gridAutoColumns} ${CHEVRON_COLUMN_WIDTH}`
@@ -143,6 +145,7 @@ export const SettingsTableListSection = <
             size="sm"
             onClick={onFooterButtonClick}
             variant="outline"
+            disabled={isFooterButtonDisabled}
           >
             {footerButtonLabel}
           </Button>

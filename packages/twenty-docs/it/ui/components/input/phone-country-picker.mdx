@@ -1,0 +1,124 @@
+---
+title: Selettore del Paese del telefono
+description: Un selettore completo del paese telefonico e parti componibili che condividono dati sui paesi e selezione.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import PhoneCountryPickerReference from '/snippets/ui/generated/components/input/phone-country-picker.mdx';
+
+## Panoramica
+
+`PhoneCountryPicker` combina un attivatore con bandiera del paese, popup, ricerca e scelte del prefisso telefonico. Usa il componente completo per la selezione ordinaria oppure componi `Root`, `Trigger` e `Options` con [Dropdown](/it/ui/components/navigation/dropdown) quando ti serve un popup personalizzato. Entrambe le forme condividono gli stessi paesi preparati e la stessa selezione.
+
+<StoryEmbed storyId="ui-input-phonecountrypicker--display" title="Selezione del paese telefonico" height={260} />
+
+## Utilizzo
+
+Fornisci i tuoi dati sui paesi e un nome accessibile per l'attivatore. Usa `value` con `onValueChange` per una selezione controllata oppure `defaultValue` per una selezione non controllata. `null` rappresenta l'assenza di un paese selezionato.
+
+```tsx
+import { useState } from 'react';
+import {
+  PhoneCountryPicker,
+  type PhoneCountryOption,
+} from 'twenty-ui/components/input';
+
+const COUNTRIES: PhoneCountryOption[] = [
+  { value: 'FR', label: 'France', callingCode: '33', flag: '🇫🇷' },
+  { value: 'GB', label: 'United Kingdom', callingCode: '44', flag: '🇬🇧' },
+  { value: 'US', label: 'United States', callingCode: '1', flag: '🇺🇸' },
+];
+
+export const PhoneCountryExample = () => {
+  const [value, setValue] = useState<string | null>('FR');
+
+  return (
+    <PhoneCountryPicker
+      aria-label="Phone country"
+      countries={COUNTRIES}
+      value={value}
+      onValueChange={setValue}
+      contentProps={{ width: 280 }}
+      optionsProps={{
+        searchLabel: 'Search countries',
+        listLabel: 'Phone countries',
+        emptyLabel: 'No countries found',
+      }}
+    />
+  );
+};
+```
+
+Ogni `PhoneCountryOption` ha un `value` stabile univoco, un `label` del paese localizzato, un `callingCode` composto solo da cifre senza il segno più iniziale e un nodo `flag` decorativo. Può anche essere `disabled`. I valori sono identificatori di proprietà del chiamante, come i codici paese ISO, e vengono restituiti invariati. Etichette, bandiere e prefissi telefonici sono dati di presentazione e non diventano l'identificatore selezionato.
+
+Il selettore aggiunge il segno più e isola i prefissi telefonici da sinistra a destra nelle righe delle opzioni e nei tooltip di overflow, incluse le interfacce da destra a sinistra. Fornisci i paesi nell'ordine in cui desideri visualizzarli. Il paese selezionato appare per primo finché corrisponde alla query; le restanti corrispondenze mantengono l'ordine fornito.
+
+## Composizione composta
+
+Questa è una modifica API incompatibile per gli utilizzatori esistenti della composizione composta. Aggiungi `PhoneCountryPicker.Root` attorno a `Dropdown.Root`, sposta `countries`, `value` e `onValueChange` da `Options` a `Root` e rimuovi `Trigger.country`. Entrambe le parti ora richiedono `Root` e ne derivano il paese selezionato.
+
+`Root` gestisce i paesi e la selezione controllata o non controllata. Inserisci al suo interno il `Dropdown.Root` condiviso e componi l'attivatore, il contenuto e le opzioni. `Trigger` deriva la bandiera selezionata e la descrizione accessibile da `Root`; `Options` legge gli stessi dati e la stessa selezione. Non fornire un altro paese o valore selezionato a tali parti.
+
+```tsx
+import {
+  PhoneCountryPicker,
+  type PhoneCountryOption,
+} from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+const COUNTRIES: PhoneCountryOption[] = [
+  { value: 'FR', label: 'France', callingCode: '33', flag: '🇫🇷' },
+  { value: 'GB', label: 'United Kingdom', callingCode: '44', flag: '🇬🇧' },
+];
+
+<PhoneCountryPicker.Root countries={COUNTRIES} defaultValue="FR">
+  <Dropdown.Root type="picker">
+    <PhoneCountryPicker.Trigger
+      aria-label="Phone country"
+      render={<Button variant="outline" />}
+    />
+    <Dropdown.Content width={320}>
+      <PhoneCountryPicker.Options
+        searchLabel="Search countries"
+        listLabel="Phone countries"
+        emptyLabel="No countries found"
+      />
+    </Dropdown.Content>
+  </Dropdown.Root>
+</PhoneCountryPicker.Root>;
+```
+
+Mantieni una radice per selettore. Il Dropdown condiviso gestisce l'apertura, il posizionamento del popup, le pagine, lo stato attivo e la navigazione della ricerca. Usa `dropdownProps` e `contentProps` sul selettore completo oppure configura direttamente le parti Dropdown nell'uso composto.
+
+## Ricerca e selezione
+
+La ricerca trova sottostringhe delle etichette dei paesi fornite, degli identificatori stabili e dei prefissi telefonici. Etichette e identificatori usano la normalizzazione condivisa `normalizeSearchText`: testo in minuscolo, decomposizione Unicode NFD e gestione degli accenti consapevole della scrittura. Ad esempio, `reunion` corrisponde a `Réunion` e `gb` corrisponde a un identificatore `GB`. Le distinzioni significative nelle scritture sono preservate in base a tale helper. Gli spazi bianchi attorno alla query vengono rimossi; gli spazi bianchi interni vengono preservati. Per la ricerca del prefisso telefonico, un segno più iniziale è facoltativo, quindi `44`, `+44` e `" +44 "` corrispondono al prefisso telefonico fornito `44`. La ricerca non analizza un numero di telefono completo né ne deduce un paese.
+
+`onValueChange(value, eventDetails)` riceve l'identificatore richiesto e i dettagli condivisi di `Dropdown.SelectionGroup`: `reason`, l'`event` nativo, il `trigger` dell'opzione selezionata, `cancel()` e `isCanceled`. Chiama `cancel()` prima di aggiornare lo stato controllato per rifiutare la richiesta. Una richiesta annullata preserva la selezione non controllata e lascia aperto il popup. Imposta `closeOnSelect={false}` per mantenerlo aperto dopo una selezione accettata. Le modifiche alla selezione non modificano alcun valore dell'input telefonico.
+
+Imposta `disabled` sul selettore completo o su `Root` per disabilitarne l'attivatore, la ricerca e la selezione. Un paese disabilitato rimane visibile e non può essere selezionato. `Trigger.disabled` e `Options.disabled` possono inoltre disabilitare tali singole parti.
+
+## Destinazioni ed etichette native
+
+Gli attributi nativi, i gestori di eventi, `className`, `style`, `ref`, `render` e l'elemento `children` facoltativo del selettore completo si applicano al relativo attivatore. `children` sostituisce la bandiera o l'icona del mondo predefinita e il chevron. `contentProps` si applica a `Dropdown.Content`; `optionsProps` si applica al div radice delle opzioni e fornisce `searchLabel`, `listLabel` e `emptyLabel`. Nell'uso composto, le proprietà native, i riferimenti e la composizione del rendering si applicano al pulsante `Trigger` o al div `Options` corrispondente. `Root` non esegue il rendering di alcun nodo DOM.
+
+Fornisci etichette dei paesi localizzate e l'`aria-label` richiesto per l'attivatore. L'etichetta del paese selezionato descrive l'attivatore, mentre la relativa bandiera e il chevron sono decorativi. Una selezione vuota mostra un'icona del mondo. Il popup prende il nome dell'attivatore, a meno che non venga denominato da un `Dropdown.Title` o da un'etichetta esplicita del contenuto. `searchLabel` ha come valore predefinito `Search` e denomina sia il campo di ricerca sia il relativo segnaposto. `listLabel` è impostato per impostazione predefinita su `Countries` e denomina la casella di riepilogo in modo indipendente. `emptyLabel` ha come valore predefinito `No results`.
+
+## Integrazione dell'input telefonico
+
+Il selettore viene fornito senza un catalogo di paesi, un pacchetto di risorse per le bandiere o un runtime per input telefonico. L'adattatore frontend gestisce l'analisi, la convalida e la formattazione dei numeri telefonici, le bozze di modifica e la persistenza. Mappa il paese selezionato della libreria telefonica su `Root.value` o sul `value` del selettore completo e rimappa le modifiche del paese tramite un solo callback. Mantieni il testo telefonico nel relativo proprietario esistente quando modifichi o cancelli un paese oppure applichi un aggiornamento esterno del paese selezionato.
+
+L'invio e il ripristino nativi del modulo, l'obbligatorietà, la modalità di sola lettura e l'integrazione con Field per questo selettore personalizzato sono rinviati. Il selettore completo inoltra gli attributi nativi dell'attivatore secondo il contratto del pulsante Dropdown.
+
+## Renderer dei componenti front-end
+
+I fixture della galleria React e Preact includono il selettore completo e la composizione composta. Il posizionamento del portale, la geometria, lo scorrimento, la chiusura e lo stato attivo appartengono al Dropdown condiviso e all'integrazione del renderer. Il selettore non introduce un runtime del renderer separato.
+
+## Props
+
+<PhoneCountryPickerReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

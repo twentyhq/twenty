@@ -1,0 +1,163 @@
+---
+title: Bifă
+description: Selectați opțiuni independente cu stări bifată și nedeterminată.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CheckboxReference from '/snippets/ui/generated/input/checkbox.mdx';
+
+## Prezentare generală
+
+Utilizați `Checkbox` atunci când fiecare opțiune poate fi selectată independent. Pentru o alegere reciproc exclusivă, utilizați [RadioGroup](/ro/ui/primitives/input/radio-group).
+
+<StoryEmbed storyId="ui-input-checkbox-checkbox--display" title="Exemplu de casetă de selectare" height={100} />
+
+## Utilizare
+
+### Stare necontrolată
+
+Utilizați `defaultChecked` pentru a seta starea inițială de bifare. Caseta de bifare gestionează modificările ulterioare.
+
+```tsx
+import { useId } from 'react';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const EmailPreference = () => {
+  const checkboxId = useId();
+
+  return (
+    <label
+      htmlFor={checkboxId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Checkbox id={checkboxId} name="updates" value="email" defaultChecked />
+      <Text render={<span />}>Receive product updates</Text>
+    </label>
+  );
+};
+```
+
+O casetă de selectare bifată și denumită contribuie cu valoarea sa la un formular. Setați `uncheckedValue` dacă formularul trebuie să trimită și o valoare atunci când aceasta nu este bifată.
+
+## Aspect și interacțiune
+
+Comparați stările bifată, nedeterminată și dezactivată, apoi alegeți independent culoarea, dimensiunea, forma și varianta. Exemplele activate pot fi comutate.
+
+<StoryEmbed storyId="ui-input-checkbox-checkbox--catalog" title="Aspectul și interacțiunea pentru caseta de selectare" height={400} />
+
+| Proprietate  | Valori                         | Implicit |
+| ------------ | ------------------------------ | -------- |
+| `dimensiune` | `sm`, `md`                     | `sm`     |
+| `variant`    | `solid`, `outline`, `soft`     | `solid`  |
+| `shape`      | `square`, `round`              | `square` |
+| `culoare`    | `accent`, `success`, `warning` | `accent` |
+
+Tasta Tab focalizează caseta de selectare, iar bara de spațiu îi schimbă starea. Selectarea etichetei sale îi schimbă, de asemenea, starea. Utilizați `disabled` pentru a împiedica interacțiunea sau `readOnly` atunci când valoarea trebuie să rămână neschimbată, iar controlul trebuie să rămână focalizabil. Păstrați semnificația în etichetă, în loc să o comunicați doar prin culoare.
+
+## Stare controlată
+
+Transmiteți `checked` și actualizați-l cu `onCheckedChange` pentru a gestiona aceeași preferință în starea React. Funcția callback primește următoarea valoare booleană și detaliile evenimentului.
+
+```tsx
+import { useId, useState } from 'react';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const EmailPreference = () => {
+  const checkboxId = useId();
+  const [checked, setChecked] = useState(true);
+
+  return (
+    <label
+      htmlFor={checkboxId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Checkbox
+        id={checkboxId}
+        name="updates"
+        value="email"
+        checked={checked}
+        onCheckedChange={setChecked}
+      />
+      <Text render={<span />}>Receive product updates</Text>
+    </label>
+  );
+};
+```
+
+## Stare nedeterminată
+
+O casetă de bifare nedeterminată reprezintă o selecție parțială. Derivați-o din opțiunile secundare, independent de starea de bifare a casetei de bifare.
+
+```tsx
+import { useState } from 'react';
+import { Checkbox } from 'twenty-ui/primitives/input';
+
+export const ColumnSelection = () => {
+  const [showEmail, setShowEmail] = useState(true);
+  const [showPhone, setShowPhone] = useState(false);
+
+  return (
+    <fieldset>
+      <legend>Visible columns</legend>
+      <label>
+        <Checkbox
+          checked={showEmail && showPhone}
+          indeterminate={showEmail !== showPhone}
+          onCheckedChange={(checked) => {
+            setShowEmail(checked);
+            setShowPhone(checked);
+          }}
+        />
+        All columns
+      </label>
+      <label>
+        <Checkbox checked={showEmail} onCheckedChange={setShowEmail} />
+        Email
+      </label>
+      <label>
+        <Checkbox checked={showPhone} onCheckedChange={setShowPhone} />
+        Phone
+      </label>
+    </fieldset>
+  );
+};
+```
+
+## Părți și conținut personalizat
+
+`Checkbox` asamblează rădăcina stilizată și pictogramele sale implicite de bifare și stare nedeterminată. Utilizați `Checkbox.Root` cu `Checkbox.Indicator` pentru a controla conținutul indicatorului. Root controlează starea și aspectul casetei; Indicator redă conținutul pe care îl furnizați.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { Checkbox } from 'twenty-ui/primitives/input';
+
+export const CustomPreference = () => (
+  <Checkbox.Root aria-label="Updates" defaultChecked>
+    <Checkbox.Indicator>
+      <IconCheck aria-hidden />
+    </Checkbox.Indicator>
+  </Checkbox.Root>
+);
+```
+
+`CheckboxRootProps` și `CheckboxIndicatorProps` sunt tipuri publice exportate din `twenty-ui/primitives/input`. Ambele părți acceptă atribute native, handlere, referințe, `render` și callbackuri `className` și `style` bazate pe stare. `ref` al Root vizează controlul vizibil; `inputRef` vizează intrarea nativă. Referința părții vizează elementul redat de aceasta. Transmiteți `nativeButton` cu `render={<button />}` atunci când înlocuiți Root cu un buton. Proprietățile de aspect aparțin Root; clasele și stilurile explicite sunt îmbinate cu valorile implicite.
+
+Indicator primește starea de bifare și starea nedeterminată, inclusiv starea de tranziție. Setați `keepMounted` pentru a păstra un indicator nebifat în DOM; stilizarea implicită îl ascunde prin opacitate. Suprascrieți `style` sau `className` pentru tranziții personalizate.
+
+<StoryEmbed storyId="ui-input-checkbox-parts--composition" title="Compoziția părților Checkbox" height={100} />
+
+Asamblarea apelabilă și tipul său `CheckboxProps` rămân acceptate. Înlocuiți asamblarea cu Root și partea sa atunci când furnizați pictograme personalizate, în loc să adăugați altă parte la elementele copil ale asamblării.
+
+Pentru resetarea controlată a formularului, gestionați `onReset` al formularului și restaurați `checked` la valoarea inițială. Base UI 1.8 nu restabilește starea componentelor necontrolate la resetarea nativă a formularului. `required`, `form`, `value` și `uncheckedValue` păstrează comportamentul intrării native din amonte.
+
+## Proprietăți
+
+Referința este generată din tipurile publice ale componentei. Atributele native, inclusiv numele accesibile și gestionarii de evenimente, sunt acceptate și pe părțile care redau elemente.
+
+<CheckboxReference />
+
+<PageBanner illustration="page-cover-checkbox" />

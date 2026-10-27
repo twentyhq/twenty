@@ -15,18 +15,13 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
-  FeatureFlagKey,
   FindApplicationRegistrationMonitoringDocument,
   FindOneApplicationRegistrationDocument,
 } from '~/generated-metadata/graphql';
 
 export const SettingsApplicationRegistrationMonitoring = () => {
   const { t } = useLingui();
-  const isApplicationMonitoringEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED,
-  );
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
 
   const { applicationRegistrationId = '' } = useParams<{
@@ -45,7 +40,7 @@ export const SettingsApplicationRegistrationMonitoring = () => {
     FindOneApplicationRegistrationDocument,
     {
       variables: { id: applicationRegistrationId },
-      skip: !isApplicationMonitoringEnabled || !applicationRegistrationId,
+      skip: !applicationRegistrationId,
     },
   );
 
@@ -57,10 +52,7 @@ export const SettingsApplicationRegistrationMonitoring = () => {
         periodStart: periodRange.periodStart,
         periodEnd: periodRange.periodEnd,
       },
-      skip:
-        !isApplicationMonitoringEnabled ||
-        !isClickHouseConfigured ||
-        !applicationRegistrationId,
+      skip: !isClickHouseConfigured || !applicationRegistrationId,
     },
   );
 
@@ -86,10 +78,6 @@ export const SettingsApplicationRegistrationMonitoring = () => {
       ),
     },
   ];
-
-  if (!isApplicationMonitoringEnabled) {
-    return null;
-  }
 
   if (!isDefined(registration)) {
     if (isRegistrationLoading) {

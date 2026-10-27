@@ -93,6 +93,7 @@ describe('DatabaseToolProvider', () => {
           [roleId]: composedObjectPermissionsByObjectId,
           [userRoleId]: composedObjectPermissionsByObjectId,
         },
+        flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
         flatObjectPermissionMaps: {
           byUniversalIdentifier: Object.fromEntries(
             explicitPermissionRows.map((row, index) => [

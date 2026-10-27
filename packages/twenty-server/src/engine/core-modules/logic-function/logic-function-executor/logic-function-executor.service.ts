@@ -123,6 +123,31 @@ export class LogicFunctionExecutorService {
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
   ) {}
 
+  async executeOrThrow({
+    toException,
+    ...executeArgs
+  }: Parameters<LogicFunctionExecutorService['execute']>[0] & {
+    toException: (reason: string) => CustomException;
+  }): Promise<LogicFunctionExecuteResult['data']> {
+    const executionResult = await this.execute(executeArgs).catch(
+      (error: unknown) => {
+        if (error instanceof CustomException) {
+          throw error;
+        }
+
+        throw toException(
+          `could not be executed: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      },
+    );
+
+    if (isDefined(executionResult.error)) {
+      throw toException(`failed: ${executionResult.error.errorMessage}`);
+    }
+
+    return executionResult.data;
+  }
+
   async execute({
     logicFunctionId,
     workspaceId,

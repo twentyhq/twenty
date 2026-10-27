@@ -5,6 +5,7 @@ import {
   type HalftoneGeometrySpec,
   type HalftoneLightingSettings,
   type HalftoneMaterialSettings,
+  type HalftoneMaterialSurface,
   type HalftoneStudioSettings,
 } from './studio-settings-types';
 
@@ -28,7 +29,7 @@ const GEOMETRY_SPECS: HalftoneGeometrySpec[] = [
 const SHAPE_HALFTONE: HalftoneEffectSettings = {
   enabled: true,
   scale: 24.72,
-  power: -0.07,
+  power: -0.35,
   toneTarget: 'light',
   width: 0.46,
   imageContrast: 1,
@@ -54,17 +55,36 @@ const SOLID_MATERIAL: HalftoneMaterialSettings = {
   metalness: 0.16,
   thickness: 150,
   refraction: 2,
-  environmentPower: 5,
+  environmentPower: 0.4,
+  environmentRotation: 240,
+  texture: 'none',
+  textureTiling: 4,
 };
 
 const GLASS_MATERIAL: HalftoneMaterialSettings = {
   surface: 'glass',
-  color: '#7d7d7d',
-  roughness: 0,
+  color: '#f4f7ff',
+  roughness: 0.05,
   metalness: 0,
-  thickness: 15.58,
+  thickness: 15,
   refraction: 2,
-  environmentPower: 5,
+  environmentPower: 0.75,
+  environmentRotation: 300,
+  texture: 'none',
+  textureTiling: 2.5,
+};
+
+const METAL_MATERIAL: HalftoneMaterialSettings = {
+  surface: 'metal',
+  color: '#ffffff',
+  roughness: 0.35,
+  metalness: 1,
+  thickness: 150,
+  refraction: 2,
+  environmentPower: 0.5,
+  environmentRotation: 240,
+  texture: 'worn',
+  textureTiling: 3,
 };
 
 // The old preset shape (roughness/metalness 0.1) that normalize snaps back to
@@ -77,6 +97,9 @@ const LEGACY_GLASS_MATERIAL: HalftoneMaterialSettings = {
   thickness: 150,
   refraction: 2,
   environmentPower: 5,
+  environmentRotation: 240,
+  texture: 'none',
+  textureTiling: 3,
 };
 
 const SOLID_LIGHTING: HalftoneLightingSettings = {
@@ -92,6 +115,14 @@ const GLASS_LIGHTING: HalftoneLightingSettings = {
   fillIntensity: 0,
   ambientIntensity: 0.3,
   angleDegrees: 53,
+  height: 2,
+};
+
+const METAL_LIGHTING: HalftoneLightingSettings = {
+  intensity: 3,
+  fillIntensity: 0,
+  ambientIntensity: 0,
+  angleDegrees: 45,
   height: 2,
 };
 
@@ -175,18 +206,60 @@ const SETTINGS: HalftoneStudioSettings = {
   animation: { ...SOLID_ANIMATION },
 };
 
+const MATERIAL_BY_SURFACE: Record<
+  HalftoneMaterialSurface,
+  HalftoneMaterialSettings
+> = {
+  solid: SOLID_MATERIAL,
+  glass: GLASS_MATERIAL,
+  metal: METAL_MATERIAL,
+};
+
+const LIGHTING_BY_SURFACE: Record<
+  HalftoneMaterialSurface,
+  HalftoneLightingSettings
+> = {
+  solid: SOLID_LIGHTING,
+  glass: GLASS_LIGHTING,
+  metal: METAL_LIGHTING,
+};
+
+const ANIMATION_BY_SURFACE: Record<
+  HalftoneMaterialSurface,
+  HalftoneAnimationSettings
+> = {
+  solid: SOLID_ANIMATION,
+  glass: GLASS_ANIMATION,
+  metal: SOLID_ANIMATION,
+};
+
+const BACKGROUND_BY_SURFACE: Record<
+  HalftoneMaterialSurface,
+  HalftoneBackgroundSettings
+> = {
+  solid: SOLID_BACKGROUND,
+  glass: GLASS_BACKGROUND,
+  metal: SOLID_BACKGROUND,
+};
+
 export const HALFTONE_STUDIO_DEFAULTS = {
   geometrySpecs: GEOMETRY_SPECS,
   shapeHalftone: SHAPE_HALFTONE,
   imageHalftone: IMAGE_HALFTONE,
   solidMaterial: SOLID_MATERIAL,
   glassMaterial: GLASS_MATERIAL,
+  metalMaterial: METAL_MATERIAL,
   legacyGlassMaterial: LEGACY_GLASS_MATERIAL,
   solidLighting: SOLID_LIGHTING,
   glassLighting: GLASS_LIGHTING,
+  metalLighting: METAL_LIGHTING,
   solidBackground: SOLID_BACKGROUND,
   glassBackground: GLASS_BACKGROUND,
   solidAnimation: SOLID_ANIMATION,
   glassAnimation: GLASS_ANIMATION,
+  materialBySurface: MATERIAL_BY_SURFACE,
+  lightingBySurface: LIGHTING_BY_SURFACE,
+  animationBySurface: ANIMATION_BY_SURFACE,
+  backgroundBySurface: BACKGROUND_BY_SURFACE,
   settings: SETTINGS,
 };

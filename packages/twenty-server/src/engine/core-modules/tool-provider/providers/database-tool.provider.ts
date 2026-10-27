@@ -70,15 +70,25 @@ export class DatabaseToolProvider implements ToolProvider {
     const toolNames = options?.toolNames;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const { rolesPermissions, flatObjectPermissionMaps } =
+    const { rolesPermissions, flatObjectPermissionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
         'rolesPermissions',
         'flatObjectPermissionMaps',
+        'flatApplicationMaps',
       ]);
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId: context.workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
+      );
 
     const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
       rolesPermissions,
       rolePermissionConfig: context.rolePermissionConfig,
+      flatObjectMetadataMaps,
+      flatApplicationMaps,
     });
 
     if (Object.keys(objectPermissions).length === 0) {
@@ -108,14 +118,6 @@ export class DatabaseToolProvider implements ToolProvider {
         }
       }
     }
-
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId: context.workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-        },
-      );
 
     const allFlatObjects = getDatabaseCrudToolFlatObjects(
       flatObjectMetadataMaps.byUniversalIdentifier,

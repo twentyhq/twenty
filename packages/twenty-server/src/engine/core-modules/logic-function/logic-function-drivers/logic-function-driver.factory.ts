@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
-
 import {
   type LogicFunctionDriver,
   LogicFunctionDriverType,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -14,7 +13,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { DisabledDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/disabled.driver';
 import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LocalDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local.driver';
-import { getLambdaResourceNamespace } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-resource-namespace.util';
+import { getLambdaConnectionOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-connection-options.util';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
@@ -29,6 +28,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
     twentyConfigService: TwentyConfigService,
     configGroupHashService: ConfigGroupHashService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
+    private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
     private readonly sdkClientArchiveService: SdkClientArchiveService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -64,56 +64,14 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
         });
 
       case LogicFunctionDriverType.LAMBDA: {
-        const region = this.twentyConfigService.get(
-          'LOGIC_FUNCTION_LAMBDA_REGION',
-        );
-        const accessKeyId = this.twentyConfigService.get(
-          'LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID',
-        );
-        const secretAccessKey = this.twentyConfigService.get(
-          'LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY',
-        );
-        const lambdaRole = this.twentyConfigService.get(
-          'LOGIC_FUNCTION_LAMBDA_ROLE',
-        );
-        const subhostingRole = this.twentyConfigService.get(
-          'LOGIC_FUNCTION_LAMBDA_SUBHOSTING_ROLE',
-        );
-        const s3BucketName = this.twentyConfigService.get('STORAGE_S3_NAME');
-        const layerBucket =
-          this.twentyConfigService.get('LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET') ??
-          s3BucketName ??
-          'twenty-lambda-layer';
-        const layerBucketRegion =
-          this.twentyConfigService.get(
-            'LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION',
-          ) ?? region;
-        const resourceTags =
-          this.twentyConfigService.get('LOGIC_FUNCTION_LAMBDA_RESOURCE_TAGS') ??
-          {};
-        const resourceNamespace = getLambdaResourceNamespace({
-          lambdaRoleArn: lambdaRole,
-        });
-
         return new LambdaDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
+          applicationDependencyFilesService:
+            this.applicationDependencyFilesService,
           cacheLockService: this.cacheLockService,
           cacheStorageService: this.cacheStorageService,
           workspaceCacheService: this.workspaceCacheService,
-          credentials: accessKeyId
-            ? { accessKeyId, secretAccessKey }
-            : fromNodeProviderChain({ clientConfig: { region } }),
-          region,
-          endpoint: this.twentyConfigService.get(
-            'LOGIC_FUNCTION_LAMBDA_ENDPOINT',
-          ),
-          lambdaRole,
-          subhostingRole,
-          layerBucket,
-          layerBucketRegion,
-          resourceNamespace,
-          resourceTags:
-            Object.keys(resourceTags).length > 0 ? resourceTags : undefined,
+          ...getLambdaConnectionOptions(this.twentyConfigService),
           sdkClientArchiveService: this.sdkClientArchiveService,
         });
       }

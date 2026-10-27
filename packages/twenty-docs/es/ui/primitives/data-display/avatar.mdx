@@ -1,0 +1,191 @@
+---
+title: Avatar
+description: Represente a una persona o un registro con una imagen, inicial o icono.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import AvatarReference from '/snippets/ui/generated/data-display/avatar.mdx';
+
+## Resumen
+
+`Avatar` muestra una imagen con una alternativa de primera letra. Úselo junto al nombre de un registro o dentro de un [Chip](/es/ui/primitives/data-display/chip). Su raíz predeterminada es un `span` de presentación.
+
+<StoryEmbed storyId="ui-data-display-avatar--display" title="Ejemplo de Avatar" height={90} />
+
+## "Uso"
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const WorkspaceAvatar = () => (
+  <Avatar
+    name="Acme"
+    colorSeed="acme-app"
+    shape="square"
+    variant="outline"
+    size="md"
+  />
+);
+```
+
+Cuando la imagen no está presente o no se puede cargar, la alternativa muestra en mayúscula la primera letra del nombre sin espacios al inicio ni al final. Un nombre vacío muestra `-`. `colorSeed` elige colores de alternativa estables y su valor predeterminado es `name`; use un identificador de registro para mantener el color estable cuando cambie el nombre.
+
+La imagen y el respaldo predeterminado son decorativos. `name` proporciona la inicial visual y los colores de respaldo sin añadir una etiqueta accesible. Cuando el avatar es la única representación de una persona o un registro, establece `imageProps={{ alt: name }}` para etiquetar tanto la imagen como el respaldo predeterminado. Mantén el avatar como decorativo cuando un nombre visible o un propietario etiquetado ya proporcionen esa información.
+
+`imageProps` acepta el contrato completo de imagen, incluidos `srcSet`, `sizes`, `crossOrigin`, `referrerPolicy`, eventos nativos, refs y `render`. Su `src` anula la abreviatura `src`. `fallbackProps` acepta el contrato completo de respaldo, incluidos `delay`, elementos secundarios, etiquetado, refs y `render`. Un `render` de respaldo personalizado gestiona su semántica de accesibilidad; establece explícitamente `aria-hidden` cuando sea decorativo.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type RecordAvatarProps = {
+  name: string;
+  imageUrl?: string;
+  initials: string;
+};
+
+export const RecordAvatar = ({
+  name,
+  imageUrl,
+  initials,
+}: RecordAvatarProps) => (
+  <Avatar
+    name={name}
+    src={imageUrl}
+    size="lg"
+    imageProps={{ alt: name, decoding: 'async', referrerPolicy: 'no-referrer' }}
+    fallbackProps={{ children: initials, delay: 150 }}
+  />
+);
+```
+
+## Compón las partes
+
+Usa `Avatar.Root`, `Avatar.Image` y `Avatar.Fallback` cuando controles la anatomía. Root proporciona el tamaño, la forma y la apariencia del respaldo; no genera elementos secundarios ni etiquetas accesibles.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type ContactAvatarProps = {
+  name: string;
+  imageUrl?: string;
+  initials: string;
+};
+
+export const ContactAvatar = ({
+  name,
+  imageUrl,
+  initials,
+}: ContactAvatarProps) => (
+  <Avatar.Root name={name} shape="circle" size="xxl">
+    <Avatar.Image src={imageUrl} alt={name} decoding="async" />
+    <Avatar.Fallback role="img" aria-label={name} delay={150}>
+      {initials}
+    </Avatar.Fallback>
+  </Avatar.Root>
+);
+```
+
+<StoryEmbed storyId="ui-data-display-avatar--parts" title="Partes del avatar" height={110} />
+
+Las partes comparten el estado de carga de imágenes de Base UI. Image procesa un `img` después de una carga correcta de forma predeterminada, y Fallback procesa un `span` mientras la imagen está ausente, cargándose o ha fallado. `delay` pospone la visualización inicial del respaldo en milisegundos y su valor predeterminado es `0`. Una fuente modificada se vuelve a cargar y puede reemplazar la imagen actual o el respaldo.
+
+`Avatar.Image` expone `onLoadingStatusChange` con los valores de estado `idle`, `loading`, `loaded` y `error`. La devolución de llamada se ejecuta cuando Base UI informa de un cambio de estado distinto de inactivo; desmontar la parte Image restablece el estado raíz compartido a `idle`. Root, Image y Fallback aceptan funciones de `className`, `style` y `render` que reconocen el estado con `imageLoadingStatus`; Image también expone `transitionStatus`.
+
+Usa `keepMounted` en Image cuando la imagen procesada deba cargarse en su lugar, incluido `loading="lazy"` o un componente de imagen optimizado. Reenvía los atributos nativos, los eventos y la ref desde procesadores de imágenes personalizados. Una imagen montada aún puede estar cargándose o haber fallado; inspecciona el estado de carga en lugar de considerar su presencia como un éxito.
+
+El procesador del componente frontal actualmente admite la ruta de precarga predeterminada con `src`. Su imagen host no recibe `srcSet`, `sizes`, `loading`, `decoding` ni `referrerPolicy`. Una función `render` personalizada cambiante con `keepMounted` puede dejar oculta una imagen decodificada porque el trabajador no puede leer su estado de finalización ni sus dimensiones. Usa allí la precarga predeterminada hasta que esas capacidades del procesador estén disponibles.
+
+Los tipos públicos `AvatarRootProps`, `AvatarImageProps`, `AvatarFallbackProps`, `AvatarRootState`, `AvatarImageState`, `AvatarFallbackState` y `AvatarImageLoadingStatus` se exportan desde `twenty-ui/primitives/data-display`. Las refs se dirigen al elemento DOM procesado: `span`, `img` y `span` de forma predeterminada, o al elemento proporcionado mediante `render`.
+
+## Forma y apariencia
+
+<StoryEmbed storyId="ui-data-display-avatar--catalog" title="Tamaños y formas de avatar" height={320} />
+
+`shape` acepta `square`, `rounded-square` o `circle`. Los tamaños son `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), `xl` (32px) y `xxl` (40px). Tanto `xl` como `xxl` usan texto alternativo de 16px.
+
+El anterior tamaño `xl` de 40px ahora es `xxl`. Actualiza los usos existentes de `size="xl"` a `size="xxl"` cuando deban seguir siendo de 40px.
+
+`variant="outline"` añade un borde a la alternativa. Las anulaciones de `color`, `backgroundColor` y `borderColor` personalizan la alternativa, mientras que una imagen cargada mantiene su apariencia original.
+
+```tsx
+import { IconUser } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const ContactIcon = () => (
+  <Avatar
+    icon={<IconUser />}
+    shape="rounded-square"
+    size="xxl"
+    role="img"
+    aria-label="Contact"
+  />
+);
+```
+
+Un `icon` tiene prioridad sobre la imagen y la alternativa de primera letra. El icono en sí es decorativo, así que etiqueta la raíz cuando transmita información. `pulsing` anima la opacidad y respeta las preferencias de movimiento reducido.
+
+## Abrir un perfil
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type ProfileAvatarProps = {
+  onOpenProfile: () => void;
+  disabled?: boolean;
+};
+
+export const ProfileAvatar = ({
+  onOpenProfile,
+  disabled = false,
+}: ProfileAvatarProps) => (
+  <Avatar
+    name="Jane"
+    shape="circle"
+    size="lg"
+    render={
+      <button
+        type="button"
+        disabled={disabled}
+        aria-label="Open Jane's profile"
+        onClick={onOpenProfile}
+      />
+    }
+  />
+);
+```
+
+<StoryEmbed storyId="ui-data-display-avatar--button-composition" title="Avatar compuesto como botón" height={110} />
+
+Compón un botón nativo para las acciones. Gestiona el foco, la activación con Intro y Espacio, y el comportamiento deshabilitado. Proporciona un nombre accesible específico para la acción. Coloca `onClick` y `disabled` en el botón procesado; el Avatar abreviado no tiene la prop `onClick`, `disabled` ni `nativeButton`.
+
+Para la navegación, compón un ancla con un `href` o un enlace de enrutador que preserve la semántica de ancla. Los enlaces nativos se activan con Intro. Mantén la navegación y el comportamiento deshabilitado con el enlace o componente interactivo que compongas.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const ProfileLink = () => (
+  <Avatar
+    name="Jane"
+    shape="circle"
+    size="lg"
+    render={<a href="/people/jane" aria-label="Open Jane's profile" />}
+  />
+);
+```
+
+## Migra los avatares en los que se puede hacer clic
+
+Compón un botón nativo mediante `render` para las acciones, o un ancla o enlace de enrutador para la navegación. Mueve `onClick` y `disabled` a ese propietario y elimina `nativeButton`. Proporciona al propietario un nombre accesible útil y evita anidar elementos interactivos. `Avatar.Root` y las demás partes explícitas conservan el contrato completo de eventos de Base UI.
+
+Los avatares abreviados son decorativos de forma predeterminada. `name` no da nombre a la imagen, al respaldo ni al propietario interactivo. Usa un `imageProps.alt` no vacío solo cuando el avatar transmita una identidad que no esté ya proporcionada por texto visible o una etiqueta del propietario. Con partes explícitas, proporciona tú mismo el texto alternativo de la imagen y las etiquetas de respaldo o los atributos decorativos, y conserva el contenido traducido en tu aplicación.
+
+## "Props"
+
+Los tipos y valores predeterminados se generan a partir de los tipos de componentes públicos. Las partes explícitas aceptan atributos nativos y controladores de eventos. El Avatar abreviado omite `onClick`; proporciónalo en el propietario pasado mediante `render`.
+
+<AvatarReference />
+
+<PageBanner illustration="page-cover-profile" />

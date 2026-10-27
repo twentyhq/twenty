@@ -6,6 +6,7 @@ import { TEAMS_ASSISTANT_FAILURE_TEXT } from 'src/features/chat/logic-functions/
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
 import { TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-sender-text';
 import { claimTeamsAssistantRequest } from 'src/features/chat/logic-functions/data/claim-teams-assistant-request';
+import { findTeamsAssistantHistory } from 'src/features/chat/logic-functions/data/find-teams-assistant-history';
 import { updateTeamsAssistantRequest } from 'src/features/chat/logic-functions/data/update-teams-assistant-request';
 import { type TeamsActivity } from 'src/features/chat/logic-functions/types/teams-activity.type';
 import { type TeamsAssistantAnswerResult } from 'src/features/chat/logic-functions/types/teams-assistant-answer-result.type';
@@ -88,8 +89,22 @@ export const answerTeamsAssistantRequest = async ({
       workspaceMemberId,
     });
 
+    const history = await findTeamsAssistantHistory({
+      client,
+      teamsConversationId,
+      workspaceMemberId,
+    }).catch((error: unknown) => {
+      console.warn(
+        `[teams] could not load the history of ${teamsConversationId}`,
+        error,
+      );
+
+      return [];
+    });
+
     const responseText = await runTeamsAssistantAgentOrThrow({
       requestText,
+      history,
       workspaceMemberId,
       deadlineAtMs: agentDeadlineAtMs,
     });

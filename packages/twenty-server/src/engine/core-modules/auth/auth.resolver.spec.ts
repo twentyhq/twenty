@@ -13,6 +13,7 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
+import { WorkspaceCreationCaptchaGuard } from 'src/engine/core-modules/captcha/workspace-creation-captcha.guard';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import {
@@ -260,6 +261,8 @@ describe('AuthResolver', () => {
       ],
     })
       .overrideGuard(CaptchaGuard)
+      .useValue(mock_CaptchaGuard)
+      .overrideGuard(WorkspaceCreationCaptchaGuard)
       .useValue(mock_CaptchaGuard)
       .compile();
 

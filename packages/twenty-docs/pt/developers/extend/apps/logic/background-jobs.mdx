@@ -1,7 +1,6 @@
 ---
 title: Tarefas em segundo plano
 description: Entregue trabalhos longos ou com limitação de taxa aos workers do Twenty colocando na fila outra execução de função de lógica, em vez de fazer tudo inline.
-icon: layer-group
 ---
 
 Uma execução de função de lógica é limitada pelo seu `timeoutSeconds` (máximo de 900 segundos). Qualquer coisa que não consiga terminar nesse intervalo — uma re-sincronização completa, uma distribuição por registro, uma API de terceiros que impõe limitações de taxa — precisa ser dividida em execuções menores.

@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import request from 'supertest';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { computePackageJsonChecksum } from 'twenty-shared/application';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
@@ -138,14 +139,17 @@ describe('CLI dev mode on a catalog-synced (npm) app', () => {
 
     expect(createDevAppRes.body.errors).toBeUndefined();
 
+    const publishedAppPackageJson = JSON.stringify({
+      name: 'published-catalog-app',
+      version: '1.0.1',
+    });
+
     // The CLI uploads the app's package.json before syncing the manifest.
     await uploadApplicationFile({
       applicationUniversalIdentifier: universalIdentifier,
       fileFolder: 'Dependencies',
       filePath: 'package.json',
-      fileBuffer: Buffer.from(
-        JSON.stringify({ name: 'published-catalog-app', version: '1.0.1' }),
-      ),
+      fileBuffer: Buffer.from(publishedAppPackageJson),
       filename: 'package.json',
       expectToFail: false,
     });
@@ -161,7 +165,9 @@ describe('CLI dev mode on a catalog-synced (npm) app', () => {
             displayName: 'Published Catalog App (dev)',
             description: 'Local dev iteration of a published app',
             applicationVariables: {},
-            packageJsonChecksum: null,
+            packageJsonChecksum: computePackageJsonChecksum(
+              publishedAppPackageJson,
+            ),
             yarnLockChecksum: null,
           },
         },
@@ -217,13 +223,16 @@ describe('CLI dev mode on a catalog-synced (npm) app', () => {
 
       expect(createDevAppRes.body.errors).toBeUndefined();
 
+      const ownedAppPackageJson = JSON.stringify({
+        name: 'owned-local-app',
+        version: '0.0.1',
+      });
+
       await uploadApplicationFile({
         applicationUniversalIdentifier: ownedUid,
         fileFolder: 'Dependencies',
         filePath: 'package.json',
-        fileBuffer: Buffer.from(
-          JSON.stringify({ name: 'owned-local-app', version: '0.0.1' }),
-        ),
+        fileBuffer: Buffer.from(ownedAppPackageJson),
         filename: 'package.json',
         expectToFail: false,
       });
@@ -239,7 +248,8 @@ describe('CLI dev mode on a catalog-synced (npm) app', () => {
               displayName: 'Owned Local App (renamed)',
               description: 'Owned local app',
               applicationVariables: {},
-              packageJsonChecksum: null,
+              packageJsonChecksum:
+                computePackageJsonChecksum(ownedAppPackageJson),
               yarnLockChecksum: null,
             },
             roles: [

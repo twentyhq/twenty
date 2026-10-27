@@ -3,7 +3,7 @@ title: Использование итератора
 description: Перебирайте массивы записей и выполняйте действия для каждого элемента.
 ---
 
-Итератор позволяет перебирать массив записей и выполнять действия для каждой из них. Он необходим для рабочих процессов, которым нужно обрабатывать несколько записей, возвращённых действием Search Records или полученных через вебхуки.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Когда использовать итератор
 
@@ -108,12 +108,12 @@ description: Перебирайте массивы записей и выпол�
 ```
 1. Webhook Trigger (receives items array)
 2. Filter (items.length > 0)
-3. Iterator (trigger.body.items)
+3. Iterator (trigger.items)
    └── Create Record
        - Object: Order Items
        - Name: {{iterator.currentItem.name}}
        - Quantity: {{iterator.currentItem.qty}}
-       - Related Order: {{trigger.body.orderId}}
+       - Related Order: {{trigger.orderId}}
 ```
 
 ### Условная обработка внутри цикла
@@ -181,3 +181,5 @@ Filter: {{searchRecords.length}} > 0
 * [Действия рабочего процесса](/ru/user-guide/workflows/capabilities/workflow-actions)
 * [Как использовать ветвления](/ru/user-guide/workflows/capabilities/use-branches-in-workflows)
 * [Частые вопросы о рабочих процессах](/ru/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+
+<PageBanner illustration="card-page-sync-recovery" />

@@ -1,0 +1,91 @@
+---
+title: Status
+description: Afișează o stare denumită cu un indicator colorat și feedback de încărcare opțional.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import StatusReference from '/snippets/ui/generated/data-display/status.mdx';
+
+## Prezentare generală
+
+`Status` combină un punct colorat, o etichetă text și un indicator de încărcare opțional. Folosește-l pentru stările fluxului de lucru sau ale înregistrărilor. Folosește [Tag](/ro/ui/primitives/data-display/tag) pentru o categorie fără indicatorul de stare.
+
+<StoryEmbed storyId="ui-data-display-status--display" title="Exemplu de Status" height={90} />
+
+## Utilizare
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+export const RecordStatus = () => (
+  <Status color="red" weight="medium">
+    Urgent
+  </Status>
+);
+```
+
+`color` este obligatoriu și utilizează paleta temei. Eticheta comunică semnificația independent de culoare. Elementul implicit este întotdeauna un `span`, inclusiv atunci când este furnizat un handler de clic nativ; `weight="medium"` îi evidențiază textul.
+
+## Încărcare și anunțuri
+
+<StoryEmbed storyId="ui-data-display-status--loading" title="Stare în timpul salvării" height={90} />
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+type SaveStatusProps = { isSaving: boolean };
+
+export const SaveStatus = ({ isSaving }: SaveStatusProps) => (
+  <div role="status">
+    <Status color={isSaving ? 'blue' : 'green'} loading={isSaving}>
+      {isSaving ? 'Saving' : 'Saved'}
+    </Status>
+  </div>
+);
+```
+
+`loading` afișează un indicator de încărcare decorativ după etichetă și setează implicit `aria-busy` la `true`. Furnizează explicit `aria-busy` atunci când fluxul de lucru înconjurător deține această stare. Componenta nu adaugă o regiune live și nu își modifică automat textul. Menține montat un container `role="status"` atunci când actualizările trebuie anunțate tehnologiei asistive și oferă o etichetă care descrie starea curentă.
+
+## Modifică o stare
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+type ChangeStatusActionProps = {
+  isUpdating: boolean;
+  onChangeStatus: () => void;
+};
+
+export const ChangeStatusAction = ({
+  isUpdating,
+  onChangeStatus,
+}: ChangeStatusActionProps) => (
+  <Status
+    color="blue"
+    loading={isUpdating}
+    render={
+      <button
+        type="button"
+        disabled={isUpdating}
+        onClick={onChangeStatus}
+        aria-label="Change record status"
+      />
+    }
+  >
+    {isUpdating ? 'Updating' : 'In progress'}
+  </Status>
+);
+```
+
+Compune un owner interactiv prin `render`. Plasează handlerul său de clic, atributele native, ref și starea disabled pe acel owner. Un buton real oferă activare prin focalizare, indicator, Enter și Space. `Status.loading` afișează progresul; transmite `disabled` butonului atunci când acțiunea trebuie să aștepte. Pentru navigare, redă un link cu destinația sa, cum ar fi `<a href="/records" />`. Ownerii nativi păstrează aspectul Status. Elementele copil Node păstrează textul, traducerile și linkurile intenționate deținute de apelant.
+
+## Proprietăți
+
+Tipurile și valorile implicite sunt generate din tipurile publice ale componentei. Sunt acceptate și atributele native, precum și gestionarii de evenimente.
+
+<StatusReference />
+
+<PageBanner illustration="page-cover-checkbox" />
