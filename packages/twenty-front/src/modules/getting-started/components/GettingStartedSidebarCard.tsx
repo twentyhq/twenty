@@ -3,17 +3,15 @@ import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStarte
 import { getGettingStartedRemainingSteps } from '@/getting-started/utils/getGettingStartedRemainingSteps';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
-import { NavigationLink } from '@/ui/input/components/NavigationLink';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useMatch } from 'react-router-dom';
+import { Link, useMatch } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components/input';
 import {
   IconChevronRight,
   IconCreditCard,
@@ -27,6 +25,18 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 const StyledContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
   box-shadow: ${themeCssVariables.boxShadow.light};
+  position: relative;
+`;
+
+const StyledCardLink = styled(Link)`
+  border-radius: inherit;
+  inset: 0;
+  position: absolute;
+`;
+
+const StyledButtonLayer = styled.div`
+  position: relative;
+  z-index: 1;
 `;
 
 const StyledCardBody = styled.div`
@@ -43,7 +53,7 @@ const StyledHeader = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[6]};
-  padding-left: ${themeCssVariables.spacing[1]};
+  padding: 0 ${themeCssVariables.spacing[1]};
   white-space: nowrap;
 
   &[data-countdown] {
@@ -151,19 +161,10 @@ export const GettingStartedSidebarCard = () => {
                 {`${progress.completedSteps.length}/${progress.steps.length}`}
               </StyledStepCount>
               {!isGettingStartedPageOpen && (
-                <NavigationLink to={AppPath.GettingStarted}>
-                  {({ href, render }) => (
-                    <LightIconButton
-                      nativeButton={false}
-                      role="link"
-                      href={href}
-                      render={render}
-                      aria-label={t`Open Getting started`}
-                    >
-                      <IconChevronRight />
-                    </LightIconButton>
-                  )}
-                </NavigationLink>
+                <IconChevronRight
+                  size={theme.icon.size.md}
+                  color={theme.font.color.tertiary}
+                />
               )}
             </StyledHeader>
             {isCountdownVisible ? (
@@ -203,24 +204,32 @@ export const GettingStartedSidebarCard = () => {
                 withBorderRadius
               />
             )}
-            {canKeepPlan ? (
-              <NavigationButton
-                size="sm"
-                fullWidth
-                startIcon={<IconCreditCard />}
-                to={getSettingsPath(SettingsPath.Billing)}
-              >
-                {keepPlanLabel}
-              </NavigationButton>
-            ) : (
-              <NavigationButton
-                size="sm"
-                fullWidth
-                to={AppPath.GettingStarted}
-              >{t`Continue setup`}</NavigationButton>
-            )}
+            <StyledButtonLayer>
+              {canKeepPlan ? (
+                <NavigationButton
+                  size="sm"
+                  fullWidth
+                  startIcon={<IconCreditCard />}
+                  to={getSettingsPath(SettingsPath.Billing)}
+                >
+                  {keepPlanLabel}
+                </NavigationButton>
+              ) : (
+                <NavigationButton
+                  size="sm"
+                  fullWidth
+                  to={AppPath.GettingStarted}
+                >{t`Continue setup`}</NavigationButton>
+              )}
+            </StyledButtonLayer>
           </StyledCardBody>
         </Card.Root>
+        {!isGettingStartedPageOpen && (
+          <StyledCardLink
+            to={AppPath.GettingStarted}
+            aria-label={t`Open Getting started`}
+          />
+        )}
       </StyledContainer>
     </NavigationDrawerSection>
   );
