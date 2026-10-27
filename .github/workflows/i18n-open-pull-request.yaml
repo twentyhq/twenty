@@ -46,7 +46,8 @@ jobs:
           BRANCH: ${{ inputs.branch }}
           TITLE: ${{ inputs.title }}
         run: |
-          if [ "$(gh pr list --head "$BRANCH" --base main --state open --json number --jq length)" = 0 ]; then
+          OPEN_PRS=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq length)
+          if [ "$OPEN_PRS" = 0 ]; then
             gh pr create -B main -H "$BRANCH" --title "$TITLE" --body 'Created by Github action'
           fi
 
