@@ -63,12 +63,17 @@ export const SettingsAccounts = () => {
     >
       <SettingsAccountsMessageChannelsSSEEffect />
       <SettingsPageContainer>
-        {!isAppPreferencesEnabled ? (
-          <SettingsAccountsLegacySections />
-        ) : activeTabId === SETTINGS_APP_PREFERENCES_TAB_IDS.ACCOUNTS ? (
-          <SettingsAppPreferencesAccountsTab />
+        {isAppPreferencesEnabled ? (
+          <>
+            {activeTabId === SETTINGS_APP_PREFERENCES_TAB_IDS.APPS && (
+              <SettingsAppPreferencesAppsSection />
+            )}
+            {activeTabId === SETTINGS_APP_PREFERENCES_TAB_IDS.ACCOUNTS && (
+              <SettingsAppPreferencesAccountsTab />
+            )}
+          </>
         ) : (
-          <SettingsAppPreferencesAppsSection />
+          <SettingsAccountsLegacySections />
         )}
       </SettingsPageContainer>
     </SettingsPageLayout>
