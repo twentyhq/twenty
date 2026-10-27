@@ -1,28 +1,68 @@
 ---
-title: المطورون
-description: أنشئ تطبيقات، استخدم واجهة برمجة التطبيقات، استضف ذاتياً، أو ساهم في قاعدة الشفرة.
+title: بناء على عشرين
+sidebarTitle: المطورون
+description: بناء تطبيقات في TypeScript، قم بتوصيل أدواتك من خلال API، واستضيف 20 بنفسك.
+hideFooterPagination: true
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3} className="documentation-card-group documentation-card-group--patterned">
+<LandingActions>
+  <LandingButton href="/ar/developers/extend/apps/getting-started/quick-start">ابني التطبيق الأول</LandingButton>
+  <LandingButton href="https://github.com/twentyhq/twenty" outlined>عرض على GitHub</LandingButton>
+</LandingActions>
+
+## لماذا البناء على عشرين
+
+معظم CRMs تعطي المطورين API وعدد قليل من الأماكن للتوصيل. العشرون يعطيك المنصة نفسها. إعلان الكائنات، الدوال على جانب الخادم، مكونات React وعناصر AI في TypeScript مع `twenty-sdk`، انظر إلى كل تغيير في المزامنة إلى خادم محلي عند الحفظ، وشحن مع CLI.
+
+* **إدارة مساحة العمل الخاصة بك مع الكود.** الكائنات والحقول ووجهات النظر وتصميمات الصفحات مباشرة كملفات TypeScript في المستودع الخاص بك، تم إصدارها ومراجعتها مثل أي تغيير آخر.
+* \*\*نفس الـ SDK كـ عشرين تطبيقا من تطبيقاتها. \* التطبيقات الساكنة والخطيسة والجرانولا مبنية مع `twenty-sdk`، لذا يمكنك البناء مع ما يستخدمه فريق ٢٠ بالضبط.
+* **قم بتوصيل الأشياء إلى النواة وليس الشريط الجانبي.** عناصرك تحصل على نفس الجداول والأذونات مثل الأشخاص والشركات. يمكن لتطبيقاتك جلب المحادثات إلى 20 رسالة، والكتابة لتسجيل الجداول الزمنية، وتعريف الوظائف لسير العمل ووكلاء الذكاء الذكي.
+* **لا يوجد سقف.** النواة مفتوحة المصدر ومستضافة ذاتيا. عندما تكون نقطة التمديد مفقودة، قم بتغيير عشرين أو ساهم بها مرة أخرى.
+* **آمنة للتجربة.** تطبيقات تعمل علبة رملة، وتلمس فقط البيانات التي يسمح بها دورها، سواء كتب فريقك أو وكيل AI الكود البرمجي.
+
+## استكشاف مستندات المطور
+
+بالإضافة إلى التطبيقات، فإن مستندات المطور تغطي API، الإستضافة الذاتية، المساهمة في العشرين ومكتبة واجهة المستخدم.
+
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/ar/developers/extend/apps/getting-started/quick-start" img="/images/documentation/banner-icons-v2/dev-apps.svg">
     <CardTitle>التطبيقات</CardTitle>
-    وسّع Twenty بكائنات مخصصة، ومنطق على جانب الخادم، ومكونات واجهة المستخدم، ووكلاء الذكاء الاصطناعي — جميعها كحزم TypeScript.
+    بناء الكائنات والمنطق والواجهات والوكلاء AI كتطبيقات TypeScript من البداية السريعة إلى النشر.
   </Card>
 
   <Card href="/ar/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
     <CardTitle>API</CardTitle>
-    واجهات برمجة تطبيقات REST وGraphQL، وخطافات الويب، وOAuth.
+    قراءة وكتابة السجلات عبر REST و GraphQL، والحصول على روابط ويب عند تغيير السجلات، وتوصيل التطبيقات مع OAuth.
   </Card>
 
   <Card href="/ar/developers/self-host/capabilities/docker-compose" img="/images/documentation/banner-icons-v2/dev-self-host.svg">
-    <CardTitle>الاستضافة الذاتية</CardTitle>
-    شغّل Twenty على البنية التحتية الخاصة بك.
+    <CardTitle>المضيف الذاتي</CardTitle>
+    تشغيل 20 على البنية التحتية الخاصة بك مع تكوينات Docker ، ثم آمنها وترقيتها.
   </Card>
 
   <Card href="/ar/developers/contribute/capabilities/local-setup" img="/images/documentation/banner-icons-v2/dev-contribute.svg">
-    <CardTitle>المساهمة</CardTitle>
-    قم بإعداد المستودع الأحادي محلياً وقدّم طلبات السحب.
+    <CardTitle>ساهم</CardTitle>
+    إعداد المونوريبو محليا والمساعدة في تحسين النواة المفتوحة المصدر.
+  </Card>
+
+  <Card href="/ar/ui/getting-started" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>مكتبة واجهة المستخدم</CardTitle>
+    عشرين من بدايات ومكونات وأيقونات ورموز الموضوع المفتوحة المصدر.
+  </Card>
+
+  <Card href="https://github.com/twentyhq/twenty" img="/images/user-guide/halftone/community-github.svg">
+    <CardTitle>GitHub</CardTitle>
+    تصفح الكود المصدري، والإبلاغ عن المشكلات ومتابعة الإصدارات .
+  </Card>
+
+  <Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+    <CardTitle>Discord</CardTitle>
+    طرح أسئلة ومشاركة ما تبنيه مع المجتمع العشرين.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="developers" />

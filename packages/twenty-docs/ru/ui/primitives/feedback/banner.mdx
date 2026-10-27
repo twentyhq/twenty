@@ -1,0 +1,109 @@
+---
+title: Баннер
+description: Содержимое обратной связи с независимыми статусом, внешним видом и палитрой.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import BannerReference from '/snippets/ui/generated/feedback/banner.mdx';
+
+## Обзор
+
+`Banner` размещает содержимое, переданное вызывающей стороной, необязательный узел `icon` и необязательный узел `action`. `status` описывает значение обратной связи: `neutral`, `info`, `success`, `warning` или `error`. `variant` выбирает внешний вид `solid` или `soft`. Явно заданный `color` переопределяет палитру статуса, не меняя его значения.
+
+По умолчанию используются `status="info"` и `variant="solid"`. Палитры статусов по умолчанию: серая, синяя, зелёная, оранжевая и красная соответственно.
+
+<StoryEmbed storyId="ui-feedback-banner--display" title="Пример баннера" height={130} />
+
+## Использование
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const SyncBanner = () => (
+  <Banner status="info" variant="solid">
+    Contact sync is temporarily paused. Your saved records remain available.
+  </Banner>
+);
+```
+
+## Действия и внешний вид
+
+<StoryEmbed storyId="ui-feedback-banner--catalog" title="Палитры и варианты баннера обратной связи" height={560} />
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+import { IconInfoCircle } from 'twenty-ui/icon';
+
+export const SyncBanner = ({ onRetry }: { onRetry: () => void }) => (
+  <Banner
+    status="error"
+    variant="soft"
+    color="blue"
+    icon={<IconInfoCircle aria-hidden="true" />}
+    action={<Banner.Action onClick={onRetry}>Retry sync</Banner.Action>}
+  >
+    Contact sync could not finish.
+  </Banner>
+);
+```
+
+`Banner.Action` предоставляет небольшую контурную кнопку, которая наследует отображаемый цвет баннера, включая явные переопределения палитры и варианты `solid`. Поддерживаются взаимодействия Button, ссылки, refs и пользовательский рендеринг. Слот `action` также принимает произвольные элементы управления.
+
+Целевой корневой элемент — `div`. Нативные атрибуты, обработчики событий, `className`, `style` и `ref` применяются к этому корневому элементу. `render` принимает элемент Base UI или функцию обратного вызова; функция обратного вызова получает нативные props и ref, а также определённое состояние `status`, `variant` и `color`. Сохраняйте переданные props и ref при компоновке другого элемента.
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const SyncResult = () => (
+  <Banner
+    status="success"
+    variant="soft"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    render={<section aria-label="Sync result" />}
+  >
+    Contacts are up to date.
+  </Banner>
+);
+```
+
+Статус не назначает автоматически `role`, `aria-live` или объявления. Выбирайте их на стороне вызывающего кода, когда обновления должны объявляться. Указывайте доступные имена для элементов управления и помечайте декоративные узлы значков с помощью `aria-hidden`. Вызывающая сторона управляет видимостью и закрытием.
+
+## Закрытие
+
+Передайте `onDismiss`, чтобы показать прозрачную кнопку закрытия размером 24 px в логическом конце строки. Элемент управления наследует цвет баннера и имеет `type="button"`. `closeLabel` по умолчанию имеет значение `Close`; укажите локализованный текст в вашем приложении. Сбалансированные интервалы по горизонтали не дают центрированному содержимому и действиям перекрывать элемент управления.
+
+Вызывающая сторона управляет видимостью. При активации элемента управления закрытием вызывается `onDismiss`, а баннер остаётся смонтированным, пока вызывающая сторона не обновит состояние. Другие действия остаются в слоте `action`.
+
+```tsx
+import { useState } from 'react';
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const DismissibleSyncBanner = () => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  return isVisible ? (
+    <Banner
+      onDismiss={() => setIsVisible(false)}
+      closeLabel="Dismiss sync message"
+    >
+      Contacts are syncing in the background.
+    </Banner>
+  ) : null;
+};
+```
+
+<StoryEmbed storyId="ui-feedback-banner--dismissible" title="Закрываемый баннер" height={160} />
+
+## Миграция
+
+Замените `variant="primary"` на `variant="solid"`, а `variant="secondary"` — на `variant="soft"`. Замените `color="danger"` на `status="error"` или на `color="red"`, если нужно изменить только палитру. Для синих информационных баннеров можно использовать `status="info"`.
+
+## Свойства
+
+<BannerReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

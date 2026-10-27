@@ -1,0 +1,57 @@
+---
+title: AnimatedIconCrossfade
+description: Tranziție graduală între două pictograme pe măsură ce se schimbă starea aplicației.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AnimatedIconCrossfadeReference from '/snippets/ui/generated/components/layout/animated-icon-crossfade.mdx';
+
+## Prezentare generală
+
+`AnimatedIconCrossfade` realizează o tranziție încrucișată între conținutul nodurilor `activeIcon` și `inactiveIcon` în funcție de `isActive`. Nu gestionează acțiunea sau starea. Compune-l în interiorul unui [Buton](/ro/ui/primitives/input/button) etichetat.
+
+<StoryEmbed storyId="ui-components-layout-animatediconcrossfade--display" title="Exemplu AnimatedIconCrossfade" height={100} />
+
+## Utilizare
+
+```tsx
+import { useState } from 'react';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
+import { IconPencil, IconX } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const EditToggle = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <Button
+      size="sm"
+      aria-expanded={isEditing}
+      onClick={() => setIsEditing(!isEditing)}
+      startIcon={
+        <AnimatedIconCrossfade
+          isActive={isEditing}
+          activeIcon={<IconX size={14} />}
+          inactiveIcon={<IconPencil size={14} />}
+        />
+      }
+    >
+      Edit actions
+    </Button>
+  );
+};
+```
+
+Ambele noduri rămân montate pe măsură ce `isActive` se modifică, păstrându-și starea locală. Straturile animează opacitatea și scalarea și dezactivează tranzițiile pentru mișcare redusă. Ambele straturi sunt decorative; păstrați numele accesibil al acțiunii pe controlul înconjurător. Pentru o imagine independentă etichetată, setați `role="img"` și `aria-label` pe rădăcină.
+
+Atributele native, evenimentele, `className`, `style` și `ref` vizează un span inline, care poate fi plasat într-un buton. `render` înlocuiește acea țintă prin compoziția Base UI. Dimensiunile rădăcinii folosesc implicit tokenul de temă pentru pictograme mici. Dimensionați explicit fiecare nod de pictogramă și utilizați stilurile de lățime și înălțime ale rădăcinii pentru ilustrații mai mari.
+
+Înlocuiți constructorii `ActiveIcon` și `InactiveIcon` cu nodurile `activeIcon` și `inactiveIcon` scrise cu litere mici. Mutați fosta opțiune `size` în dimensiunile nodului și în stilurile rădăcinii.
+
+## Proprietăți
+
+<AnimatedIconCrossfadeReference />
+
+<PageBanner illustration="card-page-sync-recovery" />

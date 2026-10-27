@@ -76,7 +76,7 @@ msgstr "{0} は 1 対多のリレーションフィールドでなければな�
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
 msgid "{action} is disabled on object {0}"
-msgstr ""
+msgstr "{action} はオブジェクト {0} で無効になっています。"
 
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -152,18 +152,18 @@ msgstr "キャンペーンはまだ送信中です。この送信者を削除す
 #. js-lingui-id: kZaUc+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
 msgid "A channel named \"{name}\" already exists"
-msgstr ""
+msgstr "「{name}」という名前のチャネルはすでに存在します"
 
 #. js-lingui-id: y84xpa
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "A channel needs a name."
-msgstr ""
+msgstr "チャネルには名前が必要です。"
 
 #. js-lingui-id: 3bCT2z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
 msgid "A channel with this name already exists."
-msgstr ""
+msgstr "この名前のチャネルはすでに存在します。"
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -263,12 +263,12 @@ msgstr "メッセージスレッドのターゲット"
 #. js-lingui-id: oP9K0J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "A messaging provider with this name already exists for this application"
-msgstr ""
+msgstr "このアプリケーションには、この名前のメッセージングプロバイダーがすでに存在します"
 
 #. js-lingui-id: eynBqK
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "A messaging provider with this name already exists for this application."
-msgstr ""
+msgstr "このアプリケーションには、この名前のメッセージングプロバイダーがすでに存在します。"
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -464,7 +464,7 @@ msgstr "このメールアドレスを持つユーザーはすでに存在しま
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type"
-msgstr ""
+msgstr "AGENT_CHAT_CHANNEL タイプには有効な agentChatChannelUniversalIdentifier が必要です"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -1090,7 +1090,7 @@ msgstr "エクスポートフィールドは利用できなくなりました。
 #. js-lingui-id: zv+Pcr
 #: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 msgid "An export is already running for this workspace."
-msgstr ""
+msgstr "このワークスペースではすでにエクスポートが実行中です。"
 
 #. js-lingui-id: jiELc8
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -1116,6 +1116,17 @@ msgstr "暗号化されたデータの処理中に内部エラーが発生しま
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."
 msgstr "このメールアドレスには既に招待が送信されています。"
+
+#. js-lingui-id: BCJWBj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "An MCP server with this name already exists"
+msgstr "この名前のMCPサーバーはすでに存在します"
+
+#. js-lingui-id: SeiYVM
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "An MCP server with this name already exists."
+msgstr "この名前のMCPサーバーはすでに存在します。"
 
 #. js-lingui-id: CQ5DXU
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -2590,13 +2601,13 @@ msgstr "ログ保持期間を変更するには Organization サブスクリプ�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel"
-msgstr ""
+msgstr "チャネル"
 
 #. js-lingui-id: gPIeS4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel archived at"
-msgstr ""
+msgstr "チャネルのアーカイブ日時"
 
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -2613,14 +2624,14 @@ msgstr "チャンネルID"
 #. js-lingui-id: G+8qH5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel name is required"
-msgstr ""
+msgstr "チャネル名が必要です"
 
 #. js-lingui-id: Nd2xnP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel not found"
-msgstr ""
+msgstr "チャネルが見つかりません"
 
 #. js-lingui-id: ZJRMDQ
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2628,30 +2639,30 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel not found."
-msgstr ""
+msgstr "チャネルが見つかりません。"
 
 #. js-lingui-id: /84Bpj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "Channel role link not found"
-msgstr ""
+msgstr "チャネルロールのリンクが見つかりません"
 
 #. js-lingui-id: 86oa9B
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel snoozed until"
-msgstr ""
+msgstr "チャネルのスヌーズ終了日時"
 
 #. js-lingui-id: ieLfO5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Channel the thread is triaged in"
-msgstr ""
+msgstr "スレッドがトリアージされているチャネル"
 
 #. js-lingui-id: 7LMBzP
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Channels are not available yet. Try again in a few minutes."
-msgstr ""
+msgstr "チャネルはまだ利用できません。数分後にもう一度お試しください。"
 
 #. js-lingui-id: z851aK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -3156,7 +3167,7 @@ msgstr "接続が見つかりません."
 #. placeholder {0}: flatMessagingProvider.connectionProviderUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Connection provider \"{0}\" was not found in this application"
-msgstr ""
+msgstr "このアプリケーションに接続プロバイダー「{0}」が見つかりませんでした"
 
 #. js-lingui-id: xQ2DfP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3179,11 +3190,14 @@ msgstr "接続プロバイダー名は必須です"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Connection provider not found"
 msgstr "接続プロバイダーが見つかりません。"
 
 #. js-lingui-id: b+xWjq
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connection provider not found."
 msgstr "接続プロバイダーが見つかりません。"
 
@@ -3200,22 +3214,22 @@ msgstr "接続プロバイダーのスコープ \"{scope}\" は無効です"
 #. js-lingui-id: lOJLh7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider scope cannot be changed"
-msgstr ""
+msgstr "接続プロバイダーのスコープは変更できません"
 
 #. js-lingui-id: rGTdmC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider scope cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
-msgstr ""
+msgstr "接続プロバイダーのスコープは作成後に変更できません。新しい universalIdentifier を使用して新しい接続プロバイダーを宣言してください"
 
 #. js-lingui-id: ouURJJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider type cannot be changed"
-msgstr ""
+msgstr "接続プロバイダーのタイプは変更できません"
 
 #. js-lingui-id: Y4TItr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider type cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
-msgstr ""
+msgstr "接続プロバイダーのタイプは作成後に変更できません。新しい universalIdentifier を使用して新しい接続プロバイダーを宣言してください"
 
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
@@ -3226,7 +3240,7 @@ msgstr "このアプリケーションには、名前 {0} の接続プロバイ�
 #. js-lingui-id: pXXjt2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
-msgstr ""
+msgstr "タイプが 'custom' の接続プロバイダーは、authorize および callback ロジック関数を参照する必要があります"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3741,7 +3755,7 @@ msgstr "カスタムコマンドメニュー項目はデフォルトにリセッ
 #. js-lingui-id: eCtxAR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Custom connection provider is missing its authorize or callback logic function"
-msgstr ""
+msgstr "カスタム接続プロバイダーに authorize または callback ロジック関数がありません"
 
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -4310,12 +4324,12 @@ msgstr "方向"
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Disabled object permission actions must be a list"
-msgstr ""
+msgstr "無効化されたオブジェクト権限アクションはリストである必要があります"
 
 #. js-lingui-id: EtelV5
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Disabled object permission actions must not repeat"
-msgstr ""
+msgstr "無効化されたオブジェクト権限アクションを重複させることはできません"
 
 #. js-lingui-id: T/2cxH
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4328,6 +4342,17 @@ msgstr "下書きを破棄"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Discard Draft"
 msgstr "下書きを破棄"
+
+#. js-lingui-id: OaH7rc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Disconnect the MCP server before changing its URL"
+msgstr "URLを変更する前にMCPサーバーを切断してください"
+
+#. js-lingui-id: X9u5qJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Disconnect the MCP server before changing its URL."
+msgstr "URLを変更する前にMCPサーバーを切断してください。"
 
 #. js-lingui-id: N4sZ6H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6763,6 +6788,31 @@ msgstr "無効な制限パラメータです。"
 msgid "Invalid logic function input."
 msgstr "ロジック関数の入力が無効です。"
 
+#. js-lingui-id: U2TpWH
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server input."
+msgstr "無効なMCPサーバー入力です。"
+
+#. js-lingui-id: PTN/J2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server name provided"
+msgstr "無効なMCPサーバー名が指定されました"
+
+#. js-lingui-id: 945sNP
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server name. Use lowercase letters, digits and underscores, starting with a letter."
+msgstr "無効なMCPサーバー名です。先頭は小文字で始め、小文字、数字、アンダースコアを使用してください。"
+
+#. js-lingui-id: 1pdxfJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server URL provided"
+msgstr "無効なMCPサーバーURLが指定されました"
+
+#. js-lingui-id: YDqREm
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server URL. Please provide a valid HTTP or HTTPS URL."
+msgstr "無効なMCPサーバーURLです。有効なHTTPまたはHTTPS URLを指定してください。"
+
 #. js-lingui-id: fNaXqL
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Invalid message channel input."
@@ -6776,7 +6826,7 @@ msgstr "無効なメッセージフォルダー入力です。"
 #. js-lingui-id: u3ER6+
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "Invalid messaging provider input."
-msgstr ""
+msgstr "無効なメッセージングプロバイダー入力です。"
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -7520,6 +7570,8 @@ msgstr "ラベル識別子ビュー項目は表示されている必要があり
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Label is required"
 msgstr "ラベルが必要です"
 
@@ -7998,6 +8050,17 @@ msgstr "maxNumberOfValues は設定で定義され、0 より大きく、{FILES_
 msgid "May"
 msgstr "5月"
 
+#. js-lingui-id: ES19km
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "MCP server not found"
+msgstr "MCPサーバーが見つかりません"
+
+#. js-lingui-id: 32QmfJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "MCP server not found."
+msgstr "MCPサーバーが見つかりません。"
+
 #. js-lingui-id: DICk6O
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -8446,28 +8509,28 @@ msgstr "このキャンペーンの一部として送信されたメッセージ
 #. js-lingui-id: DR7S+J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider connection provider cannot be changed"
-msgstr ""
+msgstr "メッセージングプロバイダーの接続プロバイダーは変更できません"
 
 #. js-lingui-id: S8RYm2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
-msgstr ""
+msgstr "メッセージングプロバイダーの接続プロバイダーは作成後に変更できません。新しい universalIdentifier を使用して新しいメッセージングプロバイダーを宣言してください"
 
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
-msgstr ""
+msgstr "メッセージングプロバイダーの表示名は必須です"
 
 #. js-lingui-id: PheN1+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider displayName is required"
-msgstr ""
+msgstr "メッセージングプロバイダーの displayName は必須です"
 
 #. js-lingui-id: NpU0GW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider name is required"
-msgstr ""
+msgstr "メッセージングプロバイダー名は必須です"
 
 #. js-lingui-id: kh1zio
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -8475,17 +8538,17 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider not found"
-msgstr ""
+msgstr "メッセージングプロバイダーが見つかりません"
 
 #. js-lingui-id: yyDEl+
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "Messaging provider not found."
-msgstr ""
+msgstr "メッセージングプロバイダーが見つかりません。"
 
 #. js-lingui-id: Ih/vm6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider with name {name} already exists for this application"
-msgstr ""
+msgstr "このアプリケーションには、名前 {name} のメッセージングプロバイダーがすでに存在します"
 
 #. js-lingui-id: IYFsjL
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -8582,7 +8645,7 @@ msgstr "モーフリレーションフィールドにはモーフIDが必要で�
 #. js-lingui-id: /eQ78F
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Move this channel's chats to another channel before deleting it."
-msgstr ""
+msgstr "削除する前に、このチャネルのチャットを別のチャネルに移動してください。"
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -8643,7 +8706,7 @@ msgstr "名前がラベルと同期していません。"
 #. js-lingui-id: QrBCC2
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "Name is not valid: it must be camelCase, e.g. \"{camelCasedName}\""
-msgstr ""
+msgstr "名前が無効です。\"{camelCasedName}\" のように camelCase である必要があります"
 
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
@@ -9336,7 +9399,7 @@ msgstr "選択されたフィールドのうち 1 つが、このオブジェク
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "One of these roles no longer exists."
-msgstr ""
+msgstr "これらのロールのいずれかは存在しなくなりました。"
 
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -9423,13 +9486,13 @@ msgstr "このフォームの値のみ変更できます。"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Open chat"
-msgstr ""
+msgstr "チャットを開く"
 
 #. js-lingui-id: 4QVn1g
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Open chat"
-msgstr ""
+msgstr "チャットを開く"
 
 #. js-lingui-id: +ee5JG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10144,7 +10207,7 @@ msgstr "\"{0}\" の特定のサブフィールドを選択してください。�
 #. js-lingui-id: r+tlvn
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Pick another channel to move the chats to."
-msgstr ""
+msgstr "チャットの移動先となる別のチャネルを選択してください。"
 
 #. js-lingui-id: TtfDdb
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
@@ -10183,6 +10246,7 @@ msgid "Please provide a password for this connection."
 msgstr "この接続用のパスワードを入力してください。"
 
 #. js-lingui-id: NR22yi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Please provide a valid HTTP or HTTPS URL"
@@ -10386,7 +10450,7 @@ msgstr "プロンプトは空にできません"
 #. js-lingui-id: KQ0Ots
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service.ts
 msgid "Property {property} cannot be updated"
-msgstr ""
+msgstr "プロパティ {property} は更新できません"
 
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -11608,7 +11672,7 @@ msgstr "メールを送信"
 #. js-lingui-id: RPQott
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Send message logic function \"{sendMessageLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "メッセージ送信ロジック関数「{sendMessageLogicFunctionUniversalIdentifier}」がこのアプリケーションに見つかりませんでした"
 
 #. js-lingui-id: +dLR8z
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12163,7 +12227,7 @@ msgstr "標準エージェントは変更できません。"
 #. js-lingui-id: rQq8lH
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Standard channels cannot be deleted."
-msgstr ""
+msgstr "標準チャネルは削除できません。"
 
 #. js-lingui-id: Ptv+nG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -12863,10 +12927,25 @@ msgstr "その会社の年間売上高合計"
 msgid "The connected {0} account is missing calendar permissions ({missingScopeList}). Please reconnect the account to grant calendar access."
 msgstr "接続済みの{0}アカウントにカレンダー権限（{missingScopeList}）がありません。カレンダーへのアクセスを許可するには、アカウントを再接続してください。"
 
+#. js-lingui-id: xYqYn7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider belongs to another application"
+msgstr "接続プロバイダーは別のアプリケーションに属しています"
+
+#. js-lingui-id: 0kfc9m
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider must belong to the same application as the MCP server"
+msgstr "接続プロバイダーはMCPサーバーと同じアプリケーションに属している必要があります"
+
+#. js-lingui-id: x9rG77
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The connection provider must belong to the same application as the MCP server."
+msgstr "接続プロバイダーはMCPサーバーと同じアプリケーションに属している必要があります。"
+
 #. js-lingui-id: fDWKx/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The connection provider this messaging provider uses was not found in its application."
-msgstr ""
+msgstr "このメッセージングプロバイダーが使用する接続プロバイダーが、そのアプリケーションに見つかりませんでした。"
 
 #. js-lingui-id: j6q6l+
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -12975,7 +13054,7 @@ msgstr "エクスポートファイルが大きすぎます。エクスポート
 #. js-lingui-id: bjRiGF
 #: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 msgid "The export is missing data and could not be completed."
-msgstr ""
+msgstr "エクスポートにデータが不足しているため、完了できませんでした。"
 
 #. js-lingui-id: RKP94c
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -13083,7 +13162,7 @@ msgstr "このキャンペーンが送信されたリスト"
 #. js-lingui-id: pSAncm
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that completes the connection was not found."
-msgstr ""
+msgstr "接続を完了するロジック関数が見つかりませんでした。"
 
 #. js-lingui-id: gU/AgL
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13093,12 +13172,12 @@ msgstr "接続済みアカウントを識別するロジック関数が見つか
 #. js-lingui-id: 8gf2aA
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that starts the connection was not found."
-msgstr ""
+msgstr "接続を開始するロジック関数が見つかりませんでした。"
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider sends with was not found in its application."
-msgstr ""
+msgstr "このメッセージングプロバイダーが送信に使用するロジック関数が、そのアプリケーションに見つかりませんでした。"
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13414,12 +13493,12 @@ msgstr "ワークフローのスケジュールが無効です。"
 #. js-lingui-id: /s75Zz
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
 msgid "The workflow select field must reference a field of the same type."
-msgstr ""
+msgstr "ワークフローの選択フィールドは、同じタイプのフィールドを参照する必要があります。"
 
 #. js-lingui-id: 8xdW5z
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
 msgid "The workflow select field must reference an existing field."
-msgstr ""
+msgstr "ワークフローの選択フィールドは、既存のフィールドを参照する必要があります。"
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -13660,27 +13739,27 @@ msgstr "この変更によりワークフローが破損するため、保存さ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This channel access no longer exists."
-msgstr ""
+msgstr "このチャネルアクセスは存在しなくなりました。"
 
 #. js-lingui-id: ++E+5T
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This channel is being changed. Try again in a moment."
-msgstr ""
+msgstr "このチャネルは変更中です。しばらくしてからもう一度お試しください。"
 
 #. js-lingui-id: /mdJSV
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This chat has no owner, so it has to stay in a channel."
-msgstr ""
+msgstr "このチャットには所有者がいないため、チャネルに残す必要があります。"
 
 #. js-lingui-id: 6zaKtA
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This chat is not in a channel."
-msgstr ""
+msgstr "このチャットはチャネルにありません。"
 
 #. js-lingui-id: TjTe43
 #: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
 msgid "This code belongs to a published workflow version. Edit it from a draft."
-msgstr ""
+msgstr "このコードは公開済みワークフローバージョンに属しています。下書きから編集してください。"
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -13882,7 +13961,7 @@ msgstr "編集中にこの上限が変更されました。再読み込みして
 #. js-lingui-id: STVycN
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This list of chats could not be loaded. Try again."
-msgstr ""
+msgstr "このチャットのリストを読み込めませんでした。もう一度お試しください。"
 
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
@@ -13912,7 +13991,7 @@ msgstr "このメンバーは二要素認証を設定していないため、復
 #. js-lingui-id: NW6Nmf
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
-msgstr ""
+msgstr "このメッセージチャネルはメッセージを送信できません。"
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -14002,7 +14081,7 @@ msgstr "この権限はそのロールにすでに設定されています。"
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
 msgid "This permission is disabled on the object and cannot be granted"
-msgstr ""
+msgstr "この権限はオブジェクトで無効化されているため、付与できません"
 
 #. js-lingui-id: wJWFt2
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -14062,12 +14141,12 @@ msgstr "このリクエストはまだ準備中です。しばらくしてから
 #. js-lingui-id: T6c4z3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This role already has access to the channel"
-msgstr ""
+msgstr "このロールはすでにチャネルにアクセスできます"
 
 #. js-lingui-id: ce6Oq+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This role already has access to the channel."
-msgstr ""
+msgstr "このロールはすでにチャネルにアクセスできます。"
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -14874,7 +14953,7 @@ msgstr "不明"
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Unknown disabled object permission action"
-msgstr ""
+msgstr "不明な無効化されたオブジェクト権限アクション"
 
 #. js-lingui-id: of4ZuG
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -15170,6 +15249,11 @@ msgstr "通話や会議の前、およびユーザーが「誰と話している
 msgctxt "skill.description"
 msgid "Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes"
 msgstr "統計、グラフ画像、アップロードされたファイルの解析など、レコードツールでは表現できないデータに対するPython処理に使用します。通常のレコードの読み取りや書き込みには使用しないでください"
+
+#. js-lingui-id: cW4z4t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Use lowercase letters, digits and underscores, starting with a letter"
+msgstr "先頭は小文字で、小文字、数字、アンダースコアを使用してください"
 
 #. js-lingui-id: Gltw+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -15895,7 +15979,7 @@ msgstr "データベースに一時的な問題が発生しています。しば
 #. js-lingui-id: 1QdT9i
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not complete the connection. Please try again."
-msgstr ""
+msgstr "接続を完了できませんでした。もう一度お試しください。"
 
 #. js-lingui-id: SO+/3j
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -15905,12 +15989,12 @@ msgstr "承認したアカウントを特定できませんでした。もう一
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not send your message. Please try again."
-msgstr ""
+msgstr "メッセージを送信できませんでした。もう一度お試しください。"
 
 #. js-lingui-id: j7daTn
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
-msgstr ""
+msgstr "接続を開始できませんでした。もう一度お試しください。"
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -16007,7 +16091,7 @@ msgstr "スヌーズしたスレッドが受信トレイに戻る日時"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "When a thread snoozed in its channel comes back to it"
-msgstr ""
+msgstr "チャネルでスヌーズされたスレッドがチャネルに戻る日時"
 
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -16043,7 +16127,7 @@ msgstr "スレッドが作成された、または最後にメッセージを受
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "When the thread was marked as done or snoozed in its channel"
-msgstr ""
+msgstr "スレッドがチャネル内で完了とマークされた、またはスヌーズされた日時"
 
 #. js-lingui-id: Kx3ltI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -17149,7 +17233,7 @@ msgstr "請求サブスクリプションが破損しています。サポート
 #. js-lingui-id: L8/bmN
 #: src/modules/emailing/utils/build-campaign-send-refusal-exception.util.ts
 msgid "Your daily limit is {limitValue, plural, one {# email} other {# emails}}, and this campaign would go over what's left today. Contact us to raise it."
-msgstr ""
+msgstr "日ごとの上限は {limitValue, plural, other {# 通のメール}} で、このキャンペーンを送信すると本日の残りの上限を超えます。上限を引き上げるにはお問い合わせください。"
 
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

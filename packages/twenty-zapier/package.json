@@ -17,7 +17,7 @@
     "dotenv": "^16.4.5",
     "libphonenumber-js": "^1.10.26",
     "zapier-platform-core": "19.0.0",
-    "zod": "^4.1.11"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

@@ -224,7 +224,7 @@ msgstr "{0, plural, one {# զրույց} other {# զրույց}}"
 #. placeholder {0}: emails.length
 #: src/modules/ai/components/AiChatApprovalEmailConfirmation.tsx
 msgid "{0, plural, one {# email selected · 0 emails skipped} other {# emails selected · 0 emails skipped}}"
-msgstr ""
+msgstr "{0, plural, one {# նամակ ընտրված է · 0 նամակ բաց է թողնված} other {# նամակ ընտրված է · 0 նամակ բաց է թողնված}}"
 
 #. js-lingui-id: XHO5F1
 #. placeholder {0}: failedResults.length
@@ -390,11 +390,17 @@ msgstr "{0} դասավորության խմբագրում"
 msgid "{0} MB"
 msgstr "{0} ՄԲ"
 
-#. js-lingui-id: mmjR0w
+#. js-lingui-id: gx/V/r
 #. placeholder {0}: formatNumber(objectCount)
-#. placeholder {1}: formatNumber(fieldCount)
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
-msgid "{0} objects, {1} fields"
+msgid "{0} objects"
+msgstr ""
+
+#. js-lingui-id: Z70Dyr
+#. placeholder {0}: formatNumber(objectCount)
+#. placeholder {1}: formatNumber(recordCount)
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
+msgid "{0} objects, {1} records"
 msgstr ""
 
 #. js-lingui-id: FGOUAP
@@ -438,7 +444,7 @@ msgstr "{0} ընտրված"
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "{0} selected · {1} skipped"
-msgstr ""
+msgstr "{0} ընտրված · {1} բաց է թողնված"
 
 #. js-lingui-id: peiknr
 #. placeholder {0}: activeFilterLabels.length
@@ -617,7 +623,7 @@ msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} ժամ} 
 #. js-lingui-id: g0wkzt
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
-msgstr ""
+msgstr "{cardCount, plural, one {Հաստատե՞լ # գործողությունը։} other {Հաստատե՞լ # գործողությունները։}})"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -657,12 +663,12 @@ msgstr "{creditsReward, plural, one {{label}, ստացեք {formattedCreditsRewa
 #. js-lingui-id: hldPZo
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringCreditsSection.tsx
 msgid "{creditsUsedLabel} credits by operation type in this period"
-msgstr ""
+msgstr "Այս ժամանակահատվածում {creditsUsedLabel} կրեդիտ՝ ըստ գործողության տեսակի"
 
 #. js-lingui-id: XKF61U
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringCreditsSection.tsx
 msgid "{creditsUsedLabel} credits by operation type, across every install in this period"
-msgstr ""
+msgstr "Այս ժամանակահատվածում {creditsUsedLabel} կրեդիտ՝ ըստ գործողության տեսակի, բոլոր տեղադրումներում"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -735,7 +741,7 @@ msgstr "{formattedCreatedRecordsProgress} / {formattedRecordsToImportCount} գր
 #. js-lingui-id: jkORJY
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "{formattedFailedRunCount} of {formattedRunCount} runs failed"
-msgstr ""
+msgstr "{formattedRunCount} գործարկումից {formattedFailedRunCount}-ը ձախողվել է"
 
 #. js-lingui-id: EjjpWm
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -918,7 +924,7 @@ msgstr "{objectLabelSingular}-ը թարմացումից առաջ"
 #. js-lingui-id: Jg9QRh
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 msgid "{p95DurationInMs} ms"
-msgstr ""
+msgstr "{p95DurationInMs} մվ"
 
 #. js-lingui-id: dKtfA2
 #: src/modules/ai/components/AiChatParticipantMentionBar.tsx
@@ -933,12 +939,12 @@ msgstr "{participantLabels}-ը կավելացվեն որպես մասնակից�
 #. js-lingui-id: jCjuhm
 #: src/modules/ai/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} are typing…"
-msgstr ""
+msgstr "{participantNames}-ը մուտքագրում են…"
 
 #. js-lingui-id: E0CZYQ
 #: src/modules/ai/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} is typing…"
-msgstr ""
+msgstr "{participantNames}-ը մուտքագրում է…"
 
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -958,17 +964,17 @@ msgstr "{positionLabel} գրառումը առաջնահերթություն ու
 #. js-lingui-id: i2Rv/S
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 msgid "{positionLabel}: {name}"
-msgstr ""
+msgstr "{positionLabel}: {name}"
 
 #. js-lingui-id: tSROzD
 #: src/modules/ai/components/AiChatFormCardContent.tsx
 msgid "{prefilledCount} of {fieldCount} fields prefilled"
-msgstr ""
+msgstr "{fieldCount} դաշտից {prefilledCount}-ը նախապես լրացված է"
 
 #. js-lingui-id: LA2w8d
 #: src/modules/settings/applications/components/SettingsApplicationConnectionProviderSection.tsx
 msgid "{providerDisplayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection."
-msgstr ""
+msgstr "{providerDisplayName} OAuth-ը դեռևս չի կարգաբերվել ձեր սերվերի ադմինիստրատորի կողմից։ Նախքան դուք կարողանաք ավելացնել միացում՝ նրանք պետք է հավելվածի գրանցման մեջ լրացնեն OAuth client ID-ն և secret-ը։"
 
 #. js-lingui-id: 2V2T+0
 #. placeholder {0}: formatNumber(queuedCount)
@@ -985,12 +991,12 @@ msgstr "{queuedMessage}, բաց է թողնվում {skipReasons}"
 #. js-lingui-id: N7gP92
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 msgid "{remainingCount} more"
-msgstr ""
+msgstr "ևս {remainingCount}"
 
 #. js-lingui-id: uVxzex
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
-msgstr ""
+msgstr "{remainingDraftCount, plural, =0 {Այս սևագրից հետո այլ սևագրեր չկան} one {Այս սևագրից հետո ևս # սևագիր} other {Այս սևագրից հետո ևս # սևագիր}}"
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1056,12 +1062,12 @@ msgstr "{selectedCount, plural, one {Կրկին գործարկել {selectedCoun
 #. js-lingui-id: 1MJWid
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 msgid "{selectedCount} records selected · {skippedCount} records skipped"
-msgstr ""
+msgstr "Ընտրված է {selectedCount} գրառում · բաց է թողնվել {skippedCount} գրառում"
 
 #. js-lingui-id: saqVE2
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
 msgid "{selectedCount} selected"
-msgstr ""
+msgstr "{selectedCount} ընտրված"
 
 #. js-lingui-id: px4Svg
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -1265,28 +1271,28 @@ msgstr "~ {0} թոքեն"
 #. js-lingui-id: QSuM4t
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "≈ 10,000 workflow steps"
-msgstr ""
+msgstr "≈ 10,000 աշխատանքային հոսքի քայլ"
 
 #. js-lingui-id: tSb6yd
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "≈ 100 AI tasks/week"
-msgstr ""
+msgstr "≈ 100 ԱԲ առաջադրանք/շաբաթ"
 
 #. js-lingui-id: qjBGD6
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "≈ 40,000 workflow steps"
-msgstr ""
+msgstr "≈ 40,000 աշխատանքային հոսքի քայլ"
 
 #. js-lingui-id: 0OnWsh
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "≈ 50,000 workflow steps"
-msgstr ""
+msgstr "≈ 50,000 աշխատանքային հոսքի քայլ"
 
 #. js-lingui-id: bLGKEo
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "≈ 500 AI tasks/week"
-msgstr ""
+msgstr "≈ 500 ԱԲ առաջադրանք/շաբաթ"
 
 #. js-lingui-id: w++m8p
 #. placeholder {0}: formatNumber(tier.model.outputCostPerMillionTokens, { decimals: 2 })
@@ -1320,7 +1326,7 @@ msgstr "${price} մեկ օգտատիրոջ համար ամսական՝ տարե�
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "$1 per credit, from $20/month"
-msgstr ""
+msgstr "$1 մեկ կրեդիտի համար՝ սկսած $20/ամիս"
 
 #. js-lingui-id: Cx0xl3
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -1351,7 +1357,7 @@ msgstr "Միջինում 1 կրեդիտը բավարար է սրանցից մե�
 #. js-lingui-id: 6CSq+c
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "1 credit/user/month"
-msgstr ""
+msgstr "1 կրեդիտ/օգտվող/ամիս"
 
 #. js-lingui-id: 4pzLrc
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
@@ -1361,7 +1367,7 @@ msgstr "1 Օբյեկտ"
 #. js-lingui-id: 3kV0ez
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailChannelDomainStatusCell.tsx
 msgid "1 of 2 done"
-msgstr ""
+msgstr "2-ից 1-ն ավարտված է"
 
 #. js-lingui-id: lKmQeh
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -1482,7 +1488,7 @@ msgstr "30+"
 #. js-lingui-id: OEhEma
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "4 credits/user/month"
-msgstr ""
+msgstr "4 կրեդիտ/օգտվող/ամիս"
 
 #. js-lingui-id: oaKnWD
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -1493,7 +1499,7 @@ msgstr "418 Ես թեյնիկ եմ"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "5 credits/month"
-msgstr ""
+msgstr "5 կրեդիտ/ամիս"
 
 #. js-lingui-id: Z2TH0F
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -1788,7 +1794,7 @@ msgstr "Գործողություն սեղմման ժամանակ"
 #. js-lingui-id: pTIviA
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
 msgid "Action progress"
-msgstr ""
+msgstr "Գործողության ընթացք"
 
 #. js-lingui-id: muKPyT
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
@@ -1971,7 +1977,7 @@ msgstr "Նախ այս ընկերությանը ավելացրեք էլ. փոստ
 #. js-lingui-id: +mN79K
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Add a recipient before sending"
-msgstr ""
+msgstr "Ուղարկելուց առաջ ավելացրեք ստացող"
 
 #. js-lingui-id: YFSF0K
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
@@ -2102,12 +2108,12 @@ msgstr "Ավելացնել սյունակ"
 #. js-lingui-id: Khs0Op
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Add column left"
-msgstr ""
+msgstr "Ավելացնել սյունակ ձախում"
 
 #. js-lingui-id: vUgQaF
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Add column right"
-msgstr ""
+msgstr "Ավելացնել սյունակ աջում"
 
 #. js-lingui-id: 3iIvQg
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -2156,7 +2162,7 @@ msgstr "Ավելացնել մանրամասներ հյուրերի համար"
 #. js-lingui-id: 0+CYPj
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 msgid "Add Email"
-msgstr ""
+msgstr "Ավելացնել էլ․ նամակ"
 
 #. js-lingui-id: WT0Ie4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -2332,7 +2338,7 @@ msgstr "Ավելացնել վճարման մեթոդ"
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
 msgid "Add people or everyone"
-msgstr ""
+msgstr "Ավելացնել մարդկանց կամ բոլորին"
 
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -2343,7 +2349,7 @@ msgstr "Ավելացնել թույլտվություն"
 #. js-lingui-id: 7RdLYg
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
 msgid "Add Phone"
-msgstr ""
+msgstr "Ավելացնել հեռախոս"
 
 #. js-lingui-id: Cw27zP
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -2380,17 +2386,17 @@ msgstr "Ավելացնել ուղի"
 #. js-lingui-id: qZd/ph
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 msgid "Add row"
-msgstr ""
+msgstr "Ավելացնել տող"
 
 #. js-lingui-id: tT/bSk
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Add row above"
-msgstr ""
+msgstr "Ավելացնել տող վերևում"
 
 #. js-lingui-id: 6QCZMo
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Add row below"
-msgstr ""
+msgstr "Ավելացնել տող ներքևում"
 
 #. js-lingui-id: O8tK4v
 #: src/modules/object-core/filters/components/CoreObjectFilterAddRuleButton.tsx
@@ -2486,7 +2492,7 @@ msgstr "Ավելացնել սիրվածներին"
 #. js-lingui-id: pBsoKL
 #: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
 msgid "Add to favorites"
-msgstr ""
+msgstr "Ավելացնել սիրվածներին"
 
 #. js-lingui-id: A7duaz
 #: src/modules/side-panel/hooks/useOpenAddToMessageListInSidePanel.ts
@@ -2623,7 +2629,7 @@ msgstr "Հասցե 2"
 #: src/modules/object-record/record-form/components/RecordFormAddressFieldInput.tsx
 #: src/modules/ui/field/input/components/AddressInput.tsx
 msgid "Address details"
-msgstr ""
+msgstr "Հասցեի տվյալներ"
 
 #. js-lingui-id: 7wCciB
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -2640,7 +2646,7 @@ msgstr "Ադմին"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Admin & Member"
-msgstr ""
+msgstr "Ադմին և անդամ"
 
 #. js-lingui-id: SsHJsm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -2765,7 +2771,7 @@ msgstr "Մեկ տարի հետո"
 #. js-lingui-id: P3gmPX
 #: src/pages/auth/Authorize.tsx
 msgid "After you connect, you will be redirected to <0>{redirectHost}</0>"
-msgstr ""
+msgstr "Միանալուց հետո կվերաուղղորդվեք դեպի <0>{redirectHost}</0>"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -2898,7 +2904,7 @@ msgstr "AI կրեդիտներ"
 #. placeholder {0}: userCreditsUsage.daysUntilReset
 #: src/modules/ai/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
-msgstr ""
+msgstr "ԱԲ կրեդիտները կթարմացվեն {0, plural, one {# օրից} other {# օրից}}։"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -3093,7 +3099,7 @@ msgstr "Բոլոր կիրառությունները"
 #: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
 #: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
 msgid "All channels"
-msgstr ""
+msgstr "Բոլոր ալիքները"
 
 #. js-lingui-id: tZLcDK
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
@@ -3259,7 +3265,7 @@ msgstr "Աշխատատարածքի բոլոր անդամներն արդեն ու
 #. js-lingui-id: AWdiC+
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspaceSelect.tsx
 msgid "All workspaces"
-msgstr ""
+msgstr "Բոլոր աշխատանքային տարածքները"
 
 #. js-lingui-id: pPTmfc
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
@@ -3467,7 +3473,7 @@ msgstr "Տեղի ունեցավ սխալ։"
 #. js-lingui-id: CKXJCD
 #: src/modules/object-record/record-index/export/utils/getRecordExportFields.ts
 msgid "An export field is no longer available."
-msgstr ""
+msgstr "Արտահանման դաշտն այլևս հասանելի չէ։"
 
 #. js-lingui-id: RGEGJZ
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers.ts
@@ -3649,7 +3655,7 @@ msgstr "API-ի անուն (Եզակի)"
 #. js-lingui-id: DEd/H4
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
 msgid "API rate limit"
-msgstr ""
+msgstr "API արագության սահմանափակում"
 
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -3659,17 +3665,17 @@ msgstr "API հարցում"
 #. js-lingui-id: WmShEW
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "API requests"
-msgstr ""
+msgstr "API հարցումներ"
 
 #. js-lingui-id: tKuLk5
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "API requests rejected and trigger jobs skipped"
-msgstr ""
+msgstr "API հարցումները մերժվել են, իսկ գործարկող աշխատանքները՝ բաց թողնվել"
 
 #. js-lingui-id: T1wXO+
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "API requests rejected and trigger jobs skipped because the app hit a rate limit"
-msgstr ""
+msgstr "API հարցումները մերժվել են, իսկ գործարկող աշխատանքները բաց են թողնվել, քանի որ հավելվածը հասել է արագության սահմանափակման"
 
 #. js-lingui-id: Z3Brb2
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -3841,7 +3847,7 @@ msgstr "Կիրառել{progressText}"
 #. js-lingui-id: YLFgbC
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "Approval review"
-msgstr ""
+msgstr "Հաստատման վերանայում"
 
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
@@ -3851,7 +3857,7 @@ msgstr "Հաստատել"
 #. js-lingui-id: IkcmiN
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "Approve all {pendingCardCount}"
-msgstr ""
+msgstr "Հաստատել բոլոր {pendingCardCount}-ը"
 
 #. js-lingui-id: 7kb4LU
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -3896,7 +3902,7 @@ msgstr "Հավելվածներ"
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Apps preferences"
-msgstr ""
+msgstr "Հավելվածների նախընտրանքներ"
 
 #. js-lingui-id: aDW39c
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
@@ -4178,7 +4184,7 @@ msgstr "Տրվում է այն օգտվողներին, ովքեր միանում
 #. js-lingui-id: 7RNUhk
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 msgid "Assigned to you"
-msgstr ""
+msgstr "Ձեզ նշանակված"
 
 #. js-lingui-id: ojKCLU
 #: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
@@ -4316,7 +4322,7 @@ msgstr "Այս զրույցը կցվում է {objectLabel}-ին"
 #. js-lingui-id: MZLSHw
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "attachment"
-msgstr ""
+msgstr "կցված ֆայլ"
 
 #. js-lingui-id: w/Sphq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -4503,17 +4509,17 @@ msgstr "Մատչելիություն"
 #. js-lingui-id: C2F7IU
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Availability calendars"
-msgstr ""
+msgstr "Հասանելիության օրացույցներ"
 
 #. js-lingui-id: caqRwP
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
 msgid "Availability was not checked for {uncheckedAttendeeList}. You can still send an invite."
-msgstr ""
+msgstr "{uncheckedAttendeeList}-ի հասանելիությունը չի ստուգվել։ Դեռ կարող եք հրավեր ուղարկել։"
 
 #. js-lingui-id: bUNt5P
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "Available times"
-msgstr ""
+msgstr "Հասանելի ժամեր"
 
 #. js-lingui-id: kfcRb0
 #: src/modules/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon.tsx
@@ -4569,7 +4575,7 @@ msgstr "Վերադառնալ մուտքի արկղ"
 #. js-lingui-id: 5CWqLx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Back to operations"
-msgstr ""
+msgstr "Վերադառնալ գործառնություններին"
 
 #. js-lingui-id: 9aZHfH
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -4755,7 +4761,7 @@ msgstr "բլոկ"
 #. js-lingui-id: 0yXkwb
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Block of code"
-msgstr ""
+msgstr "Կոդի բլոկ"
 
 #. js-lingui-id: 6IhN7r
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -5132,12 +5138,12 @@ msgstr "Օրացույցի հաշիվներ"
 #. js-lingui-id: DZrVwO
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "Calendar availability could not be checked."
-msgstr ""
+msgstr "Չհաջողվեց ստուգել օրացույցի հասանելիությունը։"
 
 #. js-lingui-id: bRk+FR
 #: src/modules/activities/calendar/utils/getTimelineCalendarEventLabel.ts
 msgid "Calendar event"
-msgstr ""
+msgstr "Օրացույցի իրադարձություն"
 
 #. js-lingui-id: 6kmXOY
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
@@ -5381,7 +5387,7 @@ msgstr "Չեղարկել պատասխանելը"
 #. js-lingui-id: 624oKO
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Cancel switch"
-msgstr ""
+msgstr "Չեղարկել փոփոխությունը"
 
 #. js-lingui-id: N6gPiD
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
@@ -5461,7 +5467,7 @@ msgstr "Չի հնարավոր վերականգնել գրառումները առ
 #. js-lingui-id: V/7kWk
 #: src/modules/object-record/record-form/components/RecordFormFilesFieldInput.tsx
 msgid "Cannot upload more than {maxItemCount} files"
-msgstr ""
+msgstr "Չի կարելի վերբեռնել ավելի քան {maxItemCount} ֆայլեր"
 
 #. js-lingui-id: H1Ddy9
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
@@ -5559,13 +5565,13 @@ msgstr "Վկայագիրն անվավեր է"
 #. js-lingui-id: o+XJ9D
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 msgid "Change"
-msgstr ""
+msgstr "Փոխել"
 
 #. js-lingui-id: Ki4LtI
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Change assignee"
-msgstr ""
+msgstr "Փոխել պատասխանատուին"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -5601,7 +5607,7 @@ msgstr "Փոխել գաղտնաբառը"
 #. js-lingui-id: 98W3AT
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 msgid "Change status in {scopeLabel}"
-msgstr ""
+msgstr "Փոխել կարգավիճակը {scopeLabel}-ում"
 
 #. js-lingui-id: EYSFEW
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
@@ -5633,29 +5639,29 @@ msgstr "Փոփոխություններ"
 #. js-lingui-id: oRH6Dq
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "channel"
-msgstr ""
+msgstr "ալիք"
 
 #. js-lingui-id: HdE1If
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Channel"
-msgstr ""
+msgstr "Ալիք"
 
 #. js-lingui-id: CXcvq4
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "Channel name"
-msgstr ""
+msgstr "Ալիքի անուն"
 
 #. js-lingui-id: XnhSY1
 #: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
 msgid "Channel options"
-msgstr ""
+msgstr "Ալիքի ընտրանքներ"
 
 #. js-lingui-id: 7oaGFi
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "channel role"
-msgstr ""
+msgstr "ալիքի դեր"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
@@ -5684,7 +5690,7 @@ msgstr "Զրույցի գործողություններ"
 #. js-lingui-id: eNENNb
 #: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
 msgid "Chat channels this role reads and replies in"
-msgstr ""
+msgstr "Զրույցի ալիքներ, որոնցում այս դերը կարդում և պատասխանում է"
 
 #. js-lingui-id: eKz2ln
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
@@ -5734,12 +5740,12 @@ msgstr "Զրույցներ"
 #. js-lingui-id: Yb1V6Z
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "check"
-msgstr ""
+msgstr "ստուգում"
 
 #. js-lingui-id: 10GIoH
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Check List"
-msgstr ""
+msgstr "Ստուգաթերթ"
 
 #. js-lingui-id: oa2dNe
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -5754,7 +5760,7 @@ msgstr "Ստուգեք իրադարձության ամսաթվերը"
 #. js-lingui-id: EXMtgb
 #: src/modules/ai/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Check the merge result before trying again"
-msgstr ""
+msgstr "Նորից փորձելուց առաջ ստուգեք միավորման արդյունքը"
 
 #. js-lingui-id: PaKTa7
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -5779,7 +5785,7 @@ msgstr "Ստուգեք ձեր մուտքային նամակները՝ նոր է�
 #. js-lingui-id: BGQXlj
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "checkbox"
-msgstr ""
+msgstr "նշման վանդակ"
 
 #. js-lingui-id: w+pzSf
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperDetails.tsx
@@ -5789,7 +5795,7 @@ msgstr "Ստուգվում է միայն այն դեպքում, երբ պահպ�
 #. js-lingui-id: DMUK+4
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "Checking calendar availability…"
-msgstr ""
+msgstr "Ստուգվում է օրացույցի հասանելիությունը…"
 
 #. js-lingui-id: SxwQE8
 #: src/modules/settings/billing/hooks/useHandleCheckoutSession.ts
@@ -5827,12 +5833,12 @@ msgstr "Ընտրեք {intervalAdjective} կրեդիտներ"
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
 #: src/modules/ui/input/components/internal/date/components/DatePickerCalendar.tsx
 msgid "Choose a date"
-msgstr ""
+msgstr "Ընտրեք ամսաթիվ"
 
 #. js-lingui-id: mXw+D5
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "Choose a date to see available times."
-msgstr ""
+msgstr "Հասանելի ժամերը տեսնելու համար ընտրեք ամսաթիվ։"
 
 #. js-lingui-id: n5pcaT
 #: src/modules/ai/components/AiModelTierDropdown.tsx
@@ -5843,7 +5849,7 @@ msgstr "Ընտրեք մոդելի ռեժիմ"
 #. js-lingui-id: Vgi70q
 #: src/modules/ai/components/AiChatApprovalMergeReview.tsx
 msgid "Choose a source record to keep"
-msgstr ""
+msgstr "Ընտրեք պահվող սկզբնաղբյուր գրառումը"
 
 #. js-lingui-id: sHa2Dg
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
@@ -5853,12 +5859,12 @@ msgstr "Ընտրեք ծախսող"
 #. js-lingui-id: ZLmzD4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone"
-msgstr ""
+msgstr "Ընտրեք ժամային գոտի"
 
 #. js-lingui-id: 2cQMP+
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone."
-msgstr ""
+msgstr "Ընտրեք ժամային գոտի։"
 
 #. js-lingui-id: RGUZK1
 #: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
@@ -5883,17 +5889,17 @@ msgstr "Ընտրեք աշխատանքային տարածք"
 #. js-lingui-id: NuBVH7
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
 msgid "Choose an access level available to all selected recipients."
-msgstr ""
+msgstr "Ընտրեք մուտքի մակարդակ, որը հասանելի է բոլոր ընտրված ստացողներին։"
 
 #. js-lingui-id: bTsJ+r
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an available calendar that can send invitations."
-msgstr ""
+msgstr "Ընտրեք հասանելի օրացույց, որը կարող է հրավերներ ուղարկել։"
 
 #. js-lingui-id: 4yF6C2
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an organizer calendar"
-msgstr ""
+msgstr "Ընտրեք կազմակերպչի օրացույց"
 
 #. js-lingui-id: 9fscAB
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
@@ -5985,7 +5991,7 @@ msgstr "Ընտրեք, թե ինչ կլինի, երբ սեղմեք էլ. փոստ
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Choose when you are available and which calendar sends invitations."
-msgstr ""
+msgstr "Ընտրեք, թե երբ եք հասանելի և որ օրացույցն է ուղարկում հրավերները։"
 
 #. js-lingui-id: kTDEu6
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -6005,7 +6011,7 @@ msgstr "Ընտրեք, թե որ դաշտերն են օգտագործվում գ�
 #. js-lingui-id: 6L95MS
 #: src/pages/settings/applications/components/SettingsApplicationConnectionMessageFolders.tsx
 msgid "Choose which folders this application imports"
-msgstr ""
+msgstr "Ընտրեք, թե այս հավելվածը որ պանակներն է ներմուծում"
 
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -6327,7 +6333,7 @@ msgstr "Կոդ - տրամաբանական ֆունկցիա"
 #. js-lingui-id: N2eHWq
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Code Block"
-msgstr ""
+msgstr "Կոդի բլոկ"
 
 #. js-lingui-id: 80c4+P
 #: src/modules/ai/components/MarkdownCodeBlock.tsx
@@ -6373,7 +6379,7 @@ msgstr "coffee.exe: միացված"
 #. js-lingui-id: ZjnNYv
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "collapse"
-msgstr ""
+msgstr "կծկել"
 
 #. js-lingui-id: H86f9p
 #: src/modules/ai/components/ThinkingToolStepRow.tsx
@@ -6419,7 +6425,7 @@ msgstr "Ծալել կողային վահանակը"
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "collapsible"
-msgstr ""
+msgstr "ծալվող"
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -6841,7 +6847,7 @@ msgstr "Հաստատել"
 #. js-lingui-id: MrMPwB
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 msgid "Confirm approval"
-msgstr ""
+msgstr "Հաստատել հաստատումը"
 
 #. js-lingui-id: Gdj3Sa
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -6940,7 +6946,7 @@ msgstr "Կապակցեք ձեր էլ. փոստը և օրացույցը՝ ձեր 
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Connect your own {0} account for this app to use on your behalf."
-msgstr ""
+msgstr "Միացրեք ձեր սեփական {0} հաշիվն այս հավելվածին, որպեսզի այն օգտագործի ձեր անունից։"
 
 #. js-lingui-id: QHcLEN
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
@@ -7033,6 +7039,11 @@ msgstr "Պարունակում է"
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBlockInsertList.tsx
 msgid "Content"
 msgstr "Բովանդակություն"
+
+#. js-lingui-id: SVyf2o
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
+msgid "Contents"
+msgstr ""
 
 #. js-lingui-id: M73whl
 #: src/modules/settings/admin-panel/components/SettingsAdminChatMessage.tsx
@@ -7151,7 +7162,7 @@ msgstr "Զրույցի բանալի"
 #. js-lingui-id: 9xGqrK
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "Conversation list"
-msgstr ""
+msgstr "Զրույցների ցանկ"
 
 #. js-lingui-id: 5RinAt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
@@ -7166,7 +7177,7 @@ msgstr "Զրույցներ"
 #. js-lingui-id: gM204O
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "Conversations in this channel will appear here."
-msgstr ""
+msgstr "Այս ալիքի զրույցները կհայտնվեն այստեղ։"
 
 #. js-lingui-id: 5dVEtZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
@@ -7532,7 +7543,7 @@ msgstr "Չհաջողվեց բեռնել տեղադրված աշխատատարա�
 #. js-lingui-id: 7zpK75
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFallback.tsx
 msgid "Couldn't load monitoring"
-msgstr ""
+msgstr "Չհաջողվեց բեռնել մոնիթորինգը"
 
 #. js-lingui-id: zaNpE4
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -8017,7 +8028,7 @@ msgstr "Կրեդիտների փաթեթ"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Credit packs"
-msgstr ""
+msgstr "Կրեդիտների փաթեթներ"
 
 #. js-lingui-id: qtEx+T
 #: src/modules/settings/billing/hooks/useCreditUpgradeAction.ts
@@ -8102,7 +8113,7 @@ msgstr "Օգտագործված կրեդիտներ"
 #. js-lingui-id: SF6cED
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringCreditsSection.tsx
 msgid "Credits used could not be loaded. Refresh to try again."
-msgstr ""
+msgstr "Չհաջողվեց բեռնել օգտագործված կրեդիտները։ Նորից փորձելու համար թարմացրեք էջը։"
 
 #. js-lingui-id: biuDTg
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -8400,7 +8411,7 @@ msgstr "Անհատական մատակարարներն անվճար են մինչ
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Custom roles"
-msgstr ""
+msgstr "Հատուկ դերեր"
 
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -8583,7 +8594,7 @@ msgstr "Տվյալներ և ցուցադրում"
 #. js-lingui-id: VytQpX
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Data export"
-msgstr ""
+msgstr "Տվյալների արտահանում"
 
 #. js-lingui-id: xpZXLn
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -8631,7 +8642,7 @@ msgstr "Տվյալների մշակման համաձայնագիր"
 #. js-lingui-id: hsPieC
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Data Processing Agreement (DPA)"
-msgstr ""
+msgstr "Տվյալների մշակման համաձայնագիր (DPA)"
 
 #. js-lingui-id: Ix/CMz
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
@@ -9007,7 +9018,7 @@ msgstr "Ջնջել"
 #. js-lingui-id: KocE4m
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 msgid "Delete {channelName}?"
-msgstr ""
+msgstr "Ջնջել {channelName}?"
 
 #. js-lingui-id: EsGY/k
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -9102,12 +9113,12 @@ msgstr "Ջնջել հավելվածը"
 #: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 msgid "Delete channel"
-msgstr ""
+msgstr "Ջնջել ալիքը"
 
 #. js-lingui-id: GAohqx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Delete column"
-msgstr ""
+msgstr "Ջնջել սյունակը"
 
 #. js-lingui-id: Wkx6Ld
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable.tsx
@@ -9197,7 +9208,7 @@ msgstr "Վերջնական ջնջել դերը"
 #. js-lingui-id: 0cspe/
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Delete row"
-msgstr ""
+msgstr "Ջնջել տողը"
 
 #. js-lingui-id: rvJGTw
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -9362,7 +9373,7 @@ msgstr "Առաքում"
 #. js-lingui-id: cFCKYZ
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "Deny"
-msgstr ""
+msgstr "Մերժել"
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
@@ -9465,7 +9476,7 @@ msgstr "Մանրամասներ ըստ աշխատանքային տարածքի"
 #. js-lingui-id: Px+rYS
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "details"
-msgstr ""
+msgstr "մանրամասներ"
 
 #. js-lingui-id: URmyfc
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
@@ -9610,7 +9621,7 @@ msgstr "Անջատել հաշիվը"
 #. js-lingui-id: ZYnwzF
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
 msgid "Disconnected"
-msgstr ""
+msgstr "Անջատված"
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -9625,7 +9636,7 @@ msgstr "Հայտնաբերում {defaultDomain}-ում"
 #. js-lingui-id: 1QfxQT
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Dismiss"
-msgstr ""
+msgstr "Փակել"
 
 #. js-lingui-id: 3gfpE2
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainAiSetup.tsx
@@ -9819,13 +9830,13 @@ msgstr "Կետեր և ստորակետ"
 #. js-lingui-id: SBTQRZ
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "down to fields"
-msgstr ""
+msgstr "մինչև դաշտերի մակարդակը"
 
 #. js-lingui-id: 6ujaBZ
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "down to fields and rows"
-msgstr ""
+msgstr "մինչև դաշտերի և տողերի մակարդակը"
 
 #. js-lingui-id: LE8J+K
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -10068,7 +10079,7 @@ msgstr "Յուրաքանչյուր ինդեքս արագացնում է ընթե
 #. js-lingui-id: SpZVrK
 #: src/modules/settings/billing/components/SettingsBillingUserCreditsSection.tsx
 msgid "Each member gets an AI allowance, used before workspace credits"
-msgstr ""
+msgstr "Յուրաքանչյուր անդամ ստանում է ԱԲ սահմանաչափ, որն օգտագործվում է աշխատանքային տարածքի կրեդիտներից առաջ"
 
 #. js-lingui-id: 79hamt
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -10088,12 +10099,12 @@ msgstr "Ամենավաղ ամսաթիվ"
 #. js-lingui-id: /CWRQs
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Early"
-msgstr ""
+msgstr "Վաղ"
 
 #. js-lingui-id: 6nz79V
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Early plan - You keep this price as long as you stay on it. It can't be picked again after you switch."
-msgstr ""
+msgstr "Վաղ սակագին — այս գինը կպահպանեք այնքան ժամանակ, որքան մնաք դրանում։ Փոխելուց հետո այն կրկին ընտրել չեք կարող։"
 
 #. js-lingui-id: tmDUtT
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
@@ -10279,7 +10290,7 @@ msgstr "Խմբագրել կանոնը"
 #: src/modules/ai/components/AiChatThreadLabelsField.tsx
 #: src/modules/ai/components/AiChatThreadLabelsField.tsx
 msgid "Edit shared labels"
-msgstr ""
+msgstr "Խմբագրել համօգտագործվող պիտակները"
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -10392,7 +10403,7 @@ msgstr "Էլ. փոստի հասցեներ, որոնք հրաժարվել են ա
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Email and chat"
-msgstr ""
+msgstr "Էլ. փոստ և զրույց"
 
 #. js-lingui-id: AoN898
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -10567,7 +10578,7 @@ msgstr "Մատակարարին արդեն փոխանցված էլ. նամակն�
 #. js-lingui-id: 2janZA
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailChannelDomainStatusCell.tsx
 msgid "Emails can be sent. Add the unsubscribe record to send campaigns."
-msgstr ""
+msgstr "Էլ. նամակները կարող են ուղարկվել։ Արշավներ ուղարկելու համար ավելացրեք բաժանորդագրությունից հրաժարման գրառումը։"
 
 #. js-lingui-id: USBKh+
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
@@ -10672,7 +10683,7 @@ msgstr "Դատարկ ներդիր"
 #. js-lingui-id: AXNBoL
 #: src/modules/advanced-text-editor/extensions/toggle/createToggleNodeView.ts
 msgid "Empty toggle. Click to add a block."
-msgstr ""
+msgstr "Դատարկ փոխարկիչ։ Սեղմեք՝ բլոկ ավելացնելու համար։"
 
 #. js-lingui-id: PaQ3df
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -10719,7 +10730,7 @@ msgstr "Ավարտի ամսաթիվը պետք է լինի սկզբի ամսաթ
 #. js-lingui-id: xus58/
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "End time must be after start time."
-msgstr ""
+msgstr "Ավարտի ժամը պետք է լինի սկզբի ժամից հետո։"
 
 #. js-lingui-id: k1i50B
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
@@ -10831,7 +10842,7 @@ msgstr "Մուտքագրեք թիվ"
 #. js-lingui-id: LsUGyx
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Enter a start and end time."
-msgstr ""
+msgstr "Մուտքագրեք սկզբի և ավարտի ժամ։"
 
 #. js-lingui-id: 93ebCf
 #: src/modules/object-record/record-field/ui/form-types/components/FormUuidFieldInput.tsx
@@ -10841,17 +10852,17 @@ msgstr "Մուտքագրեք UUID"
 #. js-lingui-id: /AaSIU
 #: src/modules/object-record/record-form/components/RecordFormLinksFieldInput.tsx
 msgid "Enter a valid domain"
-msgstr ""
+msgstr "Մուտքագրեք վավեր տիրույթ"
 
 #. js-lingui-id: qg4y3S
 #: src/modules/object-record/record-form/components/RecordFormEmailsFieldInput.tsx
 msgid "Enter a valid email"
-msgstr ""
+msgstr "Մուտքագրեք վավեր էլ․ հասցե"
 
 #. js-lingui-id: w8A3K2
 #: src/modules/object-record/record-form/components/RecordFormPhonesFieldInput.tsx
 msgid "Enter a valid phone number"
-msgstr ""
+msgstr "Մուտքագրեք վավեր հեռախոսահամար"
 
 #. js-lingui-id: DXBlEM
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemLinkEditor.tsx
@@ -11186,7 +11197,7 @@ msgstr "Կազմակերպության լիցենզիան ակտիվացնելո
 #. js-lingui-id: TK8eC3
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Error code"
-msgstr ""
+msgstr "Սխալի կոդ"
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -11332,7 +11343,7 @@ msgstr "Սխալ՝ բաժանորդագրությունը փոխելիս։"
 #. js-lingui-id: UirGxE
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Errors"
-msgstr ""
+msgstr "Սխալներ"
 
 #. js-lingui-id: 69KLIV
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
@@ -11386,7 +11397,7 @@ msgstr "Իրադարձության տեսանելիություն"
 #. js-lingui-id: tst44n
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Events"
-msgstr ""
+msgstr "Իրադարձություններ"
 
 #. js-lingui-id: lbS/kF
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -11441,7 +11452,7 @@ msgstr "ամեն {stepNumStr} ամիսը մեկ՝ {startMonth}-ից մինչև {
 #. js-lingui-id: AdpwiL
 #: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
 msgid "Every channel, including the ones created later"
-msgstr ""
+msgstr "Բոլոր ալիքները, ներառյալ ավելի ուշ ստեղծվածները"
 
 #. js-lingui-id: LhmFKG
 #: src/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
@@ -11467,7 +11478,7 @@ msgstr "ամեն րոպե"
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces."
-msgstr ""
+msgstr "Այս աշխատանքային տարածքի բոլոր օբյեկտները՝ որպես CSV ֆայլեր մեկ ZIP արխիվում, պահվում են 1 օր։ Աշխատում է կասեցված աշխատանքային տարածքների համար։"
 
 #. js-lingui-id: SpXUci
 #: src/modules/applications/utils/getStandardApplicationReadme.ts
@@ -11814,7 +11825,7 @@ msgstr "Արտահանել CSV ֆայլեր"
 #. js-lingui-id: QJwofm
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Export data"
-msgstr ""
+msgstr "Արտահանել տվյալները"
 
 #. js-lingui-id: ciTEKZ
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers.ts
@@ -11870,7 +11881,7 @@ msgstr "Արտաքին իրադարձության ID"
 #. js-lingui-id: 07Wl2A
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Extra credits"
-msgstr ""
+msgstr "Լրացուցիչ կրեդիտներ"
 
 #. js-lingui-id: 4NR4Ja
 #: src/modules/ai/utils/getAiModelTierLabel.ts
@@ -11913,7 +11924,7 @@ msgstr "Չհաջողվեց ներբեռնել ֆայլը"
 #. js-lingui-id: 1Iq+Fl
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "Failed installs, upgrades and uninstalls"
-msgstr ""
+msgstr "Տեղադրման, թարմացման և ապատեղադրման ձախողումներ"
 
 #. js-lingui-id: tKcbYd
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -11923,7 +11934,7 @@ msgstr "Ձախողված առաջադրանքներ"
 #. js-lingui-id: ZH1p6o
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "Failed runs"
-msgstr ""
+msgstr "Ձախողված գործարկումներ"
 
 #. js-lingui-id: QvHpKb
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -12299,7 +12310,7 @@ msgstr "Չհաջողվեց միացնել սպասարկման ռեժիմը։"
 #. placeholder {0}: error.message
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Failed to start the export. {0}"
-msgstr ""
+msgstr "Չհաջողվեց սկսել արտահանումը։ {0}"
 
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -12399,7 +12410,7 @@ msgstr "Չհաջողվեց թարմացնել հավելվածը։"
 #. placeholder {0}: file.name
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx
 msgid "Failed to upload \"{0}\""
-msgstr ""
+msgstr "Չհաջողվեց վերբեռնել \"{0}\""
 
 #. js-lingui-id: eh+uU5
 #: src/modules/activities/emails/hooks/useUploadEmailImage.ts
@@ -12676,7 +12687,7 @@ msgstr "Հինգերորդ"
 #. js-lingui-id: 7Lk0LK
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "file"
-msgstr ""
+msgstr "ֆայլ"
 
 #. js-lingui-id: J2eKUI
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
@@ -12884,7 +12895,7 @@ msgstr "Ավարտել կարգավորումը"
 #. js-lingui-id: 4dQFvz
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 msgid "Finished"
-msgstr ""
+msgstr "Ավարտված"
 
 #. js-lingui-id: USZ2N6
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -12997,7 +13008,7 @@ msgstr "Թղթապանակներ"
 #. js-lingui-id: 2z3uoE
 #: src/modules/ai/components/AiChatThreadFollowersField.tsx
 msgid "Follow for me"
-msgstr ""
+msgstr "Հետևել իմ փոխարեն"
 
 #. js-lingui-id: I7Exsw
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -13152,7 +13163,7 @@ msgstr "Ֆրանսերեն"
 #. js-lingui-id: 39y5bn
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Friday"
-msgstr ""
+msgstr "Ուրբաթ"
 
 #. js-lingui-id: ejVYRQ
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
@@ -13284,7 +13295,7 @@ msgstr "Ֆունկցիա"
 #. js-lingui-id: dP4xFL
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Function / event"
-msgstr ""
+msgstr "Ֆունկցիա / իրադարձություն"
 
 #. js-lingui-id: 3KlJeH
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
@@ -13309,7 +13320,7 @@ msgstr "Ֆունկցիայի գործարկում"
 #. js-lingui-id: CpTy3p
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "Function runs"
-msgstr ""
+msgstr "Ֆունկցիայի գործարկումներ"
 
 #. js-lingui-id: Tn94cL
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
@@ -13319,7 +13330,7 @@ msgstr "Ֆունկցիայի քայլ"
 #. js-lingui-id: xANKBj
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Functions"
-msgstr ""
+msgstr "Ֆունկցիաներ"
 
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
@@ -13646,12 +13657,12 @@ msgstr "Կանաչ"
 #. js-lingui-id: nKUR8Q
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "grid"
-msgstr ""
+msgstr "ցանց"
 
 #. js-lingui-id: gWA5iK
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Grid of rows and columns"
-msgstr ""
+msgstr "Տողերի և սյունակների ցանց"
 
 #. js-lingui-id: L8fEEm
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -13696,7 +13707,7 @@ msgstr "Խմբավորված {objectLabel}"
 #. js-lingui-id: owoCzo
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Grouped by error code and function"
-msgstr ""
+msgstr "Խմբավորված ըստ սխալի կոդի և ֆունկցիայի"
 
 #. js-lingui-id: 5FTAZt
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -13730,17 +13741,17 @@ msgstr "h3"
 #. js-lingui-id: Cr5XLk
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h4"
-msgstr ""
+msgstr "Վերնագիր 4"
 
 #. js-lingui-id: /eRRek
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h5"
-msgstr ""
+msgstr "Վերնագիր 5"
 
 #. js-lingui-id: CvW51C
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h6"
-msgstr ""
+msgstr "Վերնագիր 6"
 
 #. js-lingui-id: Nf7oXL
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -13766,7 +13777,7 @@ msgstr "Ժամանակը սպառվել է"
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Have access"
-msgstr ""
+msgstr "Մուտք ունեն"
 
 #. js-lingui-id: Gpb1xF
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -13781,7 +13792,7 @@ msgstr "Գործընկերությունների ղեկավար"
 #. js-lingui-id: XckaIr
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
 msgid "Header column"
-msgstr ""
+msgstr "Վերնագրի սյունակ"
 
 #. js-lingui-id: HUk3sK
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -13791,7 +13802,7 @@ msgstr "Վերնագրի անուն"
 #. js-lingui-id: Gi0VDy
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
 msgid "Header row"
-msgstr ""
+msgstr "Վերնագրի տող"
 
 #. js-lingui-id: odaos8
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -13847,19 +13858,19 @@ msgstr "Վերնագիր 3"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 msgid "Heading 4"
-msgstr ""
+msgstr "Վերնագիր 4"
 
 #. js-lingui-id: /zXDjr
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 msgid "Heading 5"
-msgstr ""
+msgstr "Վերնագիր 5"
 
 #. js-lingui-id: YpCHKo
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 msgid "Heading 6"
-msgstr ""
+msgstr "Վերնագիր 6"
 
 #. js-lingui-id: 6Ef36Q
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -14213,7 +14224,7 @@ msgstr "Պատկերակ"
 #. js-lingui-id: DMpF70
 #: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
 msgid "Icon and color"
-msgstr ""
+msgstr "Պատկերանշան և գույն"
 
 #. js-lingui-id: XTWO+W
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -14317,7 +14328,7 @@ msgstr "iFrame վիջեթ"
 #. js-lingui-id: teaneZ
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "image"
-msgstr ""
+msgstr "պատկեր"
 
 #. js-lingui-id: hG89Ed
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -14372,9 +14383,9 @@ msgid "imap.example.com"
 msgstr "imap.example.com"
 
 #. js-lingui-id: tSVr6t
+#: src/modules/settings/admin-panel/components/SettingsAdminUserWorkspaceActions.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
-#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Impersonate"
 msgstr "Մուտք գործել որպես"
@@ -14418,7 +14429,7 @@ msgid "Impersonation failed"
 msgstr "Այլ օգտատիրոջ անունից մուտքը ձախողվել է"
 
 #. js-lingui-id: yImXof
-#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminUserWorkspaceActions.tsx
 msgid "Impersonation is disabled for this workspace"
 msgstr "Ներկայացումը անջատված է այս աշխատանքային տարածքի համար"
 
@@ -14508,7 +14519,7 @@ msgstr "Տվյալների ներմուծում ..."
 #. js-lingui-id: bDESCJ
 #: src/modules/ai/components/AiChatThreadChannelIcon.tsx
 msgid "In {channelName}"
-msgstr ""
+msgstr "{channelName}-ից"
 
 #. js-lingui-id: HiyKEP
 #: src/modules/settings/developers/utils/formatExpiration.ts
@@ -14523,7 +14534,7 @@ msgstr "{listName}-ից"
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "In progress"
-msgstr ""
+msgstr "Ընթացքում"
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
@@ -14735,7 +14746,7 @@ msgstr "Մուտքագրեք ձեր վճարային տվյալները՝ <0>ա�
 #. js-lingui-id: 7vtupL
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Insert your billing details to subscribe."
-msgstr ""
+msgstr "Բաժանորդագրվելու համար մուտքագրեք վճարային տվյալները։"
 
 #. js-lingui-id: RE5y9j
 #: src/modules/onboarding/constants/ImportContactsPreviewEmails.ts
@@ -14841,7 +14852,7 @@ msgstr "Տեղադրումներ"
 #. js-lingui-id: woDmxB
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Installs, upgrades and uninstalls"
-msgstr ""
+msgstr "Տեղադրումներ, թարմացումներ և ապատեղադրումներ"
 
 #. js-lingui-id: x8uKc7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
@@ -15070,7 +15081,7 @@ msgstr "Հրավիրել"
 #. js-lingui-id: ooKvCz
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
 msgid "Invite {selectedRecipientCount}"
-msgstr ""
+msgstr "Հրավիրել {selectedRecipientCount}"
 
 #. js-lingui-id: YiNcxh
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitationAccessPicker.tsx
@@ -15081,7 +15092,7 @@ msgstr "Հրավիրել որպես"
 #. placeholder {0}: getRecordShareAccessLevelLabel(value)
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitationAccessPicker.tsx
 msgid "Invite as {0}"
-msgstr ""
+msgstr "Հրավիրել որպես {0}"
 
 #. js-lingui-id: 0M8+El
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -15267,7 +15278,7 @@ msgstr "Իտերատոր"
 #. js-lingui-id: R9VnB9
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
-msgstr ""
+msgstr "Դրա զրույցները տեղափոխվում են {destinationChannelName}։ Սա հնարավոր չէ հետարկել։"
 
 #. js-lingui-id: J6OYmT
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -15312,7 +15323,7 @@ msgstr "Առաջադրանքի անվանում"
 #. js-lingui-id: YZJBRK
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
 msgid "Job rate limit"
-msgstr ""
+msgstr "Առաջադրանքների հաճախականության սահմանաչափ"
 
 #. js-lingui-id: 27z+FV
 #: src/pages/onboarding/CreateProfile.tsx
@@ -15495,7 +15506,7 @@ msgstr "Պիտակը պետք է պարունակի առնվազն մեկ տառ
 #. js-lingui-id: h8DugX
 #: src/modules/ai/components/AiChatThreadLabelsField.tsx
 msgid "Labels"
-msgstr ""
+msgstr "Պիտակներ"
 
 #. js-lingui-id: vXIe7J
 #: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
@@ -15522,7 +15533,7 @@ msgstr "Մեծ"
 #. js-lingui-id: ie/1It
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Large heading that hides its content"
-msgstr ""
+msgstr "Մեծ վերնագիր, որը թաքցնում է իր բովանդակությունը"
 
 #. js-lingui-id: 59o/ag
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -15579,12 +15590,12 @@ msgstr "Վերջին 15 րոպեն"
 #. js-lingui-id: HyE+6E
 #: src/modules/settings/application-monitoring/constants/ApplicationMonitoringPeriods.ts
 msgid "Last 2 hours"
-msgstr ""
+msgstr "Վերջին 2 ժամ"
 
 #. js-lingui-id: VcuwXY
 #: src/modules/settings/application-monitoring/constants/ApplicationMonitoringPeriods.ts
 msgid "Last 2 hours (oldest → newest)"
-msgstr ""
+msgstr "Վերջին 2 ժամ (ամենահինը → ամենանորը)"
 
 #. js-lingui-id: aK4uBd
 #: src/modules/log-console/constants/LogConsoleTimeRangePresets.ts
@@ -15595,7 +15606,7 @@ msgstr "Վերջին 24 ժամ"
 #. js-lingui-id: jdXtmv
 #: src/modules/settings/application-monitoring/constants/ApplicationMonitoringPeriods.ts
 msgid "Last 24 hours (oldest → newest)"
-msgstr ""
+msgstr "Վերջին 24 ժամ (ամենահինը → ամենանորը)"
 
 #. js-lingui-id: j5nqnO
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -15612,7 +15623,7 @@ msgstr "Վերջին 30 օր"
 #. js-lingui-id: NDs7yf
 #: src/modules/settings/application-monitoring/constants/ApplicationMonitoringPeriods.ts
 msgid "Last 30 days (oldest → newest)"
-msgstr ""
+msgstr "Վերջին 30 օր (ամենահինը → ամենանորը)"
 
 #. js-lingui-id: gdAJ4I
 #: src/modules/log-console/constants/LogConsoleTimeRangePresets.ts
@@ -15635,7 +15646,7 @@ msgstr "Վերջին 7 օր"
 #. js-lingui-id: YG9c0q
 #: src/modules/settings/application-monitoring/constants/ApplicationMonitoringPeriods.ts
 msgid "Last 7 days (oldest → newest)"
-msgstr ""
+msgstr "Վերջին 7 օր (ամենահինը → ամենանորը)"
 
 #. js-lingui-id: GQgBSj
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -15652,7 +15663,7 @@ msgstr "Վերջին 90 օր"
 #. js-lingui-id: gOqp/L
 #: src/modules/settings/application-monitoring/constants/ApplicationMonitoringPeriods.ts
 msgid "Last 90 days (oldest → newest)"
-msgstr ""
+msgstr "Վերջին 90 օր (ամենահինը → ամենանորը)"
 
 #. js-lingui-id: ZdXEWi
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
@@ -15686,7 +15697,7 @@ msgstr "Վերջին սխալը"
 #. js-lingui-id: DHHybq
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 msgid "Last event"
-msgstr ""
+msgstr "Վերջին իրադարձությունը"
 
 #. js-lingui-id: c5zxSg
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
@@ -15733,7 +15744,7 @@ msgstr "Վերջին թարմացման պահը"
 #. js-lingui-id: U011Uh
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Last seen"
-msgstr ""
+msgstr "Վերջին անգամ դիտված"
 
 #. js-lingui-id: NYwqoV
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -16001,12 +16012,12 @@ msgstr "Լիցենզիատ"
 #. js-lingui-id: bSylfz
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "Lifecycle failures"
-msgstr ""
+msgstr "Կենսացիկլի ձախողումներ"
 
 #. js-lingui-id: bveeMM
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Lifecycle runs and their failures"
-msgstr ""
+msgstr "Կենսացիկլի գործարկումներ և դրանց ձախողումները"
 
 #. js-lingui-id: yOGTbg
 #: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
@@ -16153,14 +16164,14 @@ msgstr "Հղումը պատճենվեց սեղմատախտակին"
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
 #: src/modules/page-layout/widgets/emails/components/WidgetActionEmails.tsx
 msgid "Link email threads"
-msgstr ""
+msgstr "Կապել էլ. նամակների թելերը"
 
 #. js-lingui-id: ze7eaG
 #: src/modules/activities/calendar/components/CalendarEventsEmptyState.tsx
 #: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendar.tsx
 msgid "Link events"
-msgstr ""
+msgstr "Կապել իրադարձությունները"
 
 #. js-lingui-id: vH3ZQY
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemLinkEditor.tsx
@@ -16222,7 +16233,7 @@ msgstr "Ցանկը կրկնօրինակվել է {memberCount, plural, one {# ա
 #. js-lingui-id: BNkwyX
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "List item that hides its content"
-msgstr ""
+msgstr "Ցանկի տարր, որը թաքցնում է իր բովանդակությունը"
 
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
@@ -16232,7 +16243,7 @@ msgstr "Ցուցակի վիջեթ"
 #. js-lingui-id: PP59jq
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "List with checkboxes"
-msgstr ""
+msgstr "Նշավանդակներով ցանկ"
 
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -16287,7 +16298,7 @@ msgstr "Բեռնել ավելին"
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Load more chats"
-msgstr ""
+msgstr "Բեռնել ավելի շատ զրույցներ"
 
 #. js-lingui-id: CZGQgK
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
@@ -16312,7 +16323,7 @@ msgstr "Հավելվածների բեռնում..."
 #. js-lingui-id: UDL15Z
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 msgid "Loading chats..."
-msgstr ""
+msgstr "Չաթերի բեռնում..."
 
 #. js-lingui-id: w81Nov
 #: src/modules/ai/components/AiChatEditorSection.tsx
@@ -16334,7 +16345,7 @@ msgstr "Փաստաթղթի դիտարկիչի բեռնում..."
 #. js-lingui-id: A6/Vxy
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
 msgid "Loading email threads"
-msgstr ""
+msgstr "Էլ. նամակների թելերի բեռնում"
 
 #. js-lingui-id: qIaOZk
 #: src/modules/activities/emails/components/EmailLoader.tsx
@@ -16349,7 +16360,7 @@ msgstr "Էմոջիների բեռնում"
 #. js-lingui-id: 0Jvyke
 #: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
 msgid "Loading events"
-msgstr ""
+msgstr "Իրադարձությունների բեռնում"
 
 #. js-lingui-id: IFQsdb
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -16364,7 +16375,7 @@ msgstr "Ցուցանիշների տվյալների բեռնում..."
 #. js-lingui-id: Jz268F
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerLoadMoreFooter.tsx
 msgid "Loading more chats..."
-msgstr ""
+msgstr "Ավելի շատ զրույցների բեռնում..."
 
 #. js-lingui-id: tVSmFT
 #: src/modules/activities/components/CustomResolverFetchMoreLoader.tsx
@@ -16387,12 +16398,12 @@ msgstr "Պահպանման կարգավորումների բեռնում..."
 #. js-lingui-id: zTAQ2r
 #: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
 msgid "Loading roles"
-msgstr ""
+msgstr "Դերերի բեռնում"
 
 #. js-lingui-id: WvgJbz
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordSkeleton.tsx
 msgid "Loading sharing settings"
-msgstr ""
+msgstr "Համօգտագործման կարգավորումների բեռնում"
 
 #. js-lingui-id: VeVIIk
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -16539,7 +16550,7 @@ msgstr "Տրամաբանության ֆունկցիա"
 #. js-lingui-id: 9XdpdA
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "Logic function runs across every install in this period"
-msgstr ""
+msgstr "Այս ժամանակահատվածում տրամաբանական ֆունկցիան գործարկվում է յուրաքանչյուր տեղադրման համար"
 
 #. js-lingui-id: QTVVDd
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
@@ -16861,7 +16872,7 @@ msgstr "Արտաքին բացատ"
 #. js-lingui-id: SYhBoR
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
 msgid "Mark all done"
-msgstr ""
+msgstr "Նշել բոլորը որպես կատարված"
 
 #. js-lingui-id: yYix7P
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsGeneral.ts
@@ -16984,9 +16995,15 @@ msgid "MCP client configuration"
 msgstr "MCP հաճախորդի կազմաձևում"
 
 #. js-lingui-id: Zw+Zv+
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "MCP server"
 msgstr "MCP սպասարկիչ"
+
+#. js-lingui-id: 8qgfac
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "MCP servers"
+msgstr "MCP սպասարկիչներ"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -17023,7 +17040,7 @@ msgstr "Միջին"
 #. js-lingui-id: 0AU71I
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Medium heading that hides its content"
-msgstr ""
+msgstr "Միջին վերնագիր, որը թաքցնում է իր բովանդակությունը"
 
 #. js-lingui-id: IAcjOi
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -17087,7 +17104,7 @@ msgstr "Անդամներ և հրավիրվածներ"
 #. js-lingui-id: pbIEgB
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 msgid "Mentioned you"
-msgstr ""
+msgstr "Ձեզ հիշատակել է"
 
 #. js-lingui-id: /bZzdR
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
@@ -17110,17 +17127,17 @@ msgstr "Միավորել"
 #. js-lingui-id: yDKct3
 #: src/modules/ai/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Merge {firstSourceName} and {secondSourceName}"
-msgstr ""
+msgstr "Միավորել {firstSourceName}-ը և {secondSourceName}-ը"
 
 #. js-lingui-id: TTHfsp
 #: src/modules/ai/components/AiChatApprovalMergeReview.tsx
 msgid "Merge all {pendingPairCount}"
-msgstr ""
+msgstr "Միավորել բոլոր {pendingPairCount}-ը"
 
 #. js-lingui-id: HNtOdD
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Merge cells"
-msgstr ""
+msgstr "Միավորել բջիջները"
 
 #. js-lingui-id: d2c8f+
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
@@ -17137,7 +17154,7 @@ msgstr "Միավորել գրառումները"
 #. js-lingui-id: PXTjHO
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Merge review tabs"
-msgstr ""
+msgstr "Միավորման վերանայման ներդիրներ"
 
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
@@ -17196,7 +17213,7 @@ msgstr "Հաղորդագրություններ"
 #. js-lingui-id: MlyoA4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "messaging provider"
-msgstr ""
+msgstr "հաղորդագրությունների մատակարար"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -17258,7 +17275,7 @@ msgstr "Նվազագույն միջակայք"
 #. js-lingui-id: oSrMRT
 #: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 msgid "Mine"
-msgstr ""
+msgstr "Իմը"
 
 #. js-lingui-id: 8GG+Pa
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -17268,7 +17285,7 @@ msgstr "Նվազագույն"
 #. js-lingui-id: clKD2b
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Minor subsection heading"
-msgstr ""
+msgstr "Փոքր ենթաբաժնի վերնագիր"
 
 #. js-lingui-id: 5IrCQY
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -17430,12 +17447,12 @@ msgstr "Վերահսկեք ձեր էլ. նամակների համաժամեցմ�
 #: src/pages/settings/applications/SettingsApplicationRegistrationMonitoring.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationMonitoring.tsx
 msgid "Monitoring"
-msgstr ""
+msgstr "Մոնիթորինգ"
 
 #. js-lingui-id: I+zwoy
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFallback.tsx
 msgid "Monitoring needs ClickHouse. Set {clickHouseUrlVariableName} on the server to collect app logs and metrics."
-msgstr ""
+msgstr "Մոնիթորինգի համար անհրաժեշտ է ClickHouse։ Հավելվածի գրանցամատյաններն ու չափանիշները հավաքելու համար սերվերում սահմանեք {clickHouseUrlVariableName}։"
 
 #. js-lingui-id: kY2ll9
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -17542,7 +17559,7 @@ msgstr "Լրացուցիչ ընտրանքներ"
 #: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
 #: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
 msgid "More reactions"
-msgstr ""
+msgstr "Ավելի շատ արձագանքներ"
 
 #. js-lingui-id: 2MjaQ8
 #: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
@@ -17558,7 +17575,7 @@ msgstr "Morph կապ"
 #. js-lingui-id: 9nzqc5
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
 msgid "Most active first, out of {activeWorkspaceCountLabel} active in this period"
-msgstr ""
+msgstr "Սկզբում ամենաակտիվները՝ այս ժամանակահատվածում ակտիվ {activeWorkspaceCountLabel}-ից"
 
 #. js-lingui-id: SOHptZ
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -17585,7 +17602,7 @@ msgstr "Շարժել ներքև"
 #: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
 msgid "Move its chats to"
-msgstr ""
+msgstr "Տեղափոխել դրա զրույցները"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
@@ -17618,7 +17635,7 @@ msgstr "Տեղափոխել այլ ներդիր"
 #: src/modules/ai/components/AiChatThreadChannelPicker.tsx
 #: src/modules/ai/components/AiChatThreadChannelPicker.tsx
 msgid "Move to channel"
-msgstr ""
+msgstr "Տեղափոխել ալիք"
 
 #. js-lingui-id: JCPOml
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
@@ -17806,7 +17823,7 @@ msgstr "Անունը չի կարող դատարկ լինել։"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FullNameFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormFullNameFieldInput.tsx
 msgid "Name details"
-msgstr ""
+msgstr "Անվան մանրամասներ"
 
 #. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -17962,7 +17979,7 @@ msgstr "Նոր օրացույցի իրադարձություն"
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "New channel"
-msgstr ""
+msgstr "Նոր ալիք"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatInboxListHeader.tsx
@@ -18173,7 +18190,7 @@ msgstr "Հաջորդը"
 #. js-lingui-id: IbfvuD
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "Next approval"
-msgstr ""
+msgstr "Հաջորդ հաստատումը"
 
 #. js-lingui-id: L0DCk4
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -18198,12 +18215,12 @@ msgstr "Հաջորդ կրկնություն"
 #. js-lingui-id: g8JmSC
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
 msgid "Next month"
-msgstr ""
+msgstr "Հաջորդ ամիս"
 
 #. js-lingui-id: DnlugB
 #: src/modules/ai/components/AiChatApprovalMergeReview.tsx
 msgid "Next pair"
-msgstr ""
+msgstr "Հաջորդ զույգը"
 
 #. js-lingui-id: 8+lM81
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
@@ -18244,7 +18261,7 @@ msgstr "Հաջորդ շաբաթ"
 #. js-lingui-id: 97rmcs
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "Next: {nextTitles}"
-msgstr ""
+msgstr "Հաջորդը՝ {nextTitles}"
 
 #. js-lingui-id: ulck7h
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -18293,12 +18310,12 @@ msgstr "Մուտք չկա"
 #. js-lingui-id: ETfwRt
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 msgid "No accounts yet"
-msgstr ""
+msgstr "Դեռ հաշիվներ չկան"
 
 #. js-lingui-id: IeiB4r
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "No actions to review"
-msgstr ""
+msgstr "Վերանայման ենթակա գործողություններ չկան"
 
 #. js-lingui-id: glQp+P
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -18308,7 +18325,7 @@ msgstr "Չկա ակտիվ բաժանորդագրություն։"
 #. js-lingui-id: OdMetd
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "No activity in this period"
-msgstr ""
+msgstr "Այս ժամանակահատվածում ակտիվություն չկա"
 
 #. js-lingui-id: LM+N3q
 #: src/modules/activities/timeline-activities/components/EventList.tsx
@@ -18416,7 +18433,7 @@ msgstr "Առկա ներդիրներ չկան"
 #. js-lingui-id: vmUMKh
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "No available times. Choose another date."
-msgstr ""
+msgstr "Հասանելի ժամեր չկան։ Ընտրեք այլ ամսաթիվ։"
 
 #. js-lingui-id: 8whThc
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -18432,12 +18449,12 @@ msgstr "Մարմին չկա"
 #. js-lingui-id: 15bIDe
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars available."
-msgstr ""
+msgstr "Հասանելի օրացույցներ չկան։"
 
 #. js-lingui-id: +Rmf7F
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars match your search."
-msgstr ""
+msgstr "Ոչ մի օրացույց չի համապատասխանում ձեր որոնմանը։"
 
 #. js-lingui-id: O7I76L
 #: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
@@ -18457,7 +18474,7 @@ msgstr "Զանգի կոդ չկա"
 #. js-lingui-id: ydE3k+
 #: src/modules/ai/components/AiChatThreadChannelPicker.tsx
 msgid "No channel"
-msgstr ""
+msgstr "Ալիք չկա"
 
 #. js-lingui-id: GgZThR
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -18472,12 +18489,12 @@ msgstr "Զրույցների թելեր չեն գտնվել։"
 #. js-lingui-id: cnR7h2
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "No chats match your search"
-msgstr ""
+msgstr "Ոչ մի զրույց չի համապատասխանում ձեր որոնմանը"
 
 #. js-lingui-id: nfEdoc
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 msgid "No chats yet"
-msgstr ""
+msgstr "Դեռ զրույցներ չկան"
 
 #. js-lingui-id: qTxPPY
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
@@ -18527,7 +18544,7 @@ msgstr "Այս օգտվողի համար կրեդիտների սպառում չ�
 #. js-lingui-id: aNs+VA
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringCreditsSection.tsx
 msgid "No credits used in this period"
-msgstr ""
+msgstr "Այս ժամանակահատվածում կրեդիտներ չեն օգտագործվել"
 
 #. js-lingui-id: kxH3HO
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
@@ -18610,7 +18627,7 @@ msgstr "Այս գրառման հետ էլփոստային հաղորդագրու
 #. js-lingui-id: dtnAuN
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
 msgid "No email threads found"
-msgstr ""
+msgstr "Էլ. նամակների թելեր չեն գտնվել"
 
 #. js-lingui-id: quWMra
 #: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
@@ -18620,7 +18637,7 @@ msgstr "Էմոջի չի գտնվել"
 #. js-lingui-id: Qkn7jU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "No errors or warnings in this period"
-msgstr ""
+msgstr "Այս ժամանակահատվածում սխալներ կամ նախազգուշացումներ չկան"
 
 #. js-lingui-id: SIR5Ix
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -18636,7 +18653,7 @@ msgstr "Իրադարձություններ չկան"
 #. js-lingui-id: dW40Uz
 #: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
 msgid "No events found"
-msgstr ""
+msgstr "Իրադարձություններ չեն գտնվել"
 
 #. js-lingui-id: wY82y3
 #: src/modules/activities/calendar/components/CalendarEventsEmptyState.tsx
@@ -18686,7 +18703,7 @@ msgstr "Այս հաշվով թղթապանակներ չեն գտնվել"
 #. js-lingui-id: /2AEiG
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 msgid "No function ran in this period"
-msgstr ""
+msgstr "Այս ժամանակահատվածում ոչ մի ֆունկցիա չի գործարկվել"
 
 #. js-lingui-id: 9kCSLK
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
@@ -18710,7 +18727,7 @@ msgstr "Այս գործողության համար մուտքագրման դաշ
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "No install, upgrade or uninstall in this period"
-msgstr ""
+msgstr "Այս ժամանակահատվածում տեղադրում, թարմացում կամ ապատեղադրում չի եղել"
 
 #. js-lingui-id: lj3GoP
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -18730,7 +18747,7 @@ msgstr "Ոչ մի առաջադրանք կրկին չի գործարկվել{erro
 #. js-lingui-id: VkcRtM
 #: src/modules/ai/components/AiChatThreadLabelsField.tsx
 msgid "No labels available"
-msgstr ""
+msgstr "Հասանելի պիտակներ չկան"
 
 #. js-lingui-id: CYafz+
 #: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
@@ -18827,7 +18844,7 @@ msgstr "Նշումներ չկան"
 #. js-lingui-id: XIpopT
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 msgid "No operations found"
-msgstr ""
+msgstr "Գործողություններ չեն գտնվել"
 
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
@@ -18877,7 +18894,7 @@ msgstr "Այս փաթեթի համար ծագման հավաստում չի գտ
 #. js-lingui-id: fHi2Mr
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "No rate limit hit in this period"
-msgstr ""
+msgstr "Այս ժամանակահատվածում հաճախականության սահմանաչափ չի կիրառվել"
 
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
@@ -18894,7 +18911,7 @@ msgstr "Գրառում չկա"
 #. js-lingui-id: IdXXOw
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
 msgid "No record holds priority"
-msgstr ""
+msgstr "Ոչ մի գրառում առաջնահերթություն չունի"
 
 #. js-lingui-id: ePgApM
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -18924,7 +18941,7 @@ msgstr "Չգտնվեց որևէ գրառում, որը համապատասխան�
 #. js-lingui-id: To7xRG
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "No records to review"
-msgstr ""
+msgstr "Վերանայման ենթակա գրառումներ չկան"
 
 #. js-lingui-id: gvIkAA
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -18997,7 +19014,7 @@ msgstr "Այս անդամին դեր չի վերագրվել"
 #. js-lingui-id: s7Snbr
 #: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
 msgid "No roles"
-msgstr ""
+msgstr "Դերեր չկան"
 
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -19184,7 +19201,7 @@ msgstr "Այս հավելվածի համար սահմանվելիք փոփոխա
 #. js-lingui-id: 0l1DmS
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
 msgid "No version reported in this period"
-msgstr ""
+msgstr "Այս ժամանակահատվածում որևէ տարբերակ չի հաղորդվել"
 
 #. js-lingui-id: 0uWxPM
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -19224,7 +19241,7 @@ msgstr "Ոչ մի աշխատանքային տարածք չի ձախողվել"
 #. js-lingui-id: KL0QQT
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 msgid "No workspace ran this app in this period"
-msgstr ""
+msgstr "Այս ժամանակահատվածում ոչ մի աշխատանքային տարածք չի գործարկել այս հավելվածը"
 
 #. js-lingui-id: rPAZRd
 #: src/modules/settings/lab/hooks/useLabPublicFeatureFlags.ts
@@ -19378,7 +19395,7 @@ msgstr "Այս ջանքերի մակարդակով դեռ չի չափվել։ Ց
 #. js-lingui-id: IzW9bK
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 msgid "Not open to you"
-msgstr ""
+msgstr "Ձեզ համար բաց չէ"
 
 #. js-lingui-id: cURAbX
 #: src/modules/workflow/workflow-trigger/constants/ManualTriggerIsPinnedOptions.ts
@@ -19431,7 +19448,7 @@ msgstr "Չի կիսվել {notSharedByFullName}-ի կողմից"
 #. js-lingui-id: +3Co6p
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Not shared with"
-msgstr ""
+msgstr "Համօգտագործված չէ հետևյալի հետ"
 
 #. js-lingui-id: mu1gVr
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
@@ -19670,7 +19687,6 @@ msgstr "Օբյեկտային մակարդակ"
 
 #. js-lingui-id: B3toQF
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
@@ -19966,7 +19982,7 @@ msgstr "Բացել որպես հղում"
 #. js-lingui-id: 6I7cJR
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "Open chat"
-msgstr ""
+msgstr "Բացել զրույցը"
 
 #. js-lingui-id: 4/tvYU
 #: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
@@ -19983,7 +19999,7 @@ msgstr "Բացեք Claude-ը՝ Twenty միացուցիչի անունը և MCP U
 #. js-lingui-id: N4OQXf
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Open column menu"
-msgstr ""
+msgstr "Բացել սյունակի ընտրացանկը"
 
 #. js-lingui-id: uIKeEf
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton.tsx
@@ -20079,7 +20095,7 @@ msgstr "Բացեք Replit-ը՝ Twenty հեռավար սպասարկչի կազմ
 #. js-lingui-id: iMBVhp
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Open row menu"
-msgstr ""
+msgstr "Բացել տողի ընտրացանկը"
 
 #. js-lingui-id: d8DZWS
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsGeneral.ts
@@ -20119,7 +20135,7 @@ msgstr "Բացված"
 #. js-lingui-id: a7M/wC
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
 msgid "Opening chat..."
-msgstr ""
+msgstr "Զրույցի բացում..."
 
 #. js-lingui-id: /25cjp
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -20327,12 +20343,12 @@ msgstr "Կազմակերպության լիցենզիան հաջողությամ
 #. js-lingui-id: G5RhpL
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Organizer"
-msgstr ""
+msgstr "Կազմակերպիչ"
 
 #. js-lingui-id: vryTU3
 #: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
 msgid "Original message unavailable"
-msgstr ""
+msgstr "Բնօրինակ հաղորդագրությունը հասանելի չէ"
 
 #. js-lingui-id: /IX/7x
 #: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
@@ -20419,7 +20435,7 @@ msgstr "Արդյունք"
 #. js-lingui-id: nCQvd7
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
 msgid "Outcome unknown"
-msgstr ""
+msgstr "Արդյունքն անհայտ է"
 
 #. js-lingui-id: gdC3cZ
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
@@ -20517,7 +20533,7 @@ msgstr "p"
 #. js-lingui-id: creZpq
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 msgid "p95 duration"
-msgstr ""
+msgstr "p95 տևողություն"
 
 #. js-lingui-id: mGYa19
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -20738,7 +20754,7 @@ msgstr "Սպասման մեջ"
 #. js-lingui-id: 2B0V9T
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Pending requests"
-msgstr ""
+msgstr "Սպասող հարցումներ"
 
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
@@ -20769,7 +20785,7 @@ msgstr "Յուրաքանչյուր"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "per member"
-msgstr ""
+msgstr "յուրաքանչյուր անդամի համար"
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -20882,17 +20898,17 @@ msgstr "Անձի նույնացուցիչ"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Personal AI usage"
-msgstr ""
+msgstr "Անձնական AI օգտագործում"
 
 #. js-lingui-id: /SoAQl
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Personal usage"
-msgstr ""
+msgstr "Անձնական օգտագործում"
 
 #. js-lingui-id: /XUQpE
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Personal usage limit resets in {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr ""
+msgstr "Անձնական օգտագործման սահմանաչափը կվերակայվի {daysUntilReset, plural, one {# օրից} other {# օրից}}։"
 
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
@@ -20933,7 +20949,7 @@ msgstr "Ընտրեք գույն"
 #. js-lingui-id: B8mlc2
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
 msgid "Pick a date"
-msgstr ""
+msgstr "Ընտրեք ամսաթիվ"
 
 #. js-lingui-id: T1yaeQ
 #: src/modules/activities/emails/utils/buildCampaignDeliveryHint.ts
@@ -21052,7 +21068,7 @@ msgstr "Փաթեթ"
 #. js-lingui-id: h4k6l4
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Plan essentials"
-msgstr ""
+msgstr "Փաթեթի հիմնական հնարավորություններ"
 
 #. js-lingui-id: XduPHC
 #: src/modules/settings/billing/hooks/useApplyBillingSubscriptionChange.ts
@@ -21211,7 +21227,7 @@ msgstr "Փոստային ինդեքս"
 #. js-lingui-id: 8LyT38
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "pre"
-msgstr ""
+msgstr "նախ"
 
 #. js-lingui-id: iVFTRM
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
@@ -21299,7 +21315,7 @@ msgstr "Վերջին 7 օրը"
 #. js-lingui-id: ap92qV
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "Previous approval"
-msgstr ""
+msgstr "Նախորդ հաստատումը"
 
 #. js-lingui-id: RCsICd
 #: src/modules/ai/components/AiChatInboxThreadPagination.tsx
@@ -21314,12 +21330,12 @@ msgstr "Նախորդ կրկնություն"
 #. js-lingui-id: 1xwZj/
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
 msgid "Previous month"
-msgstr ""
+msgstr "Նախորդ ամիս"
 
 #. js-lingui-id: 7BDoFf
 #: src/modules/ai/components/AiChatApprovalMergeReview.tsx
 msgid "Previous pair"
-msgstr ""
+msgstr "Նախորդ զույգը"
 
 #. js-lingui-id: KaMwgJ
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
@@ -21344,7 +21360,7 @@ msgstr "Նախորդ սքրինշոթը"
 #. js-lingui-id: rLvhNs
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Previous value:"
-msgstr ""
+msgstr "Նախորդ արժեքը:"
 
 #. js-lingui-id: aHCEmh
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -21516,7 +21532,7 @@ msgstr "Հատկության արժեք"
 #. js-lingui-id: nHD0EI
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Proposed value:"
-msgstr ""
+msgstr "Առաջարկվող արժեքը:"
 
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -21657,12 +21673,12 @@ msgstr "Հերթ. {queueName}"
 #. js-lingui-id: 8wu9lr
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 msgid "Queued"
-msgstr ""
+msgstr "Հերթում է"
 
 #. js-lingui-id: Eldtfl
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 msgid "Queued messages"
-msgstr ""
+msgstr "Հերթագրված հաղորդագրություններ"
 
 #. js-lingui-id: WmhhWd
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21701,13 +21717,13 @@ msgstr "Պատահական"
 #. js-lingui-id: iZuzSU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "Rate limited"
-msgstr ""
+msgstr "Հաճախականության սահմանաչափը կիրառվել է"
 
 #. js-lingui-id: 5tEe0s
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Rate limits"
-msgstr ""
+msgstr "Հաճախականության սահմանաչափեր"
 
 #. js-lingui-id: z1U/Fh
 #: src/modules/ui/field/input/components/RatingInput.tsx
@@ -21832,7 +21848,7 @@ msgstr "Միայն ընթերցման {entityTypeLabel}-ի սահմանում, �
 #. js-lingui-id: EqZQdT
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Read-only calendar"
-msgstr ""
+msgstr "Միայն կարդալու օրացույց"
 
 #. js-lingui-id: mqj7ck
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -21843,11 +21859,6 @@ msgstr "Կարդալ, գրել և ջնջել {target}"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Read/Edit/Delete permissions"
 msgstr "Կարդալ/Խմբագրել/Ջնջել թույլտվություններ"
-
-#. js-lingui-id: ckH3fT
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
-msgid "Ready"
-msgstr ""
 
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -22167,7 +22178,6 @@ msgstr "գրառումներ"
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -22237,7 +22247,7 @@ msgstr "Թարմացնել"
 #. js-lingui-id: IevXlZ
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "Refresh availability for this date."
-msgstr ""
+msgstr "Թարմացնել այս ամսաթվի հասանելիությունը։"
 
 #. js-lingui-id: pTGa/J
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -22282,6 +22292,11 @@ msgstr "Տարածաշրջանը, որտեղ մշակվում են ինֆերե�
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Register as development instance"
 msgstr "Գրանցել որպես development instance"
+
+#. js-lingui-id: SqH8YF
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Register external MCP servers in Developers settings and expose their tools to AI chat."
+msgstr "Գրանցեք արտաքին MCP սպասարկիչները Մշակողների կարգավորումներում և դրանց գործիքները հասանելի դարձրեք AI զրույցում։"
 
 #. js-lingui-id: ARGZDy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -22452,7 +22467,7 @@ msgstr "Հեռացնել որպես լռելյայն"
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Remove connection?"
-msgstr ""
+msgstr "Հեռացնե՞լ կապը։"
 
 #. js-lingui-id: 2HpFUd
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -22564,7 +22579,7 @@ msgstr "Հեռացնել հերթագրված հաղորդագրությունը
 #. js-lingui-id: 6nFc2C
 #: src/modules/ai/components/AiChatComposerQuotePreview.tsx
 msgid "Remove quote"
-msgstr ""
+msgstr "Հեռացնել մեջբերումը"
 
 #. js-lingui-id: PhLz3E
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsTable.tsx
@@ -22615,7 +22630,7 @@ msgstr "Հեռացնել գործարկիչը"
 #. js-lingui-id: XrlYG5
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Remove unavailable calendars"
-msgstr ""
+msgstr "Հեռացնել անհասանելի օրացույցները"
 
 #. js-lingui-id: Kl3J3D
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
@@ -22665,7 +22680,7 @@ msgstr "Թարմացվում է"
 #. js-lingui-id: M7SqjM
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 msgid "Reopen"
-msgstr ""
+msgstr "Վերաբացել"
 
 #. js-lingui-id: co4jwi
 #. placeholder {0}: tab.title
@@ -22909,7 +22924,7 @@ msgstr "Ռեսուրսներ"
 #. js-lingui-id: qrqIfV
 #: src/modules/ai/components/AiChatThreadRequestActions.tsx
 msgid "Respond to request"
-msgstr ""
+msgstr "Պատասխանել հարցմանը"
 
 #. js-lingui-id: ZlCDf+
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -23029,7 +23044,7 @@ msgstr "Կրկնել ձախողման դեպքում"
 #. js-lingui-id: F87htB
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Retry search"
-msgstr ""
+msgstr "Կրկնել որոնումը"
 
 #. js-lingui-id: AF7Zfa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -23200,7 +23215,7 @@ msgstr "Դերեր"
 #: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
 msgid "Roles in this channel"
-msgstr ""
+msgstr "Դերեր այս ալիքում"
 
 #. js-lingui-id: Q6o/eX
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
@@ -23262,7 +23277,7 @@ msgstr "Տողային մակարդակի անվտանգություն"
 #. js-lingui-id: OXexf7
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "rows"
-msgstr ""
+msgstr "տողեր"
 
 #. js-lingui-id: OIWtYf
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -23379,7 +23394,7 @@ msgstr "Գործարկումներ"
 #. js-lingui-id: F4I4hU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Runs and failures per version"
-msgstr ""
+msgstr "Գործարկումներ և ձախողումներ ըստ տարբերակի"
 
 #. js-lingui-id: RASTzS
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
@@ -23389,7 +23404,7 @@ msgstr "Գործարկումներն այստեղ կհայտնվեն, երբ ա�
 #. js-lingui-id: Y16LgE
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Runs, failures and 95th percentile duration"
-msgstr ""
+msgstr "Գործարկումներ, ձախողումներ և 95-րդ պերսենտիլի տևողություն"
 
 #. js-lingui-id: eo1n1s
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -23420,7 +23435,7 @@ msgstr "Նույն արժեքը բոլոր կողմերում"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "SAML/OIDC"
-msgstr ""
+msgstr "ՍԱՄԼ/ՕԱյԴՍԻ"
 
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
@@ -23530,7 +23545,7 @@ msgstr "Պլանավորված սպասարկում․ {startFormatted} — {end
 #. js-lingui-id: SxCO0O
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Scheduling preferences"
-msgstr ""
+msgstr "Ժամանակացույցի նախընտրություններ"
 
 #. js-lingui-id: QJ8HBJ
 #: src/modules/settings/developers/components/PlaygroundSetupForm.tsx
@@ -23567,7 +23582,7 @@ msgstr "Ոլորել ներքև"
 #. js-lingui-id: SIucTL
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Scrollable record review"
-msgstr ""
+msgstr "Պտտվող գրառումների վերանայում"
 
 #. js-lingui-id: hJjXGo
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -23727,7 +23742,7 @@ msgstr "Որոնել API բանալիներ"
 #. js-lingui-id: fLbp9m
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Search availability calendars"
-msgstr ""
+msgstr "Որոնել հասանելիության օրացույցներ"
 
 #. js-lingui-id: 3mGNuB
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -23752,12 +23767,12 @@ msgstr "Փնտրեք ըստ աշխատանքային տարածքի անվան, 
 #. js-lingui-id: R/iIxI
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Search calendars"
-msgstr ""
+msgstr "Որոնել օրացույցներ"
 
 #. js-lingui-id: kYSv2r
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 msgid "Search chat titles..."
-msgstr ""
+msgstr "Որոնել զրույցների վերնագրերը..."
 
 #. js-lingui-id: yI4D/V
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
@@ -23789,7 +23804,7 @@ msgstr "Որոնել արժույթը"
 #. js-lingui-id: BMsyzt
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
 msgid "Search email threads"
-msgstr ""
+msgstr "Որոնել էլ. նամակների թելեր"
 
 #. js-lingui-id: Sb71rQ
 #: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
@@ -23799,7 +23814,7 @@ msgstr "Որոնել էմոջիներ"
 #. js-lingui-id: Lncu40
 #: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
 msgid "Search events"
-msgstr ""
+msgstr "Որոնել իրադարձություններ"
 
 #. js-lingui-id: AHePb2
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -23976,7 +23991,7 @@ msgstr "Որոնվում է {objectLabel}"
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Searching chats..."
-msgstr ""
+msgstr "Զրույցների որոնում..."
 
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -24165,7 +24180,7 @@ msgstr "Տեսնել, թե ինչ կարող եմ անել"
 #. js-lingui-id: ljobQ+
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "See which parts you need and how to set each one up."
-msgstr ""
+msgstr "Տեսեք, թե որ մասերն են ձեզ անհրաժեշտ և ինչպես կարգավորել յուրաքանչյուրը։"
 
 #. js-lingui-id: eQ3co2
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -24203,7 +24218,7 @@ msgstr "Ընտրել"
 #. placeholder {0}: record.label
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Select {0}"
-msgstr ""
+msgstr "Ընտրել {0}"
 
 #. js-lingui-id: qR6X1R
 #: src/modules/object-record/advanced-filter/utils/getAdvancedFilterInputPlacedholderText.ts
@@ -24365,7 +24380,7 @@ msgstr "Ընտրել բոլոր բեռնված տողերը"
 #. js-lingui-id: rRpCVj
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Select all records"
-msgstr ""
+msgstr "Ընտրել բոլոր գրառումները"
 
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
@@ -24389,12 +24404,12 @@ msgstr "Ընտրեք տարբերակ"
 #. js-lingui-id: Wh3uKH
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one available calendar to check for conflicts."
-msgstr ""
+msgstr "Ընտրեք առնվազն մեկ հասանելի օրացույց՝ հակասությունները ստուգելու համար։"
 
 #. js-lingui-id: AXQ2Fr
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one working day."
-msgstr ""
+msgstr "Ընտրեք առնվազն մեկ աշխատանքային օր։"
 
 #. js-lingui-id: 0yxhOL
 #: src/modules/ai/components/AiChatThreadRow.tsx
@@ -24482,7 +24497,7 @@ msgstr "Ընտրեք ընտրանքները"
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordPicker.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordPicker.tsx
 msgid "Select records"
-msgstr ""
+msgstr "Ընտրել գրառումներ"
 
 #. js-lingui-id: 9c44h0
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -24554,12 +24569,12 @@ msgstr "Ընտրեք ձեր լեզուն և կարգավորեք ինտերֆե�
 #. js-lingui-id: ylXj1N
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Selected"
-msgstr ""
+msgstr "Ընտրված"
 
 #. js-lingui-id: CRzfBf
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
 msgid "Selected chats"
-msgstr ""
+msgstr "Ընտրված զրույցներ"
 
 #. js-lingui-id: AM0pWl
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24582,7 +24597,7 @@ msgstr "Ուղարկել"
 #. js-lingui-id: h3fYlJ
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Send all {pendingEmailCount}"
-msgstr ""
+msgstr "Ուղարկել բոլոր {pendingEmailCount}-ը"
 
 #. js-lingui-id: mjK8F3
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -24640,7 +24655,7 @@ msgstr "Ուղարկել հրավերներ"
 #. js-lingui-id: Hvnq/n
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
 msgid "Send invite"
-msgstr ""
+msgstr "Ուղարկել հրավեր"
 
 #. js-lingui-id: RmmhAh
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
@@ -24765,7 +24780,7 @@ msgstr "Սերվերի ադմինիստրատորի մուտքի իրավուն�
 #. js-lingui-id: WJSW19
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
 msgid "Server route"
-msgstr ""
+msgstr "Սերվերի երթուղի"
 
 #. js-lingui-id: fHVf32
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
@@ -25013,7 +25028,7 @@ msgstr "Համօգտագործված ըստ բանալիի՝ գործարկու�
 #: src/modules/ai/components/AiChatThreadLabelsField.tsx
 #: src/modules/ai/components/AiChatThreadLabelsField.tsx
 msgid "Shared conversation labels"
-msgstr ""
+msgstr "Համօգտագործված զրույցի պիտակներ"
 
 #. js-lingui-id: JTP6zD
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -25151,7 +25166,7 @@ msgstr "Ցուցադրել մուտքայինը"
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 msgid "Show less"
-msgstr ""
+msgstr "Ցույց տալ ավելի քիչ"
 
 #. js-lingui-id: dlzDxE
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
@@ -25412,7 +25427,7 @@ msgstr "Երկինք"
 #. js-lingui-id: Z6Nf0i
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Small heading that hides its content"
-msgstr ""
+msgstr "Փոքր վերնագիր, որը թաքցնում է իր բովանդակությունը"
 
 #. js-lingui-id: Ik7fz5
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -25427,7 +25442,7 @@ msgstr "Ավելի փոքր"
 #. js-lingui-id: vf0gTj
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Smallest heading"
-msgstr ""
+msgstr "Ամենափոքր վերնագիր"
 
 #. js-lingui-id: ZKXQ0a
 #: src/modules/ai/utils/getAiModelTierLabel.ts
@@ -25472,7 +25487,7 @@ msgstr "smtp.example.com"
 #. js-lingui-id: WP8c0O
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "snippet"
-msgstr ""
+msgstr "հատված"
 
 #. js-lingui-id: 7+i6oV
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
@@ -25485,7 +25500,7 @@ msgstr "Հետաձգել"
 #. js-lingui-id: aqkwib
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
 msgid "Snooze chat"
-msgstr ""
+msgstr "Հետաձգել զրույցը"
 
 #. js-lingui-id: xKw3A1
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
@@ -25540,12 +25555,12 @@ msgstr "Մասամբ տեղեկամատյանի տվյալները հանվել 
 #. js-lingui-id: b5Z5wY
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Some selected calendars are no longer available."
-msgstr ""
+msgstr "Ընտրված որոշ օրացույցներ այլևս հասանելի չեն։"
 
 #. js-lingui-id: 2c+W2z
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
 msgid "Someone replies"
-msgstr ""
+msgstr "Ինչ-որ մեկը պատասխանի"
 
 #. js-lingui-id: nwtY4N
 #: src/modules/object-core/components/CoreObjectIndexPageLayout.tsx
@@ -25670,7 +25685,7 @@ msgstr "Սկզբնաղբյուր էլ. փոստի հասցե"
 #. js-lingui-id: Jvqt/3
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Source records"
-msgstr ""
+msgstr "Աղբյուր գրառումներ"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -25720,7 +25735,7 @@ msgstr "Ծախսերը սահմանափակվելու են միայն ձեր փ�
 #. js-lingui-id: sxPyTW
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Split cell"
-msgstr ""
+msgstr "Բաժանել բջիջը"
 
 #. js-lingui-id: gsifzp
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -25825,7 +25840,7 @@ msgstr "Սկսեք ձեր ամբողջ ցանցից"
 #. js-lingui-id: 75gEoC
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Start your subscription"
-msgstr ""
+msgstr "Սկսեք ձեր բաժանորդագրությունը"
 
 #. js-lingui-id: s+K73L
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -25895,7 +25910,6 @@ msgstr "Վիճակագրություն"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
@@ -26235,7 +26249,7 @@ msgstr "Բաժանորդագրությունը {0}-ին կփոխվի ամսակ�
 #. js-lingui-id: U17bCx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Subsection heading"
-msgstr ""
+msgstr "Ենթաբաժնի վերնագիր"
 
 #. js-lingui-id: pEToQK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -26245,7 +26259,7 @@ msgstr "ենթավերնագիր"
 #. js-lingui-id: KAbcm2
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
 msgid "Succeeded"
-msgstr ""
+msgstr "Հաջողված"
 
 #. js-lingui-id: zzDlyQ
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
@@ -26355,7 +26369,7 @@ msgstr "Աջակցում է դատողությանը"
 #. js-lingui-id: LbFYgh
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Survives"
-msgstr ""
+msgstr "Պահպանվում է"
 
 #. js-lingui-id: UaISq3
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -26365,7 +26379,7 @@ msgstr "Շվեդերեն"
 #. js-lingui-id: M7wPsD
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Switch"
-msgstr ""
+msgstr "Փոխել"
 
 #. js-lingui-id: 3D7mFh
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
@@ -26564,7 +26578,7 @@ msgstr "Թաբի կարգավորումներ"
 #. js-lingui-id: cFGrCP
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "table"
-msgstr ""
+msgstr "աղյուսակ"
 
 #. js-lingui-id: 4hJhzz
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
@@ -26621,7 +26635,7 @@ msgstr "Թիրախ աշխատանքային տարածքի ենթադոմեյն"
 #. js-lingui-id: 4O3LPI
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "task"
-msgstr ""
+msgstr "առաջադրանք"
 
 #. js-lingui-id: R+s8S+
 #: src/modules/activities/tasks/components/TaskRow.tsx
@@ -26649,7 +26663,7 @@ msgstr "Թիմի անդամ"
 #. placeholder {0}: index + 1
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Teammate's email {0}"
-msgstr ""
+msgstr "Թիմակցի էլեկտրոնային հասցեն {0}"
 
 #. js-lingui-id: g4mm2M
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -26704,7 +26718,7 @@ msgstr "Փորձարկել քայլը"
 #. js-lingui-id: qSRD2n
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownTestStepItem.tsx
 msgid "Test this step to see its outputs"
-msgstr ""
+msgstr "Փորձարկեք այս քայլը՝ դրա ելքերը տեսնելու համար"
 
 #. js-lingui-id: 3nWPN6
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -26767,7 +26781,7 @@ msgstr "Տեքստային խմբագիր"
 #. js-lingui-id: kv9l5H
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "That time is no longer available. Choose another time."
-msgstr ""
+msgstr "Այդ ժամն այլևս հասանելի չէ։ Ընտրեք այլ ժամ։"
 
 #. js-lingui-id: Ldukks
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
@@ -26979,7 +26993,7 @@ msgstr "PDF-ն նախապես ստորագրված է Twenty-ի կողմից և 
 #. js-lingui-id: iz994T
 #: src/modules/ai/components/AiChatApprovalMergeReview.tsx
 msgid "The priority record keeps its identity"
-msgstr ""
+msgstr "Առաջնահերթ գրառումը պահպանում է իր ինքնությունը"
 
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -27227,7 +27241,7 @@ msgstr "Այս գործակալը գործարկվում է միայն այն ժ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationMonitoring.tsx
 msgid "This app could not be found"
-msgstr ""
+msgstr "Այս հավելվածը չհաջողվեց գտնել"
 
 #. js-lingui-id: 9rY+8P
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -27310,12 +27324,12 @@ msgstr "Սա չեղարկում է {0}-ին {upcomingPlanLabel}-ին անցնե�
 #. js-lingui-id: kcwAVF
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
 msgid "This chat could not be opened. Try selecting it again."
-msgstr ""
+msgstr "Այս զրույցը չհաջողվեց բացել։ Փորձեք նորից ընտրել այն։"
 
 #. js-lingui-id: EGhCC8
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
 msgid "This chat is no longer available."
-msgstr ""
+msgstr "Այս զրույցն այլևս հասանելի չէ։"
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -27492,12 +27506,12 @@ msgstr "Սա մշտապես ջնջում է այս աշխատահոսքը և դ�
 #. js-lingui-id: FKONu5
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog.tsx
 msgid "This permanently removes {connectionLabel} from this application. The app loses access to it."
-msgstr ""
+msgstr "Սա {connectionLabel}-ը ընդմիշտ հեռացնում է այս հավելվածից։ Հավելվածը կորցնում է դրա հասանելիությունը։"
 
 #. js-lingui-id: Pdot5f
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "This permanently removes {connectionLabel}. The app loses access to it."
-msgstr ""
+msgstr "Սա {connectionLabel}-ը ընդմիշտ հեռացնում է։ Հավելվածը կորցնում է դրա հասանելիությունը։"
 
 #. js-lingui-id: R/PuIn
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -27680,7 +27694,7 @@ msgstr "Երեք սյունակ կողք կողքի"
 #. js-lingui-id: kkDQ8m
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Thursday"
-msgstr ""
+msgstr "Հինգշաբթի"
 
 #. js-lingui-id: Vqn9Z1
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
@@ -27776,7 +27790,7 @@ msgstr "Ժամային գոտի"
 #. js-lingui-id: sdkj/e
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
 msgid "TipTap"
-msgstr ""
+msgstr "ԹիփԹափ"
 
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -27794,7 +27808,7 @@ msgstr "Վերնագիր"
 #. js-lingui-id: dMtLDE
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "to"
-msgstr ""
+msgstr "ում"
 
 #. js-lingui-id: /jQctM
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
@@ -27826,18 +27840,18 @@ msgstr "Այսօր, {time}"
 #. js-lingui-id: l2E5x0
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "todo"
-msgstr ""
+msgstr "անելիք"
 
 #. js-lingui-id: ltWtmj
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "toggle"
-msgstr ""
+msgstr "անջատիչ"
 
 #. js-lingui-id: JFciKP
 #: src/modules/advanced-text-editor/extensions/toggle/createToggleNodeView.ts
 msgid "Toggle"
-msgstr ""
+msgstr "Անջատիչ"
 
 #. js-lingui-id: L3b7Bm
 #. placeholder {0}: recordGroupDefinition.title
@@ -27863,22 +27877,22 @@ msgstr "Միացնել/անջատել բոլոր թույլտվությունն�
 #. js-lingui-id: VPezw3
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Toggle Heading 1"
-msgstr ""
+msgstr "Անջատիչ վերնագիր 1"
 
 #. js-lingui-id: kl8o5X
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Toggle Heading 2"
-msgstr ""
+msgstr "Անջատիչ վերնագիր 2"
 
 #. js-lingui-id: Ze1nB8
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Toggle Heading 3"
-msgstr ""
+msgstr "Անջատիչ վերնագիր 3"
 
 #. js-lingui-id: IGPCtl
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Toggle List"
-msgstr ""
+msgstr "Անջատիչ ցանկ"
 
 #. js-lingui-id: IHtFjq
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -27984,7 +27998,7 @@ msgstr "Օգտվողների քանակով լավագույն 10 աշխատան
 #. js-lingui-id: MhEOjf
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Top errors and warnings"
-msgstr ""
+msgstr "Հիմնական սխալներ և նախազգուշացումներ"
 
 #. js-lingui-id: A4dnvW
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -28313,7 +28327,7 @@ msgstr "TTL"
 #. js-lingui-id: G3myU+
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Tuesday"
-msgstr ""
+msgstr "Երեքշաբթի"
 
 #. js-lingui-id: Kz91g/
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -28513,7 +28527,7 @@ msgstr "Անպատասխան"
 #. js-lingui-id: EbMPZJ
 #: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 msgid "Unassigned"
-msgstr ""
+msgstr "Չվերագրված"
 
 #. js-lingui-id: jqzUyM
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
@@ -28583,7 +28597,7 @@ msgstr "Cron արտահայտության վերլուծման անսպասել�
 #. js-lingui-id: 6Y7jUZ
 #: src/modules/ai/components/AiChatThreadFollowersField.tsx
 msgid "Unfollow for me"
-msgstr ""
+msgstr "Դադարեցնել հետևելը ինձ համար"
 
 #. js-lingui-id: fo0VXg
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
@@ -28605,7 +28619,7 @@ msgstr "Մինչ այն ջնջելը հեռացրեք այս հավելվածը 
 #. js-lingui-id: J4CCwC
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Uninstalled"
-msgstr ""
+msgstr "Ապատեղադրված"
 
 #. js-lingui-id: v3XLn7
 #: src/modules/settings/applications/components/SettingsApplicationUninstallButton.tsx
@@ -28895,7 +28909,7 @@ msgstr "Հրաժարվելու էջ"
 #. js-lingui-id: 2pLYBx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailChannelDomainStatusCell.tsx
 msgid "Unsubscribe record not verified"
-msgstr ""
+msgstr "Բաժանորդագրությունից հրաժարվելու գրառումը չի հաստատվել"
 
 #. js-lingui-id: gOL19R
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribe.tsx
@@ -29287,7 +29301,7 @@ msgstr "Բաժանորդագրությունը թարմացվում է..."
 #. js-lingui-id: 1/ky9s
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "upload"
-msgstr ""
+msgstr "վերբեռնել"
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/settings/components/SettingsImageInput.tsx
@@ -29302,7 +29316,7 @@ msgstr "Վերբեռնեք .xlsx, .xls կամ .csv ֆայլ"
 #. js-lingui-id: RWfTPd
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Upload a file or an image"
-msgstr ""
+msgstr "Վերբեռնել ֆայլ կամ պատկեր"
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
@@ -29574,7 +29588,7 @@ msgstr "Օգտագործեք այս անունը՝ պատասխանը հետագ
 #. js-lingui-id: hriIh7
 #: src/modules/settings/billing/components/SettingsBillingUserCreditsSection.tsx
 msgid "Use workspace credits after a member reaches their limit"
-msgstr ""
+msgstr "Օգտագործել աշխատանքային տարածքի կրեդիտները, երբ անդամը հասնի իր սահմանաչափին"
 
 #. js-lingui-id: Z4/IP1
 #: src/modules/marketplace/utils/buildApplicationCapabilitySummary.ts
@@ -29720,7 +29734,7 @@ msgstr "Օգտագործվում է լռելյայն արժեքը։ Նշեք հ�
 #. js-lingui-id: XpFkxG
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Using workspace credits for {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr ""
+msgstr "Օգտագործվում են աշխատանքային տարածքի կրեդիտները {daysUntilReset, plural, one {# օր} other {# օր}}։"
 
 #. js-lingui-id: TIUH1Q
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -30025,7 +30039,7 @@ msgstr "Դիտել առաջադրանքները"
 #. js-lingui-id: xV1CS4
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "View monitoring"
-msgstr ""
+msgstr "Դիտել մոնիթորինգը"
 
 #. js-lingui-id: sAPirx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyStateNotShared.tsx
@@ -30040,7 +30054,7 @@ msgstr "Միայն դիտում — Դուք կարող եք կարդալ այս
 #. js-lingui-id: lD7M9Z
 #: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
 msgid "View original message"
-msgstr ""
+msgstr "Դիտել բնօրինակ հաղորդագրությունը"
 
 #. js-lingui-id: hAAsm/
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -30215,7 +30229,7 @@ msgstr "Սպասում է ձեր հաստատմանը"
 #. js-lingui-id: rZmwg4
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 msgid "Wake now"
-msgstr ""
+msgstr "Արթնացնել հիմա"
 
 #. js-lingui-id: THYlSm
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -30461,7 +30475,7 @@ msgstr "Կայքեր, որոնց թույլատրված է ներառել այս
 #. js-lingui-id: VAcXNz
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Wednesday"
-msgstr ""
+msgstr "Չորեքշաբթի"
 
 #. js-lingui-id: zx4BuL
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
@@ -30556,7 +30570,7 @@ msgstr "Whatsapp"
 #. js-lingui-id: 8ssTdk
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
 msgid "When {assistantName} finishes"
-msgstr ""
+msgstr "Երբ {assistantName}-ն ավարտի"
 
 #. js-lingui-id: m7GziZ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -30581,7 +30595,7 @@ msgstr "Երբ $100,000-ից բարձր գումար ունեցող որևէ գ�
 #. js-lingui-id: le/9Ju
 #: src/modules/settings/billing/components/SettingsBillingUserCreditsSection.tsx
 msgid "When off, a member's AI chats pause until their personal usage resets"
-msgstr ""
+msgstr "Անջատված լինելու դեպքում անդամի AI զրույցները դադարում են, մինչև վերակայվի նրա անձնական օգտագործումը"
 
 #. js-lingui-id: aEaoKJ
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -30697,7 +30711,7 @@ msgstr "Windsurf / Cascade"
 #. js-lingui-id: /Fq7wz
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 msgid "With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone."
-msgstr ""
+msgstr "Քանի որ զրույցները տեղափոխելու այլ ալիք չկա, կարող է ջնջվել միայն դատարկ ալիքը։ Սա հնարավոր չէ հետարկել։"
 
 #. js-lingui-id: tVV1AC
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
@@ -30817,22 +30831,22 @@ msgstr "Աշխատահոսքեր"
 #. js-lingui-id: OskBrZ
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Working days"
-msgstr ""
+msgstr "Աշխատանքային օրեր"
 
 #. js-lingui-id: zBOlTP
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours"
-msgstr ""
+msgstr "Աշխատանքային ժամեր"
 
 #. js-lingui-id: Gfrltr
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours end"
-msgstr ""
+msgstr "Աշխատանքային ժամերի ավարտ"
 
 #. js-lingui-id: LYfzu/
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours start"
-msgstr ""
+msgstr "Աշխատանքային ժամերի սկիզբ"
 
 #. js-lingui-id: pmUArF
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
@@ -30945,7 +30959,7 @@ msgstr "Աշխատանքային տարածքի ստեղծումը ձախողվ�
 #. js-lingui-id: Rg6QK1
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Workspace credits"
-msgstr ""
+msgstr "Աշխատանքային տարածքի կրեդիտներ"
 
 #. js-lingui-id: xM1hP9
 #: src/modules/object-core/agents/components/CoreAgentModelCell.tsx
@@ -31031,7 +31045,7 @@ msgstr "Աշխատանքային տարածքի դիտումները պահան�
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
 msgid "Workspaces"
-msgstr ""
+msgstr "Աշխատանքային տարածքներ"
 
 #. js-lingui-id: 33fb3H
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
@@ -31286,7 +31300,7 @@ msgstr "Դուք մուտք չունեք այս կարգավորումների �
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "You have no {0} connection yet."
-msgstr ""
+msgstr "Դուք դեռ չունեք {0} կապ։"
 
 #. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -31331,12 +31345,12 @@ msgstr "Դուք կդադարեք ստանալ այս էլ․ նամակները
 #. js-lingui-id: wWFO2F
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "You'll be charged ${priceDisplay} per user today, then every month."
-msgstr ""
+msgstr "Այսօր ձեզանից կգանձվի ${priceDisplay} յուրաքանչյուր օգտատիրոջ համար, այնուհետև՝ ամեն ամիս։"
 
 #. js-lingui-id: v5huc/
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "You'll be charged ${priceDisplay} per user today, then every year."
-msgstr ""
+msgstr "Այսօր ձեզանից կգանձվի ${priceDisplay} յուրաքանչյուր օգտատիրոջ համար, այնուհետև՝ ամեն տարի։"
 
 #. js-lingui-id: Cl+hUj
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
@@ -31377,7 +31391,7 @@ msgstr "Ձեր քարտը պահպանվել է, բայց վճարումը դե�
 #. js-lingui-id: OD3Fzl
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Your connections could not be loaded. Check your connection and try again."
-msgstr ""
+msgstr "Չհաջողվեց բեռնել ձեր կապերը։ Ստուգեք ձեր կապը և փորձեք կրկին։"
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -31407,7 +31421,7 @@ msgstr "Ձեր մշակիչը ստանում է այս օբյեկտը։ \"body\"
 #. js-lingui-id: HCqgJ0
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 msgid "Your inbox"
-msgstr ""
+msgstr "Ձեր մուտքային արկղը"
 
 #. js-lingui-id: RVi4Cv
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
@@ -31432,17 +31446,17 @@ msgstr "Ձեր Կազմակերպության բաժանորդագրությու
 #. js-lingui-id: j58uXD
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
 msgid "Your other email threads"
-msgstr ""
+msgstr "Ձեր մյուս էլ. նամակների թելերը"
 
 #. js-lingui-id: NRHz0j
 #: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
 msgid "Your other events"
-msgstr ""
+msgstr "Ձեր մյուս իրադարձությունները"
 
 #. js-lingui-id: Wxs+Cg
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Your own AI usage, separate from the workspace credits"
-msgstr ""
+msgstr "Ձեր սեփական AI օգտագործումը՝ աշխատանքային տարածքի կրեդիտներից առանձին"
 
 #. js-lingui-id: 8mfOAZ
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
@@ -31463,7 +31477,7 @@ msgstr "Ձեր փաթեթն անմիջապես կտեղափոխվի նոր {plan
 #. js-lingui-id: 1bRTxG
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Your plan shows the last {lookbackInHoursLabel} hours. The last {fullRetentionInDaysLabel} days are kept and visible with the Audit logs entitlement."
-msgstr ""
+msgstr "Ձեր փաթեթը ցուցադրում է վերջին {lookbackInHoursLabel} ժամը։ Վերջին {fullRetentionInDaysLabel} օրը պահվում և տեսանելի է Աուդիտի գրանցամատյանների իրավունքով։"
 
 #. js-lingui-id: Bz74IS
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts

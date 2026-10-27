@@ -1,0 +1,167 @@
+---
+title: Información sobre herramientas
+description: Muestra información complementaria cuando se pasa el cursor sobre un activador o este recibe el foco.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TooltipReference from '/snippets/ui/generated/surfaces/tooltip.mdx';
+
+## Resumen
+
+Usa `Tooltip` para una explicación breve de un control o texto truncado. Mantén visible la información esencial, asigna a los controles un nombre accesible y usa [Popover](/es/ui/primitives/surfaces/popover) cuando el contenido contenga enlaces, botones u otros controles.
+
+<StoryEmbed storyId="ui-surfaces-tooltip--display" title="Ejemplo de tooltip" height={180} />
+
+## "Uso"
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ExportHelp = () => (
+  <Tooltip content="Download the visible records as a CSV file" side="top">
+    <Text render={<span />}>
+      <Button>Export records</Button>
+    </Text>
+  </Tooltip>
+);
+```
+
+El componente de conveniencia acepta un elemento activador como `children`. Los elementos nativos reciben directamente los atributos del activador, los controladores de eventos y la ref. Los componentes de activador personalizados deben reenviar todos ellos. Un elemento contenedor también funciona con un componente que no reenvía cada prop del activador.
+
+Al pasar el cursor se abre el tooltip después de `delay` milisegundos, cuyo valor predeterminado es `600`. El foco del teclado lo abre inmediatamente. `closeDelay` tiene como valor predeterminado `0`; al pasar el cursor sobre el emergente, permanece abierto a menos que se establezca `disableHoverablePopup`. Escape lo descarta.
+
+## Estado controlado
+
+Use `open` y `onOpenChange` juntos cuando la aplicación controla la visibilidad. Use `defaultOpen` solo para establecer la visibilidad inicial de un tooltip no controlado.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ControlledExportHelp = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Tooltip
+      content="Download the visible records as a CSV file"
+      open={open}
+      onOpenChange={setOpen}
+      delay={300}
+    >
+      <span>
+        <Button>Export records</Button>
+      </span>
+    </Tooltip>
+  );
+};
+```
+
+## Contenido enriquecido y composición
+
+La forma abreviada acepta `description` y `startIcon` junto con `content`. El contenido de nodo personalizado se representa tal como se proporciona, a menos que una descripción o un icono solicite el diseño de título.
+
+```tsx
+import { IconInfoCircle } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ExportDetails = () => (
+  <Tooltip
+    content="Export visible records"
+    description="Only records matching your current filters are included."
+    startIcon={<IconInfoCircle />}
+    arrow
+  >
+    <Button>Export records</Button>
+  </Tooltip>
+);
+```
+
+El uso compuesto expone cada parte instalada de Base UI y el diseño opcional de `Tooltip.Body`. Ensamble explícitamente el portal, el posicionamiento, el emergente y la flecha opcional. Popup procesa sus elementos secundarios tal como se proporcionan; Body ofrece el mismo diseño de título, descripción e icono decorativo que la forma abreviada.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ComposedExportDetails = () => (
+  <Tooltip.Provider delay={300} closeDelay={100} timeout={400}>
+    <Tooltip.Root>
+      <Tooltip.Trigger render={<Button>Export records</Button>} />
+      <Tooltip.Portal>
+        <Tooltip.Positioner side="inline-end" sideOffset={10} arrowPadding={8}>
+          <Tooltip.Popup>
+            <Tooltip.Arrow />
+            <Tooltip.Viewport>
+              <Tooltip.Body description="Only records matching your current filters are included.">
+                Export visible records
+              </Tooltip.Body>
+            </Tooltip.Viewport>
+          </Tooltip.Popup>
+        </Tooltip.Positioner>
+      </Tooltip.Portal>
+    </Tooltip.Root>
+  </Tooltip.Provider>
+);
+```
+
+| Parte        | Destino de elemento nativo, prop y ref                                                                                                                                 |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Root`       | Coordinación del estado y la carga útil. Sin nodo DOM, props nativas ni ref de DOM. `actionsRef` expone `close` y `unmount`.                                           |
+| `Proveedor`  | `delay`, `closeDelay` y `timeout` compartidos. Sin nodo DOM ni ref de DOM.                                                                                             |
+| `Disparador` | Un botón de forma predeterminada. Las props nativas, los controladores, `render` y la ref se dirigen al elemento activador.                                            |
+| `Portal`     | El div del portal. De forma predeterminada usa el contenedor del tema y, después, el cuerpo del documento.                                                             |
+| `Positioner` | El div de posicionamiento. Gestiona el ancla, el lado físico/lógico, los desplazamientos, la gestión de colisiones, el posicionamiento fijo y el relleno de la flecha. |
+| `Popup`      | El div emergente. Gestiona el contenido, las props nativas, los estilos, `render` y la ref.                                                                            |
+| `Body`       | El div opcional del cuerpo dentro de Popup o Viewport. Las props nativas, los estilos, `render` y la ref apuntan a su raíz.                                            |
+| `Arrow`      | El div de flecha dentro de Popup.                                                                                                                                      |
+| `Viewport`   | El div opcional para las transiciones entre cargas útiles de activadores.                                                                                              |
+
+`Tooltip.Body` acepta elementos secundarios de título opcionales y nodos `description` y `startIcon`. Los títulos usan un grosor medio; las descripciones usan el color secundario del tooltip, conservan los saltos de línea y ajustan el texto largo. Omite los elementos secundarios de título para un tooltip que solo tenga descripción. El icono es decorativo y solo aparece con un título. Body no añade ningún rol de tooltip, estilos de popup, tamaño ni posicionamiento. El contenido arbitrario de Popup sigue siendo compatible. Importa `TooltipBodyProps` desde `twenty-ui/primitives/surfaces` al tipar un contenedor.
+
+Cada parte de DOM acepta props nativas, refs y composición de `render` mediante elemento o devolución de llamada. Las props nativas de nivel superior de la forma abreviada, `render` y la ref se dirigen a Popup. Use `triggerProps`, `positionerProps` y `portalProps` para personalizar los otros destinos; estas anulan los valores predeterminados de la forma abreviada. Los elementos secundarios proporcionan el elemento de representación predeterminado del activador. Ambas formas conservan el estado Root controlado/no controlado y los detalles del evento de devolución de llamada de Base UI, incluidos la cancelación, el motivo, el evento original y el activador activo.
+
+`Tooltip.createHandle\<TPayload>()` conecta activadores desacoplados con cualquiera de las dos formas mediante `handle`. Los elementos secundarios de Root compuesto o `content` de la forma abreviada pueden ser una función que reciba la carga útil activa tipada. `Tooltip.Handle` y el tipo público `TooltipHandle` exponen el contrato de identificador instalado. Los identificadores admiten `open(triggerId)` y `close()` imperativos mientras su Root está montado.
+
+## Migración
+
+Reemplace `content={<Tooltip.Content description={description} startIcon={icon}>title</Tooltip.Content>}` por `content={title} description={description} startIcon={icon}`. En el uso compuesto, utiliza `Tooltip.Body` para el diseño compartido de título y descripción, o compón tu propio contenido. Se eliminan `Tooltip.Content` y `TooltipContentProps`.
+
+Las props de posicionamiento existentes de Popup compuesto se trasladan a Positioner. Envuélvelo en Portal, mueve `container` y `keepMounted` a Portal, conserva `maxWidth` en Popup y reemplaza `arrow` por un elemento secundario Arrow. Conserva explícitamente el espaciado anterior con `sideOffset={10}` cuando sea necesario. El posicionador compuesto conserva el `sideOffset={0}` de Base UI. Ambas formas limitan Popup a 300 píxeles de forma predeterminada.
+
+## Controles deshabilitados
+
+Los botones nativos deshabilitados no pueden recibir el foco del teclado. Envuelva uno en un activador enfocable para que los usuarios puedan descubrir por qué la acción no está disponible.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const UnavailableExport = () => (
+  <Tooltip content="Select at least one record to export">
+    <span tabIndex={0} aria-label="Export records unavailable">
+      <Button disabled>Export records</Button>
+    </span>
+  </Tooltip>
+);
+```
+
+Establecer `disabled` en la forma abreviada o Root suprime el tooltip en sí. `disabled` del activador suprime la interacción del tooltip de ese activador. Deshabilite el control nativo mediante sus propias props o el elemento de representación de Trigger.
+
+## Ubicación y texto desbordado
+
+La forma abreviada usa de forma predeterminada `side="top"`, `align="center"` y `sideOffset={10}`. Tanto las descripciones emergentes abreviadas como las compuestas tienen una anchura máxima de 300 píxeles, limitada por el espacio disponible junto al ancla. Pasa `maxWidth` a la abreviada o a `Tooltip.Popup` para elegir un máximo diferente, incluidas vistas previas más amplias. Los estilos de ventana emergente nativos siguen estando disponibles para tamaños personalizados. La ubicación se ajusta al espacio disponible. Un tooltip abierto se oculta mientras su ancla se desplaza fuera de la vista, incluso fuera de un contenedor de desplazamiento. Use `arrow` para una flecha y `container` para anular el destino del portal del tema; consulte [temas](/es/ui/theming).
+
+Use [OverflowingTextWithTooltip](/es/ui/primitives/typography/overflowing-text-with-tooltip) cuando una etiqueta de texto deba mostrar su valor completo solo cuando esté truncada. Sus props existentes `text`, `tooltipContent` y `tooltipPlace` siguen disponibles.
+
+## "Props"
+
+La referencia se genera a partir de los tipos de componentes públicos. También se aceptan atributos y controladores de eventos nativos del emergente.
+
+<TooltipReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

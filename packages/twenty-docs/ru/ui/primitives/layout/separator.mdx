@@ -1,0 +1,57 @@
+---
+title: Разделитель
+description: Разделяйте смежный контент горизонтальным или вертикальным разделителем.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SeparatorReference from '/snippets/ui/generated/layout/separator.mdx';
+
+## Обзор
+
+`Separator` рендерит `div` с `role="separator"` и доступной ориентацией. Он использует контракт разделителя Base UI, включая нативные свойства, рефы и композицию `render`. Импортируйте `SeparatorProps` из той же точки входа.
+
+<StoryEmbed storyId="ui-layout-separator--display" title="Горизонтальный разделитель" height={130} />
+
+## Использование
+
+```tsx
+import { Separator } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSources = () => (
+  <Text style={{ display: 'grid', gap: 'var(--t-spacing-3)' }}>
+    <Text>Import records from a CSV file.</Text>
+    <Separator />
+    <Text>Connect an external data source.</Text>
+  </Text>
+);
+```
+
+## Ориентация и внешний вид
+
+По умолчанию для `orientation` задано значение `horizontal`. В обоих вариантах ориентации поля по умолчанию равны нулю. Горизонтальные разделители заполняют доступную ширину. Вертикальные разделители растягиваются вдоль своего flex-контейнера. Задайте отдельному вертикальному разделителю высоту. Управляйте отступами через родительский макет или используйте нативные `style` либо `className` для явного задания полей и цвета линии. Base UI также принимает для этих свойств функции от ориентации.
+
+<StoryEmbed storyId="ui-layout-separator--vertical-documentation" title="Вертикальный разделитель" height={150} />
+
+## Разделители с метками
+
+Используйте [LabeledSeparator](/ru/ui/components/layout/labeled-separator) для текстовой метки между линиями разделителя или в конце линии. Он предоставляет макет и одно доступное имя разделителя.
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+
+export const SignInDivider = () => <LabeledSeparator>Or</LabeledSeparator>;
+```
+
+## Миграция
+
+Замените прежний горизонтальный помощник на `Separator`. Удалите `noMargin`, поскольку поля теперь по умолчанию равны нулю. Чтобы сохранить прежние отступы по умолчанию, добавьте `style={{ marginBlock: 'var(--t-spacing-3)' }}`. Замените `color` на `style={{ backgroundColor: color }}`. Используйте `LabeledSeparator` для разделителей с метками, передавайте метку как дочерний элемент и переименуйте `textPosition` в `labelPosition`. Замените разделители, используемые только для невидимых отступов, на отступы макета.
+
+## Свойства
+
+<SeparatorReference />
+
+<PageBanner illustration="layout" />

@@ -3,6 +3,10 @@ title: Vistas
 description: Incluye vistas guardadas preconfiguradas — orden de columnas, filtros y grupos — para los objetos de tu aplicación.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
 Una **vista** es una configuración guardada de cómo se muestran los registros de un objeto: qué campos aparecen, su orden, si son visibles y qué filtros o grupos se aplican. Usa `defineView()` para incluir vistas preconfiguradas con tu aplicación.
 
 Cada objeto obtiene automáticamente su vista principal de lista (la tabla "All ..." que abre un elemento de navegación `OBJECT`) aprovisionada por el servidor, incluidos los objetos que crea tu aplicación, con una columna por cada campo que declara tu aplicación. Las vistas que defines con `defineView()` son siempre vistas **adicionales** sobre esa vista predeterminada.
@@ -16,7 +20,7 @@ export default defineView({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
-  icon: 'IconList',
+  icon: 'IconTable',
   position: 0,
   fields: [
     {
@@ -48,6 +52,7 @@ export default defineView({
 | `criterios de ordenación`                                                                                   | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]`         | Orden de clasificación predeterminado.                                                                                                                                                                                     |
 | `isCompact`                                                                                                 | `boolean`                                                                                  | Visualización compacta de filas.                                                                                                                                                                                           |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                          | Agrupar registros (por ejemplo, columnas de kanban) por un campo.                                                                                                                                                          |
+| `groupLoadLimit`                                                                                            | `8` (predeterminado), `25`, `50`, `100`                                                    | Registros cargados por grupo antes de "Cargar más", en las vistas de tabla y lista agrupadas. Los tableros Kanban se paginan según su propio tamaño y lo ignoran.                                                          |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                                    | Agregados y tamaño de columnas kanban.                                                                                                                                                                                     |
 | `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                                | Vistas de calendario: diseño, el campo de fecha que posiciona los registros y un campo de fecha de finalización opcional.                                                                                                  |
 
@@ -69,6 +74,16 @@ filters: [
   },
 ],
 ```
+
+Tres propiedades opcionales refinan un filtro:
+
+| Propiedad                                                          | Descripción                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `subFieldName`                                                     | Se dirige a una parte de un campo compuesto, como `amountMicros` en un campo `CURRENCY` o `primaryLinkUrl` en un campo `LINKS`.                                                                                                                                |
+| `relationTargetFieldMetadataUniversalIdentifier`                   | En un filtro sobre un campo `RELATION`, el campo del objeto relacionado con el que se compara el valor, tal como lo establece el filtro avanzado cuando selecciona un campo del registro relacionado. Omítalo para filtrar por el propio registro relacionado. |
+| `viewFilterGroupUniversalIdentifier` + `positionInViewFilterGroup` | Coloque el filtro en uno de los `filterGroups` de la vista (cada uno con un `logicalOperator` de `AND`, `OR` o `NOT` y un `parentViewFilterGroupUniversalIdentifier` opcional) y ordénelo dentro de ese grupo.                                                 |
+
+`twenty app pull` vuelve a escribir los tres exactamente como los almacenó el espacio de trabajo.
 
 ### Operandos admitidos por tipo de campo
 
@@ -110,3 +125,5 @@ El campo `value` siempre es un valor serializable en JSON, pero su forma esperad
 ## Cómo aparecen las vistas en la interfaz de usuario
 
 Una vista por sí sola no es accesible desde la barra lateral. Para que aparezca allí, vincúlala con un [elemento del menú de navegación](/es/developers/extend/apps/layout/navigation-menu-items) de tipo `VIEW` que apunte al `universalIdentifier` de la vista. Ese es el patrón canónico: cada objeto personalizado obtiene una vista de índice predeterminada autogenerada al crearse, por lo que solo necesitas incluir la entrada de la barra lateral que la abre.
+
+<PageBanner illustration="card-page-views" />

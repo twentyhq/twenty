@@ -1,0 +1,213 @@
+---
+title: ResizeHandle
+description: Ridimensiona un pannello trascinando con il puntatore o usando i controlli della tastiera.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ResizeHandleReference from '/snippets/ui/generated/layout/resize-handle.mdx';
+
+## Panoramica
+
+`ResizeHandle` gestisce una dimensione numerica ed espone un separatore attivabile tramite focus. L'applicazione applica tale dimensione al pannello; la maniglia non ridimensiona automaticamente un altro elemento.
+
+<StoryEmbed storyId="ui-layout-resizehandle--display" title="Esempio di ResizeHandle" height={600} />
+
+## Utilizzo
+
+Usa `edge` per un bordo del pannello oppure `axis="y"` per il ridimensionamento in altezza in linea e `axis="x"` per il ridimensionamento in larghezza in linea. Assegna alla maniglia un nome accessibile specifico e usa `aria-controls` per identificare il pannello.
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableNotes = () => {
+  const panelId = useId();
+  const [height, setHeight] = useState(150);
+
+  return (
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
+      </Text>
+      <Text style={{ padding: 4 }}>
+        <ResizeHandle
+          axis="y"
+          defaultValue={150}
+          onValueChange={setHeight}
+          min={50}
+          max={500}
+          aria-label="Resize notes height"
+          aria-controls={panelId}
+        />
+      </Text>
+    </Card.Root>
+  );
+};
+```
+
+La maniglia gestisce il proprio valore. `onValueChange` copia la dimensione più recente nel layout del pannello senza controllare la maniglia. `defaultValue` imposta solo la dimensione iniziale.
+
+## Stato controllato
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableNotes = () => {
+  const panelId = useId();
+  const [height, setHeight] = useState(150);
+
+  return (
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
+      </Text>
+      <Text style={{ padding: 4 }}>
+        <ResizeHandle
+          axis="y"
+          value={height}
+          onValueChange={setHeight}
+          min={50}
+          max={500}
+          aria-label="Resize notes height"
+          aria-controls={panelId}
+        />
+      </Text>
+    </Card.Root>
+  );
+};
+```
+
+L'applicazione gestisce il valore e può aggiornarlo da altri controlli. Rifletti le modifiche in tempo reale in `value`; usa `onValueCommitted` per salvare la dimensione finale. Mantieni separati `value` e `defaultValue` e conserva la stessa modalità di gestione per l'intero ciclo di vita del componente.
+
+## Bordi e spazi tra i pannelli
+
+`edge="left"`, `"right"`, `"top"` o `"bottom"` determina sia l'asse sia la direzione fisica di incremento. Il movimento verso sinistra estende un bordo sinistro, il movimento verso l'alto estende un bordo superiore e il contrario vale per i bordi destro e inferiore. Questo comportamento rimane invariato nei contenuti da destra a sinistra. Usa `edge` oppure `axis` e `direction`.
+
+Con `edge`, il posizionamento predefinito è `"edge"`. Inserisci la maniglia all'interno di un pannello con `position: 'relative'` per posizionarla lungo quel bordo. `placement="inline"` la mantiene nel flusso normale. Usa `placement="gap"` tra pannelli fratelli e impostane la larghezza o l'altezza tramite `style` quando il layout necessita di uno spazio. Le maniglie degli spazi non hanno una presa visibile per impostazione predefinita.
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableDetails = ({
+  saveWidth,
+}: {
+  saveWidth: (value: number) => void;
+}) => {
+  const detailsId = useId();
+  const [width, setWidth] = useState(380);
+
+  return (
+    <div style={{ display: 'flex', height: 200 }}>
+      <Card.Root style={{ flex: 1 }}>
+        <Text>Activity</Text>
+      </Card.Root>
+      <ResizeHandle
+        edge="left"
+        placement="gap"
+        value={width}
+        onValueChange={setWidth}
+        onValueCommitted={saveWidth}
+        min={280}
+        max={800}
+        style={{ width: 12 }}
+        aria-label="Resize details"
+        aria-controls={detailsId}
+      />
+      <Card.Root id={detailsId} style={{ width }}>
+        <Text>Details</Text>
+      </Card.Root>
+    </div>
+  );
+};
+```
+
+<StoryEmbed storyId="ui-layout-resizehandle-panels--documentation" title="Esempio di bordo del pannello ResizeHandle" height={250} />
+
+<StoryEmbed storyId="ui-layout-resizehandle-panels--gap" title="Esempio di spazio del pannello ResizeHandle" height={520} />
+
+L'applicazione gestisce il layout, la dimensione salvata, lo stato compresso e la destinazione del focus quando la compressione rimuove la maniglia. Usa `onActivate` per un'azione di compressione facoltativa.
+
+## Tastiera e limiti
+
+Per `axis="y"`, Freccia giù aumenta la dimensione e Freccia su la diminuisce. Per `axis="x"`, Destra aumenta e Sinistra diminuisce nei contenuti da sinistra a destra; le direzioni si invertono in [DirectionProvider](/it/ui/primitives/layout/direction-provider) con `direction="rtl"`.
+
+I tasti freccia usano `step`, il cui valore predefinito è `10`. Home si sposta su `min` ed End si sposta su `max`. I tasti premuti con Alt, Control o Meta vengono ignorati. Il trascinamento con il puntatore usa lo spostamento in pixel e non viene allineato a `step`. Entrambe le interazioni restano entro i limiti. Le pressioni del puntatore non spostano il focus; gli utenti della tastiera raggiungono la maniglia con Tab. `disabled` impedisce il ridimensionamento e rimuove la maniglia dall'ordine di tabulazione.
+
+L'orientamento del separatore descrive il bordo di divisione: orizzontale per il ridimensionamento dell'altezza e verticale per il ridimensionamento della larghezza.
+
+## Direzioni fisiche e zoom
+
+Imposta `direction="normal"` o `direction="reverse"` quando l'aumento della dimensione deve seguire una direzione fisica fissa, indipendentemente dalla direzione del testo. Normal aumenta con il movimento verso destra o verso il basso. Reverse aumenta con il movimento verso sinistra o verso l'alto. Ometti `direction` per mantenere il comportamento relativo alla direzione del testo descritto sopra.
+
+`scale` accetta un fattore di zoom positivo o una funzione che ne restituisce uno. La maniglia lo campiona alla pressione del puntatore e divide il movimento del puntatore per tale valore. I passaggi della tastiera rimangono invariati.
+
+## Ciclo di vita del gesto
+
+`onValueChange` riporta i valori in tempo reale. `onValueCommitted` riporta il valore finale dopo un trascinamento del puntatore riuscito o una modifica effettiva tramite tastiera. I tasti Home, Fine e freccia confermano immediatamente quando modificano la dimensione.
+
+`onResizeStart` riceve il primo valore candidato entro i limiti dopo che il puntatore supera `dragThreshold`. La soglia predefinita è `5` con `edge` e `0` negli altri casi, misurata in pixel fisici. `onResizeEnd` riceve `{ cancelled, value }` per un trascinamento avviato. Escape, l'annullamento del puntatore, la perdita della cattura del puntatore e lo smontaggio annullano il gesto senza confermarlo; la disabilitazione della maniglia lo annulla al successivo evento del puntatore. L'annullamento chiama `onValueChange` con il valore iniziale, limitato ai vincoli correnti. `onResizeEnd` riceve tale valore ripristinato.
+
+Fornisci `onActivate` per gestire un clic senza trascinamento, Invio o Spazio. Il superamento della soglia impedisce al clic successivo del puntatore di attivarsi, anche quando il puntatore torna alla posizione iniziale.
+
+I gestori nativi vengono eseguiti prima dell'interazione dell'handle. La chiamata a `preventDefault()` in `onPointerDown` o `onKeyDown` salta quell'interazione. Impedire `onPointerMove` salta solo quell'aggiornamento e lascia attivo il gesto. Impedire `onPointerUp` annulla il trascinamento, ripristina il valore delimitato iniziale e salta `onValueCommitted`. L'annullamento del puntatore e la perdita dell'acquisizione terminano comunque il gesto.
+
+## Maniglia personalizzata
+
+`ref`, gli attributi nativi, `className`, `style` e i gestori di eventi nativi si applicano alla radice del separatore, un `div` per impostazione predefinita. Il ref non si applica al pannello ridimensionato né alla maniglia visibile.
+
+`children` sostituisce la presa visibile e `children={null}` la nasconde; non sostituisce il comportamento del separatore. `render` può sostituire l'elemento radice e il ref si applica quindi a tale sostituzione. I wrapper personalizzati devono [inoltrare le props e il ref forniti](/it/ui/primitives/overview#custom-components) affinché il focus, l'acquisizione del puntatore, i gestori della tastiera e gli attributi di accessibilità raggiungano lo stesso elemento.
+
+## Props
+
+<ResizeHandleReference />
+
+<PageBanner illustration="layout" />

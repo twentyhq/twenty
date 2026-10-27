@@ -1,0 +1,167 @@
+---
+title: راديو
+description: اعرض خيارًا واحدًا في مجموعة أزرار اختيار متنافية.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import RadioReference from '/snippets/ui/generated/input/radio.mdx';
+
+## نظرة عامة
+
+يمثل `Radio` خيارًا واحدًا ضمن [RadioGroup](/ar/ui/primitives/input/radio-group). امنح كل خيار `value` مميزًا وتسمية مرئية. تمتلك المجموعة القيمة المحددة.
+
+<StoryEmbed storyId="ui-input-radio--display" title="مثال على زر الاختيار" height={140} />
+
+## استخدام
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const ContactMethod = () => (
+  <RadioGroup
+    name="contactMethod"
+    defaultValue="email"
+    aria-label="Preferred contact method"
+  >
+    <Radio value="email">Email</Radio>
+    <Radio value="phone">Phone</Radio>
+    <Radio value="post" disabled>
+      Postal mail (unavailable)
+    </Radio>
+  </RadioGroup>
+);
+```
+
+تقبل الخاصية `size` القيمة `sm` أو `md`، وتكون `sm` افتراضيًا. استخدم الحجم نفسه للخيارات في مجموعة.
+
+## الخيارات المرئية
+
+قارن بين حالات المحدد والمعطل، والأحجام، والمظهرين الافتراضي والبطاقة. استخدم مجموعة خيارات معنونة لاتخاذ اختيار فعلي.
+
+<StoryEmbed storyId="ui-input-radio--catalog" title="الخيارات المرئية لزر الاختيار" height={380} />
+
+## الأجزاء الكاملة
+
+يكشف `Radio.Root` و`Radio.Indicator` عن أجزاء Base UI المثبتة دون التجميع المنسق. قم بتجميعها عندما تحتاج إلى محتوى مخصص أو موضع مخصص للمؤشر. يوفر `Radio` القابل للاستدعاء مظهر زر الاختيار والمؤشر الخاصين بـ Twenty للخيارات الشائعة.
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const StorageChoice = () => (
+  <RadioGroup aria-label="Storage" defaultValue="ssd">
+    <Radio.Root value="ssd">
+      <Radio.Indicator keepMounted render={<span />}>
+        ✓
+      </Radio.Indicator>
+      SSD
+    </Radio.Root>
+    <Radio.Root value="hdd">HDD</Radio.Root>
+  </RadioGroup>
+);
+```
+
+تعرض أزرار الاختيار القياسية و`Radio.Root` عنصر span بدلالات زر اختيار وإدخالاً أصلياً مخفياً مجاوراً. تُعرِض أزرار الاختيار على هيئة بطاقة عنصر div. يستهدف `ref` الجذر المُعرَض؛ ويستهدف `inputRef` الإدخال. يُعرِض `Radio.Indicator` عنصر span، ويستهدف مرجعه ذلك العنصر. تحتفظ `render` و`className` و`style` المستندتان إلى الحالة والسمات الأصلية ومعالجات الأحداث بعقود المصدر الخاصة بها. تتضمن الأنواع العامة `RadioProps` و`RadioRootProps` و`RadioRootState` و`RadioIndicatorProps` و`RadioIndicatorState`.
+
+## خيارات البطاقة
+
+استخدم `variant="card"` للخيارات بعرض كامل مع مؤشر زر اختيار داخلي. تحتفظ أزرار الاختيار على هيئة بطاقة بجذر div افتراضياً. استخدم `render` لاختيار عنصر آخر صراحةً. عندما يكون ذلك العنصر زراً أصلياً، اضبط أيضاً `nativeButton`. أبقِ عناصر التحكم التفاعلية خارج محتوى البطاقة.
+
+امنح المجموعة عرضًا كافيًا لمحتواها واترك مساحة للمؤشر في أعلى اليمين. يساعد العنوان والأيقونة والوصف القصير على شرح كل خيار.
+
+<StoryEmbed storyId="ui-input-radio--cards-documentation" title="خيارات بطاقات الاختيار" height={290} />
+
+```tsx
+import { IconLayoutKanban, IconTable } from 'twenty-ui/icon';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+const VIEWS = [
+  {
+    value: 'table',
+    title: 'Table view',
+    description: 'Browse records in rows.',
+    Icon: IconTable,
+  },
+  {
+    value: 'board',
+    title: 'Board view',
+    description: 'Track progress across columns.',
+    Icon: IconLayoutKanban,
+  },
+];
+
+export const ViewChoice = () => (
+  <RadioGroup
+    aria-label="Default view"
+    defaultValue="table"
+    style={{ width: 280 }}
+  >
+    {VIEWS.map(({ value, title, description, Icon }) => (
+      <Radio key={value} variant="card" value={value}>
+        <span style={{ display: 'grid', gap: 8, paddingInlineEnd: 24 }}>
+          <Icon size={20} aria-hidden />
+          <Text
+            render={<span />}
+            style={{ fontWeight: 'var(--t-font-weight-medium)' }}
+          >
+            {title}
+          </Text>
+          <Text
+            render={<span />}
+            style={{ color: 'var(--t-font-color-secondary)', lineHeight: 1.5 }}
+          >
+            {description}
+          </Text>
+        </span>
+      </Radio>
+    ))}
+  </RadioGroup>
+);
+```
+
+## تركيب أصلي صريح
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingChoice = () => (
+  <RadioGroup aria-label="Billing interval" defaultValue="monthly">
+    <Radio
+      variant="card"
+      value="monthly"
+      nativeButton
+      render={<button type="button" />}
+    >
+      Monthly
+    </Radio>
+    <Radio
+      variant="card"
+      value="yearly"
+      nativeButton
+      render={<button type="button" />}
+    >
+      Yearly
+    </Radio>
+  </RadioGroup>
+);
+```
+
+يستهدف المرجع الزر المُركَّب. بالنسبة إلى الجذور المخصصة التي ليست أزراراً، اترك `nativeButton` بالقيمة false ومرّر خصائص العرض والمرجع المقدمين إلى العنصر الفعلي.
+
+## لوحة المفاتيح والتحديد
+
+يدخل مفتاح Tab إلى المجموعة أو يخرج منها. تتنقل مفاتيح الأسهم بين الخيارات الممكّنة وتحدد الخيار الذي عليه التركيز. يحدد مفتاح المسافة زر الاختيار الذي عليه التركيز. يلغي زر الاختيار Base UI المثبّت التحديد بمفتاح Enter لكلٍ من الجذور الافتراضية والأزرار الأصلية المُركَّبة. توجد معالجات التحديد والتغيير على `RadioGroup`؛ راجع [مثاله غير المتحكَّم به](/ar/ui/primitives/input/radio-group#uncontrolled-state) و[مثاله المتحكَّم به](/ar/ui/primitives/input/radio-group#controlled-state).
+
+تغيّر أسهم زر الاختيار التحديد أثناء نقلها للتركيز. ينقل [Dropdown.SelectionGroup](/ar/ui/components/navigation/dropdown) التركيز باستخدام مفاتيح الأسهم ويؤكد اختيارًا باستخدام Enter أو Space.
+
+`Radio` و`Radio.Root` عامان بالنسبة إلى نوع القيمة. حافظ على اتساق هذا النوع مع مجموعته. يمكن للسمات الأصلية مثل `aria-describedby` ربط خيار بنص مساعدة إضافي.
+
+## الإزاحة
+
+يتم إنشاء المرجع من أنواع المكونات العامة. تُقبل أيضًا السمات الأصلية، بما في ذلك الأسماء القابلة للوصول ومعالجات الأحداث، في الأجزاء التي تعرض عناصر.
+
+<RadioReference />
+
+<PageBanner illustration="page-cover-switch" />

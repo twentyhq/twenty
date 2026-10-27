@@ -16,5 +16,5 @@ export const indexMetadataItemSchema = z.object({
   isUnique: z.boolean(),
   applicationId: z.uuid(),
   isSystemSideEffect: z.boolean(),
-  objectMetadata: z.any(),
+  objectMetadata: z.any().optional(),
 }) satisfies z.ZodType<IndexMetadataItem>;

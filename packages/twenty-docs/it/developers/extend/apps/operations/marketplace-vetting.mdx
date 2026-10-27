@@ -1,0 +1,61 @@
+---
+title: Verifica del marketplace (in corso)
+description: Requisiti proposti affinché le app di terze parti ricevano un badge di verifica.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Come funziona il controllo
+
+<Warning>
+  **Lavori in corso.** Questa pagina e i relativi requisiti potrebbero evolvere. La verifica di terze parti
+  non è ancora disponibile. Consulta
+  [Pubblicazione](/it/developers/extend/apps/operations/publishing#marketplace-visibility-and-vetting)
+  per il comportamento attuale del marketplace.
+</Warning>
+
+La verifica si applica a una versione e a un pacchetto dell'app specifici. Ogni aggiornamento richiede la revisione e
+l'approvazione di Twenty. Le app verificate possono essere rivalutate man mano che le dipendenze o i servizi
+evolvono.
+
+## Elenco di controllo per la verifica
+
+Tutti gli elementi applicabili devono essere superati. Consigliamo di utilizzare un agente per autovalutare
+ogni criterio con prove e correzioni necessarie prima dell'invio.
+
+* [ ] **Editore.** [Rivendica la tua app](/it/developers/extend/apps/operations/publishing#claiming-your-app)
+  e [pubblica con provenienza](/it/developers/extend/apps/operations/publishing#ci-publishing).
+* [ ] **Sicurezza.** Supera la revisione interna della sicurezza di Twenty e risolvi i
+  problemi bloccanti.
+* [ ] **Autorizzazioni.** Richiedi solo le
+  [autorizzazioni](/it/developers/extend/apps/config/roles) necessarie per le funzionalità dell'app.
+* [ ] **Funzionalità.** La configurazione e i flussi di lavoro principali sono facili da seguire e funzionano come
+  pubblicizzato, senza arresti anomali, lavoro perso o record duplicati. Nessuna funzionalità segnaposto
+  né controllo non funzionante.
+* [ ] **Prestazioni.** Rispetta i limiti di frequenza condivisi per API/processi, gestisci il throttling e
+  segui le
+  [buone pratiche per lo sviluppo di app](/it/developers/extend/apps/getting-started/good-practices).
+* [ ] **Utilità.** Completa un'attività CRM significativa per un pubblico più ampio rispetto alla
+  configurazione di un singolo cliente. I connettori piccoli e le automazioni headless sono idonei.
+* [ ] **Esperienza nativa.** Riutilizza oggetti, viste e flussi di lavoro nativi ove appropriato.
+  Se l'app ha un'interfaccia utente, usa
+  [`twenty-ui`](/it/developers/extend/apps/layout/front-components#using-twenty-ui-components)
+  e adotta i layout, le interazioni e le convenzioni di accessibilità di Twenty.
+* [ ] **Privacy.** Spiega quali dati lasciano lo spazio di lavoro, dove vanno e perché,
+  inclusi i fornitori di IA, per quanto tempo vengono conservati e come possono essere eliminati.
+* [ ] **Manutenzione e compatibilità.** Dichiara le versioni supportate di Twenty, mantieni
+  stabili gli identificatori delle entità e correggi nel tempo bug critici e integrazioni non funzionanti.
+* [ ] **Logo e galleria.** Fornisci un logo originale e riconoscibile e immagini
+  curate dell'app effettiva. Segui le
+  [linee guida per le immagini](/it/developers/extend/apps/operations/publishing#marketplace-metadata).
+* [ ] **Scheda e README.** Descrivi accuratamente le funzionalità e le affiliazioni nel
+  nome, nella descrizione e negli screenshot. Mantieni il README breve, ben formattato
+  e incentrato sul valore dell'app.
+* [ ] **Prezzi.** Indica chiaramente se l'app è gratuita o a pagamento, i prezzi dei piani,
+  la frequenza di fatturazione e gli eventuali servizi di terze parti a pagamento necessari.
+* [ ] **Documentazione e supporto.** Fornisci istruzioni di configurazione, un esempio funzionante
+  e un contatto per il supporto. Se utilizzi route condivise, completa la
+  [configurazione](/it/developers/extend/apps/operations/publishing#setting-up-server-routes)
+  e verifica che gli eventi raggiungano lo spazio di lavoro corretto.
+
+<PageBanner illustration="card-page-marketplace-vetting" />

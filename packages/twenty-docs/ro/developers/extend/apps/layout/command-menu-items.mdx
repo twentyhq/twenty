@@ -3,6 +3,10 @@ title: Elemente din meniul de comenzi
 description: Expune componente front-end ca acțiuni rapide și intrări în meniul de comenzi (Cmd+K) folosind defineCommandMenuItem.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Un element din meniul de comenzi este puntea dintre utilizator și un [front component](/ro/developers/extend/apps/layout/front-components). Acesta înregistrează componenta în meniul de comenzi Twenty (Cmd+K) și, opțional, ca buton fixat de acțiune rapidă în colțul din dreapta sus al paginii.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
@@ -31,6 +35,7 @@ export default defineCommandMenuItem({
 | `availabilityType`                      | Nu          | Controlează unde apare comanda: `'GLOBAL'` (mereu disponibilă), `'GLOBAL_OBJECT_CONTEXT'` (doar în paginile cu context de obiect — pagini de index și de înregistrare), `'RECORD_SELECTION'` (doar când sunt selectate înregistrări) sau `'FALLBACK'` (afișată când nicio altă comandă nu se potrivește) |
 | `availabilityObjectUniversalIdentifier` | Nu          | Restricționați comanda la paginile unui anumit tip de obiect (de ex., doar pe înregistrările Company)                                                                                                                                                                                                    |
 | `conditionalAvailabilityExpression`     | Nu          | O expresie booleană care controlează dinamic vizibilitatea (vezi mai jos)                                                                                                                                                                                                                                |
+| `conditionalPinnedExpression`           | Nu          | O expresie booleană care restrânge `isPinned`: comanda apare ca buton de acțiune rapidă numai cât timp este îndeplinită și, în caz contrar, rămâne în meniul de comenzi. Aceeași sintaxă și aceleași variabile ca pentru `conditionalAvailabilityExpression`                                             |
 
 ## Comenzi headless
 
@@ -115,3 +120,5 @@ Combinați variabilele în expresii booleene:
 | `none(array, prop)`                 | `true` dacă proprietatea este falsy pentru fiecare element              |
 | `noneDefined(array, prop)`          | `true` dacă proprietatea este nedefinită pentru fiecare element         |
 | `noneEquals(array, prop, value)`    | `true` dacă proprietatea nu este egală cu valoarea pe niciun element    |
+
+<PageBanner illustration="card-page-command-menu" />

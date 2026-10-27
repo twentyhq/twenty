@@ -1,0 +1,105 @@
+---
+title: Строка сведений
+description: Выравнивайте метки сведений со значениями, переносящимися на новую строку, и необязательными действиями.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DetailsRowReference from '/snippets/ui/generated/components/data-display/details-row.mdx';
+
+## Обзор
+
+`DetailsRow` сопоставляет метку со значением в списке описаний. Добавьте декоративный значок, несколько элементов значения или действие, предоставляемое вашим приложением.
+
+<StoryEmbed storyId="ui-data-display-detailsrow--display" title="Пример строки сведений" height={220} />
+
+## Использование
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+import { IconNotes, IconTag, IconUser } from 'twenty-ui/icon';
+import { Chip, Tag } from 'twenty-ui/primitives/data-display';
+import { Card } from 'twenty-ui/primitives/surfaces';
+
+export const CollectionDetails = () => (
+  <Card.Root>
+    <Card.Content>
+      <dl style={{ display: 'grid', gap: 8, margin: 0 }}>
+        <DetailsRow label="Owner" startIcon={<IconUser size={16} />}>
+          <Chip>Jordan Lee</Chip>
+        </DetailsRow>
+        <DetailsRow label="Categories" startIcon={<IconTag size={16} />}>
+          <Tag color="blue">Research</Tag>
+          <Tag color="purple">Design</Tag>
+        </DetailsRow>
+        <DetailsRow label="Description" startIcon={<IconNotes size={16} />}>
+          A shared collection of customer research and design decisions.
+        </DetailsRow>
+      </dl>
+    </Card.Content>
+  </Card.Root>
+);
+```
+
+Размещайте каждую строку непосредственно внутри `dl`. Передавайте метку через `label`, а её значение — через `children`. Приложение отвечает за метки, локализацию, форматированные значения и заполнители для отсутствующих значений.
+
+## Выравнивание и перенос строк
+
+Метки и значения переносятся на новую строку, а не обрезаются. Несколько элементов значения, таких как чипы или теги, переносятся на дополнительные строки. По мере увеличения содержимого строки выравнивают его по верхнему краю.
+
+Ширина столбца меток по умолчанию равна `7rem` и ограничена 40 % ширины строки, чтобы оставить место для значения в узких контейнерах. Задайте одинаковое значение `labelWidth` в соседних строках, чтобы настроить их выравнивание. Для чисел используются пиксели; также поддерживаются значения длины CSS, например `'8rem'`.
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+
+export const PublicationDetails = () => (
+  <dl style={{ display: 'grid', gap: 8, margin: 0, maxWidth: 360 }}>
+    <DetailsRow label="Primary contributor" labelWidth={128}>
+      Jordan Lee
+    </DetailsRow>
+    <DetailsRow label="Review notes" labelWidth={128}>
+      Include findings from the customer interviews before publication.
+    </DetailsRow>
+  </dl>
+);
+```
+
+## Действия
+
+Используйте `action` для элемента управления рядом со значением. Строка не добавляет поведение редактирования, щелчка или клавиатуры. Предоставьте элемент управления с доступным именем и свяжите его обработчик с поведением приложения.
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconCopy } from 'twenty-ui/icon';
+
+export const ContactDetails = ({ onCopy }: { onCopy: () => void }) => (
+  <dl style={{ margin: 0 }}>
+    <DetailsRow
+      label="Email"
+      action={
+        <LightIconButton aria-label="Copy email address" onClick={onCopy}>
+          <IconCopy size={16} />
+        </LightIconButton>
+      }
+    >
+      jordan@example.com
+    </DetailsRow>
+  </dl>
+);
+```
+
+## Композиция и доступность
+
+Каждая строка отображает группу `div` с меткой `dt` и элементом `dd`, содержащим значение и необязательное действие. Вызывающая сторона предоставляет охватывающий `dl`. Используйте содержательный текст в метке. Необязательный `startIcon` скрыт от вспомогательных технологий, а вызывающая сторона управляет его размерами.
+
+Нативные атрибуты, `className`, `style` и `ref` применяются к внешнему `div`. При использовании `render` с пользовательской обёрткой сохраняйте этот `div` непосредственно внутри `dl` и передавайте все предоставленные свойства и ref. Сохраняйте действия внутри их слота, чтобы термин и определение оставались непосредственными дочерними элементами строки.
+
+Используйте [MetricRow](/ru/ui/components/data-display/metric-row) для метрики с необязательным индикатором выполнения. `DetailsRow` предоставляет только макет метки, значения и действия.
+
+## Свойства
+
+<DetailsRowReference />
+
+<PageBanner illustration="page-cover-input" />

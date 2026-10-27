@@ -1,0 +1,89 @@
+---
+title: Paginator cu număr
+description: Navighează într-o colecție finită cu controale Anterior și Următor și text de poziție formatat.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CountPagerReference from '/snippets/ui/generated/components/navigation/count-pager.mdx';
+
+## Prezentare generală
+
+`CountPager` combină butoanele anterior și următor cu text de poziție formatat de apelant. Folosește-l pentru a parcurge o colecție mică, cum ar fi elementele de revizuit sau solicitările.
+
+<StoryEmbed storyId="ui-components-countpager--display" title="Exemplu de paginator cu număr" height={100} />
+
+## Utilizare
+
+```tsx
+import { useState } from 'react';
+import { CountPager } from 'twenty-ui/components/navigation';
+
+export const ReviewPager = () => {
+  const [index, setIndex] = useState(0);
+
+  return (
+    <CountPager
+      aria-label="Review item"
+      index={index}
+      count={3}
+      onIndexChange={setIndex}
+      positionText={`${index + 1} of 3`}
+      previousLabel="Previous item"
+      nextLabel="Next item"
+    />
+  );
+};
+```
+
+## Navigare controlată
+
+Furnizează un `index` bazat pe zero, `count` al colecției și `onIndexChange`. Activarea unui buton disponibil solicită indexul învecinat. Aplicația ta actualizează indexul și redă conținutul corespunzător.
+
+Anterior este dezactivat la primul element, iar Următor este dezactivat la ultimul element. Ambele butoane sunt dezactivate pentru o colecție goală sau cu un singur element, când este setat `disabled` sau când indexul ori numărul furnizat este nevalid. Numerele trebuie să fie întregi nenegativi, iar indexul trebuie să fie un număr întreg în limitele colecției.
+
+Modificarea proprietăților nu apelează niciodată `onIndexChange`. Când elementele dispar sau colecția se modifică, aplicația ta alege următorul element activ. Încărcarea datelor, identitățile stabile ale elementelor, păstrarea schițelor și executarea elementului afișat rămân în responsabilitatea aplicației.
+
+## Textul de poziție și amplasarea
+
+`positionText` este obligatoriu și rămâne sub controlul aplicației. Formatează numerele, unitățile și traducerile înainte de a-l transmite paginatorului. Pentru o colecție goală, furnizează o valoare semnificativă, precum `No items`; componenta nu inventează o etichetă pentru starea goală.
+
+Valoarea implicită `positionPlacement="between"` afișează Anterior, textul de poziție și Următor. Setează `positionPlacement="start"` pentru a plasa textul înaintea ambelor butoane. Textul umple apoi lățimea disponibilă, astfel încât acțiunile să fie aliniate la sfârșitul rândului.
+
+```tsx
+import { useState } from 'react';
+import { CountPager } from 'twenty-ui/components/navigation';
+
+export const RequestPager = () => {
+  const [index, setIndex] = useState(0);
+
+  return (
+    <CountPager
+      aria-label="Pending requests"
+      index={index}
+      count={3}
+      onIndexChange={setIndex}
+      positionText={`Request ${index + 1} of 3`}
+      previousLabel="Previous request"
+      nextLabel="Next request"
+      positionPlacement="start"
+      style={{ width: 280, maxWidth: '100%' }}
+    />
+  );
+};
+```
+
+## Accesibilitate și compoziție
+
+Elementul rădăcină este implicit un grup. Furnizează un nume accesibil contextual cu `aria-label` sau `aria-labelledby`, plus `previousLabel` și `nextLabel` pentru cele două butoane cu pictograme. Textul de poziție utilizează o regiune live politicoasă, astfel încât modificările să poată fi anunțate fără a muta focalizarea.
+
+Controalele folosesc butoane native cu prezentarea partajată [LightIconButton](/ro/ui/components/input/light-icon-button). Tab comută între controalele activate, iar Enter sau Space activează butonul focalizat. Controalele dezactivate nu pot naviga. Clicurile pe paginator nu trimit un formular înconjurător.
+
+Atributele native, `className`, `style` și `ref` vizează elementul rădăcină. Folosește `render` pentru a compune un alt element rădăcină, păstrând proprietățile furnizate și referința. Păstrează intacte butoanele și semantica lor de interacțiune.
+
+## Proprietăți
+
+<CountPagerReference />
+
+<PageBanner illustration="dashboards" />
