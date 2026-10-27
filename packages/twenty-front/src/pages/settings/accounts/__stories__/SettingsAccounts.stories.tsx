@@ -62,8 +62,13 @@ const getTableRow = (canvasElement: HTMLElement, text: string) => {
   return within(row);
 };
 
-const getTab = (canvasElement: HTMLElement, tabId: string) =>
-  within(canvasElement).getByTestId(`tab-${tabId}`);
+const getTab = ({
+  canvasElement,
+  tabId,
+}: {
+  canvasElement: HTMLElement;
+  tabId: string;
+}) => within(canvasElement).getByTestId(`tab-${tabId}`);
 
 const accountGroupsStory: Story = {
   args: {
@@ -109,7 +114,7 @@ export const AppsTabOpensByDefault: Story = {
       canvas.queryByText('Shared accounts between apps'),
     ).not.toBeInTheDocument();
 
-    await userEvent.click(getTab(canvasElement, 'accounts'));
+    await userEvent.click(getTab({ canvasElement, tabId: 'accounts' }));
 
     expect(await canvas.findByText('tim@apple.dev')).toBeVisible();
     expect(
@@ -240,7 +245,7 @@ export const AppPreferencesListEnabledApps: Story = {
 
     await canvas.findByText('tim@apple.dev', undefined, { timeout: 3000 });
     expect(canvas.queryByText('Blocklist')).not.toBeInTheDocument();
-    await userEvent.click(getTab(canvasElement, 'apps'));
+    await userEvent.click(getTab({ canvasElement, tabId: 'apps' }));
 
     expect(
       await canvas.findByRole('link', { name: 'Gmail and Calendar' }),
@@ -463,7 +468,7 @@ export const AppsWhoseProviderIsNotSetUpShowNoMissingAccount: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('tim@apple.dev', undefined, { timeout: 3000 });
-    await userEvent.click(getTab(canvasElement, 'apps'));
+    await userEvent.click(getTab({ canvasElement, tabId: 'apps' }));
     await canvas.findByText('Linear', undefined, { timeout: 3000 });
 
     expect(
@@ -542,7 +547,7 @@ export const BlocklistFallsBackToAccountsTabWithoutBuiltInAccountApp: Story = {
       await canvas.findByText('Blocklist', undefined, { timeout: 3000 }),
     ).toBeVisible();
 
-    await userEvent.click(getTab(canvasElement, 'apps'));
+    await userEvent.click(getTab({ canvasElement, tabId: 'apps' }));
 
     expect(await canvas.findByText('Fathom')).toBeVisible();
     expect(
