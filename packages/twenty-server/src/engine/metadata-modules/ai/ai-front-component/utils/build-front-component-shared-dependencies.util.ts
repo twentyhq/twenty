@@ -57,7 +57,6 @@ export const buildFrontComponentSharedDependencies = async ({
     exports: {},
   };
 
-  // Export discovery executes app dependencies inside the builder Lambda.
   runInNewContext(
     code,
     { module, exports: module.exports },
