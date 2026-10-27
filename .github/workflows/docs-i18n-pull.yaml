@@ -61,12 +61,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # Without an open PR, whatever the branch holds is regenerable, so restart it from main
+          # The branch only holds regenerable output, so restart it from main when
+          # there is no open PR to keep or when keeping it would conflict with main
           if [ "$(gh pr list --head i18n-docs --base main --state open --json number --jq length)" = 0 ]; then
             git checkout -B i18n-docs origin/main
           else
             git checkout -B i18n-docs origin/i18n-docs
-            git merge --no-edit origin/main
+            git merge --no-edit origin/main || { git merge --abort && git checkout -B i18n-docs origin/main; }
           fi
 
       - name: Stash any changes before pulling translations

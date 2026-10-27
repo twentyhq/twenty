@@ -41,12 +41,13 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@twenty.com'
-          # Without an open PR, whatever the branch holds is regenerable, so restart it from main
+          # The branch only holds regenerable output, so restart it from main when
+          # there is no open PR to keep or when keeping it would conflict with main
           if [ "$(gh pr list --head i18n-website --base main --state open --json number --jq length)" = 0 ]; then
             git checkout -B i18n-website origin/main
           else
             git checkout -B i18n-website origin/i18n-website
-            git merge --no-edit origin/main
+            git merge --no-edit origin/main || { git merge --abort && git checkout -B i18n-website origin/main; }
           fi
 
       - name: Install dependencies
