@@ -3,7 +3,7 @@ import { readFile } from 'fs/promises';
 import path from 'path';
 
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
-import { SEED_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/seed-dependencies-dirname';
+import { STANDARD_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/standard-application-dependencies-directory-name';
 
 export type DefaultApplicationPackageFields = {
   packageJsonChecksum: string;
@@ -14,7 +14,7 @@ export type DefaultApplicationPackageFields = {
 };
 
 export const getDefaultApplicationPackageFields = async ({
-  directory = SEED_DEPENDENCIES_DIRNAME,
+  directory = STANDARD_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
 }: { directory?: string } = {}): Promise<DefaultApplicationPackageFields> => {
   const [packageJsonContent, yarnLockContent] = await Promise.all([
     readFile(path.join(directory, 'package.json'), 'utf8'),

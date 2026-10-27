@@ -1,5 +1,6 @@
 import { type Job, Worker } from 'bullmq';
 
+import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -53,6 +54,32 @@ describe('BullMQDriver deduplication', () => {
         id: job.opts.jobId ?? `auto-${index}`,
       })),
     );
+  });
+
+  describe.each([undefined, 0, 2])('job priority %s', (priority) => {
+    it('uses the caller priority or the shared default to add', async () => {
+      await driver.add(MessageQueue.workspaceQueue, 'job', {}, { priority });
+
+      expect(mockAdd).toHaveBeenCalledWith(
+        'job',
+        {},
+        expect.objectContaining({ priority: priority ?? DEFAULT_JOB_PRIORITY }),
+      );
+    });
+
+    it('uses the caller priority or the shared default to bulkAdd', async () => {
+      await driver.bulkAdd(MessageQueue.workspaceQueue, 'job', [{ data: {} }], {
+        priority,
+      });
+
+      expect(mockAddBulk).toHaveBeenCalledWith([
+        expect.objectContaining({
+          opts: expect.objectContaining({
+            priority: priority ?? DEFAULT_JOB_PRIORITY,
+          }),
+        }),
+      ]);
+    });
   });
 
   describe('add', () => {

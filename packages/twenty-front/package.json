@@ -97,7 +97,7 @@
     "framer-motion": "^11.18.0",
     "fuse.js": "^7.1.0",
     "graphiql": "^5.2.3",
-    "graphql": "16.8.1",
+    "graphql": "16.14.2",
     "graphql-sse": "^2.5.4",
     "graphql-tag": "^2.12.6",
     "idb-keyval": "^6.2.5",

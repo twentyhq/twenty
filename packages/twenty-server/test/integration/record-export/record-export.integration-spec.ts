@@ -400,7 +400,7 @@ describe('record export lifecycle (integration)', () => {
       return rows.length === 0;
     });
     expect(response.headers['content-disposition']).toBe(
-      'attachment; filename="company.csv"',
+      'attachment; filename=company.csv',
     );
     expect(response.headers['cache-control']).toBe('private, no-store');
     expect(response.text.replace(/^\uFEFF/, '')).toBe(
