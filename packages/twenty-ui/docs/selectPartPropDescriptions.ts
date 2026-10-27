@@ -22,7 +22,7 @@ export const SELECT_PART_PROP_DESCRIPTIONS = {
   Positioner: {
     ref: 'Ref to the positioning div. Native props, styles and render apply to this element.',
     alignItemWithTrigger:
-      'Uses the upstream selected-item alignment by default. Set false to use side, align and offsets without overlapping the trigger.',
+      'Aligns the selected item with the trigger when true. Defaults to false to position the popup using side, align and offsets.',
   },
   Popup: {
     children:

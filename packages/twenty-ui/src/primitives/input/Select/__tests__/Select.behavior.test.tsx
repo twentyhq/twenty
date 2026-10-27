@@ -431,7 +431,7 @@ describe('Select behavior', () => {
     expect(itemRef.current?.querySelector('svg')).toBeNull();
   });
 
-  it('keeps an inline popup and uses the upstream positioner defaults', () => {
+  it('keeps an inline popup and anchors it below the trigger by default', () => {
     const positionerRef = createRef<HTMLDivElement>();
     const popupRef = createRef<HTMLDivElement>();
     const { container } = render(
@@ -445,10 +445,26 @@ describe('Select behavior', () => {
     );
 
     expect(positionerRef.current).toBeInstanceOf(HTMLDivElement);
-    expect(positionerRef.current).toHaveAttribute('data-side', 'none');
+    expect(positionerRef.current).toHaveAttribute('data-side', 'bottom');
     expect(positionerRef.current).toHaveAttribute('data-align', 'center');
     expect(popupRef.current?.parentElement).toBe(positionerRef.current);
     expect(container).toContainElement(popupRef.current);
+  });
+
+  it('supports explicit selected-item alignment', () => {
+    const positionerRef = createRef<HTMLDivElement>();
+
+    render(
+      <Select.Root open modal={false}>
+        <Select.Trigger aria-label="Aligned select" />
+        <Select.Positioner ref={positionerRef} alignItemWithTrigger>
+          <Select.Popup />
+        </Select.Positioner>
+      </Select.Root>,
+      { wrapper: ThemedWrapper },
+    );
+
+    expect(positionerRef.current).toHaveAttribute('data-side', 'none');
   });
 
   it('passes advanced positioning and offset functions to the positioner', async () => {

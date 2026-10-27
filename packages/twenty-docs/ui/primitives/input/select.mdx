@@ -342,7 +342,7 @@ All parts that render elements accept native attributes, refs, and Base UI's `re
 
 Set `size="sm"` or `size="md"` on `Trigger`. Placement belongs on `Positioner`; portal destination belongs on `Portal`.
 
-`Positioner` preserves Base UI's defaults: `side="bottom"`, `align="center"`, `sideOffset={0}`, and `alignItemWithTrigger={true}`. Selected-item alignment applies to pointer input when there is enough space. Set `alignItemWithTrigger={false}` to use anchored positioning consistently. The examples above choose `align="start"` and `sideOffset={8}` explicitly.
+`Positioner` defaults to `side="bottom"`, `align="center"`, `sideOffset={0}`, and `alignItemWithTrigger={false}`. This anchors the popup beside the trigger and supports asynchronous layout in front components. Set `alignItemWithTrigger={true}` to align the selected item with the trigger for pointer input when there is enough space. Selected-item alignment requires synchronous DOM measurements and is not supported in front components. The examples above choose `align="start"` and `sideOffset={8}` explicitly.
 
 ```tsx
 import { useRef, useState } from 'react';

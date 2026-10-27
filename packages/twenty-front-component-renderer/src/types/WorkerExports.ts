@@ -8,6 +8,7 @@ import { type FocusUpdate } from '@/types/FocusUpdate';
 import { type GeometryUpdateBatch } from '@/types/GeometryUpdateBatch';
 import { type HostToWorkerRenderContext } from '@/types/HostToWorkerRenderContext';
 import { type MediaSessionEventBatch } from '@/types/MediaSession';
+import { type OutsidePressEventData } from '@/types/OutsidePressEventData';
 
 export type WorkerExports = {
   render: (
@@ -24,5 +25,6 @@ export type WorkerExports = {
   pushCapturedPointerEvent: (
     update: CapturedPointerEventUpdate,
   ) => Promise<void>;
+  pushOutsidePressEvent: (eventData: OutsidePressEventData) => Promise<void>;
   pushMediaSessionEvents: (batch: MediaSessionEventBatch) => Promise<void>;
 };

@@ -63,6 +63,7 @@ import { exposeGlobals } from '@/utils/exposeGlobals';
 import { installAriaBooleanPropertyAccessors } from '@/remote/elements/utils/installAriaBooleanPropertyAccessors';
 import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
+import { dispatchOutsidePressEvent } from '@/remote/elements/utils/dispatchOutsidePressEvent';
 import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveRemoteElementPrototypes';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/thread/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '@/remote/worker/thread/utils/handleCommandConfirmationModalResult';
@@ -292,6 +293,9 @@ const workerExports: WorkerExports = {
   },
   pushCapturedPointerEvent: async (update) => {
     workerPointerCapture.dispatchCapturedPointerEvent(update);
+  },
+  pushOutsidePressEvent: async (eventData) => {
+    dispatchOutsidePressEvent({ documentTarget: document, eventData });
   },
   pushMediaSessionEvents: async (batch) => {
     workerMediaBridge.dispatchEvents(batch);

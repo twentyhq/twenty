@@ -16,7 +16,7 @@ The standalone Toast countdown fixture checks remaining time after repeated cont
 
 NumberField checks locale formatting and localized paste, controlled empty values, uncontrolled typing, bounds, keyboard commits, pointer value changes, callback event details, accessible labels, native forms, refs and render composition in both runtimes. Sequential typing after clearing a formatted value can reset the caret and insert subsequent digits before earlier input. Formatted pointer edits can also restore stale display values when host blur races the worker update. Pointer button release does not emit its commit callback, although host blur can emit an input-blur commit. ScrubArea can enter its scrubbing state, but drag movement and release do not reach the worker window listeners; pointer lock and the custom scrub cursor are also unavailable. These renderer limits apply independently of the standalone React NumberField browser checks.
 
-Popover composes Portal, Positioner, Popup, Arrow and Viewport. Its focused React/Preact cases check controlled trigger requests, native attributes, Button render composition, DOM refs and callback reasons. These checks do not establish popup visibility, geometry or dismissal support. The omitted-container popup still requires C04/C05/C07 renderer acceptance.
+Popover composes Portal, Positioner, Popup, Arrow and Viewport. Its focused React/Preact cases check controlled trigger requests, native attributes, Button render composition, DOM refs and callback reasons. They also check visible body-portal content, attachment to the trigger, pointer reachability, repeated closing and reopening through the trigger, Close button and Escape, and outside-press dismissal. Full focus restoration, scrolling and collision coverage remain pending.
 
 OverflowingList keeps fitting items in its compact row and shows the complete list in its popup. The original fixture covers full popup contents and default event isolation. The `twenty-ui-overflowing-list-api` fixture exercises controlled and defaultOpen state, callback reasons and native events, cancelable Escape, root/trigger/popup refs with render composition, and public `actionsRef.close()` and `actionsRef.unmount()` in React and Preact. The deferred-close example retains the closed popup after `preventUnmountOnClose()`, releases it when the caller finishes its exit, and opens it again. The trigger and popup block click, mousedown, pointerdown, keydown and keyup by default. Each supplied handler replaces its default, so the API fixture explicitly allows trigger and popup clicks to bubble while recording their native event type. These API cases do not complete the separate C04 portal, C05 measurement/geometry, C06 scrolling or C07 dismissal acceptance. Existing OverflowingList responsive measurement and independent-instance evidence remains with C05.
 
@@ -24,7 +24,7 @@ In standalone React, when a popup click override allows bubbling, the installed 
 
 The SDK registers native handlers on physical elements. The API fixture overrides the default click blocking and asserts native trigger bubbling and popup callback preservation. Logical portal bubbling to a surrounding React ancestor remains a separate C04 gap in React and Preact: the diagnostic parent count reaches 1 after the trigger click and stays at 1 after the popup item click, instead of reaching 2.
 
-Dropdown checks controlled opening, native action refs and Button render composition, disabled callback suppression, action callbacks, page navigation, option selection and click-to-close in both runtimes. The portal fixture preserves all 16 rows and checks attachment along the physical collision side, overlap with the trigger and confinement to the owner portal area. A temporary constrained long-menu probe passed End-key focus and scrolling in both runtimes: a 128px popup scrolled to 386px and kept the last item visible. Outside-host dismissal remains a C07 renderer limitation. Clicking the host action invokes that action, while Dropdown remains expanded with its popup mounted. Its picker page checks initial search focus, a single Tab stop across option and action rows, arrow navigation and Tab reentry to the last focused row. Search preview clears when focus moves to a row, action or sibling button outside a popup whose outside dismissal is canceled, stays cleared during a keyed reorder, and returns when search regains focus. Nonempty-query Enter selects the first eligible option. Escape and Back focus restoration are not established by these checks.
+Dropdown checks controlled opening, native action refs and Button render composition, disabled callback suppression, action callbacks, page navigation, option selection and click-to-close in both runtimes. The portal fixture preserves all 16 rows and checks attachment along the physical collision side, overlap with the trigger and confinement to the owner portal area. A temporary constrained long-menu probe passed End-key focus and scrolling in both runtimes: a 128px popup scrolled to 386px and kept the last item visible. Separate dismissal stories check repeated reopening after action, trigger and Escape closure, clicks inside the popup, outside clicks within the worker and on a host control, cancellation, and custom portal containers. The outside action still activates when it dismisses the popup. Its picker page checks initial search focus, a single Tab stop across option and action rows, arrow navigation and Tab reentry to the last focused row. Search preview clears when focus moves to a row, action or sibling button outside a popup whose outside dismissal is canceled, stays cleared during a keyed reorder, and returns when search regains focus. Nonempty-query Enter selects the first eligible option. Escape and Back focus restoration are not established by these checks.
 
 Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
 
@@ -85,19 +85,25 @@ effect within the interaction timeout.
 | `twenty-ui-card-composition`     | Card (native parts and refs, render composition, display semantics, button/link ownership and nested controls)                          |
 | `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                                 |
 | `twenty-ui-select`               | Select                                                                                                                                  |
+| `twenty-ui-select-long-list`     | Controlled nonmodal Select with 20 options, default anchor positioning, trigger/selection reopening and host outside dismissal           |
 | `twenty-ui-portals`              | Body portal callbacks, removal, nearby overflow, menu placement and confinement                                                         |
 | `twenty-ui-dropdown`             | Dropdown (controlled opening, action refs and callbacks, disabled actions, page navigation, picker Tab stop and selection)                                                                                                               |
+| `twenty-ui-dropdown-dismissal`   | Dropdown (reopening, clicks inside the popup, worker and host outside dismissal, cancellation and custom portal containers)             |
 | `twenty-ui-toast`                | Toast                                                                                                                                   |
 | `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                                 |
 | `twenty-ui-checkbox`             | Checkbox                                                                                                                                |
 | `twenty-ui-radio-group`          | RadioGroup, Radio Root/Indicator and styled cards, SegmentedControl                                                                     |
 | `twenty-ui-tooltip`              | Tooltip (convenience and compound APIs)                                                                                                 |
+| `twenty-ui-tooltip-first-hover`  | Tooltip on a ghost icon Button, default timing, button/SVG hover, exit and re-entry without a worker ThemeProvider                      |
 | `twenty-ui-responsive-hooks`     | useIsMobile, useIsTouchDevice, Button hotkeys                                                                                           |
 | `twenty-ui-reading-directions`   | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`)     |
 | `twenty-ui-country-select`       | CountrySelect (`TwentyUiCountrySelect.stories.tsx`)                                                                                     |
 
-The focused fixtures import public twenty-ui entry points and use
+Most focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
+`twenty-ui-select-long-list` mirrors the application's scrolling page and toolbar;
+`twenty-ui-tooltip-first-hover` uses `FrontComponentCard`. Both import the
+stylesheet directly without a worker `ThemeProvider`.
 `twenty-ui-reading-directions` imports the stylesheet directly instead: its dark
 stories rely on the provider-less CSS-variable theme, and its two directions do
 not fit the card's width.
@@ -160,11 +166,10 @@ forwarded. Separate React/Preact probes pass basic bottom/start placement with
 an 8px offset and nonzero visible host geometry. They do not establish collision
 handling or placement under scrolling and zoom.
 
-Three renderer gaps remain outside that positive coverage. A strict outside-press
-success probe fails in both runtimes: the host button activates once, but the
-popup remains open because events outside the owned component do not reach the
-worker. C07 owns that dismissal transport. A separate strict native-input
-semantics probe also fails in both runtimes after a controlled update while
+Autocomplete outside-press dismissal still needs verification after the renderer
+outside-press transport was added. Its existing stories do not establish that
+behavior. Two other renderer gaps remain outside the positive coverage. A strict
+native-input semantics probe fails in both runtimes after a controlled update while
 closed. Base UI compares the registered element's tag name with `INPUT`, while
 the worker retains `HTML-INPUT` for remote DOM transport. It consequently treats
 the input as a custom control and removes its combobox role and expanded state
@@ -297,12 +302,31 @@ expected-to-fail by the runner.
 
 | Component                                                             | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Popover, Select (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and visible content; search, selection, dismissal and focus restoration are not covered yet.                                                                                                                                                                                                                                                                                     |
+| Popover (React and Preact) | Visible body-portal content, attachment to the trigger, repeated closing and reopening, and outside-press dismissal are checked. Full focus restoration, scrolling and collision coverage remain pending. |
+| Select (React and Preact) | The long-list fixture checks default anchor positioning, repeated selection/reopening and host outside dismissal without a worker ThemeProvider. Explicit `alignItemWithTrigger={true}` remains unsupported in front-component workers. Full focus restoration, scrolling and collision coverage remain pending. |
 | CountrySelect (React and Preact)                                       | Fixtures pass pointer opening, filtering, disabled interaction, translated labels and decorative flags, controlled/uncontrolled shorthand and compound selection, null clearing/reselection, canceled changes, external values, trigger and option-group render/ref targets, and search input props/ref. Search keyboard activation and IME (API-34), page sessions (API-35), and full portal, geometry, scrolling, outside dismissal and focus restoration acceptance (C04-C07) remain open. |
 | PhoneCountryPicker (React and Preact)                             | React interactions and React/Preact trigger cases pass, covering shorthand/compound selection, cancellation, controlled clearing, native refs/render and RTL calling codes. Strict Preact interaction remains failing: typing `"+966"` yields `"966"`, before the clear/replacement assertions run. The input propagation gap remains visible in the active fixture.                                                                                        |
 | Slider (React)                                                        | Edge-aligned thumbs stay hidden until the value changes. Base UI 1.8 and 1.9 set up the thumb's `ResizeObserver` before React attaches the `Slider.Control` ref, so the thumb never re-measures once the first host geometry arrives ([mui/base-ui#5995](https://github.com/mui/base-ui/issues/5995), fix pending in [mui/base-ui#6000](https://github.com/mui/base-ui/pull/6000)). Preact attaches the ref first, so its thumbs appear. `thumbAlignment="center"` avoids the issue. |
 | OverflowingList                                                       | Item widths come from the last host layout, because a worker cannot lay out the measuring state synchronously. The truncated last item is measured at its truncated width, so the visible count can differ from a native render when that item's full width decides whether it fits.                                                                                                                                                                                                 |
 | Responsive hooks                                                      | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width.                          |
+
+`SelectLongListReopening` and `SelectLongListOutsideHost` reproduce the application's
+20-option engineer picker with the fifth engineer selected, a controlled value,
+`modal={false}` and a page origin at 220px left and 48px top. The previous
+three-option fixture missed a live failure: closing and reopening the long list
+collapsed its popup to 10px high while its option rows remained 32px high, and
+shifted it away from the trigger. The long-list story reproduced that failure;
+`alignItemWithTrigger={false}` restored the popup. `Select.Positioner` now defaults
+to that setting. The retained fixture omits the prop and checks popup dimensions,
+overlap with the trigger, pointer reachability and repeated reopening. Explicit
+item alignment remains unsupported in workers, and these checks do not establish
+full deployed application behavior.
+
+`TooltipFirstHover` uses a direct ghost icon Button and the default hover delay.
+Its play waits one sandbox round trip before the first hover to allow Base UI's
+native listener effects to finish. It checks visible, anchored content when
+hovering the button or its SVG icon, then leaving and re-entering the trigger.
+Native mouse probes pass button-padding and SVG hover, movement within the trigger, exit and re-entry in both runtimes. No Tooltip runtime fix was established by these probes.
 
 The CurrencyPicker fixtures cover shorthand and composed selection in React and
 Preact, disabled controls and options, exact no-results/name/symbol search,
@@ -364,7 +388,16 @@ controlled fixture pairs its explicit panel IDs with matching native
 `aria-controls` on each tab. Its TabButton controls retain route links with
 `aria-current` and adjacent button actions without tab-panel semantics.
 
-A trusted primary press on a slider control, the innermost pressed element that disables touch gestures with `touch-action: none` and contains an enabled range input, starts a host capture session that forwards every move, release and cancellation of that pointer to the worker until the gesture ends, including a release that arrives before the worker answers, a zero pointer id and movement after capture loss. It forwards pointer coordinates and modifiers without another host target's control values, reports the implicit capture release that follows a release or cancellation, and renderer or node teardown ends the session. Each pointer has its own session, so a second pointer on the same control keeps the first capture. Capture only flows from the host to the worker. The worker's `setPointerCapture`, `hasPointerCapture` and `releasePointerCapture` keep a local record of one capturing element per pointer, which a forwarded capture loss or implicit release clears and which a detached element no longer reports. A worker release therefore never ends the host's capture early. General outside presses and overlay dismissal remain separate compatibility work.
+A trusted primary press on a slider control, the innermost pressed element that disables touch gestures with `touch-action: none` and contains an enabled range input, starts a host capture session that forwards every move, release and cancellation of that pointer to the worker until the gesture ends, including a release that arrives before the worker answers, a zero pointer id and movement after capture loss. It forwards pointer coordinates and modifiers without another host target's control values, reports the implicit capture release that follows a release or cancellation, and renderer or node teardown ends the session. Each pointer has its own session, so a second pointer on the same control keeps the first capture. Capture only flows from the host to the worker. The worker's `setPointerCapture`, `hasPointerCapture` and `releasePointerCapture` keep a local record of one capturing element per pointer, which a forwarded capture loss or implicit release clears and which a detached element no longer reports. A worker release therefore never ends the host's capture early.
+
+Outside presses use a separate transport that forwards only the event type,
+button state, click count and pointer type to worker document listeners. It does
+not expose external DOM nodes, control values or pointer coordinates. Events on
+owned controls and portals keep their existing delivery path, and active pointer
+capture sessions are excluded from this outside-press path. Dropdown and Popover
+stories verify the dismissal behavior described above; other components still
+need their own acceptance checks. General host keyboard forwarding and full
+focus restoration remain separate work.
 
 Once the remaining gaps are fixed, extend the stories to verify keyboard
 navigation, dismissal, and focus restoration across overlay components. The fixtures
@@ -415,5 +448,5 @@ and link composition, DOM refs, keyboard activation and disabled owners in both
 runtimes. The same fixtures check intentional link content without automatic
 anchors, truncation and custom multiline tooltip content. Escape dismissal is
 checked from an explicit button owner with a native keyboard handler, which
-relays the event to the worker. General document-listener forwarding remains
-part of the renderer's dismissal work.
+relays the event to the worker. General host keyboard forwarding to worker
+document listeners remains part of the renderer's dismissal work.

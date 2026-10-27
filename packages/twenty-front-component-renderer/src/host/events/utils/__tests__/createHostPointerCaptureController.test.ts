@@ -1,4 +1,5 @@
 import { wrapEventHandler } from '@/host/events/utils/wrapEventHandler';
+import { trackHostOutsidePress } from '@/host/events/utils/trackHostOutsidePress';
 import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
 
 import { createHostPointerCaptureController } from '../createHostPointerCaptureController';
@@ -87,6 +88,70 @@ describe('createHostPointerCaptureController', () => {
   afterEach(() => {
     jest.restoreAllMocks();
     document.body.replaceChildren();
+  });
+
+  it('leaves an outside release after capture loss on the captured event path', () => {
+    const { controller, element, geometryTracker, pushCapturedPointerEvent } =
+      createCaptureFixture();
+    const { handleCaptureLoss, handlePointerUp } = startCapturedGesture({
+      controller,
+      element,
+      pointerId: 0,
+    });
+    const pushOutsidePressEvent = jest.fn();
+    const addDocumentListener = jest.spyOn(document, 'addEventListener');
+    const dispose = trackHostOutsidePress({
+      documentTarget: document,
+      findRemoteElementIdContainingNode:
+        geometryTracker.findRemoteElementIdContainingNode,
+      hasActivePointerCaptureForEvent:
+        controller.hasActivePointerCaptureForEvent,
+      pushOutsidePressEvent,
+    });
+    const outsidePointerUp = addDocumentListener.mock.calls.find(
+      ([eventType, , capture]) => eventType === 'pointerup' && capture === true,
+    )![1] as (event: PointerEvent) => void;
+    addDocumentListener.mockRestore();
+
+    try {
+      element.hasPointerCapture.mockReturnValue(false);
+      handleCaptureLoss(
+        createNativePointerEvent({ type: 'lostpointercapture', pointerId: 0 }),
+      );
+      const event = createNativePointerEvent({
+        type: 'pointerup',
+        pointerId: 0,
+      });
+
+      expect(controller.hasActivePointerCaptureForEvent(event)).toBe(true);
+      expect(
+        controller.hasActivePointerCaptureForEvent(
+          createNativePointerEvent({ type: 'pointerup', pointerId: 1 }),
+        ),
+      ).toBe(false);
+      expect(
+        controller.hasActivePointerCaptureForEvent(
+          createNativePointerEvent({
+            type: 'pointerup',
+            pointerId: 0,
+            isTrusted: false,
+          }),
+        ),
+      ).toBe(false);
+      outsidePointerUp(event);
+      handlePointerUp(event);
+
+      expect(pushOutsidePressEvent).not.toHaveBeenCalled();
+      expect(
+        pushCapturedPointerEvent.mock.calls.map(
+          ([update]) => update.eventData.type,
+        ),
+      ).toEqual(['lostpointercapture', 'pointerup']);
+      expect(controller.hasActivePointerCaptureForEvent(event)).toBe(false);
+    } finally {
+      dispose();
+      controller.reset();
+    }
   });
 
   it('should forward every event of the captured pointer, inside or outside the element, until its release', () => {

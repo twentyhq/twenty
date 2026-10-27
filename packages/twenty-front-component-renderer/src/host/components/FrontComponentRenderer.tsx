@@ -15,6 +15,7 @@ import { FrontComponentGeometryTrackerEffect } from '@/host/effect-components/Fr
 import { FrontComponentInitializeHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentInitializeHostCommunicationApiEffect';
 import { FrontComponentMediaSessionEffect } from '@/host/effect-components/FrontComponentMediaSessionEffect';
 import { FrontComponentPointerCaptureEffect } from '@/host/effect-components/FrontComponentPointerCaptureEffect';
+import { FrontComponentOutsidePressEffect } from '@/host/effect-components/FrontComponentOutsidePressEffect';
 import { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
@@ -138,6 +139,11 @@ export const FrontComponentRenderer = ({
             />
             <FrontComponentPointerCaptureEffect
               thread={thread}
+              pointerCaptureController={pointerCaptureController}
+            />
+            <FrontComponentOutsidePressEffect
+              thread={thread}
+              geometryTracker={geometryTracker}
               pointerCaptureController={pointerCaptureController}
             />
             {isDefined(mediaSessionHost) && (
