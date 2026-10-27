@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { type ObjectPermissionAction } from 'twenty-shared/application';
 import {
   FeatureFlagKey,
   MetadataReadability,
@@ -14,9 +15,12 @@ import { type OperationType } from 'src/engine/twenty-orm/repository/permissions
 // A record shared by name reaches people whose role cannot otherwise access
 // its object, but only to view or edit it: deleting it, creating siblings or
 // managing its access stay with the roles that can access the object
-const OPERATION_TYPES_GRANTABLE_BEYOND_ROLE: OperationType[] = [
-  'select',
-  'update',
+const OPERATIONS_GRANTABLE_BEYOND_ROLE: {
+  operationType: OperationType;
+  objectPermissionAction: ObjectPermissionAction;
+}[] = [
+  { operationType: 'select', objectPermissionAction: 'canReadObjectRecords' },
+  { operationType: 'update', objectPermissionAction: 'canUpdateObjectRecords' },
 ];
 
 export type ObjectSharing = {
@@ -51,7 +55,10 @@ export const resolveObjectSharing = ({
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
-    'readability' | 'isSystem' | 'sharingReach'
+    | 'readability'
+    | 'isSystem'
+    | 'sharingReach'
+    | 'disabledObjectPermissionActions'
   >;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 }): ObjectSharing => {
@@ -71,7 +78,12 @@ export const resolveObjectSharing = ({
     sharingMode,
     canShareBeyondRole,
     operationTypesGrantedBeyondRole: canShareBeyondRole
-      ? OPERATION_TYPES_GRANTABLE_BEYOND_ROLE
+      ? OPERATIONS_GRANTABLE_BEYOND_ROLE.filter(
+          ({ objectPermissionAction }) =>
+            !flatObjectMetadata.disabledObjectPermissionActions?.includes(
+              objectPermissionAction,
+            ),
+        ).map(({ operationType }) => operationType)
       : [],
   };
 };

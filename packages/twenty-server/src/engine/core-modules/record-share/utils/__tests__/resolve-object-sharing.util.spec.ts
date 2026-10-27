@@ -13,6 +13,7 @@ const OPEN_OBJECT = {
   readability: MetadataReadability.OPEN,
   isSystem: false,
   sharingReach: ObjectSharingReach.WORKSPACE,
+  disabledObjectPermissionActions: null,
 };
 const RECORD_SHARING = {
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
@@ -88,5 +89,18 @@ describe('resolveObjectSharing', () => {
       canShareBeyondRole: false,
       operationTypesGrantedBeyondRole: [],
     });
+  });
+
+  it('should not grant beyond the role an operation the object disables', () => {
+    expect(
+      resolveObjectSharing({
+        flatObjectMetadata: {
+          ...OPEN_OBJECT,
+          readability: MetadataReadability.PRIVATE,
+          disabledObjectPermissionActions: ['canUpdateObjectRecords'],
+        },
+        featureFlagsMap: RECORD_SHARING,
+      }).operationTypesGrantedBeyondRole,
+    ).toEqual(['select']);
   });
 });
