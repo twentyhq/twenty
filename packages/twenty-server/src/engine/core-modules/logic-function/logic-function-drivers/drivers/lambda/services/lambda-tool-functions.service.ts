@@ -7,7 +7,6 @@ import {
   InvokeCommand,
   LogType,
   PublishLayerVersionCommand,
-  ResourceConflictException,
 } from '@aws-sdk/client-lambda';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -267,14 +266,7 @@ export class LambdaToolFunctionsService {
     const builderFunctionName = await this.getBuilderFunctionName();
     const lambdaClient = await this.awsClient.getLambdaClient();
 
-    const existingBuilder =
-      await this.awsClient.getFunction(builderFunctionName);
-
-    if (isDefined(existingBuilder)) {
-      if (existingBuilder.Configuration?.State !== 'Active') {
-        await this.awsClient.waitFunctionActive(builderFunctionName);
-      }
-
+    if (isDefined(await this.awsClient.getFunction(builderFunctionName))) {
       return;
     }
 
@@ -304,13 +296,7 @@ export class LambdaToolFunctionsService {
         EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
-      try {
-        await lambdaClient.send(new CreateFunctionCommand(params));
-      } catch (error) {
-        if (!(error instanceof ResourceConflictException)) {
-          throw error;
-        }
-      }
+      await lambdaClient.send(new CreateFunctionCommand(params));
     } finally {
       await temporaryDirManager.clean();
     }
