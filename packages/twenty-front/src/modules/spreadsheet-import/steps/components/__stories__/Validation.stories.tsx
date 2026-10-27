@@ -1,7 +1,5 @@
 import { type Meta } from '@storybook/react-vite';
 
-import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
-
 import {
   editableTableInitialData,
   importedColums,
@@ -22,7 +20,6 @@ const meta: Meta<typeof ValidationStep> = {
     layout: 'fullscreen',
   },
   decorators: [
-    ToastDecorator,
     (Story) => {
       jotaiStore.set(
         isDialogOpenedComponentState.atomFamily({

@@ -1,13 +1,10 @@
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { SpreadsheetImportSubmissionError } from '@/spreadsheet-import/errors/SpreadsheetImportSubmissionError';
-import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useToast } from 'twenty-ui/components/feedback';
 import { SpreadsheetImportStepBody } from '@/spreadsheet-import/components/SpreadsheetImportStepBody';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
+import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import {
@@ -19,6 +16,7 @@ import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetCol
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { styled } from '@linaria/react';
+import { useStore } from 'jotai';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   type Dispatch,
@@ -111,11 +109,8 @@ export const ValidationStep = ({
   setCurrentStepState,
   onBack,
 }: ValidationStepProps) => {
+  const store = useStore();
   const hideStepBar = useHideStepBar();
-  const setSpreadsheetImportDialog = useSetAtomState(
-    spreadsheetImportDialogState,
-  );
-  const { enqueueToast } = useToast();
   const { enqueueDialog } = useDialogManager();
   const {
     spreadsheetImportFields: fields,
@@ -260,10 +255,12 @@ export const ValidationStep = ({
 
     try {
       await onSubmit(calculatedData, file);
-    } catch (error) {
-      const isSubmissionError =
-        error instanceof SpreadsheetImportSubmissionError;
-      const importedRowIndexes = new Set(
+      onClose();
+    } catch {
+      const importedRecordsCount = store.get(
+        spreadsheetImportCreatedRecordsProgressState.atom,
+      );
+      const importedRows = new Set(
         data
           .filter(
             (row) =>
@@ -271,32 +268,21 @@ export const ValidationStep = ({
                 (rowError) => rowError.level === 'error',
               ),
           )
-          .slice(0, isSubmissionError ? error.importedRowCount : 0)
-          .map((row) => row.__index),
+          .slice(0, importedRecordsCount),
       );
+      const remainingRows = data.filter((row) => !importedRows.has(row));
 
-      const remainingData = data.filter(
-        (row) => !importedRowIndexes.has(row.__index),
-      );
-      updateData(remainingData);
-      setSelectedRows(new Set());
+      updateData(remainingRows);
       setCurrentStepState({
         type: SpreadsheetImportStepType.validateData,
-        data: remainingData,
+        data: remainingRows,
         importedColumns,
       });
-      setSpreadsheetImportDialog((state) => ({
+      store.set(spreadsheetImportDialogState.atom, (state) => ({
         ...state,
         isStepBarVisible: true,
       }));
-      enqueueToast(
-        getToastOptionsFromError({
-          error: isSubmissionError ? error.cause : error,
-        }),
-      );
-      return;
     }
-    onClose();
   };
   const onContinue = () => {
     const invalidData = data.find((value) => {

@@ -1,4 +1,3 @@
-import { SpreadsheetImportSubmissionError } from '@/spreadsheet-import/errors/SpreadsheetImportSubmissionError';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -78,34 +77,21 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
           return fieldMapping;
         });
 
-        let importedRowCount = 0;
-        const refreshRecords = () =>
-          apolloCoreClient.refetchQueries({
-            updateCache: (cache) => {
-              cache.evict({ fieldName: objectMetadataItem.namePlural });
-            },
-          });
-
         try {
           await batchCreateManyRecords({
             recordsToCreate: createInputs,
             upsert: true,
-            onBatchCompleted: (completedRecordsCount) => {
-              importedRowCount = completedRecordsCount;
-            },
           });
         } catch (error) {
-          await refreshRecords().catch(() => undefined);
-          if (importedRowCount === createInputs.length) {
-            enqueueToast(getToastOptionsFromError({ error }));
-            return;
-          }
-          throw new SpreadsheetImportSubmissionError(error, importedRowCount);
-        }
-
-        await refreshRecords().catch((error) => {
           enqueueToast(getToastOptionsFromError({ error }));
-        });
+          throw error;
+        } finally {
+          await apolloCoreClient.refetchQueries({
+            updateCache: (cache) => {
+              cache.evict({ fieldName: objectMetadataItem.namePlural });
+            },
+          });
+        }
       },
       spreadsheetImportFields,
       availableFieldMetadataItems:
