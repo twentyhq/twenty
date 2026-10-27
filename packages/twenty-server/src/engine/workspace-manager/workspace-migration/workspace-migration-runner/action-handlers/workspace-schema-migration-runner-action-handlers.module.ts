@@ -92,6 +92,9 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
 import { CreateApplicationVariableActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/application-variable/services/create-application-variable-action-handler.service';
 import { DeleteApplicationVariableActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/application-variable/services/delete-application-variable-action-handler.service';
 import { UpdateApplicationVariableActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/application-variable/services/update-application-variable-action-handler.service';
+import { CreateMcpServerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/mcp-server/services/create-mcp-server-action-handler.service';
+import { DeleteMcpServerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/mcp-server/services/delete-mcp-server-action-handler.service';
+import { UpdateMcpServerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/mcp-server/services/update-mcp-server-action-handler.service';
 import { CreateWebhookActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/webhook/services/create-webhook-action-handler.service';
 import { DeleteWebhookActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/webhook/services/delete-webhook-action-handler.service';
 import { UpdateWebhookActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/webhook/services/update-webhook-action-handler.service';
@@ -254,6 +257,9 @@ import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/w
     CreateWebhookActionHandlerService,
     UpdateWebhookActionHandlerService,
     DeleteWebhookActionHandlerService,
+    CreateMcpServerActionHandlerService,
+    UpdateMcpServerActionHandlerService,
+    DeleteMcpServerActionHandlerService,
 
     CreateApplicationVariableActionHandlerService,
     UpdateApplicationVariableActionHandlerService,
