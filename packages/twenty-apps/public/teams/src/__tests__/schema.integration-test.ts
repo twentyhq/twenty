@@ -5,6 +5,7 @@ import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
   DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { TEAMS_ASSISTANT_CRM_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/features/chat/constants/teams-assistant-crm-object-universal-identifiers';
 import { describe, expect, it } from 'vitest';
 
 describe('App installation', () => {
@@ -43,12 +44,21 @@ describe('App installation', () => {
         canSoftDeleteAllObjectRecords: true,
         canDestroyAllObjectRecords: true,
         canUpdateAllSettings: true,
-        objectPermissions: { objectMetadataId: true },
-        permissionFlags: { id: true },
+        objectPermissions: {
+          objectMetadataId: true,
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+          canSoftDeleteObjectRecords: true,
+          canDestroyObjectRecords: true,
+        },
       },
     });
 
     const role = getRoles.find((role) => role.id === agent.roleId);
+
+    if (!isDefined(role)) {
+      throw new Error('The Teams assistant agent has no role.');
+    }
 
     expect(role).toEqual(
       expect.objectContaining({
@@ -61,8 +71,36 @@ describe('App installation', () => {
         canUpdateAllSettings: false,
       }),
     );
-    expect(role?.objectPermissions ?? []).toHaveLength(13);
-    expect(role?.permissionFlags ?? []).toHaveLength(2);
+
+    const { objects } = await client.query({
+      objects: {
+        __args: { paging: { first: 200 }, filter: {} },
+        edges: { node: { id: true, universalIdentifier: true } },
+      },
+    });
+
+    const objectUniversalIdentifierById = new Map(
+      objects.edges.map((edge) => [
+        edge.node.id,
+        edge.node.universalIdentifier,
+      ]),
+    );
+
+    const editableObjectUniversalIdentifiers = (role.objectPermissions ?? [])
+      .filter(
+        (objectPermission) =>
+          objectPermission.canReadObjectRecords &&
+          objectPermission.canUpdateObjectRecords &&
+          objectPermission.canSoftDeleteObjectRecords &&
+          !objectPermission.canDestroyObjectRecords,
+      )
+      .map((objectPermission) =>
+        objectUniversalIdentifierById.get(objectPermission.objectMetadataId),
+      );
+
+    expect(editableObjectUniversalIdentifiers).toEqual(
+      expect.arrayContaining(TEAMS_ASSISTANT_CRM_OBJECT_UNIVERSAL_IDENTIFIERS),
+    );
   });
 
   it('registers Microsoft OAuth under Teams without configured credentials', async () => {
