@@ -57,7 +57,7 @@ export const VariablesTabSavesOnlyEditedValues: Story = {
       await canvas.findByRole('link', { name: 'Variables' }, { timeout: 3000 }),
     ).toBeVisible();
     expect(canvas.getAllByText('Fathom').length).toBeGreaterThan(0);
-    expect(canvas.getByText('App preferences')).toBeVisible();
+    expect(canvas.getByText('Apps preferences')).toBeVisible();
     expect(canvas.getByText('Record my meetings')).toBeVisible();
     expect(canvas.getByDisplayValue('always')).toBeVisible();
     expect(canvas.getByPlaceholderText('sk-1********')).toHaveValue('');
