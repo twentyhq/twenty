@@ -98,6 +98,9 @@ import { UpdateWebhookActionHandlerService } from 'src/engine/workspace-manager/
 import { CreateConnectionProviderActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/connection-provider/services/create-connection-provider-action-handler.service';
 import { DeleteConnectionProviderActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/connection-provider/services/delete-connection-provider-action-handler.service';
 import { UpdateConnectionProviderActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/connection-provider/services/update-connection-provider-action-handler.service';
+import { CreateMessagingProviderActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/messaging-provider/services/create-messaging-provider-action-handler.service';
+import { DeleteMessagingProviderActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/messaging-provider/services/delete-messaging-provider-action-handler.service';
+import { UpdateMessagingProviderActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/messaging-provider/services/update-messaging-provider-action-handler.service';
 import { CreateTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/create-timeline-activity-type-action-handler.service';
 import { DeleteTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/delete-timeline-activity-type-action-handler.service';
 import { UpdateTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/update-timeline-activity-type-action-handler.service';
@@ -259,6 +262,9 @@ import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/w
     CreateConnectionProviderActionHandlerService,
     UpdateConnectionProviderActionHandlerService,
     DeleteConnectionProviderActionHandlerService,
+    CreateMessagingProviderActionHandlerService,
+    UpdateMessagingProviderActionHandlerService,
+    DeleteMessagingProviderActionHandlerService,
     CreateTimelineActivityTypeActionHandlerService,
     UpdateTimelineActivityTypeActionHandlerService,
     DeleteTimelineActivityTypeActionHandlerService,

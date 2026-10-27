@@ -6,6 +6,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { getConnectionProviderManifestLogicFunctionReferences } from 'src/engine/core-modules/application/application-manifest/utils/get-connection-provider-manifest-logic-function-references.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 
@@ -21,17 +22,12 @@ export const assertConnectionProviderLogicFunctionsAreOwn = ({
   inferDeletionFromMissingEntities: boolean;
 }): void => {
   for (const connectionProvider of manifest.connectionProviders ?? []) {
-    for (const [hook, logicFunctionReference] of Object.entries({
-      identifyAccount: connectionProvider.identifyAccountLogicFunction,
-      onConnect: connectionProvider.onConnectLogicFunction,
-      onDisconnect: connectionProvider.onDisconnectLogicFunction,
-    })) {
-      if (!isDefined(logicFunctionReference)) {
-        continue;
-      }
-
-      const { universalIdentifier } = logicFunctionReference;
-
+    for (const {
+      hook,
+      universalIdentifier,
+    } of getConnectionProviderManifestLogicFunctionReferences(
+      connectionProvider,
+    )) {
       // fromFlatLogicFunctionMaps only holds this application's functions, which a partial sync keeps.
       const isOwnLogicFunction =
         isDefined(
