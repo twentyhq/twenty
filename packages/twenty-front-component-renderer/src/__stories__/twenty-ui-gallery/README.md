@@ -24,7 +24,7 @@ In standalone React, when a popup click override allows bubbling, the installed 
 
 The SDK registers native handlers on physical elements. The API fixture overrides the default click blocking and asserts native trigger bubbling and popup callback preservation. Logical portal bubbling to a surrounding React ancestor remains a separate C04 gap in React and Preact: the diagnostic parent count reaches 1 after the trigger click and stays at 1 after the popup item click, instead of reaching 2.
 
-Dropdown checks controlled opening, native action refs and Button render composition, disabled callback suppression, action callbacks, page navigation, option selection and click-to-close in both runtimes. The portal fixture preserves all 16 rows and checks attachment along the physical collision side, overlap with the trigger and confinement to the owner portal area. A temporary constrained long-menu probe passed End-key focus and scrolling in both runtimes: a 128px popup scrolled to 386px and kept the last item visible. Separate dismissal stories check repeated reopening after action, trigger and Escape closure, clicks inside the popup, outside clicks within the worker and on a host control, cancellation, and custom portal containers. The outside action still activates when it dismisses the popup. Its picker page checks initial search focus, a single Tab stop across option and action rows, arrow navigation and Tab reentry to the last focused row. Search preview clears when focus moves to a row, action or sibling button outside a popup whose outside dismissal is canceled, stays cleared during a keyed reorder, and returns when search regains focus. Nonempty-query Enter selects the first eligible option. Escape and Back focus restoration are not established by these checks.
+Dropdown checks controlled opening, native action refs and Button render composition, disabled callback suppression, action callbacks, page navigation, option selection and click-to-close in both runtimes. The portal fixture preserves all 16 rows and checks attachment along the physical collision side, overlap with the trigger and confinement to the owner portal area. A temporary constrained long-menu probe passed End-key focus and scrolling in both runtimes: a 128px popup scrolled to 386px and kept the last item visible. Separate dismissal stories check repeated reopening after action, trigger and Escape closure, clicks inside the popup, outside clicks within the worker (on a control and on content without handlers) and on a host control, cancellation, and custom portal containers. The outside action still activates when it dismisses the popup. Its picker page checks initial search focus, a single Tab stop across option and action rows, arrow navigation and Tab reentry to the last focused row. Search preview clears when focus moves to a row, action or sibling button outside a popup whose outside dismissal is canceled, stays cleared during a keyed reorder, and returns when search regains focus. Nonempty-query Enter selects the first eligible option. Escape and Back focus restoration are not established by these checks.
 
 Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
 
@@ -395,12 +395,23 @@ button state, click count and pointer type to worker document listeners. It does
 not expose external DOM nodes, control values or pointer coordinates. The worker
 reports when its document, `<html>` or `<body>` has listeners for these press
 types, such as the dismiss listeners of an open Base UI popup, and the host
-listens for outside presses only while it does. Events on
-owned controls and portals keep their existing delivery path, and active pointer
-capture sessions are excluded from this outside-press path. Dropdown and Popover
-stories verify the dismissal behavior described above; other components still
-need their own acceptance checks. General host keyboard forwarding and full
-focus restoration remain separate work.
+listens for outside presses only while it does. A press on an owned element
+crosses through that element's handlers when one exists on its path; while the
+worker listens, the renderer root forwards the remaining owned presses with
+their full event data at their target, so a listener-less backdrop or label
+still dismisses a popup. A captured gesture's release, and the `mouseup` and
+`click` that follow it, stay off the outside-press path. Clicks without a press,
+such as keyboard activation of a host control, are not forwarded: the worker
+reports `document.body` as active whenever host focus is elsewhere, so Base UI
+would move focus back into the component. Presses on host scrollbars are not
+forwarded either, as Base UI ignores them natively. Worker dispatches set
+`window.event`, so React flushes the resulting close before the next forwarded
+press as it does in a browser. Touch swipes outside the component do not
+dismiss popups, because the worker has no `TouchEvent` touch lists for Base UI's
+touch tracking; taps still close them through their compatibility `mousedown`.
+Dropdown and Popover stories verify the dismissal behavior described above;
+other components still need their own acceptance checks. General host keyboard
+forwarding and full focus restoration remain separate work.
 
 Once the remaining gaps are fixed, extend the stories to verify keyboard
 navigation, dismissal, and focus restoration across overlay components. The fixtures

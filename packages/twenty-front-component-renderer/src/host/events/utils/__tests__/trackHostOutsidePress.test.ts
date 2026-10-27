@@ -2,7 +2,13 @@ import { OUTSIDE_PRESS_EVENT_TYPES } from '@/constants/OutsidePressEventTypes';
 import { trackHostOutsidePress } from '@/host/events/utils/trackHostOutsidePress';
 import { findRemoteElementIdContainingNode } from '@/host/geometry/utils/findRemoteElementIdContainingNode';
 
-const createOutsidePressTracker = (ownedElements: Element[] = []) => {
+const createOutsidePressTracker = ({
+  ownedElements = [],
+  hasActivePointerCaptureForEvent = () => false,
+}: {
+  ownedElements?: Element[];
+  hasActivePointerCaptureForEvent?: (event: object) => boolean;
+} = {}) => {
   const remoteElementIdByRegisteredNode = new WeakMap<object, string>();
 
   for (const element of ownedElements) {
@@ -18,11 +24,31 @@ const createOutsidePressTracker = (ownedElements: Element[] = []) => {
         remoteElementIdByRegisteredNode,
       }),
     pushOutsidePressEvent,
-    hasActivePointerCaptureForEvent: () => false,
+    hasActivePointerCaptureForEvent,
   });
 
   return { pushOutsidePressEvent, dispose };
 };
+
+const createPress = (type: string) =>
+  new MouseEvent(type, { bubbles: true, detail: 1 });
+
+const createPressAtHorizontalOffset = ({
+  type,
+  offsetX,
+}: {
+  type: string;
+  offsetX: number;
+}) => {
+  const event = createPress(type);
+
+  Object.defineProperty(event, 'offsetX', { value: offsetX });
+
+  return event;
+};
+
+const readForwardedEventTypes = (pushOutsidePressEvent: jest.Mock) =>
+  pushOutsidePressEvent.mock.calls.map(([eventData]) => eventData.type);
 
 describe('trackHostOutsidePress', () => {
   afterEach(() => {
@@ -74,14 +100,13 @@ describe('trackHostOutsidePress', () => {
     root.append(child);
     portal.append(portalChild);
     document.body.append(root, portal);
-    const { pushOutsidePressEvent, dispose } = createOutsidePressTracker([
-      root,
-      portal,
-    ]);
+    const { pushOutsidePressEvent, dispose } = createOutsidePressTracker({
+      ownedElements: [root, portal],
+    });
 
     try {
-      child.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      portalChild.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      child.dispatchEvent(createPress('click'));
+      portalChild.dispatchEvent(createPress('click'));
 
       expect(pushOutsidePressEvent).not.toHaveBeenCalled();
     } finally {
@@ -99,9 +124,7 @@ describe('trackHostOutsidePress', () => {
         outsideButton.addEventListener(eventType, (event) =>
           event.stopPropagation(),
         );
-        outsideButton.dispatchEvent(
-          new MouseEvent(eventType, { bubbles: true }),
-        );
+        outsideButton.dispatchEvent(createPress(eventType));
       }
       outsideButton.dispatchEvent(
         new MouseEvent('mousemove', { bubbles: true }),
@@ -110,9 +133,85 @@ describe('trackHostOutsidePress', () => {
         new KeyboardEvent('keydown', { key: 'a', bubbles: true }),
       );
 
-      expect(
-        pushOutsidePressEvent.mock.calls.map(([eventData]) => eventData.type),
-      ).toEqual(OUTSIDE_PRESS_EVENT_TYPES);
+      expect(readForwardedEventTypes(pushOutsidePressEvent)).toEqual(
+        OUTSIDE_PRESS_EVENT_TYPES,
+      );
+    } finally {
+      dispose();
+    }
+  });
+
+  it('skips clicks without a press, such as keyboard activation of a host control', () => {
+    const outsideButton = document.createElement('button');
+    document.body.append(outsideButton);
+    const { pushOutsidePressEvent, dispose } = createOutsidePressTracker();
+
+    try {
+      outsideButton.dispatchEvent(
+        new MouseEvent('click', { bubbles: true, detail: 0 }),
+      );
+
+      expect(pushOutsidePressEvent).not.toHaveBeenCalled();
+    } finally {
+      dispose();
+    }
+  });
+
+  it('skips presses on a host scrollbar', () => {
+    const scrollContainer = document.createElement('div');
+    scrollContainer.style.overflowY = 'auto';
+    Object.defineProperties(scrollContainer, {
+      clientWidth: { value: 100 },
+      offsetWidth: { value: 115 },
+      clientHeight: { value: 100 },
+      scrollHeight: { value: 400 },
+    });
+    document.body.append(scrollContainer);
+    const { pushOutsidePressEvent, dispose } = createOutsidePressTracker();
+
+    try {
+      scrollContainer.dispatchEvent(
+        createPressAtHorizontalOffset({ type: 'mousedown', offsetX: 105 }),
+      );
+      scrollContainer.dispatchEvent(
+        createPressAtHorizontalOffset({ type: 'mousedown', offsetX: 50 }),
+      );
+
+      expect(readForwardedEventTypes(pushOutsidePressEvent)).toEqual([
+        'mousedown',
+      ]);
+    } finally {
+      dispose();
+    }
+  });
+
+  it('keeps the compatibility events after a captured release off the outside path', () => {
+    const outsideButton = document.createElement('button');
+    document.body.append(outsideButton);
+    const firstCapturedRelease = createPress('pointerup');
+    const secondCapturedRelease = createPress('pointerup');
+    const capturedReleases = new Set<object>([
+      firstCapturedRelease,
+      secondCapturedRelease,
+    ]);
+    const { pushOutsidePressEvent, dispose } = createOutsidePressTracker({
+      hasActivePointerCaptureForEvent: (event) => capturedReleases.has(event),
+    });
+
+    try {
+      outsideButton.dispatchEvent(firstCapturedRelease);
+      outsideButton.dispatchEvent(createPress('mouseup'));
+      outsideButton.dispatchEvent(createPress('click'));
+      outsideButton.dispatchEvent(createPress('click'));
+      outsideButton.dispatchEvent(secondCapturedRelease);
+      outsideButton.dispatchEvent(createPress('pointerdown'));
+      outsideButton.dispatchEvent(createPress('mouseup'));
+
+      expect(readForwardedEventTypes(pushOutsidePressEvent)).toEqual([
+        'click',
+        'pointerdown',
+        'mouseup',
+      ]);
     } finally {
       dispose();
     }
@@ -122,16 +221,20 @@ describe('trackHostOutsidePress', () => {
     const firstButton = document.createElement('button');
     const secondButton = document.createElement('button');
     document.body.append(firstButton, secondButton);
-    const firstTracker = createOutsidePressTracker([firstButton]);
-    const secondTracker = createOutsidePressTracker([secondButton]);
+    const firstTracker = createOutsidePressTracker({
+      ownedElements: [firstButton],
+    });
+    const secondTracker = createOutsidePressTracker({
+      ownedElements: [secondButton],
+    });
 
     try {
-      firstButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      firstButton.dispatchEvent(createPress('click'));
       expect(firstTracker.pushOutsidePressEvent).not.toHaveBeenCalled();
       expect(secondTracker.pushOutsidePressEvent).toHaveBeenCalledTimes(1);
 
       secondTracker.dispose();
-      document.body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      document.body.dispatchEvent(createPress('click'));
       expect(firstTracker.pushOutsidePressEvent).toHaveBeenCalledTimes(1);
       expect(secondTracker.pushOutsidePressEvent).toHaveBeenCalledTimes(1);
     } finally {

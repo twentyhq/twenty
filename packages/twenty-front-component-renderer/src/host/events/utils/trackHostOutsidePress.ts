@@ -2,6 +2,9 @@ import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { OUTSIDE_PRESS_EVENT_TYPES } from '@/constants/OutsidePressEventTypes';
+import { createCapturedGestureEventFilter } from '@/host/events/utils/createCapturedGestureEventFilter';
+import { isPressLessClick } from '@/host/events/utils/isPressLessClick';
+import { isScrollbarPress } from '@/host/events/utils/isScrollbarPress';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 import { type OutsidePressEventData } from '@/types/OutsidePressEventData';
 import { isOutsidePressEventType } from '@/utils/isOutsidePressEventType';
@@ -17,14 +20,22 @@ export const trackHostOutsidePress = ({
   hasActivePointerCaptureForEvent: (event: object) => boolean;
   pushOutsidePressEvent: (eventData: OutsidePressEventData) => void;
 }): (() => void) => {
+  const isCapturedGestureEvent = createCapturedGestureEventFilter(
+    hasActivePointerCaptureForEvent,
+  );
+
   const handleOutsidePress = (event: MouseEvent) => {
     if (
       !isOutsidePressEventType(event.type) ||
-      hasActivePointerCaptureForEvent(event) ||
+      isCapturedGestureEvent(event) ||
+      isPressLessClick(event) ||
       isDefined(findRemoteElementIdContainingNode(event.target)) ||
       event
         .composedPath()
-        .some((target) => isDefined(findRemoteElementIdContainingNode(target)))
+        .some((target) =>
+          isDefined(findRemoteElementIdContainingNode(target)),
+        ) ||
+      isScrollbarPress(event)
     ) {
       return;
     }

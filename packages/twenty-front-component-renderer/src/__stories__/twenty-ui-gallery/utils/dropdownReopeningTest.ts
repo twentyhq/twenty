@@ -28,6 +28,10 @@ export const dropdownReopeningTest: TwentyUiGalleryPlayFunction = async ({
   await expectMenuClosed();
 
   await openMenu();
+  await userEvent.click(canvas.getByRole('status', { name: 'Selections' }));
+  await expectMenuClosed();
+
+  await openMenu();
   await userEvent.click(page.getByRole('menuitem', { name: 'Select record' }));
   await expectMenuClosed();
   expect(canvas.getByRole('status', { name: 'Selections' })).toHaveTextContent(

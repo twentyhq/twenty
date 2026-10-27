@@ -62,4 +62,34 @@ describe('dispatchOutsidePressEvent', () => {
     });
     expect(popupListener).not.toHaveBeenCalled();
   });
+
+  it('exposes the press as the current window event while it is dispatched', () => {
+    const polyfillWindow = new Window();
+    installEventConstructorPolyfills({
+      globalScope: toGlobalScopeRecord(polyfillWindow),
+    });
+    const documentTarget = polyfillWindow.document as unknown as Document;
+    let receivedEvent: Event | undefined;
+    let windowEventDuringDispatch: unknown;
+
+    documentTarget.addEventListener('mousedown', (event) => {
+      receivedEvent = event;
+      windowEventDuringDispatch = Reflect.get(polyfillWindow, 'event');
+    });
+
+    dispatchOutsidePressEvent({
+      documentTarget,
+      eventData: {
+        type: 'mousedown',
+        button: 0,
+        buttons: 1,
+        detail: 1,
+        pointerType: 'mouse',
+      },
+    });
+
+    expect(receivedEvent).toBeDefined();
+    expect(windowEventDuringDispatch).toBe(receivedEvent);
+    expect(Reflect.get(polyfillWindow, 'event')).toBeUndefined();
+  });
 });

@@ -1,4 +1,5 @@
 import { createWorkerEventFromSerializedEvent } from '@/remote/elements/utils/createWorkerEventFromSerializedEvent';
+import { dispatchAsCurrentWindowEvent } from '@/remote/elements/utils/dispatchAsCurrentWindowEvent';
 import { type OutsidePressEventData } from '@/types/OutsidePressEventData';
 
 export const dispatchOutsidePressEvent = ({
@@ -8,11 +9,12 @@ export const dispatchOutsidePressEvent = ({
   documentTarget: Document;
   eventData: OutsidePressEventData;
 }): void => {
-  documentTarget.body.dispatchEvent(
-    createWorkerEventFromSerializedEvent({
+  dispatchAsCurrentWindowEvent({
+    eventTarget: documentTarget.body,
+    event: createWorkerEventFromSerializedEvent({
       listeningElement: documentTarget.body,
       eventType: eventData.type,
       eventData: { ...eventData, bubbles: true },
     }),
-  );
+  });
 };

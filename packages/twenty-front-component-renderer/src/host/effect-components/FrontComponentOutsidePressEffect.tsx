@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { OUTSIDE_PRESS_TRANSPORT_FAILURE_WARNING } from '@/host/constants/OutsidePressTransportFailureWarning';
+import { PRESS_TRANSPORT_FAILURE_WARNING } from '@/host/constants/PressTransportFailureWarning';
 import { type HostOutsidePressController } from '@/host/events/types/HostOutsidePressController';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 
@@ -14,17 +14,28 @@ export const FrontComponentOutsidePressEffect = ({
   outsidePressController,
 }: FrontComponentOutsidePressEffectProps) => {
   useEffect(() => {
-    let hasWarnedAboutOutsidePressPushFailure = false;
+    let hasWarnedAboutPressPushFailure = false;
 
-    outsidePressController.setPushOutsidePressEvent((eventData) => {
-      thread.imports.pushOutsidePressEvent(eventData).catch(() => {
-        if (hasWarnedAboutOutsidePressPushFailure) {
-          return;
-        }
+    const warnAboutPressPushFailure = () => {
+      if (hasWarnedAboutPressPushFailure) {
+        return;
+      }
 
-        hasWarnedAboutOutsidePressPushFailure = true;
-        console.warn(OUTSIDE_PRESS_TRANSPORT_FAILURE_WARNING);
-      });
+      hasWarnedAboutPressPushFailure = true;
+      console.warn(PRESS_TRANSPORT_FAILURE_WARNING);
+    };
+
+    outsidePressController.setPressEventTransport({
+      pushOutsidePressEvent: (eventData) => {
+        thread.imports
+          .pushOutsidePressEvent(eventData)
+          .catch(warnAboutPressPushFailure);
+      },
+      pushOwnedPressEvent: (eventData) => {
+        thread.imports
+          .pushOwnedPressEvent(eventData)
+          .catch(warnAboutPressPushFailure);
+      },
     });
 
     return () => {

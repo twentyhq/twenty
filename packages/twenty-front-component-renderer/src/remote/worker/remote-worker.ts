@@ -65,6 +65,7 @@ import { installAriaBooleanPropertyAccessors } from '@/remote/elements/utils/ins
 import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
 import { dispatchOutsidePressEvent } from '@/remote/elements/utils/dispatchOutsidePressEvent';
+import { dispatchOwnedPressEvent } from '@/remote/elements/utils/dispatchOwnedPressEvent';
 import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveRemoteElementPrototypes';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/thread/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '@/remote/worker/thread/utils/handleCommandConfirmationModalResult';
@@ -302,6 +303,9 @@ const workerExports: WorkerExports = {
   },
   pushOutsidePressEvent: async (eventData) => {
     dispatchOutsidePressEvent({ documentTarget: document, eventData });
+  },
+  pushOwnedPressEvent: async (eventData) => {
+    dispatchOwnedPressEvent({ documentTarget: document, eventData });
   },
   pushMediaSessionEvents: async (batch) => {
     workerMediaBridge.dispatchEvents(batch);

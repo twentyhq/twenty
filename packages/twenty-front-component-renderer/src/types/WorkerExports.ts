@@ -9,6 +9,7 @@ import { type GeometryUpdateBatch } from '@/types/GeometryUpdateBatch';
 import { type HostToWorkerRenderContext } from '@/types/HostToWorkerRenderContext';
 import { type MediaSessionEventBatch } from '@/types/MediaSession';
 import { type OutsidePressEventData } from '@/types/OutsidePressEventData';
+import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export type WorkerExports = {
   render: (
@@ -26,5 +27,6 @@ export type WorkerExports = {
     update: CapturedPointerEventUpdate,
   ) => Promise<void>;
   pushOutsidePressEvent: (eventData: OutsidePressEventData) => Promise<void>;
+  pushOwnedPressEvent: (eventData: SerializedEventData) => Promise<void>;
   pushMediaSessionEvents: (batch: MediaSessionEventBatch) => Promise<void>;
 };

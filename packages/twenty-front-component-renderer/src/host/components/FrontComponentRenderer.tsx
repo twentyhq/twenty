@@ -98,7 +98,16 @@ export const FrontComponentRenderer = ({
 
   return (
     <FrontComponentGeometryTrackerContext.Provider value={geometryTracker}>
-      <div ref={geometryTracker.setRoot} style={ROOT_CONTAINER_STYLE}>
+      <div
+        ref={geometryTracker.setRoot}
+        style={ROOT_CONTAINER_STYLE}
+        onPointerDown={outsidePressController.forwardUnhandledOwnedPress}
+        onPointerUp={outsidePressController.forwardUnhandledOwnedPress}
+        onPointerCancel={outsidePressController.forwardUnhandledOwnedPress}
+        onMouseDown={outsidePressController.forwardUnhandledOwnedPress}
+        onMouseUp={outsidePressController.forwardUnhandledOwnedPress}
+        onClick={outsidePressController.forwardUnhandledOwnedPress}
+      >
         <FrontComponentWorkerEffect
           componentUrl={componentUrl}
           applicationAccessToken={applicationAccessToken}
