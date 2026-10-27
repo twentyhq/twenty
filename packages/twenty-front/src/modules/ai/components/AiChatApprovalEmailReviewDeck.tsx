@@ -33,9 +33,6 @@ export const AiChatApprovalEmailReviewDeck = ({
   disabled = false,
 }: AiChatApprovalEmailReviewDeckProps) => {
   const { t } = useLingui();
-  const pendingEmailCount = emails.filter(
-    (email) => email.status === 'pending',
-  ).length;
   const cards: AiChatApprovalReviewCard[] = emails.map((email, index) => {
     const remainingDraftCount = emails
       .slice(index + 1)
@@ -82,7 +79,9 @@ export const AiChatApprovalEmailReviewDeck = ({
       onRequestApproval={onRequestApproval}
       onDeny={onSkip}
       disabled={disabled}
-      approveAllLabel={t`Send all ${pendingEmailCount}`}
+      getApproveAllLabel={(pendingEmailCount) =>
+        t`Send all ${pendingEmailCount}`
+      }
     />
   );
 };
