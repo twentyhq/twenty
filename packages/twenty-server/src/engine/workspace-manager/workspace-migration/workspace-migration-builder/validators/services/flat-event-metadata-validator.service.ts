@@ -60,7 +60,7 @@ const validateEventMetadataDefinition = ({
     });
   }
 
-  for (const property of flatEventMetadata.properties ?? []) {
+  for (const property of flatEventMetadata.properties) {
     if (
       property.type === 'RECORD_REFERENCE' &&
       !isDefined(

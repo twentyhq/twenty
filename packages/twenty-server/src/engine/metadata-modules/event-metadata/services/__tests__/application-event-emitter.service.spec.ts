@@ -77,12 +77,12 @@ describe('ApplicationEventEmitterService', () => {
       channels: [
         `appEvent:${WORKSPACE_ID}:${EVENT_METADATA_ID}:visitor:visitor-1`,
       ],
-      occurrence: {
+      serializedOccurrence: JSON.stringify({
         id: result.id,
         event: 'agentTyping',
         occurredAt: result.occurredAt,
         properties: { isTyping: true },
-      },
+      }),
     });
   });
 
@@ -112,19 +112,5 @@ describe('ApplicationEventEmitterService', () => {
       }),
     ).rejects.toThrow(EventMetadataException);
     expect(publish).not.toHaveBeenCalled();
-  });
-
-  it('should refuse an anonymousId that could escape its channel', async () => {
-    await expect(
-      service.emit({
-        workspaceId: WORKSPACE_ID,
-        applicationId: APPLICATION_ID,
-        event: 'agentTyping',
-        properties: { isTyping: true },
-        anonymousId: 'visitor-1:record:other',
-      }),
-    ).rejects.toMatchObject({
-      code: EventMetadataExceptionCode.INVALID_EVENT_PROPERTIES,
-    });
   });
 });

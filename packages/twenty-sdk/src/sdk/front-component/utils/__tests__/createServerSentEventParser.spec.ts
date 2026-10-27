@@ -12,7 +12,6 @@ describe('createServerSentEventParser', () => {
 
     expect(onEvent).toHaveBeenCalledTimes(1);
     expect(onEvent).toHaveBeenCalledWith({
-      id: '1',
       event: 'occurrence',
       data: '{"a":1}',
     });
@@ -25,7 +24,6 @@ describe('createServerSentEventParser', () => {
     push('data: first\r\ndata: second\r\n\r\n');
 
     expect(onEvent).toHaveBeenCalledWith({
-      id: null,
       event: 'message',
       data: 'first\nsecond',
     });

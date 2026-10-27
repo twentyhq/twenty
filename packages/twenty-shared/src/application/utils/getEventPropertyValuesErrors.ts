@@ -1,9 +1,11 @@
+import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { validate as uuidValidate } from 'uuid';
 
 import {
   type EventPropertyManifest,
   type EventPropertyType,
 } from '@/application/eventManifestType';
+import { isDefined } from '@/utils/validation/isDefined';
 
 const isValueOfPropertyType = (
   value: unknown,
@@ -11,16 +13,16 @@ const isValueOfPropertyType = (
 ): boolean => {
   switch (type) {
     case 'TEXT':
-      return typeof value === 'string';
+      return isString(value);
     case 'NUMBER':
-      return typeof value === 'number' && Number.isFinite(value);
+      return isNumber(value) && Number.isFinite(value);
     case 'BOOLEAN':
-      return typeof value === 'boolean';
+      return isBoolean(value);
     case 'DATE_TIME':
-      return typeof value === 'string' && !Number.isNaN(Date.parse(value));
+      return isString(value) && !Number.isNaN(Date.parse(value));
     case 'UUID':
     case 'RECORD_REFERENCE':
-      return typeof value === 'string' && uuidValidate(value);
+      return isString(value) && uuidValidate(value);
     case 'RAW_JSON':
       return true;
   }
@@ -49,7 +51,7 @@ export const getEventPropertyValuesErrors = ({
   for (const property of properties) {
     const value = values[property.name];
 
-    if (value === undefined || value === null) {
+    if (!isDefined(value)) {
       if (property.isRequired === true) {
         errors.push(
           `Event "${eventName}" property "${property.name}" is required`,

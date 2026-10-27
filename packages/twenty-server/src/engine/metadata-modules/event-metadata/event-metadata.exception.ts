@@ -13,6 +13,7 @@ export enum EventMetadataExceptionCode {
   INVALID_EVENT_SUBSCRIPTION = 'INVALID_EVENT_SUBSCRIPTION',
   EVENT_SUBSCRIPTION_FORBIDDEN = 'EVENT_SUBSCRIPTION_FORBIDDEN',
   INVALID_VISITOR_EVENT_TOKEN = 'INVALID_VISITOR_EVENT_TOKEN',
+  TOO_MANY_VISITOR_EVENT_STREAMS = 'TOO_MANY_VISITOR_EVENT_STREAMS',
 }
 
 const getEventMetadataExceptionUserFriendlyMessage = (
@@ -35,6 +36,8 @@ const getEventMetadataExceptionUserFriendlyMessage = (
       return msg`You are not allowed to receive these events.`;
     case EventMetadataExceptionCode.INVALID_VISITOR_EVENT_TOKEN:
       return msg`This event stream link is invalid or has expired.`;
+    case EventMetadataExceptionCode.TOO_MANY_VISITOR_EVENT_STREAMS:
+      return msg`Too many open event streams for this visitor.`;
     default:
       assertUnreachable(code);
   }

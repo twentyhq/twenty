@@ -10,15 +10,16 @@ export class EventRealtimeService {
 
   async publish({
     channels,
-    occurrence,
+    serializedOccurrence,
   }: {
     channels: string[];
-    occurrence: EventOccurrence;
+    serializedOccurrence: string;
   }): Promise<void> {
     const pubSubClient = this.redisClientService.getPubSubClient();
+    const payload = Buffer.from(serializedOccurrence);
 
     await Promise.all(
-      channels.map((channel) => pubSubClient.publish(channel, occurrence)),
+      channels.map((channel) => pubSubClient.publish(channel, payload)),
     );
   }
 
@@ -33,11 +34,7 @@ export class EventRealtimeService {
     const pubSubClient = this.redisClientService.getPubSubClient();
 
     const subscriptionIds = await Promise.all(
-      channels.map((channel) =>
-        pubSubClient.subscribe(channel, (occurrence: EventOccurrence) =>
-          onOccurrence(occurrence),
-        ),
-      ),
+      channels.map((channel) => pubSubClient.subscribe(channel, onOccurrence)),
     );
 
     return () => {

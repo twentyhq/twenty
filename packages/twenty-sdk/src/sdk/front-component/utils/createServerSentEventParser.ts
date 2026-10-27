@@ -1,5 +1,4 @@
 export type ServerSentEvent = {
-  id: string | null;
   event: string;
   data: string;
 };
@@ -10,7 +9,6 @@ export const createServerSentEventParser = (
   let buffer = '';
 
   const dispatchBlock = (block: string) => {
-    let id: string | null = null;
     let event = 'message';
     const dataLines: string[] = [];
 
@@ -27,9 +25,7 @@ export const createServerSentEventParser = (
           ? ''
           : line.slice(separatorIndex + 1).replace(/^ /, '');
 
-      if (field === 'id') {
-        id = value;
-      } else if (field === 'event') {
+      if (field === 'event') {
         event = value;
       } else if (field === 'data') {
         dataLines.push(value);
@@ -37,7 +33,7 @@ export const createServerSentEventParser = (
     }
 
     if (dataLines.length > 0) {
-      onEvent({ id, event, data: dataLines.join('\n') });
+      onEvent({ event, data: dataLines.join('\n') });
     }
   };
 

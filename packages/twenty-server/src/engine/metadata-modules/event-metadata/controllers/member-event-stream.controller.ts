@@ -6,6 +6,8 @@ import {
   Res,
   UseFilters,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 
 import { Request, Response } from 'express';
@@ -23,15 +25,14 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { EVENT_STREAM_REAUTHORIZATION_INTERVAL_MS } from 'src/engine/metadata-modules/event-metadata/constants/event-stream.constant';
+import { MemberEventStreamInput } from 'src/engine/metadata-modules/event-metadata/dtos/member-event-stream.input';
 import {
   EventMetadataException,
   EventMetadataExceptionCode,
 } from 'src/engine/metadata-modules/event-metadata/event-metadata.exception';
+import { EventMetadataRestApiExceptionFilter } from 'src/engine/metadata-modules/event-metadata/filters/event-metadata-rest-api-exception.filter';
 import { EventRealtimeService } from 'src/engine/metadata-modules/event-metadata/services/event-realtime.service';
 import { MemberEventSubscriptionService } from 'src/engine/metadata-modules/event-metadata/services/member-event-subscription.service';
-import { parseMemberEventSubscriptionsOrThrow } from 'src/engine/metadata-modules/event-metadata/utils/parse-member-event-subscriptions-or-throw.util';
-import { sendEventMetadataExceptionResponse } from 'src/engine/metadata-modules/event-metadata/utils/send-event-metadata-exception-response.util';
 import { streamEventOccurrences } from 'src/engine/metadata-modules/event-metadata/utils/stream-event-occurrences.util';
 
 @Controller(`${ApiPath.Rest}/${ApiPath.AppEvents}`)
@@ -45,7 +46,11 @@ import { streamEventOccurrences } from 'src/engine/metadata-modules/event-metada
   }),
   NoPermissionGuard,
 )
-@UseFilters(RestApiExceptionFilter, AuthRestApiExceptionFilter)
+@UseFilters(
+  RestApiExceptionFilter,
+  AuthRestApiExceptionFilter,
+  EventMetadataRestApiExceptionFilter,
+)
 export class MemberEventStreamController {
   constructor(
     private readonly memberEventSubscriptionService: MemberEventSubscriptionService,
@@ -54,51 +59,47 @@ export class MemberEventStreamController {
   ) {}
 
   @Post('stream')
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async stream(
     @Req() request: Request,
     @Res() response: Response,
     @AuthWorkspace() workspace: FlatWorkspace,
     @AuthApplication() application: FlatApplication,
-    @Body() body: unknown,
+    @Body() memberEventStreamInput: MemberEventStreamInput,
   ): Promise<void> {
-    try {
-      const authContext = getWorkspaceAuthContext();
+    const authContext = getWorkspaceAuthContext();
 
-      const subscriptions =
-        await this.memberEventSubscriptionService.resolveOrThrow({
-          workspaceId: workspace.id,
-          applicationId: application.id,
-          subscriptions: parseMemberEventSubscriptionsOrThrow(body),
-        });
-
-      const canReadAllRecords = () =>
-        this.memberEventSubscriptionService.canReadAllRecords({
-          authContext,
-          subscriptions,
-        });
-
-      if (!(await canReadAllRecords())) {
-        throw new EventMetadataException(
-          'You cannot read every record these subscriptions are scoped to',
-          EventMetadataExceptionCode.EVENT_SUBSCRIPTION_FORBIDDEN,
-        );
-      }
-
-      await streamEventOccurrences({
-        request,
-        response,
-        subscribe: (onOccurrence) =>
-          this.eventRealtimeService.subscribe({
-            channels: subscriptions.map(({ channel }) => channel),
-            onOccurrence,
-          }),
-        closeAt: this.getAccessTokenExpiration(request),
-        reauthorize: canReadAllRecords,
-        reauthorizationIntervalMs: EVENT_STREAM_REAUTHORIZATION_INTERVAL_MS,
+    const subscriptions =
+      await this.memberEventSubscriptionService.resolveOrThrow({
+        workspaceId: workspace.id,
+        applicationId: application.id,
+        subscriptions: memberEventStreamInput.subscriptions,
       });
-    } catch (error) {
-      sendEventMetadataExceptionResponse(response, error);
+
+    const canReadAllRecords = () =>
+      this.memberEventSubscriptionService.canReadAllRecords({
+        authContext,
+        subscriptions,
+      });
+
+    if (!(await canReadAllRecords())) {
+      throw new EventMetadataException(
+        'You cannot read every record these subscriptions are scoped to',
+        EventMetadataExceptionCode.EVENT_SUBSCRIPTION_FORBIDDEN,
+      );
     }
+
+    await streamEventOccurrences({
+      request,
+      response,
+      subscribe: (onOccurrence) =>
+        this.eventRealtimeService.subscribe({
+          channels: subscriptions.map(({ channel }) => channel),
+          onOccurrence,
+        }),
+      closeAt: this.getAccessTokenExpiration(request),
+      reauthorize: canReadAllRecords,
+    });
   }
 
   private getAccessTokenExpiration(request: Request): Date | undefined {

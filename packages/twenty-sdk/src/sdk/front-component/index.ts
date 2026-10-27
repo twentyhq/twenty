@@ -11,8 +11,10 @@ export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { updateProgress } from './functions/updateProgress';
 export { uploadFile } from './functions/uploadFile';
 export { subscribeToAppEvents } from './functions/subscribeToAppEvents';
-export type { AppEventSubscription } from './functions/subscribeToAppEvents';
-export type { EventOccurrence } from 'twenty-shared/application';
+export type {
+  AppEventSubscription,
+  EventOccurrence,
+} from 'twenty-shared/application';
 export { useColorScheme } from './hooks/useColorScheme';
 export { useEvent } from './hooks/useEvent';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';

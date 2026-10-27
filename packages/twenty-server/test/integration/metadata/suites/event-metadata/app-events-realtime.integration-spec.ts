@@ -227,6 +227,16 @@ describe('app events realtime (e2e)', () => {
     expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
   });
 
+  it('refuses an anonymousId that could escape its channel', async () => {
+    const response = await emit({
+      event: 'messageAdded',
+      properties: { companyId },
+      anonymousId: 'visitor-1:record:other',
+    });
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
+  });
+
   it('refuses an event the application did not declare', async () => {
     const response = await emit({ event: 'somethingElse' });
 
@@ -278,13 +288,19 @@ describe('app events realtime (e2e)', () => {
 
   it('refuses a missing or tampered visitor token', async () => {
     const missingTokenResponse = await fetch(`${SERVER_URL}/app-events/stream`);
-    const visitorToken = await createVisitorToken('visitor-1');
+    const [header, payload, signature] = (
+      await createVisitorToken('visitor-1')
+    ).split('.');
+    const tamperedSignature = `${signature.startsWith('A') ? 'B' : 'A'}${signature.slice(1)}`;
     const tamperedTokenResponse = await fetch(
-      `${SERVER_URL}/app-events/stream?token=${visitorToken.slice(0, -2)}xx`,
+      `${SERVER_URL}/app-events/stream?token=${header}.${payload}.${tamperedSignature}`,
     );
 
     expect(missingTokenResponse.status).toBe(401);
     expect(tamperedTokenResponse.status).toBe(401);
+
+    await missingTokenResponse.text();
+    await tamperedTokenResponse.text();
   });
 
   it('does not accept a visitor token as an API credential', async () => {
@@ -332,6 +348,22 @@ describe('app events realtime (e2e)', () => {
     memberStream.close();
   });
 
+  it('refuses a member subscription whose recordId is not a UUID', async () => {
+    const response = await fetch(`${SERVER_URL}/rest/app-events/stream`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${applicationToken}`,
+      },
+      body: JSON.stringify({
+        subscriptions: [{ event: 'messageAdded', recordId: 'company-1' }],
+      }),
+    });
+
+    expect(response.status).toBe(400);
+    await response.text();
+  });
+
   it('refuses a member subscription to a record they cannot read', async () => {
     const response = await fetch(`${SERVER_URL}/rest/app-events/stream`, {
       method: 'POST',
@@ -345,5 +377,6 @@ describe('app events realtime (e2e)', () => {
     });
 
     expect(response.status).toBe(403);
+    await response.text();
   });
 });

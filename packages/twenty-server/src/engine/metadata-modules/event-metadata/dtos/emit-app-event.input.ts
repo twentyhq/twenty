@@ -1,7 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
+import { ANONYMOUS_ID_PATTERN } from 'twenty-shared/application';
 
 @InputType('EmitAppEventInput')
 export class EmitAppEventInput {
@@ -16,7 +23,7 @@ export class EmitAppEventInput {
   properties?: Record<string, unknown>;
 
   @Field({ nullable: true })
-  @IsString()
+  @Matches(ANONYMOUS_ID_PATTERN)
   @IsOptional()
   anonymousId?: string;
 }

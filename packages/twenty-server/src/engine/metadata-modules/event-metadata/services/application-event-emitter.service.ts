@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  ANONYMOUS_ID_PATTERN,
   EVENT_LIMITS,
   type EmitEventResult,
   type EventOccurrence,
   getEventPropertyValuesErrors,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
@@ -17,7 +15,7 @@ import {
 import { EventRealtimeService } from 'src/engine/metadata-modules/event-metadata/services/event-realtime.service';
 import { buildEventRealtimeChannel } from 'src/engine/metadata-modules/event-metadata/utils/build-event-realtime-channel.util';
 import { computeEventOccurrenceRealtimeScopes } from 'src/engine/metadata-modules/event-metadata/utils/compute-event-occurrence-realtime-scopes.util';
-import { findApplicationFlatEventMetadataByName } from 'src/engine/metadata-modules/event-metadata/utils/find-application-flat-event-metadata-by-name.util';
+import { findApplicationFlatEventMetadataByNameOrThrow } from 'src/engine/metadata-modules/event-metadata/utils/find-application-flat-event-metadata-by-name-or-throw.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -46,25 +44,11 @@ export class ApplicationEventEmitterService {
         'flatObjectMetadataMaps',
       ]);
 
-    const flatEventMetadata = findApplicationFlatEventMetadataByName({
+    const flatEventMetadata = findApplicationFlatEventMetadataByNameOrThrow({
       flatEventMetadataMaps,
       applicationId,
       name: event,
     });
-
-    if (!isDefined(flatEventMetadata)) {
-      throw new EventMetadataException(
-        `Event "${event}" is not declared by this application`,
-        EventMetadataExceptionCode.EVENT_METADATA_NOT_FOUND,
-      );
-    }
-
-    if (isDefined(anonymousId) && !ANONYMOUS_ID_PATTERN.test(anonymousId)) {
-      throw new EventMetadataException(
-        `anonymousId must match ${ANONYMOUS_ID_PATTERN}`,
-        EventMetadataExceptionCode.INVALID_EVENT_PROPERTIES,
-      );
-    }
 
     const propertyErrors = getEventPropertyValuesErrors({
       eventName: event,
@@ -79,22 +63,22 @@ export class ApplicationEventEmitterService {
       );
     }
 
-    if (
-      Buffer.byteLength(JSON.stringify(properties)) >
-      EVENT_LIMITS.MAX_PAYLOAD_BYTES
-    ) {
-      throw new EventMetadataException(
-        `Event properties cannot exceed ${EVENT_LIMITS.MAX_PAYLOAD_BYTES} bytes`,
-        EventMetadataExceptionCode.INVALID_EVENT_PROPERTIES,
-      );
-    }
-
     const occurrence: EventOccurrence = {
       id: v4(),
       event,
       occurredAt: new Date().toISOString(),
       properties,
     };
+    const serializedOccurrence = JSON.stringify(occurrence);
+
+    if (
+      Buffer.byteLength(serializedOccurrence) > EVENT_LIMITS.MAX_PAYLOAD_BYTES
+    ) {
+      throw new EventMetadataException(
+        `An event occurrence cannot exceed ${EVENT_LIMITS.MAX_PAYLOAD_BYTES} bytes`,
+        EventMetadataExceptionCode.INVALID_EVENT_PROPERTIES,
+      );
+    }
 
     const channels = computeEventOccurrenceRealtimeScopes({
       flatEventMetadata,
@@ -109,7 +93,7 @@ export class ApplicationEventEmitterService {
       }),
     );
 
-    await this.eventRealtimeService.publish({ channels, occurrence });
+    await this.eventRealtimeService.publish({ channels, serializedOccurrence });
 
     return { id: occurrence.id, occurredAt: occurrence.occurredAt };
   }

@@ -2,22 +2,19 @@ import {
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
 } from 'twenty-shared/application-runtime';
-import { type EventOccurrence } from 'twenty-shared/application';
+import {
+  type AppEventSubscription,
+  type EventOccurrence,
+} from 'twenty-shared/application';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { APP_EVENTS_STREAM_PATH } from '../constants/app-events-stream-path';
 import { frontComponentHostCommunicationApi } from '../globals/frontComponentHostCommunicationApi';
 import { createServerSentEventParser } from '../utils/createServerSentEventParser';
 
 const INITIAL_RETRY_DELAY_MS = 1_000;
 const MAX_RETRY_DELAY_MS = 30_000;
-const NON_RETRYABLE_STATUSES = new Set([400, 403, 404]);
-
-export type AppEventSubscription = {
-  event: string;
-  recordId: string;
-  property?: string;
-};
+const NON_RETRYABLE_STATUSES = new Set([400, 401, 403, 404]);
 
 const waitUnlessAborted = (delayMs: number, signal: AbortSignal) =>
   new Promise<void>((resolve) => {
@@ -65,7 +62,7 @@ export const subscribeToAppEvents = async ({
   while (!signal.aborted) {
     try {
       const response = await fetch(
-        `${process.env[DEFAULT_API_URL_NAME]}${APP_EVENTS_STREAM_PATH}`,
+        `${process.env[DEFAULT_API_URL_NAME]}/${ApiPath.Rest}/${ApiPath.AppEvents}/stream`,
         {
           method: 'POST',
           headers: {
@@ -86,10 +83,7 @@ export const subscribeToAppEvents = async ({
         }
       }
 
-      if (
-        NON_RETRYABLE_STATUSES.has(response.status) ||
-        response.status === 401
-      ) {
+      if (NON_RETRYABLE_STATUSES.has(response.status)) {
         console.error(
           `Twenty app events: subscription refused (HTTP ${response.status})`,
         );

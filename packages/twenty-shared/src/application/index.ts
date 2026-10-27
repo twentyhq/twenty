@@ -16,6 +16,7 @@ export type {
   AgentTriggerManifest,
 } from './agentTriggerType';
 export type { AppConnection } from './appConnectionType';
+export type { AppEventSubscription } from './appEventSubscriptionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
 export type {

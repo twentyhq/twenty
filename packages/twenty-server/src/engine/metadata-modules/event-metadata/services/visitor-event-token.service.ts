@@ -1,28 +1,41 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  ANONYMOUS_ID_PATTERN,
   type CreateVisitorEventTokenResult,
   EVENT_LIMITS,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type AppEventVisitorJwtPayload } from 'src/engine/core-modules/auth/types/app-event-visitor-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { MAX_CONNECTIONS_PER_VISITOR_TOKEN } from 'src/engine/metadata-modules/event-metadata/constants/event-stream.constant';
 import {
   EventMetadataException,
   EventMetadataExceptionCode,
 } from 'src/engine/metadata-modules/event-metadata/event-metadata.exception';
-import { findApplicationFlatEventMetadataByName } from 'src/engine/metadata-modules/event-metadata/utils/find-application-flat-event-metadata-by-name.util';
+import { buildEventRealtimeChannel } from 'src/engine/metadata-modules/event-metadata/utils/build-event-realtime-channel.util';
+import { findApplicationFlatEventMetadataByNameOrThrow } from 'src/engine/metadata-modules/event-metadata/utils/find-application-flat-event-metadata-by-name-or-throw.util';
+import { hasVisitorRealtimeScope } from 'src/engine/metadata-modules/event-metadata/utils/has-visitor-realtime-scope.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+type VerifiedAppEventVisitorJwtPayload = AppEventVisitorJwtPayload & {
+  jti: string;
+  exp: number;
+};
 
 @Injectable()
 export class VisitorEventTokenService {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineSubscriptions)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   async create({
@@ -38,58 +51,19 @@ export class VisitorEventTokenService {
     events: string[];
     expiresInSeconds?: number;
   }): Promise<CreateVisitorEventTokenResult> {
-    if (!ANONYMOUS_ID_PATTERN.test(anonymousId)) {
-      throw new EventMetadataException(
-        `anonymousId must match ${ANONYMOUS_ID_PATTERN}`,
-        EventMetadataExceptionCode.INVALID_VISITOR_EVENT_TOKEN_INPUT,
-      );
-    }
-
-    if (
-      events.length === 0 ||
-      events.length > EVENT_LIMITS.MAX_EVENTS_PER_VISITOR_TOKEN
-    ) {
-      throw new EventMetadataException(
-        `A visitor token must list between 1 and ${EVENT_LIMITS.MAX_EVENTS_PER_VISITOR_TOKEN} events`,
-        EventMetadataExceptionCode.INVALID_VISITOR_EVENT_TOKEN_INPUT,
-      );
-    }
-
-    if (
-      !Number.isInteger(expiresInSeconds) ||
-      expiresInSeconds < 1 ||
-      expiresInSeconds > EVENT_LIMITS.MAX_VISITOR_TOKEN_TTL_SECONDS
-    ) {
-      throw new EventMetadataException(
-        `expiresInSeconds must be an integer between 1 and ${EVENT_LIMITS.MAX_VISITOR_TOKEN_TTL_SECONDS}`,
-        EventMetadataExceptionCode.INVALID_VISITOR_EVENT_TOKEN_INPUT,
-      );
-    }
-
     const { flatEventMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatEventMetadataMaps',
       ]);
 
     const eventMetadataIds = [...new Set(events)].map((event) => {
-      const flatEventMetadata = findApplicationFlatEventMetadataByName({
+      const flatEventMetadata = findApplicationFlatEventMetadataByNameOrThrow({
         flatEventMetadataMaps,
         applicationId,
         name: event,
       });
 
-      if (!isDefined(flatEventMetadata)) {
-        throw new EventMetadataException(
-          `Event "${event}" is not declared by this application`,
-          EventMetadataExceptionCode.EVENT_METADATA_NOT_FOUND,
-        );
-      }
-
-      const hasVisitorScope = (
-        flatEventMetadata.capabilities.realtime?.scopes ?? []
-      ).some((scope) => scope.kind === 'visitor');
-
-      if (!hasVisitorScope) {
+      if (!hasVisitorRealtimeScope(flatEventMetadata)) {
         throw new EventMetadataException(
           `Event "${event}" does not declare a visitor realtime scope`,
           EventMetadataExceptionCode.INVALID_VISITOR_EVENT_TOKEN_INPUT,
@@ -121,8 +95,8 @@ export class VisitorEventTokenService {
 
   async verifyOrThrow(
     token: string,
-  ): Promise<AppEventVisitorJwtPayload & { exp: number }> {
-    const verifiedPayload: AppEventVisitorJwtPayload =
+  ): Promise<VerifiedAppEventVisitorJwtPayload> {
+    const { jti, exp, ...verifiedPayload }: AppEventVisitorJwtPayload =
       await this.jwtWrapperService.verifyJwtToken(token).catch(() => {
         throw new EventMetadataException(
           'Visitor event token signature invalid or expired',
@@ -132,7 +106,8 @@ export class VisitorEventTokenService {
 
     if (
       verifiedPayload.type !== JwtTokenTypeEnum.APP_EVENT_VISITOR ||
-      !isDefined(verifiedPayload.exp)
+      !isDefined(jti) ||
+      !isDefined(exp)
     ) {
       throw new EventMetadataException(
         'Wrong JWT type for a visitor event token',
@@ -140,6 +115,75 @@ export class VisitorEventTokenService {
       );
     }
 
-    return { ...verifiedPayload, exp: verifiedPayload.exp };
+    return { ...verifiedPayload, jti, exp };
+  }
+
+  async resolveChannelsOrThrow({
+    workspaceId,
+    applicationId,
+    anonymousId,
+    eventMetadataIds,
+  }: VerifiedAppEventVisitorJwtPayload): Promise<string[]> {
+    const { flatEventMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatEventMetadataMaps',
+      ]);
+
+    const channels = findManyFlatEntityByIdInFlatEntityMaps({
+      flatEntityMaps: flatEventMetadataMaps,
+      flatEntityIds: eventMetadataIds,
+    })
+      .filter(
+        (flatEventMetadata) =>
+          flatEventMetadata.applicationId === applicationId &&
+          hasVisitorRealtimeScope(flatEventMetadata),
+      )
+      .map((flatEventMetadata) =>
+        buildEventRealtimeChannel({
+          workspaceId,
+          eventMetadataId: flatEventMetadata.id,
+          scope: { kind: 'visitor', anonymousId },
+        }),
+      );
+
+    if (channels.length === 0) {
+      throw new EventMetadataException(
+        'None of the events in this visitor token can be streamed anymore',
+        EventMetadataExceptionCode.INVALID_VISITOR_EVENT_TOKEN,
+      );
+    }
+
+    return channels;
+  }
+
+  async acquireStreamSlotOrThrow({
+    jti,
+    exp,
+  }: VerifiedAppEventVisitorJwtPayload): Promise<() => Promise<void>> {
+    const connectionCountKey = `appEventVisitorStreamConnections:${jti}`;
+    const connectionCount = await this.cacheStorageService.incrBy(
+      connectionCountKey,
+      1,
+    );
+
+    await this.cacheStorageService.expire(
+      connectionCountKey,
+      Math.max(exp - Math.floor(Date.now() / 1000), 1) * 1000,
+    );
+
+    const releaseStreamSlot = async () => {
+      await this.cacheStorageService.incrBy(connectionCountKey, -1);
+    };
+
+    if (connectionCount > MAX_CONNECTIONS_PER_VISITOR_TOKEN) {
+      await releaseStreamSlot();
+
+      throw new EventMetadataException(
+        'Too many open streams for this visitor token',
+        EventMetadataExceptionCode.TOO_MANY_VISITOR_EVENT_STREAMS,
+      );
+    }
+
+    return releaseStreamSlot;
   }
 }

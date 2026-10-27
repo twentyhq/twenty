@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import {
+  type AppEventSubscription,
+  type EventRealtimeScopeManifest,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -8,12 +12,11 @@ import {
   EventMetadataException,
   EventMetadataExceptionCode,
 } from 'src/engine/metadata-modules/event-metadata/event-metadata.exception';
-import { type MemberEventSubscriptionInput } from 'src/engine/metadata-modules/event-metadata/types/member-event-subscription-input.type';
 import { type ResolvedRecordEventSubscription } from 'src/engine/metadata-modules/event-metadata/types/resolved-record-event-subscription.type';
 import { buildEventRealtimeChannel } from 'src/engine/metadata-modules/event-metadata/utils/build-event-realtime-channel.util';
-import { findApplicationFlatEventMetadataByName } from 'src/engine/metadata-modules/event-metadata/utils/find-application-flat-event-metadata-by-name.util';
+import { findApplicationFlatEventMetadataByNameOrThrow } from 'src/engine/metadata-modules/event-metadata/utils/find-application-flat-event-metadata-by-name-or-throw.util';
+import { findRecordScopeFlatObjectMetadata } from 'src/engine/metadata-modules/event-metadata/utils/find-record-scope-flat-object-metadata.util';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -31,7 +34,7 @@ export class MemberEventSubscriptionService {
   }: {
     workspaceId: string;
     applicationId: string;
-    subscriptions: MemberEventSubscriptionInput[];
+    subscriptions: AppEventSubscription[];
   }): Promise<ResolvedRecordEventSubscription[]> {
     const { flatEventMetadataMaps, flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -40,28 +43,23 @@ export class MemberEventSubscriptionService {
       ]);
 
     return subscriptions.map(({ event, recordId, property }) => {
-      const flatEventMetadata = findApplicationFlatEventMetadataByName({
+      const flatEventMetadata = findApplicationFlatEventMetadataByNameOrThrow({
         flatEventMetadataMaps,
         applicationId,
         name: event,
       });
 
-      if (!isDefined(flatEventMetadata)) {
-        throw new EventMetadataException(
-          `Event "${event}" is not declared by this application`,
-          EventMetadataExceptionCode.EVENT_METADATA_NOT_FOUND,
-        );
-      }
-
       const recordScopes = (
         flatEventMetadata.capabilities.realtime?.scopes ?? []
       ).filter(
-        (scope) =>
+        (
+          scope,
+        ): scope is Extract<EventRealtimeScopeManifest, { kind: 'record' }> =>
           scope.kind === 'record' &&
           (!isDefined(property) || scope.property === property),
       );
 
-      if (recordScopes.length !== 1 || recordScopes[0].kind !== 'record') {
+      if (recordScopes.length !== 1) {
         throw new EventMetadataException(
           isDefined(property)
             ? `Event "${event}" has no record scope on property "${property}"`
@@ -70,18 +68,11 @@ export class MemberEventSubscriptionService {
         );
       }
 
-      const scopeProperty = recordScopes[0].property;
-      const referencedProperty = flatEventMetadata.properties.find(
-        (eventProperty) => eventProperty.name === scopeProperty,
-      );
-
-      const flatObjectMetadata =
-        referencedProperty?.type === 'RECORD_REFERENCE'
-          ? findFlatEntityByUniversalIdentifier({
-              flatEntityMaps: flatObjectMetadataMaps,
-              universalIdentifier: referencedProperty.objectUniversalIdentifier,
-            })
-          : undefined;
+      const flatObjectMetadata = findRecordScopeFlatObjectMetadata({
+        flatEventMetadata,
+        scopeProperty: recordScopes[0].property,
+        flatObjectMetadataMaps,
+      });
 
       if (!isDefined(flatObjectMetadata)) {
         throw new EventMetadataException(

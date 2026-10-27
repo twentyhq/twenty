@@ -2,9 +2,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type EventRealtimeScope } from 'src/engine/metadata-modules/event-metadata/types/event-realtime-scope.type';
+import { findRecordScopeFlatObjectMetadata } from 'src/engine/metadata-modules/event-metadata/utils/find-record-scope-flat-object-metadata.util';
 import { type FlatEventMetadata } from 'src/engine/metadata-modules/flat-event-metadata/types/flat-event-metadata.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const computeEventOccurrenceRealtimeScopes = ({
@@ -29,20 +29,13 @@ export const computeEventOccurrenceRealtimeScopes = ({
     }
 
     const recordId = properties[scope.property];
-    const property = flatEventMetadata.properties.find(
-      (eventProperty) => eventProperty.name === scope.property,
-    );
-
-    if (!isNonEmptyString(recordId) || property?.type !== 'RECORD_REFERENCE') {
-      continue;
-    }
-
-    const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
-      flatEntityMaps: flatObjectMetadataMaps,
-      universalIdentifier: property.objectUniversalIdentifier,
+    const flatObjectMetadata = findRecordScopeFlatObjectMetadata({
+      flatEventMetadata,
+      scopeProperty: scope.property,
+      flatObjectMetadataMaps,
     });
 
-    if (isDefined(flatObjectMetadata)) {
+    if (isNonEmptyString(recordId) && isDefined(flatObjectMetadata)) {
       scopes.push({
         kind: 'record',
         objectMetadataId: flatObjectMetadata.id,

@@ -25,6 +25,7 @@ export const eventMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case EventMetadataExceptionCode.EVENT_METADATA_NAME_ALREADY_EXISTS:
         throw new ConflictError(error);
       case EventMetadataExceptionCode.EVENT_SUBSCRIPTION_FORBIDDEN:
+      case EventMetadataExceptionCode.TOO_MANY_VISITOR_EVENT_STREAMS:
         throw new ForbiddenError(error);
       case EventMetadataExceptionCode.INVALID_VISITOR_EVENT_TOKEN:
         throw new AuthenticationError(error);

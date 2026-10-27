@@ -20,13 +20,7 @@ export const defineEvent: DefineEntity<EventManifest> = (config) => {
 
   if (!isNonEmptyString(config.name)) {
     errors.push('Event must have a name');
-  }
-
-  if (!isNonEmptyString(config.label)) {
-    errors.push('Event must have a label');
-  }
-
-  if (isNonEmptyString(config.name)) {
+  } else {
     errors.push(
       ...getEventDefinitionErrors({
         name: config.name,
@@ -34,6 +28,10 @@ export const defineEvent: DefineEntity<EventManifest> = (config) => {
         capabilities: config.capabilities,
       }),
     );
+  }
+
+  if (!isNonEmptyString(config.label)) {
+    errors.push('Event must have a label');
   }
 
   return createValidationResult({ config, errors });
