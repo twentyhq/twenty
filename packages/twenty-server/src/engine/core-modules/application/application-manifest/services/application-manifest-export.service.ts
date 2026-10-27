@@ -9,11 +9,13 @@ import { type ApplicationExport } from 'src/engine/core-modules/application/appl
 import { assertFlatApplicationIsExportable } from 'src/engine/core-modules/application/application-manifest/utils/assert-flat-application-is-exportable.util';
 import { classifyApplicationFlatEntities } from 'src/engine/core-modules/application/application-manifest/utils/classify-application-flat-entities.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
+import { reconstructAgentsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-agents-manifest.util';
 import { reconstructDataModelManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-data-model-manifest.util';
 import { getResolvableReferenceUniversalIdentifiers } from 'src/engine/core-modules/application/application-manifest/utils/get-resolvable-reference-universal-identifiers.util';
 import { reconstructNavigationMenuItemsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-navigation-menu-items-manifest.util';
 import { reconstructPageLayoutsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-page-layouts-manifest.util';
 import { reconstructRolesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-roles-manifest.util';
+import { reconstructSkillsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-skills-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
@@ -143,6 +145,18 @@ export class ApplicationManifestExportService {
             metadataName: 'pageLayout',
           }),
       });
+    const { agents, coverage: agentsCoverage } = reconstructAgentsManifest({
+      applicationAllFlatEntityMaps,
+      allFlatEntityMaps,
+      resolvableRoleUniversalIdentifiers:
+        getResolvableReferenceUniversalIdentifiers({
+          coverage: rolesCoverage,
+          metadataName: 'role',
+        }),
+    });
+    const { skills, coverage: skillsCoverage } = reconstructSkillsManifest({
+      applicationAllFlatEntityMaps,
+    });
     const translations = isDefined(flatApplication.applicationRegistrationId)
       ? await this.applicationTranslationCacheService.getCatalogsByLocale(
           flatApplication.applicationRegistrationId,
@@ -165,8 +179,8 @@ export class ApplicationManifestExportService {
       frontComponents: [],
       permissionFlags,
       roles,
-      skills: [],
-      agents: [],
+      skills,
+      agents,
       publicAssets: [],
       views,
       viewFields,
@@ -197,6 +211,8 @@ export class ApplicationManifestExportService {
           ...viewsCoverage,
           ...pageLayoutsCoverage,
           ...navigationMenuItemsCoverage,
+          ...agentsCoverage,
+          ...skillsCoverage,
         ],
       }),
       files: [],

@@ -57,6 +57,8 @@ const SUPPORT_ROLE_UID = '30303030-3030-4303-8303-303030303030';
 const AUDITOR_ROLE_UID = '40404040-4040-4404-8404-404040404040';
 const EXPORT_PETS_FLAG_UID = '50505050-5050-4505-8505-505050505050';
 const LEGACY_OBJECT_PERMISSION_UID = '60606060-6060-4606-8606-606060606060';
+const AGENT_UID = '70707070-7070-4707-8707-707070707070';
+const SKILL_UID = '80808080-8080-4808-8808-808080808080';
 
 const APPLICATION_WITH_SUPPORT_DEFAULT_ROLE = {
   universalIdentifier: APP_UID,
@@ -923,6 +925,48 @@ describe('buildPullEntities', () => {
     expect(widget?.parentName).toBe('pet');
     expect(widget?.config).not.toHaveProperty('configuration.__typename');
     expect(JSON.stringify(widget?.config)).not.toContain('__typename');
+  });
+
+  it('should write agents into src/agents and skills into src/skills verbatim, named after their name', () => {
+    const agent = {
+      universalIdentifier: AGENT_UID,
+      name: 'pet-groomer',
+      label: 'Pet Groomer',
+      prompt: 'Plan the grooming.',
+      responseFormat: { type: 'text' as const },
+    };
+    const skill = {
+      universalIdentifier: SKILL_UID,
+      name: 'grooming-tips',
+      label: 'Grooming Tips',
+      content: 'Brush first.',
+    };
+    const { entities, skipped } = buildPullEntities(
+      buildManifest({ agents: [agent], skills: [skill] }),
+    );
+    const pathOf = (kind: string) => {
+      const entity = entities.find((candidate) => candidate.kind === kind);
+
+      return `${entity?.defaultFolder}/${entity?.fileBaseName}${entity?.fileSuffix}`;
+    };
+
+    expect(skipped).toEqual([]);
+    expect(entities.find((entity) => entity.kind === 'agent')).toMatchObject({
+      universalIdentifier: AGENT_UID,
+      definer: 'defineAgent',
+      config: agent,
+      enumBindings: [],
+      parentName: null,
+    });
+    expect(entities.find((entity) => entity.kind === 'skill')).toMatchObject({
+      universalIdentifier: SKILL_UID,
+      definer: 'defineSkill',
+      config: skill,
+      enumBindings: [],
+      parentName: null,
+    });
+    expect(pathOf('agent')).toBe('src/agents/pet-groomer.agent.ts');
+    expect(pathOf('skill')).toBe('src/skills/grooming-tips.skill.ts');
   });
 
   it('should build a manifest that has no views, view fields, page layouts and page layout tabs properties without producing their entities', () => {

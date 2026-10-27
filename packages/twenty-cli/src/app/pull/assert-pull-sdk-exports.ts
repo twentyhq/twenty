@@ -32,7 +32,7 @@ export const assertPullSdkExports = ({
     throw new CliError({
       code: 'SDK_SOURCE_UNSUPPORTED',
       message: `The app's twenty-sdk cannot read the generated definitions. Missing exports: ${missingNames.join(', ')}.`,
-      hint: 'Upgrade the app to a compatible twenty-sdk version (2.40.0 or later).',
+      hint: 'Upgrade the app to a compatible twenty-sdk version (2.46.0 or later).',
       details: { missingNames },
     });
   }
