@@ -326,7 +326,7 @@ describe('Agent update should succeed', () => {
     const { data } = await findAgents({
       expectToFail: false,
       input: undefined,
-      gqlFields: 'id name prompt isCustom isActive',
+      gqlFields: 'id name label isCustom',
     });
 
     const helperAgent = data.findManyAgents.find(
@@ -335,45 +335,48 @@ describe('Agent update should succeed', () => {
 
     expect(helperAgent).toBeDefined();
 
-    const { data: editData } = await updateOneAgent({
-      expectToFail: false,
-      input: {
-        id: helperAgent!.id,
-        prompt: 'Workspace prompt',
+    try {
+      const { data: editData } = await updateOneAgent({
+        expectToFail: false,
+        input: {
+          id: helperAgent!.id,
+          label: 'Workspace helper',
+          isActive: false,
+        },
+        gqlFields: 'id label isActive',
+      });
+
+      expect(editData.updateOneAgent).toMatchObject({
+        label: 'Workspace helper',
         isActive: false,
-      },
-      gqlFields: 'id prompt isActive',
-    });
+      });
 
-    expect(editData.updateOneAgent).toMatchObject({
-      prompt: 'Workspace prompt',
-      isActive: false,
-    });
+      const [agentRow] = await global.testDataSource.query(
+        `SELECT label, "isActive", overrides FROM core."agent" WHERE id = $1`,
+        [helperAgent!.id],
+      );
 
-    const [agentRow] = await global.testDataSource.query(
-      `SELECT prompt, "isActive", overrides FROM core."agent" WHERE id = $1`,
-      [helperAgent!.id],
-    );
+      expect(agentRow.label).toBe(helperAgent!.label);
+      expect(agentRow.isActive).toBe(true);
+      expect(Object.values(agentRow.overrides)).toEqual([
+        { label: 'Workspace helper', isActive: false },
+      ]);
+    } finally {
+      // Every spec shares the helper agent, so a failed assertion must not leave it archived
+      const { data: revertData } = await updateOneAgent({
+        expectToFail: false,
+        input: {
+          id: helperAgent!.id,
+          label: helperAgent!.label,
+          isActive: true,
+        },
+        gqlFields: 'id label isActive',
+      });
 
-    expect(agentRow.prompt).toBe(helperAgent!.prompt);
-    expect(agentRow.isActive).toBe(true);
-    expect(Object.values(agentRow.overrides)).toEqual([
-      { prompt: 'Workspace prompt', isActive: false },
-    ]);
-
-    const { data: revertData } = await updateOneAgent({
-      expectToFail: false,
-      input: {
-        id: helperAgent!.id,
-        prompt: helperAgent!.prompt,
+      expect(revertData.updateOneAgent).toMatchObject({
+        label: helperAgent!.label,
         isActive: true,
-      },
-      gqlFields: 'id prompt isActive',
-    });
-
-    expect(revertData.updateOneAgent).toMatchObject({
-      prompt: helperAgent!.prompt,
-      isActive: true,
-    });
+      });
+    }
   });
 });
