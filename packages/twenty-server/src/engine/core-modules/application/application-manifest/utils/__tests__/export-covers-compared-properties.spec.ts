@@ -359,7 +359,7 @@ const WORKFLOW_MANIFEST: WorkflowManifest = {
   },
 };
 
-const exportWorkflowManifest = (manifest: WorkflowManifest) => {
+const exportWorkflowManifestOrThrow = (manifest: WorkflowManifest) => {
   const references = { logicFunctionIdByUniversalIdentifier: new Map() };
   const { flatUniversalWorkflowVersion, ...universalFlatWorkflow } =
     fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
@@ -798,7 +798,9 @@ const EXPORTED_KINDS: ExportedKind[] = [
   },
   {
     metadataName: 'workflow',
-    emittedProperties: Object.keys(exportWorkflowManifest(WORKFLOW_MANIFEST)),
+    emittedProperties: Object.keys(
+      exportWorkflowManifestOrThrow(WORKFLOW_MANIFEST),
+    ),
     renamedProperties: { versionDefinitionHash: 'version' },
     workspaceLocalProperties: [],
     knownGaps: {

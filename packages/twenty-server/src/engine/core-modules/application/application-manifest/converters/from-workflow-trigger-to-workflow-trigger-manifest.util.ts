@@ -21,6 +21,25 @@ type WorkflowManifestInverseReferenceResolvers = ReturnType<
   typeof buildWorkflowManifestInverseReferenceResolvers
 >;
 
+const fromManualTriggerAvailability = ({
+  availability,
+  resolvers,
+}: {
+  availability: NonNullable<WorkflowManualTrigger['settings']['availability']>;
+  resolvers: WorkflowManifestInverseReferenceResolvers;
+}) => {
+  if (availability.type === 'GLOBAL') {
+    return { type: availability.type };
+  }
+
+  return {
+    type: availability.type,
+    objectUniversalIdentifier: resolvers.objectUniversalIdentifier(
+      availability.objectNameSingular,
+    ),
+  };
+};
+
 const fromManualTriggerSettings = ({
   settings,
   resolvers,
@@ -45,16 +64,10 @@ const fromManualTriggerSettings = ({
   return {
     ...(isDefined(availability)
       ? {
-          availability:
-            availability.type === 'GLOBAL'
-              ? { type: availability.type }
-              : {
-                  type: availability.type,
-                  objectUniversalIdentifier:
-                    resolvers.objectUniversalIdentifier(
-                      availability.objectNameSingular,
-                    ),
-                },
+          availability: fromManualTriggerAvailability({
+            availability,
+            resolvers,
+          }),
         }
       : {}),
     ...(isDefined(icon) ? { icon } : {}),

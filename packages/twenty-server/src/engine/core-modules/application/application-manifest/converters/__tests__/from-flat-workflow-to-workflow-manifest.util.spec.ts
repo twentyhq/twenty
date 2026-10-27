@@ -646,10 +646,13 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
 
     it('reports a version the sync would not reproduce', () => {
       const synced = syncWorkflow(buildWorkflow({}));
+      const trigger = synced.flatWorkflowVersion.triggers?.[0];
 
-      Object.assign(synced.flatWorkflowVersion.triggers?.[0] ?? {}, {
-        name: 'Renamed in the builder',
-      });
+      if (!isDefined(trigger)) {
+        throw new Error('Expected the synced version to have a trigger');
+      }
+
+      Object.assign(trigger, { name: 'Renamed in the builder' });
 
       expect(exportWorkflow(synced)).toEqual({
         reason: 'workflow changed in the workflow builder',
