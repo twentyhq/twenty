@@ -2931,6 +2931,7 @@ export interface Query {
     applicationRegistrationTarballUrl?: Scalars['String']
     applicationSdkClientChecksums?: SdkClientChecksums
     barChartData: BarChartData
+    billingPlans: BillingPlan[]
     billingPortalSession: BillingSession
     callRecordingIdForCalendarEvent?: Scalars['UUID']
     chatMessages: AgentMessage[]
@@ -3022,6 +3023,7 @@ export interface Query {
     githubClaimAuthorizationUrl: Scalars['String']
     isApplicationStopped: Scalars['Boolean']
     lineChartData: LineChartData
+    /** @deprecated Use billingPlans instead. */
     listPlans: BillingPlan[]
     messageSuppressions: MessageSuppressionList
     metadataTranslations: MetadataTranslation[]
@@ -7410,6 +7412,7 @@ export interface QueryGenqlSelection{
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
     applicationSdkClientChecksums?: (SdkClientChecksumsGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     barChartData?: (BarChartDataGenqlSelection & { __args: {input: BarChartDataInput} })
+    billingPlans?: BillingPlanGenqlSelection
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {forPaymentMethodUpdate?: (Scalars['Boolean'] | null), returnUrlPath?: (Scalars['String'] | null)} })
     callRecordingIdForCalendarEvent?: { __args: {calendarEventId: Scalars['UUID']} }
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
@@ -7507,6 +7510,7 @@ export interface QueryGenqlSelection{
     githubClaimAuthorizationUrl?: { __args: {applicationRegistrationId: Scalars['String']} }
     isApplicationStopped?: { __args: {applicationUniversalIdentifier: Scalars['String']} }
     lineChartData?: (LineChartDataGenqlSelection & { __args: {input: LineChartDataInput} })
+    /** @deprecated Use billingPlans instead. */
     listPlans?: BillingPlanGenqlSelection
     messageSuppressions?: (MessageSuppressionListGenqlSelection & { __args: {input: FindMessageSuppressionsInput} })
     metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })

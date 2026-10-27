@@ -3976,6 +3976,7 @@ type Query {
   applicationRegistrationTarballUrl(id: String!): String
   applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
   barChartData(input: BarChartDataInput!): BarChartData!
+  billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
   chatMessages(threadId: UUID!): [AgentMessage!]!
@@ -4076,7 +4077,7 @@ type Query {
   githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
   isApplicationStopped(applicationUniversalIdentifier: String!): Boolean!
   lineChartData(input: LineChartDataInput!): LineChartData!
-  listPlans: [BillingPlan!]!
+  listPlans: [BillingPlan!]! @deprecated(reason: "Use billingPlans instead.")
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
   minimalMetadata: MinimalMetadata!
