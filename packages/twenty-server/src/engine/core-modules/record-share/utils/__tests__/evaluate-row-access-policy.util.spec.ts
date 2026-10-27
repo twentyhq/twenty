@@ -140,37 +140,6 @@ describe('evaluateRowAccessPolicy', () => {
     ).toEqual(new Set(['active-shared', 'archived-shared']));
   });
 
-  it('admits records whose private parent is shared or that point to no parent', async () => {
-    const context = buildContext();
-
-    expect(
-      await evaluateRowAccessPolicy({
-        policy: {
-          kind: 'gated',
-          expression: {
-            kind: 'parentRecordShared',
-            ...shareTarget,
-            objectMetadataId: 'thread-object-id',
-            joinColumnName: 'threadId',
-          },
-        },
-        records: [
-          { id: 'link-to-shared', threadId: 'active-shared' },
-          { id: 'other-link-to-shared', threadId: 'active-shared' },
-          { id: 'link-to-unshared', threadId: 'active-private' },
-          { id: 'detached-link', threadId: null },
-        ],
-        context,
-      }),
-    ).toEqual(
-      new Set(['link-to-shared', 'other-link-to-shared', 'detached-link']),
-    );
-    expect(context.fetchRecordShares).toHaveBeenCalledWith({
-      objectMetadataId: 'thread-object-id',
-      recordIds: ['active-shared', 'active-private'],
-    });
-  });
-
   it('only fetches shares for records still in play after an and', async () => {
     const context = buildContext();
 

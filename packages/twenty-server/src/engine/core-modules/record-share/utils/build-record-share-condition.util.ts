@@ -15,7 +15,6 @@ export const buildRecordShareCondition = ({
   principalIds,
   accessLevels,
   isUncorrelated = false,
-  recordIdColumnName = 'id',
 }: {
   tableAlias: string;
   recordShareTableExpression: string;
@@ -23,7 +22,6 @@ export const buildRecordShareCondition = ({
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
   isUncorrelated?: boolean;
-  recordIdColumnName?: string;
 }): { sql: string; parameters: ObjectLiteral } => {
   const parameterSuffix = randomBytes(5).toString('hex');
   const objectMetadataIdParameterName = `recordShareObjectMetadataId_${parameterSuffix}`;
@@ -34,7 +32,7 @@ export const buildRecordShareCondition = ({
     buildPostgresSafeAlias(`${tableAlias}_recordShare`),
   );
 
-  const recordId = `${escapeIdentifier(tableAlias)}.${escapeIdentifier(recordIdColumnName)}`;
+  const recordId = `${escapeIdentifier(tableAlias)}."id"`;
   const grantConditions = [
     `${recordShareAlias}."objectMetadataId" = :${objectMetadataIdParameterName}`,
     `${recordShareAlias}."principalId" = ANY(:${principalIdsParameterName})`,

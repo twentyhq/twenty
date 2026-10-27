@@ -1,6 +1,5 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { buildParentRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-parent-record-share-condition.util';
 import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
 import { buildRecordShareExceptionCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-exception-condition.util';
 import {
@@ -54,11 +53,6 @@ export const compileRowAccessExpression = ({
       });
     case 'recordNotRestricted':
       return buildRecordShareExceptionCondition({
-        ...expression,
-        recordShareTableExpression: environment.recordShareTableExpression,
-      });
-    case 'parentRecordShared':
-      return buildParentRecordShareCondition({
         ...expression,
         recordShareTableExpression: environment.recordShareTableExpression,
       });

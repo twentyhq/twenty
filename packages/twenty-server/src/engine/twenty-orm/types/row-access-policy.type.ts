@@ -32,13 +32,7 @@ export type RowAccessExpression =
       // Compiled as a grant list read once, so it can be ORed with an indexed filter
       isUncorrelated?: boolean;
     } & RecordShareExpressionTarget)
-  | ({ kind: 'recordNotRestricted' } & RecordShareExpressionTarget)
-  // A share on the private parent record the join column points to;
-  // objectMetadataId is the parent's
-  | ({
-      kind: 'parentRecordShared';
-      joinColumnName: string;
-    } & RecordShareExpressionTarget);
+  | ({ kind: 'recordNotRestricted' } & RecordShareExpressionTarget);
 
 export type RecordShareExpressionTarget = {
   tableAlias: string;

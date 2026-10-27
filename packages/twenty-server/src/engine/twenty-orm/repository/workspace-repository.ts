@@ -1798,14 +1798,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         objectMetadataId,
         recordIds: requestedRecordIds,
       }) => {
-        // Parent ids are read off the records, which an update can repoint
-        if (objectMetadataId !== this.options.flatObjectMetadata.id) {
-          return this.findRecordShareGrants({
-            objectMetadataId,
-            recordIds: requestedRecordIds,
-          });
-        }
-
         const recordShareGrants =
           recordShareGrantsByObjectMetadataId.get(objectMetadataId) ??
           this.findRecordShareGrants({ objectMetadataId, recordIds });
