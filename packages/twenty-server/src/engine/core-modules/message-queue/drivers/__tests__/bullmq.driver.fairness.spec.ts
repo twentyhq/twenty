@@ -646,4 +646,94 @@ describe('BullMQDriver fairness scenarios', () => {
       expect(await harness.processAll()).toEqual(['S1', 'W1', 'S2', 'S3']);
     });
   });
+
+  describe('S10: A enqueues 1 job delayed by 1 second, then C enqueues 5 jobs, 3 of them get processed before the second elapses', () => {
+    const enqueueAndProcessThree = async (harness: FairnessHarness) => {
+      await harness.enqueue({ label: 'D1', workspaceId: 'A', delay: 1000 });
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'C', count: 5 }),
+        workspaceId: 'C',
+      });
+
+      expect(await harness.processNext(3)).toEqual(['C1', 'C2', 'C3']);
+
+      harness.advanceTime({ milliseconds: 1000 });
+    };
+
+    it('flag off: the delayed job waits its second, then joins the end of the FIFO backlog', async () => {
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
+
+      await enqueueAndProcessThree(harness);
+
+      expect(await harness.processAll()).toEqual(['C4', 'C5', 'D1']);
+    });
+
+    it('flag on: the delayed job keeps the static priority and no clock is charged, so when due it sorts among the tickets at the default priority until it gets ticketed at its due time', async () => {
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+
+      await enqueueAndProcessThree(harness);
+
+      expect(
+        await harness.readClock({ groupKey: buildWorkspaceGroupKey('A') }),
+      ).toBeUndefined();
+      expect(await harness.processAll()).toEqual(['C4', 'D1', 'C5']);
+    });
+  });
+
+  describe('S11: A has 5 jobs waiting and B an app enqueueJobs job; after 2 jobs, A sends an urgent route dispatch', () => {
+    const enqueueBacklog = async (harness: FairnessHarness) => {
+      await harness.enqueueMany({
+        labels: buildLabels({ prefix: 'A', count: 5 }),
+        workspaceId: 'A',
+      });
+      await harness.enqueue({
+        label: 'E_B',
+        workspaceId: 'B',
+        priority: ENQUEUE_JOB_PRIORITY,
+      });
+    };
+    const enqueueRouteDispatch = async (harness: FairnessHarness) => {
+      await harness.enqueue({
+        label: 'R_A',
+        workspaceId: 'A',
+        priority: SERVER_ROUTE_DISPATCH_JOB_PRIORITY,
+      });
+    };
+
+    it('flag off: the route dispatch jumps ahead of its own backlog, the app job waits for every default job', async () => {
+      const harness = await createFairnessHarness({ isFairnessEnabled: false });
+
+      await enqueueBacklog(harness);
+
+      expect(await harness.processNext(2)).toEqual(['A1', 'A2']);
+
+      await enqueueRouteDispatch(harness);
+
+      expect(await harness.processAll()).toEqual([
+        'R_A',
+        'A3',
+        'A4',
+        'A5',
+        'E_B',
+      ]);
+    });
+
+    it('flag on: the app job takes a fair slot, the route dispatch still jumps ahead of everything', async () => {
+      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+
+      await enqueueBacklog(harness);
+
+      expect(await harness.processNext(2)).toEqual(['A1', 'E_B']);
+
+      await enqueueRouteDispatch(harness);
+
+      expect(await harness.processAll()).toEqual([
+        'R_A',
+        'A2',
+        'A3',
+        'A4',
+        'A5',
+      ]);
+    });
+  });
 });
