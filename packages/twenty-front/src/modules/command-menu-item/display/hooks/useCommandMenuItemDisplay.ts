@@ -17,8 +17,14 @@ export const useCommandMenuItemDisplay = (item: CommandMenuItemDefinition) => {
 
   const Icon = getIcon(iconKey, COMMAND_MENU_DEFAULT_ICON);
 
-  const { handleClick, disabled, progress, showDisabledLoader } =
-    useCommandMenuItemClick({ item, Icon, label });
+  const {
+    handleClick,
+    disabled,
+    progress,
+    showDisabledLoader,
+    keepLabelWhileLoading,
+    to,
+  } = useCommandMenuItemClick({ item, Icon, label });
 
   return {
     Icon,
@@ -28,5 +34,7 @@ export const useCommandMenuItemDisplay = (item: CommandMenuItemDefinition) => {
     disabled,
     progress,
     isLoading: showDisabledLoader,
+    keepLabelWhileLoading,
+    to,
   };
 };

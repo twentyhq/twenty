@@ -19,6 +19,7 @@ import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/com
 import { ADD_COMMAND_MENU_ITEM_TARGET_OBJECT_METADATA_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-35/add-command-menu-item-target-object-metadata-upgrade-command-name.constant';
 import { ADD_COMMAND_MENU_ITEM_CONDITIONAL_PINNED_EXPRESSION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-39/add-command-menu-item-conditional-pinned-expression-upgrade-command-name.constant';
 import { ADD_CORE_VERSION_POINTERS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-core-version-pointers-upgrade-command-name.constant';
+import { ADD_COMMAND_MENU_ITEM_IS_PIN_LOCKED_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-53/add-command-menu-item-is-pin-locked-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type PathCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/path-command-menu-item-payload.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -108,6 +109,13 @@ export class CommandMenuItemEntity
 
   @Column({ default: false })
   isPinned: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_COMMAND_MENU_ITEM_IS_PIN_LOCKED_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'boolean', nullable: false, default: false })
+  isPinLocked: boolean;
 
   @Column({
     type: 'enum',

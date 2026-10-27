@@ -28,7 +28,7 @@ export class DataModelSection {
 
   constructor(public readonly page: Page) {
     this.searchObjectInput = page.getByPlaceholder('Search an object...');
-    this.addObjectButton = page.getByRole('button', { name: 'Add object' });
+    this.addObjectButton = page.getByRole('link', { name: 'Add object' });
     this.objectSingularNameInput = page.getByPlaceholder('Listing', {
       exact: true,
     });

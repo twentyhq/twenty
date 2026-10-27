@@ -58,6 +58,7 @@ const THIRD_PARTY_COMMAND_MENU_ITEM: CommandMenuItemFieldsFragment = {
   shortLabel: 'Sync',
   position: 9,
   isPinned: false,
+  isPinLocked: false,
   hotKeys: null,
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,

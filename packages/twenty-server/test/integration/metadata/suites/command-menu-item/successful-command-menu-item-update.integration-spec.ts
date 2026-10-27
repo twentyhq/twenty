@@ -1,8 +1,11 @@
 import { faker } from '@faker-js/faker';
+import gql from 'graphql-tag';
 import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
+import { findCommandMenuItemByEngineComponentKey } from 'test/integration/metadata/suites/command-menu-item/utils/find-command-menu-item-by-engine-component-key.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/update-command-menu-item.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
@@ -152,6 +155,58 @@ describe('CommandMenuItem update should succeed', () => {
       isPinned: true,
       availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
       availabilityObjectMetadataId: personObjectMetadataId,
+    });
+  });
+});
+
+describe('Locked CommandMenuItem update should succeed', () => {
+  let lockedCommandMenuItemId: string;
+
+  afterEach(async () => {
+    await makeMetadataApiRequest({
+      query: gql`
+        mutation ResetCommandMenuItem($id: UUID!) {
+          resetCommandMenuItem(id: $id) {
+            id
+          }
+        }
+      `,
+      variables: { id: lockedCommandMenuItemId },
+    });
+  });
+
+  it('should move a locked command without unpinning it', async () => {
+    const lockedCommandMenuItem = await findCommandMenuItemByEngineComponentKey(
+      EngineComponentKey.SAVE_PAGE,
+    );
+
+    lockedCommandMenuItemId = lockedCommandMenuItem.id;
+
+    expect(lockedCommandMenuItem).toMatchObject({
+      isPinned: true,
+      isPinLocked: true,
+    });
+
+    const { data } = await updateCommandMenuItem({
+      expectToFail: false,
+      input: {
+        id: lockedCommandMenuItemId,
+        isPinned: true,
+        position: lockedCommandMenuItem.position + 100,
+      },
+      gqlFields: `
+        id
+        isPinned
+        isPinLocked
+        position
+      `,
+    });
+
+    expect(data.updateCommandMenuItem).toMatchObject({
+      id: lockedCommandMenuItemId,
+      isPinned: true,
+      isPinLocked: true,
+      position: lockedCommandMenuItem.position + 100,
     });
   });
 });

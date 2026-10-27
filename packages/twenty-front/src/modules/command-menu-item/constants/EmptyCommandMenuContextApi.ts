@@ -5,6 +5,7 @@ import {
 
 export const EMPTY_COMMAND_MENU_CONTEXT_API: CommandMenuContextApi = {
   pageType: ContextStorePageType.Index,
+  pageCommandKeys: [],
   isInSidePanel: false,
   isDashboardPageLayoutInEditMode: false,
   isLayoutCustomizationModeEnabled: false,

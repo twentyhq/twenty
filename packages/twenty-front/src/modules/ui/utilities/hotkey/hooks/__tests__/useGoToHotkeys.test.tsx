@@ -1,7 +1,11 @@
 import { act, fireEvent, renderHook } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 
+import { PageFocusId } from '@/types/PageFocusId';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -68,5 +72,51 @@ describe('useGoToHotkeys', () => {
     expect(result.current.pathname).toBe('/three');
     expect(preNavigateFunction).toHaveBeenCalledTimes(1);
     expect(preNavigateFunction).toHaveBeenCalledWith();
+  });
+
+  it('navigates from a settings page but leaves typing in a field alone', async () => {
+    const store = createStore();
+    store.set(focusStackState.atom, [
+      {
+        focusId: PageFocusId.Settings,
+        componentInstance: {
+          componentType: FocusComponentType.PAGE,
+          componentInstanceId: PageFocusId.Settings,
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysWithModifiers: false,
+          enableGlobalHotkeysConflictingWithKeyboard: false,
+        },
+      },
+    ]);
+    const user = userEvent.setup();
+    const field = document.body.appendChild(document.createElement('input'));
+    const { result } = renderHook(
+      () => {
+        useGoToHotkeys({ key: 's', location: '/three' });
+
+        return useLocation();
+      },
+      {
+        wrapper: ({ children }) => (
+          <JotaiProvider store={store}>
+            <Wrapper>{children}</Wrapper>
+          </JotaiProvider>
+        ),
+      },
+    );
+
+    await user.click(field);
+    await user.keyboard('gs');
+
+    expect(field).toHaveValue('gs');
+    expect(result.current.pathname).toBe('/two');
+
+    field.blur();
+    await user.keyboard('gs');
+
+    expect(result.current.pathname).toBe('/three');
+
+    field.remove();
   });
 });

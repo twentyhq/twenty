@@ -1,6 +1,7 @@
 import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMenuItemSection';
 
 export const COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER = [
+  'THIS_PAGE',
   'SELECTION',
   'CURRENT_VIEW',
   'THIS_OBJECT',

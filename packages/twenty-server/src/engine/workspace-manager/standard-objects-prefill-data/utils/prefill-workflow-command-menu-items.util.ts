@@ -71,6 +71,7 @@ export const prefillWorkflowCommandMenuItems = async ({
     ),
     position: 100,
     isPinned: false,
+    isPinLocked: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: null,
     conditionalPinnedExpression: null,

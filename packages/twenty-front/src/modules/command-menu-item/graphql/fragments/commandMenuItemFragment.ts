@@ -19,6 +19,7 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
     shortLabel
     position
     isPinned
+    isPinLocked
     payload {
       ... on PathCommandMenuItemPayload {
         path

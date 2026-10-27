@@ -8,13 +8,16 @@ import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/Em
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCommandMenuItemClick } from '@/command-menu-item/hooks/useCommandMenuItemClick';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
+import { type PageCommand } from '@/command-menu-item/page-command/types/PageCommand';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStorePageCommandsComponentState } from '@/context-store/states/contextStorePageCommandsComponentState';
 import {
   type ContextStoreTargetedRecordsRule,
   contextStoreTargetedRecordsRuleComponentState,
 } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const companyObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
   (item) => item.nameSingular === 'company',
@@ -36,6 +39,7 @@ jest.mock('@/object-metadata/states/objectMetadataItemsSelector', () => ({
 
 const mockOpenFrontComponentInSidePanel = jest.fn();
 const mockMountCommand = jest.fn();
+const mockCloseSidePanelMenu = jest.fn();
 
 jest.mock(
   '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow',
@@ -48,8 +52,12 @@ jest.mock('@/command-menu-item/engine-command/hooks/useMountCommand', () => ({
   useMountCommand: () => mockMountCommand,
 }));
 
-jest.mock('@/command-menu-item/hooks/useCloseCommandMenu', () => ({
-  useCloseCommandMenu: () => ({ closeCommandMenu: jest.fn() }),
+jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
+  useSidePanelMenu: () => ({ closeSidePanelMenu: mockCloseSidePanelMenu }),
+}));
+
+jest.mock('@/ui/layout/dropdown/hooks/useCloseDropdown', () => ({
+  useCloseDropdown: () => ({ closeDropdown: jest.fn() }),
 }));
 
 jest.mock('@/side-panel/hooks/useOpenFrontComponentInSidePanel', () => ({
@@ -81,9 +89,13 @@ const FRONT_COMPONENT_COMMAND_MENU_ITEM = {
 const getWrapper = ({
   commandMenuContextApi,
   targetedRecordsRule,
+  pageCommands = {},
+  containerType = CommandMenuItemContainerType.CommandMenuList,
 }: {
   commandMenuContextApi: CommandMenuContextApi;
   targetedRecordsRule: ContextStoreTargetedRecordsRule;
+  pageCommands?: Partial<Record<EngineComponentKey, PageCommand>>;
+  containerType?: CommandMenuItemContainerType;
 }) => {
   const store = createStore();
   store.set(
@@ -98,12 +110,18 @@ const getWrapper = ({
     }),
     targetedRecordsRule,
   );
+  store.set(
+    contextStorePageCommandsComponentState.atomFamily({
+      instanceId: 'context-store-instance-id',
+    }),
+    pageCommands,
+  );
 
   return ({ children }: { children: ReactNode }) => (
     <JotaiProvider store={store}>
       <CommandMenuContext.Provider
         value={{
-          containerType: CommandMenuItemContainerType.CommandMenuList,
+          containerType,
           displayType: 'listItem',
           commandMenuItems: [],
           commandMenuContextApi,
@@ -258,4 +276,133 @@ describe('useCommandMenuItemClick', () => {
       }),
     );
   });
+
+  it('shows a page command as loading while its page is busy', () => {
+    const { result } = renderHook(
+      () =>
+        useCommandMenuItemClick({
+          item: {
+            id: 'save-page',
+            engineComponentKey: EngineComponentKey.SAVE_PAGE,
+          } as CommandMenuItemDefinition,
+          Icon: IconApps,
+          label: 'Save',
+        }),
+      {
+        wrapper: getWrapper({
+          commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+          targetedRecordsRule: { mode: 'selection', selectedRecordIds: [] },
+          pageCommands: {
+            [EngineComponentKey.SAVE_PAGE]: {
+              run: jest.fn(),
+              isDisabled: false,
+              isLoading: true,
+              registrationId: 'settings-page',
+            },
+          },
+        }),
+      },
+    );
+
+    expect(result.current.disabled).toBe(true);
+    expect(result.current.showDisabledLoader).toBe(true);
+  });
+
+  it('shows the progress a page reports for its command', () => {
+    const { result } = renderHook(
+      () =>
+        useCommandMenuItemClick({
+          item: {
+            id: 'install-application',
+            engineComponentKey: EngineComponentKey.INSTALL_APPLICATION,
+          } as CommandMenuItemDefinition,
+          Icon: IconApps,
+          label: 'Install',
+        }),
+      {
+        wrapper: getWrapper({
+          commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+          targetedRecordsRule: { mode: 'selection', selectedRecordIds: [] },
+          pageCommands: {
+            [EngineComponentKey.INSTALL_APPLICATION]: {
+              run: jest.fn(),
+              isDisabled: true,
+              isLoading: false,
+              progress: 40,
+              registrationId: 'application-page',
+            },
+          },
+        }),
+      },
+    );
+
+    expect(result.current).toMatchObject({
+      disabled: true,
+      showDisabledLoader: true,
+      progress: 40,
+    });
+  });
+
+  it.each([
+    {
+      description: 'closes the command menu before running a page command',
+      engineComponentKey: EngineComponentKey.SAVE_PAGE,
+      containerType: CommandMenuItemContainerType.CommandMenuList,
+      shouldCloseSidePanel: true,
+    },
+    {
+      description:
+        'leaves the side panel alone when a page command runs from the page header',
+      engineComponentKey: EngineComponentKey.SAVE_PAGE,
+      containerType: CommandMenuItemContainerType.IndexPageHeader,
+      shouldCloseSidePanel: false,
+    },
+    {
+      description: 'keeps the command menu open while another command runs',
+      engineComponentKey: EngineComponentKey.IMPORT_RECORDS,
+      containerType: CommandMenuItemContainerType.CommandMenuList,
+      shouldCloseSidePanel: false,
+    },
+  ])(
+    '$description',
+    async ({ engineComponentKey, containerType, shouldCloseSidePanel }) => {
+      const { result } = renderHook(
+        () =>
+          useCommandMenuItemClick({
+            item: {
+              id: 'command-menu-item-id',
+              engineComponentKey,
+            } as CommandMenuItemDefinition,
+            Icon: IconApps,
+            label: 'Run',
+          }),
+        {
+          wrapper: getWrapper({
+            commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+            targetedRecordsRule: { mode: 'selection', selectedRecordIds: [] },
+            containerType,
+            pageCommands: {
+              [EngineComponentKey.SAVE_PAGE]: {
+                run: jest.fn(),
+                isDisabled: false,
+                isLoading: false,
+                registrationId: 'settings-page',
+              },
+            },
+          }),
+        },
+      );
+
+      await act(async () => {
+        await result.current.handleClick();
+      });
+
+      expect(mockMountCommand).toHaveBeenCalledWith(
+        expect.objectContaining({ engineComponentKey }),
+      );
+      expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(
+        shouldCloseSidePanel ? 1 : 0,
+      );
+    },
+  );
 });

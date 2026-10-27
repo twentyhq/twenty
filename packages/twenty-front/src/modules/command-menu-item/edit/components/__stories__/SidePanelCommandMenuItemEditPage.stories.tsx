@@ -38,6 +38,7 @@ const PINNED_COMMAND_MENU_ITEM: CommandMenuItemFieldsFragment = {
   shortLabel: 'People',
   position: 0,
   isPinned: true,
+  isPinLocked: false,
   hotKeys: null,
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
@@ -54,6 +55,7 @@ const OTHER_COMMAND_MENU_ITEM: CommandMenuItemFieldsFragment = {
   shortLabel: 'Companies',
   position: 1,
   isPinned: false,
+  isPinLocked: false,
 };
 
 const SERVER_COMMAND_MENU_ITEMS = {

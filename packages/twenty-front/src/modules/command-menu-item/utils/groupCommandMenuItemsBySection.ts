@@ -9,6 +9,7 @@ export const groupCommandMenuItemsBySection = (
     CommandMenuItemSection,
     CommandMenuItemDefinition[]
   > = {
+    THIS_PAGE: [],
     SELECTION: [],
     CURRENT_VIEW: [],
     THIS_OBJECT: [],

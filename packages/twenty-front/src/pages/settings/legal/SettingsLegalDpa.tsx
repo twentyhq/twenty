@@ -1,12 +1,10 @@
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
-
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { IconPlus } from 'twenty-ui/icon';
 
+import { PageCommandLinkEffect } from '@/command-menu-item/page-command/components/PageCommandLinkEffect';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { DpaDocumentPreview } from '@/settings/legal/components/DpaDocumentPreview';
 import { DpaNotice } from '@/settings/legal/components/DpaNotice';
@@ -20,6 +18,7 @@ import {
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 export const SettingsLegalDpa = () => {
   const { t } = useLingui();
@@ -51,14 +50,11 @@ export const SettingsLegalDpa = () => {
         { children: t`Workspace`, href: getSettingsPath(SettingsPath.General) },
         { children: t`Legal` },
       ]}
-      actionButton={
-        <NavigationButton
+      pageCommands={
+        <PageCommandLinkEffect
+          engineComponentKey={EngineComponentKey.GENERATE_DPA}
           to={getSettingsPath(SettingsPath.LegalDpaNew)}
-          startIcon={<IconPlus />}
-          size="sm"
-          variant="solid"
-          color="accent"
-        >{t`Generate DPA`}</NavigationButton>
+        />
       }
     >
       <SettingsPageContainer>

@@ -2921,6 +2921,9 @@ export default {
             "isActive": [
                 4
             ],
+            "isPinLocked": [
+                4
+            ],
             "isPinned": [
                 4
             ],

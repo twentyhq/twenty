@@ -10,9 +10,10 @@ import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAi
 import { type RawAiProviderConfig } from '@/settings/admin-panel/ai/types/RawAiProviderConfig';
 import { getProviderIcon } from '@/ai/utils/getProviderIcon';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsFormSubmitOnEnter } from '@/settings/page-commands/components/SettingsFormSubmitOnEnter';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -287,6 +288,9 @@ export const SettingsAdminNewAiProvider = () => {
 
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
+      <SettingsFormSubmitOnEnter
+        disabled={isSubmitting || !hasSelected || !hasCustomAiProviderAccess}
+      />
       <SettingsPageLayout
         title={t`New AI Provider`}
         links={[
@@ -296,13 +300,13 @@ export const SettingsAdminNewAiProvider = () => {
           },
           { children: <Trans>New AI Provider</Trans> },
         ]}
-        actionButton={
-          <SaveAndCancelButtons
+        pageCommands={
+          <SettingsSaveAndCancelPageCommands
             onCancel={() => navigate(AI_ADMIN_PATH)}
             isSaveDisabled={
               isSubmitting || !hasSelected || !hasCustomAiProviderAccess
             }
-            onSave={handleSave}
+            onSave={form.handleSubmit(handleSave)}
           />
         }
       >

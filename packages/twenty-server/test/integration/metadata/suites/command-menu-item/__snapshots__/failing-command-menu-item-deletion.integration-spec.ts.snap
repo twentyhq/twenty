@@ -55,3 +55,38 @@ exports[`CommandMenuItem deletion should fail when deleting with missing id 1`] 
   "name": "GraphQLError",
 }
 `;
+
+exports[`CommandMenuItem deletion should fail when deleting a locked command 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "commandMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_COMMAND_MENU_ITEM_INPUT",
+              "message": "This command is always pinned",
+              "userFriendlyMessage": "This command is always pinned",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "commandMenuItem",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 commandMenuItem",
+    "summary": {
+      "commandMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This command is always pinned",
+  },
+  "message": "Multiple validation errors occurred while deleting command menu item",
+  "name": "GraphQLError",
+}
+`;

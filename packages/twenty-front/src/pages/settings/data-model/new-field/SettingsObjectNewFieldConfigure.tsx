@@ -1,4 +1,5 @@
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
+import { PageCommandEffect } from '@/command-menu-item/page-command/components/PageCommandEffect';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -26,10 +27,12 @@ import {
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type z } from 'zod';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  EngineComponentKey,
+  FieldMetadataType,
+} from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -214,6 +217,14 @@ export const SettingsObjectNewFieldConfigure = () => {
           },
           { children: t`New field` },
         ]}
+        pageCommands={
+          <PageCommandEffect
+            engineComponentKey={EngineComponentKey.SAVE_PAGE}
+            onRun={formConfig.handleSubmit(handleSave)}
+            isDisabled={!canSave || isSaving}
+            isLoading={isSaving}
+          />
+        }
         secondaryBar={
           <SettingsWizardStepBar
             label={t`2. Configure field`}
@@ -223,15 +234,6 @@ export const SettingsObjectNewFieldConfigure = () => {
                 { objectNamePlural },
                 { fieldType },
               )
-            }
-            trailing={
-              <Button
-                size="sm"
-                onClick={formConfig.handleSubmit(handleSave)}
-                disabled={!canSave || isSaving}
-                variant="solid"
-                color="accent"
-              >{t`Save`}</Button>
             }
           />
         }

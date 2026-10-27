@@ -27,6 +27,7 @@ const buildPinnedCommandMenuItem = ({
   label: id,
   position: 0,
   isPinned: true,
+  isPinLocked: false,
   isActive: true,
   engineComponentKey: EngineComponentKey.SNOOZE_AI_CHAT,
   availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,

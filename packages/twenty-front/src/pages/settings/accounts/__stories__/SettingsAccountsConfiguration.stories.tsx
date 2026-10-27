@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 import { expect, userEvent, within } from 'storybook/test';
 
+import { CommandMenuItemsDecorator } from '~/testing/decorators/CommandMenuItemsDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -17,7 +18,7 @@ import {
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsAccountsConfiguration',
   component: SettingsAccountsConfiguration,
-  decorators: [PageDecorator],
+  decorators: [CommandMenuItemsDecorator, PageDecorator],
   args: {
     routePath: '/settings/accounts/configuration/:connectedAccountId',
     routeParams: { ':connectedAccountId': GOOGLE_ACCOUNT_ID },

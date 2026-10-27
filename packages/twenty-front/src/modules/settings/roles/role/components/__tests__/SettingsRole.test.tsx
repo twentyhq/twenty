@@ -1,11 +1,8 @@
-import { i18n } from '@lingui/core';
-import { I18nProvider } from '@lingui/react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
-import { type ReactNode } from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 import { SettingsRoleRouteGuard } from '@/settings/roles/components/SettingsRoleRouteGuard';
 import { SettingsRole } from '@/settings/roles/role/components/SettingsRole';
@@ -14,6 +11,7 @@ import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settin
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { RoutedFlowStateScopeContext } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
+import { getJestPageCommandsWrapper } from '~/testing/jest/getJestPageCommandsWrapper';
 
 const mockSaveDraftRoleToDB = jest.fn();
 const mockLoadCurrentUser = jest.fn();
@@ -74,19 +72,13 @@ jest.mock('twenty-ui/components/feedback', () => ({
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
-jest.mock('@/settings/components/layout/SettingsPageLayout', () => ({
-  SettingsPageLayout: ({
-    actionButton,
-    children,
-  }: {
-    actionButton?: ReactNode;
-    children: ReactNode;
-  }) => (
-    <>
-      {actionButton}
-      {children}
-    </>
-  ),
+jest.mock(
+  '@/command-menu-item/display/components/PinnedCommandMenuItemsInlineMeasurements',
+  () => ({ PinnedCommandMenuItemsInlineMeasurements: () => null }),
+);
+
+jest.mock('@/information-banner/components/InformationBannerWrapper', () => ({
+  InformationBannerWrapper: () => null,
 }));
 
 jest.mock('@/settings/components/layout/SettingsTabBar', () => ({
@@ -166,15 +158,17 @@ const renderSettingsRole = ({
   });
 
   const rendered = render(
-    <I18nProvider i18n={i18n}>
-      <MemoryRouter>
-        <JotaiProvider store={store}>
-          <RoutedFlowStateScopeContext.Provider value={scopeId}>
-            <SettingsRole roleId={ROLE_ID} isCreateMode={isCreateMode} />
-          </RoutedFlowStateScopeContext.Provider>
-        </JotaiProvider>
-      </MemoryRouter>
-    </I18nProvider>,
+    <RoutedFlowStateScopeContext.Provider value={scopeId}>
+      <SettingsRole roleId={ROLE_ID} isCreateMode={isCreateMode} />
+    </RoutedFlowStateScopeContext.Provider>,
+    {
+      wrapper: getJestPageCommandsWrapper({
+        store,
+        initialEntries: [
+          getSettingsPath(SettingsPath.RoleDetail, { roleId: ROLE_ID }),
+        ],
+      }),
+    },
   );
 
   return { ...rendered, store };
@@ -197,7 +191,9 @@ describe('SettingsRole', () => {
 
       await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
-      expect(mockNavigateSettings).toHaveBeenCalledTimes(1);
+      await waitFor(() => {
+        expect(mockNavigateSettings).toHaveBeenCalledTimes(1);
+      });
       expect(mockNavigateSettings).toHaveBeenCalledWith(SettingsPath.Roles);
       expect(mockSaveDraftRoleToDB).not.toHaveBeenCalled();
 
@@ -225,9 +221,11 @@ describe('SettingsRole', () => {
 
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
-    expect(store.get(settingsDraftRoleFamilyState.atomFamily(ROLE_ID))).toEqual(
-      PERSISTED_ROLE,
-    );
+    await waitFor(() => {
+      expect(
+        store.get(settingsDraftRoleFamilyState.atomFamily(ROLE_ID)),
+      ).toEqual(PERSISTED_ROLE);
+    });
     expect(mockNavigateSettings).not.toHaveBeenCalled();
     expect(mockSaveDraftRoleToDB).not.toHaveBeenCalled();
   });
@@ -241,6 +239,10 @@ describe('SettingsRole', () => {
 
     await user.click(saveButton);
 
+    await waitFor(() => {
+      expect(saveButton).toBeEnabled();
+    });
+    expect(saveButton).not.toHaveAttribute('aria-busy', 'true');
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({
         status: 'error',
@@ -248,8 +250,6 @@ describe('SettingsRole', () => {
       }),
     );
     expect(mockSaveDraftRoleToDB).not.toHaveBeenCalled();
-    expect(saveButton).toBeEnabled();
-    expect(saveButton).not.toHaveAttribute('aria-busy', 'true');
   });
 
   it('should show the save button as loading until the role is saved', async () => {
@@ -268,7 +268,10 @@ describe('SettingsRole', () => {
 
     await user.click(saveButton);
 
-    expect(saveButton).toHaveAttribute('aria-busy', 'true');
+    await waitFor(() => {
+      expect(saveButton).toHaveAttribute('aria-busy', 'true');
+    });
+    expect(saveButton).toBeDisabled();
 
     await act(async () => {
       resolveSave();
@@ -293,12 +296,13 @@ describe('SettingsRole', () => {
     await user.click(saveButton);
 
     await waitFor(() => {
-      expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
+      expect(saveButton).toBeEnabled();
     });
+    expect(saveButton).not.toHaveAttribute('aria-busy', 'true');
+    expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'error' }),
     );
     expect(mockLoadCurrentUser).not.toHaveBeenCalled();
-    expect(saveButton).not.toHaveAttribute('aria-busy', 'true');
   });
 });

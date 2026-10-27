@@ -1,4 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { PageCommandEffect } from '@/command-menu-item/page-command/components/PageCommandEffect';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
@@ -27,15 +28,13 @@ import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import {
-  IconArrowUpRight,
-  IconCopy,
-  IconMail,
-  IconTrash,
-} from 'twenty-ui/icon';
+import { IconArrowUpRight, IconCopy, IconMail } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
+import {
+  EngineComponentKey,
+  GetEmailingDomainsDocument,
+} from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
@@ -165,15 +164,12 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
         },
         { children: sourceHandle },
       ]}
-      actionButton={
-        <Button
-          startIcon={<IconTrash />}
-          size="sm"
-          disabled={deleting}
-          onClick={() => openDialog(DELETE_EMAIL_GROUP_MODAL_ID)}
-          variant="outline"
-          color="danger"
-        >{t`Delete`}</Button>
+      pageCommands={
+        <PageCommandEffect
+          engineComponentKey={EngineComponentKey.DELETE_PAGE_ITEM}
+          onRun={() => openDialog(DELETE_EMAIL_GROUP_MODAL_ID)}
+          isDisabled={deleting}
+        />
       }
     >
       <SettingsPageContainer>

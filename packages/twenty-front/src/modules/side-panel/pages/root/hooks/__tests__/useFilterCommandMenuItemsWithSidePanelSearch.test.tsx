@@ -29,6 +29,7 @@ const buildMockItem = (
   shortLabel: null,
   position: 0,
   isPinned: false,
+  isPinLocked: false,
   hotKeys: null,
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,

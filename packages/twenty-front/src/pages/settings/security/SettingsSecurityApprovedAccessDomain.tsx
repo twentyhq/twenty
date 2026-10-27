@@ -1,7 +1,8 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsFormSubmitOnEnter } from '@/settings/page-commands/components/SettingsFormSubmitOnEnter';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useMutation } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -79,12 +80,14 @@ export const SettingsSecurityApprovedAccessDomain = () => {
 
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
+      <SettingsFormSubmitOnEnter disabled={form.formState.isSubmitting} />
       <SettingsPageLayout
         title={t`New Approved Access Domain`}
-        actionButton={
-          <SaveAndCancelButtons
+        pageCommands={
+          <SettingsSaveAndCancelPageCommands
             onCancel={() => navigate(SettingsPath.WorkspaceMembersPage)}
             isSaveDisabled={form.formState.isSubmitting}
+            onSave={form.handleSubmit(handleSave)}
           />
         }
         links={[

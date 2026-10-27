@@ -82,6 +82,7 @@ const COMMAND_MENU_ITEM: FlatCommandMenuItem = {
   shortLabel: null,
   position: 0,
   isPinned: false,
+  isPinLocked: false,
   isActive: true,
   overrides: null,
   universalOverrides: null,

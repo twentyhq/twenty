@@ -5,6 +5,7 @@ import { useResolvedApplicationDescription } from '@/applications/hooks/useResol
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { PageCommandEffect } from '@/command-menu-item/page-command/components/PageCommandEffect';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { useInstalledBuiltInAccountApp } from '@/settings/applications/hooks/useInstalledBuiltInAccountApp';
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
@@ -34,15 +35,14 @@ import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
   IconAlertTriangle,
   IconApps,
-  IconDeviceFloppy,
   IconSettings,
   IconVariable,
   useIcons,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 import {
   ApplicationRegistrationSourceType,
   ApplicationVariableScope,
+  EngineComponentKey,
   FindMarketplaceAppDetailDocument,
   FindOneApplicationDocument,
   IsApplicationStoppedDocument,
@@ -408,18 +408,15 @@ export const SettingsApplicationDetails = () => {
           },
           { children: displayName },
         ]}
-        actionButton={
+        pageCommands={
           activeTabId === APPLICATION_VARIABLES_TAB_ID ? (
-            <Button
-              startIcon={<IconDeviceFloppy />}
-              variant="solid"
-              color="accent"
-              size="sm"
-              onClick={saveApplicationVariablesAndRecheckHealth}
-              disabled={
+            <PageCommandEffect
+              engineComponentKey={EngineComponentKey.SAVE_PAGE}
+              onRun={saveApplicationVariablesAndRecheckHealth}
+              isDisabled={
                 !hasUnsavedApplicationVariables || isSavingApplicationVariables
               }
-            >{t`Save settings`}</Button>
+            />
           ) : undefined
         }
         secondaryBar={

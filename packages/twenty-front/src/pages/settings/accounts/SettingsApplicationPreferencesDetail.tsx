@@ -2,6 +2,7 @@ import { AppChip } from '@/applications/components/AppChip';
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { PageCommandEffect } from '@/command-menu-item/page-command/components/PageCommandEffect';
 import { SettingsAppPreferencesConnectionsTab } from '@/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab';
 import { APPLICATION_PREFERENCES_CONNECTIONS_TAB_ID } from '@/settings/app-preferences/constants/ApplicationPreferencesConnectionsTabId';
 import { SETTINGS_APPLICATION_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsApplicationPreferencesTabListComponentId';
@@ -24,15 +25,10 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import {
-  IconDeviceFloppy,
-  IconSettings,
-  IconVariable,
-  useIcons,
-} from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { IconSettings, IconVariable, useIcons } from 'twenty-ui/icon';
 import {
   ApplicationVariableScope,
+  EngineComponentKey,
   UpdateMyUserApplicationVariableDocument,
 } from '~/generated-metadata/graphql';
 import { useApplicationVariablesDraft } from '@/settings/applications/hooks/useApplicationVariablesDraft';
@@ -154,18 +150,15 @@ export const SettingsApplicationPreferencesDetail = ({
           },
           { children: appName },
         ]}
-        actionButton={
+        pageCommands={
           activeTabId === APPLICATION_VARIABLES_TAB_ID ? (
-            <Button
-              startIcon={<IconDeviceFloppy />}
-              variant="solid"
-              color="accent"
-              size="sm"
-              onClick={saveApplicationVariables}
-              disabled={
+            <PageCommandEffect
+              engineComponentKey={EngineComponentKey.SAVE_PAGE}
+              onRun={saveApplicationVariables}
+              isDisabled={
                 !hasUnsavedApplicationVariables || isSavingApplicationVariables
               }
-            >{t`Save settings`}</Button>
+            />
           ) : undefined
         }
         secondaryBar={

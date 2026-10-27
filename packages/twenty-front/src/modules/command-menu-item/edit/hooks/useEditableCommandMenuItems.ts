@@ -1,6 +1,7 @@
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
 import { useCurrentCommandMenuContextApi } from '@/command-menu-item/hooks/useCurrentCommandMenuContextApi';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
+import { doesCommandMenuItemMatchPageCommands } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageCommands';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
@@ -31,6 +32,11 @@ export const useEditableCommandMenuItems = () => {
           item.availabilityType !== CommandMenuItemAvailabilityType.FALLBACK,
       )
       .filter(doesCommandMenuItemMatchPageLayoutId(currentPageLayoutId))
+      .filter(
+        doesCommandMenuItemMatchPageCommands(
+          commandMenuContextApi.pageCommandKeys,
+        ),
+      )
       .sort(
         (firstItem, secondItem) => firstItem.position - secondItem.position,
       );

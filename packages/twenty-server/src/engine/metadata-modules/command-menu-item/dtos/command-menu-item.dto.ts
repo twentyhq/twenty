@@ -83,6 +83,10 @@ export class CommandMenuItemDTO {
   @Field()
   isPinned: boolean;
 
+  @IsBoolean()
+  @Field()
+  isPinLocked: boolean;
+
   @IsEnum(CommandMenuItemAvailabilityType)
   @Field(() => CommandMenuItemAvailabilityType)
   availabilityType: CommandMenuItemAvailabilityType;

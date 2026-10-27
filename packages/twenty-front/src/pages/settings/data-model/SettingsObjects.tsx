@@ -1,5 +1,6 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 
+import { PageCommandLinkEffect } from '@/command-menu-item/page-command/components/PageCommandLinkEffect';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -12,8 +13,8 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { IconEye, IconPlus, IconSparkle2 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { IconEye, IconSparkle2 } from 'twenty-ui/icon';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 import { SettingsObjectTable } from '~/pages/settings/data-model/SettingsObjectTable';
 
 const SETTINGS_DATA_MODEL_HERO_INSTANCE_ID_PREFIX = 'settings-data-model-hero';
@@ -37,24 +38,12 @@ export const SettingsObjects = () => {
   return (
     <SettingsPageLayout
       title={t`Data model`}
-      actionButton={
-        isDDLLocked ? (
-          <Button
-            startIcon={<IconPlus />}
-            size="sm"
-            disabled
-            variant="solid"
-            color="accent"
-          >{t`Add object`}</Button>
-        ) : (
-          <NavigationButton
-            to={getSettingsPath(SettingsPath.NewObject)}
-            startIcon={<IconPlus />}
-            size="sm"
-            variant="solid"
-            color="accent"
-          >{t`Add object`}</NavigationButton>
-        )
+      pageCommands={
+        <PageCommandLinkEffect
+          engineComponentKey={EngineComponentKey.ADD_DATA_MODEL_OBJECT}
+          to={getSettingsPath(SettingsPath.NewObject)}
+          isDisabled={isDDLLocked}
+        />
       }
       links={[
         {

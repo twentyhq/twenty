@@ -98,6 +98,7 @@ export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
     icon: NAVIGATION_INTERPOLATED_ICON,
     position,
     isPinned: false,
+    isPinLocked: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression,
     conditionalPinnedExpression: null,

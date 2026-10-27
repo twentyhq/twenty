@@ -1,9 +1,17 @@
+import { SettingsPageCommandMenu } from '@/command-menu-item/components/SettingsPageCommandMenu';
+import { ContextStorePageTitleEffect } from '@/context-store/components/ContextStorePageTitleEffect';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { SettingsSecondaryBar } from '@/settings/components/layout/SettingsSecondaryBar';
 import { SidePanelPageTitleSyncEffect } from '@/side-panel/components/SidePanelPageTitleSyncEffect';
+import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useId, type JSX, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,7 +20,7 @@ type SettingsPageLayoutProps = {
   title?: ReactNode;
   pageTitle?: string;
   icon?: ReactNode;
-  actionButton?: ReactNode;
+  pageCommands?: ReactNode;
   secondaryBar?: ReactNode;
   children: ReactNode;
   tag?: JSX.Element;
@@ -24,20 +32,24 @@ export const SettingsPageLayout = ({
   title,
   pageTitle,
   icon,
-  actionButton,
+  pageCommands,
   secondaryBar,
   children,
   tag,
   titleColor,
 }: SettingsPageLayoutProps) => {
   const titleInstanceId = useId();
+  const isInMainSurface = useWorkspaceSurface().type === 'main';
+  const isSettingsPage = useIsSettingsPage();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
 
-  const sidePanelPageTitle =
-    pageTitle ??
-    (typeof title === 'string'
-      ? title
-      : links.findLast(({ children }) => typeof children === 'string')
-          ?.children);
+  const resolvedPageTitle = [
+    pageTitle,
+    title,
+    links.findLast(({ children }) => isNonEmptyString(children))?.children,
+  ].find(isNonEmptyString);
 
   const formattedTitle =
     typeof title === 'string' ? (
@@ -53,13 +65,11 @@ export const SettingsPageLayout = ({
 
   return (
     <>
-      <SidePanelPageTitleSyncEffect
-        pageTitle={
-          typeof sidePanelPageTitle === 'string'
-            ? sidePanelPageTitle
-            : undefined
-        }
-      />
+      <SidePanelPageTitleSyncEffect pageTitle={resolvedPageTitle} />
+      {isSettingsPage && (
+        <ContextStorePageTitleEffect pageTitle={resolvedPageTitle ?? null} />
+      )}
+      {pageCommands}
       <PageCardLayout
         header={
           <PageCardHeader
@@ -67,7 +77,16 @@ export const SettingsPageLayout = ({
             title={formattedTitle}
             icon={icon}
             tag={tag}
-            actionButton={actionButton}
+            actionButton={
+              isSettingsPage ? (
+                <>
+                  <SettingsPageCommandMenu />
+                  {isInMainSurface && !isLayoutCustomizationModeEnabled && (
+                    <SidePanelToggleButton />
+                  )}
+                </>
+              ) : undefined
+            }
             centerTitle
             titleColor={titleColor}
           />

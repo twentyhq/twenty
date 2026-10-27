@@ -6,6 +6,7 @@ import { isEngineCommandMountedFamilySelector } from '@/command-menu-item/engine
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { contextStorePageCommandsComponentState } from '@/context-store/states/contextStorePageCommandsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreGraphqlFilterFromStore } from '@/context-store/utils/computeContextStoreGraphqlFilterFromStore';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
@@ -42,6 +43,11 @@ export const useCommandMenuItemClick = ({
     contextStoreInstanceId,
   );
 
+  const contextStorePageCommands = useAtomComponentStateValue(
+    contextStorePageCommandsComponentState,
+    contextStoreInstanceId,
+  );
+
   const isMounted = useAtomFamilySelectorValue(
     isEngineCommandMountedFamilySelector,
     item.id,
@@ -65,12 +71,17 @@ export const useCommandMenuItemClick = ({
 
   const shouldMountCommand = isHeadless || isEngineCommand;
 
-  const closeBehavior = shouldMountCommand
-    ? ({
-        closeSidePanelOnShowPageOptionsExecution: false,
-        closeSidePanelOnCommandMenuListExecution: false,
-      } as const)
-    : ({} as const);
+  const pageCommand = isEngineCommand
+    ? contextStorePageCommands[item.engineComponentKey]
+    : undefined;
+
+  const closeBehavior =
+    shouldMountCommand && !isDefined(pageCommand)
+      ? ({
+          closeSidePanelOnShowPageOptionsExecution: false,
+          closeSidePanelOnCommandMenuListExecution: false,
+        } as const)
+      : ({} as const);
 
   const { closeCommandMenu } = useCloseCommandMenu(closeBehavior);
 
@@ -143,10 +154,24 @@ export const useCommandMenuItemClick = ({
     }
   };
 
+  if (isDefined(pageCommand)) {
+    return {
+      handleClick,
+      disabled: isMounted || pageCommand.isDisabled || pageCommand.isLoading,
+      progress: pageCommand.progress,
+      showDisabledLoader:
+        pageCommand.isLoading || isDefined(pageCommand.progress),
+      keepLabelWhileLoading: true,
+      to: pageCommand.to,
+    };
+  }
+
   return {
     handleClick,
     disabled,
     progress: shouldMountCommand ? commandMenuItemProgress : undefined,
     showDisabledLoader: shouldMountCommand ? isMounted : false,
+    keepLabelWhileLoading: false,
+    to: undefined,
   };
 };
