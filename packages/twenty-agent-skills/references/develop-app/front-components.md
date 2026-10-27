@@ -73,6 +73,23 @@ Object metadata belongs to the front component's own context, so a side panel ca
 
 Use the generated or core Twenty client for reads and writes. Keep loading, empty, error, disabled, and saving states explicit so runtime failures are visible and recoverable.
 
+## Live Updates
+
+To refresh a component when the app emits a realtime event (see `logic.md`), call `useEvent` from `twenty-sdk/front-component` instead of polling:
+
+```tsx
+useEvent({
+  event: 'messageAdded',
+  recordId: conversationId,
+  onEvent: () => refetch(),
+  onConnected: () => refetch(),
+});
+```
+
+- The event must declare a `record` scope, and the stream is refused unless the viewer, within the app's role, can read `recordId`. Pass `property` when the event has several record scopes.
+- Delivery is best effort, so refetch in `onConnected` as well as `onEvent`. Each occurrence carries an `id` to drop duplicates.
+- `subscribeToAppEvents({ subscriptions, onEvent, onConnected?, signal })` is the non-hook form for several subscriptions (up to 20) on one stream.
+
 ## Headless Actions And DRY Helpers
 
 Headless front components should be thin action shells. The component file should mostly read SDK hooks, return the `Command` helper, and delegate reusable behavior to helpers.
