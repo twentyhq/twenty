@@ -27,6 +27,7 @@ const CREATED_AT = '2026-09-01T00:00:00.000Z';
 
 export const GOOGLE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000011';
 export const MICROSOFT_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000014';
+export const GOOGLE_MESSAGE_CHANNEL_ID = '20202020-1a2b-4c3d-8e4f-000000000031';
 export const FATHOM_ONLY_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000013';
 const FATHOM_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000012';
 const MY_SHARED_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000015';
@@ -85,6 +86,7 @@ const buildMessageChannel = (
   syncStatus: 'ACTIVE',
   syncStage: 'MESSAGE_LIST_FETCH_PENDING',
   syncStageStartedAt: null,
+  importProgress: null,
   connectedAccountId,
   connectedAccount: {
     __typename: 'ConnectedAccountHandleDTO',
@@ -187,11 +189,8 @@ export const CONNECTED_ACCOUNTS = [
   }),
 ];
 
-const MESSAGE_CHANNELS = [
-  buildMessageChannel(
-    '20202020-1a2b-4c3d-8e4f-000000000031',
-    GOOGLE_ACCOUNT_ID,
-  ),
+export const MESSAGE_CHANNELS = [
+  buildMessageChannel(GOOGLE_MESSAGE_CHANNEL_ID, GOOGLE_ACCOUNT_ID),
   buildMessageChannel(
     '20202020-1a2b-4c3d-8e4f-000000000032',
     FATHOM_ONLY_ACCOUNT_ID,
