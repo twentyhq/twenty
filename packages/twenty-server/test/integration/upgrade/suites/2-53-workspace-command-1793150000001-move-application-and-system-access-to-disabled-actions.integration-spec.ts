@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type MoveApplicationAccessToDisabledActionsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793150000001-move-application-access-to-disabled-actions.command';
+import { type MoveApplicationAndSystemAccessToDisabledActionsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793150000001-move-application-and-system-access-to-disabled-actions.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -15,6 +15,20 @@ const RUN_ON_WORKSPACE_ARGS = {
 
 const APPLICATION_WRITABLE_OBJECT = 'rocket';
 const APPLICATION_READABLE_OBJECT = 'pet';
+const SYSTEM_OBJECT = 'shortLink';
+const SYSTEM_WRITABLE_OBJECT = 'workflowAutomatedTrigger';
+
+const ALL_ACTIONS = [
+  'canDestroyObjectRecords',
+  'canReadObjectRecords',
+  'canSoftDeleteObjectRecords',
+  'canUpdateObjectRecords',
+];
+const WRITE_ACTIONS = [
+  'canDestroyObjectRecords',
+  'canSoftDeleteObjectRecords',
+  'canUpdateObjectRecords',
+];
 
 type ObjectAccessRow = {
   writability: string;
@@ -22,8 +36,8 @@ type ObjectAccessRow = {
   disabledObjectPermissionActions: string[] | null;
 };
 
-describe('2-53 workspace command - move application access to disabled actions (integration)', () => {
-  let command: MoveApplicationAccessToDisabledActionsCommand;
+describe('2-53 workspace command - move application and system access to disabled actions (integration)', () => {
+  let command: MoveApplicationAndSystemAccessToDisabledActionsCommand;
   let workspaceCacheService: WorkspaceCacheService;
 
   const setObjectAccess = async ({
@@ -84,8 +98,8 @@ describe('2-53 workspace command - move application access to disabled actions (
 
   beforeAll(async () => {
     command =
-      getAppProviderByClassName<MoveApplicationAccessToDisabledActionsCommand>(
-        'MoveApplicationAccessToDisabledActionsCommand',
+      getAppProviderByClassName<MoveApplicationAndSystemAccessToDisabledActionsCommand>(
+        'MoveApplicationAndSystemAccessToDisabledActionsCommand',
       );
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
@@ -107,6 +121,22 @@ describe('2-53 workspace command - move application access to disabled actions (
         disabledObjectPermissionActions: null,
       },
     });
+    await setObjectAccess({
+      nameSingular: SYSTEM_OBJECT,
+      access: {
+        writability: 'SYSTEM',
+        readability: 'SYSTEM',
+        disabledObjectPermissionActions: null,
+      },
+    });
+    await setObjectAccess({
+      nameSingular: SYSTEM_WRITABLE_OBJECT,
+      access: {
+        writability: 'SYSTEM',
+        readability: 'OPEN',
+        disabledObjectPermissionActions: null,
+      },
+    });
   });
 
   afterAll(async () => {
@@ -123,6 +153,22 @@ describe('2-53 workspace command - move application access to disabled actions (
         },
       });
     }
+    await setObjectAccess({
+      nameSingular: SYSTEM_OBJECT,
+      access: {
+        writability: 'SYSTEM',
+        readability: 'SYSTEM',
+        disabledObjectPermissionActions: ALL_ACTIONS,
+      },
+    });
+    await setObjectAccess({
+      nameSingular: SYSTEM_WRITABLE_OBJECT,
+      access: {
+        writability: 'SYSTEM',
+        readability: 'OPEN',
+        disabledObjectPermissionActions: WRITE_ACTIONS,
+      },
+    });
   });
 
   it('changes nothing on a dry run', async () => {
@@ -168,6 +214,19 @@ describe('2-53 workspace command - move application access to disabled actions (
     expect(await findCachedObjectAccess(APPLICATION_READABLE_OBJECT)).toEqual(
       expectedReadableAccess,
     );
+  });
+
+  it('disables the actions SYSTEM access forbade and keeps the stored values', async () => {
+    expect(await findObjectAccess(SYSTEM_OBJECT)).toEqual({
+      writability: 'SYSTEM',
+      readability: 'SYSTEM',
+      disabledObjectPermissionActions: ALL_ACTIONS,
+    });
+    expect(await findObjectAccess(SYSTEM_WRITABLE_OBJECT)).toEqual({
+      writability: 'SYSTEM',
+      readability: 'OPEN',
+      disabledObjectPermissionActions: WRITE_ACTIONS,
+    });
   });
 
   it('changes nothing when it runs again', async () => {
