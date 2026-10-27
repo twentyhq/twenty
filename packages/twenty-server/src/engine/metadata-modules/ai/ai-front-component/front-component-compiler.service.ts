@@ -179,8 +179,11 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
     handlerSource,
   }: {
     workspaceId: string;
-    dependencies: Awaited<
-      ReturnType<WorkspaceFrontComponentDependenciesService['readOrThrow']>
+    dependencies: Pick<
+      Awaited<
+        ReturnType<WorkspaceFrontComponentDependenciesService['readOrThrow']>
+      >,
+      'revision' | 'packageJson' | 'yarnLock'
     >;
     handlerSource: string;
   }) {
