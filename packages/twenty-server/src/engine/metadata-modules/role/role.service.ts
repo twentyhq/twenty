@@ -36,12 +36,14 @@ import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/crea
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
+import { isRoleCreationEntitled } from 'src/engine/metadata-modules/role/utils/is-role-creation-entitled.util';
 import {
   validateRoleDeletionDoesNotLockOutActorOrThrow,
   validateRoleUpdateDoesNotLockOutActorOrThrow,
 } from 'src/engine/metadata-modules/role/utils/validate-role-mutation-does-not-lock-out-actor.util';
 import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/metadata-modules/role-permission-flag/utils/from-flat-role-permission-flag-to-role-permission-flag-dto.util';
 import { fromCreateRoleTargetInputToFlatRoleTargetToCreate } from 'src/engine/metadata-modules/role-target/utils/from-create-role-target-input-to-flat-role-target-to-create.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -54,6 +56,7 @@ export class RoleService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationService: ApplicationService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async getWorkspaceRoles(workspaceId: string): Promise<RoleDTO[]> {
@@ -188,6 +191,23 @@ export class RoleService {
       workspaceId,
       flatApplication: ownerFlatApplication,
     });
+
+    const { billingEntitlements } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'billingEntitlements',
+      ]);
+
+    if (
+      !isRoleCreationEntitled({
+        flatRole: flatRoleToCreate,
+        billingEntitlements,
+      })
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.CUSTOM_ROLES_NOT_ENTITLED,
+        PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
+      );
+    }
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(

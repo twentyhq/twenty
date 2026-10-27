@@ -95,6 +95,34 @@ describe('Custom role assignment without the custom roles entitlement', () => {
     expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
+  it('should refuse creating a role that members or API keys can be assigned', async () => {
+    const { errors } = await createOneRole({
+      expectToFail: true,
+      input: { label: 'Unentitled custom role' },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('should still create a role only agents can be assigned', async () => {
+    const { data, errors } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'Unentitled agent role',
+        canBeAssignedToUsers: false,
+        canBeAssignedToAgents: true,
+        canBeAssignedToApiKeys: false,
+      },
+    });
+
+    expect(errors).toBeUndefined();
+
+    await deleteOneRole({
+      expectToFail: false,
+      input: { idToDelete: data.createOneRole.id },
+    });
+  });
+
   describe('when a new user joins with a custom role', () => {
     let userWorkspaceService: UserWorkspaceService;
     let workspace: WorkspaceEntity;
@@ -192,6 +220,7 @@ describe('Custom role assignment without the custom roles entitlement', () => {
         label: 'Agent only role',
         canBeAssignedToUsers: false,
         canBeAssignedToAgents: true,
+        canBeAssignedToApiKeys: false,
       },
     });
 
