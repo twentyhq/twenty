@@ -1,3 +1,4 @@
+import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { WorkspaceFrontComponentDependenciesService } from 'src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service';
 import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
 import { Global, Module } from '@nestjs/common';
@@ -23,6 +24,7 @@ import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front
   imports: [
     TypeOrmModule.forFeature([FrontComponentEntity]),
     ApplicationModule,
+    ApplicationPackageModule,
     ApplicationLookupModule,
     ApplicationRegistrationLookupModule,
     CacheLockModule,
