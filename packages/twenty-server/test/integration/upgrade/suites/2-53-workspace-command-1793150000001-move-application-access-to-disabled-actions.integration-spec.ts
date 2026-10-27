@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type MoveApplicationAccessToDisabledActionsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793150000001-move-application-access-to-disabled-actions.command';
@@ -24,10 +26,13 @@ describe('2-53 workspace command - move application access to disabled actions (
   let command: MoveApplicationAccessToDisabledActionsCommand;
   let workspaceCacheService: WorkspaceCacheService;
 
-  const setObjectAccess = async (
-    nameSingular: string,
-    access: ObjectAccessRow,
-  ) => {
+  const setObjectAccess = async ({
+    nameSingular,
+    access,
+  }: {
+    nameSingular: string;
+    access: ObjectAccessRow;
+  }) => {
     await global.testDataSource.query(
       `UPDATE core."objectMetadata"
        SET "writability" = $3, "readability" = $4, "disabledObjectPermissionActions" = $5
@@ -37,9 +42,9 @@ describe('2-53 workspace command - move application access to disabled actions (
         nameSingular,
         access.writability,
         access.readability,
-        access.disabledObjectPermissionActions === null
-          ? null
-          : JSON.stringify(access.disabledObjectPermissionActions),
+        isDefined(access.disabledObjectPermissionActions)
+          ? JSON.stringify(access.disabledObjectPermissionActions)
+          : null,
       ],
     );
     await workspaceCacheService.invalidateAndRecompute(
@@ -86,15 +91,21 @@ describe('2-53 workspace command - move application access to disabled actions (
       'WorkspaceCacheService',
     );
 
-    await setObjectAccess(APPLICATION_WRITABLE_OBJECT, {
-      writability: 'APPLICATION',
-      readability: 'OPEN',
-      disabledObjectPermissionActions: ['canDestroyObjectRecords'],
+    await setObjectAccess({
+      nameSingular: APPLICATION_WRITABLE_OBJECT,
+      access: {
+        writability: 'APPLICATION',
+        readability: 'OPEN',
+        disabledObjectPermissionActions: ['canDestroyObjectRecords'],
+      },
     });
-    await setObjectAccess(APPLICATION_READABLE_OBJECT, {
-      writability: 'OPEN',
-      readability: 'APPLICATION',
-      disabledObjectPermissionActions: null,
+    await setObjectAccess({
+      nameSingular: APPLICATION_READABLE_OBJECT,
+      access: {
+        writability: 'OPEN',
+        readability: 'APPLICATION',
+        disabledObjectPermissionActions: null,
+      },
     });
   });
 
@@ -103,10 +114,13 @@ describe('2-53 workspace command - move application access to disabled actions (
       APPLICATION_WRITABLE_OBJECT,
       APPLICATION_READABLE_OBJECT,
     ]) {
-      await setObjectAccess(nameSingular, {
-        writability: 'OPEN',
-        readability: 'OPEN',
-        disabledObjectPermissionActions: null,
+      await setObjectAccess({
+        nameSingular,
+        access: {
+          writability: 'OPEN',
+          readability: 'OPEN',
+          disabledObjectPermissionActions: null,
+        },
       });
     }
   });

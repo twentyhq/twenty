@@ -24,7 +24,6 @@ export const buildRowAccessPolicy = ({
 
   const context = { subject, environment };
 
-  // subjects without object permissions, such as webhook delivery, are bound by disabled actions here
   if (
     isObjectOperationDisabled({
       objectMetadata: target.flatObjectMetadata,
