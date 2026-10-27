@@ -1,0 +1,1 @@
+export const APPLICATION_PREFERENCES_CONNECTIONS_TAB_ID = 'connections';

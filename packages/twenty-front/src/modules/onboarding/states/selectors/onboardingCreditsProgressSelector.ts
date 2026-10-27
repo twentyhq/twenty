@@ -26,6 +26,7 @@ export const onboardingCreditsProgressSelector =
       }
 
       const currentUser = get(currentUserState);
+      const currentWorkspace = get(currentWorkspaceState);
 
       return getOnboardingCreditsProgress({
         onboardingFreeCredits: get(
@@ -36,8 +37,9 @@ export const onboardingCreditsProgressSelector =
         isWorkspaceCreator: currentUser?.isWorkspaceCreator ?? false,
         isPlanRequired: getIsPlanRequired({
           isBillingEnabled: get(billingState)?.isBillingEnabled ?? false,
-          currentWorkspace: get(currentWorkspaceState),
+          currentWorkspace,
         }),
+        isTrialAvailable: currentWorkspace?.isTrialAvailable ?? false,
         profileName:
           get(onboardingCreateProfileDraftState) ??
           get(currentWorkspaceMemberState)?.name,
