@@ -76,7 +76,8 @@ export class LambdaLayerManagerService {
 
     // Verified before locking so files that do not match cannot hold the lock
     // of a layer name other applications share
-    const dependencies = await this.getVerifiedDependencies(context);
+    const { packageJson, yarnLock } =
+      await this.getVerifiedDependencies(context);
 
     return this.cacheLockService.withLock(
       async () => {
@@ -87,7 +88,7 @@ export class LambdaLayerManagerService {
           return arnCreatedWhileWaiting;
         }
 
-        await this.createDepsLayer({ layerName, ...dependencies });
+        await this.createDepsLayer({ layerName, packageJson, yarnLock });
 
         const newArn = await this.awsClient.getExistingLayerArn(layerName);
 
