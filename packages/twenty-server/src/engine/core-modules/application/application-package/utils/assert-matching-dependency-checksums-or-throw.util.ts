@@ -25,7 +25,7 @@ const isMatchingDependencyChecksums = ({
     storedFilesChecksums.yarnLockChecksum ===
       declaredChecksums.yarnLockChecksum);
 
-export const assertMatchingDependencyChecksums = ({
+export const assertMatchingDependencyChecksumsOrThrow = ({
   applicationUniversalIdentifier,
   declaredChecksums,
   packageJsonContent,

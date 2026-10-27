@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { FileFolder } from 'twenty-shared/types';
 
 import {
-  assertMatchingDependencyChecksums,
+  assertMatchingDependencyChecksumsOrThrow,
   type DependencyChecksums,
-} from 'src/engine/core-modules/application/application-package/utils/assert-matching-dependency-checksums.util';
+} from 'src/engine/core-modules/application/application-package/utils/assert-matching-dependency-checksums-or-throw.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -38,7 +38,7 @@ export class ApplicationDependencyFilesService {
         applicationUniversalIdentifier,
       });
 
-    const storedFilesChecksums = assertMatchingDependencyChecksums({
+    const storedFilesChecksums = assertMatchingDependencyChecksumsOrThrow({
       applicationUniversalIdentifier,
       declaredChecksums,
       packageJsonContent,

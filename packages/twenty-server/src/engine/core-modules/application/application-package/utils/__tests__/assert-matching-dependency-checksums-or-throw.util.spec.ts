@@ -1,4 +1,4 @@
-import { assertMatchingDependencyChecksums } from 'src/engine/core-modules/application/application-package/utils/assert-matching-dependency-checksums.util';
+import { assertMatchingDependencyChecksumsOrThrow } from 'src/engine/core-modules/application/application-package/utils/assert-matching-dependency-checksums-or-throw.util';
 import { computeApplicationPackageChecksums } from 'src/engine/core-modules/application/application-package/utils/compute-application-package-checksums.util';
 import { computeLegacyApplicationPackageChecksums } from 'src/engine/core-modules/application/application-package/utils/compute-legacy-application-package-checksums.util';
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
@@ -12,10 +12,10 @@ const STORED_FILES = {
 
 const STORED_FILES_CHECKSUMS = computeApplicationPackageChecksums(STORED_FILES);
 
-describe('assertMatchingDependencyChecksums', () => {
+describe('assertMatchingDependencyChecksumsOrThrow', () => {
   it('returns the checksums of the stored files when the declared ones match', () => {
     expect(
-      assertMatchingDependencyChecksums({
+      assertMatchingDependencyChecksumsOrThrow({
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         declaredChecksums: STORED_FILES_CHECKSUMS,
         ...STORED_FILES,
@@ -25,7 +25,7 @@ describe('assertMatchingDependencyChecksums', () => {
 
   it('refuses a package.json checksum that does not describe the stored file', () => {
     expect(() =>
-      assertMatchingDependencyChecksums({
+      assertMatchingDependencyChecksumsOrThrow({
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         declaredChecksums: {
           ...STORED_FILES_CHECKSUMS,
@@ -38,7 +38,7 @@ describe('assertMatchingDependencyChecksums', () => {
 
   it('refuses a yarn.lock checksum that does not describe the stored file', () => {
     expect(() =>
-      assertMatchingDependencyChecksums({
+      assertMatchingDependencyChecksumsOrThrow({
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         declaredChecksums: {
           ...STORED_FILES_CHECKSUMS,
@@ -51,7 +51,7 @@ describe('assertMatchingDependencyChecksums', () => {
 
   it('refuses a stored yarn.lock when no yarn.lock checksum is declared', () => {
     expect(() =>
-      assertMatchingDependencyChecksums({
+      assertMatchingDependencyChecksumsOrThrow({
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         declaredChecksums: {
           ...STORED_FILES_CHECKSUMS,
@@ -64,7 +64,7 @@ describe('assertMatchingDependencyChecksums', () => {
 
   it('ignores the declared yarn.lock checksum when no yarn.lock is stored', () => {
     expect(
-      assertMatchingDependencyChecksums({
+      assertMatchingDependencyChecksumsOrThrow({
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         declaredChecksums: {
           ...STORED_FILES_CHECKSUMS,
@@ -78,7 +78,7 @@ describe('assertMatchingDependencyChecksums', () => {
 
   it('accepts the md5 checksums of older CLIs and returns the current ones', () => {
     expect(
-      assertMatchingDependencyChecksums({
+      assertMatchingDependencyChecksumsOrThrow({
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         declaredChecksums:
           computeLegacyApplicationPackageChecksums(STORED_FILES),
@@ -89,7 +89,7 @@ describe('assertMatchingDependencyChecksums', () => {
 
   it('refuses a pair that mixes both formulas', () => {
     expect(() =>
-      assertMatchingDependencyChecksums({
+      assertMatchingDependencyChecksumsOrThrow({
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         declaredChecksums: {
           packageJsonChecksum: STORED_FILES_CHECKSUMS.packageJsonChecksum,
