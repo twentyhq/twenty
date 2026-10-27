@@ -48,7 +48,7 @@ import {
   IconSettings2,
   IconUsers,
 } from 'twenty-ui/icon';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Avatar, Status } from 'twenty-ui/primitives/data-display';
 import { Button, Switch } from 'twenty-ui/primitives/input';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { Card } from 'twenty-ui/primitives/surfaces';
@@ -357,9 +357,10 @@ export const SettingsAdminWorkspaceDetail = () => {
                   />
                   <Table>
                     <TableBody>
-                      <TableRow gridTemplateColumns="1fr 2fr 100px">
+                      <TableRow gridTemplateColumns="1fr 2fr 80px 100px">
                         <TableHeader>{t`Name`}</TableHeader>
                         <TableHeader>{t`Email`}</TableHeader>
+                        <TableHeader>{t`Admin`}</TableHeader>
                         <TableHeader align="right">{t`Actions`}</TableHeader>
                       </TableRow>
                       {workspace.users?.map((user) => {
@@ -370,7 +371,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                         return (
                           <TableRow
                             key={userId}
-                            gridTemplateColumns="1fr 2fr 100px"
+                            gridTemplateColumns="1fr 2fr 80px 100px"
                             to={getSettingsPath(
                               SettingsPath.AdminPanelUserDetail,
                               {
@@ -401,6 +402,13 @@ export const SettingsAdminWorkspaceDetail = () => {
                               />
                             </TableCell>
                             <TableCell>{user.email}</TableCell>
+                            <TableCell>
+                              {user.isAdmin ? (
+                                <Status color="green">{t`Yes`}</Status>
+                              ) : (
+                                <Status color="gray">{t`No`}</Status>
+                              )}
+                            </TableCell>
                             <TableCell align="right">
                               {workspace.allowImpersonation &&
                                 isDefined(currentUser?.id) &&
