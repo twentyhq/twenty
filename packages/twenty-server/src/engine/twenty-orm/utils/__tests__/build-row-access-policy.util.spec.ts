@@ -363,10 +363,15 @@ describe('buildRowAccessPolicy', () => {
         },
       });
 
-      expect(policy.kind).toBe('gated');
-      if (policy.kind !== 'gated') throw new Error('Expected a role filter');
-      expect(policy.condition.sql).toContain('"person"."title" = :restricted');
-      expect(policy.condition.sql).not.toContain('recordShare');
+      expect(policy).toMatchObject({
+        kind: 'gated',
+        condition: {
+          sql: expect.stringContaining('"person"."title" = :restricted'),
+        },
+      });
+      expect(policy).toMatchObject({
+        condition: { sql: expect.not.stringContaining('recordShare') },
+      });
     });
 
     it.each([MetadataWritability.SYSTEM, MetadataWritability.APPLICATION])(
