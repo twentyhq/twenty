@@ -7,7 +7,6 @@ import { Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { isWorkspaceComposerApplication } from 'src/engine/core-modules/application/utils/is-workspace-composer-application.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
@@ -90,40 +89,6 @@ export class WorkflowExecutionContextService {
         authContext.workspace.workspaceCustomApplicationId,
       targetApplicationId,
       targetLabel,
-    });
-  }
-
-  async isRunBoundToInstalledApplication({
-    runApplicationId,
-    workspaceId,
-  }: {
-    runApplicationId: string | undefined;
-    workspaceId: string;
-  }): Promise<boolean> {
-    if (!isDefined(runApplicationId)) {
-      return false;
-    }
-
-    const [{ flatApplicationMaps }, workspace] = await Promise.all([
-      this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-      ]),
-      this.workspaceRepository.findOneOrFail({
-        where: { id: workspaceId },
-        select: ['id', 'workspaceCustomApplicationId'],
-      }),
-    ]);
-
-    const runApplication = flatApplicationMaps.byId[runApplicationId];
-
-    // a run keeps the limits of an application that has since left the workspace
-    if (!isDefined(runApplication)) {
-      return true;
-    }
-
-    return !isWorkspaceComposerApplication({
-      application: runApplication,
-      workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
     });
   }
 
