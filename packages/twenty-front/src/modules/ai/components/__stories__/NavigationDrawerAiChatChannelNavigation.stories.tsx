@@ -263,12 +263,7 @@ export const Favorite: Story = {
 export const SameViewKeepsCollapsed: Story = {
   render: (args) => (
     <>
-      <ChannelNavigationStory
-        channel={args.channel}
-        summary={args.summary}
-        channelView={args.channelView}
-        isActive={args.isActive}
-      />
+      <ChannelNavigationStory channel={args.channel} summary={args.summary} />
       <Button
         onClick={() =>
           jotaiStore.set(agentChatChannelViewState.atom, { ...OPEN_VIEW })
@@ -349,12 +344,7 @@ export const ReturnToTriage: Story = {
   args: { channelView: null, isActive: false },
   render: (args) => (
     <>
-      <ChannelNavigationStory
-        channel={args.channel}
-        summary={args.summary}
-        channelView={args.channelView}
-        isActive={args.isActive}
-      />
+      <ChannelNavigationStory channel={args.channel} summary={args.summary} />
       <Button
         onClick={() => jotaiStore.set(agentChatChannelViewState.atom, null)}
       >
