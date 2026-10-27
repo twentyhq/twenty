@@ -2,7 +2,9 @@ import { type DiscoveryService } from '@nestjs/core';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey, FieldActorSource } from 'twenty-shared/types';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 
+import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -15,12 +17,14 @@ import { UpdateAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/u
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const workspaceId = 'workspace-id';
 const agentId = '20202020-0000-4000-8000-000000000001';
 const roleId = '20202020-0000-4000-8000-000000000002';
 const existingTriggerId = '20202020-0000-4000-8000-000000000003';
+const workspaceCustomApplicationId = 'application-id';
 
 const buildAgent = (overrides: Record<string, unknown> = {}) => ({
   id: agentId,
@@ -32,7 +36,7 @@ const buildAgent = (overrides: Record<string, unknown> = {}) => ({
   modelId: 'workspace-default-model',
   roleId,
   triggers: [],
-  applicationId: 'application-id',
+  applicationId: workspaceCustomApplicationId,
   isCustom: true,
   isSystem: false,
   ...overrides,
@@ -76,6 +80,18 @@ const buildAgentTools = (options?: {
   const aiModelRegistryService = {
     validateModelAvailability: jest.fn(),
   };
+  const applicationService = {
+    findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+      .fn()
+      .mockResolvedValue({
+        workspaceCustomFlatApplication: { id: workspaceCustomApplicationId },
+      }),
+  };
+  const workspaceCacheService = {
+    getOrRecompute: jest.fn().mockResolvedValue({
+      flatWorkflowVersionMaps: { byUniversalIdentifier: {} },
+    }),
+  };
   const permissionsService = {
     checkRolesPermissions: jest
       .fn()
@@ -97,8 +113,14 @@ const buildAgentTools = (options?: {
     new UpdateAgentTool(
       agentService as unknown as AgentService,
       aiModelRegistryService as unknown as AiModelRegistryService,
+      applicationService as unknown as ApplicationService,
+      workspaceCacheService as unknown as WorkspaceCacheService,
     ),
-    new DeleteAgentTool(agentService as unknown as AgentService),
+    new DeleteAgentTool(
+      agentService as unknown as AgentService,
+      applicationService as unknown as ApplicationService,
+      workspaceCacheService as unknown as WorkspaceCacheService,
+    ),
   ];
 
   const definedToolRegistryService = new DefinedToolRegistryService(
@@ -145,7 +167,23 @@ const buildAgentTools = (options?: {
     agentService,
     aiModelRegistryService,
     permissionsService,
+    workspaceCacheService,
   };
+};
+
+const workflowVersionsWithAgentStep = {
+  flatWorkflowVersionMaps: {
+    byUniversalIdentifier: {
+      'workflow-version-id': {
+        steps: [
+          {
+            type: WorkflowActionType.AI_AGENT,
+            settings: { input: { agentId } },
+          },
+        ],
+      },
+    },
+  },
 };
 
 describe('Agent tools', () => {
@@ -379,10 +417,11 @@ describe('Agent tools', () => {
     });
 
     it('refuses to change an agent backing a workflow step', async () => {
-      const { executeTool, agentService } = buildAgentTools();
+      const { executeTool, agentService, workspaceCacheService } =
+        buildAgentTools();
 
-      agentService.findOneAgentById.mockResolvedValue(
-        buildAgent({ isSystem: true }),
+      workspaceCacheService.getOrRecompute.mockResolvedValue(
+        workflowVersionsWithAgentStep,
       );
 
       await expect(
@@ -413,10 +452,11 @@ describe('Agent tools', () => {
     });
 
     it('refuses to delete an agent backing a workflow step', async () => {
-      const { executeTool, agentService } = buildAgentTools();
+      const { executeTool, agentService, workspaceCacheService } =
+        buildAgentTools();
 
-      agentService.findOneAgentById.mockResolvedValue(
-        buildAgent({ isSystem: true }),
+      workspaceCacheService.getOrRecompute.mockResolvedValue(
+        workflowVersionsWithAgentStep,
       );
 
       await expect(
