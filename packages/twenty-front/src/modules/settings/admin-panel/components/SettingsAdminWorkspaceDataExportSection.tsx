@@ -57,7 +57,7 @@ export const SettingsAdminWorkspaceDataExportSection = ({
     workspaceId,
   );
 
-  const [createWorkspaceDataExport] =
+  const [createWorkspaceDataExport, { loading: isCreating }] =
     useMutation<CreateWorkspaceDataExportMutation>(
       CREATE_WORKSPACE_DATA_EXPORT,
       {
@@ -74,6 +74,11 @@ export const SettingsAdminWorkspaceDataExportSection = ({
         },
       },
     );
+
+  const hasPendingExport = adminPanelWorkspaceDataExports.some(
+    (workspaceDataExport) =>
+      workspaceDataExport.status === WorkspaceDataExportStatus.PENDING,
+  );
 
   return (
     <>
@@ -175,6 +180,7 @@ export const SettingsAdminWorkspaceDataExportSection = ({
         gridAutoColumns="3fr 4fr 2fr 180px"
         footerButtonLabel={t`Export data`}
         onFooterButtonClick={() => createWorkspaceDataExport()}
+        isFooterButtonDisabled={isCreating || hasPendingExport}
       />
     </>
   );
