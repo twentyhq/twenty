@@ -275,6 +275,10 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'webhook',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
+  mcpServer: {
+    entityKind: 'MCP server',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
   applicationVariable: {
     entityKind: 'application variable',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
