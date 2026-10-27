@@ -47,6 +47,7 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { ShareWithService } from 'src/engine/core-modules/record-share/services/share-with.service';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
@@ -77,8 +78,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
     const { sharingMode } = resolveObjectSharing(queryRunnerContext);
+    const isPrivateObject = sharingMode === RecordSharingMode.PRIVATE;
 
-    if (isNonEmptyArray(args.shareWith)) {
+    if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
         shareWith: args.shareWith,
@@ -155,7 +157,13 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      repository,
+      repository:
+        isPrivateObject && isDefined(queryRunnerContext.transactionScope)
+          ? queryRunnerContext.transactionScope.getRepository(
+              flatObjectMetadata.nameSingular,
+              { shouldBypassPermissionChecks: true },
+            )
+          : repository,
       selectedFieldsResult: args.selectedFieldsResult,
     });
 

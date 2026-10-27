@@ -748,5 +748,12 @@ describe('core workflow visibility (e2e)', () => {
 
       expect(archivedAt).not.toBeNull();
     });
+
+    it('keeps it private to its owner even when the workflow is visible', async () => {
+      const response = await readConversation(APPLE_JONY_MEMBER_ACCESS_TOKEN);
+
+      expect(response.body.data?.chatThread ?? null).toBeNull();
+      expect(response.body.errors).toBeDefined();
+    });
   });
 });

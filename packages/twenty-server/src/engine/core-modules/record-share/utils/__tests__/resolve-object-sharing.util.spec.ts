@@ -1,11 +1,12 @@
 /* @license Enterprise */
 
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, MetadataReadability } from 'twenty-shared/types';
 
 import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 
 const OBJECT = {
+  readability: MetadataReadability.OPEN,
   isSystem: false,
   disabledObjectPermissionActions: null,
 };
@@ -73,6 +74,45 @@ describe('resolveObjectSharing', () => {
     ).toMatchObject({
       canShareBeyondRole: false,
       operationTypesGrantedBeyondRole: [],
+    });
+  });
+
+  it.each([
+    { isSystem: false, featureFlagsMap: {} },
+    { isSystem: true, featureFlagsMap: RECORD_SHARING },
+  ])(
+    'should keep private records private for %o',
+    ({ isSystem, featureFlagsMap }) => {
+      expect(
+        resolveObjectSharing({
+          flatObjectMetadata: {
+            ...OBJECT,
+            readability: MetadataReadability.PRIVATE,
+            isSystem,
+          },
+          featureFlagsMap,
+        }),
+      ).toEqual({
+        sharingMode: RecordSharingMode.PRIVATE,
+        canShareBeyondRole: false,
+        operationTypesGrantedBeyondRole: [],
+      });
+    },
+  );
+
+  it('should let a grant on a private object view or edit beyond the role', () => {
+    expect(
+      resolveObjectSharing({
+        flatObjectMetadata: {
+          ...OBJECT,
+          readability: MetadataReadability.PRIVATE,
+        },
+        featureFlagsMap: RECORD_SHARING,
+      }),
+    ).toEqual({
+      sharingMode: RecordSharingMode.PRIVATE,
+      canShareBeyondRole: true,
+      operationTypesGrantedBeyondRole: ['select', 'update'],
     });
   });
 });

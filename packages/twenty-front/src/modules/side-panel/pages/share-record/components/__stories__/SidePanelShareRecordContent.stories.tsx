@@ -54,7 +54,7 @@ const MEMBERS = [
 ];
 
 const SHARING = {
-  sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+  sharingMode: RecordSharingMode.PRIVATE,
   canManageSharing: true,
   generalAccessLevel: RecordShareAccessLevel.NONE,
   defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
@@ -519,6 +519,7 @@ export const DefaultGeneralAccess: Story = {
     sharingState: {
       sharing: {
         ...SHARING,
+        sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
         generalAccessLevel: RecordShareAccessLevel.READ_WRITE,
         defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
       },
@@ -695,7 +696,7 @@ export const ReadOnly: Story = {
     const page = within(canvasElement.ownerDocument.body);
     await expect(
       await page.findByText(
-        'Only the creator of this record, people with full access to it and admins can change who has access.',
+        'Only the creator of this record and people with full access to it can change who has access.',
       ),
     ).toBeVisible();
     await expect(page.queryByText('Everyone')).not.toBeInTheDocument();

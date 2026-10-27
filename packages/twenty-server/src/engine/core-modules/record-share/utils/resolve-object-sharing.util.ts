@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { type ObjectPermissionAction } from 'twenty-shared/application';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, MetadataReadability } from 'twenty-shared/types';
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -32,16 +32,24 @@ export const resolveObjectSharing = ({
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
-    'isSystem' | 'disabledObjectPermissionActions'
+    'readability' | 'isSystem' | 'disabledObjectPermissionActions'
   >;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 }): ObjectSharing => {
   const isRecordSharingEnabled =
     featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
 
+  // Private records are only reached through their shares, whatever the flag
+  const sharingMode =
+    flatObjectMetadata.readability === MetadataReadability.PRIVATE
+      ? RecordSharingMode.PRIVATE
+      : isRecordSharingEnabled && !flatObjectMetadata.isSystem
+        ? RecordSharingMode.OPEN_BY_DEFAULT
+        : RecordSharingMode.ROLE_ONLY;
+
   if (!isRecordSharingEnabled || flatObjectMetadata.isSystem) {
     return {
-      sharingMode: RecordSharingMode.ROLE_ONLY,
+      sharingMode,
       canShareBeyondRole: false,
       operationTypesGrantedBeyondRole: [],
     };
@@ -56,7 +64,7 @@ export const resolveObjectSharing = ({
     ).map(({ operationType }) => operationType);
 
   return {
-    sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+    sharingMode,
     canShareBeyondRole: isNonEmptyArray(operationTypesGrantedBeyondRole),
     operationTypesGrantedBeyondRole,
   };

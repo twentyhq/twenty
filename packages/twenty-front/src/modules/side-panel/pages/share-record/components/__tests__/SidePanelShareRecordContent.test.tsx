@@ -34,7 +34,7 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
 type Share = RecordSharingFieldsFragment['shares'][number];
 
 const sharing: RecordSharingFieldsFragment = {
-  sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+  sharingMode: RecordSharingMode.PRIVATE,
   canManageSharing: true,
   permissions: {
     canRead: true,
@@ -147,7 +147,7 @@ describe('Share record side panel', () => {
     await waitFor(() =>
       expect(
         screen.getByText(
-          'Only the creator of this record, people with full access to it and admins can change who has access.',
+          'Only the creator of this record and people with full access to it can change who has access.',
         ),
       ).toBeVisible(),
     );
@@ -187,6 +187,23 @@ describe('Share record side panel', () => {
       expect(
         screen.getByText(
           "People you add get this record even if their role can't access Companies. Field permissions still apply.",
+        ),
+      ).toBeVisible(),
+    );
+  });
+
+  it('tells viewers of a record open by default who can change its access', async () => {
+    renderSharing({
+      sharingOverrides: {
+        sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+        canManageSharing: false,
+        roles: [],
+      },
+    });
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          'Only the creator of this record, people with full access to it and admins can change who has access.',
         ),
       ).toBeVisible(),
     );

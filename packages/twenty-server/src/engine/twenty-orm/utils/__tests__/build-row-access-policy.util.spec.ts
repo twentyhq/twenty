@@ -1,5 +1,9 @@
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
-import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  MetadataReadability,
+  RecordShareAccessLevel,
+} from 'twenty-shared/types';
 
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -30,6 +34,10 @@ const buildObject = ({ id }: { id: string }): FlatObjectMetadata =>
   } as Parameters<typeof getFlatObjectMetadataMock>[0]);
 
 const note = buildObject({ id: 'note' });
+const person: FlatObjectMetadata = {
+  ...buildObject({ id: 'person' }),
+  readability: MetadataReadability.PRIVATE,
+};
 
 const environment: RowAccessPolicyEnvironment &
   RowAccessCompilationEnvironment = {
@@ -155,6 +163,12 @@ describe('buildRowAccessPolicy', () => {
         operationType: 'select',
       }),
     ).toEqual({ kind: 'open' });
+  });
+
+  it('keeps PRIVATE records gated for a subject with access to all records', () => {
+    expect(
+      gatedSql({ ...readEverything, canAccessAllRecords: true }, person),
+    ).toContain('recordShare');
   });
 
   it('keeps a system object open when record sharing is enabled', () => {
@@ -283,5 +297,34 @@ describe('buildRowAccessPolicy', () => {
     );
 
     expect(sql).toBe('("note"."title" = :restricted)');
+  });
+
+  it('gates a PRIVATE object on its share rows and leaves it open without principals', () => {
+    expect(gatedSql(readEverything, person)).toContain(
+      '"person_recordShare"."recordId" = "person"."id"',
+    );
+    expect(
+      build({ ...readEverything, principalIds: undefined }, person),
+    ).toEqual({ kind: 'open' });
+  });
+
+  it('keeps a PRIVATE object open for its owning application', () => {
+    expect(
+      build({ ...readEverything, isOwningApplication: () => true }, person),
+    ).toEqual({ kind: 'open' });
+  });
+
+  it('keeps private records gated regardless of the sharing UI flag', () => {
+    const policy = buildCompiledRowAccessPolicy({
+      subject: readEverything,
+      environment,
+      tableAlias: 'person',
+      flatObjectMetadata: person,
+      operationType: 'select',
+    });
+    expect(policy.kind).toBe('gated');
+    if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+    expect(policy.condition.sql).toContain('recordShare');
+    expect(policy.condition.sql).not.toContain('rowCause');
   });
 });

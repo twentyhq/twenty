@@ -2,6 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
@@ -50,6 +51,7 @@ export class RecordShareOwnershipTransferService {
     });
   }
 
+  // Private records such as chats stay with their creator
   private async findTransferableObjectMetadataIds(
     workspaceId: string,
   ): Promise<string[]> {
@@ -60,7 +62,11 @@ export class RecordShareOwnershipTransferService {
 
     return Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
       .filter(isDefined)
-      .filter((flatObjectMetadata) => !flatObjectMetadata.isSystem)
+      .filter(
+        (flatObjectMetadata) =>
+          !flatObjectMetadata.isSystem &&
+          flatObjectMetadata.readability !== MetadataReadability.PRIVATE,
+      )
       .map((flatObjectMetadata) => flatObjectMetadata.id);
   }
 

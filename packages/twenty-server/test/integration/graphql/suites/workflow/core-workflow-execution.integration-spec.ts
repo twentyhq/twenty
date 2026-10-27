@@ -1416,6 +1416,16 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         isArchived: true,
         isBackInInbox: true,
       });
+
+      const readByAnotherMember = await request(`http://localhost:${APP_PORT}`)
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `query ReadRunConversation($threadId: UUID!) { chatMessages(threadId: $threadId) { role } }`,
+          variables: { threadId },
+        });
+
+      expect(readByAnotherMember.body.errors).toBeDefined();
     });
 
     it('keeps the conversation of a workflow without a member creator off every inbox', async () => {

@@ -17,22 +17,26 @@ export const resolveShareWithToWrite = ({
   sharingMode: RecordSharingMode;
   shareWith?: ShareWithInput[] | null;
 }): ShareWithInput[] | null => {
-  switch (sharingMode) {
-    case RecordSharingMode.ROLE_ONLY:
-    case RecordSharingMode.PRIVATE:
-    case RecordSharingMode.INHERITED:
-      return null;
-    case RecordSharingMode.OPEN_BY_DEFAULT: {
-      const defaultGeneralAccessLevel =
-        resolveDefaultGeneralAccessLevel(sharingMode);
-      const shareWithToWrite = (shareWith ?? []).filter(
-        (shareWithEntry) =>
-          shareWithEntry.everyone !== true ||
-          shareWithEntry.accessLevel !== defaultGeneralAccessLevel,
-      );
+  if (
+    sharingMode === RecordSharingMode.ROLE_ONLY ||
+    sharingMode === RecordSharingMode.INHERITED
+  ) {
+    return null;
+  }
 
+  const defaultGeneralAccessLevel =
+    resolveDefaultGeneralAccessLevel(sharingMode);
+  const shareWithToWrite = (shareWith ?? []).filter(
+    (shareWithEntry) =>
+      shareWithEntry.everyone !== true ||
+      shareWithEntry.accessLevel !== defaultGeneralAccessLevel,
+  );
+
+  switch (sharingMode) {
+    case RecordSharingMode.OPEN_BY_DEFAULT:
       return isNonEmptyArray(shareWithToWrite) ? shareWithToWrite : null;
-    }
+    case RecordSharingMode.PRIVATE:
+      return shareWithToWrite;
     default:
       return assertUnreachable(sharingMode);
   }

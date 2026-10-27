@@ -727,13 +727,15 @@ describe('Chat channels through the authenticated API', () => {
     );
   });
 
-  it('keeps a channel open to the roles it is given', async () => {
+  it('keeps a channel open to roles, and its chats, to who holds them', async () => {
     const { id: adminRoleId } = await findOneRoleByLabel({ label: 'Admin' });
     const memberRoleId = await closeMemberAllChannelsAccess();
     const channelId = await createChannel({ roleIds: [adminRoleId] });
+    const threadId = await createThreadInChannel(channelId);
 
-    await createThreadInChannel(channelId);
-
+    expect(
+      await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).not.toContain(threadId);
     expect(
       (await listChannels(APPLE_JONY_MEMBER_ACCESS_TOKEN)).map(({ id }) => id),
     ).not.toContain(channelId);
@@ -759,6 +761,9 @@ describe('Chat channels through the authenticated API', () => {
     expect(
       [...openResponse.body.data.updateAgentChatChannel.roleIds].sort(),
     ).toEqual([adminRoleId, memberRoleId].sort());
+    expect(await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toContain(
+      threadId,
+    );
     expect(
       (await getChannelSummaries(APPLE_JONY_MEMBER_ACCESS_TOKEN)).find(
         (summary) => summary.channelId === channelId,
@@ -770,6 +775,9 @@ describe('Chat channels through the authenticated API', () => {
     );
 
     expect(
+      await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).not.toContain(threadId);
+    expect(
       (await getChannelSummaries(APPLE_JONY_MEMBER_ACCESS_TOKEN)).map(
         (summary) => summary.channelId,
       ),
@@ -779,13 +787,21 @@ describe('Chat channels through the authenticated API', () => {
   it('opens every channel to a role given access to all channels, and back', async () => {
     const memberRoleId = await closeMemberAllChannelsAccess();
     const channelId = await createChannel();
-    const listJonyChannelIds = async () =>
-      (await listChannels(APPLE_JONY_MEMBER_ACCESS_TOKEN)).map(({ id }) => id);
+    const threadId = await createThreadInChannel(channelId);
 
-    expect(await listJonyChannelIds()).not.toContain(channelId);
+    await expectEventually(async () =>
+      expect(
+        await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      ).not.toContain(threadId),
+    );
 
     await setRoleAllChannelsAccess(memberRoleId, true);
 
+    await expectEventually(async () =>
+      expect(await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toContain(
+        threadId,
+      ),
+    );
     expect(
       (await listChannels(APPLE_JONY_MEMBER_ACCESS_TOKEN)).find(
         ({ id }) => id === channelId,
@@ -794,7 +810,11 @@ describe('Chat channels through the authenticated API', () => {
 
     await setRoleAllChannelsAccess(memberRoleId, false);
 
-    expect(await listJonyChannelIds()).not.toContain(channelId);
+    await expectEventually(async () =>
+      expect(
+        await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      ).not.toContain(threadId),
+    );
   });
 
   it('removes a role taken off a channel from a chat filed into it meanwhile', async () => {
@@ -1365,6 +1385,9 @@ describe('Chat channels through the authenticated API', () => {
     expect(await readChannelGrants(threadId)).toEqual([
       { principalType: 'ROLE', sourceId: destinationChannelId },
     ]);
+    expect(
+      await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).not.toContain(threadId);
 
     assertGraphQLSuccessfulResponse(
       await makeMetadataApiRequest({

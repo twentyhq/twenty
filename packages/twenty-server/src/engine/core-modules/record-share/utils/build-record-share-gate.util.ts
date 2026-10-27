@@ -27,11 +27,19 @@ export const buildRecordShareGate = ({
     featureFlagsMap: environment.featureFlagsMap,
   });
 
+  const isPrivate =
+    sharingMode === RecordSharingMode.PRIVATE &&
+    !subject.isOwningApplication(flatObjectMetadata);
+
   if (
-    sharingMode !== RecordSharingMode.OPEN_BY_DEFAULT ||
-    subject.canAccessAllRecords ||
-    !isDefined(subject.principalIds)
+    !isPrivate &&
+    (sharingMode !== RecordSharingMode.OPEN_BY_DEFAULT ||
+      subject.canAccessAllRecords)
   ) {
+    return { kind: 'open' };
+  }
+
+  if (!isDefined(subject.principalIds)) {
     return { kind: 'open' };
   }
 
@@ -44,7 +52,7 @@ export const buildRecordShareGate = ({
   return {
     kind: 'gated',
     expression: {
-      kind: 'recordNotRestricted',
+      kind: isPrivate ? 'recordShared' : 'recordNotRestricted',
       tableAlias,
       objectMetadataId: flatObjectMetadata.id,
       principalIds: subject.principalIds,

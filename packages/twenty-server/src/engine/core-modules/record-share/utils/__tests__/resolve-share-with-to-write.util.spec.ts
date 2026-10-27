@@ -19,6 +19,30 @@ const EVERYONE_AT_DEFAULT = {
 };
 
 describe('resolveShareWithToWrite', () => {
+  it('should write every entry, and the creator rows, on a private object', () => {
+    expect(
+      resolveShareWithToWrite({
+        sharingMode: RecordSharingMode.PRIVATE,
+        shareWith: [ROLE_GRANT, EVERYONE_GRANT],
+      }),
+    ).toEqual([ROLE_GRANT, EVERYONE_GRANT]);
+    expect(
+      resolveShareWithToWrite({ sharingMode: RecordSharingMode.PRIVATE }),
+    ).toEqual([]);
+  });
+
+  it('should leave no everyone row when everyone keeps the default of a private object', () => {
+    expect(
+      resolveShareWithToWrite({
+        sharingMode: RecordSharingMode.PRIVATE,
+        shareWith: [
+          ROLE_GRANT,
+          { everyone: true, accessLevel: RecordShareAccessLevel.NONE },
+        ],
+      }),
+    ).toEqual([ROLE_GRANT]);
+  });
+
   it('should write named grants and a general access other than the default on a record open by default', () => {
     expect(
       resolveShareWithToWrite({

@@ -1,8 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
   FieldMetadataType,
+  MetadataReadability,
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
   type RecordGqlOperationFilter,
@@ -536,6 +538,94 @@ describe('ObjectRecordEventPublisher', () => {
       expect(
         mockSubscriptionService.publishToEventStream,
       ).not.toHaveBeenCalled();
+    });
+
+    it('should not evaluate the record share gate for a stream whose queries target another object', async () => {
+      const privateObjectMetadata: FlatObjectMetadata = {
+        ...companyObjectMetadata,
+        readability: MetadataReadability.PRIVATE,
+      };
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([
+          [
+            streamChannelId,
+            {
+              ...mockStreamData,
+              queries: {
+                'query-1': { objectNameSingular: 'person', variables: {} },
+              },
+            },
+          ],
+        ]) as Map<string, EventStreamData | undefined>,
+      );
+
+      await service.publish({
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: privateObjectMetadata,
+        events: [createMockEvent()],
+      } as WorkspaceEventBatch<never>);
+
+      expect(
+        mockRecordShareStorageService.findByRecordIds,
+      ).not.toHaveBeenCalled();
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('only publishes shared private records after metadata activation', async () => {
+      const privateObjectMetadata: FlatObjectMetadata = {
+        ...companyObjectMetadata,
+        readability: MetadataReadability.PRIVATE,
+      };
+
+      mockRecordShareStorageService.findByRecordIds.mockResolvedValue([
+        {
+          id: 'record-share-1',
+          recordId: 'record-1',
+          objectMetadataId: privateObjectMetadata.id,
+          principalId: EVERYONE_PRINCIPAL_ID,
+          principalType: RecordSharePrincipalType.EVERYONE,
+          accessLevel: RecordShareAccessLevel.READ,
+          rowCause: RecordShareRowCause.MANUAL,
+          sourceId: 'source-1',
+        },
+      ] as RecordShare[]);
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: privateObjectMetadata,
+        events: [
+          createMockEvent(),
+          createMockEvent({
+            recordId: 'record-2',
+            properties: { after: { id: 'record-2', name: 'Hidden Company' } },
+          }),
+        ],
+      };
+
+      await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+      expect(
+        mockRecordShareStorageService.findByRecordIds,
+      ).toHaveBeenCalledWith({
+        workspaceId,
+        objectMetadataId: privateObjectMetadata.id,
+        recordIds: ['record-1', 'record-2'],
+      });
+
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+
+      expect(
+        publishCall.payload.objectRecordEventsWithQueryIds.map(
+          (matchedEvent: { objectRecordEvent: { recordId: string } }) =>
+            matchedEvent.objectRecordEvent.recordId,
+        ),
+      ).toEqual(['record-1']);
     });
 
     it('publishes a batch without consulting the sharing rollout flag', async () => {
