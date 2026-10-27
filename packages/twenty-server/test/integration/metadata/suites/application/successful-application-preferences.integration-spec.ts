@@ -1,3 +1,4 @@
+import { TEST_APPLICATION_PACKAGE_JSON_CHECKSUM } from 'test/integration/metadata/suites/application/constants/test-application-package-json.constant';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildFrontComponentManifest } from 'test/integration/metadata/suites/application/utils/build-front-component-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -141,7 +142,7 @@ describe('My application preferences should succeed', () => {
                 value: 'https://example.com',
               },
             },
-            packageJsonChecksum: null,
+            packageJsonChecksum: TEST_APPLICATION_PACKAGE_JSON_CHECKSUM,
             yarnLockChecksum: null,
           },
           frontComponents: [
