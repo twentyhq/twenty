@@ -16,7 +16,7 @@ import {
   Worker,
 } from 'bullmq';
 import { type JobState as BullMQJobState } from 'bullmq/dist/esm/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
@@ -38,12 +38,15 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
+import { FairPriorityTagger } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority-tagger';
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { buildQueueJobIdWithSuffix } from 'src/engine/core-modules/message-queue/utils/build-queue-job-id-with-suffix.util';
 import { computeJobQueueWaitMs } from 'src/engine/core-modules/message-queue/utils/compute-job-queue-wait-ms.util';
+import { computeFairPriority } from 'src/engine/core-modules/message-queue/utils/compute-fair-priority.util';
+import { getDefaultGroupKeys } from 'src/engine/core-modules/message-queue/utils/get-default-group-keys.util';
 import { isQueueJobIdAlreadyWaiting } from 'src/engine/core-modules/message-queue/utils/is-queue-job-id-already-waiting.util';
 import { JOB_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/job-latency-ms-bucket-boundaries.constant';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -73,13 +76,19 @@ export class BullMQDriver
     Record<MessageQueue, MessageQueueWorkerOptions>
   > = {};
   private workersDrain: Promise<void> | undefined;
+  private readonly fairPriorityTagger: FairPriorityTagger;
 
   constructor(
     private options: BullMQDriverOptions,
     private metricsService: MetricsService,
     private twentyConfigService: TwentyConfigService,
     private eventEmitter: EventEmitter2,
-  ) {}
+  ) {
+    this.fairPriorityTagger = new FairPriorityTagger({
+      getClient: (queueName) => this.queueMap[queueName].client,
+      keyPrefix: options.prefix ?? 'bull',
+    });
+  }
 
   onModuleInit() {
     this.metricsService.createMultiObservableGauge({
@@ -369,6 +378,97 @@ export class BullMQDriver
     });
   }
 
+  private isFairnessEnabled(): boolean {
+    return this.twentyConfigService.get('IS_WORKER_FAIRNESS_ENABLED');
+  }
+
+  private withFairPriority({
+    queueOptions,
+    fairPriority,
+  }: {
+    queueOptions: BullMQJobsOptions;
+    fairPriority: number | undefined;
+  }): BullMQJobsOptions {
+    return isDefined(fairPriority)
+      ? { ...queueOptions, priority: fairPriority }
+      : queueOptions;
+  }
+
+  // A delayed job is ranked once it is due, so it is neither ticketed nor charged at enqueue
+  private async computeFairPriorities({
+    queueName,
+    jobsData,
+    options,
+  }: {
+    queueName: MessageQueue;
+    jobsData: unknown[];
+    options?: Pick<QueueJobOptions, 'groupKeys' | 'delay'>;
+  }): Promise<(number | undefined)[]> {
+    const staticPriorities: (number | undefined)[] = jobsData.map(
+      () => undefined,
+    );
+
+    if (!this.isFairnessEnabled() || (options?.delay ?? 0) > 0) {
+      return staticPriorities;
+    }
+
+    const reservations: { groupKeys: string[]; jobIndexes: number[] }[] = [];
+    const reservationBySignature = new Map<
+      string,
+      (typeof reservations)[number]
+    >();
+
+    jobsData.forEach((jobData, jobIndex) => {
+      const groupKeys = isNonEmptyArray(options?.groupKeys)
+        ? [...new Set(options.groupKeys)]
+        : getDefaultGroupKeys(jobData);
+      const signature = groupKeys.join('\u0000');
+      const reservation = reservationBySignature.get(signature) ?? {
+        groupKeys,
+        jobIndexes: [],
+      };
+
+      if (!reservationBySignature.has(signature)) {
+        reservationBySignature.set(signature, reservation);
+        reservations.push(reservation);
+      }
+
+      reservation.jobIndexes.push(jobIndex);
+    });
+
+    const tickets = await this.fairPriorityTagger.reserve({
+      queueName,
+      reservations: reservations.map(({ groupKeys, jobIndexes }) => ({
+        groupKeys,
+        batchSize: jobIndexes.length,
+      })),
+    });
+
+    if (!isDefined(tickets)) {
+      void this.metricsService.incrementCounterForEvent({
+        key: MetricsKeys.JobFairTagFallback,
+        attributes: { queue: queueName },
+        shouldStoreInCache: false,
+      });
+
+      return staticPriorities;
+    }
+
+    const fairPriorities = [...staticPriorities];
+
+    reservations.forEach(({ jobIndexes }, reservationIndex) => {
+      const { tag, weight } = tickets[reservationIndex];
+
+      jobIndexes.forEach((jobIndex, position) => {
+        fairPriorities[jobIndex] = computeFairPriority({
+          tag: tag + position / weight,
+        });
+      });
+    });
+
+    return fairPriorities;
+  }
+
   async addCron<T>({
     queueName,
     jobName,
@@ -515,8 +615,17 @@ export class BullMQDriver
     }
 
     const queueOptions = this.buildJobsOptions({ queueName, options });
+    const [fairPriority] = await this.computeFairPriorities({
+      queueName,
+      jobsData: [data],
+      options,
+    });
 
-    const job = await this.queueMap[queueName].add(jobName, data, queueOptions);
+    const job = await this.queueMap[queueName].add(
+      jobName,
+      data,
+      this.withFairPriority({ queueOptions, fairPriority }),
+    );
 
     return job.id;
   }
@@ -567,13 +676,21 @@ export class BullMQDriver
     }
 
     const queueOptions = this.buildJobsOptions({ queueName, options });
+    const fairPriorities = await this.computeFairPriorities({
+      queueName,
+      jobsData: jobsToAdd.map(({ data }) => data),
+      options,
+    });
 
     const addedJobs = await this.queueMap[queueName].addBulk(
       jobsToAdd.map(({ data, jobId }, index) => ({
         name: jobName,
         data,
         opts: {
-          ...queueOptions,
+          ...this.withFairPriority({
+            queueOptions,
+            fairPriority: fairPriorities[index],
+          }),
           jobId:
             jobId ??
             (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined),
