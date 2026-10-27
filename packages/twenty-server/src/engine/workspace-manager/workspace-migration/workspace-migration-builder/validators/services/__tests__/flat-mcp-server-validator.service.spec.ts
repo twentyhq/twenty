@@ -1,6 +1,9 @@
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
 import { type UniversalFlatMcpServer } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-mcp-server.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
@@ -8,6 +11,7 @@ import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manage
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { FlatMcpServerValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service';
 
+const WORKSPACE_ID = v4();
 const APPLICATION_UNIVERSAL_IDENTIFIER = v4();
 const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER = v4();
 const PROVIDER_UNIVERSAL_IDENTIFIER = v4();
@@ -26,6 +30,7 @@ const buildProvider = (
   type: 'oauth',
   scope: 'WORKSPACE',
   oauthConfig: null,
+  customConfig: null,
   identifyAccountLogicFunctionUniversalIdentifier: null,
   onConnectLogicFunctionUniversalIdentifier: null,
   onDisconnectLogicFunctionUniversalIdentifier: null,
@@ -48,9 +53,21 @@ const buildMcpServer = (
   ...overrides,
 });
 
-const buildMaps = (existingMcpServers: UniversalFlatMcpServer[] = []) => {
-  const flatConnectionProviderMaps = createEmptyFlatEntityMaps();
-  const flatMcpServerMaps = createEmptyFlatEntityMaps();
+const buildFeatureFlagsMap =
+  (): WorkspaceMigrationBuilderAdditionalCacheDataMaps['featureFlagsMap'] =>
+    Object.values(FeatureFlagKey).reduce(
+      (featureFlagsMap, key) => ({ ...featureFlagsMap, [key]: false }),
+      {} as WorkspaceMigrationBuilderAdditionalCacheDataMaps['featureFlagsMap'],
+    );
+
+const buildValidationArgs = (
+  existingMcpServers: UniversalFlatMcpServer[],
+): Omit<
+  UniversalFlatEntityValidationArgs<'mcpServer'>,
+  'flatEntityToValidate'
+> => {
+  const optimisticFlatEntityMapsAndRelatedFlatEntityMaps =
+    createEmptyAllFlatEntityMaps();
 
   for (const provider of [
     buildProvider(
@@ -64,18 +81,32 @@ const buildMaps = (existingMcpServers: UniversalFlatMcpServer[] = []) => {
   ]) {
     addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
       universalFlatEntity: provider,
-      universalFlatEntityMapsToMutate: flatConnectionProviderMaps,
+      universalFlatEntityMapsToMutate:
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatConnectionProviderMaps,
     });
   }
 
   for (const mcpServer of existingMcpServers) {
     addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
       universalFlatEntity: mcpServer,
-      universalFlatEntityMapsToMutate: flatMcpServerMaps,
+      universalFlatEntityMapsToMutate:
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatMcpServerMaps,
     });
   }
 
-  return { flatConnectionProviderMaps, flatMcpServerMaps };
+  return {
+    additionalCacheDataMaps: {
+      featureFlagsMap: buildFeatureFlagsMap(),
+      billingEntitlements: {},
+    },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
+    workspaceId: WORKSPACE_ID,
+    buildOptions: {
+      isSystemBuild: false,
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    },
+  };
 };
 
 const errorCodes = (result: { errors: { code: string }[] }) =>
@@ -87,9 +118,9 @@ describe('FlatMcpServerValidatorService', () => {
   describe('creation', () => {
     const validate = (mcpServer: UniversalFlatMcpServer) =>
       validator.validateFlatMcpServerCreation({
+        ...buildValidationArgs([]),
         flatEntityToValidate: mcpServer,
-        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: buildMaps(),
-      } as unknown as UniversalFlatEntityValidationArgs<'mcpServer'>);
+      });
 
     it('accepts a provider of the same application', () => {
       const result = validate(
@@ -124,12 +155,21 @@ describe('FlatMcpServerValidatorService', () => {
       connectionProviderUniversalIdentifier: PROVIDER_UNIVERSAL_IDENTIFIER,
     });
 
-    const validate = (flatEntityUpdate: Partial<UniversalFlatMcpServer>) =>
-      validator.validateFlatMcpServerUpdate({
-        universalIdentifier: existing.universalIdentifier,
+    const validate = (
+      flatEntityUpdate: FlatEntityUpdateValidationArgs<'mcpServer'>['flatEntityUpdate'],
+    ) => {
+      const { remainingFlatEntityMapsToValidate: _unused, ...args } =
+        buildValidationArgs([existing]);
+
+      return validator.validateFlatMcpServerUpdate({
+        ...args,
+        finalFlatEntityMaps:
+          args.optimisticFlatEntityMapsAndRelatedFlatEntityMaps
+            .flatMcpServerMaps,
         flatEntityUpdate,
-        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: buildMaps([existing]),
-      } as unknown as FlatEntityUpdateValidationArgs<'mcpServer'>);
+        universalIdentifier: existing.universalIdentifier,
+      });
+    };
 
     it('rejects a url change while a provider is linked', () => {
       const result = validate({ url: 'https://other.example.com/mcp' });

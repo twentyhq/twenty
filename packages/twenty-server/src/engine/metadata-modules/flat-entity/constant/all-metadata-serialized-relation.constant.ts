@@ -56,6 +56,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   mcpServer: {},
   applicationVariable: {},
   connectionProvider: {},
+  messagingProvider: {},
   timelineActivityType: {},
   validationRule: {},
   searchFieldMetadata: {},

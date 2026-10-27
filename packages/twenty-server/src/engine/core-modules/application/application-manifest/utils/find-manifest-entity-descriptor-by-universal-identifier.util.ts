@@ -84,6 +84,14 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
         (connectionProvider) => connectionProvider.displayName,
       ),
   },
+  messagingProvider: {
+    entityKind: 'messaging provider',
+    getCandidates: (manifest) =>
+      toCandidates(
+        manifest.messagingProviders,
+        (messagingProvider) => messagingProvider.displayName,
+      ),
+  },
   timelineActivityType: {
     entityKind: 'timeline activity type',
     getCandidates: (manifest) =>

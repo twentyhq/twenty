@@ -162,8 +162,7 @@ export class McpServerService {
     return getUrlSafely(url)?.toString() ?? url;
   }
 
-  // An unknown id is passed through as-is so the validator reports it
-  // instead of the lookup throwing before validation runs.
+  // Unknown ids pass through so the validator reports them instead of a lookup throwing first.
   private async resolveConnectionProviderUniversalIdentifier({
     connectionProviderId,
     workspaceId,

@@ -310,6 +310,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   applicationVariable: {},
   viewSort: {},
   connectionProvider: {},
+  messagingProvider: {},
   searchFieldMetadata: {},
   timelineActivityType: {},
   settingsMenuItem: {},

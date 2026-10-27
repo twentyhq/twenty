@@ -102,6 +102,7 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'workflow':
     case 'workflowVersion':
     case 'connectionProvider':
+    case 'messagingProvider':
     case 'timelineActivityType':
     case 'agentChatChannel':
     case 'agentChatChannelRole':

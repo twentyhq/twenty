@@ -16,7 +16,7 @@ export const fromCreateMcpServerInputToFlatMcpServerToCreate = ({
     'id' | 'name' | 'label' | 'url' | 'connectionProviderId' | 'isActive'
   >;
   workspaceId: string;
-  flatApplication: FlatApplication;
+  flatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
   connectionProviderUniversalIdentifier: string | null;
 }): FlatMcpServer => {
   const now = new Date().toISOString();

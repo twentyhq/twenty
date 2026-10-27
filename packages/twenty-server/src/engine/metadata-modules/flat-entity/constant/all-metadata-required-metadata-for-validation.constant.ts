@@ -126,6 +126,10 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   },
   applicationVariable: {},
   connectionProvider: {},
+  messagingProvider: {
+    connectionProvider: true,
+    logicFunction: true,
+  },
   searchFieldMetadata: {
     objectMetadata: true,
     fieldMetadata: true,

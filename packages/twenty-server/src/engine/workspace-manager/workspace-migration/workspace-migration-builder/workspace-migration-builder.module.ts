@@ -35,6 +35,7 @@ import { WorkspaceMigrationApplicationVariableActionsBuilderService } from 'src/
 import { WorkspaceMigrationMcpServerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/mcp-server/workspace-migration-mcp-server-actions-builder.service';
 import { WorkspaceMigrationWebhookActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/workspace-migration-webhook-actions-builder.service';
 import { WorkspaceMigrationConnectionProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/workspace-migration-connection-provider-actions-builder.service';
+import { WorkspaceMigrationMessagingProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/messaging-provider/workspace-migration-messaging-provider-actions-builder.service';
 import { WorkspaceMigrationTimelineActivityTypeActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/workspace-migration-timeline-activity-type-actions-builder.service';
 import { WorkspaceMigrationAgentChatChannelActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel/workspace-migration-agent-chat-channel-actions-builder.service';
 import { WorkspaceMigrationAgentChatChannelRoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel-role/workspace-migration-agent-chat-channel-role-actions-builder.service';
@@ -80,6 +81,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationMcpServerActionsBuilderService,
     WorkspaceMigrationApplicationVariableActionsBuilderService,
     WorkspaceMigrationConnectionProviderActionsBuilderService,
+    WorkspaceMigrationMessagingProviderActionsBuilderService,
     WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
     WorkspaceMigrationSettingsMenuItemActionsBuilderService,
     WorkspaceMigrationAgentChatChannelActionsBuilderService,
@@ -121,6 +123,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationMcpServerActionsBuilderService,
     WorkspaceMigrationApplicationVariableActionsBuilderService,
     WorkspaceMigrationConnectionProviderActionsBuilderService,
+    WorkspaceMigrationMessagingProviderActionsBuilderService,
     WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
     WorkspaceMigrationSettingsMenuItemActionsBuilderService,
     WorkspaceMigrationAgentChatChannelActionsBuilderService,

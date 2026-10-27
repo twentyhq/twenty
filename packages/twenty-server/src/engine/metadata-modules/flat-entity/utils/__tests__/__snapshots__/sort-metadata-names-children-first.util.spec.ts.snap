@@ -26,6 +26,7 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "connectionProvider",
   "frontComponent",
   "logicFunction",
+  "messagingProvider",
   "pageLayout",
   "pageLayoutTab",
   "skill",

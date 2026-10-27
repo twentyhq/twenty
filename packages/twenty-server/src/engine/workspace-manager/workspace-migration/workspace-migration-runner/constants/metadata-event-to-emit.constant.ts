@@ -32,6 +32,7 @@ export const METADATA_EVENTS_TO_EMIT = {
   mcpServer: false,
   applicationVariable: false,
   connectionProvider: true,
+  messagingProvider: true,
   timelineActivityType: true,
   validationRule: true,
   searchFieldMetadata: true,
