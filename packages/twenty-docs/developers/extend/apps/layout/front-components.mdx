@@ -505,6 +505,7 @@ Available hooks:
 | `useColorScheme()`                            | `'light'` or `'dark'`                            | The host UI's active color scheme (`System` is already resolved)                                                 |
 | `useLocation()`                               | `FrontComponentLocation` or `null`               | The host route's pathname, query string, and hash, plus the host app's origin                                    |
 | `useToolCall()`                               | `FrontComponentToolCall` or `null`               | The AI tool call this component is rendering, when it was surfaced from a logic function's `toolTriggerSettings` |
+| `useEvent({ event, recordId, onEvent })` | `void` | Calls `onEvent` for each occurrence of one of the app's events on that record. See [Realtime Events](/developers/extend/apps/logic/realtime-events) |
 | `useFrontComponentExecutionContext(selector)` | varies                                           | Access the full execution context with a selector function                                                       |
 
 ### Object metadata
