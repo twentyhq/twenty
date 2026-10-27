@@ -155,7 +155,7 @@ export class AgentService {
     });
 
     return {
-      ...createdAgent,
+      ...resolveEffectiveAgent(createdAgent),
       roleId: flatRoleTargetToCreate?.roleId ?? null,
     };
   }
@@ -249,7 +249,7 @@ export class AgentService {
       recomputedFlatRoleTargetByAgentIdMaps[flatAgentToUpdate.id];
 
     return {
-      ...updatedAgent,
+      ...resolveEffectiveAgent(updatedAgent),
       roleId: existingRoleTarget?.roleId ?? null,
     };
   }
@@ -348,7 +348,7 @@ export class AgentService {
     }
 
     return agentsToDelete.map((agent) => ({
-      ...agent,
+      ...resolveEffectiveAgent(agent),
       roleId: flatRoleTargetByAgentIdMaps[agent.id]?.roleId ?? null,
     }));
   }
