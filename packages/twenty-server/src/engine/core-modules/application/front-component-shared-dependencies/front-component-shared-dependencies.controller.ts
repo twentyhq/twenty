@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Logger,
-  Param,
   Res,
   UseFilters,
   UseGuards,
@@ -15,8 +14,6 @@ import { ApiPath, FileFolder } from 'twenty-shared/types';
 
 import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import { FrontComponentSharedDependenciesService } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.service';
-import { extractChecksumFromCacheKey } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/extract-checksum-from-cache-key.util';
-import { getSharedDependenciesBundleCacheControl } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/get-shared-dependencies-bundle-cache-control.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -70,34 +67,32 @@ export class FrontComponentSharedDependenciesController {
     })
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Param('cacheKey') cacheKey?: string,
   ) {
-    const { fileResponse, frontComponentSharedDependenciesChecksum } =
-      await this.frontComponentSharedDependenciesService
-        .getBuiltSharedDependenciesPresignedUrlOrStream({
-          applicationId,
-          workspaceId: workspace.id,
-        })
-        .catch((error) => {
-          if (
-            error instanceof FileStorageException &&
-            error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-          ) {
-            throw new ApplicationException(
-              `Shared dependencies bundle not found for application "${applicationId}"`,
-              ApplicationExceptionCode.ENTITY_NOT_FOUND,
-            );
-          }
+    const fileResponse = await this.frontComponentSharedDependenciesService
+      .getBuiltSharedDependenciesPresignedUrlOrStream({
+        applicationId,
+        workspaceId: workspace.id,
+      })
+      .catch((error) => {
+        if (
+          error instanceof FileStorageException &&
+          error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+        ) {
+          throw new ApplicationException(
+            `Shared dependencies bundle not found for application "${applicationId}"`,
+            ApplicationExceptionCode.ENTITY_NOT_FOUND,
+          );
+        }
 
-          if (!(error instanceof ApplicationException)) {
-            this.logger.error(
-              'getBuiltSharedDependenciesPresignedUrlOrStream failed unexpectedly',
-              { error },
-            );
-          }
+        if (!(error instanceof ApplicationException)) {
+          this.logger.error(
+            'getBuiltSharedDependenciesPresignedUrlOrStream failed unexpectedly',
+            { error },
+          );
+        }
 
-          throw error;
-        });
+        throw error;
+      });
 
     if (fileResponse.type === 'redirect') {
       res.setHeader('Cache-Control', PRESIGNED_URL_NO_STORE_CACHE_CONTROL);
@@ -109,13 +104,6 @@ export class FrontComponentSharedDependenciesController {
       res,
       fileResponse.mimeType,
       FileFolder.BuiltFrontComponent,
-    );
-    res.setHeader(
-      'Cache-Control',
-      getSharedDependenciesBundleCacheControl({
-        requestedChecksum: extractChecksumFromCacheKey(cacheKey),
-        frontComponentSharedDependenciesChecksum,
-      }),
     );
 
     try {

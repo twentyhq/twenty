@@ -25,7 +25,7 @@ describe('getFingerprintedRestUrl', () => {
     );
   });
 
-  it('keeps shared dependency checksums outside static asset paths', () => {
+  it('uses the same checksum-fingerprinted path for shared dependencies', () => {
     expect(
       getFingerprintedRestUrl({
         resource: 'front-component-shared-dependencies',
@@ -33,7 +33,7 @@ describe('getFingerprintedRestUrl', () => {
         checksum: 'abc123',
       }),
     ).toBe(
-      `${REST_API_BASE_URL}/front-component-shared-dependencies/application-id/abc123`,
+      `${REST_API_BASE_URL}/front-component-shared-dependencies/application-id/abc123.js`,
     );
   });
 });

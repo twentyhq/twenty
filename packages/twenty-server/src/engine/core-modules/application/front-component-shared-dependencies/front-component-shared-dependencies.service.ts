@@ -29,10 +29,7 @@ export class FrontComponentSharedDependenciesService {
   }: {
     applicationId: string;
     workspaceId: string;
-  }): Promise<{
-    fileResponse: FileResponse;
-    frontComponentSharedDependenciesChecksum: string | null;
-  }> {
+  }): Promise<FileResponse> {
     const application =
       await this.applicationService.findOneApplicationWithRelationsOrThrow({
         id: applicationId,
@@ -65,23 +62,15 @@ export class FrontComponentSharedDependenciesService {
     });
 
     if (isDefined(presignedUrl)) {
-      return {
-        fileResponse: { type: 'redirect', presignedUrl },
-        frontComponentSharedDependenciesChecksum:
-          application.frontComponentSharedDependenciesChecksum,
-      };
+      return { type: 'redirect', presignedUrl };
     }
 
     const stream = await this.fileStorageService.readFile(resourceIdentifier);
 
     return {
-      fileResponse: {
-        type: 'stream',
-        stream,
-        mimeType: SHARED_DEPENDENCIES_BUNDLE_MIME_TYPE,
-      },
-      frontComponentSharedDependenciesChecksum:
-        application.frontComponentSharedDependenciesChecksum,
+      type: 'stream',
+      stream,
+      mimeType: SHARED_DEPENDENCIES_BUNDLE_MIME_TYPE,
     };
   }
 }

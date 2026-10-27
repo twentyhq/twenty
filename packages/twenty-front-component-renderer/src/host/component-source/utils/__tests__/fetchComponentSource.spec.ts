@@ -26,7 +26,7 @@ const SHARED_DEPENDENCIES_SOURCE =
   'export const __shared_dependencies_react__ = {};';
 
 const buildFingerprintedSharedDependenciesUrl = (checksum: string): string =>
-  `https://api.twenty.com/rest/front-component-shared-dependencies/application-id/${checksum}`;
+  `https://api.twenty.com/rest/front-component-shared-dependencies/application-id/${checksum}.js`;
 
 const FINGERPRINTED_SHARED_DEPENDENCIES_URL =
   buildFingerprintedSharedDependenciesUrl(
@@ -322,9 +322,9 @@ describe('fetchComponentSource', () => {
   it('evicts the previous shared dependencies bundle of the same application only', async () => {
     const cache = new FakeCache();
 
-    const staleSharedDependenciesUrl = `${buildFingerprintedSharedDependenciesUrl(
+    const staleSharedDependenciesUrl = buildFingerprintedSharedDependenciesUrl(
       computeSha256Hex('previous shared dependencies build'),
-    )}.js`;
+    );
     const otherApplicationSharedDependenciesUrl =
       'https://api.twenty.com/rest/front-component-shared-dependencies/other-application-id/0000000000000000000000000000000000000000000000000000000000000000.js';
 
@@ -356,29 +356,23 @@ describe('fetchComponentSource', () => {
     });
   });
 
-  it.each([
-    { url: BARE_URL },
-    { url: `${BARE_URL}/${computeSha256Hex(COMPONENT_SOURCE)}` },
-  ])(
-    'never touches the cache for a non-fingerprinted URL $url',
-    async ({ url }) => {
-      const cache = new FakeCache();
+  it('never touches the cache for a non-fingerprinted URL', async () => {
+    const cache = new FakeCache();
 
-      setupCaches(cache);
+    setupCaches(cache);
 
-      const fetchMock = jest.fn(async () =>
-        createFakeJsResponse('bare url source'),
-      );
+    const fetchMock = jest.fn(async () =>
+      createFakeJsResponse('bare url source'),
+    );
 
-      globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-      const source = await fetchComponentSource({ url });
+    const source = await fetchComponentSource({ url: BARE_URL });
 
-      expect(source).toBe('bare url source');
-      expect(cache.match).not.toHaveBeenCalled();
-      expect(cache.put).not.toHaveBeenCalled();
-    },
-  );
+    expect(source).toBe('bare url source');
+    expect(cache.match).not.toHaveBeenCalled();
+    expect(cache.put).not.toHaveBeenCalled();
+  });
 
   it('never touches the cache for a legacy md5-fingerprinted URL', async () => {
     const cache = new FakeCache();
