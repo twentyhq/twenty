@@ -9,13 +9,11 @@ import { ApplicationEventEmitterService } from 'src/engine/metadata-modules/even
 import { EventRealtimeService } from 'src/engine/metadata-modules/event-metadata/services/event-realtime.service';
 import { MemberEventSubscriptionService } from 'src/engine/metadata-modules/event-metadata/services/member-event-subscription.service';
 import { VisitorEventTokenService } from 'src/engine/metadata-modules/event-metadata/services/visitor-event-token.service';
-import { FlatEventMetadataModule } from 'src/engine/metadata-modules/flat-event-metadata/flat-event-metadata.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
-    FlatEventMetadataModule,
     WorkspaceCacheModule,
     WorkspaceCacheStorageModule,
     JwtModule,
