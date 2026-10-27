@@ -23,7 +23,6 @@ type IsChannelTabVisibleArgs = {
   isLoading: boolean;
 };
 
-// Connecting happens on the General tab, so a channel tab exists only once a channel is ready.
 // Accounts load before their channels, so a missing channel only hides the tab once loading is done.
 const isChannelTabVisible = ({
   isSupported,
