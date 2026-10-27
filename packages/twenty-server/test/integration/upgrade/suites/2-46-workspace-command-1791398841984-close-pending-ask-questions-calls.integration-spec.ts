@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -211,11 +212,19 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
 
   it('resolves the wake-up of the agent run suspended on the closed call', async () => {
     expect(addJob).toHaveBeenCalledTimes(1);
-    expect(addJob).toHaveBeenCalledWith(RESUME_PENDING_WAKE_UP_JOB_NAME, {
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      wakeUpId,
-      answer: { result: {} },
-    });
+    expect(addJob).toHaveBeenCalledWith(
+      RESUME_PENDING_WAKE_UP_JOB_NAME,
+      {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        wakeUpId,
+        answer: { result: {} },
+      },
+      {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
+    );
   });
 
   it('resolves the wake-up again on a rerun, as long as it was not claimed', async () => {
@@ -224,11 +233,19 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
     await runCommand();
 
     expect(addJob).toHaveBeenCalledTimes(1);
-    expect(addJob).toHaveBeenCalledWith(RESUME_PENDING_WAKE_UP_JOB_NAME, {
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      wakeUpId,
-      answer: { result: {} },
-    });
+    expect(addJob).toHaveBeenCalledWith(
+      RESUME_PENDING_WAKE_UP_JOB_NAME,
+      {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        wakeUpId,
+        answer: { result: {} },
+      },
+      {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
+    );
     expect(await readThread(chatThread)).toEqual({
       pendingQuestionMessageId: null,
       turnStatus: 'completed',
