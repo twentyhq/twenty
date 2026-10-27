@@ -190,8 +190,6 @@ const workflowStepManifestOptions = [
                 'Record picker fields require an object universal identifier',
             });
           }
-          // A select offers the options of an existing select field, which the
-          // install resolves to its id in the workspace
           if (
             (field.type === 'SELECT' || field.type === 'MULTI_SELECT') &&
             !z

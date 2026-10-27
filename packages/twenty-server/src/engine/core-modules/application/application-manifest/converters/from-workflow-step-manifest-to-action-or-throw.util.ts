@@ -144,7 +144,6 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
             );
           }
           const selectedField = field(selectedFieldUniversalIdentifier);
-          // The form offers that field's options, so the types must match, as in the builder
           if (selectedField.type !== formField.type) {
             throw new ApplicationException(
               `Select field ${formField.name} must reference a ${formField.type} field`,
