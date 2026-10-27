@@ -1,9 +1,13 @@
-import { type Manifest } from 'twenty-shared/application';
+import {
+  APPLICATION_PACKAGE_YARN_LOCK_PATH,
+  type Manifest,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export type ApplicationFileToStore = {
   relativePath: string;
+  resourcePath?: string;
   fileFolder: FileFolder;
   isRequired: boolean;
 };
@@ -16,6 +20,12 @@ export const buildApplicationFileList = (
       relativePath: 'package.json',
       fileFolder: FileFolder.Dependencies,
       isRequired: true,
+    },
+    {
+      relativePath: APPLICATION_PACKAGE_YARN_LOCK_PATH,
+      resourcePath: 'yarn.lock',
+      fileFolder: FileFolder.Dependencies,
+      isRequired: false,
     },
     {
       relativePath: 'manifest.json',

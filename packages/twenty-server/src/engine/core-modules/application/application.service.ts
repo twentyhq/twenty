@@ -14,6 +14,7 @@ import {
 } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { computeApplicationPackageChecksums } from 'src/engine/core-modules/application/application-package/utils/compute-application-package-checksums.util';
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
 import { getDefaultApplicationPackageFieldsForApplication } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields-for-application.util';
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
@@ -35,7 +36,6 @@ import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
 import { serializeApplicationForBroadcast } from 'src/engine/core-modules/application/utils/serialize-application-for-broadcast.util';
@@ -687,10 +687,11 @@ export class ApplicationService {
     yarnLockContent: string;
     queryRunner?: QueryRunner;
   }): Promise<void> {
-    const packageJsonChecksum = logicFunctionCreateHash(
-      JSON.stringify(JSON.parse(packageJsonContent)),
-    );
-    const yarnLockChecksum = logicFunctionCreateHash(yarnLockContent);
+    const { packageJsonChecksum, yarnLockChecksum } =
+      computeApplicationPackageChecksums({
+        packageJsonContent,
+        yarnLockContent,
+      });
     const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
       packageJsonContent,
       yarnLockContent,

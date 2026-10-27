@@ -5,13 +5,11 @@
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
-    "dev": "mintlify dev",
-    "validate": "mintlify validate",
+    "mintlify": "npx --yes mintlify@4.2.1125",
+    "dev": "nx run twenty-docs:dev",
+    "validate": "nx run twenty-docs:validate",
     "fix-links": "tsx scripts/fix-translated-links.ts",
     "lint": "npx oxlint -c .oxlintrc.json ."
-  },
-  "dependencies": {
-    "mintlify": "^4.2.956"
   },
   "devDependencies": {
     "@mdx-js/mdx": "^3.1.1",

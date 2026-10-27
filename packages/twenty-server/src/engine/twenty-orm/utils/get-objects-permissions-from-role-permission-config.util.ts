@@ -2,34 +2,32 @@ import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
-import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
+import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
+import { type ApplicationDefaultRoleMaps } from 'src/engine/twenty-orm/types/application-default-role-maps.type';
 
 export const getObjectsPermissionsFromRolePermissionConfig = ({
   rolesPermissions,
   rolePermissionConfig,
+  flatObjectMetadataMaps,
+  flatApplicationMaps,
 }: {
   rolesPermissions: ObjectsPermissionsByRoleId;
   rolePermissionConfig: RolePermissionConfig;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatApplicationMaps: ApplicationDefaultRoleMaps;
 }): ObjectsPermissions => {
   if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
     return {};
   }
 
-  const roleIds = getRoleIdsToIntersect(rolePermissionConfig.intersectionOf);
-
-  if (!isDefined(roleIds)) {
-    return {};
-  }
-
-  const permissionsPerRole = roleIds.map((roleId) => rolesPermissions[roleId]);
-
-  if (!permissionsPerRole.every(isDefined)) {
-    return {};
-  }
-
-  return computePermissionIntersection(permissionsPerRole);
+  return computeObjectsPermissionsForRolePermissionConfig({
+    intersectionOf: rolePermissionConfig.intersectionOf,
+    rolesPermissions,
+    flatObjectMetadataMaps,
+    flatApplicationMaps,
+  });
 };
