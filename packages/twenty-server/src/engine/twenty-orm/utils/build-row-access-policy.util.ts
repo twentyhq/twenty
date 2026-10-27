@@ -29,6 +29,9 @@ export const buildRowAccessPolicy = ({
     !isMetadataWritePermitted({
       writability: target.flatObjectMetadata.writability,
       isSystemContext: false,
+      isOwningApplication: subject.isOwningApplication(
+        target.flatObjectMetadata,
+      ),
     })
   ) {
     return { kind: 'denied' };

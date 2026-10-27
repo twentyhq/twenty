@@ -2136,7 +2136,7 @@ export interface MetadataEvent {
 /** Metadata Event Action */
 export type MetadataEventAction = 'CREATED' | 'DELETED' | 'UPDATED'
 
-export type MetadataReadability = 'INHERITED' | 'OPEN' | 'PRIVATE' | 'SYSTEM'
+export type MetadataReadability = 'APPLICATION' | 'INHERITED' | 'OPEN' | 'PRIVATE' | 'SYSTEM'
 
 export interface MetadataTranslation {
     canonicalValue: Scalars['String']
@@ -2155,7 +2155,7 @@ export interface MetadataTranslation {
 /** Where a resolved metadata label comes from: a workspace-authored translation, a shipped application catalog, or inheritance from the canonical value */
 export type MetadataTranslationProvenance = 'INHERITED' | 'SHIPPED' | 'WORKSPACE'
 
-export type MetadataWritability = 'OPEN' | 'SYSTEM'
+export type MetadataWritability = 'APPLICATION' | 'OPEN' | 'SYSTEM'
 
 export interface MinimalMetadata {
     collectionHashes: CollectionHash[]

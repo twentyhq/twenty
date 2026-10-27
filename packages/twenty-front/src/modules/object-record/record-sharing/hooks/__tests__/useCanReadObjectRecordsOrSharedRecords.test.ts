@@ -69,11 +69,12 @@ describe('useCanReadObjectRecordsOrSharedRecords', () => {
     },
   );
 
-  it('denies on SYSTEM objects, whose records are never shared', () => {
-    expect(renderCanRead({ readability: MetadataReadability.SYSTEM })).toBe(
-      false,
-    );
-  });
+  it.each([MetadataReadability.APPLICATION, MetadataReadability.SYSTEM])(
+    'denies on %s objects, whose records are never shared',
+    (readability) => {
+      expect(renderCanRead({ readability })).toBe(false);
+    },
+  );
 
   it('denies when record sharing is disabled', () => {
     mockIsRecordLevelSharingEnabled.mockReturnValue(false);

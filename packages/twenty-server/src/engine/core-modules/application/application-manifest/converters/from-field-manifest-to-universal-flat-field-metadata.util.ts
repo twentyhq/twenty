@@ -10,7 +10,6 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { isLegacyApplicationMetadataAccess } from 'src/engine/core-modules/application/application-manifest/utils/is-legacy-application-metadata-access.util';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { isAuditLoggableFieldType } from 'src/engine/metadata-modules/field-metadata/utils/is-audit-loggable-field-type.util';
@@ -133,9 +132,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     isSystem: false,
     isSystemSideEffect: false,
     isUIEditable: fieldManifest.isUIEditable ?? true,
-    writability: isLegacyApplicationMetadataAccess(fieldManifest.writability)
-      ? MetadataWritability.SYSTEM
-      : (fieldManifest.writability ?? MetadataWritability.OPEN),
+    writability: fieldManifest.writability ?? MetadataWritability.OPEN,
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: fieldManifest.isUnique ?? false,
     isSearchable: resolveManifestFieldIsSearchable({

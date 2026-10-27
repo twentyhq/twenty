@@ -1,7 +1,11 @@
 import { type ObjectManifest } from 'twenty-shared/application';
-import { ObjectOpenRecordIn, ObjectSharingReach } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  ObjectOpenRecordIn,
+  ObjectSharingReach,
+} from 'twenty-shared/types';
 
-import { resolveObjectManifestRecordAccess } from 'src/engine/core-modules/application/application-manifest/utils/resolve-object-manifest-record-access.util';
+import { resolveObjectManifestWritability } from 'src/engine/core-modules/application/application-manifest/utils/resolve-object-manifest-writability.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 export const fromObjectManifestToUniversalFlatObjectMetadata = ({
@@ -31,7 +35,8 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     isSystem: false,
     isUIEditable: objectManifest.isUIEditable ?? true,
     isUICreatable: objectManifest.isUICreatable ?? true,
-    ...resolveObjectManifestRecordAccess(objectManifest),
+    ...resolveObjectManifestWritability(objectManifest),
+    readability: objectManifest.readability ?? MetadataReadability.OPEN,
     readabilityParentFieldUniversalIdentifiers:
       objectManifest.readabilityParentFieldUniversalIdentifiers ?? null,
     sharingReach: objectManifest.sharingReach ?? ObjectSharingReach.WORKSPACE,

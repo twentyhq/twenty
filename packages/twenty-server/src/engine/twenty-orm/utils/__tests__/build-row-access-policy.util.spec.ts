@@ -164,6 +164,14 @@ describe('buildRowAccessPolicy', () => {
     },
   );
 
+  it('keeps APPLICATION records restricted to their owning application', () => {
+    const object = { ...note, readability: MetadataReadability.APPLICATION };
+    expect(build(readEverything, object)).toEqual({ kind: 'denied' });
+    expect(
+      build({ ...readEverything, isOwningApplication: () => true }, object),
+    ).toEqual({ kind: 'open' });
+  });
+
   it('opens an OPEN object to a subject without predicate', () => {
     expect(build(readEverything, note)).toEqual({ kind: 'open' });
   });
@@ -407,7 +415,7 @@ describe('buildRowAccessPolicy', () => {
       build({ ...readEverything, isOwningApplication: () => true }, attachment),
     ).toEqual({ kind: 'open' });
   });
-  it.each([MetadataWritability.SYSTEM])(
+  it.each([MetadataWritability.SYSTEM, MetadataWritability.APPLICATION])(
     'does not inherit write access through a %s parent',
     (writability) => {
       jest.mocked(resolveInheritedReadabilityParents).mockReturnValue([

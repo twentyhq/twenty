@@ -7,14 +7,14 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// ReplaceApplicationMetadataAccessSlowInstanceCommand updates rows behind the flat-entity caches
+// the 2.53 slow instance command updates object metadata rows behind this cache
 @RegisteredWorkspaceCommand('2.53.0', 1793129132001)
 @Command({
-  name: 'upgrade:2-53:flush-metadata-after-application-access-replacement',
+  name: 'upgrade:2-53:flush-object-metadata-after-application-writability-move',
   description:
-    'Flush the object and field metadata caches after APPLICATION readability and writability were replaced',
+    'Flush the object metadata cache after APPLICATION writability moved to disabled object permission actions',
 })
-export class FlushMetadataAfterApplicationAccessReplacementCommand extends ProvisionedWorkspaceCommandRunner {
+export class FlushObjectMetadataAfterApplicationWritabilityMoveCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -32,7 +32,6 @@ export class FlushMetadataAfterApplicationAccessReplacementCommand extends Provi
 
     await this.workspaceCacheService.flush(workspaceId, [
       getMetadataFlatEntityMapsKey('objectMetadata'),
-      getMetadataFlatEntityMapsKey('fieldMetadata'),
     ]);
   }
 }

@@ -211,7 +211,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
 
   it('checks enum imports actually used by generated files', async () => {
     const state = JSON.parse(JSON.stringify(exported));
-    state.manifest.objects[0].writability = MetadataWritability.SYSTEM;
+    state.manifest.objects[0].writability = MetadataWritability.APPLICATION;
     exported = state;
     const result = await runJson();
     expect(result.envelope.error).toMatchObject({

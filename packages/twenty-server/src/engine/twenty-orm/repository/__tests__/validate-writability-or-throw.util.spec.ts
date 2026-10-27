@@ -35,6 +35,12 @@ const applicationContext = {
   application: { id: OWNING_APPLICATION_ID },
 } as WorkspaceAuthContext;
 
+const otherApplicationContext = {
+  type: 'application',
+  workspace: { id: 'workspace-1' },
+  application: { id: 'app-2' },
+} as WorkspaceAuthContext;
+
 const systemContext = {
   type: 'system',
   workspace: { id: 'workspace-1' },
@@ -63,6 +69,16 @@ const plainUserContext = {
   user: { id: 'user-1' },
   workspaceMemberId: 'workspace-member-1',
   workspaceMember: { id: 'workspace-member-1' },
+} as WorkspaceAuthContext;
+
+const otherApplicationUserContext = {
+  type: 'user',
+  workspace: { id: 'workspace-1' },
+  userWorkspaceId: 'user-workspace-1',
+  user: { id: 'user-1' },
+  workspaceMemberId: 'workspace-member-1',
+  workspaceMember: { id: 'workspace-member-1' },
+  application: { id: 'app-2' },
 } as WorkspaceAuthContext;
 
 const validate = ({
@@ -102,6 +118,69 @@ describe('validateWritabilityOrThrow', () => {
     ).not.toThrow();
   });
 
+  it('should let the owning application write an APPLICATION object', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: applicationContext,
+      }),
+    ).not.toThrow();
+  });
+
+  it('should refuse another application on an APPLICATION object', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: otherApplicationContext,
+      }),
+    ).toThrow(/not writable/);
+  });
+
+  it('should let the owning application write while serving a person', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: userContextCarryingApplication,
+      }),
+    ).not.toThrow();
+  });
+
+  it('should refuse a plain session on an APPLICATION object', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: plainUserContext,
+      }),
+    ).toThrow();
+  });
+
+  it('should refuse another application serving a person on an APPLICATION object', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: otherApplicationUserContext,
+      }),
+    ).toThrow(/not writable/);
+  });
+
+  it('should refuse an api key context on an APPLICATION object', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: apiKeyContext,
+      }),
+    ).toThrow(/not writable/);
+  });
+
+  it('should refuse a missing context on an APPLICATION object', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: undefined,
+      }),
+    ).toThrow(/not writable/);
+  });
+
   it('should refuse every token-bound caller on a SYSTEM object', () => {
     for (const authContext of [
       applicationContext,
@@ -128,6 +207,15 @@ describe('validateWritabilityOrThrow', () => {
     ).not.toThrow();
   });
 
+  it('should let a system context write an APPLICATION object', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: systemContext,
+      }),
+    ).not.toThrow();
+  });
+
   it('should let a system context write a SYSTEM field', () => {
     expect(() =>
       validate({
@@ -140,10 +228,19 @@ describe('validateWritabilityOrThrow', () => {
   it('should enforce field writability even when the object is OPEN', () => {
     expect(() =>
       validate({
-        fieldWritability: MetadataWritability.SYSTEM,
+        fieldWritability: MetadataWritability.APPLICATION,
         authContext: plainUserContext,
       }),
     ).toThrow(/field "status".*not writable/);
+  });
+
+  it('should let the owning application write an APPLICATION field', () => {
+    expect(() =>
+      validate({
+        fieldWritability: MetadataWritability.APPLICATION,
+        authContext: applicationContext,
+      }),
+    ).not.toThrow();
   });
 
   it('should refuse every caller on a SYSTEM field', () => {

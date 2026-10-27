@@ -13,22 +13,32 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
+import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
 
 const isWritePermittedByWritability = ({
   writability,
+  owningApplicationId,
   authContext,
 }: {
   writability: MetadataWritability | undefined;
+  owningApplicationId: string | undefined;
   authContext: WorkspaceAuthContext | undefined;
-}): boolean =>
-  isMetadataWritePermitted({
+}): boolean => {
+  return isMetadataWritePermitted({
     writability,
     isSystemContext: authContext?.type === 'system',
+    isOwningApplication:
+      isDefined(authContext) &&
+      isOwningApplicationAuthContext({ authContext, owningApplicationId }),
   });
+};
 
 type ValidateWritabilityOrThrowArgs = {
   operationType: OperationType;
-  objectMetadata: Pick<FlatObjectMetadata, 'writability' | 'nameSingular'>;
+  objectMetadata: Pick<
+    FlatObjectMetadata,
+    'writability' | 'applicationId' | 'nameSingular'
+  >;
   updatedColumns: string[];
   columnNameToFieldMetadataIdMap: Record<string, string>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -50,6 +60,7 @@ export const validateWritabilityOrThrow = ({
   if (
     !isWritePermittedByWritability({
       writability: objectMetadata.writability,
+      owningApplicationId: objectMetadata.applicationId,
       authContext,
     })
   ) {
@@ -78,6 +89,7 @@ export const validateWritabilityOrThrow = ({
     if (
       !isWritePermittedByWritability({
         writability: fieldMetadata.writability,
+        owningApplicationId: fieldMetadata.applicationId,
         authContext,
       })
     ) {

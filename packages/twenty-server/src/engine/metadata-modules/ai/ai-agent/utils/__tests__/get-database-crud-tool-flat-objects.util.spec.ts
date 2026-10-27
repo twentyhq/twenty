@@ -40,6 +40,7 @@ describe('getDatabaseCrudToolFlatObjects', () => {
 
   it.each([
     MetadataReadability.OPEN,
+    MetadataReadability.APPLICATION,
     MetadataReadability.PRIVATE,
     MetadataReadability.INHERITED,
   ])(
