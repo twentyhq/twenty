@@ -185,6 +185,12 @@ export class McpProtocolService {
             applicationRoleId: application.defaultRoleId,
             ...agentRoleIdsBySource,
           },
+          principalBySource: {
+            applicationRoleId: {
+              type: 'application',
+              applicationId: application.id,
+            },
+          },
         },
       };
     }
