@@ -150,12 +150,15 @@ const CollapsibleWrapper = styled.div`
   opacity: 0;
   transition:
     grid-template-rows 0.4s ${EASING.standard},
-    opacity 0.4s ${EASING.standard};
+    opacity 0.4s ${EASING.standard},
+    visibility 0.4s ${EASING.standard};
+  visibility: hidden;
   width: 100%;
 
   &[data-expanded] {
     grid-template-rows: 1fr;
     opacity: 1;
+    visibility: visible;
   }
 `;
 
