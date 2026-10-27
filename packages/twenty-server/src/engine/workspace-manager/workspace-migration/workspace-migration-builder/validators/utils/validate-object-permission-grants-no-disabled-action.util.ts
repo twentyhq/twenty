@@ -1,4 +1,5 @@
 import { msg, t } from '@lingui/core/macro';
+import { type ObjectPermissionAction } from 'twenty-shared/application';
 
 import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
@@ -9,8 +10,13 @@ export const validateObjectPermissionGrantsNoDisabledAction = ({
   flatObjectPermission,
   flatObjectMetadata,
 }: {
-  flatObjectPermission: UniversalFlatObjectPermission;
-  flatObjectMetadata: UniversalFlatObjectMetadata | undefined;
+  flatObjectPermission: Pick<
+    UniversalFlatObjectPermission,
+    ObjectPermissionAction | 'objectMetadataUniversalIdentifier'
+  >;
+  flatObjectMetadata:
+    | Pick<UniversalFlatObjectMetadata, 'disabledObjectPermissionActions'>
+    | undefined;
 }): FlatEntityValidationError[] =>
   (flatObjectMetadata?.disabledObjectPermissionActions ?? [])
     .filter((action) => flatObjectPermission[action] === true)
