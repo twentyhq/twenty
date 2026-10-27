@@ -13,13 +13,11 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { Status } from 'twenty-ui/primitives/data-display';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 
-const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
-  'minmax(0, 1fr) 160px 180px 36px';
+const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS = 'minmax(0, 1fr) 160px 36px';
 
 export const SettingsApplicationConnectionsSection = ({
   applicationId,
@@ -40,17 +38,15 @@ export const SettingsApplicationConnectionsSection = ({
   return (
     <>
       {connectionProviders.map((provider) => {
+        if (provider.scope !== 'WORKSPACE') {
+          return null;
+        }
+
         const canStartAuthorization =
           canStartConnectionProviderAuthorization(provider);
-        const canAddConnection = provider.scope === 'WORKSPACE';
-
         const providerConnections = connectedAccounts.filter(
           (account) => account.connectionProviderId === provider.id,
         );
-
-        if (!canAddConnection && providerConnections.length === 0) {
-          return null;
-        }
 
         return (
           <SettingsApplicationConnectionProviderSection
@@ -58,9 +54,7 @@ export const SettingsApplicationConnectionsSection = ({
             providerDisplayName={provider.displayName}
             providerLogoUrl={provider.logoUrl}
             description={t`Manage connections used by this app to call ${provider.displayName}.`}
-            shouldShowMissingCredentialsBanner={
-              canAddConnection && !canStartAuthorization
-            }
+            shouldShowMissingCredentialsBanner={!canStartAuthorization}
           >
             {providerConnections.length > 0 && (
               <Table>
@@ -71,7 +65,6 @@ export const SettingsApplicationConnectionsSection = ({
                 >
                   <TableHeader>{t`Connection`}</TableHeader>
                   <TableHeader>{t`Status`}</TableHeader>
-                  <TableHeader>{t`Visibility`}</TableHeader>
                   <TableHeader />
                 </TableRow>
                 <SettingsApplicationConnectionTableRows>
@@ -106,17 +99,6 @@ export const SettingsApplicationConnectionsSection = ({
                           connection={connection}
                         />
                       </TableCell>
-                      <TableCell clickable>
-                        <Status
-                          color={
-                            connection.scope === 'WORKSPACE' ? 'blue' : 'gray'
-                          }
-                        >
-                          {connection.scope === 'WORKSPACE'
-                            ? t`Workspace shared`
-                            : t`Just for me`}
-                        </Status>
-                      </TableCell>
                       <TableCell
                         align="right"
                         color={themeCssVariables.font.color.tertiary}
@@ -133,7 +115,7 @@ export const SettingsApplicationConnectionsSection = ({
                 </SettingsApplicationConnectionTableRows>
               </Table>
             )}
-            {canAddConnection && canStartAuthorization && (
+            {canStartAuthorization && (
               <SettingsApplicationAddConnectionButton
                 applicationId={applicationId}
                 providerName={provider.name}
