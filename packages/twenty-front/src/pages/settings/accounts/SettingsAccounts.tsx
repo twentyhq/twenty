@@ -3,6 +3,7 @@ import { SettingsAccountsLegacySections } from '@/settings/accounts/components/S
 import { SettingsAccountsMessageChannelsSSEEffect } from '@/settings/accounts/components/SettingsAccountsMessageChannelsSSEEffect';
 import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
 import { SettingsAppPreferencesAppsSection } from '@/settings/app-preferences/components/SettingsAppPreferencesAppsSection';
+import { SETTINGS_APP_PREFERENCES_TAB_IDS } from '@/settings/app-preferences/constants/SettingsAppPreferencesTabIds';
 import { SETTINGS_APP_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsAppPreferencesTabListComponentId';
 import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -26,8 +27,16 @@ export const SettingsAccounts = () => {
   const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
 
   const tabs = [
-    { id: 'apps', title: t`Apps`, Icon: IconApps },
-    { id: 'accounts', title: t`Accounts`, Icon: IconAt },
+    {
+      id: SETTINGS_APP_PREFERENCES_TAB_IDS.APPS,
+      title: t`Apps`,
+      Icon: IconApps,
+    },
+    {
+      id: SETTINGS_APP_PREFERENCES_TAB_IDS.ACCOUNTS,
+      title: t`Accounts`,
+      Icon: IconAt,
+    },
   ];
 
   const activeTabId = useSettingsActiveTabId(
@@ -36,7 +45,7 @@ export const SettingsAccounts = () => {
   );
 
   const renderAppPreferencesContent = () => {
-    if (activeTabId === 'accounts') {
+    if (activeTabId === SETTINGS_APP_PREFERENCES_TAB_IDS.ACCOUNTS) {
       return (
         <>
           <SettingsAccountGroupsSection />
