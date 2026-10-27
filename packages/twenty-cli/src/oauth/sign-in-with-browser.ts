@@ -66,7 +66,12 @@ export const signInWithBrowser = async ({
       signal,
     });
 
+    await callbackServer.complete(true);
+
     return { ...tokens, clientId: oauthServer.clientId };
+  } catch (error) {
+    await callbackServer.complete(false);
+    throw error;
   } finally {
     callbackServer.close();
   }

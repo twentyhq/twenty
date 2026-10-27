@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.53.0', 1793114132041)
+@RegisteredInstanceCommand('2.53.0', 1793150000001)
 export class AddEventMetadataFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('CREATE TABLE "core"."eventMetadata" ("workspaceId" uuid NOT NULL, "universalIdentifier" uuid NOT NULL, "applicationId" uuid NOT NULL, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "label" character varying NOT NULL, "description" character varying, "icon" character varying, "properties" jsonb NOT NULL DEFAULT \'[]\', "capabilities" jsonb NOT NULL DEFAULT \'{}\', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "IDX_EVENT_METADATA_NAME_APPLICATION_UNIQUE" UNIQUE ("name", "applicationId"), CONSTRAINT "PK_7762390924658f4d3ad88c45be0" PRIMARY KEY ("id"))');

@@ -190,6 +190,20 @@ const workflowStepManifestOptions = [
                 'Record picker fields require an object universal identifier',
             });
           }
+          if (
+            (field.type === 'SELECT' || field.type === 'MULTI_SELECT') &&
+            !z
+              .uuid()
+              .safeParse(field.settings?.selectedFieldUniversalIdentifier)
+              .success
+          ) {
+            context.addIssue({
+              code: 'custom',
+              path: ['settings', 'selectedFieldUniversalIdentifier'],
+              message:
+                'Select fields require the universal identifier of the field whose options they offer',
+            });
+          }
         }),
     ),
   ),

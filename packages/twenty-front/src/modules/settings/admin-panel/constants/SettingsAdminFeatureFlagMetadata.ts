@@ -44,4 +44,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`App preferences`,
     description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
   },
+  [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
+    label: msg`MCP servers`,
+    description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
+  },
 };

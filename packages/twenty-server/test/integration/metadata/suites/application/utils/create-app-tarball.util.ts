@@ -5,6 +5,7 @@ import { join } from 'path';
 
 import * as tar from 'tar';
 import {
+  APPLICATION_PACKAGE_YARN_LOCK_PATH,
   computeDependencyFileChecksum,
   computePackageJsonChecksum,
 } from 'twenty-shared/application';
@@ -28,7 +29,8 @@ const declareDependencyChecksums = (
     return files;
   }
 
-  const yarnLockContent = files['yarn.lock'];
+  const yarnLockContent =
+    files[APPLICATION_PACKAGE_YARN_LOCK_PATH] ?? files['yarn.lock'];
 
   return {
     ...files,

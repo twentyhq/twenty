@@ -53,6 +53,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
     objectMetadata: true,
   },
   webhook: {},
+  mcpServer: {},
   applicationVariable: {},
   connectionProvider: {},
   messagingProvider: {},

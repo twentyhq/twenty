@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import crypto from 'crypto';
 import { promises as fs } from 'fs';
 import { dirname, join } from 'path';
+import { EMPTY_YARN_LOCK_CONTENT } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
@@ -10,7 +11,6 @@ import { type QueryRunner } from 'typeorm';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { EMPTY_YARN_LOCK_CONTENT } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/empty-yarn-lock-content.constant';
 import {
   getLogicFunctionSeedProjectFiles,
   LogicFunctionSeedProjectFile,
