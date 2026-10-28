@@ -6,9 +6,15 @@ See `logic.md` for post-install hooks. See `app-structure.md` for source layout.
 
 ## Mental Model
 
-Twenty workflows are workspace records, not app entities — no `define*` primitive. Ship them via `definePostInstallLogicFunction` and the workspace API.
+Declare app workflows with `defineWorkflow` from `twenty-sdk/define`: one call per workflow, holding a trigger and its steps. `twenty app pull` writes workflows in this form.
 
-A workflow is a `Workflow` plus at least one `WorkflowVersion`. Creating a `Workflow` auto-creates its draft `v1`; never create a `WorkflowVersion` directly.
+Workflows created at runtime through the workspace API are a `Workflow` plus at least one `WorkflowVersion`. Creating a `Workflow` auto-creates its draft `v1`; never create a `WorkflowVersion` directly.
+
+## Email and Calendar Steps
+
+- `SEND_EMAIL`, `DRAFT_EMAIL` and `CREATE_CALENDAR_EVENT` name their account with exactly one of `connectedAccountId` or `connectedAccountHandle`.
+- Use `connectedAccountHandle` (the account's email address) in app code: ids only exist in one workspace. Apply resolves it to the oldest active account with that address that can run the step, and fails if none can.
+- `twenty app pull` writes a literal account id as its handle. Variables and workspace member ids stay `connectedAccountId`.
 
 ## Manual Record Trigger
 
