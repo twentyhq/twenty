@@ -228,12 +228,12 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
 
         const currentDepsLayerName =
           getLambdaLayerNameFromArn(currentDepsLayerArn);
-        const depsLayerNames =
+        const targetDepsLayerNames =
           await layerManager.getDepsLayerNames(flatApplication);
 
         if (
           isDefined(currentDepsLayerName) &&
-          depsLayerNames.includes(currentDepsLayerName)
+          targetDepsLayerNames.includes(currentDepsLayerName)
         ) {
           return false;
         }
