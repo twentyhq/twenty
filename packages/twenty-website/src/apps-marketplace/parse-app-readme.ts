@@ -18,7 +18,6 @@ export type AppReadmeBlock =
 
 export type AppReadmeSection = {
   title: string;
-  markdown: string;
   blocks: AppReadmeBlock[];
   hasSubheadings: boolean;
 };
@@ -70,12 +69,8 @@ const toBodyInlineNodes = (
 
 const toListItem = (item: ListItem): AppReadmeListItem => {
   const [firstChild, ...otherChildren] = item.children;
-
-  if (firstChild?.type !== 'paragraph') {
-    return { markdown: serialize(item.children) };
-  }
-
-  const [leadingNode, ...otherInlineNodes] = firstChild.children;
+  const [leadingNode, ...otherInlineNodes] =
+    firstChild?.type === 'paragraph' ? firstChild.children : [];
 
   if (leadingNode?.type !== 'strong') {
     return { markdown: serialize(item.children) };
@@ -155,7 +150,6 @@ export const parseAppReadme = (markdown: string): AppReadme => {
     intro: toBlocks(introNodes),
     sections: sections.map(({ title, nodes }) => ({
       title,
-      markdown: serialize(nodes),
       blocks: toBlocks(nodes),
       hasSubheadings: nodes.some((node) => node.type === 'heading'),
     })),

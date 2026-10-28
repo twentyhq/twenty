@@ -3,7 +3,7 @@ import remarkGfm from 'remark-gfm';
 
 import { ExternalLink } from './ExternalLink';
 
-// h1/h2 are demoted to h3 so markdown headings never emit a second <h1> on the page
+// h1/h2 are demoted to h3 so partner headings never emit a second <h1> on the page
 // (the page title already owns the h1). Without this they'd unwrap to bare inline text.
 const ALLOWED = [
   'p',

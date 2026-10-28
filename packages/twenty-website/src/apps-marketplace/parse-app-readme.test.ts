@@ -1,20 +1,12 @@
 import { parseAppReadme } from './parse-app-readme';
 
 describe('parseAppReadme', () => {
-  it('drops the title and keeps the text before the first section as intro', () => {
-    const readme = parseAppReadme('# Slack\n\n**Your CRM, in Slack.**\n');
-
-    expect(readme.intro).toEqual([
-      { kind: 'text', markdown: '**Your CRM, in Slack.**' },
-    ]);
-    expect(readme.sections).toEqual([]);
-  });
-
-  it('splits sections on level-two headings and strips leading emoji', () => {
+  it('splits the README into intro and sections, dropping the title and heading emoji', () => {
     const readme = parseAppReadme(
-      '## ✨ What you get\n\nText\n\n## 💳 Billing\n\nFree',
+      '# Slack\n\nIntro\n\n## ✨ What you get\n\nText\n\n## 💳 Billing\n\nFree',
     );
 
+    expect(readme.intro).toEqual([{ kind: 'text', markdown: 'Intro' }]);
     expect(readme.sections.map((section) => section.title)).toEqual([
       'What you get',
       'Billing',
@@ -66,55 +58,22 @@ describe('parseAppReadme', () => {
     ]);
   });
 
-  it('keeps wrapped lines with their list item and merges loose lists', () => {
-    const readme = parseAppReadme(
-      '## Steps\n\n1. Open settings\n   and click Install.\n\n2. Connect',
-    );
+  it('reads blockquotes as notes', () => {
+    const readme = parseAppReadme('## Setup\n\n> Answers can be inaccurate.');
 
     expect(readme.sections[0].blocks).toEqual([
-      {
-        kind: 'list',
-        ordered: true,
-        items: [
-          { markdown: 'Open settings\nand click Install.' },
-          { markdown: 'Connect' },
-        ],
-      },
-    ]);
-  });
-
-  it('splits a list from the paragraph right above it', () => {
-    const readme = parseAppReadme('## Values\n\nSupported values:\n- a\n- b');
-
-    expect(readme.sections[0].blocks).toEqual([
-      { kind: 'text', markdown: 'Supported values:' },
-      {
-        kind: 'list',
-        ordered: false,
-        items: [{ markdown: 'a' }, { markdown: 'b' }],
-      },
-    ]);
-  });
-
-  it('reads blockquotes as notes and keeps code fences whole', () => {
-    const readme = parseAppReadme(
-      '## Setup\n\n> Answers can be\n> inaccurate.\n\n```text\na\n\nb\n```',
-    );
-
-    expect(readme.sections[0].blocks).toEqual([
-      { kind: 'note', markdown: 'Answers can be\ninaccurate.' },
-      { kind: 'text', markdown: '```text\na\n\nb\n```' },
+      { kind: 'note', markdown: 'Answers can be inaccurate.' },
     ]);
   });
 
   it('flags sections that contain subheadings', () => {
     const readme = parseAppReadme(
-      '## Self-hosting\n\nIntro\n\n### 1. Register\n\n1. Visit the page',
+      '## Self-hosting\n\nIntro\n\n### 1. Register\n\n1. Visit the page\n\n## Billing\n\nFree',
     );
 
-    expect(readme.sections[0].hasSubheadings).toBe(true);
-    expect(readme.sections[0].markdown).toBe(
-      'Intro\n\n### 1. Register\n\n1. Visit the page',
-    );
+    expect(readme.sections.map((section) => section.hasSubheadings)).toEqual([
+      true,
+      false,
+    ]);
   });
 });

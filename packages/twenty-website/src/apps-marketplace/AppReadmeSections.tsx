@@ -4,7 +4,6 @@ import { mediaUp, spacing } from '@/tokens';
 import { Heading, SectionIntro, SectionShell, SectionStack } from '@/ui';
 
 import { AppReadmeBlocks } from './AppReadmeBlocks';
-import { AppReadmeMarkdown } from './AppReadmeMarkdown';
 import { type AppReadmeSection } from './parse-app-readme';
 
 const ExplainerGrid = styled.div`
@@ -24,26 +23,11 @@ const Column = styled.div`
 `;
 
 const SectionContent = ({ section }: { section: AppReadmeSection }) => {
-  if (section.hasSubheadings) {
-    return (
-      <ExplainerGrid>
-        <Column>
-          <Heading as="h2" size="sm" weight="light">
-            {section.title}
-          </Heading>
-        </Column>
-        <Column>
-          <AppReadmeMarkdown markdown={section.markdown} />
-        </Column>
-      </ExplainerGrid>
-    );
-  }
-
   const firstListIndex = section.blocks.findIndex(
     (block) => block.kind === 'list',
   );
 
-  if (firstListIndex === 0) {
+  if (firstListIndex === 0 && !section.hasSubheadings) {
     return (
       <SectionStack>
         <SectionIntro>
@@ -58,7 +42,9 @@ const SectionContent = ({ section }: { section: AppReadmeSection }) => {
     );
   }
 
-  const mainBlocksStart = Math.max(firstListIndex, 0);
+  const mainBlocksStart = section.hasSubheadings
+    ? 0
+    : Math.max(firstListIndex, 0);
 
   return (
     <ExplainerGrid>

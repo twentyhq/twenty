@@ -1,4 +1,3 @@
-// The Markdown parser packages (mdast, micromark and their helpers) ship ESM only
 const TRANSFORMED_MODULES = [
   'twenty-ui',
   'twenty-shared',
