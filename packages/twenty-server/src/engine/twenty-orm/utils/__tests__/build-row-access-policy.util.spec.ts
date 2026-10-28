@@ -332,13 +332,8 @@ describe('buildRowAccessPolicy', () => {
       subject: readEverything,
       environment: sharingEnvironment,
       tableAlias: person.nameSingular,
-      flatObjectMetadata: {
-        ...person,
-        writability: MetadataWritability.OPEN,
-        sharingReach: ObjectSharingReach.ROLE_ACCESS,
-      },
+      flatObjectMetadata: person,
       operationType: 'update',
-      depth: 0,
       hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ_WRITE,
     } satisfies Parameters<typeof buildCompiledRowAccessPolicy>[0];
 
@@ -357,6 +352,7 @@ describe('buildRowAccessPolicy', () => {
     it('preserves the member-bound row filter when sharing cannot reach beyond the role', () => {
       const policy = buildCompiledRowAccessPolicy({
         ...prospectiveShareArguments,
+        environment,
         subject: {
           ...readEverything,
           resolveRowLevelPermissionRecordFilter: () => NOTE_FILTER,
@@ -374,50 +370,49 @@ describe('buildRowAccessPolicy', () => {
       });
     });
 
-    it.each([MetadataWritability.SYSTEM, MetadataWritability.APPLICATION])(
-      'preserves %s metadata write denial',
-      (writability) => {
-        expect(
-          buildCompiledRowAccessPolicy({
-            ...prospectiveShareArguments,
-            flatObjectMetadata: {
-              ...prospectiveShareArguments.flatObjectMetadata,
-              writability,
-            },
-          }),
-        ).toEqual({ kind: 'denied' });
-      },
-    );
-
-    it('honors ownership for application metadata', () => {
+    it('preserves a disabled edit action', () => {
       expect(
         buildCompiledRowAccessPolicy({
           ...prospectiveShareArguments,
-          subject: { ...readEverything, isOwningApplication: () => true },
           flatObjectMetadata: {
-            ...prospectiveShareArguments.flatObjectMetadata,
-            readability: MetadataReadability.APPLICATION,
-            writability: MetadataWritability.APPLICATION,
-          },
-        }),
-      ).toEqual({ kind: 'open' });
-    });
-
-    it('does not use a prospective share to bypass application readability', () => {
-      expect(
-        buildCompiledRowAccessPolicy({
-          ...prospectiveShareArguments,
-          operationType: 'select',
-          flatObjectMetadata: {
-            ...prospectiveShareArguments.flatObjectMetadata,
-            readability: MetadataReadability.APPLICATION,
-            sharingReach: ObjectSharingReach.WORKSPACE,
+            ...person,
+            disabledObjectPermissionActions: [
+              'canUpdateObjectRecords' as const,
+            ],
           },
         }),
       ).toEqual({ kind: 'denied' });
     });
 
-    it('reaches beyond missing role access only when the standard sharing reach permits it', () => {
+    it('honors ownership for an object that disables editing', () => {
+      expect(
+        buildCompiledRowAccessPolicy({
+          ...prospectiveShareArguments,
+          subject: { ...readEverything, isOwningApplication: () => true },
+          flatObjectMetadata: {
+            ...person,
+            disabledObjectPermissionActions: [
+              'canUpdateObjectRecords' as const,
+            ],
+          },
+        }),
+      ).toEqual({ kind: 'open' });
+    });
+
+    it('does not use a prospective share to bypass a disabled read action', () => {
+      expect(
+        buildCompiledRowAccessPolicy({
+          ...prospectiveShareArguments,
+          operationType: 'select',
+          flatObjectMetadata: {
+            ...person,
+            disabledObjectPermissionActions: ['canReadObjectRecords' as const],
+          },
+        }),
+      ).toEqual({ kind: 'denied' });
+    });
+
+    it('reaches beyond missing role access only when record sharing is enabled', () => {
       const withoutObjectPermission: RowAccessPolicySubject = {
         ...readEverything,
         objectsPermissions: {},
@@ -426,6 +421,7 @@ describe('buildRowAccessPolicy', () => {
       expect(
         buildCompiledRowAccessPolicy({
           ...prospectiveShareArguments,
+          environment,
           subject: withoutObjectPermission,
         }),
       ).toEqual({ kind: 'denied' });
@@ -433,10 +429,6 @@ describe('buildRowAccessPolicy', () => {
         buildCompiledRowAccessPolicy({
           ...prospectiveShareArguments,
           subject: withoutObjectPermission,
-          flatObjectMetadata: {
-            ...prospectiveShareArguments.flatObjectMetadata,
-            sharingReach: ObjectSharingReach.WORKSPACE,
-          },
         }),
       ).toEqual({ kind: 'open' });
     });
