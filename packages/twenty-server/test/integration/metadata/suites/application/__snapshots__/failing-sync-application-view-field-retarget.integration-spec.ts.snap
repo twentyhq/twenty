@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Manifest sync should refuse pointing an existing view field at another field should keep the view field on its original field 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "NON_UPDATABLE_PROPERTY_DIVERGENCE",
+              "message": "viewField property "fieldMetadataUniversalIdentifier" cannot be updated",
+              "userFriendlyMessage": "Property fieldMetadataUniversalIdentifier cannot be updated",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewField",
+    "summary": {
+      "totalErrors": 1,
+      "viewField": 1,
+    },
+    "userFriendlyMessage": "Property fieldMetadataUniversalIdentifier cannot be updated",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
