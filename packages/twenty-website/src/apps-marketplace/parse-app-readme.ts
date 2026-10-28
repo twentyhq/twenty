@@ -1,6 +1,7 @@
-import { type ListItem, type Nodes, type RootContent } from 'mdast';
+import { type ListItem, type PhrasingContent, type RootContent } from 'mdast';
 import { fromMarkdown } from 'mdast-util-from-markdown';
-import { gfmFromMarkdown } from 'mdast-util-gfm';
+import { gfmFromMarkdown, gfmToMarkdown } from 'mdast-util-gfm';
+import { toMarkdown } from 'mdast-util-to-markdown';
 import { toString } from 'mdast-util-to-string';
 import { gfm } from 'micromark-extension-gfm';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -30,115 +31,132 @@ export type AppReadme = {
 const LEADING_EMOJI_PATTERN = /^(?:\p{Extended_Pictographic}|‍|️|\s)+(?=\S)/u;
 const TITLE_SEPARATOR_PATTERN = /^\s*(?:[:—–-]\s*)?/;
 
-const getStartOffset = (node: Nodes) => node.position?.start.offset ?? 0;
+const serialize = (nodes: RootContent[]) =>
+  toMarkdown(
+    { type: 'root', children: nodes },
+    { extensions: [gfmToMarkdown()] },
+  ).trim();
 
-const getEndOffset = (node: Nodes) => node.position?.end.offset ?? 0;
+const isAppNameHeading = (node: RootContent) =>
+  node.type === 'heading' && node.depth === 1;
 
-const sliceSource = (source: string, first: Nodes, last: Nodes = first) =>
-  source.slice(getStartOffset(first), getEndOffset(last));
+const isSectionHeading = (node: RootContent) =>
+  node.type === 'heading' && node.depth === 2;
 
-// Continuation lines keep the list item's indentation in the source
-const dedent = (text: string, indent: number) =>
-  text.replace(new RegExp(`\\n {1,${Math.max(indent, 1)}}`, 'g'), '\n');
+const isStandaloneBlock = (node: RootContent) =>
+  node.type === 'list' || node.type === 'blockquote';
 
-const toListItem = (source: string, item: ListItem): AppReadmeListItem => {
-  const [firstChild] = item.children;
-  const lastChild = item.children[item.children.length - 1];
+const toSectionTitle = (node: RootContent) =>
+  toString(node).replace(LEADING_EMOJI_PATTERN, '').trim();
 
-  if (!isDefined(firstChild) || !isDefined(lastChild)) {
-    return { markdown: '' };
+const toBodyInlineNodes = (
+  inlineNodes: PhrasingContent[],
+): PhrasingContent[] => {
+  const [separatorNode, ...otherNodes] = inlineNodes;
+
+  if (separatorNode?.type !== 'text') {
+    return inlineNodes;
   }
 
-  const indent = (firstChild.position?.start.column ?? 1) - 1;
-  const leadingNode =
-    firstChild.type === 'paragraph' ? firstChild.children[0] : undefined;
+  const value = capitalize(
+    separatorNode.value.replace(TITLE_SEPARATOR_PATTERN, ''),
+  );
+
+  return value === ''
+    ? otherNodes
+    : [{ ...separatorNode, value }, ...otherNodes];
+};
+
+const toListItem = (item: ListItem): AppReadmeListItem => {
+  const [firstChild, ...otherChildren] = item.children;
+
+  if (firstChild?.type !== 'paragraph') {
+    return { markdown: serialize(item.children) };
+  }
+
+  const [leadingNode, ...otherInlineNodes] = firstChild.children;
 
   if (leadingNode?.type !== 'strong') {
-    return {
-      markdown: dedent(sliceSource(source, firstChild, lastChild), indent),
-    };
+    return { markdown: serialize(item.children) };
   }
-
-  const body = source
-    .slice(getEndOffset(leadingNode), getEndOffset(lastChild))
-    .replace(TITLE_SEPARATOR_PATTERN, '');
 
   return {
     title: toString(leadingNode).replace(/:$/, ''),
-    markdown: capitalize(dedent(body, indent).trim()),
+    markdown: serialize([
+      { type: 'paragraph', children: toBodyInlineNodes(otherInlineNodes) },
+      ...otherChildren,
+    ]),
   };
 };
 
-const toBlock = (source: string, node: RootContent): AppReadmeBlock => {
-  switch (node.type) {
-    case 'blockquote':
-      return {
-        kind: 'note',
-        markdown: sliceSource(source, node).replace(/^>\s?/gm, ''),
-      };
+const toBlock = (nodes: RootContent[]): AppReadmeBlock => {
+  const [firstNode] = nodes;
+
+  switch (firstNode.type) {
     case 'list':
       return {
         kind: 'list',
-        ordered: node.ordered === true,
-        items: node.children.map((item) => toListItem(source, item)),
+        ordered: firstNode.ordered ?? false,
+        items: firstNode.children.map(toListItem),
       };
+    case 'blockquote':
+      return { kind: 'note', markdown: serialize(firstNode.children) };
     default:
-      return { kind: 'text', markdown: sliceSource(source, node) };
+      return { kind: 'text', markdown: serialize(nodes) };
   }
 };
 
-// Consecutive paragraphs, tables and code read as one block of prose
-const appendBlock = (blocks: AppReadmeBlock[], block: AppReadmeBlock) => {
-  const previous = blocks[blocks.length - 1];
+const groupProseNodes = (nodes: RootContent[]): RootContent[][] => {
+  const groups: RootContent[][] = [];
 
-  if (previous?.kind === 'text' && block.kind === 'text') {
-    previous.markdown = `${previous.markdown}\n\n${block.markdown}`;
-    return;
+  for (const node of nodes) {
+    const previousGroup = groups.at(-1);
+
+    if (
+      isDefined(previousGroup) &&
+      !isStandaloneBlock(node) &&
+      !isStandaloneBlock(previousGroup[0])
+    ) {
+      previousGroup.push(node);
+      continue;
+    }
+
+    groups.push([node]);
   }
 
-  blocks.push(block);
+  return groups;
 };
+
+const toBlocks = (nodes: RootContent[]) => groupProseNodes(nodes).map(toBlock);
 
 export const parseAppReadme = (markdown: string): AppReadme => {
   const root = fromMarkdown(markdown, {
     extensions: [gfm()],
     mdastExtensions: [gfmFromMarkdown()],
   });
-  const readme: AppReadme = { intro: [], sections: [] };
+  const introNodes: RootContent[] = [];
+  const sections: { title: string; nodes: RootContent[] }[] = [];
 
   for (const node of root.children) {
-    const currentSection = readme.sections[readme.sections.length - 1];
-
-    // The page hero already shows the app name
-    if (node.type === 'heading' && node.depth === 1) {
+    if (isAppNameHeading(node)) {
       continue;
     }
 
-    if (node.type === 'heading' && node.depth === 2) {
-      readme.sections.push({
-        title: toString(node).replace(LEADING_EMOJI_PATTERN, '').trim(),
-        markdown: '',
-        blocks: [],
-        hasSubheadings: false,
-      });
+    if (isSectionHeading(node)) {
+      sections.push({ title: toSectionTitle(node), nodes: [] });
       continue;
     }
 
-    if (isDefined(currentSection)) {
-      currentSection.markdown = [
-        currentSection.markdown,
-        sliceSource(markdown, node),
-      ]
-        .filter((part) => part !== '')
-        .join('\n\n');
-      currentSection.hasSubheadings ||= node.type === 'heading';
-    }
-
-    appendBlock(
-      currentSection?.blocks ?? readme.intro,
-      toBlock(markdown, node),
-    );
+    (sections.at(-1)?.nodes ?? introNodes).push(node);
   }
 
-  return readme;
+  return {
+    intro: toBlocks(introNodes),
+    sections: sections.map(({ title, nodes }) => ({
+      title,
+      markdown: serialize(nodes),
+      blocks: toBlocks(nodes),
+      hasSubheadings: nodes.some((node) => node.type === 'heading'),
+    })),
+  };
 };

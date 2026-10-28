@@ -47,6 +47,25 @@ describe('parseAppReadme', () => {
     ]);
   });
 
+  it('keeps the rest of a titled item as its body', () => {
+    const readme = parseAppReadme(
+      '## Setup\n\n- **Run it**: type `cmd`\n\n  Then wait for the reply.',
+    );
+
+    expect(readme.sections[0].blocks).toEqual([
+      {
+        kind: 'list',
+        ordered: false,
+        items: [
+          {
+            title: 'Run it',
+            markdown: 'Type `cmd`\n\nThen wait for the reply.',
+          },
+        ],
+      },
+    ]);
+  });
+
   it('keeps wrapped lines with their list item and merges loose lists', () => {
     const readme = parseAppReadme(
       '## Steps\n\n1. Open settings\n   and click Install.\n\n2. Connect',
