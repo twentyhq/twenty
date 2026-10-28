@@ -112,6 +112,7 @@ const INBOX_ACTION_QUERIES: Record<
 
 const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
   openThreadCount: 0,
+  unreadOpenThreadCount: 0,
   needsInputThreadCount: 0,
   hasUnreadOpenThread: false,
   hasUnreadMentionThread: false,
@@ -493,6 +494,7 @@ export class AgentChatThreadParticipantService {
            )
            SELECT
              COUNT(*)::int AS "openThreadCount",
+             COUNT(*) FILTER (WHERE "isUnread")::int AS "unreadOpenThreadCount",
              COUNT("pendingQuestionMessageId")::int AS "needsInputThreadCount",
              COALESCE(BOOL_OR("isUnread"), false) AS "hasUnreadOpenThread",
              COALESCE(BOOL_OR("isUnread" AND "lastMentionedAt" IS NOT NULL), false) AS "hasUnreadMentionThread",

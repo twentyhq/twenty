@@ -282,65 +282,10 @@ designar a ningún miembro.
 <Accordion title="sendInboxMessage" description="Inicia o continúa una conversación en los chats de los miembros">
 
 `sendInboxMessage()` publica un mensaje de tu aplicación en los chats de uno o más
-miembros del espacio de trabajo. Puede finalizar en una llamada a herramienta que el miembro responde desde el chat, tras lo cual
-la conversación continúa con el asistente de Twenty.
-
-```ts src/logic-functions/notify-first-recording.ts
-import { sendInboxMessage } from 'twenty-sdk/logic-function';
-
-const { threadId } = await sendInboxMessage({
-  workspaceMemberIds: [workspaceMemberId],
-  threadKey: 'first-call-recording',
-  idempotencyKey: 'first-call-recording',
-  title: 'Your first call recording is ready',
-  text: 'Your first call was recorded: **Weekly sync**.',
-  toolCall: {
-    toolName: 'ask_question',
-    input: {
-      header: 'Share',
-      question: 'Do you want to share it with the other attendees?',
-      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
-    },
-  },
-});
-```
-
-Puntos clave:
-* `workspaceMemberIds` enumera los miembros que reciben la conversación, al menos
-  uno. El primer miembro de una conversación nueva es su propietario, y los demás la siguen
-  como participantes. Un envío posterior con la misma clave que enumera miembros nuevos los añade;
-  los miembros que omite conservan la conversación.
-* `threadKey` selecciona la conversación de esta aplicación, compartida por todos los miembros a los que
-  se envía. Una clave nueva inicia una conversación titulada `title`; una clave que usaste antes
-  añade el mensaje a esa conversación.
-* `idempotencyKey` identifica el mensaje dentro de la conversación. Enviar
-  de nuevo con las mismas claves no escribe nada nuevo, por lo que los reintentos y las ejecuciones simultáneas
-  nunca duplican un mensaje.
-* `toolCall` (opcional) finaliza el mensaje con una de las siguientes opciones:
-  * una llamada que responde el miembro, que pausa la conversación: `ask_question`
-    (una pregunta de opción múltiple), `request_form` (campos que se deben completar) o
-    `propose_tool_call` (una llamada que se debe aprobar). Su `input` toma el `toolName`,
-    los `arguments` con los que llamarías a la herramienta y un `summary` de una sola oración.
-    La herramienta debe ser una que el rol predeterminado de tu aplicación podría ejecutar por sí mismo, como
-    `create_one_person` o `update_one_opportunity` (con el `id` del registro); un
-    correo electrónico (`send_email` o `draft_email`, con `recipients`, `subject` y un
-    `body` en HTML) no necesita permiso de tu aplicación. El miembro revisa la llamada
-    en la misma tarjeta que una llamada que propone el asistente, la edita si quiere y
-    la llamada aprobada se ejecuta con su propio acceso;
-  * una de las herramientas propias de tu aplicación, mediante `logicFunctionUniversalIdentifier`, representada
-    por su componente de frontend con los valores `input` y `output` que proporcionas. No
-    pausa la conversación.
-* Solo una llamada que el miembro responde puede esperar en una conversación a la vez:
-  enviar otra antes de que responda falla con `THREAD_AWAITING_ANSWER`. Los mensajes
-  simples y las llamadas a herramientas de la aplicación se siguen aceptando.
-* Solo el miembro propietario de una conversación puede eliminarla, y una conversación eliminada
-  desaparece para todos los miembros: no se vuelve a crear y no se
-  añade nada a ella. Los demás miembros pueden cancelar la suscripción para quitarla de su propia
-  bandeja de entrada.
-* Todos los miembros deben tener el permiso `AI`, y la llamada falla sin
-  escribir el mensaje cuando uno de ellos no puede tener la conversación. El
-  [rol predeterminado](/es/developers/extend/apps/config/roles) de tu aplicación debe otorgar
-  `SystemPermissionFlag.AI`.
+miembros del espacio de trabajo. Puede terminar en una llamada a una herramienta a la que el miembro responde desde el chat,
+después de lo cual la conversación continúa con el asistente de Twenty. Consulta
+[Inbox](/es/developers/extend/apps/logic/inbox) para conocer sus opciones, las funciones auxiliares de menciones
+y cómo publicar desde un componente de front-end.
 
 </Accordion>
 </AccordionGroup>

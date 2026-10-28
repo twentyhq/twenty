@@ -211,6 +211,7 @@ export class WorkspaceDataSource {
         rolePermissionConfig: repositoryRolePermissionConfig,
         objectPermissionsByRoleId: this.objectPermissionsByRoleId,
         flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
         flatApplicationMaps: this.internalContext.flatApplicationMaps,
       });
 

@@ -74,6 +74,7 @@ describe('fromFlatObjectMetadataToObjectManifest', () => {
       writability: MetadataWritability.APPLICATION,
       readability: MetadataReadability.INHERITED,
       readabilityParentFieldUniversalIdentifiers: [PARENT_FIELD_UID],
+      disabledObjectPermissionActions: ['canUpdateObjectRecords'],
       sharingReach: ObjectSharingReach.WORKSPACE,
       openRecordIn: ObjectOpenRecordIn.SIDE_PANEL,
       labelIdentifierFieldMetadataUniversalIdentifier: LABEL_FIELD_UID,
