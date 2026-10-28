@@ -1,26 +1,27 @@
 import { SettingsAppPreferencesAppNameCell } from '@/settings/app-preferences/components/SettingsAppPreferencesAppNameCell';
 import { SettingsAppPreferencesAppStatusCell } from '@/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell';
+import { SettingsAppPreferencesAppsSectionToolbar } from '@/settings/app-preferences/components/SettingsAppPreferencesAppsSectionToolbar';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
 import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { type AppPreferencesRow } from '@/settings/app-preferences/types/AppPreferencesRow';
-import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-
-const StyledToolbar = styled.div`
-  padding-bottom: ${themeCssVariables.spacing[2]};
-`;
 
 export const SettingsAppPreferencesAppsSection = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
   const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
-  const { applicationsWithPreferences, hasApplicationsLoadError, refetch } =
-    useApplicationsWithPreferences();
+  const {
+    applicationsWithPreferences,
+    loading,
+    hasLoadedApplicationsWithPreferences,
+    hasApplicationsLoadError,
+    refetch,
+  } = useApplicationsWithPreferences();
+  const isLoadingApplications =
+    loading && !hasLoadedApplicationsWithPreferences;
 
   const rows: AppPreferencesRow[] = [
     ...enabledBuiltInAccountApps.map(
@@ -44,16 +45,13 @@ export const SettingsAppPreferencesAppsSection = () => {
       title={t`Apps`}
       description={t`Choose your preferences for the apps installed on your workspace by the admin`}
       toolbar={
-        hasApplicationsLoadError ? (
-          <StyledToolbar>
-            <SettingsApplicationLoadErrorBanner
-              message={t`Your installed apps could not be loaded. Check your connection and try again.`}
-              onRetry={() => refetch().catch(() => undefined)}
-            />
-          </StyledToolbar>
-        ) : undefined
+        <SettingsAppPreferencesAppsSectionToolbar
+          isLoading={isLoadingApplications}
+          hasLoadError={hasApplicationsLoadError}
+          onRetry={() => refetch().catch(() => undefined)}
+        />
       }
-      items={rows}
+      items={isLoadingApplications ? [] : rows}
       columns={[
         { label: t`App`, Cell: SettingsAppPreferencesAppNameCell },
         {
