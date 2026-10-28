@@ -2,9 +2,8 @@ import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 import { type KeyboardEvent, type ReactNode, useRef } from 'react';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { ICON } from 'twenty-ui/theme';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { THEME_COMMON, themeCssVariables } from 'twenty-ui/theme';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 
 import { type SettingsSelectNavigationKey } from 'src/front-components/utils/get-next-active-option-index.util';
 
@@ -137,7 +136,7 @@ export const SettingsSelectControl = ({
       {adornment}
       <OverflowingTextWithTooltip text={label} />
       <StyledChevronWrapper>
-        <IconChevronDown size={ICON.size.md} stroke={ICON.stroke.sm} />
+        <IconChevronDown size={THEME_COMMON.icon.size.md} stroke={THEME_COMMON.icon.stroke.sm} />
       </StyledChevronWrapper>
     </StyledControlContainer>
   );
