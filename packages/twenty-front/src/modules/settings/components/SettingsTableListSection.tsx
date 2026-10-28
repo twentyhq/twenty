@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { styled } from '@linaria/react';
 
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -59,6 +60,7 @@ type SettingsTableListSectionProps<Item extends { id: string }> = {
   items: Item[];
   columns: SettingsTableListSectionColumn<Item>[];
   gridAutoColumns: string;
+  isLoading?: boolean;
   showRowChevron?: boolean;
   onRowClick?: (item: Item) => void;
   footerButtonLabel?: string;
@@ -76,6 +78,7 @@ export const SettingsTableListSection = <
   items,
   columns,
   gridAutoColumns,
+  isLoading = false,
   showRowChevron = false,
   onRowClick,
   footerButtonLabel,
@@ -94,7 +97,8 @@ export const SettingsTableListSection = <
         actions={headerAdornment}
       />
       {isDefined(toolbar) && toolbar}
-      {items.length > 0 && (
+      {isLoading && <SettingsSectionSkeletonLoader />}
+      {!isLoading && items.length > 0 && (
         <Table>
           <TableRow gridAutoColumns={resolvedGridAutoColumns}>
             {columns.map((column) => (
