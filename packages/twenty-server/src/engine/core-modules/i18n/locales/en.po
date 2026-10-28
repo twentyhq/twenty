@@ -1487,6 +1487,12 @@ msgctxt "fieldMetadata.label"
 msgid "Assignee"
 msgstr "Assignee"
 
+#. js-lingui-id: VkxEa0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Assistant participant"
+msgstr "Assistant participant"
+
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -3770,6 +3776,7 @@ msgstr "Custom object is missing a label identifier field."
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Custom roles are part of the Organization plan."
 
@@ -5398,11 +5405,6 @@ msgstr "Field type TS_VECTOR must be a system field"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "Field type TS_VECTOR must be named \"searchVector\""
-
-#. js-lingui-id: VkSxbb
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
-msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr "Field type TS_VECTOR must have SYSTEM writability"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -16147,6 +16149,12 @@ msgstr "Whether current participant rules justify this target"
 msgctxt "fieldMetadata.description"
 msgid "Whether new activity brings the thread back to the inbox"
 msgstr "Whether new activity brings the thread back to the inbox"
+
+#. js-lingui-id: DYv22m
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether the assistant participates in this conversation"
+msgstr "Whether the assistant participates in this conversation"
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts

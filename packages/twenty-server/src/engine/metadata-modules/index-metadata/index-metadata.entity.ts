@@ -13,6 +13,7 @@ import {
 } from 'typeorm';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexType } from 'twenty-shared/types';
@@ -65,8 +66,8 @@ export class IndexMetadataEntity
   )
   indexFieldMetadatas: Relation<IndexFieldMetadataEntity[]>;
 
-  @Column({ default: false })
-  isCustom: boolean;
+  @Column({ type: 'boolean', default: false })
+  isCustom: WasRemovedInUpgrade<boolean>;
 
   @Column({ nullable: false, default: false })
   isUnique: boolean;

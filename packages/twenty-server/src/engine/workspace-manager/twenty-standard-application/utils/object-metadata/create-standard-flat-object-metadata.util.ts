@@ -13,6 +13,10 @@ import {
   type CreateStandardObjectArgs,
   createStandardObjectFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-object-flat-metadata.util';
+import {
+  PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
+  PLATFORM_WRITTEN_DISABLED_OBJECT_PERMISSION_ACTIONS,
+} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-object-permission-actions.constant';
 
 export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
   agentChatThread: (
@@ -136,6 +140,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUICreatable: false,
         readability: MetadataReadability.SYSTEM,
         writability: MetadataWritability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
@@ -178,6 +184,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUICreatable: false,
         readability: MetadataReadability.SYSTEM,
         writability: MetadataWritability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
@@ -221,6 +229,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUICreatable: false,
         readability: MetadataReadability.SYSTEM,
         writability: MetadataWritability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
@@ -266,6 +276,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         // member can read the message's thread
         readability: MetadataReadability.SYSTEM,
         writability: MetadataWritability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
@@ -311,6 +323,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         // owner grant and written only through the chat resolvers
         readability: MetadataReadability.PRIVATE,
         writability: MetadataWritability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_WRITTEN_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
@@ -354,6 +368,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUICreatable: false,
         readability: MetadataReadability.SYSTEM,
         writability: MetadataWritability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
@@ -397,6 +413,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUICreatable: false,
         readability: MetadataReadability.SYSTEM,
         writability: MetadataWritability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
@@ -522,6 +540,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUICreatable: false,
         writability: MetadataWritability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_WRITTEN_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -958,6 +978,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUICreatable: false,
         writability: MetadataWritability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_WRITTEN_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -1007,6 +1029,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUICreatable: false,
         writability: MetadataWritability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_WRITTEN_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -1390,6 +1414,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUICreatable: false,
         writability: MetadataWritability.SYSTEM,
         readability: MetadataReadability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -1437,6 +1463,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUICreatable: false,
         writability: MetadataWritability.SYSTEM,
         readability: MetadataReadability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'resolvedDestinationUrl',
       },
       workspaceId,
@@ -1646,6 +1674,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isUICreatable: false,
         writability: MetadataWritability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_WRITTEN_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,

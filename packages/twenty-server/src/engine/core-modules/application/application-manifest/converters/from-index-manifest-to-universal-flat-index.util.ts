@@ -127,7 +127,6 @@ export const fromIndexManifestToUniversalFlatIndex = ({
       objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       indexType: resolvedIndexType,
       indexWhereClause: null,
-      isCustom: false,
       isUnique: indexManifest.isUnique ?? false,
       isSystemSideEffect: false,
       universalFlatIndexFieldMetadatas,

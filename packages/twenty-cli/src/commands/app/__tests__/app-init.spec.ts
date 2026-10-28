@@ -106,7 +106,7 @@ describe('app init', () => {
     expect(await readPackageJson(appDirectory)).toMatchObject({
       name: 'my-app',
       engines: {
-        node: '^24.5.0',
+        node: '^24.5.0 || ^26.5.1',
         npm: 'please-use-yarn',
         twenty: `>=${semver.major(APP_TEMPLATE_PACKAGE_VERSION)}.${semver.minor(APP_TEMPLATE_PACKAGE_VERSION)}.0`,
         yarn: '>=4.0.2',

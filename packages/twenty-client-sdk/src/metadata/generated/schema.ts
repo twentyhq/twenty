@@ -20,6 +20,7 @@ export interface Agent {
     description?: Scalars['String']
     icon?: Scalars['String']
     id: Scalars['UUID']
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
     isCustom: Scalars['Boolean']
     isSystem: Scalars['Boolean']
     label: Scalars['String']
@@ -35,10 +36,12 @@ export interface Agent {
 }
 
 export interface AgentChatChannel {
+    applicationId: Scalars['UUID']
     color?: Scalars['String']
     icon?: Scalars['String']
     id: Scalars['UUID']
     isAccessible?: Scalars['Boolean']
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
     isCustom: Scalars['Boolean']
     name: Scalars['String']
     position: Scalars['Float']
@@ -57,9 +60,13 @@ export interface AgentChatChannelRole {
 }
 
 export interface AgentChatChannelSummary {
+    assignedToMeCount: Scalars['Int']
     channelId: Scalars['UUID']
+    doneCount: Scalars['Int']
+    hasUnreadAssignedToMe: Scalars['Boolean']
     hasUnreadOpen: Scalars['Boolean']
     openCount: Scalars['Int']
+    snoozedCount: Scalars['Int']
     __typename: 'AgentChatChannelSummary'
 }
 
@@ -1742,12 +1749,15 @@ export interface Impersonate {
 }
 
 export interface Index {
+    applicationId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     id: Scalars['UUID']
     indexFieldMetadataList: IndexField[]
     indexType: IndexType
     indexWhereClause?: Scalars['String']
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
     isCustom?: Scalars['Boolean']
+    isSystemSideEffect: Scalars['Boolean']
     isUnique: Scalars['Boolean']
     name: Scalars['String']
     updatedAt: Scalars['DateTime']
@@ -3405,6 +3415,7 @@ export interface Skill {
     icon?: Scalars['String']
     id: Scalars['UUID']
     isActive: Scalars['Boolean']
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
     isCustom: Scalars['Boolean']
     isSystem: Scalars['Boolean']
     label: Scalars['String']
@@ -3844,6 +3855,7 @@ export interface View {
     id: Scalars['UUID']
     isActive: Scalars['Boolean']
     isCompact: Scalars['Boolean']
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
     isCustom: Scalars['Boolean']
     isSystemSideEffect: Scalars['Boolean']
     kanbanAggregateOperation?: AggregateOperations
@@ -4203,6 +4215,7 @@ export interface AgentGenqlSelection{
     description?: boolean | number
     icon?: boolean | number
     id?: boolean | number
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
     isCustom?: boolean | number
     isSystem?: boolean | number
     label?: boolean | number
@@ -4219,10 +4232,12 @@ export interface AgentGenqlSelection{
 }
 
 export interface AgentChatChannelGenqlSelection{
+    applicationId?: boolean | number
     color?: boolean | number
     icon?: boolean | number
     id?: boolean | number
     isAccessible?: boolean | number
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
     isCustom?: boolean | number
     name?: boolean | number
     position?: boolean | number
@@ -4241,9 +4256,13 @@ export interface AgentChatChannelRoleGenqlSelection{
 }
 
 export interface AgentChatChannelSummaryGenqlSelection{
+    assignedToMeCount?: boolean | number
     channelId?: boolean | number
+    doneCount?: boolean | number
+    hasUnreadAssignedToMe?: boolean | number
     hasUnreadOpen?: boolean | number
     openCount?: boolean | number
+    snoozedCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6204,12 +6223,15 @@ export interface ImpersonateGenqlSelection{
 }
 
 export interface IndexGenqlSelection{
+    applicationId?: boolean | number
     createdAt?: boolean | number
     id?: boolean | number
     indexFieldMetadataList?: IndexFieldGenqlSelection
     indexType?: boolean | number
     indexWhereClause?: boolean | number
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
     isCustom?: boolean | number
+    isSystemSideEffect?: boolean | number
     isUnique?: boolean | number
     name?: boolean | number
     updatedAt?: boolean | number
@@ -7980,6 +8002,7 @@ export interface SkillGenqlSelection{
     icon?: boolean | number
     id?: boolean | number
     isActive?: boolean | number
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
     isCustom?: boolean | number
     isSystem?: boolean | number
     label?: boolean | number
@@ -8696,6 +8719,7 @@ export interface ViewGenqlSelection{
     id?: boolean | number
     isActive?: boolean | number
     isCompact?: boolean | number
+    /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
     isCustom?: boolean | number
     isSystemSideEffect?: boolean | number
     kanbanAggregateOperation?: boolean | number

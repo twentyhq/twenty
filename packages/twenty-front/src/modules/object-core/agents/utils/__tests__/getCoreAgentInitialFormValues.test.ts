@@ -38,7 +38,6 @@ describe('getCoreAgentInitialFormValues', () => {
       modelId: 'anthropic/claude-sonnet-5',
       role: 'role-id',
       prompt: 'You qualify leads.',
-      isCustom: true,
       modelConfiguration: { webSearch: { enabled: true } },
       triggers: [
         {

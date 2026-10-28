@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Info } from 'twenty-ui/feedback';
-import { Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/typography';
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 
 import { GranolaFolderPicker } from 'src/front-components/components/GranolaFolderPicker';
 import { GranolaFolderPolicyRadioCard } from 'src/front-components/components/GranolaFolderPolicyRadioCard';
@@ -36,9 +35,9 @@ export const GranolaFolderSection = () => {
   };
 
   return (
-    <Section>
+    <Section.Root>
       <OnMountEffect onMount={loadStoredSelection} />
-      <H2Title
+      <Section.Header
         title={t('Folders')}
         description={t(
           'Choose which Granola folders feed live sync and history imports.',
@@ -52,14 +51,19 @@ export const GranolaFolderSection = () => {
           <GranolaFolderPicker {...storedSelectionState.storedSelection} />
         )}
         {storedSelectionState.step === 'FAILED' && (
-          <Info
-            accent="danger"
-            text={t('Could not load your Granola folders.')}
-            buttonTitle={t('Retry')}
-            onClick={loadStoredSelection}
-          />
+          <InlineBanner
+            layout="compact"
+            status="error"
+            action={
+              <InlineBanner.Action onClick={loadStoredSelection}>
+                {t('Retry')}
+              </InlineBanner.Action>
+            }
+          >
+            {t('Could not load your Granola folders.')}
+          </InlineBanner>
         )}
       </StyledSettingsSectionStack>
-    </Section>
+    </Section.Root>
   );
 };
