@@ -33,7 +33,6 @@ import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
 import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
-import { getDefaultShouldDeferWorkspaceMigrationActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/default-should-defer-workspace-migration-actions.util';
 import { getMetadataNamesToLoadForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-metadata-names-to-load-for-workspace-migration.util';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 
@@ -241,7 +240,7 @@ export class WorkspaceMigrationRunnerService {
   private executeRun = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
-    shouldDeferActions: shouldDeferActionsOverride,
+    shouldDeferActions: shouldDeferActionsByCaller = true,
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
@@ -372,9 +371,7 @@ export class WorkspaceMigrationRunnerService {
     const shouldDeferActions =
       featureFlagsMap[
         FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
-      ] &&
-      (shouldDeferActionsOverride ??
-        getDefaultShouldDeferWorkspaceMigrationActions());
+      ] && shouldDeferActionsByCaller;
 
     this.logger.perfTime('Runner', 'Transaction execution');
 

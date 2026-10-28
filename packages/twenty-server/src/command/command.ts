@@ -4,12 +4,8 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
-import { setDefaultShouldDeferWorkspaceMigrationActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/default-should-defer-workspace-migration-actions.util';
 
 import { CommandModule } from './command.module';
-
-// Commands chain migrations and may run without a worker.
-setDefaultShouldDeferWorkspaceMigrationActions(false);
 
 async function bootstrap() {
   const errorHandler = (err: Error) => {
