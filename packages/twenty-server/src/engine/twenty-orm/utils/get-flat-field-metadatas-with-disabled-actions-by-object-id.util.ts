@@ -5,7 +5,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 
 type FlatFieldMetadataWithDisabledActions = Pick<
   OrmFlatFieldMetadata,
-  'id' | 'applicationId' | 'disabledFieldPermissionActions'
+  'id' | 'name' | 'applicationId' | 'disabledFieldPermissionActions'
 >;
 
 const fieldsWithDisabledActionsByObjectIdCache = new WeakMap<
