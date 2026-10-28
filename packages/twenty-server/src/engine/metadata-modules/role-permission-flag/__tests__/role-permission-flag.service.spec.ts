@@ -363,5 +363,56 @@ describe('RolePermissionFlagService.upsertPermissionFlags', () => {
         ).toEqual([APP_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER]);
       });
     });
+
+    describe('when an app flag stores a legacy key after the standard flag was renamed', () => {
+      const buildLegacyKeyService = () =>
+        buildService({
+          permissionFlags: [
+            {
+              ...STANDARD_WORKSPACE_APPS_PERMISSION_FLAG,
+              key: PermissionFlagType.WORKSPACE_APPS,
+            },
+            { ...APP_PERMISSION_FLAG, key: 'APPLICATIONS' },
+          ],
+          grantedPermissionFlagUniversalIdentifiers: [
+            APP_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+          ],
+        });
+
+      it('rejects a request for the legacy key instead of granting the standard flag', async () => {
+        const { service, validateBuildAndRunWorkspaceMigration } =
+          buildLegacyKeyService();
+
+        await expect(
+          service.upsertPermissionFlags({
+            workspaceId: WORKSPACE_ID,
+            input: { roleId: ROLE_ID, permissionFlagKeys: ['APPLICATIONS'] },
+          }),
+        ).rejects.toMatchObject({
+          code: PermissionsExceptionCode.INVALID_SETTING,
+          message: expect.stringContaining('Invoice Exporter'),
+        });
+        expect(validateBuildAndRunWorkspaceMigration).not.toHaveBeenCalled();
+      });
+
+      it('grants the standard flag when the new key is requested', async () => {
+        const { service, validateBuildAndRunWorkspaceMigration } =
+          buildLegacyKeyService();
+
+        await service.upsertPermissionFlags({
+          workspaceId: WORKSPACE_ID,
+          input: {
+            roleId: ROLE_ID,
+            permissionFlagKeys: [PermissionFlagType.WORKSPACE_APPS],
+          },
+        });
+
+        expect(
+          getCreatedPermissionFlagUniversalIdentifiers(
+            validateBuildAndRunWorkspaceMigration,
+          ),
+        ).toEqual([SystemPermissionFlag.WORKSPACE_APPS]);
+      });
+    });
   });
 });

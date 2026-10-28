@@ -101,7 +101,7 @@ export class RolePermissionFlagService {
     await this.throwIfAnyPermissionFlagKeyIsAmbiguous({
       workspaceId,
       permissionFlags,
-      keys: permissionFlagsByInputKey.map(({ key }) => key),
+      requestedKeys: permissionFlagsByInputKey,
     });
 
     const requestedPermissionFlags = uniqBy(
@@ -203,33 +203,41 @@ export class RolePermissionFlagService {
     return resultFlags;
   }
 
-  // upgrade:2-53:rename-app-permission-flag-keys: a standard flag still stored under
-  // its old key resolves to a key an app flag may already store; fail closed
+  // upgrade:2-53:rename-app-permission-flag-keys: a standard flag still stored under its
+  // old key, or an app flag stored under a legacy key, can share a requested key; fail closed
   private async throwIfAnyPermissionFlagKeyIsAmbiguous({
     workspaceId,
     permissionFlags,
-    keys,
+    requestedKeys,
   }: {
     workspaceId: string;
     permissionFlags: FlatPermissionFlag[];
-    keys: string[];
+    requestedKeys: { flag: string; key: string }[];
   }): Promise<void> {
-    const collisions = [...new Set(keys)].flatMap((key) => {
-      const permissionFlagsWithKey = permissionFlags.filter(
-        (permissionFlag) => resolvePermissionFlagKey(permissionFlag) === key,
-      );
+    const collisions = uniqBy(
+      uniqBy(requestedKeys, 'flag').flatMap(({ flag, key }) => {
+        const permissionFlagsWithKey = permissionFlags.filter(
+          (permissionFlag) => {
+            const resolvedKey = resolvePermissionFlagKey(permissionFlag);
 
-      return permissionFlagsWithKey.length > 1
-        ? [
-            {
-              key,
-              appPermissionFlags: permissionFlagsWithKey.filter(
-                (permissionFlag) => !belongsToTwentyStandardApp(permissionFlag),
-              ),
-            },
-          ]
-        : [];
-    });
+            return resolvedKey === key || resolvedKey === flag;
+          },
+        );
+
+        return permissionFlagsWithKey.length > 1
+          ? [
+              {
+                key,
+                appPermissionFlags: permissionFlagsWithKey.filter(
+                  (permissionFlag) =>
+                    !belongsToTwentyStandardApp(permissionFlag),
+                ),
+              },
+            ]
+          : [];
+      }),
+      'key',
+    );
 
     if (!isNonEmptyArray(collisions)) {
       return;
