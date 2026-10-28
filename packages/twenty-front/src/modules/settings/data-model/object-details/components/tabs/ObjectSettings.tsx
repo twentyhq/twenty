@@ -4,12 +4,10 @@ import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMeta
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
-import { isShareableObjectMetadataItem } from '@/object-record/record-sharing/utils/isShareableObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
-import { ObjectSharingReachPicker } from '@/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker';
 import { SettingsObjectValidationRulesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
@@ -105,9 +103,6 @@ export const ObjectSettings = ({
     FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
   );
   const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
-  const isRecordLevelSharingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-  );
 
   const handleDisable = async () => {
     const result = await updateOneObjectMetadataItem({
@@ -183,19 +178,6 @@ export const ObjectSettings = ({
                 buttonTitle={t`Activate`}
               />
             )}
-          </Section.Root>
-        )}
-      {isRecordLevelSharingEnabled &&
-        isShareableObjectMetadataItem(objectMetadataItem) && (
-          <Section.Root>
-            <Section.Header
-              title={t`Record sharing`}
-              description={t`Who a record of ${objectLabel} can be shared with. Roles still decide what people see by default.`}
-            />
-            <ObjectSharingReachPicker
-              objectMetadataItem={objectMetadataItem}
-              isReadOnly={isReadOnly}
-            />
           </Section.Root>
         )}
       <Section.Root>

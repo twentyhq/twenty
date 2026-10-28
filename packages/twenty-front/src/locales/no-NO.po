@@ -1566,11 +1566,6 @@ msgstr "En betalingsmåte kreves for å holde arbeidsområdet ditt aktivt."
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "En betaling på abonnementet ditt mislyktes. Premiumfunksjonene dine forblir aktive mens vi prøver på nytt."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "En post kan deles med hvem som helst, også personer med roller som ikke har tilgang til dette objektet. De får bare tilgang til den posten, for å vise eller redigere den."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1677,11 +1672,6 @@ msgstr "Om appen din"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Godkjente og signerte DPA-er for dette arbeidsområdet, med malversjon og dato."
-
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "Tilgang arves også fra relaterte oppføringer."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3569,11 +3559,6 @@ msgstr "Alle enheter"
 msgid "Any field"
 msgstr "Et hvilket som helst felt"
 
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "Alle i arbeidsområdet"
-
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Anyone with an approved email domain can find and join."
@@ -5295,11 +5280,6 @@ msgstr "Kampanje planlagt til {sendTime}"
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Planleggingen av kampanjen er avbrutt, og den er tilbake i utkastene dine"
 
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "Kan bare vise: Rollen deres kan ikke redigere {objectLabelPlural}"
-
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
@@ -6950,6 +6930,12 @@ msgstr "Koble til med Google"
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Koble til med Microsoft"
+
+#. js-lingui-id: vPwoq6
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
+#: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
+msgid "Connect with {appName}"
+msgstr ""
 
 #. js-lingui-id: oduBE8
 #: src/pages/onboarding/ImportContacts.tsx
@@ -19926,11 +19912,6 @@ msgstr "bare på {firstDay} og {secondDay}"
 msgid "only on {remainingDays} and {0}"
 msgstr "bare på {remainingDays} og {0}"
 
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "Bare personer som allerede har tilgang til disse oppføringene"
-
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Only run when one of these fields changes"
@@ -22125,7 +22106,6 @@ msgstr "Velg oppføringer"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "Deling av oppføringer"
 
@@ -23182,11 +23162,6 @@ msgstr "rolle"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Role"
 msgstr "Rolle"
-
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "Rolle- og felttillatelser gjelder fortsatt."
 
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
@@ -25069,11 +25044,6 @@ msgstr "Delte e-poster i innboksen"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Shared record"
 msgstr "Delt oppføring"
-
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "Deling går aldri utover roller og radfiltrene deres. Bruk det for sensitive objekter."
 
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -29300,6 +29270,11 @@ msgstr "Oppgrader til Organisasjon"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "Oppgrader til Organization for å konfigurere SSO."
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr ""
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
@@ -30689,11 +30664,6 @@ msgstr "Om denne modellen støtter chain-of-thought-resonnering"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "Hvilken samtale med mottakeren dette trinnet skriver til"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "Hvem en oppføring av {objectLabel} kan deles med. Roller bestemmer fortsatt hva folk ser som standard."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30766,11 +30736,6 @@ msgstr "Uten landskode"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "uten kredittkort"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "Kan ikke se den: Rollen deres har ikke tilgang til {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -20,11 +20,13 @@ import {
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
+import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domain/utils/count-delivered-recipients.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -52,6 +54,8 @@ const TEST_SEND_THROTTLE = { maxRequests: 3, windowMs: 24 * 60 * 60 * 1000 };
 
 @Injectable()
 export class MessageCampaignService {
+  private readonly logger = new Logger(MessageCampaignService.name);
+
   constructor(
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
@@ -73,15 +77,18 @@ export class MessageCampaignService {
     workspaceId,
     userWorkspaceId,
     campaignId,
+    expectedRecipientCount,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     campaignId: string;
+    expectedRecipientCount?: number;
   }): Promise<SendCampaignResult> {
     const prepared = await this.prepareCampaignSendOrThrow({
       workspaceId,
       userWorkspaceId,
       campaignId,
+      expectedRecipientCount,
     });
 
     return this.claimAndMaterializeOrThrow({
@@ -167,11 +174,13 @@ export class MessageCampaignService {
     userWorkspaceId,
     campaignId,
     requestedScheduledAt,
+    expectedRecipientCount,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     campaignId: string;
     requestedScheduledAt?: Date;
+    expectedRecipientCount?: number;
   }): Promise<PreparedCampaignSend> {
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
@@ -192,6 +201,16 @@ export class MessageCampaignService {
       roleId,
       requestedScheduledAt,
     });
+
+    if (
+      isDefined(expectedRecipientCount) &&
+      sendableRecipients.length !== expectedRecipientCount
+    ) {
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} would now reach ${sendableRecipients.length} recipient(s), not the ${expectedRecipientCount} that were approved`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+      );
+    }
 
     const messageChannel =
       await this.messageChannelMetadataService.getOrCreateEmailGroupChannel({
@@ -361,8 +380,64 @@ export class MessageCampaignService {
     };
   }
 
+  async sendCampaignTest({
+    workspaceId,
+    userWorkspaceId,
+    campaignId,
+    toAddress,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    campaignId: string;
+    toAddress: string;
+  }): Promise<EmailingDomainSendEmailResult> {
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    const campaign = await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager
+          .getRepository(
+            MessageCampaignWorkspaceEntity,
+            buildEmailingRolePermissionConfig(roleId),
+          )
+          .findOne({ where: { id: campaignId } }),
+    );
+
+    if (!isDefined(campaign)) {
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} not found`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND,
+      );
+    }
+
+    if (
+      !isNonEmptyString(campaign.fromAddress?.primaryEmail) ||
+      !isNonEmptyString(campaign.subject) ||
+      !isNonEmptyString(campaign.bodyTemplate)
+    ) {
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} needs a from address, a subject and a body before a test send`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+      );
+    }
+
+    return this.sendTest({
+      workspaceId,
+      spenders: { userWorkspaceId },
+      toAddress,
+      subject: campaign.subject,
+      html: campaign.bodyTemplate,
+      fromAddress: campaign.fromAddress.primaryEmail,
+      unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
+    });
+  }
+
   async sendTest({
     workspaceId,
+    spenders,
     toAddress,
     subject,
     html,
@@ -370,12 +445,18 @@ export class MessageCampaignService {
     unsubscribeTopicId,
   }: {
     workspaceId: string;
+    spenders: UsageSpenders;
     toAddress: string;
     subject: string;
     html: string;
     fromAddress: string;
     unsubscribeTopicId?: string;
   }): Promise<EmailingDomainSendEmailResult> {
+    await this.emailBillingService.validateEmailSendOrThrow({
+      workspaceId,
+      spenders,
+    });
+
     const emailingDomain = await this.findSendReadyEmailingDomainOrThrow({
       workspaceId,
       fromAddress,
@@ -407,7 +488,7 @@ export class MessageCampaignService {
       TEST_SEND_THROTTLE.windowMs,
     );
 
-    return this.emailingDomainSenderService.sendEmail(
+    const result = await this.emailingDomainSenderService.sendEmail(
       workspaceId,
       emailingDomain.id,
       {
@@ -420,6 +501,38 @@ export class MessageCampaignService {
         unsubscribeTopicId,
       },
     );
+
+    await this.billAcceptedSend({ workspaceId, spenders, result });
+
+    return result;
+  }
+
+  // The provider already accepted the mail, so a billing failure must not invite a resend
+  private async billAcceptedSend({
+    workspaceId,
+    spenders,
+    result,
+  }: {
+    workspaceId: string;
+    spenders: UsageSpenders;
+    result: Pick<
+      EmailingDomainSendEmailResult,
+      'messageId' | 'deliveredRecipients'
+    >;
+  }): Promise<void> {
+    await this.emailBillingService
+      .billSentEmails({
+        workspaceId,
+        spenders,
+        sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
+      })
+      .catch((error) => {
+        this.logger.error(
+          `Workspace ${workspaceId} sent email ${result.messageId} but failed to bill it, so this send is unbilled: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
   }
 
   private async findSendReadyEmailingDomainOrThrow({

@@ -1566,11 +1566,6 @@ msgstr "È necessario un metodo di pagamento per mantenere attivo il tuo spazio 
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "Un pagamento per il tuo abbonamento non è riuscito. Le tue funzionalità premium restano attive mentre riproviamo."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "Un record può essere condiviso con chiunque, anche con persone il cui ruolo non può accedere a questo oggetto. Riceveranno solo quel record, per visualizzarlo o modificarlo."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1677,11 +1672,6 @@ msgstr "Informazioni sulla tua app"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "DPA accettati e firmati per questo spazio di lavoro, con la relativa versione del modello e data."
-
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "L'accesso viene ereditato anche dai record correlati."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3569,11 +3559,6 @@ msgstr "Qualsiasi dispositivo"
 msgid "Any field"
 msgstr "Qualsiasi campo"
 
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "Chiunque nello spazio di lavoro"
-
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Anyone with an approved email domain can find and join."
@@ -5295,11 +5280,6 @@ msgstr "Campagna programmata per il {sendTime}"
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Programmazione della campagna annullata e campagna riportata nelle bozze"
 
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "Può solo visualizzare: il suo ruolo non può modificare {objectLabelPlural}"
-
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
@@ -6950,6 +6930,12 @@ msgstr "Connettiti con Google"
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Connettiti con Microsoft"
+
+#. js-lingui-id: vPwoq6
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
+#: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
+msgid "Connect with {appName}"
+msgstr ""
 
 #. js-lingui-id: oduBE8
 #: src/pages/onboarding/ImportContacts.tsx
@@ -19926,11 +19912,6 @@ msgstr "solo il {firstDay} e {secondDay}"
 msgid "only on {remainingDays} and {0}"
 msgstr "solo il {remainingDays} e {0}"
 
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "Solo le persone che possono già accedere a questi record"
-
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Only run when one of these fields changes"
@@ -22125,7 +22106,6 @@ msgstr "Selezione record"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "Condivisione dei record"
 
@@ -23182,11 +23162,6 @@ msgstr "ruolo"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Role"
 msgstr "Ruolo"
-
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "Le autorizzazioni dei ruoli e dei campi continuano ad applicarsi."
 
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
@@ -25069,11 +25044,6 @@ msgstr "Email della posta in arrivo condivisa"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Shared record"
 msgstr "Record condiviso"
-
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "La condivisione non va mai oltre i ruoli e i relativi filtri delle righe. Usala per gli oggetti sensibili."
 
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -29302,6 +29272,11 @@ msgstr "Passa a Organization"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "Passa a Organization per configurare SSO."
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr ""
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
@@ -30691,11 +30666,6 @@ msgstr "Se questo modello supporta il ragionamento chain-of-thought"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "In quale conversazione con il destinatario scrive questo passaggio"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "Con chi può essere condiviso un record di {objectLabel}. I ruoli decidono comunque cosa le persone vedono per impostazione predefinita."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30768,11 +30738,6 @@ msgstr "Senza prefisso internazionale"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "senza carta di credito"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "Non lo vedrà: il suo ruolo non può accedere a {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)

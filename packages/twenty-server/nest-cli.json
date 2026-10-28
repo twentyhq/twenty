@@ -13,6 +13,7 @@
   },
   "compilerOptions": {
     "builder": "swc",
+    "tsConfigPath": "tsconfig.build.json",
     "typeCheck": false,
     "watchAssets": true,
     "assets": [

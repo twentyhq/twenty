@@ -11,9 +11,11 @@ import {
 export const fromDeleteSkillInputToFlatSkillOrThrow = ({
   flatSkillMaps,
   skillId,
+  workspaceCustomApplicationId,
 }: {
   flatSkillMaps: FlatEntityMaps<FlatSkill>;
   skillId: string;
+  workspaceCustomApplicationId: string;
 }): FlatSkill => {
   const existingFlatSkill = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: skillId,
@@ -27,7 +29,7 @@ export const fromDeleteSkillInputToFlatSkillOrThrow = ({
     );
   }
 
-  if (!existingFlatSkill.isCustom) {
+  if (existingFlatSkill.applicationId !== workspaceCustomApplicationId) {
     throw new SkillException(
       'Cannot delete standard skill',
       SkillExceptionCode.SKILL_IS_STANDARD,

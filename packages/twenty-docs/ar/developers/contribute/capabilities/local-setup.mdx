@@ -12,13 +12,12 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 قبل أن تتمكن من تثبيت واستخدام Twenty، تأكد من تثبيت الأمور التالية على جهاز الكمبيوتر الخاص بك:
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* [Node v24.5.0](https://nodejs.org/en/download)
+* [Node الإصدار 26](https://nodejs.org/en/download)
 * [yarn v4](https://yarnpkg.com/getting-started/install)
 * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
 <Warning>
-لن يعمل `npm` ، يجب عليك استخدام `yarn` بدلًا من ذلك. يأتي Yarn الآن مع Node.js، لذا لست بحاجة إلى تثبيته بشكل منفصل.
-عليك فقط تشغيل `corepack enable` لتفعيل Yarn إذا لم تقم بذلك بعد.
+لن يعمل `npm` ، يجب عليك استخدام `yarn` بدلًا من ذلك. لم يعد Node 26 يتضمن Corepack، لذا ثبّته مرة واحدة باستخدام `npm install -g corepack`، ثم شغّل `corepack enable` لتمكين Yarn.
 </Warning>
 
 </Tab>
@@ -64,6 +63,7 @@ nvm install # installs recommended node version
 
 nvm use # use recommended node version
 
+npm install -g corepack
 corepack enable
 ```
 

@@ -28,6 +28,7 @@ import { type SettingsSkillFormValues } from '~/pages/settings/ai/types/Settings
 import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 import { getSettingsSkillInitialFormValues } from '~/pages/settings/ai/utils/getSettingsSkillInitialFormValues';
 import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -60,8 +61,10 @@ export const SettingsSkillFormContent = ({
   const { getIcon } = useIcons();
   const navigate = useNavigateSettings();
 
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+
   const isCreateMode = !isDefined(skill);
-  const isReadonlyMode = isDefined(skill) && !skill.isCustom;
+  const isReadonlyMode = isDefined(skill) && !getIsMetadataItemCustom(skill);
 
   const [initialFormValues] = useState(() =>
     getSettingsSkillInitialFormValues(skill),

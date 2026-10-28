@@ -104,7 +104,6 @@ const buildExistingFlatView = ({
     key: null,
     position: 0,
     isCompact: false,
-    isCustom: false,
     isActive: true,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     visibility: ViewVisibility.WORKSPACE,
