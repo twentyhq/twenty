@@ -51,6 +51,7 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
   );
 
   // A member, API key or agent holding an app's default role (Admin) stays restricted
+  // TODO: simplify once Admin is no longer the Standard application's default role (#28667)
   const getActingApplicationId = (roleId: string) =>
     roleId === applicationRoleId && !nonApplicationRoleIds.has(roleId)
       ? applicationIdByDefaultRoleId[roleId]
