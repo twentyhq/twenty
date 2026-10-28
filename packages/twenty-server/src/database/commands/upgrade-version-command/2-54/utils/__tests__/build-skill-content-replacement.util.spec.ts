@@ -1,6 +1,6 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
-import { buildSkillContentReplacement } from 'src/database/commands/upgrade-version-command/2-53/utils/build-skill-content-replacement.util';
+import { buildSkillContentReplacement } from 'src/database/commands/upgrade-version-command/2-54/utils/build-skill-content-replacement.util';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 
 const PREVIOUS_CONTENT = '# CRM Hygiene Skill\n\nThere is no merge tool.';

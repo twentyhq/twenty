@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { CRM_HYGIENE_SKILL_CONTENT_BEFORE_MERGE_TOOL } from 'src/database/commands/upgrade-version-command/2-53/constants/crm-hygiene-skill-content-before-merge-tool.constant';
-import { buildSkillContentReplacement } from 'src/database/commands/upgrade-version-command/2-53/utils/build-skill-content-replacement.util';
+import { CRM_HYGIENE_SKILL_CONTENT_BEFORE_MERGE_TOOL } from 'src/database/commands/upgrade-version-command/2-54/constants/crm-hygiene-skill-content-before-merge-tool.constant';
+import { buildSkillContentReplacement } from 'src/database/commands/upgrade-version-command/2-54/utils/build-skill-content-replacement.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -18,9 +18,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const CRM_HYGIENE_SKILL_UNIVERSAL_IDENTIFIER =
   STANDARD_SKILL['crm-hygiene'].universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.53.0', 1793206127866)
+@RegisteredWorkspaceCommand('2.54.0', 1793206127866)
 @Command({
-  name: 'upgrade:2-53:update-crm-hygiene-skill-merge-guidance',
+  name: 'upgrade:2-54:update-crm-hygiene-skill-merge-guidance',
   description:
     'Update the crm-hygiene skill so it merges duplicates with merge_many_* instead of saying there is no merge tool',
 })
