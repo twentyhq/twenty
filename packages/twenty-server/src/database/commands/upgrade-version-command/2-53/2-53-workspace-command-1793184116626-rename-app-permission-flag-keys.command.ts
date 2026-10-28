@@ -3,14 +3,17 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { type AppPermissionFlagKeyRenameDirection } from 'src/database/commands/upgrade-version-command/2-53/types/app-permission-flag-key-rename-direction.type';
+import { type PermissionFlagKeyRename } from 'src/database/commands/upgrade-version-command/2-53/types/permission-flag-key-rename.type';
 import { buildAppPermissionFlagExpressionUpdates } from 'src/database/commands/upgrade-version-command/2-53/utils/build-app-permission-flag-expression-updates.util';
 import { buildAppPermissionFlagKeyRenames } from 'src/database/commands/upgrade-version-command/2-53/utils/build-app-permission-flag-key-renames.util';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
@@ -28,6 +31,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 export class RenameAppPermissionFlagKeysCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     @InjectDataSource()
@@ -52,7 +56,9 @@ export class RenameAppPermissionFlagKeysCommand extends ProvisionedWorkspaceComm
     workspaceId,
     options,
     direction,
-  }: RunOnWorkspaceArgs & { direction: 'up' | 'down' }): Promise<void> {
+  }: RunOnWorkspaceArgs & {
+    direction: AppPermissionFlagKeyRenameDirection;
+  }): Promise<void> {
     const { flatPermissionFlagMaps, flatCommandMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatPermissionFlagMaps',
@@ -74,34 +80,61 @@ export class RenameAppPermissionFlagKeysCommand extends ProvisionedWorkspaceComm
 
       throw new Error(
         doNotTranslate(
-          `Workspace ${workspaceId}: ${collisionDescriptions.join('; ')}. Rename or remove the conflicting permission flag, then rerun the upgrade.`,
+          `Workspace ${workspaceId}: ${collisionDescriptions.join('; ')}. Permission flag keys cannot change, so uninstall the application that owns each conflicting permission flag, then rerun the upgrade.`,
         ),
       );
     }
 
-    const commandMenuItemsToUpdate = buildAppPermissionFlagExpressionUpdates({
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const {
+      standardCommandMenuItemsToUpdate,
+      customCommandMenuItemsToUpdate,
+      skippedCommandMenuItemCount,
+    } = buildAppPermissionFlagExpressionUpdates({
       flatCommandMenuItemByUniversalIdentifier:
         flatCommandMenuItemMaps.byUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
       now: new Date().toISOString(),
       direction,
     });
 
-    if (
-      !isNonEmptyArray(permissionFlagKeyRenames) &&
-      !isNonEmptyArray(commandMenuItemsToUpdate)
-    ) {
+    const isDryRun = options.dryRun ?? false;
+    const logPrefix = `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}`;
+
+    if (skippedCommandMenuItemCount > 0) {
+      this.logger.warn(
+        doNotTranslate(
+          `${logPrefix}: leaving ${skippedCommandMenuItemCount} command menu item(s) of other applications that read a renamed permission flag key`,
+        ),
+      );
+    }
+
+    const commandMenuItemCount =
+      standardCommandMenuItemsToUpdate.length +
+      customCommandMenuItemsToUpdate.length;
+
+    const plannedChanges = [
+      isNonEmptyArray(permissionFlagKeyRenames)
+        ? `permission flag key(s) ${permissionFlagKeyRenames
+            .map(({ fromKey, toKey }) => `${fromKey} -> ${toKey}`)
+            .join(', ')}`
+        : undefined,
+      commandMenuItemCount > 0
+        ? `the permission flag references of ${commandMenuItemCount} command menu item(s) (${standardCommandMenuItemsToUpdate.length} standard, ${customCommandMenuItemsToUpdate.length} custom)`
+        : undefined,
+    ].filter(isDefined);
+
+    if (!isNonEmptyArray(plannedChanges)) {
       return;
     }
 
-    const isDryRun = options.dryRun ?? false;
-    const renamedKeys = permissionFlagKeyRenames.map(
-      ({ fromKey, toKey }) => `${fromKey} -> ${toKey}`,
-    );
-
     this.logger.log(
-      doNotTranslate(
-        `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: renaming permission flag key(s) [${renamedKeys.join(', ')}] and ${commandMenuItemsToUpdate.length} command menu item expression(s)`,
-      ),
+      doNotTranslate(`${logPrefix}: renaming ${plannedChanges.join(' and ')}`),
     );
 
     if (isDryRun) {
@@ -115,10 +148,21 @@ export class RenameAppPermissionFlagKeysCommand extends ProvisionedWorkspaceComm
       });
     }
 
-    if (isNonEmptyArray(commandMenuItemsToUpdate)) {
+    if (isNonEmptyArray(standardCommandMenuItemsToUpdate)) {
       await this.updateCommandMenuItems({
         workspaceId,
-        commandMenuItemsToUpdate,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        commandMenuItemsToUpdate: standardCommandMenuItemsToUpdate,
+      });
+    }
+
+    if (isNonEmptyArray(customCommandMenuItemsToUpdate)) {
+      await this.updateCommandMenuItems({
+        workspaceId,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        commandMenuItemsToUpdate: customCommandMenuItemsToUpdate,
       });
     }
   }
@@ -129,11 +173,7 @@ export class RenameAppPermissionFlagKeysCommand extends ProvisionedWorkspaceComm
     permissionFlagKeyRenames,
   }: {
     workspaceId: string;
-    permissionFlagKeyRenames: {
-      permissionFlagId: string;
-      fromKey: string;
-      toKey: string;
-    }[];
+    permissionFlagKeyRenames: PermissionFlagKeyRename[];
   }): Promise<void> {
     try {
       await this.coreDataSource.transaction(async (entityManager) => {
@@ -157,43 +197,67 @@ export class RenameAppPermissionFlagKeysCommand extends ProvisionedWorkspaceComm
           }
         }
       });
-    } finally {
-      // Even on failure, so a rerun plans from the database, not a stale cache
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'flatPermissionFlagMaps',
-      ]);
+    } catch (renameError) {
+      // A rerun must plan from the database, and a failed refresh must not hide why the rename failed
+      await this.refreshPermissionFlagCache(workspaceId).catch(
+        (refreshError: unknown) =>
+          this.logger.error(
+            doNotTranslate(
+              `Workspace ${workspaceId}: could not refresh the permission flag cache: ${String(refreshError)}`,
+            ),
+          ),
+      );
+
+      throw renameError;
     }
+
+    await this.refreshPermissionFlagCache(workspaceId);
+  }
+
+  private async refreshPermissionFlagCache(workspaceId: string): Promise<void> {
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatPermissionFlagMaps',
+    ]);
   }
 
   private async updateCommandMenuItems({
     workspaceId,
+    applicationUniversalIdentifier,
     commandMenuItemsToUpdate,
   }: {
     workspaceId: string;
+    applicationUniversalIdentifier: string;
     commandMenuItemsToUpdate: FlatCommandMenuItem[];
   }): Promise<void> {
-    const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-        {
-          workspaceId,
-          isSystemBuild: true,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          allFlatEntityOperationByMetadataName: {
-            commandMenuItem: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: commandMenuItemsToUpdate,
-            },
-          },
+    const migrationArgs = {
+      workspaceId,
+      isSystemBuild: true,
+      applicationUniversalIdentifier,
+      allFlatEntityOperationByMetadataName: {
+        commandMenuItem: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: [],
+          flatEntityToUpdate: commandMenuItemsToUpdate,
         },
-      );
+      },
+    };
+
+    // Twenty standard metadata never flows through the side-effect engine (UPGRADE_COMMANDS.md)
+    const result =
+      applicationUniversalIdentifier ===
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+        ? await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+            migrationArgs,
+          )
+        : await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+            migrationArgs,
+          );
 
     if (result.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         result,
         doNotTranslate(
-          `Failed to rename the app permission flag references in command menu items for workspace ${workspaceId}`,
+          `Failed to rename the app permission flag references in command menu items of application ${applicationUniversalIdentifier} for workspace ${workspaceId}`,
         ),
       );
     }

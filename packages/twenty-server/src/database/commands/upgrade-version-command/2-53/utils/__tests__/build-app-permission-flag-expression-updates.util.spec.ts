@@ -1,10 +1,14 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
+import { type AppPermissionFlagKeyRenameDirection } from 'src/database/commands/upgrade-version-command/2-53/types/app-permission-flag-key-rename-direction.type';
 import { buildAppPermissionFlagExpressionUpdates } from 'src/database/commands/upgrade-version-command/2-53/utils/build-app-permission-flag-expression-updates.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const NOW = '2026-10-28T12:00:00.000Z';
+
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '20202020-5555-4555-8555-555555555555';
 
 const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-3333-4333-8333-333333333333';
@@ -19,26 +23,38 @@ const PREVIOUS_EXPRESSION_BY_STANDARD_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER = {
 const buildCommandMenuItem = ({
   universalIdentifier,
   conditionalAvailabilityExpression,
+  conditionalPinnedExpression = null,
   applicationUniversalIdentifier = TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 }: {
   universalIdentifier: string;
   conditionalAvailabilityExpression: string | null;
+  conditionalPinnedExpression?: string | null;
   applicationUniversalIdentifier?: string;
 }): FlatCommandMenuItem =>
   ({
     universalIdentifier,
     conditionalAvailabilityExpression,
+    conditionalPinnedExpression,
     applicationUniversalIdentifier,
     updatedAt: '2026-01-01T00:00:00.000Z',
   }) as FlatCommandMenuItem;
 
-const indexByUniversalIdentifier = (commandMenuItems: FlatCommandMenuItem[]) =>
-  Object.fromEntries(
-    commandMenuItems.map((commandMenuItem) => [
-      commandMenuItem.universalIdentifier,
-      commandMenuItem,
-    ]),
-  );
+const buildUpdates = (
+  commandMenuItems: FlatCommandMenuItem[],
+  direction: AppPermissionFlagKeyRenameDirection = 'up',
+) =>
+  buildAppPermissionFlagExpressionUpdates({
+    flatCommandMenuItemByUniversalIdentifier: Object.fromEntries(
+      commandMenuItems.map((commandMenuItem) => [
+        commandMenuItem.universalIdentifier,
+        commandMenuItem,
+      ]),
+    ),
+    workspaceCustomApplicationUniversalIdentifier:
+      WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    now: NOW,
+    direction,
+  });
 
 const buildPreviousStandardCommandMenuItems = () =>
   Object.entries(
@@ -52,18 +68,17 @@ const buildPreviousStandardCommandMenuItems = () =>
 
 const renameExpression = (
   conditionalAvailabilityExpression: string,
-  direction: 'up' | 'down',
+  direction: AppPermissionFlagKeyRenameDirection,
 ) =>
-  buildAppPermissionFlagExpressionUpdates({
-    flatCommandMenuItemByUniversalIdentifier: indexByUniversalIdentifier([
+  buildUpdates(
+    [
       buildCommandMenuItem({
         universalIdentifier: 'command-menu-item',
         conditionalAvailabilityExpression,
       }),
-    ]),
-    now: NOW,
+    ],
     direction,
-  })[0]?.conditionalAvailabilityExpression;
+  ).standardCommandMenuItemsToUpdate[0]?.conditionalAvailabilityExpression;
 
 describe('buildAppPermissionFlagExpressionUpdates', () => {
   it('produces the expressions the standard application now declares', () => {
@@ -74,20 +89,16 @@ describe('buildAppPermissionFlagExpressionUpdates', () => {
         twentyStandardApplicationId: '20202020-2222-4222-8222-222222222222',
       });
 
-    const updates = buildAppPermissionFlagExpressionUpdates({
-      flatCommandMenuItemByUniversalIdentifier: indexByUniversalIdentifier(
-        buildPreviousStandardCommandMenuItems(),
-      ),
-      now: NOW,
-      direction: 'up',
-    });
+    const { standardCommandMenuItemsToUpdate } = buildUpdates(
+      buildPreviousStandardCommandMenuItems(),
+    );
 
-    expect(updates).toHaveLength(4);
+    expect(standardCommandMenuItemsToUpdate).toHaveLength(4);
 
     for (const {
       universalIdentifier,
       conditionalAvailabilityExpression,
-    } of updates) {
+    } of standardCommandMenuItemsToUpdate) {
       expect(conditionalAvailabilityExpression).toBe(
         allFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier[
           universalIdentifier
@@ -97,16 +108,12 @@ describe('buildAppPermissionFlagExpressionUpdates', () => {
   });
 
   it('rewrites the standard command menu items on up', () => {
-    const updates = buildAppPermissionFlagExpressionUpdates({
-      flatCommandMenuItemByUniversalIdentifier: indexByUniversalIdentifier(
-        buildPreviousStandardCommandMenuItems(),
-      ),
-      now: NOW,
-      direction: 'up',
-    });
+    const { standardCommandMenuItemsToUpdate } = buildUpdates(
+      buildPreviousStandardCommandMenuItems(),
+    );
 
     expect(
-      updates.map(
+      standardCommandMenuItemsToUpdate.map(
         ({ universalIdentifier, conditionalAvailabilityExpression }) => ({
           universalIdentifier,
           conditionalAvailabilityExpression,
@@ -130,7 +137,11 @@ describe('buildAppPermissionFlagExpressionUpdates', () => {
         conditionalAvailabilityExpression: 'permissionFlags.WORKSPACE_APPS',
       },
     ]);
-    expect(updates.every(({ updatedAt }) => updatedAt === NOW)).toBe(true);
+    expect(
+      standardCommandMenuItemsToUpdate.every(
+        ({ updatedAt }) => updatedAt === NOW,
+      ),
+    ).toBe(true);
   });
 
   it('restores the previous expressions on down', () => {
@@ -162,40 +173,75 @@ describe('buildAppPermissionFlagExpressionUpdates', () => {
     ).toBeUndefined();
   });
 
-  it('skips items already renamed or without an expression', () => {
-    expect(
-      buildAppPermissionFlagExpressionUpdates({
-        flatCommandMenuItemByUniversalIdentifier: indexByUniversalIdentifier([
-          buildCommandMenuItem({
-            universalIdentifier: 'renamed',
-            conditionalAvailabilityExpression: 'permissionFlags.USER_APPS',
-          }),
-          buildCommandMenuItem({
-            universalIdentifier: 'without-expression',
-            conditionalAvailabilityExpression: null,
-          }),
-        ]),
-        now: NOW,
-        direction: 'up',
+  it('rewrites the pinned expression alongside the availability expression', () => {
+    const { standardCommandMenuItemsToUpdate } = buildUpdates([
+      buildCommandMenuItem({
+        universalIdentifier: 'pinned-only',
+        conditionalAvailabilityExpression: 'permissionFlags.AI',
+        conditionalPinnedExpression: 'permissionFlags.APPLICATIONS',
       }),
-    ).toEqual([]);
+    ]);
+
+    expect(standardCommandMenuItemsToUpdate).toMatchObject([
+      {
+        conditionalAvailabilityExpression: 'permissionFlags.AI',
+        conditionalPinnedExpression: 'permissionFlags.WORKSPACE_APPS',
+      },
+    ]);
   });
 
-  it('leaves command menu items owned by another application', () => {
+  it('skips items already renamed or without an expression', () => {
     expect(
-      buildAppPermissionFlagExpressionUpdates({
-        flatCommandMenuItemByUniversalIdentifier: indexByUniversalIdentifier([
-          buildCommandMenuItem({
-            universalIdentifier: 'app-owned',
-            conditionalAvailabilityExpression:
-              'permissionFlags.CONNECTED_ACCOUNTS',
-            applicationUniversalIdentifier:
-              OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
-          }),
-        ]),
-        now: NOW,
-        direction: 'up',
-      }),
-    ).toEqual([]);
+      buildUpdates([
+        buildCommandMenuItem({
+          universalIdentifier: 'renamed',
+          conditionalAvailabilityExpression: 'permissionFlags.USER_APPS',
+          conditionalPinnedExpression: 'permissionFlags.WORKSPACE_APPS',
+        }),
+        buildCommandMenuItem({
+          universalIdentifier: 'without-expression',
+          conditionalAvailabilityExpression: null,
+        }),
+      ]),
+    ).toEqual({
+      standardCommandMenuItemsToUpdate: [],
+      customCommandMenuItemsToUpdate: [],
+      skippedCommandMenuItemCount: 0,
+    });
+  });
+
+  it('separates workspace custom items and counts items of other applications without rewriting them', () => {
+    const { customCommandMenuItemsToUpdate, skippedCommandMenuItemCount } =
+      buildUpdates([
+        buildCommandMenuItem({
+          universalIdentifier: 'custom',
+          conditionalAvailabilityExpression:
+            'permissionFlags.CONNECTED_ACCOUNTS',
+          applicationUniversalIdentifier:
+            WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        }),
+        buildCommandMenuItem({
+          universalIdentifier: 'other-application',
+          conditionalAvailabilityExpression:
+            'permissionFlags.CONNECTED_ACCOUNTS',
+          applicationUniversalIdentifier:
+            OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+        }),
+      ]);
+
+    expect(
+      customCommandMenuItemsToUpdate.map(
+        ({ universalIdentifier, conditionalAvailabilityExpression }) => ({
+          universalIdentifier,
+          conditionalAvailabilityExpression,
+        }),
+      ),
+    ).toEqual([
+      {
+        universalIdentifier: 'custom',
+        conditionalAvailabilityExpression: 'permissionFlags.USER_APPS',
+      },
+    ]);
+    expect(skippedCommandMenuItemCount).toBe(1);
   });
 });

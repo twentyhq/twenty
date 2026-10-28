@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag.type';
 import { fromCreateRolePermissionFlagInputToFlatRolePermissionFlagToCreate } from 'src/engine/metadata-modules/flat-role-permission-flag/utils/from-create-role-permission-flag-input-to-flat-role-permission-flag-to-create.util';
 import { resolvePermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/utils/resolve-permission-flag-key.util';
@@ -14,6 +15,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -60,14 +62,25 @@ export class RolePermissionFlagService {
     }
 
     const roleUniversalIdentifier = role.universalIdentifier;
-    const permissionFlagByKey = new Map(
-      Object.values(flatPermissionFlagMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .map((permissionFlag) => [
-          resolvePermissionFlagKey(permissionFlag),
-          permissionFlag,
-        ]),
-    );
+    const permissionFlagByKey = new Map<string, FlatPermissionFlag>();
+
+    for (const permissionFlag of Object.values(
+      flatPermissionFlagMaps.byUniversalIdentifier,
+    ).filter(isDefined)) {
+      const key = resolvePermissionFlagKey(permissionFlag);
+
+      // An app flag created before its key was reserved can share the
+      // resolved key of a standard flag; the standard flag must win
+      if (
+        permissionFlagByKey.has(key) &&
+        !belongsToTwentyStandardApp(permissionFlag)
+      ) {
+        continue;
+      }
+
+      permissionFlagByKey.set(key, permissionFlag);
+    }
+
     const permissionFlagsByInputKey = input.permissionFlagKeys.map((flag) => ({
       flag,
       permissionFlag: permissionFlagByKey.get(flag),

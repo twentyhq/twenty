@@ -1,13 +1,13 @@
-// The standard flags as the 2.6 backfill saw them before 2.53 renamed
-// CONNECTED_ACCOUNTS and APPLICATIONS. Frozen: never mutate these values.
-export const PRE_2_53_STANDARD_PERMISSION_FLAG_DEFINITIONS: {
+// The standard flag definitions as of 2.52, before 2.53 renamed CONNECTED_ACCOUNTS
+// and APPLICATIONS. Frozen: never change these values.
+export const PRE_2_53_STANDARD_PERMISSION_FLAG_DEFINITIONS: readonly Readonly<{
   key: string;
   universalIdentifier: string;
   label: string;
   description: string | null;
   icon: string | null;
   permissionType: 'settings' | 'tool';
-}[] = [
+}>[] = [
   {
     key: 'API_KEYS_AND_WEBHOOKS',
     universalIdentifier: 'beb99803-9a0e-588d-9c4b-3dd14d9cdf21',

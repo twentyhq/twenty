@@ -89,31 +89,33 @@ describe('validateFlatPermissionFlagCreation', () => {
     expect(result.errors[0].message).toContain('CAN_DO_THING');
   });
 
-  it('should report an error when an app flag uses a standard permission flag key', () => {
-    const result = validateFlatPermissionFlagCreation(
-      buildCreationArgs({
-        flatEntityToValidate: buildFlatPermissionFlag({
-          universalIdentifier: 'new-flag',
-          key: PermissionFlagType.USER_APPS,
+  it.each([PermissionFlagType.USER_APPS, 'CONNECTED_ACCOUNTS', 'APPLICATIONS'])(
+    'should report an error when an app flag uses the reserved key %s',
+    (key) => {
+      const result = validateFlatPermissionFlagCreation(
+        buildCreationArgs({
+          flatEntityToValidate: buildFlatPermissionFlag({
+            universalIdentifier: 'new-flag',
+            key,
+          }),
         }),
-      }),
-    );
+      );
 
-    expect(result.errors).toHaveLength(1);
-    expect(result.errors[0].code).toBe(
-      PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_KEY,
-    );
-    expect(result.errors[0].message).toContain(PermissionFlagType.USER_APPS);
-  });
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].code).toBe(
+        PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_KEY,
+      );
+      expect(result.errors[0].message).toContain(key);
+    },
+  );
 
-  it('should accept a standard permission flag key on a standard app flag', () => {
+  it('should accept a standard permission flag key on a flag owned by the standard app', () => {
     const result = validateFlatPermissionFlagCreation(
       buildCreationArgs({
         flatEntityToValidate: buildStandardAppFlatPermissionFlag({
           universalIdentifier: SystemPermissionFlag.USER_APPS,
           key: PermissionFlagType.USER_APPS,
         }),
-        isCallerStandardApp: true,
       }),
     );
 

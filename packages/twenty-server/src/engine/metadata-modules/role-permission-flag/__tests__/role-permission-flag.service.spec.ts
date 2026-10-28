@@ -1,3 +1,4 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   PermissionFlagType,
   SystemPermissionFlag,
@@ -5,6 +6,7 @@ import {
 
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RolePermissionFlagService } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.service';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -14,43 +16,41 @@ const ROLE_ID = 'role-id';
 const ROLE_UNIVERSAL_IDENTIFIER = '4b1f1c0e-62d6-4a43-9a3c-2a4f0e6f3c11';
 const APP_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER =
   'a3a0f7c2-5f8e-4f0e-9d7b-3c1d2e4f5a6b';
+const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER =
+  'c6b5a4f3-2e1d-4c0b-9a8f-7e6d5c4b3a2f';
 const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
   '7d3c4b2a-1e0f-4a9b-8c7d-6e5f4a3b2c1d';
 
-const buildPermissionFlag = ({
-  id,
-  universalIdentifier,
-  key,
-}: {
-  id: string;
-  universalIdentifier: string;
-  key: string;
-}) => ({ id, universalIdentifier, key });
+const STANDARD_WORKSPACE_APPS_PERMISSION_FLAG = {
+  id: 'workspace-apps-flag-id',
+  universalIdentifier: SystemPermissionFlag.WORKSPACE_APPS,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  key: 'APPLICATIONS',
+} as FlatPermissionFlag;
 
-// The workspace has not run the 2-53 rename yet, so the standard row keeps its previous key
-const PERMISSION_FLAGS = [
-  buildPermissionFlag({
-    id: 'workspace-apps-flag-id',
-    universalIdentifier: SystemPermissionFlag.WORKSPACE_APPS,
-    key: 'APPLICATIONS',
-  }),
-  buildPermissionFlag({
-    id: 'app-flag-id',
-    universalIdentifier: APP_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
-    key: 'CAN_EXPORT_INVOICES',
-  }),
-];
+const APP_PERMISSION_FLAG = {
+  id: 'app-flag-id',
+  universalIdentifier: APP_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+  key: 'CAN_EXPORT_INVOICES',
+} as FlatPermissionFlag;
 
-const buildService = () => {
+const buildService = (
+  permissionFlags: FlatPermissionFlag[] = [
+    STANDARD_WORKSPACE_APPS_PERMISSION_FLAG,
+    APP_PERMISSION_FLAG,
+  ],
+) => {
   const flatPermissionFlagMaps = {
     byUniversalIdentifier: Object.fromEntries(
-      PERMISSION_FLAGS.map((permissionFlag) => [
+      permissionFlags.map((permissionFlag) => [
         permissionFlag.universalIdentifier,
         permissionFlag,
       ]),
     ),
     universalIdentifierById: Object.fromEntries(
-      PERMISSION_FLAGS.map((permissionFlag) => [
+      permissionFlags.map((permissionFlag) => [
         permissionFlag.id,
         permissionFlag.universalIdentifier,
       ]),
@@ -158,4 +158,39 @@ describe('RolePermissionFlagService.upsertPermissionFlags', () => {
     ).rejects.toMatchObject({ code: PermissionsExceptionCode.INVALID_SETTING });
     expect(validateBuildAndRunWorkspaceMigration).not.toHaveBeenCalled();
   });
+
+  it.each(['before', 'after'])(
+    'grants the standard flag when an app flag listed %s it holds the same resolved key',
+    async (appFlagPosition) => {
+      const appPermissionFlagHoldingStandardKey = {
+        ...APP_PERMISSION_FLAG,
+        key: PermissionFlagType.WORKSPACE_APPS,
+      };
+      const { service, validateBuildAndRunWorkspaceMigration } = buildService(
+        appFlagPosition === 'before'
+          ? [
+              appPermissionFlagHoldingStandardKey,
+              STANDARD_WORKSPACE_APPS_PERMISSION_FLAG,
+            ]
+          : [
+              STANDARD_WORKSPACE_APPS_PERMISSION_FLAG,
+              appPermissionFlagHoldingStandardKey,
+            ],
+      );
+
+      await service.upsertPermissionFlags({
+        workspaceId: WORKSPACE_ID,
+        input: {
+          roleId: ROLE_ID,
+          permissionFlagKeys: [PermissionFlagType.WORKSPACE_APPS],
+        },
+      });
+
+      expect(
+        getCreatedPermissionFlagUniversalIdentifiers(
+          validateBuildAndRunWorkspaceMigration,
+        ),
+      ).toEqual([SystemPermissionFlag.WORKSPACE_APPS]);
+    },
+  );
 });

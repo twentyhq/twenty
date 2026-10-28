@@ -1,15 +1,10 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AppPermissionFlagKeyRenameDirection } from 'src/database/commands/upgrade-version-command/2-53/types/app-permission-flag-key-rename-direction.type';
+import { type PermissionFlagKeyRename } from 'src/database/commands/upgrade-version-command/2-53/types/permission-flag-key-rename.type';
 import { getAppPermissionFlagKeyMappings } from 'src/database/commands/upgrade-version-command/2-53/utils/get-app-permission-flag-key-mappings.util';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
-
-type PermissionFlagKeyRename = {
-  permissionFlagId: string;
-  universalIdentifier: string;
-  fromKey: string;
-  toKey: string;
-};
 
 type PermissionFlagKeyCollision = PermissionFlagKeyRename & {
   conflictingPermissionFlag: FlatPermissionFlag;
@@ -23,7 +18,7 @@ export const buildAppPermissionFlagKeyRenames = ({
     string,
     FlatPermissionFlag | undefined
   >;
-  direction: 'up' | 'down';
+  direction: AppPermissionFlagKeyRenameDirection;
 }): {
   permissionFlagKeyRenames: PermissionFlagKeyRename[];
   permissionFlagKeyCollisions: PermissionFlagKeyCollision[];

@@ -30,21 +30,15 @@ describe('resolvePermissionFlagKey', () => {
     ).toBe(PermissionFlagType.WORKSPACE_APPS);
   });
 
-  it('returns the stored key of an app-defined flag', () => {
-    expect(
-      resolvePermissionFlagKey({
-        universalIdentifier: '0b6c3a51-7a54-4ef6-8d4e-0f3f0a4b9b1e',
-        key: 'CAN_EXPORT_INVOICES',
-      }),
-    ).toBe('CAN_EXPORT_INVOICES');
-  });
-
-  it('does not map a legacy key on an app-defined flag to a standard key', () => {
-    expect(
-      resolvePermissionFlagKey({
-        universalIdentifier: '0b6c3a51-7a54-4ef6-8d4e-0f3f0a4b9b1e',
-        key: 'APPLICATIONS',
-      }),
-    ).toBe('APPLICATIONS');
-  });
+  it.each(['CAN_EXPORT_INVOICES', 'APPLICATIONS'])(
+    'returns the stored key %s of a flag outside the standard set',
+    (storedKey) => {
+      expect(
+        resolvePermissionFlagKey({
+          universalIdentifier: '0b6c3a51-7a54-4ef6-8d4e-0f3f0a4b9b1e',
+          key: storedKey,
+        }),
+      ).toBe(storedKey);
+    },
+  );
 });

@@ -3,12 +3,16 @@ import { type DataSource, type EntityManager } from 'typeorm';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { RenameAppPermissionFlagKeysCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793184116626-rename-app-permission-flag-keys.command';
+import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
+
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '20202020-5555-4555-8555-555555555555';
 
 const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-3333-4333-8333-333333333333';
@@ -17,7 +21,6 @@ type CommandMenuItemMigrationArgs = {
   allFlatEntityOperationByMetadataName: {
     commandMenuItem: { flatEntityToUpdate: FlatCommandMenuItem[] };
   };
-  isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
 };
 
@@ -33,17 +36,6 @@ const buildPermissionFlag = (
     applicationUniversalIdentifier,
   }) as FlatPermissionFlag;
 
-const buildCommandMenuItem = (
-  universalIdentifier: string,
-  conditionalAvailabilityExpression: string,
-  applicationUniversalIdentifier = TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-): FlatCommandMenuItem =>
-  ({
-    universalIdentifier,
-    conditionalAvailabilityExpression,
-    applicationUniversalIdentifier,
-  }) as FlatCommandMenuItem;
-
 const buildInitialPermissionFlags = () => [
   buildPermissionFlag(
     'e5f63b2d-5369-5df6-8f32-a8bd9e79e653',
@@ -53,21 +45,35 @@ const buildInitialPermissionFlags = () => [
   buildPermissionFlag('1c7f09a7-367d-568b-a0e8-c274eccd6ee3', 'AI'),
 ];
 
-const buildInitialCommandMenuItems = () => [
-  buildCommandMenuItem(
-    '447a65cc-8535-408e-9c48-db24affb7530',
-    'permissionFlags.CONNECTED_ACCOUNTS',
-  ),
-  buildCommandMenuItem(
-    '44db6d7a-79ac-485e-b3da-da8776bd7777',
-    'permissionFlags.APPLICATIONS',
-  ),
-  buildCommandMenuItem(
-    'app-owned-command-menu-item',
-    'permissionFlags.CONNECTED_ACCOUNTS',
-    OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
-  ),
+const buildRenamedPermissionFlags = () => [
+  buildPermissionFlag('e5f63b2d-5369-5df6-8f32-a8bd9e79e653', 'USER_APPS'),
+  buildPermissionFlag('9faa55f7-2606-566b-9e1d-aefbedbd0136', 'WORKSPACE_APPS'),
+  buildPermissionFlag('1c7f09a7-367d-568b-a0e8-c274eccd6ee3', 'AI'),
 ];
+
+const buildInitialCommandMenuItems = () =>
+  [
+    {
+      universalIdentifier: '447a65cc-8535-408e-9c48-db24affb7530',
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      conditionalAvailabilityExpression: 'permissionFlags.CONNECTED_ACCOUNTS',
+      conditionalPinnedExpression: null,
+    },
+    {
+      universalIdentifier: 'custom-command-menu-item',
+      applicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      conditionalAvailabilityExpression: null,
+      conditionalPinnedExpression: 'permissionFlags.APPLICATIONS',
+    },
+    {
+      universalIdentifier: 'other-application-command-menu-item',
+      applicationUniversalIdentifier: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+      conditionalAvailabilityExpression: 'permissionFlags.CONNECTED_ACCOUNTS',
+      conditionalPinnedExpression: null,
+    },
+  ] as FlatCommandMenuItem[];
 
 const indexByUniversalIdentifier = <
   TFlatEntity extends { universalIdentifier: string },
@@ -84,25 +90,46 @@ const indexByUniversalIdentifier = <
 describe('RenameAppPermissionFlagKeysCommand', () => {
   let permissionFlags: FlatPermissionFlag[];
   let commandMenuItems: FlatCommandMenuItem[];
-  let transactionCount: number;
-  let migrationCalls: CommandMenuItemMigrationArgs[];
+  let writes: string[];
   let getOrRecompute: jest.Mock;
   let invalidateAndRecompute: jest.Mock;
   let command: RenameAppPermissionFlagKeysCommand;
+  let log: jest.SpyInstance;
+  let warn: jest.SpyInstance;
+  let error: jest.SpyInstance;
 
   const getKeys = () => permissionFlags.map(({ key }) => key);
 
   const getExpressions = () =>
     commandMenuItems.map(
-      ({ conditionalAvailabilityExpression }) =>
-        conditionalAvailabilityExpression,
+      ({ conditionalAvailabilityExpression, conditionalPinnedExpression }) =>
+        conditionalAvailabilityExpression ?? conditionalPinnedExpression,
     );
+
+  const applyCommandMenuItemMigration = (
+    path: string,
+    args: CommandMenuItemMigrationArgs,
+  ) => {
+    writes.push(`${path} ${args.applicationUniversalIdentifier}`);
+
+    const updatedCommandMenuItems = indexByUniversalIdentifier(
+      args.allFlatEntityOperationByMetadataName.commandMenuItem
+        .flatEntityToUpdate,
+    );
+
+    commandMenuItems = commandMenuItems.map(
+      (commandMenuItem) =>
+        updatedCommandMenuItems[commandMenuItem.universalIdentifier] ??
+        commandMenuItem,
+    );
+
+    return { status: 'success' };
+  };
 
   beforeEach(() => {
     permissionFlags = buildInitialPermissionFlags();
     commandMenuItems = buildInitialCommandMenuItems();
-    transactionCount = 0;
-    migrationCalls = [];
+    writes = [];
     getOrRecompute = jest.fn(async () => ({
       flatPermissionFlagMaps: {
         byUniversalIdentifier: indexByUniversalIdentifier(permissionFlags),
@@ -111,12 +138,9 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
         byUniversalIdentifier: indexByUniversalIdentifier(commandMenuItems),
       },
     }));
-    invalidateAndRecompute = jest.fn();
-
-    const workspaceCacheService = {
-      getOrRecompute,
-      invalidateAndRecompute,
-    } as unknown as WorkspaceCacheService;
+    invalidateAndRecompute = jest.fn(async () => {
+      writes.push('permission flag cache');
+    });
 
     const entityManager = {
       update: jest.fn(
@@ -148,42 +172,45 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
         async (
           runInTransaction: (entityManager: EntityManager) => Promise<void>,
         ) => {
-          transactionCount++;
-
           await runInTransaction(entityManager);
+
+          writes.push('permission flag keys');
         },
       ),
     } as unknown as DataSource;
 
-    const workspaceMigrationValidateBuildAndRunService = {
-      validateBuildAndRunLegacyWorkspaceMigration: jest.fn(
-        async (args: CommandMenuItemMigrationArgs) => {
-          migrationCalls.push(args);
-
-          const updatedCommandMenuItems = indexByUniversalIdentifier(
-            args.allFlatEntityOperationByMetadataName.commandMenuItem
-              .flatEntityToUpdate,
-          );
-
-          commandMenuItems = commandMenuItems.map(
-            (commandMenuItem) =>
-              updatedCommandMenuItems[commandMenuItem.universalIdentifier] ??
-              commandMenuItem,
-          );
-
-          return { status: 'success' };
-        },
-      ),
-    } as unknown as WorkspaceMigrationValidateBuildAndRunService;
-
     command = new RenameAppPermissionFlagKeysCommand(
       {} as WorkspaceIteratorService,
-      workspaceCacheService,
-      workspaceMigrationValidateBuildAndRunService,
+      {
+        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+          .fn()
+          .mockResolvedValue({
+            workspaceCustomFlatApplication: {
+              universalIdentifier:
+                WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+            },
+          }),
+      } as unknown as ApplicationService,
+      {
+        getOrRecompute,
+        invalidateAndRecompute,
+      } as unknown as WorkspaceCacheService,
+      {
+        validateBuildAndRunLegacyWorkspaceMigration: jest.fn(
+          async (args: CommandMenuItemMigrationArgs) =>
+            applyCommandMenuItemMigration('legacy', args),
+        ),
+        validateBuildAndRunWorkspaceMigration: jest.fn(
+          async (args: CommandMenuItemMigrationArgs) =>
+            applyCommandMenuItemMigration('side-effect', args),
+        ),
+      } as unknown as WorkspaceMigrationValidateBuildAndRunService,
       coreDataSource,
     );
 
-    jest.spyOn(command['logger'], 'log').mockImplementation();
+    log = jest.spyOn(command['logger'], 'log').mockImplementation();
+    warn = jest.spyOn(command['logger'], 'warn').mockImplementation();
+    error = jest.spyOn(command['logger'], 'error').mockImplementation();
   });
 
   const buildArgs = (dryRun = false) => ({
@@ -193,91 +220,12 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
     total: 1,
   });
 
-  it('renames the standard keys and the standard command menu expressions that read them', async () => {
-    await command.runOnWorkspace(buildArgs());
-
-    expect(getKeys()).toEqual(['USER_APPS', 'WORKSPACE_APPS', 'AI']);
-    expect(getExpressions()).toEqual([
-      'permissionFlags.USER_APPS',
-      'permissionFlags.WORKSPACE_APPS',
-      'permissionFlags.CONNECTED_ACCOUNTS',
-    ]);
-    expect(invalidateAndRecompute).toHaveBeenCalledWith(WORKSPACE_ID, [
-      'flatPermissionFlagMaps',
-    ]);
-    expect(migrationCalls).toMatchObject([
-      {
-        isSystemBuild: true,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-      },
-    ]);
-  });
-
-  it('changes nothing on a second run', async () => {
-    await command.runOnWorkspace(buildArgs());
-
-    transactionCount = 0;
-    migrationCalls = [];
-
-    await command.runOnWorkspace(buildArgs());
-
-    expect(transactionCount).toBe(0);
-    expect(migrationCalls).toEqual([]);
-  });
-
-  it('restores the previous keys and expressions on down', async () => {
-    await command.up(buildArgs());
-    await command.down(buildArgs());
-
-    expect(permissionFlags).toEqual(buildInitialPermissionFlags());
-    expect(getExpressions()).toEqual(
-      buildInitialCommandMenuItems().map(
-        ({ conditionalAvailabilityExpression }) =>
-          conditionalAvailabilityExpression,
-      ),
-    );
-  });
-
-  it('writes nothing on a dry run', async () => {
-    await command.runOnWorkspace(buildArgs(true));
-
-    expect(transactionCount).toBe(0);
-    expect(migrationCalls).toEqual([]);
-    expect(permissionFlags).toEqual(buildInitialPermissionFlags());
-  });
-
-  it('fails the workspace without writing anything when another flag already holds a new key', async () => {
-    permissionFlags = [
-      ...permissionFlags,
-      buildPermissionFlag(
-        '20202020-4444-4444-8444-444444444444',
-        'USER_APPS',
-        OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
-      ),
-    ];
-
-    await expect(command.runOnWorkspace(buildArgs())).rejects.toThrow(
-      `CONNECTED_ACCOUNTS cannot become USER_APPS: permission flag 20202020-4444-4444-8444-444444444444 of application ${OTHER_APPLICATION_UNIVERSAL_IDENTIFIER} already uses that key`,
-    );
-    expect(transactionCount).toBe(0);
-    expect(migrationCalls).toEqual([]);
-    expect(getKeys()).toEqual([
-      'CONNECTED_ACCOUNTS',
-      'APPLICATIONS',
-      'AI',
-      'USER_APPS',
-    ]);
-  });
-
-  it('fails and refreshes the cache when a key changed after it was cached', async () => {
-    const [connectedAccountsPermissionFlag] = permissionFlags;
-
+  const changeConnectedAccountsKeyAfterCaching = () => {
     getOrRecompute.mockImplementationOnce(async () => {
       const cachedPermissionFlags = [...permissionFlags];
 
       permissionFlags = permissionFlags.map((permissionFlag) =>
-        permissionFlag === connectedAccountsPermissionFlag
+        permissionFlag.key === 'CONNECTED_ACCOUNTS'
           ? { ...permissionFlag, key: 'SOMETHING_ELSE' }
           : permissionFlag,
       );
@@ -293,13 +241,105 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
         },
       };
     });
+  };
+
+  it('renames the keys, then the standard command menu items on the legacy path, then the custom ones on the side-effect path', async () => {
+    await command.runOnWorkspace(buildArgs());
+
+    expect(writes).toEqual([
+      'permission flag keys',
+      'permission flag cache',
+      `legacy ${TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER}`,
+      `side-effect ${WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER}`,
+    ]);
+    expect(getKeys()).toEqual(['USER_APPS', 'WORKSPACE_APPS', 'AI']);
+    expect(getExpressions()).toEqual([
+      'permissionFlags.USER_APPS',
+      'permissionFlags.WORKSPACE_APPS',
+      'permissionFlags.CONNECTED_ACCOUNTS',
+    ]);
+    expect(warn).toHaveBeenCalledWith(
+      `Workspace ${WORKSPACE_ID}: leaving 1 command menu item(s) of other applications that read a renamed permission flag key`,
+    );
+  });
+
+  it('restores the previous keys and expressions on down', async () => {
+    await command.up(buildArgs());
+    await command.down(buildArgs());
+
+    expect(permissionFlags).toEqual(buildInitialPermissionFlags());
+    expect(commandMenuItems).toMatchObject(buildInitialCommandMenuItems());
+  });
+
+  it('writes nothing once the workspace is renamed', async () => {
+    await command.runOnWorkspace(buildArgs());
+
+    writes = [];
+
+    await command.runOnWorkspace(buildArgs());
+
+    expect(writes).toEqual([]);
+  });
+
+  it('writes nothing on a dry run', async () => {
+    await command.runOnWorkspace(buildArgs(true));
+
+    expect(writes).toEqual([]);
+    expect(permissionFlags).toEqual(buildInitialPermissionFlags());
+    expect(commandMenuItems).toEqual(buildInitialCommandMenuItems());
+    expect(log).toHaveBeenCalledWith(
+      `[DRY RUN] Workspace ${WORKSPACE_ID}: renaming permission flag key(s) CONNECTED_ACCOUNTS -> USER_APPS, APPLICATIONS -> WORKSPACE_APPS and the permission flag references of 2 command menu item(s) (1 standard, 1 custom)`,
+    );
+  });
+
+  it('leaves the key list out of the log when only expressions change', async () => {
+    permissionFlags = buildRenamedPermissionFlags();
+
+    await command.runOnWorkspace(buildArgs());
+
+    expect(log).toHaveBeenCalledWith(
+      `Workspace ${WORKSPACE_ID}: renaming the permission flag references of 2 command menu item(s) (1 standard, 1 custom)`,
+    );
+    expect(writes).toEqual([
+      `legacy ${TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER}`,
+      `side-effect ${WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER}`,
+    ]);
+  });
+
+  it('aborts before any write when another flag already holds a new key', async () => {
+    permissionFlags = [
+      ...permissionFlags,
+      buildPermissionFlag(
+        '20202020-4444-4444-8444-444444444444',
+        'USER_APPS',
+        OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ),
+    ];
 
     await expect(command.runOnWorkspace(buildArgs())).rejects.toThrow(
-      `permission flag ${connectedAccountsPermissionFlag.id} no longer has key CONNECTED_ACCOUNTS`,
+      `CONNECTED_ACCOUNTS cannot become USER_APPS: permission flag 20202020-4444-4444-8444-444444444444 of application ${OTHER_APPLICATION_UNIVERSAL_IDENTIFIER} already uses that key. Permission flag keys cannot change, so uninstall the application that owns each conflicting permission flag, then rerun the upgrade.`,
     );
-    expect(invalidateAndRecompute).toHaveBeenCalledWith(WORKSPACE_ID, [
-      'flatPermissionFlagMaps',
-    ]);
-    expect(migrationCalls).toEqual([]);
+    expect(writes).toEqual([]);
+  });
+
+  it('refreshes the cache and fails when a key changed after it was cached', async () => {
+    changeConnectedAccountsKeyAfterCaching();
+
+    await expect(command.runOnWorkspace(buildArgs())).rejects.toThrow(
+      'permission flag id-e5f63b2d-5369-5df6-8f32-a8bd9e79e653 no longer has key CONNECTED_ACCOUNTS',
+    );
+    expect(writes).toEqual(['permission flag cache']);
+  });
+
+  it('surfaces the rename error when the cache refresh fails too', async () => {
+    changeConnectedAccountsKeyAfterCaching();
+    invalidateAndRecompute.mockRejectedValueOnce(new Error('Redis is down'));
+
+    await expect(command.runOnWorkspace(buildArgs())).rejects.toThrow(
+      'no longer has key CONNECTED_ACCOUNTS',
+    );
+    expect(error).toHaveBeenCalledWith(
+      `Workspace ${WORKSPACE_ID}: could not refresh the permission flag cache: Error: Redis is down`,
+    );
   });
 });
