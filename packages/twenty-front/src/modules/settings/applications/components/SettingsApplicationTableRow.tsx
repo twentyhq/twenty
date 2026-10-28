@@ -3,6 +3,8 @@ import { type ReactNode } from 'react';
 import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { type ApplicationDisplayData } from '@/applications/types/ApplicationDisplayData';
+import { SettingsAppPreferencesAppStatusCell } from '@/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell';
+import { type AppPreferencesAppStatus } from '@/settings/app-preferences/types/AppPreferencesAppStatus';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -13,6 +15,7 @@ import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
+import { type SettingsApplicationTableRowMiddleColumn } from '@/settings/applications/types/SettingsApplicationTableRowMiddleColumn';
 
 export type SettingsApplicationTableRowProps = {
   action: ReactNode;
@@ -21,11 +24,21 @@ export type SettingsApplicationTableRowProps = {
   };
   hasUpdate?: boolean;
   link?: string;
+  middleColumn?: SettingsApplicationTableRowMiddleColumn;
   sourceType?: ApplicationRegistrationSourceType;
+  status?: AppPreferencesAppStatus;
 };
 
 export const APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   '164px 80px minmax(0, 1fr) 36px';
+
+export const APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS_BY_MIDDLE_COLUMN: Record<
+  SettingsApplicationTableRowMiddleColumn,
+  string
+> = {
+  type: APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
+  status: '164px 180px minmax(0, 1fr) 36px',
+};
 
 const SOURCE_TYPE_LABELS: Record<
   ApplicationRegistrationSourceType,
@@ -37,12 +50,17 @@ const SOURCE_TYPE_LABELS: Record<
   [ApplicationRegistrationSourceType.TARBALL]: msg`Tarball`,
 };
 
+const getSourceTypeLabel = (sourceType?: ApplicationRegistrationSourceType) =>
+  sourceType ? t(SOURCE_TYPE_LABELS[sourceType]) : t`Built-in`;
+
 export const SettingsApplicationTableRow = ({
   action,
   application,
   hasUpdate,
   link,
+  middleColumn = 'type',
   sourceType,
+  status,
 }: SettingsApplicationTableRowProps) => {
   const resolvedDescription = useResolvedApplicationDescription(application);
   const descriptionSummary =
@@ -50,7 +68,11 @@ export const SettingsApplicationTableRow = ({
 
   return (
     <TableRow
-      gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      gridTemplateColumns={
+        APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS_BY_MIDDLE_COLUMN[
+          middleColumn
+        ]
+      }
       key={application.id}
       to={link}
     >
@@ -58,7 +80,11 @@ export const SettingsApplicationTableRow = ({
         <ApplicationDisplay application={application} />
       </StyledNameTableCell>
       <TableCell color={themeCssVariables.font.color.tertiary}>
-        {sourceType ? t(SOURCE_TYPE_LABELS[sourceType]) : t`Built-in`}
+        {middleColumn === 'status' ? (
+          <SettingsAppPreferencesAppStatusCell status={status} />
+        ) : (
+          getSourceTypeLabel(sourceType)
+        )}
       </TableCell>
       <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
         <OverflowingTextWithTooltip text={descriptionSummary} />

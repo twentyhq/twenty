@@ -45,8 +45,11 @@ const meta: Meta<typeof SettingsApplicationsTable> = {
   component: SettingsApplicationsTable,
   decorators: [ComponentWithRouterDecorator],
   args: {
+    title: 'Installed apps',
+    description: 'All the applications currently installed on this workspace',
     applications: [OAUTH_APPLICATION, NPM_APPLICATION, STANDARD_APPLICATION],
     builtInAccountApps: BUILT_IN_ACCOUNT_APPS,
+    variant: 'workspace',
   },
 };
 

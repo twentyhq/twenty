@@ -19367,6 +19367,11 @@ msgstr "Nije dostupno u Podrazumevanom Pregledu"
 msgid "Not configured"
 msgstr "Nije podešeno"
 
+#. js-lingui-id: S33tz3
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Not connected"
+msgstr ""
+
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"

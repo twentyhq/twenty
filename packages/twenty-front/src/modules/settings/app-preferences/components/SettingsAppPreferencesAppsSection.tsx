@@ -1,15 +1,12 @@
-import { SettingsAppPreferencesAppNameCell } from '@/settings/app-preferences/components/SettingsAppPreferencesAppNameCell';
-import { SettingsAppPreferencesAppStatusCell } from '@/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
 import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
-import { type AppPreferencesRow } from '@/settings/app-preferences/types/AppPreferencesRow';
+import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
+import { getAppPreferencesAppStatusById } from '@/settings/app-preferences/utils/getAppPreferencesAppStatusById';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
-import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
+import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledToolbar = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -17,7 +14,6 @@ const StyledToolbar = styled.div`
 
 export const SettingsAppPreferencesAppsSection = () => {
   const { t } = useLingui();
-  const navigateSettings = useNavigateSettings();
   const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
   const {
     applicationsWithPreferences,
@@ -26,28 +22,19 @@ export const SettingsAppPreferencesAppsSection = () => {
     hasApplicationsLoadError,
     refetch,
   } = useApplicationsWithPreferences();
+  const { groups, loading: accountGroupsLoading } = useMyAccountGroups();
   const isLoadingApplications =
     loading && !hasLoadedApplicationsWithPreferences;
-
-  const rows: AppPreferencesRow[] = [
-    ...enabledBuiltInAccountApps.map(
-      (builtInAccountApp): AppPreferencesRow => ({
-        type: 'builtIn',
-        id: builtInAccountApp.id,
-        builtInAccountApp,
-      }),
-    ),
-    ...applicationsWithPreferences.map(
-      (applicationWithPreferences): AppPreferencesRow => ({
-        type: 'installed',
-        id: applicationWithPreferences.application.id,
-        applicationWithPreferences,
-      }),
-    ),
-  ];
+  const statusById = accountGroupsLoading
+    ? {}
+    : getAppPreferencesAppStatusById({
+        groups,
+        builtInAccountApps: enabledBuiltInAccountApps,
+        applicationsWithPreferences,
+      });
 
   return (
-    <SettingsTableListSection<AppPreferencesRow>
+    <SettingsApplicationsTable
       title={t`Apps`}
       description={t`Choose your preferences for the apps installed on your workspace by the admin`}
       toolbar={
@@ -60,27 +47,13 @@ export const SettingsAppPreferencesAppsSection = () => {
           </StyledToolbar>
         ) : undefined
       }
-      items={rows}
+      applications={applicationsWithPreferences.map(
+        ({ application }) => application,
+      )}
+      builtInAccountApps={enabledBuiltInAccountApps}
+      variant="member"
+      statusById={statusById}
       isLoading={isLoadingApplications}
-      columns={[
-        { label: t`App`, Cell: SettingsAppPreferencesAppNameCell },
-        {
-          label: t`Status`,
-          align: 'right',
-          Cell: SettingsAppPreferencesAppStatusCell,
-        },
-      ]}
-      gridAutoColumns="1fr 1fr"
-      showRowChevron
-      onRowClick={(row) =>
-        row.type === 'builtIn'
-          ? navigateSettings(SettingsPath.BuiltInAccountApp, {
-              builtInAccountAppId: row.builtInAccountApp.id,
-            })
-          : navigateSettings(SettingsPath.ApplicationPreferences, {
-              applicationId: row.applicationWithPreferences.application.id,
-            })
-      }
     />
   );
 };
