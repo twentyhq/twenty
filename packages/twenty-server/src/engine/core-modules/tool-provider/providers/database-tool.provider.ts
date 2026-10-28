@@ -88,6 +88,7 @@ export class DatabaseToolProvider implements ToolProvider {
       rolesPermissions,
       rolePermissionConfig: context.rolePermissionConfig,
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       flatApplicationMaps,
     });
 

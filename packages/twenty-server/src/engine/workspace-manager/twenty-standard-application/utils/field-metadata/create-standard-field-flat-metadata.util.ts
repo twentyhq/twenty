@@ -101,6 +101,7 @@ export const createStandardFieldFlatMetadata = <
             name as keyof typeof PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
           ].writability
         : MetadataWritability.OPEN,
+    disabledFieldPermissionActions: null,
     isLabelSyncedWithName: false,
     overrides: null,
     defaultValue: defaultValue ?? null,

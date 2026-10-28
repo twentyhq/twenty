@@ -1,7 +1,9 @@
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/twenty-orm/types/application-default-role-maps.type';
@@ -9,6 +11,7 @@ import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permissio
 import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
 
 const INVOICE_ID = 'invoice-id';
+const AMOUNT_FIELD_ID = 'amount-field-id';
 
 const FULL_ACCESS: ObjectPermissions = {
   canReadObjectRecords: true,
@@ -31,6 +34,19 @@ flatObjectMetadataMaps.byUniversalIdentifier.invoice =
     disabledObjectPermissionActions: ['canDestroyObjectRecords'],
   });
 flatObjectMetadataMaps.universalIdentifierById[INVOICE_ID] = 'invoice';
+
+const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> =
+  createEmptyFlatEntityMaps();
+
+flatFieldMetadataMaps.byUniversalIdentifier.amount = getFlatFieldMetadataMock({
+  id: AMOUNT_FIELD_ID,
+  universalIdentifier: 'amount',
+  objectMetadataId: INVOICE_ID,
+  type: FieldMetadataType.NUMBER,
+  applicationId: 'owning-application-id',
+  disabledFieldPermissionActions: ['canUpdateFieldValue'],
+});
+flatFieldMetadataMaps.universalIdentifierById[AMOUNT_FIELD_ID] = 'amount';
 
 const flatApplicationMaps: ApplicationDefaultRoleMaps = {
   byId: {
@@ -85,16 +101,25 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
       canDestroy: false,
     },
   ])(
-    'disabled action allowed for $actor: $canDestroy',
+    'disabled actions allowed for $actor: $canDestroy',
     ({ intersectionOf, canDestroy }) => {
-      expect(
+      const invoicePermissions =
         computeObjectsPermissionsForRolePermissionConfig({
           intersectionOf,
           rolesPermissions,
           flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
           flatApplicationMaps,
-        })[INVOICE_ID]?.canDestroyObjectRecords,
-      ).toBe(canDestroy);
+        })[INVOICE_ID];
+
+      expect(invoicePermissions?.canDestroyObjectRecords).toBe(canDestroy);
+      expect(
+        invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]?.canUpdate ===
+          false,
+      ).toBe(!canDestroy);
+      expect(
+        invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]?.canRead,
+      ).not.toBe(false);
     },
   );
 });
