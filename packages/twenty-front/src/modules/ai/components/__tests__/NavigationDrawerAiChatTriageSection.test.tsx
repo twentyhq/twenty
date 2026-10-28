@@ -44,6 +44,7 @@ type OpenThreadsSummary =
 const READ_SUMMARY: OpenThreadsSummary = {
   __typename: 'AgentChatOpenThreadsSummary',
   openThreadCount: 2,
+  unreadOpenThreadCount: 0,
   needsInputThreadCount: 0,
   hasUnreadOpenThread: false,
   hasUnreadMentionThread: false,

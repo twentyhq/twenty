@@ -11,7 +11,7 @@ import {
   RecordShareExceptionCode,
 } from 'src/engine/core-modules/record-share/record-share.exception';
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
-import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
+import { buildWorkspaceMemberRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-workspace-member-row-access-policy-subject.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -161,25 +161,19 @@ export class RecordSharePrincipalService {
           shouldBypassPermissionChecks: true,
         })
         .findOne({ where: { id: principal.principalId } });
-      const roleSubject = buildRoleRowAccessPolicySubject({
-        roleId,
-        owningApplicationId: undefined,
-        rolesPermissions,
-        roleIdsWithAllRecordsAccess,
-        flatRowLevelPermissionPredicateMaps,
-        flatRowLevelPermissionPredicateGroupMaps,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-        workspaceMember: workspaceMember ?? undefined,
-      });
       const policy = repository.buildRowAccessPolicy({
-        subject: {
-          ...roleSubject,
-          principalIds: [
-            ...(roleSubject.principalIds ?? []),
-            principal.principalId,
-          ],
-        },
+        subject: buildWorkspaceMemberRowAccessPolicySubject({
+          roleId,
+          owningApplicationId: undefined,
+          rolesPermissions,
+          roleIdsWithAllRecordsAccess,
+          flatRowLevelPermissionPredicateMaps,
+          flatRowLevelPermissionPredicateGroupMaps,
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+          workspaceMemberId: principal.principalId,
+          workspaceMember: workspaceMember ?? undefined,
+        }),
         operationType: 'select',
       });
       const reachableRecordIds =

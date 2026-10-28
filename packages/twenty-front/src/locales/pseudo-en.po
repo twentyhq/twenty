@@ -852,9 +852,9 @@ msgstr ""
 msgid "{label}, {statusLabel}"
 msgstr ""
 
-#. js-lingui-id: hr3CkB
+#. js-lingui-id: g4xrfh
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
-msgid "{label}, unread"
+msgid "{label}, {unreadOpenThreadCount} unread"
 msgstr ""
 
 #. js-lingui-id: 1DrH/j
@@ -8898,11 +8898,6 @@ msgstr ""
 #. js-lingui-id: iDTUBO
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Defaults to the step name"
-msgstr ""
-
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
 msgstr ""
 
 #. js-lingui-id: Y2ImVJ
@@ -23296,11 +23291,6 @@ msgstr ""
 #. js-lingui-id: UPaWvi
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
-msgstr ""
-
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
 msgstr ""
 
 #. js-lingui-id: ++zKOb
