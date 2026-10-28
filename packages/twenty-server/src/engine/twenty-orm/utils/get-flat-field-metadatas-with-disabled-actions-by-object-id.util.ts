@@ -1,7 +1,7 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
 // Field metadata maps are immutable per cache version, so the grouping is built once per version
@@ -15,7 +15,7 @@ const getInverseRelationFlatFieldMetadatas = (
   flatFieldMetadata: OrmFlatFieldMetadata,
 ): OrmFlatFieldMetadata[] => {
   if (
-    flatFieldMetadata.type !== FieldMetadataType.RELATION ||
+    !isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ||
     !isDefined(flatFieldMetadata.relationTargetFieldMetadataId) ||
     !isDefined(flatFieldMetadata.relationTargetObjectMetadataId) ||
     !flatFieldMetadata.disabledFieldPermissionActions?.includes(
