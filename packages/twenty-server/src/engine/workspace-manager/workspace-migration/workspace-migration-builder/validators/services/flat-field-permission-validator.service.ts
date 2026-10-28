@@ -116,6 +116,8 @@ export class FlatFieldPermissionValidatorService {
         flatFieldPermission: flatFieldPermissionToValidate,
         flatFieldMetadata: referencedFieldMetadata,
         flatRole: referencedRole,
+        applicationDefaultRoleUniversalIdentifier:
+          buildOptions.applicationDefaultRoleUniversalIdentifier,
       }),
     );
 
@@ -255,6 +257,8 @@ export class FlatFieldPermissionValidatorService {
           flatEntityMaps: flatFieldMetadataMaps,
         }),
         flatRole: referencedRole,
+        applicationDefaultRoleUniversalIdentifier:
+          buildOptions.applicationDefaultRoleUniversalIdentifier,
       }),
     );
 
