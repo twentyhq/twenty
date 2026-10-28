@@ -13,17 +13,10 @@ import {
 import { RichText } from '@/ui';
 
 const Prose = styled.div`
+  ${typeRampDeclarations('bodySm')}
   color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('sans')};
   overflow-wrap: anywhere;
-
-  &[data-size='sm'] {
-    ${typeRampDeclarations('bodySm')}
-  }
-
-  &[data-size='xs'] {
-    ${typeRampDeclarations('bodyXs')}
-  }
 
   &[data-tone='ink'] {
     color: ${semanticColor.ink};
@@ -103,17 +96,15 @@ const Prose = styled.div`
 
 type AppReadmeMarkdownProps = {
   markdown: string;
-  size?: 'sm' | 'xs';
   tone?: 'muted' | 'ink';
 };
 
 export function AppReadmeMarkdown({
   markdown,
-  size = 'sm',
   tone = 'muted',
 }: AppReadmeMarkdownProps) {
   return (
-    <Prose data-size={size} data-tone={tone}>
+    <Prose data-tone={tone}>
       <RichText markdown={markdown} />
     </Prose>
   );

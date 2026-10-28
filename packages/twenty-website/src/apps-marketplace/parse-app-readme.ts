@@ -28,7 +28,8 @@ export type AppReadme = {
   sections: AppReadmeSection[];
 };
 
-const LEADING_EMOJI_PATTERN = /^(?:\p{Extended_Pictographic}|‍|️|\s)+(?=\S)/u;
+const LEADING_EMOJI_PATTERN =
+  /^(?:\p{Extended_Pictographic}|\u200D|\uFE0F|\s)+(?=\S)/u;
 const TITLE_SEPARATOR_PATTERN = /^\s*(?:[:—–-]\s*)?/;
 
 const serialize = (nodes: RootContent[]) =>
