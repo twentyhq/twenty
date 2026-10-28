@@ -630,7 +630,7 @@ msgstr "{cardCount, plural, other {核准 # 項動作？}}"
 #. js-lingui-id: AnO6CC
 #: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr ""
+msgstr "{channelStatusLabel} · {assignmentLabel}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -2100,7 +2100,7 @@ msgstr "新增副本"
 #. js-lingui-id: PKjhUq
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "Add channel"
-msgstr ""
+msgstr "新增通道"
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -6922,7 +6922,7 @@ msgstr "透過 IMAP/SMTP 連接"
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
 msgid "Connect with {appName}"
-msgstr ""
+msgstr "連接到 {appName}"
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -9338,7 +9338,7 @@ msgstr "已刪除 {objectLabel}"
 #. js-lingui-id: 6T/COx
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
-msgstr ""
+msgstr "已刪除 {totalCount} 個連線中的 {successfulCount} 個。無法刪除：{failedLabels}。"
 
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
@@ -9628,7 +9628,7 @@ msgstr "已中斷連線"
 #. js-lingui-id: +etBOJ
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
-msgstr ""
+msgstr "已中斷 {totalCount} 個連線中的 {successfulCount} 個。無法中斷：{failedLabels}。"
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -12810,7 +12810,7 @@ msgstr "依記錄 ID 篩選"
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 msgid "Filter channel chats"
-msgstr ""
+msgstr "篩選頻道聊天"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -26482,7 +26482,7 @@ msgstr "同步對象標籤和 API 名稱"
 #. js-lingui-id: 4XvJjz
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
-msgstr ""
+msgstr "下列項目的同步將會停止，且憑證將被移除。重新連線後，您的電子郵件和活動將會保留並可供使用。"
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -27485,7 +27485,7 @@ msgstr "這會永久刪除 {accountHandle} 及其所有已同步的電子郵件�
 #. js-lingui-id: vrBe2V
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
-msgstr ""
+msgstr "這將永久刪除以下項目及其所有已同步的電子郵件和活動。此動作無法復原。"
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29265,7 +29265,7 @@ msgstr "升級至 Organization 以設定 SSO。"
 #. js-lingui-id: LNDff6
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Upgrade to Organization to create custom roles"
-msgstr ""
+msgstr "升級至 Organization 以建立自訂角色"
 
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx

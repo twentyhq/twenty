@@ -1496,7 +1496,7 @@ msgstr "受讓人"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Assistant participant"
-msgstr ""
+msgstr "助理參與者"
 
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8138,7 +8138,7 @@ msgstr "不允許合併封鎖清單項目。"
 #. js-lingui-id: kGsb0J
 #: src/modules/dashboard/query-hooks/dashboard-merge-many.pre-query.hook.ts
 msgid "Merging dashboards is not allowed."
-msgstr ""
+msgstr "不允許合併儀表板。"
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -16164,7 +16164,7 @@ msgstr "新活動是否會讓對話串返回收件匣"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether the assistant participates in this conversation"
-msgstr ""
+msgstr "助理是否參與此對話"
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts

@@ -1496,7 +1496,7 @@ msgstr "담당자"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Assistant participant"
-msgstr ""
+msgstr "어시스턴트 참가자"
 
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8138,7 +8138,7 @@ msgstr "차단 목록 항목 병합은 허용되지 않습니다."
 #. js-lingui-id: kGsb0J
 #: src/modules/dashboard/query-hooks/dashboard-merge-many.pre-query.hook.ts
 msgid "Merging dashboards is not allowed."
-msgstr ""
+msgstr "대시보드를 병합할 수 없습니다."
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -16164,7 +16164,7 @@ msgstr "새 활동으로 스레드가 받은 편지함으로 돌아오는지 여
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether the assistant participates in this conversation"
-msgstr ""
+msgstr "어시스턴트가 이 대화에 참여하는지 여부"
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts

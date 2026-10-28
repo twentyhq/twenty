@@ -630,7 +630,7 @@ msgstr "{cardCount, plural, zero {الموافقة على صفر من الإجر
 #. js-lingui-id: AnO6CC
 #: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr ""
+msgstr "{channelStatusLabel} · {assignmentLabel}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -2100,7 +2100,7 @@ msgstr "إضافة نسخة كربونية"
 #. js-lingui-id: PKjhUq
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "Add channel"
-msgstr ""
+msgstr "إضافة قناة"
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -6922,7 +6922,7 @@ msgstr "الاتصال عبر IMAP/SMTP"
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
 msgid "Connect with {appName}"
-msgstr ""
+msgstr "الاتصال بـ {appName}"
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -9338,7 +9338,7 @@ msgstr "تم حذف {objectLabel}"
 #. js-lingui-id: 6T/COx
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
-msgstr ""
+msgstr "تم حذف {successfulCount} من أصل {totalCount} من الاتصالات. تعذّر حذف: {failedLabels}."
 
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
@@ -9628,7 +9628,7 @@ msgstr "غير متصل"
 #. js-lingui-id: +etBOJ
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
-msgstr ""
+msgstr "تم قطع اتصال {successfulCount} من أصل {totalCount} من الاتصالات. تعذّر قطع الاتصال: {failedLabels}."
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -12810,7 +12810,7 @@ msgstr "تصفية حسب معرّف السجل"
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 msgid "Filter channel chats"
-msgstr ""
+msgstr "تصفية دردشات القناة"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -26482,7 +26482,7 @@ msgstr "مزامنة تسميات الكائنات وأسماء API"
 #. js-lingui-id: 4XvJjz
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
-msgstr ""
+msgstr "ستتوقف المزامنة وستُزال بيانات الاعتماد للعناصر التالية. سيُحتفظ برسائل بريدك الإلكتروني وأحداثك وستظل متاحة بعد إعادة الاتصال."
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -27485,7 +27485,7 @@ msgstr "يؤدي هذا إلى حذف {accountHandle} وجميع رسائل بر
 #. js-lingui-id: vrBe2V
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
-msgstr ""
+msgstr "سيؤدي هذا إلى حذف العناصر التالية نهائيًا، وجميع رسائل البريد الإلكتروني والأحداث المتزامنة المرتبطة بها. لا يمكن التراجع عن هذا الإجراء."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29265,7 +29265,7 @@ msgstr "قم بالترقية إلى «المؤسسة» لتهيئة SSO."
 #. js-lingui-id: LNDff6
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Upgrade to Organization to create custom roles"
-msgstr ""
+msgstr "قم بالترقية إلى المؤسسة لإنشاء أدوار مخصصة"
 
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx

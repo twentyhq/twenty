@@ -630,7 +630,7 @@ msgstr "{cardCount, plural, one {Jóváhagy # műveletet?} other {Jóváhagy # m
 #. js-lingui-id: AnO6CC
 #: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr ""
+msgstr "{channelStatusLabel} · {assignmentLabel}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -2100,7 +2100,7 @@ msgstr "Másolat hozzáadása"
 #. js-lingui-id: PKjhUq
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "Add channel"
-msgstr ""
+msgstr "Csatorna hozzáadása"
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -6922,7 +6922,7 @@ msgstr "Kapcsolódás IMAP/SMTP-vel"
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
 msgid "Connect with {appName}"
-msgstr ""
+msgstr "Kapcsolódás ezzel: {appName}"
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -9338,7 +9338,7 @@ msgstr "{objectLabel} törölve"
 #. js-lingui-id: 6T/COx
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
-msgstr ""
+msgstr "Törölve: {successfulCount}/{totalCount} kapcsolat. Nem sikerült törölni: {failedLabels}."
 
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
@@ -9628,7 +9628,7 @@ msgstr "Leválasztva"
 #. js-lingui-id: +etBOJ
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
-msgstr ""
+msgstr "Leválasztva: {successfulCount}/{totalCount} kapcsolat. Nem sikerült leválasztani: {failedLabels}."
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -12810,7 +12810,7 @@ msgstr "Szűrés rekordazonosító szerint"
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 msgid "Filter channel chats"
-msgstr ""
+msgstr "Csatornabeszélgetések szűrése"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -26482,7 +26482,7 @@ msgstr "Objektumok címkéinek és API neveinek szinkronizálása"
 #. js-lingui-id: 4XvJjz
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
-msgstr ""
+msgstr "A szinkronizálás leáll, és a következőkhöz tartozó hitelesítő adatok törlődnek. Az e-mailjei és eseményei megmaradnak, és az újracsatlakozás után is elérhetők lesznek."
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -27485,7 +27485,7 @@ msgstr "Ez véglegesen törli a(z) {accountHandle} fiókot és az összes szinkr
 #. js-lingui-id: vrBe2V
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
-msgstr ""
+msgstr "Ez véglegesen törli a következőket, valamint az összes szinkronizált e-mailjüket és eseményüket. Ez a művelet nem vonható vissza."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29265,7 +29265,7 @@ msgstr "Frissítsen Organization csomagra az SSO konfigurálásához."
 #. js-lingui-id: LNDff6
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Upgrade to Organization to create custom roles"
-msgstr ""
+msgstr "Frissítsen Organization csomagra egyéni szerepkörök létrehozásához"
 
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx

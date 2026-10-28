@@ -630,7 +630,7 @@ msgstr "{cardCount, plural, other {#개 작업을 승인하시겠습니까?}}"
 #. js-lingui-id: AnO6CC
 #: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr ""
+msgstr "{channelStatusLabel} · {assignmentLabel}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -2100,7 +2100,7 @@ msgstr "CC 추가"
 #. js-lingui-id: PKjhUq
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "Add channel"
-msgstr ""
+msgstr "채널 추가"
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -6922,7 +6922,7 @@ msgstr "IMAP/SMTP로 연결"
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
 msgid "Connect with {appName}"
-msgstr ""
+msgstr "{appName}과 연결하기"
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -9338,7 +9338,7 @@ msgstr "삭제된 {objectLabel}"
 #. js-lingui-id: 6T/COx
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
-msgstr ""
+msgstr "총 {totalCount}개의 연결 중 {successfulCount}개를 삭제했습니다. 삭제하지 못한 연결: {failedLabels}."
 
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
@@ -9628,7 +9628,7 @@ msgstr "연결 해제됨"
 #. js-lingui-id: +etBOJ
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
-msgstr ""
+msgstr "총 {totalCount}개의 연결 중 {successfulCount}개를 연결 해제했습니다. 연결 해제하지 못한 연결: {failedLabels}."
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -12810,7 +12810,7 @@ msgstr "레코드 ID로 필터링"
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 msgid "Filter channel chats"
-msgstr ""
+msgstr "채널 채팅 필터"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -26482,7 +26482,7 @@ msgstr "객체 레이블과 API 이름 동기화"
 #. js-lingui-id: 4XvJjz
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
-msgstr ""
+msgstr "다음 항목의 동기화가 중지되고 자격 증명이 삭제됩니다. 이메일과 이벤트는 유지되며 다시 연결한 후에도 사용할 수 있습니다."
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -27485,7 +27485,7 @@ msgstr "{accountHandle} 및 동기화된 모든 이메일과 이벤트를 영구
 #. js-lingui-id: vrBe2V
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
-msgstr ""
+msgstr "이 작업을 수행하면 다음 항목과 해당 항목의 동기화된 모든 이메일 및 이벤트가 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29265,7 +29265,7 @@ msgstr "SSO를 구성하려면 Organization으로 업그레이드하세요."
 #. js-lingui-id: LNDff6
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Upgrade to Organization to create custom roles"
-msgstr ""
+msgstr "사용자 지정 역할을 만들려면 Organization으로 업그레이드하세요"
 
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx

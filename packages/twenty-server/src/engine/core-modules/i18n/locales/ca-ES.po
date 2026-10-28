@@ -1496,7 +1496,7 @@ msgstr "Assignat"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Assistant participant"
-msgstr ""
+msgstr "Participant assistent"
 
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8138,7 +8138,7 @@ msgstr "No es permet combinar les entrades de la llista de bloqueig."
 #. js-lingui-id: kGsb0J
 #: src/modules/dashboard/query-hooks/dashboard-merge-many.pre-query.hook.ts
 msgid "Merging dashboards is not allowed."
-msgstr ""
+msgstr "No es permet combinar els quadres de comandament."
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -16164,7 +16164,7 @@ msgstr "Si l'activitat nova fa que el fil torni a la safata d'entrada"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether the assistant participates in this conversation"
-msgstr ""
+msgstr "Si l'assistent participa en aquesta conversa"
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts

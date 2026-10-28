@@ -1496,7 +1496,7 @@ msgstr "Responsabil"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Assistant participant"
-msgstr ""
+msgstr "Participant asistent"
 
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8138,7 +8138,7 @@ msgstr "Fuzionarea intrărilor din lista de blocare nu este permisă."
 #. js-lingui-id: kGsb0J
 #: src/modules/dashboard/query-hooks/dashboard-merge-many.pre-query.hook.ts
 msgid "Merging dashboards is not allowed."
-msgstr ""
+msgstr "Îmbinarea tablourilor de bord nu este permisă."
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -16164,7 +16164,7 @@ msgstr "Dacă activitatea nouă readuce conversația în inbox"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether the assistant participates in this conversation"
-msgstr ""
+msgstr "Dacă asistentul participă la această conversație"
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
