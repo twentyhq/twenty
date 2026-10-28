@@ -3,11 +3,14 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import * as esbuild from 'esbuild';
-import { getSharedDependenciesEntrySource } from '../utils/get-shared-dependencies-entry-source';
-import { getSharedDependenciesShimSource } from '../utils/get-shared-dependencies-shim-source';
+import {
+  getSharedDependenciesEntrySource,
+  getSharedDependenciesShimSource,
+} from 'twenty-shared/front-component-build';
 import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 import { describe, expect, it } from 'vitest';
 
+import { getFrontComponentBuildPlugins } from '@/app/bundles/front-component-build/utils/get-front-component-build-plugins';
 import { MINIMAL_APP_PATH } from '@/app/__tests__/utils/fixture-paths';
 import { enumerateSharedDependenciesExportNames } from '@/app/bundles/front-component-build/shared-dependencies-build/utils/enumerate-shared-dependencies-export-names';
 
@@ -122,10 +125,22 @@ describe('enumerateSharedDependenciesExportNames', () => {
         format: 'esm',
         outfile: bundlePath,
       });
-      const shim = getSharedDependenciesShimSource({
-        specifier,
-        exportNames: names,
-      }).replaceAll(
+      const component = await esbuild.build({
+        stdin: {
+          contents: `export { count, increment } from ${JSON.stringify(specifier)};`,
+          resolveDir: appPath,
+        },
+        bundle: true,
+        format: 'esm',
+        write: false,
+        external: [FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER],
+        plugins: getFrontComponentBuildPlugins({
+          getSharedDependenciesBuildContext: () => ({
+            exportNamesBySpecifier: new Map([[specifier, names]]),
+          }),
+        }),
+      });
+      const shim = component.outputFiles[0].text.replaceAll(
         FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
         pathToFileURL(bundlePath).href,
       );

@@ -30,6 +30,21 @@ const buildPinnedCommandMenuItem = ({
   isActive: true,
   engineComponentKey: EngineComponentKey.SNOOZE_AI_CHAT,
   availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  __typename: 'CommandMenuItem',
+  universalIdentifier: null,
+  applicationId: null,
+  coreWorkflowVersionId: null,
+  workflowVersionId: null,
+  frontComponentId: null,
+  icon: null,
+  shortLabel: null,
+  conditionalAvailabilityExpression: null,
+  conditionalPinnedExpression: null,
+  availabilityObjectMetadataId: null,
+  navigationTargetObjectMetadataId: null,
+  pageLayoutId: null,
+  frontComponent: null,
+  payload: null,
 });
 
 const SNOOZE = buildPinnedCommandMenuItem({ id: 'snooze', hotKeys: ['H'] });

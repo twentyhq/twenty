@@ -13,14 +13,25 @@ const buildResult = (
     description: string | null;
     action: { label: string; location?: string | null } | null;
   }> = {},
-) => ({
-  __typename: 'ApplicationHealthCheckResult' as const,
-  status: ApplicationHealthStatus.ERROR,
-  title: 'Your key was revoked',
-  description: null,
-  action: null,
-  ...overrides,
-});
+) => {
+  const { action = null, ...rest } = overrides;
+
+  return {
+    __typename: 'ApplicationHealthCheckResult' as const,
+    status: ApplicationHealthStatus.ERROR,
+    title: 'Your key was revoked',
+    description: null,
+    ...rest,
+    action:
+      action === null
+        ? null
+        : {
+            __typename: 'ApplicationHealthCheckAction' as const,
+            location: null,
+            ...action,
+          },
+  };
+};
 
 describe('getApplicationHealthBanner', () => {
   it('should return nothing when there is no result', () => {

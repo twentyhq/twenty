@@ -29,6 +29,7 @@ const getStatus = ({
       isSubscribed,
       lastMentionedAt,
       updatedAt: ARCHIVED_AT,
+      __typename: 'AgentChatThreadParticipant',
     },
   });
 

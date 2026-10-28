@@ -13,7 +13,6 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/core-modules/record-share/utils/is-update-of-hidden-fields-only.util';
-import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/metadata-modules/permissions/utils/omit-restricted-fields-from-event.util';
 import { AGENT_TRIGGER_RUN_LIMITS } from 'src/engine/metadata-modules/ai/ai-agent-trigger/constants/agent-trigger-run-limits.const';
 import { RunAgentTriggerJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/run-agent-trigger.job';
@@ -114,15 +113,13 @@ export class CallAgentDatabaseEventTriggersJob {
             }),
         )
         .map((event) =>
-          omitInheritedReadabilityChildRecords(
-            omitRestrictedFieldsFromEvent({
-              event,
-              objectMetadata,
-              objectsPermissions: agentObjectsPermissions,
-              flatObjectMetadataMaps,
-              flatFieldMetadataMaps,
-            }),
-          ),
+          omitRestrictedFieldsFromEvent({
+            event,
+            objectMetadata,
+            objectsPermissions: agentObjectsPermissions,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          }),
         )
         .filter((event) => !isUpdateOfHiddenFieldsOnly(event));
 

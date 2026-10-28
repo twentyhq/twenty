@@ -72,6 +72,7 @@ Puncte cheie:
 * `nextStepIds` conectează graful. Declanșatorul indică spre primii pași, iar fiecare pas indică spre pașii care se execută după acesta.
 * Un pas citește rezultatul anterior cu `{{trigger.\<path>}}` sau `{{\<step universalIdentifier>.\<path>}}`.
 * Compilarea validează întreaga definiție: tipurile de declanșatoare sau pași neacceptate, legăturile de pași defecte și referințele la pași necunoscuți o fac să eșueze.
+* `isSystem` (opțional, implicit `false`) ascunde fluxul de lucru din listele care omit fluxurile de lucru de sistem. Modifică doar ceea ce este afișat.
 
 ## Referirea la alte entități
 
