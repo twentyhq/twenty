@@ -1,0 +1,119 @@
+---
+title: Chip
+description: Muestra contenido compacto propiedad del llamador con espacios opcionales al inicio y al final.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ChipReference from '/snippets/ui/generated/data-display/chip.mdx';
+
+## Resumen
+
+Usa `Chip` para referencias compactas a personas, registros o archivos. Usa [Tag](/es/ui/primitives/data-display/tag) para categorías de colores y [Status](/es/ui/primitives/data-display/status) para estados de flujo de trabajo.
+
+<StoryEmbed storyId="ui-data-display-chip--display" title="Ejemplo de Chip" height={90} />
+
+## "Uso"
+
+```tsx
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+
+export const AssigneeChip = () => (
+  <Chip
+    variant="soft"
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
+  >
+    Jane
+  </Chip>
+);
+```
+
+Los elementos secundarios aceptan texto o nodos. `startElement` y `endElement` aceptan avatares, iconos u otro contenido. `endElementDivider` añade un separador antes del contenido final. El chip predeterminado es un `div`; sus ranuras pueden contener una acción independiente mientras el propio chip sigue siendo de presentación.
+
+Chip nunca inserta una etiqueta. Proporciona una alternativa traducida desde tu aplicación cuando sea necesario. Omite los elementos secundarios para el contenido compuesto íntegramente por ranuras. Un chip interactivo con solo un icono necesita un nombre accesible proporcionado por quien lo llama.
+
+## Apariencia
+
+<StoryEmbed storyId="ui-data-display-chip--catalog" title="Variantes y tamaños de chip" height={200} />
+
+`size` acepta `sm` o `md`, con alturas totales de 20px y 24px. `variant` acepta `ghost`, `soft`, `solid`, `plain` u `outline`; `ghost` es el valor predeterminado. Los chips simples no tienen relleno en reposo ni relleno inicial. Los chips de contorno tienen un borde marcado de 1px, un relleno en reposo más claro y un relleno interno horizontal de 8px a cada lado, con la misma altura total que las demás variantes. Los chips simples y de contorno en los que se puede hacer clic usan los fondos de `ghost` al pasar el cursor y al presionar, el cursor de puntero y el anillo de enfoque. Usa `shape="round"` para una píldora, `weight="medium"` para dar énfasis y `color="secondary"` para texto secundario.
+
+## Botones y enlaces
+
+```tsx
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+
+type AssigneeActionProps = {
+  onOpenAssignee: () => void;
+  disabled?: boolean;
+};
+
+export const AssigneeAction = ({
+  onOpenAssignee,
+  disabled,
+}: AssigneeActionProps) => (
+  <Chip
+    render={<button type="button" disabled={disabled} />}
+    onClick={onOpenAssignee}
+    aria-label="Open Jane's record"
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
+  >
+    Jane
+  </Chip>
+);
+```
+
+Proporcionar `onClick` mantiene el `div` predeterminado. Usa `render` para componer un botón nativo explícito, un ancla, un enlace de enrutador u otro propietario adecuado. Los atributos nativos, controladores, estilos y la referencia raíz llegan a ese propietario. Un botón nativo proporciona activación mediante teclado y comportamiento deshabilitado. Chip reconoce el estado nativo deshabilitado y `aria-disabled` para la apariencia; `aria-disabled` por sí solo no impide la activación.
+
+`clickable` controla la apariencia al pasar el cursor y del puntero, y su valor predeterminado depende de si se proporciona `onClick`. Establécelo explícitamente para un enlace sin un controlador de clic. No anides botones ni enlaces dentro de un chip que sea interactivo.
+
+```tsx
+import { Chip } from 'twenty-ui/primitives/data-display';
+
+export const DocumentationChip = () => (
+  <Chip
+    variant="outline"
+    shape="round"
+    render={<a href="https://twenty.com/developers" />}
+    clickable
+  >
+    Documentation
+  </Chip>
+);
+```
+
+El texto de la URL sigue siendo texto sin formato. Los enlaces intencionados pertenecen al contenido de quien llama o a la composición raíz explícita.
+
+## Truncamiento y descripciones emergentes
+
+```tsx
+import { Chip } from 'twenty-ui/primitives/data-display';
+
+export const FileChip = () => (
+  <Chip variant="soft" maxWidth={180} tooltipPlace="top">
+    Quarterly customer research.pdf
+  </Chip>
+);
+```
+
+`maxWidth` limita el ancho del chip renderizado en píxeles, incluido el relleno y cualquier borde de contorno. El mismo límite se aplica a los chips simples con relleno asimétrico. El contenido se trunca con puntos suspensivos de forma predeterminada; `truncate={false}` lo deja sin restricciones de truncamiento. Los elementos secundarios de tipo cadena proporcionan su propio texto de descripción emergente. Establece `tooltipContent` para texto personalizado o contenido de nodo, `tooltipDelay` para el retraso de apertura y `isTooltipMultiline` para conservar los saltos de línea. `alwaysShowTooltip` también habilita la descripción emergente cuando el contenido cabe. Estas opciones siguen [OverflowingTextWithTooltip](/es/ui/primitives/typography/overflowing-text-with-tooltip). Mantén la información esencial disponible sin depender de pasar el cursor.
+
+## Migración
+
+Reemplaza `emptyLabel` por elementos secundarios alternativos proporcionados por quien llama y reemplaza `forceEmptyText` o `isLabelHidden` por elementos secundarios omitidos. Mantén las alternativas de producto traducidas en la aplicación. Reemplaza `tooltipLabel` por `tooltipContent`. Mueve `disabled` al propietario interactivo explícito y elimina `nativeButton`. Agrega un botón o enlace nativo mediante `render` dondequiera que el chip se basara anteriormente en `onClick` para elegir su elemento.
+
+Reemplace las anulaciones de relleno inicial por `variant="plain"`. Mantenga `clickable` habilitado para enlaces y botones nativos que necesiten respuesta visual al pasar el cursor y al presionar.
+
+## "Props"
+
+Los tipos y valores predeterminados se generan a partir de los tipos de componentes públicos. También se aceptan atributos nativos y controladores de eventos.
+
+<ChipReference />
+
+<PageBanner illustration="page-cover-checkbox" />

@@ -3,9 +3,15 @@ title: Almacén de clave-valor
 description: Conserva resultados intermedios, almacena en caché datos y comparte estado entre ejecuciones de funciones lógicas con el almacén de clave-valor integrado de la aplicación.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
 Las funciones de lógica se ejecutan aisladas en procesos de Node.js de corta duración; una vez que una ejecución finaliza, nada de lo que se mantuvo en memoria sobrevive. Cuando necesitas **recordar algo entre ejecuciones** (almacenar en caché una respuesta de API costosa, guardar un cursor para sincronizaciones incrementales, aplicar *debounce* al trabajo o traspasar estado de una función a otra), persiste esos datos en el almacén de clave-valor integrado.
 
 Cada aplicación obtiene su propio espacio de nombres aislado: las entradas se asocian con la aplicación autenticada, por lo que tus claves nunca pueden entrar en conflicto con — ni ser leídas por — otra aplicación.
+
+El almacén es **persistente**: las entradas se almacenan en la base de datos PostgreSQL de la instancia — no en una caché en memoria como Redis —, por lo que sobreviven a los reinicios del servidor, las implementaciones y las actualizaciones de la aplicación, y permanecen allí hasta que las elimines. Esto lo hace fiable para estados duraderos, como cursores de sincronización o configuraciones por usuario, y no solo para cachés de corta duración. Los valores se almacenan como JSON sin formato y sin cifrado a nivel de aplicación, así que no incluyas secretos en él — guarda las claves de API y otras credenciales en las [variables secretas de aplicación o servidor](/es/developers/extend/apps/config/application), que se cifran en reposo.
 
 ```text
   ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
@@ -95,7 +101,7 @@ export default defineLogicFunction({
 * **Espacios de nombres.** Añade un prefijo a las claves para mantener separadas las distintas responsabilidades: `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
 * **Caducidad (TTL).** El almacén no tiene caducidad integrada. Almacena una marca de tiempo dentro del valor (como en el ejemplo de caché) y revísala al leer, o borra las claves obsoletas desde una [función activada por cron](/es/developers/extend/apps/logic/logic-functions).
 * **Qué almacenar.** Cualquier valor serializable en JSON: números, cadenas, arreglos, objetos. Mantén las entradas pequeñas; esto es para coordinación y almacenamiento en caché, no para *blobs* grandes o archivos. Para archivos, utiliza un campo `FILES` y [`uploadFile`](/es/developers/extend/apps/logic/logic-functions#uploading-files).
-* **Visibilidad.** Las entradas residen en la base de datos de la instancia, no como registros del espacio de trabajo: nunca aparecen en la interfaz de usuario del espacio de trabajo, no forman parte del modelo de datos de tu aplicación y no necesitan permisos de rol ni de objeto.
+* **Visibilidad.** Las entradas residen en la base de datos Postgres de la instancia, no como registros del espacio de trabajo; nunca aparecen en la interfaz de usuario del espacio de trabajo, no forman parte del modelo de datos de tu aplicación y no necesitan permisos de rol ni de objeto.
 
 ## Alternativa: un objeto de almacenamiento consultable
 
@@ -107,3 +113,5 @@ El almacén integrado es deliberadamente opaco: las entradas no son registros, p
 <Note>
 A diferencia del almacén integrado, un objeto personalizado siempre está limitado a un solo espacio de trabajo: no puede compartir entradas entre instalaciones como lo hacen las claves `SERVER`.
 </Note>
+
+<PageBanner illustration="card-page-key-value-store" />

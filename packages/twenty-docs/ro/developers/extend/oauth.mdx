@@ -3,6 +3,10 @@ title: OAuth
 description: Fluxul codului de autorizare cu PKCE și acreditări de client pentru acces server-la-server.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Twenty implementează OAuth 2.0 cu cod de autorizare + PKCE pentru aplicațiile orientate către utilizatori și acreditări de client pentru acces server-la-server. Clienții sunt înregistrați dinamic prin [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) — fără configurare manuală într-un panou de control.
 
 ## Când să folosiți OAuth
@@ -186,3 +190,5 @@ Acesta returnează toate endpoint-urile, tipurile de grant acceptate, domeniile 
 | **Cel mai potrivit pentru**      | Scripturi, instrumente interne      | Aplicații externe, integrări multi-utilizator |
 | **Rotirea tokenurilor**          | Manual                              | Automată prin tokenuri de reîmprospătare      |
 | **Acces pe domenii de aplicare** | Acces API complet                   | Granular, prin domenii de aplicare            |
+
+<PageBanner illustration="card-page-sso" />

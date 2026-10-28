@@ -16,7 +16,6 @@ import { AgentChatChannelThreadsFetchMoreTrigger } from '@/ai/components/AgentCh
 import { AgentChatChannelThreadsLoadEffect } from '@/ai/components/AgentChatChannelThreadsLoadEffect';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatInboxBreadcrumb } from '@/ai/components/AiChatInboxBreadcrumb';
-import { AiChatInboxChannelToolbar } from '@/ai/components/AiChatInboxChannelToolbar';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
 import { AiChatInboxConversationPane } from '@/ai/components/AiChatInboxConversationPane';
 import { AiChatInboxListHeader } from '@/ai/components/AiChatInboxListHeader';
@@ -292,11 +291,6 @@ const AiChatInboxPageContent = () => {
               }
             >
               <StyledListContent>
-                {isDefined(agentChatShownChannelView) && (
-                  <AiChatInboxChannelToolbar
-                    channelView={agentChatShownChannelView}
-                  />
-                )}
                 <StyledThreadListContainer ref={threadListContainerRef}>
                   <StyledThreadList>
                     {isLoading && threads.length === 0 ? (

@@ -3,12 +3,18 @@ title: Configurazione dell'applicazione
 description: Dichiara l'identità della tua app, il ruolo predefinito, le variabili e i metadati del marketplace con defineApplication.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 Ogni app deve avere esattamente una chiamata a `defineApplication`. Dichiara:
 
 * **Identità** — identificatore universale, nome visualizzato, descrizione.
 * **Autorizzazioni** — il ruolo sotto il quale vengono eseguite le sue funzioni logiche e i componenti front-end.
+* **Funzionalità multimediali** *(facoltativo)*: accesso al microfono o alla fotocamera richiesto dai componenti front, approvato separatamente dalle autorizzazioni del ruolo.
 * **Variabili** *(opzionali)* — coppie chiave–valore esposte al tuo codice come variabili d'ambiente.
 * **Hook di pre-installazione / post-installazione / disinstallazione** *(opzionali)* — vedi [Funzioni logiche](/it/developers/extend/apps/logic/logic-functions).
+* **Fatturazione** *(facoltativa)* — `billing.recurring` per le tariffe di abbonamento che la piattaforma addebita automaticamente, `billing.operations` per ciò per cui l'app addebita crediti e `billing.description` per il marketplace; vedi [Addebito di crediti](/it/developers/extend/apps/logic/credits).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -20,9 +26,17 @@ export default defineApplication({
   applicationVariables: {
     DEFAULT_RECIPIENT_NAME: {
       universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      label: 'Default recipient name',
       description: 'Default recipient name for postcards',
       value: 'Jane Doe',
       isSecret: false,
+    },
+    API_KEY: {
+      universalIdentifier: '6b1f5a02-7c4d-4a19-9e63-2f0c8a5d1b47',
+      label: 'API key',
+      description: 'Key used to reach the postcard provider',
+      isSecret: true,
+      isRequired: true,
     },
   },
 });
@@ -30,14 +44,40 @@ export default defineApplication({
 
 Note:
 
-* I campi `universalIdentifier` sono ID deterministici che possiedi. Generali una volta e mantienili stabili tra una sincronizzazione e l'altra.
-* `applicationVariables` diventano variabili d'ambiente per le tue funzioni e i componenti front-end. Nelle funzioni di logica (lato server), sono disponibili come `process.env.VARIABLE_NAME`. Nei componenti front-end, usa `getApplicationVariable('VARIABLE_NAME')` da `twenty-sdk/front-component`. Le variabili contrassegnate con `isSecret: true` vengono iniettate solo nelle funzioni di logica. I componenti front-end ricevono solo variabili non segrete.
+* I campi `universalIdentifier` sono UUID che generi una sola volta e possiedi. Mantienili stabili tra le sincronizzazioni. Il `universalIdentifier` dell'applicazione deve essere un UUID valido: il server rifiuta un manifesto il cui identificatore non lo è. È univoco nell'intera istanza ed è associato allo spazio di lavoro proprietario della sua registrazione, quindi solo quello spazio di lavoro può sincronizzare l'app — consulta [Proprietà della registrazione](/it/developers/extend/apps/operations/publishing#registration-ownership).
+* `applicationVariables` accetta un elemento facoltativo `label` — un nome intuitivo visualizzato nella pagina delle impostazioni dell'app invece della chiave della variabile non elaborata.
+* `applicationVariables` diventano variabili d'ambiente per le tue funzioni e i componenti front-end. Nelle funzioni di logica (lato server), sono disponibili come `process.env.VARIABLE_NAME`. Nei componenti front-end, usa `getApplicationVariable('VARIABLE_NAME')` da `twenty-sdk/front-component`. Le variabili contrassegnate con `isSecret: true` vengono iniettate solo nelle funzioni di logica. I componenti front-end ricevono solo variabili non segrete. Una variabile con `scope: 'USER'` contiene il valore del membro per cui viene eseguito il codice: consulta [Variabili dell'area di lavoro e dell'utente](#workspace-and-user-variables).
+* La tua app può anche leggere e aggiornare i propri valori delle variabili in fase di esecuzione, ed è così che un componente di impostazioni personalizzato salva ciò che l'utente ha digitato: consulta [Lettura e aggiornamento delle variabili in fase di esecuzione](/it/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime). Un'applicazione può accedere solo alle proprie variabili, nel proprio spazio di lavoro.
 * Il ruolo predefinito viene rilevato automaticamente dal file di ruolo contrassegnato con [`defineApplicationRole()`](/it/developers/extend/apps/config/roles): non è necessario farvi riferimento da `defineApplication()`.
-* Le funzioni di pre-installazione, post-installazione e disinstallazione vengono rilevate automaticamente durante il build del manifest — non è necessario farne riferimento in `defineApplication()`.
+* Le funzioni di pre-installazione, post-installazione e disinstallazione, nonché il controllo di integrità, vengono rilevate automaticamente durante la build del manifest — non è necessario farvi riferimento in `defineApplication()`.
 * Il passaggio esplicito di `defaultRoleUniversalIdentifier` è ancora supportato per garantire la compatibilità con le versioni precedenti, ma è deprecato a favore di `defineApplicationRole()`.
 * `serverVariables` sono configurazioni e segreti con ambito di istanza (ad esempio chiavi API). A differenza di `applicationVariables`, non dichiarano alcun valore nel manifest — l’operatore dello spazio di lavoro li compila dalle impostazioni dell’app e vengono iniettati nelle funzioni di logica solo una volta impostati.
+* Un'app può segnalare il proprio stato di configurazione con [`defineHealthCheck()`](/it/developers/extend/apps/logic/logic-functions#health-check), per ciò che solo l'app può sapere — una chiave presente ma revocata, un account di terze parti con il piano errato. `isRequired` copre ciò che Twenty può vedere autonomamente; il controllo di integrità copre il resto.
+* Entrambi i tipi di variabile accettano `isRequired: true`. Una variabile obbligatoria che lo spazio di lavoro non ha ancora compilato lascia l'app non configurata: la relativa pagina delle impostazioni mostra un banner che indica le variabili mancanti, con un pulsante che porta alla scheda in cui sono impostate. Contrassegna come obbligatorio solo ciò senza cui l'app non può effettivamente funzionare: una variabile facoltativa con un valore predefinito sensato dovrebbe rimanere facoltativa.
 * Entrambi i tipi di variabile accettano `isDeprecated: true`. Usala per ritirare una variabile invece di eliminarla: mantenere la chiave dichiarata preserva il valore memorizzato (eliminandola si distrugge il valore inserito dall'operatore) e la variabile è ancora iniettata, così il tuo codice può ripiegare su di essa — `process.env.NEW_API_KEY ?? process.env.API_KEY`. Una variabile deprecata scompare dalle impostazioni dell'app non appena non ha più un valore e non viene mai conteggiata nel controllo di configurazione dell'app, quindi `isDeprecated` prevale su `isRequired`.
-* Per eseguire il rendering di un'interfaccia di configurazione personalizzata all'interno della scheda **Settings** dell'app (al posto della sezione predefinita di configurazione delle variabili), dichiara un front component con [`defineSettingsFrontComponent()`](/it/developers/extend/apps/layout/front-components#custom-settings-component) in un proprio file. Ne è consentito solo uno per app. Le sezioni gestite dal sistema (auto-upgrade, App URL, connessioni) rimangono sempre visibili.
+* Twenty imposta questi nomi per ogni esecuzione di funzione logica, quindi sono riservati: `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` e `APPLICATION_ID`. Un manifest che dichiara uno di essi come variabile dell'applicazione o del server viene rifiutato quando l'app viene sincronizzata o pubblicata.
+* Per aggiungere le tue voci al menu delle impostazioni dell'app (al posto della pagina **Variables** generata), dichiara un front component e configura un [`defineSettingsMenuItem()`](/it/developers/extend/apps/layout/front-components#settings-menu-items) affinché punti a esso, in un proprio file. Dichiarane quanti te ne servono e ordinali con `position`; `scope` colloca un elemento nelle impostazioni del workspace o nelle impostazioni personali di ciascun membro. L'elemento **Generale** gestito dal sistema (aggiornamento automatico, URL dell'app, connessioni) è sempre il primo e l'URL dell'app viene visualizzato solo quando l'app dispone di funzioni attivate da HTTP.
+
+## Funzionalità multimediali richieste
+
+Imposta `requestedCapabilities` quando un componente front usa `navigator.mediaDevices.getUserMedia()`. L'array facoltativo accetta `'microphone'`, `'camera'` o entrambi. Omettilo o usa un array vuoto quando l'app non necessita di acquisizione multimediale.
+
+```ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'Media recorder',
+  description: 'Record audio and video in your workspace',
+  requestedCapabilities: ['microphone', 'camera'],
+});
+```
+
+Le funzionalità dichiarate vengono visualizzate durante l'installazione. L'approvazione richiede un membro dello spazio di lavoro che possa gestire le app e si applica all'intero spazio di lavoro. Queste autorizzazioni sono separate dalle autorizzazioni del ruolo dell'app e non sostituiscono le autorizzazioni del browser o del sistema operativo.
+
+Un'app installata senza l'autorizzazione richiesta mette in pausa l'acquisizione e visualizza una finestra di dialogo di approvazione al primo utilizzo, incluse le app meno recenti senza dichiarazioni di funzionalità. Il rifiuto mantiene l'acquisizione bloccata prima che vengano richieste le autorizzazioni del browser. Gli aggiornamenti del pacchetto non concedono automaticamente accessi aggiuntivi. Le app di sviluppo sincronizzate localmente ricevono le funzionalità dichiarate nel relativo manifesto.
+
+Consulta [Acquisizione multimediale](/it/developers/extend/apps/layout/front-components#media-capture) per il comportamento dell'acquisizione e gli indicatori di registrazione.
 
 ## Tipi di variabili
 
@@ -92,6 +132,67 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 
 Lo stesso vale per i componenti front-end che leggono i valori tramite `getApplicationVariable('VARIABLE_NAME')`: il valore restituito è una stringa; analizzalo secondo le necessità.
 
+## Variabili dello spazio di lavoro e dell'utente
+
+Ogni variabile dell'applicazione ha un `scope`:
+
+* **`WORKSPACE`** (predefinito): un valore per l'intero spazio di lavoro, impostato da un membro che può gestire le app.
+* **`USER`**: ogni membro mantiene il proprio valore.
+
+```ts src/application-config.ts
+import { defineApplication, FieldType } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, role...
+  applicationVariables: {
+    RECORD_MY_MEETINGS: {
+      universalIdentifier: '0b6f3c1e-8a2d-4f57-9c1b-7e4d2a9f6c30',
+      label: 'Record my meetings',
+      type: FieldType.BOOLEAN,
+      value: true,
+      scope: 'USER',
+    },
+  },
+});
+```
+
+Il `value` di una variabile utente è il relativo valore predefinito: un membro che non ha impostato il proprio lo legge e una nuova versione della tua app può modificarlo. Una variabile segreta non può avere un valore predefinito. Senza un valore predefinito, un membro che non ha impostato il proprio legge una stringa vuota, quindi la tua app decide cosa significa un valore non impostato.
+
+Un amministratore dello spazio di lavoro non può impostare un valore per una variabile utente: i suoi valori appartengono a ciascun membro.
+
+L'ambito di una variabile viene impostato al momento della creazione e non può cambiare. Per modificarla, dichiara la variabile con un nuovo `universalIdentifier`: la sincronizzazione elimina la vecchia variabile, con i valori dei relativi membri, e crea quella nuova.
+
+Le variabili utente possono essere `isSecret`, `isRequired` o entrambe. Ad esempio, una chiave API personale può dichiarare `scope: 'USER', isSecret: true, isRequired: true`. I valori sono crittografati a riposo.
+
+Per le variabili utente, `isRequired` descrive un requisito per membro. Un membro che non dispone di un valore per essa, né proprio né predefinito, vede la tua app contrassegnata come **Configurazione mancante** nelle preferenze App, con un banner che indica le variabili. Non influisce sull'avviso di configurazione dell'area di lavoro e nulla lo impone in fase di esecuzione: il tuo codice decide comunque cosa significa un valore non impostato.
+
+Una variabile utente viene inserita con il valore del membro per cui viene eseguito il codice oppure con il relativo valore predefinito, finché il membro non imposta il proprio:
+
+* In una funzione logica, `process.env` contiene i valori del membro che ha attivato l'esecuzione, lo stesso membro di cui agisce `TWENTY_APP_ACCESS_TOKEN`. Un'esecuzione senza alcun membro associato, come un processo cron o un hook di installazione, non riceve alcuna variabile utente.
+* In un componente front-end, `getApplicationVariable` restituisce i valori del membro che lo visualizza. Le variabili utente segrete vengono omesse, come le variabili segrete dell'area di lavoro.
+
+Il membro che ha attivato un'esecuzione non è sempre il membro a cui si riferisce: un evento del database viene eseguito come chiunque abbia modificato il record. Quando un'esecuzione riguarda qualcun altro o ogni membro, leggi i valori con `myUserApplicationVariables` tramite `MetadataApiClient`. Elenca ogni membro con i valori delle variabili utente della tua app e funziona in ogni esecuzione di funzione logica, inclusi processi cron e webhook. Ogni voce contiene `userWorkspaceId`, `workspaceMemberId` e `variables` del membro: la dichiarazione di ogni variabile utente (`label`, `description`, `type`, `options`, `isSecret`, `isRequired`, `isDeprecated`) e il valore del membro, oppure il valore predefinito finché non imposta il proprio. Esegui la query come applicazione per ottenere i valori effettivi: con un token associato a una persona, restituisce solo la voce di quella persona, con i segreti mascherati.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+// In a logic function, for example a cron job
+const client = new MetadataApiClient({ runAs: 'application' });
+
+const { myUserApplicationVariables } = await client.query({
+  myUserApplicationVariables: {
+    workspaceMemberId: true,
+    variables: { key: true, value: true },
+  },
+});
+```
+
+I valori sono stringhe, nello stesso formato di `process.env` (consulta [Tipi di variabili](#variable-types)).
+
+`updateMyUserApplicationVariable` salva il valore personale di un membro. Prende l'`applicationUniversalIdentifier` della tua app e scrive il valore della persona dietro al token: la sessione del membro stesso oppure il token della tua app quando dietro c'è un membro, ad esempio in un componente front-end o in una funzione logica eseguita per un membro. Il token della tua app può identificare solo la tua app e un token senza nessuna persona associata, ad esempio in un processo cron o in un hook di installazione, viene rifiutato. Un valore vuoto rimuove il valore proprio del membro, quindi viene letto nuovamente il valore predefinito oppure una stringa vuota per una variabile senza valore predefinito.
+
+Non richiede l'autorizzazione `APPLICATIONS`, ma richiede `CONNECTED_ACCOUNTS`: nel ruolo del membro e, quando il token della tua app effettua la chiamata, anche nel ruolo predefinito della tua app, se ne dichiara uno. Se la tua app salva variabili utente, aggiungi `SystemPermissionFlag.CONNECTED_ACCOUNTS` a `permissionFlagUniversalIdentifiers` nel suo [ruolo](/it/developers/extend/apps/config/roles).
+
 ## Ruolo funzione predefinito
 
 Il ruolo dichiarato con [`defineApplicationRole()`](/it/developers/extend/apps/config/roles) controlla a cosa possono accedere le funzioni di logica e i componenti di interfaccia dell'app:
@@ -106,18 +207,21 @@ Quando esegui lo scaffolding di una nuova app, la CLI crea un file di ruolo iniz
 
 Se prevedi di [pubblicare la tua app](/it/developers/extend/apps/operations/publishing), questi campi opzionali controllano come appare nel marketplace:
 
-| Campo              | Descrizione                                                                                                                         |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `author`           | Nome dell'autore o dell'azienda                                                                                                     |
-| `category`         | Categoria dell'app per il filtraggio nel marketplace                                                                                |
-| `logo`             | Percorso del logo dell'app in bundle in `public/` (ad esempio, `public/logo.png`)                                                   |
-| `galleryImages`    | Array dei percorsi delle immagini della galleria raggruppati in `public/` (ad esempio, `public/screenshot-1.png`)                   |
-| `aboutDescription` | Descrizione markdown più lunga per la scheda "Informazioni". Se omesso, il marketplace utilizza il `README.md` del pacchetto da npm |
-| `websiteUrl`       | Link al tuo sito web                                                                                                                |
-| `termsUrl`         | Link ai Termini di servizio                                                                                                         |
-| `emailSupport`     | Indirizzo email di supporto                                                                                                         |
-| `issueReportUrl`   | Link al sistema di tracciamento dei problemi                                                                                        |
+| Campo                 | Descrizione                                                                                                                                                                                                                        |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `author`              | Nome dell'autore o dell'azienda                                                                                                                                                                                                    |
+| `category`            | Categoria dell'app per il filtraggio nel marketplace                                                                                                                                                                               |
+| `logo`                | Percorso del logo dell'app in bundle in `public/` (ad esempio, `public/logo.png`)                                                                                                                                                  |
+| `galleryImages`       | Array dei percorsi delle immagini della galleria raggruppati in `public/` (ad esempio, `public/screenshot-1.png`)                                                                                                                  |
+| `aboutDescription`    | Descrizione markdown più lunga per la scheda "Informazioni". Se omesso, il marketplace utilizza il `README.md` del pacchetto da npm. Le immagini non vengono visualizzate e l'HTML non elaborato viene mostrato come testo normale |
+| `billing.description` | Il costo dell'app, in una breve riga amichevole per la tua scheda nel marketplace (ad es. `$0.02 al minuto registrato`). Impostalo se l'app [addebita crediti](/it/developers/extend/apps/logic/credits)                              |
+| `websiteUrl`          | Link al tuo sito web                                                                                                                                                                                                               |
+| `termsUrl`            | Link ai Termini di servizio                                                                                                                                                                                                        |
+| `emailSupport`        | Indirizzo email di supporto                                                                                                                                                                                                        |
+| `issueReportUrl`      | Link al sistema di tracciamento dei problemi                                                                                                                                                                                       |
 
 <Note>
 `logoUrl` e `screenshots` sono alias deprecati di `logo` e `galleryImages`. Gli URL assoluti esterni (`http://` o `https://`) non sono supportati per questi campi: vengono eliminati con un avviso al momento della generazione. Raccogli invece le immagini nella cartella `public/` della tua app.
 </Note>
+
+<PageBanner illustration="card-page-application-config" />

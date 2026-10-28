@@ -67,6 +67,34 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.OPEN,
     isAuditLogged: false,
   },
+  isAssistantParticipant: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'isAssistantParticipant',
+        type: FieldMetadataType.BOOLEAN,
+        label: i18nLabel(
+          msg({
+            message: 'Assistant participant',
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Whether the assistant participates in this conversation',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconSparkles',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: false,
+        defaultValue: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
   totalInputTokens: {
     ...createStandardFieldFlatMetadata({
       ...args,

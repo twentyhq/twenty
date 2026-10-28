@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getWatchInputPlugins } from '@/app/dev/collect-watch-inputs';
 import { getBaseFrontComponentBuildOptions } from '@/app/bundles/front-component-build/utils/get-base-front-component-build-options';
-import { type SharedDependenciesExportNames } from '@/app/bundles/front-component-build/shared-dependencies-build/types/shared-dependencies-export-names.type';
+import { type SharedDependenciesExportNames } from 'twenty-shared/front-component-build';
 
 export const enumerateSharedDependenciesExportNames = async ({
   appPath,

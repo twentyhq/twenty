@@ -29,7 +29,7 @@ export const GOOGLE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000011';
 export const MICROSOFT_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000014';
 export const GOOGLE_MESSAGE_CHANNEL_ID = '20202020-1a2b-4c3d-8e4f-000000000031';
 export const FATHOM_ONLY_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000013';
-const FATHOM_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000012';
+export const FATHOM_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000012';
 const MY_SHARED_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000015';
 const TEAMMATE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000016';
 const EMAIL_GROUP_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000017';
@@ -224,6 +224,7 @@ export const withoutDeletedAccounts = <TAccount extends { id: string }>(
 ) => accounts.filter((account) => !deletedAccountIds.has(account.id));
 
 export const deleteConnectedAccount = fn();
+export const disconnectConnectedAccount = fn();
 export const myApplicationPreferencesRequested = fn();
 
 export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
@@ -267,6 +268,18 @@ export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
       },
     });
   }),
+  graphql.mutation('DisconnectConnectedAccount', ({ variables }) => {
+    disconnectConnectedAccount(variables.id);
+
+    return HttpResponse.json({
+      data: {
+        disconnectConnectedAccount: {
+          __typename: 'ConnectedAccountPublicDTO',
+          id: variables.id,
+        },
+      },
+    });
+  }),
   graphql.query('MyApplicationPreferences', () => {
     myApplicationPreferencesRequested();
 
@@ -290,6 +303,7 @@ export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
 export const seedAccountGroupsStory = async () => {
   deletedAccountIds.clear();
   deleteConnectedAccount.mockClear();
+  disconnectConnectedAccount.mockClear();
   myApplicationPreferencesRequested.mockClear();
   await mockedApolloClient.clearStore();
 

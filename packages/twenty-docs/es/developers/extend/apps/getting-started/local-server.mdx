@@ -1,86 +1,38 @@
 ---
 title: Servidor local
-description: "Administra el servidor Docker local de Twenty: inícialo, deténlo, actualízalo, crea una instancia de prueba en paralelo y realiza la configuración manual del SDK."
+description: Conecta la CLI independiente a un servidor Twenty local.
 ---
 
-## Administrar el servidor local
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-Usa `yarn twenty docker:*` para controlar el contenedor local de Twenty:
+## Configuración
 
-| Comando                                | Qué hace                                                          |
-| -------------------------------------- | ----------------------------------------------------------------- |
-| `yarn twenty docker:start`             | Inicia el servidor local (descarga la imagen si es necesario)     |
-| `yarn twenty docker:start 2.2.0`       | Iniciar una versión específica del servidor                       |
-| `yarn twenty docker:start --port 3030` | Inicia en un puerto personalizado                                 |
-| `yarn twenty docker:stop`              | Detiene el servidor (conserva los datos)                          |
-| `yarn twenty docker:status`            | Muestra la URL, la versión y las credenciales de inicio de sesión |
-| `yarn twenty docker:logs`              | Transmite los registros del servidor                              |
-| `yarn twenty docker:reset`             | Elimina los datos y comienza desde cero                           |
-| `yarn twenty docker:upgrade`           | Descarga la última imagen `twenty-app-dev`                        |
-| `yarn twenty docker:upgrade 2.2.0`     | Actualiza a una versión específica                                |
+La CLI independiente se conecta a un servidor Twenty en ejecución. No inicia ni administra contenedores de Docker.
 
-Los datos se conservan entre reinicios en dos volúmenes de Docker (`twenty-app-dev-data` para PostgreSQL, `twenty-app-dev-storage` para archivos). Usa `reset` para borrar todo.
+Usa la [guía de autoalojamiento](/es/developers/self-host/self-host) para ejecutar Twenty con Docker. En una copia local de un repositorio de Twenty, también funciona el entorno de desarrollo existente:
 
-## Fijar la versión del servidor
-
-Cuando no se pasa ninguna versión, `docker:start` resuelve la versión a partir del rango `engines.twenty` de tu aplicación en `package.json`, el mismo rango con el que el servidor valida cuando tu aplicación se instala. Inicia la imagen publicada más reciente de `twenty-app-dev` que satisface el rango, recurriendo a `latest` cuando el campo está ausente o ninguna versión publicada coincide:
-
-```json filename="package.json"
-{
-  "engines": {
-    "twenty": ">=2.2.0"
-  }
-}
+```bash
+bash packages/twenty-utils/setup-dev-env.sh
+yarn start
 ```
 
-Pasa una versión explícitamente para anular el rango en una sola ejecución: `yarn twenty docker:start 2.3.0`. Si ya existe un contenedor en una versión diferente, `docker:start` lo actualiza in situ (recreando el contenedor mientras conserva tus volúmenes de datos).
+Luego autentícate con la URL del servidor de tu espacio de trabajo:
 
-## Actualización de la imagen del servidor
-
-`yarn twenty docker:upgrade` descarga la última imagen, compara los digests y solo recrea el contenedor si realmente cambió algo. Los volúmenes se conservan — solo se reemplaza el contenedor. Si se descargó una nueva imagen y el contenedor estaba en ejecución, la actualización inicia automáticamente un contenedor nuevo; ejecuta `yarn twenty docker:start` después para esperar a que esté en buen estado.
-
-```bash filename="Terminal"
-yarn twenty docker:upgrade            # Latest
-yarn twenty docker:upgrade 2.2.0      # Specific version
+```bash
+twenty auth login --url http://localhost:3000 --name local
+twenty app apply --create --remote local
 ```
 
-Puedes verificar la versión en ejecución con `yarn twenty docker:status` (muestra el `APP_VERSION` incluido en el contenedor).
+Usa la URL y el puerto reales de tu servidor. Para espacios de trabajo con subdominios, usa el nombre de host del espacio de trabajo.
 
-## Ejecutar una instancia de prueba en paralelo
+## Pruebas de integración
 
-Pasa `--test` a cualquier comando de `docker:*` para administrar una segunda instancia completamente aislada — útil para ejecutar pruebas de integración o experimentar sin tocar los datos principales de desarrollo:
+Usa un servidor o espacio de trabajo independiente y desechable. La configuración de las pruebas de integración instala una aplicación y el desmontaje la desinstala. Configura `TWENTY_API_URL` y `TWENTY_API_KEY` para esa instancia de prueba antes de ejecutar `yarn test`.
 
-| Comando                             | Qué hace                                                       |
-| ----------------------------------- | -------------------------------------------------------------- |
-| `yarn twenty docker:start --test`   | Inicia la instancia de prueba (usa el puerto 2021 por defecto) |
-| `yarn twenty docker:stop --test`    | Deténla                                                        |
-| `yarn twenty docker:status --test`  | Muestra su estado                                              |
-| `yarn twenty docker:logs --test`    | Transmite sus registros                                        |
-| `yarn twenty docker:reset --test`   | Borra sus datos                                                |
-| `yarn twenty docker:upgrade --test` | Actualiza su imagen                                            |
+El flujo de trabajo de CI generado aprovisiona una instancia aislada mediante `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` e instala la CLI independiente por separado.
 
-La instancia de prueba se ejecuta en su propio contenedor de Docker (`twenty-app-dev-test`) con volúmenes dedicados (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) y configuración dedicada, por lo que puede ejecutarse en paralelo con la instancia principal sin conflictos. Combina `--test` con `--port` para anular el puerto predeterminado (2021).
+## Dependencias del proyecto
 
-## Configuración manual (sin el generador)
+Instala `twenty-sdk` y `twenty-client-sdk` como dependencias del proyecto. Instala la CLI `twenty` globalmente y, luego, ejecuta `twenty app typecheck`, `twenty app build` y `twenty app apply` desde el directorio de la aplicación.
 
-Omite el generador si vas a agregar el SDK a un proyecto existente:
-
-```bash filename="Terminal"
-yarn add twenty-sdk twenty-client-sdk
-```
-
-Agrega el script a `package.json`:
-
-```json filename="package.json"
-{
-  "scripts": {
-    "twenty": "twenty"
-  }
-}
-```
-
-Ahora puedes ejecutar `yarn twenty dev`, `yarn twenty docker:start` y todos los demás comandos.
-
-<Note>
-No instales `twenty-sdk` globalmente — fíjalo por proyecto para que cada app use su propia versión.
-</Note>
+<PageBanner illustration="dev-self-host" />

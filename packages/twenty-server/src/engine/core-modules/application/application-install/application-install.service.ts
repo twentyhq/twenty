@@ -415,6 +415,7 @@ export class ApplicationInstallService {
       workspaceId: params.workspaceId,
       applicationRegistrationId: appRegistration.id,
       sourceType: appRegistration.sourceType,
+      autoUpgrade: appRegistration.isVetted,
     });
 
     await progressReporter.reportStepCompleted('CREATE_APPLICATION');
@@ -850,7 +851,12 @@ export class ApplicationInstallService {
   ): Promise<void> {
     const filesToWrite = buildApplicationFileList(manifest);
 
-    for (const { relativePath, fileFolder, isRequired } of filesToWrite) {
+    for (const {
+      relativePath,
+      resourcePath,
+      fileFolder,
+      isRequired,
+    } of filesToWrite) {
       const absolutePath = this.resolveWithinDirOrThrow(
         extractedDir,
         relativePath,
@@ -861,14 +867,9 @@ export class ApplicationInstallService {
       try {
         content = await fs.readFile(absolutePath);
       } catch (error) {
-        if (
-          !isRequired &&
-          error instanceof Error &&
-          'code' in error &&
-          error.code === 'ENOENT'
-        ) {
+        if (!isRequired && (error as NodeJS.ErrnoException).code === 'ENOENT') {
           this.logger.warn(
-            `Source file not found in package: ${relativePath}; skipping for backward compatibility`,
+            `Optional file not found in package: ${relativePath}; skipping for backward compatibility`,
           );
 
           continue;
@@ -885,7 +886,7 @@ export class ApplicationInstallService {
         fileFolder,
         applicationUniversalIdentifier,
         workspaceId,
-        resourcePath: relativePath,
+        resourcePath: resourcePath ?? relativePath,
         settings: { isTemporaryFile: false, toDelete: false },
       });
     }
@@ -952,6 +953,7 @@ export class ApplicationInstallService {
     workspaceId,
     applicationRegistrationId,
     sourceType,
+    autoUpgrade,
   }: {
     existingApplication: ApplicationEntity | null;
     universalIdentifier: string;
@@ -960,6 +962,7 @@ export class ApplicationInstallService {
     workspaceId: string;
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
+    autoUpgrade: boolean;
   }): Promise<ApplicationEntity> {
     if (isDefined(existingApplication)) {
       return existingApplication;
@@ -972,6 +975,7 @@ export class ApplicationInstallService {
       sourcePath: universalIdentifier,
       sourceType,
       applicationRegistrationId,
+      autoUpgrade,
       workspaceId,
     });
   }

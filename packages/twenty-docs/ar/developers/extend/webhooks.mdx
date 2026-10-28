@@ -3,13 +3,17 @@ title: خطافات الويب
 description: احصل على إشعار عند تغيّر السجلات — سيتم إرسال طلب HTTP POST إلى endpoint الخاص بك عند كل عملية إنشاء أو تحديث أو حذف.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## نظرة عامة
 
 يقوم Twenty بإرسال طلب HTTP POST إلى URL الخاص بك كلما تم إنشاء سجل أو تحديثه أو حذفه. جميع أنواع الكائنات مشمولة، بما في ذلك الكائنات المخصصة.
 
 ## إنشاء خطاف ويب
 
-1. انتقل إلى **الإعدادات → APIs & Webhooks → Webhooks**
+1. انتقل إلى **الإعدادات → المطورون → خطافات الويب**
 2. انقر على **+ إنشاء خطاف ويب**
 3. أدخل عنوان URL لخطاف الويب الخاص بك (يجب أن يكون قابلاً للوصول علنًا)
 4. انقر على **حفظ**
@@ -114,3 +118,5 @@ const isValid = crypto.timingSafeEqual(
 | **مشغّل خطاف ويب لسير العمل** | IN      | استقبال البيانات في Twenty من الأنظمة الخارجية              |
 
 لاستقبال البيانات الخارجية، راجع [إعداد مشغّل خطاف الويب](/ar/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
+
+<PageBanner illustration="card-page-webhooks" />

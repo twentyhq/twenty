@@ -1,0 +1,112 @@
+---
+title: Примитивы
+sidebarTitle: Обзор
+description: Базовые элементы управления для создания интерфейсов с Twenty UI.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Обзор
+
+Примитивы — это базовые элементы управления в Twenty UI. Они включают поля ввода, элементы отображения, навигацию и составные элементы управления, такие как Select, Popover и AlertDialog. Каждый примитив получает данные и функции обратного вызова из вашего приложения.
+
+Импортируйте примитивы из точки входа семейства, например `twenty-ui/primitives/input`. Совокупная точка входа `twenty-ui/primitives` также экспортирует все семейства примитивов. Сведения об установке и настройке темы см. в разделе [Начало работы](/ru/ui/getting-started).
+
+[Компоненты](/ru/ui/components/overview) объединяют эти примитивы в общие предустановки дизайна и многократно используемые строительные блоки приложений.
+
+## Управление состоянием
+
+Используйте неконтролируемое состояние, когда компонент может самостоятельно управлять своими взаимодействиями. Свойство по умолчанию задаёт начальное состояние. Используйте контролируемое состояние, когда приложению требуется согласовать это состояние с другими элементами управления, навигацией или данными приложения.
+
+| Состояние                        | Неконтролируемое начальное состояние | Контролируемое состояние | Функция обратного вызова при изменении |
+| -------------------------------- | ------------------------------------ | ------------------------ | -------------------------------------- |
+| Ввод, выбор или активная вкладка | `defaultValue`                       | `значение`               | `onValueChange`                        |
+| Флажок или переключатель         | `defaultChecked`                     | `checked`                | `onCheckedChange`                      |
+| Видимость всплывающего окна      | `defaultOpen`                        | `открыть`                | `onOpenChange`                         |
+
+В контролируемом режиме передайте текущее состояние и обновляйте его в функции обратного вызова при изменении. В неконтролируемом режиме вы всё равно можете отслеживать изменения, не беря на себя управление состоянием. Добавление одной лишь функции обратного вызова не делает компонент контролируемым.
+
+Выберите режим для каждого состояния и сохраняйте его на протяжении всего жизненного цикла компонента. Свойства по умолчанию инициализируют состояние; их последующее изменение не заменяет текущее состояние. Не передавайте одновременно свойство по умолчанию и контролируемое свойство для одного и того же состояния.
+
+Некоторые компоненты имеют более одного независимого состояния. Например, [Select](/ru/ui/primitives/input/select#open-state) может иметь контролируемое значение и неконтролируемую видимость всплывающего окна.
+
+Состояние относится к части, которая управляет взаимодействием. Настраивайте выбор радиокнопки в [RadioGroup](/ru/ui/primitives/input/radio-group), а не в каждом Radio. Компоненты отображения, такие как Text, не имеют контролируемого или неконтролируемого режима. [Toast](/ru/ui/components/feedback/toast) делегирует управление своей видимостью и удалением приложению.
+
+## Композиция
+
+Составные примитивы предоставляют части, такие как `Select.Root`, `Select.Trigger` и `Select.Popup`. Держите связанные части под одним корневым элементом в дереве компонентов, чтобы они совместно использовали состояние и отношения доступности. Раздел анатомии каждого компонента определяет обязательные части и необязательное содержимое.
+
+Слоты, такие как `InputGroup.startElement` и `ListItem.actions`, принимают узлы React в качестве свойств. Они добавляют содержимое в макет компонента. Части и слоты — это разные API; используйте имена, указанные в руководстве по компоненту.
+
+### Композиция всплывающего окна
+
+Select, Popover и Autocomplete предоставляют отдельные части `Portal`, `Positioner` и `Popup`:
+
+| Часть        | Назначение                                            |
+| ------------ | ----------------------------------------------------- |
+| `Portal`     | Целевой контейнер и монтирование                      |
+| `Positioner` | Размещение, якорь, смещения и обработка коллизий      |
+| `Popup`      | Содержимое, поведение фокуса, нативные атрибуты и ref |
+| `Arrow`      | Необязательная стрелка внутри всплывающего окна       |
+
+Размещайте Popup внутри Positioner, а Positioner — внутри Portal. Размещайте содержимое внутри Popup и при необходимости явно добавляйте Arrow. Портал может перемещать отрисованный DOM в другой контейнер, сохраняя иерархию компонентов и контекст. См. [темизацию](/ru/ui/theming#scope-an-override) для получения сведений об ограниченных контейнерах портала.
+
+Каждая отрисованная часть сохраняет собственные нативные атрибуты, цель ref и композицию рендеринга. [Autocomplete](/ru/ui/primitives/input/autocomplete) также сохраняет установленные вышестоящие части коллекции, группировки, сетки, фильтрации и статуса.
+
+[Dialog](/ru/ui/primitives/surfaces/dialog) и [AlertDialog](/ru/ui/primitives/surfaces/alert-dialog) предоставляют отдельные части `Portal`, `Backdrop`, `Viewport` и `Popup`. Настройте монтирование и назначение в Portal, внешний вид наложения в Backdrop и Viewport, а также размер содержимого и фокус в Popup. Каждая часть сохраняет собственные нативные атрибуты, цель ref и композицию рендеринга. Эти API диалогов предназначены для автономного UI и хоста Twenty. Компоненты Front используют [API диалогов хоста SDK](/ru/developers/extend/apps/layout/front-components#host-communication-api).
+
+### Пользовательские компоненты
+
+Для частей, поддерживающих `render`, передайте совместимый элемент или компонент, чтобы заменить элемент по умолчанию. Например, `Popover.Trigger` может использовать `Button` из Twenty UI, сохраняя поведение триггера.
+
+Пользовательская обёртка должна передавать предоставленные props и ref интерактивному элементу. Это сохраняет обработчики событий, атрибуты доступности, позиционирование и восстановление фокуса. В этом примере они передаются через `Button`, который прикрепляет их к своей нативной кнопке.
+
+```tsx
+import { type ComponentPropsWithRef } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+type HelpButtonProps = ComponentPropsWithRef<typeof Button>;
+
+const HelpButton = ({ ref, ...props }: HelpButtonProps) => (
+  <Button {...props} ref={ref} variant="outline" />
+);
+
+export const ImportHelp = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<HelpButton>Import help</HelpButton>} />
+    <Popover.Portal>
+      <Popover.Positioner>
+        <Popover.Popup>
+          <Popover.Title>Import a CSV file</Popover.Title>
+          <Popover.Description>
+            Use a header row to identify your columns.
+          </Popover.Description>
+          <Popover.Close render={<Button>Got it</Button>} />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+Передайте кнопку через `render` и сохраняйте каждое действие как отдельный интерактивный элемент управления. При добавлении собственного поведения сохраняйте обработчики и ref, предоставленные вашей обёртке. Ref должен достигать элемента, получающего фокус.
+
+Используйте нативную кнопку для частей, подобных кнопке. Для частей, предоставляющих `nativeButton`, устанавливайте `nativeButton={false}`, только если отрисованный элемент не является нативной кнопкой. Пользовательский компонент, который в итоге отрисовывает кнопку, например `HelpButton`, сохраняет поведение кнопки по умолчанию.
+
+## Просмотр примитивов
+
+Каждая страница содержит примеры использования, рекомендации по взаимодействию и сгенерированную справку по API.
+
+| Семейство           | Примитивы                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Доступность         | [Визуально скрытый](/ru/ui/primitives/accessibility/visually-hidden)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Отображение данных  | [Аватар](/ru/ui/primitives/data-display/avatar), [Чип](/ru/ui/primitives/data-display/chip), [Образец цвета](/ru/ui/primitives/data-display/color-sample), [Бейдж](/ru/ui/primitives/data-display/badge), [Статус](/ru/ui/primitives/data-display/status), [Тег](/ru/ui/primitives/data-display/tag)                                                                                                                                                                                                                                                                                                                                                                             |
+| Обратная связь      | [Banner](/ru/ui/primitives/feedback/banner), [Loader](/ru/ui/primitives/feedback/loader), [Progress](/ru/ui/primitives/feedback/progress), [ProgressBar](/ru/ui/primitives/feedback/progress-bar), [ProgressRing](/ru/ui/primitives/feedback/progress-ring), [Skeleton](/ru/ui/primitives/feedback/skeleton)                                                                                                                                                                                                                                                                                                                                                                     |
+| Формы               | [Автозаполнение](/ru/ui/primitives/input/autocomplete), [Кнопка](/ru/ui/primitives/input/button), [Группа кнопок](/ru/ui/primitives/input/button-group), [Флажок](/ru/ui/primitives/input/checkbox), [Поле](/ru/ui/primitives/input/field), [Ввод](/ru/ui/primitives/input/input), [Группа ввода](/ru/ui/primitives/input/input-group), [Числовое поле](/ru/ui/primitives/input/number-field), [Переключатель](/ru/ui/primitives/input/radio), [Группа переключателей](/ru/ui/primitives/input/radio-group), [Выбор](/ru/ui/primitives/input/select), [Ползунок](/ru/ui/primitives/input/slider), [Переключатель](/ru/ui/primitives/input/switch), [Текстовая область](/ru/ui/primitives/input/textarea) |
+| Макет               | [Сворачиваемый элемент](/ru/ui/primitives/layout/collapsible), [Разделитель](/ru/ui/primitives/layout/separator), [Маркер изменения размера](/ru/ui/primitives/layout/resize-handle), [Поставщик направления](/ru/ui/primitives/layout/direction-provider)                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| Навигация           | [Навигационная цепочка](/ru/ui/primitives/navigation/breadcrumb), [Элемент списка](/ru/ui/primitives/navigation/list-item), [Вкладки](/ru/ui/primitives/navigation/tabs)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Области отображения | [Диалог предупреждения](/ru/ui/primitives/surfaces/alert-dialog), [Карточка](/ru/ui/primitives/surfaces/card), [Диалог](/ru/ui/primitives/surfaces/dialog), [Всплывающее окно](/ru/ui/primitives/surfaces/popover), [Подсказка](/ru/ui/primitives/surfaces/tooltip)                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Типографика         | [Заголовок](/ru/ui/primitives/typography/heading), [Переполняющий текст с подсказкой](/ru/ui/primitives/typography/overflowing-text-with-tooltip), [Поставщик режима подсказки для переполняющего текста](/ru/ui/primitives/typography/overflowing-text-tooltip-mode-provider), [Сочетание клавиш](/ru/ui/primitives/typography/shortcut), [Текст](/ru/ui/primitives/typography/text)                                                                                                                                                                                                                                                                                         |
+
+<PageBanner illustration="section-ui-primitives" />

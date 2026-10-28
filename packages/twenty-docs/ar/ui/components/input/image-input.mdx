@@ -1,0 +1,109 @@
+---
+title: ImageInput
+description: إجراءات اختيار الصورة ومعاينتها ورفعها التي يملكها المستدعي.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ImageInputReference from '/snippets/ui/generated/components/input/image-input.mdx';
+
+## نظرة عامة
+
+يجمع `ImageInput` بين معاينة الصورة ومنتقي الملفات الأصلي وإجراءات الرفع أو الإزالة أو الإلغاء. يتم تشغيل `onFileSelect` عند اختيار ملف. يتحقق تطبيقك من الملف ويرفعه، ويمتلك تقدّم الرفع وإلغاءه، ويوفر عنوان URL للمعاينة عبر `src`.
+
+<StoryEmbed storyId="ui-input-imageinput--display" title="اختر صورة وعاينها وأزلها" height={140} />
+
+## استخدام
+
+```tsx
+import { useState } from 'react';
+import { ImageInput } from 'twenty-ui/components/input';
+
+export const WorkspaceImage = () => {
+  const [preview, setPreview] = useState<{
+    src?: string;
+    reader?: FileReader;
+  }>({});
+
+  return (
+    <ImageInput
+      helperText="Choose a square image for your workspace."
+      src={preview.src}
+      onFileSelect={(file) => {
+        const reader = new FileReader();
+        setPreview((current) => ({ src: current.src, reader }));
+        reader.onload = () => {
+          setPreview((current) => {
+            if (current.reader !== reader) {
+              return current;
+            }
+
+            return { src: reader.result?.toString() };
+          });
+        };
+        reader.readAsDataURL(file);
+      }}
+      onRemove={() => setPreview({})}
+    />
+  );
+};
+```
+
+يحتفظ المثال بالمعاينة الحالية أثناء قراءة بديل، ويتجاهل القراءات الناتجة عن التحديدات المُزالة أو المستبدلة.
+
+## الاختيار والمعاينة
+
+تفتح المعاينة وزر الرفع منتقي الملفات الأصلي نفسه. يتلقى `onFileSelect` العنصر `File` المحدد؛ ولا يبدأ عملية رفع بنفسه. يؤدي الإلغاء أو إرجاع اختيار فارغ إلى إبقاء الصورة الحالية دون تغيير. يُمسح إدخال الملف بعد الاختيار بحيث يمكن اختيار الملف نفسه مجددًا، ويظل `File` الخاص بدالة الاستدعاء قابلًا للاستخدام.
+
+تدعم مكونات الواجهة التحديد الأصلي ومحتويات `File` القابلة للقراءة. تم التحقق من تدفقات React وPreact المُنشأة بواسطة SDK في Chromium باستخدام التفعيل بالمؤشر وEnter وSpace. لا يُفتح المنتقي إلا عبر نقرة موثوقة داخل المكون. تدعم عناوين URL للكائنات التي ينشئها Worker والمُسندة إلى `src` للصورة المعاينات.
+
+تكون القيمة الافتراضية لـ `accept` هي `image/*`، وهو يرشح منتقي الملفات. تحقق من التنسيقات والأبعاد والحجم المسموح بها في تطبيقك. لا يحتفظ هذا المحدد المعتمد على الاستدعاءات بملف لإرساله عبر النموذج الأصلي. تستخدم أزرار إجراءاته `type="button"`، لذا لا ترسل نموذجًا محيطًا.
+
+تعرض الصورة الفارغة أو التي فشل تحميلها عنصرًا نائبًا. يؤدي تغيير `src` إلى إعادة محاولة المعاينة، بما في ذلك بعد فشل تحميل صورة سابقة. تستدعي الإزالة `onRemove`؛ حدّث `src` بعد أن يزيل تطبيقك الصورة. يمتلك التطبيق عناوين URL للمعاينة المحلية ويلغي عناوين URL للكائنات التي ينشئها العامل عندما لا تعود مطلوبة. يمتلك العارض تنظيف عناوين URL لمعاينة مضيفه.
+
+## خصائص الجذر وإدخال الملف
+
+تُطبّق `className` و`style` و`ref` على عنصر div الجذر. يتلقى مرجع الجذر الافتراضي عنصر `HTMLDivElement`؛ استخدم `inputRef` لإدخال الملف المخفي. استخدم `render={<div ... />}` لتوفير سمات الجذر الأصلية أو معالجات الأحداث. أبقِ ذلك الجذر غير تفاعلي، لأن الوحدة تحتوي بالفعل على أزرار. يُطبّق `dir` على كل من الجذر وإدخال الملف؛ استخدم `dir="rtl"` للتخطيط من اليمين إلى اليسار.
+
+تكون سمات إدخال الملف الأصلية خصائص على المستوى الأعلى، بما في ذلك `accept` و`capture` و`name` و`id` و`title` و`form` و`required` والسمات القابلة للوصول وسمات البيانات ومعالجات الأحداث. تُطبّق على الإدخال المخفي. يتلقى `inputRef` عنصر `HTMLInputElement` الخاص به. يستخدم عنصر التحكم دائمًا `type="file"`، ويقبل ملفًا واحدًا، ويعيد تعيين قيمته بعد كل اختيار. لا يمكن تخصيص `children` و`dangerouslySetInnerHTML` و`type` و`multiple` و`value` و`defaultValue` و`hidden`.
+
+لا يزال التحقق الأصلي من `required` يرى إدخالًا فارغًا بعد الاختيار لأن الإدخال يُعاد تعيينه. تحقق من عمليات الرفع المكتملة في تطبيقك.
+
+يتلقى `onChange` حدث التغيير الأصلي بينما لا يزال الإدخال يحتوي على الملف المحدد. ثم يُعاد تعيين الإدخال قبل تشغيل `onFileSelect`. تتبع خصائص الأحداث الأصلية عقد الإدخال في React. `onAbort` هو إجراء إيقاف الرفع.
+
+## حالات الرفع والتعطيل
+
+تجعل `isUploading` الجذر مشغولًا وتجعل الاختيار والإزالة غير متاحين. تبقى عناصر التحكم التي كانت متاحة قابلة للتركيز، لذلك لا يُفقد تركيز لوحة المفاتيح عند بدء الرفع. وفّر `onAbort` لاستبدال الرفع بالإلغاء أثناء الرفع. يعمل الإلغاء قبل وجود أول عنوان URL للصورة. يتولى التطبيق الإلغاء ويعيد تعيين `isUploading` إلى `false` عند انتهاء الرفع.
+
+تعطّل `disabled` كل إجراء. يتطلب الاختيار `onFileSelect`. تتطلب الإزالة كلاً من `onRemove` و`src` غير فارغ.
+
+<StoryEmbed storyId="ui-input-imageinput--uploading" title="رفع صورة مع إجراء إلغاء" height={140} />
+
+## التسميات والإرشادات والأخطاء
+
+وفّر سلاسل `uploadLabel` و`removeLabel` و`abortLabel` مترجمة محليًا. قيمها الافتراضية هي `Upload` و`Remove` و`Abort`. تسمّي تسمية الرفع أيضًا زر المعاينة وإدخال الملف المخفي. يمكن للسمات الأصلية القابلة للوصول توفير اسم مختلف لإدخال الملف. يصف `aria-describedby` أيضًا أزرار الاختيار ويتحد مع النص المساعد ونص الخطأ الخاصين بالتطبيق.
+
+ينتمي `helperText` و`errorMessage` إلى التطبيق. يصف كلاهما عناصر التحكم في الاختيار، ويُعلن عن الأخطاء كتنبيهات. لا توجد حدود مضمّنة للملفات أو إرشادات للمنتج.
+
+<StoryEmbed storyId="ui-input-imageinput--with-error" title="إدخال صورة مع إرشادات وخطأ" height={160} />
+
+## الترحيل
+
+استبدل `onUpload` بـ `onFileSelect`. أبقِ `accept` كخاصية على المستوى الأعلى. لا تزال دالة الاستدعاء تتلقى `File`؛ أبقِ رمز التحقق والرفع الحالي في تطبيقك.
+
+```tsx
+import { ImageInput } from 'twenty-ui/components/input';
+
+export const WorkspaceImageSelector = ({
+  uploadImage,
+}: {
+  uploadImage: (file: File) => void;
+}) => <ImageInput onFileSelect={uploadImage} accept="image/png, image/jpeg" />;
+```
+
+## الخصائص
+
+<ImageInputReference />
+
+<PageBanner illustration="page-cover-image" />

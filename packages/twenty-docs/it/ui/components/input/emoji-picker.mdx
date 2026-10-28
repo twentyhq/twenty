@@ -1,0 +1,75 @@
+---
+title: EmojiPicker
+description: Cerca e seleziona un'emoji usando i dati Emojibase ospitati dal chiamante.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import EmojiPickerReference from '/snippets/ui/generated/components/input/emoji-picker.mdx';
+
+## Panoramica
+
+`EmojiPicker` offre la ricerca di emoji, la navigazione per categoria e la selezione tramite tastiera. La tua applicazione fornisce le proprie etichette, la posizione dei dati delle emoji e il gestore della selezione.
+
+<StoryEmbed storyId="ui-input-emojipicker--display" title="Cerca emoji e scegli una reazione" height={400} />
+
+## Utilizzo
+
+```tsx
+import { useState } from 'react';
+import { EmojiPicker } from 'twenty-ui/components/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-ui/utilities';
+
+export const EmojiPickerExample = () => {
+  const [emoji, setEmoji] = useState<string | undefined>();
+
+  return (
+    <Text
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: themeCssVariables.spacing[2],
+        width: 296,
+      }}
+    >
+      <EmojiPicker
+        emojibaseUrl="/emojibase"
+        searchLabel="Search emojis"
+        loadingLabel="Loading emojis"
+        emptyLabel="No emoji found"
+        onEmojiSelect={setEmoji}
+      />
+      <Text role="status">
+        {isDefined(emoji) ? `Selected emoji: ${emoji}` : 'Choose an emoji'}
+      </Text>
+    </Text>
+  );
+};
+```
+
+L'anteprima utilizza un piccolo catalogo di fixture. L'esempio di utilizzo prevede che l'applicazione fornisca dati Emojibase in `/emojibase`.
+
+## Dati ed etichette
+
+`emojibaseUrl` è obbligatorio. Il selettore carica sia `${emojibaseUrl}/${locale}/data.json` sia `${emojibaseUrl}/${locale}/messages.json`. Ospita questi file dal pacchetto di dati Emojibase per ogni lingua supportata. La lingua predefinita è `en`; fornire etichette dell'interfaccia tradotte non modifica la lingua del catalogo di emoji.
+
+Fornisci `searchLabel`, `loadingLabel` e `emptyLabel` localizzati. `searchLabel` denomina il campo di ricerca e fornisce il relativo segnaposto, a meno che `searchPlaceholder` non lo sostituisca. I nomi delle emoji, le categorie e i tag di ricerca provengono dalla lingua Emojibase selezionata.
+
+## Selezione e composizione
+
+`onEmojiSelect` riceve la stringa emoji Unicode selezionata. Il selettore mantiene internamente la propria ricerca e l'emoji attiva. L'applicazione gestisce qualsiasi valore selezionato, conteggio delle reazioni, identificatore del messaggio, autorizzazione, persistenza e visibilità del popup. Componilo all'interno di [Dropdown](/it/ui/components/navigation/dropdown) quando necessita di un popup.
+
+Il selettore utilizza otto colonne e un'altezza di 280px. Imposta la larghezza del relativo contenitore in modo che si adatti alla griglia. Gli attributi nativi di div, i gestori, gli stili, i nomi delle classi e i riferimenti sono destinati al relativo contenitore esterno.
+
+## Accessibilità
+
+L'input di ricerca ha il nome accessibile fornito. Porta lo stato attivo su di esso con Tab oppure imposta `autoFocus` all'apertura di un popup. I tasti freccia consentono di navigare nella griglia di emoji e Invio seleziona l'emoji attiva. Ogni emoji ha un nome accessibile dal catalogo selezionato. `autoFocus` è impostato su `false` per impostazione predefinita.
+
+## Props
+
+<EmojiPickerReference />
+
+<PageBanner illustration="page-cover-emoji" />

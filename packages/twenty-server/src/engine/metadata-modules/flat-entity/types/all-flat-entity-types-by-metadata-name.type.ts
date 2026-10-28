@@ -83,6 +83,8 @@ import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/f
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
+import { type FlatMcpServerMaps } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server-maps.type';
+import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 import { type FlatWebhookMaps } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook-maps.type';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
@@ -124,6 +126,7 @@ import { type UniversalFlatViewSort } from 'src/engine/workspace-manager/workspa
 import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type UniversalFlatApplicationVariable } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-application-variable.type';
+import { type UniversalFlatMcpServer } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-mcp-server.type';
 import { type UniversalFlatWebhook } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-webhook.type';
 import {
   type FlatCreateAgentAction,
@@ -389,6 +392,14 @@ import {
   type UniversalDeleteWebhookAction,
   type UniversalUpdateWebhookAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/types/workspace-migration-webhook-action.type';
+import {
+  type FlatCreateMcpServerAction,
+  type FlatDeleteMcpServerAction,
+  type FlatUpdateMcpServerAction,
+  type UniversalCreateMcpServerAction,
+  type UniversalDeleteMcpServerAction,
+  type UniversalUpdateMcpServerAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/mcp-server/types/workspace-migration-mcp-server-action.type';
 import {
   type FlatCreateSearchFieldMetadataAction,
   type FlatDeleteSearchFieldMetadataAction,
@@ -882,6 +893,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatWebhook;
     universalFlatEntity: UniversalFlatWebhook;
     entity: MetadataEntity<'webhook'>;
+  };
+  mcpServer: {
+    flatEntityMaps: FlatMcpServerMaps;
+    universalActions: {
+      create: UniversalCreateMcpServerAction;
+      update: UniversalUpdateMcpServerAction;
+      delete: UniversalDeleteMcpServerAction;
+    };
+    flatActions: {
+      create: FlatCreateMcpServerAction;
+      update: FlatUpdateMcpServerAction;
+      delete: FlatDeleteMcpServerAction;
+    };
+    flatEntity: FlatMcpServer;
+    universalFlatEntity: UniversalFlatMcpServer;
+    entity: MetadataEntity<'mcpServer'>;
   };
   applicationVariable: {
     flatEntityMaps: FlatApplicationVariableMaps;

@@ -1,0 +1,128 @@
+---
+title: مُدرِّج الأرقام
+description: حرّر رقمًا بحدود اختيارية وأزرار للزيادة أو النقصان.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import NumberStepperReference from '/snippets/ui/generated/components/input/number-stepper.mdx';
+
+## نظرة عامة
+
+`NumberStepper` هو إعداد مسبق مدمج ومريح مبني من [NumberField](/ar/ui/primitives/input/number-field). يجمع بين حقل إدخال نصي رقمي وأزرار اختيارية للإنقاص والزيادة. استورده من `twenty-ui/components/input`. استخدم `NumberField` عندما تحتاج إلى خيارات الإعدادات المحلية أو التنسيق، أو خطوات معدِّلة مختلفة، أو المسح، أو تركيب الأجزاء بشكل مستقل.
+
+<StoryEmbed storyId="ui-input-numberstepper--display" title="مثال NumberStepper" height={130} />
+
+## استخدام
+
+```tsx
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => (
+  <Field.Root>
+    <Field.Label style={{ color: 'var(--t-font-color-primary)' }}>
+      Quantity
+    </Field.Label>
+    <NumberStepper defaultValue={3} min={0} max={10} />
+    <Field.Description style={{ color: 'var(--t-font-color-secondary)' }}>
+      Choose up to ten items.
+    </Field.Description>
+  </Field.Root>
+);
+```
+
+## الخيارات المرئية
+
+قارن الحالات الافتراضية والمقيّدة والمعطّلة وللقراءة فقط وغير الصالحة، مع أزرار الخطوات أو بدونها.
+
+<StoryEmbed storyId="ui-input-numberstepper--catalog" title="حدود حالات أداة زيادة الأرقام وخفضها وحالاتها" height={220} />
+
+## قيمة غير متحكَّم بها
+
+استخدم `defaultValue` لتعيين الكمية الأولية. يتولى حقل الإدخال التغييرات اللاحقة.
+
+```tsx
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => (
+  <Field.Root>
+    <Field.Label>Quantity</Field.Label>
+    <NumberStepper name="quantity" defaultValue={3} min={0} max={10} step={1} />
+    <Field.Description>Choose up to ten items.</Field.Description>
+  </Field.Root>
+);
+```
+
+## قيمة متحكَّم بها
+
+مرّر رقمًا أو `null` عبر `value` وحدّثه في `onValueChange` للتحكم في الكمية نفسها ضمن حالة React. تتلقى دالة رد الاتصال القيمة الرقمية التالية وتفاصيل الحدث.
+
+```tsx
+import { useState } from 'react';
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => {
+  const [quantity, setQuantity] = useState<number | null>(3);
+
+  return (
+    <Field.Root>
+      <Field.Label>Quantity</Field.Label>
+      <NumberStepper
+        name="quantity"
+        value={quantity}
+        onValueChange={setQuantity}
+        min={0}
+        max={10}
+        step={1}
+      />
+      <Field.Description>Choose up to ten items.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+يؤدي مسح الحقل إلى الإبلاغ عن `null`. يبقى النص غير المكتمل، مثل `-` أو `+`، قابلاً للتحرير دون الإبلاغ عن رقم غير صالح إلى أن يُستبدل أو يُغيَّر بخطوة. بشكل افتراضي، تُبلِغ التعديلات الرقمية القابلة للتحليل عن القيمة المقيّدة؛ وتُطبَّع المسودة المعروضة عند فقدان التركيز. لا تستدعي القيم المطابقة للقيمة الحالية `onValueChange` مرة أخرى.
+
+تُبلِغ `onValueCommitted(value, details)` عن القيمة بعد اعتماد تعديل: عند فقدان التركيز بعد الكتابة أو المسح، وعند تحرير المؤشر بعد تعديل بواسطة زر، وفورًا لتعديلات لوحة المفاتيح. تتضمن تفاصيلها `event` الأصلي و`reason`. يحتفظ `onValueChange` بتفاصيل التغيير، بما فيها أساليب الإلغاء واتجاه التدرج الاختياري.
+
+## التحقق من صحة التطبيق
+
+عيّن `allowOutOfRange` عندما يحتاج التطبيق إلى القيمة المحللة قبل تطبيق حدوده أو التحقق من صحته. يتلقى `onValueChange` بعد ذلك الأرقام المكتوبة والملصقة خارج النطاق. تحافظ الحقول غير المتحكَّم بها، أو الحقول المتحكَّم بها التي تقبل تلك القيم، عليها عند فقدان التركيز. تعود الحقول المتحكَّم بها التي ترفضها إلى قيمتها المقبولة عند فقدان التركيز. على سبيل المثال، يؤدي استبدال `60` بـ `45` إلى الإبلاغ عن `4` ثم `45`، حتى عندما يكون `min={30}`. يمكن للتطبيق تجاهل القيمة الوسيطة دون حفظ الحد الأدنى عن طريق الخطأ.
+
+تظل الأزرار وتعديلات لوحة المفاتيح متوقفة عند `min` و`max`. يمنع التحقق الأصلي من صحة النموذج الإرسال ما دامت قيمة مقبولة خارج ذلك النطاق. القيمة الافتراضية لـ `allowOutOfRange` هي `false`.
+
+## الحدود والتفاعل
+
+يشمل `min` و`max` القيمتين الحدّيتين. تتوقف أزرار الزيادة والنقصان عند الحد المطابق. يضبط السهم لأعلى والسهم لأسفل حقل الإدخال ذي التركيز بمقدار `step`، الذي تكون قيمته الافتراضية `1`. يحدّد Home وEnd الحد المطابق عند توفيره؛ استدعِ `event.preventBaseUIHandler()` في `onKeyDown` للاحتفاظ بسلوك تحرير النص للمفتاح بدلًا من ذلك. تنطبق الخطوة نفسها عند الضغط باستمرار على Shift أو Alt. تدعم القيم المعروضة حتى 15 رقمًا كسريًا؛ استخدم خطوة موجبة ضمن هذه الدقة للتعديلات العشرية.
+
+تستخدم القيم أرقامًا لاتينية وتعرض فواصل تجميع بدءًا من خمسة أرقام صحيحة، مثل `12,500`. تُقبل فواصل التجميع الخاصة بالإعدادات المحلية للمتصفح عند الكتابة واللصق.
+
+يتحكم `step` في التعديلات؛ ولا يقرّب القيم المكتوبة إلى خطوة. عند تعيين `min`، يتطلب التحقق الأصلي من صحة النموذج أيضًا `min` زائد مضاعف لـ `step`: مع القيمة الافتراضية `1` لـ `step`، تمنع القيمة المكتوبة `2.5` الإرسال. عيّن `showButtons={false}` لتحرير النص مع سلوك لوحة المفاتيح نفسه.
+
+لكل زر اسم افتراضي متاح. استخدم `decrementLabel` و`incrementLabel` لتوفير أسماء سياقية أو مترجمة. امنح حقل الإدخال `Field.Label` مرئيًا، أو `aria-label`، أو `aria-labelledby`.
+
+## النماذج والتركيز
+
+استخدم `name` لتضمين القيمة الرقمية في نموذج. يربطه `form` بنموذج في موضع آخر من المستند. تستخدم أزرار التعديل `type="button"`، لذا لا يؤدي تعديل قيمة إلى إرسال النموذج. يشارك `required` في التحقق الأصلي من الصحة.
+
+استخدم `value` متحكَّمًا بها عندما يحتاج تطبيقك إلى إعادة تعيين الحقل. لا تؤدي إعادة تعيين نموذج أصلية إلى إعادة تعيين الحالة الرقمية.
+
+يمنع `disabled` التغييرات ويستبعد القيمة من إرسال النموذج. يمنع `readOnly` التغييرات مع الإبقاء على قابلية تركيز حقل الإدخال وإتاحة قيمته للنموذج.
+
+تنطبق سمات ومعالجات حقل الإدخال الأصلية، و`className`، و`style`، و`ref`، و`render` على حقل إدخال النص المرئي. يتلقى المرجع `HTMLInputElement`؛ استدعِ `ref.current?.focus()` لتركيزه. عند التركيب عبر `render`، مرّر الخصائص والمرجع المقدَّمين إلى حقل إدخال أصلي. خصّص التخطيط المحيط بعنصر منفصل، أو استخدم جزأي `NumberField.Root` و`NumberField.Group` عند الحاجة إلى الوصول إلى الغلاف. اجمع حقل الإدخال مع `Field.Description` و`Field.Error` للحصول على رسائل الإرشاد والتحقق من الصحة.
+
+يستخدم الإعداد المسبق عمدًا تنسيقًا مدمجًا، وأرقامًا لاتينية، وما يصل إلى 15 رقمًا كسريًا، وتجميعًا بدءًا من خمسة أرقام صحيحة، و`step` نفسها للتعديلات العادية وتعديلات Shift وAlt. تنطبق هذه الخيارات على `NumberStepper` فقط. يحتفظ بديل `NumberField` الكامل بخيارات التنسيق والتدرج الخاصة بـ Base UI.
+
+## عارض مكوّن الواجهة الأمامية
+
+تدعم بيئات الاختبار المعزولة لعارضَي React وPreact الكتابة، وتعديلات لوحة المفاتيح، والحدود، وقيم النماذج، والتدرج بالمؤشر، واللصق فوق النص المحدد. يتحقق معرض العارض من هذه التفاعلات في وقتي التشغيل كليهما. كما هو الحال مع `NumberField`، تُبلِغ تعديلات المؤشر عن التغييرات، لكن بيئة الاختبار المعزولة لا تسلّم حاليًا دالة رد الاتصال الخاصة بالاعتماد المطابقة عند تحرير المؤشر. تحتفظ مضيفات React العادية بسلوك الاعتماد الكامل.
+
+## الخصائص
+
+<NumberStepperReference />
+
+<PageBanner illustration="page-cover-input" />

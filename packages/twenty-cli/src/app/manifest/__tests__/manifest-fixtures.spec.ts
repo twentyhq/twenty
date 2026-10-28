@@ -14,6 +14,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { stop } from 'esbuild';
+import { EMPTY_YARN_LOCK_CONTENT } from 'twenty-shared/application';
 import {
   afterAll,
   afterEach,
@@ -252,7 +253,7 @@ describe('CLI manifest fixtures and worker transport', () => {
       signal: new AbortController().signal,
     });
     await symlink(join(root, 'node_modules'), join(appPath, 'node_modules'));
-    await rm(join(appPath, 'yarn.lock'));
+    await writeFile(join(appPath, 'yarn.lock'), EMPTY_YARN_LOCK_CONTENT);
     const result = await compareManifest(appPath);
     const packageJson = JSON.parse(
       await readFile(join(appPath, 'package.json'), 'utf8'),

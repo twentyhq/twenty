@@ -3,7 +3,7 @@ title: Utilizați Iterator
 description: Parcurgeți array-uri de înregistrări pentru a executa acțiuni asupra fiecărui element.
 ---
 
-Iterator vă permite să parcurgeți un array de înregistrări și să efectuați acțiuni pe fiecare în parte. Este esențial pentru fluxuri de lucru care trebuie să proceseze mai multe înregistrări returnate de Search Records sau primite prin webhook-uri.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Când să folosiți Iterator
 
@@ -108,12 +108,12 @@ Dacă Search Records returnează 5 persoane, Iteratorul:
 ```
 1. Webhook Trigger (receives items array)
 2. Filter (items.length > 0)
-3. Iterator (trigger.body.items)
+3. Iterator (trigger.items)
    └── Create Record
        - Object: Order Items
        - Name: {{iterator.currentItem.name}}
        - Quantity: {{iterator.currentItem.qty}}
-       - Related Order: {{trigger.body.orderId}}
+       - Related Order: {{trigger.orderId}}
 ```
 
 ### Procesare condițională în interiorul buclei
@@ -181,3 +181,5 @@ Filter: {{searchRecords.length}} > 0
 * [Acțiuni ale fluxurilor de lucru](/ro/user-guide/workflows/capabilities/workflow-actions)
 * [Cum să utilizați ramurile](/ro/user-guide/workflows/capabilities/use-branches-in-workflows)
 * [Întrebări frecvente despre fluxurile de lucru](/ro/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+
+<PageBanner illustration="card-page-sync-recovery" />

@@ -3,11 +3,12 @@ title: Mostrar el número de correos electrónicos recibidos
 description: Cree un flujo de trabajo para contar y mostrar automáticamente el número de correos electrónicos recibidos de cada contacto.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}} />
-
 ## Resumen
+
+<img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}} />
 
 Este flujo de trabajo se activa cada vez que se recibe un nuevo correo electrónico y actualiza un campo personalizado en el registro de Person con el recuento total de correos electrónicos de ese remitente.
 
@@ -67,3 +68,5 @@ El valor `totalCount` de la acción Search Records representa el número total d
 * [Acciones de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-actions)
 * [Cómo crear campos personalizados](/es/user-guide/data-model/how-tos/customize-your-data-model)
 * [Acción Search Records](/es/user-guide/workflows/capabilities/workflow-actions#search-records)
+
+<PageBanner illustration="page-cover-email" />

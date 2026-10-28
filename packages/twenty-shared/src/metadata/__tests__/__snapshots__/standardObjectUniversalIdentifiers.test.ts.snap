@@ -40,6 +40,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "id": {
         "universalIdentifier": "59b74693-2b88-5eb9-82ef-23b1e75c2b78",
       },
+      "isAssistantParticipant": {
+        "universalIdentifier": "d901f5bc-23ba-48ac-9103-145da4b76afe",
+      },
       "lastActivityAt": {
         "universalIdentifier": "b3847509-8e98-4038-88de-dd891767d6fc",
       },
