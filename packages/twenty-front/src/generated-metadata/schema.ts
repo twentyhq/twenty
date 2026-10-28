@@ -3577,7 +3577,6 @@ export type Mutation = {
   setRecordGeneralAccess: RecordSharingDto;
   setRecordShare: RecordSharingDto;
   setResourceCreditSubscriptionPrice: BillingUpdate;
-  shareInboxThread: Scalars['Boolean']['output'];
   signIn: AvailableWorkspacesAndAccessTokens;
   signOut: Scalars['Boolean']['output'];
   signUp: AvailableWorkspacesAndAccessTokens;
@@ -4647,11 +4646,6 @@ export type MutationSetRecordShareArgs = {
 
 export type MutationSetResourceCreditSubscriptionPriceArgs = {
   priceId: Scalars['String']['input'];
-};
-
-
-export type MutationShareInboxThreadArgs = {
-  input: ShareInboxThreadInput;
 };
 
 
@@ -6450,13 +6444,6 @@ export enum RecordShareAccessLevel {
   READ_WRITE = 'READ_WRITE'
 }
 
-export type RecordShareGrantInput = {
-  accessLevel: RecordShareAccessLevel;
-  everyone?: InputMaybe<Scalars['Boolean']['input']>;
-  roleId?: InputMaybe<Scalars['UUID']['input']>;
-  workspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
-};
-
 export type RecordSharePrincipalInput = {
   roleId?: InputMaybe<Scalars['UUID']['input']>;
   workspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
@@ -6913,11 +6900,6 @@ export type SetupSso = {
   name: Scalars['String']['output'];
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
-};
-
-export type ShareInboxThreadInput = {
-  grants: Array<RecordShareGrantInput>;
-  threadId: Scalars['UUID']['input'];
 };
 
 export type SignUp = {

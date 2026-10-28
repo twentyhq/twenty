@@ -3397,7 +3397,6 @@ type Mutation {
   setRecordGeneralAccess(accessLevel: RecordShareAccessLevel!, target: RecordTargetInput!): RecordSharingDTO!
   setRecordShare(accessLevel: RecordShareAccessLevel!, principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
-  shareInboxThread(input: ShareInboxThreadInput!): Boolean!
   signIn(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signOut(refreshToken: String): Boolean!
   signUp(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
@@ -4221,13 +4220,6 @@ enum RecordShareAccessLevel {
   READ_WRITE
 }
 
-input RecordShareGrantInput {
-  accessLevel: RecordShareAccessLevel!
-  everyone: Boolean
-  roleId: UUID
-  workspaceMemberId: UUID
-}
-
 input RecordSharePrincipalInput {
   roleId: UUID
   workspaceMemberId: UUID
@@ -4661,11 +4653,6 @@ type SetupSso {
   name: String!
   status: SSOIdentityProviderStatus!
   type: IdentityProviderType!
-}
-
-input ShareInboxThreadInput {
-  grants: [RecordShareGrantInput!]!
-  threadId: UUID!
 }
 
 type SignUp {
