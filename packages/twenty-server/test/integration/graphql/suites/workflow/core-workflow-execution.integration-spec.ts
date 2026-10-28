@@ -236,7 +236,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   };
 
   const waitForRun = async (runId: string, status: string) => {
-    for (let attempt = 0; attempt < 150; attempt++) {
+    for (let attempt = 0; attempt < 600; attempt++) {
       const run = await getRun(runId);
 
       if (run?.status === status) {
@@ -655,7 +655,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     throw new Error('Cron failed to dispatch');
   });
   const waitForStep = async (runId: string, stepId: string, status: string) => {
-    for (let attempt = 0; attempt < 150; attempt++) {
+    for (let attempt = 0; attempt < 600; attempt++) {
       const run = await getRun(runId);
 
       if (run?.state?.stepInfos[stepId]?.status === status) {

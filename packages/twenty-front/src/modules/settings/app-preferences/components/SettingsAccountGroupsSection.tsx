@@ -2,23 +2,21 @@ import { SettingsAccountGroupTableRow } from '@/settings/app-preferences/compone
 import { SettingsAccountGroupsEmptyState } from '@/settings/app-preferences/components/SettingsAccountGroupsEmptyState';
 import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsAccountGroupTableGridTemplateColumns';
 import { SETTINGS_BUILT_IN_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsBuiltInAccountAppAccountGroupTableGridTemplateColumns';
+import { useAddBuiltInAccount } from '@/settings/app-preferences/hooks/useAddBuiltInAccount';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
-import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTableRows = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -40,8 +38,7 @@ export const SettingsAccountGroupsSection = ({
   builtInAccountApp,
 }: SettingsAccountGroupsSectionProps) => {
   const { t } = useLingui();
-  const navigateSettings = useNavigateSettings();
-  const { triggerApisOAuth } = useTriggerApisOAuth();
+  const { addBuiltInAccount } = useAddBuiltInAccount();
   const { groups: allGroups, loading } = useMyAccountGroups();
 
   const groups = isDefined(builtInAccountApp)
@@ -67,15 +64,6 @@ export const SettingsAccountGroupsSection = ({
       <TableHeader />
     </TableRow>
   );
-
-  const addBuiltInAccount = (app: BuiltInAccountApp) => {
-    if (app.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV) {
-      navigateSettings(SettingsPath.NewImapSmtpCaldavConnection);
-      return;
-    }
-
-    triggerApisOAuth(app.provider);
-  };
 
   return (
     <Section.Root>

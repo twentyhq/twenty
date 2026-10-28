@@ -69,6 +69,8 @@ Punti chiave:
 * `modelId` (opzionale) sostituisce il modello di IA predefinito utilizzato dall'agente.
 * `responseFormat` (facoltativo) imposta il formato di output predefinito dell'agente. Per il testo in formato libero, il valore predefinito è `{ type: 'text' }`. Usa `{ type: 'json', schema }` per forzare un output JSON strutturato. Una chiamata a `runAgent()` o un passaggio AI di un workflow può richiedere un formato diverso, che ha la precedenza.
 * `roleUniversalIdentifier` (facoltativo) associa l'agente a un ruolo definito dalla tua app. Quel ruolo non deve concedere più del ruolo dell'applicazione, altrimenti la build non riesce; vedi [Ruoli degli agenti](/it/developers/extend/apps/config/roles#agent-roles).
+* `modelConfiguration` (facoltativo) attiva gli strumenti nativi del modello, come fa la pagina delle impostazioni dell'agente: `{ webSearch: { enabled: true }, twitterSearch: { enabled: true } }`. Ogni strumento funziona solo con i modelli che lo supportano. Omettilo per mantenerli disattivati.
+* `isSystem` (facoltativo, il valore predefinito è `false`) nasconde l'agente dagli elenchi di agenti, come gli agenti che Twenty crea per i passaggi IA dei workflow. Modifica solo ciò che viene visualizzato: gli agenti di un'app possono essere modificati solo tramite l'app, indipendentemente da quanto indica questo flag.
 
 Per impostazione predefinita, un agente restituisce testo in formato libero. Per ottenere un output strutturato, imposta `responseFormat` su `{ type: 'json' }` e fornisci uno `schema`:
 
