@@ -325,6 +325,9 @@ export default {
             "openThreadCount": [
                 10
             ],
+            "unreadOpenThreadCount": [
+                10
+            ],
             "__typename": [
                 1
             ]
