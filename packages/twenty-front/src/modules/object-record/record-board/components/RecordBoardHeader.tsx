@@ -8,7 +8,7 @@ import { useContext } from 'react';
 const StyledHeaderContainer = styled.div`
   display: flex;
   flex-direction: row;
-  height: 40px;
+  height: 64px;
   overflow: visible;
 
   width: 100%;

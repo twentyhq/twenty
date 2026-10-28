@@ -17,8 +17,21 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+const StyledFieldValue = styled.div`
+  display: contents;
+
+  &[data-amount='true'] {
+    font-size: ${themeCssVariables.font.size.lg};
+    font-variant-numeric: tabular-nums;
+    font-weight: ${themeCssVariables.font.weight.semiBold};
+  }
+`;
 
 export const RecordBoardCardBody = () => {
   const { recordId, isRecordReadOnly, isDragOverlay } = useContext(
@@ -113,9 +126,17 @@ export const RecordBoardCardBody = () => {
                   }),
                 }}
               >
-                <RecordInlineCell
-                  instanceIdPrefix={RECORD_BOARD_CARD_INPUT_ID_PREFIX}
-                />
+                <StyledFieldValue
+                  data-amount={
+                    fieldMetadataItem.type === FieldMetadataType.CURRENCY
+                      ? 'true'
+                      : undefined
+                  }
+                >
+                  <RecordInlineCell
+                    instanceIdPrefix={RECORD_BOARD_CARD_INPUT_ID_PREFIX}
+                  />
+                </StyledFieldValue>
               </RecordFieldComponentInstanceContext.Provider>
             </FieldContext.Provider>
           </StopPropagationContainer>
