@@ -6,15 +6,12 @@ import { v4 } from 'uuid';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { addRoleIdsToFlatAgentChatChannel } from 'src/engine/metadata-modules/agent-chat-channel/utils/add-role-ids-to-flat-agent-chat-channel.util';
+import { assertAgentChatChannelOwnedByApplication } from 'src/engine/metadata-modules/agent-chat-channel/utils/assert-agent-chat-channel-owned-by-application.util';
 import { buildAgentChatChannelRolesToCreate } from 'src/engine/metadata-modules/agent-chat-channel/utils/build-agent-chat-channel-roles-to-create.util';
 import { findAgentChatChannelRoleUniversalIdentifiersOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-agent-chat-channel-role-universal-identifiers-or-throw.util';
 import { findFlatAgentChatChannelOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-flat-agent-chat-channel-or-throw.util';
 import { validateAgentChatChannelNameOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/validate-agent-chat-channel-name-or-throw.util';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { type FlatAgentChatChannelRole } from 'src/engine/metadata-modules/flat-agent-chat-channel-role/types/flat-agent-chat-channel-role.type';
 import { type FlatAgentChatChannel } from 'src/engine/metadata-modules/flat-agent-chat-channel/types/flat-agent-chat-channel.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -107,14 +104,17 @@ export class AgentChatChannelMetadataService {
     const channelUniversalIdentifier =
       universalIdentifier?.toLowerCase() ?? v4();
 
-    const existingChannel =
-      await this.findOwnChannelByUniversalIdentifierOrThrow({
-        workspaceId,
-        universalIdentifier: channelUniversalIdentifier,
-        ownerFlatApplication,
-      });
+    const existingChannel = await this.findChannelByUniversalIdentifier({
+      workspaceId,
+      universalIdentifier: channelUniversalIdentifier,
+    });
 
     if (isDefined(existingChannel)) {
+      assertAgentChatChannelOwnedByApplication({
+        channel: existingChannel,
+        applicationId: ownerFlatApplication.id,
+      });
+
       return existingChannel;
     }
 
@@ -127,15 +127,19 @@ export class AgentChatChannelMetadataService {
       });
     } catch (error) {
       const concurrentlyCreatedChannel =
-        await this.findOwnChannelByUniversalIdentifierOrThrow({
+        await this.findChannelByUniversalIdentifier({
           workspaceId,
           universalIdentifier: channelUniversalIdentifier,
-          ownerFlatApplication,
         });
 
       if (!isDefined(concurrentlyCreatedChannel)) {
         throw error;
       }
+
+      assertAgentChatChannelOwnedByApplication({
+        channel: concurrentlyCreatedChannel,
+        applicationId: ownerFlatApplication.id,
+      });
 
       return concurrentlyCreatedChannel;
     }
@@ -294,7 +298,7 @@ export class AgentChatChannelMetadataService {
     roleIds,
   }: ChannelToCreate & {
     workspaceId: string;
-    ownerFlatApplication: FlatApplication;
+    ownerFlatApplication: Pick<FlatApplication, 'universalIdentifier'>;
     universalIdentifier: string;
   }): Promise<FlatAgentChatChannelWithRoleIds> {
     const channelMaps = await this.getChannelMaps(workspaceId);
@@ -346,14 +350,12 @@ export class AgentChatChannelMetadataService {
     return this.findChannelOrThrow({ workspaceId, channelId });
   }
 
-  private async findOwnChannelByUniversalIdentifierOrThrow({
+  private async findChannelByUniversalIdentifier({
     workspaceId,
     universalIdentifier,
-    ownerFlatApplication,
   }: {
     workspaceId: string;
     universalIdentifier: string;
-    ownerFlatApplication: FlatApplication;
   }): Promise<FlatAgentChatChannelWithRoleIds | undefined> {
     const { flatAgentChatChannelMaps, flatAgentChatChannelRoleMaps } =
       await this.getChannelMaps(workspaceId);
@@ -364,13 +366,6 @@ export class AgentChatChannelMetadataService {
 
     if (!isDefined(channel)) {
       return undefined;
-    }
-
-    if (channel.applicationId !== ownerFlatApplication.id) {
-      throw new AiException(
-        'Another application owns a channel with this universal identifier',
-        AiExceptionCode.CHAT_CHANNEL_UNIVERSAL_IDENTIFIER_TAKEN,
-      );
     }
 
     return addRoleIdsToFlatAgentChatChannel({
