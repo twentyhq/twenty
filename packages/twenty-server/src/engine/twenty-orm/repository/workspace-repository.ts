@@ -1706,6 +1706,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
+    // Inserts never build a row access policy, so disabled actions are
+    // checked here for every write
+    if (this.isOperationDisabled(operationType)) {
+      throw new PermissionsException(
+        `${PermissionsExceptionMessage.PERMISSION_DENIED}: records of "${this.options.flatObjectMetadata.nameSingular}" are not writable through the API`,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
     validateOperationIsPermittedOrThrow({
       entityName: this.options.tableShape.nameSingular,
       operationType,
@@ -2214,13 +2223,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   isReadDisabled(): boolean {
+    return this.isOperationDisabled('select');
+  }
+
+  private isOperationDisabled(operationType: OperationType): boolean {
     const subject = this.resolveRowAccessPolicySubject();
 
     return (
       !subject.isSystemContext &&
       isObjectOperationDisabled({
         objectMetadata: this.options.flatObjectMetadata,
-        operationType: 'select',
+        operationType,
       }) &&
       !subject.isOwningApplication(this.options.flatObjectMetadata)
     );
