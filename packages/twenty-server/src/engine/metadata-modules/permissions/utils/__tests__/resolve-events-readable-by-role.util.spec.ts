@@ -57,7 +57,7 @@ const FULL_ACCESS: ObjectPermissions = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const updateEvent = {
+const updateEvent: ObjectRecordUpdateEvent = {
   recordId: 'record-1',
   properties: {
     updatedFields: ['name', 'secret'],
@@ -68,7 +68,7 @@ const updateEvent = {
       secret: { before: 'old', after: 'new' },
     },
   },
-} as unknown as ObjectRecordUpdateEvent;
+};
 
 const resolveForApplication = (owningApplicationId: string) =>
   resolveEventsReadableByRole({

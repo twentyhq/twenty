@@ -8,6 +8,7 @@ import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/ut
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -26,9 +27,9 @@ const setTaglineDisabledActions = async (
        AND field."workspaceId" = $1 AND object."nameSingular" = 'company' AND field."name" = 'tagline'`,
     [
       SEED_APPLE_WORKSPACE_ID,
-      disabledFieldPermissionActions === null
-        ? null
-        : JSON.stringify(disabledFieldPermissionActions),
+      isDefined(disabledFieldPermissionActions)
+        ? JSON.stringify(disabledFieldPermissionActions)
+        : null,
     ],
   );
   await getAppProviderByClassName<WorkspaceCacheService>(
