@@ -119,10 +119,12 @@ export const RecordCreationFormProvider = ({
     ({
       objectMetadataItem,
       initialDraftRecord,
+      canCreateAnother = true,
       createRecord,
     }: {
       objectMetadataItem: EnrichedObjectMetadataItem;
       initialDraftRecord?: Partial<ObjectRecord>;
+      canCreateAnother?: boolean;
       createRecord: (
         draftRecord: Partial<ObjectRecord>,
       ) => Promise<ObjectRecord>;
@@ -154,6 +156,7 @@ export const RecordCreationFormProvider = ({
           requestId,
           objectMetadataId: objectMetadataItem.id,
           initialDraftRecord: initialDraftRecord ?? {},
+          canCreateAnother,
         },
       );
 

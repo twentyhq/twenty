@@ -6,6 +6,7 @@ export type RecordCreationFormContextValue = {
   requestRecordCreation: (params: {
     objectMetadataItem: EnrichedObjectMetadataItem;
     initialDraftRecord?: Partial<ObjectRecord>;
+    canCreateAnother?: boolean;
     createRecord: (draftRecord: Partial<ObjectRecord>) => Promise<ObjectRecord>;
   }) => Promise<ObjectRecord | null>;
   settleRecordCreationDraft: (params: {

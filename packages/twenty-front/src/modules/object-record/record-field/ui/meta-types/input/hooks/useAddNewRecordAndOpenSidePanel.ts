@@ -78,6 +78,8 @@ export const useAddNewRecordAndOpenSidePanel = ({
   }
   const relationFieldMetadataItemRelationType =
     relationFieldMetadataItem.settings?.relationType;
+  const shouldAttachToSourceRecord =
+    relationFieldMetadataItemRelationType === RelationType.ONE_TO_MANY;
 
   return {
     createNewRecordAndOpenSidePanel: async (searchInput?: string) => {
@@ -154,9 +156,7 @@ export const useAddNewRecordAndOpenSidePanel = ({
         const recordInput = removePropertiesFromRecord(draftRecord, ['id']);
         const createdRecord = await saveRecord(recordInput);
 
-        if (
-          relationFieldMetadataItemRelationType === RelationType.ONE_TO_MANY
-        ) {
+        if (shouldAttachToSourceRecord) {
           recordAwaitingAttachment = { record: createdRecord, recordInput };
           await updateOneRecord({
             objectNameSingular: objectMetadataItem.nameSingular,
@@ -178,6 +178,7 @@ export const useAddNewRecordAndOpenSidePanel = ({
       const createdRecord = isRecordCreationFormEnabled
         ? await requestRecordCreation({
             initialDraftRecord,
+            canCreateAnother: !shouldAttachToSourceRecord,
             createRecord: createAndAttachRecord,
           })
         : await createAndAttachRecord(initialDraftRecord);

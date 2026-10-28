@@ -20,9 +20,11 @@ export const useRecordCreationForm = ({
   const requestRecordCreation = useCallback(
     ({
       initialDraftRecord,
+      canCreateAnother,
       createRecord,
     }: {
       initialDraftRecord?: Partial<ObjectRecord>;
+      canCreateAnother?: boolean;
       createRecord: (
         draftRecord: Partial<ObjectRecord>,
       ) => Promise<ObjectRecord>;
@@ -30,6 +32,7 @@ export const useRecordCreationForm = ({
       requestRecordCreationInContext({
         objectMetadataItem,
         initialDraftRecord,
+        canCreateAnother,
         createRecord,
       }),
     [requestRecordCreationInContext, objectMetadataItem],

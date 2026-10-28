@@ -98,6 +98,7 @@ export const SidePanelRecordCreationFormPage = () => {
       requestId={recordCreationFormRequest.requestId}
       objectMetadataId={recordCreationFormRequest.objectMetadataId}
       initialDraftRecord={recordCreationFormRequest.initialDraftRecord}
+      canCreateAnother={recordCreationFormRequest.canCreateAnother}
     />
   );
 };
@@ -106,10 +107,12 @@ const SidePanelRecordCreationForm = ({
   requestId,
   objectMetadataId,
   initialDraftRecord,
+  canCreateAnother,
 }: {
   requestId: string;
   objectMetadataId: string;
   initialDraftRecord: Partial<ObjectRecord>;
+  canCreateAnother: boolean;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
@@ -363,13 +366,20 @@ const SidePanelRecordCreationForm = ({
     keys: [
       `${Key.Meta}+${Key.Enter}`,
       `${Key.Control}+${Key.Enter}`,
-      `${Key.Alt}+${Key.Enter}`,
+      ...(canCreateAnother ? [`${Key.Alt}+${Key.Enter}`] : []),
     ],
     focusId: currentFocusId ?? SIDE_PANEL_FOCUS_ID,
     callback: (keyboardEvent) =>
       keyboardEvent.altKey ? handleCreateAnotherClick() : handleCreateClick(),
-    dependencies: [currentFocusId, handleCreateClick, handleCreateAnotherClick],
+    dependencies: [
+      canCreateAnother,
+      currentFocusId,
+      handleCreateClick,
+      handleCreateAnotherClick,
+    ],
   });
+
+  const isOptionsDropdownShown = canCreateAnother || hasLayoutsPermission;
 
   return (
     <StyledContainer ref={containerRef} tabIndex={-1}>
@@ -442,25 +452,33 @@ const SidePanelRecordCreationForm = ({
       )}
       <SidePanelFooter
         actions={[
-          <SidePanelOptionsDropdown
-            key="options"
-            dropdownId={optionsDropdownId}
-          >
-            <Dropdown.ActionItem
-              startIcon={<IconPlus />}
-              shortcut={['Alt', 'Enter']}
-              disabled={isSubmitting}
-              onClick={handleCreateAnotherClick}
-            >{t`Create another`}</Dropdown.ActionItem>
-            {hasLayoutsPermission && (
-              <Dropdown.ActionItem
-                startIcon={<IconEdit />}
-                onClick={() =>
-                  openRecordCreationFormSettingsInSidePanel(objectMetadataItem)
-                }
-              >{t`Edit form`}</Dropdown.ActionItem>
-            )}
-          </SidePanelOptionsDropdown>,
+          ...(isOptionsDropdownShown
+            ? [
+                <SidePanelOptionsDropdown
+                  key="options"
+                  dropdownId={optionsDropdownId}
+                >
+                  {canCreateAnother && (
+                    <Dropdown.ActionItem
+                      startIcon={<IconPlus />}
+                      shortcut={['Alt', 'Enter']}
+                      disabled={isSubmitting}
+                      onClick={handleCreateAnotherClick}
+                    >{t`Create another`}</Dropdown.ActionItem>
+                  )}
+                  {hasLayoutsPermission && (
+                    <Dropdown.ActionItem
+                      startIcon={<IconEdit />}
+                      onClick={() =>
+                        openRecordCreationFormSettingsInSidePanel(
+                          objectMetadataItem,
+                        )
+                      }
+                    >{t`Edit form`}</Dropdown.ActionItem>
+                  )}
+                </SidePanelOptionsDropdown>,
+              ]
+            : []),
           <Button
             key="create-record"
             startIcon={<IconPlus />}

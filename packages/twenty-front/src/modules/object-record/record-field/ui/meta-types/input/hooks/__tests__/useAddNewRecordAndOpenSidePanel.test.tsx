@@ -114,14 +114,15 @@ const setup = (
     });
     return creation;
   };
-  const getDraft = () => {
+  const getRequest = () => {
     const [page] = store.get(sidePanelNavigationStackState.atom);
     return store.get(
       recordCreationFormRequestComponentState.atomFamily({
         instanceId: page.pageId,
       }),
-    )?.initialDraftRecord;
+    );
   };
+  const getDraft = () => getRequest()?.initialDraftRecord;
   const submit = async ({
     draftRecord,
     shouldKeepOpen = false,
@@ -147,7 +148,7 @@ const setup = (
     });
     return result;
   };
-  return { ...hook, start, submit, getDraft };
+  return { ...hook, start, submit, getDraft, getRequest };
 };
 
 beforeEach(() => {
@@ -204,6 +205,19 @@ it('creates distinct linked records on each submission and respects edited defau
   await expect(creation).resolves.toBe(secondInput.id);
   expect(mockOpenRecordInSidePanel).toHaveBeenCalledTimes(1);
 });
+
+it.each([
+  { relationship: 'company-people', canCreateAnother: true },
+  { relationship: 'person-company', canCreateAnother: false },
+] as const)(
+  'offers Create another only when the parent can link several records ($relationship)',
+  ({ relationship, canCreateAnother }) => {
+    const { start, getRequest } = setup(relationship);
+    start();
+
+    expect(getRequest()?.canCreateAnother).toBe(canCreateAnother);
+  },
+);
 
 it.each([false, true])(
   'retries a failed parent attachment without creating another target (edited: %s)',
