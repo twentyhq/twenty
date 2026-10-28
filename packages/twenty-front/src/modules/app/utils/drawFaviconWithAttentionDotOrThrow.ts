@@ -1,11 +1,11 @@
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 const FAVICON_SIZE = 64;
 const ATTENTION_DOT_RADIUS = 12;
 const ATTENTION_DOT_NOTCH_RADIUS = 16;
 
-export const drawFaviconWithAttentionDot = async ({
+export const drawFaviconWithAttentionDotOrThrow = async ({
   faviconUrl,
   dotColor,
 }: {
@@ -29,7 +29,10 @@ export const drawFaviconWithAttentionDot = async ({
   const context = canvas.getContext('2d');
 
   if (!isDefined(context)) {
-    throw new Error(doNotTranslate('Canvas 2D context is unavailable'));
+    throw new CustomError(
+      doNotTranslate('Canvas 2D context is unavailable'),
+      'CANVAS_2D_CONTEXT_UNAVAILABLE',
+    );
   }
 
   const dotCenterX = FAVICON_SIZE - ATTENTION_DOT_RADIUS;

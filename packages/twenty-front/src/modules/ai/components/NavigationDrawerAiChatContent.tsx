@@ -46,6 +46,9 @@ export const NavigationDrawerAiChatContent = () => {
     currentAiChatThread,
     handleThreadClick,
   } = useAiChatSidebarThreads();
+  const visibleRecentThreads = isAiChatInboxEnabled
+    ? recentThreads.slice(0, AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT)
+    : recentThreads;
 
   if (isLoading) {
     return (
@@ -71,14 +74,7 @@ export const NavigationDrawerAiChatContent = () => {
             <NavigationDrawerAiChatThreadSection
               sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
               title={t`Recent`}
-              threads={
-                isAiChatInboxEnabled
-                  ? recentThreads.slice(
-                      0,
-                      AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT,
-                    )
-                  : recentThreads
-              }
+              threads={visibleRecentThreads}
               currentThreadId={currentAiChatThread}
               onThreadClick={handleThreadClick}
             />

@@ -9,6 +9,11 @@ const CONTAINER_ITEMS_SIBLING = {
   position: NAVIGATION_MENU_CONTAINER_ITEMS_SECTION_POSITION,
 };
 
+type SiblingCandidate = Pick<
+  NavigationMenuItem,
+  'id' | 'folderId' | 'type' | 'position'
+>;
+
 const byPosition = (
   first: Pick<NavigationMenuItem, 'position'>,
   second: Pick<NavigationMenuItem, 'position'>,
@@ -19,14 +24,14 @@ export const getNavigationMenuItemSortedSiblings = ({
   navigationMenuItem,
   visibleItemIds,
 }: {
-  items: NavigationMenuItem[];
-  navigationMenuItem: NavigationMenuItem;
+  items: SiblingCandidate[];
+  navigationMenuItem: SiblingCandidate;
   visibleItemIds: Set<string>;
 }): Pick<NavigationMenuItem, 'id' | 'position'>[] => {
   const folderId = navigationMenuItem.folderId ?? null;
   const isContainer = isNavigationMenuItemContainer(navigationMenuItem);
   const isSection = isNavigationMenuItemAnySection(navigationMenuItem);
-  const isSameKind = (item: NavigationMenuItem) =>
+  const isSameKind = (item: SiblingCandidate) =>
     isSection
       ? isNavigationMenuItemAnySection(item)
       : item.type === navigationMenuItem.type;

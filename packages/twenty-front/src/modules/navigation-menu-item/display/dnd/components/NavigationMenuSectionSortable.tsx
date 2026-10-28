@@ -18,7 +18,7 @@ const StyledSectionSortableRoot = styled.div`
 `;
 
 type NavigationMenuSectionSortableProps = {
-  section: NavigationMenuItem;
+  section: Pick<NavigationMenuItem, 'id' | 'folderId'>;
   index: number;
   children: ReactNode;
 };

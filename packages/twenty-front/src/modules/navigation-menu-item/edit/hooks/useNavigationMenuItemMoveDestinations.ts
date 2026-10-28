@@ -129,31 +129,38 @@ export const useNavigationMenuItemMoveDestinations = ({
   const getContainerDestinations = (
     containerId: string | null,
   ): NavigationMenuItemMoveDestination[] => {
-    const getFolders = (parentId: string | null) =>
-      canMoveIntoFolder
-        ? sortByPosition(
-            items.filter(
-              (folder) =>
-                isNavigationMenuItemFolder(folder) &&
-                (folder.folderId ?? null) === parentId &&
-                !excludedIds.has(folder.id),
-            ),
-          ).map(getFolderDestination)
-        : [];
+    const getFolders = (parentId: string | null) => {
+      if (!canMoveIntoFolder) {
+        return [];
+      }
 
-    const sections = canMoveIntoSection
-      ? sortByPosition(
-          items.filter(
-            (sectionItem) =>
-              isNavigationMenuItemSection(sectionItem) &&
-              (sectionItem.folderId ?? null) === containerId,
-          ),
-        )
-      : [];
+      return sortByPosition(
+        items.filter(
+          (folder) =>
+            isNavigationMenuItemFolder(folder) &&
+            (folder.folderId ?? null) === parentId &&
+            !excludedIds.has(folder.id),
+        ),
+      ).map(getFolderDestination);
+    };
+
+    const getSections = () => {
+      if (!canMoveIntoSection) {
+        return [];
+      }
+
+      return sortByPosition(
+        items.filter(
+          (sectionItem) =>
+            isNavigationMenuItemSection(sectionItem) &&
+            (sectionItem.folderId ?? null) === containerId,
+        ),
+      );
+    };
 
     return [
       ...getFolders(containerId),
-      ...sections.flatMap((sectionItem) => [
+      ...getSections().flatMap((sectionItem) => [
         {
           id: sectionItem.id,
           label: sectionItem.name ?? t`Section`,

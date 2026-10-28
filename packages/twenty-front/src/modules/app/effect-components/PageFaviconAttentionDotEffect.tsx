@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { type FaviconWithAttentionDot } from '@/app/types/FaviconWithAttentionDot';
-import { drawFaviconWithAttentionDot } from '@/app/utils/drawFaviconWithAttentionDot';
+import { drawFaviconWithAttentionDotOrThrow } from '@/app/utils/drawFaviconWithAttentionDotOrThrow';
 
 type PageFaviconAttentionDotEffectProps = {
   faviconUrl: string;
@@ -17,7 +17,7 @@ export const PageFaviconAttentionDotEffect = ({
   useEffect(() => {
     let isCancelled = false;
 
-    drawFaviconWithAttentionDot({ faviconUrl, dotColor })
+    drawFaviconWithAttentionDotOrThrow({ faviconUrl, dotColor })
       .then((dataUrl) => {
         if (!isCancelled) {
           onFaviconDrawn({ faviconUrl, dotColor, dataUrl });
