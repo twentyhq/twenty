@@ -1,1795 +1,465 @@
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
-export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+/** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
-/** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
-  BigInt: { input: any; output: any; }
-  DateTime: { input: string; output: string; }
-  JSON: { input: any; output: any; }
-  UUID: { input: string; output: string; }
-};
+import type * as Types from './schema';
 
-export type AdminAiModelConfig = {
-  __typename?: 'AdminAiModelConfig';
-  contextWindowTokens?: Maybe<Scalars['Float']['output']>;
-  dataResidency?: Maybe<Scalars['String']['output']>;
-  efforts?: Maybe<Array<Scalars['String']['output']>>;
-  inputCostPerMillionTokens?: Maybe<Scalars['Float']['output']>;
-  isAdminEnabled: Scalars['Boolean']['output'];
-  isAvailable: Scalars['Boolean']['output'];
-  isDeprecated?: Maybe<Scalars['Boolean']['output']>;
-  kind: Scalars['String']['output'];
-  label: Scalars['String']['output'];
-  maxOutputTokens?: Maybe<Scalars['Float']['output']>;
-  modelFamily?: Maybe<ModelFamily>;
-  modelFamilyLabel?: Maybe<Scalars['String']['output']>;
-  modelId: Scalars['String']['output'];
-  name?: Maybe<Scalars['String']['output']>;
-  outputCostPerMillionTokens?: Maybe<Scalars['Float']['output']>;
-  providerLabel?: Maybe<Scalars['String']['output']>;
-  providerName?: Maybe<Scalars['String']['output']>;
-  sdkPackage?: Maybe<Scalars['String']['output']>;
-};
-
-export type AdminAiModelTierDefault = {
-  __typename?: 'AdminAiModelTierDefault';
-  modelId?: Maybe<Scalars['String']['output']>;
-  tier: AiModelTier;
-};
-
-export type AdminAiModels = {
-  __typename?: 'AdminAiModels';
-  defaultModelByTier: Array<AdminAiModelTierDefault>;
-  models: Array<AdminAiModelConfig>;
-};
-
-export type AdminApplicationMonitoring = {
-  __typename?: 'AdminApplicationMonitoring';
-  activeWorkspaceCount: Scalars['Int']['output'];
-  activity: Array<ApplicationMonitoringActivityBucket>;
-  bucketSizeInSeconds: Scalars['Int']['output'];
-  creditUsage?: Maybe<Array<ApplicationMonitoringCreditBucket>>;
-  creditsUsed?: Maybe<Scalars['Float']['output']>;
-  failedRunCount: Scalars['Int']['output'];
-  functions: Array<ApplicationMonitoringFunction>;
-  issues: Array<ApplicationMonitoringIssue>;
-  lifecycle: Array<ApplicationMonitoringLifecycleBucket>;
-  lifecycleFailureCount: Scalars['Int']['output'];
-  lookbackInHours: Scalars['Int']['output'];
-  periodEnd: Scalars['DateTime']['output'];
-  periodStart: Scalars['DateTime']['output'];
-  rateLimitEventCount: Scalars['Int']['output'];
-  runCount: Scalars['Int']['output'];
-  versions: Array<ApplicationMonitoringVersion>;
-  workspaces: Array<ApplicationMonitoringWorkspace>;
-};
-
-export type AdminApplicationRegistrationClaim = {
-  __typename?: 'AdminApplicationRegistrationClaim';
-  workspaceDisplayName?: Maybe<Scalars['String']['output']>;
-  workspaceId: Scalars['String']['output'];
-};
-
-export type AdminChatMessage = {
-  __typename?: 'AdminChatMessage';
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  parts: Array<AdminChatMessagePart>;
-  role: AgentMessageRole;
-};
-
-export type AdminChatMessagePart = {
-  __typename?: 'AdminChatMessagePart';
-  errorMessage?: Maybe<Scalars['String']['output']>;
-  orderIndex: Scalars['Int']['output'];
-  reasoningContent?: Maybe<Scalars['String']['output']>;
-  state?: Maybe<Scalars['String']['output']>;
-  textContent?: Maybe<Scalars['String']['output']>;
-  toolCallId?: Maybe<Scalars['String']['output']>;
-  toolInput?: Maybe<Scalars['JSON']['output']>;
-  toolName?: Maybe<Scalars['String']['output']>;
-  toolOutput?: Maybe<Scalars['JSON']['output']>;
-  type: Scalars['String']['output'];
-};
-
-export type AdminChatThreadMessages = {
-  __typename?: 'AdminChatThreadMessages';
-  messages: Array<AdminChatMessage>;
-  thread: AdminWorkspaceChatThread;
-};
-
-export type AdminPanelHealthServiceData = {
-  __typename?: 'AdminPanelHealthServiceData';
-  description: Scalars['String']['output'];
-  details?: Maybe<Scalars['String']['output']>;
-  errorMessage?: Maybe<Scalars['String']['output']>;
-  id: HealthIndicatorId;
-  label: Scalars['String']['output'];
-  queues?: Maybe<Array<AdminPanelWorkerQueueHealth>>;
-  status: AdminPanelHealthServiceStatus;
-};
-
-export enum AdminPanelHealthServiceStatus {
-  OPERATIONAL = 'OPERATIONAL',
-  OUTAGE = 'OUTAGE'
-}
-
-export type AdminPanelRecentUser = {
-  __typename?: 'AdminPanelRecentUser';
-  avatarUrl?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  email: Scalars['String']['output'];
-  firstName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  isAdmin?: Maybe<Scalars['Boolean']['output']>;
-  lastName?: Maybe<Scalars['String']['output']>;
-  workspaceId?: Maybe<Scalars['UUID']['output']>;
-  workspaceLogo?: Maybe<Scalars['String']['output']>;
-  workspaceName?: Maybe<Scalars['String']['output']>;
-};
-
-export type AdminPanelTopWorkspace = {
-  __typename?: 'AdminPanelTopWorkspace';
-  id: Scalars['UUID']['output'];
-  logoUrl?: Maybe<Scalars['String']['output']>;
-  name: Scalars['String']['output'];
-  subdomain: Scalars['String']['output'];
-  totalUsers: Scalars['Int']['output'];
-};
-
-export type AdminPanelUsageLimit = {
-  __typename?: 'AdminPanelUsageLimit';
-  burstValue?: Maybe<Scalars['BigInt']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  limitKind: Scalars['String']['output'];
-  limitValue: Scalars['BigInt']['output'];
-  operationType: UsageOperationType;
-  periodCount: Scalars['Int']['output'];
-  periodUnit: Scalars['String']['output'];
-  resourceType: UsageResourceType;
-  spenderId?: Maybe<Scalars['String']['output']>;
-  spenderType: Scalars['String']['output'];
-  unit: UsageUnit;
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type AdminPanelUsageLimitDefault = {
-  __typename?: 'AdminPanelUsageLimitDefault';
-  isOverridable: Scalars['Boolean']['output'];
-  limitKind: Scalars['String']['output'];
-  limitValue: Scalars['BigInt']['output'];
-  operationType: UsageOperationType;
-  overriddenByUsageLimitId?: Maybe<Scalars['UUID']['output']>;
-  periodCount: Scalars['Int']['output'];
-  periodUnit: Scalars['String']['output'];
-  resourceType: UsageResourceType;
-  spenderType: Scalars['String']['output'];
-  unit: UsageUnit;
-};
-
-export type AdminPanelWorkerQueueHealth = {
-  __typename?: 'AdminPanelWorkerQueueHealth';
-  id: Scalars['String']['output'];
-  queueName: Scalars['String']['output'];
-  status: AdminPanelHealthServiceStatus;
-};
-
-export type AdminPanelWorkspaceBilling = {
-  __typename?: 'AdminPanelWorkspaceBilling';
-  creditBalance?: Maybe<Scalars['Float']['output']>;
-  creditGrants: Array<AdminPanelWorkspaceCreditGrant>;
-  stripeCustomerId?: Maybe<Scalars['String']['output']>;
-  subscription?: Maybe<AdminPanelWorkspaceSubscription>;
-  usage?: Maybe<AdminPanelWorkspaceUsage>;
-};
-
-export type AdminPanelWorkspaceCreditGrant = {
-  __typename?: 'AdminPanelWorkspaceCreditGrant';
-  amount: Scalars['Float']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  effectiveAt: Scalars['DateTime']['output'];
-  expiresAt?: Maybe<Scalars['DateTime']['output']>;
-  id: Scalars['UUID']['output'];
-  isActive: Scalars['Boolean']['output'];
-  reason?: Maybe<Scalars['String']['output']>;
-  revokedAt?: Maybe<Scalars['DateTime']['output']>;
-  sourceGrantId?: Maybe<Scalars['UUID']['output']>;
-  type: BillingCreditGrantType;
-};
-
-export type AdminPanelWorkspaceSubscription = {
-  __typename?: 'AdminPanelWorkspaceSubscription';
-  cancelAt?: Maybe<Scalars['DateTime']['output']>;
-  cancelAtPeriodEnd: Scalars['Boolean']['output'];
-  canceledAt?: Maybe<Scalars['DateTime']['output']>;
-  currency: Scalars['String']['output'];
-  currentPeriodEnd: Scalars['DateTime']['output'];
-  currentPeriodStart: Scalars['DateTime']['output'];
-  interval?: Maybe<SubscriptionInterval>;
-  items: Array<AdminPanelWorkspaceSubscriptionItem>;
-  planKey?: Maybe<Scalars['String']['output']>;
-  status: SubscriptionStatus;
-  stripeSubscriptionId: Scalars['String']['output'];
-  trialEnd?: Maybe<Scalars['DateTime']['output']>;
-  trialStart?: Maybe<Scalars['DateTime']['output']>;
-};
-
-export type AdminPanelWorkspaceSubscriptionItem = {
-  __typename?: 'AdminPanelWorkspaceSubscriptionItem';
-  includedCredits?: Maybe<Scalars['Float']['output']>;
-  productKey?: Maybe<Scalars['String']['output']>;
-  productName: Scalars['String']['output'];
-  quantity?: Maybe<Scalars['Float']['output']>;
-  stripePriceId: Scalars['String']['output'];
-  unitAmount?: Maybe<Scalars['Float']['output']>;
-};
-
-export type AdminPanelWorkspaceUsage = {
-  __typename?: 'AdminPanelWorkspaceUsage';
-  periodEnd: Scalars['DateTime']['output'];
-  periodStart: Scalars['DateTime']['output'];
-  userCreditsUsed: Scalars['Float']['output'];
-  workspaceCreditsExtraGranted: Scalars['Float']['output'];
-  workspaceCreditsGranted: Scalars['Float']['output'];
-  workspaceCreditsRemaining: Scalars['Float']['output'];
-  workspaceCreditsTotalGranted: Scalars['Float']['output'];
-  workspaceCreditsUsed: Scalars['Float']['output'];
-};
-
-export type AdminPanelWorkspaceUsageLimits = {
-  __typename?: 'AdminPanelWorkspaceUsageLimits';
-  defaults: Array<AdminPanelUsageLimitDefault>;
-  limits: Array<AdminPanelUsageLimit>;
-};
-
-export type AdminUpdateApplicationRegistrationInput = {
-  id: Scalars['String']['input'];
-  update: AdminUpdateApplicationRegistrationPayload;
-};
-
-export type AdminUpdateApplicationRegistrationPayload = {
-  isListed?: InputMaybe<Scalars['Boolean']['input']>;
-  isPreInstalled?: InputMaybe<Scalars['Boolean']['input']>;
-  isVetted?: InputMaybe<Scalars['Boolean']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  oAuthRedirectUris?: InputMaybe<Array<Scalars['String']['input']>>;
-  oAuthScopes?: InputMaybe<Array<Scalars['String']['input']>>;
-};
-
-export type AdminWorkspaceChatThread = {
-  __typename?: 'AdminWorkspaceChatThread';
-  conversationSize: Scalars['Int']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  messageCount: Scalars['Int']['output'];
-  title?: Maybe<Scalars['String']['output']>;
-  totalInputTokens: Scalars['Int']['output'];
-  totalOutputTokens: Scalars['Int']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-/** Role of a message in a chat thread */
-export enum AgentMessageRole {
-  ASSISTANT = 'ASSISTANT',
-  SYSTEM = 'SYSTEM',
-  USER = 'USER'
-}
-
-export enum AiModelTier {
-  balanced = 'balanced',
-  extraFast = 'extraFast',
-  extraSmart = 'extraSmart',
-  fast = 'fast',
-  smart = 'smart'
-}
-
-export type ApplicationMonitoringActivityBucket = {
-  __typename?: 'ApplicationMonitoringActivityBucket';
-  bucketStart: Scalars['DateTime']['output'];
-  errorCount: Scalars['Int']['output'];
-  rateLimitedJobCount: Scalars['Int']['output'];
-  rateLimitedRequestCount: Scalars['Int']['output'];
-};
-
-export type ApplicationMonitoringCreditBucket = {
-  __typename?: 'ApplicationMonitoringCreditBucket';
-  bucketStart: Scalars['DateTime']['output'];
-  creditsUsed: Scalars['Float']['output'];
-  operationType: Scalars['String']['output'];
-};
-
-export type ApplicationMonitoringFunction = {
-  __typename?: 'ApplicationMonitoringFunction';
-  failedRunCount: Scalars['Int']['output'];
-  logicFunctionName: Scalars['String']['output'];
-  p95DurationMs: Scalars['Float']['output'];
-  runCount: Scalars['Int']['output'];
-};
-
-export type ApplicationMonitoringIssue = {
-  __typename?: 'ApplicationMonitoringIssue';
-  affectedInstallCount: Scalars['Int']['output'];
-  errorCode: Scalars['String']['output'];
-  eventCount: Scalars['Int']['output'];
-  lastSeenAt: Scalars['DateTime']['output'];
-  level: Scalars['String']['output'];
-  logicFunctionName: Scalars['String']['output'];
-  source: Scalars['String']['output'];
-  versions: Array<Scalars['String']['output']>;
-};
-
-export type ApplicationMonitoringLifecycleBucket = {
-  __typename?: 'ApplicationMonitoringLifecycleBucket';
-  bucketStart: Scalars['DateTime']['output'];
-  failedCount: Scalars['Int']['output'];
-  installCount: Scalars['Int']['output'];
-  uninstallCount: Scalars['Int']['output'];
-  upgradeCount: Scalars['Int']['output'];
-};
-
-export type ApplicationMonitoringVersion = {
-  __typename?: 'ApplicationMonitoringVersion';
-  activeInstallCount: Scalars['Int']['output'];
-  failedRunCount: Scalars['Int']['output'];
-  runCount: Scalars['Int']['output'];
-  version: Scalars['String']['output'];
-};
-
-export type ApplicationMonitoringWorkspace = {
-  __typename?: 'ApplicationMonitoringWorkspace';
-  applicationVersion: Scalars['String']['output'];
-  failedRunCount: Scalars['Int']['output'];
-  lastEventAt: Scalars['DateTime']['output'];
-  rateLimitEventCount: Scalars['Int']['output'];
-  runCount: Scalars['Int']['output'];
-  workspaceId: Scalars['String']['output'];
-  workspaceLogoUrl?: Maybe<Scalars['String']['output']>;
-  workspaceName?: Maybe<Scalars['String']['output']>;
-};
-
-export type ApplicationRegistration = {
-  __typename?: 'ApplicationRegistration';
-  author?: Maybe<Scalars['String']['output']>;
-  configurationIssues: Array<ApplicationRegistrationConfigurationIssue>;
-  createdAt: Scalars['DateTime']['output'];
-  galleryImagesUrls: Array<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  installCount: Scalars['Int']['output'];
-  isConfigured: Scalars['Boolean']['output'];
-  isListed: Scalars['Boolean']['output'];
-  isPreInstalled: Scalars['Boolean']['output'];
-  isVetted: Scalars['Boolean']['output'];
-  latestAvailableVersion?: Maybe<Scalars['String']['output']>;
-  logoUrl?: Maybe<Scalars['String']['output']>;
-  name: Scalars['String']['output'];
-  oAuthClientId: Scalars['String']['output'];
-  oAuthRedirectUris: Array<Scalars['String']['output']>;
-  oAuthScopes: Array<Scalars['String']['output']>;
-  ownerWorkspaceId?: Maybe<Scalars['UUID']['output']>;
-  sourcePackage?: Maybe<Scalars['String']['output']>;
-  sourceType: ApplicationRegistrationSourceType;
-  universalIdentifier: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export enum ApplicationRegistrationConfigurationIssue {
-  MISSING_OWNER_WORKSPACE = 'MISSING_OWNER_WORKSPACE',
-  MISSING_REQUIRED_SERVER_VARIABLES = 'MISSING_REQUIRED_SERVER_VARIABLES',
-  NOT_INSTALLED_ON_OWNER_WORKSPACE = 'NOT_INSTALLED_ON_OWNER_WORKSPACE'
-}
-
-export type ApplicationRegistrationInstalledWorkspaces = {
-  __typename?: 'ApplicationRegistrationInstalledWorkspaces';
-  hasMore: Scalars['Boolean']['output'];
-  totalCount: Scalars['Int']['output'];
-  workspaces: Array<InstalledWorkspace>;
-};
-
-export enum ApplicationRegistrationSourceType {
-  LOCAL = 'LOCAL',
-  NPM = 'NPM',
-  OAUTH_ONLY = 'OAUTH_ONLY',
-  TARBALL = 'TARBALL'
-}
-
-export type ApplicationRegistrationStats = {
-  __typename?: 'ApplicationRegistrationStats';
-  activeInstalls: Scalars['Int']['output'];
-  autoUpdateEnabled: Scalars['Int']['output'];
-  creditsUsedBreakdown?: Maybe<Array<CreditUsedItem>>;
-  mostInstalledVersion?: Maybe<Scalars['String']['output']>;
-  suspendedInstalls: Scalars['Int']['output'];
-  totalCreditsUsed?: Maybe<Scalars['Float']['output']>;
-  versionDistribution: Array<VersionDistributionEntry>;
-};
-
-export type ApplicationRegistrationVariable = {
-  __typename?: 'ApplicationRegistrationVariable';
-  createdAt: Scalars['DateTime']['output'];
-  description: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  isDeprecated: Scalars['Boolean']['output'];
-  isFilled: Scalars['Boolean']['output'];
-  isRequired: Scalars['Boolean']['output'];
-  isSecret: Scalars['Boolean']['output'];
-  key: Scalars['String']['output'];
-  options?: Maybe<Scalars['JSON']['output']>;
-  type: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-  value?: Maybe<Scalars['String']['output']>;
-};
-
-/** The origin of a batch of credits granted to a workspace */
-export enum BillingCreditGrantType {
-  COMPENSATION = 'COMPENSATION',
-  ONBOARDING_REWARD = 'ONBOARDING_REWARD',
-  PURCHASE = 'PURCHASE',
-  ROLLOVER = 'ROLLOVER',
-  SALES = 'SALES'
-}
-
-export enum ConfigSource {
-  DATABASE = 'DATABASE',
-  DEFAULT = 'DEFAULT',
-  ENVIRONMENT = 'ENVIRONMENT'
-}
-
-export type ConfigVariable = {
-  __typename?: 'ConfigVariable';
-  description: Scalars['String']['output'];
-  isEnvOnly: Scalars['Boolean']['output'];
-  isSensitive: Scalars['Boolean']['output'];
-  name: Scalars['String']['output'];
-  options?: Maybe<Scalars['JSON']['output']>;
-  source: ConfigSource;
-  type: ConfigVariableType;
-  value?: Maybe<Scalars['JSON']['output']>;
-};
-
-export enum ConfigVariableType {
-  ARRAY = 'ARRAY',
-  BOOLEAN = 'BOOLEAN',
-  ENUM = 'ENUM',
-  JSON = 'JSON',
-  NUMBER = 'NUMBER',
-  STRING = 'STRING'
-}
-
-export type ConfigVariables = {
-  __typename?: 'ConfigVariables';
-  groups: Array<ConfigVariablesGroupData>;
-};
-
-export enum ConfigVariablesGroup {
-  ADVANCED_SETTINGS = 'ADVANCED_SETTINGS',
-  ANALYTICS_CONFIG = 'ANALYTICS_CONFIG',
-  AWS_SES_SETTINGS = 'AWS_SES_SETTINGS',
-  BILLING_CONFIG = 'BILLING_CONFIG',
-  CAPTCHA_CONFIG = 'CAPTCHA_CONFIG',
-  CLOUDFLARE_CONFIG = 'CLOUDFLARE_CONFIG',
-  CODE_INTERPRETER_CONFIG = 'CODE_INTERPRETER_CONFIG',
-  EMAIL_SETTINGS = 'EMAIL_SETTINGS',
-  GOOGLE_AUTH = 'GOOGLE_AUTH',
-  LLM = 'LLM',
-  LOGGING = 'LOGGING',
-  LOGIC_FUNCTION_CONFIG = 'LOGIC_FUNCTION_CONFIG',
-  MICROSOFT_AUTH = 'MICROSOFT_AUTH',
-  RATE_LIMITING = 'RATE_LIMITING',
-  RESEND_SETTINGS = 'RESEND_SETTINGS',
-  SERVER_CONFIG = 'SERVER_CONFIG',
-  SSL = 'SSL',
-  STORAGE_CONFIG = 'STORAGE_CONFIG',
-  SUPPORT_CHAT_CONFIG = 'SUPPORT_CHAT_CONFIG',
-  TOKENS_DURATION = 'TOKENS_DURATION'
-}
-
-export type ConfigVariablesGroupData = {
-  __typename?: 'ConfigVariablesGroupData';
-  description: Scalars['String']['output'];
-  isHiddenOnLoad: Scalars['Boolean']['output'];
-  name: ConfigVariablesGroup;
-  variables: Array<ConfigVariable>;
-};
-
-export type CreateUsageLimitInput = {
-  burstValue?: InputMaybe<Scalars['BigInt']['input']>;
-  limitKind: Scalars['String']['input'];
-  limitValue: Scalars['BigInt']['input'];
-  operationType: UsageOperationType;
-  periodCount: Scalars['Int']['input'];
-  periodUnit: Scalars['String']['input'];
-  resourceType: UsageResourceType;
-  spenderId?: InputMaybe<Scalars['String']['input']>;
-  spenderType: Scalars['String']['input'];
-  unit: UsageUnit;
-};
-
-export type CreditUsedItem = {
-  __typename?: 'CreditUsedItem';
-  creditsUsed: Scalars['Float']['output'];
-  label?: Maybe<Scalars['String']['output']>;
-  operation?: Maybe<UsageOperationType>;
-  resource?: Maybe<UsageResourceType>;
-};
-
-export type CustomAiProviderAccessDto = {
-  __typename?: 'CustomAiProviderAccessDTO';
-  hasAccess: Scalars['Boolean']['output'];
-  seatCount: Scalars['Int']['output'];
-  seatThreshold: Scalars['Int']['output'];
-};
-
-export type DeleteJobsResponse = {
-  __typename?: 'DeleteJobsResponse';
-  deletedCount: Scalars['Int']['output'];
-  results: Array<JobOperationResult>;
-};
-
-export type FeatureFlag = {
-  __typename?: 'FeatureFlag';
-  key: FeatureFlagKey;
-  value: Scalars['Boolean']['output'];
-};
-
-export enum FeatureFlagKey {
-  IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
-  IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
-  IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
-  IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
-  IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED = 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED',
-  IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
-  IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
-  IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
-  IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
-  IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
-}
-
-export type FindApplicationRegistrationInstalledWorkspacesInput = {
-  id: Scalars['String']['input'];
-  limit?: Scalars['Int']['input'];
-  offset?: Scalars['Int']['input'];
-  searchTerm?: InputMaybe<Scalars['String']['input']>;
-};
-
-export enum HealthIndicatorId {
-  app = 'app',
-  connectedAccount = 'connectedAccount',
-  database = 'database',
-  redis = 'redis',
-  worker = 'worker'
-}
-
-export type InstalledWorkspace = {
-  __typename?: 'InstalledWorkspace';
-  displayName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  logo?: Maybe<Scalars['String']['output']>;
-  version?: Maybe<Scalars['String']['output']>;
-};
-
-export type InstanceAndAllWorkspacesUpgradeStatus = {
-  __typename?: 'InstanceAndAllWorkspacesUpgradeStatus';
-  computedAt: Scalars['DateTime']['output'];
-  instanceUpgradeStatus: InstanceUpgradeStatus;
-  upToDateWorkspaceCount: Scalars['Int']['output'];
-  workspacesBehind: Array<WorkspaceUpgradeRef>;
-  workspacesFailed: Array<WorkspaceUpgradeRef>;
-};
-
-export type InstanceUpgradeStatus = {
-  __typename?: 'InstanceUpgradeStatus';
-  health: UpgradeHealth;
-  inferredVersion?: Maybe<Scalars['String']['output']>;
-  latestCommand?: Maybe<LatestUpgradeCommand>;
-};
-
-export type JobOperationResult = {
-  __typename?: 'JobOperationResult';
-  error?: Maybe<Scalars['String']['output']>;
-  jobId: Scalars['String']['output'];
-  success: Scalars['Boolean']['output'];
-};
-
-/** Job state in the queue */
-export enum JobState {
-  ACTIVE = 'ACTIVE',
-  COMPLETED = 'COMPLETED',
-  DELAYED = 'DELAYED',
-  FAILED = 'FAILED',
-  PRIORITIZED = 'PRIORITIZED',
-  WAITING = 'WAITING',
-  WAITING_CHILDREN = 'WAITING_CHILDREN'
-}
-
-export type LatestUpgradeCommand = {
-  __typename?: 'LatestUpgradeCommand';
-  createdAt: Scalars['DateTime']['output'];
-  errorMessage?: Maybe<Scalars['String']['output']>;
-  executedByVersion: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  status: Scalars['String']['output'];
-};
-
-export type MaintenanceMode = {
-  __typename?: 'MaintenanceMode';
-  endAt: Scalars['DateTime']['output'];
-  link?: Maybe<Scalars['String']['output']>;
-  startAt: Scalars['DateTime']['output'];
-};
-
-export enum ModelFamily {
-  CLAUDE = 'CLAUDE',
-  GEMINI = 'GEMINI',
-  GPT = 'GPT',
-  GROK = 'GROK',
-  MISTRAL = 'MISTRAL'
-}
-
-export type ModelsDevModelSuggestion = {
-  __typename?: 'ModelsDevModelSuggestion';
-  cacheCreationCostPerMillionTokens?: Maybe<Scalars['Float']['output']>;
-  cachedInputCostPerMillionTokens?: Maybe<Scalars['Float']['output']>;
-  contextWindowTokens: Scalars['Float']['output'];
-  inputCostPerMillionTokens: Scalars['Float']['output'];
-  maxOutputTokens: Scalars['Float']['output'];
-  modalities: Array<Scalars['String']['output']>;
-  modelId: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  outputCostPerMillionTokens: Scalars['Float']['output'];
-  supportsReasoning: Scalars['Boolean']['output'];
-};
-
-export type ModelsDevProviderSuggestion = {
-  __typename?: 'ModelsDevProviderSuggestion';
-  id: Scalars['String']['output'];
-  modelCount: Scalars['Float']['output'];
-  npm: Scalars['String']['output'];
-};
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  addAiProvider: Scalars['Boolean']['output'];
-  addModelToProvider: Scalars['Boolean']['output'];
-  clearMaintenanceMode: Scalars['Boolean']['output'];
-  createDatabaseConfigVariable: Scalars['Boolean']['output'];
-  createWorkspaceDataExport: WorkspaceDataExport;
-  createWorkspaceUsageLimit: AdminPanelUsageLimit;
-  deleteDatabaseConfigVariable: Scalars['Boolean']['output'];
-  deleteJobs: DeleteJobsResponse;
-  deleteWorkspaceUsageLimit: Scalars['Boolean']['output'];
-  generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin: TwoFactorAuthenticationRecoveryCode;
-  grantWorkspaceCredits: AdminPanelWorkspaceCreditGrant;
-  refreshUpgradeStatus: InstanceAndAllWorkspacesUpgradeStatus;
-  removeAiProvider: Scalars['Boolean']['output'];
-  removeModelFromProvider: Scalars['Boolean']['output'];
-  retryJobs: RetryJobsResponse;
-  revokeSigningKey: SigningKeyDto;
-  revokeWorkspaceCreditGrant: AdminPanelWorkspaceCreditGrant;
-  setAdminAiModelEnabled: Scalars['Boolean']['output'];
-  setAdminAiModelsEnabled: Scalars['Boolean']['output'];
-  setAdminDefaultAiModel: Scalars['Boolean']['output'];
-  setMaintenanceMode: Scalars['Boolean']['output'];
-  syncMarketplaceCatalog: Scalars['Boolean']['output'];
-  updateAdminApplicationRegistration: ApplicationRegistration;
-  updateAdminApplicationRegistrationVariable: ApplicationRegistrationVariable;
-  updateDatabaseConfigVariable: Scalars['Boolean']['output'];
-  updateServerAdminAccess: ServerAdmin;
-  updateWorkspaceFeatureFlag: Scalars['Boolean']['output'];
-  updateWorkspaceUsageLimit: AdminPanelUsageLimit;
-};
-
-
-export type MutationAddAiProviderArgs = {
-  providerConfig: Scalars['JSON']['input'];
-  providerName: Scalars['String']['input'];
-};
-
-
-export type MutationAddModelToProviderArgs = {
-  modelConfig: Scalars['JSON']['input'];
-  providerName: Scalars['String']['input'];
-};
-
-
-export type MutationCreateDatabaseConfigVariableArgs = {
-  key: Scalars['String']['input'];
-  value: Scalars['JSON']['input'];
-};
-
-
-export type MutationCreateWorkspaceDataExportArgs = {
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type MutationCreateWorkspaceUsageLimitArgs = {
-  payload: CreateUsageLimitInput;
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type MutationDeleteDatabaseConfigVariableArgs = {
-  key: Scalars['String']['input'];
-};
-
-
-export type MutationDeleteJobsArgs = {
-  jobIds: Array<Scalars['String']['input']>;
-  queueName: Scalars['String']['input'];
-};
-
-
-export type MutationDeleteWorkspaceUsageLimitArgs = {
-  usageLimitId: Scalars['UUID']['input'];
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type MutationGenerateTwoFactorAuthenticationRecoveryCodeAsServerAdminArgs = {
-  otp?: InputMaybe<Scalars['String']['input']>;
-  userId: Scalars['UUID']['input'];
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type MutationGrantWorkspaceCreditsArgs = {
-  amount: Scalars['Float']['input'];
-  clientOperationId: Scalars['UUID']['input'];
-  expiresInDays?: InputMaybe<Scalars['Int']['input']>;
-  reason?: InputMaybe<Scalars['String']['input']>;
-  type: BillingCreditGrantType;
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type MutationRemoveAiProviderArgs = {
-  providerName: Scalars['String']['input'];
-};
-
-
-export type MutationRemoveModelFromProviderArgs = {
-  modelName: Scalars['String']['input'];
-  providerName: Scalars['String']['input'];
-};
-
-
-export type MutationRetryJobsArgs = {
-  jobIds: Array<Scalars['String']['input']>;
-  queueName: Scalars['String']['input'];
-};
-
-
-export type MutationRevokeSigningKeyArgs = {
-  id: Scalars['UUID']['input'];
-};
-
-
-export type MutationRevokeWorkspaceCreditGrantArgs = {
-  creditGrantId: Scalars['UUID']['input'];
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type MutationSetAdminAiModelEnabledArgs = {
-  enabled: Scalars['Boolean']['input'];
-  modelId: Scalars['String']['input'];
-};
-
-
-export type MutationSetAdminAiModelsEnabledArgs = {
-  enabled: Scalars['Boolean']['input'];
-  modelIds: Array<Scalars['String']['input']>;
-};
-
-
-export type MutationSetAdminDefaultAiModelArgs = {
-  modelId: Scalars['String']['input'];
-  tier: AiModelTier;
-};
-
-
-export type MutationSetMaintenanceModeArgs = {
-  endAt: Scalars['DateTime']['input'];
-  link?: InputMaybe<Scalars['String']['input']>;
-  startAt: Scalars['DateTime']['input'];
-};
-
-
-export type MutationUpdateAdminApplicationRegistrationArgs = {
-  input: AdminUpdateApplicationRegistrationInput;
-};
-
-
-export type MutationUpdateAdminApplicationRegistrationVariableArgs = {
-  input: UpdateApplicationRegistrationVariableInput;
-};
-
-
-export type MutationUpdateDatabaseConfigVariableArgs = {
-  key: Scalars['String']['input'];
-  value: Scalars['JSON']['input'];
-};
-
-
-export type MutationUpdateServerAdminAccessArgs = {
-  canAccessFullAdminPanel?: InputMaybe<Scalars['Boolean']['input']>;
-  canImpersonate?: InputMaybe<Scalars['Boolean']['input']>;
-  otp?: InputMaybe<Scalars['String']['input']>;
-  userId: Scalars['UUID']['input'];
-};
-
-
-export type MutationUpdateWorkspaceFeatureFlagArgs = {
-  featureFlag: Scalars['String']['input'];
-  value: Scalars['Boolean']['input'];
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type MutationUpdateWorkspaceUsageLimitArgs = {
-  payload: UpdateUsageLimitInput;
-  workspaceId: Scalars['UUID']['input'];
-};
-
-export type PaginatedApplicationRegistrations = {
-  __typename?: 'PaginatedApplicationRegistrations';
-  hasMore: Scalars['Boolean']['output'];
-  registrations: Array<ApplicationRegistration>;
-  totalCount: Scalars['Int']['output'];
-};
-
-export type Query = {
-  __typename?: 'Query';
-  adminPanelRecentUsers: Array<AdminPanelRecentUser>;
-  adminPanelTopWorkspaces: Array<AdminPanelTopWorkspace>;
-  findAdminApplicationRegistrationClaims: Array<AdminApplicationRegistrationClaim>;
-  findAdminApplicationRegistrationInstalledWorkspaces: ApplicationRegistrationInstalledWorkspaces;
-  findAdminApplicationRegistrationMonitoring: AdminApplicationMonitoring;
-  findAdminApplicationRegistrationStats: ApplicationRegistrationStats;
-  findAdminApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
-  findAllApplicationRegistrations: PaginatedApplicationRegistrations;
-  findOneAdminApplicationRegistration: ApplicationRegistration;
-  getAdminAiModels: AdminAiModels;
-  getAdminAiUsageByWorkspace: Array<UsageBreakdownItem>;
-  getAdminChatThreadMessages: AdminChatThreadMessages;
-  getAdminWorkspaceChatThreads: Array<AdminWorkspaceChatThread>;
-  getAiProviders: Scalars['JSON']['output'];
-  getConfigVariablesGrouped: ConfigVariables;
-  getCustomAiProviderAccess: CustomAiProviderAccessDto;
-  getDatabaseConfigVariable: ConfigVariable;
-  getIndicatorHealthStatus: AdminPanelHealthServiceData;
-  getInstanceAndAllWorkspacesUpgradeStatus: InstanceAndAllWorkspacesUpgradeStatus;
-  getMaintenanceMode?: Maybe<MaintenanceMode>;
-  getModelsDevProviders: Array<ModelsDevProviderSuggestion>;
-  getModelsDevSuggestions: Array<ModelsDevModelSuggestion>;
-  getQueueJobs: QueueJobsResponse;
-  getQueueMetrics: QueueMetricsData;
-  getServerAdmins: Array<ServerAdmin>;
-  getSigningKeys: SigningKeysAdminPanelDto;
-  getSystemHealthStatus: SystemHealth;
-  getUpgradeStatus: Array<WorkspaceUpgradeStatus>;
-  userLookupAdminPanel: UserLookup;
-  versionInfo: VersionInfo;
-  workspaceBillingAdminPanel?: Maybe<AdminPanelWorkspaceBilling>;
-  workspaceDataExports: Array<WorkspaceDataExport>;
-  workspaceLookupAdminPanel: UserLookup;
-  workspaceUsageLimits: AdminPanelWorkspaceUsageLimits;
-};
-
-
-export type QueryAdminPanelRecentUsersArgs = {
-  searchTerm?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryAdminPanelTopWorkspacesArgs = {
-  searchTerm?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryFindAdminApplicationRegistrationClaimsArgs = {
-  applicationRegistrationId: Scalars['String']['input'];
-};
-
-
-export type QueryFindAdminApplicationRegistrationInstalledWorkspacesArgs = {
-  input: FindApplicationRegistrationInstalledWorkspacesInput;
-};
-
-
-export type QueryFindAdminApplicationRegistrationMonitoringArgs = {
-  id: Scalars['String']['input'];
-  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
-  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
-  workspaceId?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryFindAdminApplicationRegistrationStatsArgs = {
-  id: Scalars['String']['input'];
-  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
-  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
-};
-
-
-export type QueryFindAdminApplicationRegistrationVariablesArgs = {
-  applicationRegistrationId: Scalars['String']['input'];
-};
-
-
-export type QueryFindAllApplicationRegistrationsArgs = {
-  isConfigured?: InputMaybe<Scalars['Boolean']['input']>;
-  isListed?: InputMaybe<Scalars['Boolean']['input']>;
-  isPreInstalledOnly?: InputMaybe<Scalars['Boolean']['input']>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  searchTerm?: InputMaybe<Scalars['String']['input']>;
-  sourceTypes?: InputMaybe<Array<ApplicationRegistrationSourceType>>;
-};
-
-
-export type QueryFindOneAdminApplicationRegistrationArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type QueryGetAdminAiUsageByWorkspaceArgs = {
-  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
-  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
-};
-
-
-export type QueryGetAdminChatThreadMessagesArgs = {
-  threadId: Scalars['UUID']['input'];
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type QueryGetAdminWorkspaceChatThreadsArgs = {
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type QueryGetDatabaseConfigVariableArgs = {
-  key: Scalars['String']['input'];
-};
-
-
-export type QueryGetIndicatorHealthStatusArgs = {
-  indicatorId: HealthIndicatorId;
-};
-
-
-export type QueryGetModelsDevSuggestionsArgs = {
-  providerType: Scalars['String']['input'];
-};
-
-
-export type QueryGetQueueJobsArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  queueName: Scalars['String']['input'];
-  state: JobState;
-};
-
-
-export type QueryGetQueueMetricsArgs = {
-  queueName: Scalars['String']['input'];
-  timeRange?: InputMaybe<QueueMetricsTimeRange>;
-};
-
-
-export type QueryGetUpgradeStatusArgs = {
-  workspaceIds: Array<Scalars['UUID']['input']>;
-};
-
-
-export type QueryUserLookupAdminPanelArgs = {
-  userIdentifier: Scalars['String']['input'];
-};
-
-
-export type QueryWorkspaceBillingAdminPanelArgs = {
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type QueryWorkspaceDataExportsArgs = {
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type QueryWorkspaceLookupAdminPanelArgs = {
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type QueryWorkspaceUsageLimitsArgs = {
-  workspaceId: Scalars['UUID']['input'];
-};
-
-export type QueueJob = {
-  __typename?: 'QueueJob';
-  attemptsMade: Scalars['Float']['output'];
-  data?: Maybe<Scalars['JSON']['output']>;
-  failedReason?: Maybe<Scalars['String']['output']>;
-  finishedOn?: Maybe<Scalars['Float']['output']>;
-  id: Scalars['String']['output'];
-  logs?: Maybe<Array<Scalars['String']['output']>>;
-  name: Scalars['String']['output'];
-  processedOn?: Maybe<Scalars['Float']['output']>;
-  returnValue?: Maybe<Scalars['JSON']['output']>;
-  stackTrace?: Maybe<Array<Scalars['String']['output']>>;
-  state: JobState;
-  timestamp?: Maybe<Scalars['Float']['output']>;
-};
-
-export type QueueJobsResponse = {
-  __typename?: 'QueueJobsResponse';
-  count: Scalars['Float']['output'];
-  hasMore: Scalars['Boolean']['output'];
-  jobs: Array<QueueJob>;
-  retentionConfig: QueueRetentionConfig;
-  totalCount: Scalars['Float']['output'];
-};
-
-export type QueueMetricsData = {
-  __typename?: 'QueueMetricsData';
-  data: Array<QueueMetricsSeries>;
-  details?: Maybe<WorkerQueueMetrics>;
-  queueName: Scalars['String']['output'];
-  timeRange: QueueMetricsTimeRange;
-  workers: Scalars['Float']['output'];
-};
-
-export type QueueMetricsDataPoint = {
-  __typename?: 'QueueMetricsDataPoint';
-  x: Scalars['Float']['output'];
-  y: Scalars['Float']['output'];
-};
-
-export type QueueMetricsSeries = {
-  __typename?: 'QueueMetricsSeries';
-  data: Array<QueueMetricsDataPoint>;
-  id: Scalars['String']['output'];
-};
-
-export enum QueueMetricsTimeRange {
-  FourHours = 'FourHours',
-  OneDay = 'OneDay',
-  OneHour = 'OneHour',
-  SevenDays = 'SevenDays',
-  TwelveHours = 'TwelveHours'
-}
-
-export type QueueRetentionConfig = {
-  __typename?: 'QueueRetentionConfig';
-  completedMaxAge: Scalars['Float']['output'];
-  completedMaxCount: Scalars['Float']['output'];
-  failedMaxAge: Scalars['Float']['output'];
-  failedMaxCount: Scalars['Float']['output'];
-};
-
-export type RetryJobsResponse = {
-  __typename?: 'RetryJobsResponse';
-  results: Array<JobOperationResult>;
-  retriedCount: Scalars['Int']['output'];
-};
-
-export type ServerAdmin = {
-  __typename?: 'ServerAdmin';
-  canAccessFullAdminPanel: Scalars['Boolean']['output'];
-  canImpersonate: Scalars['Boolean']['output'];
-  email: Scalars['String']['output'];
-  firstName: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  lastName: Scalars['String']['output'];
-};
-
-export type SigningKeyDto = {
-  __typename?: 'SigningKeyDTO';
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  isCurrent: Scalars['Boolean']['output'];
-  publicKey: Scalars['String']['output'];
-  revokedAt?: Maybe<Scalars['DateTime']['output']>;
-  verifyCountInWindow: Scalars['Int']['output'];
-};
-
-export type SigningKeysAdminPanelDto = {
-  __typename?: 'SigningKeysAdminPanelDTO';
-  legacyVerifyCountInWindow: Scalars['Int']['output'];
-  signingKeys: Array<SigningKeyDto>;
-  verifyWindowDays: Scalars['Int']['output'];
-};
-
-export enum SubscriptionInterval {
-  Month = 'Month',
-  Year = 'Year'
-}
-
-export enum SubscriptionStatus {
-  Active = 'Active',
-  Canceled = 'Canceled',
-  Incomplete = 'Incomplete',
-  IncompleteExpired = 'IncompleteExpired',
-  PastDue = 'PastDue',
-  Paused = 'Paused',
-  Trialing = 'Trialing',
-  Unpaid = 'Unpaid'
-}
-
-export type SystemHealth = {
-  __typename?: 'SystemHealth';
-  services: Array<SystemHealthService>;
-};
-
-export type SystemHealthService = {
-  __typename?: 'SystemHealthService';
-  id: HealthIndicatorId;
-  label: Scalars['String']['output'];
-  status: AdminPanelHealthServiceStatus;
-};
-
-export type TwoFactorAuthenticationRecoveryCode = {
-  __typename?: 'TwoFactorAuthenticationRecoveryCode';
-  expiresAt: Scalars['DateTime']['output'];
-  recoveryCode: Scalars['String']['output'];
-};
-
-export type UpdateApplicationRegistrationVariableInput = {
-  id: Scalars['String']['input'];
-  update: UpdateApplicationRegistrationVariablePayload;
-};
-
-export type UpdateApplicationRegistrationVariablePayload = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  resetValue?: InputMaybe<Scalars['Boolean']['input']>;
-  value?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type UpdateUsageLimitInput = {
-  id: Scalars['UUID']['input'];
-  payload: CreateUsageLimitInput;
-};
-
-export enum UpgradeHealth {
-  BEHIND = 'BEHIND',
-  FAILED = 'FAILED',
-  UP_TO_DATE = 'UP_TO_DATE'
-}
-
-export type UsageBreakdownItem = {
-  __typename?: 'UsageBreakdownItem';
-  creditsUsed: Scalars['Float']['output'];
-  key: Scalars['String']['output'];
-  label?: Maybe<Scalars['String']['output']>;
-  userCreditsUsed: Scalars['Float']['output'];
-  workspaceCreditsUsed: Scalars['Float']['output'];
-};
-
-export enum UsageOperationType {
-  AI_CHAT_TOKEN = 'AI_CHAT_TOKEN',
-  AI_WORKFLOW_TOKEN = 'AI_WORKFLOW_TOKEN',
-  AI_WORKFLOW_WEB_SEARCH = 'AI_WORKFLOW_WEB_SEARCH',
-  ALL = 'ALL',
-  API_REQUEST = 'API_REQUEST',
-  CALL_RECORDING = 'CALL_RECORDING',
-  CODE_EXECUTION = 'CODE_EXECUTION',
-  EMAIL_SEND = 'EMAIL_SEND',
-  MESSAGE_CAMPAIGN_SEND = 'MESSAGE_CAMPAIGN_SEND',
-  RECORD_WRITE = 'RECORD_WRITE',
-  STORAGE_FILE = 'STORAGE_FILE',
-  SUBSCRIPTION = 'SUBSCRIPTION',
-  WEBHOOK_CALL = 'WEBHOOK_CALL',
-  WEB_SEARCH = 'WEB_SEARCH',
-  WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION'
-}
-
-export enum UsageResourceType {
-  AI = 'AI',
-  ALL = 'ALL',
-  API = 'API',
-  APP = 'APP',
-  EMAIL = 'EMAIL',
-  LOGIC_FUNCTION = 'LOGIC_FUNCTION',
-  RECORD = 'RECORD',
-  STORAGE = 'STORAGE',
-  WEBHOOK = 'WEBHOOK',
-  WORKFLOW = 'WORKFLOW'
-}
-
-export enum UsageUnit {
-  BYTE = 'BYTE',
-  COMPLEXITY = 'COMPLEXITY',
-  CREDIT = 'CREDIT',
-  FILE = 'FILE',
-  INVOCATION = 'INVOCATION',
-  MILLISECOND = 'MILLISECOND',
-  MINUTE = 'MINUTE',
-  RECORD = 'RECORD',
-  REQUEST = 'REQUEST',
-  SEAT = 'SEAT',
-  TOKEN = 'TOKEN',
-  USER_CREDIT = 'USER_CREDIT'
-}
-
-export type UserInfo = {
-  __typename?: 'UserInfo';
-  avatarUrl?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  email: Scalars['String']['output'];
-  firstName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  isAdmin?: Maybe<Scalars['Boolean']['output']>;
-  lastName?: Maybe<Scalars['String']['output']>;
-};
-
-export type UserLookup = {
-  __typename?: 'UserLookup';
-  user?: Maybe<UserInfo>;
-  workspaces: Array<WorkspaceInfo>;
-};
-
-export type VersionDistributionEntry = {
-  __typename?: 'VersionDistributionEntry';
-  count: Scalars['Int']['output'];
-  version: Scalars['String']['output'];
-};
-
-export type VersionInfo = {
-  __typename?: 'VersionInfo';
-  currentVersion?: Maybe<Scalars['String']['output']>;
-  latestVersion?: Maybe<Scalars['String']['output']>;
-};
-
-export type WorkerQueueMetrics = {
-  __typename?: 'WorkerQueueMetrics';
-  active: Scalars['Float']['output'];
-  completed: Scalars['Float']['output'];
-  completedData?: Maybe<Array<Scalars['Float']['output']>>;
-  delayed: Scalars['Float']['output'];
-  failed: Scalars['Float']['output'];
-  failedData?: Maybe<Array<Scalars['Float']['output']>>;
-  failureRate: Scalars['Float']['output'];
-  waiting: Scalars['Float']['output'];
-};
-
-export enum WorkspaceActivationStatus {
-  ACTIVE = 'ACTIVE',
-  CREATED = 'CREATED',
-  INACTIVE = 'INACTIVE',
-  ONGOING_CREATION = 'ONGOING_CREATION',
-  PENDING_CREATION = 'PENDING_CREATION',
-  SUSPENDED = 'SUSPENDED'
-}
-
-export type WorkspaceDataExport = {
-  __typename?: 'WorkspaceDataExport';
-  createdAt: Scalars['DateTime']['output'];
-  downloadUrl?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  objects: Array<WorkspaceDataExportObject>;
-  sizeInBytes: Scalars['Float']['output'];
-  status: WorkspaceDataExportStatus;
-  workspaceId: Scalars['UUID']['output'];
-};
-
-export type WorkspaceDataExportObject = {
-  __typename?: 'WorkspaceDataExportObject';
-  fieldCount: Scalars['Int']['output'];
-  isExported: Scalars['Boolean']['output'];
-  labelSingular: Scalars['String']['output'];
-  nameSingular: Scalars['String']['output'];
-  recordCount: Scalars['Int']['output'];
-};
-
-export enum WorkspaceDataExportStatus {
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  PENDING = 'PENDING'
-}
-
-export type WorkspaceInfo = {
-  __typename?: 'WorkspaceInfo';
-  activationStatus: WorkspaceActivationStatus;
-  allowImpersonation: Scalars['Boolean']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  featureFlags: Array<FeatureFlag>;
-  id: Scalars['UUID']['output'];
-  logo?: Maybe<Scalars['String']['output']>;
-  name: Scalars['String']['output'];
-  totalUsers: Scalars['Float']['output'];
-  users: Array<UserInfo>;
-  workspaceUrls: WorkspaceUrls;
-};
-
-export type WorkspaceUpgradeRef = {
-  __typename?: 'WorkspaceUpgradeRef';
-  id: Scalars['UUID']['output'];
-  name?: Maybe<Scalars['String']['output']>;
-};
-
-export type WorkspaceUpgradeStatus = {
-  __typename?: 'WorkspaceUpgradeStatus';
-  displayName?: Maybe<Scalars['String']['output']>;
-  health: UpgradeHealth;
-  inferredVersion?: Maybe<Scalars['String']['output']>;
-  latestCommand?: Maybe<LatestUpgradeCommand>;
-  workspaceId: Scalars['UUID']['output'];
-};
-
-export type WorkspaceUrls = {
-  __typename?: 'WorkspaceUrls';
-  customUrl?: Maybe<Scalars['String']['output']>;
-  subdomainUrl: Scalars['String']['output'];
-};
-
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+export * from './schema';
 export type AddAiProviderMutationVariables = Exact<{
-  providerName: Scalars['String']['input'];
-  providerConfig: Scalars['JSON']['input'];
+  providerName: string;
+  providerConfig: any;
 }>;
 
 
-export type AddAiProviderMutation = { __typename?: 'Mutation', addAiProvider: boolean };
+export type AddAiProviderMutation = { addAiProvider: boolean };
 
 export type AddModelToProviderMutationVariables = Exact<{
-  providerName: Scalars['String']['input'];
-  modelConfig: Scalars['JSON']['input'];
+  providerName: string;
+  modelConfig: any;
 }>;
 
 
-export type AddModelToProviderMutation = { __typename?: 'Mutation', addModelToProvider: boolean };
+export type AddModelToProviderMutation = { addModelToProvider: boolean };
 
 export type RemoveAiProviderMutationVariables = Exact<{
-  providerName: Scalars['String']['input'];
+  providerName: string;
 }>;
 
 
-export type RemoveAiProviderMutation = { __typename?: 'Mutation', removeAiProvider: boolean };
+export type RemoveAiProviderMutation = { removeAiProvider: boolean };
 
 export type RemoveModelFromProviderMutationVariables = Exact<{
-  providerName: Scalars['String']['input'];
-  modelName: Scalars['String']['input'];
+  providerName: string;
+  modelName: string;
 }>;
 
 
-export type RemoveModelFromProviderMutation = { __typename?: 'Mutation', removeModelFromProvider: boolean };
+export type RemoveModelFromProviderMutation = { removeModelFromProvider: boolean };
 
 export type SetAdminAiModelEnabledMutationVariables = Exact<{
-  modelId: Scalars['String']['input'];
-  enabled: Scalars['Boolean']['input'];
+  modelId: string;
+  enabled: boolean;
 }>;
 
 
-export type SetAdminAiModelEnabledMutation = { __typename?: 'Mutation', setAdminAiModelEnabled: boolean };
+export type SetAdminAiModelEnabledMutation = { setAdminAiModelEnabled: boolean };
 
 export type SetAdminAiModelsEnabledMutationVariables = Exact<{
-  modelIds: Array<Scalars['String']['input']> | Scalars['String']['input'];
-  enabled: Scalars['Boolean']['input'];
+  modelIds: Array<string> | string;
+  enabled: boolean;
 }>;
 
 
-export type SetAdminAiModelsEnabledMutation = { __typename?: 'Mutation', setAdminAiModelsEnabled: boolean };
+export type SetAdminAiModelsEnabledMutation = { setAdminAiModelsEnabled: boolean };
 
 export type SetAdminDefaultAiModelMutationVariables = Exact<{
-  tier: AiModelTier;
-  modelId: Scalars['String']['input'];
+  tier: Types.AiModelTier;
+  modelId: string;
 }>;
 
 
-export type SetAdminDefaultAiModelMutation = { __typename?: 'Mutation', setAdminDefaultAiModel: boolean };
+export type SetAdminDefaultAiModelMutation = { setAdminDefaultAiModel: boolean };
 
 export type GetAdminAiModelsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAdminAiModelsQuery = { __typename?: 'Query', getAdminAiModels: { __typename?: 'AdminAiModels', defaultModelByTier: Array<{ __typename?: 'AdminAiModelTierDefault', tier: AiModelTier, modelId?: string | null }>, models: Array<{ __typename?: 'AdminAiModelConfig', modelId: string, label: string, kind: string, modelFamily?: ModelFamily | null, sdkPackage?: string | null, isAvailable: boolean, isAdminEnabled: boolean, isDeprecated?: boolean | null, contextWindowTokens?: number | null, maxOutputTokens?: number | null, inputCostPerMillionTokens?: number | null, outputCostPerMillionTokens?: number | null, providerName?: string | null, providerLabel?: string | null, name?: string | null, dataResidency?: string | null, efforts?: Array<string> | null }> } };
+export type GetAdminAiModelsQuery = { getAdminAiModels: { __typename: 'AdminAiModels', defaultModelByTier: Array<{ __typename: 'AdminAiModelTierDefault', tier: Types.AiModelTier, modelId: string | null }>, models: Array<{ __typename: 'AdminAiModelConfig', modelId: string, label: string, kind: string, modelFamily: Types.ModelFamily | null, sdkPackage: string | null, isAvailable: boolean, isAdminEnabled: boolean, isDeprecated: boolean | null, contextWindowTokens: number | null, maxOutputTokens: number | null, inputCostPerMillionTokens: number | null, outputCostPerMillionTokens: number | null, providerName: string | null, providerLabel: string | null, name: string | null, dataResidency: string | null, efforts: Array<string> | null }> } };
 
 export type GetAdminAiUsageByWorkspaceQueryVariables = Exact<{
-  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
-  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
+  periodStart?: string | null | undefined;
+  periodEnd?: string | null | undefined;
 }>;
 
 
-export type GetAdminAiUsageByWorkspaceQuery = { __typename?: 'Query', getAdminAiUsageByWorkspace: Array<{ __typename?: 'UsageBreakdownItem', key: string, label?: string | null, creditsUsed: number }> };
+export type GetAdminAiUsageByWorkspaceQuery = { getAdminAiUsageByWorkspace: Array<{ __typename: 'UsageBreakdownItem', key: string, label: string | null, creditsUsed: number }> };
 
 export type GetAiProvidersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAiProvidersQuery = { __typename?: 'Query', getAiProviders: any };
+export type GetAiProvidersQuery = { getAiProviders: any };
 
 export type GetCustomAiProviderAccessQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCustomAiProviderAccessQuery = { __typename?: 'Query', getCustomAiProviderAccess: { __typename?: 'CustomAiProviderAccessDTO', hasAccess: boolean, seatCount: number, seatThreshold: number } };
+export type GetCustomAiProviderAccessQuery = { getCustomAiProviderAccess: { __typename: 'CustomAiProviderAccessDTO', hasAccess: boolean, seatCount: number, seatThreshold: number } };
 
 export type GetModelsDevProvidersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetModelsDevProvidersQuery = { __typename?: 'Query', getModelsDevProviders: Array<{ __typename?: 'ModelsDevProviderSuggestion', id: string, modelCount: number, npm: string }> };
+export type GetModelsDevProvidersQuery = { getModelsDevProviders: Array<{ __typename: 'ModelsDevProviderSuggestion', id: string, modelCount: number, npm: string }> };
 
 export type GetModelsDevSuggestionsQueryVariables = Exact<{
-  providerType: Scalars['String']['input'];
+  providerType: string;
 }>;
 
 
-export type GetModelsDevSuggestionsQuery = { __typename?: 'Query', getModelsDevSuggestions: Array<{ __typename?: 'ModelsDevModelSuggestion', modelId: string, name: string, inputCostPerMillionTokens: number, outputCostPerMillionTokens: number, cachedInputCostPerMillionTokens?: number | null, cacheCreationCostPerMillionTokens?: number | null, contextWindowTokens: number, maxOutputTokens: number, modalities: Array<string>, supportsReasoning: boolean }> };
+export type GetModelsDevSuggestionsQuery = { getModelsDevSuggestions: Array<{ __typename: 'ModelsDevModelSuggestion', modelId: string, name: string, inputCostPerMillionTokens: number, outputCostPerMillionTokens: number, cachedInputCostPerMillionTokens: number | null, cacheCreationCostPerMillionTokens: number | null, contextWindowTokens: number, maxOutputTokens: number, modalities: Array<string>, supportsReasoning: boolean }> };
 
 export type SyncMarketplaceCatalogMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SyncMarketplaceCatalogMutation = { __typename?: 'Mutation', syncMarketplaceCatalog: boolean };
+export type SyncMarketplaceCatalogMutation = { syncMarketplaceCatalog: boolean };
 
 export type UpdateAdminApplicationRegistrationMutationVariables = Exact<{
-  input: AdminUpdateApplicationRegistrationInput;
+  input: Types.AdminUpdateApplicationRegistrationInput;
 }>;
 
 
-export type UpdateAdminApplicationRegistrationMutation = { __typename?: 'Mutation', updateAdminApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, logoUrl?: string | null, galleryImagesUrls: Array<string>, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, isListed: boolean, isVetted: boolean, isPreInstalled: boolean, isConfigured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string } };
+export type UpdateAdminApplicationRegistrationMutation = { updateAdminApplicationRegistration: { __typename: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, logoUrl: string | null, galleryImagesUrls: Array<string>, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: Types.ApplicationRegistrationSourceType, sourcePackage: string | null, latestAvailableVersion: string | null, isListed: boolean, isVetted: boolean, isPreInstalled: boolean, isConfigured: boolean, ownerWorkspaceId: string | null, createdAt: string, updatedAt: string } };
 
 export type UpdateAdminApplicationRegistrationVariableMutationVariables = Exact<{
-  input: UpdateApplicationRegistrationVariableInput;
+  input: Types.UpdateApplicationRegistrationVariableInput;
 }>;
 
 
-export type UpdateAdminApplicationRegistrationVariableMutation = { __typename?: 'Mutation', updateAdminApplicationRegistrationVariable: { __typename?: 'ApplicationRegistrationVariable', id: string, key: string, description: string, isSecret: boolean, isRequired: boolean, isFilled: boolean, createdAt: string, updatedAt: string } };
+export type UpdateAdminApplicationRegistrationVariableMutation = { updateAdminApplicationRegistrationVariable: { __typename: 'ApplicationRegistrationVariable', id: string, key: string, description: string, isSecret: boolean, isRequired: boolean, isFilled: boolean, createdAt: string, updatedAt: string } };
 
 export type FindAdminApplicationRegistrationClaimsQueryVariables = Exact<{
-  applicationRegistrationId: Scalars['String']['input'];
+  applicationRegistrationId: string;
 }>;
 
 
-export type FindAdminApplicationRegistrationClaimsQuery = { __typename?: 'Query', findAdminApplicationRegistrationClaims: Array<{ __typename?: 'AdminApplicationRegistrationClaim', workspaceId: string, workspaceDisplayName?: string | null }> };
+export type FindAdminApplicationRegistrationClaimsQuery = { findAdminApplicationRegistrationClaims: Array<{ __typename: 'AdminApplicationRegistrationClaim', workspaceId: string, workspaceDisplayName: string | null }> };
 
 export type FindAdminApplicationRegistrationInstalledWorkspacesQueryVariables = Exact<{
-  input: FindApplicationRegistrationInstalledWorkspacesInput;
+  input: Types.FindApplicationRegistrationInstalledWorkspacesInput;
 }>;
 
 
-export type FindAdminApplicationRegistrationInstalledWorkspacesQuery = { __typename?: 'Query', findAdminApplicationRegistrationInstalledWorkspaces: { __typename?: 'ApplicationRegistrationInstalledWorkspaces', totalCount: number, hasMore: boolean, workspaces: Array<{ __typename?: 'InstalledWorkspace', id: string, displayName?: string | null, logo?: string | null, version?: string | null }> } };
+export type FindAdminApplicationRegistrationInstalledWorkspacesQuery = { findAdminApplicationRegistrationInstalledWorkspaces: { __typename: 'ApplicationRegistrationInstalledWorkspaces', totalCount: number, hasMore: boolean, workspaces: Array<{ __typename: 'InstalledWorkspace', id: string, displayName: string | null, logo: string | null, version: string | null }> } };
 
 export type FindAdminApplicationRegistrationMonitoringQueryVariables = Exact<{
-  id: Scalars['String']['input'];
-  workspaceId?: InputMaybe<Scalars['String']['input']>;
-  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
-  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
+  id: string;
+  workspaceId?: string | null | undefined;
+  periodStart?: string | null | undefined;
+  periodEnd?: string | null | undefined;
 }>;
 
 
-export type FindAdminApplicationRegistrationMonitoringQuery = { __typename?: 'Query', findAdminApplicationRegistrationMonitoring: { __typename?: 'AdminApplicationMonitoring', periodStart: string, periodEnd: string, bucketSizeInSeconds: number, lookbackInHours: number, runCount: number, failedRunCount: number, lifecycleFailureCount: number, rateLimitEventCount: number, creditsUsed?: number | null, activeWorkspaceCount: number, activity: Array<{ __typename?: 'ApplicationMonitoringActivityBucket', bucketStart: string, errorCount: number, rateLimitedRequestCount: number, rateLimitedJobCount: number }>, lifecycle: Array<{ __typename?: 'ApplicationMonitoringLifecycleBucket', bucketStart: string, installCount: number, upgradeCount: number, uninstallCount: number, failedCount: number }>, creditUsage?: Array<{ __typename?: 'ApplicationMonitoringCreditBucket', bucketStart: string, operationType: string, creditsUsed: number }> | null, issues: Array<{ __typename?: 'ApplicationMonitoringIssue', level: string, source: string, errorCode: string, logicFunctionName: string, versions: Array<string>, eventCount: number, affectedInstallCount: number, lastSeenAt: string }>, versions: Array<{ __typename?: 'ApplicationMonitoringVersion', version: string, runCount: number, failedRunCount: number, activeInstallCount: number }>, functions: Array<{ __typename?: 'ApplicationMonitoringFunction', logicFunctionName: string, runCount: number, failedRunCount: number, p95DurationMs: number }>, workspaces: Array<{ __typename?: 'ApplicationMonitoringWorkspace', workspaceId: string, workspaceName?: string | null, workspaceLogoUrl?: string | null, applicationVersion: string, runCount: number, failedRunCount: number, rateLimitEventCount: number, lastEventAt: string }> } };
+export type FindAdminApplicationRegistrationMonitoringQuery = { findAdminApplicationRegistrationMonitoring: { __typename: 'AdminApplicationMonitoring', periodStart: string, periodEnd: string, bucketSizeInSeconds: number, lookbackInHours: number, runCount: number, failedRunCount: number, lifecycleFailureCount: number, rateLimitEventCount: number, creditsUsed: number | null, activeWorkspaceCount: number, activity: Array<{ __typename: 'ApplicationMonitoringActivityBucket', bucketStart: string, errorCount: number, rateLimitedRequestCount: number, rateLimitedJobCount: number }>, lifecycle: Array<{ __typename: 'ApplicationMonitoringLifecycleBucket', bucketStart: string, installCount: number, upgradeCount: number, uninstallCount: number, failedCount: number }>, creditUsage: Array<{ __typename: 'ApplicationMonitoringCreditBucket', bucketStart: string, operationType: string, creditsUsed: number }> | null, issues: Array<{ __typename: 'ApplicationMonitoringIssue', level: string, source: string, errorCode: string, logicFunctionName: string, versions: Array<string>, eventCount: number, affectedInstallCount: number, lastSeenAt: string }>, versions: Array<{ __typename: 'ApplicationMonitoringVersion', version: string, runCount: number, failedRunCount: number, activeInstallCount: number }>, functions: Array<{ __typename: 'ApplicationMonitoringFunction', logicFunctionName: string, runCount: number, failedRunCount: number, p95DurationMs: number }>, workspaces: Array<{ __typename: 'ApplicationMonitoringWorkspace', workspaceId: string, workspaceName: string | null, workspaceLogoUrl: string | null, applicationVersion: string, runCount: number, failedRunCount: number, rateLimitEventCount: number, lastEventAt: string }> } };
 
 export type FindAdminApplicationRegistrationStatsQueryVariables = Exact<{
-  id: Scalars['String']['input'];
-  periodStart: Scalars['DateTime']['input'];
-  periodEnd: Scalars['DateTime']['input'];
+  id: string;
+  periodStart: string;
+  periodEnd: string;
 }>;
 
 
-export type FindAdminApplicationRegistrationStatsQuery = { __typename?: 'Query', findAdminApplicationRegistrationStats: { __typename?: 'ApplicationRegistrationStats', activeInstalls: number, autoUpdateEnabled: number, totalCreditsUsed?: number | null, suspendedInstalls: number, mostInstalledVersion?: string | null, creditsUsedBreakdown?: Array<{ __typename?: 'CreditUsedItem', label?: string | null, operation?: UsageOperationType | null, creditsUsed: number }> | null, versionDistribution: Array<{ __typename?: 'VersionDistributionEntry', version: string, count: number }> } };
+export type FindAdminApplicationRegistrationStatsQuery = { findAdminApplicationRegistrationStats: { __typename: 'ApplicationRegistrationStats', activeInstalls: number, autoUpdateEnabled: number, totalCreditsUsed: number | null, suspendedInstalls: number, mostInstalledVersion: string | null, creditsUsedBreakdown: Array<{ __typename: 'CreditUsedItem', label: string | null, operation: Types.UsageOperationType | null, creditsUsed: number }> | null, versionDistribution: Array<{ __typename: 'VersionDistributionEntry', version: string, count: number }> } };
 
 export type FindAdminApplicationRegistrationVariablesQueryVariables = Exact<{
-  applicationRegistrationId: Scalars['String']['input'];
+  applicationRegistrationId: string;
 }>;
 
 
-export type FindAdminApplicationRegistrationVariablesQuery = { __typename?: 'Query', findAdminApplicationRegistrationVariables: Array<{ __typename?: 'ApplicationRegistrationVariable', id: string, key: string, value?: string | null, description: string, isSecret: boolean, isRequired: boolean, isDeprecated: boolean, isFilled: boolean, type: string, options?: any | null, createdAt: string, updatedAt: string }> };
+export type FindAdminApplicationRegistrationVariablesQuery = { findAdminApplicationRegistrationVariables: Array<{ __typename: 'ApplicationRegistrationVariable', id: string, key: string, value: string | null, description: string, isSecret: boolean, isRequired: boolean, isDeprecated: boolean, isFilled: boolean, type: string, options: any, createdAt: string, updatedAt: string }> };
 
 export type FindAllApplicationRegistrationsQueryVariables = Exact<{
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  searchTerm?: InputMaybe<Scalars['String']['input']>;
-  isPreInstalledOnly?: InputMaybe<Scalars['Boolean']['input']>;
-  sourceTypes?: InputMaybe<Array<ApplicationRegistrationSourceType> | ApplicationRegistrationSourceType>;
-  isListed?: InputMaybe<Scalars['Boolean']['input']>;
-  isConfigured?: InputMaybe<Scalars['Boolean']['input']>;
+  limit?: number | null | undefined;
+  offset?: number | null | undefined;
+  searchTerm?: string | null | undefined;
+  isPreInstalledOnly?: boolean | null | undefined;
+  sourceTypes?: Array<Types.ApplicationRegistrationSourceType> | Types.ApplicationRegistrationSourceType | null | undefined;
+  isListed?: boolean | null | undefined;
+  isConfigured?: boolean | null | undefined;
 }>;
 
 
-export type FindAllApplicationRegistrationsQuery = { __typename?: 'Query', findAllApplicationRegistrations: { __typename?: 'PaginatedApplicationRegistrations', totalCount: number, hasMore: boolean, registrations: Array<{ __typename?: 'ApplicationRegistration', author?: string | null, installCount: number, id: string, universalIdentifier: string, name: string, logoUrl?: string | null, galleryImagesUrls: Array<string>, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, isListed: boolean, isVetted: boolean, isPreInstalled: boolean, isConfigured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string }> } };
+export type FindAllApplicationRegistrationsQuery = { findAllApplicationRegistrations: { __typename: 'PaginatedApplicationRegistrations', totalCount: number, hasMore: boolean, registrations: Array<{ __typename: 'ApplicationRegistration', author: string | null, installCount: number, id: string, universalIdentifier: string, name: string, logoUrl: string | null, galleryImagesUrls: Array<string>, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: Types.ApplicationRegistrationSourceType, sourcePackage: string | null, latestAvailableVersion: string | null, isListed: boolean, isVetted: boolean, isPreInstalled: boolean, isConfigured: boolean, ownerWorkspaceId: string | null, createdAt: string, updatedAt: string }> } };
 
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
-  key: Scalars['String']['input'];
-  value: Scalars['JSON']['input'];
+  key: string;
+  value: any;
 }>;
 
 
-export type CreateDatabaseConfigVariableMutation = { __typename?: 'Mutation', createDatabaseConfigVariable: boolean };
+export type CreateDatabaseConfigVariableMutation = { createDatabaseConfigVariable: boolean };
 
 export type DeleteDatabaseConfigVariableMutationVariables = Exact<{
-  key: Scalars['String']['input'];
+  key: string;
 }>;
 
 
-export type DeleteDatabaseConfigVariableMutation = { __typename?: 'Mutation', deleteDatabaseConfigVariable: boolean };
+export type DeleteDatabaseConfigVariableMutation = { deleteDatabaseConfigVariable: boolean };
 
 export type UpdateDatabaseConfigVariableMutationVariables = Exact<{
-  key: Scalars['String']['input'];
-  value: Scalars['JSON']['input'];
+  key: string;
+  value: any;
 }>;
 
 
-export type UpdateDatabaseConfigVariableMutation = { __typename?: 'Mutation', updateDatabaseConfigVariable: boolean };
+export type UpdateDatabaseConfigVariableMutation = { updateDatabaseConfigVariable: boolean };
 
 export type GetConfigVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariables', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value?: any | null, isSensitive: boolean, isEnvOnly: boolean, type: ConfigVariableType, options?: any | null, source: ConfigSource }> }> } };
+export type GetConfigVariablesGroupedQuery = { getConfigVariablesGrouped: { __typename: 'ConfigVariables', groups: Array<{ __typename: 'ConfigVariablesGroupData', name: Types.ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename: 'ConfigVariable', name: string, description: string, value: any, isSensitive: boolean, isEnvOnly: boolean, type: Types.ConfigVariableType, options: any, source: Types.ConfigSource }> }> } };
 
 export type GetDatabaseConfigVariableQueryVariables = Exact<{
-  key: Scalars['String']['input'];
+  key: string;
 }>;
 
 
-export type GetDatabaseConfigVariableQuery = { __typename?: 'Query', getDatabaseConfigVariable: { __typename?: 'ConfigVariable', name: string, description: string, value?: any | null, isSensitive: boolean, isEnvOnly: boolean, type: ConfigVariableType, options?: any | null, source: ConfigSource } };
+export type GetDatabaseConfigVariableQuery = { getDatabaseConfigVariable: { __typename: 'ConfigVariable', name: string, description: string, value: any, isSensitive: boolean, isEnvOnly: boolean, type: Types.ConfigVariableType, options: any, source: Types.ConfigSource } };
 
-export type UserInfoFragmentFragment = { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null, createdAt: string };
+export type UserInfoFragmentFragment = { __typename: 'UserInfo', id: string, email: string, firstName: string | null, lastName: string | null, createdAt: string };
 
 export type CreateWorkspaceDataExportMutationVariables = Exact<{
-  workspaceId: Scalars['UUID']['input'];
+  workspaceId: string;
 }>;
 
 
-export type CreateWorkspaceDataExportMutation = { __typename?: 'Mutation', createWorkspaceDataExport: { __typename?: 'WorkspaceDataExport', id: string, workspaceId: string, status: WorkspaceDataExportStatus, sizeInBytes: number, createdAt: string, downloadUrl?: string | null, objects: Array<{ __typename?: 'WorkspaceDataExportObject', nameSingular: string, labelSingular: string, fieldCount: number, recordCount: number, isExported: boolean }> } };
+export type CreateWorkspaceDataExportMutation = { createWorkspaceDataExport: { __typename: 'WorkspaceDataExport', id: string, workspaceId: string, status: Types.WorkspaceDataExportStatus, sizeInBytes: number, createdAt: string, downloadUrl: string | null, objects: Array<{ __typename: 'WorkspaceDataExportObject', nameSingular: string, labelSingular: string, fieldCount: number, recordCount: number, isExported: boolean }> } };
 
 export type CreateWorkspaceUsageLimitMutationVariables = Exact<{
-  workspaceId: Scalars['UUID']['input'];
-  payload: CreateUsageLimitInput;
+  workspaceId: string;
+  payload: Types.CreateUsageLimitInput;
 }>;
 
 
-export type CreateWorkspaceUsageLimitMutation = { __typename?: 'Mutation', createWorkspaceUsageLimit: { __typename?: 'AdminPanelUsageLimit', id: string } };
+export type CreateWorkspaceUsageLimitMutation = { createWorkspaceUsageLimit: { __typename: 'AdminPanelUsageLimit', id: string } };
 
 export type DeleteWorkspaceUsageLimitMutationVariables = Exact<{
-  workspaceId: Scalars['UUID']['input'];
-  usageLimitId: Scalars['UUID']['input'];
+  workspaceId: string;
+  usageLimitId: string;
 }>;
 
 
-export type DeleteWorkspaceUsageLimitMutation = { __typename?: 'Mutation', deleteWorkspaceUsageLimit: boolean };
+export type DeleteWorkspaceUsageLimitMutation = { deleteWorkspaceUsageLimit: boolean };
 
 export type GenerateTwoFactorAuthenticationRecoveryCodeAsServerAdminMutationVariables = Exact<{
-  userId: Scalars['UUID']['input'];
-  workspaceId: Scalars['UUID']['input'];
-  otp?: InputMaybe<Scalars['String']['input']>;
+  userId: string;
+  workspaceId: string;
+  otp?: string | null | undefined;
 }>;
 
 
-export type GenerateTwoFactorAuthenticationRecoveryCodeAsServerAdminMutation = { __typename?: 'Mutation', generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin: { __typename?: 'TwoFactorAuthenticationRecoveryCode', recoveryCode: string, expiresAt: string } };
+export type GenerateTwoFactorAuthenticationRecoveryCodeAsServerAdminMutation = { generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin: { __typename: 'TwoFactorAuthenticationRecoveryCode', recoveryCode: string, expiresAt: string } };
 
 export type GrantWorkspaceCreditsMutationVariables = Exact<{
-  workspaceId: Scalars['UUID']['input'];
-  amount: Scalars['Float']['input'];
-  type: BillingCreditGrantType;
-  reason?: InputMaybe<Scalars['String']['input']>;
-  expiresInDays?: InputMaybe<Scalars['Int']['input']>;
-  clientOperationId: Scalars['UUID']['input'];
+  workspaceId: string;
+  amount: number;
+  type: Types.BillingCreditGrantType;
+  reason?: string | null | undefined;
+  expiresInDays?: number | null | undefined;
+  clientOperationId: string;
 }>;
 
 
-export type GrantWorkspaceCreditsMutation = { __typename?: 'Mutation', grantWorkspaceCredits: { __typename?: 'AdminPanelWorkspaceCreditGrant', id: string, amount: number, type: BillingCreditGrantType, effectiveAt: string, expiresAt?: string | null, revokedAt?: string | null, sourceGrantId?: string | null, reason?: string | null, isActive: boolean, createdAt: string } };
+export type GrantWorkspaceCreditsMutation = { grantWorkspaceCredits: { __typename: 'AdminPanelWorkspaceCreditGrant', id: string, amount: number, type: Types.BillingCreditGrantType, effectiveAt: string, expiresAt: string | null, revokedAt: string | null, sourceGrantId: string | null, reason: string | null, isActive: boolean, createdAt: string } };
 
 export type RevokeWorkspaceCreditGrantMutationVariables = Exact<{
-  workspaceId: Scalars['UUID']['input'];
-  creditGrantId: Scalars['UUID']['input'];
+  workspaceId: string;
+  creditGrantId: string;
 }>;
 
 
-export type RevokeWorkspaceCreditGrantMutation = { __typename?: 'Mutation', revokeWorkspaceCreditGrant: { __typename?: 'AdminPanelWorkspaceCreditGrant', id: string, amount: number, type: BillingCreditGrantType, effectiveAt: string, expiresAt?: string | null, revokedAt?: string | null, sourceGrantId?: string | null, reason?: string | null, isActive: boolean, createdAt: string } };
+export type RevokeWorkspaceCreditGrantMutation = { revokeWorkspaceCreditGrant: { __typename: 'AdminPanelWorkspaceCreditGrant', id: string, amount: number, type: Types.BillingCreditGrantType, effectiveAt: string, expiresAt: string | null, revokedAt: string | null, sourceGrantId: string | null, reason: string | null, isActive: boolean, createdAt: string } };
 
 export type UpdateServerAdminAccessMutationVariables = Exact<{
-  userId: Scalars['UUID']['input'];
-  canAccessFullAdminPanel?: InputMaybe<Scalars['Boolean']['input']>;
-  canImpersonate?: InputMaybe<Scalars['Boolean']['input']>;
-  otp?: InputMaybe<Scalars['String']['input']>;
+  userId: string;
+  canAccessFullAdminPanel?: boolean | null | undefined;
+  canImpersonate?: boolean | null | undefined;
+  otp?: string | null | undefined;
 }>;
 
 
-export type UpdateServerAdminAccessMutation = { __typename?: 'Mutation', updateServerAdminAccess: { __typename?: 'ServerAdmin', id: string, email: string, firstName: string, lastName: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean } };
+export type UpdateServerAdminAccessMutation = { updateServerAdminAccess: { __typename: 'ServerAdmin', id: string, email: string, firstName: string, lastName: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean } };
 
 export type UpdateWorkspaceFeatureFlagMutationVariables = Exact<{
-  workspaceId: Scalars['UUID']['input'];
-  featureFlag: Scalars['String']['input'];
-  value: Scalars['Boolean']['input'];
+  workspaceId: string;
+  featureFlag: string;
+  value: boolean;
 }>;
 
 
-export type UpdateWorkspaceFeatureFlagMutation = { __typename?: 'Mutation', updateWorkspaceFeatureFlag: boolean };
+export type UpdateWorkspaceFeatureFlagMutation = { updateWorkspaceFeatureFlag: boolean };
 
 export type UpdateWorkspaceUsageLimitMutationVariables = Exact<{
-  workspaceId: Scalars['UUID']['input'];
-  payload: UpdateUsageLimitInput;
+  workspaceId: string;
+  payload: Types.UpdateUsageLimitInput;
 }>;
 
 
-export type UpdateWorkspaceUsageLimitMutation = { __typename?: 'Mutation', updateWorkspaceUsageLimit: { __typename?: 'AdminPanelUsageLimit', id: string } };
+export type UpdateWorkspaceUsageLimitMutation = { updateWorkspaceUsageLimit: { __typename: 'AdminPanelUsageLimit', id: string } };
 
 export type AdminPanelRecentUsersQueryVariables = Exact<{
-  searchTerm?: InputMaybe<Scalars['String']['input']>;
+  searchTerm?: string | null | undefined;
 }>;
 
 
-export type AdminPanelRecentUsersQuery = { __typename?: 'Query', adminPanelRecentUsers: Array<{ __typename?: 'AdminPanelRecentUser', id: string, email: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, createdAt: string, workspaceName?: string | null, workspaceId?: string | null, workspaceLogo?: string | null }> };
+export type AdminPanelRecentUsersQuery = { adminPanelRecentUsers: Array<{ __typename: 'AdminPanelRecentUser', id: string, email: string, firstName: string | null, lastName: string | null, avatarUrl: string | null, createdAt: string, workspaceName: string | null, workspaceId: string | null, workspaceLogo: string | null }> };
 
 export type AdminPanelTopWorkspacesQueryVariables = Exact<{
-  searchTerm?: InputMaybe<Scalars['String']['input']>;
+  searchTerm?: string | null | undefined;
 }>;
 
 
-export type AdminPanelTopWorkspacesQuery = { __typename?: 'Query', adminPanelTopWorkspaces: Array<{ __typename?: 'AdminPanelTopWorkspace', id: string, logoUrl?: string | null, name: string, totalUsers: number, subdomain: string }> };
+export type AdminPanelTopWorkspacesQuery = { adminPanelTopWorkspaces: Array<{ __typename: 'AdminPanelTopWorkspace', id: string, logoUrl: string | null, name: string, totalUsers: number, subdomain: string }> };
 
 export type FindOneAdminApplicationRegistrationQueryVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: string;
 }>;
 
 
-export type FindOneAdminApplicationRegistrationQuery = { __typename?: 'Query', findOneAdminApplicationRegistration: { __typename?: 'ApplicationRegistration', configurationIssues: Array<ApplicationRegistrationConfigurationIssue>, id: string, universalIdentifier: string, name: string, logoUrl?: string | null, galleryImagesUrls: Array<string>, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, isListed: boolean, isVetted: boolean, isPreInstalled: boolean, isConfigured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string } };
+export type FindOneAdminApplicationRegistrationQuery = { findOneAdminApplicationRegistration: { __typename: 'ApplicationRegistration', configurationIssues: Array<Types.ApplicationRegistrationConfigurationIssue>, id: string, universalIdentifier: string, name: string, logoUrl: string | null, galleryImagesUrls: Array<string>, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: Types.ApplicationRegistrationSourceType, sourcePackage: string | null, latestAvailableVersion: string | null, isListed: boolean, isVetted: boolean, isPreInstalled: boolean, isConfigured: boolean, ownerWorkspaceId: string | null, createdAt: string, updatedAt: string } };
 
 export type GetAdminChatThreadMessagesQueryVariables = Exact<{
-  workspaceId: Scalars['UUID']['input'];
-  threadId: Scalars['UUID']['input'];
+  workspaceId: string;
+  threadId: string;
 }>;
 
 
-export type GetAdminChatThreadMessagesQuery = { __typename?: 'Query', getAdminChatThreadMessages: { __typename?: 'AdminChatThreadMessages', thread: { __typename?: 'AdminWorkspaceChatThread', id: string, title?: string | null, totalInputTokens: number, totalOutputTokens: number, conversationSize: number, messageCount: number, createdAt: string, updatedAt: string }, messages: Array<{ __typename?: 'AdminChatMessage', id: string, role: AgentMessageRole, createdAt: string, parts: Array<{ __typename?: 'AdminChatMessagePart', type: string, orderIndex: number, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, state?: string | null, errorMessage?: string | null }> }> } };
+export type GetAdminChatThreadMessagesQuery = { getAdminChatThreadMessages: { __typename: 'AdminChatThreadMessages', thread: { __typename: 'AdminWorkspaceChatThread', id: string, title: string | null, totalInputTokens: number, totalOutputTokens: number, conversationSize: number, messageCount: number, createdAt: string, updatedAt: string }, messages: Array<{ __typename: 'AdminChatMessage', id: string, role: Types.AgentMessageRole, createdAt: string, parts: Array<{ __typename: 'AdminChatMessagePart', type: string, orderIndex: number, textContent: string | null, reasoningContent: string | null, toolName: string | null, toolCallId: string | null, toolInput: any, toolOutput: any, state: string | null, errorMessage: string | null }> }> } };
 
 export type GetAdminWorkspaceChatThreadsQueryVariables = Exact<{
-  workspaceId: Scalars['UUID']['input'];
+  workspaceId: string;
 }>;
 
 
-export type GetAdminWorkspaceChatThreadsQuery = { __typename?: 'Query', getAdminWorkspaceChatThreads: Array<{ __typename?: 'AdminWorkspaceChatThread', id: string, title?: string | null, totalInputTokens: number, totalOutputTokens: number, conversationSize: number, messageCount: number, createdAt: string, updatedAt: string }> };
+export type GetAdminWorkspaceChatThreadsQuery = { getAdminWorkspaceChatThreads: Array<{ __typename: 'AdminWorkspaceChatThread', id: string, title: string | null, totalInputTokens: number, totalOutputTokens: number, conversationSize: number, messageCount: number, createdAt: string, updatedAt: string }> };
 
 export type GetServerAdminsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetServerAdminsQuery = { __typename?: 'Query', getServerAdmins: Array<{ __typename?: 'ServerAdmin', id: string, email: string, firstName: string, lastName: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean }> };
+export type GetServerAdminsQuery = { getServerAdmins: Array<{ __typename: 'ServerAdmin', id: string, email: string, firstName: string, lastName: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean }> };
 
 export type GetUpgradeStatusQueryVariables = Exact<{
-  workspaceIds: Array<Scalars['UUID']['input']> | Scalars['UUID']['input'];
+  workspaceIds: Array<string> | string;
 }>;
 
 
-export type GetUpgradeStatusQuery = { __typename?: 'Query', getUpgradeStatus: Array<{ __typename?: 'WorkspaceUpgradeStatus', workspaceId: string, displayName?: string | null, inferredVersion?: string | null, health: UpgradeHealth, latestCommand?: { __typename?: 'LatestUpgradeCommand', name: string, status: string, executedByVersion: string, errorMessage?: string | null, createdAt: string } | null }> };
+export type GetUpgradeStatusQuery = { getUpgradeStatus: Array<{ __typename: 'WorkspaceUpgradeStatus', workspaceId: string, displayName: string | null, inferredVersion: string | null, health: Types.UpgradeHealth, latestCommand: { __typename: 'LatestUpgradeCommand', name: string, status: string, executedByVersion: string, errorMessage: string | null, createdAt: string } | null }> };
 
 export type GetVersionInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetVersionInfoQuery = { __typename?: 'Query', versionInfo: { __typename?: 'VersionInfo', currentVersion?: string | null, latestVersion?: string | null } };
+export type GetVersionInfoQuery = { versionInfo: { __typename: 'VersionInfo', currentVersion: string | null, latestVersion: string | null } };
 
 export type WorkspaceBillingAdminPanelQueryVariables = Exact<{
-  workspaceId: Scalars['UUID']['input'];
+  workspaceId: string;
 }>;
 
 
-export type WorkspaceBillingAdminPanelQuery = { __typename?: 'Query', workspaceBillingAdminPanel?: { __typename?: 'AdminPanelWorkspaceBilling', stripeCustomerId?: string | null, creditBalance?: number | null, creditGrants: Array<{ __typename?: 'AdminPanelWorkspaceCreditGrant', id: string, amount: number, type: BillingCreditGrantType, effectiveAt: string, expiresAt?: string | null, revokedAt?: string | null, sourceGrantId?: string | null, reason?: string | null, isActive: boolean, createdAt: string }>, usage?: { __typename?: 'AdminPanelWorkspaceUsage', periodStart: string, periodEnd: string, workspaceCreditsUsed: number, workspaceCreditsGranted: number, workspaceCreditsExtraGranted: number, workspaceCreditsTotalGranted: number, workspaceCreditsRemaining: number } | null, subscription?: { __typename?: 'AdminPanelWorkspaceSubscription', stripeSubscriptionId: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, currency: string, planKey?: string | null, currentPeriodStart: string, currentPeriodEnd: string, trialStart?: string | null, trialEnd?: string | null, cancelAt?: string | null, canceledAt?: string | null, cancelAtPeriodEnd: boolean, items: Array<{ __typename?: 'AdminPanelWorkspaceSubscriptionItem', productName: string, productKey?: string | null, stripePriceId: string, quantity?: number | null, unitAmount?: number | null, includedCredits?: number | null }> } | null } | null };
+export type WorkspaceBillingAdminPanelQuery = { workspaceBillingAdminPanel: { __typename: 'AdminPanelWorkspaceBilling', stripeCustomerId: string | null, creditBalance: number | null, creditGrants: Array<{ __typename: 'AdminPanelWorkspaceCreditGrant', id: string, amount: number, type: Types.BillingCreditGrantType, effectiveAt: string, expiresAt: string | null, revokedAt: string | null, sourceGrantId: string | null, reason: string | null, isActive: boolean, createdAt: string }>, usage: { __typename: 'AdminPanelWorkspaceUsage', periodStart: string, periodEnd: string, workspaceCreditsUsed: number, workspaceCreditsGranted: number, workspaceCreditsExtraGranted: number, workspaceCreditsTotalGranted: number, workspaceCreditsRemaining: number } | null, subscription: { __typename: 'AdminPanelWorkspaceSubscription', stripeSubscriptionId: string, status: Types.SubscriptionStatus, interval: Types.SubscriptionInterval | null, currency: string, planKey: string | null, currentPeriodStart: string, currentPeriodEnd: string, trialStart: string | null, trialEnd: string | null, cancelAt: string | null, canceledAt: string | null, cancelAtPeriodEnd: boolean, items: Array<{ __typename: 'AdminPanelWorkspaceSubscriptionItem', productName: string, productKey: string | null, stripePriceId: string, quantity: number | null, unitAmount: number | null, includedCredits: number | null }> } | null } | null };
 
 export type UserLookupAdminPanelQueryVariables = Exact<{
-  userIdentifier: Scalars['String']['input'];
+  userIdentifier: string;
 }>;
 
 
-export type UserLookupAdminPanelQuery = { __typename?: 'Query', userLookupAdminPanel: { __typename?: 'UserLookup', user?: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null, createdAt: string } | null, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, activationStatus: WorkspaceActivationStatus, createdAt: string, allowImpersonation: boolean, workspaceUrls: { __typename?: 'WorkspaceUrls', customUrl?: string | null, subdomainUrl: string }, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
+export type UserLookupAdminPanelQuery = { userLookupAdminPanel: { __typename: 'UserLookup', user: { __typename: 'UserInfo', id: string, email: string, firstName: string | null, lastName: string | null, createdAt: string } | null, workspaces: Array<{ __typename: 'WorkspaceInfo', id: string, name: string, logo: string | null, totalUsers: number, activationStatus: Types.WorkspaceActivationStatus, createdAt: string, allowImpersonation: boolean, workspaceUrls: { __typename: 'WorkspaceUrls', customUrl: string | null, subdomainUrl: string }, users: Array<{ __typename: 'UserInfo', id: string, email: string, firstName: string | null, lastName: string | null }>, featureFlags: Array<{ __typename: 'FeatureFlag', key: Types.FeatureFlagKey, value: boolean }> }> } };
 
 export type WorkspaceDataExportsQueryVariables = Exact<{
-  workspaceId: Scalars['UUID']['input'];
+  workspaceId: string;
 }>;
 
 
-export type WorkspaceDataExportsQuery = { __typename?: 'Query', workspaceDataExports: Array<{ __typename?: 'WorkspaceDataExport', id: string, workspaceId: string, status: WorkspaceDataExportStatus, sizeInBytes: number, createdAt: string, downloadUrl?: string | null, objects: Array<{ __typename?: 'WorkspaceDataExportObject', nameSingular: string, labelSingular: string, fieldCount: number, recordCount: number, isExported: boolean }> }> };
+export type WorkspaceDataExportsQuery = { workspaceDataExports: Array<{ __typename: 'WorkspaceDataExport', id: string, workspaceId: string, status: Types.WorkspaceDataExportStatus, sizeInBytes: number, createdAt: string, downloadUrl: string | null, objects: Array<{ __typename: 'WorkspaceDataExportObject', nameSingular: string, labelSingular: string, fieldCount: number, recordCount: number, isExported: boolean }> }> };
 
 export type WorkspaceLookupAdminPanelQueryVariables = Exact<{
-  workspaceId: Scalars['UUID']['input'];
+  workspaceId: string;
 }>;
 
 
-export type WorkspaceLookupAdminPanelQuery = { __typename?: 'Query', workspaceLookupAdminPanel: { __typename?: 'UserLookup', user?: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null, createdAt: string } | null, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, allowImpersonation: boolean, logo?: string | null, totalUsers: number, activationStatus: WorkspaceActivationStatus, createdAt: string, workspaceUrls: { __typename?: 'WorkspaceUrls', customUrl?: string | null, subdomainUrl: string }, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, isAdmin?: boolean | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
+export type WorkspaceLookupAdminPanelQuery = { workspaceLookupAdminPanel: { __typename: 'UserLookup', user: { __typename: 'UserInfo', id: string, email: string, firstName: string | null, lastName: string | null, createdAt: string } | null, workspaces: Array<{ __typename: 'WorkspaceInfo', id: string, name: string, allowImpersonation: boolean, logo: string | null, totalUsers: number, activationStatus: Types.WorkspaceActivationStatus, createdAt: string, workspaceUrls: { __typename: 'WorkspaceUrls', customUrl: string | null, subdomainUrl: string }, users: Array<{ __typename: 'UserInfo', id: string, email: string, firstName: string | null, lastName: string | null, avatarUrl: string | null, isAdmin: boolean | null }>, featureFlags: Array<{ __typename: 'FeatureFlag', key: Types.FeatureFlagKey, value: boolean }> }> } };
 
 export type WorkspaceUsageLimitsQueryVariables = Exact<{
-  workspaceId: Scalars['UUID']['input'];
+  workspaceId: string;
 }>;
 
 
-export type WorkspaceUsageLimitsQuery = { __typename?: 'Query', workspaceUsageLimits: { __typename?: 'AdminPanelWorkspaceUsageLimits', defaults: Array<{ __typename?: 'AdminPanelUsageLimitDefault', resourceType: UsageResourceType, operationType: UsageOperationType, spenderType: string, limitKind: string, periodCount: number, periodUnit: string, unit: UsageUnit, limitValue: any, isOverridable: boolean, overriddenByUsageLimitId?: string | null }>, limits: Array<{ __typename?: 'AdminPanelUsageLimit', id: string, periodCount: number, periodUnit: string, limitValue: any, burstValue?: any | null }> } };
+export type WorkspaceUsageLimitsQuery = { workspaceUsageLimits: { __typename: 'AdminPanelWorkspaceUsageLimits', defaults: Array<{ __typename: 'AdminPanelUsageLimitDefault', resourceType: Types.UsageResourceType, operationType: Types.UsageOperationType, spenderType: string, limitKind: string, periodCount: number, periodUnit: string, unit: Types.UsageUnit, limitValue: any, isOverridable: boolean, overriddenByUsageLimitId: string | null }>, limits: Array<{ __typename: 'AdminPanelUsageLimit', id: string, periodCount: number, periodUnit: string, limitValue: any, burstValue: any }> } };
 
 export type DeleteJobsMutationVariables = Exact<{
-  queueName: Scalars['String']['input'];
-  jobIds: Array<Scalars['String']['input']> | Scalars['String']['input'];
+  queueName: string;
+  jobIds: Array<string> | string;
 }>;
 
 
-export type DeleteJobsMutation = { __typename?: 'Mutation', deleteJobs: { __typename?: 'DeleteJobsResponse', deletedCount: number, results: Array<{ __typename?: 'JobOperationResult', jobId: string, success: boolean, error?: string | null }> } };
+export type DeleteJobsMutation = { deleteJobs: { __typename: 'DeleteJobsResponse', deletedCount: number, results: Array<{ __typename: 'JobOperationResult', jobId: string, success: boolean, error: string | null }> } };
 
 export type RefreshUpgradeStatusMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RefreshUpgradeStatusMutation = { __typename?: 'Mutation', refreshUpgradeStatus: { __typename?: 'InstanceAndAllWorkspacesUpgradeStatus', computedAt: string, instanceUpgradeStatus: { __typename?: 'InstanceUpgradeStatus', inferredVersion?: string | null, health: UpgradeHealth, latestCommand?: { __typename?: 'LatestUpgradeCommand', name: string, status: string, executedByVersion: string, errorMessage?: string | null, createdAt: string } | null }, workspacesBehind: Array<{ __typename?: 'WorkspaceUpgradeRef', id: string, name?: string | null }>, workspacesFailed: Array<{ __typename?: 'WorkspaceUpgradeRef', id: string, name?: string | null }> } };
+export type RefreshUpgradeStatusMutation = { refreshUpgradeStatus: { __typename: 'InstanceAndAllWorkspacesUpgradeStatus', computedAt: string, instanceUpgradeStatus: { __typename: 'InstanceUpgradeStatus', inferredVersion: string | null, health: Types.UpgradeHealth, latestCommand: { __typename: 'LatestUpgradeCommand', name: string, status: string, executedByVersion: string, errorMessage: string | null, createdAt: string } | null }, workspacesBehind: Array<{ __typename: 'WorkspaceUpgradeRef', id: string, name: string | null }>, workspacesFailed: Array<{ __typename: 'WorkspaceUpgradeRef', id: string, name: string | null }> } };
 
 export type RetryJobsMutationVariables = Exact<{
-  queueName: Scalars['String']['input'];
-  jobIds: Array<Scalars['String']['input']> | Scalars['String']['input'];
+  queueName: string;
+  jobIds: Array<string> | string;
 }>;
 
 
-export type RetryJobsMutation = { __typename?: 'Mutation', retryJobs: { __typename?: 'RetryJobsResponse', retriedCount: number, results: Array<{ __typename?: 'JobOperationResult', jobId: string, success: boolean, error?: string | null }> } };
+export type RetryJobsMutation = { retryJobs: { __typename: 'RetryJobsResponse', retriedCount: number, results: Array<{ __typename: 'JobOperationResult', jobId: string, success: boolean, error: string | null }> } };
 
 export type GetIndicatorHealthStatusQueryVariables = Exact<{
-  indicatorId: HealthIndicatorId;
+  indicatorId: Types.HealthIndicatorId;
 }>;
 
 
-export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicatorHealthStatus: { __typename?: 'AdminPanelHealthServiceData', id: HealthIndicatorId, label: string, description: string, status: AdminPanelHealthServiceStatus, errorMessage?: string | null, details?: string | null, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', id: string, queueName: string, status: AdminPanelHealthServiceStatus }> | null } };
+export type GetIndicatorHealthStatusQuery = { getIndicatorHealthStatus: { __typename: 'AdminPanelHealthServiceData', id: Types.HealthIndicatorId, label: string, description: string, status: Types.AdminPanelHealthServiceStatus, errorMessage: string | null, details: string | null, queues: Array<{ __typename: 'AdminPanelWorkerQueueHealth', id: string, queueName: string, status: Types.AdminPanelHealthServiceStatus }> | null } };
 
 export type GetInstanceAndAllWorkspacesUpgradeStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetInstanceAndAllWorkspacesUpgradeStatusQuery = { __typename?: 'Query', getInstanceAndAllWorkspacesUpgradeStatus: { __typename?: 'InstanceAndAllWorkspacesUpgradeStatus', computedAt: string, instanceUpgradeStatus: { __typename?: 'InstanceUpgradeStatus', inferredVersion?: string | null, health: UpgradeHealth, latestCommand?: { __typename?: 'LatestUpgradeCommand', name: string, status: string, executedByVersion: string, errorMessage?: string | null, createdAt: string } | null }, workspacesBehind: Array<{ __typename?: 'WorkspaceUpgradeRef', id: string, name?: string | null }>, workspacesFailed: Array<{ __typename?: 'WorkspaceUpgradeRef', id: string, name?: string | null }> } };
+export type GetInstanceAndAllWorkspacesUpgradeStatusQuery = { getInstanceAndAllWorkspacesUpgradeStatus: { __typename: 'InstanceAndAllWorkspacesUpgradeStatus', computedAt: string, instanceUpgradeStatus: { __typename: 'InstanceUpgradeStatus', inferredVersion: string | null, health: Types.UpgradeHealth, latestCommand: { __typename: 'LatestUpgradeCommand', name: string, status: string, executedByVersion: string, errorMessage: string | null, createdAt: string } | null }, workspacesBehind: Array<{ __typename: 'WorkspaceUpgradeRef', id: string, name: string | null }>, workspacesFailed: Array<{ __typename: 'WorkspaceUpgradeRef', id: string, name: string | null }> } };
 
 export type GetQueueJobsQueryVariables = Exact<{
-  queueName: Scalars['String']['input'];
-  state: JobState;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
+  queueName: string;
+  state: Types.JobState;
+  limit?: number | null | undefined;
+  offset?: number | null | undefined;
 }>;
 
 
-export type GetQueueJobsQuery = { __typename?: 'Query', getQueueJobs: { __typename?: 'QueueJobsResponse', count: number, totalCount: number, hasMore: boolean, jobs: Array<{ __typename?: 'QueueJob', id: string, name: string, data?: any | null, state: JobState, timestamp?: number | null, failedReason?: string | null, processedOn?: number | null, finishedOn?: number | null, attemptsMade: number, returnValue?: any | null, logs?: Array<string> | null, stackTrace?: Array<string> | null }>, retentionConfig: { __typename?: 'QueueRetentionConfig', completedMaxAge: number, completedMaxCount: number, failedMaxAge: number, failedMaxCount: number } } };
+export type GetQueueJobsQuery = { getQueueJobs: { __typename: 'QueueJobsResponse', count: number, totalCount: number, hasMore: boolean, jobs: Array<{ __typename: 'QueueJob', id: string, name: string, data: any, state: Types.JobState, timestamp: number | null, failedReason: string | null, processedOn: number | null, finishedOn: number | null, attemptsMade: number, returnValue: any, logs: Array<string> | null, stackTrace: Array<string> | null }>, retentionConfig: { __typename: 'QueueRetentionConfig', completedMaxAge: number, completedMaxCount: number, failedMaxAge: number, failedMaxCount: number } } };
 
 export type GetQueueMetricsQueryVariables = Exact<{
-  queueName: Scalars['String']['input'];
-  timeRange?: InputMaybe<QueueMetricsTimeRange>;
+  queueName: string;
+  timeRange?: Types.QueueMetricsTimeRange | null | undefined;
 }>;
 
 
-export type GetQueueMetricsQuery = { __typename?: 'Query', getQueueMetrics: { __typename?: 'QueueMetricsData', queueName: string, timeRange: QueueMetricsTimeRange, workers: number, details?: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, failureRate: number } | null, data: Array<{ __typename?: 'QueueMetricsSeries', id: string, data: Array<{ __typename?: 'QueueMetricsDataPoint', x: number, y: number }> }> } };
+export type GetQueueMetricsQuery = { getQueueMetrics: { __typename: 'QueueMetricsData', queueName: string, timeRange: Types.QueueMetricsTimeRange, workers: number, details: { __typename: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, failureRate: number } | null, data: Array<{ __typename: 'QueueMetricsSeries', id: string, data: Array<{ __typename: 'QueueMetricsDataPoint', x: number, y: number }> }> } };
 
 export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', services: Array<{ __typename?: 'SystemHealthService', id: HealthIndicatorId, label: string, status: AdminPanelHealthServiceStatus }> } };
+export type GetSystemHealthStatusQuery = { getSystemHealthStatus: { __typename: 'SystemHealth', services: Array<{ __typename: 'SystemHealthService', id: Types.HealthIndicatorId, label: string, status: Types.AdminPanelHealthServiceStatus }> } };
 
 export type ClearMaintenanceModeMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ClearMaintenanceModeMutation = { __typename?: 'Mutation', clearMaintenanceMode: boolean };
+export type ClearMaintenanceModeMutation = { clearMaintenanceMode: boolean };
 
 export type SetMaintenanceModeMutationVariables = Exact<{
-  startAt: Scalars['DateTime']['input'];
-  endAt: Scalars['DateTime']['input'];
-  link?: InputMaybe<Scalars['String']['input']>;
+  startAt: string;
+  endAt: string;
+  link?: string | null | undefined;
 }>;
 
 
-export type SetMaintenanceModeMutation = { __typename?: 'Mutation', setMaintenanceMode: boolean };
+export type SetMaintenanceModeMutation = { setMaintenanceMode: boolean };
 
 export type GetMaintenanceModeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMaintenanceModeQuery = { __typename?: 'Query', getMaintenanceMode?: { __typename?: 'MaintenanceMode', startAt: string, endAt: string, link?: string | null } | null };
+export type GetMaintenanceModeQuery = { getMaintenanceMode: { __typename: 'MaintenanceMode', startAt: string, endAt: string, link: string | null } | null };
 
 export type RevokeSigningKeyMutationVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: string;
 }>;
 
 
-export type RevokeSigningKeyMutation = { __typename?: 'Mutation', revokeSigningKey: { __typename?: 'SigningKeyDTO', id: string, isCurrent: boolean, createdAt: string, revokedAt?: string | null, verifyCountInWindow: number } };
+export type RevokeSigningKeyMutation = { revokeSigningKey: { __typename: 'SigningKeyDTO', id: string, isCurrent: boolean, createdAt: string, revokedAt: string | null, verifyCountInWindow: number } };
 
 export type GetSigningKeysQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSigningKeysQuery = { __typename?: 'Query', getSigningKeys: { __typename?: 'SigningKeysAdminPanelDTO', legacyVerifyCountInWindow: number, verifyWindowDays: number, signingKeys: Array<{ __typename?: 'SigningKeyDTO', id: string, publicKey: string, isCurrent: boolean, createdAt: string, revokedAt?: string | null, verifyCountInWindow: number }> } };
+export type GetSigningKeysQuery = { getSigningKeys: { __typename: 'SigningKeysAdminPanelDTO', legacyVerifyCountInWindow: number, verifyWindowDays: number, signingKeys: Array<{ __typename: 'SigningKeyDTO', id: string, publicKey: string, isCurrent: boolean, createdAt: string, revokedAt: string | null, verifyCountInWindow: number }> } };
 
-export type ApplicationRegistrationFragmentFragment = { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, logoUrl?: string | null, galleryImagesUrls: Array<string>, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, isListed: boolean, isVetted: boolean, isPreInstalled: boolean, isConfigured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string };
+export type ApplicationRegistrationFragmentFragment = { __typename: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, logoUrl: string | null, galleryImagesUrls: Array<string>, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: Types.ApplicationRegistrationSourceType, sourcePackage: string | null, latestAvailableVersion: string | null, isListed: boolean, isVetted: boolean, isPreInstalled: boolean, isConfigured: boolean, ownerWorkspaceId: string | null, createdAt: string, updatedAt: string };
 
 export const UserInfoFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserInfoFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<UserInfoFragmentFragment, unknown>;
 export const ApplicationRegistrationFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApplicationRegistrationFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApplicationRegistration"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"galleryImagesUrls"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthClientId"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthRedirectUris"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthScopes"}},{"kind":"Field","name":{"kind":"Name","value":"sourceType"}},{"kind":"Field","name":{"kind":"Name","value":"sourcePackage"}},{"kind":"Field","name":{"kind":"Name","value":"latestAvailableVersion"}},{"kind":"Field","name":{"kind":"Name","value":"isListed"}},{"kind":"Field","name":{"kind":"Name","value":"isVetted"}},{"kind":"Field","name":{"kind":"Name","value":"isPreInstalled"}},{"kind":"Field","name":{"kind":"Name","value":"isConfigured"}},{"kind":"Field","name":{"kind":"Name","value":"ownerWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ApplicationRegistrationFragmentFragment, unknown>;
