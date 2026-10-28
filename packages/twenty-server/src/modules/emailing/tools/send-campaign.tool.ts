@@ -9,8 +9,8 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { SEND_CAMPAIGN_TOOL_NAME } from 'src/modules/emailing/constants/send-campaign-tool-name.constant';
 import { MessageCampaignScheduleService } from 'src/modules/emailing/services/message-campaign-schedule.service';
-import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 
 const sendCampaignInputSchema = z.object({
   campaignId: z.uuid().describe('The UUID of the messageCampaign record.'),
@@ -31,21 +31,20 @@ const sendCampaignInputSchema = z.object({
 });
 
 @DefineTool({
-  name: 'send_campaign',
+  name: SEND_CAMPAIGN_TOOL_NAME,
   category: ToolCategory.ACTION,
   requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
   requiredFeatureFlags: [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED],
   description:
     'Send an email campaign to its list now, or schedule it. This emails real people and cannot be undone once sending starts. ' +
     'Only call it after the person explicitly asked to send this campaign and approved the recipient count from preview_campaign_send. ' +
-    'Unsubscribed and suppressed recipients are always skipped. ' +
+    'Unsubscribed and suppressed recipients are always skipped. A scheduled send goes to the list as it is at send time. ' +
     'Returns the campaign ID and its status; read the messageCampaign record to follow progress and statistics.',
 })
 export class SendCampaignTool extends BaseTool<typeof sendCampaignInputSchema> {
   readonly inputSchema = sendCampaignInputSchema;
 
   constructor(
-    private readonly messageCampaignService: MessageCampaignService,
     private readonly messageCampaignScheduleService: MessageCampaignScheduleService,
     private readonly emailGroupAccessService: EmailGroupAccessService,
   ) {
@@ -54,7 +53,7 @@ export class SendCampaignTool extends BaseTool<typeof sendCampaignInputSchema> {
 
   async execute({
     input: { campaignId, scheduledAt, expectedRecipientCount },
-    context: { workspaceId, userWorkspaceId, locale },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof sendCampaignInputSchema>): Promise<ToolOutput> {
     if (!isDefined(userWorkspaceId)) {
       return {
@@ -70,38 +69,13 @@ export class SendCampaignTool extends BaseTool<typeof sendCampaignInputSchema> {
       ? new Date(scheduledAt)
       : undefined;
 
-    const preview = await this.messageCampaignService.previewSend({
-      workspaceId,
-      userWorkspaceId,
-      campaignId,
-      scheduledAt: scheduledAtDate,
-      locale,
-    });
-
-    if (preview.blockers.length > 0) {
-      return {
-        success: false,
-        message: 'Failed to send campaign',
-        error: preview.blockers.map(({ message }) => message).join(' '),
-      };
-    }
-
-    const sendableCount = preview.audience?.sendable ?? 0;
-
-    if (sendableCount !== expectedRecipientCount) {
-      return {
-        success: false,
-        message: 'Failed to send campaign',
-        error: `The campaign would now reach ${sendableCount} recipient(s), not the ${expectedRecipientCount} that were approved. Show the person the new count before sending.`,
-      };
-    }
-
     const { queuedCount } =
       await this.messageCampaignScheduleService.sendNowOrScheduleOrThrow({
         workspaceId,
         userWorkspaceId,
         campaignId,
         scheduledAt: scheduledAtDate,
+        expectedRecipientCount,
       });
 
     return {

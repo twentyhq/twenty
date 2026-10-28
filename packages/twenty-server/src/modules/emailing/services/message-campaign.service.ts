@@ -77,15 +77,18 @@ export class MessageCampaignService {
     workspaceId,
     userWorkspaceId,
     campaignId,
+    expectedRecipientCount,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     campaignId: string;
+    expectedRecipientCount?: number;
   }): Promise<SendCampaignResult> {
     const prepared = await this.prepareCampaignSendOrThrow({
       workspaceId,
       userWorkspaceId,
       campaignId,
+      expectedRecipientCount,
     });
 
     return this.claimAndMaterializeOrThrow({
@@ -171,11 +174,13 @@ export class MessageCampaignService {
     userWorkspaceId,
     campaignId,
     requestedScheduledAt,
+    expectedRecipientCount,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     campaignId: string;
     requestedScheduledAt?: Date;
+    expectedRecipientCount?: number;
   }): Promise<PreparedCampaignSend> {
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
@@ -196,6 +201,16 @@ export class MessageCampaignService {
       roleId,
       requestedScheduledAt,
     });
+
+    if (
+      isDefined(expectedRecipientCount) &&
+      sendableRecipients.length !== expectedRecipientCount
+    ) {
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} would now reach ${sendableRecipients.length} recipient(s), not the ${expectedRecipientCount} that were approved`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+      );
+    }
 
     const messageChannel =
       await this.messageChannelMetadataService.getOrCreateEmailGroupChannel({
@@ -488,8 +503,7 @@ export class MessageCampaignService {
     return result;
   }
 
-  // The provider has already accepted the mail, so surfacing a billing failure
-  // would invite a retry that sends it a second time.
+  // The provider already accepted the mail, so a billing failure must not invite a resend
   private async billAcceptedSend({
     workspaceId,
     spenders,

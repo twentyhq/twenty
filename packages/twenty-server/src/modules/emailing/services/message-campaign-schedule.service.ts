@@ -40,11 +40,13 @@ export class MessageCampaignScheduleService {
     userWorkspaceId,
     campaignId,
     scheduledAt,
+    expectedRecipientCount,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     campaignId: string;
     scheduledAt?: Date;
+    expectedRecipientCount?: number;
   }): Promise<SendCampaignResult> {
     const isPayingCustomer =
       await this.billingService.isPayingCustomer(workspaceId);
@@ -67,6 +69,7 @@ export class MessageCampaignScheduleService {
         userWorkspaceId,
         campaignId,
         scheduledAt,
+        expectedRecipientCount,
       });
     }
 
@@ -74,6 +77,7 @@ export class MessageCampaignScheduleService {
       workspaceId,
       userWorkspaceId,
       campaignId,
+      expectedRecipientCount,
     });
   }
 
@@ -82,11 +86,13 @@ export class MessageCampaignScheduleService {
     userWorkspaceId,
     campaignId,
     scheduledAt,
+    expectedRecipientCount,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     campaignId: string;
     scheduledAt: Date;
+    expectedRecipientCount?: number;
   }): Promise<SendCampaignResult> {
     const {
       roleId,
@@ -99,6 +105,7 @@ export class MessageCampaignScheduleService {
       userWorkspaceId,
       campaignId,
       requestedScheduledAt: scheduledAt,
+      expectedRecipientCount,
     });
 
     const scheduled =

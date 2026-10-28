@@ -9,6 +9,7 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { SEND_CAMPAIGN_TEST_TOOL_NAME } from 'src/modules/emailing/constants/send-campaign-test-tool-name.constant';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 
 const sendCampaignTestInputSchema = z.object({
@@ -19,7 +20,7 @@ const sendCampaignTestInputSchema = z.object({
 });
 
 @DefineTool({
-  name: 'send_campaign_test',
+  name: SEND_CAMPAIGN_TEST_TOOL_NAME,
   category: ToolCategory.ACTION,
   requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
   requiredFeatureFlags: [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED],
