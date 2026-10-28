@@ -202,6 +202,47 @@ export const PAGE_LAYOUT_ENUM_BINDINGS: EnumBinding[] = [
   ...buildPageLayoutTabEnumBindings(['tabs', '[]']),
 ];
 
+const STEP_PATH = ['version', 'steps', '[]'];
+
+const buildViewFilterOperandBinding = (path: string[]): EnumBinding => ({
+  path,
+  symbol: 'ViewFilterOperand',
+  members: ViewFilterOperand,
+});
+
+// twenty-sdk/define exports no filter group operator enums, so those stay string literals.
+export const WORKFLOW_ENUM_BINDINGS: EnumBinding[] = [
+  buildViewFilterOperandBinding([
+    'version',
+    'trigger',
+    'settings',
+    'filter',
+    'stepFilters',
+    '[]',
+    'operand',
+  ]),
+  buildViewFilterOperandBinding([
+    ...STEP_PATH,
+    'input',
+    'stepFilters',
+    '[]',
+    'operand',
+  ]),
+  buildViewFilterOperandBinding([
+    ...STEP_PATH,
+    'input',
+    'filter',
+    'recordFilters',
+    '[]',
+    'operand',
+  ]),
+  {
+    path: [...STEP_PATH, 'input', '[]', 'type'],
+    symbol: 'FieldType',
+    members: FieldMetadataType,
+  },
+];
+
 const isSamePath = (left: string[], right: string[]): boolean =>
   left.length === right.length &&
   left.every((segment, index) => segment === right[index]);

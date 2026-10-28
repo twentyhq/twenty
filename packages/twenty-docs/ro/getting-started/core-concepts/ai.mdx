@@ -3,9 +3,10 @@ title: AI
 description: Cum folosește Twenty IA pentru a îmbunătăți experiența ta cu CRM-ul.
 ---
 
-import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-Twenty integrează inteligența artificială direct în CRM-ul tău — nu ca pe un artificiu, ci ca pe un instrument care funcționează în cadrul modelului tău de date și al sistemului tău de permisiuni.
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Chatbot IA
 
@@ -28,6 +29,11 @@ Agenții funcționează în cadrul fluxurilor tale de lucru existente, astfel î
 
 Inteligența artificială din Twenty respectă modelul tău de permisiuni. Agenții pot accesa doar obiectele și câmpurile pe care utilizatorul (sau rolul) are permisiunea să le vizualizeze. Datele sensibile rămân protejate chiar și atunci când este implicată inteligența artificială.
 
-<Card title="Ghid complet despre IA" icon="arrow-right" href="/ro/user-guide/ai/overview">
-  Referință detaliată despre chatbot, agenți și controalele de permisiuni.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ro/user-guide/ai/overview" img="/images/documentation/banner-icons-v2/ai.svg">
+  <CardTitle>Ghid complet</CardTitle>
+  Referințe detaliate despre robotul vorbitor, agenții și controalele permisiunilor.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="getting-started-ai" />

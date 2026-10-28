@@ -3,6 +3,11 @@ title: نظرة عامة
 description: شكّل البيانات التي يضيفها تطبيقك إلى مساحة العمل — الكائنات والحقول والعلاقات.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## ما تغطيه طبقة البيانات
+
 طبقة **البيانات** في تطبيق Twenty هي البيانات التي *يضيفها* تطبيقك إلى مساحة العمل — أنواع السجلات الجديدة التي يصرّح عنها، والأعمدة التي يضيفها إلى الكائنات الموجودة، وكيف ترتبط هذه السجلات ببعضها البعض.
 
 ```text
@@ -24,18 +29,22 @@ description: شكّل البيانات التي يضيفها تطبيقك إلى
 
 ## في هذا القسم
 
-<CardGroup cols={2}>
-  <Card title="كائنات" icon="table" href="/ar/developers/extend/apps/data/objects">
-    `defineObject` — صرّح عن أنواع سجلات جديدة مع حقولها الخاصة.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ar/developers/extend/apps/data/objects" img="/images/user-guide/halftone/card-page-objects.svg">
+    <CardTitle>الكائنات</CardTitle>
+    `defineObject` - اعلن عن أنواع السجلات الجديدة مع حقول تخصهم.
   </Card>
-  <Card title="توسيع الكائنات" icon="wand" href="/ar/developers/extend/apps/data/extending-objects">
-    `defineField` — أضِف حقولًا إلى كائنات قياسية أو كائنات تطبيقات أخرى.
+  <Card href="/ar/developers/extend/apps/data/extending-objects" img="/images/user-guide/halftone/card-page-extending-objects.svg">
+    <CardTitle>توسيع الكائنات</CardTitle>
+    `defineField` - إضافة حقول إلى الكائنات القياسية أو التطبيقات الأخرى.
   </Card>
-  <Card title="العلاقات" icon="sitemap" href="/ar/developers/extend/apps/data/relations">
-    اتصالات ثنائية الاتجاه من نوع `MANY_TO_ONE` / `ONE_TO_MANY` بين الكائنات.
+  <Card href="/ar/developers/extend/apps/data/relations" img="/images/user-guide/halftone/card-page-relations.svg">
+    <CardTitle>العلاقات</CardTitle>
+    الاتصالات الثنائية الاتجاه `MANY_TO_ONE` / `ONE_TO_MANY` بين الأشياء.
   </Card>
-  <Card title="أنواع أنشطة الجدول الزمني" icon="history" href="/ar/developers/extend/apps/data/timeline-activity-types">
-    حدّد أحداث التدقيق التلقائية وأحداث التطبيق المحددة صراحةً للجداول الزمنية للسجلات.
+  <Card href="/ar/developers/extend/apps/data/timeline-activity-types" img="/images/user-guide/halftone/card-page-timeline.svg">
+    <CardTitle>النشاط من النوع</CardTitle>
+    حدد أحداث المراجعة التلقائية وأحداث التطبيق الصريحة لجداول زمنية للتسجيل.
   </Card>
 </CardGroup>
 
@@ -47,9 +56,9 @@ description: شكّل البيانات التي يضيفها تطبيقك إلى
 | **الحقل**                  | عمود على كائن. يمكن للحقول المستقلة توسيع الكائنات التي لم تنشئها (مثل إضافة `loyaltyTier` إلى Company) | `defineField()`                         |
 | **علاقة**                  | ارتباط ثنائي الاتجاه بين كائنين — يُصرّح عن كلا الجانبين كحقول                                          | `defineField()` مع `FieldType.RELATION` |
 | **الفهرس**                 | فهرس قاعدة بيانات لتسريع استعلام متكرر على أحد الكائنات لديك                                            | `defineIndex()`                         |
-| **نوع نشاط الجدول الزمني** | حدث تدقيق تلقائي أو حدث مجال صريح يظهر في المخططات الزمنية للسجلات.                                     | `defineTimelineActivityType()`          |
+| **نوع نشاط الجدول الزمني** | حدث تدقيق تلقائي أو حدث مجال صريح يظهر في المخططات الزمنية للسجلات                                      | `defineTimelineActivityType()`          |
 
-يكتشف SDK هذه العناصر عبر تحليل AST أثناء وقت الإنشاء، لذا تنظيم الملفات يعود إليك — الاصطلاح هو `src/objects/` و `src/fields/` و `src/indexes/` و `src/timeline-activity-types/`. معرّفات UUID ثابتة من نوع `universalIdentifier` تربط كل شيء معًا عبر عمليات النشر.
+يكتشف CLI هذه العناصر عبر تحليل AST أثناء وقت البناء، لذا تنظيم الملفات يعود إليك — القاعدة المتّبعة هي `src/objects/` و `src/fields/` و `src/indexes/` و `src/timeline-activity-types/`. معرّفات UUID ثابتة من نوع `universalIdentifier` تربط كل شيء معًا عبر عمليات النشر.
 
 ## الفهارس (اختياري)
 
@@ -98,3 +107,5 @@ defineIndex({
 <Note>
 هل تبحث عن **Application Config** أو **Roles & Permissions**؟ هذه تصف التطبيق نفسه بدلًا من البيانات التي يضيفها — وتوجد ضمن [Config](/ar/developers/extend/apps/config/overview). هل تبحث عن **Connections** (Linear, GitHub, Slack OAuth)؟ هذه وُجِدت ليتم استدعاؤها *من* دوال المنطق وتوجد ضمن [Logic](/ar/developers/extend/apps/logic/connections).
 </Note>
+
+<PageBanner illustration="section-apps-data" />

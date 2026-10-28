@@ -1,0 +1,191 @@
+---
+title: الصورة الرمزية
+description: مثّل شخصًا أو سجلًا بصورة أو حرف أول أو أيقونة.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import AvatarReference from '/snippets/ui/generated/data-display/avatar.mdx';
+
+## نظرة عامة
+
+يعرض `Avatar` صورة مع بديل للحرف الأول. استخدمه بجانب اسم سجل أو داخل [شريحة](/ar/ui/primitives/data-display/chip). العنصر الجذر الافتراضي له هو `span` للعرض.
+
+<StoryEmbed storyId="ui-data-display-avatar--display" title="مثال على Avatar" height={90} />
+
+## استخدام
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const WorkspaceAvatar = () => (
+  <Avatar
+    name="Acme"
+    colorSeed="acme-app"
+    shape="square"
+    variant="outline"
+    size="md"
+  />
+);
+```
+
+عند غياب الصورة أو تعذر تحميلها، يعرض البديل الحرف الأول من الاسم بعد إزالة المسافات منه، بأحرف كبيرة. يعرض الاسم الفارغ `-`. يختار `colorSeed` ألوانًا ثابتة للبديل ويكون افتراضيًا `name`؛ استخدم معرّف سجل للحفاظ على ثبات اللون عند تغيير الاسم.
+
+الصورة والبديل الافتراضي للعودة عنصران زخرفيان. يوفر `name` الحرف الأول المرئي وألوان البديل للعودة من دون إضافة تسمية يمكن الوصول إليها. عندما تكون الصورة الرمزية هي التمثيل الوحيد لشخص أو سجل، اضبط `imageProps={{ alt: name }}` لتسمية كل من الصورة والبديل الافتراضي للعودة. أبقِ الصورة الرمزية زخرفية عندما يوفّر اسم مرئي أو مالك مُسمّى هذه المعلومات بالفعل.
+
+يقبل `imageProps` عقد الصورة الكامل، بما في ذلك `srcSet` و`sizes` و`crossOrigin` و`referrerPolicy` والأحداث الأصلية والمراجع و`render`. تتجاوز خاصية `src` الخاصة به الاختصار `src`. يقبل `fallbackProps` عقد البديل للعودة الكامل، بما في ذلك `delay` والعناصر التابعة والتسمية والمراجع و`render`. يتولى `render` المخصص للبديل للعودة دلالات إمكانية الوصول الخاصة به؛ اضبط `aria-hidden` صراحةً عندما يكون زخرفيًا.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type RecordAvatarProps = {
+  name: string;
+  imageUrl?: string;
+  initials: string;
+};
+
+export const RecordAvatar = ({
+  name,
+  imageUrl,
+  initials,
+}: RecordAvatarProps) => (
+  <Avatar
+    name={name}
+    src={imageUrl}
+    size="lg"
+    imageProps={{ alt: name, decoding: 'async', referrerPolicy: 'no-referrer' }}
+    fallbackProps={{ children: initials, delay: 150 }}
+  />
+);
+```
+
+## ركّب الأجزاء
+
+استخدم `Avatar.Root` و`Avatar.Image` و`Avatar.Fallback` عندما تكون مسؤولًا عن البنية. يوفر Root الحجم والشكل ومظهر البديل للعودة؛ ولا ينشئ عناصر تابعة أو تسميات يمكن الوصول إليها.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type ContactAvatarProps = {
+  name: string;
+  imageUrl?: string;
+  initials: string;
+};
+
+export const ContactAvatar = ({
+  name,
+  imageUrl,
+  initials,
+}: ContactAvatarProps) => (
+  <Avatar.Root name={name} shape="circle" size="xxl">
+    <Avatar.Image src={imageUrl} alt={name} decoding="async" />
+    <Avatar.Fallback role="img" aria-label={name} delay={150}>
+      {initials}
+    </Avatar.Fallback>
+  </Avatar.Root>
+);
+```
+
+<StoryEmbed storyId="ui-data-display-avatar--parts" title="أجزاء الصورة الرمزية" height={110} />
+
+تتشارك الأجزاء حالة تحميل الصورة في Base UI. يعرض Image عنصر `img` بعد تحميل ناجح افتراضيًا، ويعرض Fallback عنصر `span` بينما تكون الصورة غائبة أو قيد التحميل أو فشل تحميلها. تؤخر `delay` العرض الأولي للبديل للعودة بالمللي ثانية، وتكون قيمتها الافتراضية `0`. يُحمّل مصدر متغيّر مرة أخرى ويمكنه استبدال الصورة الحالية أو البديل للعودة.
+
+يكشف `Avatar.Image` عن `onLoadingStatusChange` مع قيم الحالة `idle` و`loading` و`loaded` و`error`. يُشغَّل رد الاتصال عندما تُبلغ Base UI عن تغيّر حالة غير `idle`؛ وتؤدي إزالة تركيب جزء Image إلى إعادة تعيين حالة الجذر المشتركة إلى `idle`. تقبل Root وImage وFallback دوال `className` و`style` و`render` المدركة للحالة مع `imageLoadingStatus`؛ ويكشف Image أيضًا عن `transitionStatus`.
+
+استخدم `keepMounted` على Image عندما يجب تحميل الصورة المعروضة في موضعها، بما في ذلك `loading="lazy"` أو مكوّن صورة محسّن. مرّر السمات والأحداث الأصلية والمرجع من مُصيّرات الصور المخصصة. قد تظل الصورة المركبة قيد التحميل أو يكون تحميلها قد فشل؛ افحص حالة التحميل بدلًا من اعتبار وجودها نجاحًا.
+
+يدعم مُصيّر المكوّن الأمامي حاليًا مسار التحميل المسبق الافتراضي باستخدام `src`. لا تتلقى صورة المضيف الخاصة به `srcSet` أو `sizes` أو `loading` أو `decoding` أو `referrerPolicy`. قد تؤدي دالة `render` مخصصة متغيرة مع `keepMounted` إلى إبقاء صورة مفككة مخفية لأن العامل لا يمكنه قراءة حالة اكتمالها أو أبعادها. استخدم التحميل المسبق الافتراضي هناك إلى أن تتوفر إمكانات المُصيّر هذه.
+
+تُصدَّر الأنواع العامة `AvatarRootProps` و`AvatarImageProps` و`AvatarFallbackProps` و`AvatarRootState` و`AvatarImageState` و`AvatarFallbackState` و`AvatarImageLoadingStatus` من `twenty-ui/primitives/data-display`. تستهدف المراجع عنصر DOM المعروض: `span` و`img` و`span` افتراضيًا، أو العنصر المقدم عبر `render`.
+
+## الشكل والمظهر
+
+<StoryEmbed storyId="ui-data-display-avatar--catalog" title="أحجام وأشكال الصور الرمزية" height={320} />
+
+يقبل `shape` القيم `square` أو `rounded-square` أو `circle`. الأحجام هي `xs` ‏(12px)، و`sm` ‏(14px)، و`md` ‏(16px)، و`lg` ‏(24px)، و`xl` ‏(32px)، و`xxl` ‏(40px). يستخدم كل من `xl` و`xxl` نصًا احتياطيًا بحجم 16px.
+
+أصبح الحجم السابق `xl` البالغ 40px هو الآن `xxl`. حدّث استخدامات `size="xl"` الحالية إلى `size="xxl"` عندما ينبغي أن تظل بحجم 40px.
+
+تضيف `variant="outline"` حدًا إلى البديل. تخصص تجاوزات `color` و`backgroundColor` و`borderColor` البديل، بينما تحافظ الصورة المحمّلة على مظهرها الأصلي.
+
+```tsx
+import { IconUser } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const ContactIcon = () => (
+  <Avatar
+    icon={<IconUser />}
+    shape="rounded-square"
+    size="xxl"
+    role="img"
+    aria-label="Contact"
+  />
+);
+```
+
+تكون للأيقونة `icon` الأولوية على كل من الصورة والبديل ذي الحرف الأول. الأيقونة نفسها زخرفية، لذا سمِّ الجذر عندما تنقل معلومات. تُحرّك `pulsing` الشفافية وتحترم تفضيلات تقليل الحركة.
+
+## فتح ملف شخصي
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type ProfileAvatarProps = {
+  onOpenProfile: () => void;
+  disabled?: boolean;
+};
+
+export const ProfileAvatar = ({
+  onOpenProfile,
+  disabled = false,
+}: ProfileAvatarProps) => (
+  <Avatar
+    name="Jane"
+    shape="circle"
+    size="lg"
+    render={
+      <button
+        type="button"
+        disabled={disabled}
+        aria-label="Open Jane's profile"
+        onClick={onOpenProfile}
+      />
+    }
+  />
+);
+```
+
+<StoryEmbed storyId="ui-data-display-avatar--button-composition" title="صورة رمزية مركبة كزر" height={110} />
+
+ركّب زرًا أصليًا للإجراءات. يتولى التركيز والتنشيط بمفتاحي Enter وSpace وسلوك التعطيل. وفّر اسمًا يمكن الوصول إليه ومحددًا للإجراء. ضع `onClick` و`disabled` على الزر المعروض؛ لا تتضمن الصورة الرمزية المختصرة خاصية `onClick` أو `disabled` أو `nativeButton`.
+
+للتنقل، ركّب رابط ارتساء مع `href` أو رابط موجه يحافظ على دلالات رابط الارتساء. تُفعّل الروابط الأصلية بمفتاح Enter. أبقِ سلوك التنقل والتعطيل مع الرابط أو المكوّن التفاعلي الذي تركّبه.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const ProfileLink = () => (
+  <Avatar
+    name="Jane"
+    shape="circle"
+    size="lg"
+    render={<a href="/people/jane" aria-label="Open Jane's profile" />}
+  />
+);
+```
+
+## رحّل الصور الرمزية القابلة للنقر
+
+ركّب زرًا أصليًا عبر `render` للإجراءات، أو رابط ارتساء أو رابط موجه للتنقل. انقل `onClick` و`disabled` إلى ذلك المالك وأزل `nativeButton`. امنح المالك اسمًا مفيدًا يمكن الوصول إليه وتجنب تداخل العناصر التفاعلية. يحتفظ `Avatar.Root` والأجزاء الصريحة الأخرى بعقد أحداث Base UI الكامل.
+
+الصور الرمزية المختصرة زخرفية افتراضيًا. لا يحدد `name` اسم الصورة أو البديل للعودة أو المالك التفاعلي. استخدم `imageProps.alt` غير فارغ فقط عندما تنقل الصورة الرمزية هوية لا يوفرها بالفعل نص مرئي أو تسمية مالك. مع الأجزاء الصريحة، وفّر النص البديل للصورة وتسميات البديل للعودة أو السمات الزخرفية بنفسك، وأبقِ المحتوى المترجم في تطبيقك.
+
+## الخصائص
+
+تُنشأ الأنواع والقيم الافتراضية من أنواع المكوّنات العامة. تقبل الأجزاء الصريحة السمات الأصلية ومعالجات الأحداث. تحذف الصورة الرمزية المختصرة `onClick`؛ وفّره على المالك المُمرَّر عبر `render`.
+
+<AvatarReference />
+
+<PageBanner illustration="page-cover-profile" />

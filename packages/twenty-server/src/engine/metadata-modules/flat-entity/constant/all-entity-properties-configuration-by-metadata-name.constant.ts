@@ -1851,6 +1851,43 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
+  mcpServer: {
+    name: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    url: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    connectionProviderId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'connectionProviderUniversalIdentifier',
+    },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
   applicationVariable: {
     key: {
       toCompare: true,

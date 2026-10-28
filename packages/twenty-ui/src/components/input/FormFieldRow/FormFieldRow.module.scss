@@ -49,7 +49,10 @@
   gap: var(--t-spacing-1);
   min-inline-size: 0;
   overflow-wrap: anywhere;
-  padding-inline: var(--t-spacing-2);
+  padding-inline: var(
+    --form-field-row-content-padding-inline,
+    var(--t-spacing-2)
+  );
 }
 
 .trailing {

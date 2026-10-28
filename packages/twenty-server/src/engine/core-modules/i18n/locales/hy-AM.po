@@ -72,6 +72,12 @@ msgstr "{0}-ը պետք է լինի «one-to-many» կամ «many-to-one» կա�
 msgid "{0} must be a one-to-many relation field."
 msgstr "{0}-ը պետք է լինի «one-to-many» կապի դաշտ։"
 
+#. js-lingui-id: LP7rtP
+#. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
+msgid "{action} is disabled on object {0}"
+msgstr "{action}-ն անջատված է {0} օբյեկտում"
+
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
@@ -103,16 +109,6 @@ msgstr "{hostnameCount} հոստանուն է գտնվել \"{domainName}\" դո
 #: src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util.ts
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{aggregateFieldLabel}-ի {operationLabel}"
-
-#. js-lingui-id: TJ2Qca
-#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
-msgid "{providerDisplayName} only supports connections shared with the workspace."
-msgstr "{providerDisplayName}-ն աջակցում է միայն աշխատատարածքի հետ համօգտագործվող միացումներին։"
-
-#. js-lingui-id: Hz1hn8
-#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
-msgid "{providerDisplayName} only supports personal connections."
-msgstr "{providerDisplayName}-ն աջակցում է միայն անձնական միացումներին։"
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -152,6 +148,22 @@ msgstr "Օրացույցի իրադարձության թիրախ"
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
 msgstr "Արշավը դեռ ուղարկվում է։ Սպասեք դրա ավարտին կամ չեղարկեք այն՝ նախքան այս ուղարկողին հեռացնելը։"
+
+#. js-lingui-id: kZaUc+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
+msgid "A channel named \"{name}\" already exists"
+msgstr "\"{name}\" անունով ալիք արդեն գոյություն ունի"
+
+#. js-lingui-id: y84xpa
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "A channel needs a name."
+msgstr "Ալիքին անուն է անհրաժեշտ։"
+
+#. js-lingui-id: 3bCT2z
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
+msgid "A channel with this name already exists."
+msgstr "Այս անունով ալիք արդեն գոյություն ունի։"
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -247,6 +259,16 @@ msgstr "Մարքեթինգային էլեկտրոնային նամակը կար�
 msgctxt "objectMetadata.description"
 msgid "A message thread target"
 msgstr "Հաղորդագրությունների շղթայի թիրախ"
+
+#. js-lingui-id: oP9K0J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "A messaging provider with this name already exists for this application"
+msgstr "Այս հավելվածի համար այս անունով հաղորդագրությունների մատուցող արդեն կա"
+
+#. js-lingui-id: eynBqK
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "A messaging provider with this name already exists for this application."
+msgstr "Այս հավելվածի համար այս անվամբ հաղորդագրությունների մատուցող արդեն գոյություն ունի։"
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -433,15 +455,16 @@ msgstr "Օրացույցի իրադարձություն ստեղծելու հա�
 msgid "A two-factor authentication recovery code was generated for you"
 msgstr "Ձեզ համար ստեղծվել է երկգործոն նույնականացման վերականգնման կոդ"
 
-#. js-lingui-id: 28Abul
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "A user variable cannot have a value: each member sets their own."
-msgstr "Օգտատիրոջ փոփոխականը չի կարող արժեք ունենալ. յուրաքանչյուր անդամ ինքն է սահմանում իր արժեքը։"
-
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A user with this email already exists."
 msgstr "Այս էլ. փոստով օգտվող արդեն գոյություն ունի։"
+
+#. js-lingui-id: wSP1qx
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type"
+msgstr "Վավեր agentChatChannelUniversalIdentifier-ը պարտադիր է AGENT_CHAT_CHANNEL տիպի համար"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -558,11 +581,6 @@ msgstr "Աշխատահոսի տարբերակ"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Աշխատանքային տարածքի անդամ"
-
-#. js-lingui-id: 7co7Js
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "A workspace variable must have a value."
-msgstr "Աշխատանքային տարածքի փոփոխականը պետք է արժեք ունենա։"
 
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -1062,10 +1080,17 @@ msgid "An error occurred."
 msgstr "Տեղի ունեցավ սխալ։"
 
 #. js-lingui-id: CKXJCD
-#: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
-#: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
+#: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
+#: src/engine/core-modules/record-export/services/record-export-query.service.ts
+#: src/engine/core-modules/record-export/services/record-export-query.service.ts
+#: src/engine/core-modules/record-export/utils/expand-morph-relation-export-fields.util.ts
 msgid "An export field is no longer available."
 msgstr "Արտահանման դաշտն այլևս հասանելի չէ։"
+
+#. js-lingui-id: zv+Pcr
+#: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
+msgid "An export is already running for this workspace."
+msgstr "Այս աշխատատարածքի համար արտահանումն արդեն ընթանում է։"
 
 #. js-lingui-id: jiELc8
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -1091,6 +1116,17 @@ msgstr "Ներքին սխալ է տեղի ունեցել գաղտնագրված 
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."
 msgstr "Այս էլ. փոստին հրավեր արդեն ուղարկվել է։"
+
+#. js-lingui-id: BCJWBj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "An MCP server with this name already exists"
+msgstr "Այս անունով MCP սերվեր արդեն գոյություն ունի"
+
+#. js-lingui-id: SeiYVM
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "An MCP server with this name already exists."
+msgstr "Այս անունով MCP սերվեր արդեն գոյություն ունի։"
 
 #. js-lingui-id: CQ5DXU
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -1455,6 +1491,12 @@ msgstr "Ինձ նշանակված"
 msgctxt "fieldMetadata.label"
 msgid "Assignee"
 msgstr "Կատարող"
+
+#. js-lingui-id: VkxEa0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Assistant participant"
+msgstr ""
 
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2561,6 +2603,18 @@ msgstr "Cc"
 msgid "Changing log retention requires an Organization subscription."
 msgstr "Log-երի պահպանման ժամկետը փոխելը պահանջում է Organization բաժանորդագրություն։"
 
+#. js-lingui-id: zBdJe6
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Channel"
+msgstr "Ալիք"
+
+#. js-lingui-id: gPIeS4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Channel archived at"
+msgstr "Ալիքը արխիվացվել է"
+
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -2572,6 +2626,49 @@ msgstr "Ալիքի ID"
 msgctxt "fieldMetadata.label"
 msgid "Channel ID"
 msgstr "Ալիքի ID"
+
+#. js-lingui-id: G+8qH5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "Channel name is required"
+msgstr "Ալիքի անունը պարտադիր է"
+
+#. js-lingui-id: Nd2xnP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "Channel not found"
+msgstr "Ալիքը չի գտնվել"
+
+#. js-lingui-id: ZJRMDQ
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "Channel not found."
+msgstr "Ալիքը չի գտնվել։"
+
+#. js-lingui-id: /84Bpj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "Channel role link not found"
+msgstr "Ալիքի դերի կապը չի գտնվել"
+
+#. js-lingui-id: 86oa9B
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Channel snoozed until"
+msgstr "Ալիքը հետաձգված է մինչև"
+
+#. js-lingui-id: ieLfO5
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Channel the thread is triaged in"
+msgstr "Ալիքը, որում թելը տեսակավորվել է"
+
+#. js-lingui-id: 7LMBzP
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Channels are not available yet. Try again in a few minutes."
+msgstr "Ալիքները դեռ հասանելի չեն։ Կրկին փորձեք մի քանի րոպեից։"
 
 #. js-lingui-id: z851aK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -3072,6 +3169,12 @@ msgstr "Միացված հաշիվը չի գտնվել։"
 msgid "Connection not found."
 msgstr "Միացումը չի գտնվել."
 
+#. js-lingui-id: CQZ2kU
+#. placeholder {0}: flatMessagingProvider.connectionProviderUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Connection provider \"{0}\" was not found in this application"
+msgstr "Այս հավելվածում \"{0}\" միացման մատուցողը չի գտնվել"
+
 #. js-lingui-id: xQ2DfP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider display name is required"
@@ -3093,11 +3196,14 @@ msgstr "Միացման մատուցողի անունը պարտադիր է"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Connection provider not found"
 msgstr "Միացման մատուցողը չի գտնվել"
 
 #. js-lingui-id: b+xWjq
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connection provider not found."
 msgstr "Միացման մատուցողը չի գտնվել։"
 
@@ -3111,11 +3217,36 @@ msgstr "Միացման մատուցողի oauthConfig.{label}-ը պարտադի�
 msgid "Connection provider scope \"{scope}\" is invalid"
 msgstr "Միացման մատուցողի ընդգրկույթը \"{scope}\" անվավեր է"
 
+#. js-lingui-id: lOJLh7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider scope cannot be changed"
+msgstr "Միացման մատուցողի ընդգրկույթը չի կարող փոփոխվել"
+
+#. js-lingui-id: rGTdmC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider scope cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
+msgstr "Ստեղծումից հետո միացման մատուցողի ընդգրկույթը չի կարող փոփոխվել. հայտարարեք նոր միացման մատուցող՝ նոր universalIdentifier-ով"
+
+#. js-lingui-id: ouURJJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider type cannot be changed"
+msgstr "Միացման մատուցողի տեսակը չի կարող փոփոխվել"
+
+#. js-lingui-id: Y4TItr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider type cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
+msgstr "Ստեղծումից հետո միացման մատուցողի տեսակը չի կարող փոփոխվել. հայտարարեք նոր միացման մատուցող՝ նոր universalIdentifier-ով"
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with name {0} already exists for this application"
 msgstr "Այս հավելվածի համար {0} անվամբ միացման մատուցող արդեն գոյություն ունի"
+
+#. js-lingui-id: pXXjt2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
+msgstr "'custom' տիպով միացման մատուցողը պետք է հղում կատարի authorize և callback տրամաբանության ֆունկցիաներին"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3626,6 +3757,11 @@ msgstr "Cron գործարկիչներին անհրաժեշտ է վավեր cron 
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Custom command menu item cannot be reset to default."
 msgstr "Հարմարեցված հրամանի մենյուի տարրը չի կարող վերադարձվել լռելյայնին։"
+
+#. js-lingui-id: eCtxAR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Custom connection provider is missing its authorize or callback logic function"
+msgstr "Պատվերով միացման մատուցողում բացակայում է authorize կամ callback տրամաբանության ֆունկցիան"
 
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -4191,6 +4327,16 @@ msgctxt "fieldMetadata.label"
 msgid "Direction"
 msgstr "Ուղղություն"
 
+#. js-lingui-id: jPdYe/
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
+msgid "Disabled object permission actions must be a list"
+msgstr "Անջատված օբյեկտի թույլտվությունների գործողությունները պետք է ցուցակ լինեն"
+
+#. js-lingui-id: EtelV5
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
+msgid "Disabled object permission actions must not repeat"
+msgstr "Անջատված օբյեկտի թույլտվությունների գործողությունները չպետք է կրկնվեն"
+
 #. js-lingui-id: T/2cxH
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -4202,6 +4348,17 @@ msgstr "Չեղարկել սևագիրը"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Discard Draft"
 msgstr "Չեղարկել սևագիրը"
+
+#. js-lingui-id: OaH7rc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Disconnect the MCP server before changing its URL"
+msgstr "Փոխեք MCP սերվերի URL-ը միայն այն անջատելուց հետո"
+
+#. js-lingui-id: X9u5qJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Disconnect the MCP server before changing its URL."
+msgstr "Փոխեք MCP սերվերի URL-ը միայն այն անջատելուց հետո։"
 
 #. js-lingui-id: N4sZ6H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -4886,7 +5043,6 @@ msgstr "Փորձառություն"
 #. js-lingui-id: PCGpYB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Export"
 msgstr "Արտահանել"
@@ -4901,12 +5057,6 @@ msgstr "Արտահանել {objectLabel}"
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Export not found."
 msgstr "Արտահանումը չի գտնվել։"
-
-#. js-lingui-id: xvfw7w
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Export to PDF"
-msgstr "Արտահանել PDF ձևաչափով"
 
 #. js-lingui-id: c5P53s
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6644,6 +6794,31 @@ msgstr "Սահմանաչափի պարամետրը անվավեր է։"
 msgid "Invalid logic function input."
 msgstr "Լոգիկայի ֆունկցիայի մուտքագրումը սխալ է։"
 
+#. js-lingui-id: U2TpWH
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server input."
+msgstr "MCP սերվերի մուտքագրումը անվավեր է։"
+
+#. js-lingui-id: PTN/J2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server name provided"
+msgstr "Նշված MCP սերվերի անունը սխալ է"
+
+#. js-lingui-id: 945sNP
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server name. Use lowercase letters, digits and underscores, starting with a letter."
+msgstr "MCP սերվերի անունը անվավեր է։ Օգտագործեք փոքրատառեր, թվեր և ընդգծման նշաններ՝ սկսելով տառից։"
+
+#. js-lingui-id: 1pdxfJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server URL provided"
+msgstr "Նշված MCP սերվերի URL-ը սխալ է"
+
+#. js-lingui-id: YDqREm
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server URL. Please provide a valid HTTP or HTTPS URL."
+msgstr "MCP սերվերի URL-ը սխալ է։ Խնդրում ենք տրամադրել վավեր HTTP կամ HTTPS URL։"
+
 #. js-lingui-id: fNaXqL
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Invalid message channel input."
@@ -6653,6 +6828,11 @@ msgstr "Հաղորդագրության ալիքի մուտքային տվյալ�
 #: src/engine/metadata-modules/message-folder/message-folder.exception.ts
 msgid "Invalid message folder input."
 msgstr "Հաղորդագրությունների թղթապանակի մուտքային տվյալները անվավեր են։"
+
+#. js-lingui-id: u3ER6+
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "Invalid messaging provider input."
+msgstr "Հաղորդագրությունների մատուցողի մուտքային տվյալները անվավեր են։"
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -7035,6 +7215,7 @@ msgstr "Անվավեր արժեք դիրքի համար. \"{inspectedValue}\""
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 msgid "Invalid value for rich text."
 msgstr "Անվավեր արժեք հարուստ տեքստի համար։"
 
@@ -7395,6 +7576,8 @@ msgstr "Պիտակի նույնացուցիչի տեսքի դաշտը պետք �
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Label is required"
 msgstr "Պիտակը պարտադիր է։"
 
@@ -7873,6 +8056,17 @@ msgstr "maxNumberOfValues-ը պետք է սահմանված լինի կարգա�
 msgid "May"
 msgstr "Մայիս"
 
+#. js-lingui-id: ES19km
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "MCP server not found"
+msgstr "MCP սերվերը չի գտնվել"
+
+#. js-lingui-id: 32QmfJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "MCP server not found."
+msgstr "MCP սերվերը չի գտնվել։"
+
 #. js-lingui-id: DICk6O
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -8318,6 +8512,50 @@ msgctxt "fieldMetadata.description"
 msgid "Messages sent as part of this campaign"
 msgstr "Այս արշավի շրջանակում ուղարկված հաղորդագրությունները"
 
+#. js-lingui-id: DR7S+J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider connection provider cannot be changed"
+msgstr "Հաղորդագրությունների մատուցողի միացման մատուցողը չի կարող փոփոխվել"
+
+#. js-lingui-id: S8RYm2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
+msgstr "Ստեղծումից հետո հաղորդագրությունների մատուցողի միացման մատուցողը չի կարող փոփոխվել. հայտարարեք նոր հաղորդագրությունների մատուցող՝ նոր universalIdentifier-ով"
+
+#. js-lingui-id: A2qm/C
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider display name is required"
+msgstr "Հաղորդագրությունների մատուցողի ցուցադրվող անունը պարտադիր է"
+
+#. js-lingui-id: PheN1+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider displayName is required"
+msgstr "Հաղորդագրությունների մատուցողի displayName-ը պարտադիր է"
+
+#. js-lingui-id: NpU0GW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider name is required"
+msgstr "Հաղորդագրությունների մատուցողի անունը պարտադիր է"
+
+#. js-lingui-id: kh1zio
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider not found"
+msgstr "Հաղորդագրությունների մատուցողը չի գտնվել"
+
+#. js-lingui-id: yyDEl+
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "Messaging provider not found."
+msgstr "Հաղորդագրությունների մատուցողը չի գտնվել։"
+
+#. js-lingui-id: Ih/vm6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider with name {name} already exists for this application"
+msgstr "Այս հավելվածի համար {name} անվամբ հաղորդագրությունների մատուցող արդեն գոյություն ունի"
+
 #. js-lingui-id: IYFsjL
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
@@ -8410,6 +8648,11 @@ msgstr "Ամիսը առաջինը"
 msgid "Morph relation field must have a morph id"
 msgstr "Մորֆ հարաբերության դաշտը պետք է ունենա մորֆ ID"
 
+#. js-lingui-id: /eQ78F
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Move this channel's chats to another channel before deleting it."
+msgstr "Ջնջելուց առաջ այս ալիքի զրույցները տեղափոխեք մեկ այլ ալիք։"
+
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
@@ -8465,6 +8708,11 @@ msgstr "\"{name}\" անունը հասանելի չէ, քանի որ արդեն 
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Name is not synced with label."
 msgstr "Անվանումը համաժամեցված չէ պիտակի հետ։"
+
+#. js-lingui-id: QrBCC2
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+msgid "Name is not valid: it must be camelCase, e.g. \"{camelCasedName}\""
+msgstr "Անունը վավեր չէ. այն պետք է լինի camelCase, օրինակ՝ \"{camelCasedName}\""
 
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
@@ -9153,6 +9401,12 @@ msgstr "On delete գործողությունը աջակցվում է միայն 
 msgid "One of the selected fields does not belong to this object."
 msgstr "Ընտրված դաշտերից մեկն այս օբյեկտին չի պատկանում։"
 
+#. js-lingui-id: mhOSep
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "One of these roles no longer exists."
+msgstr "Այս դերերից մեկն այլևս գոյություն չունի։"
+
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "One or more records were not found."
@@ -9233,6 +9487,18 @@ msgstr "Միայն այս աշխատահոսքը ստեղծած անձը կար�
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
 msgid "Only the values of this form can be changed."
 msgstr "Միայն այս ձևի արժեքները կարող են փոխվել։"
+
+#. js-lingui-id: 9rFxst
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Open chat"
+msgstr "Բացել զրույցը"
+
+#. js-lingui-id: 4QVn1g
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Open chat"
+msgstr "Բացել զրույցը"
 
 #. js-lingui-id: +ee5JG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9944,6 +10210,11 @@ msgstr "Ընտրեք ուղարկման ժամանակ ապագայում։"
 msgid "Pick a specific sub-field of \"{0}\" — composite fields can't be indexed as a whole."
 msgstr "Ընտրեք կոնկրետ ենթադաշտ \"{0}\" դաշտից — համակցված դաշտերը չեն կարող ինդեքսավորվել ամբողջությամբ։"
 
+#. js-lingui-id: r+tlvn
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Pick another channel to move the chats to."
+msgstr "Ընտրեք մեկ այլ ալիք՝ զրույցները տեղափոխելու համար։"
+
 #. js-lingui-id: TtfDdb
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
 msgid "Pick at least one field for the index."
@@ -9981,6 +10252,7 @@ msgid "Please provide a password for this connection."
 msgstr "Խնդրում ենք մուտքագրել գաղտնաբառ այս միացման համար։"
 
 #. js-lingui-id: NR22yi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Please provide a valid HTTP or HTTPS URL"
@@ -10125,12 +10397,6 @@ msgctxt "pageLayoutWidget.title"
 msgid "Preview"
 msgstr "Նախադիտում"
 
-#. js-lingui-id: ysRzX6
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Previous AI Chats"
-msgstr "Նախորդ AI զրույցներ"
-
 #. js-lingui-id: +DJKfQ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Primary axis group by field is required for bar chart"
@@ -10186,6 +10452,11 @@ msgstr "Մշակվում է"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
 msgid "Prompt cannot be empty"
 msgstr "Prompt-ը չի կարող լինել դատարկ"
+
+#. js-lingui-id: KQ0Ots
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service.ts
+msgid "Property {property} cannot be updated"
+msgstr "{property} հատկությունը չի կարող թարմացվել"
 
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -10930,6 +11201,7 @@ msgid "Role name is invalid"
 msgstr "Դերի անունը սխալ է"
 
 #. js-lingui-id: MvTCyk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -11402,6 +11674,11 @@ msgstr "Ուղարկել էլ․ նամակ"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Send Email"
 msgstr "Ուղարկել էլ․ նամակ"
+
+#. js-lingui-id: RPQott
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Send message logic function \"{sendMessageLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "Այս հավելվածում \"{sendMessageLogicFunctionUniversalIdentifier}\" հաղորդագրություն ուղարկելու տրամաբանության ֆունկցիան չի գտնվել"
 
 #. js-lingui-id: +dLR8z
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11952,6 +12229,11 @@ msgstr "Փուլ"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Standard agents cannot be modified."
 msgstr "Ստանդարտ գործակալները չեն կարող փոփոխվել։"
+
+#. js-lingui-id: rQq8lH
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Standard channels cannot be deleted."
+msgstr "Ստանդարտ ալիքները չի կարելի ջնջել։"
 
 #. js-lingui-id: Ptv+nG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -12651,6 +12933,26 @@ msgstr "Կազմակերպության ընդհանուր տարեկան եկա�
 msgid "The connected {0} account is missing calendar permissions ({missingScopeList}). Please reconnect the account to grant calendar access."
 msgstr "Միացված {0} հաշիվը չունի օրացույցի թույլտվություններ ({missingScopeList})։ Խնդրում ենք վերամիացնել հաշիվը՝ օրացույցի հասանելիություն տրամադրելու համար։"
 
+#. js-lingui-id: xYqYn7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider belongs to another application"
+msgstr "Կապի մատակարարը պատկանում է մեկ այլ հավելվածի"
+
+#. js-lingui-id: 0kfc9m
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider must belong to the same application as the MCP server"
+msgstr "Կապի մատակարարը պետք է պատկանի նույն հավելվածին, ինչ MCP սերվերը"
+
+#. js-lingui-id: x9rG77
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The connection provider must belong to the same application as the MCP server."
+msgstr "Կապի մատակարարը պետք է պատկանի նույն հավելվածին, ինչ MCP սերվերը։"
+
+#. js-lingui-id: fDWKx/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The connection provider this messaging provider uses was not found in its application."
+msgstr "Միացման մատուցողը, որն օգտագործում է այս հաղորդագրությունների մատուցողը, չի գտնվել իր հավելվածում։"
+
 #. js-lingui-id: j6q6l+
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The connection-provider manifest is missing required fields."
@@ -12755,6 +13057,11 @@ msgstr "Արտահանումը ձախողվեց։ Խնդրում ենք կրկի
 msgid "The export file is too large. Please export fewer records."
 msgstr "Արտահանման ֆայլը չափազանց մեծ է։ Խնդրում ենք արտահանել ավելի քիչ գրառումներ։"
 
+#. js-lingui-id: bjRiGF
+#: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
+msgid "The export is missing data and could not be completed."
+msgstr "Արտահանման համար տվյալները բացակայում են, և այն չի հաջողվել ավարտել։"
+
 #. js-lingui-id: RKP94c
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12858,10 +13165,25 @@ msgctxt "fieldMetadata.description"
 msgid "The list this campaign was sent to"
 msgstr "Ցուցակը, որին ուղարկվել է այս արշավը"
 
+#. js-lingui-id: pSAncm
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function that completes the connection was not found."
+msgstr "Միացումն ավարտող տրամաբանության ֆունկցիան չի գտնվել։"
+
 #. js-lingui-id: gU/AgL
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that identifies the connected account was not found."
 msgstr "Միացված հաշիվը նույնականացնող տրամաբանության ֆունկցիան չի գտնվել։"
+
+#. js-lingui-id: 8gf2aA
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function that starts the connection was not found."
+msgstr "Միացումը սկսող տրամաբանության ֆունկցիան չի գտնվել։"
+
+#. js-lingui-id: usqJwo
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider sends with was not found in its application."
+msgstr "Տրամաբանության ֆունկցիան, որով այս հաղորդագրությունների մատուցողն ուղարկում է, չի գտնվել իր հավելվածում։"
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13174,6 +13496,16 @@ msgstr "Աշխատանքային հոսքը հղում է կատարում մե�
 msgid "The workflow schedule is invalid."
 msgstr "Աշխատանքային հոսքի ժամանակացույցն անվավեր է։"
 
+#. js-lingui-id: /s75Zz
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow select field must reference a field of the same type."
+msgstr "Աշխատանքային հոսքի ընտրության դաշտը պետք է հղում կատարի նույն տիպի դաշտին։"
+
+#. js-lingui-id: 8xdW5z
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow select field must reference an existing field."
+msgstr "Աշխատանքային հոսքի ընտրության դաշտը պետք է հղում կատարի գոյություն ունեցող դաշտին։"
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13409,6 +13741,32 @@ msgstr "Այս արշավի ցուցակը աղբարկղում է։ Վերակ�
 msgid "This change would corrupt the workflow, it was not saved"
 msgstr "Այս փոփոխությունը կվնասեր աշխատահոսքը, ուստի այն չի պահպանվել"
 
+#. js-lingui-id: ThXjDv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "This channel access no longer exists."
+msgstr "Այս ալիքի հասանելիությունն այլևս գոյություն չունի։"
+
+#. js-lingui-id: ++E+5T
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This channel is being changed. Try again in a moment."
+msgstr "Այս ալիքը փոփոխվում է։ Կրկին փորձեք մի պահից։"
+
+#. js-lingui-id: /mdJSV
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This chat has no owner, so it has to stay in a channel."
+msgstr "Այս զրույցը սեփականատեր չունի, ուստի այն պետք է մնա ալիքում։"
+
+#. js-lingui-id: 6zaKtA
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This chat is not in a channel."
+msgstr "Այս զրույցը ալիքում չէ։"
+
+#. js-lingui-id: TjTe43
+#: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
+msgid "This code belongs to a published workflow version. Edit it from a draft."
+msgstr "Այս կոդը պատկանում է հրապարակված աշխատանքային հոսքի տարբերակին։ Խմբագրեք այն սևագրից։"
+
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
@@ -13423,11 +13781,6 @@ msgstr "Այս միացված հաշիվը չի կարող օգտագործվե�
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
 msgstr "Այս միացումը թույլատրելի չէ։"
-
-#. js-lingui-id: 5G7DBW
-#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
-msgid "This connection provider does not support this kind of connection."
-msgstr "Միացման այս մատուցողը չի աջակցում այս տեսակի միացմանը։"
 
 #. js-lingui-id: DtHdRF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
@@ -13611,6 +13964,11 @@ msgstr "Այս սահմանաչափը չի կարող պահպանվել։"
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "Այս սահմանաչափը փոխվել է, մինչ դուք այն խմբագրում էիք։ Վերբեռնեք מחדש և կրկին փորձեք."
 
+#. js-lingui-id: STVycN
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This list of chats could not be loaded. Try again."
+msgstr "Չհաջողվեց բեռնել զրույցների այս ցանկը։ Կրկին փորձեք։"
+
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log filter is not valid."
@@ -13635,6 +13993,11 @@ msgstr "Այս անդամը չի կարող պատասխանել այս զրու
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "This member hasn't set up two-factor authentication, so there is nothing to recover."
 msgstr "Այս անդամը չի կարգավորել երկգործոն նույնականացումը, ուստի վերականգնելու ոչինչ չկա։"
+
+#. js-lingui-id: NW6Nmf
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "This message channel cannot send messages."
+msgstr "Հաղորդագրությունների այս ալիքը չի կարող հաղորդագրություններ ուղարկել։"
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -13721,6 +14084,11 @@ msgstr "Այս Կազմակերպության բանալին արդեն օգտա
 msgid "This permission is already set for the role"
 msgstr "Այս արտոնությունը արդեն սահմանված է դերի համար"
 
+#. js-lingui-id: IlFhXC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
+msgid "This permission is disabled on the object and cannot be granted"
+msgstr "Այս թույլտվությունն անջատված է օբյեկտում և չի կարող տրվել"
+
 #. js-lingui-id: wJWFt2
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This plan is not available."
@@ -13776,6 +14144,16 @@ msgstr "Այս հարցումն այլևս պատասխան չի սպասում�
 msgid "This request is still getting ready. Try again in a moment."
 msgstr "Այս հարցումը դեռ պատրաստվում է։ Մի պահից փորձեք կրկին։"
 
+#. js-lingui-id: T6c4z3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "This role already has access to the channel"
+msgstr "Այս դերն արդեն հասանելիություն ունի ալիքին"
+
+#. js-lingui-id: ce6Oq+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "This role already has access to the channel."
+msgstr "Այս դերն արդեն հասանելիություն ունի ալիքին։"
+
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This role cannot be assigned to agents."
@@ -13806,7 +14184,7 @@ msgstr "Այս դերը չի կարող խմբագրվել։"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Այս դերը չի կարող փոփոխվել, քանի որ այն համակարգային դեր է։ Փոփոխել կարելի է միայն հատուկ ստեղծված դերերը։"
 
@@ -14578,6 +14956,11 @@ msgstr "Ունիվերսալ նույնացուցիչը վերապահված է 
 msgid "Unknown"
 msgstr "Անհայտ"
 
+#. js-lingui-id: 0CuayF
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
+msgid "Unknown disabled object permission action"
+msgstr "Օբյեկտի թույլտվության անհայտ անջատված գործողություն"
+
 #. js-lingui-id: of4ZuG
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -14873,6 +15256,11 @@ msgctxt "skill.description"
 msgid "Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes"
 msgstr "Օգտագործեք Python-ի համար այն տվյալների դեպքում, որոնք գրառումների գործիքները չեն կարող արտահայտել՝ վիճակագրություն, գծապատկերների պատկերներ, վերբեռնված ֆայլի վերլուծություն։ Մի օգտագործեք այն սովորական գրառումների ընթերցման և գրանցման համար"
 
+#. js-lingui-id: cW4z4t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Use lowercase letters, digits and underscores, starting with a letter"
+msgstr "Օգտագործեք փոքրատառեր, թվեր և ընդգծման նշաններ՝ սկսելով տառից"
+
 #. js-lingui-id: Gltw+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
@@ -14967,11 +15355,6 @@ msgstr "Օգտատերը արդեն գոյություն ունի"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "Օգտվողն արդեն ունի վերագրված դեր։"
-
-#. js-lingui-id: +FdZ1+
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "User application variable cannot have a value"
-msgstr "Հավելվածի օգտատիրոջ փոփոխականը չի կարող արժեք ունենալ"
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -15458,12 +15841,6 @@ msgstr "Upsert-ից հետո տեսքը չի գտնվել"
 msgid "View not found for widget"
 msgstr "Վիջեթի համար տեսքը չի գտնվել"
 
-#. js-lingui-id: pAoCL6
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "View Previous AI Chats"
-msgstr "Դիտել նախորդ AI զրույցները"
-
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -15605,10 +15982,25 @@ msgstr "Դիտարկվող դաշտերը կիրառելի են միայն \"upd
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "Մենք ժամանակավոր խնդիր ենք ունենում մեր տվյալների բազայի հետ։ Խնդրում ենք փորձել ավելի ուշ։"
 
+#. js-lingui-id: 1QdT9i
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not complete the connection. Please try again."
+msgstr "Չհաջողվեց ավարտել միացումը։ Խնդրում ենք կրկին փորձել։"
+
 #. js-lingui-id: SO+/3j
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "Չհաջողվեց նույնականացնել ձեր լիազորած հաշիվը։ Խնդրում ենք կրկին փորձել։"
+
+#. js-lingui-id: rj0Dtg
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not send your message. Please try again."
+msgstr "Չհաջողվեց ուղարկել ձեր հաղորդագրությունը։ Խնդրում ենք կրկին փորձել։"
+
+#. js-lingui-id: j7daTn
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not start the connection. Please try again."
+msgstr "Չհաջողվեց սկսել միացումը։ Խնդրում ենք կրկին փորձել։"
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -15701,6 +16093,12 @@ msgctxt "fieldMetadata.description"
 msgid "When a snoozed thread comes back to the inbox"
 msgstr "Երբ հետաձգված թեման վերադառնում է մուտքի արկղ"
 
+#. js-lingui-id: zdfiR1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When a thread snoozed in its channel comes back to it"
+msgstr "Երբ իր ալիքում հետաձգված թելը վերադառնում է այնտեղ"
+
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -15731,6 +16129,12 @@ msgctxt "fieldMetadata.description"
 msgid "When the thread was created or last received a message"
 msgstr "Երբ թեման ստեղծվել է կամ վերջին անգամ հաղորդագրություն է ստացել"
 
+#. js-lingui-id: 5JPMXf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When the thread was marked as done or snoozed in its channel"
+msgstr "Երբ թելը նշվել է որպես ավարտված կամ հետաձգվել է իր ալիքում"
+
 #. js-lingui-id: Kx3ltI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -15754,6 +16158,12 @@ msgstr "Արդյոք մասնակցի ընթացիկ կանոններն արդա
 msgctxt "fieldMetadata.description"
 msgid "Whether new activity brings the thread back to the inbox"
 msgstr "Արդյոք նոր ակտիվությունը թեման վերադարձնում է մուտքի արկղ"
+
+#. js-lingui-id: DYv22m
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether the assistant participates in this conversation"
+msgstr ""
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -16245,11 +16655,6 @@ msgstr "Workspace"
 msgid "Workspace {workspaceId} is not found."
 msgstr "Աշխատատարածք {workspaceId}-ը չի գտնվել։"
 
-#. js-lingui-id: Ulbao6
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "Workspace application variable must have a value"
-msgstr "Աշխատանքային տարածքի հավելվածի փոփոխականը պետք է արժեք ունենա"
-
 #. js-lingui-id: lNgTSN
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Workspace cannot be deleted: subscription is not yet canceled."
@@ -16435,6 +16840,7 @@ msgstr "Workspace-ը չի գտնվել բաժանորդագրության իրա
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+#: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 #: src/engine/core-modules/workspace/workspace.exception.ts
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -16835,6 +17241,11 @@ msgstr "Ձեր AWS SES հաշիվը դեռ sandbox-ում է, ուստի այս 
 #: src/engine/core-modules/billing/utils/build-phase-update-params-or-throw.util.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "Ձեր վճարային բաժանորդագրությունը խաթարված է։ Խնդրում ենք կապվել աջակցման ծառայության հետ։"
+
+#. js-lingui-id: L8/bmN
+#: src/modules/emailing/utils/build-campaign-send-refusal-exception.util.ts
+msgid "Your daily limit is {limitValue, plural, one {# email} other {# emails}}, and this campaign would go over what's left today. Contact us to raise it."
+msgstr "Ձեր օրական սահմանաչափը {limitValue, plural, one {# էլ. նամակ} other {# էլ. նամակ}} է, և այս արշավը կգերազանցի այսօրվա մնացած սահմանաչափը։ Կապվեք մեզ հետ՝ այն բարձրացնելու համար։"
 
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

@@ -24,6 +24,7 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   channelArchivedAt: string | null;
   channelSnoozedUntil: string | null;
   title: string | null;
+  isAssistantParticipant: boolean;
   lastActivityAt: string | null;
   lastMessageText: string | null;
   lastMessageSenderWorkspaceMemberId: string | null;

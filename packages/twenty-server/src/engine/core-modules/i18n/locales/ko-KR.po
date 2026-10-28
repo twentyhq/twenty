@@ -72,6 +72,12 @@ msgstr "{0}은(는) 일대다 또는 다대일 관계 필드여야 합니다."
 msgid "{0} must be a one-to-many relation field."
 msgstr "{0}은(는) 일대다 관계 필드여야 합니다."
 
+#. js-lingui-id: LP7rtP
+#. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
+msgid "{action} is disabled on object {0}"
+msgstr "객체 {0}에서 {action}이 비활성화되어 있습니다"
+
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
@@ -103,16 +109,6 @@ msgstr "도메인 \"{domainName}\"에서 {hostnameCount}개의 호스트 이름�
 #: src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util.ts
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{aggregateFieldLabel}의 {operationLabel}"
-
-#. js-lingui-id: TJ2Qca
-#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
-msgid "{providerDisplayName} only supports connections shared with the workspace."
-msgstr "{providerDisplayName}은 작업 공간과 공유된 연결만 지원합니다."
-
-#. js-lingui-id: Hz1hn8
-#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
-msgid "{providerDisplayName} only supports personal connections."
-msgstr "{providerDisplayName}은 개인 연결만 지원합니다."
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -152,6 +148,22 @@ msgstr "캘린더 이벤트 대상"
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
 msgstr "캠페인이 아직 전송 중입니다. 이 발신자를 제거하기 전에 전송이 완료될 때까지 기다리거나 캠페인을 취소하세요."
+
+#. js-lingui-id: kZaUc+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
+msgid "A channel named \"{name}\" already exists"
+msgstr "\"{name}\"이라는 이름의 채널이 이미 존재합니다"
+
+#. js-lingui-id: y84xpa
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "A channel needs a name."
+msgstr "채널에는 이름이 필요합니다."
+
+#. js-lingui-id: 3bCT2z
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
+msgid "A channel with this name already exists."
+msgstr "이 이름의 채널이 이미 존재합니다."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -247,6 +259,16 @@ msgstr "마케팅 이메일은 한 번에 한 명의 수신자에게만 보낼 �
 msgctxt "objectMetadata.description"
 msgid "A message thread target"
 msgstr "메시지 스레드 대상"
+
+#. js-lingui-id: oP9K0J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "A messaging provider with this name already exists for this application"
+msgstr "이 애플리케이션에 해당 이름의 메시징 공급자가 이미 존재합니다"
+
+#. js-lingui-id: eynBqK
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "A messaging provider with this name already exists for this application."
+msgstr "이 이름의 메시징 공급자가 이 애플리케이션에 이미 존재합니다."
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -433,15 +455,16 @@ msgstr "캘린더 이벤트를 만들려면 제목이 필요합니다"
 msgid "A two-factor authentication recovery code was generated for you"
 msgstr "회원님을 위한 이중 인증 복구 코드가 생성되었습니다."
 
-#. js-lingui-id: 28Abul
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "A user variable cannot have a value: each member sets their own."
-msgstr "사용자 변수는 값을 가질 수 없습니다. 각 구성원이 직접 설정합니다."
-
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A user with this email already exists."
 msgstr "이 이메일을 가진 사용자가 이미 존재합니다."
+
+#. js-lingui-id: wSP1qx
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type"
+msgstr "AGENT_CHAT_CHANNEL 유형에는 유효한 agentChatChannelUniversalIdentifier가 필요합니다"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -558,11 +581,6 @@ msgstr "워크플로우 버전"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "워크스페이스 멤버"
-
-#. js-lingui-id: 7co7Js
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "A workspace variable must have a value."
-msgstr "워크스페이스 변수에는 값이 있어야 합니다."
 
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -1062,10 +1080,17 @@ msgid "An error occurred."
 msgstr "오류가 발생했습니다."
 
 #. js-lingui-id: CKXJCD
-#: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
-#: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
+#: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
+#: src/engine/core-modules/record-export/services/record-export-query.service.ts
+#: src/engine/core-modules/record-export/services/record-export-query.service.ts
+#: src/engine/core-modules/record-export/utils/expand-morph-relation-export-fields.util.ts
 msgid "An export field is no longer available."
 msgstr "내보내기 필드를 더 이상 사용할 수 없습니다."
+
+#. js-lingui-id: zv+Pcr
+#: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
+msgid "An export is already running for this workspace."
+msgstr "이 작업 공간에서는 이미 내보내기가 실행 중입니다."
 
 #. js-lingui-id: jiELc8
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -1091,6 +1116,17 @@ msgstr "암호화된 데이터를 처리하는 동안 내부 오류가 발생했
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."
 msgstr "이 이메일로 이미 초대장이 전송되었습니다."
+
+#. js-lingui-id: BCJWBj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "An MCP server with this name already exists"
+msgstr "이 이름을 가진 MCP 서버가 이미 존재합니다"
+
+#. js-lingui-id: SeiYVM
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "An MCP server with this name already exists."
+msgstr "이 이름을 가진 MCP 서버가 이미 존재합니다."
 
 #. js-lingui-id: CQ5DXU
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -1455,6 +1491,12 @@ msgstr "내 작업에 할당됨"
 msgctxt "fieldMetadata.label"
 msgid "Assignee"
 msgstr "담당자"
+
+#. js-lingui-id: VkxEa0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Assistant participant"
+msgstr ""
 
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2561,6 +2603,18 @@ msgstr "참조"
 msgid "Changing log retention requires an Organization subscription."
 msgstr "로그 보존 기간을 변경하려면 Organization 구독이 필요합니다."
 
+#. js-lingui-id: zBdJe6
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Channel"
+msgstr "채널"
+
+#. js-lingui-id: gPIeS4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Channel archived at"
+msgstr "채널 보관 일시"
+
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -2572,6 +2626,49 @@ msgstr "채널 ID"
 msgctxt "fieldMetadata.label"
 msgid "Channel ID"
 msgstr "채널 ID"
+
+#. js-lingui-id: G+8qH5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "Channel name is required"
+msgstr "채널 이름이 필요합니다"
+
+#. js-lingui-id: Nd2xnP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "Channel not found"
+msgstr "채널을 찾을 수 없음"
+
+#. js-lingui-id: ZJRMDQ
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "Channel not found."
+msgstr "채널을 찾을 수 없음."
+
+#. js-lingui-id: /84Bpj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "Channel role link not found"
+msgstr "채널 역할 링크를 찾을 수 없음"
+
+#. js-lingui-id: 86oa9B
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Channel snoozed until"
+msgstr "채널 다시 알림 일시"
+
+#. js-lingui-id: ieLfO5
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Channel the thread is triaged in"
+msgstr "스레드가 분류된 채널"
+
+#. js-lingui-id: 7LMBzP
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Channels are not available yet. Try again in a few minutes."
+msgstr "채널을 아직 사용할 수 없습니다. 몇 분 후에 다시 시도하세요."
 
 #. js-lingui-id: z851aK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -3072,6 +3169,12 @@ msgstr "연결된 계정을 찾을 수 없음."
 msgid "Connection not found."
 msgstr "연결을 찾을 수 없습니다."
 
+#. js-lingui-id: CQZ2kU
+#. placeholder {0}: flatMessagingProvider.connectionProviderUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Connection provider \"{0}\" was not found in this application"
+msgstr "이 애플리케이션에서 연결 공급자 \"{0}\"을 찾을 수 없습니다"
+
 #. js-lingui-id: xQ2DfP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider display name is required"
@@ -3093,11 +3196,14 @@ msgstr "연결 공급자 이름이 필요합니다"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Connection provider not found"
 msgstr "연결 공급자를 찾을 수 없음"
 
 #. js-lingui-id: b+xWjq
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connection provider not found."
 msgstr "연결 공급자를 찾을 수 없음."
 
@@ -3111,11 +3217,36 @@ msgstr "연결 공급자 oauthConfig.{label}가 필요합니다"
 msgid "Connection provider scope \"{scope}\" is invalid"
 msgstr "연결 공급자 범위 \"{scope}\"이 유효하지 않음"
 
+#. js-lingui-id: lOJLh7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider scope cannot be changed"
+msgstr "연결 공급자 범위는 변경할 수 없습니다"
+
+#. js-lingui-id: rGTdmC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider scope cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
+msgstr "생성 후에는 연결 공급자 범위를 변경할 수 없습니다. 새 universalIdentifier로 새 연결 공급자를 선언하세요"
+
+#. js-lingui-id: ouURJJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider type cannot be changed"
+msgstr "연결 공급자 유형은 변경할 수 없습니다"
+
+#. js-lingui-id: Y4TItr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider type cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
+msgstr "생성 후에는 연결 공급자 유형을 변경할 수 없습니다. 새 universalIdentifier로 새 연결 공급자를 선언하세요"
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with name {0} already exists for this application"
 msgstr "{0}라는 이름의 연결 공급자가 이 애플리케이션에 이미 존재합니다"
+
+#. js-lingui-id: pXXjt2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
+msgstr "'custom' 유형의 연결 공급자는 authorize 및 callback 로직 함수를 참조해야 합니다"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3626,6 +3757,11 @@ msgstr "Cron 트리거에는 \"0 9 * * 1\"과 같은 유효한 cron 패턴이 �
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Custom command menu item cannot be reset to default."
 msgstr "사용자 지정 명령 메뉴 항목은 기본값으로 재설정할 수 없습니다."
+
+#. js-lingui-id: eCtxAR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Custom connection provider is missing its authorize or callback logic function"
+msgstr "사용자 지정 연결 공급자에 authorize 또는 callback 로직 함수가 없습니다"
 
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -4191,6 +4327,16 @@ msgctxt "fieldMetadata.label"
 msgid "Direction"
 msgstr "방향"
 
+#. js-lingui-id: jPdYe/
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
+msgid "Disabled object permission actions must be a list"
+msgstr "비활성화된 객체 권한 작업은 목록이어야 합니다"
+
+#. js-lingui-id: EtelV5
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
+msgid "Disabled object permission actions must not repeat"
+msgstr "비활성화된 객체 권한 작업은 중복될 수 없습니다"
+
 #. js-lingui-id: T/2cxH
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -4202,6 +4348,17 @@ msgstr "초안 삭제"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Discard Draft"
 msgstr "초안 삭제"
+
+#. js-lingui-id: OaH7rc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Disconnect the MCP server before changing its URL"
+msgstr "URL을 변경하기 전에 MCP 서버의 연결을 해제하세요"
+
+#. js-lingui-id: X9u5qJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Disconnect the MCP server before changing its URL."
+msgstr "URL을 변경하기 전에 MCP 서버의 연결을 해제하세요."
 
 #. js-lingui-id: N4sZ6H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -4886,7 +5043,6 @@ msgstr "경험"
 #. js-lingui-id: PCGpYB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Export"
 msgstr "내보내기"
@@ -4901,12 +5057,6 @@ msgstr "{objectLabel} 내보내기"
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Export not found."
 msgstr "내보내기를 찾을 수 없습니다."
-
-#. js-lingui-id: xvfw7w
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Export to PDF"
-msgstr "PDF로 내보내기"
 
 #. js-lingui-id: c5P53s
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6644,6 +6794,31 @@ msgstr "잘못된 limit 매개변수입니다."
 msgid "Invalid logic function input."
 msgstr "잘못된 로직 함수 입력입니다."
 
+#. js-lingui-id: U2TpWH
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server input."
+msgstr "잘못된 MCP 서버 입력입니다."
+
+#. js-lingui-id: PTN/J2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server name provided"
+msgstr "잘못된 MCP 서버 이름이 제공되었습니다"
+
+#. js-lingui-id: 945sNP
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server name. Use lowercase letters, digits and underscores, starting with a letter."
+msgstr "잘못된 MCP 서버 이름입니다. 문자로 시작하고 소문자, 숫자 및 밑줄을 사용하세요."
+
+#. js-lingui-id: 1pdxfJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server URL provided"
+msgstr "잘못된 MCP 서버 URL이 제공되었습니다"
+
+#. js-lingui-id: YDqREm
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server URL. Please provide a valid HTTP or HTTPS URL."
+msgstr "잘못된 MCP 서버 URL입니다. 유효한 HTTP 또는 HTTPS URL을 제공하십시오."
+
 #. js-lingui-id: fNaXqL
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Invalid message channel input."
@@ -6653,6 +6828,11 @@ msgstr "잘못된 메시지 채널 입력입니다."
 #: src/engine/metadata-modules/message-folder/message-folder.exception.ts
 msgid "Invalid message folder input."
 msgstr "잘못된 메시지 폴더 입력입니다."
+
+#. js-lingui-id: u3ER6+
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "Invalid messaging provider input."
+msgstr "잘못된 메시징 공급자 입력입니다."
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -7035,6 +7215,7 @@ msgstr "잘못된 위치 값: \"{inspectedValue}\""
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 msgid "Invalid value for rich text."
 msgstr "잘못된 서식 있는 텍스트 값입니다."
 
@@ -7395,6 +7576,8 @@ msgstr "라벨 식별자 보기 필드는 보여야 합니다"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Label is required"
 msgstr "레이블이 필요합니다"
 
@@ -7873,6 +8056,17 @@ msgstr "maxNumberOfValues는 설정에서 정의되어 있어야 하며 0보다 
 msgid "May"
 msgstr "5월"
 
+#. js-lingui-id: ES19km
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "MCP server not found"
+msgstr "MCP 서버를 찾을 수 없음"
+
+#. js-lingui-id: 32QmfJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "MCP server not found."
+msgstr "MCP 서버를 찾을 수 없음."
+
 #. js-lingui-id: DICk6O
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -8318,6 +8512,50 @@ msgctxt "fieldMetadata.description"
 msgid "Messages sent as part of this campaign"
 msgstr "이 캠페인의 일부로 전송된 메시지"
 
+#. js-lingui-id: DR7S+J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider connection provider cannot be changed"
+msgstr "메시징 공급자의 연결 공급자는 변경할 수 없습니다"
+
+#. js-lingui-id: S8RYm2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
+msgstr "생성 후에는 메시징 공급자의 연결 공급자를 변경할 수 없습니다. 새 universalIdentifier로 새 메시징 공급자를 선언하세요"
+
+#. js-lingui-id: A2qm/C
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider display name is required"
+msgstr "메시징 공급자 표시 이름이 필요합니다"
+
+#. js-lingui-id: PheN1+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider displayName is required"
+msgstr "메시징 공급자 displayName이 필요합니다"
+
+#. js-lingui-id: NpU0GW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider name is required"
+msgstr "메시징 공급자 이름이 필요합니다"
+
+#. js-lingui-id: kh1zio
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider not found"
+msgstr "메시징 공급자를 찾을 수 없음"
+
+#. js-lingui-id: yyDEl+
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "Messaging provider not found."
+msgstr "메시징 공급자를 찾을 수 없음."
+
+#. js-lingui-id: Ih/vm6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider with name {name} already exists for this application"
+msgstr "{name}라는 이름의 메시징 공급자가 이 애플리케이션에 이미 존재합니다"
+
 #. js-lingui-id: IYFsjL
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
@@ -8410,6 +8648,11 @@ msgstr "월 우선"
 msgid "Morph relation field must have a morph id"
 msgstr "Morph 관계 필드에는 morph ID가 있어야 합니다."
 
+#. js-lingui-id: /eQ78F
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Move this channel's chats to another channel before deleting it."
+msgstr "삭제하기 전에 이 채널의 채팅을 다른 채널로 이동하세요."
+
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
@@ -8465,6 +8708,11 @@ msgstr ""
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Name is not synced with label."
 msgstr "이름이 레이블과 동기화되지 않았습니다."
+
+#. js-lingui-id: QrBCC2
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+msgid "Name is not valid: it must be camelCase, e.g. \"{camelCasedName}\""
+msgstr "이름이 유효하지 않습니다. camelCase 형식이어야 합니다. 예: \"{camelCasedName}\""
 
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
@@ -9153,6 +9401,12 @@ msgstr "삭제 시 동작은 다대일 관계에서만 지원됩니다."
 msgid "One of the selected fields does not belong to this object."
 msgstr "선택한 필드 중 하나가 이 객체에 속하지 않습니다."
 
+#. js-lingui-id: mhOSep
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "One of these roles no longer exists."
+msgstr "이 역할 중 하나가 더 이상 존재하지 않습니다."
+
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "One or more records were not found."
@@ -9233,6 +9487,18 @@ msgstr "이 워크플로우를 만든 사용자만 표시 대상을 변경할 �
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
 msgid "Only the values of this form can be changed."
 msgstr "이 양식의 값만 변경할 수 있습니다."
+
+#. js-lingui-id: 9rFxst
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Open chat"
+msgstr "채팅 열기"
+
+#. js-lingui-id: 4QVn1g
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Open chat"
+msgstr "채팅 열기"
 
 #. js-lingui-id: +ee5JG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9944,6 +10210,11 @@ msgstr "미래의 전송 시간을 선택하세요."
 msgid "Pick a specific sub-field of \"{0}\" — composite fields can't be indexed as a whole."
 msgstr "\"{0}\"의 특정 하위 필드를 선택하세요. 복합 필드는 전체로 인덱싱할 수 없습니다."
 
+#. js-lingui-id: r+tlvn
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Pick another channel to move the chats to."
+msgstr "채팅을 이동할 다른 채널을 선택하세요."
+
 #. js-lingui-id: TtfDdb
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
 msgid "Pick at least one field for the index."
@@ -9981,6 +10252,7 @@ msgid "Please provide a password for this connection."
 msgstr "이 연결에 사용할 비밀번호를 입력해 주세요."
 
 #. js-lingui-id: NR22yi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Please provide a valid HTTP or HTTPS URL"
@@ -10125,12 +10397,6 @@ msgctxt "pageLayoutWidget.title"
 msgid "Preview"
 msgstr "미리보기"
 
-#. js-lingui-id: ysRzX6
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Previous AI Chats"
-msgstr "이전 AI 채팅"
-
 #. js-lingui-id: +DJKfQ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Primary axis group by field is required for bar chart"
@@ -10186,6 +10452,11 @@ msgstr "처리 중"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
 msgid "Prompt cannot be empty"
 msgstr "프롬프트는 비워 둘 수 없습니다."
+
+#. js-lingui-id: KQ0Ots
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service.ts
+msgid "Property {property} cannot be updated"
+msgstr "{property} 속성은 업데이트할 수 없습니다"
 
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -10930,6 +11201,7 @@ msgid "Role name is invalid"
 msgstr "역할 이름이 잘못되었습니다"
 
 #. js-lingui-id: MvTCyk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -11402,6 +11674,11 @@ msgstr "이메일 보내기"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Send Email"
 msgstr "이메일 보내기"
+
+#. js-lingui-id: RPQott
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Send message logic function \"{sendMessageLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "이 애플리케이션에서 메시지 전송 로직 함수 \"{sendMessageLogicFunctionUniversalIdentifier}\"을 찾을 수 없습니다"
 
 #. js-lingui-id: +dLR8z
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11952,6 +12229,11 @@ msgstr "단계"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Standard agents cannot be modified."
 msgstr "표준 에이전트는 수정할 수 없습니다."
+
+#. js-lingui-id: rQq8lH
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Standard channels cannot be deleted."
+msgstr "표준 채널은 삭제할 수 없습니다."
 
 #. js-lingui-id: Ptv+nG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -12651,6 +12933,26 @@ msgstr "회사의 총 연간 매출"
 msgid "The connected {0} account is missing calendar permissions ({missingScopeList}). Please reconnect the account to grant calendar access."
 msgstr "연결된 {0} 계정에 캘린더 권한이 없습니다({missingScopeList}). 캘린더 액세스 권한을 부여하려면 계정을 다시 연결하세요."
 
+#. js-lingui-id: xYqYn7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider belongs to another application"
+msgstr "연결 제공자가 다른 애플리케이션에 속해 있습니다"
+
+#. js-lingui-id: 0kfc9m
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider must belong to the same application as the MCP server"
+msgstr "연결 제공자는 MCP 서버와 동일한 애플리케이션에 속해야 합니다"
+
+#. js-lingui-id: x9rG77
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The connection provider must belong to the same application as the MCP server."
+msgstr "연결 제공자는 MCP 서버와 동일한 애플리케이션에 속해야 합니다."
+
+#. js-lingui-id: fDWKx/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The connection provider this messaging provider uses was not found in its application."
+msgstr "이 메시징 공급자가 사용하는 연결 공급자를 해당 애플리케이션에서 찾을 수 없습니다."
+
 #. js-lingui-id: j6q6l+
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The connection-provider manifest is missing required fields."
@@ -12755,6 +13057,11 @@ msgstr "내보내기에 실패했습니다. 다시 시도하거나 더 적은 �
 msgid "The export file is too large. Please export fewer records."
 msgstr "내보내기 파일이 너무 큽니다. 더 적은 레코드를 내보내세요."
 
+#. js-lingui-id: bjRiGF
+#: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
+msgid "The export is missing data and could not be completed."
+msgstr "내보내기에 데이터가 누락되어 완료할 수 없습니다."
+
 #. js-lingui-id: RKP94c
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12858,10 +13165,25 @@ msgctxt "fieldMetadata.description"
 msgid "The list this campaign was sent to"
 msgstr "이 캠페인이 전송된 목록"
 
+#. js-lingui-id: pSAncm
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function that completes the connection was not found."
+msgstr "연결을 완료하는 로직 함수를 찾을 수 없습니다."
+
 #. js-lingui-id: gU/AgL
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that identifies the connected account was not found."
 msgstr "연결된 계정을 식별하는 로직 함수를 찾을 수 없습니다."
+
+#. js-lingui-id: 8gf2aA
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function that starts the connection was not found."
+msgstr "연결을 시작하는 로직 함수를 찾을 수 없습니다."
+
+#. js-lingui-id: usqJwo
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider sends with was not found in its application."
+msgstr "이 메시징 공급자가 전송에 사용하는 로직 함수를 해당 애플리케이션에서 찾을 수 없습니다."
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13174,6 +13496,16 @@ msgstr "워크플로가 이 애플리케이션에서 사용할 수 없는 메타
 msgid "The workflow schedule is invalid."
 msgstr "워크플로 일정이 잘못되었습니다."
 
+#. js-lingui-id: /s75Zz
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow select field must reference a field of the same type."
+msgstr "워크플로 선택 필드는 동일한 유형의 필드를 참조해야 합니다."
+
+#. js-lingui-id: 8xdW5z
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow select field must reference an existing field."
+msgstr "워크플로 선택 필드는 기존 필드를 참조해야 합니다."
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13409,6 +13741,32 @@ msgstr "이 캠페인의 목록이 휴지통에 있습니다. 복원하거나 �
 msgid "This change would corrupt the workflow, it was not saved"
 msgstr "이 변경으로 인해 워크플로우가 손상될 수 있으므로 저장되지 않았습니다"
 
+#. js-lingui-id: ThXjDv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "This channel access no longer exists."
+msgstr "이 채널 액세스는 더 이상 존재하지 않습니다."
+
+#. js-lingui-id: ++E+5T
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This channel is being changed. Try again in a moment."
+msgstr "이 채널은 변경 중입니다. 잠시 후 다시 시도하세요."
+
+#. js-lingui-id: /mdJSV
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This chat has no owner, so it has to stay in a channel."
+msgstr "이 채팅에는 소유자가 없으므로 채널에 유지되어야 합니다."
+
+#. js-lingui-id: 6zaKtA
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This chat is not in a channel."
+msgstr "이 채팅은 채널에 없습니다."
+
+#. js-lingui-id: TjTe43
+#: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
+msgid "This code belongs to a published workflow version. Edit it from a draft."
+msgstr "이 코드는 게시된 워크플로 버전에 속합니다. 초안에서 편집하세요."
+
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
@@ -13423,11 +13781,6 @@ msgstr "이 연결된 계정은 이 작업에 사용할 수 없습니다."
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
 msgstr "이 연결은 허용되지 않습니다."
-
-#. js-lingui-id: 5G7DBW
-#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
-msgid "This connection provider does not support this kind of connection."
-msgstr "이 연결 공급자는 이러한 종류의 연결을 지원하지 않습니다."
 
 #. js-lingui-id: DtHdRF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
@@ -13611,6 +13964,11 @@ msgstr "이 한도는 저장할 수 없습니다."
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "편집하는 동안 이 제한이 변경되었습니다. 새로고침한 후 다시 시도하세요."
 
+#. js-lingui-id: STVycN
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This list of chats could not be loaded. Try again."
+msgstr "이 채팅 목록을 불러올 수 없습니다. 다시 시도하세요."
+
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log filter is not valid."
@@ -13635,6 +13993,11 @@ msgstr "이 구성원은 이 채팅에서 답장할 수 없으므로 할당할 �
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "This member hasn't set up two-factor authentication, so there is nothing to recover."
 msgstr "이 구성원은 이중 인증을 설정하지 않았으므로 복구할 항목이 없습니다."
+
+#. js-lingui-id: NW6Nmf
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "This message channel cannot send messages."
+msgstr "이 메시지 채널은 메시지를 보낼 수 없습니다."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -13721,6 +14084,11 @@ msgstr "이 조직 키는 이미 다른 서버 인스턴스에서 사용 중입�
 msgid "This permission is already set for the role"
 msgstr "이 권한은 이미 해당 역할에 설정되어 있습니다"
 
+#. js-lingui-id: IlFhXC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
+msgid "This permission is disabled on the object and cannot be granted"
+msgstr "이 권한은 객체에서 비활성화되어 있어 부여할 수 없습니다"
+
 #. js-lingui-id: wJWFt2
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This plan is not available."
@@ -13776,6 +14144,16 @@ msgstr "이 요청은 더 이상 응답을 기다리지 않습니다."
 msgid "This request is still getting ready. Try again in a moment."
 msgstr "이 요청은 아직 준비 중입니다. 잠시 후 다시 시도하세요."
 
+#. js-lingui-id: T6c4z3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "This role already has access to the channel"
+msgstr "이 역할에는 이미 채널에 대한 액세스 권한이 있습니다"
+
+#. js-lingui-id: ce6Oq+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "This role already has access to the channel."
+msgstr "이 역할에는 이미 채널에 대한 액세스 권한이 있습니다."
+
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This role cannot be assigned to agents."
@@ -13806,7 +14184,7 @@ msgstr "이 역할은 편집할 수 없습니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "이 역할은 시스템 역할이기 때문에 수정할 수 없습니다. 사용자 정의 역할만 편집할 수 있습니다."
 
@@ -14578,6 +14956,11 @@ msgstr "범용 식별자는 시스템에서 관리하는 메타데이터용으�
 msgid "Unknown"
 msgstr "알 수 없음"
 
+#. js-lingui-id: 0CuayF
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
+msgid "Unknown disabled object permission action"
+msgstr "알 수 없는 비활성화된 객체 권한 작업"
+
 #. js-lingui-id: of4ZuG
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -14873,6 +15256,11 @@ msgctxt "skill.description"
 msgid "Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes"
 msgstr "레코드 도구로 표현할 수 없는 데이터 작업에 Python을 사용합니다. 예: 통계, 차트 이미지, 업로드된 파일 파싱. 일반적인 레코드 읽기 및 쓰기에는 사용하지 마세요"
 
+#. js-lingui-id: cW4z4t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Use lowercase letters, digits and underscores, starting with a letter"
+msgstr "문자로 시작하고 소문자, 숫자 및 밑줄을 사용하세요"
+
 #. js-lingui-id: Gltw+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
@@ -14967,11 +15355,6 @@ msgstr "사용자가 이미 존재합니다"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "사용자에게 이미 역할이 할당되어 있습니다."
-
-#. js-lingui-id: +FdZ1+
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "User application variable cannot have a value"
-msgstr "사용자 애플리케이션 변수는 값을 가질 수 없습니다"
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -15458,12 +15841,6 @@ msgstr "upsert 후 View를 찾을 수 없음"
 msgid "View not found for widget"
 msgstr "위젯의 View를 찾을 수 없음"
 
-#. js-lingui-id: pAoCL6
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "View Previous AI Chats"
-msgstr "이전 AI 채팅 보기"
-
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -15605,10 +15982,25 @@ msgstr "감시 필드는 \"updated\" 데이터베이스 이벤트 트리거에�
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "현재 데이터베이스에 일시적인 문제가 발생했습니다. 나중에 다시 시도해 주세요."
 
+#. js-lingui-id: 1QdT9i
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not complete the connection. Please try again."
+msgstr "연결을 완료할 수 없습니다. 다시 시도하세요."
+
 #. js-lingui-id: SO+/3j
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "승인한 계정을 식별할 수 없습니다. 다시 시도하세요."
+
+#. js-lingui-id: rj0Dtg
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not send your message. Please try again."
+msgstr "메시지를 보낼 수 없습니다. 다시 시도하세요."
+
+#. js-lingui-id: j7daTn
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not start the connection. Please try again."
+msgstr "연결을 시작할 수 없습니다. 다시 시도하세요."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -15701,6 +16093,12 @@ msgctxt "fieldMetadata.description"
 msgid "When a snoozed thread comes back to the inbox"
 msgstr "다시 알림 설정된 스레드가 받은 편지함으로 돌아오는 시점"
 
+#. js-lingui-id: zdfiR1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When a thread snoozed in its channel comes back to it"
+msgstr "채널에서 다시 알림 처리된 스레드가 해당 채널로 돌아올 때"
+
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -15731,6 +16129,12 @@ msgctxt "fieldMetadata.description"
 msgid "When the thread was created or last received a message"
 msgstr "스레드가 생성되었거나 마지막으로 메시지를 받은 시점"
 
+#. js-lingui-id: 5JPMXf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When the thread was marked as done or snoozed in its channel"
+msgstr "스레드가 채널에서 완료로 표시되었거나 다시 알림 처리된 시점"
+
 #. js-lingui-id: Kx3ltI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -15754,6 +16158,12 @@ msgstr "현재 참가자 규칙이 이 대상을 정당화하는지 여부"
 msgctxt "fieldMetadata.description"
 msgid "Whether new activity brings the thread back to the inbox"
 msgstr "새 활동으로 스레드가 받은 편지함으로 돌아오는지 여부"
+
+#. js-lingui-id: DYv22m
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether the assistant participates in this conversation"
+msgstr ""
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -16245,11 +16655,6 @@ msgstr "워크스페이스"
 msgid "Workspace {workspaceId} is not found."
 msgstr "워크스페이스 {workspaceId}를 찾을 수 없음."
 
-#. js-lingui-id: Ulbao6
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "Workspace application variable must have a value"
-msgstr "워크스페이스 애플리케이션 변수에는 값이 있어야 합니다"
-
 #. js-lingui-id: lNgTSN
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Workspace cannot be deleted: subscription is not yet canceled."
@@ -16435,6 +16840,7 @@ msgstr "구독 이벤트에 해당하는 워크스페이스를 찾을 수 없음
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+#: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 #: src/engine/core-modules/workspace/workspace.exception.ts
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -16835,6 +17241,11 @@ msgstr "AWS SES 계정이 아직 샌드박스 상태이므로 이 도메인에�
 #: src/engine/core-modules/billing/utils/build-phase-update-params-or-throw.util.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "결제 구독에 문제가 있습니다. 지원팀에 문의하십시오."
+
+#. js-lingui-id: L8/bmN
+#: src/modules/emailing/utils/build-campaign-send-refusal-exception.util.ts
+msgid "Your daily limit is {limitValue, plural, one {# email} other {# emails}}, and this campaign would go over what's left today. Contact us to raise it."
+msgstr "일일 한도는 {limitValue, plural, other {#개의 이메일}}이며, 이 캠페인은 오늘 남은 한도를 초과합니다. 한도를 늘리려면 문의하세요."
 
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

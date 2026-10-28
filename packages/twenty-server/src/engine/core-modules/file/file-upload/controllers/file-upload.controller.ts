@@ -27,15 +27,12 @@ export class FileUploadController {
   @Put(`${ApiPath.FileUpload}/:id`)
   @UseGuards(FileUploadTokenGuard, NoPermissionGuard)
   async uploadFileById(
-    @Req() req: Request,
+    @Req() req: Request & { workspaceId: string },
     @Res() res: Response,
     @Param('id') fileId: string,
   ) {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const workspaceId = (req as any)?.workspaceId;
-
     await this.fileUploadService.receiveFileStream({
-      workspaceId,
+      workspaceId: req.workspaceId,
       fileId,
       stream: req,
     });

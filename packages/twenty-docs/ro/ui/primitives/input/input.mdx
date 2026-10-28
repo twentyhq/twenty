@@ -1,0 +1,119 @@
+---
+title: Intrare
+description: Un câmp de introducere a textului cu atribute native, integrare cu câmpuri și două dimensiuni.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InputReference from '/snippets/ui/generated/input/input.mdx';
+
+## Prezentare generală
+
+`Input` redă un câmp de introducere a textului și acceptă atribute native de introducere precum `type`, `name`, `required`, `disabled` și `autoComplete`.
+
+<StoryEmbed storyId="ui-input-input--display" title="Exemplu de câmp de introducere" height={140} />
+
+## Utilizare
+
+### Stare necontrolată
+
+Utilizați `defaultValue` pentru a seta adresa de e-mail inițială. Câmpul de introducere gestionează modificările ulterioare.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root>
+    <Field.Label>Email</Field.Label>
+    <Input
+      name="email"
+      type="email"
+      autoComplete="email"
+      defaultValue="alex@example.com"
+    />
+    <Field.Description>Use your work email address.</Field.Description>
+  </Field.Root>
+);
+```
+
+## Opțiuni vizuale
+
+Comparați câmpurile de introducere mici și medii în stările lor implicite, focalizate, nevalide și dezactivate. Utilizați feedbackul de validare împreună cu stilizarea pentru starea nevalidă.
+
+<StoryEmbed storyId="ui-input-input--catalog" title="Opțiuni vizuale pentru câmpul de introducere" height={380} />
+
+## Aspect simplu
+
+Utilizați `variant="plain"` în interiorul unui rând sau al unei suprafețe existente. Elimină umplerea, chenarul, colțurile rotunjite și spațierea interioară și folosește înălțimea naturală. Elementul părinte furnizează spațierea și dimensiunile rândului. Stilizarea textului, a substituentului și a stării dezactivate rămâne comună. Conturul albastru urmează comportamentul nativ `:focus-visible` al browserului. Pentru controalele de text, aceasta poate include focusul cu indicatorul și focalizarea automată, precum și focusul de tastatură. Starea nevalidă utilizează un contur de pericol fără a schimba aspectul.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const InlineSubject = () => (
+  <Field.Root>
+    <Field.Label>Subject</Field.Label>
+    <Input variant="plain" placeholder="Add a subject" />
+  </Field.Root>
+);
+```
+
+`InputGroup` oferă automat câmpului său de introducere aspectul simplu și păstrează grupul ca singurul chenar pentru focus și validare. Înălțimile sale `sm` și `md` rămân 24px și 32px. Câmpurile de introducere simple independente nu utilizează înălțimea fixă asociată cu `size`.
+
+## Stare controlată
+
+Transmiteți `value` și actualizați-o cu `onValueChange` pentru a gestiona aceeași adresă de e-mail în starea React. Funcția de apel invers primește următoarea valoare șir și detaliile evenimentului.
+
+```tsx
+import { useState } from 'react';
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => {
+  const [email, setEmail] = useState('alex@example.com');
+
+  return (
+    <Field.Root>
+      <Field.Label>Email</Field.Label>
+      <Input
+        name="email"
+        type="email"
+        autoComplete="email"
+        value={email}
+        onValueChange={setEmail}
+      />
+      <Field.Description>Use your work email address.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+## Adăugați un element decorativ
+
+`InputGroup` gestionează bordura înconjurătoare și înălțimea layoutului. Dimensiunea inputului este determinată de `size` explicit al elementului copil, apoi de valoarea implicită a grupului, apoi de `md`. Inputul grupat se extinde în interiorul bordurii comune, așadar utilizați `size` al grupului pentru a modifica înălțimea generală a câmpului.
+
+```tsx
+import { IconSearch } from 'twenty-ui/icon';
+import { Input, InputGroup } from 'twenty-ui/primitives/input';
+
+export const CompactSearch = () => (
+  <InputGroup size="sm" startElement={<IconSearch size={16} aria-hidden />}>
+    <Input aria-label="Search contacts" />
+  </InputGroup>
+);
+```
+
+## Personalizarea controlului nativ și a wrapperului
+
+Atributele native, gestionarele, `className`, `style` și `ref` vizează inputul. Referința primește un `HTMLInputElement`. Folosește `render` pentru a compune o altă componentă de intrare și pentru a redirecționa proprietățile și referința furnizate către intrarea sa nativă.
+
+`onChange` primește un eveniment React de modificare pentru intrarea nativă. `onValueChange(value, details)` primește următorul șir și detaliile evenimentului Base UI, inclusiv `event`, `reason`, `cancel` și `allowPropagation`. Evenimentul vizează intrarea. Anularea detaliilor păstrează politica de validare a Base UI; nu anulează o editare nativă. Apelanții controlați decid ce valoare să confirme.
+
+Aplică stilurile de aspect, atributele și referințele pe `InputGroup` atunci când personalizezi învelișul din jur. Grupul nu deține nicio valoare. Comportamentul nativ pentru `name`, `form`, `required`, `readOnly`, `disabled`, trimitere și resetare rămâne pe intrare, iar denumirea și validarea Field sunt furnizate prin `Field.Root`.
+
+## Proprietăți
+
+Referința include proprietăți specifice componentei și proprietăți moștenite de la Base UI. Sunt acceptate și atribute native de introducere. O intrare independentă folosește implicit `md`; într-un grup, un `size` de intrare omis moștenește dimensiunea grupului.
+
+<InputReference />
+
+<PageBanner illustration="page-cover-input" />

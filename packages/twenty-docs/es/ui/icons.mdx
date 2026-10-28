@@ -1,0 +1,90 @@
+---
+title: Iconos
+description: Iconos con nombre, búsqueda dinámica, contenedores de ilustraciones y sus props compatibles.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import IconReference from '/snippets/ui/generated/icon/icon.mdx';
+import IconsProviderReference from '/snippets/ui/generated/icon/icons-provider.mdx';
+import IllustrationIconWrapperReference from '/snippets/ui/generated/icon/illustration-icon-wrapper.mdx';
+import ThinkingOrbitLoaderIconReference from '/snippets/ui/generated/icon/thinking-orbit-loader-icon.mdx';
+import IconCatalog from '/snippets/ui/generated/icon/catalog.mdx';
+
+## Resumen
+
+Importa iconos con nombre desde `twenty-ui/icon`. Usa el control circundante o el texto visible para comunicar el significado. Los iconos decorativos deben ocultarse de la tecnología de asistencia.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const CompleteButton = () => (
+  <Button startIcon={<IconCheck />}>Complete task</Button>
+);
+```
+
+Los espacios para iconos de los botones ya ajustan el tamaño de su icono y lo ocultan de la tecnología de asistencia, por lo que el icono no necesita props adicionales allí.
+
+## Props compatibles
+
+Los iconos de Tabler aceptan `size` (número o longitud CSS), `stroke` (ancho de trazo), `color` y atributos y refs SVG nativos. Los iconos personalizados de marca e ilustración solo aceptan las props enumeradas en el catálogo generado a continuación. Sus valores predeterminados de tamaño varían; pasa `size` para obtener un resultado coherente. Los colores de marca pueden estar fijados por la ilustración, por lo que la anulación de color solo está disponible donde se indica.
+
+Los iconos personalizados que no aceptan atributos de accesibilidad necesitan un contenedor con la etiqueta adecuada o `aria-hidden`. `className` y `style` también están disponibles solo donde se indican. Importa un icono específico cuando sea posible para evitar cargar el catálogo dinámico.
+
+Los iconos exportados mantienen el ancho solicitado en los diseños flex, incluso dentro de botones. Permite que el texto adyacente se trunque o que el elemento principal se ajuste o se desplace cuando el espacio sea limitado. Cuando un icono admite `className` o `style`, puedes anular explícitamente `flex-shrink` para un diseño que lo necesite. Los contenedores de ilustraciones también conservan su ancho.
+
+## Nombres de iconos dinámicos
+
+Usa `IconsProvider` e `Icon` cuando los nombres se eligen en tiempo de ejecución. El proveedor carga el mapa completo de iconos de forma asíncrona; los paquetes creados sin división de código, como los componentes de front-end, incluyen el mapa completo. Antes de que se complete la carga y para nombres desconocidos, `Icon` representa `Icon123`. El mapa dinámico difiere del catálogo de exportaciones con nombre; no supongas que todas las exportaciones de marca o ilustración se pueden resolver por nombre.
+
+```tsx
+import { Icon, IconsProvider } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const DynamicAction = ({ iconName }: { iconName: string }) => (
+  <IconsProvider>
+    <Button startIcon={<Icon name={iconName} />}>Open record</Button>
+  </IconsProvider>
+);
+```
+
+`useIcons()` expone `getIcon(name, customDefaultIcon)` y `getIcons()` dentro del mismo proveedor. `getIcons()` devuelve inicialmente un mapa vacío. `getIcon` usa la alternativa con nombre cuando existe y, después, `Icon123`. El proveedor acepta un elemento hijo; usa un fragmento para varios hijos.
+
+### Props de Icon
+
+<IconReference />
+
+### Props de IconsProvider
+
+<IconsProviderReference />
+
+## Contenedor de ilustración
+
+`IllustrationIconWrapper` proporciona el estilo del contenedor de ilustración y reenvía atributos div nativos, hijos, estilos y refs. Cada exportación de `IllustrationIcon*` ya se representa dentro de él, así que usa el contenedor solo para enmarcar tu propio contenido de ilustración.
+
+```tsx
+import { IconCalendarEvent, IllustrationIconWrapper } from 'twenty-ui/icon';
+
+export const CalendarIllustration = () => (
+  <IllustrationIconWrapper role="img" aria-label="Calendar event">
+    <IconCalendarEvent size={32} />
+  </IllustrationIconWrapper>
+);
+```
+
+<IllustrationIconWrapperReference />
+
+## Icono de cargador animado
+
+`ThinkingOrbitLoaderIcon` se anima continuamente mientras está montado. Es decorativo y siempre está oculto de la tecnología de asistencia. Muestra el texto de carga por separado y monta o elimina el icono según el estado de la aplicación.
+
+<ThinkingOrbitLoaderIconReference />
+
+## Catálogo de iconos con nombre
+
+Este catálogo se genera a partir de las exportaciones públicas de `twenty-ui/icon` y agrupa los iconos según las props que aceptan.
+
+<IconCatalog />
+
+<PageBanner illustration="section-ui-components" />

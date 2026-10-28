@@ -60,16 +60,12 @@ describe('ApplicationInstallService', () => {
   const fileStorageService = {
     writeFile: jest.fn(),
   };
+  const appRegistrationRepository = {
+    findOne: jest.fn(),
+  };
 
   const service = new ApplicationInstallService(
-    {
-      findOne: jest.fn().mockResolvedValue({
-        id: APPLICATION_REGISTRATION_ID,
-        universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-        sourceType: ApplicationRegistrationSourceType.NPM,
-        manifest: null,
-      }),
-    } as unknown as Repository<ApplicationRegistrationEntity>,
+    appRegistrationRepository as unknown as Repository<ApplicationRegistrationEntity>,
     applicationService as unknown as ApplicationService,
     applicationLookupService as unknown as ApplicationLookupService,
     applicationPackageFetcherService as unknown as ApplicationPackageFetcherService,
@@ -129,6 +125,13 @@ describe('ApplicationInstallService', () => {
     );
     fileStorageService.writeFile.mockResolvedValue({ id: LOGO_FILE_ID });
     applicationService.update.mockResolvedValue(undefined);
+    appRegistrationRepository.findOne.mockResolvedValue({
+      id: APPLICATION_REGISTRATION_ID,
+      universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      sourceType: ApplicationRegistrationSourceType.NPM,
+      manifest: null,
+      isVetted: false,
+    });
   });
 
   afterEach(async () => {
@@ -199,4 +202,35 @@ describe('ApplicationInstallService', () => {
       expect.objectContaining({ logo: LOGO_PATH }),
     );
   });
+
+  it.each([
+    { isVetted: true, autoUpgrade: true },
+    { isVetted: false, autoUpgrade: false },
+  ])(
+    'creates the application with auto upgrade $autoUpgrade when the registration vetting is $isVetted',
+    async ({ isVetted, autoUpgrade }) => {
+      appRegistrationRepository.findOne.mockResolvedValue({
+        id: APPLICATION_REGISTRATION_ID,
+        universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        sourceType: ApplicationRegistrationSourceType.NPM,
+        manifest: null,
+        isVetted,
+      });
+      applicationLookupService.findByUniversalIdentifier.mockResolvedValue(
+        null,
+      );
+      applicationService.create.mockResolvedValue({
+        id: APPLICATION_ID,
+        logo: null,
+        logoFileId: null,
+        version: null,
+      });
+
+      await install();
+
+      expect(applicationService.create).toHaveBeenCalledWith(
+        expect.objectContaining({ autoUpgrade }),
+      );
+    },
+  );
 });

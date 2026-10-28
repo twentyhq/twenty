@@ -72,6 +72,12 @@ msgstr "{0} 必须是一个一对多或多对一的关联字段。"
 msgid "{0} must be a one-to-many relation field."
 msgstr "{0} 必须是一个一对多的关联字段。"
 
+#. js-lingui-id: LP7rtP
+#. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
+msgid "{action} is disabled on object {0}"
+msgstr "对象 {0} 上的 {action} 已禁用"
+
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
@@ -103,16 +109,6 @@ msgstr "在域名 \"{domainName}\" 中找到 {hostnameCount} 个主机名。预�
 #: src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util.ts
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} 的 {aggregateFieldLabel}"
-
-#. js-lingui-id: TJ2Qca
-#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
-msgid "{providerDisplayName} only supports connections shared with the workspace."
-msgstr "{providerDisplayName} 仅支持与工作区共享的连接。"
-
-#. js-lingui-id: Hz1hn8
-#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
-msgid "{providerDisplayName} only supports personal connections."
-msgstr "{providerDisplayName} 仅支持个人连接。"
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -152,6 +148,22 @@ msgstr "日历事件目标"
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
 msgstr "某个营销活动仍在发送。请等待其完成或取消后，再移除此发件人。"
+
+#. js-lingui-id: kZaUc+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
+msgid "A channel named \"{name}\" already exists"
+msgstr "名为 \"{name}\" 的渠道已存在"
+
+#. js-lingui-id: y84xpa
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "A channel needs a name."
+msgstr "渠道需要名称。"
+
+#. js-lingui-id: 3bCT2z
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
+msgid "A channel with this name already exists."
+msgstr "已存在同名渠道。"
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -247,6 +259,16 @@ msgstr "营销邮件一次只能发送给一位收件人，因此每个人都会
 msgctxt "objectMetadata.description"
 msgid "A message thread target"
 msgstr "消息线程目标"
+
+#. js-lingui-id: oP9K0J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "A messaging provider with this name already exists for this application"
+msgstr "此应用已存在同名的消息提供商"
+
+#. js-lingui-id: eynBqK
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "A messaging provider with this name already exists for this application."
+msgstr "此应用已存在同名的消息提供商。"
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -433,15 +455,16 @@ msgstr "创建日历事件时必须填写标题"
 msgid "A two-factor authentication recovery code was generated for you"
 msgstr "已为您生成双因素身份验证恢复代码"
 
-#. js-lingui-id: 28Abul
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "A user variable cannot have a value: each member sets their own."
-msgstr "用户变量不能有值：每位成员设置自己的值。"
-
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A user with this email already exists."
 msgstr "已存在使用该电子邮件的用户。"
+
+#. js-lingui-id: wSP1qx
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type"
+msgstr "对于 AGENT_CHAT_CHANNEL 类型，必须提供有效的 agentChatChannelUniversalIdentifier"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -558,11 +581,6 @@ msgstr "工作流版本"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "工作区成员"
-
-#. js-lingui-id: 7co7Js
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "A workspace variable must have a value."
-msgstr "工作区变量必须有值。"
 
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -1062,10 +1080,17 @@ msgid "An error occurred."
 msgstr "发生错误。"
 
 #. js-lingui-id: CKXJCD
-#: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
-#: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
+#: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
+#: src/engine/core-modules/record-export/services/record-export-query.service.ts
+#: src/engine/core-modules/record-export/services/record-export-query.service.ts
+#: src/engine/core-modules/record-export/utils/expand-morph-relation-export-fields.util.ts
 msgid "An export field is no longer available."
 msgstr "某个导出字段已不再可用。"
+
+#. js-lingui-id: zv+Pcr
+#: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
+msgid "An export is already running for this workspace."
+msgstr "此工作区已有导出正在进行。"
 
 #. js-lingui-id: jiELc8
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -1091,6 +1116,17 @@ msgstr "处理加密数据时发生内部错误。"
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."
 msgstr "已向该电子邮件发送邀请。"
+
+#. js-lingui-id: BCJWBj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "An MCP server with this name already exists"
+msgstr "带有此名称的 MCP 服务器已存在"
+
+#. js-lingui-id: SeiYVM
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "An MCP server with this name already exists."
+msgstr "带有此名称的 MCP 服务器已存在。"
 
 #. js-lingui-id: CQ5DXU
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -1455,6 +1491,12 @@ msgstr "分配给我"
 msgctxt "fieldMetadata.label"
 msgid "Assignee"
 msgstr "负责人"
+
+#. js-lingui-id: VkxEa0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Assistant participant"
+msgstr ""
 
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2561,6 +2603,18 @@ msgstr "抄送"
 msgid "Changing log retention requires an Organization subscription."
 msgstr "更改日志保留期限需要组织版订阅。"
 
+#. js-lingui-id: zBdJe6
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Channel"
+msgstr "渠道"
+
+#. js-lingui-id: gPIeS4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Channel archived at"
+msgstr "渠道归档时间"
+
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -2572,6 +2626,49 @@ msgstr "频道 ID"
 msgctxt "fieldMetadata.label"
 msgid "Channel ID"
 msgstr "频道 ID"
+
+#. js-lingui-id: G+8qH5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "Channel name is required"
+msgstr "渠道名称为必填项"
+
+#. js-lingui-id: Nd2xnP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "Channel not found"
+msgstr "未找到渠道"
+
+#. js-lingui-id: ZJRMDQ
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "Channel not found."
+msgstr "未找到渠道。"
+
+#. js-lingui-id: /84Bpj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "Channel role link not found"
+msgstr "未找到渠道角色链接"
+
+#. js-lingui-id: 86oa9B
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Channel snoozed until"
+msgstr "渠道暂停至"
+
+#. js-lingui-id: ieLfO5
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Channel the thread is triaged in"
+msgstr "会话分类所在的渠道"
+
+#. js-lingui-id: 7LMBzP
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Channels are not available yet. Try again in a few minutes."
+msgstr "渠道尚不可用。请几分钟后重试。"
 
 #. js-lingui-id: z851aK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -3072,6 +3169,12 @@ msgstr "未找到已连接账户。"
 msgid "Connection not found."
 msgstr "未找到连接."
 
+#. js-lingui-id: CQZ2kU
+#. placeholder {0}: flatMessagingProvider.connectionProviderUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Connection provider \"{0}\" was not found in this application"
+msgstr "在此应用中未找到连接提供商 \"{0}\""
+
 #. js-lingui-id: xQ2DfP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider display name is required"
@@ -3093,11 +3196,14 @@ msgstr "连接提供商的名称为必填项"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Connection provider not found"
 msgstr "未找到连接提供商"
 
 #. js-lingui-id: b+xWjq
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connection provider not found."
 msgstr "未找到连接提供商。"
 
@@ -3111,11 +3217,36 @@ msgstr "连接提供商的 oauthConfig.{label} 为必填项"
 msgid "Connection provider scope \"{scope}\" is invalid"
 msgstr "连接提供商范围 \"{scope}\" 无效"
 
+#. js-lingui-id: lOJLh7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider scope cannot be changed"
+msgstr "无法更改连接提供商范围"
+
+#. js-lingui-id: rGTdmC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider scope cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
+msgstr "创建后无法更改连接提供商范围：请使用新的 universalIdentifier 声明新的连接提供商"
+
+#. js-lingui-id: ouURJJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider type cannot be changed"
+msgstr "无法更改连接提供商类型"
+
+#. js-lingui-id: Y4TItr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider type cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
+msgstr "创建后无法更改连接提供商类型：请使用新的 universalIdentifier 声明新的连接提供商"
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with name {0} already exists for this application"
 msgstr "此应用程序中已存在名为 {0} 的连接提供商"
+
+#. js-lingui-id: pXXjt2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
+msgstr "类型为 'custom' 的连接提供商必须引用 authorize 和 callback 逻辑函数"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3626,6 +3757,11 @@ msgstr "Cron 触发器需要有效的 cron 模式，例如 \"0 9 * * 1\""
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Custom command menu item cannot be reset to default."
 msgstr "自定义命令菜单项无法重置为默认值。"
+
+#. js-lingui-id: eCtxAR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Custom connection provider is missing its authorize or callback logic function"
+msgstr "自定义连接提供商缺少其 authorize 或 callback 逻辑函数"
 
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -4191,6 +4327,16 @@ msgctxt "fieldMetadata.label"
 msgid "Direction"
 msgstr "方向"
 
+#. js-lingui-id: jPdYe/
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
+msgid "Disabled object permission actions must be a list"
+msgstr "已禁用的对象权限操作必须是列表"
+
+#. js-lingui-id: EtelV5
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
+msgid "Disabled object permission actions must not repeat"
+msgstr "已禁用的对象权限操作不得重复"
+
 #. js-lingui-id: T/2cxH
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -4202,6 +4348,17 @@ msgstr "放弃草稿"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Discard Draft"
 msgstr "放弃草稿"
+
+#. js-lingui-id: OaH7rc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Disconnect the MCP server before changing its URL"
+msgstr "更改 MCP 服务器的 URL 前，请先断开连接"
+
+#. js-lingui-id: X9u5qJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Disconnect the MCP server before changing its URL."
+msgstr "更改 MCP 服务器的 URL 前，请先断开连接。"
 
 #. js-lingui-id: N4sZ6H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -4886,7 +5043,6 @@ msgstr "体验"
 #. js-lingui-id: PCGpYB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Export"
 msgstr "导出"
@@ -4901,12 +5057,6 @@ msgstr "导出 {objectLabel}"
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Export not found."
 msgstr "未找到导出。"
-
-#. js-lingui-id: xvfw7w
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Export to PDF"
-msgstr "导出为 PDF"
 
 #. js-lingui-id: c5P53s
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6644,6 +6794,31 @@ msgstr "limit 参数无效。"
 msgid "Invalid logic function input."
 msgstr "无效的逻辑函数输入。"
 
+#. js-lingui-id: U2TpWH
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server input."
+msgstr "MCP 服务器输入无效。"
+
+#. js-lingui-id: PTN/J2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server name provided"
+msgstr "提供的 MCP 服务器名称无效"
+
+#. js-lingui-id: 945sNP
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server name. Use lowercase letters, digits and underscores, starting with a letter."
+msgstr "MCP 服务器名称无效。请使用小写字母、数字和下划线，并以字母开头。"
+
+#. js-lingui-id: 1pdxfJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server URL provided"
+msgstr "提供的 MCP 服务器 URL 无效"
+
+#. js-lingui-id: YDqREm
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server URL. Please provide a valid HTTP or HTTPS URL."
+msgstr "MCP 服务器 URL 无效。请提供有效的 HTTP 或 HTTPS URL。"
+
 #. js-lingui-id: fNaXqL
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Invalid message channel input."
@@ -6653,6 +6828,11 @@ msgstr "消息通道输入无效。"
 #: src/engine/metadata-modules/message-folder/message-folder.exception.ts
 msgid "Invalid message folder input."
 msgstr "消息文件夹输入无效。"
+
+#. js-lingui-id: u3ER6+
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "Invalid messaging provider input."
+msgstr "消息提供商输入无效。"
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -7035,6 +7215,7 @@ msgstr "位置的值无效：“{inspectedValue}”"
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 msgid "Invalid value for rich text."
 msgstr "富文本的值无效。"
 
@@ -7395,6 +7576,8 @@ msgstr "标签标识视图字段必须可见"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Label is required"
 msgstr "标签为必填项"
 
@@ -7873,6 +8056,17 @@ msgstr "必须在设置中定义 maxNumberOfValues，并且其值必须是大于
 msgid "May"
 msgstr "五月"
 
+#. js-lingui-id: ES19km
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "MCP server not found"
+msgstr "未找到 MCP 服务器"
+
+#. js-lingui-id: 32QmfJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "MCP server not found."
+msgstr "未找到 MCP 服务器。"
+
 #. js-lingui-id: DICk6O
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -8318,6 +8512,50 @@ msgctxt "fieldMetadata.description"
 msgid "Messages sent as part of this campaign"
 msgstr "作为此营销活动一部分发送的消息"
 
+#. js-lingui-id: DR7S+J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider connection provider cannot be changed"
+msgstr "无法更改消息提供商的连接提供商"
+
+#. js-lingui-id: S8RYm2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
+msgstr "创建后无法更改消息提供商的连接提供商：请使用新的 universalIdentifier 声明新的消息提供商"
+
+#. js-lingui-id: A2qm/C
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider display name is required"
+msgstr "消息提供商的显示名称为必填项"
+
+#. js-lingui-id: PheN1+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider displayName is required"
+msgstr "消息提供商的 displayName 为必填项"
+
+#. js-lingui-id: NpU0GW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider name is required"
+msgstr "消息提供商的名称为必填项"
+
+#. js-lingui-id: kh1zio
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider not found"
+msgstr "未找到消息提供商"
+
+#. js-lingui-id: yyDEl+
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "Messaging provider not found."
+msgstr "未找到消息提供商。"
+
+#. js-lingui-id: Ih/vm6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider with name {name} already exists for this application"
+msgstr "此应用程序中已存在名为 {name} 的消息提供商"
+
 #. js-lingui-id: IYFsjL
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
@@ -8410,6 +8648,11 @@ msgstr "月优先"
 msgid "Morph relation field must have a morph id"
 msgstr "多态关联字段必须具有 morph ID"
 
+#. js-lingui-id: /eQ78F
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Move this channel's chats to another channel before deleting it."
+msgstr "删除此渠道前，请先将其聊天移至其他渠道。"
+
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
@@ -8465,6 +8708,11 @@ msgstr ""
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Name is not synced with label."
 msgstr "名称未与标签同步。"
+
+#. js-lingui-id: QrBCC2
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+msgid "Name is not valid: it must be camelCase, e.g. \"{camelCasedName}\""
+msgstr "名称无效：必须使用 camelCase，例如 \"{camelCasedName}\""
 
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
@@ -9153,6 +9401,12 @@ msgstr "删除时操作仅支持多对一关系"
 msgid "One of the selected fields does not belong to this object."
 msgstr "所选字段之一不属于此对象。"
 
+#. js-lingui-id: mhOSep
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "One of these roles no longer exists."
+msgstr "其中一个角色已不存在。"
+
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "One or more records were not found."
@@ -9233,6 +9487,18 @@ msgstr "只有创建此工作流的人员可以更改其可见范围"
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
 msgid "Only the values of this form can be changed."
 msgstr "只能更改此表单的值。"
+
+#. js-lingui-id: 9rFxst
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Open chat"
+msgstr "打开聊天"
+
+#. js-lingui-id: 4QVn1g
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Open chat"
+msgstr "打开聊天"
 
 #. js-lingui-id: +ee5JG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9944,6 +10210,11 @@ msgstr "请选择未来的发送时间。"
 msgid "Pick a specific sub-field of \"{0}\" — composite fields can't be indexed as a whole."
 msgstr "请选择 “{0}” 的某个特定子字段 — 复合字段不能作为整体建立索引。"
 
+#. js-lingui-id: r+tlvn
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Pick another channel to move the chats to."
+msgstr "请选择另一个渠道以移动聊天。"
+
 #. js-lingui-id: TtfDdb
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
 msgid "Pick at least one field for the index."
@@ -9981,6 +10252,7 @@ msgid "Please provide a password for this connection."
 msgstr "请输入此连接的密码。"
 
 #. js-lingui-id: NR22yi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Please provide a valid HTTP or HTTPS URL"
@@ -10125,12 +10397,6 @@ msgctxt "pageLayoutWidget.title"
 msgid "Preview"
 msgstr "预览"
 
-#. js-lingui-id: ysRzX6
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Previous AI Chats"
-msgstr "历史人工智能对话"
-
 #. js-lingui-id: +DJKfQ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Primary axis group by field is required for bar chart"
@@ -10186,6 +10452,11 @@ msgstr "处理中"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
 msgid "Prompt cannot be empty"
 msgstr "提示词不能为空"
+
+#. js-lingui-id: KQ0Ots
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service.ts
+msgid "Property {property} cannot be updated"
+msgstr "属性 {property} 无法更新"
 
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -10930,6 +11201,7 @@ msgid "Role name is invalid"
 msgstr "角色名称无效"
 
 #. js-lingui-id: MvTCyk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -11402,6 +11674,11 @@ msgstr "发送邮件"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Send Email"
 msgstr "发送邮件"
+
+#. js-lingui-id: RPQott
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Send message logic function \"{sendMessageLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "在此应用中未找到发送消息逻辑函数 \"{sendMessageLogicFunctionUniversalIdentifier}\""
 
 #. js-lingui-id: +dLR8z
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11952,6 +12229,11 @@ msgstr "阶段"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Standard agents cannot be modified."
 msgstr "标准代理无法修改。"
+
+#. js-lingui-id: rQq8lH
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Standard channels cannot be deleted."
+msgstr "无法删除标准渠道。"
 
 #. js-lingui-id: Ptv+nG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -12651,6 +12933,26 @@ msgstr "公司总年度收入"
 msgid "The connected {0} account is missing calendar permissions ({missingScopeList}). Please reconnect the account to grant calendar access."
 msgstr "已连接的 {0} 账户缺少日历权限（{missingScopeList}）。请重新连接该账户以授予日历访问权限。"
 
+#. js-lingui-id: xYqYn7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider belongs to another application"
+msgstr "连接提供程序属于另一个应用程序"
+
+#. js-lingui-id: 0kfc9m
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider must belong to the same application as the MCP server"
+msgstr "连接提供程序必须与 MCP 服务器属于同一应用程序"
+
+#. js-lingui-id: x9rG77
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The connection provider must belong to the same application as the MCP server."
+msgstr "连接提供程序必须与 MCP 服务器属于同一应用程序。"
+
+#. js-lingui-id: fDWKx/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The connection provider this messaging provider uses was not found in its application."
+msgstr "未在其应用中找到此消息提供商使用的连接提供商。"
+
 #. js-lingui-id: j6q6l+
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The connection-provider manifest is missing required fields."
@@ -12755,6 +13057,11 @@ msgstr "导出失败。请重试或导出更少的记录。"
 msgid "The export file is too large. Please export fewer records."
 msgstr "导出文件过大。请导出更少的记录。"
 
+#. js-lingui-id: bjRiGF
+#: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
+msgid "The export is missing data and could not be completed."
+msgstr "导出缺少数据，无法完成。"
+
 #. js-lingui-id: RKP94c
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12858,10 +13165,25 @@ msgctxt "fieldMetadata.description"
 msgid "The list this campaign was sent to"
 msgstr "此营销活动发送到的列表"
 
+#. js-lingui-id: pSAncm
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function that completes the connection was not found."
+msgstr "未找到完成连接的逻辑函数。"
+
 #. js-lingui-id: gU/AgL
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that identifies the connected account was not found."
 msgstr "未找到用于识别已连接账户的逻辑函数。"
+
+#. js-lingui-id: 8gf2aA
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function that starts the connection was not found."
+msgstr "未找到启动连接的逻辑函数。"
+
+#. js-lingui-id: usqJwo
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider sends with was not found in its application."
+msgstr "未在其应用中找到此消息提供商用于发送消息的逻辑函数。"
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13174,6 +13496,16 @@ msgstr "工作流引用了此应用程序不可用的元数据。"
 msgid "The workflow schedule is invalid."
 msgstr "工作流计划无效。"
 
+#. js-lingui-id: /s75Zz
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow select field must reference a field of the same type."
+msgstr "工作流选择字段必须引用相同类型的字段。"
+
+#. js-lingui-id: 8xdW5z
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow select field must reference an existing field."
+msgstr "工作流选择字段必须引用现有字段。"
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13409,6 +13741,32 @@ msgstr "此营销活动的列表位于回收站中。请将其还原，或在“
 msgid "This change would corrupt the workflow, it was not saved"
 msgstr "此更改会损坏工作流，因此未保存"
 
+#. js-lingui-id: ThXjDv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "This channel access no longer exists."
+msgstr "此渠道访问权限已不存在。"
+
+#. js-lingui-id: ++E+5T
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This channel is being changed. Try again in a moment."
+msgstr "此渠道正在更改。请稍后重试。"
+
+#. js-lingui-id: /mdJSV
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This chat has no owner, so it has to stay in a channel."
+msgstr "此聊天没有所有者，因此必须保留在渠道中。"
+
+#. js-lingui-id: 6zaKtA
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This chat is not in a channel."
+msgstr "此聊天不在任何渠道中。"
+
+#. js-lingui-id: TjTe43
+#: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
+msgid "This code belongs to a published workflow version. Edit it from a draft."
+msgstr "此代码属于已发布的工作流版本。请从草稿中编辑。"
+
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
@@ -13423,11 +13781,6 @@ msgstr "此已连接的账户无法用于此操作。"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
 msgstr "不允许此连接。"
-
-#. js-lingui-id: 5G7DBW
-#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
-msgid "This connection provider does not support this kind of connection."
-msgstr "此连接提供商不支持此类连接。"
 
 #. js-lingui-id: DtHdRF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
@@ -13611,6 +13964,11 @@ msgstr "无法保存此限制。"
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "此限制在您编辑时已发生更改。请重新加载后重试。"
 
+#. js-lingui-id: STVycN
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This list of chats could not be loaded. Try again."
+msgstr "无法加载此聊天列表。请重试。"
+
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log filter is not valid."
@@ -13635,6 +13993,11 @@ msgstr "该成员无法在此聊天中回复，因此无法将其分配给该成
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "This member hasn't set up two-factor authentication, so there is nothing to recover."
 msgstr "该成员尚未设置双因素身份验证，因此没有可恢复的内容。"
+
+#. js-lingui-id: NW6Nmf
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "This message channel cannot send messages."
+msgstr "此消息渠道无法发送消息。"
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -13721,6 +14084,11 @@ msgstr "此组织密钥已在另一台服务器实例上使用。请先从该服
 msgid "This permission is already set for the role"
 msgstr "该角色已设置此权限"
 
+#. js-lingui-id: IlFhXC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
+msgid "This permission is disabled on the object and cannot be granted"
+msgstr "此权限在对象上已禁用，无法授予"
+
 #. js-lingui-id: wJWFt2
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This plan is not available."
@@ -13776,6 +14144,16 @@ msgstr "此请求不再等待回答。"
 msgid "This request is still getting ready. Try again in a moment."
 msgstr "此请求仍在准备中。请稍后重试。"
 
+#. js-lingui-id: T6c4z3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "This role already has access to the channel"
+msgstr "此角色已有该渠道的访问权限"
+
+#. js-lingui-id: ce6Oq+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "This role already has access to the channel."
+msgstr "此角色已有该渠道的访问权限。"
+
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This role cannot be assigned to agents."
@@ -13806,7 +14184,7 @@ msgstr "此角色无法编辑。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "此角色无法修改，因为它是系统角色。只有自定义角色可以编辑。"
 
@@ -14578,6 +14956,11 @@ msgstr "通用标识符保留给系统管理的元数据使用"
 msgid "Unknown"
 msgstr "未知"
 
+#. js-lingui-id: 0CuayF
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
+msgid "Unknown disabled object permission action"
+msgstr "未知的已禁用对象权限操作"
+
 #. js-lingui-id: of4ZuG
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -14873,6 +15256,11 @@ msgctxt "skill.description"
 msgid "Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes"
 msgstr "用于记录工具无法表达的数据 Python 操作：统计、图表图像、解析上传的文件。请勿将其用于常规记录读取和写入"
 
+#. js-lingui-id: cW4z4t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Use lowercase letters, digits and underscores, starting with a letter"
+msgstr "请使用小写字母、数字和下划线，并以字母开头"
+
 #. js-lingui-id: Gltw+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
@@ -14967,11 +15355,6 @@ msgstr "用户已存在"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "用户已分配角色。"
-
-#. js-lingui-id: +FdZ1+
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "User application variable cannot have a value"
-msgstr "用户应用程序变量不能有值"
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -15458,12 +15841,6 @@ msgstr "在插入或更新后未找到视图"
 msgid "View not found for widget"
 msgstr "未找到小部件的视图"
 
-#. js-lingui-id: pAoCL6
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "View Previous AI Chats"
-msgstr "查看历史人工智能对话"
-
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -15605,10 +15982,25 @@ msgstr "监视字段仅适用于 \"updated\" 数据库事件触发器"
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "我们遇到数据库临时问题，请稍后再试。"
 
+#. js-lingui-id: 1QdT9i
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not complete the connection. Please try again."
+msgstr "我们无法完成连接。请重试。"
+
 #. js-lingui-id: SO+/3j
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "我们无法识别您授权的账户。请重试。"
+
+#. js-lingui-id: rj0Dtg
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not send your message. Please try again."
+msgstr "我们无法发送您的消息。请重试。"
+
+#. js-lingui-id: j7daTn
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not start the connection. Please try again."
+msgstr "我们无法启动连接。请重试。"
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -15701,6 +16093,12 @@ msgctxt "fieldMetadata.description"
 msgid "When a snoozed thread comes back to the inbox"
 msgstr "稍后处理的线程何时返回收件箱"
 
+#. js-lingui-id: zdfiR1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When a thread snoozed in its channel comes back to it"
+msgstr "渠道中已暂停的会话恢复时"
+
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -15731,6 +16129,12 @@ msgctxt "fieldMetadata.description"
 msgid "When the thread was created or last received a message"
 msgstr "线程创建或最后收到消息的时间"
 
+#. js-lingui-id: 5JPMXf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When the thread was marked as done or snoozed in its channel"
+msgstr "会话在其渠道中被标记为完成或暂停时"
+
 #. js-lingui-id: Kx3ltI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -15754,6 +16158,12 @@ msgstr "当前参与者规则是否证明此目标合理"
 msgctxt "fieldMetadata.description"
 msgid "Whether new activity brings the thread back to the inbox"
 msgstr "新活动是否会将线程带回收件箱"
+
+#. js-lingui-id: DYv22m
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether the assistant participates in this conversation"
+msgstr ""
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -16245,11 +16655,6 @@ msgstr "工作区"
 msgid "Workspace {workspaceId} is not found."
 msgstr "未找到工作区 {workspaceId}。"
 
-#. js-lingui-id: Ulbao6
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "Workspace application variable must have a value"
-msgstr "工作区应用程序变量必须有值"
-
 #. js-lingui-id: lNgTSN
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Workspace cannot be deleted: subscription is not yet canceled."
@@ -16435,6 +16840,7 @@ msgstr "未找到订阅事件对应的工作区。"
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+#: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 #: src/engine/core-modules/workspace/workspace.exception.ts
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -16835,6 +17241,11 @@ msgstr "您的 AWS SES 账户仍处于沙盒环境，因此此域名无法向未
 #: src/engine/core-modules/billing/utils/build-phase-update-params-or-throw.util.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "您的账单订阅已损坏。请联系支持。"
+
+#. js-lingui-id: L8/bmN
+#: src/modules/emailing/utils/build-campaign-send-refusal-exception.util.ts
+msgid "Your daily limit is {limitValue, plural, one {# email} other {# emails}}, and this campaign would go over what's left today. Contact us to raise it."
+msgstr "您的每日限额为 {limitValue, plural, other {# 封电子邮件}}，此活动将超过今天的剩余额度。请联系我们提高限额。"
 
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
