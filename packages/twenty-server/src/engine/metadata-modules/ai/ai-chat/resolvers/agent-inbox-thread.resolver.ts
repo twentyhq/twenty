@@ -52,17 +52,9 @@ export class AgentInboxThreadResolver {
   async attachRecordToInboxThread(
     @Args('input') input: InboxThreadRecordInputDTO,
   ): Promise<boolean> {
-    const authContext = this.getCallerAuthContext();
-
-    await this.inboxAccessService.getWritableThread({
-      authContext,
-      threadId: input.threadId,
-    });
-    await this.threadTargetService.attachThreadToRecord({
-      ...input,
-      workspaceId: authContext.workspace.id,
-      authContext,
-    });
+    await this.threadTargetService.attachThreadToRecord(
+      await this.authorizeThreadRecordLink(input),
+    );
 
     return true;
   }
@@ -71,19 +63,22 @@ export class AgentInboxThreadResolver {
   async detachRecordFromInboxThread(
     @Args('input') input: InboxThreadRecordInputDTO,
   ): Promise<boolean> {
+    await this.threadTargetService.detachThreadFromRecord(
+      await this.authorizeThreadRecordLink(input),
+    );
+
+    return true;
+  }
+
+  private async authorizeThreadRecordLink(input: InboxThreadRecordInputDTO) {
     const authContext = this.getCallerAuthContext();
 
-    await this.inboxAccessService.getWritableThread({
+    await this.inboxAccessService.assertThreadIsWritableOrThrow({
       authContext,
       threadId: input.threadId,
     });
-    await this.threadTargetService.detachThreadFromRecord({
-      ...input,
-      workspaceId: authContext.workspace.id,
-      authContext,
-    });
 
-    return true;
+    return { ...input, workspaceId: authContext.workspace.id, authContext };
   }
 
   private getCallerAuthContext(): AgentInboxCallerAuthContext {

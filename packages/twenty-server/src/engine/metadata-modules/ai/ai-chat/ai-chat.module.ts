@@ -47,7 +47,6 @@ import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-c
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
-import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
 import { AgentInboxThreadResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver';
 import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-access.service';
 
@@ -72,7 +71,6 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     MetricsModule,
     ToolProviderModule,
     DashboardToolsModule,
-    RecordShareStorageModule,
   ],
   providers: [
     AgentChatActorService,

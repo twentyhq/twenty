@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -10,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { type GraphQLResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
@@ -18,20 +20,20 @@ import {
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 
-import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
-import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -48,20 +50,14 @@ const SEND_INBOX_MESSAGE = parse(
   'mutation SendInboxMessage($input: SendInboxMessageInput!) { sendInboxMessage(input: $input) { threadId } }',
 );
 
-type GraphqlResponse = {
-  body: {
-    data?: Record<string, unknown> | null;
-    errors?: { extensions?: { code?: string; subCode?: string } }[];
-  };
-};
-
-const expectGraphqlError = (
-  response: GraphqlResponse,
-  { code, subCode }: { code: string; subCode?: string },
+const expectNotFound = (
+  response: GraphQLResponse<Record<string, unknown>>,
+  subCode: AiExceptionCode,
 ) => {
-  expect(response.body.errors?.[0]?.extensions).toMatchObject(
-    isDefined(subCode) ? { code, subCode } : { code },
-  );
+  expect(response.body.errors?.[0]?.extensions).toMatchObject({
+    code: 'NOT_FOUND',
+    subCode,
+  });
 };
 
 describe('Inbox thread mutations for members and applications', () => {
@@ -84,7 +80,7 @@ describe('Inbox thread mutations for members and applications', () => {
     token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
   }: LinkRecordArgs & {
     mutation: typeof ATTACH_RECORD;
-  }): Promise<GraphqlResponse> =>
+  }) =>
     makeMetadataApiRequest(
       {
         query: mutation,
@@ -117,15 +113,20 @@ describe('Inbox thread mutations for members and applications', () => {
   }: {
     threadId: string;
     accessLevel: RecordShareAccessLevel;
-  }): Promise<void> =>
-    setManualRecordShare({
+  }): Promise<void> => {
+    const { flatObjectMetadataMaps } =
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatObjectMetadataMaps']);
+
+    await setManualRecordShare({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       enabled: true,
       share: {
         objectMetadataId:
-          await getAppProviderByClassName<AgentChatSharingService>(
-            'AgentChatSharingService',
-          ).getThreadObjectMetadataId(SEED_APPLE_WORKSPACE_ID),
+          flatObjectMetadataMaps.byUniversalIdentifier[
+            STANDARD_OBJECTS.agentChatThread.universalIdentifier
+          ]!.id,
         recordId: threadId,
         principalId: applicationRoleId,
         principalType: RecordSharePrincipalType.ROLE,
@@ -133,6 +134,7 @@ describe('Inbox thread mutations for members and applications', () => {
         sourceId: threadId,
       },
     });
+  };
 
   const createMemberThread = async (): Promise<string> => {
     const threadId = randomUUID();
@@ -257,148 +259,143 @@ describe('Inbox thread mutations for members and applications', () => {
     }
   });
 
-  describe('attaching records', () => {
-    it('links the conversation to the record once, however often a member asks', async () => {
-      const threadId = await createMemberThread();
+  it('links the conversation to the record once, however often a member asks', async () => {
+    const threadId = await createMemberThread();
 
-      expect((await attachRecord({ threadId })).body).toEqual({
-        data: { attachRecordToInboxThread: true },
-      });
-      expect((await attachRecord({ threadId })).body).toEqual({
-        data: { attachRecordToInboxThread: true },
-      });
-      expect(await readCompanyLinks(threadId)).toEqual([{ deletedAt: null }]);
+    expect((await attachRecord({ threadId })).body).toEqual({
+      data: { attachRecordToInboxThread: true },
+    });
+    expect((await attachRecord({ threadId })).body).toEqual({
+      data: { attachRecordToInboxThread: true },
+    });
+    expect(await readCompanyLinks(threadId)).toEqual([{ deletedAt: null }]);
+  });
+
+  it('soft deletes the link on detach, changes nothing when detached again, and links again on attach', async () => {
+    const threadId = await createMemberThread();
+
+    await attachRecord({ threadId });
+
+    expect((await detachRecord({ threadId })).body).toEqual({
+      data: { detachRecordFromInboxThread: true },
+    });
+    expect((await detachRecord({ threadId })).body).toEqual({
+      data: { detachRecordFromInboxThread: true },
+    });
+    expect(await readCompanyLinks(threadId)).toEqual([
+      { deletedAt: expect.anything() },
+    ]);
+
+    await attachRecord({ threadId });
+
+    expect(await readCompanyLinks(threadId)).toEqual([
+      { deletedAt: expect.anything() },
+      { deletedAt: null },
+    ]);
+  });
+
+  it('reports a record the caller cannot read as not found, on attach and on detach', async () => {
+    const threadId = await createMemberThread();
+    const unreadableRecordId = randomUUID();
+
+    expectNotFound(
+      await attachRecord({ threadId, recordId: unreadableRecordId }),
+      AiExceptionCode.RECORD_NOT_FOUND,
+    );
+    expectNotFound(
+      await detachRecord({ threadId, recordId: unreadableRecordId }),
+      AiExceptionCode.RECORD_NOT_FOUND,
+    );
+  });
+
+  it('refuses a member who cannot edit the conversation', async () => {
+    const threadId = await createMemberThread();
+
+    expectNotFound(
+      await attachRecord({ threadId, token: APPLE_JONY_MEMBER_ACCESS_TOKEN }),
+      AiExceptionCode.THREAD_NOT_FOUND,
+    );
+    expect(await readCompanyLinks(threadId)).toEqual([]);
+  });
+
+  it('acts as the member when an application token carries one', async () => {
+    const threadId = await createMemberThread();
+    const memberApplicationToken = (
+      await generateAppleAdminApplicationTokenPair({
+        applicationId: application.id,
+      })
+    ).applicationAccessToken.token;
+
+    expect(
+      (await attachRecord({ threadId, token: memberApplicationToken })).body,
+    ).toEqual({ data: { attachRecordToInboxThread: true } });
+    expect(await readCompanyLinks(threadId)).toEqual([{ deletedAt: null }]);
+  });
+
+  it('attaches and detaches as the application that wrote in the conversation', async () => {
+    const threadId = await createApplicationThread();
+
+    expect(
+      (await attachRecord({ threadId, token: applicationToken })).body,
+    ).toEqual({ data: { attachRecordToInboxThread: true } });
+    expect(await readCompanyLinks(threadId)).toEqual([{ deletedAt: null }]);
+
+    expect(
+      (await detachRecord({ threadId, token: applicationToken })).body,
+    ).toEqual({ data: { detachRecordFromInboxThread: true } });
+    expect(await readCompanyLinks(threadId)).toEqual([
+      { deletedAt: expect.anything() },
+    ]);
+  });
+
+  it('refuses an application that neither wrote in the conversation nor reaches it through its role', async () => {
+    const threadId = await createMemberThread();
+
+    expectNotFound(
+      await attachRecord({ threadId, token: applicationToken }),
+      AiExceptionCode.THREAD_NOT_FOUND,
+    );
+    expect(await readCompanyLinks(threadId)).toEqual([]);
+  });
+
+  it('does not count a message a member sent through the application as the application taking part', async () => {
+    const threadId = await createMemberThread();
+
+    await recordMemberMessageSentThroughApplication(threadId);
+
+    expectNotFound(
+      await attachRecord({ threadId, token: applicationToken }),
+      AiExceptionCode.THREAD_NOT_FOUND,
+    );
+    expect(await readCompanyLinks(threadId)).toEqual([]);
+  });
+
+  it('refuses an application whose role can only read the conversation', async () => {
+    const threadId = await createMemberThread();
+
+    await grantApplicationRoleAccess({
+      threadId,
+      accessLevel: RecordShareAccessLevel.READ,
     });
 
-    it('soft deletes the link on detach, changes nothing when detached again, and links again on attach', async () => {
-      const threadId = await createMemberThread();
+    expectNotFound(
+      await attachRecord({ threadId, token: applicationToken }),
+      AiExceptionCode.THREAD_NOT_FOUND,
+    );
+    expect(await readCompanyLinks(threadId)).toEqual([]);
+  });
 
-      await attachRecord({ threadId });
+  it('lets an application whose role was granted the conversation attach records', async () => {
+    const threadId = await createMemberThread();
 
-      expect((await detachRecord({ threadId })).body).toEqual({
-        data: { detachRecordFromInboxThread: true },
-      });
-      expect((await detachRecord({ threadId })).body).toEqual({
-        data: { detachRecordFromInboxThread: true },
-      });
-      expect(await readCompanyLinks(threadId)).toEqual([
-        { deletedAt: expect.anything() },
-      ]);
-
-      await attachRecord({ threadId });
-
-      expect(await readCompanyLinks(threadId)).toEqual([
-        { deletedAt: expect.anything() },
-        { deletedAt: null },
-      ]);
+    await grantApplicationRoleAccess({
+      threadId,
+      accessLevel: RecordShareAccessLevel.READ_WRITE,
     });
 
-    it('reports a record the caller cannot read as not found, on attach and on detach', async () => {
-      const threadId = await createMemberThread();
-      const unreadableRecordId = randomUUID();
-
-      expectGraphqlError(
-        await attachRecord({ threadId, recordId: unreadableRecordId }),
-        { code: 'NOT_FOUND', subCode: AiExceptionCode.RECORD_NOT_FOUND },
-      );
-      expectGraphqlError(
-        await detachRecord({ threadId, recordId: unreadableRecordId }),
-        { code: 'NOT_FOUND', subCode: AiExceptionCode.RECORD_NOT_FOUND },
-      );
-    });
-
-    it('refuses a member who cannot edit the conversation', async () => {
-      const threadId = await createMemberThread();
-
-      expectGraphqlError(
-        await attachRecord({ threadId, token: APPLE_JONY_MEMBER_ACCESS_TOKEN }),
-        { code: 'NOT_FOUND', subCode: AiExceptionCode.THREAD_NOT_FOUND },
-      );
-      expect(await readCompanyLinks(threadId)).toEqual([]);
-    });
-
-    it('acts as the member when an application token carries one', async () => {
-      const threadId = await createMemberThread();
-      const memberApplicationToken = (
-        await generateApplicationTokenPair({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          applicationId: application.id,
-          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-          userId: USER_DATA_SEED_IDS.JANE,
-        })
-      ).applicationAccessToken.token;
-
-      expect(
-        (await attachRecord({ threadId, token: memberApplicationToken })).body,
-      ).toEqual({ data: { attachRecordToInboxThread: true } });
-      expect(await readCompanyLinks(threadId)).toEqual([{ deletedAt: null }]);
-    });
-
-    it('attaches and detaches as the application that wrote in the conversation', async () => {
-      const threadId = await createApplicationThread();
-
-      expect(
-        (await attachRecord({ threadId, token: applicationToken })).body,
-      ).toEqual({ data: { attachRecordToInboxThread: true } });
-      expect(await readCompanyLinks(threadId)).toEqual([{ deletedAt: null }]);
-
-      expect(
-        (await detachRecord({ threadId, token: applicationToken })).body,
-      ).toEqual({ data: { detachRecordFromInboxThread: true } });
-      expect(await readCompanyLinks(threadId)).toEqual([
-        { deletedAt: expect.anything() },
-      ]);
-    });
-
-    it('refuses an application that neither wrote in the conversation nor reaches it through its role', async () => {
-      const threadId = await createMemberThread();
-
-      expectGraphqlError(
-        await attachRecord({ threadId, token: applicationToken }),
-        { code: 'NOT_FOUND', subCode: AiExceptionCode.THREAD_NOT_FOUND },
-      );
-      expect(await readCompanyLinks(threadId)).toEqual([]);
-    });
-
-    it('does not count a message a member sent through the application as the application taking part', async () => {
-      const threadId = await createMemberThread();
-
-      await recordMemberMessageSentThroughApplication(threadId);
-
-      expectGraphqlError(
-        await attachRecord({ threadId, token: applicationToken }),
-        { code: 'NOT_FOUND', subCode: AiExceptionCode.THREAD_NOT_FOUND },
-      );
-      expect(await readCompanyLinks(threadId)).toEqual([]);
-    });
-
-    it('refuses an application whose role can only read the conversation', async () => {
-      const threadId = await createMemberThread();
-
-      await grantApplicationRoleAccess({
-        threadId,
-        accessLevel: RecordShareAccessLevel.READ,
-      });
-
-      expectGraphqlError(
-        await attachRecord({ threadId, token: applicationToken }),
-        { code: 'NOT_FOUND', subCode: AiExceptionCode.THREAD_NOT_FOUND },
-      );
-      expect(await readCompanyLinks(threadId)).toEqual([]);
-    });
-
-    it('lets an application whose role was granted the conversation attach records', async () => {
-      const threadId = await createMemberThread();
-
-      await grantApplicationRoleAccess({
-        threadId,
-        accessLevel: RecordShareAccessLevel.READ_WRITE,
-      });
-
-      expect(
-        (await attachRecord({ threadId, token: applicationToken })).body,
-      ).toEqual({ data: { attachRecordToInboxThread: true } });
-      expect(await readCompanyLinks(threadId)).toEqual([{ deletedAt: null }]);
-    });
+    expect(
+      (await attachRecord({ threadId, token: applicationToken })).body,
+    ).toEqual({ data: { attachRecordToInboxThread: true } });
+    expect(await readCompanyLinks(threadId)).toEqual([{ deletedAt: null }]);
   });
 });

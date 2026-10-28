@@ -17,6 +17,8 @@ import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/ut
 import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
+import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
+import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { acquireAgentChatChannelGrantLocksForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks-for-thread-write-or-throw.util';
@@ -83,8 +85,26 @@ export class AgentChatSharingService {
     ).id;
   }
 
-  async getThreadObjectMetadataId(workspaceId: string): Promise<string> {
-    return (await this.getThreadObjectMetadata(workspaceId)).id;
+  async isThreadWritableByRole({
+    workspaceId,
+    threadId,
+    roleId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    roleId: string;
+  }): Promise<boolean> {
+    const threadShares = await this.recordShareStorageService.findByRecordIds({
+      workspaceId,
+      objectMetadataId: (await this.getThreadObjectMetadata(workspaceId)).id,
+      recordIds: [threadId],
+    });
+
+    return resolveRecordIdsSharedWithPrincipals({
+      recordShares: threadShares,
+      principalIds: [roleId],
+      accessLevels: resolveRequiredRecordShareAccessLevels('update'),
+    }).has(threadId);
   }
 
   getReadableThread(args: AgentChatThreadAccessArgs) {
