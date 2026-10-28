@@ -6,6 +6,7 @@ import { MoveApplicationAndSystemAccessToDisabledActionsCommand } from 'src/data
 import { UngateMergeFromDuplicateCriteriaCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793180997766-ungate-merge-from-duplicate-criteria.command';
 import { GateMergeCommandOnRecordPermissionsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793183175063-gate-merge-command-on-record-permissions.command';
 import { SyncWorkspaceMemberRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793192231470-sync-workspace-member-record-page.command';
+import { BackfillStandardPermissionFlagsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793198086907-backfill-standard-permission-flags.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -23,6 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     UngateMergeFromDuplicateCriteriaCommand,
     GateMergeCommandOnRecordPermissionsCommand,
     SyncWorkspaceMemberRecordPageCommand,
+    BackfillStandardPermissionFlagsCommand,
   ],
 })
 export class V2_53_UpgradeVersionCommandModule {}

@@ -2,6 +2,9 @@ import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { WORKFLOW_CONNECTED_ACCOUNT_STEP_CAPABILITY } from 'src/engine/core-modules/application/application-manifest/constants/workflow-connected-account-step-capability.constant';
+import { type WorkflowConnectedAccountStepType } from 'src/engine/core-modules/application/application-manifest/types/workflow-connected-account-step-type.type';
+import { findWorkflowStepConnectedAccount } from 'src/engine/core-modules/application/application-manifest/utils/find-workflow-step-connected-account.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -74,5 +77,35 @@ export const buildWorkflowManifestReferenceResolvers = ({
     };
   };
 
-  return { resolve, objectName, field, fieldReference };
+  const connectedAccountIdOrThrow = ({
+    stepType,
+    handle,
+  }: {
+    stepType: WorkflowConnectedAccountStepType;
+    handle: string;
+  }) => {
+    const connectedAccount = findWorkflowStepConnectedAccount({
+      stepType,
+      handle,
+      connectedAccounts: references.connectedAccounts ?? [],
+    });
+    if (!isDefined(connectedAccount)) {
+      throw new ApplicationException(
+        `${subject}: no connected account ${handle} shared with this workspace can ${WORKFLOW_CONNECTED_ACCOUNT_STEP_CAPABILITY[stepType]}`,
+        ApplicationExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`The workflow uses connected account ${handle}, which is not connected and shared in this workspace.`,
+        },
+      );
+    }
+    return connectedAccount.id;
+  };
+
+  return {
+    resolve,
+    objectName,
+    field,
+    fieldReference,
+    connectedAccountIdOrThrow,
+  };
 };

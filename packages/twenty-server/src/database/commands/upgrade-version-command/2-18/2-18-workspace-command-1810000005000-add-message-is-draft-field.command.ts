@@ -109,6 +109,7 @@ export class AddMessageIsDraftFieldCommand extends ProvisionedWorkspaceCommandRu
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {

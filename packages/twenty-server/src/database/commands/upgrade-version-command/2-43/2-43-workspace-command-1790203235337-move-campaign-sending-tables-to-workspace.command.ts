@@ -129,6 +129,7 @@ export class MoveCampaignSendingTablesToWorkspaceCommand extends ProvisionedWork
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName,
           workspaceId,
           isSystemBuild: true,

@@ -236,10 +236,10 @@ const buildMaps = ({
 
 const reconstruct = ({
   synced,
-  canReferenceOtherApplicationsWorkflowActions = false,
+  isWorkspaceCustomApplication = false,
 }: {
   synced: ReturnType<typeof syncWorkflow>[];
-  canReferenceOtherApplicationsWorkflowActions?: boolean;
+  isWorkspaceCustomApplication?: boolean;
 }) =>
   reconstructWorkflowsManifest({
     applicationAllFlatEntityMaps: buildMaps({
@@ -253,7 +253,8 @@ const reconstruct = ({
     }),
     exportedObjectUniversalIdentifiers: new Set([TICKET_UID]),
     resolvableFieldUniversalIdentifiers: new Set(),
-    canReferenceOtherApplicationsWorkflowActions,
+    isWorkspaceCustomApplication,
+    connectedAccounts: [],
   });
 
 describe('reconstructWorkflowsManifest', () => {
@@ -315,10 +316,6 @@ describe('reconstructWorkflowsManifest', () => {
         workflowOverrides: { lastPublishedCoreWorkflowVersionId: null },
       }),
       syncWorkflow({
-        manifest: manifest('b5000000-0000-4000-8000-000000000000'),
-        workflowOverrides: { workspaceWorkflowId: 'workspace-workflow-id' },
-      }),
-      syncWorkflow({
         manifest: createRecordWorkflow({
           universalIdentifier: 'b6000000-0000-4000-8000-000000000000',
           objectUniversalIdentifier: UNEXPORTED_OBJECT_UID,
@@ -359,12 +356,6 @@ describe('reconstructWorkflowsManifest', () => {
         })),
         {
           metadataName: 'workflow',
-          universalIdentifier: 'b5000000-0000-4000-8000-000000000000',
-          status: ApplicationExportCoverageStatus.UNSUPPORTED,
-          reason: 'workflow created in the workspace',
-        },
-        {
-          metadataName: 'workflow',
           universalIdentifier: 'b6000000-0000-4000-8000-000000000000',
           status: ApplicationExportCoverageStatus.UNSUPPORTED,
           reason: 'workflow referencing an object that is not exported',
@@ -399,7 +390,7 @@ describe('reconstructWorkflowsManifest', () => {
     expect(
       reconstruct({
         synced,
-        canReferenceOtherApplicationsWorkflowActions: true,
+        isWorkspaceCustomApplication: true,
       }).workflows,
     ).toEqual([manifest]);
   });
@@ -426,7 +417,8 @@ describe('reconstructWorkflowsManifest', () => {
         allFlatEntityMaps: mapsWithWorkflow,
         exportedObjectUniversalIdentifiers: new Set([TICKET_UID]),
         resolvableFieldUniversalIdentifiers: new Set(),
-        canReferenceOtherApplicationsWorkflowActions: false,
+        isWorkspaceCustomApplication: false,
+        connectedAccounts: [],
       }).coverage,
     ).toEqual([
       {
@@ -436,5 +428,108 @@ describe('reconstructWorkflowsManifest', () => {
         reason: 'workflow changed in the workflow builder',
       },
     ]);
+  });
+
+  describe('workspace custom application', () => {
+    const builderWorkflow = ({
+      universalIdentifier,
+      versionOverrides = {},
+    }: {
+      universalIdentifier: string;
+      versionOverrides?: Partial<FlatWorkflowVersion>;
+    }) => {
+      const builderVersionId = `9${universalIdentifier.slice(1)}`;
+
+      return syncWorkflow({
+        manifest: createRecordWorkflow({
+          universalIdentifier,
+          objectUniversalIdentifier: TICKET_UID,
+        }),
+        workflowOverrides: {
+          lastPublishedCoreWorkflowVersionId: builderVersionId,
+          versionDefinitionHash: null,
+          workspaceWorkflowId: 'workspace-workflow-id',
+          createdByUserWorkspaceId: 'user-workspace-id',
+        },
+        versionOverrides: {
+          id: builderVersionId,
+          universalIdentifier: `8${universalIdentifier.slice(1)}`,
+          isSystemSideEffect: false,
+          workspaceWorkflowVersionId: 'workspace-workflow-version-id',
+          ...versionOverrides,
+        },
+      });
+    };
+
+    it('exports the active version published from the workflow builder', () => {
+      const synced = builderWorkflow({
+        universalIdentifier: 'e0000000-0000-4000-8000-000000000000',
+      });
+
+      expect(
+        reconstruct({ synced: [synced], isWorkspaceCustomApplication: true }),
+      ).toEqual({
+        workflows: [
+          createRecordWorkflow({
+            universalIdentifier: 'e0000000-0000-4000-8000-000000000000',
+            objectUniversalIdentifier: TICKET_UID,
+          }),
+        ],
+        coverage: [
+          {
+            metadataName: 'workflow',
+            universalIdentifier: 'e0000000-0000-4000-8000-000000000000',
+            status: ApplicationExportCoverageStatus.EXPORTED,
+          },
+        ],
+      });
+      expect(reconstruct({ synced: [synced] }).coverage).toEqual([
+        {
+          metadataName: 'workflow',
+          universalIdentifier: 'e0000000-0000-4000-8000-000000000000',
+          status: ApplicationExportCoverageStatus.UNSUPPORTED,
+          reason: 'workflow changed in the workflow builder',
+        },
+      ]);
+    });
+
+    it('reports a builder workflow without an active version or that a manifest cannot reproduce', () => {
+      const deactivated = builderWorkflow({
+        universalIdentifier: 'e1000000-0000-4000-8000-000000000000',
+        versionOverrides: { status: WorkflowVersionStatus.DEACTIVATED },
+      });
+      const renamedTrigger = builderWorkflow({
+        universalIdentifier: 'e2000000-0000-4000-8000-000000000000',
+      });
+      const [trigger] = renamedTrigger.flatWorkflowVersion.triggers ?? [];
+
+      renamedTrigger.flatWorkflowVersion = {
+        ...renamedTrigger.flatWorkflowVersion,
+        triggers: [{ ...trigger, name: 'Launch manually' }],
+      };
+
+      expect(
+        reconstruct({
+          synced: [deactivated, renamedTrigger],
+          isWorkspaceCustomApplication: true,
+        }),
+      ).toEqual({
+        workflows: [],
+        coverage: [
+          {
+            metadataName: 'workflow',
+            universalIdentifier: 'e1000000-0000-4000-8000-000000000000',
+            status: ApplicationExportCoverageStatus.UNSUPPORTED,
+            reason: 'workflow without an active version',
+          },
+          {
+            metadataName: 'workflow',
+            universalIdentifier: 'e2000000-0000-4000-8000-000000000000',
+            status: ApplicationExportCoverageStatus.UNSUPPORTED,
+            reason: 'workflow with settings a manifest cannot reproduce',
+          },
+        ],
+      });
+    });
   });
 });
