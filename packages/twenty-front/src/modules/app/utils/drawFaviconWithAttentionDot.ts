@@ -1,3 +1,4 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
 const FAVICON_SIZE = 64;
@@ -28,7 +29,7 @@ export const drawFaviconWithAttentionDot = async ({
   const context = canvas.getContext('2d');
 
   if (!isDefined(context)) {
-    return faviconUrl;
+    throw new Error(doNotTranslate('Canvas 2D context is unavailable'));
   }
 
   const dotCenterX = FAVICON_SIZE - ATTENTION_DOT_RADIUS;
