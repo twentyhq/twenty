@@ -31,21 +31,22 @@ export const startTeamsAssistantStatus = async ({
     });
   };
 
-  const writer =
-    conversationType === TEAMS_PERSONAL_CONVERSATION_TYPE
-      ? await startTeamsAssistantStream({
-          serviceUrl,
-          conversationId,
-          text: TEAMS_ASSISTANT_INITIAL_STATUS,
-        }).catch((error: unknown) => {
-          console.warn(
-            `[teams] could not start a stream in ${conversationId}`,
-            error,
-          );
+  if (conversationType !== TEAMS_PERSONAL_CONVERSATION_TYPE) {
+    return { finish: sendMessage };
+  }
 
-          return undefined;
-        })
-      : undefined;
+  const writer = await startTeamsAssistantStream({
+    serviceUrl,
+    conversationId,
+    text: TEAMS_ASSISTANT_INITIAL_STATUS,
+  }).catch((error: unknown) => {
+    console.warn(
+      `[teams] could not start a stream in ${conversationId}`,
+      error,
+    );
+
+    return undefined;
+  });
 
   if (!isDefined(writer)) {
     return { finish: sendMessage };
