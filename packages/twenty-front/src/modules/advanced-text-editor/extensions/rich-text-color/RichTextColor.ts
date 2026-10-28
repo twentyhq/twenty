@@ -27,7 +27,7 @@ export const RichTextColor = Extension.create({
             isNonEmptyString(textColor)
               ? {
                   'data-text-color': textColor,
-                  style: `color: ${themeCssVariables.color[textColor]}`,
+                  style: `color: var(--editor-text-color-${textColor}, ${themeCssVariables.color[textColor]})`,
                 }
               : {},
         },
@@ -40,7 +40,7 @@ export const RichTextColor = Extension.create({
             isNonEmptyString(backgroundColor)
               ? {
                   'data-background-color': backgroundColor,
-                  style: `background-color: ${themeCssVariables.color[`${backgroundColor}3`]}`,
+                  style: `background-color: var(--editor-background-color-${backgroundColor}, ${themeCssVariables.color[`${backgroundColor}3`]})`,
                 }
               : {},
         },

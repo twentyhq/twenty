@@ -6,6 +6,7 @@ import { Indent } from '@/advanced-text-editor/extensions/indent/Indent';
 import { ResizableImage } from '@/advanced-text-editor/extensions/resizable-image/ResizableImage';
 import { RichTextColor } from '@/advanced-text-editor/extensions/rich-text-color/RichTextColor';
 import { SlashCommand } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
+import { ReadOnlyAwareTaskItem } from '@/advanced-text-editor/extensions/task-item/ReadOnlyAwareTaskItem';
 import { ToggleNode } from '@/advanced-text-editor/extensions/toggle/ToggleNode';
 import { UploadExtension } from '@/advanced-text-editor/extensions/upload/UploadExtension';
 import { type AdvancedTextEditorExtensionContext } from '@/advanced-text-editor/types/AdvancedTextEditorExtensionContext';
@@ -42,7 +43,8 @@ export const buildRecordRichTextExtensions = ({
   TextAlign.configure({
     types: [TIPTAP_NODE_TYPES.HEADING, TIPTAP_NODE_TYPES.PARAGRAPH],
   }),
-  ListKit.configure({ taskItem: { nested: true } }),
+  ListKit.configure({ taskItem: false }),
+  ReadOnlyAwareTaskItem.configure({ nested: true }),
   ToggleNode,
   Indent,
   Blockquote,

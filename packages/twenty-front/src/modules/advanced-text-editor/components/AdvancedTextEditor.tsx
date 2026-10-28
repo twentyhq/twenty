@@ -1,5 +1,6 @@
 import { AdvancedTextEditorTableHandles } from '@/advanced-text-editor/components/AdvancedTextEditorTableHandles';
 import { ImageBubbleMenu } from '@/advanced-text-editor/components/ImageBubbleMenu';
+import { ADVANCED_TEXT_EDITOR_NOTE_VARIANT_STYLES } from '@/advanced-text-editor/constants/AdvancedTextEditorNoteVariantStyles';
 import { LinkBubbleMenu } from '@/advanced-text-editor/components/LinkBubbleMenu';
 import { TextBubbleMenu } from '@/advanced-text-editor/components/TextBubbleMenu';
 import { useHoveredTableCell } from '@/advanced-text-editor/hooks/useHoveredTableCell';
@@ -56,7 +57,7 @@ const StyledEditorContainer = styled.div<{
     height: 100%;
     line-height: var(--editor-line-height);
     overflow-wrap: anywhere;
-    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+    padding: var(--editor-padding);
 
     p.is-editor-empty:first-of-type:not([data-placeholder=''])::before {
       ${FORM_FIELD_PLACEHOLDER_STYLES}
@@ -120,15 +121,15 @@ const StyledEditorContainer = styled.div<{
     }
 
     h4 {
-      font-size: calc(var(--editor-font-size) * 1.15);
+      font-size: var(--editor-heading-4-font-size);
     }
 
     h5 {
-      font-size: var(--editor-font-size);
+      font-size: var(--editor-heading-5-font-size);
     }
 
     h6 {
-      font-size: calc(var(--editor-font-size) * 0.9);
+      font-size: var(--editor-heading-6-font-size);
     }
 
     .toggle-block {
@@ -218,6 +219,7 @@ const StyledEditorContainer = styled.div<{
 
       & > :is(ul, ol) {
         --editor-parent-list-offset: var(--editor-list-item-offset);
+        margin-top: var(--editor-nested-list-spacing);
       }
     }
 
@@ -247,10 +249,11 @@ const StyledEditorContainer = styled.div<{
       border-radius: ${themeCssVariables.border.radius.md};
       margin: 0 0 var(--editor-block-spacing);
       overflow-x: auto;
-      padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+      padding: var(--editor-code-block-padding);
 
       code {
         background-color: transparent;
+        font-size: var(--editor-code-block-font-size);
         padding: 0;
       }
     }
@@ -267,6 +270,13 @@ const StyledEditorContainer = styled.div<{
         & > label {
           flex: 0 0 auto;
           user-select: none;
+        }
+
+        & > label > input {
+          height: var(--editor-task-checkbox-height);
+          margin: var(--editor-task-checkbox-margin);
+          vertical-align: var(--editor-task-checkbox-vertical-align);
+          width: var(--editor-task-checkbox-width);
         }
 
         & > div {
@@ -405,6 +415,7 @@ const StyledEditorContainer = styled.div<{
       border-left: none;
       border-right: none;
       border-top: 1px solid ${themeCssVariables.border.color.medium};
+      margin: var(--editor-divider-spacing) 0;
 
       &.ProseMirror-selectednode {
         box-shadow: 0 0 0 ${themeCssVariables.spacing[2]}
@@ -455,7 +466,7 @@ const StyledEditorContainer = styled.div<{
     }
 
     :is(h1, h2, h3, h4, h5, h6):first-child {
-      margin-top: 0;
+      margin-top: var(--editor-heading-first-spacing-top);
     }
 
     :is(
@@ -486,6 +497,10 @@ const StyledEditorContainer = styled.div<{
 
   .ProseMirror-hideselection * {
     caret-color: transparent;
+  }
+
+  &:is([data-variant='note'], [data-variant='widget']) {
+    ${ADVANCED_TEXT_EDITOR_NOTE_VARIANT_STYLES}
   }
 `;
 
@@ -526,6 +541,7 @@ export const AdvancedTextEditor = ({
     <StyledEditorContainer
       readonly={readonly}
       minHeight={minHeight}
+      data-variant={variant}
       style={getAdvancedTextEditorTypographyStyle(variant)}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
