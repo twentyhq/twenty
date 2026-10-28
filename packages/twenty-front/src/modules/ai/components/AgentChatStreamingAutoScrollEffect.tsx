@@ -1,24 +1,12 @@
-import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomComponentSelector';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const AgentChatStreamingAutoScrollEffect = () => {
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-
-  const agentChatMessages = useAtomFamilyStateValue(
-    agentChatMessagesFamilyState,
-    { threadId: currentAiChatThread },
-  );
-
   const agentChatIsScrolledToBottom = useAtomComponentSelectorValue(
     agentChatIsScrolledToBottomComponentSelector,
   );
@@ -26,20 +14,26 @@ export const AgentChatStreamingAutoScrollEffect = () => {
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
   useEffect(() => {
-    if (!isNonEmptyArray(agentChatMessages)) {
-      return;
-    }
-
     if (!agentChatIsScrolledToBottom) {
       return;
     }
 
     const { scrollWrapperElement } = getScrollWrapperElement();
+    const messageListElement = scrollWrapperElement?.firstElementChild;
 
-    if (isDefined(scrollWrapperElement)) {
-      scrollAiChatToBottom(scrollWrapperElement);
+    if (!isDefined(scrollWrapperElement) || !isDefined(messageListElement)) {
+      return;
     }
-  }, [agentChatMessages, agentChatIsScrolledToBottom, getScrollWrapperElement]);
+
+    // the answer keeps revealing between message updates, so follow its height instead
+    const resizeObserver = new ResizeObserver(() =>
+      scrollAiChatToBottom(scrollWrapperElement),
+    );
+
+    resizeObserver.observe(messageListElement);
+
+    return () => resizeObserver.disconnect();
+  }, [agentChatIsScrolledToBottom, getScrollWrapperElement]);
 
   return null;
 };

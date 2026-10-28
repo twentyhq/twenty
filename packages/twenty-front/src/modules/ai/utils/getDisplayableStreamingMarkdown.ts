@@ -1,4 +1,4 @@
-const CODE_FENCE_LINE_REGEX = /^\s*(```|~~~)/gm;
+const CODE_FENCE_LINE_REGEX = /^\s*(```|~~~)/;
 const TABLE_DELIMITER_LINE_REGEX = /^\s*\|?\s*:?-{3,}/m;
 const UNFINISHED_LINK_REGEX = /^\[[^\]]*(\]\([^)]*)?$/;
 
@@ -10,7 +10,9 @@ const countOccurrences = ({ text, token }: { text: string; token: string }) =>
 
 // Text cut mid-stream would flash raw syntax, so hide what cannot render yet and close what can.
 export const getDisplayableStreamingMarkdown = (text: string): string => {
-  const codeFenceLineCount = text.match(CODE_FENCE_LINE_REGEX)?.length ?? 0;
+  const codeFenceLineCount = text
+    .split('\n')
+    .filter((line) => CODE_FENCE_LINE_REGEX.test(line)).length;
 
   if (codeFenceLineCount % 2 === 1) {
     return text;
@@ -28,29 +30,35 @@ export const getDisplayableStreamingMarkdown = (text: string): string => {
     return hideFrom({ text, index: lastBlockStart });
   }
 
-  let displayableText = text;
+  const lastLineStart = text.lastIndexOf('\n') + 1;
 
-  const chatReferenceStart = displayableText.lastIndexOf('[[');
-
-  if (chatReferenceStart > displayableText.lastIndexOf(']]')) {
-    displayableText = hideFrom({
-      text: displayableText,
-      index: chatReferenceStart,
-    });
+  if (CODE_FENCE_LINE_REGEX.test(text.slice(lastLineStart))) {
+    return text;
   }
 
-  const lastLineStart = displayableText.lastIndexOf('\n') + 1;
-  const linkStart = displayableText.lastIndexOf('[');
+  // code spans, including one still open, cannot hold references or links
+  const lastLineOutsideCode = text
+    .slice(lastLineStart)
+    .replace(/`[^`]*`?/g, (code) => ' '.repeat(code.length));
+  const chatReferenceStart = lastLineOutsideCode.lastIndexOf('[[');
+  const linkStart = lastLineOutsideCode.lastIndexOf('[');
 
-  if (
-    linkStart >= lastLineStart &&
-    UNFINISHED_LINK_REGEX.test(displayableText.slice(linkStart))
+  let displayableText = text;
+
+  if (chatReferenceStart > lastLineOutsideCode.lastIndexOf(']]')) {
+    displayableText = hideFrom({
+      text,
+      index: lastLineStart + chatReferenceStart,
+    });
+  } else if (
+    linkStart !== -1 &&
+    UNFINISHED_LINK_REGEX.test(lastLineOutsideCode.slice(linkStart))
   ) {
-    const isImage = displayableText[linkStart - 1] === '!';
+    const isImage = lastLineOutsideCode[linkStart - 1] === '!';
 
     displayableText = hideFrom({
-      text: displayableText,
-      index: isImage ? linkStart - 1 : linkStart,
+      text,
+      index: lastLineStart + (isImage ? linkStart - 1 : linkStart),
     });
   }
 
