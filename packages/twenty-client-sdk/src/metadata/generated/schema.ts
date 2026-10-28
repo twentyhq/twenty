@@ -1519,6 +1519,7 @@ export interface Field {
     createdAt: Scalars['DateTime']
     defaultValue?: Scalars['JSON']
     description?: Scalars['String']
+    disabledFieldPermissionActions?: Scalars['String'][]
     icon?: Scalars['String']
     id: Scalars['UUID']
     isActive?: Scalars['Boolean']
@@ -5973,6 +5974,7 @@ export interface FieldGenqlSelection{
     createdAt?: boolean | number
     defaultValue?: boolean | number
     description?: boolean | number
+    disabledFieldPermissionActions?: boolean | number
     icon?: boolean | number
     id?: boolean | number
     isActive?: boolean | number

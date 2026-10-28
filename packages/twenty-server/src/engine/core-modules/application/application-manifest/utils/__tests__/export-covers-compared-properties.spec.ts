@@ -481,6 +481,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
           type: FieldMetadataType.TEXT,
           description: 'A field',
           icon: 'IconAbc',
+          disabledFieldPermissionActions: ['canUpdateFieldValue'],
           defaultValue: "'x'",
           options: null,
           universalSettings: null,
