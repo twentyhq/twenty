@@ -3,7 +3,7 @@ import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { GETTING_STARTED_AI_THREAD_PROMPTS } from '@/getting-started/constants/GettingStartedAiThreadPrompts';
-import { useCompleteGettingStartedStep } from '@/getting-started/hooks/useCompleteGettingStartedStep';
+import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -12,7 +12,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconArrowUp } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { type GettingStartedStep } from '~/generated-metadata/graphql';
+import {
+  type GettingStartedStep,
+  GettingStartedStepStatus,
+} from '~/generated-metadata/graphql';
 
 const StyledColumn = styled.div`
   display: flex;
@@ -40,7 +43,7 @@ export const GettingStartedAiThreadAction = ({
     isDefined(aiThreadPrompt) ? t(aiThreadPrompt.prompt) : '',
   );
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
-  const { completeGettingStartedStep } = useCompleteGettingStartedStep();
+  const { updateGettingStarted } = useUpdateGettingStarted();
   const canSendAgentChatMessage = useCanSendAgentChatMessage();
   const trimmedPrompt = prompt.trim();
 
@@ -50,7 +53,9 @@ export const GettingStartedAiThreadAction = ({
         serializePlainTextAsAdvancedTextEditorDocument(trimmedPrompt),
       mode: 'SEND',
     });
-    void completeGettingStartedStep({ step, threadId });
+    void updateGettingStarted({
+      stepStatus: { step, status: GettingStartedStepStatus.DONE, threadId },
+    });
   };
 
   return (

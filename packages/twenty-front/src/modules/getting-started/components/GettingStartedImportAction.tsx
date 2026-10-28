@@ -2,7 +2,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID } from '@/getting-started/constants/GettingStartedImportContextStoreInstanceId';
 import { SPREADSHEET_EXPORT_GUIDES } from '@/getting-started/constants/SpreadsheetExportGuides';
-import { useCompleteGettingStartedStep } from '@/getting-started/hooks/useCompleteGettingStartedStep';
+import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
@@ -13,7 +13,10 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconExternalLink, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { GettingStartedStep } from '~/generated-metadata/graphql';
+import {
+  GettingStartedStep,
+  GettingStartedStepStatus,
+} from '~/generated-metadata/graphql';
 
 const StyledColumn = styled.div`
   display: flex;
@@ -35,7 +38,7 @@ const StyledMuted = styled.span`
 
 export const GettingStartedImportAction = () => {
   const { t } = useLingui();
-  const { completeGettingStartedStep } = useCompleteGettingStartedStep();
+  const { updateGettingStarted } = useUpdateGettingStarted();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.Person,
   });
@@ -50,8 +53,11 @@ export const GettingStartedImportAction = () => {
     setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
     openObjectRecordsSpreadsheetImportDialog({
       uploadStepHook: async (importedRows) => {
-        void completeGettingStartedStep({
-          step: GettingStartedStep.IMPORT_DATA,
+        void updateGettingStarted({
+          stepStatus: {
+            step: GettingStartedStep.IMPORT_DATA,
+            status: GettingStartedStepStatus.DONE,
+          },
         });
 
         return importedRows;
