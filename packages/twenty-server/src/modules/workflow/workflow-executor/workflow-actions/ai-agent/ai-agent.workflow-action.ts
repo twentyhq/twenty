@@ -90,21 +90,21 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    const agent = await this.agentRepository.findOne(workspaceId, {
+    const agentRow = await this.agentRepository.findOne(workspaceId, {
       where: { id: agentId },
     });
 
-    if (!isDefined(agent)) {
+    if (!isDefined(agentRow)) {
       throw new WorkflowStepExecutorException(
         `Agent with id ${agentId} not found`,
         WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 
-    const effectiveAgent = resolveEffectiveAgent(agent);
+    const agent = resolveEffectiveAgent(agentRow);
 
-    if (!effectiveAgent.isActive) {
-      const { label } = effectiveAgent;
+    if (!agent.isActive) {
+      const { label } = agent;
 
       throw new WorkflowStepExecutorException(
         `Agent "${label}" is archived`,
@@ -153,7 +153,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       workflowRunId: runInfo.workflowRunId,
       workspaceId,
       stepId: currentStepId,
-      summary: buildStartedAgentRunSummary(effectiveAgent.modelId),
+      summary: buildStartedAgentRunSummary(agent.modelId),
       threadId: conversation.threadId,
     });
 

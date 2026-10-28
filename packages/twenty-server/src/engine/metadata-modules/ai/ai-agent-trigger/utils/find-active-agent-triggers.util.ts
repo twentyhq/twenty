@@ -17,11 +17,9 @@ export const findActiveAgentTriggers = <TTriggerType extends AgentTriggerType>({
 }): FlatAgentWithTrigger<Extract<AgentTrigger, { type: TTriggerType }>>[] =>
   Object.values(flatAgentMaps.byUniversalIdentifier)
     .filter(isDefined)
-    .filter(
-      (flatAgent) =>
-        !isDefined(flatAgent.deletedAt) &&
-        resolveEffectiveAgent(flatAgent).isActive,
-    )
+    .filter((flatAgent) => !isDefined(flatAgent.deletedAt))
+    .map((flatAgent) => resolveEffectiveAgent(flatAgent))
+    .filter((flatAgent) => flatAgent.isActive)
     .flatMap((flatAgent) =>
       flatAgent.triggers
         .filter(

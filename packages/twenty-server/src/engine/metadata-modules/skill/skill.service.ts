@@ -42,8 +42,8 @@ export class SkillService {
 
     return Object.values(flatSkillMaps.byUniversalIdentifier)
       .filter(isDefined)
-      .sort((a, b) => a.label.localeCompare(b.label))
-      .map(fromFlatSkillToSkillDto);
+      .map(fromFlatSkillToSkillDto)
+      .sort((a, b) => a.label.localeCompare(b.label));
   }
 
   async findById(id: string, workspaceId: string): Promise<SkillDTO | null> {

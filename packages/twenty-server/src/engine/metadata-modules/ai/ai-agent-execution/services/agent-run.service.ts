@@ -174,19 +174,21 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       input.responseFormat,
     );
 
-    const agent = await this.agentRepository.findOne(workspace.id, {
+    const agentRow = await this.agentRepository.findOne(workspace.id, {
       where: {
         universalIdentifier: input.agentUniversalIdentifier,
       },
     });
 
-    if (!agent) {
+    if (!agentRow) {
       throw new NotFoundException(
         `Agent ${input.agentUniversalIdentifier} not found`,
       );
     }
 
-    if (!resolveEffectiveAgent(agent).isActive) {
+    const agent = resolveEffectiveAgent(agentRow);
+
+    if (!agent.isActive) {
       throw new AiException(
         `Agent ${input.agentUniversalIdentifier} is archived`,
         AiExceptionCode.AGENT_IS_INACTIVE,
