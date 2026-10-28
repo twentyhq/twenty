@@ -6,6 +6,7 @@ import {
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -17,6 +18,7 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
 import { resolveEffectiveUniversalFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity.util';
 import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
+import { type ViewOverrides } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = '20202020-aaaa-4aaa-8aaa-000000000001';
@@ -127,7 +129,9 @@ const updateView = ({
       [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
         mainGroupByFieldMetadataId: groupingOverride,
         type: isNull(groupingOverride) ? ViewType.TABLE : ViewType.KANBAN,
-        ...(existingTranslations && { translations: existingTranslations }),
+        ...(isDefined(existingTranslations) && {
+          translations: existingTranslations,
+        }),
       },
     },
     universalOverrides: null,
@@ -229,18 +233,18 @@ describe('fromUpdateViewInputToFlatViewToUpdateOrThrow', () => {
 
   describe('translations', () => {
     const resolveNameInLocale = ({
-      overrides,
+      translations,
       locale,
     }: {
-      overrides: unknown;
+      translations: ViewOverrides['translations'];
       locale: 'en' | 'fr-FR' | 'zh-CN';
     }) =>
       resolveViewName({
         view: {
           name: 'By Stage',
-          overrides: overrides as Parameters<
-            typeof resolveViewName
-          >[0]['view']['overrides'],
+          overrides: {
+            [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: { translations },
+          },
         },
         i18nContext: {
           locale,
@@ -276,19 +280,19 @@ describe('fromUpdateViewInputToFlatViewToUpdateOrThrow', () => {
 
       expect(
         resolveNameInLocale({
-          overrides: flatViewToUpdate.universalOverrides,
+          translations: workspaceOverrides?.translations,
           locale: 'fr-FR',
         }),
       ).toBe('Par étape');
       expect(
         resolveNameInLocale({
-          overrides: flatViewToUpdate.universalOverrides,
+          translations: workspaceOverrides?.translations,
           locale: 'zh-CN',
         }),
       ).toBe('按阶段');
       expect(
         resolveNameInLocale({
-          overrides: flatViewToUpdate.universalOverrides,
+          translations: workspaceOverrides?.translations,
           locale: 'en',
         }),
       ).toBe('By Stage');
@@ -311,6 +315,20 @@ describe('fromUpdateViewInputToFlatViewToUpdateOrThrow', () => {
           WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER
         ]?.translations,
       ).toEqual({ 'zh-CN': { name: '按阶段' } });
+    });
+
+    it('saves other updates when translations is null', () => {
+      const { flatViewToUpdate } = updateView({
+        groupingOverride: null,
+        updateViewInput: { name: 'Renamed view', translations: null },
+      });
+
+      expect(
+        resolveEffectiveUniversalFlatEntity({
+          metadataName: 'view',
+          universalFlatEntity: flatViewToUpdate,
+        }).name,
+      ).toBe('Renamed view');
     });
 
     it('throws when translating a non-translatable property', () => {

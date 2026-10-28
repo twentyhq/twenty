@@ -73,8 +73,11 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     );
   }
 
-  const { translations = [], ...updateViewInputWithoutTranslations } =
-    rawUpdateViewInput;
+  const {
+    translations: rawTranslations,
+    ...updateViewInputWithoutTranslations
+  } = rawUpdateViewInput;
+  const translations = rawTranslations ?? [];
 
   const invalidTranslationProperties = findInvalidTranslationOverrideProperties(
     translations,

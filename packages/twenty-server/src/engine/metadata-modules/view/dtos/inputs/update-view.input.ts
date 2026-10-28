@@ -129,5 +129,5 @@ export class UpdateViewInput {
   @ValidateNested({ each: true })
   @IsOptional()
   @Field(() => [MetadataTranslationOverrideInput], { nullable: true })
-  translations?: MetadataTranslationOverrideInput[];
+  translations?: MetadataTranslationOverrideInput[] | null;
 }
