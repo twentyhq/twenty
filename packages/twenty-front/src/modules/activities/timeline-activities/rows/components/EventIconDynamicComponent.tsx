@@ -20,5 +20,5 @@ export const EventIconDynamicComponent = ({
 
   const EventIcon = getIcon(eventIcon);
 
-  return <EventIcon size={theme.icon.size.md} />;
+  return <EventIcon size={theme.icon.size.sm} />;
 };

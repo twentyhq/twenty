@@ -44,7 +44,11 @@ const StyledLeftContainer = styled.div`
 
 const StyledIconContainer = styled.div`
   align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
+  background: ${themeCssVariables.accent.tertiary};
+  border: 1px solid ${themeCssVariables.accent.secondary};
+  border-radius: ${themeCssVariables.border.radius.rounded};
+  box-sizing: border-box;
+  color: ${themeCssVariables.accent.accent9};
   display: flex;
   flex-shrink: 0;
   height: ${TIMELINE_ICON_SLOT_SIZE}px;
@@ -55,9 +59,10 @@ const StyledIconContainer = styled.div`
 `;
 
 const StyledVerticalLine = styled.div`
-  background: ${themeCssVariables.border.color.light};
+  background: ${themeCssVariables.border.color.medium};
   flex: 1;
-  width: 2px;
+  margin: ${themeCssVariables.spacing[1]} 0;
+  width: 1px;
   z-index: 2;
 `;
 
@@ -68,7 +73,7 @@ const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
   margin-bottom: ${({ isMarginBottom }) =>
-    isMarginBottom ? themeCssVariables.spacing[3] : '0'};
+    isMarginBottom ? themeCssVariables.spacing[4] : '0'};
   min-height: ${TIMELINE_ICON_SLOT_SIZE}px;
   min-width: 0;
   overflow: hidden;

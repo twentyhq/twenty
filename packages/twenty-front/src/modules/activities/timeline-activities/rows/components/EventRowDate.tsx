@@ -16,6 +16,8 @@ const StyledEventRowDate = styled.div`
     display: none;
   }
   color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-variant-numeric: tabular-nums;
   padding: 0 ${themeCssVariables.spacing[1]};
   white-space: nowrap;
 `;

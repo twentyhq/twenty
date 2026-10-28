@@ -13,12 +13,13 @@ const StyledColumn = styled.div`
   color: ${themeCssVariables.font.color.primary};
   display: flex;
   flex-direction: row;
+  font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledAction = styled.div`
   align-items: center;
-  color: ${themeCssVariables.font.color.secondary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex-direction: row;
   gap: ${themeCssVariables.spacing[1]};

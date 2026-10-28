@@ -30,7 +30,7 @@ export const EventCardToggleButton = ({
         onClick={() => setIsOpen(!isOpen)}
         aria-label={isOpen ? t`Collapse details` : t`Expand details`}
         size="sm"
-        variant="outline"
+        variant="ghost"
       >
         {isOpen ? <IconChevronUp /> : <IconChevronDown />}
       </IconButton>

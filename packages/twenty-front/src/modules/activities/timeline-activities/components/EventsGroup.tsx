@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 
 import { EventRow } from '@/activities/timeline-activities/components/EventRow';
-import { TIMELINE_ICON_SLOT_SIZE } from '@/activities/timeline-activities/constants/TimelineIconSlotSize';
 import { type EventGroup } from '@/activities/timeline-activities/utils/groupEventsByMonth';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -27,28 +26,18 @@ const StyledActivityGroupContainer = styled.div`
   position: relative;
 `;
 
-const StyledActivityGroupBar = styled.div`
-  background: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.md};
-  height: 100%;
-  inset-inline-start: 0;
-  position: absolute;
-  top: 0;
-  width: ${TIMELINE_ICON_SLOT_SIZE}px;
-`;
-
 const StyledMonthSeperator = styled.div`
   align-items: center;
   align-self: stretch;
-  color: ${themeCssVariables.font.color.light};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   gap: ${themeCssVariables.spacing[4]};
+  letter-spacing: 0.02em;
 `;
 const StyledMonthSeperatorLine = styled.div`
-  background: ${themeCssVariables.border.color.light};
+  background: ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.pill};
   corner-shape: round;
   flex: 1 0 0;
@@ -68,7 +57,6 @@ export const EventsGroup = ({
         <StyledMonthSeperatorLine />
       </StyledMonthSeperator>
       <StyledActivityGroupContainer>
-        <StyledActivityGroupBar />
         {group.items.map((event, index) => (
           <EventRow
             mainObjectMetadataItem={mainObjectMetadataItem}
