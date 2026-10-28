@@ -11,9 +11,7 @@ export const FrontComponentThemeProvider = ({
 }: FrontComponentThemeProviderProps) => {
   const colorScheme = useColorScheme();
 
-  // twenty-ui components read icon sizes off the theme context, and without an
-  // explicit theme they resolve to var() strings an SVG size attribute cannot
-  // use — icons render at their intrinsic size without a real theme here.
+  // Without an explicit theme, icon sizes resolve to var() strings SVG attributes cannot use.
   return (
     <ThemeProvider
       colorScheme={colorScheme}
