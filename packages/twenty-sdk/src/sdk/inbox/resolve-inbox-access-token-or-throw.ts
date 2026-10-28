@@ -7,7 +7,9 @@ import {
 
 import { getApplicationAccessToken } from '@/sdk/utils/get-application-access-token';
 
-export const resolveInboxAccessToken = (sender: InboxMessageSender): string => {
+export const resolveInboxAccessTokenOrThrow = (
+  sender: InboxMessageSender,
+): string => {
   if (sender === 'APPLICATION') {
     const applicationAccessToken = getApplicationAccessToken();
 

@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { resolveInboxAccessToken } from '@/sdk/inbox/resolve-inbox-access-token';
+import { resolveInboxAccessTokenOrThrow } from '@/sdk/inbox/resolve-inbox-access-token-or-throw';
 
 const NOBODY_BEHIND_THE_RUN_ERROR =
   /Cron schedules, install hooks and unauthenticated webhooks/;
 
-describe('resolveInboxAccessToken', () => {
+describe('resolveInboxAccessTokenOrThrow', () => {
   const initialEnvironment = process.env;
 
   beforeEach(() => {
@@ -23,17 +23,21 @@ describe('resolveInboxAccessToken', () => {
       process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
       process.env.TWENTY_APP_ACCESS_TOKEN = 'member-token';
 
-      expect(resolveInboxAccessToken('APPLICATION')).toBe('application-token');
+      expect(resolveInboxAccessTokenOrThrow('APPLICATION')).toBe(
+        'application-token',
+      );
     });
 
     it('falls back to the user-bound token of a front component', () => {
       process.env.TWENTY_APP_ACCESS_TOKEN = 'component-token';
 
-      expect(resolveInboxAccessToken('APPLICATION')).toBe('component-token');
+      expect(resolveInboxAccessTokenOrThrow('APPLICATION')).toBe(
+        'component-token',
+      );
     });
 
     it('throws outside the app runtime', () => {
-      expect(() => resolveInboxAccessToken('APPLICATION')).toThrow(
+      expect(() => resolveInboxAccessTokenOrThrow('APPLICATION')).toThrow(
         /TWENTY_APP_APPLICATION_ACCESS_TOKEN or TWENTY_APP_ACCESS_TOKEN/,
       );
     });
@@ -44,19 +48,23 @@ describe('resolveInboxAccessToken', () => {
       process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
       process.env.TWENTY_APP_ACCESS_TOKEN = 'member-token';
 
-      expect(resolveInboxAccessToken('CURRENT_MEMBER')).toBe('member-token');
+      expect(resolveInboxAccessTokenOrThrow('CURRENT_MEMBER')).toBe(
+        'member-token',
+      );
     });
 
     it('uses the user-bound token of a front component', () => {
       process.env.TWENTY_APP_ACCESS_TOKEN = 'component-token';
 
-      expect(resolveInboxAccessToken('CURRENT_MEMBER')).toBe('component-token');
+      expect(resolveInboxAccessTokenOrThrow('CURRENT_MEMBER')).toBe(
+        'component-token',
+      );
     });
 
     it('refuses a run without a member token', () => {
       process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
 
-      expect(() => resolveInboxAccessToken('CURRENT_MEMBER')).toThrow(
+      expect(() => resolveInboxAccessTokenOrThrow('CURRENT_MEMBER')).toThrow(
         NOBODY_BEHIND_THE_RUN_ERROR,
       );
     });
@@ -65,7 +73,7 @@ describe('resolveInboxAccessToken', () => {
       process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
       process.env.TWENTY_APP_ACCESS_TOKEN = 'application-token';
 
-      expect(() => resolveInboxAccessToken('CURRENT_MEMBER')).toThrow(
+      expect(() => resolveInboxAccessTokenOrThrow('CURRENT_MEMBER')).toThrow(
         NOBODY_BEHIND_THE_RUN_ERROR,
       );
     });

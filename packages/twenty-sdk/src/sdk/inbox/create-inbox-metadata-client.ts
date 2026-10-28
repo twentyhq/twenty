@@ -1,7 +1,7 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { type InboxMessageSender } from 'twenty-shared/application';
 
-import { resolveInboxAccessToken } from '@/sdk/inbox/resolve-inbox-access-token';
+import { resolveInboxAccessTokenOrThrow } from '@/sdk/inbox/resolve-inbox-access-token-or-throw';
 
 export const createInboxMetadataClient = ({
   sender,
@@ -9,5 +9,7 @@ export const createInboxMetadataClient = ({
   sender: InboxMessageSender;
 }): MetadataApiClient =>
   new MetadataApiClient({
-    headers: { Authorization: `Bearer ${resolveInboxAccessToken(sender)}` },
+    headers: {
+      Authorization: `Bearer ${resolveInboxAccessTokenOrThrow(sender)}`,
+    },
   });
