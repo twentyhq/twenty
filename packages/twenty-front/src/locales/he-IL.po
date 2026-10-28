@@ -8905,11 +8905,6 @@ msgstr "תצוגת ברירת מחדל"
 msgid "Defaults to the step name"
 msgstr "ברירת המחדל היא שם השלב"
 
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
-msgstr "פעולות דחויות להעברת סביבת עבודה"
-
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
@@ -23338,11 +23333,6 @@ msgstr "הרצת קוד לניתוח קבצים ונתונים"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "הפעל פונקציה"
-
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr "הפעל ברקע את החלקים האיטיים של שינויים במודל הנתונים לאחר שמירתם."
 
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx

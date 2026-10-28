@@ -8905,11 +8905,6 @@ msgstr "Standaardweergave"
 msgid "Defaults to the step name"
 msgstr "Standaard ingesteld op de stapnaam"
 
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
-msgstr "Uitgestelde migratieacties voor werkruimten"
-
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
@@ -23338,11 +23333,6 @@ msgstr "Code uitvoeren om bestanden en gegevens te analyseren"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "Functie uitvoeren"
-
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr "Voer de trage onderdelen van wijzigingen in het gegevensmodel op de achtergrond uit nadat ze zijn opgeslagen."
 
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx

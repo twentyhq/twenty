@@ -3008,6 +3008,16 @@ msgctxt "fieldMetadata.label"
 msgid "Completed"
 msgstr "Terminé"
 
+#. js-lingui-id: XveQi3
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
+msgid "Component build exceeded the 10 second time limit."
+msgstr ""
+
+#. js-lingui-id: fmCVqA
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
+msgid "Component build exceeds the 5 MB output limit."
+msgstr ""
+
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -5096,6 +5106,11 @@ msgstr "Échec"
 msgid "Failed to add people to the list."
 msgstr "Échec de l'ajout de personnes à la liste."
 
+#. js-lingui-id: nVOUB8
+#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+msgid "Failed to build front component."
+msgstr ""
+
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to build function dependencies."
@@ -6738,6 +6753,16 @@ msgstr "Filtre invalide : utilisez \"{joinColumnName}\" pour filtrer par ce cham
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Invalid front component input."
 msgstr "Entrée de composant frontal invalide."
+
+#. js-lingui-id: 5V3pAK
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
+msgid "Invalid front component settings."
+msgstr ""
+
+#. js-lingui-id: r0izKL
+#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+msgid "Invalid front component source."
+msgstr ""
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts

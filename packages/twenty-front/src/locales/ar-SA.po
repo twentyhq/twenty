@@ -8905,11 +8905,6 @@ msgstr "العرض الافتراضي"
 msgid "Defaults to the step name"
 msgstr "الإعداد الافتراضي هو اسم الخطوة"
 
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
-msgstr "إجراءات ترحيل مساحة العمل المؤجلة"
-
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
@@ -23338,11 +23333,6 @@ msgstr "تشغيل الشيفرة لتحليل الملفات والبيانات
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "تشغيل الوظيفة"
-
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr "شغّل الأجزاء البطيئة من تغييرات نموذج البيانات في الخلفية بعد حفظها."
 
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
