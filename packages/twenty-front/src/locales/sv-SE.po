@@ -394,14 +394,14 @@ msgstr "{0} MB"
 #. placeholder {0}: formatNumber(objectCount)
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "{0} objects"
-msgstr ""
+msgstr "{0} objekt"
 
 #. js-lingui-id: Z70Dyr
 #. placeholder {0}: formatNumber(objectCount)
 #. placeholder {1}: formatNumber(recordCount)
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "{0} objects, {1} records"
-msgstr ""
+msgstr "{0} objekt, {1} poster"
 
 #. js-lingui-id: FGOUAP
 #. placeholder {0}: formatNumber(displayedRecords.length)
@@ -7043,7 +7043,7 @@ msgstr "Innehåll"
 #. js-lingui-id: SVyf2o
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Contents"
-msgstr ""
+msgstr "Innehåll"
 
 #. js-lingui-id: M73whl
 #: src/modules/settings/admin-panel/components/SettingsAdminChatMessage.tsx
@@ -17309,12 +17309,6 @@ msgstr "Minuter"
 msgid "Minutes between triggers"
 msgstr "Minuter mellan triggers"
 
-#. js-lingui-id: G40We3
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
-msgid "Missing account"
-msgstr "Saknat konto"
-
 #. js-lingui-id: 0z4Od/
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Missing authorization URL"
@@ -21966,6 +21960,7 @@ msgid "Reconnect"
 msgstr "Återanslut"
 
 #. js-lingui-id: XsIxsL
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect needed"

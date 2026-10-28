@@ -28,7 +28,7 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { CodeInterpreterInputZodSchema } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool.schema';
-import { TWENTY_MCP_HELPER } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/twenty-mcp-helper.const';
+import { TWENTY_MCP_HELPER } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/twenty-mcp-helper.constant';
 import {
   type CodeInterpreterFileInput,
   type CodeInterpreterInput,

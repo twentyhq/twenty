@@ -104,6 +104,7 @@ export default defineWorkflow({
 
 * Шаги записи используют `objectUniversalIdentifier` вместо имени объекта.
 * Фильтры и сортировки ссылаются на поля с помощью `fieldMetadataUniversalIdentifier`.
+* Операнды фильтра принимают значения `ViewFilterOperand`, экспортируемые из `twenty-sdk/define`. Операторы группы фильтров принимают строковые значения, такие как `'AND'` или `'OR'`.
 * Поля формы типа `RECORD` именуют свой объект с помощью `settings.objectUniversalIdentifier`. Поля типа `SELECT` и `MULTI_SELECT` предлагают варианты существующего поля того же типа, именуемого с помощью `settings.selectedFieldUniversalIdentifier`.
 * Чтобы выполнить собственный код, используйте шаг `LOGIC_FUNCTION`. Шаг Code в конструкторе недоступен.
 * Шаги электронной почты и календаря выполняются, только если роль вашего приложения имеет соответствующий флаг разрешения: `SystemPermissionFlag.SEND_EMAIL_TOOL` для `SEND_EMAIL` и `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` для `CREATE_CALENDAR_EVENT`. Рабочая область предоставляет его при установке приложения, после чего шаг может использовать любую подключенную учетную запись в рабочей области, как рабочий процесс, созданный в приложении.

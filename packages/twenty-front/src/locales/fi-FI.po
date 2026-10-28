@@ -394,14 +394,14 @@ msgstr "{0} Mt"
 #. placeholder {0}: formatNumber(objectCount)
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "{0} objects"
-msgstr ""
+msgstr "{0} objektia"
 
 #. js-lingui-id: Z70Dyr
 #. placeholder {0}: formatNumber(objectCount)
 #. placeholder {1}: formatNumber(recordCount)
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "{0} objects, {1} records"
-msgstr ""
+msgstr "{0} objektia, {1} tietuetta"
 
 #. js-lingui-id: FGOUAP
 #. placeholder {0}: formatNumber(displayedRecords.length)
@@ -7043,7 +7043,7 @@ msgstr "Sisältö"
 #. js-lingui-id: SVyf2o
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Contents"
-msgstr ""
+msgstr "Sisältö"
 
 #. js-lingui-id: M73whl
 #: src/modules/settings/admin-panel/components/SettingsAdminChatMessage.tsx
@@ -17309,12 +17309,6 @@ msgstr "Minuutit"
 msgid "Minutes between triggers"
 msgstr "Minuutit liipaisimien välillä"
 
-#. js-lingui-id: G40We3
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
-msgid "Missing account"
-msgstr "Tili puuttuu"
-
 #. js-lingui-id: 0z4Od/
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Missing authorization URL"
@@ -21964,6 +21958,7 @@ msgid "Reconnect"
 msgstr "Yhdistä uudelleen"
 
 #. js-lingui-id: XsIxsL
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect needed"

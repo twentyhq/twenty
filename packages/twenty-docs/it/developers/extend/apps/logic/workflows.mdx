@@ -104,6 +104,7 @@ I relativi input corrispondono ai passaggi del [generatore di workflow](/it/user
 
 * I passaggi relativi ai record usano `objectUniversalIdentifier` anziché un nome di oggetto.
 * I filtri e gli ordinamenti puntano ai campi con `fieldMetadataUniversalIdentifier`.
+* Gli operandi di filtro accettano valori `ViewFilterOperand`, esportati da `twenty-sdk/define`. Gli operatori del gruppo di filtri accettano valori stringa come `'AND'` o `'OR'`.
 * I campi del modulo di tipo `RECORD` denominano il proprio oggetto con `settings.objectUniversalIdentifier`. I campi di tipo `SELECT` e `MULTI_SELECT` offrono le opzioni di un campo esistente dello stesso tipo, denominato con `settings.selectedFieldUniversalIdentifier`.
 * Per eseguire il tuo codice, usa un passaggio `LOGIC_FUNCTION`. Il passaggio Code del builder non è disponibile.
 * I passaggi email e calendario vengono eseguiti solo se il ruolo della tua app dispone del flag di autorizzazione corrispondente: `SystemPermissionFlag.SEND_EMAIL_TOOL` per `SEND_EMAIL` e `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` per `CREATE_CALENDAR_EVENT`. Il workspace lo concede installando l'app e il passaggio può quindi usare qualsiasi account connesso nel workspace, come un workflow creato nell'app.
