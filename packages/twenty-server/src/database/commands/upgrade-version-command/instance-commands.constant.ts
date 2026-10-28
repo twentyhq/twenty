@@ -262,7 +262,7 @@ import { AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand } f
 import { BackfillApplicationAutoUpgradeSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-slow-1793170402367-backfill-application-auto-upgrade';
 import { AddMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438837-add-messaging-provider';
 import { AddMcpServerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793150000000-add-mcp-server';
-import { AgentAndSkillOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793150412083-agent-and-skill-overridable-entity';
+import { AgentAndSkillOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793174513984-agent-and-skill-overridable-entity';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
