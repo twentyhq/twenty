@@ -201,7 +201,7 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
     },
   );
 
-  it('should keep the label identifier readable and restrict the inverse of a relation', () => {
+  it('should keep the label identifier readable and restrict the inverse of a relation or morph relation', () => {
     const COMPANY_ID = 'company-id';
     const objectMaps: FlatEntityMaps<FlatObjectMetadata> =
       createEmptyFlatEntityMaps();
@@ -241,6 +241,17 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
         relationTargetFieldMetadataId: 'company-invoices-field-id',
         disabledFieldPermissionActions: ['canReadFieldValue'],
       }),
+      getFlatFieldMetadataMock({
+        id: 'invoice-payer-company-field-id',
+        universalIdentifier: 'invoice-payer-company',
+        objectMetadataId: INVOICE_ID,
+        type: FieldMetadataType.MORPH_RELATION,
+        morphId: 'invoice-payer',
+        applicationId: 'owning-application-id',
+        relationTargetObjectMetadataId: COMPANY_ID,
+        relationTargetFieldMetadataId: 'company-paid-invoices-field-id',
+        disabledFieldPermissionActions: ['canReadFieldValue'],
+      }),
     ]) {
       fieldMaps.byUniversalIdentifier[flatFieldMetadata.universalIdentifier] =
         flatFieldMetadata;
@@ -270,6 +281,11 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
     expect(
       objectsPermissions[COMPANY_ID]?.restrictedFields[
         'company-invoices-field-id'
+      ]?.canRead,
+    ).toBe(false);
+    expect(
+      objectsPermissions[COMPANY_ID]?.restrictedFields[
+        'company-paid-invoices-field-id'
       ]?.canRead,
     ).toBe(false);
   });
