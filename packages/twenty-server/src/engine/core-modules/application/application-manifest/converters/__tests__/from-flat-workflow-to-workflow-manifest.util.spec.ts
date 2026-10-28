@@ -49,6 +49,7 @@ const connectedAccount = (
   connectionParameters: null,
   archivedAt: null,
   scopes: ['https://www.googleapis.com/auth/calendar.events'],
+  scope: 'WORKSPACE',
   calendarChannels: [{ isSyncEnabled: true }],
   ...overrides,
 });
@@ -438,6 +439,22 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
         expect(exportWorkflow(synced)).toEqual({
           manifest: sendEmailWorkflow({ connectedAccountHandle: SALES_HANDLE }),
         });
+      });
+
+      it('exports a step on an account private to a member as its id', () => {
+        const manifest = sendEmailWorkflow({
+          connectedAccountId: 'sales-account-id',
+        });
+
+        expect(
+          exportWorkflow({
+            ...syncWorkflow(manifest),
+            exportReferences: {
+              ...references,
+              connectedAccounts: [connectedAccount({ scope: 'USER' })],
+            },
+          }),
+        ).toEqual({ manifest });
       });
 
       it.each(['{{trigger.properties.after.assigneeId}}', WORKSPACE_MEMBER_ID])(

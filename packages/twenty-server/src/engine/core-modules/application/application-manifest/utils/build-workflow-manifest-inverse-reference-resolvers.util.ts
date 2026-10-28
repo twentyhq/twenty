@@ -168,7 +168,7 @@ export const buildWorkflowManifestInverseReferenceResolvers = (
       reason: 'workflow step on an agent of another application',
     });
 
-  // Values that are not an account of the workspace (variables, workspace member ids) are kept as they are
+  // Values that are not a shared account of the workspace (variables, member ids, private accounts) are kept as they are
   const connectedAccountReference = ({
     stepType,
     connectedAccountId,
@@ -181,7 +181,10 @@ export const buildWorkflowManifestInverseReferenceResolvers = (
         ? connectedAccountById.get(connectedAccountId)
         : undefined;
 
-    if (!isDefined(connectedAccount)) {
+    if (
+      !isDefined(connectedAccount) ||
+      connectedAccount.scope !== 'WORKSPACE'
+    ) {
       return { connectedAccountId };
     }
 

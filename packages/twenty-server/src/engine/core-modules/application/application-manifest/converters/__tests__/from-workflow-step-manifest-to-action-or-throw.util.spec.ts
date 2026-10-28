@@ -394,10 +394,10 @@ describe('application workflow actions', () => {
       connectionParameters: null,
       archivedAt: null,
       scopes: [GOOGLE_CALENDAR_EVENTS_SCOPE],
+      scope: 'WORKSPACE',
       calendarChannels: [{ isSyncEnabled: true }],
       ...overrides,
     });
-    // Oldest first: an archived account, then an IMAP-only mailbox without CalDAV, then a Google account
     const connectedAccounts = [
       connectedAccount({ id: 'archived-id', archivedAt: new Date() }),
       connectedAccount({
@@ -503,8 +503,31 @@ describe('application workflow actions', () => {
           handle: 'unknown@example.com',
         }),
       ).toThrow(
-        'Workflow step Reach out: no connected account unknown@example.com in this workspace can send email',
+        'Workflow step Reach out: no connected account unknown@example.com shared with this workspace can send email',
       );
+    });
+
+    it('does not resolve a handle to an account private to a member', () => {
+      expect(() =>
+        convertWithHandle({
+          type: 'SEND_EMAIL',
+          handle: 'sales@example.com',
+          accounts: [connectedAccount({ scope: 'USER' })],
+        }),
+      ).toThrow('no connected account sales@example.com shared with');
+    });
+
+    it('resolves a handle to a shared account over an older private one', () => {
+      expect(
+        convertWithHandle({
+          type: 'SEND_EMAIL',
+          handle: 'sales@example.com',
+          accounts: [
+            connectedAccount({ id: 'private-id', scope: 'USER' }),
+            connectedAccount({ id: 'shared-id' }),
+          ],
+        }),
+      ).toMatchObject({ connectedAccountId: 'shared-id' });
     });
   });
 

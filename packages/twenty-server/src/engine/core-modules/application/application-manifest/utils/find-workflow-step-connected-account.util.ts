@@ -43,6 +43,8 @@ export const findWorkflowStepConnectedAccount = ({
 }): WorkflowManifestConnectedAccountReference | undefined =>
   connectedAccounts.find(
     (connectedAccount) =>
+      // Sync acts for no member, so a handle can only name an account shared with the workspace
+      connectedAccount.scope === 'WORKSPACE' &&
       !isDefined(connectedAccount.archivedAt) &&
       connectedAccount.handle.toLowerCase() === handle.toLowerCase() &&
       canConnectedAccountRunStep({ stepType, connectedAccount }),

@@ -326,6 +326,7 @@ export class ConnectedAccountMetadataService {
       | 'connectionParameters'
       | 'archivedAt'
       | 'scopes'
+      | 'scope'
     > & {
       calendarChannels: Pick<CalendarChannelEntity, 'isSyncEnabled'>[];
     })[]
@@ -340,6 +341,7 @@ export class ConnectedAccountMetadataService {
         connectionParameters: true,
         archivedAt: true,
         scopes: true,
+        scope: true,
         calendarChannels: { id: true, isSyncEnabled: true },
       },
       order: { createdAt: 'ASC', id: 'ASC' },

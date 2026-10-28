@@ -91,10 +91,10 @@ export const buildWorkflowManifestReferenceResolvers = ({
     });
     if (!isDefined(connectedAccount)) {
       throw new ApplicationException(
-        `${subject}: no connected account ${handle} in this workspace can ${WORKFLOW_CONNECTED_ACCOUNT_STEP_CAPABILITY[stepType]}`,
+        `${subject}: no connected account ${handle} shared with this workspace can ${WORKFLOW_CONNECTED_ACCOUNT_STEP_CAPABILITY[stepType]}`,
         ApplicationExceptionCode.INVALID_INPUT,
         {
-          userFriendlyMessage: msg`The workflow uses connected account ${handle}, which is not connected in this workspace.`,
+          userFriendlyMessage: msg`The workflow uses connected account ${handle}, which is not connected and shared in this workspace.`,
         },
       );
     }

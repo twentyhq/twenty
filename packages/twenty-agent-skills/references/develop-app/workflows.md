@@ -13,8 +13,8 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
 ## Email and Calendar Steps
 
 - `SEND_EMAIL`, `DRAFT_EMAIL` and `CREATE_CALENDAR_EVENT` name their account with exactly one of `connectedAccountId` or `connectedAccountHandle`.
-- Use `connectedAccountHandle` (the account's email address) in app code: ids only exist in one workspace. Apply resolves it to the oldest active account with that address that can run the step, and fails if none can.
-- `twenty app pull` writes a literal account id as its handle. Variables and workspace member ids stay `connectedAccountId`.
+- Use `connectedAccountHandle` (the account's email address) in app code: ids only exist in one workspace. Apply resolves it to the oldest active account with that address that is shared with the workspace (`WORKSPACE` scope) and can run the step, and fails if none can. A member's private account can't be named by handle.
+- `twenty app pull` writes a shared account's id as its handle. Private account ids, variables and workspace member ids stay `connectedAccountId`.
 
 ## Manual Record Trigger
 

@@ -35,6 +35,7 @@ export type WorkflowManifestConnectedAccountReference = Pick<
   | 'connectionParameters'
   | 'archivedAt'
   | 'scopes'
+  | 'scope'
 > & { calendarChannels: Pick<CalendarChannelEntity, 'isSyncEnabled'>[] };
 
 export type WorkflowManifestReferences = {

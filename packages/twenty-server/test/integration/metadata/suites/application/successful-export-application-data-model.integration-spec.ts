@@ -73,6 +73,8 @@ import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/applica
 import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-object-manifest-to-universal-flat-object-metadata.util';
 import { buildSearchVectorFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-search-vector-flat-field-metadata-for-custom-object.util';
 import { buildSearchVectorGinIndexForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-search-vector-gin-index-for-custom-object.util';
+import { type ConnectedAccountScope } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_APP_ID = '7e3d1c2b-0000-4a7b-8c9d-0e1f2a3b4c5d';
 const TEST_ROLE_ID = '7e3d1c2b-0001-4a7b-8c9d-0e1f2a3b4c5d';
@@ -1690,6 +1692,13 @@ const withSendEmailConnectedAccountHandle = ({
   },
 });
 
+const setSeededConnectedAccountScope = (scope: ConnectedAccountScope) =>
+  globalThis.testDataSource.query(
+    `UPDATE core."connectedAccount" SET scope = $1
+      WHERE handle = $2 AND "workspaceId" = $3`,
+    [scope, SEEDED_CONNECTED_ACCOUNT_HANDLE, SEED_APPLE_WORKSPACE_ID],
+  );
+
 const workflowsManifest = buildBaseManifest({
   appId: WORKFLOW_TEST_APP_ID,
   roleId: WORKFLOW_TEST_ROLE_ID,
@@ -1717,7 +1726,19 @@ const workflowsManifest = buildBaseManifest({
 });
 
 describe('Application export - workflows', () => {
+  let seededConnectedAccountScope: ConnectedAccountScope;
+
   beforeAll(async () => {
+    const [seededConnectedAccount] = await globalThis.testDataSource.query(
+      `SELECT scope FROM core."connectedAccount"
+        WHERE handle = $1 AND "workspaceId" = $2`,
+      [SEEDED_CONNECTED_ACCOUNT_HANDLE, SEED_APPLE_WORKSPACE_ID],
+    );
+
+    seededConnectedAccountScope = seededConnectedAccount.scope;
+    // A handle only names an account shared with the workspace; the seed connects it for Tim alone
+    await setSeededConnectedAccountScope('WORKSPACE');
+
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: WORKFLOW_TEST_APP_ID,
     });
@@ -1738,6 +1759,7 @@ describe('Application export - workflows', () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: WORKFLOW_TEST_APP_ID,
     });
+    await setSeededConnectedAccountScope(seededConnectedAccountScope);
   });
 
   it('exports the synced workflows as they were declared', async () => {
@@ -1820,5 +1842,21 @@ describe('Application export - workflows', () => {
     });
 
     expect(errors?.[0]?.message).toContain(unknownHandle);
+  }, 60000);
+
+  it('refuses a step whose connected account handle names an account private to a member', async () => {
+    await setSeededConnectedAccountScope('USER');
+
+    try {
+      const { errors } = await syncApplication({
+        manifest: workflowsManifest,
+        dryRun: true,
+        expectToFail: true,
+      });
+
+      expect(errors?.[0]?.message).toContain(SEEDED_CONNECTED_ACCOUNT_HANDLE);
+    } finally {
+      await setSeededConnectedAccountScope('WORKSPACE');
+    }
   }, 60000);
 });
