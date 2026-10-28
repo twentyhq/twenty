@@ -21,7 +21,8 @@ export const waitForDeferredWorkspaceMigrationActions =
         await global.testDataSource.query(
           `SELECT id, name, status, attempts, "lastError"
            FROM core."deferredWorkspaceMigrationAction"
-           WHERE status IN ('PENDING', 'IN_PROGRESS')`,
+           WHERE status IN ('PENDING', 'IN_PROGRESS')
+           AND name IN ('build_index', 'validate_foreignKey')`,
         );
 
       if (inFlightActions.length === 0) {
