@@ -3,7 +3,7 @@ import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
-import { type BackfillStandardPermissionFlagsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793150427513-backfill-standard-permission-flags.command';
+import { type BackfillStandardPermissionFlagsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793178046161-backfill-standard-permission-flags.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';

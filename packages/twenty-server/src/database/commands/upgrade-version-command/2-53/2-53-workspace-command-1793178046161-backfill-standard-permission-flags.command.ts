@@ -12,7 +12,7 @@ import { buildStandardFlatPermissionFlagMetadataMaps } from 'src/engine/workspac
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.53.0', 1793150427513)
+@RegisteredWorkspaceCommand('2.53.0', 1793178046161)
 @Command({
   name: 'upgrade:2-53:backfill-standard-permission-flags',
   description:
