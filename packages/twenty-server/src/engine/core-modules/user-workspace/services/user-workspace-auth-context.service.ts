@@ -17,7 +17,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { isActiveUserWorkspace } from 'src/engine/core-modules/user-workspace/utils/is-active-user-workspace.util';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -46,7 +45,10 @@ export class UserWorkspaceAuthContextService {
       relations: { user: true },
     });
 
-    return userWorkspaces.filter(isActiveUserWorkspace);
+    return userWorkspaces.filter(
+      ({ user }) =>
+        isDefined(user) && !user.disabled && !isDefined(user.deletedAt),
+    );
   }
 
   async resolveWorkspaceMember({
@@ -120,7 +122,12 @@ export class UserWorkspaceAuthContextService {
       where: { id: userWorkspaceId, workspaceId },
       relations: { user: true },
     });
-    if (!isActiveUserWorkspace(userWorkspace)) {
+    if (
+      !isDefined(userWorkspace) ||
+      !isDefined(userWorkspace.user) ||
+      userWorkspace.user.disabled ||
+      isDefined(userWorkspace.user.deletedAt)
+    ) {
       throw new AuthException(
         'User workspace not found',
         AuthExceptionCode.UNAUTHENTICATED,
