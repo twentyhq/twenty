@@ -1,12 +1,18 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
+// Servers before 2.53 report this flag as APPLICATIONS.
+const MANAGE_APPS_PERMISSION_FLAG_KEYS = ['WORKSPACE_APPS', 'APPLICATIONS'];
+
 export const currentUserCanManageGranolaOrThrow =
   async (): Promise<boolean> => {
     const { currentUser } = await new MetadataApiClient().query({
       currentUser: { currentUserWorkspace: { permissionFlags: true } },
     });
 
-    return (currentUser.currentUserWorkspace?.permissionFlags ?? []).includes(
-      'APPLICATIONS',
+    const permissionFlags: string[] =
+      currentUser.currentUserWorkspace?.permissionFlags ?? [];
+
+    return MANAGE_APPS_PERMISSION_FLAG_KEYS.some((key) =>
+      permissionFlags.includes(key),
     );
   };
