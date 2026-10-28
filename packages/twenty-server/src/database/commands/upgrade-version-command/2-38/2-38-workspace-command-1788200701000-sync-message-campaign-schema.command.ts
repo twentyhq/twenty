@@ -1,6 +1,5 @@
 import { Command } from 'nest-commander';
 
-
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FieldMetadataType, MessageCampaignStatus } from 'twenty-shared/types';
 import { MESSAGE_CAMPAIGN_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/upgrade-version-command/2-38/constants/message-campaign-standard-object-universal-identifiers.constant';
@@ -14,7 +13,10 @@ import { buildNavigationCommandMenuItemOperationsOrThrow } from 'src/database/co
 import { collectMessageCampaignStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-38/utils/collect-message-campaign-standard-universal-identifiers.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { getExistingOrStandardFlatEntityOrThrow, getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import {
+  getExistingOrStandardFlatEntityOrThrow,
+  getStandardFlatEntitiesToCreateOrThrow,
+} from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { isDefined } from 'twenty-shared/utils';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -292,6 +294,7 @@ export class SyncMessageCampaignSchemaCommand extends ProvisionedWorkspaceComman
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
@@ -363,6 +366,7 @@ export class SyncMessageCampaignSchemaCommand extends ProvisionedWorkspaceComman
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
@@ -478,6 +482,7 @@ export class SyncMessageCampaignSchemaCommand extends ProvisionedWorkspaceComman
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:
@@ -522,9 +527,11 @@ export class SyncMessageCampaignSchemaCommand extends ProvisionedWorkspaceComman
     expectedValue: string;
     label: string;
   }): FlatFieldMetadata | undefined {
-    const workspaceField = findFlatEntityByUniversalIdentifier<FlatFieldMetadata>(
-      { flatEntityMaps: workspaceFieldMaps, universalIdentifier },
-    );
+    const workspaceField =
+      findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
+        flatEntityMaps: workspaceFieldMaps,
+        universalIdentifier,
+      });
 
     if (!isDefined(workspaceField)) {
       this.logger.log(
@@ -548,9 +555,11 @@ export class SyncMessageCampaignSchemaCommand extends ProvisionedWorkspaceComman
       return undefined;
     }
 
-    const standardField = findFlatEntityByUniversalIdentifier<FlatFieldMetadata>(
-      { flatEntityMaps: standardFieldMaps, universalIdentifier },
-    );
+    const standardField =
+      findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
+        flatEntityMaps: standardFieldMaps,
+        universalIdentifier,
+      });
 
     if (
       !isDefined(standardField) ||

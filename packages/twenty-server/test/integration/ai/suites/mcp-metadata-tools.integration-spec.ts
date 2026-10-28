@@ -4,6 +4,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions-or-throw.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -54,7 +55,7 @@ type ObjectSummary = {
 };
 type ValidationRuleSummary = { id: string; name: string };
 
-const callMetadataTool = ({
+const callMetadataTool = async ({
   toolName,
   toolArguments,
   token = API_KEY_ACCESS_TOKEN,
@@ -62,12 +63,15 @@ const callMetadataTool = ({
   toolName: string;
   toolArguments: Record<string, unknown>;
   token?: string;
-}) =>
-  callMcpTool({
+}) => {
+  await waitForDeferredWorkspaceMigrationActionsOrThrow();
+
+  return callMcpTool({
     toolName: 'execute_tool',
     toolArguments: { toolName, arguments: toolArguments },
     token,
   });
+};
 
 const runMetadataTool = async <TResult>(
   call: Parameters<typeof callMetadataTool>[0],

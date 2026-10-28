@@ -71,6 +71,7 @@ export class LimitWorkflowCommandsToSingleSelectionCommand extends ProvisionedWo
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

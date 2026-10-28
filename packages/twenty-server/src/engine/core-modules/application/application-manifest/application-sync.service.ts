@@ -71,6 +71,7 @@ export class ApplicationSyncService {
     dryRun = false,
     inferDeletionFromMissingEntities = true,
     persistVersion = true,
+    shouldDeferActions,
   }: {
     workspaceId: string;
     manifest: Manifest;
@@ -78,6 +79,7 @@ export class ApplicationSyncService {
     dryRun?: boolean;
     inferDeletionFromMissingEntities?: boolean;
     persistVersion?: boolean;
+    shouldDeferActions?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -116,6 +118,7 @@ export class ApplicationSyncService {
             ownerFlatApplication,
             dryRun,
             inferDeletionFromMissingEntities,
+            shouldDeferActions,
           },
         );
     } catch (error) {
