@@ -2,12 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
 
-import {
-  assertMatchingDependencyChecksumsOrThrow,
-  type DependencyChecksums,
-} from 'src/engine/core-modules/application/application-package/utils/assert-matching-dependency-checksums-or-throw.util';
+import { assertMatchingDependencyChecksumsOrThrow } from 'src/engine/core-modules/application/application-package/utils/assert-matching-dependency-checksums-or-throw.util';
 import { computeApplicationPackageChecksums } from 'src/engine/core-modules/application/application-package/utils/compute-application-package-checksums.util';
 import { computeLegacyApplicationPackageChecksums } from 'src/engine/core-modules/application/application-package/utils/compute-legacy-application-package-checksums.util';
+import { type DependencyChecksums } from 'src/engine/core-modules/application/application-package/utils/is-matching-dependency-checksums.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 

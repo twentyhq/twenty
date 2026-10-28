@@ -14,6 +14,10 @@ import { type ApplicationDependencyFilesService } from 'src/engine/core-modules/
 import { WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies-directory-name';
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
 import {
+  type DependencyChecksums,
+  isMatchingDependencyChecksums,
+} from 'src/engine/core-modules/application/application-package/utils/is-matching-dependency-checksums.util';
+import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
@@ -47,11 +51,6 @@ import {
 type DepsLayerDependencies = {
   packageJson: string;
   yarnLock: string;
-};
-
-type DependencyChecksums = {
-  packageJsonChecksum: string;
-  yarnLockChecksum: string;
 };
 
 const LAYER_LOCK_OPTIONS = {
@@ -336,18 +335,16 @@ export class LambdaLayerManagerService {
   private async findWorkspaceCustomSharedDependencies(
     flatApplication: FlatApplication,
   ): Promise<DepsLayerDependencies | undefined> {
-    const isOnDependencyChecksums = ({
-      packageJsonChecksum,
-      yarnLockChecksum,
-    }: DependencyChecksums) =>
-      flatApplication.packageJsonChecksum === packageJsonChecksum &&
-      flatApplication.yarnLockChecksum === yarnLockChecksum;
-
     const defaultDependencies = await getDefaultApplicationPackageFields({
       directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
     });
 
-    if (isOnDependencyChecksums(defaultDependencies)) {
+    if (
+      isMatchingDependencyChecksums({
+        declaredChecksums: flatApplication,
+        filesChecksums: defaultDependencies,
+      })
+    ) {
       return {
         packageJson: sanitizeApplicationPackageJson(
           defaultDependencies.packageJsonContent,
@@ -356,7 +353,15 @@ export class LambdaLayerManagerService {
       };
     }
 
-    return DEPENDENCY_CHECKSUMS_SEEDED_IN_2_52.some(isOnDependencyChecksums)
+    const isOnSeededDependencies = DEPENDENCY_CHECKSUMS_SEEDED_IN_2_52.some(
+      (seededChecksums) =>
+        isMatchingDependencyChecksums({
+          declaredChecksums: flatApplication,
+          filesChecksums: seededChecksums,
+        }),
+    );
+
+    return isOnSeededDependencies
       ? this.getVerifiedDependencies(flatApplication)
       : undefined;
   }

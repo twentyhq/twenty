@@ -1,27 +1,11 @@
-import { isDefined } from 'twenty-shared/utils';
-
+import {
+  type DependencyChecksums,
+  isMatchingDependencyChecksums,
+} from 'src/engine/core-modules/application/application-package/utils/is-matching-dependency-checksums.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-
-export type DependencyChecksums = {
-  packageJsonChecksum: string | null;
-  yarnLockChecksum: string | null;
-};
-
-const isMatchingDependencyChecksums = ({
-  declaredChecksums,
-  storedFilesChecksums,
-}: {
-  declaredChecksums: DependencyChecksums;
-  storedFilesChecksums: DependencyChecksums;
-}): boolean =>
-  storedFilesChecksums.packageJsonChecksum ===
-    declaredChecksums.packageJsonChecksum &&
-  (!isDefined(storedFilesChecksums.yarnLockChecksum) ||
-    storedFilesChecksums.yarnLockChecksum ===
-      declaredChecksums.yarnLockChecksum);
 
 export const assertMatchingDependencyChecksumsOrThrow = ({
   applicationUniversalIdentifier,
@@ -35,11 +19,8 @@ export const assertMatchingDependencyChecksumsOrThrow = ({
   legacyStoredFilesChecksums: DependencyChecksums;
 }): void => {
   const isMatching = [storedFilesChecksums, legacyStoredFilesChecksums].some(
-    (acceptedChecksums) =>
-      isMatchingDependencyChecksums({
-        declaredChecksums,
-        storedFilesChecksums: acceptedChecksums,
-      }),
+    (filesChecksums) =>
+      isMatchingDependencyChecksums({ declaredChecksums, filesChecksums }),
   );
 
   if (!isMatching) {
