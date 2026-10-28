@@ -1,14 +1,19 @@
 ---
 title: Layout Pagina
-description: Personalizza le pagine di dettaglio dei record — schede, widget e dove vengono renderizzati i front components — usando `definePageLayout` e `definePageLayoutTab`.
+description: Personalizza le pagine di dettaglio dei record — schede, widget e dove vengono renderizzati i front components — usando definePageLayout, definePageLayoutTab e definePageLayoutWidget.
 ---
 
-Un **layout di pagina** controlla come è organizzata la pagina di dettaglio di un record: quali schede compaiono e quali widget contengono. Usa `definePageLayout()` per dichiarare un layout per un oggetto di tua proprietà, oppure `definePageLayoutTab()` per aggiungere una singola scheda a un layout già esistente (tuo o standard di Twenty).
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-| Caso d'uso                                                                         | Entità                |
-| ---------------------------------------------------------------------------------- | --------------------- |
-| Definire l’intero layout per la pagina di un record su un oggetto di tua proprietà | `definePageLayout`    |
-| Aggiungere una scheda a un layout esistente (un tuo oggetto o uno standard)        | `definePageLayoutTab` |
+## Panoramica
+
+Un **layout di pagina** controlla come è organizzata la pagina di dettaglio di un record: quali schede compaiono e quali widget contengono. Usa `definePageLayout()` per dichiarare un layout per un oggetto di tua proprietà, `definePageLayoutTab()` per aggiungere una singola scheda a un layout già esistente (tuo o uno standard di Twenty one), oppure `definePageLayoutWidget()` per aggiungere un singolo widget a una scheda già esistente.
+
+| Caso d'uso                                                                                                     | Entità                   |
+| -------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| Definire l’intero layout per la pagina di un record su un oggetto di tua proprietà                             | `definePageLayout`       |
+| Aggiungere una scheda a un layout esistente (un tuo oggetto o uno standard)                                    | `definePageLayoutTab`    |
+| Aggiungi un widget a una scheda esistente (la scheda Home di una pagina di record o una scheda da te definita) | `definePageLayoutWidget` |
 
 ## definePageLayout
 
@@ -36,6 +41,7 @@ export default definePageLayout({
           universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
           title: 'Hello World',
           type: 'FRONT_COMPONENT',
+          heightBehavior: 'TAB_VIEWPORT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
@@ -50,17 +56,23 @@ export default definePageLayout({
 
 ### Punti chiave
 
-* `type` è uno tra `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` o `'STANDALONE_PAGE'`. Usa `'RECORD_PAGE'` per personalizzare la vista dei dettagli di un oggetto specifico.
+* `type` è uno tra `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'`, `'STANDALONE_PAGE'` o `'RECORD_FORM'`. Usa `'RECORD_PAGE'` per personalizzare la vista dei dettagli di un oggetto specifico. `'RECORD_FORM'` descrive il modulo di creazione di un oggetto e contiene widget `FORM_FIELD`, ognuno dei quali visualizza un singolo campo. Twenty fornisce un layout `'RECORD_FORM'` per oggetto con un widget per ogni campo creabile, quindi raramente è necessario crearne uno; non esegue ancora il rendering dei moduli di record.
 * `objectUniversalIdentifier` specifica a quale oggetto si applica questo layout.
-* Ogni `tab` definisce una sezione della pagina con `title`, `position` e `layoutMode`: `VERTICAL_LIST` per le pagine dei record e le pagine autonome, `GRID` per le dashboard e `CANVAS` per un singolo widget che deve riempire il viewport della tab. Una tab `VERTICAL_LIST` dispone i widget verticalmente. I widget integrati che gestiscono il proprio scorrimento, come cronologie, file, note, attività e flussi di lavoro, riempiono un viewport; campi, componenti front, grafici e altri widget fit-content vengono visualizzati all'altezza del contenuto o configurata. Una tab `GRID` dispone sempre i widget come schede su una griglia di 12 colonne. Un widget `CANVAS` non ha una posizione esplicita; se una scheda canvas contiene più widget, questi vengono renderizzati alla loro altezza del contenuto anziché riempire il viewport.
+* Ogni `tab` definisce una sezione della pagina con `title`, `position` e `layoutMode`: usa `VERTICAL_LIST` per le pagine dei record e le pagine autonome, e `GRID` per le dashboard. Una tab `VERTICAL_LIST` dispone i widget verticalmente. I widget integrati che gestiscono il proprio scorrimento, come timeline, file, note, attività, flussi di lavoro e conversazioni, riempiono un'area di visualizzazione per impostazione predefinita; i campi, i componenti front, i grafici e altri widget con adattamento al contenuto vengono visualizzati all'altezza del loro contenuto o all'altezza configurata. Una tab `GRID` dispone sempre i widget come schede su una griglia di 12 colonne.
+* I widget in una tab `VERTICAL_LIST` ereditano la modalità di layout della tab e il loro ordine deriva dall'array `widgets`. Non impostare `position`; imposta l'opzionale `heightBehavior` di primo livello su `'TAB_VIEWPORT'` quando un widget deve occupare una viewport completa della tab e gestire il proprio scorrimento, oppure su `'FIT_CONTENT'` per sovrascrivere un'impostazione predefinita integrata a tutta altezza. I widget precedenti non riducono tale altezza. È consentito un solo widget `TAB_VIEWPORT` attivo per tab e deve trovarsi dopo i widget fit-content.
+* I widget `GRID` continuano a utilizzare `position: { layoutMode: PageLayoutTabLayoutMode.GRID, row, column, rowSpan, columnSpan }`. `heightBehavior` di livello superiore è valido solo per le schede `VERTICAL_LIST`; utilizzarlo con `GRID` o `CANVAS` genera un errore di convalida.
+* Le schede Canvas esistenti e le posizioni esplicite dei widget rimangono supportate. L'SDK mostra avvisi di deprecazione con le sostituzioni consigliate.
 * Imposta esplicitamente `layoutMode`. Ometterlo imposta `VERTICAL_LIST` su una `STANDALONE_PAGE` e `GRID` altrove, il che raramente è ciò che vuoi per la pagina di un record.
 * Ogni `widget` all'interno di una scheda può renderizzare un [front component](/it/developers/extend/apps/layout/front-components), un elenco di relazioni o altri tipi di widget integrati.
-* Un widget `FRONT_COMPONENT` può impostare `headerCommandMenuItemUniversalIdentifiers` su un array ordinato di identificatori universali degli elementi del menu di comandi della stessa app. Queste azioni vengono visualizzate come pulsanti con icona nell'intestazione della scheda del widget e mantengono la disponibilità a livello di comando e i controlli delle autorizzazioni. Gli identificatori devono essere univoci e devono essere risolti quando l'app viene installata.
+* Un widget `FRONT_COMPONENT` può impostare `headerCommandMenuItemUniversalIdentifiers` su un array ordinato di identificatori universali degli elementi del menu di comando della stessa app. Queste azioni vengono visualizzate come pulsanti con icona nell'intestazione della scheda del widget e mantengono la relativa disponibilità a livello di comando e i controlli delle autorizzazioni. Gli identificatori devono essere univoci e devono essere risolti quando l'app è installata.
 * `position` sulle schede controlla il loro ordine. Usa valori più alti (ad es., 50) per posizionare le schede personalizzate dopo quelle integrate.
+* `twenty app pull` riscrive i layout di pagina con le relative schede e widget inclusi inline. Un widget che l'esportazione non può ancora includere, ad esempio uno che mostra il componente front della tua app o uno del tipo `VIEW` deprecato, viene segnalato da pull anziché scritto; consulta [ciò che pull non scrive](/it/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 
 ### Widget dei campi
 
-Un widget `FIELD` esegue il rendering di un campo del record. Per i campi di relazione può anche incorporare un elenco di record correlati:
+Un widget `FIELD` esegue il rendering di un campo del record corrente. Per i campi di relazione, può anche incorporare una vista dei record correlati al record corrente.
+
+Per incorporare una vista che non è limitata al record corrente, usa un [widget della tabella dei record](#record-table-widgets).
 
 ```ts
 {
@@ -78,7 +90,33 @@ Un widget `FIELD` esegue il rendering di un campo del record. Per i campi di rel
 
 * `fieldMetadataId` accetta l'identificatore universale di un campo sull'oggetto del layout.
 * `fieldDisplayMode` può essere uno tra `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` o `'TABLE'`. `TABLE` incorpora una vista che elenca i record di un campo di relazione uno-a-molti.
+* `isUIEditable` si applica ai campi di relazione in modalità di visualizzazione `TABLE`. Per impostazione predefinita è `true`; impostalo su `false` per impedire la modifica dei record dalla tabella incorporata o dal kanban.
 * `nestedRelationFieldMetadataId` è facoltativo e accetta l'identificatore universale di un campo di relazione uno-a-molti sull'oggetto di destinazione della relazione, per elencare i record a due salti di relazione di distanza (ad es. una pagina Company che elenca le opportunità delle persone dell'azienda, o una pagina Person che elenca le opportunità dell'azienda della persona). Il primo salto può essere un campo di relazione uno-a-molti o molti-a-uno, il secondo deve essere uno-a-molti (le relazioni di giunzione non sono supportate) e richiede `fieldDisplayMode: 'TABLE'` — combinarlo con qualsiasi altra modalità di visualizzazione genera un errore di convalida, poiché un widget annidato viene sempre renderizzato come una vista incorporata.
+
+### Widget della tabella dei record
+
+Un widget `RECORD_TABLE` incorpora una vista salvata in un dashboard, in una pagina del record o in una pagina autonoma. La vista salvata determina i record, i campi, i filtri, gli ordinamenti e il layout mostrati nel widget.
+
+```ts
+{
+  universalIdentifier: 'd1d2d3d4-d5d6-4000-8000-000000000004',
+  title: 'Open opportunities',
+  type: 'RECORD_TABLE',
+  configuration: {
+    configurationType: 'RECORD_TABLE',
+    viewUniversalIdentifier: OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER,
+    recordLimit: 8,
+    isUIEditable: false,
+  },
+}
+```
+
+* `viewUniversalIdentifier` identifica la vista da visualizzare.
+* `recordLimit` è facoltativo e limita il numero di record visualizzati dal widget.
+* `isUIEditable` si applica alle viste tabella e kanban. Abilita la modifica delle celle della tabella o la modifica, lo spostamento e la creazione delle schede kanban. Per impostazione predefinita è `true` nei layout `RECORD_PAGE` e `false` negli altri layout.
+* `isUIEditable` controlla solo le azioni dell'interfaccia utente. Le autorizzazioni dei record continuano ad applicarsi e le impostazioni della vista rimangono modificabili solo nell'editor del layout di pagina.
+
+Gli amministratori dello spazio di lavoro possono configurare lo stesso comportamento con **Consenti modifica** negli editor del [widget del dashboard](/it/user-guide/dashboards/capabilities/widgets#editing-records) e della [pagina del record](/it/user-guide/layout/capabilities/record-pages#editing-related-records).
 
 ## definePageLayoutTab
 
@@ -155,3 +193,74 @@ export default definePageLayoutTab({
 * `position` controlla l'ordinamento rispetto alle schede esistenti nel layout di destinazione. Scegli un valore che collochi la tua scheda dove desideri rispetto alle schede integrate.
 
 * Usa questo invece di `definePageLayout` quando vuoi solo aggiungere a un layout esistente. Usa `definePageLayout` quando possiedi l’intero layout.
+
+* `twenty app pull` riscrive una scheda aggiunta a un layout di pagina di cui non sei proprietario come file `definePageLayoutTab()`, con i relativi widget inclusi inline, soggetti agli stessi limiti dei widget di un `definePageLayout()`.
+
+## definePageLayoutWidget
+
+Usa questa opzione quando vuoi solo **aggiungere** un widget a una scheda già esistente, ad esempio un componente front nella scheda Home della pagina Company standard o un grafico nella scheda Home della pagina del record del tuo oggetto.
+
+```ts src/page-layout-widgets/example-home-widget.ts
+import {
+  definePageLayoutWidget,
+  PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayoutWidget({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000003',
+  pageLayoutTabUniversalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.home
+      .universalIdentifier,
+  title: 'Hello World',
+  type: 'FRONT_COMPONENT',
+  position: {
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    index: 1000,
+    heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+  },
+  configuration: {
+    configurationType: 'FRONT_COMPONENT',
+    frontComponentUniversalIdentifier:
+      HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+### Punti chiave
+
+* `pageLayoutTabUniversalIdentifier` è **obbligatorio** e deve puntare a una scheda già esistente al momento dell'installazione: una scheda Twenty standard (`STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.\<object>RecordPage.tabs.\<tab>.universalIdentifier`), una scheda di uno dei tuoi layout o una scheda della pagina del record che Twenty genera per uno dei tuoi oggetti. Le schede generate hanno identificatori deterministici, quindi puoi calcolarli:
+
+  ```ts
+  import {
+    getSystemPageLayoutTabUniversalIdentifier,
+    getSystemRecordPageLayoutUniversalIdentifier,
+  } from 'twenty-sdk/define';
+
+  const EXAMPLE_HOME_TAB_UNIVERSAL_IDENTIFIER =
+    getSystemPageLayoutTabUniversalIdentifier({
+      objectMetadataApplicationUniversalIdentifier:
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+      pageLayoutUniversalIdentifier:
+        getSystemRecordPageLayoutUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier:
+            APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+        }),
+      title: 'Home',
+    });
+  ```
+
+* `position` è **obbligatorio**, poiché la scheda non fa parte del tuo manifest e la sua modalità di layout non può essere dedotta. Abbina la modalità di layout della scheda: le schede della pagina del record sono elenchi verticali, quindi usa `{ layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index }` con un indice superiore a quello dei widget integrati (il widget Fields è a 0).
+
+* Per un elenco verticale, imposta `position.heightBehavior` su `PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT` per riempire la viewport di una scheda, oppure su `PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT` per utilizzare il contenuto o l'altezza configurata del widget. Importa questa enum da `twenty-sdk/define`, come nell'esempio precedente. Se omesso, il widget mantiene il valore predefinito integrato. Solo un widget attivo per scheda può riempire la viewport e il suo indice deve posizionarlo dopo tutti i widget con adattamento al contenuto. `heightBehavior` non è supportato nelle posizioni `GRID` o `CANVAS`.
+
+* `configuration` funziona esattamente come un widget definito inline in `definePageLayout` o `definePageLayoutTab`: fa riferimento a [componenti front](/it/developers/extend/apps/layout/front-components), viste, campi e così via.
+
+* Usa questa opzione invece di `definePageLayoutTab` quando la scheda esiste già e vuoi solo inserirvi un widget. Usa `definePageLayoutTab` quando vuoi una scheda tutta tua.
+
+* `twenty app pull` riscrive un widget aggiunto a una scheda di cui non sei proprietario come file `definePageLayoutWidget()`, soggetto agli stessi limiti dei widget di un `definePageLayout()`.
+
+<PageBanner illustration="card-page-page-layouts" />

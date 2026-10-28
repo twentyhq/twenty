@@ -76,7 +76,7 @@ msgstr "{0} باید یک فیلد رابطه یک‌به‌چند باشد."
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
 msgid "{action} is disabled on object {0}"
-msgstr ""
+msgstr "{action} در شیء {0} غیرفعال است"
 
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -152,18 +152,18 @@ msgstr "یک کارزار همچنان در حال ارسال است. پیش ا�
 #. js-lingui-id: kZaUc+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
 msgid "A channel named \"{name}\" already exists"
-msgstr ""
+msgstr "کانالی با نام \"{name}\" از قبل وجود دارد"
 
 #. js-lingui-id: y84xpa
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "A channel needs a name."
-msgstr ""
+msgstr "کانال به نام نیاز دارد."
 
 #. js-lingui-id: 3bCT2z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
 msgid "A channel with this name already exists."
-msgstr ""
+msgstr "کانالی با این نام از قبل وجود دارد."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -263,12 +263,12 @@ msgstr "یک هدف رشته پیام"
 #. js-lingui-id: oP9K0J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "A messaging provider with this name already exists for this application"
-msgstr ""
+msgstr "ارائه‌دهنده پیام‌رسانی با این نام از قبل برای این برنامه وجود دارد"
 
 #. js-lingui-id: eynBqK
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "A messaging provider with this name already exists for this application."
-msgstr ""
+msgstr "ارائه‌دهنده پیام‌رسانی با این نام از قبل برای این برنامه وجود دارد."
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -464,7 +464,7 @@ msgstr "کاربری با این ایمیل از قبل وجود دارد."
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type"
-msgstr ""
+msgstr "یک agentChatChannelUniversalIdentifier معتبر برای نوع AGENT_CHAT_CHANNEL لازم است"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -1090,7 +1090,7 @@ msgstr "یک فیلد صادرات دیگر در دسترس نیست."
 #. js-lingui-id: zv+Pcr
 #: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 msgid "An export is already running for this workspace."
-msgstr ""
+msgstr "صادر کردن برای این فضای کاری از قبل در حال اجرا است."
 
 #. js-lingui-id: jiELc8
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -1116,6 +1116,17 @@ msgstr "هنگام پردازش داده‌های رمزگذاری‌شده یک
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."
 msgstr "دعوت‌نامه‌ای پیش‌تر به این ایمیل ارسال شده است."
+
+#. js-lingui-id: BCJWBj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "An MCP server with this name already exists"
+msgstr "یک سرور MCP با این نام از قبل وجود دارد"
+
+#. js-lingui-id: SeiYVM
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "An MCP server with this name already exists."
+msgstr "یک سرور MCP با این نام از قبل وجود دارد."
 
 #. js-lingui-id: CQ5DXU
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -2590,13 +2601,13 @@ msgstr "تغییر مدت نگهداری گزارش‌ها به اشتراک س�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel"
-msgstr ""
+msgstr "کانال"
 
 #. js-lingui-id: gPIeS4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel archived at"
-msgstr ""
+msgstr "زمان بایگانی کانال"
 
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -2613,14 +2624,14 @@ msgstr "شناسه کانال"
 #. js-lingui-id: G+8qH5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel name is required"
-msgstr ""
+msgstr "نام کانال الزامی است"
 
 #. js-lingui-id: Nd2xnP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel not found"
-msgstr ""
+msgstr "کانال پیدا نشد"
 
 #. js-lingui-id: ZJRMDQ
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2628,30 +2639,30 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel not found."
-msgstr ""
+msgstr "کانال پیدا نشد."
 
 #. js-lingui-id: /84Bpj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "Channel role link not found"
-msgstr ""
+msgstr "پیوند نقش کانال پیدا نشد"
 
 #. js-lingui-id: 86oa9B
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel snoozed until"
-msgstr ""
+msgstr "تعویق کانال تا"
 
 #. js-lingui-id: ieLfO5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Channel the thread is triaged in"
-msgstr ""
+msgstr "کانالی که گفت‌وگو در آن دسته‌بندی شده است"
 
 #. js-lingui-id: 7LMBzP
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Channels are not available yet. Try again in a few minutes."
-msgstr ""
+msgstr "کانال‌ها هنوز در دسترس نیستند. چند دقیقه دیگر دوباره تلاش کنید."
 
 #. js-lingui-id: z851aK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -3156,7 +3167,7 @@ msgstr "اتصال پیدا نشد."
 #. placeholder {0}: flatMessagingProvider.connectionProviderUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Connection provider \"{0}\" was not found in this application"
-msgstr ""
+msgstr "ارائه‌دهنده اتصال \"{0}\" در این برنامه پیدا نشد"
 
 #. js-lingui-id: xQ2DfP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3179,11 +3190,14 @@ msgstr "نام ارائه‌دهنده اتصال الزامی است"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Connection provider not found"
 msgstr "ارائه‌دهنده اتصال یافت نشد"
 
 #. js-lingui-id: b+xWjq
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connection provider not found."
 msgstr "ارائه‌دهنده اتصال یافت نشد."
 
@@ -3200,22 +3214,22 @@ msgstr "دامنه ارائه‌دهنده اتصال \"{scope}\" نامعتبر
 #. js-lingui-id: lOJLh7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider scope cannot be changed"
-msgstr ""
+msgstr "دامنه ارائه‌دهنده اتصال قابل تغییر نیست"
 
 #. js-lingui-id: rGTdmC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider scope cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
-msgstr ""
+msgstr "دامنه ارائه‌دهنده اتصال پس از ایجاد قابل تغییر نیست: یک ارائه‌دهنده اتصال جدید با یک universalIdentifier جدید تعریف کنید"
 
 #. js-lingui-id: ouURJJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider type cannot be changed"
-msgstr ""
+msgstr "نوع ارائه‌دهنده اتصال قابل تغییر نیست"
 
 #. js-lingui-id: Y4TItr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider type cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
-msgstr ""
+msgstr "نوع ارائه‌دهنده اتصال پس از ایجاد قابل تغییر نیست: یک ارائه‌دهنده اتصال جدید با یک universalIdentifier جدید تعریف کنید"
 
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
@@ -3226,7 +3240,7 @@ msgstr "ارائه‌دهنده اتصال با نام {0} از پیش برای 
 #. js-lingui-id: pXXjt2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
-msgstr ""
+msgstr "ارائه‌دهنده اتصال با نوع 'custom' باید به یک تابع منطقی authorize و callback ارجاع دهد"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3741,7 +3755,7 @@ msgstr "آیتم منوی فرمان سفارشی را نمی‌توان به پ
 #. js-lingui-id: eCtxAR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Custom connection provider is missing its authorize or callback logic function"
-msgstr ""
+msgstr "تابع منطقی authorize یا callback در ارائه‌دهنده اتصال سفارشی وجود ندارد"
 
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -4310,12 +4324,12 @@ msgstr "جهت"
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Disabled object permission actions must be a list"
-msgstr ""
+msgstr "کنش‌های مجوز شیء غیرفعال باید یک فهرست باشند"
 
 #. js-lingui-id: EtelV5
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Disabled object permission actions must not repeat"
-msgstr ""
+msgstr "کنش‌های مجوز شیء غیرفعال نباید تکراری باشند"
 
 #. js-lingui-id: T/2cxH
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4328,6 +4342,17 @@ msgstr "دور انداختن پیش‌نویس"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Discard Draft"
 msgstr "دور انداختن پیش‌نویس"
+
+#. js-lingui-id: OaH7rc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Disconnect the MCP server before changing its URL"
+msgstr "پیش از تغییر URL سرور MCP، اتصال آن را قطع کنید"
+
+#. js-lingui-id: X9u5qJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Disconnect the MCP server before changing its URL."
+msgstr "پیش از تغییر URL سرور MCP، اتصال آن را قطع کنید."
 
 #. js-lingui-id: N4sZ6H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6763,6 +6788,31 @@ msgstr "پارامتر محدودیت نامعتبر است."
 msgid "Invalid logic function input."
 msgstr "ورودی تابع منطقی نامعتبر است."
 
+#. js-lingui-id: U2TpWH
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server input."
+msgstr "ورودی سرور MCP نامعتبر است."
+
+#. js-lingui-id: PTN/J2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server name provided"
+msgstr "نام سرور MCP ارائه‌شده نامعتبر است"
+
+#. js-lingui-id: 945sNP
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server name. Use lowercase letters, digits and underscores, starting with a letter."
+msgstr "نام سرور MCP نامعتبر است. از حروف کوچک، ارقام و زیرخط استفاده کنید و نام را با یک حرف آغاز کنید."
+
+#. js-lingui-id: 1pdxfJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server URL provided"
+msgstr "URL سرور MCP ارائه‌شده نامعتبر است"
+
+#. js-lingui-id: YDqREm
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server URL. Please provide a valid HTTP or HTTPS URL."
+msgstr "URL سرور MCP نامعتبر است. لطفاً یک URL معتبر HTTP یا HTTPS ارائه کنید."
+
 #. js-lingui-id: fNaXqL
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Invalid message channel input."
@@ -6776,7 +6826,7 @@ msgstr "ورودی پوشه پیام نامعتبر است."
 #. js-lingui-id: u3ER6+
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "Invalid messaging provider input."
-msgstr ""
+msgstr "ورودی ارائه‌دهنده پیام‌رسانی نامعتبر است."
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -7520,6 +7570,8 @@ msgstr "فیلد نمای شناسه برچسب باید قابل مشاهده �
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Label is required"
 msgstr "برچسب الزامی است."
 
@@ -7998,6 +8050,17 @@ msgstr "maxNumberOfValues باید در تنظیمات تعریف شده باش�
 msgid "May"
 msgstr "مه"
 
+#. js-lingui-id: ES19km
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "MCP server not found"
+msgstr "سرور MCP یافت نشد"
+
+#. js-lingui-id: 32QmfJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "MCP server not found."
+msgstr "سرور MCP یافت نشد."
+
 #. js-lingui-id: DICk6O
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -8446,28 +8509,28 @@ msgstr "پیام‌های ارسال‌شده به‌عنوان بخشی از ا
 #. js-lingui-id: DR7S+J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider connection provider cannot be changed"
-msgstr ""
+msgstr "ارائه‌دهنده اتصالِ ارائه‌دهنده پیام‌رسانی قابل تغییر نیست"
 
 #. js-lingui-id: S8RYm2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
-msgstr ""
+msgstr "ارائه‌دهنده اتصالِ ارائه‌دهنده پیام‌رسانی پس از ایجاد قابل تغییر نیست: یک ارائه‌دهنده پیام‌رسانی جدید با یک universalIdentifier جدید تعریف کنید"
 
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
-msgstr ""
+msgstr "نام نمایشی ارائه‌دهنده پیام‌رسانی الزامی است"
 
 #. js-lingui-id: PheN1+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider displayName is required"
-msgstr ""
+msgstr "displayName ارائه‌دهنده پیام‌رسانی الزامی است"
 
 #. js-lingui-id: NpU0GW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider name is required"
-msgstr ""
+msgstr "نام ارائه‌دهنده پیام‌رسانی الزامی است"
 
 #. js-lingui-id: kh1zio
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -8475,17 +8538,17 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider not found"
-msgstr ""
+msgstr "ارائه‌دهنده پیام‌رسانی پیدا نشد"
 
 #. js-lingui-id: yyDEl+
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "Messaging provider not found."
-msgstr ""
+msgstr "ارائه‌دهنده پیام‌رسانی پیدا نشد."
 
 #. js-lingui-id: Ih/vm6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider with name {name} already exists for this application"
-msgstr ""
+msgstr "ارائه‌دهنده پیام‌رسانی با نام {name} از قبل برای این برنامه وجود دارد"
 
 #. js-lingui-id: IYFsjL
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -8582,7 +8645,7 @@ msgstr "فیلد رابطه morph باید یک شناسه morph داشته با
 #. js-lingui-id: /eQ78F
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Move this channel's chats to another channel before deleting it."
-msgstr ""
+msgstr "پیش از حذف این کانال، گفت‌وگوهای آن را به کانال دیگری منتقل کنید."
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -8643,7 +8706,7 @@ msgstr "نام با برچسب همگام نیست."
 #. js-lingui-id: QrBCC2
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "Name is not valid: it must be camelCase, e.g. \"{camelCasedName}\""
-msgstr ""
+msgstr "نام معتبر نیست: باید به صورت camelCase باشد، برای مثال \"{camelCasedName}\""
 
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
@@ -9336,7 +9399,7 @@ msgstr "یکی از فیلدهای انتخاب‌شده به این شیء تع
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "One of these roles no longer exists."
-msgstr ""
+msgstr "یکی از این نقش‌ها دیگر وجود ندارد."
 
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -9423,13 +9486,13 @@ msgstr "فقط مقادیر این فرم قابل تغییر هستند."
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Open chat"
-msgstr ""
+msgstr "باز کردن گفت‌وگو"
 
 #. js-lingui-id: 4QVn1g
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Open chat"
-msgstr ""
+msgstr "باز کردن گفت‌وگو"
 
 #. js-lingui-id: +ee5JG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10144,7 +10207,7 @@ msgstr "یک زیرفیلد مشخص از \"{0}\" انتخاب کنید — فی
 #. js-lingui-id: r+tlvn
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Pick another channel to move the chats to."
-msgstr ""
+msgstr "کانال دیگری را برای انتقال گفت‌وگوها انتخاب کنید."
 
 #. js-lingui-id: TtfDdb
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
@@ -10183,6 +10246,7 @@ msgid "Please provide a password for this connection."
 msgstr "لطفاً یک گذرواژه برای این اتصال ارائه کنید."
 
 #. js-lingui-id: NR22yi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Please provide a valid HTTP or HTTPS URL"
@@ -10386,7 +10450,7 @@ msgstr "اعلان نمی‌تواند خالی باشد"
 #. js-lingui-id: KQ0Ots
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service.ts
 msgid "Property {property} cannot be updated"
-msgstr ""
+msgstr "ویژگی {property} قابل به‌روزرسانی نیست"
 
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -11608,7 +11672,7 @@ msgstr "ارسال ایمیل"
 #. js-lingui-id: RPQott
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Send message logic function \"{sendMessageLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "تابع منطقی ارسال پیام \"{sendMessageLogicFunctionUniversalIdentifier}\" در این برنامه پیدا نشد"
 
 #. js-lingui-id: +dLR8z
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12163,7 +12227,7 @@ msgstr "عامل‌های استاندارد قابل تغییر نیستند."
 #. js-lingui-id: rQq8lH
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Standard channels cannot be deleted."
-msgstr ""
+msgstr "کانال‌های استاندارد قابل حذف نیستند."
 
 #. js-lingui-id: Ptv+nG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -12863,10 +12927,25 @@ msgstr "مجموع درآمد سالانه شرکت"
 msgid "The connected {0} account is missing calendar permissions ({missingScopeList}). Please reconnect the account to grant calendar access."
 msgstr "حساب متصل {0} مجوزهای تقویم را ندارد ({missingScopeList}). لطفاً برای اعطای دسترسی به تقویم، حساب را دوباره متصل کنید."
 
+#. js-lingui-id: xYqYn7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider belongs to another application"
+msgstr "ارائه‌دهنده اتصال به برنامه دیگری تعلق دارد"
+
+#. js-lingui-id: 0kfc9m
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider must belong to the same application as the MCP server"
+msgstr "ارائه‌دهنده اتصال باید به همان برنامه‌ای تعلق داشته باشد که سرور MCP به آن تعلق دارد"
+
+#. js-lingui-id: x9rG77
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The connection provider must belong to the same application as the MCP server."
+msgstr "ارائه‌دهنده اتصال باید به همان برنامه‌ای تعلق داشته باشد که سرور MCP به آن تعلق دارد."
+
 #. js-lingui-id: fDWKx/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The connection provider this messaging provider uses was not found in its application."
-msgstr ""
+msgstr "ارائه‌دهنده اتصالی که این ارائه‌دهنده پیام‌رسانی استفاده می‌کند، در برنامه آن پیدا نشد."
 
 #. js-lingui-id: j6q6l+
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -12975,7 +13054,7 @@ msgstr "فایل خروجی بیش از حد بزرگ است. لطفاً رکو�
 #. js-lingui-id: bjRiGF
 #: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 msgid "The export is missing data and could not be completed."
-msgstr ""
+msgstr "داده‌هایی در صادر کردن وجود ندارد و تکمیل آن ممکن نشد."
 
 #. js-lingui-id: RKP94c
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -13083,7 +13162,7 @@ msgstr "فهرستی که این کمپین به آن ارسال شد"
 #. js-lingui-id: pSAncm
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that completes the connection was not found."
-msgstr ""
+msgstr "تابع منطقی تکمیل‌کننده اتصال پیدا نشد."
 
 #. js-lingui-id: gU/AgL
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13093,12 +13172,12 @@ msgstr "تابع منطقی که حساب متصل را شناسایی می‌ک
 #. js-lingui-id: 8gf2aA
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that starts the connection was not found."
-msgstr ""
+msgstr "تابع منطقی آغازکننده اتصال پیدا نشد."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider sends with was not found in its application."
-msgstr ""
+msgstr "تابع منطقی که این ارائه‌دهنده پیام‌رسانی با آن ارسال می‌کند، در برنامه آن پیدا نشد."
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13414,12 +13493,12 @@ msgstr "زمان‌بندی گردش کار نامعتبر است."
 #. js-lingui-id: /s75Zz
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
 msgid "The workflow select field must reference a field of the same type."
-msgstr ""
+msgstr "فیلد انتخاب گردش کار باید به فیلدی از همان نوع ارجاع دهد."
 
 #. js-lingui-id: 8xdW5z
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
 msgid "The workflow select field must reference an existing field."
-msgstr ""
+msgstr "فیلد انتخاب گردش کار باید به یک فیلد موجود ارجاع دهد."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -13660,27 +13739,27 @@ msgstr "این تغییر گردش کار را خراب می‌کند و ذخی�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This channel access no longer exists."
-msgstr ""
+msgstr "این دسترسی کانال دیگر وجود ندارد."
 
 #. js-lingui-id: ++E+5T
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This channel is being changed. Try again in a moment."
-msgstr ""
+msgstr "این کانال در حال تغییر است. لحظه‌ای دیگر دوباره تلاش کنید."
 
 #. js-lingui-id: /mdJSV
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This chat has no owner, so it has to stay in a channel."
-msgstr ""
+msgstr "این گفت‌وگو مالک ندارد، بنابراین باید در یک کانال بماند."
 
 #. js-lingui-id: 6zaKtA
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This chat is not in a channel."
-msgstr ""
+msgstr "این گفت‌وگو در یک کانال نیست."
 
 #. js-lingui-id: TjTe43
 #: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
 msgid "This code belongs to a published workflow version. Edit it from a draft."
-msgstr ""
+msgstr "این کد متعلق به یک نسخه منتشرشده گردش کار است. آن را از یک پیش‌نویس ویرایش کنید."
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -13882,7 +13961,7 @@ msgstr "این محدودیت هنگام ویرایش آن تغییر کرد. ب
 #. js-lingui-id: STVycN
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This list of chats could not be loaded. Try again."
-msgstr ""
+msgstr "این فهرست گفت‌وگوها بارگیری نشد. دوباره تلاش کنید."
 
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
@@ -13912,7 +13991,7 @@ msgstr "این عضو احراز هویت دومرحله‌ای را تنظیم 
 #. js-lingui-id: NW6Nmf
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
-msgstr ""
+msgstr "این کانال پیام نمی‌تواند پیام ارسال کند."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -14002,7 +14081,7 @@ msgstr "این مجوز از قبل برای نقش تنظیم شده است"
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
 msgid "This permission is disabled on the object and cannot be granted"
-msgstr ""
+msgstr "این مجوز در شیء غیرفعال است و قابل اعطا نیست"
 
 #. js-lingui-id: wJWFt2
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -14062,12 +14141,12 @@ msgstr "این درخواست هنوز در حال آماده‌شدن است. �
 #. js-lingui-id: T6c4z3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This role already has access to the channel"
-msgstr ""
+msgstr "این نقش از قبل به کانال دسترسی دارد"
 
 #. js-lingui-id: ce6Oq+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This role already has access to the channel."
-msgstr ""
+msgstr "این نقش از قبل به کانال دسترسی دارد."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -14874,7 +14953,7 @@ msgstr "نامشخص"
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Unknown disabled object permission action"
-msgstr ""
+msgstr "کنش مجوز شیء غیرفعال ناشناخته است"
 
 #. js-lingui-id: of4ZuG
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -15170,6 +15249,11 @@ msgstr "پیش از تماس یا جلسه، و هر زمان که کاربر م
 msgctxt "skill.description"
 msgid "Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes"
 msgstr "برای Python روی داده‌هایی استفاده کنید که ابزارهای رکورد نمی‌توانند بیان کنند: آمار، تصاویر نمودار، تجزیه یک فایل بارگذاری‌شده. برای خواندن و نوشتن‌های عادی رکورد از آن استفاده نکنید"
+
+#. js-lingui-id: cW4z4t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Use lowercase letters, digits and underscores, starting with a letter"
+msgstr "از حروف کوچک، ارقام و زیرخط استفاده کنید و با یک حرف آغاز کنید"
 
 #. js-lingui-id: Gltw+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -15895,7 +15979,7 @@ msgstr "ما با مشکلی موقت در پایگاه داده خود مواج
 #. js-lingui-id: 1QdT9i
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not complete the connection. Please try again."
-msgstr ""
+msgstr "نتوانستیم اتصال را تکمیل کنیم. لطفاً دوباره تلاش کنید."
 
 #. js-lingui-id: SO+/3j
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -15905,12 +15989,12 @@ msgstr "نتوانستیم حسابی را که مجاز کرده‌اید شن�
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not send your message. Please try again."
-msgstr ""
+msgstr "نتوانستیم پیام شما را ارسال کنیم. لطفاً دوباره تلاش کنید."
 
 #. js-lingui-id: j7daTn
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
-msgstr ""
+msgstr "نتوانستیم اتصال را آغاز کنیم. لطفاً دوباره تلاش کنید."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -16007,7 +16091,7 @@ msgstr "وقتی یک رشته به‌تعویق‌افتاده به صندوق 
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "When a thread snoozed in its channel comes back to it"
-msgstr ""
+msgstr "زمانی که یک رشته تعویق‌شده در کانالش به آن بازمی‌گردد"
 
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -16043,7 +16127,7 @@ msgstr "زمانی که رشته ایجاد شد یا آخرین پیام را �
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "When the thread was marked as done or snoozed in its channel"
-msgstr ""
+msgstr "زمانی که رشته در کانالش انجام‌شده علامت‌گذاری یا تعویق شد"
 
 #. js-lingui-id: Kx3ltI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -17149,7 +17233,7 @@ msgstr "اشتراک صورت‌حساب شما خراب است. لطفاً با
 #. js-lingui-id: L8/bmN
 #: src/modules/emailing/utils/build-campaign-send-refusal-exception.util.ts
 msgid "Your daily limit is {limitValue, plural, one {# email} other {# emails}}, and this campaign would go over what's left today. Contact us to raise it."
-msgstr ""
+msgstr "محدودیت روزانه شما {limitValue, plural, one {# ایمیل} other {# ایمیل}} است و این کارزار از مقدار باقی‌مانده امروز فراتر می‌رود. برای افزایش آن با ما تماس بگیرید."
 
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

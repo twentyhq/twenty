@@ -3,6 +3,10 @@ title: Hook di installazione
 description: Esegui la logica durante il ciclo di vita di installazione, aggiornamento o disinstallazione — inserisci dati iniziali, esegui il backup dei record, valida l'aggiornamento, pulisci le risorse esterne.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 Gli hook di installazione sono funzioni logiche speciali che vengono eseguite durante il ciclo di vita di installazione, aggiornamento o disinstallazione. Condividono lo stesso runtime del gestore delle [logic functions](/it/developers/extend/apps/logic/logic-functions) normali, ma sono dichiarati con le proprie funzioni di definizione e vivono al di fuori del normale modello di trigger (HTTP, cron, eventi del database). Gli hook di installazione ricevono un `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` è `undefined` in caso di nuova installazione); l'hook di disinstallazione riceve un `UninstallPayload` (`{ version?: string }` — la versione che viene rimossa).
 
 Ogni app può definire **al massimo uno** per ciascun hook (pre-install, post-install, uninstall). La build del manifesto genera un errore se viene rilevato più di un hook per qualsiasi tipo.
@@ -46,11 +50,11 @@ Ogni app può definire **al massimo uno** per ciascun hook (pre-install, post-in
 * Il consueto ambiente delle logic-function (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) viene iniettato, così puoi chiamare le API di Twenty con il token della tua app.
 * L'hook viene collegato automaticamente al manifesto dell'applicazione in fase di build (`preInstallLogicFunction` / `postInstallLogicFunction`) — non c'è nulla da referenziare in [`defineApplication()`](/it/developers/extend/apps/config/application).
 * Il `timeoutSeconds` predefinito è 300 per consentire attività di setup più lunghe, come il seeding dei dati.
-* **Non eseguito in modalità dev**: `yarn twenty dev` salta il flusso di installazione e sincronizza direttamente i file, quindi gli hook non vengono mai eseguiti in quell'ambiente. Attivali invece manualmente:
+* **Non eseguito in modalità dev**: `twenty app dev` salta il flusso di installazione e sincronizza direttamente i file, quindi gli hook non vengono mai eseguiti in quell'ambiente. Attivali invece manualmente:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec --postInstall
-yarn twenty dev:function:exec --preInstall
+twenty app exec --post-install
+twenty app exec --pre-install
 ```
 
 <AccordionGroup>
@@ -59,7 +63,10 @@ yarn twenty dev:function:exec --preInstall
 Viene eseguito una volta che l'installazione della tua app è terminata: metadati sincronizzati, client SDK generato, nuovo schema interrogabile. Esempio — eseguire il seeding di un record predefinito nelle nuove installazioni:
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePostInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
@@ -68,7 +75,9 @@ const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
   const client = new CoreApiClient();
   await client.mutation({
     createPostCard: {
-      __args: { data: { name: 'Welcome to Postcard', content: 'Your first card!' } },
+      __args: {
+        data: { name: 'Welcome to Postcard', content: 'Your first card!' },
+      },
       id: true,
     },
   });
@@ -100,10 +109,16 @@ Il pre-install è sempre **sincrono** e blocca l'installazione. Se l'handler gen
 Esempio — copiare i valori di un campo legacy prima che la migrazione lo elimini:
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePreInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+const handler = async ({
+  previousVersion,
+  newVersion,
+}: InstallPayload): Promise<void> => {
   // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
   if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
     return;
@@ -132,7 +147,8 @@ const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise
 export default definePreInstallLogicFunction({
   universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
   name: 'pre-install',
-  description: 'Backs up legacy notes into description before the v2 migration.',
+  description:
+    'Backs up legacy notes into description before the v2 migration.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: true,
   handler,
@@ -155,11 +171,14 @@ Note:
 * Come gli hook di installazione, **non viene eseguito in modalità dev** — attivalo manualmente invece:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec --uninstall
+twenty app exec --uninstall-hook
 ```
 
 ```ts src/logic-functions/uninstall.ts
-import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import {
+  defineUninstallLogicFunction,
+  type UninstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (_payload: UninstallPayload): Promise<void> => {
@@ -185,3 +204,5 @@ export default defineUninstallLogicFunction({
   handler,
 });
 ```
+
+<PageBanner illustration="card-page-install-hooks" />

@@ -3,40 +3,74 @@ title: Filtre și sortare
 description: Filtrați și sortați înregistrările pentru a găsi exact ceea ce aveți nevoie.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Filtrarea datelor
 
 Filtrele vă ajută să vă concentrați pe înregistrări specifice, afișând doar pe cele care corespund criteriilor.
 
 ### Adăugarea unui filtru
 
-1. Faceți clic pe butonul **Filtru** din bara de instrumente
+1. Faceți clic pe **Filtru** în bara de instrumente
 2. Selectați câmpul după care să filtrați
-3. Alegeți operatorul (egal, conține etc.)
-4. Introduceți valoarea filtrului
-5. Faceți clic pe **Aplică**
+3. Alegeți un operator
+4. Introduceți sau alegeți o valoare
+
+Filtrul se aplică imediat ce introduceți sau alegeți o valoare. Operatori precum **Este gol** sau **Este în trecut** se aplică imediat.
 
 ### Operatori de filtrare
 
-| Tipul câmpului | Operatori disponibili                                     |
-| -------------- | --------------------------------------------------------- |
-| Text           | Este egal cu, Conține, Începe cu, Se termină cu, Este gol |
-| Număr          | Este egal cu, Mai mare decât, Mai mic decât, Este gol     |
-| Dată           | Este egal cu, Înainte de, După, Este gol                  |
-| Select         | Este egal cu, Este unul dintre, Este gol                  |
-| Bifă           | Este adevărat, Este fals                                  |
-| Relație        | Este egal cu, Este gol                                    |
+| Tipul câmpului                                                                    | Operatori                                                                                                                    |
+| --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Text**, **E-mailuri**, **Telefoane**, **Linkuri**, **Adresă**, **Nume complet** | Conține, Nu conține, Este gol, Nu este gol                                                                                   |
+| **Număr**, **Monedă**, **Evaluare**                                               | Este, Nu este, Mai mare sau egal cu, Mai mic sau egal cu, Este gol, Nu este gol                                              |
+| **Dată**, **Dată și oră**                                                         | Este, Este relativă, Este în trecut, Este în viitor, Este astăzi, Este înainte, Este după sau egal cu, Este gol, Nu este gol |
+| **Selectare**                                                                     | Este, Nu este, Este gol, Nu este gol                                                                                         |
+| **Selectare multiplă**                                                            | Conține, Nu conține, Este gol, Nu este gol                                                                                   |
+| **Adevărat/Fals**                                                                 | Este                                                                                                                         |
+| **Relație**                                                                       | Este, Nu este, Este gol, Nu este gol                                                                                         |
+| **Actor** (de ex., Creat de)                                                      | Conține, Nu conține, Este gol, Nu este gol                                                                                   |
+| **Matrice**, **JSON**, **Fișiere**                                                | Conține, Nu conține, Este gol, Nu este gol                                                                                   |
 
-### Filtre multiple
+<Tip>
+**Conține** potrivește o parte din text, indiferent de majuscule sau minuscule. Folosiți-l pentru a găsi o valoare într-un câmp Text, cum ar fi numele unui oraș.
+</Tip>
 
-Combinați mai multe filtre pentru a restrânge rezultatele:
+* Filtrele **Selectare**, **Selectare multiplă** și **Relație** acceptă mai multe valori și afișează înregistrările care corespund oricăreia dintre ele
+* Filtrele de relație funcționează pe câmpuri care indică spre o înregistrare, cum ar fi câmpul **Companie** al unei persoane
 
-* Toate filtrele sunt aplicate cu logica AND
-* Fiecare filtru suplimentar restrânge și mai mult rezultatele
+### Combinarea filtrelor
+
+Filtrele adăugate din **Filtru** se combină cu ȘI: înregistrările trebuie să corespundă tuturor. Selectarea unui câmp care are deja un filtru deschide acel filtru pentru editare.
+
+### Filtru avansat
+
+Folosiți filtrul avansat pentru a afișa înregistrări care corespund unei condiții sau alteia (logica SAU):
+
+1. Faceți clic pe **Filtru → Filtru avansat**
+2. Setați prima regulă: un câmp, un operator și o valoare
+3. Faceți clic pe **Adăugare regulă de filtrare → Adăugare regulă** și setați a doua regulă
+4. În a doua regulă, schimbați **Și** în **Sau**
+
+**Exemplu:** persoane cu sediul în Paris sau Londra
+
+* **Oraș** Conține "Paris"
+* **Sau** **Oraș** Conține "Londra"
+
+De asemenea, puteți:
+
+* Combinați **Și** și **Sau** cu **Adăugare regulă de filtrare → Adăugare grup de reguli**. Fiecare grup are propriul conector
+* Filtrați după un câmp al unei înregistrări asociate, cum ar fi câmpul **Nume** al **Companiei** unei persoane
+* Filtrați după o parte a unui câmp compozit, cum ar fi orașul dintr-o adresă
+
+Filtrul avansat apare în bara de vizualizare ca o etichetă, cum ar fi **2 reguli avansate**. Faceți clic pe el pentru a edita regulile. Se combină cu celelalte filtre folosind ȘI.
 
 ### Eliminarea filtrelor
 
-* Faceți clic pe **X** de pe fiecare etichetă de filtru
-* Faceți clic pe **Șterge tot** pentru a elimina toate filtrele
+* Faceți clic pe **X** de pe o etichetă de filtru
+* Faceți clic pe **X** de pe eticheta cu reguli avansate pentru a elimina filtrul avansat
+* Pentru a elimina o regulă, faceți clic pe meniul **⋮** de la sfârșitul rândului acesteia și selectați **Eliminare regulă** (sau **Eliminare grup de reguli**)
+* Faceți clic pe **Resetare** pentru a reveni la filtrele și sortările salvate ale vizualizării
 
 ## Sortarea datelor
 
@@ -44,10 +78,11 @@ Sortarea determină ordinea în care apar înregistrările.
 
 ### Adăugarea unei sortări
 
-1. Faceți clic pe butonul **Sortare** din bara de instrumente
-2. Selectați câmpul după care să sortați
-3. Alegeți ascendent (A-Z, 0-9) sau descendent (Z-A, 9-0)
-4. Faceți clic pe **Aplică**
+1. Faceți clic pe **Sortare** în bara de instrumente
+2. Alegeți **Crescător** sau **Descrescător** în partea de sus a meniului
+3. Selectați câmpul după care să sortați
+
+Sortarea se aplică imediat ce selectați câmpul.
 
 ### Sortări multiple
 
@@ -56,23 +91,28 @@ Adăugați mai multe niveluri de sortare:
 * Prima sortare este principală
 * Sortările ulterioare se aplică în interiorul grupurilor de valori egale
 
-### Sortare rapidă pe coloană
+### Sortarea dintr-un antet de coloană
 
-Faceți clic pe orice antet de coloană pentru a sorta:
+1. Faceți clic pe un antet de coloană
+2. Selectați **Sortare**
 
-* Primul clic: Ascendent
-* Al doilea clic: Descendent
-* Al treilea clic: Elimină sortarea
+Prima sortare este crescătoare. Selectați din nou **Sortare** pentru a comuta între crescător și descrescător.
+
+Pentru a elimina o sortare, faceți clic pe **X** de pe eticheta acesteia din bara de vizualizare.
 
 ## Salvarea setărilor de filtrare și sortare
 
-Filtrele și sortările sunt salvate împreună cu vizualizarea:
+Salvați filtrele și sortările într-o vizualizare:
 
 1. Configurați filtrele și sortările
-2. Faceți clic pe **Salvare** pentru a actualiza vizualizarea curentă
-3. Sau faceți clic pe **Salvează ca vizualizare nouă** pentru a crea o variantă
+2. Faceți clic pe **Actualizare vizualizare** pentru a le salva în vizualizarea curentă
+3. Sau faceți clic pe săgeata de lângă **Actualizare vizualizare** și selectați **Creare vizualizare** pentru a le salva ca o vizualizare nouă
+
+În vizualizările implicite, cum ar fi **Toate companiile**, faceți clic pe **Salvare ca vizualizare nouă**.
 
 ## Conexe
 
 * [Vizualizări de Tabel](/ro/user-guide/views-pipelines/capabilities/table-views) — funcționalitatea Grupare după
 * [Prezentare generală a vizualizărilor](/ro/user-guide/views-pipelines/overview) — crearea și gestionarea vizualizărilor
+
+<PageBanner illustration="page-cover-filter" />

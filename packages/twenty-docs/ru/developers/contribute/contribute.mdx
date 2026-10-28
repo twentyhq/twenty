@@ -3,6 +3,10 @@ title: Внести вклад
 description: Внесите вклад в разработку Twenty с открытым исходным кодом.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
 ## Обзор
 
 Twenty — проект с открытым исходным кодом, который приветствует вклад сообщества. Независимо от того, исправляете ли вы ошибки, добавляете функции или улучшаете документацию, ваш вклад помогает сделать Twenty лучше для всех.
@@ -17,11 +21,15 @@ Twenty — проект с открытым исходным кодом, кот�
 
 ## Начало работы
 
-<CardGroup cols={2}>
-  <Card title="Отчеты об ошибках и запросы" icon="bug" href="/ru/developers/contribute/capabilities/bug-and-requests">
-    Сообщайте о проблемах или запрашивайте новые функции
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ru/developers/contribute/capabilities/bug-and-requests" img="/images/user-guide/halftone/card-page-bug-requests.svg">
+    <CardTitle>Сообщения об ошибках и запросы</CardTitle>
+    Сообщайте о проблемах или запрашивайте функции
   </Card>
-  <Card title="Разработка интерфейса" icon="browser" href="/ru/developers/contribute/capabilities/frontend-development/folder-architecture-front">
-    Внесите вклад в пользовательский интерфейс
+  <Card href="/ru/developers/contribute/capabilities/frontend-development/folder-architecture-front" img="/images/user-guide/halftone/card-page-frontend-architecture.svg">
+    <CardTitle>Фронтенд-разработка</CardTitle>
+    Внесите вклад в UI
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-contribute" />

@@ -2579,6 +2579,7 @@ export interface Object {
     indexMetadataList: Index[]
     indexMetadatas: ObjectIndexMetadatasConnection
     isActive: Scalars['Boolean']
+    isAuditLogged: Scalars['Boolean']
     isLabelSyncedWithName: Scalars['Boolean']
     isRemote: Scalars['Boolean']
     isSearchable: Scalars['Boolean']
@@ -7097,6 +7098,7 @@ export interface ObjectGenqlSelection{
     /** Limit or page results. */
     paging: CursorPaging} })
     isActive?: boolean | number
+    isAuditLogged?: boolean | number
     isLabelSyncedWithName?: boolean | number
     isRemote?: boolean | number
     isSearchable?: boolean | number

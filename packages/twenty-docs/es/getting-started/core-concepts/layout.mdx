@@ -3,7 +3,10 @@ title: Diseño
 description: Cómo navegar, explorar y visualizar registros en Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## El diseño principal
 
@@ -11,7 +14,9 @@ El centro de la pantalla es donde viven tus registros: personas, empresas, oport
 
 <img src="/images/user-guide/home/main-layout.png" style={{width:'100%'}} />
 
-## Barra de navegación
+<span id="navigation-bar" />
+
+## Barra lateral
 
 La barra lateral izquierda te ofrece:
 
@@ -23,6 +28,8 @@ La barra lateral izquierda te ofrece:
 * **Flujos de trabajo** — crea automatizaciones
 
 Arrastra elementos para reordenarlos, crea carpetas para agrupar objetos relacionados y oculta lo que no uses.
+
+Usa el botón para contraer situado en la parte superior de la barra lateral o selecciona **Contraer barra lateral** en el menú de comandos (`Cmd+K` en Mac o `Ctrl+K` en Windows). Cuando esté contraída, usa **Expandir barra lateral** para volver a mostrarla.
 
 <img src="/images/user-guide/home/navigation-bar.png" style={{width:'100%'}} />
 
@@ -40,7 +47,7 @@ Pulsa `Cmd+K` (Mac) o `Ctrl+K` (Windows), o haz clic en los tres puntos de la es
 
 ## Buscar
 
-Accesible mediante el Menú de Comandos, en la parte superior de la barra de navegación o presionando `/`. La búsqueda funciona en todos los objetos.
+Accesible mediante el Menú de Comandos, en la parte superior de la barra lateral o presionando `/`. La búsqueda funciona en todos los objetos.
 
 <img src="/images/user-guide/home/search-bar.png" style={{width:'100%'}} />
 
@@ -66,8 +73,13 @@ Cada vista guarda sus propios filtros, ordenación y visibilidad de campos. Comp
 
 Cuando abres un registro, la página de detalles se compone de **pestañas** y **widgets** configurables. Añade, elimina, reordena y cambia el tamaño de los widgets en una cuadrícula: campos, registros relacionados, correos electrónicos, cronología, tareas, notas, archivos, gráficos, iframes y más. Cada tipo de objeto tiene su propio diseño.
 
-<Card title="Guía completa del diseño" icon="arrow-right" href="/es/user-guide/layout/overview">
-  Navegación, vistas, páginas de registros: referencia detallada y guías prácticas.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/es/user-guide/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+  <CardTitle>Guía completa de Layout</CardTitle>
+  Barra lateral, vistas, páginas de registros: referencia detallada y guías prácticas.
 </Card>
+</CardGroup>
 
 <VimeoEmbed videoId="1185511790" title="Diseño" />
+
+<PageBanner illustration="getting-started-layout" />

@@ -1,28 +1,68 @@
 ---
-title: Desarrolladores
-description: Crea aplicaciones, usa la API, aloja por tu cuenta o contribuye a la base de código.
+title: Construir en Veinte
+sidebarTitle: Desarrolladores
+description: Construye aplicaciones en TypeScript, conecta tus herramientas a través de APIs, y aloja 20 tú mismo.
+hideFooterPagination: true
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3} className="documentation-card-group documentation-card-group--patterned">
+<LandingActions>
+  <LandingButton href="/es/developers/extend/apps/getting-started/quick-start">Construye tu primera aplicación</LandingButton>
+  <LandingButton href="https://github.com/twentyhq/twenty" outlined>Ver en GitHub</LandingButton>
+</LandingActions>
+
+## Por qué construir en Veinte
+
+La mayoría de los CRMs dan a los desarrolladores una API y unos pocos lugares para conectarse. Veinte te da la propia plataforma. Declarar objetos, funciones del lado del servidor, componentes React y agentes de IA en TypeScript simple con el `twenty-sdk`, ver cada cambio sincronizado con un servidor local a medida que se guarda, y enviar con el CLI.
+
+* **Gestiona tu espacio de trabajo con código.** Los objetos, campos, vistas y diseños de página viven como archivos TypeScript en tu repositorio, versionados y revisados como cualquier otro cambio.
+* \*\*El mismo SDK que las propias aplicaciones de Twenty. \* Slack, Linear y Granola son aplicaciones construidas con el `twenty-sdk`, así que construyes con exactamente lo que utiliza el equipo de Twenty.
+* **Conecta al núcleo, no a una barra lateral.** Tus objetos obtienen las mismas tablas y permisos que Personas y Compañías. Sus aplicaciones pueden traer conversaciones en mensajes de Twenty, escribir en cronologías de registro y exponer funciones a flujos de trabajo y agentes de IA.
+* **Sin cesar.** El núcleo es de código abierto y autohostable. Cuando falta un punto de extensión, cambie el propio Veinte o vuelva a aportarlo.
+* **Seguro para experimentar.** Las aplicaciones ejecutan sandboamed y sólo tocan los datos que su rol permite, ya sea que tu equipo o un agente de IA hayan escrito el código.
+
+## Explora los documentos del desarrollador
+
+Además de las aplicaciones, los documentos para desarrolladores cubren la API, autoalojamiento, contribuyendo a Veinte y a la biblioteca de UI.
+
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/es/developers/extend/apps/getting-started/quick-start" img="/images/documentation/banner-icons-v2/dev-apps.svg">
-    <CardTitle>Aplicaciones</CardTitle>
-    Amplía Twenty con objetos personalizados, lógica del lado del servidor, componentes de IU y agentes de IA — todo como paquetes de TypeScript.
+    <CardTitle>Aplica</CardTitle>
+    Construye objetos, lógica, interfaces y agentes de IA como aplicaciones de TypeScript, desde el inicio rápido hasta la publicación.
   </Card>
 
   <Card href="/es/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
     <CardTitle>API</CardTitle>
-    APIs REST y GraphQL, ganchos web y OAuth.
+    Leer y escribir registros sobre REST y GraphQL, obtener webhooks cuando los registros cambian, y conectar aplicaciones con OAuth.
   </Card>
 
   <Card href="/es/developers/self-host/capabilities/docker-compose" img="/images/documentation/banner-icons-v2/dev-self-host.svg">
-    <CardTitle>Autoalojar</CardTitle>
-    Ejecuta Twenty en tu propia infraestructura.
+    <CardTitle>Auto Host</CardTitle>
+    Ejecute Veinte en su propia infraestructura con Docker Compose, luego asegúrese y actualice.
   </Card>
 
   <Card href="/es/developers/contribute/capabilities/local-setup" img="/images/documentation/banner-icons-v2/dev-contribute.svg">
-    <CardTitle>Contribuir</CardTitle>
-    Configura el monorepo localmente y envía PRs.
+    <CardTitle>Contribuye</CardTitle>
+    Configura el monorepo localmente y ayuda a mejorar el núcleo de código abierto.
+  </Card>
+
+  <Card href="/es/ui/getting-started" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>UI Library</CardTitle>
+    Primitivas, componentes, iconos y tokens de temas de React de código abierto de veinte.
+  </Card>
+
+  <Card href="https://github.com/twentyhq/twenty" img="/images/user-guide/halftone/community-github.svg">
+    <CardTitle>GitHub</CardTitle>
+    Navega por el código fuente, reporta problemas y sigue los lanzamientos.
+  </Card>
+
+  <Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+    <CardTitle>Discord</CardTitle>
+    Haz preguntas y comparte lo que construyes con la comunidad Veinte
   </Card>
 </CardGroup>
+
+<PageBanner illustration="developers" />

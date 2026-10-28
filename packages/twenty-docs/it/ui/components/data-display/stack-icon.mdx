@@ -1,0 +1,47 @@
+---
+title: Icona stack
+description: Un'icona di 16 px con un elemento più piccolo sovrapposto nell'angolo inferiore destro.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import StackIconReference from '/snippets/ui/generated/components/data-display/stack-icon.mdx';
+
+## Panoramica
+
+Passa l'icona principale tramite lo slot del nodo `icon` e l'elemento sovrapposto tramite `stackedIcon`. Il contenitore è largo e alto 16 px; l'elemento sovrapposto è posizionato in modo assoluto a 8 px da sinistra e 7 px dall'alto, quindi fuoriesce dall'angolo inferiore destro. Un avatar quadrato di 12 px è la dimensione prevista per il logo di un'applicazione. Entrambi i nodi sono decorativi, quindi mantieni un'etichetta visibile accanto all'icona.
+
+Lascia spazio per la fuoriuscita dell'elemento sovrapposto quando posizioni i contenuti adiacenti. L'esempio utilizza uno spazio di 12 px tra il contenitore dell'icona e la relativa etichetta.
+
+<StoryEmbed storyId="ui-components-data-display-stackicon--display" title="Icona aziendale con un logo sovrapposto" height={100} />
+
+## Utilizzo
+
+```tsx
+import { StackIcon } from 'twenty-ui/components/data-display';
+import { IconBuildingSkyscraper } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CompanyFieldLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <StackIcon
+      icon={<IconBuildingSkyscraper size={16} />}
+      stackedIcon={
+        <Avatar size="xs" shape="square" variant="outline" name="Stripe" />
+      }
+    />
+    <Text>Companies</Text>
+  </Text>
+);
+```
+
+Gli attributi nativi, gli eventi, `className`, `style` e `ref` si applicano al div esterno. `render` sostituisce tale destinazione tramite la composizione di Base UI, preservando entrambi i nodi delle icone.
+
+## Props
+
+<StackIconReference />
+
+<PageBanner illustration="section-ui-components" />

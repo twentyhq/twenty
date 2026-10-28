@@ -34,7 +34,7 @@
     "three": "^0.184.0",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
-    "zod": "^4.1.11"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@babel/plugin-transform-export-namespace-from": "^7.24.6",

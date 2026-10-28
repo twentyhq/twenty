@@ -1,0 +1,213 @@
+---
+title: ResizeHandle
+description: Redimensionează un panou prin glisarea indicatorului sau folosind comenzile de la tastatură.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ResizeHandleReference from '/snippets/ui/generated/layout/resize-handle.mdx';
+
+## Prezentare generală
+
+`ResizeHandle` gestionează o dimensiune numerică și expune un separator care poate primi focalizarea. Aplicația aplică acea dimensiune panoului; mânerul nu redimensionează automat un alt element.
+
+<StoryEmbed storyId="ui-layout-resizehandle--display" title="Exemplu ResizeHandle" height={600} />
+
+## Utilizare
+
+Folosește `edge` pentru o margine a panoului sau `axis="y"` pentru redimensionarea pe înălțime în linie și `axis="x"` pentru redimensionarea pe lățime în linie. Atribuie mânerului un nume accesibil specific și utilizează `aria-controls` pentru a identifica panoul.
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableNotes = () => {
+  const panelId = useId();
+  const [height, setHeight] = useState(150);
+
+  return (
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
+      </Text>
+      <Text style={{ padding: 4 }}>
+        <ResizeHandle
+          axis="y"
+          defaultValue={150}
+          onValueChange={setHeight}
+          min={50}
+          max={500}
+          aria-label="Resize notes height"
+          aria-controls={panelId}
+        />
+      </Text>
+    </Card.Root>
+  );
+};
+```
+
+Mânerul își gestionează propria valoare. `onValueChange` copiază cea mai recentă dimensiune în aspectul panoului fără a controla mânerul. `defaultValue` setează doar dimensiunea inițială.
+
+## Stare controlată
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableNotes = () => {
+  const panelId = useId();
+  const [height, setHeight] = useState(150);
+
+  return (
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
+      </Text>
+      <Text style={{ padding: 4 }}>
+        <ResizeHandle
+          axis="y"
+          value={height}
+          onValueChange={setHeight}
+          min={50}
+          max={500}
+          aria-label="Resize notes height"
+          aria-controls={panelId}
+        />
+      </Text>
+    </Card.Root>
+  );
+};
+```
+
+Aplicația gestionează valoarea și o poate actualiza din alte controale. Reflectați modificările în timp real în `value`; utilizați `onValueCommitted` pentru a salva dimensiunea finală. Păstrați separate `value` și `defaultValue` și mențineți același mod de gestionare pe toată durata de viață a componentei.
+
+## Marginile și spațiile dintre panouri
+
+`edge="left"`, `"right"`, `"top"` sau `"bottom"` determină atât axa, cât și direcția fizică de creștere. Mișcarea spre stânga mărește o margine stângă, mișcarea în sus mărește o margine superioară, iar opusul se aplică marginilor din dreapta și de jos. Acest comportament rămâne același în conținutul de la dreapta la stânga. Utilizați fie `edge`, fie `axis` și `direction`.
+
+Cu `edge`, poziționarea are implicit valoarea `"edge"`. Plasați mânerul într-un panou cu `position: 'relative'` pentru a-l poziționa de-a lungul acelei margini. `placement="inline"` îl păstrează în fluxul normal. Utilizați `placement="gap"` între panourile surori și setați lățimea sau înălțimea acestuia prin `style` atunci când aspectul necesită un spațiu. Mânerele pentru spații nu au implicit nicio zonă de prindere vizibilă.
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableDetails = ({
+  saveWidth,
+}: {
+  saveWidth: (value: number) => void;
+}) => {
+  const detailsId = useId();
+  const [width, setWidth] = useState(380);
+
+  return (
+    <div style={{ display: 'flex', height: 200 }}>
+      <Card.Root style={{ flex: 1 }}>
+        <Text>Activity</Text>
+      </Card.Root>
+      <ResizeHandle
+        edge="left"
+        placement="gap"
+        value={width}
+        onValueChange={setWidth}
+        onValueCommitted={saveWidth}
+        min={280}
+        max={800}
+        style={{ width: 12 }}
+        aria-label="Resize details"
+        aria-controls={detailsId}
+      />
+      <Card.Root id={detailsId} style={{ width }}>
+        <Text>Details</Text>
+      </Card.Root>
+    </div>
+  );
+};
+```
+
+<StoryEmbed storyId="ui-layout-resizehandle-panels--documentation" title="Exemplu de margine a panoului ResizeHandle" height={250} />
+
+<StoryEmbed storyId="ui-layout-resizehandle-panels--gap" title="Exemplu de spațiu între panouri ResizeHandle" height={520} />
+
+Aplicația gestionează aspectul, dimensiunea salvată, starea de restrângere și destinația focalizării atunci când restrângerea elimină mânerul. Utilizați `onActivate` pentru o acțiune opțională de restrângere.
+
+## Tastatură și limite
+
+Pentru `axis="y"`, Săgeată în jos mărește dimensiunea, iar Săgeată în sus o micșorează. Pentru `axis="x"`, Dreapta crește, iar Stânga scade în conținutul de la stânga la dreapta; direcțiile se inversează în [DirectionProvider](/ro/ui/primitives/layout/direction-provider) cu `direction="rtl"`.
+
+Tastele săgeată folosesc `step`, care are implicit valoarea `10`. Home trece la `min`, iar End trece la `max`. Tastele apăsate împreună cu Alt, Control sau Meta sunt ignorate. Glisarea indicatorului utilizează deplasarea în pixeli și nu se aliniază la `step`. Ambele interacțiuni rămân în limite. Apăsările cu indicatorul nu mută focalizarea; utilizatorii tastaturii ajung la mâner cu Tab. `disabled` împiedică redimensionarea și elimină mânerul din ordinea de navigare cu Tab.
+
+Orientarea separatorului descrie marginea de separare: orizontală pentru redimensionarea înălțimii și verticală pentru redimensionarea lățimii.
+
+## Direcții fizice și zoom
+
+Setați `direction="normal"` sau `direction="reverse"` atunci când creșterea dimensiunii trebuie să urmeze o direcție fizică fixă, indiferent de direcția textului. Normal crește odată cu mișcarea spre dreapta sau în jos. Invers crește odată cu mișcarea spre stânga sau în sus. Omiteți `direction` pentru a păstra comportamentul privind direcția textului descris mai sus.
+
+`scale` acceptă un factor de zoom pozitiv sau o funcție care returnează unul. Mânerul îl eșantionează la apăsarea indicatorului și împarte mișcarea indicatorului la acea valoare. Pașii tastaturii rămân neschimbați.
+
+## Ciclul de viață al gestului
+
+`onValueChange` raportează valori în timp real. `onValueCommitted` raportează valoarea finală după o glisare reușită cu indicatorul sau o modificare efectivă de la tastatură. Tastele Home, End și săgeată confirmă imediat atunci când modifică dimensiunea.
+
+`onResizeStart` primește primul candidat limitat după ce indicatorul depășește `dragThreshold`. Pragul este implicit `5` cu `edge` și `0` în caz contrar, măsurat în pixeli fizici. `onResizeEnd` primește `{ cancelled, value }` pentru o glisare începută. Escape, anularea indicatorului, pierderea capturii indicatorului și demontarea anulează gestul fără confirmare; dezactivarea mânerului îl anulează la următorul său eveniment al indicatorului. Anularea apelează `onValueChange` cu valoarea inițială, limitată la limitele curente. `onResizeEnd` primește acea valoare restaurată.
+
+Furnizați `onActivate` pentru a gestiona un clic fără glisare, Enter sau Space. Depășirea pragului împiedică activarea prin clicul ulterior al indicatorului, chiar și atunci când indicatorul revine la poziția sa inițială.
+
+Gestionarele native rulează înaintea interacțiunii mânerului. Apelarea `preventDefault()` în `onPointerDown` sau `onKeyDown` omite acea interacțiune. Prevenirea `onPointerMove` omite doar acea actualizare și menține gestul activ. Prevenirea `onPointerUp` anulează tragerea, restabilește valoarea limitată inițială și omite `onValueCommitted`. Anularea indicatorului și pierderea capturării încheie în continuare gestul.
+
+## Mâner personalizat
+
+`ref`, atribute native, `className`, `style` și gestionarele de evenimente native vizează rădăcina separatorului, implicit un `div`. Referința nu vizează panoul redimensionat sau mânerul vizibil.
+
+`children` înlocuiește indicatorul de prindere vizibil, iar `children={null}` îl ascunde; nu înlocuiește comportamentul separatorului. `render` poate înlocui elementul rădăcină, iar referința vizează apoi acea înlocuire. Învelișurile personalizate trebuie să [redirecționeze props și ref furnizate](/ro/ui/primitives/overview#custom-components), astfel încât focalizarea, capturarea indicatorului, gestionarii de la tastatură și atributele de accesibilitate să ajungă la același element.
+
+## Proprietăți
+
+<ResizeHandleReference />
+
+<PageBanner illustration="layout" />
