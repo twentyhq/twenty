@@ -122,7 +122,7 @@ export class LambdaLayerManagerService {
       return existingArn;
     }
 
-    if (!(await this.canBuildWorkspaceCustomDepsLayer(flatApplication))) {
+    if (!(await this.canBuildWorkspaceCustomSharedDepsLayer(flatApplication))) {
       return this.ensureApplicationDepsLayer(flatApplication);
     }
 
@@ -178,7 +178,7 @@ export class LambdaLayerManagerService {
     });
   }
 
-  private async canBuildWorkspaceCustomDepsLayer(
+  private async canBuildWorkspaceCustomSharedDepsLayer(
     flatApplication: FlatApplication,
   ): Promise<boolean> {
     const defaultPackageFields = await getDefaultApplicationPackageFields({
