@@ -83,17 +83,19 @@ export const SettingsApplicationsTable = ({
           .toLowerCase()
           .includes(normalizedSearchTerm),
     )
-    .sort((a, b) => {
-      const aIsOAuth =
-        a.applicationRegistration?.sourceType ===
+    .sort((firstApplication, secondApplication) => {
+      const isFirstApplicationOAuthOnly =
+        firstApplication.applicationRegistration?.sourceType ===
         ApplicationRegistrationSourceType.OAUTH_ONLY;
-      const bIsOAuth =
-        b.applicationRegistration?.sourceType ===
+      const isSecondApplicationOAuthOnly =
+        secondApplication.applicationRegistration?.sourceType ===
         ApplicationRegistrationSourceType.OAUTH_ONLY;
 
-      if (aIsOAuth === bIsOAuth) return 0;
+      if (isFirstApplicationOAuthOnly === isSecondApplicationOAuthOnly) {
+        return 0;
+      }
 
-      return aIsOAuth ? 1 : -1;
+      return isFirstApplicationOAuthOnly ? 1 : -1;
     });
 
   const filteredBuiltInAccountApps = filterBySearchQuery({
