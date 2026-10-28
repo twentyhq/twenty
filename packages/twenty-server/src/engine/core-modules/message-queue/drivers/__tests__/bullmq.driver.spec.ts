@@ -4,6 +4,7 @@ import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/cons
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 const mockGetJobs = jest.fn();
 const mockGetRanges = jest.fn();
@@ -353,6 +354,7 @@ describe('BullMQDriver queue wait metric', () => {
 
     expect(recordHistogram).toHaveBeenCalledWith(
       expect.objectContaining({
+        key: MetricsKeys.JobLatencyMs,
         value: 2_000,
         attributes: { queue: MessageQueue.workflowQueue, job_name: 'job' },
       }),
@@ -367,7 +369,7 @@ describe('BullMQDriver queue wait metric', () => {
     });
 
     expect(recordHistogram).toHaveBeenCalledWith(
-      expect.objectContaining({ value: 0 }),
+      expect.objectContaining({ key: MetricsKeys.JobLatencyMs, value: 0 }),
     );
   });
 
@@ -378,7 +380,24 @@ describe('BullMQDriver queue wait metric', () => {
       attemptsStarted: 2,
     });
 
-    expect(recordHistogram).not.toHaveBeenCalled();
+    expect(recordHistogram).not.toHaveBeenCalledWith(
+      expect.objectContaining({ key: MetricsKeys.JobLatencyMs }),
+    );
+  });
+
+  it('records the job duration', async () => {
+    await processJob({
+      opts: {},
+      timestamp: Date.now(),
+      attemptsStarted: 1,
+    });
+
+    expect(recordHistogram).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: MetricsKeys.JobDurationMs,
+        attributes: { queue: MessageQueue.workflowQueue, job_name: 'job' },
+      }),
+    );
   });
 });
 
