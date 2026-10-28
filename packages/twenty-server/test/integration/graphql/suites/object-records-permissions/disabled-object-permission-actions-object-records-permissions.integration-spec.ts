@@ -1,8 +1,10 @@
 import { randomUUID } from 'node:crypto';
 
+import gql from 'graphql-tag';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import {
   RecordShareAccessLevel,
@@ -17,8 +19,20 @@ import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/da
 
 describe('disabled object permission actions', () => {
   let createRecordShareOperation: ReturnType<typeof createOneOperationFactory>;
+  let recordShareObjectMetadataId: string;
 
   beforeAll(async () => {
+    recordShareObjectMetadataId = (
+      await getCoreRepository<ObjectMetadataEntity>(
+        ObjectMetadataEntity,
+      ).findOneOrFail({
+        where: {
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          nameSingular: 'recordShare',
+        },
+      })
+    ).id;
+
     const personObjectMetadata = await getCoreRepository<ObjectMetadataEntity>(
       ObjectMetadataEntity,
     ).findOneOrFail({
@@ -50,5 +64,39 @@ describe('disabled object permission actions', () => {
     expect(response.body.errors?.[0]?.extensions?.code).toBe(
       ErrorCode.FORBIDDEN,
     );
+  });
+
+  it("reports the actions disabled on record shares in an admin user's permissions", async () => {
+    const response = await makeMetadataApiRequest({
+      query: gql`
+        query CurrentUserObjectsPermissions {
+          currentUser {
+            currentUserWorkspace {
+              objectsPermissions {
+                objectMetadataId
+                canReadObjectRecords
+                canUpdateObjectRecords
+                canSoftDeleteObjectRecords
+                canDestroyObjectRecords
+              }
+            }
+          }
+        }
+      `,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.currentUser.currentUserWorkspace.objectsPermissions.find(
+        ({ objectMetadataId }: { objectMetadataId: string }) =>
+          objectMetadataId === recordShareObjectMetadataId,
+      ),
+    ).toEqual({
+      objectMetadataId: recordShareObjectMetadataId,
+      canReadObjectRecords: false,
+      canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    });
   });
 });

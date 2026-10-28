@@ -43,7 +43,10 @@ export const SidePanelShareRecordGeneralAccessItem = ({
     generalAccessLevel === RecordShareAccessLevel.NONE;
   const { hasGeneralAccess, label: generalAccessLabel } =
     getRecordSharingGeneralAccess({
-      sharing: { generalAccessLevel, hasManagedGeneralAccess },
+      sharing: {
+        generalAccessLevel: generalAccessLevel ?? null,
+        hasManagedGeneralAccess,
+      },
       objectLabelPlural,
     });
   const withDefaultMarker = ({

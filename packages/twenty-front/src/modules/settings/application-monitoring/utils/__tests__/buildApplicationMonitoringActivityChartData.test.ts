@@ -13,6 +13,7 @@ describe('buildApplicationMonitoringActivityChartData', () => {
             errorCount: 41,
             rateLimitedRequestCount: 33,
             rateLimitedJobCount: 4,
+            __typename: 'ApplicationMonitoringActivityBucket',
           },
         ],
       }),

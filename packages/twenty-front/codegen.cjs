@@ -18,16 +18,28 @@ module.exports = {
     '!./src/**/__mocks__/*.ts',
   ],
   overwrite: true,
+  config: {
+    defaultScalarType: 'any',
+    scalars: {
+      DateTime: 'string',
+    },
+    namingConvention: { enumValues: 'keep' },
+    enumType: 'native',
+  },
   generates: {
+    './src/generated/schema.ts': {
+      plugins: ['typescript'],
+    },
     './src/generated/graphql.ts': {
-      plugins: ['typescript', 'typescript-operations', 'typed-document-node'],
+      plugins: [
+        { add: { content: "export * from './schema';" } },
+        'typescript-operations',
+        'typed-document-node',
+      ],
       config: {
-        skipTypename: false,
-        defaultScalarType: 'any',
-        scalars: {
-          DateTime: 'string',
-        },
-        namingConvention: { enumValues: 'keep' },
+        importSchemaTypesFrom: './src/generated/schema',
+        nonOptionalTypename: true,
+        skipTypeNameForRoot: true,
       },
     },
   },
