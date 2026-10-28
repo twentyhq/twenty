@@ -3,7 +3,6 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { isNonEmptyString } from '@sniptt/guards';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import chunk from 'lodash.chunk';
 import { In, Repository } from 'typeorm';
 import {
   assertIsDefinedOrThrow,
@@ -21,8 +20,6 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { isActiveUserWorkspace } from 'src/engine/core-modules/user-workspace/utils/is-active-user-workspace.util';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-const ACTIVE_USER_WORKSPACE_BATCH_SIZE = 1_000;
 
 @Injectable()
 export class UserWorkspaceAuthContextService {
@@ -44,23 +41,12 @@ export class UserWorkspaceAuthContextService {
       return [];
     }
 
-    const activeUserWorkspaces: UserWorkspaceEntity[] = [];
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: { id: In(userWorkspaceIds), workspaceId },
+      relations: { user: true },
+    });
 
-    for (const membershipIds of chunk(
-      [...new Set(userWorkspaceIds)],
-      ACTIVE_USER_WORKSPACE_BATCH_SIZE,
-    )) {
-      const userWorkspaces = await this.userWorkspaceRepository.find({
-        where: { id: In(membershipIds), workspaceId },
-        relations: { user: true },
-      });
-
-      activeUserWorkspaces.push(
-        ...userWorkspaces.filter(isActiveUserWorkspace),
-      );
-    }
-
-    return activeUserWorkspaces;
+    return userWorkspaces.filter(isActiveUserWorkspace);
   }
 
   async resolveWorkspaceMember({

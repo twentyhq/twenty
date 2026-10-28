@@ -45,7 +45,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
-const PARTICIPANT_WORKSPACE_MEMBER_BATCH_SIZE = 1_000;
 
 const EDIT_ACCESS_LEVELS: (RecordShareAccessLevel | null | undefined)[] = [
   RecordShareAccessLevel.READ_WRITE,
@@ -261,13 +260,19 @@ export class AgentChatSharingService {
         'flatObjectMetadataMaps',
       ],
     );
-    const userWorkspaceIds = candidateMemberIds.flatMap((memberId) => {
+    const knownMembers = candidateMemberIds.flatMap((memberId) => {
       const member = permissionMaps.flatWorkspaceMemberMaps.byId[memberId];
-      const userWorkspaceId = isDefined(member)
-        ? permissionMaps.flatWorkspaceMemberMaps.userWorkspaceIdByUserId[
-            member.userId
-          ]
-        : undefined;
+
+      return isDefined(member) ? [member] : [];
+    });
+
+    if (!isNonEmptyArray(knownMembers)) {
+      return [];
+    }
+
+    const userWorkspaceIds = knownMembers.flatMap(({ userId }) => {
+      const userWorkspaceId =
+        permissionMaps.flatWorkspaceMemberMaps.userWorkspaceIdByUserId[userId];
 
       return isDefined(userWorkspaceId) ? [userWorkspaceId] : [];
     });
@@ -289,18 +294,9 @@ export class AgentChatSharingService {
                 'workspaceMember',
                 { shouldBypassPermissionChecks: true },
               );
-            const members: WorkspaceMemberWorkspaceEntity[] = [];
-
-            for (const memberIds of chunk(
-              candidateMemberIds,
-              PARTICIPANT_WORKSPACE_MEMBER_BATCH_SIZE,
-            )) {
-              members.push(
-                ...(await memberRepository.find({
-                  where: { id: In(memberIds) },
-                })),
-              );
-            }
+            const members = await memberRepository.find({
+              where: { id: In(knownMembers.map(({ id }) => id)) },
+            });
             const repository = transactionScope.getRepository(
               'agentChatThread',
               {
