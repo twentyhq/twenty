@@ -13,10 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies-directory-name';
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
-import {
-  type DependencyChecksums,
-  isMatchingDependencyChecksums,
-} from 'src/engine/core-modules/application/application-package/utils/is-matching-dependency-checksums.util';
+import { isMatchingDependencyChecksums } from 'src/engine/core-modules/application/application-package/utils/is-matching-dependency-checksums.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -32,6 +29,7 @@ import {
   SDK_LAYER_PREFIX_IN_ZIP,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
+import { DEPENDENCY_CHECKSUMS_SEEDED_IN_2_52 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/legacy-deps-layer/dependency-checksums-seeded-in-2-52.constant';
 import { type LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name.util';
@@ -58,19 +56,6 @@ const LAYER_LOCK_OPTIONS = {
   ms: BUILD_LOCK_RETRY_MS,
   maxRetries: BUILD_LOCK_MAX_RETRIES,
 };
-
-// Only for the current release (2.53): the files 2.52 seeded Workspace apps
-// with, at the upgrade or at workspace creation, also share a layer
-const DEPENDENCY_CHECKSUMS_SEEDED_IN_2_52: DependencyChecksums[] = [
-  {
-    packageJsonChecksum: '7d84e53bcbc345d9652b048470f59695',
-    yarnLockChecksum: '6a09947c24d8cba9011da22936fe3e87',
-  },
-  {
-    packageJsonChecksum: '444fb064df1febd5f30c8bcadf58e536',
-    yarnLockChecksum: '225201a4fd2b60ab92c865fce0fd18d6',
-  },
-];
 
 export class LambdaLayerManagerService {
   private readonly logger = new Logger(LambdaLayerManagerService.name);
@@ -353,12 +338,13 @@ export class LambdaLayerManagerService {
       };
     }
 
-    const isOnSeededDependencies = DEPENDENCY_CHECKSUMS_SEEDED_IN_2_52.some(
-      (seededChecksums) =>
-        isMatchingDependencyChecksums({
-          declaredChecksums: flatApplication,
-          filesChecksums: seededChecksums,
-        }),
+    const isOnSeededDependencies = Object.values(
+      DEPENDENCY_CHECKSUMS_SEEDED_IN_2_52,
+    ).some((seededChecksums) =>
+      isMatchingDependencyChecksums({
+        declaredChecksums: flatApplication,
+        filesChecksums: seededChecksums,
+      }),
     );
 
     return isOnSeededDependencies
