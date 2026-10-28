@@ -1,4 +1,4 @@
-export const installYarnDependencies: (options: {
+export declare const installYarnDependencies: (options: {
   directory: string;
   yarnEngineDirectory: string;
   args: string[];
