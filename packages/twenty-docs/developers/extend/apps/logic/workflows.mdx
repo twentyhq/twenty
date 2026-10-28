@@ -106,7 +106,11 @@ Their inputs match the steps of the [workflow builder](/user-guide/workflows/cap
 - Form fields of type `RECORD` name their object with `settings.objectUniversalIdentifier`. Fields of type `SELECT` and `MULTI_SELECT` offer the options of an existing field of the same type, named with `settings.selectedFieldUniversalIdentifier`.
 - To run your own code, use a `LOGIC_FUNCTION` step. The builder's Code step is not available.
 - Email and calendar steps run only if your app's role has the matching permission flag: `SystemPermissionFlag.SEND_EMAIL_TOOL` for `SEND_EMAIL` and `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` for `CREATE_CALENDAR_EVENT`. The workspace grants it by installing the app, and the step can then use any connected account in the workspace, like a workflow built in the app.
-- Connected account ids are local to each workspace, so don't hardcode one. Pass the account as a variable. Email steps also take a workspace member id, such as `{{trigger.properties.after.assigneeId}}`, which resolves to that member's first account able to send.
+- Connected account ids are local to each workspace, so don't hardcode one. Name the account in one of two ways:
+  - `connectedAccountHandle`: the account's email address, such as `'sales@example.com'`. When the app is synced, the handle resolves to an account with that address that is shared with the workspace (`WORKSPACE` scope) and can run the step. A member's private account can't be named by handle: pull keeps it as its `connectedAccountId`. If several accounts share the address, for example one mailbox connected by two members or through two providers, the oldest one wins. If none matches, the sync fails and names the handle. This is not `fromHandle`, which picks an alias to send from.
+  - `connectedAccountId`: a variable, such as `{{trigger.properties.after.connectedAccountId}}`. Email steps also take a workspace member id, such as `{{trigger.properties.after.assigneeId}}`, which resolves to that member's first account able to send.
+
+  Set exactly one of the two.
 
 ## After install
 

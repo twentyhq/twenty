@@ -8905,11 +8905,6 @@ msgstr "Լռելյայն տեսք"
 msgid "Defaults to the step name"
 msgstr "Լռելյայն՝ քայլի անունը"
 
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
-msgstr "Աշխատանքային տարածքի հետաձգված տեղափոխման գործողություններ"
-
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
@@ -23338,11 +23333,6 @@ msgstr "Գործարկել կոդ՝ ֆայլերն ու տվյալները վե�
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "Գործարկել ֆունկցիան"
-
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr "Տվյալների մոդելի փոփոխությունների դանդաղ մասերը գործարկեք հետին պլանում՝ դրանք պահպանելուց հետո։"
 
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx

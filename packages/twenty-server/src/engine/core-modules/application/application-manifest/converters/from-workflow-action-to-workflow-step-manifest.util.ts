@@ -214,6 +214,19 @@ const fromActionInput = ({
         stepFilters: toArray(record.stepFilters).map(resolvers.fieldReference),
       };
     }
+    case WorkflowActionType.SEND_EMAIL:
+    case WorkflowActionType.DRAFT_EMAIL:
+    case WorkflowActionType.CREATE_CALENDAR_EVENT: {
+      const { connectedAccountId, ...rest } = toRecord(input);
+
+      return {
+        ...rest,
+        ...resolvers.connectedAccountReference({
+          stepType: action.type,
+          connectedAccountId,
+        }),
+      };
+    }
     case WorkflowActionType.HTTP_REQUEST:
     case WorkflowActionType.CLASSIFY:
     case WorkflowActionType.ITERATOR:

@@ -8905,11 +8905,6 @@ msgstr "Προεπιλεγμένη Προβολή"
 msgid "Defaults to the step name"
 msgstr "Προεπιλογή στο όνομα του βήματος"
 
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
-msgstr "Αναβληθείσες ενέργειες μετεγκατάστασης χώρου εργασίας"
-
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
@@ -23338,11 +23333,6 @@ msgstr "Εκτέλεση κώδικα για την ανάλυση αρχείω�
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "Εκτελέστε τη Λειτουργία"
-
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr "Εκτελέστε τα αργά τμήματα των αλλαγών του μοντέλου δεδομένων στο παρασκήνιο μετά την αποθήκευσή τους."
 
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx

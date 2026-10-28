@@ -17,6 +17,7 @@ type Agent {
   description: String
   icon: String
   id: UUID!
+  isActive: Boolean!
   isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystem: Boolean!
   label: String!
@@ -4912,6 +4913,7 @@ input UpdateAgentInput {
   description: String
   icon: String
   id: UUID!
+  isActive: Boolean
   label: String
   modelConfiguration: JSON
   modelId: String

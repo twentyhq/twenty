@@ -1,4 +1,8 @@
-import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  FieldMetadataType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 import {
   workflowStepManifestSchema,
   type WorkflowStepManifest,
@@ -6,6 +10,7 @@ import {
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { fromWorkflowStepManifestToActionOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util';
+import { type WorkflowManifestConnectedAccountReference } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 
 const STEP_ID = '11111111-1111-4111-8111-111111111111';
 const REFERENCE_ID = '22222222-2222-4222-8222-222222222222';
@@ -375,6 +380,155 @@ describe('application workflow actions', () => {
         },
       }),
     ).toThrow('does not belong');
+  });
+
+  describe('connected accounts', () => {
+    const GOOGLE_CALENDAR_EVENTS_SCOPE =
+      'https://www.googleapis.com/auth/calendar.events';
+    const connectedAccount = (
+      overrides: Partial<WorkflowManifestConnectedAccountReference>,
+    ): WorkflowManifestConnectedAccountReference => ({
+      id: 'account-id',
+      handle: 'sales@example.com',
+      provider: ConnectedAccountProvider.GOOGLE,
+      connectionParameters: null,
+      archivedAt: null,
+      scopes: [GOOGLE_CALENDAR_EVENTS_SCOPE],
+      scope: 'WORKSPACE',
+      calendarChannels: [{ isSyncEnabled: true }],
+      ...overrides,
+    });
+    const connectedAccounts = [
+      connectedAccount({ id: 'archived-id', archivedAt: new Date() }),
+      connectedAccount({
+        id: 'imap-id',
+        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+        connectionParameters: {
+          IMAP: { host: 'imap.example.com', port: 993 },
+        } as WorkflowManifestConnectedAccountReference['connectionParameters'],
+        scopes: null,
+        calendarChannels: [],
+      }),
+      connectedAccount({ id: 'google-id', handle: 'Sales@Example.com' }),
+    ];
+    const convertWithHandle = ({
+      type,
+      handle,
+      accounts = connectedAccounts,
+    }: {
+      type: 'SEND_EMAIL' | 'DRAFT_EMAIL' | 'CREATE_CALENDAR_EVENT';
+      handle: string;
+      accounts?: WorkflowManifestConnectedAccountReference[];
+    }) => {
+      const { connectedAccountId: _connectedAccountId, ...input } =
+        inputs[type];
+
+      return fromWorkflowStepManifestToActionOrThrow({
+        step: workflowStepManifestSchema.parse({
+          universalIdentifier: STEP_ID,
+          name: 'Reach out',
+          type,
+          input: { ...input, connectedAccountHandle: handle },
+          nextStepIds: [],
+        }),
+        index: 0,
+        references: { ...references, connectedAccounts: accounts },
+      }).settings.input;
+    };
+
+    it.each([
+      { type: 'SEND_EMAIL' as const, connectedAccountId: 'google-id' },
+      { type: 'DRAFT_EMAIL' as const, connectedAccountId: 'imap-id' },
+      {
+        type: 'CREATE_CALENDAR_EVENT' as const,
+        connectedAccountId: 'google-id',
+      },
+    ])(
+      'resolves a $type handle to the oldest active account able to run it',
+      ({ type, connectedAccountId }) => {
+        const input = convertWithHandle({ type, handle: 'sales@example.com' });
+
+        expect(input).toMatchObject({ connectedAccountId });
+        expect(input).not.toHaveProperty('connectedAccountHandle');
+      },
+    );
+
+    it.each([
+      {
+        case: 'calendar sync is disabled',
+        account: connectedAccount({
+          calendarChannels: [{ isSyncEnabled: false }],
+        }),
+      },
+      {
+        case: 'the calendar scope is missing',
+        account: connectedAccount({ scopes: [] }),
+      },
+    ])(
+      'does not create calendar events with an account whose $case',
+      ({ account }) => {
+        expect(() =>
+          convertWithHandle({
+            type: 'CREATE_CALENDAR_EVENT',
+            handle: 'sales@example.com',
+            accounts: [account],
+          }),
+        ).toThrow('can create calendar events');
+      },
+    );
+
+    it.each([
+      '{{trigger.properties.after.assigneeId}}',
+      '20202020-0687-4c41-b707-ed1bfca972a7',
+    ])('keeps the account value %s as declared', (connectedAccountId) => {
+      expect(
+        fromWorkflowStepManifestToActionOrThrow({
+          step: workflowStepManifestSchema.parse({
+            universalIdentifier: STEP_ID,
+            name: 'Reach out',
+            type: 'SEND_EMAIL',
+            input: { ...email, connectedAccountId },
+            nextStepIds: [],
+          }),
+          index: 0,
+          references: { ...references, connectedAccounts },
+        }).settings.input,
+      ).toMatchObject({ connectedAccountId });
+    });
+
+    it('fails on a handle no account of the workspace can send from', () => {
+      expect(() =>
+        convertWithHandle({
+          type: 'SEND_EMAIL',
+          handle: 'unknown@example.com',
+        }),
+      ).toThrow(
+        'Workflow step Reach out: no connected account unknown@example.com shared with this workspace can send email',
+      );
+    });
+
+    it('does not resolve a handle to an account private to a member', () => {
+      expect(() =>
+        convertWithHandle({
+          type: 'SEND_EMAIL',
+          handle: 'sales@example.com',
+          accounts: [connectedAccount({ scope: 'USER' })],
+        }),
+      ).toThrow('no connected account sales@example.com shared with');
+    });
+
+    it('resolves a handle to a shared account over an older private one', () => {
+      expect(
+        convertWithHandle({
+          type: 'SEND_EMAIL',
+          handle: 'sales@example.com',
+          accounts: [
+            connectedAccount({ id: 'private-id', scope: 'USER' }),
+            connectedAccount({ id: 'shared-id' }),
+          ],
+        }),
+      ).toMatchObject({ connectedAccountId: 'shared-id' });
+    });
   });
 
   it('preserves branches, loop entries, outputs and error handling', () => {
