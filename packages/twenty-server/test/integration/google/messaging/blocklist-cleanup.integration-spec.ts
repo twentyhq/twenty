@@ -2,9 +2,11 @@ import { randomUUID } from 'node:crypto';
 
 import { BlocklistScope, ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { googleCalendarEvent } from 'test/integration/google/mocks/google-calendar-event.util';
@@ -16,6 +18,7 @@ import {
   findImportedCalendarEventTitles,
   findImportedMessageSubjects,
 } from 'test/integration/utils/find-imported-records.util';
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
 import { resetMessageChannelSyncState } from 'test/integration/utils/reset-channel-sync-state.util';
@@ -217,5 +220,36 @@ describe('Blocklist cleanup (integration)', () => {
         importedEventTitle,
       ]),
     ).toEqual([importedEventTitle]);
+  }, 180000);
+
+  it('re-imports the messages of an unblocked handle on an idle channel and restarts its calendar sync from scratch', async () => {
+    const response = await makeGraphqlApiRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'blocklist',
+        gqlFields: 'id',
+        recordId: blocklistIds[0],
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    await waitForAllJobsToFinish();
+
+    const calendarChannel = await getCoreRepository<CalendarChannelEntity>(
+      CalendarChannelEntity,
+    ).findOneByOrFail({ id: channel.calendarChannelId });
+
+    expect(calendarChannel.syncCursor).toBe('');
+
+    await runMessageChannelSync(channel.channelId);
+    await waitForAllJobsToFinish();
+
+    expect(
+      await findImportedMessageSubjects([
+        blockedSubject,
+        workspaceBlockedSubject,
+        keptSubject,
+      ]),
+    ).toEqual([blockedSubject, keptSubject].sort());
   }, 180000);
 });

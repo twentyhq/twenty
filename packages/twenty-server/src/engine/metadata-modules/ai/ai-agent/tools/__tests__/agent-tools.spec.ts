@@ -38,7 +38,6 @@ const buildAgent = (overrides: Record<string, unknown> = {}) => ({
   roleId,
   triggers: [],
   applicationId: workspaceCustomApplicationId,
-  isCustom: true,
   isSystem: false,
   ...overrides,
 });

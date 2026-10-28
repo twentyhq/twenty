@@ -207,6 +207,7 @@ Notas:
 * Se permite exactamente **una** llamada a `defineApplicationRole(...)` por aplicación; la compilación del manifiesto fallará si encuentra más de una.
 * Usa `defineRole()` (no `defineApplicationRole()`) para cualquier rol **adicional** que distribuya tu aplicación.
 * Configurar `defaultRoleUniversalIdentifier` explícitamente en `defineApplication()` sigue siendo compatible por motivos de retrocompatibilidad, pero está en desuso en favor de `defineApplicationRole()`. El identificador debe coincidir con un rol que defina tu aplicación; de lo contrario, la compilación falla.
+* Un rol al que se pueden asignar miembros del espacio de trabajo o claves de API (`canBeAssignedToUsers` o `canBeAssignedToApiKeys`, ambos `true` cuando se omiten) es un rol personalizado y requiere el **plan Organization o superior**: en otros planes, se rechaza la instalación. Mantén ambos en `false` en los roles que solo tu aplicación y sus agentes asumen.
 
 ### Roles de Agente
 

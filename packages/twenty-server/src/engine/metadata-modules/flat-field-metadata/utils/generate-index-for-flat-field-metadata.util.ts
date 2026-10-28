@@ -36,7 +36,6 @@ export const generateIndexForFlatFieldMetadata = ({
         ],
         indexType: IndexType.BTREE,
         indexWhereClause: null,
-        isCustom: true,
         isUnique: flatFieldMetadata.isUnique ?? false,
         isSystemSideEffect: true,
         objectMetadataUniversalIdentifier:

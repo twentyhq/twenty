@@ -11,7 +11,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type Skill } from '~/generated-metadata/graphql';
 
 export type SettingsSkillTableRowProps = {
-  skill: Skill;
+  skill: Omit<Skill, 'isCustom'>;
   action?: ReactNode;
   link?: string;
 };

@@ -709,5 +709,18 @@ exports[`getStandardPageLayoutMetadataRelatedEntityIds should return standard pa
       },
     },
   },
+  "workspaceMemberRecordPage": {
+    "id": "00000000-0000-0000-0000-000000000178",
+    "tabs": {
+      "home": {
+        "id": "00000000-0000-0000-0000-000000000179",
+        "widgets": {
+          "fields": {
+            "id": "00000000-0000-0000-0000-000000000180",
+          },
+        },
+      },
+    },
+  },
 }
 `;

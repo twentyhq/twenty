@@ -140,6 +140,7 @@ export class SkillService {
     const flatSkillToUpdate = fromUpdateSkillInputToFlatSkillToUpdateOrThrow({
       flatSkillMaps: existingFlatSkillMaps,
       updateSkillInput: input,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 
     const validateAndBuildResult =
@@ -199,6 +200,7 @@ export class SkillService {
     const flatSkillToDelete = fromDeleteSkillInputToFlatSkillOrThrow({
       flatSkillMaps: existingFlatSkillMaps,
       skillId: id,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 
     const validateAndBuildResult =

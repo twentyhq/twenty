@@ -132,11 +132,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version: "24"
+          node-version-file: .nvmrc
           package-manager-cache: false
 
       - name: Build and inspect packages
         run: |
+          npm install -g corepack
           corepack enable
           yarn install --immutable
           projects=$(jq -rn --arg packages "$PACKAGES" \

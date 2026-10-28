@@ -347,6 +347,6 @@ describe('Standard field isUnique update should succeed', () => {
 
     jestExpectToBeDefined(nameFieldIndex);
     expect(nameFieldIndex.isUnique).toBe(true);
-    expect(nameFieldIndex.isCustom).toBe(true);
+    expect(nameFieldIndex.isSystemSideEffect).toBe(true);
   });
 });
