@@ -121,15 +121,15 @@ const StyledEditorContainer = styled.div<{
     }
 
     h4 {
-      font-size: calc(var(--editor-font-size) * 1.15);
+      font-size: var(--editor-heading-4-font-size);
     }
 
     h5 {
-      font-size: var(--editor-font-size);
+      font-size: var(--editor-heading-5-font-size);
     }
 
     h6 {
-      font-size: calc(var(--editor-font-size) * 0.9);
+      font-size: var(--editor-heading-6-font-size);
     }
 
     .toggle-block {
@@ -234,7 +234,8 @@ const StyledEditorContainer = styled.div<{
     blockquote {
       border-left: var(--editor-quote-border-width) solid
         var(--editor-accent-color);
-      font-style: italic;
+      color: var(--editor-quote-color);
+      font-style: var(--editor-quote-font-style);
       margin: 0 0 var(--editor-block-spacing);
       padding-left: var(--editor-quote-indent);
     }
@@ -253,8 +254,9 @@ const StyledEditorContainer = styled.div<{
     }
 
     pre {
-      background-color: ${themeCssVariables.background.transparent.lighter};
+      background-color: var(--editor-code-block-background);
       border-radius: ${themeCssVariables.border.radius.md};
+      color: var(--editor-code-block-color);
       margin: 0 0 var(--editor-block-spacing);
       overflow-x: auto;
       padding: var(--editor-code-block-padding);
@@ -302,7 +304,7 @@ const StyledEditorContainer = styled.div<{
       }
 
       li[data-checked='true'] > div {
-        color: ${themeCssVariables.font.color.tertiary};
+        color: var(--editor-task-checked-color);
         text-decoration: line-through;
       }
     }
@@ -333,7 +335,7 @@ const StyledEditorContainer = styled.div<{
       }
 
       th {
-        background-color: ${themeCssVariables.background.tertiary};
+        background-color: var(--editor-table-header-background);
         font-weight: ${themeCssVariables.font.weight.medium};
         text-align: left;
       }
