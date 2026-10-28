@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { mediaUp, spacing } from '@/tokens';
-import { Heading, SectionIntro, SectionShell, SectionStack } from '@/ui';
+import { Heading, SectionShell } from '@/ui';
 
 import { AppReadmeBlocks } from './AppReadmeBlocks';
 import { type AppReadmeSection } from './parse-app-readme';
@@ -13,6 +13,12 @@ const ExplainerGrid = styled.div`
 
   ${mediaUp('md')} {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+`;
+
+const Stack = styled.div`
+  & > * + * {
+    margin-top: ${spacing(8)};
   }
 `;
 
@@ -29,16 +35,14 @@ const SectionContent = ({ section }: { section: AppReadmeSection }) => {
 
   if (firstListIndex === 0 && !section.hasSubheadings) {
     return (
-      <SectionStack>
-        <SectionIntro>
-          <Heading as="h2" size="lg" weight="light">
-            {section.title}
-          </Heading>
-        </SectionIntro>
+      <Stack>
+        <Heading as="h2" size="md" weight="light">
+          {section.title}
+        </Heading>
         <Column>
           <AppReadmeBlocks blocks={section.blocks} listLayout="grid" />
         </Column>
-      </SectionStack>
+      </Stack>
     );
   }
 
@@ -49,7 +53,7 @@ const SectionContent = ({ section }: { section: AppReadmeSection }) => {
   return (
     <ExplainerGrid>
       <Column>
-        <Heading as="h2" size="sm" weight="light">
+        <Heading as="h2" size="md" weight="light">
           {section.title}
         </Heading>
         <AppReadmeBlocks
