@@ -49,7 +49,7 @@ export const NavigationMenuItemTypeTooltip = ({
     AGENT_CHAT_CHANNEL: { label: t`Channel`, Icon: IconHash },
     TAB: { label: t`Tab`, Icon: IconLayoutSidebar },
     SECTION: { label: t`Section`, Icon: IconLayoutList },
-    AI_CHAT_TRIAGE: { label: t`Inbox`, Icon: IconInbox },
+    AI_CHAT_INBOX: { label: t`Inbox`, Icon: IconInbox },
     AI_CHAT_FAVORITES: { label: t`Favorite chats`, Icon: IconHeart },
     AI_CHAT_CHANNELS: { label: t`Channels`, Icon: IconHash },
     AI_CHAT_RECENTS: { label: t`Recent chats`, Icon: IconMessage },

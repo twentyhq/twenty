@@ -6,7 +6,7 @@ export const useNavigationMenuItemAiChatSectionLabel = () => {
   const { t } = useLingui();
 
   const labelBySectionType: Partial<Record<NavigationMenuItemType, string>> = {
-    [NavigationMenuItemType.AI_CHAT_TRIAGE]: t`Inbox`,
+    [NavigationMenuItemType.AI_CHAT_INBOX]: t`Inbox`,
     [NavigationMenuItemType.AI_CHAT_FAVORITES]: t`Favorite chats`,
     [NavigationMenuItemType.AI_CHAT_CHANNELS]: t`Channels`,
     [NavigationMenuItemType.AI_AGENTS]: t`Agents`,

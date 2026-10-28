@@ -99,8 +99,8 @@ jest.mock(
   }),
 );
 
-jest.mock('@/ai/components/NavigationDrawerAiChatTriageSection', () => ({
-  NavigationDrawerAiChatTriageSection: () => <nav aria-label="Triage" />,
+jest.mock('@/ai/components/NavigationDrawerAiChatInboxSection', () => ({
+  NavigationDrawerAiChatInboxSection: () => <nav aria-label="Inbox" />,
 }));
 
 let mockIsAiChatInboxEnabled = true;
@@ -223,18 +223,18 @@ describe('NavigationDrawerAiChatContent', () => {
     expect(queryByText('Support')).toBeNull();
   });
 
-  it('shows the triage section with the inbox feature flag on', () => {
+  it('shows the inbox section with the inbox feature flag on', () => {
     const { getByRole } = renderContent();
 
-    expect(getByRole('navigation', { name: 'Triage' })).toBeInTheDocument();
+    expect(getByRole('navigation', { name: 'Inbox' })).toBeInTheDocument();
   });
 
-  it('hides the triage section while the inbox feature flag is off', () => {
+  it('hides the inbox section while the inbox feature flag is off', () => {
     mockIsAiChatInboxEnabled = false;
 
     const { queryByRole } = renderContent();
 
-    expect(queryByRole('navigation', { name: 'Triage' })).toBeNull();
+    expect(queryByRole('navigation', { name: 'Inbox' })).toBeNull();
     expect(queryByRole('region', { name: 'Recent' })).toBeInTheDocument();
   });
 

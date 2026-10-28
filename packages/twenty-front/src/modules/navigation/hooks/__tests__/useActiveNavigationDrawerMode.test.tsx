@@ -18,9 +18,9 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: () => mockIsCustomizableSidebarEnabled,
 }));
 
-const triageSection: NavigationMenuItem = {
-  id: 'triage-section',
-  type: NavigationMenuItemType.AI_CHAT_TRIAGE,
+const inboxSection: NavigationMenuItem = {
+  id: 'inbox-section',
+  type: NavigationMenuItemType.AI_CHAT_INBOX,
   folderId: 'inbox-tab',
   position: 0,
   createdAt: '',
@@ -104,7 +104,7 @@ describe('useActiveNavigationDrawerMode', () => {
       const { result } = renderActiveNavigationDrawerMode({
         pathname,
         activeTab,
-        navigationMenuItems: [triageSection],
+        navigationMenuItems: [inboxSection],
       });
 
       expect(result.current).toBe(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
@@ -114,7 +114,7 @@ describe('useActiveNavigationDrawerMode', () => {
   it('keeps the AI mode on the inbox page while the customizable sidebar is off', () => {
     const { result } = renderActiveNavigationDrawerMode({
       pathname: '/inbox',
-      navigationMenuItems: [triageSection],
+      navigationMenuItems: [inboxSection],
     });
 
     expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);

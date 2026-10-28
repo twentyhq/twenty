@@ -1,7 +1,7 @@
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
-import { isNavigationMenuItemCommandsContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemCommandsContainer';
+import { isNavigationMenuItemPinnedCommands } from '@/navigation-menu-item/common/utils/isNavigationMenuItemPinnedCommands';
 import { isNavigationMenuItemTab } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTab';
 
 export const isNavigationMenuItemTabOrSection = (
@@ -9,4 +9,4 @@ export const isNavigationMenuItemTabOrSection = (
 ) =>
   isNavigationMenuItemTab(item) ||
   isNavigationMenuItemAnySection(item) ||
-  isNavigationMenuItemCommandsContainer(item);
+  isNavigationMenuItemPinnedCommands(item);

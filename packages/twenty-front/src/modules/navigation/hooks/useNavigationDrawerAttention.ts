@@ -30,10 +30,10 @@ export const useNavigationDrawerAttention = () => {
   };
 
   const inboxAttention = getInboxAttention();
-  const triageSectionParentIds = new Set(
+  const inboxSectionParentIds = new Set(
     aiChatSections
       .filter(
-        (section) => section.type === NavigationMenuItemType.AI_CHAT_TRIAGE,
+        (section) => section.type === NavigationMenuItemType.AI_CHAT_INBOX,
       )
       .map((section) => section.folderId ?? null),
   );
@@ -42,9 +42,9 @@ export const useNavigationDrawerAttention = () => {
   return {
     inboxAttention,
     getTabAttention: (tabId: string | null) =>
-      triageSectionParentIds.has(tabId) ? inboxAttention : null,
+      inboxSectionParentIds.has(tabId) ? inboxAttention : null,
     navigationDrawerAttention:
-      isInboxModeShown || triageSectionParentIds.size > 0
+      isInboxModeShown || inboxSectionParentIds.size > 0
         ? inboxAttention
         : null,
   };

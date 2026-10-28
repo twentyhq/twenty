@@ -27,7 +27,7 @@ const FAVORITES_SECTION_OPTION = {
 };
 
 const AI_SECTION_OPTIONS = [
-  { type: NavigationMenuItemType.AI_CHAT_TRIAGE, Icon: IconInbox },
+  { type: NavigationMenuItemType.AI_CHAT_INBOX, Icon: IconInbox },
   { type: NavigationMenuItemType.AI_CHAT_FAVORITES, Icon: IconHeart },
   { type: NavigationMenuItemType.AI_CHAT_CHANNELS, Icon: IconHash },
   { type: NavigationMenuItemType.AI_CHAT_RECENTS, Icon: IconMessage },

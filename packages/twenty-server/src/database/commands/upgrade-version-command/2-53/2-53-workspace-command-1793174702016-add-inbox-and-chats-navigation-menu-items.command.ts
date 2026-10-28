@@ -15,7 +15,7 @@ import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twe
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const INBOX_AND_CHATS_SECTION_TYPES: NavigationMenuItemType[] = [
-  NavigationMenuItemType.AI_CHAT_TRIAGE,
+  NavigationMenuItemType.AI_CHAT_INBOX,
   NavigationMenuItemType.AI_CHAT_FAVORITES,
   NavigationMenuItemType.AI_CHAT_CHANNELS,
   NavigationMenuItemType.AI_CHAT_RECENTS,

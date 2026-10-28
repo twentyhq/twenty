@@ -10,7 +10,7 @@ import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoa
 import { NavigationDrawerAiChatChannelsSection } from '@/ai/components/NavigationDrawerAiChatChannelsSection';
 import { NavigationDrawerAiChatFavoritesSection } from '@/ai/components/NavigationDrawerAiChatFavoritesSection';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
-import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
+import { NavigationDrawerAiChatInboxSection } from '@/ai/components/NavigationDrawerAiChatInboxSection';
 import { AI_CHAT_RECENTS_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatRecentsNavigationSectionId';
 import { useAiChatSidebarThreads } from '@/ai/hooks/useAiChatSidebarThreads';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -72,9 +72,9 @@ export const NavigationMenuItemAiChatSection = ({
   ) : null;
 
   switch (section.type) {
-    case NavigationMenuItemType.AI_CHAT_TRIAGE:
+    case NavigationMenuItemType.AI_CHAT_INBOX:
       return isAiChatInboxEnabled ? (
-        <NavigationDrawerAiChatTriageSection
+        <NavigationDrawerAiChatInboxSection
           label={label}
           rightIcon={sectionMenu}
           alwaysShowRightIcon={isEditable}

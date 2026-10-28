@@ -15,7 +15,7 @@ export class AddTabAndSectionNavigationMenuItemTypesFastInstanceCommand
       'ALTER TYPE "core"."navigationMenuItem_type_enum" RENAME TO "navigationMenuItem_type_enum_old"',
     );
     await queryRunner.query(
-      "CREATE TYPE \"core\".\"navigationMenuItem_type_enum\" AS ENUM('VIEW', 'FOLDER', 'LINK', 'OBJECT', 'RECORD', 'PAGE_LAYOUT', 'AGENT_CHAT_CHANNEL', 'TAB', 'SECTION', 'AI_CHAT_TRIAGE', 'AI_CHAT_FAVORITES', 'AI_CHAT_RECENTS', 'AI_AGENTS', 'AI_CHAT_CHANNELS')",
+      "CREATE TYPE \"core\".\"navigationMenuItem_type_enum\" AS ENUM('VIEW', 'FOLDER', 'LINK', 'OBJECT', 'RECORD', 'PAGE_LAYOUT', 'AGENT_CHAT_CHANNEL', 'TAB', 'SECTION', 'AI_CHAT_INBOX', 'AI_CHAT_FAVORITES', 'AI_CHAT_RECENTS', 'AI_AGENTS', 'AI_CHAT_CHANNELS')",
     );
     await queryRunner.query(
       'ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "type" DROP DEFAULT',
@@ -27,7 +27,7 @@ export class AddTabAndSectionNavigationMenuItemTypesFastInstanceCommand
       'DROP TYPE "core"."navigationMenuItem_type_enum_old"',
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_type_fields" CHECK (("type" = 'FOLDER') OR ("type" = 'TAB') OR ("type" = 'SECTION') OR ("type" = 'AI_CHAT_TRIAGE') OR ("type" = 'AI_CHAT_FAVORITES') OR ("type" = 'AI_CHAT_RECENTS') OR ("type" = 'AI_AGENTS') OR ("type" = 'AI_CHAT_CHANNELS') OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'VIEW' AND "viewId" IS NOT NULL) OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'LINK' AND "link" IS NOT NULL) OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL) OR ("type" = 'AGENT_CHAT_CHANNEL' AND "agentChatChannelId" IS NOT NULL))`,
+      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_type_fields" CHECK (("type" = 'FOLDER') OR ("type" = 'TAB') OR ("type" = 'SECTION') OR ("type" = 'AI_CHAT_INBOX') OR ("type" = 'AI_CHAT_FAVORITES') OR ("type" = 'AI_CHAT_RECENTS') OR ("type" = 'AI_AGENTS') OR ("type" = 'AI_CHAT_CHANNELS') OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'VIEW' AND "viewId" IS NOT NULL) OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'LINK' AND "link" IS NOT NULL) OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL) OR ("type" = 'AGENT_CHAT_CHANNEL' AND "agentChatChannelId" IS NOT NULL))`,
     );
   }
 
@@ -36,7 +36,7 @@ export class AddTabAndSectionNavigationMenuItemTypesFastInstanceCommand
       'ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT IF EXISTS "CHK_navigation_menu_item_type_fields"',
     );
     await queryRunner.query(
-      `DELETE FROM "core"."navigationMenuItem" WHERE "type" IN ('TAB', 'SECTION', 'AI_CHAT_TRIAGE', 'AI_CHAT_FAVORITES', 'AI_CHAT_RECENTS', 'AI_AGENTS', 'AI_CHAT_CHANNELS')`,
+      `DELETE FROM "core"."navigationMenuItem" WHERE "type" IN ('TAB', 'SECTION', 'AI_CHAT_INBOX', 'AI_CHAT_FAVORITES', 'AI_CHAT_RECENTS', 'AI_AGENTS', 'AI_CHAT_CHANNELS')`,
     );
     await queryRunner.query(
       'ALTER TYPE "core"."navigationMenuItem_type_enum" RENAME TO "navigationMenuItem_type_enum_old"',

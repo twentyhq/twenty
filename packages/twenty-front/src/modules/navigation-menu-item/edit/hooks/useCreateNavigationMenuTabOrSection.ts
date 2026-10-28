@@ -14,7 +14,7 @@ import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { buildOptimisticNavigationMenuItem } from '@/navigation-menu-item/common/utils/buildOptimisticNavigationMenuItem';
 import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
-import { isNavigationMenuItemCommandsContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemCommandsContainer';
+import { isNavigationMenuItemPinnedCommands } from '@/navigation-menu-item/common/utils/isNavigationMenuItemPinnedCommands';
 import { isNavigationMenuItemTab } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTab';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
@@ -106,16 +106,16 @@ export const useCreateNavigationMenuTabOrSection = () => {
   };
 
   const pinCommand = (commandKey: NavigationMenuItemCommandKey) => {
-    const commandsContainer = workspaceNavigationMenuItems.find(
-      isNavigationMenuItemCommandsContainer,
+    const pinnedCommandsContainer = workspaceNavigationMenuItems.find(
+      isNavigationMenuItemPinnedCommands,
     );
-    const commandsContainerId = commandsContainer?.id ?? v4();
+    const pinnedCommandsContainerId = pinnedCommandsContainer?.id ?? v4();
 
-    if (!isDefined(commandsContainer)) {
+    if (!isDefined(pinnedCommandsContainer)) {
       addToDraft(
         buildOptimisticNavigationMenuItem({
-          id: commandsContainerId,
-          type: NavigationMenuItemType.COMMANDS,
+          id: pinnedCommandsContainerId,
+          type: NavigationMenuItemType.PINNED_COMMANDS,
           position: -1,
         }),
       );
@@ -126,10 +126,10 @@ export const useCreateNavigationMenuTabOrSection = () => {
         id: v4(),
         type: NavigationMenuItemType.COMMAND,
         commandKey,
-        folderId: commandsContainerId,
+        folderId: pinnedCommandsContainerId,
         position: getNextPosition(
           (item) => item.type === NavigationMenuItemType.COMMAND,
-          commandsContainerId,
+          pinnedCommandsContainerId,
         ),
       }),
     );

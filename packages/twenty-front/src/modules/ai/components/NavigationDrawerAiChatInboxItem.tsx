@@ -25,7 +25,7 @@ const StyledCount = styled.span`
   padding-right: ${themeCssVariables.spacing['1.5']};
 `;
 
-type NavigationDrawerAiChatTriageItemProps = {
+type NavigationDrawerAiChatInboxItemProps = {
   filterStatus: AgentChatThreadFilterStatus;
   count?: number;
   isCountUrgent?: boolean;
@@ -33,13 +33,13 @@ type NavigationDrawerAiChatTriageItemProps = {
   subItemState?: NavigationDrawerSubItemState;
 };
 
-export const NavigationDrawerAiChatTriageItem = ({
+export const NavigationDrawerAiChatInboxItem = ({
   filterStatus,
   count,
   isCountUrgent = false,
   isUnread,
   subItemState,
-}: NavigationDrawerAiChatTriageItemProps) => {
+}: NavigationDrawerAiChatInboxItemProps) => {
   const { t } = useLingui();
   const location = useLocation();
   const navigate = useNavigateApp();

@@ -7,7 +7,7 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
   pinnedCommands: {
     universalIdentifier: '20202020-b012-4b12-8b12-c0aba11c0012',
-    type: NavigationMenuItemType.COMMANDS,
+    type: NavigationMenuItemType.PINNED_COMMANDS,
     position: -1,
   },
   pinnedCommandsSearch: {
@@ -26,7 +26,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
   },
   inboxSection: {
     universalIdentifier: '20202020-b00d-4b0d-8b0d-c0aba11c000d',
-    type: NavigationMenuItemType.AI_CHAT_TRIAGE,
+    type: NavigationMenuItemType.AI_CHAT_INBOX,
     position: 0,
   },
   favoritesSection: {

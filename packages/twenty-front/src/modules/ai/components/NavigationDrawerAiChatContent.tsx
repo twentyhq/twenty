@@ -8,7 +8,7 @@ import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoa
 import { NavigationDrawerAiChatChannelsSection } from '@/ai/components/NavigationDrawerAiChatChannelsSection';
 import { NavigationDrawerAiChatFavoritesSection } from '@/ai/components/NavigationDrawerAiChatFavoritesSection';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
-import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
+import { NavigationDrawerAiChatInboxSection } from '@/ai/components/NavigationDrawerAiChatInboxSection';
 import { AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT } from '@/ai/constants/AiChatInboxRecentThreadsMaxCount';
 import { AI_CHAT_RECENTS_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatRecentsNavigationSectionId';
 import { useAiChatSidebarThreads } from '@/ai/hooks/useAiChatSidebarThreads';
@@ -59,7 +59,7 @@ export const NavigationDrawerAiChatContent = () => {
     <StyledContainer>
       <StyledThreadList>
         <StyledSectionsContainer>
-          {isAiChatInboxEnabled && <NavigationDrawerAiChatTriageSection />}
+          {isAiChatInboxEnabled && <NavigationDrawerAiChatInboxSection />}
           <NavigationDrawerAiChatFavoritesSection
             channels={favoriteChannels}
             threads={favoriteThreads}

@@ -76,9 +76,9 @@ const developersTab: NavigationMenuItem = {
   updatedAt: '',
 };
 
-const triageSection: NavigationMenuItem = {
-  id: 'triage-section',
-  type: NavigationMenuItemType.AI_CHAT_TRIAGE,
+const inboxSection: NavigationMenuItem = {
+  id: 'inbox-section',
+  type: NavigationMenuItemType.AI_CHAT_INBOX,
   folderId: inboxTab.id,
   position: 0,
   createdAt: '',
@@ -311,7 +311,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       .mocked(useWorkspaceNavigationMenuTabs)
       .mockReturnValue([inboxTab, developersTab]);
 
-    renderModeSwitcher({ navigationMenuItems: [triageSection] });
+    renderModeSwitcher({ navigationMenuItems: [inboxSection] });
 
     expect(
       screen
@@ -326,7 +326,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
   });
 
   it.each([
-    ['chat', NavigationMenuItemType.AI_CHAT_TRIAGE],
+    ['chat', NavigationMenuItemType.AI_CHAT_INBOX],
     ['agents', NavigationMenuItemType.AI_AGENTS],
   ] as const)(
     'hides a tab holding only %s sections from members without AI access',
@@ -336,7 +336,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
         .mockReturnValue([inboxTab, developersTab]);
 
       renderModeSwitcher({
-        navigationMenuItems: [{ ...triageSection, type: sectionType }],
+        navigationMenuItems: [{ ...inboxSection, type: sectionType }],
         permissionFlags: [],
       });
 
@@ -374,7 +374,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
 
       renderModeSwitcher({
         isLayoutCustomizationModeEnabled: true,
-        navigationMenuItems: [triageSection],
+        navigationMenuItems: [inboxSection],
       });
 
       expect(screen.queryAllByRole('button', { name: 'Add tab' })).toHaveLength(
@@ -420,8 +420,8 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     ['Inbox', inboxTab.id],
     ['Home', null],
   ] as const)(
-    'flags %s while the triage it holds needs the member',
-    async (label, triageParentId) => {
+    'flags %s while the inbox it holds needs the member',
+    async (label, inboxParentId) => {
       jest
         .mocked(useWorkspaceNavigationMenuTabs)
         .mockReturnValue([inboxTab, developersTab]);
@@ -429,7 +429,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
 
       renderModeSwitcher({
         openThreadsSummary: { hasUnreadMentionThread: true },
-        navigationMenuItems: [{ ...triageSection, folderId: triageParentId }],
+        navigationMenuItems: [{ ...inboxSection, folderId: inboxParentId }],
       });
 
       expect(
@@ -467,7 +467,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
   });
 
-  it('leaves the flag to the triage of the tab you are on', async () => {
+  it('leaves the flag to the inbox of the tab you are on', async () => {
     jest
       .mocked(useWorkspaceNavigationMenuTabs)
       .mockReturnValue([inboxTab, developersTab]);
@@ -475,7 +475,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
 
     renderModeSwitcher({
       openThreadsSummary: { needsInputThreadCount: 1 },
-      navigationMenuItems: [triageSection],
+      navigationMenuItems: [inboxSection],
     });
     await waitForOpenThreadsSummary();
 

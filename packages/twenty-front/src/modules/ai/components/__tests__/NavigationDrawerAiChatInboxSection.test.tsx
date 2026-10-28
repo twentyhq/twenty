@@ -8,7 +8,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
+import { NavigationDrawerAiChatInboxSection } from '@/ai/components/NavigationDrawerAiChatInboxSection';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -52,7 +52,7 @@ const READ_SUMMARY: OpenThreadsSummary = {
   unreadAssignedThreadCount: 0,
 };
 
-const renderTriage = ({
+const renderInboxSection = ({
   path = '/inbox',
   summary = READ_SUMMARY,
   visibleItemLimit,
@@ -74,7 +74,7 @@ const renderTriage = ({
           ]}
         >
           <MemoryRouter initialEntries={[path]}>
-            <NavigationDrawerAiChatTriageSection
+            <NavigationDrawerAiChatInboxSection
               visibleItemLimit={visibleItemLimit}
             />
           </MemoryRouter>
@@ -83,7 +83,7 @@ const renderTriage = ({
     </JotaiProvider>,
   );
 
-describe('NavigationDrawerAiChatTriageSection', () => {
+describe('NavigationDrawerAiChatInboxSection', () => {
   beforeEach(() => {
     localStorage.clear();
     resetJotaiStore();
@@ -102,7 +102,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('counts every open chat and flags Open when one is unread', async () => {
-    renderTriage({ summary: { ...READ_SUMMARY, hasUnreadOpenThread: true } });
+    renderInboxSection({ summary: { ...READ_SUMMARY, hasUnreadOpenThread: true } });
 
     expect(
       await screen.findByRole('button', { name: /^Open\s*, unread\s*2$/ }),
@@ -112,7 +112,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('shows Open as read when every open chat is read', async () => {
-    renderTriage();
+    renderInboxSection();
 
     expect(
       await screen.findByRole('button', { name: /^Open\s*2$/ }),
@@ -120,7 +120,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('shows only Open until See more reveals the other statuses', async () => {
-    renderTriage({ visibleItemLimit: 1 });
+    renderInboxSection({ visibleItemLimit: 1 });
 
     expect(
       await screen.findByRole('button', { name: /^Open\s*2$/ }),
@@ -140,7 +140,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
       AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
     );
 
-    renderTriage({ path: '/inbox' });
+    renderInboxSection({ path: '/inbox' });
 
     expect(screen.getByRole('button', { name: 'Snoozed' })).toHaveAttribute(
       'aria-current',
@@ -157,7 +157,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
       AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
     );
 
-    renderTriage();
+    renderInboxSection();
 
     expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
   });
@@ -168,7 +168,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
       AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
     );
 
-    renderTriage();
+    renderInboxSection();
 
     expect(screen.getByRole('button', { name: 'Mentions' })).toHaveAttribute(
       'aria-current',
@@ -178,13 +178,13 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('hides the statuses narrowing Open outside the inbox', () => {
-    renderTriage({ path: '/objects/companies' });
+    renderInboxSection({ path: '/objects/companies' });
 
     expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
   });
 
   it('opens the inbox on the chosen status', async () => {
-    renderTriage();
+    renderInboxSection();
 
     await userEvent.click(screen.getByRole('button', { name: 'Snoozed' }));
 
@@ -197,7 +197,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('counts the open chats waiting on an answer in Needs input', async () => {
-    renderTriage({ summary: { ...READ_SUMMARY, needsInputThreadCount: 1 } });
+    renderInboxSection({ summary: { ...READ_SUMMARY, needsInputThreadCount: 1 } });
 
     expect(
       await screen.findByRole('button', { name: /^Needs input\s*1$/ }),
@@ -205,7 +205,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('keeps Needs input and its count in view outside the inbox', async () => {
-    renderTriage({
+    renderInboxSection({
       path: '/objects/companies',
       summary: { ...READ_SUMMARY, needsInputThreadCount: 3 },
     });
@@ -217,7 +217,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('flags and counts Mentions when chats the member was mentioned in are unread', async () => {
-    renderTriage({
+    renderInboxSection({
       summary: {
         ...READ_SUMMARY,
         hasUnreadMentionThread: true,
@@ -231,7 +231,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('keeps the statuses narrowing Open with unread chats in view outside the inbox', async () => {
-    renderTriage({
+    renderInboxSection({
       path: '/objects/companies',
       summary: {
         ...READ_SUMMARY,
@@ -247,7 +247,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('opens the inbox on the chats the member was mentioned in', async () => {
-    renderTriage();
+    renderInboxSection();
 
     await userEvent.click(screen.getByRole('button', { name: 'Mentions' }));
 
@@ -257,7 +257,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('flags and counts Assigned when chats assigned to the member are unread', async () => {
-    renderTriage({
+    renderInboxSection({
       summary: {
         ...READ_SUMMARY,
         hasUnreadAssignedThread: true,

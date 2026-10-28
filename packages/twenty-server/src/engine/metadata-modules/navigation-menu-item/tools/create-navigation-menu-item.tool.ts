@@ -64,7 +64,7 @@ const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
   }),
   z.object({
     type: z.enum([
-      NavigationMenuItemType.AI_CHAT_TRIAGE,
+      NavigationMenuItemType.AI_CHAT_INBOX,
       NavigationMenuItemType.AI_CHAT_FAVORITES,
       NavigationMenuItemType.AI_CHAT_RECENTS,
       NavigationMenuItemType.AI_AGENTS,
@@ -142,7 +142,7 @@ const toServiceInput = (
     case NavigationMenuItemType.FOLDER:
     case NavigationMenuItemType.TAB:
     case NavigationMenuItemType.SECTION:
-    case NavigationMenuItemType.AI_CHAT_TRIAGE:
+    case NavigationMenuItemType.AI_CHAT_INBOX:
     case NavigationMenuItemType.AI_CHAT_FAVORITES:
     case NavigationMenuItemType.AI_CHAT_RECENTS:
     case NavigationMenuItemType.AI_AGENTS:
@@ -184,7 +184,7 @@ const toServiceInput = (
 Type chooses the variant:
 - TAB: a sidebar tab next to Home (name required, no parent). Items and sections live in it through folderId.
 - SECTION: a titled group of items inside a tab or at the root of Home (name required).
-- AI_CHAT_TRIAGE, AI_CHAT_FAVORITES, AI_CHAT_RECENTS: built-in inbox sections (triage filters, favorite chats, recent chats) that list the viewer's own chats; they live in a tab or at the root of Home.
+- AI_CHAT_INBOX, AI_CHAT_FAVORITES, AI_CHAT_RECENTS: built-in inbox sections (triage filters, favorite chats, recent chats) that list the viewer's own chats; they live in a tab or at the root of Home.
 - AI_AGENTS: a built-in section listing the workspace's AI agents, each opening its agent page; it lives in a tab or at the root of Home.
 - AI_CHAT_CHANNELS: a built-in section listing the workspace's chat channels the viewer can access; it lives in a tab or at the root of Home.
 - FAVORITES: a built-in section listing the viewer's own favorites; it lives in a tab or at the root of Home.

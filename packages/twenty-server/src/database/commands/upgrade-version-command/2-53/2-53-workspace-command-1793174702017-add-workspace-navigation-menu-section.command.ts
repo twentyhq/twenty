@@ -17,7 +17,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const TAB_AND_SECTION_TYPES: NavigationMenuItemType[] = [
   NavigationMenuItemType.TAB,
   NavigationMenuItemType.SECTION,
-  NavigationMenuItemType.AI_CHAT_TRIAGE,
+  NavigationMenuItemType.AI_CHAT_INBOX,
   NavigationMenuItemType.AI_CHAT_FAVORITES,
   NavigationMenuItemType.AI_CHAT_RECENTS,
   NavigationMenuItemType.AI_AGENTS,

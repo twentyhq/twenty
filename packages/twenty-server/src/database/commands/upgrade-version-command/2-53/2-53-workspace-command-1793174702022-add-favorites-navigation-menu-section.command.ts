@@ -16,7 +16,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 
 const HOME_SECTION_TYPES: NavigationMenuItemType[] = [
   NavigationMenuItemType.SECTION,
-  NavigationMenuItemType.AI_CHAT_TRIAGE,
+  NavigationMenuItemType.AI_CHAT_INBOX,
   NavigationMenuItemType.AI_CHAT_FAVORITES,
   NavigationMenuItemType.AI_CHAT_RECENTS,
   NavigationMenuItemType.AI_AGENTS,
@@ -25,7 +25,7 @@ const HOME_SECTION_TYPES: NavigationMenuItemType[] = [
 
 const getPositionUnderInbox = (homeSections: FlatNavigationMenuItem[]) => {
   const inboxSectionIndex = homeSections.findIndex(
-    (section) => section.type === NavigationMenuItemType.AI_CHAT_TRIAGE,
+    (section) => section.type === NavigationMenuItemType.AI_CHAT_INBOX,
   );
 
   if (inboxSectionIndex === -1) {

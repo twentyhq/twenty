@@ -101,7 +101,7 @@ describe('useNavigationDrawerAttention', () => {
       sidebar: 'an Inbox section',
       isCustomizableSidebarEnabled: true,
       navigationMenuItems: [
-        buildChatSection(NavigationMenuItemType.AI_CHAT_TRIAGE),
+        buildChatSection(NavigationMenuItemType.AI_CHAT_INBOX),
       ],
       expected: 'unread',
     },
@@ -137,7 +137,7 @@ describe('useNavigationDrawerAttention', () => {
   it('ranks chats waiting on the member above unread mentions', async () => {
     const { result } = renderNavigationDrawerAttention({
       navigationMenuItems: [
-        buildChatSection(NavigationMenuItemType.AI_CHAT_TRIAGE),
+        buildChatSection(NavigationMenuItemType.AI_CHAT_INBOX),
       ],
       summary: { ...UNREAD_MENTION_SUMMARY, needsInputThreadCount: 2 },
     });

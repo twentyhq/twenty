@@ -65,7 +65,7 @@ export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspace
       (navigationMenuItem) =>
         isDefined(navigationMenuItem) &&
         !isDefined(navigationMenuItem.userWorkspaceId) &&
-        navigationMenuItem.type === NavigationMenuItemType.COMMANDS,
+        navigationMenuItem.type === NavigationMenuItemType.PINNED_COMMANDS,
     );
 
     if (hasPinnedCommands) {

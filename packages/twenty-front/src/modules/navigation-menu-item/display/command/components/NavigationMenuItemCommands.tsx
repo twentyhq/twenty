@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { isNavigationMenuItemCommandsContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemCommandsContainer';
+import { isNavigationMenuItemPinnedCommands } from '@/navigation-menu-item/common/utils/isNavigationMenuItemPinnedCommands';
 import { getNavigationMenuItemCommandKey } from '@/navigation-menu-item/common/utils/getNavigationMenuItemCommandKey';
 import { useNavigationMenuItemCommandRunner } from '@/navigation-menu-item/display/command/hooks/useNavigationMenuItemCommandRunner';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -19,11 +19,11 @@ export const NavigationMenuItemCommands = () => {
     isLayoutCustomizationModeEnabledState,
   );
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
-  const commandsContainer = workspaceNavigationMenuItems.find(
-    isNavigationMenuItemCommandsContainer,
+  const pinnedCommandsContainer = workspaceNavigationMenuItems.find(
+    isNavigationMenuItemPinnedCommands,
   );
   const commandItems = useNavigationMenuItemsInContainers(
-    isDefined(commandsContainer) ? [commandsContainer.id] : [],
+    isDefined(pinnedCommandsContainer) ? [pinnedCommandsContainer.id] : [],
   );
   const { isCommandAvailable } = useNavigationMenuItemCommandRunner();
   const {
@@ -44,7 +44,7 @@ export const NavigationMenuItemCommands = () => {
     <NavigationMenuItemAddCommandButton commandItems={commandItems} />
   ) : undefined;
 
-  if (!isDefined(commandsContainer) || visibleCommandItems.length === 0) {
+  if (!isDefined(pinnedCommandsContainer) || visibleCommandItems.length === 0) {
     return isDefined(addCommandButton) ? (
       <NavigationDrawerSection>{addCommandButton}</NavigationDrawerSection>
     ) : null;
@@ -54,8 +54,8 @@ export const NavigationMenuItemCommands = () => {
     <WorkspaceSectionContainer
       sectionTitle=""
       items={visibleCommandItems}
-      containerId={commandsContainer.id}
-      navigationSectionId={`navigation-menu-commands-${commandsContainer.id}`}
+      containerId={pinnedCommandsContainer.id}
+      navigationSectionId={`navigation-menu-commands-${pinnedCommandsContainer.id}`}
       isTitleHidden
       addMenuItemButton={addCommandButton}
       selectedNavigationMenuItemId={selectedNavigationMenuItemId}

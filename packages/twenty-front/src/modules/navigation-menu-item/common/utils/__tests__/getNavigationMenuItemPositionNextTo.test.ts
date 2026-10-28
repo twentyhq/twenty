@@ -1,7 +1,7 @@
 import { getNavigationMenuItemPositionNextTo } from '@/navigation-menu-item/common/utils/getNavigationMenuItemPositionNextTo';
 
 const sortedSiblings = [
-  { id: 'triage', position: -1.5 },
+  { id: 'inbox', position: -1.5 },
   { id: 'container-items', position: -0.5 },
   { id: 'workspace', position: 0 },
   { id: 'sales', position: 1 },
@@ -9,9 +9,9 @@ const sortedSiblings = [
 
 describe('getNavigationMenuItemPositionNextTo', () => {
   it.each([
-    ['lands after a target below it', 'triage', 'workspace', 0.5],
+    ['lands after a target below it', 'inbox', 'workspace', 0.5],
     ['lands before a target above it', 'sales', 'workspace', -0.25],
-    ['lands first when dropped on the first sibling', 'sales', 'triage', -2.5],
+    ['lands first when dropped on the first sibling', 'sales', 'inbox', -2.5],
     ['crosses the container items', 'workspace', 'container-items', -1],
   ])('%s', (_, navigationMenuItemId, targetNavigationMenuItemId, position) => {
     expect(

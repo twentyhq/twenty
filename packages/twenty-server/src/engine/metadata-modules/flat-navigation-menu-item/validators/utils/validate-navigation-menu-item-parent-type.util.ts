@@ -15,15 +15,15 @@ const ALLOWED_PARENT_TYPES_BY_TYPE: Partial<
   Record<NavigationMenuItemType, NavigationMenuItemType[]>
 > = {
   [NavigationMenuItemType.TAB]: [],
-  [NavigationMenuItemType.COMMANDS]: [],
+  [NavigationMenuItemType.PINNED_COMMANDS]: [],
   [NavigationMenuItemType.SECTION]: [NavigationMenuItemType.TAB],
-  [NavigationMenuItemType.AI_CHAT_TRIAGE]: [NavigationMenuItemType.TAB],
+  [NavigationMenuItemType.AI_CHAT_INBOX]: [NavigationMenuItemType.TAB],
   [NavigationMenuItemType.AI_CHAT_FAVORITES]: [NavigationMenuItemType.TAB],
   [NavigationMenuItemType.AI_CHAT_RECENTS]: [NavigationMenuItemType.TAB],
   [NavigationMenuItemType.AI_AGENTS]: [NavigationMenuItemType.TAB],
   [NavigationMenuItemType.AI_CHAT_CHANNELS]: [NavigationMenuItemType.TAB],
   [NavigationMenuItemType.FAVORITES]: [NavigationMenuItemType.TAB],
-  [NavigationMenuItemType.COMMAND]: [NavigationMenuItemType.COMMANDS],
+  [NavigationMenuItemType.COMMAND]: [NavigationMenuItemType.PINNED_COMMANDS],
   [NavigationMenuItemType.FOLDER]: [
     NavigationMenuItemType.TAB,
     NavigationMenuItemType.SECTION,

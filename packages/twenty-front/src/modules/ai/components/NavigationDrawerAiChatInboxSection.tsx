@@ -3,10 +3,10 @@ import { type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
-import { NavigationDrawerAiChatTriageItem } from '@/ai/components/NavigationDrawerAiChatTriageItem';
+import { NavigationDrawerAiChatInboxItem } from '@/ai/components/NavigationDrawerAiChatInboxItem';
 import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
-import { AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatTriageNavigationSectionId';
+import { AI_CHAT_INBOX_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatInboxNavigationSectionId';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
@@ -30,19 +30,19 @@ const OPEN_SUB_FILTER_STATUSES = [
   AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED,
 ];
 
-type NavigationDrawerAiChatTriageSectionProps = {
+type NavigationDrawerAiChatInboxSectionProps = {
   label?: string;
   rightIcon?: ReactNode;
   alwaysShowRightIcon?: boolean;
   visibleItemLimit?: number | null;
 };
 
-export const NavigationDrawerAiChatTriageSection = ({
+export const NavigationDrawerAiChatInboxSection = ({
   label,
   rightIcon,
   alwaysShowRightIcon,
   visibleItemLimit,
-}: NavigationDrawerAiChatTriageSectionProps = {}) => {
+}: NavigationDrawerAiChatInboxSectionProps = {}) => {
   const { t } = useLingui();
   const location = useLocation();
   const agentChatThreadFilterStatus = useAtomStateValue(
@@ -66,7 +66,7 @@ export const NavigationDrawerAiChatTriageSection = ({
     isShowingAllItems,
     toggleShowingAllItems,
   } = useNavigationSectionVisibleItems({
-    navigationSectionId: AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID,
+    navigationSectionId: AI_CHAT_INBOX_NAVIGATION_SECTION_ID,
     items: TRIAGE_FILTER_STATUSES,
     visibleItemLimit,
   });
@@ -100,7 +100,7 @@ export const NavigationDrawerAiChatTriageSection = ({
 
   return (
     <CollapsibleNavigationDrawerSection
-      sectionId={AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID}
+      sectionId={AI_CHAT_INBOX_NAVIGATION_SECTION_ID}
       label={label ?? t`Inbox`}
       rightIcon={rightIcon}
       alwaysShowRightIcon={alwaysShowRightIcon}
@@ -108,13 +108,13 @@ export const NavigationDrawerAiChatTriageSection = ({
       {visibleFilterStatuses.map((filterStatus) =>
         filterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE ? (
           <NavigationDrawerItemGroup key={filterStatus}>
-            <NavigationDrawerAiChatTriageItem
+            <NavigationDrawerAiChatInboxItem
               filterStatus={filterStatus}
               count={openThreadCount}
               isUnread={hasUnreadOpenThread}
             />
             {shownOpenSubFilterStatuses.map((openSubFilterStatus, index) => (
-              <NavigationDrawerAiChatTriageItem
+              <NavigationDrawerAiChatInboxItem
                 key={openSubFilterStatus}
                 filterStatus={openSubFilterStatus}
                 count={countByOpenSubFilterStatus[openSubFilterStatus]}
@@ -132,7 +132,7 @@ export const NavigationDrawerAiChatTriageSection = ({
             ))}
           </NavigationDrawerItemGroup>
         ) : (
-          <NavigationDrawerAiChatTriageItem
+          <NavigationDrawerAiChatInboxItem
             key={filterStatus}
             filterStatus={filterStatus}
           />

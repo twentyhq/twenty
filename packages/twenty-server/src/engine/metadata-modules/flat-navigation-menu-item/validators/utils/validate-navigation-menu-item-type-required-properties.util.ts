@@ -141,13 +141,13 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
             ),
           ];
     }
-    case NavigationMenuItemType.AI_CHAT_TRIAGE:
+    case NavigationMenuItemType.AI_CHAT_INBOX:
     case NavigationMenuItemType.AI_CHAT_FAVORITES:
     case NavigationMenuItemType.AI_CHAT_RECENTS:
     case NavigationMenuItemType.AI_AGENTS:
     case NavigationMenuItemType.AI_CHAT_CHANNELS:
     case NavigationMenuItemType.FAVORITES:
-    case NavigationMenuItemType.COMMANDS: {
+    case NavigationMenuItemType.PINNED_COMMANDS: {
       return [];
     }
     case NavigationMenuItemType.COMMAND: {

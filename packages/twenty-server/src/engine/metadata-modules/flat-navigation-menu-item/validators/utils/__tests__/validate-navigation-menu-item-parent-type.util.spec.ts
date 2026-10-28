@@ -6,7 +6,7 @@ import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/nav
 describe('validateNavigationMenuItemParentType', () => {
   it.each([
     [NavigationMenuItemType.SECTION, NavigationMenuItemType.TAB],
-    [NavigationMenuItemType.AI_CHAT_TRIAGE, NavigationMenuItemType.TAB],
+    [NavigationMenuItemType.AI_CHAT_INBOX, NavigationMenuItemType.TAB],
     [NavigationMenuItemType.AI_AGENTS, NavigationMenuItemType.TAB],
     [NavigationMenuItemType.AI_CHAT_CHANNELS, NavigationMenuItemType.TAB],
     [NavigationMenuItemType.FOLDER, NavigationMenuItemType.TAB],
