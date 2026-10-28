@@ -1,5 +1,5 @@
 import { type NavigationDrawerAttention } from '@/navigation/types/NavigationDrawerAttention';
-import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
+import { StyledNavigationDrawerAttentionDot } from '@/navigation/components/StyledNavigationDrawerAttentionDot';
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -88,14 +88,6 @@ const StyledModeIcon = styled.span`
   width: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledAttentionDot = styled(StyledNavigationDrawerUnreadDot)`
-  background: ${themeCssVariables.color.red};
-
-  &[data-attention='unread'] {
-    background: ${themeCssVariables.font.color.tertiary};
-  }
-`;
-
 const StyledModeLabelBase = styled.span`
   display: block;
   min-width: 0;
@@ -169,7 +161,7 @@ export const MainNavigationDrawerModeButton = ({
         <StyledModeIcon>
           <Icon size={theme.icon.size.md} />
           {isDefined(attention) && (
-            <StyledAttentionDot data-attention={attention} />
+            <StyledNavigationDrawerAttentionDot data-attention={attention} />
           )}
         </StyledModeIcon>
         <StyledModeLabel

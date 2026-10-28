@@ -5,11 +5,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
-import { isNavigationMenuItemAgentsSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAgentsSection';
-import { isNavigationMenuItemAiChatSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAiChatSection';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useNavigationMenuAiChatSections } from '@/navigation-menu-item/display/hooks/useNavigationMenuAiChatSections';
-import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerCustomTab } from '@/navigation/components/MainNavigationDrawerCustomTab';
@@ -21,7 +18,7 @@ import {
   useNavigationDrawerModes,
 } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useVisibleNavigationMenuTabs } from '@/navigation/hooks/useVisibleNavigationMenuTabs';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import {
   type NavigationDrawerActiveTab,
@@ -29,10 +26,7 @@ import {
 } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 // Expanded, the row matches the page card header so their borders read as one line.
@@ -64,8 +58,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
   const navigationMenuTabs = useWorkspaceNavigationMenuTabs();
-  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const visibleTabs = useVisibleNavigationMenuTabs();
   const { switchNavigationDrawerMode, switchToNavigationMenuTab } =
     useSwitchNavigationDrawerMode();
   const { inboxAttention, getTabAttention } = useNavigationDrawerAttention();
@@ -93,21 +86,6 @@ export const MainNavigationDrawerModeSwitcher = () => {
 
   const shouldShowTooltips = !isExpanded && !isMobile;
   const hasAiChatSections = aiChatSections.length > 0;
-  const hasOnlyAiSections = (tabId: string) => {
-    const children = workspaceNavigationMenuItems.filter(
-      (item) => item.folderId === tabId,
-    );
-
-    return (
-      children.length > 0 &&
-      children.every(
-        (child) =>
-          isNavigationMenuItemAiChatSection(child) ||
-          isNavigationMenuItemAgentsSection(child),
-      )
-    );
-  };
-
   const isHomeActive =
     !isDefined(activeNavigationMenuTab) &&
     activeNavigationDrawerMode === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU;
@@ -162,12 +140,6 @@ export const MainNavigationDrawerModeSwitcher = () => {
       (mode !== NAVIGATION_DRAWER_TABS.SETTINGS ||
         !isCustomizableSidebarEnabled) &&
       (mode !== NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY || !hasAiChatSections),
-  );
-  const visibleTabs = navigationMenuTabs.filter(
-    (tab) =>
-      hasAiPermission ||
-      isLayoutCustomizationModeEnabled ||
-      !hasOnlyAiSections(tab.id),
   );
   const canAddTab =
     isCustomizableSidebarEnabled &&

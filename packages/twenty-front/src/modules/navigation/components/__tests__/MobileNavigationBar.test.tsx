@@ -1,11 +1,13 @@
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
-import { IconHome, IconSearch } from 'twenty-ui/icon';
+import { IconHome, IconMessage, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 jest.mock('@/navigation/hooks/useMobileNavigationBarItems');
@@ -14,13 +16,15 @@ const renderMobileNavigationBar = (pathname = '/home') => {
   const store = createStore();
 
   render(
-    <Provider store={store}>
-      <MemoryRouter initialEntries={[pathname]}>
-        <div role="region" aria-label="Page content" />
-        <MobileNavigationBar />
-        <Button>Page action</Button>
-      </MemoryRouter>
-    </Provider>,
+    <I18nProvider i18n={i18n}>
+      <Provider store={store}>
+        <MemoryRouter initialEntries={[pathname]}>
+          <div role="region" aria-label="Page content" />
+          <MobileNavigationBar />
+          <Button>Page action</Button>
+        </MemoryRouter>
+      </Provider>
+    </I18nProvider>,
   );
 
   return { store };
@@ -34,9 +38,16 @@ describe('MobileNavigationBar', () => {
     jest.mocked(useMobileNavigationBarItems).mockReturnValue({
       activeItemName: 'home',
       items: [
-        { name: 'home', label: 'Home', Icon: IconHome, onClick: jest.fn() },
+        {
+          name: 'home',
+          kind: 'tab',
+          label: 'Home',
+          Icon: IconHome,
+          onClick: jest.fn(),
+        },
         {
           name: 'search',
+          kind: 'action',
           label: 'Search',
           Icon: IconSearch,
           onClick: onSearchClick,
@@ -58,6 +69,39 @@ describe('MobileNavigationBar', () => {
     );
     expect(screen.getByRole('button', { name: 'Search' })).not.toHaveAttribute(
       'aria-current',
+    );
+  });
+
+  it('flags a tab that needs attention in its accessible name', () => {
+    jest.mocked(useMobileNavigationBarItems).mockReturnValue({
+      activeItemName: 'home',
+      items: [
+        {
+          name: 'home',
+          kind: 'tab',
+          label: 'Home',
+          Icon: IconHome,
+          onClick: jest.fn(),
+        },
+        {
+          name: 'chats-tab',
+          kind: 'tab',
+          label: 'Chats',
+          Icon: IconMessage,
+          attention: 'needs-input',
+          onClick: jest.fn(),
+        },
+      ],
+    });
+
+    renderMobileNavigationBar();
+
+    expect(
+      screen.getByRole('button', { name: 'Chats, needs your attention' }),
+    ).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Home' })).toHaveAttribute(
+      'aria-current',
+      'page',
     );
   });
 
