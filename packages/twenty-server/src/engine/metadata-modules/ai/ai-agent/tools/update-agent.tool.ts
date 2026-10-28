@@ -4,18 +4,16 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { agentTriggersSchema } from 'src/engine/metadata-modules/ai/ai-agent/tools/schemas/agent-trigger.schema';
-import { findManageableAgentOrThrow } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/find-manageable-agent-or-throw.util';
+import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/tools/services/manageable-agent.service';
 import { toAgentSummary } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-summary.util';
 import { toAgentTriggers } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-triggers.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const updateAgentInputSchema = z.object({
   id: z.uuid().describe('Id of the agent to update'),
@@ -51,8 +49,7 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
   constructor(
     private readonly agentService: AgentService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly applicationService: ApplicationService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly manageableAgentService: ManageableAgentService,
   ) {
     super();
   }
@@ -61,11 +58,8 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
     input: { triggers, ...parameters },
     context,
   }: ToolExecuteArgs<typeof updateAgentInputSchema>): Promise<ToolOutput> {
-    await findManageableAgentOrThrow({
+    await this.manageableAgentService.findManageableAgentOrThrow({
       agentId: parameters.id,
-      agentService: this.agentService,
-      applicationService: this.applicationService,
-      workspaceCacheService: this.workspaceCacheService,
       context,
     });
 

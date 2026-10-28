@@ -3,14 +3,12 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
-import { findManageableAgentOrThrow } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/find-manageable-agent-or-throw.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/tools/services/manageable-agent.service';
 
 const deleteAgentInputSchema = z.object({
   id: z.uuid().describe('Id of the agent to delete'),
@@ -28,8 +26,7 @@ export class DeleteAgentTool extends BaseTool<typeof deleteAgentInputSchema> {
 
   constructor(
     private readonly agentService: AgentService,
-    private readonly applicationService: ApplicationService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly manageableAgentService: ManageableAgentService,
   ) {
     super();
   }
@@ -38,11 +35,8 @@ export class DeleteAgentTool extends BaseTool<typeof deleteAgentInputSchema> {
     input,
     context,
   }: ToolExecuteArgs<typeof deleteAgentInputSchema>): Promise<ToolOutput> {
-    await findManageableAgentOrThrow({
+    await this.manageableAgentService.findManageableAgentOrThrow({
       agentId: input.id,
-      agentService: this.agentService,
-      applicationService: this.applicationService,
-      workspaceCacheService: this.workspaceCacheService,
       context,
     });
 

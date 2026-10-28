@@ -13,6 +13,7 @@ import { type AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent
 import { CreateAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/create-agent.tool';
 import { DeleteAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/delete-agent.tool';
 import { ListAgentsTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/list-agents.tool';
+import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/tools/services/manageable-agent.service';
 import { UpdateAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/update-agent.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -104,6 +105,12 @@ const buildAgentTools = (options?: {
     }),
   };
 
+  const manageableAgentService = new ManageableAgentService(
+    agentService as unknown as AgentService,
+    applicationService as unknown as ApplicationService,
+    workspaceCacheService as unknown as WorkspaceCacheService,
+  );
+
   const tools = [
     new ListAgentsTool(agentService as unknown as AgentService),
     new CreateAgentTool(
@@ -113,13 +120,11 @@ const buildAgentTools = (options?: {
     new UpdateAgentTool(
       agentService as unknown as AgentService,
       aiModelRegistryService as unknown as AiModelRegistryService,
-      applicationService as unknown as ApplicationService,
-      workspaceCacheService as unknown as WorkspaceCacheService,
+      manageableAgentService,
     ),
     new DeleteAgentTool(
       agentService as unknown as AgentService,
-      applicationService as unknown as ApplicationService,
-      workspaceCacheService as unknown as WorkspaceCacheService,
+      manageableAgentService,
     ),
   ];
 
