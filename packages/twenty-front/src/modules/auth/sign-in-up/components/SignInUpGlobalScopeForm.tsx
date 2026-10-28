@@ -23,6 +23,7 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
@@ -41,47 +42,52 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 const StyledWorkspaceContainer = styled.div`
   background-color: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.lg};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  gap: 2px;
   overflow: hidden;
+  padding: ${themeCssVariables.spacing[1]};
   width: 100%;
 
-  > * {
-    border-bottom: 1px solid ${themeCssVariables.border.color.medium};
-
-    &:last-child {
-      border-bottom: none;
-    }
+  a:focus-visible {
+    outline: none;
   }
 `;
 
 const StyledWorkspaceItem = styled.div`
   align-items: center;
+  border-radius: ${themeCssVariables.border.radius.md};
   cursor: pointer;
   display: flex;
   flex-direction: row;
-  height: ${themeCssVariables.spacing[15]};
+  height: ${themeCssVariables.spacing[14]};
   justify-content: space-between;
   overflow: hidden;
-
   padding: 0;
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
   width: 100%;
 
   &:hover {
+    background-color: ${themeCssVariables.background.transparent.lighter};
+  }
+
+  &:active {
     background-color: ${themeCssVariables.background.transparent.light};
   }
 
-  &:last-child {
-    border-bottom: none;
+  a:focus-visible > & {
+    box-shadow: 0 0 0 3px ${themeCssVariables.accent.secondary};
   }
 `;
 
 const StyledWorkspaceContent = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[4]};
-  padding: 0 ${themeCssVariables.spacing[4]};
+  gap: ${themeCssVariables.spacing[3]};
+  padding: 0 ${themeCssVariables.spacing[3]};
   width: 100%;
 `;
 
@@ -89,6 +95,7 @@ const StyledWorkspaceTextContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  min-width: 0;
 `;
 
 const StyledWorkspaceLogo = styled.div`
@@ -104,18 +111,40 @@ const StyledWorkspaceLogo = styled.div`
 const StyledWorkspaceName = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-weight: ${themeCssVariables.font.weight.medium};
-  padding-bottom: ${themeCssVariables.spacing[1]};
+  overflow: hidden;
+  padding-bottom: 2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledWorkspaceUrl = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.xs};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledChevronIcon = styled.div`
   align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${themeCssVariables.font.color.light};
   display: flex;
+  transition:
+    color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS},
+    transform calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS};
+
+  ${StyledWorkspaceItem}:hover & {
+    color: ${themeCssVariables.font.color.secondary};
+    transform: translateX(2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ${StyledWorkspaceItem}:hover & {
+      transform: none;
+    }
+  }
 `;
 
 const StyledForgotPasswordLinkContainer = styled.div`

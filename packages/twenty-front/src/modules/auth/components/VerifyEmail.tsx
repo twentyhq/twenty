@@ -1,3 +1,4 @@
+import { StyledAuthCard } from '@/auth/components/StyledAuthCard';
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
@@ -17,7 +18,9 @@ export const VerifyEmail = () => {
   if (isError) {
     return (
       <StyledAuthContent>
-        <EmailVerificationSent email={email} isError={true} />
+        <StyledAuthCard>
+          <EmailVerificationSent email={email} isError={true} />
+        </StyledAuthCard>
       </StyledAuthContent>
     );
   }

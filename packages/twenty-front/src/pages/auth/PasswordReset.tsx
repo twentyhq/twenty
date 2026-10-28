@@ -1,5 +1,6 @@
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { Logo } from '@/auth/components/Logo';
+import { StyledAuthCard } from '@/auth/components/StyledAuthCard';
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { Title } from '@/auth/components/Title';
@@ -211,94 +212,96 @@ export const PasswordReset = () => {
   return (
     isTokenValid && (
       <StyledAuthContent>
-        <StyledMainContainer>
-          <AnimatedEaseIn>
-            <Logo
-              secondaryLogo={workspacePublicData?.logo}
-              placeholder={workspacePublicData?.displayName}
-            />
-          </AnimatedEaseIn>
-          <Title animate>{passwordActionLabel}</Title>
-          <StyledOnboardingContentContainer>
-            {!email ? (
-              <SkeletonLine
-                height={SKELETON_HEIGHT_SIZES.m}
-                count={2}
-                gap={themeCssVariables.spacing[2]}
-                baseColor={themeCssVariables.background.quaternary}
-                highlightColor={themeCssVariables.background.secondary}
+        <StyledAuthCard>
+          <StyledMainContainer>
+            <AnimatedEaseIn>
+              <Logo
+                secondaryLogo={workspacePublicData?.logo}
+                placeholder={workspacePublicData?.displayName}
               />
-            ) : (
-              <StyledForm onSubmit={handleSubmit(onSubmit)}>
-                <StyledFullWidthContainer>
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    transition={{
-                      type: 'spring',
-                      stiffness: 800,
-                      damping: 35,
-                    }}
-                  >
-                    <StyledInputContainer>
-                      <TextInput
-                        autoFocus
-                        value={email}
-                        placeholder={t`Email`}
-                        fullWidth
-                        disabled
+            </AnimatedEaseIn>
+            <Title animate>{passwordActionLabel}</Title>
+            <StyledOnboardingContentContainer>
+              {!email ? (
+                <SkeletonLine
+                  height={SKELETON_HEIGHT_SIZES.m}
+                  count={2}
+                  gap={themeCssVariables.spacing[2]}
+                  baseColor={themeCssVariables.background.quaternary}
+                  highlightColor={themeCssVariables.background.secondary}
+                />
+              ) : (
+                <StyledForm onSubmit={handleSubmit(onSubmit)}>
+                  <StyledFullWidthContainer>
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 800,
+                        damping: 35,
+                      }}
+                    >
+                      <StyledInputContainer>
+                        <TextInput
+                          autoFocus
+                          value={email}
+                          placeholder={t`Email`}
+                          fullWidth
+                          disabled
+                        />
+                      </StyledInputContainer>
+                    </motion.div>
+                  </StyledFullWidthContainer>
+                  <StyledFullWidthContainer>
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 800,
+                        damping: 35,
+                      }}
+                    >
+                      <Controller
+                        name="newPassword"
+                        control={control}
+                        render={({
+                          field: { onChange, onBlur, value },
+                          fieldState: { error },
+                        }) => (
+                          <StyledInputContainer>
+                            <TextInput
+                              autoFocus
+                              value={value}
+                              type="password"
+                              placeholder={t`New Password`}
+                              onBlur={onBlur}
+                              onChange={onChange}
+                              error={error?.message}
+                              fullWidth
+                            />
+                          </StyledInputContainer>
+                        )}
                       />
-                    </StyledInputContainer>
-                  </motion.div>
-                </StyledFullWidthContainer>
-                <StyledFullWidthContainer>
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    transition={{
-                      type: 'spring',
-                      stiffness: 800,
-                      damping: 35,
-                    }}
-                  >
-                    <Controller
-                      name="newPassword"
-                      control={control}
-                      render={({
-                        field: { onChange, onBlur, value },
-                        fieldState: { error },
-                      }) => (
-                        <StyledInputContainer>
-                          <TextInput
-                            autoFocus
-                            value={value}
-                            type="password"
-                            placeholder={t`New Password`}
-                            onBlur={onBlur}
-                            onChange={onChange}
-                            error={error?.message}
-                            fullWidth
-                          />
-                        </StyledInputContainer>
-                      )}
-                    />
-                  </motion.div>
-                </StyledFullWidthContainer>
+                    </motion.div>
+                  </StyledFullWidthContainer>
 
-                <StyledMainButtonContainer>
-                  <MainButton
-                    type="submit"
-                    fullWidth
-                    disabled={isUpdatingPassword}
-                    variant="outline"
-                  >
-                    {passwordActionLabel}
-                  </MainButton>
-                </StyledMainButtonContainer>
-              </StyledForm>
-            )}
-          </StyledOnboardingContentContainer>
-        </StyledMainContainer>
+                  <StyledMainButtonContainer>
+                    <MainButton
+                      type="submit"
+                      fullWidth
+                      disabled={isUpdatingPassword}
+                      variant="outline"
+                    >
+                      {passwordActionLabel}
+                    </MainButton>
+                  </StyledMainButtonContainer>
+                </StyledForm>
+              )}
+            </StyledOnboardingContentContainer>
+          </StyledMainContainer>
+        </StyledAuthCard>
       </StyledAuthContent>
     )
   );

@@ -1,3 +1,4 @@
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { styled } from '@linaria/react';
 
 import { t } from '@lingui/core/macro';
@@ -35,6 +36,8 @@ const StyledCardContent = styled(Card.Content)`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]};
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
 `;
 
 const StyledHeader = styled.span`
@@ -47,7 +50,7 @@ const StyledTitle = styled.span<{ disabled?: boolean }>`
   color: ${({ disabled }) =>
     disabled
       ? themeCssVariables.font.color.extraLight
-      : themeCssVariables.font.color.secondary};
+      : themeCssVariables.font.color.primary};
   display: flex;
   flex: 1 0 auto;
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -59,6 +62,22 @@ const StyledIconChevronRightContainer = styled.span`
   align-items: center;
   color: ${themeCssVariables.font.color.light};
   display: flex;
+  transition:
+    color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS},
+    transform calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS};
+
+  :is(a, button):hover & {
+    color: ${themeCssVariables.font.color.secondary};
+    transform: translateX(2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :is(a, button):hover & {
+      transform: none;
+    }
+  }
 `;
 
 const StyledDescription = styled.span<{ disabled?: boolean }>`

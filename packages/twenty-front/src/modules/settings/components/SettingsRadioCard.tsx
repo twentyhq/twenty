@@ -1,3 +1,4 @@
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
@@ -10,16 +11,26 @@ const StyledRadioCardContentContainer = styled.label`
   > div {
     align-items: center;
     border: 1px solid ${themeCssVariables.border.color.medium};
-    border-radius: ${themeCssVariables.border.radius.sm};
+    border-radius: ${themeCssVariables.border.radius.md};
     cursor: pointer;
     display: flex;
     flex-grow: 1;
     gap: ${themeCssVariables.spacing[2]};
     padding: ${themeCssVariables.spacing[2]};
+    transition:
+      background-color calc(${themeCssVariables.animation.duration.fast} * 1s)
+        ${EASE_OUT_CSS},
+      border-color calc(${themeCssVariables.animation.duration.fast} * 1s)
+        ${EASE_OUT_CSS};
 
     &:hover {
       background: ${themeCssVariables.background.transparent.lighter};
+      border-color: ${themeCssVariables.border.color.strong};
     }
+  }
+
+  &:has([data-checked]) > div {
+    border-color: ${themeCssVariables.border.color.blue};
   }
 `;
 

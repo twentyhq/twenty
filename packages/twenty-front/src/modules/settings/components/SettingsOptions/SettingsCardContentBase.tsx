@@ -10,8 +10,9 @@ export const StyledSettingsCardContent = styled(Card.Content)`
 export const StyledSettingsCardIcon = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.background.primary};
-  border: 2px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.light};
   box-sizing: border-box;
   display: flex;
   height: ${themeCssVariables.spacing[8]};

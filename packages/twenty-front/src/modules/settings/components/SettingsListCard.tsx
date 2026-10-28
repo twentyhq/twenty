@@ -1,3 +1,4 @@
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { styled } from '@linaria/react';
 import { type ComponentType } from 'react';
 
@@ -18,7 +19,7 @@ const StyledButton = styled.button`
   align-items: center;
   background: ${themeCssVariables.background.primary};
   border: none;
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
@@ -27,10 +28,16 @@ const StyledButton = styled.button`
   height: ${themeCssVariables.spacing[8]};
   padding: 0 ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[2]};
+  transition:
+    background-color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS},
+    color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS};
   width: 100%;
 
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
+    color: ${themeCssVariables.font.color.primary};
   }
 `;
 

@@ -9,7 +9,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 const StyledCard = styled.div`
   background-color: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.lg};
+  box-shadow: ${themeCssVariables.boxShadow.light};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

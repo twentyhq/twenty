@@ -1,4 +1,5 @@
 import { Logo } from '@/auth/components/Logo';
+import { StyledAuthCard } from '@/auth/components/StyledAuthCard';
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { Title } from '@/auth/components/Title';
 import { AnimatedEaseIn } from '@/auth/components/internal/AnimatedEaseIn/AnimatedEaseIn';
@@ -13,17 +14,23 @@ import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 
 const StyledTitleContainer = styled.div`
   line-height: 1.2;
-  margin-top: ${themeCssVariables.spacing[10]};
+  margin-top: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledFormContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  margin-bottom: ${themeCssVariables.spacing[6]};
-  margin-top: ${themeCssVariables.spacing[6]};
+  margin-top: ${themeCssVariables.spacing[2]};
   min-width: 0;
   width: 100%;
+`;
+
+const StyledFooterContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin-top: ${themeCssVariables.spacing[6]};
 `;
 
 type SignInUpStandardContentProps = {
@@ -43,29 +50,33 @@ export const SignInUpStandardContent = ({
 }: SignInUpStandardContentProps) => {
   return (
     <StyledAuthContent>
-      <AnimatedEaseIn>
-        <Logo
-          secondaryLogo={workspacePublicData?.logo}
-          placeholder={workspacePublicData?.displayName}
-          onClick={onClickOnLogo}
-          to={AppPath.SignInUp}
-        />
-      </AnimatedEaseIn>
-      <StyledTitleContainer>
-        <Title animate>{title}</Title>
-      </StyledTitleContainer>
-      <StyledFormContainer>{signInUpForm}</StyledFormContainer>
-      {signInUpStep === SignInUpStep.WorkspaceSelection && (
-        <WorkspaceSelectionFooter />
-      )}
-      {![
-        SignInUpStep.Password,
-        SignInUpStep.TwoFactorAuthenticationProvision,
-        SignInUpStep.TwoFactorAuthenticationVerification,
-        SignInUpStep.TwoFactorAuthenticationRecovery,
-        SignInUpStep.WorkspaceSelection,
-        SignInUpStep.WorkspaceCreation,
-      ].includes(signInUpStep) && <FooterNote />}
+      <StyledAuthCard>
+        <AnimatedEaseIn>
+          <Logo
+            secondaryLogo={workspacePublicData?.logo}
+            placeholder={workspacePublicData?.displayName}
+            onClick={onClickOnLogo}
+            to={AppPath.SignInUp}
+          />
+        </AnimatedEaseIn>
+        <StyledTitleContainer>
+          <Title animate>{title}</Title>
+        </StyledTitleContainer>
+        <StyledFormContainer>{signInUpForm}</StyledFormContainer>
+      </StyledAuthCard>
+      <StyledFooterContainer>
+        {signInUpStep === SignInUpStep.WorkspaceSelection && (
+          <WorkspaceSelectionFooter />
+        )}
+        {![
+          SignInUpStep.Password,
+          SignInUpStep.TwoFactorAuthenticationProvision,
+          SignInUpStep.TwoFactorAuthenticationVerification,
+          SignInUpStep.TwoFactorAuthenticationRecovery,
+          SignInUpStep.WorkspaceSelection,
+          SignInUpStep.WorkspaceCreation,
+        ].includes(signInUpStep) && <FooterNote />}
+      </StyledFooterContainer>
     </StyledAuthContent>
   );
 };

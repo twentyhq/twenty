@@ -1,4 +1,5 @@
 import { CARD_ACTION_CLASS_NAME } from '@/ui/layout/card/styles/CardActionClassName';
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { css, cx } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -78,6 +79,9 @@ const StyledDescription = styled.span`
 `;
 
 const rowActionClassName = css`
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
+
   &:hover {
     background: ${themeCssVariables.background.transparent.lighter};
   }

@@ -6,6 +6,7 @@ import {
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { styled } from '@linaria/react';
 import { useId } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -22,6 +23,8 @@ const StyledSettingsCardSwitchContent = styled.div<{ disabled?: boolean }>`
   padding: ${themeCssVariables.spacing[4]};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   position: relative;
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
 
   &:hover {
     background: ${themeCssVariables.background.transparent.lighter};

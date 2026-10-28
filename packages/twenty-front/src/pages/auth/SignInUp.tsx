@@ -1,3 +1,4 @@
+import { StyledAuthCard } from '@/auth/components/StyledAuthCard';
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
@@ -220,7 +221,9 @@ export const SignInUp = () => {
     <StyledBackground>
       {signInUpStep === SignInUpStep.EmailVerification ? (
         <StyledAuthContent>
-          <EmailVerificationSent email={searchParams.get('email')} />
+          <StyledAuthCard>
+            <EmailVerificationSent email={searchParams.get('email')} />
+          </StyledAuthCard>
         </StyledAuthContent>
       ) : (
         <SignInUpStandardContent

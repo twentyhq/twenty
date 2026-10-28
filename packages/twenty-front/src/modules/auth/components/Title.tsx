@@ -12,6 +12,7 @@ const StyledTitle = styled.div<Pick<TitleProps, 'noMarginTop'>>`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.xl};
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  letter-spacing: -0.01em;
   margin-bottom: ${themeCssVariables.spacing[4]};
   margin-top: ${({ noMarginTop }) =>
     !noMarginTop ? themeCssVariables.spacing[4] : '0'};
