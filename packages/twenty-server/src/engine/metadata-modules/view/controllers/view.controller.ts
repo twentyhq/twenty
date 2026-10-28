@@ -208,14 +208,6 @@ export class ViewController {
     workspaceId: string,
     locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO[]> {
-    const hasTemplates = views.some((view) =>
-      hasObjectMetadataLabelPlaceholder(view.name),
-    );
-
-    if (!hasTemplates && views.every((view) => view.isCustom)) {
-      return views;
-    }
-
     const { flatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -252,8 +244,10 @@ export class ViewController {
           })
         : undefined;
 
+      const { overrides: _overrides, ...viewWithoutOverrides } = view;
+
       return {
-        ...view,
+        ...viewWithoutOverrides,
         name: resolveViewName({
           view,
           objectLabelPlaceholderValues,

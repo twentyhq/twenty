@@ -4,6 +4,7 @@ import {
   extractAndSanitizeObjectStringFields,
   isDefined,
   isNonEmptyArray,
+  isValidLocale,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
@@ -87,6 +88,17 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   if (isNonEmptyArray(invalidTranslationProperties)) {
     throw new ViewException(
       `Cannot translate view properties: ${invalidTranslationProperties.join(', ')}`,
+      ViewExceptionCode.INVALID_VIEW_DATA,
+    );
+  }
+
+  const invalidTranslationLocales = translations
+    .map(({ locale }) => locale)
+    .filter((locale) => !isValidLocale(locale));
+
+  if (isNonEmptyArray(invalidTranslationLocales)) {
+    throw new ViewException(
+      `Unsupported translation locales: ${invalidTranslationLocales.join(', ')}`,
       ViewExceptionCode.INVALID_VIEW_DATA,
     );
   }

@@ -6,6 +6,7 @@ import {
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -19,6 +20,7 @@ import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadat
 import { resolveEffectiveUniversalFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity.util';
 import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { type ViewOverrides } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = '20202020-aaaa-4aaa-8aaa-000000000001';
@@ -76,19 +78,18 @@ const existingViewGroup: FlatViewGroup = {
   position: 3,
 };
 
-const updateView = ({
+const buildExistingFlatView = ({
   groupingOverride,
-  updateViewInput,
   existingTranslations,
 }: {
   groupingOverride: string | null;
-  updateViewInput: Omit<UpdateViewInput, 'id'>;
-  existingTranslations?: Record<string, { name?: string }>;
-}) => {
+  existingTranslations?: ViewOverrides['translations'];
+}): FlatView => {
   const existingViewGroups = isNull(groupingOverride)
     ? []
     : [existingViewGroup];
-  const existingView: FlatView = {
+
+  return {
     id: VIEW_ID,
     universalIdentifier: VIEW_ID,
     name: 'By Stage',
@@ -152,6 +153,24 @@ const updateView = ({
     navigationMenuItemIds: [],
     navigationMenuItemUniversalIdentifiers: [],
   };
+};
+
+const updateView = ({
+  groupingOverride,
+  updateViewInput,
+  existingTranslations,
+}: {
+  groupingOverride: string | null;
+  updateViewInput: Omit<UpdateViewInput, 'id'>;
+  existingTranslations?: ViewOverrides['translations'];
+}) => {
+  const existingViewGroups = isNull(groupingOverride)
+    ? []
+    : [existingViewGroup];
+  const existingView = buildExistingFlatView({
+    groupingOverride,
+    existingTranslations,
+  });
 
   return fromUpdateViewInputToFlatViewToUpdateOrThrow({
     updateViewInput: { id: VIEW_ID, ...updateViewInput },
@@ -232,6 +251,15 @@ describe('fromUpdateViewInputToFlatViewToUpdateOrThrow', () => {
   });
 
   describe('translations', () => {
+    const buildI18nContext = (locale: 'en' | 'fr-FR' | 'zh-CN') => ({
+      locale,
+      i18nInstance: { _: (id: string) => id },
+      isStandardApp: false,
+      workspaceCustomApplicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ownerApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
     const resolveNameInLocale = ({
       translations,
       locale,
@@ -243,17 +271,12 @@ describe('fromUpdateViewInputToFlatViewToUpdateOrThrow', () => {
         view: {
           name: 'By Stage',
           overrides: {
-            [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: { translations },
+            [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+              translations,
+            },
           },
         },
-        i18nContext: {
-          locale,
-          i18nInstance: { _: (id: string) => id },
-          isStandardApp: false,
-          workspaceCustomApplicationUniversalIdentifier:
-            WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-          ownerApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-        },
+        i18nContext: buildI18nContext(locale),
       });
 
     it('stores per-locale name translations authored by the workspace', () => {
@@ -329,6 +352,39 @@ describe('fromUpdateViewInputToFlatViewToUpdateOrThrow', () => {
           universalFlatEntity: flatViewToUpdate,
         }).name,
       ).toBe('Renamed view');
+    });
+
+    it('keeps stored translations on the view DTO for name resolution', () => {
+      const viewDto = fromFlatViewToViewDto(
+        buildExistingFlatView({
+          groupingOverride: null,
+          existingTranslations: { 'fr-FR': { name: 'Par étape' } },
+        }),
+      );
+
+      expect(
+        resolveViewName({
+          view: viewDto,
+          i18nContext: buildI18nContext('fr-FR'),
+        }),
+      ).toBe('Par étape');
+    });
+
+    it('throws on an unsupported locale', () => {
+      expect(() =>
+        updateView({
+          groupingOverride: null,
+          updateViewInput: {
+            translations: [
+              {
+                locale: 'fr_FR' as keyof typeof APP_LOCALES,
+                property: 'name',
+                value: 'Par étape',
+              },
+            ],
+          },
+        }),
+      ).toThrow('Unsupported translation locales: fr_FR');
     });
 
     it('throws when translating a non-translatable property', () => {
