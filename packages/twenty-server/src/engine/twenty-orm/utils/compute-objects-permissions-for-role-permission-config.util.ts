@@ -50,9 +50,7 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
     Object.values(nonApplicationRoleIdsBySource).filter(isDefined),
   );
 
-  // Only an application acting through its own role keeps its objects' disabled
-  // actions, as the row access policy does: a member, API key or agent holding
-  // that role (Admin is the Standard application's default role) stays restricted
+  // A member, API key or agent holding an app's default role (Admin) stays restricted
   const getActingApplicationId = (roleId: string) =>
     roleId === applicationRoleId && !nonApplicationRoleIds.has(roleId)
       ? applicationIdByDefaultRoleId[roleId]
