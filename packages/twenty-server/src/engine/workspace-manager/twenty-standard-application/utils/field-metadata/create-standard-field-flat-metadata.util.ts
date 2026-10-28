@@ -75,6 +75,9 @@ export const createStandardFieldFlatMetadata = <
   const name = fieldName.toString();
   const searchFields: ReadonlyArray<{ name: string }> =
     SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName];
+  const partialSystemFlatFieldMetadata = Object.entries(
+    PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
+  ).find(([partialSystemFieldName]) => partialSystemFieldName === name)?.[1];
 
   return {
     id: fieldIds[fieldName].id,
@@ -96,17 +99,9 @@ export const createStandardFieldFlatMetadata = <
     isAuditLogged: isAuditLoggableFieldType(type),
     isUIEditable,
     writability:
-      name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
-        ? PARTIAL_SYSTEM_FLAT_FIELD_METADATAS[
-            name as keyof typeof PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
-          ].writability
-        : MetadataWritability.OPEN,
+      partialSystemFlatFieldMetadata?.writability ?? MetadataWritability.OPEN,
     disabledFieldPermissionActions:
-      name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
-        ? PARTIAL_SYSTEM_FLAT_FIELD_METADATAS[
-            name as keyof typeof PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
-          ].disabledFieldPermissionActions
-        : null,
+      partialSystemFlatFieldMetadata?.disabledFieldPermissionActions ?? null,
     isLabelSyncedWithName: false,
     overrides: null,
     defaultValue: defaultValue ?? null,
