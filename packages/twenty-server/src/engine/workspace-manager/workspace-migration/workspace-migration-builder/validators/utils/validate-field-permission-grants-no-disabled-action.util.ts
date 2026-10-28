@@ -12,6 +12,7 @@ export const validateFieldPermissionGrantsNoDisabledAction = ({
   flatFieldPermission,
   flatFieldMetadata,
   flatRole,
+  applicationDefaultRoleUniversalIdentifier,
 }: {
   flatFieldPermission: Pick<
     UniversalFlatFieldPermission,
@@ -24,17 +25,24 @@ export const validateFieldPermissionGrantsNoDisabledAction = ({
       >
     | undefined;
   flatRole:
-    | Pick<UniversalFlatRole, 'applicationUniversalIdentifier'>
+    | Pick<
+        UniversalFlatRole,
+        'universalIdentifier' | 'applicationUniversalIdentifier'
+      >
     | undefined;
+  applicationDefaultRoleUniversalIdentifier: string | undefined;
 }): FlatEntityValidationError[] => {
   if (!isDefined(flatFieldMetadata)) {
     return [];
   }
 
-  // the owning application keeps disabled actions on its own fields, so its roles may grant them
+  // mirrors the runtime: only the owning application's default role keeps disabled actions
   if (
-    flatRole?.applicationUniversalIdentifier ===
-    flatFieldMetadata.applicationUniversalIdentifier
+    isDefined(flatRole) &&
+    flatRole.universalIdentifier ===
+      applicationDefaultRoleUniversalIdentifier &&
+    flatRole.applicationUniversalIdentifier ===
+      flatFieldMetadata.applicationUniversalIdentifier
   ) {
     return [];
   }
