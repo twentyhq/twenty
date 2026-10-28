@@ -1,3 +1,4 @@
+import { getRecordShortLabel } from '@/companies/utils/getRecordShortLabel';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
@@ -23,6 +24,7 @@ type RecordChipProps = {
   to?: string | undefined;
   size?: ChipSize;
   isLabelHidden?: boolean;
+  isLabelShortened?: boolean;
   isIconHidden?: boolean;
   triggerEvent?: TriggerEventType;
   onClick?: (event: MouseEvent) => void;
@@ -38,6 +40,7 @@ export const RecordChip = ({
   size,
   forceDisableClick = false,
   isLabelHidden = false,
+  isLabelShortened = false,
   isIconHidden = false,
   triggerEvent = 'MOUSE_DOWN',
   onClick,
@@ -47,7 +50,13 @@ export const RecordChip = ({
     record,
   });
 
-  const { text: label, content } = getChipLabel(recordChipData.name);
+  const shortLabel = isLabelShortened
+    ? getRecordShortLabel({ objectNameSingular, record })
+    : undefined;
+
+  const { text: label, content } = getChipLabel(
+    shortLabel ?? recordChipData.name,
+  );
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 

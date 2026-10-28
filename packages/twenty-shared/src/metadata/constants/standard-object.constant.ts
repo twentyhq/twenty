@@ -342,6 +342,7 @@ export const STANDARD_OBJECTS = {
         fields: STANDARD_OBJECT_FIELDS.company,
         viewFieldNames: [
           'name',
+          'shortName',
           'domainName',
           'createdBy',
           'accountOwner',
@@ -355,6 +356,7 @@ export const STANDARD_OBJECTS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
         fields: STANDARD_OBJECT_FIELDS.company,
         viewFieldNames: [
+          'shortName',
           'domainName',
           'accountOwner',
           'annualRevenue',

@@ -1,4 +1,5 @@
 import { type RecordGqlFields } from 'twenty-shared/types';
+import { getShortLabelFieldMetadataItem } from '@/companies/utils/getShortLabelFieldMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
@@ -89,6 +90,8 @@ export const useRelevantRecordsGqlFields = ({
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
   const imageIdentifierFieldMetadataItem =
     getImageIdentifierFieldMetadataItem(objectMetadataItem);
+  const shortLabelFieldMetadataItem =
+    getShortLabelFieldMetadataItem(objectMetadataItem);
 
   const hasPosition = hasObjectMetadataItemPositionField(objectMetadataItem);
 
@@ -99,6 +102,9 @@ export const useRelevantRecordsGqlFields = ({
       : {}),
     ...(isDefined(imageIdentifierFieldMetadataItem)
       ? { [imageIdentifierFieldMetadataItem.name]: true }
+      : {}),
+    ...(isDefined(shortLabelFieldMetadataItem)
+      ? { [shortLabelFieldMetadataItem.name]: true }
       : {}),
     ...(hasPosition ? { position: true } : {}),
     ...allDepthOneGqlFields,

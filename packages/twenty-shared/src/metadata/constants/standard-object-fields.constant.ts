@@ -738,6 +738,9 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
     ),
     name: { universalIdentifier: '20202020-4d99-4e2e-a84c-4a27837b1ece' },
+    shortName: {
+      universalIdentifier: '2e3f4ee3-93b5-41dd-8ba5-778f8214c2d0',
+    },
     domainName: {
       universalIdentifier: '20202020-0c28-43d8-8ba5-3659924d3489',
     },

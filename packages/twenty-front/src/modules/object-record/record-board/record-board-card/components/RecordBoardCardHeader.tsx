@@ -127,6 +127,7 @@ export const RecordBoardCardHeader = () => {
               objectNameSingular={objectMetadataItem.nameSingular}
               record={recordStore}
               variant="ghost"
+              isLabelShortened
               onClick={() => {
                 activateBoardCard({ rowIndex, columnIndex });
                 unfocusBoardCard();

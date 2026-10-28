@@ -136,6 +136,7 @@ export const RecordBoardCardBody = () => {
                 fieldDefinition: correspondingFieldDefinition,
                 useUpdateRecord: useUpdateOneRecordHook,
                 isDisplayModeFixHeight: true,
+                isRecordChipLabelShortened: true,
                 triggerEvent: 'CLICK',
                 anchorId: isDragOverlay
                   ? undefined

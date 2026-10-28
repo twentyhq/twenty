@@ -14,7 +14,8 @@ export const RelationToOneFieldDisplay = () => {
     foreignKeyFieldValue,
   } = useRelationToOneFieldDisplay();
 
-  const { disableChipClick, triggerEvent } = useContext(FieldContext);
+  const { disableChipClick, isRecordChipLabelShortened, triggerEvent } =
+    useContext(FieldContext);
 
   if (!isDefined(fieldValue) && isDefined(foreignKeyFieldValue)) {
     return <ForbiddenFieldDisplay />;
@@ -40,6 +41,7 @@ export const RelationToOneFieldDisplay = () => {
       forceDisableClick={
         isWorkspaceMemberFieldMetadataRelation || disableChipClick
       }
+      isLabelShortened={isRecordChipLabelShortened}
       triggerEvent={triggerEvent}
     />
   );

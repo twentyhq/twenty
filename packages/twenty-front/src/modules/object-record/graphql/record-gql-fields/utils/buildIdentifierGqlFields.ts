@@ -1,3 +1,4 @@
+import { getShortLabelFieldMetadataItem } from '@/companies/utils/getShortLabelFieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -17,6 +18,7 @@ export const buildIdentifierGqlFields = (
     getLabelIdentifierFieldMetadataItem(objectMetadata);
   const imageIdentifierField =
     getImageIdentifierFieldMetadataItem(objectMetadata);
+  const shortLabelField = getShortLabelFieldMetadataItem(objectMetadata);
 
   return {
     id: true,
@@ -25,6 +27,9 @@ export const buildIdentifierGqlFields = (
     }),
     ...(isDefined(imageIdentifierField) && {
       [imageIdentifierField.name]: true,
+    }),
+    ...(isDefined(shortLabelField) && {
+      [shortLabelField.name]: true,
     }),
   };
 };

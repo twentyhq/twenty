@@ -154,6 +154,29 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  shortName: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'shortName',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(
+        msg({ message: `Short name`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Short company name shown on compact surfaces like kanban cards`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconAbc',
+      isNullable: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   domainName: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

@@ -21,7 +21,8 @@ export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
     useRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
-  const { disableChipClick, triggerEvent } = useContext(FieldContext);
+  const { disableChipClick, isRecordChipLabelShortened, triggerEvent } =
+    useContext(FieldContext);
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const { objectMetadataNameSingular } = fieldDefinition.metadata;
@@ -100,6 +101,7 @@ export const RelationFromManyFieldDisplay = () => {
             objectNameSingular={objectMetadata.nameSingular}
             record={record}
             forceDisableClick={disableChipClick}
+            isLabelShortened={isRecordChipLabelShortened}
             triggerEvent={triggerEvent}
           />
         ))}
@@ -121,6 +123,7 @@ export const RelationFromManyFieldDisplay = () => {
             objectNameSingular={recordChipData.objectNameSingular}
             record={record}
             forceDisableClick={disableChipClick}
+            isLabelShortened={isRecordChipLabelShortened}
             triggerEvent={triggerEvent}
           />
         );

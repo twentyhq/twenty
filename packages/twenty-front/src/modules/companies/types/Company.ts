@@ -5,6 +5,7 @@ export type Company = {
   updatedAt?: string;
   deletedAt?: string | null;
   name: string;
+  shortName?: string | null;
   domainName:
     | string
     | {
