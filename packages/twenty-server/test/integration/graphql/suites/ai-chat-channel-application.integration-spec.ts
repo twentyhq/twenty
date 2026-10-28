@@ -15,7 +15,9 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { type ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -636,10 +638,15 @@ describe('Uninstalling an application that created inbox channels', () => {
   const createdThreadIds: string[] = [];
   const createdChannelIds: string[] = [];
   let uninstalledApplication: ApplicationUnderTest;
+  let rolledBackApplication: ApplicationUnderTest;
 
   beforeAll(async () => {
     uninstalledApplication = await setupApplicationUnderTest({
       name: 'Uninstalled Channel Application',
+      permissionFlagUniversalIdentifiers: CHANNEL_MANAGER_PERMISSION_FLAGS,
+    });
+    rolledBackApplication = await setupApplicationUnderTest({
+      name: 'Rolled Back Channel Application',
       permissionFlagUniversalIdentifiers: CHANNEL_MANAGER_PERMISSION_FLAGS,
     });
   }, 180_000);
@@ -656,15 +663,36 @@ describe('Uninstalling an application that created inbox channels', () => {
       });
     }
 
-    if (!isDefined(uninstalledApplication)) {
-      return;
+    for (const { application } of [
+      uninstalledApplication,
+      rolledBackApplication,
+    ].filter(isDefined)) {
+      await cleanupApplicationAndAppRegistration({
+        applicationUniversalIdentifier: application.universalIdentifier,
+      });
     }
-
-    await cleanupApplicationAndAppRegistration({
-      applicationUniversalIdentifier:
-        uninstalledApplication.application.universalIdentifier,
-    });
   }, 120_000);
+
+  const createChannelOrThrow = async ({
+    input,
+    token,
+  }: {
+    input: Record<string, unknown>;
+    token: string;
+  }): Promise<string> => {
+    const response = await makeMetadataApiRequest(
+      { query: CREATE_CHANNEL, variables: { input } },
+      token,
+    );
+
+    assertGraphQLSuccessfulResponse(response);
+
+    const channelId = response.body.data.createAgentChatChannel.id;
+
+    createdChannelIds.push(channelId);
+
+    return channelId;
+  };
 
   const createThreadInChannel = async (channelId: string): Promise<string> => {
     const response = await makeMetadataApiRequest({
@@ -685,25 +713,13 @@ describe('Uninstalling an application that created inbox channels', () => {
     const workspaceCustomApplicationId =
       await findWorkspaceCustomApplicationId();
     const { id: memberRoleId } = await findOneRoleByLabel({ label: 'Member' });
-    const createResponse = await makeMetadataApiRequest(
-      {
-        query: CREATE_CHANNEL,
-        variables: {
-          input: {
-            name: buildChannelName(),
-            roleIds: [uninstalledApplication.roleId, memberRoleId],
-          },
-        },
+    const channelId = await createChannelOrThrow({
+      input: {
+        name: buildChannelName(),
+        roleIds: [uninstalledApplication.roleId, memberRoleId],
       },
-      uninstalledApplication.token,
-    );
-
-    assertGraphQLSuccessfulResponse(createResponse);
-
-    const channelId = createResponse.body.data.createAgentChatChannel.id;
-
-    createdChannelIds.push(channelId);
-
+      token: uninstalledApplication.token,
+    });
     const threadId = await createThreadInChannel(channelId);
 
     expect(await readChannelGrantRoleIds(threadId)).toContain(
@@ -739,5 +755,27 @@ describe('Uninstalling an application that created inbox channels', () => {
 
     expect(grantRoleIds).toContain(memberRoleId);
     expect(grantRoleIds).not.toContain(uninstalledApplication.roleId);
+  }, 60_000);
+
+  it('deletes its channels when its failed install is rolled back', async () => {
+    const channelId = await createChannelOrThrow({
+      input: {
+        name: buildChannelName(),
+        roleIds: [rolledBackApplication.roleId],
+      },
+      token: rolledBackApplication.token,
+    });
+
+    await getAppProviderByClassName<ApplicationSyncService>(
+      'ApplicationSyncService',
+    ).uninstallApplication({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      applicationUniversalIdentifier:
+        rolledBackApplication.application.universalIdentifier,
+      shouldRunUninstallHook: false,
+      shouldKeepAgentChatChannels: false,
+    });
+
+    expect(await readChannelApplicationId(channelId)).toBeUndefined();
   }, 60_000);
 });

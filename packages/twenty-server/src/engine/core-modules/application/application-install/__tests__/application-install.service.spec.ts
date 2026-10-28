@@ -63,6 +63,15 @@ describe('ApplicationInstallService', () => {
   const appRegistrationRepository = {
     findOne: jest.fn(),
   };
+  const applicationSyncService = {
+    uninstallApplication: jest.fn(),
+  };
+  const applicationManifestApplyService = {
+    applyManifestToWorkspace: jest
+      .fn()
+      .mockResolvedValue({ workspaceMigration: { actions: [] } }),
+    refreshRegistrationFromManifest: jest.fn(),
+  };
 
   const service = new ApplicationInstallService(
     appRegistrationRepository as unknown as Repository<ApplicationRegistrationEntity>,
@@ -75,13 +84,8 @@ describe('ApplicationInstallService', () => {
     {
       ensureNpmVersion: jest.fn().mockResolvedValue(undefined),
     } as unknown as ApplicationRegistrationVersionService,
-    {} as ApplicationSyncService,
-    {
-      applyManifestToWorkspace: jest
-        .fn()
-        .mockResolvedValue({ workspaceMigration: { actions: [] } }),
-      refreshRegistrationFromManifest: jest.fn(),
-    } as unknown as ApplicationManifestApplyService,
+    applicationSyncService as unknown as ApplicationSyncService,
+    applicationManifestApplyService as unknown as ApplicationManifestApplyService,
     fileStorageService as unknown as FileStorageService,
     {} as LogicFunctionExecutorService,
     {
@@ -184,6 +188,28 @@ describe('ApplicationInstallService', () => {
       workspaceId: WORKSPACE_ID,
     });
     expect(isLogoFileStoredWhenLogoIsSet).toEqual([true]);
+  });
+
+  it('rolls back a failed fresh install without keeping its channels', async () => {
+    applicationLookupService.findByUniversalIdentifier.mockResolvedValue(null);
+    applicationService.create.mockResolvedValue({
+      id: APPLICATION_ID,
+      logo: null,
+      logoFileId: null,
+      version: null,
+    });
+    applicationManifestApplyService.applyManifestToWorkspace.mockRejectedValueOnce(
+      new Error('Manifest sync failed'),
+    );
+
+    await expect(install()).rejects.toThrow('Manifest sync failed');
+
+    expect(applicationSyncService.uninstallApplication).toHaveBeenCalledWith({
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      workspaceId: WORKSPACE_ID,
+      shouldRunUninstallHook: false,
+      shouldKeepAgentChatChannels: false,
+    });
   });
 
   it('does not update an upgraded application whose logo is unchanged', async () => {
