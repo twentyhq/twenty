@@ -2,10 +2,8 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { NavigationDrawerAiChatInboxSection } from '@/ai/components/NavigationDrawerAiChatInboxSection';
@@ -133,19 +131,6 @@ describe('NavigationDrawerAiChatInboxSection', () => {
     await expectInboxRowToHaveText({ name: /^Open$/, text: /^Open\s*2$/ });
   });
 
-  it('shows only Open until See more reveals the other statuses', async () => {
-    renderInboxSection({ visibleItemLimit: 1 });
-
-    await expectInboxRowToHaveText({ name: /^Open$/, text: /^Open\s*2$/ });
-    expect(screen.queryByRole('button', { name: 'Snoozed' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Done' })).toBeNull();
-
-    await userEvent.click(screen.getByRole('button', { name: 'See more' }));
-
-    expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
-    expect(screen.getByRole('button', { name: 'Done' })).toBeVisible();
-  });
-
   it('marks the status the inbox shows as current', () => {
     jotaiStore.set(
       agentChatThreadFilterStatusState.atom,
@@ -163,7 +148,7 @@ describe('NavigationDrawerAiChatInboxSection', () => {
     );
   });
 
-  it('hides the statuses narrowing Open while another status is shown', () => {
+  it('keeps personal filters visible while Snoozed is shown', () => {
     jotaiStore.set(
       agentChatThreadFilterStatusState.atom,
       AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
@@ -171,10 +156,10 @@ describe('NavigationDrawerAiChatInboxSection', () => {
 
     renderInboxSection();
 
-    expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Mentions' })).toBeVisible();
   });
 
-  it('keeps the statuses narrowing Open while one of them is shown', () => {
+  it('marks Mentions as current without hiding the other filters', () => {
     jotaiStore.set(
       agentChatThreadFilterStatusState.atom,
       AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
@@ -189,23 +174,10 @@ describe('NavigationDrawerAiChatInboxSection', () => {
     expect(screen.getByRole('button', { name: 'Assigned' })).toBeVisible();
   });
 
-  it('hides the statuses narrowing Open outside the inbox', () => {
+  it('keeps personal filters visible outside the inbox', () => {
     renderInboxSection({ path: '/objects/companies' });
 
-    expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
-  });
-
-  it('opens the inbox on the chosen status', async () => {
-    renderInboxSection();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Snoozed' }));
-
-    expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
-      AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
-    );
-    expect(navigate).toHaveBeenCalledWith(AppPath.AiChatInbox, {
-      threadId: null,
-    });
+    expect(screen.getByRole('button', { name: 'Mentions' })).toBeVisible();
   });
 
   it('counts the open chats waiting on an answer in Needs input', async () => {
@@ -229,7 +201,7 @@ describe('NavigationDrawerAiChatInboxSection', () => {
       name: /^Needs input$/,
       text: /^Needs input\s*3$/,
     });
-    expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Mentions' })).toBeVisible();
   });
 
   it('flags and counts Mentions when chats the member was mentioned in are unread', async () => {
@@ -247,7 +219,7 @@ describe('NavigationDrawerAiChatInboxSection', () => {
     });
   });
 
-  it('keeps the statuses narrowing Open with unread chats in view outside the inbox', async () => {
+  it('preserves unread counts outside the inbox', async () => {
     renderInboxSection({
       path: '/objects/companies',
       summary: {
@@ -261,17 +233,7 @@ describe('NavigationDrawerAiChatInboxSection', () => {
       name: /^Assigned\s*, unread$/,
       text: /^Assigned\s*, unread\s*1$/,
     });
-    expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
-  });
-
-  it('opens the inbox on the chats the member was mentioned in', async () => {
-    renderInboxSection();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Mentions' }));
-
-    expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
-      AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
-    );
+    expect(screen.getByRole('button', { name: 'Mentions' })).toBeVisible();
   });
 
   it('flags and counts Assigned when chats assigned to the member are unread', async () => {
