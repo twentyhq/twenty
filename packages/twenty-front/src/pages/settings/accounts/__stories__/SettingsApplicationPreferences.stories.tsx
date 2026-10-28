@@ -360,7 +360,7 @@ export const FailedOAuthReturnShowsItsMessage: Story = {
   args: {
     routeParams: { ':applicationId': FATHOM_APPLICATION_ID },
     searchParams: { errorMessage: FAILED_OAUTH_ERROR_MESSAGE },
-    routeHash: '#connections',
+    routeHash: '#general',
   },
   decorators: [
     (Story) => (
@@ -383,7 +383,7 @@ export const FailedOAuthReturnShowsItsMessage: Story = {
     ).toBeVisible();
     await waitFor(() =>
       expect(canvas.getByTestId('location-probe')).toHaveTextContent(
-        /^#connections$/,
+        /^#general$/,
       ),
     );
     expect(

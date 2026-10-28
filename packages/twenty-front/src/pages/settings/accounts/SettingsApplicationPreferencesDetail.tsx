@@ -1,7 +1,7 @@
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsAppPreferencesGeneralTab } from '@/settings/app-preferences/components/SettingsAppPreferencesGeneralTab';
-import { APPLICATION_PREFERENCES_CONNECTIONS_TAB_ID } from '@/settings/app-preferences/constants/ApplicationPreferencesConnectionsTabId';
+import { APPLICATION_PREFERENCES_GENERAL_TAB_ID } from '@/settings/app-preferences/constants/ApplicationPreferencesGeneralTabId';
 import { SETTINGS_APPLICATION_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsApplicationPreferencesTabListComponentId';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { APPLICATION_VARIABLES_TAB_ID } from '@/settings/applications/constants/ApplicationVariablesTabId';
@@ -90,7 +90,7 @@ export const SettingsApplicationPreferencesDetail = ({
 
   const tabs: SingleTabProps[] = [
     {
-      id: APPLICATION_PREFERENCES_CONNECTIONS_TAB_ID,
+      id: APPLICATION_PREFERENCES_GENERAL_TAB_ID,
       title: t`General`,
       Icon: IconSettings,
     },
@@ -183,7 +183,7 @@ export const SettingsApplicationPreferencesDetail = ({
       <SettingsApplicationStoppedBanner
         applicationUniversalIdentifier={application.universalIdentifier}
       />
-      {activeTabId === APPLICATION_PREFERENCES_CONNECTIONS_TAB_ID && (
+      {activeTabId === APPLICATION_PREFERENCES_GENERAL_TAB_ID && (
         <SettingsAppPreferencesGeneralTab
           application={application}
           displayName={appName}
