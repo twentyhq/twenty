@@ -8135,6 +8135,11 @@ msgstr "Συγχώνευση {objectLabelPlural}"
 msgid "Merging blocklist entries is not allowed."
 msgstr "Η συγχώνευση καταχωρίσεων λίστας αποκλεισμού δεν επιτρέπεται."
 
+#. js-lingui-id: kGsb0J
+#: src/modules/dashboard/query-hooks/dashboard-merge-many.pre-query.hook.ts
+msgid "Merging dashboards is not allowed."
+msgstr ""
+
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
