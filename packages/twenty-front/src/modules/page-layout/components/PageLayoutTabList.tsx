@@ -93,6 +93,18 @@ const StyledContainer = styled.div<{
     position: absolute;
     right: 0;
   }
+
+  // Active tabs derive both label and icon color from this token.
+  & [role='tab'][aria-selected='true'],
+  & a[aria-current='page'] {
+    --t-font-color-primary: ${themeCssVariables.color.blue};
+  }
+
+  & [role='tablist'] > [role='presentation'],
+  & a[aria-current='page']::after {
+    background: ${themeCssVariables.color.blue};
+    block-size: 2px;
+  }
 `;
 
 const StyledDropdownContainer = styled.div`

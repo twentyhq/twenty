@@ -25,8 +25,8 @@ const StyledPropertyBox = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  padding-bottom: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[3]};
+  padding-bottom: ${themeCssVariables.spacing[4]};
   padding-top: ${themeCssVariables.spacing[3]};
 `;
 
@@ -37,7 +37,7 @@ const StyledInlineFieldsPropertyBox = styled.div<{
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[3]};
   padding-bottom: ${({ hasMoreGroup }) =>
     hasMoreGroup ? themeCssVariables.spacing[3] : '0'};
   padding-top: 0;

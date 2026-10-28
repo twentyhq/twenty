@@ -88,6 +88,13 @@ jest.mock(
 );
 
 jest.mock(
+  '@/object-record/record-show/components/RecordShowSidePanelIdentity',
+  () => ({
+    RecordShowSidePanelIdentity: () => <div data-testid="record-identity" />,
+  }),
+);
+
+jest.mock(
   '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect',
   () => ({
     RecordShowPageSSESubscribeEffect: () => <div data-testid="record-sse" />,
@@ -180,6 +187,7 @@ describe('RecordShowPage workspace surface composition', () => {
     expect(screen.getByTestId('record-header')).toBeInTheDocument();
     expect(screen.getByTestId('main-command-menu')).toBeInTheDocument();
     expect(screen.getByTestId('side-panel-toggle')).toBeInTheDocument();
+    expect(screen.queryByTestId('record-identity')).not.toBeInTheDocument();
     expect(screen.getByTestId('record-renderer')).toBeInTheDocument();
   });
 
@@ -205,6 +213,7 @@ describe('RecordShowPage workspace surface composition', () => {
     expect(screen.getByTestId('record-page-title')).toBeInTheDocument();
     expect(screen.queryByTestId('main-command-menu')).not.toBeInTheDocument();
     expect(screen.queryByTestId('side-panel-toggle')).not.toBeInTheDocument();
+    expect(screen.getByTestId('record-identity')).toBeInTheDocument();
     expect(screen.getByTestId('record-renderer')).toBeInTheDocument();
     expect(screen.getByTestId('record-sse')).toBeInTheDocument();
   });

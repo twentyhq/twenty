@@ -11,6 +11,7 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
+import { RecordShowSidePanelIdentity } from '@/object-record/record-show/components/RecordShowSidePanelIdentity';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
 import { type RecordShowPageHeaderTitleMode } from '@/object-record/record-show/types/RecordShowPageHeaderTitleMode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -51,6 +52,9 @@ export const RecordShowPageShell = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
+
+  const isSidePanelIdentityVisible =
+    isInSidePanel && !isRecordIdentifierBarHidden;
 
   const recordShowComponentInstanceId =
     useWorkspaceSurfaceScopedComponentInstanceId(
@@ -94,6 +98,7 @@ export const RecordShowPageShell = ({
               titleMode={headerTitleMode}
               titlePrefix={headerTitlePrefix}
               titleAccessory={headerTitleAccessory}
+              isRecordTitleInBody={isSidePanelIdentityVisible}
             >
               {!isInSidePanel && (
                 <>
@@ -112,6 +117,12 @@ export const RecordShowPageShell = ({
               recordId: objectRecordId,
             }}
           >
+            {isSidePanelIdentityVisible && (
+              <RecordShowSidePanelIdentity
+                objectNameSingular={objectNameSingular}
+                objectRecordId={objectRecordId}
+              />
+            )}
             <PageLayoutRecordPageRenderer
               targetRecordIdentifier={{
                 id: objectRecordId,

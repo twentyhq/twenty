@@ -7,15 +7,17 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledHeader = styled.header`
   align-items: center;
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   cursor: pointer;
   display: flex;
-  height: 24px;
+  height: 32px;
   justify-content: space-between;
 `;
 
 const StyledTitleLabel = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-weight: ${themeCssVariables.font.weight.medium};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledChevronWrapper = styled.div<{ isExpanded: boolean }>`

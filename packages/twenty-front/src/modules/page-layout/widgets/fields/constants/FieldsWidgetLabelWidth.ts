@@ -1,0 +1,1 @@
+export const FIELDS_WIDGET_LABEL_WIDTH = 136;

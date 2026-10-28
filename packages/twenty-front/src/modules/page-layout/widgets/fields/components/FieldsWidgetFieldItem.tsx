@@ -9,6 +9,7 @@ import {
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationForbidden';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
+import { FIELDS_WIDGET_LABEL_WIDTH } from '@/page-layout/widgets/fields/constants/FieldsWidgetLabelWidth';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { type ObjectPermissions } from 'twenty-shared/types';
 
@@ -42,13 +43,16 @@ export const FieldsWidgetFieldItem = ({
   instanceId,
   onMouseEnter,
 }: FieldsWidgetFieldItemProps) => {
-  const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
-    field: fieldMetadataItem,
-    position: globalIndex,
-    objectMetadataItem,
-    showLabel: true,
-    labelWidth: 90,
-  });
+  const fieldDefinition = {
+    ...formatFieldMetadataItemAsColumnDefinition({
+      field: fieldMetadataItem,
+      position: globalIndex,
+      objectMetadataItem,
+      showLabel: true,
+      labelWidth: FIELDS_WIDGET_LABEL_WIDTH,
+    }),
+    iconName: '',
+  };
 
   return (
     <FieldContext.Provider

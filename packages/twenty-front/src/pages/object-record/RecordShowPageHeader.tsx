@@ -1,3 +1,4 @@
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getObjectMetadataIdentifierFields } from '@/object-metadata/utils/getObjectMetadataIdentifierFields';
 import { ObjectRecordShowPageBreadcrumb } from '@/object-record/record-show/components/ObjectRecordShowPageBreadcrumb';
 import { RecordIdentifierBarTitle } from '@/object-record/record-show/components/RecordIdentifierBarTitle';
@@ -6,6 +7,7 @@ import { type RecordShowPageHeaderTitleMode } from '@/object-record/record-show/
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type RecordShowPageHeaderProps = {
   objectNameSingular: string;
@@ -13,10 +15,14 @@ type RecordShowPageHeaderProps = {
   titleMode?: RecordShowPageHeaderTitleMode;
   titlePrefix?: React.ReactNode;
   titleAccessory?: React.ReactNode;
+  isRecordTitleInBody?: boolean;
   children?: React.ReactNode;
 };
 
-type RecordShowPageMainHeaderProps = RecordShowPageHeaderProps;
+type RecordShowPageMainHeaderProps = Omit<
+  RecordShowPageHeaderProps,
+  'isRecordTitleInBody'
+>;
 type RecordShowPagePanelHeaderProps = Omit<
   RecordShowPageHeaderProps,
   'children' | 'titleMode' | 'titlePrefix'
@@ -71,25 +77,56 @@ const RecordShowPageMainHeader = ({
   );
 };
 
+type RecordShowPagePanelObjectLabelHeaderProps = Pick<
+  RecordShowPagePanelHeaderProps,
+  'objectNameSingular' | 'titleAccessory'
+>;
+
+const RecordShowPagePanelObjectLabelHeader = ({
+  objectNameSingular,
+  titleAccessory,
+}: RecordShowPagePanelObjectLabelHeaderProps) => {
+  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+
+  return (
+    <PageCardHeader
+      title={
+        <>
+          {objectMetadataItem.labelSingular}
+          {titleAccessory}
+        </>
+      }
+      titleColor={themeCssVariables.font.color.tertiary}
+    />
+  );
+};
+
 const RecordShowPagePanelHeader = ({
   objectNameSingular,
   objectRecordId,
   titleAccessory,
-}: RecordShowPagePanelHeaderProps) => (
-  <PageCardHeader
-    title={
-      <>
-        <RecordIdentifierBarTitle
-          objectNameSingular={objectNameSingular}
-          objectRecordId={objectRecordId}
-          variant="side-panel"
-          recordLinkSurface="main"
-        />
-        {titleAccessory}
-      </>
-    }
-  />
-);
+  isRecordTitleInBody,
+}: RecordShowPagePanelHeaderProps) =>
+  isRecordTitleInBody === true ? (
+    <RecordShowPagePanelObjectLabelHeader
+      objectNameSingular={objectNameSingular}
+      titleAccessory={titleAccessory}
+    />
+  ) : (
+    <PageCardHeader
+      title={
+        <>
+          <RecordIdentifierBarTitle
+            objectNameSingular={objectNameSingular}
+            objectRecordId={objectRecordId}
+            variant="side-panel"
+            recordLinkSurface="main"
+          />
+          {titleAccessory}
+        </>
+      }
+    />
+  );
 
 export const RecordShowPageHeader = ({
   objectNameSingular,
@@ -97,6 +134,7 @@ export const RecordShowPageHeader = ({
   titleMode,
   titlePrefix,
   titleAccessory,
+  isRecordTitleInBody,
   children,
 }: RecordShowPageHeaderProps) => {
   const workspaceSurface = useWorkspaceSurface();
@@ -106,6 +144,7 @@ export const RecordShowPageHeader = ({
       objectNameSingular={objectNameSingular}
       objectRecordId={objectRecordId}
       titleAccessory={titleAccessory}
+      isRecordTitleInBody={isRecordTitleInBody}
     />
   ) : (
     <RecordShowPageMainHeader
