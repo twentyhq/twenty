@@ -1,5 +1,4 @@
-// The standard flag definitions as of 2.52, before 2.53 renamed CONNECTED_ACCOUNTS
-// and APPLICATIONS. Frozen: never change these values.
+// Frozen 2.52 standard flag definitions, with the pre-2.53 keys
 export const PRE_2_53_STANDARD_PERMISSION_FLAG_DEFINITIONS: readonly Readonly<{
   key: string;
   universalIdentifier: string;

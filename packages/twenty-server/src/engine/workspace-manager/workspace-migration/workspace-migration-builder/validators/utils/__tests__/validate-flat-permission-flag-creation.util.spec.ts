@@ -109,6 +109,27 @@ describe('validateFlatPermissionFlagCreation', () => {
     },
   );
 
+  it('should only report the reservation when an app flag reuses the key of an existing standard flag', () => {
+    const result = validateFlatPermissionFlagCreation(
+      buildCreationArgs({
+        flatEntityToValidate: buildFlatPermissionFlag({
+          universalIdentifier: 'new-flag',
+          key: PermissionFlagType.USER_APPS,
+        }),
+        existingFlags: [
+          buildStandardAppFlatPermissionFlag({
+            universalIdentifier: SystemPermissionFlag.USER_APPS,
+            key: PermissionFlagType.USER_APPS,
+          }),
+        ],
+      }),
+    );
+
+    expect(result.errors.map(({ code }) => code)).toEqual([
+      PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_KEY,
+    ]);
+  });
+
   it('should accept a standard permission flag key on a flag owned by the standard app', () => {
     const result = validateFlatPermissionFlagCreation(
       buildCreationArgs({

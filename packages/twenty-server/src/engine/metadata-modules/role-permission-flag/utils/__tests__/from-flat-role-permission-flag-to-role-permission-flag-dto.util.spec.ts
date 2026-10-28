@@ -68,7 +68,7 @@ describe('fromFlatRolePermissionFlagToRolePermissionFlagDto', () => {
     });
   });
 
-  it('exposes the current key of a standard flag still stored under its previous key', () => {
+  it('upgrade:2-53:rename-app-permission-flag-keys exposes the current key of a standard flag still stored under its previous key', () => {
     expect(
       fromFlatRolePermissionFlagToRolePermissionFlagDto(
         buildFlatRolePermissionFlag(),

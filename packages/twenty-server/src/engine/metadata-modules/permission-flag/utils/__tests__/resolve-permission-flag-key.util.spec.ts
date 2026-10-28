@@ -5,7 +5,7 @@ import {
 
 import { resolvePermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/utils/resolve-permission-flag-key.util';
 
-describe('resolvePermissionFlagKey', () => {
+describe('upgrade:2-53:rename-app-permission-flag-keys resolvePermissionFlagKey', () => {
   it.each<[string, PermissionFlagType]>([
     ['APPLICATIONS', PermissionFlagType.WORKSPACE_APPS],
     ['CONNECTED_ACCOUNTS', PermissionFlagType.USER_APPS],

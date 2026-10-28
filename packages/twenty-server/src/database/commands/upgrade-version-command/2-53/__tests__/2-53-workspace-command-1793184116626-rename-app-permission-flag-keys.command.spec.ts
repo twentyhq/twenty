@@ -24,15 +24,19 @@ type CommandMenuItemMigrationArgs = {
   applicationUniversalIdentifier: string;
 };
 
+const OTHER_APPLICATION_ID = '20202020-3333-4333-8333-000000000003';
+
 const buildPermissionFlag = (
   universalIdentifier: string,
   key: string,
   applicationUniversalIdentifier = TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  applicationId = 'standard-application-id',
 ): FlatPermissionFlag =>
   ({
     id: `id-${universalIdentifier}`,
     universalIdentifier,
     key,
+    applicationId,
     applicationUniversalIdentifier,
   }) as FlatPermissionFlag;
 
@@ -54,6 +58,7 @@ const buildRenamedPermissionFlags = () => [
 const buildInitialCommandMenuItems = () =>
   [
     {
+      id: 'standard-command-menu-item-id',
       universalIdentifier: '447a65cc-8535-408e-9c48-db24affb7530',
       applicationUniversalIdentifier:
         TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -61,6 +66,7 @@ const buildInitialCommandMenuItems = () =>
       conditionalPinnedExpression: null,
     },
     {
+      id: 'custom-command-menu-item-id',
       universalIdentifier: 'custom-command-menu-item',
       applicationUniversalIdentifier:
         WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -68,6 +74,7 @@ const buildInitialCommandMenuItems = () =>
       conditionalPinnedExpression: 'permissionFlags.APPLICATIONS',
     },
     {
+      id: 'other-application-command-menu-item-id',
       universalIdentifier: 'other-application-command-menu-item',
       applicationUniversalIdentifier: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
       conditionalAvailabilityExpression: 'permissionFlags.CONNECTED_ACCOUNTS',
@@ -93,6 +100,9 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
   let writes: string[];
   let getOrRecompute: jest.Mock;
   let invalidateAndRecompute: jest.Mock;
+  let findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest.Mock;
+  let validateBuildAndRunLegacyWorkspaceMigration: jest.Mock;
+  let validateBuildAndRunWorkspaceMigration: jest.Mock;
   let command: RenameAppPermissionFlagKeysCommand;
   let log: jest.SpyInstance;
   let warn: jest.SpyInstance;
@@ -137,6 +147,9 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
       flatCommandMenuItemMaps: {
         byUniversalIdentifier: indexByUniversalIdentifier(commandMenuItems),
       },
+      flatApplicationMaps: {
+        byId: { [OTHER_APPLICATION_ID]: { name: 'Invoice Exporter' } },
+      },
     }));
     invalidateAndRecompute = jest.fn(async () => {
       writes.push('permission flag cache');
@@ -179,31 +192,35 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
       ),
     } as unknown as DataSource;
 
+    findWorkspaceTwentyStandardAndCustomApplicationOrThrow = jest
+      .fn()
+      .mockResolvedValue({
+        workspaceCustomFlatApplication: {
+          universalIdentifier:
+            WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+      });
+    validateBuildAndRunLegacyWorkspaceMigration = jest.fn(
+      async (args: CommandMenuItemMigrationArgs) =>
+        applyCommandMenuItemMigration('legacy', args),
+    );
+    validateBuildAndRunWorkspaceMigration = jest.fn(
+      async (args: CommandMenuItemMigrationArgs) =>
+        applyCommandMenuItemMigration('side-effect', args),
+    );
+
     command = new RenameAppPermissionFlagKeysCommand(
       {} as WorkspaceIteratorService,
       {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            workspaceCustomFlatApplication: {
-              universalIdentifier:
-                WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-            },
-          }),
+        findWorkspaceTwentyStandardAndCustomApplicationOrThrow,
       } as unknown as ApplicationService,
       {
         getOrRecompute,
         invalidateAndRecompute,
       } as unknown as WorkspaceCacheService,
       {
-        validateBuildAndRunLegacyWorkspaceMigration: jest.fn(
-          async (args: CommandMenuItemMigrationArgs) =>
-            applyCommandMenuItemMigration('legacy', args),
-        ),
-        validateBuildAndRunWorkspaceMigration: jest.fn(
-          async (args: CommandMenuItemMigrationArgs) =>
-            applyCommandMenuItemMigration('side-effect', args),
-        ),
+        validateBuildAndRunLegacyWorkspaceMigration,
+        validateBuildAndRunWorkspaceMigration,
       } as unknown as WorkspaceMigrationValidateBuildAndRunService,
       coreDataSource,
     );
@@ -313,13 +330,74 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
         '20202020-4444-4444-8444-444444444444',
         'USER_APPS',
         OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+        OTHER_APPLICATION_ID,
       ),
     ];
 
     await expect(command.runOnWorkspace(buildArgs())).rejects.toThrow(
-      `CONNECTED_ACCOUNTS cannot become USER_APPS: permission flag 20202020-4444-4444-8444-444444444444 of application ${OTHER_APPLICATION_UNIVERSAL_IDENTIFIER} already uses that key. Permission flag keys cannot change, so uninstall the application that owns each conflicting permission flag, then rerun the upgrade.`,
+      `CONNECTED_ACCOUNTS cannot become USER_APPS: permission flag 20202020-4444-4444-8444-444444444444 of application "Invoice Exporter" (${OTHER_APPLICATION_UNIVERSAL_IDENTIFIER}) already uses that key. Permission flag keys cannot change: revoke each conflicting permission flag from every role, uninstall its application, then rerun the upgrade. upgrade --dry-run lists the workspaces that still collide.`,
     );
     expect(writes).toEqual([]);
+  });
+
+  it('reports the collision on a dry run too', async () => {
+    permissionFlags = [
+      ...permissionFlags,
+      buildPermissionFlag(
+        '20202020-4444-4444-8444-444444444444',
+        'USER_APPS',
+        OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+        OTHER_APPLICATION_ID,
+      ),
+    ];
+
+    await expect(command.runOnWorkspace(buildArgs(true))).rejects.toThrow(
+      'CONNECTED_ACCOUNTS cannot become USER_APPS',
+    );
+  });
+
+  it('leaves an invalid custom command menu item behind with a warning instead of failing', async () => {
+    validateBuildAndRunWorkspaceMigration.mockResolvedValueOnce({
+      status: 'fail',
+    });
+
+    await command.runOnWorkspace(buildArgs());
+
+    expect(getKeys()).toEqual(['USER_APPS', 'WORKSPACE_APPS', 'AI']);
+    expect(getExpressions()).toEqual([
+      'permissionFlags.USER_APPS',
+      'permissionFlags.APPLICATIONS',
+      'permissionFlags.CONNECTED_ACCOUNTS',
+    ]);
+    expect(warn).toHaveBeenCalledWith(
+      `Workspace ${WORKSPACE_ID}: left the permission flag references of 1 custom command menu item(s) unchanged because they fail validation: custom-command-menu-item-id`,
+    );
+  });
+
+  it('fails when the standard command menu items fail validation', async () => {
+    validateBuildAndRunLegacyWorkspaceMigration.mockResolvedValueOnce({
+      status: 'fail',
+      report: {},
+    });
+
+    await expect(command.runOnWorkspace(buildArgs())).rejects.toThrow(
+      `Failed to rename the app permission flag references in the standard command menu items of workspace ${WORKSPACE_ID}`,
+    );
+  });
+
+  it('skips the workspace custom application lookup when only standard items read a renamed key', async () => {
+    commandMenuItems = buildInitialCommandMenuItems().filter(
+      ({ applicationUniversalIdentifier }) =>
+        applicationUniversalIdentifier ===
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
+    await command.runOnWorkspace(buildArgs());
+
+    expect(
+      findWorkspaceTwentyStandardAndCustomApplicationOrThrow,
+    ).not.toHaveBeenCalled();
+    expect(getExpressions()).toEqual(['permissionFlags.USER_APPS']);
   });
 
   it('refreshes the cache and fails when a key changed after it was cached', async () => {

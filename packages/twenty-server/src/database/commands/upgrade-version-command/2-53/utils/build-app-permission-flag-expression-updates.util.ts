@@ -2,7 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AppPermissionFlagKeyRenameDirection } from 'src/database/commands/upgrade-version-command/2-53/types/app-permission-flag-key-rename-direction.type';
 import { getAppPermissionFlagKeyMappings } from 'src/database/commands/upgrade-version-command/2-53/utils/get-app-permission-flag-key-mappings.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 
@@ -31,7 +30,6 @@ const renameAppPermissionFlagReferences = ({
 
 export const buildAppPermissionFlagExpressionUpdates = ({
   flatCommandMenuItemByUniversalIdentifier,
-  workspaceCustomApplicationUniversalIdentifier,
   now,
   direction,
 }: {
@@ -39,13 +37,11 @@ export const buildAppPermissionFlagExpressionUpdates = ({
     string,
     FlatCommandMenuItem | undefined
   >;
-  workspaceCustomApplicationUniversalIdentifier: string;
   now: string;
-  direction: AppPermissionFlagKeyRenameDirection;
+  direction: 'up' | 'down';
 }): {
   standardCommandMenuItemsToUpdate: FlatCommandMenuItem[];
-  customCommandMenuItemsToUpdate: FlatCommandMenuItem[];
-  skippedCommandMenuItemCount: number;
+  nonStandardCommandMenuItemsToUpdate: FlatCommandMenuItem[];
 } => {
   const toKeyByFromKey = new Map(
     getAppPermissionFlagKeyMappings(direction).map(({ fromKey, toKey }) => [
@@ -55,8 +51,7 @@ export const buildAppPermissionFlagExpressionUpdates = ({
   );
 
   const standardCommandMenuItemsToUpdate: FlatCommandMenuItem[] = [];
-  const customCommandMenuItemsToUpdate: FlatCommandMenuItem[] = [];
-  let skippedCommandMenuItemCount = 0;
+  const nonStandardCommandMenuItemsToUpdate: FlatCommandMenuItem[] = [];
 
   for (const commandMenuItem of Object.values(
     flatCommandMenuItemByUniversalIdentifier,
@@ -93,20 +88,13 @@ export const buildAppPermissionFlagExpressionUpdates = ({
       TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
     ) {
       standardCommandMenuItemsToUpdate.push(updatedCommandMenuItem);
-    } else if (
-      commandMenuItem.applicationUniversalIdentifier ===
-      workspaceCustomApplicationUniversalIdentifier
-    ) {
-      customCommandMenuItemsToUpdate.push(updatedCommandMenuItem);
     } else {
-      // The owning application's next manifest sync would revert a rewrite
-      skippedCommandMenuItemCount++;
+      nonStandardCommandMenuItemsToUpdate.push(updatedCommandMenuItem);
     }
   }
 
   return {
     standardCommandMenuItemsToUpdate,
-    customCommandMenuItemsToUpdate,
-    skippedCommandMenuItemCount,
+    nonStandardCommandMenuItemsToUpdate,
   };
 };

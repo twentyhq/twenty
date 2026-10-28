@@ -56,10 +56,11 @@ export const validateFlatPermissionFlagCreation = ({
     });
   }
 
-  if (
+  const isKeyReserved =
     !belongsToTwentyStandardApp(flatPermissionFlagToValidate) &&
-    RESERVED_PERMISSION_FLAG_KEYS.has(flatPermissionFlagToValidate.key)
-  ) {
+    RESERVED_PERMISSION_FLAG_KEYS.has(flatPermissionFlagToValidate.key);
+
+  if (isKeyReserved) {
     validationResult.errors.push({
       code: PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_KEY,
       message: t`Permission flag definition key "${flatPermissionFlagToValidate.key}" is reserved for a standard permission flag`,
@@ -77,7 +78,7 @@ export const validateFlatPermissionFlagCreation = ({
         flatPermissionFlagToValidate.universalIdentifier,
   );
 
-  if (isDefined(collidingPermissionFlag)) {
+  if (!isKeyReserved && isDefined(collidingPermissionFlag)) {
     validationResult.errors.push({
       code: PermissionFlagExceptionCode.PERMISSION_FLAG_ALREADY_EXISTS,
       message: t`Permission flag definition with key "${flatPermissionFlagToValidate.key}" is already registered in this workspace.`,

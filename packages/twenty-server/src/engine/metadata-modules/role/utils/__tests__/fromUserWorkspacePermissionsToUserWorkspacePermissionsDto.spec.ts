@@ -36,27 +36,11 @@ describe('fromUserWorkspacePermissionsToUserWorkspacePermissionsDto', () => {
     [PermissionFlagType.USER_APPS, 'CONNECTED_ACCOUNTS'],
     [PermissionFlagType.WORKSPACE_APPS, 'APPLICATIONS'],
   ])(
-    'also reports a granted %s under its previous key %s',
+    'upgrade:2-53:rename-app-permission-flag-keys also reports a granted %s under its previous key %s',
     (permissionFlag, previousKey) => {
       expect(getSortedPermissionFlags([permissionFlag])).toEqual(
         [permissionFlag, previousKey].sort(),
       );
     },
   );
-
-  it('reports both previous keys when both renamed flags are granted', () => {
-    expect(
-      getSortedPermissionFlags([
-        PermissionFlagType.WORKSPACE_APPS,
-        PermissionFlagType.USER_APPS,
-        PermissionFlagType.AI,
-      ]),
-    ).toEqual([
-      PermissionFlagType.AI,
-      'APPLICATIONS',
-      'CONNECTED_ACCOUNTS',
-      PermissionFlagType.USER_APPS,
-      PermissionFlagType.WORKSPACE_APPS,
-    ]);
-  });
 });

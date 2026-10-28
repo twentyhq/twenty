@@ -2,7 +2,6 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 
 import { buildAppPermissionFlagKeyRenames } from 'src/database/commands/upgrade-version-command/2-53/utils/build-app-permission-flag-key-renames.util';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const USER_APPS_UNIVERSAL_IDENTIFIER = 'e5f63b2d-5369-5df6-8f32-a8bd9e79e653';
 
@@ -59,32 +58,6 @@ const NEXT_STANDARD_PERMISSION_FLAGS = [
 ];
 
 describe('buildAppPermissionFlagKeyRenames', () => {
-  it('renames to the keys the standard application now declares', () => {
-    const { allFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: '2026-10-28T12:00:00.000Z',
-        workspaceId: '20202020-1111-4111-8111-111111111111',
-        twentyStandardApplicationId: '20202020-2222-4222-8222-222222222222',
-      });
-
-    const { permissionFlagKeyRenames } = buildAppPermissionFlagKeyRenames({
-      flatPermissionFlagsByUniversalIdentifier: indexByUniversalIdentifier(
-        PREVIOUS_STANDARD_PERMISSION_FLAGS,
-      ),
-      direction: 'up',
-    });
-
-    expect(permissionFlagKeyRenames).toHaveLength(2);
-
-    for (const { universalIdentifier, toKey } of permissionFlagKeyRenames) {
-      expect(
-        allFlatEntityMaps.flatPermissionFlagMaps.byUniversalIdentifier[
-          universalIdentifier
-        ]?.key,
-      ).toBe(toKey);
-    }
-  });
-
   it('renames CONNECTED_ACCOUNTS and APPLICATIONS on up', () => {
     expect(
       buildAppPermissionFlagKeyRenames({

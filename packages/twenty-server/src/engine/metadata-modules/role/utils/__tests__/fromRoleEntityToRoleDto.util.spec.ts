@@ -57,7 +57,6 @@ describe('fromRoleEntityToRoleDto', () => {
             id: 'role-permission-flag-id',
             roleId: 'role-id',
             permissionFlag: {
-              universalIdentifier: SystemPermissionFlag.WORKSPACE,
               key: PermissionFlagType.WORKSPACE,
             },
           },
@@ -74,7 +73,7 @@ describe('fromRoleEntityToRoleDto', () => {
     ]);
   });
 
-  it('exposes the current key of a standard flag still stored under its previous key', () => {
+  it('upgrade:2-53:rename-app-permission-flag-keys exposes the current key of a standard flag still stored under its previous key', () => {
     const roleDto = fromRoleEntityToRoleDto(
       buildRoleEntity({
         rolePermissionFlags: [

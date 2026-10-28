@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import uniqBy from 'lodash.uniqby';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -19,6 +20,12 @@ import {
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+// Old clients still send the pre-2.53 keys; delete once
+// upgrade:2-53:rename-app-permission-flag-keys leaves the cross-upgrade window
+const PERMISSION_FLAG_TYPE_BY_LEGACY_KEY = new Map<string, string>(
+  Object.entries(PERMISSION_FLAG_TYPE_BY_LEGACY_STANDARD_KEY),
+);
 
 @Injectable()
 export class RolePermissionFlagService {
@@ -63,42 +70,20 @@ export class RolePermissionFlagService {
     }
 
     const roleUniversalIdentifier = role.universalIdentifier;
-    const permissionFlagByKey = new Map<string, FlatPermissionFlag>();
-
-    for (const permissionFlag of Object.values(
+    const permissionFlags = Object.values(
       flatPermissionFlagMaps.byUniversalIdentifier,
-    ).filter(isDefined)) {
-      const key = resolvePermissionFlagKey(permissionFlag);
-
-      // An app flag created before its key was reserved can share the
-      // resolved key of a standard flag; the standard flag must win
-      if (
-        permissionFlagByKey.has(key) &&
-        !belongsToTwentyStandardApp(permissionFlag)
-      ) {
-        continue;
-      }
-
-      permissionFlagByKey.set(key, permissionFlag);
-    }
-
-    // Old clients still send the pre-2.53 keys, possibly next to the new ones; delete
-    // once upgrade:2-53:rename-app-permission-flag-keys leaves the cross-upgrade window
-    const permissionFlagTypeByLegacyKey = new Map<string, string>(
-      Object.entries(PERMISSION_FLAG_TYPE_BY_LEGACY_STANDARD_KEY),
+    ).filter(isDefined);
+    const permissionFlagByKey = new Map(
+      permissionFlags.map((permissionFlag) => [
+        resolvePermissionFlagKey(permissionFlag),
+        permissionFlag,
+      ]),
     );
-    const requestedPermissionFlagKeys = new Set(
-      input.permissionFlagKeys.map(
-        (flag) => permissionFlagTypeByLegacyKey.get(flag) ?? flag,
-      ),
-    );
+    const permissionFlagsByInputKey = input.permissionFlagKeys.map((flag) => {
+      const key = PERMISSION_FLAG_TYPE_BY_LEGACY_KEY.get(flag) ?? flag;
 
-    const permissionFlagsByInputKey = [...requestedPermissionFlagKeys].map(
-      (flag) => ({
-        flag,
-        permissionFlag: permissionFlagByKey.get(flag),
-      }),
-    );
+      return { flag, key, permissionFlag: permissionFlagByKey.get(key) };
+    });
     const missingPermissionFlags = permissionFlagsByInputKey
       .filter(({ permissionFlag }) => !isDefined(permissionFlag))
       .map(({ flag }) => flag);
@@ -113,6 +98,19 @@ export class RolePermissionFlagService {
       );
     }
 
+    await this.throwIfAnyPermissionFlagKeyIsAmbiguous({
+      workspaceId,
+      permissionFlags,
+      keys: permissionFlagsByInputKey.map(({ key }) => key),
+    });
+
+    const requestedPermissionFlags = uniqBy(
+      permissionFlagsByInputKey
+        .map(({ permissionFlag }) => permissionFlag)
+        .filter(isDefined),
+      'universalIdentifier',
+    );
+
     const currentRolePermissionFlagsForRole = Object.values(
       flatRolePermissionFlagMaps.byUniversalIdentifier,
     ).filter(
@@ -121,9 +119,9 @@ export class RolePermissionFlagService {
     );
 
     const inputSet = new Set(
-      permissionFlagsByInputKey
-        .map(({ permissionFlag }) => permissionFlag?.universalIdentifier)
-        .filter(isDefined),
+      requestedPermissionFlags.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ),
     );
     const existingSet = new Set(
       currentRolePermissionFlagsForRole.map(
@@ -136,9 +134,7 @@ export class RolePermissionFlagService {
         { workspaceId },
       );
 
-    const flatEntityToCreate = permissionFlagsByInputKey
-      .map(({ permissionFlag }) => permissionFlag)
-      .filter(isDefined)
+    const flatEntityToCreate = requestedPermissionFlags
       .filter(
         (permissionFlag) =>
           !existingSet.has(permissionFlag.universalIdentifier),
@@ -205,5 +201,66 @@ export class RolePermissionFlagService {
     );
 
     return resultFlags;
+  }
+
+  // upgrade:2-53:rename-app-permission-flag-keys: a standard flag still stored under
+  // its old key resolves to a key an app flag may already store; fail closed
+  private async throwIfAnyPermissionFlagKeyIsAmbiguous({
+    workspaceId,
+    permissionFlags,
+    keys,
+  }: {
+    workspaceId: string;
+    permissionFlags: FlatPermissionFlag[];
+    keys: string[];
+  }): Promise<void> {
+    const collisions = [...new Set(keys)].flatMap((key) => {
+      const permissionFlagsWithKey = permissionFlags.filter(
+        (permissionFlag) => resolvePermissionFlagKey(permissionFlag) === key,
+      );
+
+      return permissionFlagsWithKey.length > 1
+        ? [
+            {
+              key,
+              appPermissionFlags: permissionFlagsWithKey.filter(
+                (permissionFlag) => !belongsToTwentyStandardApp(permissionFlag),
+              ),
+            },
+          ]
+        : [];
+    });
+
+    if (!isNonEmptyArray(collisions)) {
+      return;
+    }
+
+    const flatApplications =
+      await this.applicationService.findManyInstalledFlatApplications(
+        workspaceId,
+      );
+    const applicationNameById = new Map(
+      flatApplications.map(({ id, name }) => [id, name]),
+    );
+
+    const collisionDescription = collisions
+      .map(({ key, appPermissionFlags }) => {
+        const applicationNames = appPermissionFlags.map(
+          ({ applicationId, applicationUniversalIdentifier }) =>
+            applicationNameById.get(applicationId) ??
+            applicationUniversalIdentifier,
+        );
+
+        return `${key} (${applicationNames.join(', ')})`;
+      })
+      .join(', ');
+
+    throw new PermissionsException(
+      `Permission flag key(s) defined by both Twenty and an application: ${collisionDescription}. Revoke them from every role, then uninstall the application.`,
+      PermissionsExceptionCode.INVALID_SETTING,
+      {
+        userFriendlyMessage: msg`These permissions are defined both by Twenty and by an installed application: ${collisionDescription}. Revoke them from every role, then uninstall the application.`,
+      },
+    );
   }
 }

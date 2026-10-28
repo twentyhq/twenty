@@ -1,14 +1,9 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
-import { type AppPermissionFlagKeyRenameDirection } from 'src/database/commands/upgrade-version-command/2-53/types/app-permission-flag-key-rename-direction.type';
 import { buildAppPermissionFlagExpressionUpdates } from 'src/database/commands/upgrade-version-command/2-53/utils/build-app-permission-flag-expression-updates.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const NOW = '2026-10-28T12:00:00.000Z';
-
-const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
-  '20202020-5555-4555-8555-555555555555';
 
 const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-3333-4333-8333-333333333333';
@@ -41,7 +36,7 @@ const buildCommandMenuItem = ({
 
 const buildUpdates = (
   commandMenuItems: FlatCommandMenuItem[],
-  direction: AppPermissionFlagKeyRenameDirection = 'up',
+  direction: 'up' | 'down' = 'up',
 ) =>
   buildAppPermissionFlagExpressionUpdates({
     flatCommandMenuItemByUniversalIdentifier: Object.fromEntries(
@@ -50,8 +45,6 @@ const buildUpdates = (
         commandMenuItem,
       ]),
     ),
-    workspaceCustomApplicationUniversalIdentifier:
-      WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     now: NOW,
     direction,
   });
@@ -68,7 +61,7 @@ const buildPreviousStandardCommandMenuItems = () =>
 
 const renameExpression = (
   conditionalAvailabilityExpression: string,
-  direction: AppPermissionFlagKeyRenameDirection,
+  direction: 'up' | 'down',
 ) =>
   buildUpdates(
     [
@@ -81,32 +74,6 @@ const renameExpression = (
   ).standardCommandMenuItemsToUpdate[0]?.conditionalAvailabilityExpression;
 
 describe('buildAppPermissionFlagExpressionUpdates', () => {
-  it('produces the expressions the standard application now declares', () => {
-    const { allFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: NOW,
-        workspaceId: '20202020-1111-4111-8111-111111111111',
-        twentyStandardApplicationId: '20202020-2222-4222-8222-222222222222',
-      });
-
-    const { standardCommandMenuItemsToUpdate } = buildUpdates(
-      buildPreviousStandardCommandMenuItems(),
-    );
-
-    expect(standardCommandMenuItemsToUpdate).toHaveLength(4);
-
-    for (const {
-      universalIdentifier,
-      conditionalAvailabilityExpression,
-    } of standardCommandMenuItemsToUpdate) {
-      expect(conditionalAvailabilityExpression).toBe(
-        allFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier[
-          universalIdentifier
-        ]?.conditionalAvailabilityExpression,
-      );
-    }
-  });
-
   it('rewrites the standard command menu items on up', () => {
     const { standardCommandMenuItemsToUpdate } = buildUpdates(
       buildPreviousStandardCommandMenuItems(),
@@ -205,32 +172,25 @@ describe('buildAppPermissionFlagExpressionUpdates', () => {
       ]),
     ).toEqual({
       standardCommandMenuItemsToUpdate: [],
-      customCommandMenuItemsToUpdate: [],
-      skippedCommandMenuItemCount: 0,
+      nonStandardCommandMenuItemsToUpdate: [],
     });
   });
 
-  it('separates workspace custom items and counts items of other applications without rewriting them', () => {
-    const { customCommandMenuItemsToUpdate, skippedCommandMenuItemCount } =
-      buildUpdates([
-        buildCommandMenuItem({
-          universalIdentifier: 'custom',
-          conditionalAvailabilityExpression:
-            'permissionFlags.CONNECTED_ACCOUNTS',
-          applicationUniversalIdentifier:
-            WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-        }),
-        buildCommandMenuItem({
-          universalIdentifier: 'other-application',
-          conditionalAvailabilityExpression:
-            'permissionFlags.CONNECTED_ACCOUNTS',
-          applicationUniversalIdentifier:
-            OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
-        }),
-      ]);
+  it('separates the items of other applications from the standard ones', () => {
+    const {
+      standardCommandMenuItemsToUpdate,
+      nonStandardCommandMenuItemsToUpdate,
+    } = buildUpdates([
+      buildCommandMenuItem({
+        universalIdentifier: 'other-application',
+        conditionalAvailabilityExpression: 'permissionFlags.CONNECTED_ACCOUNTS',
+        applicationUniversalIdentifier: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+      }),
+    ]);
 
+    expect(standardCommandMenuItemsToUpdate).toEqual([]);
     expect(
-      customCommandMenuItemsToUpdate.map(
+      nonStandardCommandMenuItemsToUpdate.map(
         ({ universalIdentifier, conditionalAvailabilityExpression }) => ({
           universalIdentifier,
           conditionalAvailabilityExpression,
@@ -238,10 +198,9 @@ describe('buildAppPermissionFlagExpressionUpdates', () => {
       ),
     ).toEqual([
       {
-        universalIdentifier: 'custom',
+        universalIdentifier: 'other-application',
         conditionalAvailabilityExpression: 'permissionFlags.USER_APPS',
       },
     ]);
-    expect(skippedCommandMenuItemCount).toBe(1);
   });
 });

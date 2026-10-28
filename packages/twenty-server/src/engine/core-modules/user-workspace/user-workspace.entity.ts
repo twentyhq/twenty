@@ -1,7 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import {
-  type PermissionFlagType,
+  PermissionFlagType,
   PermissionsOnAllObjectRecords,
 } from 'twenty-shared/constants';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -22,11 +22,28 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TwoFactorAuthenticationMethodSummaryDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
-import { PERMISSION_FLAG_TYPE_WITH_LEGACY_KEYS } from 'src/engine/core-modules/user-workspace/enums/permission-flag-type-with-legacy-keys.enum';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
-import { type LegacyStandardPermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/types/legacy-standard-permission-flag-key.type';
+import { type LegacyStandardPermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-type-by-legacy-standard-key.constant';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
+
+// Old clients still read the pre-2.53 keys; delete once
+// upgrade:2-53:rename-app-permission-flag-keys leaves the cross-upgrade window
+const PERMISSION_FLAG_TYPE_WITH_LEGACY_KEYS = {
+  ...PermissionFlagType,
+  CONNECTED_ACCOUNTS: 'CONNECTED_ACCOUNTS',
+  APPLICATIONS: 'APPLICATIONS',
+} as const satisfies {
+  [TKey in PermissionFlagType | LegacyStandardPermissionFlagKey]: TKey;
+};
+
+registerEnumType(PERMISSION_FLAG_TYPE_WITH_LEGACY_KEYS, {
+  name: 'PermissionFlagType',
+  valuesMap: {
+    CONNECTED_ACCOUNTS: { deprecationReason: 'Use USER_APPS instead.' },
+    APPLICATIONS: { deprecationReason: 'Use WORKSPACE_APPS instead.' },
+  },
+});
 
 registerEnumType(PermissionsOnAllObjectRecords, {
   name: 'PermissionsOnAllObjectRecords',
