@@ -24,7 +24,6 @@ export type CreateStandardViewOptions<O extends AllStandardObjectName> = {
   position: number;
   icon: string;
   isCompact?: boolean;
-  isCustom?: boolean;
   openRecordIn?: ViewOpenRecordIn;
   kanbanAggregateOperation?: AggregateOperations | null;
   kanbanAggregateOperationFieldName?: AllStandardObjectFieldName<O>;
@@ -53,7 +52,6 @@ export const createStandardViewFlatMetadata = <
     position,
     icon,
     isCompact = false,
-    isCustom = false,
     openRecordIn = ViewOpenRecordIn.SIDE_PANEL,
     kanbanAggregateOperation = null,
     kanbanAggregateOperationFieldName,
@@ -147,7 +145,6 @@ export const createStandardViewFlatMetadata = <
     icon,
     position,
     isCompact,
-    isCustom,
     openRecordIn,
     kanbanAggregateOperation,
     kanbanAggregateOperationFieldMetadataId,

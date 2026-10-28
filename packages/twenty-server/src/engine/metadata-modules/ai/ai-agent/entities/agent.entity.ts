@@ -60,8 +60,8 @@ export class AgentEntity
   @Column({ nullable: true, type: 'jsonb', default: { type: 'text' } })
   responseFormat: JsonbProperty<AgentResponseFormat>;
 
-  @Column({ default: false })
-  isCustom: boolean;
+  @Column({ type: 'boolean', default: false })
+  isCustom: WasRemovedInUpgrade<boolean>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:

@@ -8,7 +8,6 @@ export const fromFlatSkillToSkillDto = (flatSkill: FlatSkill): SkillDTO => ({
   icon: flatSkill.icon ?? undefined,
   description: flatSkill.description ?? undefined,
   content: flatSkill.content,
-  isCustom: flatSkill.isCustom,
   isSystem: flatSkill.isSystem,
   isActive: flatSkill.isActive,
   workspaceId: flatSkill.workspaceId,
