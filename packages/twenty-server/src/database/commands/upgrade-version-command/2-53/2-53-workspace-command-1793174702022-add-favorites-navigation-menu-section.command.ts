@@ -8,6 +8,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { buildStandardNavigationMenuItemToCreate } from 'src/database/commands/upgrade-version-command/2-53/utils/build-standard-navigation-menu-item-to-create.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -125,36 +126,15 @@ export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspa
     const now = new Date().toISOString();
     const favoritesSection = STANDARD_NAVIGATION_MENU_ITEMS.favoritesSection;
 
-    const favoritesSectionToCreate: FlatNavigationMenuItem = {
+    const favoritesSectionToCreate = buildStandardNavigationMenuItemToCreate({
       id: v4(),
       universalIdentifier: favoritesSection.universalIdentifier,
       type: favoritesSection.type,
       position: getPositionUnderInbox(homeSections),
-      applicationId: twentyStandardFlatApplication.id,
-      applicationUniversalIdentifier:
-        twentyStandardFlatApplication.universalIdentifier,
       workspaceId,
-      userWorkspaceId: null,
-      folderId: null,
-      folderUniversalIdentifier: null,
-      targetRecordId: null,
-      targetObjectMetadataId: null,
-      targetObjectMetadataUniversalIdentifier: null,
-      viewId: null,
-      viewUniversalIdentifier: null,
-      pageLayoutId: null,
-      pageLayoutUniversalIdentifier: null,
-      agentChatChannelId: null,
-      agentChatChannelUniversalIdentifier: null,
-      commandKey: null,
-      name: null,
-      link: null,
-      icon: null,
-      color: null,
-      visibleItemLimit: null,
-      createdAt: now,
-      updatedAt: now,
-    };
+      twentyStandardFlatApplication,
+      now,
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(

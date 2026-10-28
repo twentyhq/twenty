@@ -1,11 +1,11 @@
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
-import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
+import { extractContainerIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractContainerIdFromDroppableId';
 import { getNavigationMenuItemContainerDroppableId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerDroppableId';
 
-describe('extractFolderIdFromDroppableId', () => {
+describe('extractContainerIdFromDroppableId', () => {
   it('places items dropped at the root of Home without a parent', () => {
     expect(
-      extractFolderIdFromDroppableId(
+      extractContainerIdFromDroppableId(
         getNavigationMenuItemContainerDroppableId(null),
         'workspace',
       ),
@@ -14,7 +14,7 @@ describe('extractFolderIdFromDroppableId', () => {
 
   it('places items dropped in a tab or section under that container', () => {
     expect(
-      extractFolderIdFromDroppableId(
+      extractContainerIdFromDroppableId(
         getNavigationMenuItemContainerDroppableId('section-id'),
         'workspace',
       ),
@@ -23,7 +23,7 @@ describe('extractFolderIdFromDroppableId', () => {
 
   it('places items dropped in a folder under that folder', () => {
     expect(
-      extractFolderIdFromDroppableId(
+      extractContainerIdFromDroppableId(
         `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_PREFIX}folder-id`,
         'workspace',
       ),

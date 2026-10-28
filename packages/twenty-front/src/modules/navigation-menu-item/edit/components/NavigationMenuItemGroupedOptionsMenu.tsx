@@ -8,29 +8,29 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
-type NavigationMenuItemContainerTemplateMenuGroup = {
+type NavigationMenuItemGroupedOptionsMenuGroup = {
   id: string;
   label?: string;
   options: NavigationMenuItemOption[];
 };
 
-type NavigationMenuItemContainerTemplateMenuProps = {
+type NavigationMenuItemGroupedOptionsMenuProps = {
   dropdownId: string;
   title: string;
   trigger: ReactElement;
   isTriggerNativeButton?: boolean;
   side?: 'right' | 'bottom';
-  groups: NavigationMenuItemContainerTemplateMenuGroup[];
+  groups: NavigationMenuItemGroupedOptionsMenuGroup[];
 };
 
-export const NavigationMenuItemContainerTemplateMenu = ({
+export const NavigationMenuItemGroupedOptionsMenu = ({
   dropdownId,
   title,
   trigger,
   isTriggerNativeButton = true,
   side = 'right',
   groups,
-}: NavigationMenuItemContainerTemplateMenuProps) => (
+}: NavigationMenuItemGroupedOptionsMenuProps) => (
   <DropdownRoot dropdownId={dropdownId} type="menu">
     <Dropdown.Trigger nativeButton={isTriggerNativeButton} render={trigger} />
     <DropdownContent

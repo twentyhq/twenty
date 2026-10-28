@@ -4,8 +4,6 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import {
-  IconChevronDown,
-  IconChevronUp,
   IconEye,
   IconFolderSymlink,
   IconHome,
@@ -21,6 +19,7 @@ import { NavigationMenuItemContainerNameEditor } from '@/navigation-menu-item/ed
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
+import { useNavigationMenuItemReorderOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemReorderOptions';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 
 type NavigationMenuItemSectionMenuContentProps = {
@@ -38,11 +37,14 @@ export const NavigationMenuItemSectionMenuContent = ({
   const { getIcon } = useIcons();
   const { goToPage } = useDropdownPage();
   const tabs = useWorkspaceNavigationMenuTabs();
-  const { getSortedSiblings, moveUp, moveDown, moveToFolder, remove } =
+  const { moveToContainer, remove } =
     useNavigationMenuItemMoveRemove('workspace');
+  const { reorderOptions } = useNavigationMenuItemReorderOptions({
+    navigationMenuItemId: section.id,
+    section: 'workspace',
+    onClose,
+  });
   const { updateItem } = useNavigationMenuItemEditController('workspace');
-  const siblings = getSortedSiblings(section.id) ?? [];
-  const index = siblings.findIndex((sibling) => sibling.id === section.id);
   const parentId = section.folderId ?? null;
 
   const isVisibleItemLimitEditable =
@@ -60,20 +62,7 @@ export const NavigationMenuItemSectionMenuContent = ({
       : t`All items`;
 
   const actions: NavigationMenuItemOption[] = [
-    {
-      id: 'up',
-      label: t`Move up`,
-      Icon: IconChevronUp,
-      isDisabled: index <= 0,
-      onClick: () => run(() => moveUp(section.id)),
-    },
-    {
-      id: 'down',
-      label: t`Move down`,
-      Icon: IconChevronDown,
-      isDisabled: index < 0 || index === siblings.length - 1,
-      onClick: () => run(() => moveDown(section.id)),
-    },
+    ...reorderOptions,
     {
       id: 'move',
       label: t`Move to tab`,
@@ -97,14 +86,14 @@ export const NavigationMenuItemSectionMenuContent = ({
       label: t`Home`,
       Icon: IconHome,
       isDisabled: !isDefined(parentId),
-      onClick: () => run(() => moveToFolder(section.id, null)),
+      onClick: () => run(() => moveToContainer(section.id, null)),
     },
     ...tabs.map((tab) => ({
       id: tab.id,
       label: tab.name ?? t`Tab`,
       Icon: getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT),
       isDisabled: parentId === tab.id,
-      onClick: () => run(() => moveToFolder(section.id, tab.id)),
+      onClick: () => run(() => moveToContainer(section.id, tab.id)),
     })),
   ];
 

@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation } from 'react-router-dom';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -12,7 +13,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { useNavigationMenuItemAiChatSectionLabel } from '@/navigation-menu-item/display/sections/ai-chat/hooks/useNavigationMenuItemAiChatSectionLabel';
+import { useNavigationMenuItemSectionLabel } from '@/navigation-menu-item/common/hooks/useNavigationMenuItemSectionLabel';
 import { NavigationMenuItemSectionMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemSectionMenu';
 import { useCreateCoreAgent } from '@/object-core/agents/hooks/useCreateCoreAgent';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
@@ -39,8 +40,7 @@ export const NavigationMenuItemAgentsSection = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const { getDefaultAiChatSectionLabel } =
-    useNavigationMenuItemAiChatSectionLabel();
+  const { getDefaultSectionLabel } = useNavigationMenuItemSectionLabel();
   const { createCoreAgent, canCreateCoreAgent } = useCreateCoreAgent();
   const { data } = useQuery(FindManyAgentsDocument, {
     fetchPolicy: 'cache-and-network',
@@ -72,7 +72,7 @@ export const NavigationMenuItemAgentsSection = ({
     return null;
   }
 
-  const defaultLabel = getDefaultAiChatSectionLabel(section.type);
+  const defaultLabel = getDefaultSectionLabel(NavigationMenuItemType.AI_AGENTS);
   const newAgentButton = canCreateCoreAgent ? (
     <LightIconButton
       emphasis="subtle"

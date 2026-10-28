@@ -8,7 +8,7 @@ import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/co
 import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
-import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 
 export const buildUpdateInputsFromDraft = ({
   draft,
@@ -38,7 +38,7 @@ export const buildUpdateInputsFromDraft = ({
       (original.folderId ?? null) !== (draftItem.folderId ?? null);
     const isNamedContainer =
       isNavigationMenuItemFolder(draftItem) ||
-      isNavigationMenuItemTabOrSection(draftItem);
+      isNavigationMenuItemContainer(draftItem);
     const nameChanged =
       (isNamedContainer || isNavigationMenuItemLink(draftItem)) &&
       (original.name ?? null) !== (draftItem.name ?? null);

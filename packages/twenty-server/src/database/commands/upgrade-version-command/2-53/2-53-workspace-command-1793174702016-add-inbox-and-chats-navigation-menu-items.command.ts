@@ -8,8 +8,8 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { buildStandardNavigationMenuItemToCreate } from 'src/database/commands/upgrade-version-command/2-53/utils/build-standard-navigation-menu-item-to-create.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -102,90 +102,37 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
     const now = new Date().toISOString();
     const chatsTabId = v4();
 
-    const buildFlatNavigationMenuItem = ({
-      id,
-      universalIdentifier,
-      type,
-      name,
-      icon,
-      folderId,
-      folderUniversalIdentifier,
-      position,
-      visibleItemLimit,
-    }: Pick<
-      FlatNavigationMenuItem,
-      | 'id'
-      | 'universalIdentifier'
-      | 'type'
-      | 'name'
-      | 'icon'
-      | 'folderId'
-      | 'folderUniversalIdentifier'
-      | 'position'
-      | 'visibleItemLimit'
-    >): FlatNavigationMenuItem => ({
-      id,
-      type,
-      universalIdentifier,
-      applicationId: twentyStandardFlatApplication.id,
-      applicationUniversalIdentifier:
-        twentyStandardFlatApplication.universalIdentifier,
+    const creationContext = {
       workspaceId,
-      userWorkspaceId: null,
-      targetRecordId: null,
-      targetObjectMetadataId: null,
-      targetObjectMetadataUniversalIdentifier: null,
-      viewId: null,
-      viewUniversalIdentifier: null,
-      folderId,
-      folderUniversalIdentifier,
-      pageLayoutId: null,
-      pageLayoutUniversalIdentifier: null,
-      agentChatChannelId: null,
-      agentChatChannelUniversalIdentifier: null,
-      name,
-      link: null,
-      icon,
-      color: null,
-      visibleItemLimit,
-      commandKey: null,
-      position,
-      createdAt: now,
-      updatedAt: now,
-    });
+      twentyStandardFlatApplication,
+      now,
+    };
 
     const { inboxSection, chatsTab } = STANDARD_NAVIGATION_MENU_ITEMS;
 
     const flatNavigationMenuItemsToCreate = [
-      buildFlatNavigationMenuItem({
+      buildStandardNavigationMenuItemToCreate({
+        ...creationContext,
         id: v4(),
         universalIdentifier: inboxSection.universalIdentifier,
         type: inboxSection.type,
-        name: null,
-        icon: null,
-        folderId: null,
-        folderUniversalIdentifier: null,
         position: inboxSection.position,
-        visibleItemLimit: null,
       }),
-      buildFlatNavigationMenuItem({
+      buildStandardNavigationMenuItemToCreate({
+        ...creationContext,
         id: chatsTabId,
         universalIdentifier: chatsTab.universalIdentifier,
         type: chatsTab.type,
         name: chatsTab.name,
         icon: chatsTab.icon,
-        folderId: null,
-        folderUniversalIdentifier: null,
         position: chatsTab.position,
-        visibleItemLimit: null,
       }),
       ...CHATS_TAB_SECTION_DEFINITIONS.map((chatsTabSection) =>
-        buildFlatNavigationMenuItem({
+        buildStandardNavigationMenuItemToCreate({
+          ...creationContext,
           id: v4(),
           universalIdentifier: chatsTabSection.universalIdentifier,
           type: chatsTabSection.type,
-          name: null,
-          icon: null,
           folderId: chatsTabId,
           folderUniversalIdentifier: chatsTabSection.folderUniversalIdentifier,
           position: chatsTabSection.position,

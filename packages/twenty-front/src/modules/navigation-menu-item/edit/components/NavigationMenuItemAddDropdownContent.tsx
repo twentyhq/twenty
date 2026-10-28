@@ -18,7 +18,7 @@ import {
   type NewNavigationMenuItemInput,
 } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { normalizeSearchText } from 'twenty-ui/utilities';
-import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 
 const VIEW_OBJECT_PAGE = 'view-object';
 
@@ -67,7 +67,7 @@ export const NavigationMenuItemAddDropdownContent = ({
     currentItems.filter(
       (item) =>
         (item.folderId ?? null) === (folderId ?? null) &&
-        !isNavigationMenuItemTabOrSection(item),
+        !isNavigationMenuItemContainer(item),
     ).length;
 
   const navigate = (next: Step) => {

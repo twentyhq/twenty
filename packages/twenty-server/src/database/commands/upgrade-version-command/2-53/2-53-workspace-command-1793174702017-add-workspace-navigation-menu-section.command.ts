@@ -8,8 +8,8 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { buildStandardNavigationMenuItemToCreate } from 'src/database/commands/upgrade-version-command/2-53/utils/build-standard-navigation-menu-item-to-create.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -103,36 +103,16 @@ export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspa
       workspaceCustomFlatApplication.id,
     ]);
 
-    const workspaceSectionToCreate: FlatNavigationMenuItem = {
+    const workspaceSectionToCreate = buildStandardNavigationMenuItemToCreate({
       id: workspaceSectionId,
-      type: workspaceSection.type,
       universalIdentifier: workspaceSection.universalIdentifier,
-      applicationId: twentyStandardFlatApplication.id,
-      applicationUniversalIdentifier:
-        twentyStandardFlatApplication.universalIdentifier,
-      workspaceId,
-      userWorkspaceId: null,
-      targetRecordId: null,
-      targetObjectMetadataId: null,
-      targetObjectMetadataUniversalIdentifier: null,
-      viewId: null,
-      viewUniversalIdentifier: null,
-      folderId: null,
-      folderUniversalIdentifier: null,
-      pageLayoutId: null,
-      pageLayoutUniversalIdentifier: null,
-      agentChatChannelId: null,
-      agentChatChannelUniversalIdentifier: null,
+      type: workspaceSection.type,
       name: workspaceSection.name,
-      link: null,
-      icon: null,
-      visibleItemLimit: null,
-      commandKey: null,
-      color: null,
       position: workspaceSection.position,
-      createdAt: now,
-      updatedAt: now,
-    };
+      workspaceId,
+      twentyStandardFlatApplication,
+      now,
+    });
 
     const rootItemsToMove = navigationMenuItems
       .filter(

@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 
 export const getNavigationMenuItemSectionId = (
   items: Pick<NavigationMenuItem, 'id' | 'type' | 'folderId'>[],
@@ -9,7 +9,7 @@ export const getNavigationMenuItemSectionId = (
 ): string | null => {
   const container = items.find((item) => item.id === containerId);
 
-  if (!isDefined(container) || isNavigationMenuItemTabOrSection(container)) {
+  if (!isDefined(container) || isNavigationMenuItemContainer(container)) {
     return containerId;
   }
 

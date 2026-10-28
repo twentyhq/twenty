@@ -1,5 +1,5 @@
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
-import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { NavigationMenuItemCommandDisplay } from '@/navigation-menu-item/display/command/components/NavigationMenuItemCommandDisplay';
 import { NavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolder';
@@ -23,7 +23,7 @@ export const NavigationMenuItemDisplay = ({
   readOnly,
   orphanIndex,
 }: NavigationMenuItemDisplayProps) => {
-  if (isNavigationMenuItemTabOrSection(item)) {
+  if (isNavigationMenuItemContainer(item)) {
     return null;
   }
 

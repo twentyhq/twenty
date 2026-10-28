@@ -14,11 +14,11 @@ import { NavigationDrawerAiChatInboxSection } from '@/ai/components/NavigationDr
 import { AI_CHAT_RECENTS_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatRecentsNavigationSectionId';
 import { useAiChatSidebarThreads } from '@/ai/hooks/useAiChatSidebarThreads';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { useNavigationMenuItemAiChatSectionLabel } from '@/navigation-menu-item/display/sections/ai-chat/hooks/useNavigationMenuItemAiChatSectionLabel';
-import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
+import { useNavigationMenuItemSectionLabel } from '@/navigation-menu-item/common/hooks/useNavigationMenuItemSectionLabel';
+import { isNavigationMenuItemBuiltInSectionType } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSectionType';
+import { NavigationMenuItemEditableSectionPlaceholder } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemEditableSectionPlaceholder';
 import { NavigationMenuItemSectionMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemSectionMenu';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -35,8 +35,7 @@ export const NavigationMenuItemAiChatSection = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const { getDefaultAiChatSectionLabel } =
-    useNavigationMenuItemAiChatSectionLabel();
+  const { getDefaultSectionLabel } = useNavigationMenuItemSectionLabel();
   const {
     isAiChatInboxEnabled,
     isLoading,
@@ -47,11 +46,14 @@ export const NavigationMenuItemAiChatSection = ({
     handleThreadClick,
   } = useAiChatSidebarThreads();
 
-  if (!hasAiPermission) {
+  if (
+    !hasAiPermission ||
+    !isNavigationMenuItemBuiltInSectionType(section.type)
+  ) {
     return null;
   }
 
-  const defaultLabel = getDefaultAiChatSectionLabel(section.type);
+  const defaultLabel = getDefaultSectionLabel(section.type);
   const label = section.name ?? defaultLabel;
   const isEditable = isLayoutCustomizationModeEnabled && !isMobile;
   const sectionMenu = isEditable ? (
@@ -61,14 +63,10 @@ export const NavigationMenuItemAiChatSection = ({
     />
   ) : undefined;
   const emptyEditableSection = isEditable ? (
-    <CollapsibleNavigationDrawerSection
-      sectionId={getNavigationMenuSectionNavigationSectionId(section)}
-      label={label}
-      rightIcon={sectionMenu}
-      alwaysShowRightIcon={isEditable}
-    >
-      {null}
-    </CollapsibleNavigationDrawerSection>
+    <NavigationMenuItemEditableSectionPlaceholder
+      section={section}
+      defaultName={defaultLabel}
+    />
   ) : null;
 
   switch (section.type) {

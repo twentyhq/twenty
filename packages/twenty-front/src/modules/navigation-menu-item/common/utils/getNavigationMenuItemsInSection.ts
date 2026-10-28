@@ -1,7 +1,7 @@
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { getNavigationMenuItemSectionId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemSectionId';
-import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 
 export const getNavigationMenuItemsInSection = <
   TNavigationMenuItem extends Pick<
@@ -14,7 +14,7 @@ export const getNavigationMenuItemsInSection = <
 ): TNavigationMenuItem[] =>
   items.filter(
     (item) =>
-      !isNavigationMenuItemTabOrSection(item) &&
+      !isNavigationMenuItemContainer(item) &&
       getNavigationMenuItemSectionId(items, item.folderId ?? null) ===
         sectionId,
   );

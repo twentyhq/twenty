@@ -1,12 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconChevronLeft, IconChevronRight, IconTrash } from 'twenty-ui/icon';
+import { IconTrash } from 'twenty-ui/icon';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { NavigationMenuItemContainerNameEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerNameEditor';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
+import { useNavigationMenuItemReorderOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemReorderOptions';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
@@ -28,10 +29,13 @@ export const NavigationMenuTabMenuContent = ({
   const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
   );
-  const { getSortedSiblings, moveUp, moveDown, remove } =
-    useNavigationMenuItemMoveRemove('workspace');
-  const siblings = getSortedSiblings(tab.id) ?? [];
-  const index = siblings.findIndex((sibling) => sibling.id === tab.id);
+  const { remove } = useNavigationMenuItemMoveRemove('workspace');
+  const { reorderOptions } = useNavigationMenuItemReorderOptions({
+    navigationMenuItemId: tab.id,
+    section: 'workspace',
+    isHorizontal: true,
+    onClose,
+  });
 
   const run = (action: () => Promise<void>) => {
     void action();
@@ -39,20 +43,7 @@ export const NavigationMenuTabMenuContent = ({
   };
 
   const actions: NavigationMenuItemOption[] = [
-    {
-      id: 'left',
-      label: t`Move left`,
-      Icon: IconChevronLeft,
-      isDisabled: index <= 0,
-      onClick: () => run(() => moveUp(tab.id)),
-    },
-    {
-      id: 'right',
-      label: t`Move right`,
-      Icon: IconChevronRight,
-      isDisabled: index < 0 || index === siblings.length - 1,
-      onClick: () => run(() => moveDown(tab.id)),
-    },
+    ...reorderOptions,
     {
       id: 'delete',
       label: t`Delete tab`,

@@ -1,7 +1,7 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
@@ -83,6 +83,13 @@ const renderInboxSection = ({
     </JotaiProvider>,
   );
 
+const expectInboxRowToHaveText = (name: RegExp, text: RegExp) =>
+  waitFor(() =>
+    expect(
+      screen.getByRole('button', { name }).closest('.navigation-drawer-item'),
+    ).toHaveTextContent(text),
+  );
+
 describe('NavigationDrawerAiChatInboxSection', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -102,11 +109,14 @@ describe('NavigationDrawerAiChatInboxSection', () => {
   });
 
   it('counts every open chat and flags Open when one is unread', async () => {
-    renderInboxSection({ summary: { ...READ_SUMMARY, hasUnreadOpenThread: true } });
+    renderInboxSection({
+      summary: { ...READ_SUMMARY, hasUnreadOpenThread: true },
+    });
 
-    expect(
-      await screen.findByRole('button', { name: /^Open\s*, unread\s*2$/ }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText(
+      /^Open\s*, unread$/,
+      /^Open\s*, unread\s*2$/,
+    );
     expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Done' })).toBeVisible();
   });
@@ -114,17 +124,13 @@ describe('NavigationDrawerAiChatInboxSection', () => {
   it('shows Open as read when every open chat is read', async () => {
     renderInboxSection();
 
-    expect(
-      await screen.findByRole('button', { name: /^Open\s*2$/ }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText(/^Open$/, /^Open\s*2$/);
   });
 
   it('shows only Open until See more reveals the other statuses', async () => {
     renderInboxSection({ visibleItemLimit: 1 });
 
-    expect(
-      await screen.findByRole('button', { name: /^Open\s*2$/ }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText(/^Open$/, /^Open\s*2$/);
     expect(screen.queryByRole('button', { name: 'Snoozed' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Done' })).toBeNull();
 
@@ -197,11 +203,11 @@ describe('NavigationDrawerAiChatInboxSection', () => {
   });
 
   it('counts the open chats waiting on an answer in Needs input', async () => {
-    renderInboxSection({ summary: { ...READ_SUMMARY, needsInputThreadCount: 1 } });
+    renderInboxSection({
+      summary: { ...READ_SUMMARY, needsInputThreadCount: 1 },
+    });
 
-    expect(
-      await screen.findByRole('button', { name: /^Needs input\s*1$/ }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText(/^Needs input$/, /^Needs input\s*1$/);
   });
 
   it('keeps Needs input and its count in view outside the inbox', async () => {
@@ -210,9 +216,7 @@ describe('NavigationDrawerAiChatInboxSection', () => {
       summary: { ...READ_SUMMARY, needsInputThreadCount: 3 },
     });
 
-    expect(
-      await screen.findByRole('button', { name: /^Needs input\s*3$/ }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText(/^Needs input$/, /^Needs input\s*3$/);
     expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
   });
 
@@ -225,9 +229,10 @@ describe('NavigationDrawerAiChatInboxSection', () => {
       },
     });
 
-    expect(
-      await screen.findByRole('button', { name: /^Mentions\s*, unread\s*2$/ }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText(
+      /^Mentions\s*, unread$/,
+      /^Mentions\s*, unread\s*2$/,
+    );
   });
 
   it('keeps the statuses narrowing Open with unread chats in view outside the inbox', async () => {
@@ -240,9 +245,10 @@ describe('NavigationDrawerAiChatInboxSection', () => {
       },
     });
 
-    expect(
-      await screen.findByRole('button', { name: /^Assigned\s*, unread\s*1$/ }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText(
+      /^Assigned\s*, unread$/,
+      /^Assigned\s*, unread\s*1$/,
+    );
     expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
   });
 
@@ -265,8 +271,9 @@ describe('NavigationDrawerAiChatInboxSection', () => {
       },
     });
 
-    expect(
-      await screen.findByRole('button', { name: /^Assigned\s*, unread\s*3$/ }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText(
+      /^Assigned\s*, unread$/,
+      /^Assigned\s*, unread\s*3$/,
+    );
   });
 });

@@ -1,38 +1,20 @@
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import {
-  IconHash,
-  IconHeart,
-  IconInbox,
-  IconLego,
-  IconMessage,
-  IconNewSection,
-  IconPlus,
-} from 'twenty-ui/icon';
+import { IconNewSection, IconPlus } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
+import { NAVIGATION_MENU_ITEM_AI_SECTION_TYPES } from '@/navigation-menu-item/common/constants/NavigationMenuItemAiSectionTypes';
+import { NAVIGATION_MENU_ITEM_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuItemBuiltInSections';
+import { type NavigationMenuItemBuiltInSectionType } from '@/navigation-menu-item/common/types/NavigationMenuItemBuiltInSectionType';
 import { useWorkspaceNavigationMenuSections } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuSections';
-import { useNavigationMenuItemAiChatSectionLabel } from '@/navigation-menu-item/display/sections/ai-chat/hooks/useNavigationMenuItemAiChatSectionLabel';
-import { NavigationMenuItemContainerTemplateMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerTemplateMenu';
+import { useNavigationMenuItemSectionLabel } from '@/navigation-menu-item/common/hooks/useNavigationMenuItemSectionLabel';
+import { NavigationMenuItemGroupedOptionsMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemGroupedOptionsMenu';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { useCreateNavigationMenuTabOrSection } from '@/navigation-menu-item/edit/hooks/useCreateNavigationMenuTabOrSection';
 import { getNavigationMenuAddSectionDropdownId } from '@/navigation-menu-item/edit/utils/getNavigationMenuAddSectionDropdownId';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
-
-const FAVORITES_SECTION_OPTION = {
-  type: NavigationMenuItemType.FAVORITES,
-  Icon: IconHeart,
-};
-
-const AI_SECTION_OPTIONS = [
-  { type: NavigationMenuItemType.AI_CHAT_INBOX, Icon: IconInbox },
-  { type: NavigationMenuItemType.AI_CHAT_FAVORITES, Icon: IconHeart },
-  { type: NavigationMenuItemType.AI_CHAT_CHANNELS, Icon: IconHash },
-  { type: NavigationMenuItemType.AI_CHAT_RECENTS, Icon: IconMessage },
-  { type: NavigationMenuItemType.AI_AGENTS, Icon: IconLego },
-];
 
 type NavigationMenuItemAddSectionButtonProps = {
   parentId: string | null;
@@ -44,19 +26,49 @@ export const NavigationMenuItemAddSectionButton = ({
   const { t } = useLingui();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const sections = useWorkspaceNavigationMenuSections(parentId);
-  const { getDefaultAiChatSectionLabel } =
-    useNavigationMenuItemAiChatSectionLabel();
+  const { getDefaultSectionLabel } = useNavigationMenuItemSectionLabel();
   const { createSection, createBuiltInSection } =
     useCreateNavigationMenuTabOrSection();
-  const builtInSectionOptions = [
-    FAVORITES_SECTION_OPTION,
-    ...(hasAiPermission ? AI_SECTION_OPTIONS : []),
+  const builtInSectionTypes: NavigationMenuItemBuiltInSectionType[] = [
+    NavigationMenuItemType.FAVORITES,
+    ...(hasAiPermission ? NAVIGATION_MENU_ITEM_AI_SECTION_TYPES : []),
+  ];
+
+  const groups = [
+    {
+      id: 'built-in',
+      options: builtInSectionTypes.map((type) => {
+        const isAlreadyInSidebar = sections.some(
+          (section) => section.type === type,
+        );
+
+        return {
+          id: type,
+          label: getDefaultSectionLabel(type),
+          Icon: NAVIGATION_MENU_ITEM_BUILT_IN_SECTIONS[type].Icon,
+          isDisabled: isAlreadyInSidebar,
+          isAlreadyInSidebar,
+          onClick: () => createBuiltInSection({ parentId, type }),
+        };
+      }),
+    },
+    {
+      id: 'custom',
+      options: [
+        {
+          id: 'custom',
+          label: t`Custom section`,
+          Icon: IconPlus,
+          onClick: () => createSection(parentId),
+        },
+      ],
+    },
   ];
 
   return (
     <NavigationDrawerSection>
       <NavigationMenuItemEntrance>
-        <NavigationMenuItemContainerTemplateMenu
+        <NavigationMenuItemGroupedOptionsMenu
           dropdownId={getNavigationMenuAddSectionDropdownId(parentId)}
           title={t`Add section`}
           isTriggerNativeButton={false}
@@ -70,36 +82,7 @@ export const NavigationMenuItemAddSectionButton = ({
               />
             </div>
           }
-          groups={[
-            {
-              id: 'built-in',
-              options: builtInSectionOptions.map(({ type, Icon }) => {
-                const isAlreadyInSidebar = sections.some(
-                  (section) => section.type === type,
-                );
-
-                return {
-                  id: type,
-                  label: getDefaultAiChatSectionLabel(type),
-                  Icon,
-                  isDisabled: isAlreadyInSidebar,
-                  isAlreadyInSidebar,
-                  onClick: () => createBuiltInSection({ parentId, type }),
-                };
-              }),
-            },
-            {
-              id: 'custom',
-              options: [
-                {
-                  id: 'custom',
-                  label: t`Custom section`,
-                  Icon: IconPlus,
-                  onClick: () => createSection(parentId),
-                },
-              ],
-            },
-          ]}
+          groups={groups}
         />
       </NavigationMenuItemEntrance>
     </NavigationDrawerSection>

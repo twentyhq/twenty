@@ -8,7 +8,7 @@ import { getNavigationMenuItemPositionNextTo } from '@/navigation-menu-item/comm
 import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
 import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
-import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 
@@ -32,7 +32,7 @@ export const useNavigationMenuItemMoveRemove = (
       return null;
     }
     const folderId = currentItem.folderId ?? null;
-    const isTabOrSection = isNavigationMenuItemTabOrSection(currentItem);
+    const isTabOrSection = isNavigationMenuItemContainer(currentItem);
     const isSection = isNavigationMenuItemAnySection(currentItem);
     const isSameKind = (item: NavigationMenuItem) =>
       isSection
@@ -127,9 +127,9 @@ export const useNavigationMenuItemMoveRemove = (
     ]);
   };
 
-  const moveToFolder = async (
+  const moveToContainer = async (
     navigationMenuItemId: string,
-    targetFolderId: string | null,
+    targetContainerId: string | null,
   ) => {
     const itemToMove = currentItems.find(
       (item) => item.id === navigationMenuItemId,
@@ -139,12 +139,12 @@ export const useNavigationMenuItemMoveRemove = (
     }
 
     const isFolder = isNavigationMenuItemFolder(itemToMove);
-    if (isFolder && targetFolderId === navigationMenuItemId) {
+    if (isFolder && targetContainerId === navigationMenuItemId) {
       return;
     }
 
     // Block moving a folder into one of its own descendants (would orphan the subtree).
-    if (isFolder && isDefined(targetFolderId)) {
+    if (isFolder && isDefined(targetContainerId)) {
       const descendantFolderIds = new Set<string>();
       const collectDescendants = (folderId: string) => {
         currentItems
@@ -158,16 +158,16 @@ export const useNavigationMenuItemMoveRemove = (
           });
       };
       collectDescendants(navigationMenuItemId);
-      if (descendantFolderIds.has(targetFolderId)) {
+      if (descendantFolderIds.has(targetContainerId)) {
         return;
       }
     }
 
     const itemsInTargetFolder = currentItems.filter(
       (item) =>
-        (item.folderId ?? null) === targetFolderId &&
-        isNavigationMenuItemTabOrSection(item) ===
-          isNavigationMenuItemTabOrSection(itemToMove),
+        (item.folderId ?? null) === targetContainerId &&
+        isNavigationMenuItemContainer(item) ===
+          isNavigationMenuItemContainer(itemToMove),
     );
     const maxPositionInTarget = Math.max(
       -1,
@@ -175,7 +175,7 @@ export const useNavigationMenuItemMoveRemove = (
     );
 
     await updateItem(navigationMenuItemId, {
-      folderId: targetFolderId ?? null,
+      folderId: targetContainerId ?? null,
       position: maxPositionInTarget + 1,
     });
   };
@@ -187,6 +187,6 @@ export const useNavigationMenuItemMoveRemove = (
     moveDown,
     moveNextTo,
     remove,
-    moveToFolder,
+    moveToContainer,
   };
 };

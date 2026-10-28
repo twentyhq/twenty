@@ -14,11 +14,11 @@ import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/com
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { computeDndReorderPosition } from '@/navigation-menu-item/common/utils/computeDndReorderPosition';
-import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
+import { extractContainerIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractContainerIdFromDroppableId';
 import { isNavigationMenuItemAlreadyInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAlreadyInSection';
 import { isNavigationMenuItemPinnedCommands } from '@/navigation-menu-item/common/utils/isNavigationMenuItemPinnedCommands';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
-import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -57,7 +57,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
           (a, b) => a.position - b.position,
         )
       : navigationMenuItemsSorted
-    ).filter((item) => !isNavigationMenuItemTabOrSection(item));
+    ).filter((item) => !isNavigationMenuItemContainer(item));
 
   const applyReorder = async (
     draggableId: string,
@@ -139,11 +139,11 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     const draggedItem = allItems.find((item) => item.id === draggableId);
     if (!draggedItem) return;
 
-    const destinationFolderId = extractFolderIdFromDroppableId(
+    const destinationContainerId = extractContainerIdFromDroppableId(
       destination.droppableId,
       section,
     );
-    const sourceFolderId = extractFolderIdFromDroppableId(
+    const sourceContainerId = extractContainerIdFromDroppableId(
       source.droppableId,
       section,
     );
@@ -152,14 +152,14 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       isNavigationMenuItemAlreadyInSection({
         items: allItems,
         itemId: draggableId,
-        containerId: destinationFolderId,
+        containerId: destinationContainerId,
       })
     ) {
       return;
     }
 
     const destinationParent = allItems.find(
-      (item) => item.id === destinationFolderId,
+      (item) => item.id === destinationContainerId,
     );
 
     if (
@@ -183,36 +183,36 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     }
 
     if (destination.droppableId.startsWith(config.folderHeaderPrefix)) {
-      if (destinationFolderId === null) {
+      if (destinationContainerId === null) {
         throw new Error(doNotTranslate('Invalid folder header ID'));
       }
 
       const folderList = getSortedItems().filter((item) =>
-        matchesFolderId(item, destinationFolderId),
+        matchesFolderId(item, destinationContainerId),
       );
 
       await computeAndApplyReorder(
         draggableId,
         folderList,
         folderList.length,
-        destinationFolderId,
+        destinationContainerId,
       );
       setOpenNavigationMenuItemFolderIds((current) =>
-        current.includes(destinationFolderId)
+        current.includes(destinationContainerId)
           ? current
-          : [...current, destinationFolderId],
+          : [...current, destinationContainerId],
       );
       return;
     }
 
-    const isSameFolder = sourceFolderId === destinationFolderId;
+    const isSameContainer = sourceContainerId === destinationContainerId;
 
     const destinationList = getSortedItems().filter((item) =>
-      matchesFolderId(item, destinationFolderId),
+      matchesFolderId(item, destinationContainerId),
     );
 
     if (
-      isSameFolder &&
+      isSameContainer &&
       !destinationList.some((item) => item.id === draggableId)
     ) {
       return;
@@ -229,7 +229,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       draggableId,
       destinationList,
       insertBeforeIndex >= 0 ? insertBeforeIndex : destination.index,
-      isSameFolder ? undefined : (destinationFolderId ?? null),
+      isSameContainer ? undefined : (destinationContainerId ?? null),
     );
   };
 

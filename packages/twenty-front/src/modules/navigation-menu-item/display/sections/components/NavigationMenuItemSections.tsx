@@ -42,15 +42,15 @@ const renderSectionContent = (section: NavigationMenuItem) => {
   return <NavigationMenuItemCustomSection section={section} />;
 };
 
-type NavigationMenuItemCustomSectionsProps = {
+type NavigationMenuItemSectionsProps = {
   parentId: string | null;
   placement: 'above-items' | 'below-items';
 };
 
-export const NavigationMenuItemCustomSections = ({
+export const NavigationMenuItemSections = ({
   parentId,
   placement,
-}: NavigationMenuItemCustomSectionsProps) => {
+}: NavigationMenuItemSectionsProps) => {
   const isMobile = useIsMobile();
   const isAboveItems = placement === 'above-items';
   const allSections = useWorkspaceNavigationMenuSections(parentId);

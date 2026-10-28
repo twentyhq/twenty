@@ -1,14 +1,13 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections';
 import { NavigationMenuItemDndKitProvider } from '@/navigation-menu-item/display/dnd/providers/NavigationMenuItemDndKitProvider';
-import { useNavigationMenuItemAiChatSectionLabel } from '@/navigation-menu-item/display/sections/ai-chat/hooks/useNavigationMenuItemAiChatSectionLabel';
+import { useNavigationMenuItemSectionLabel } from '@/navigation-menu-item/common/hooks/useNavigationMenuItemSectionLabel';
+import { NavigationMenuItemEditableSectionPlaceholder } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemEditableSectionPlaceholder';
 import { FavoritesSection } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesSection';
-import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
-import { NavigationMenuItemSectionMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemSectionMenu';
-import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type NavigationMenuItemFavoritesSectionProps = {
@@ -22,27 +21,17 @@ export const NavigationMenuItemFavoritesSection = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const { getDefaultAiChatSectionLabel } =
-    useNavigationMenuItemAiChatSectionLabel();
+  const { getDefaultSectionLabel } = useNavigationMenuItemSectionLabel();
 
-  const defaultLabel = getDefaultAiChatSectionLabel(section.type);
+  const defaultLabel = getDefaultSectionLabel(NavigationMenuItemType.FAVORITES);
   const label = section.name ?? defaultLabel;
 
   if (isLayoutCustomizationModeEnabled && !isMobile) {
     return (
-      <CollapsibleNavigationDrawerSection
-        sectionId={getNavigationMenuSectionNavigationSectionId(section)}
-        label={label}
-        rightIcon={
-          <NavigationMenuItemSectionMenu
-            section={section}
-            defaultName={defaultLabel}
-          />
-        }
-        alwaysShowRightIcon
-      >
-        {null}
-      </CollapsibleNavigationDrawerSection>
+      <NavigationMenuItemEditableSectionPlaceholder
+        section={section}
+        defaultName={defaultLabel}
+      />
     );
   }
 

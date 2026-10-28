@@ -8,8 +8,8 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { buildStandardNavigationMenuItemToCreate } from 'src/database/commands/upgrade-version-command/2-53/utils/build-standard-navigation-menu-item-to-create.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -91,57 +91,25 @@ export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspace
 
     const now = new Date().toISOString();
 
-    const buildFlatNavigationMenuItem = (
-      navigationMenuItem: Pick<
-        FlatNavigationMenuItem,
-        | 'id'
-        | 'universalIdentifier'
-        | 'type'
-        | 'folderId'
-        | 'folderUniversalIdentifier'
-        | 'position'
-        | 'commandKey'
-      >,
-    ): FlatNavigationMenuItem => ({
-      ...navigationMenuItem,
-      applicationId: twentyStandardFlatApplication.id,
-      applicationUniversalIdentifier:
-        twentyStandardFlatApplication.universalIdentifier,
+    const creationContext = {
       workspaceId,
-      userWorkspaceId: null,
-      targetRecordId: null,
-      targetObjectMetadataId: null,
-      targetObjectMetadataUniversalIdentifier: null,
-      viewId: null,
-      viewUniversalIdentifier: null,
-      pageLayoutId: null,
-      pageLayoutUniversalIdentifier: null,
-      agentChatChannelId: null,
-      agentChatChannelUniversalIdentifier: null,
-      name: null,
-      link: null,
-      icon: null,
-      color: null,
-      visibleItemLimit: null,
-      createdAt: now,
-      updatedAt: now,
-    });
-
+      twentyStandardFlatApplication,
+      now,
+    };
     const pinnedCommands = STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommands;
     const pinnedCommandsId = v4();
 
     const flatNavigationMenuItemsToCreate = [
-      buildFlatNavigationMenuItem({
+      buildStandardNavigationMenuItemToCreate({
+        ...creationContext,
         id: pinnedCommandsId,
         universalIdentifier: pinnedCommands.universalIdentifier,
         type: pinnedCommands.type,
-        folderId: null,
-        folderUniversalIdentifier: null,
         position: pinnedCommands.position,
-        commandKey: null,
       }),
       ...DEFAULT_PINNED_COMMANDS.map((command) =>
-        buildFlatNavigationMenuItem({
+        buildStandardNavigationMenuItemToCreate({
+          ...creationContext,
           id: v4(),
           universalIdentifier: command.universalIdentifier,
           type: command.type,

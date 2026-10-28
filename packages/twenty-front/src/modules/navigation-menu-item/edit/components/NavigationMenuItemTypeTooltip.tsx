@@ -6,10 +6,6 @@ import {
   IconAddressBook,
   IconBox,
   IconCommand,
-  IconHeart,
-  IconInbox,
-  IconLego,
-  IconMessage,
   IconFolder,
   IconHash,
   IconLayoutList,
@@ -21,6 +17,11 @@ import {
 } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme } from 'twenty-ui/theme';
+
+import { NAVIGATION_MENU_ITEM_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuItemBuiltInSections';
+import { useNavigationMenuItemSectionLabel } from '@/navigation-menu-item/common/hooks/useNavigationMenuItemSectionLabel';
+import { type NavigationMenuItemBuiltInSectionType } from '@/navigation-menu-item/common/types/NavigationMenuItemBuiltInSectionType';
+import { isNavigationMenuItemBuiltInSectionType } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSectionType';
 
 type NavigationMenuItemTypeTooltipProps = {
   type: NavigationMenuItemType;
@@ -35,9 +36,10 @@ export const NavigationMenuItemTypeTooltip = ({
 }: NavigationMenuItemTypeTooltipProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const { getDefaultSectionLabel } = useNavigationMenuItemSectionLabel();
 
   const labelsByType: Record<
-    NavigationMenuItemType,
+    Exclude<NavigationMenuItemType, NavigationMenuItemBuiltInSectionType>,
     { label: string; Icon: IconComponent }
   > = {
     OBJECT: { label: t`Object`, Icon: IconBox },
@@ -49,17 +51,16 @@ export const NavigationMenuItemTypeTooltip = ({
     AGENT_CHAT_CHANNEL: { label: t`Channel`, Icon: IconHash },
     TAB: { label: t`Tab`, Icon: IconLayoutSidebar },
     SECTION: { label: t`Section`, Icon: IconLayoutList },
-    AI_CHAT_INBOX: { label: t`Inbox`, Icon: IconInbox },
-    AI_CHAT_FAVORITES: { label: t`Favorite chats`, Icon: IconHeart },
-    AI_CHAT_CHANNELS: { label: t`Channels`, Icon: IconHash },
-    AI_CHAT_RECENTS: { label: t`Recent chats`, Icon: IconMessage },
-    AI_AGENTS: { label: t`Agents`, Icon: IconLego },
-    COMMANDS: { label: t`Commands`, Icon: IconCommand },
+    PINNED_COMMANDS: { label: t`Commands`, Icon: IconCommand },
     COMMAND: { label: t`Command`, Icon: IconCommand },
-    FAVORITES: { label: t`Favorites`, Icon: IconHeart },
   };
 
-  const { label, Icon } = labelsByType[type];
+  const { label, Icon } = isNavigationMenuItemBuiltInSectionType(type)
+    ? {
+        label: getDefaultSectionLabel(type),
+        Icon: NAVIGATION_MENU_ITEM_BUILT_IN_SECTIONS[type].Icon,
+      }
+    : labelsByType[type];
 
   return (
     <Tooltip

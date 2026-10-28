@@ -4,7 +4,7 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/co
 import { NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG } from '@/navigation-menu-item/common/constants/NavigationMenuItemSectionDroppableConfig';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 
-export const extractFolderIdFromDroppableId = (
+export const extractContainerIdFromDroppableId = (
   droppableId: string,
   navigationMenuItemSection: NavigationMenuItemSection,
 ): string | null => {

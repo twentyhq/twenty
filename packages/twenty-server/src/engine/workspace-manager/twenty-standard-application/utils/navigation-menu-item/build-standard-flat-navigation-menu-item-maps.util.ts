@@ -6,7 +6,7 @@ import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/fla
 import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/add-flat-navigation-menu-item-to-maps-and-update-index.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
-import { createStandardNavigationMenuItemContainerFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-container-flat-metadata.util';
+import { createStandardNavigationMenuItemWithoutTargetFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-without-target-flat-metadata.util';
 import { createStandardNavigationMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-flat-metadata.util';
 import {
   createStandardNavigationMenuItemFolderFlatMetadata,
@@ -65,7 +65,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 
   addFlatNavigationMenuItemToMapsAndUpdateIndex({
     flatNavigationMenuItem:
-      createStandardNavigationMenuItemContainerFlatMetadata({
+      createStandardNavigationMenuItemWithoutTargetFlatMetadata({
         universalIdentifier: pinnedCommandsDefinition.universalIdentifier,
         type: pinnedCommandsDefinition.type,
         position: pinnedCommandsDefinition.position,
@@ -83,7 +83,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 
     addFlatNavigationMenuItemToMapsAndUpdateIndex({
       flatNavigationMenuItem:
-        createStandardNavigationMenuItemContainerFlatMetadata({
+        createStandardNavigationMenuItemWithoutTargetFlatMetadata({
           universalIdentifier: pinnedCommandDefinition.universalIdentifier,
           type: pinnedCommandDefinition.type,
           commandKey: pinnedCommandDefinition.commandKey,
@@ -106,7 +106,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 
     addFlatNavigationMenuItemToMapsAndUpdateIndex({
       flatNavigationMenuItem:
-        createStandardNavigationMenuItemContainerFlatMetadata({
+        createStandardNavigationMenuItemWithoutTargetFlatMetadata({
           universalIdentifier: homeSectionDefinition.universalIdentifier,
           type: homeSectionDefinition.type,
           position: homeSectionDefinition.position,
@@ -125,7 +125,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 
   addFlatNavigationMenuItemToMapsAndUpdateIndex({
     flatNavigationMenuItem:
-      createStandardNavigationMenuItemContainerFlatMetadata({
+      createStandardNavigationMenuItemWithoutTargetFlatMetadata({
         universalIdentifier: workspaceSectionDefinition.universalIdentifier,
         type: workspaceSectionDefinition.type,
         name: workspaceSectionDefinition.name,
@@ -218,7 +218,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 
   addFlatNavigationMenuItemToMapsAndUpdateIndex({
     flatNavigationMenuItem:
-      createStandardNavigationMenuItemContainerFlatMetadata({
+      createStandardNavigationMenuItemWithoutTargetFlatMetadata({
         universalIdentifier: chatsTabDefinition.universalIdentifier,
         type: chatsTabDefinition.type,
         name: chatsTabDefinition.name,
@@ -238,7 +238,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 
     addFlatNavigationMenuItemToMapsAndUpdateIndex({
       flatNavigationMenuItem:
-        createStandardNavigationMenuItemContainerFlatMetadata({
+        createStandardNavigationMenuItemWithoutTargetFlatMetadata({
           universalIdentifier: chatsTabSectionDefinition.universalIdentifier,
           type: chatsTabSectionDefinition.type,
           folderId: chatsTabId,

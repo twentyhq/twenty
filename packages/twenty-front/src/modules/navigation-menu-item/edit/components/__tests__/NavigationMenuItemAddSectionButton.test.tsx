@@ -1,8 +1,10 @@
+import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 import { MemoryRouter } from 'react-router-dom';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -21,9 +23,13 @@ const renderAddSectionButton = (permissionFlags: PermissionFlagType[]) => {
   render(
     <I18nProvider i18n={i18n}>
       <JotaiProvider store={store}>
-        <MemoryRouter>
-          <NavigationMenuItemAddSectionButton parentId={null} />
-        </MemoryRouter>
+        <MockedProvider>
+          <ToastProvider>
+            <MemoryRouter>
+              <NavigationMenuItemAddSectionButton parentId={null} />
+            </MemoryRouter>
+          </ToastProvider>
+        </MockedProvider>
       </JotaiProvider>
     </I18nProvider>,
   );

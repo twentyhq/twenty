@@ -4,7 +4,7 @@ import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/ut
 import { isNavigationMenuItemPinnedCommands } from '@/navigation-menu-item/common/utils/isNavigationMenuItemPinnedCommands';
 import { isNavigationMenuItemTab } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTab';
 
-export const isNavigationMenuItemTabOrSection = (
+export const isNavigationMenuItemContainer = (
   item: Pick<NavigationMenuItem, 'type'>,
 ) =>
   isNavigationMenuItemTab(item) ||

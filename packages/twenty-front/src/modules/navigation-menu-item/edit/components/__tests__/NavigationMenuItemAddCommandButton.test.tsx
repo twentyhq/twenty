@@ -22,9 +22,9 @@ jest.mock(
 );
 
 jest.mock(
-  '@/navigation-menu-item/edit/hooks/useCreateNavigationMenuTabOrSection',
+  '@/navigation-menu-item/edit/hooks/usePinNavigationMenuCommand',
   () => ({
-    useCreateNavigationMenuTabOrSection: () => ({ pinCommand: jest.fn() }),
+    usePinNavigationMenuCommand: () => ({ pinCommand: jest.fn() }),
   }),
 );
 

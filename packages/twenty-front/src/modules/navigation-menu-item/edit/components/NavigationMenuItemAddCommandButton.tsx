@@ -10,9 +10,9 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { NAVIGATION_MENU_ITEM_COMMANDS } from '@/navigation-menu-item/common/constants/NavigationMenuItemCommands';
 import { getNavigationMenuItemCommandKey } from '@/navigation-menu-item/common/utils/getNavigationMenuItemCommandKey';
 import { useNavigationMenuItemCommandRunner } from '@/navigation-menu-item/display/command/hooks/useNavigationMenuItemCommandRunner';
-import { NavigationMenuItemContainerTemplateMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerTemplateMenu';
+import { NavigationMenuItemGroupedOptionsMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemGroupedOptionsMenu';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
-import { useCreateNavigationMenuTabOrSection } from '@/navigation-menu-item/edit/hooks/useCreateNavigationMenuTabOrSection';
+import { usePinNavigationMenuCommand } from '@/navigation-menu-item/edit/hooks/usePinNavigationMenuCommand';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
@@ -36,7 +36,7 @@ export const NavigationMenuItemAddCommandButton = ({
 }: NavigationMenuItemAddCommandButtonProps) => {
   const { t } = useLingui();
   const { isCommandAvailable } = useNavigationMenuItemCommandRunner();
-  const { pinCommand } = useCreateNavigationMenuTabOrSection();
+  const { pinCommand } = usePinNavigationMenuCommand();
   const pinnedCommandKeys = new Set(
     commandItems.map(getNavigationMenuItemCommandKey).filter(isDefined),
   );
@@ -66,7 +66,7 @@ export const NavigationMenuItemAddCommandButton = ({
           <StyledDisabledAddCommand>{addCommandItem}</StyledDisabledAddCommand>
         </Tooltip>
       ) : (
-        <NavigationMenuItemContainerTemplateMenu
+        <NavigationMenuItemGroupedOptionsMenu
           dropdownId="navigation-menu-add-command"
           title={t`Add command`}
           isTriggerNativeButton={false}

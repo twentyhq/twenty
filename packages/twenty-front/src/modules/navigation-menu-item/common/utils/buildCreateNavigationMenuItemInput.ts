@@ -10,7 +10,7 @@ import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/co
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
 import { isNavigationMenuItemObject } from '@/navigation-menu-item/common/utils/isNavigationMenuItemObject';
-import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 
 export const buildCreateNavigationMenuItemInput = (
   draftItem: NavigationMenuItem,
@@ -24,7 +24,7 @@ export const buildCreateNavigationMenuItemInput = (
 
   if (
     isNavigationMenuItemFolder(draftItem) ||
-    isNavigationMenuItemTabOrSection(draftItem)
+    isNavigationMenuItemContainer(draftItem)
   ) {
     input.name = draftItem.name ?? undefined;
     input.icon = draftItem.icon ?? null;

@@ -4,7 +4,7 @@ import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-na
 import { type NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
-export const createStandardNavigationMenuItemContainerFlatMetadata = ({
+export const createStandardNavigationMenuItemWithoutTargetFlatMetadata = ({
   universalIdentifier,
   type,
   name,

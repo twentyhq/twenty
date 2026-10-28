@@ -6,7 +6,7 @@ import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/us
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { useWorkspaceNavigationMenuSections } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuSections';
-import { NavigationMenuItemCustomSections } from '@/navigation-menu-item/display/sections/custom/components/NavigationMenuItemCustomSections';
+import { NavigationMenuItemSections } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSections';
 import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionContainer';
 import { useWorkspaceSectionItemClickHandlers } from '@/navigation-menu-item/display/sections/workspace/hooks/useWorkspaceSectionItemClickHandlers';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -39,10 +39,7 @@ export const NavigationMenuTabContent = ({
 
   return (
     <>
-      <NavigationMenuItemCustomSections
-        parentId={tabId}
-        placement="above-items"
-      />
+      <NavigationMenuItemSections parentId={tabId} placement="above-items" />
       {items.length > 0 && (
         <WorkspaceSectionContainer
           sectionTitle=""
@@ -55,10 +52,7 @@ export const NavigationMenuTabContent = ({
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
         />
       )}
-      <NavigationMenuItemCustomSections
-        parentId={tabId}
-        placement="below-items"
-      />
+      <NavigationMenuItemSections parentId={tabId} placement="below-items" />
       {!isLayoutCustomizationModeEnabled && isEmpty && hasLayoutsPermission && (
         <NavigationDrawerSection>
           <NavigationDrawerItem

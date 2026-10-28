@@ -10,7 +10,7 @@ import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common
 import type { SortableTargetDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemDndKitSortableTargetDestination';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
-import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
+import { extractContainerIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractContainerIdFromDroppableId';
 import { isNavigationMenuItemAlreadyInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAlreadyInSection';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { useHandleNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/display/dnd/hooks/useHandleNavigationMenuItemDragAndDrop';
@@ -105,7 +105,7 @@ export const useNavigationMenuItemDndKit = (
         isNavigationMenuItemAlreadyInSection({
           items,
           itemId: sourceItemId,
-          containerId: extractFolderIdFromDroppableId(
+          containerId: extractContainerIdFromDroppableId(
             resolved.destination.droppableId,
             sectionType,
           ),
@@ -125,7 +125,7 @@ export const useNavigationMenuItemDndKit = (
       }
 
       const destinationParent = getNavItemById(
-        extractFolderIdFromDroppableId(
+        extractContainerIdFromDroppableId(
           resolved.destination.droppableId,
           sectionType,
         ) ?? undefined,

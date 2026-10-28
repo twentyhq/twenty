@@ -2,8 +2,6 @@ import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
-  IconChevronUp,
-  IconChevronDown,
   IconFolderSymlink,
   IconRowInsertTop,
   IconRowInsertBottom,
@@ -15,6 +13,7 @@ import {
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
+import { useNavigationMenuItemReorderOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemReorderOptions';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
@@ -41,8 +40,12 @@ export const NavigationMenuItemActions = ({
   const moveToLabel = isCustomizableSidebarEnabled
     ? t`Move to`
     : t`Move to folder`;
-  const { getSortedSiblings, moveUp, moveDown, moveToFolder, remove } =
-    useNavigationMenuItemMoveRemove(section);
+  const { moveToContainer, remove } = useNavigationMenuItemMoveRemove(section);
+  const { reorderOptions, index } = useNavigationMenuItemReorderOptions({
+    navigationMenuItemId: item.id,
+    section,
+    onClose,
+  });
   const moveDestinationGroups = useNavigationMenuItemMoveDestinations({
     item,
     section,
@@ -51,28 +54,13 @@ export const NavigationMenuItemActions = ({
     group.destinations.some((destination) => !destination.isDisabled),
   );
   const { goToPage } = useDropdownPage();
-  const siblings = getSortedSiblings(item.id) ?? [];
-  const index = siblings.findIndex((sibling) => sibling.id === item.id);
   const run = (action: () => Promise<void>) => {
     void action();
     onClose();
   };
   const isCommand = item.type === NavigationMenuItemType.COMMAND;
   const actions: NavigationMenuItemOption[] = [
-    {
-      id: 'up',
-      label: t`Move up`,
-      Icon: IconChevronUp,
-      isDisabled: index <= 0,
-      onClick: () => run(() => moveUp(item.id)),
-    },
-    {
-      id: 'down',
-      label: t`Move down`,
-      Icon: IconChevronDown,
-      isDisabled: index < 0 || index === siblings.length - 1,
-      onClick: () => run(() => moveDown(item.id)),
-    },
+    ...reorderOptions,
     ...(isCommand
       ? []
       : [
@@ -141,7 +129,7 @@ export const NavigationMenuItemActions = ({
                     isDisabled: destination.isDisabled,
                     contextualText: destination.contextualText,
                     onClick: () =>
-                      run(() => moveToFolder(item.id, destination.id)),
+                      run(() => moveToContainer(item.id, destination.id)),
                   }}
                 />
               ))}

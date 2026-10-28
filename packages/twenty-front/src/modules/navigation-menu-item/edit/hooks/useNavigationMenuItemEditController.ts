@@ -1,6 +1,9 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { useLingui } from '@lingui/react/macro';
-import { type NavigationMenuItemType } from 'twenty-shared/types';
+import {
+  type NavigationMenuItemCommandKey,
+  type NavigationMenuItemType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -11,7 +14,7 @@ import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/common/utils/buildCreateNavigationMenuItemInput';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
-import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -27,6 +30,8 @@ export type NewNavigationMenuItemInput = {
   name?: string | null;
   link?: string | null;
   color?: string | null;
+  visibleItemLimit?: number | null;
+  commandKey?: NavigationMenuItemCommandKey | null;
 };
 
 type CreateItemOptions = {
@@ -66,9 +71,9 @@ export const useNavigationMenuItemEditController = (
     { targetFolderId, targetIndex }: CreateItemOptions = {},
   ): string => {
     const folderId = targetFolderId ?? null;
-    const isTabOrSection = isNavigationMenuItemTabOrSection(input);
+    const isContainer = isNavigationMenuItemContainer(input);
     const positionSiblings = currentItems.filter(
-      (item) => isNavigationMenuItemTabOrSection(item) === isTabOrSection,
+      (item) => isNavigationMenuItemContainer(item) === isContainer,
     );
     const itemsInFolder = positionSiblings.filter(
       (item) => (item.folderId ?? null) === folderId,
@@ -102,6 +107,8 @@ export const useNavigationMenuItemEditController = (
       name: input.name ?? undefined,
       link: input.link ?? undefined,
       color: input.color ?? undefined,
+      visibleItemLimit: input.visibleItemLimit ?? undefined,
+      commandKey: input.commandKey ?? undefined,
       applicationId: undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
