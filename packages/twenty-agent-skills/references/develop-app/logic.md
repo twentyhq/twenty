@@ -113,7 +113,7 @@ To let members reply to an app's message channels, declare `defineMessagingProvi
 
 ## Post-Install Hooks
 
-Use `definePostInstallLogicFunction` for records that must exist on install — default workflows, views, roles, or seeded reference data. Do not implement this as runtime first-run code.
+Use `definePostInstallLogicFunction` for records that must exist on install — views, roles, or seeded reference data. Ship workflows with `defineWorkflow` (see `workflows.md`). Do not implement this as runtime first-run code.
 
 Post-install hook files live alongside other logic functions (typically `src/logic-functions/<name>.post-install.ts`). Kebab-case filename, one export per file.
 

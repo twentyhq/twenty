@@ -2,7 +2,7 @@
 
 Use when the app needs to ship a workflow, or when a logic function should be invocable from the workflow builder.
 
-See `logic.md` for workflow actions and post-install hooks. See `app-structure.md` for source layout.
+See `logic.md` for post-install hooks. See `app-structure.md` for source layout.
 
 ## Mental Model
 
