@@ -37,6 +37,12 @@ import {
   failNextApplicationPreferencesRequest,
   seedApplicationPreferencesStory,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
+import {
+  LINEAR_APPLICATION_ID,
+  LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+  MOCKED_TRANSIENT_TOKEN,
+} from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
+import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
 import { withinTableRowOrThrow } from '~/testing/utils/withinTableRowOrThrow';
 
 const meta: Meta<PageDecoratorArgs> = {
@@ -268,15 +274,16 @@ export const AccountsSectionHeaderStaysWhileLoading: Story = {
   },
 };
 
-export const AccountsTabWithoutAccountsSaysNoAccountsYet: Story = {
+export const AccountsTabWithoutAccountsOffersConnectCards: Story = {
   ...accountsTabStory,
+  beforeEach: seedApplicationPreferencesStory,
   parameters: {
     msw: {
       handlers: [
         graphql.query('MyConnectedAccounts', () =>
           HttpResponse.json({ data: { myConnectedAccounts: [] } }),
         ),
-        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+        ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
       ],
     },
   },
@@ -284,9 +291,32 @@ export const AccountsTabWithoutAccountsSaysNoAccountsYet: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('No accounts yet', undefined, { timeout: 3000 }),
+      await canvas.findByText('Connect with Gmail and Calendar', undefined, {
+        timeout: 3000,
+      }),
     ).toBeVisible();
-    expect(canvas.queryByText('Connect with Google')).not.toBeInTheDocument();
+    expect(canvas.getByText('Connect with Outlook')).toBeVisible();
+    const linearCard = await canvas.findByText(
+      'Connect with Linear',
+      undefined,
+      {
+        timeout: 3000,
+      },
+    );
+    expect(canvas.getByText('Connect with Fathom')).toBeVisible();
+    expect(canvas.queryByText('Connect with Granola')).not.toBeInTheDocument();
+
+    const redirectUrl = await clickAndCaptureOAuthRedirect(linearCard);
+
+    expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe(
+      `${REACT_APP_SERVER_BASE_URL}/auth/apps/authorize`,
+    );
+    expect(Object.fromEntries(redirectUrl.searchParams)).toEqual({
+      applicationId: LINEAR_APPLICATION_ID,
+      providerName: 'linear',
+      transientToken: MOCKED_TRANSIENT_TOKEN,
+      redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+    });
   },
 };
 

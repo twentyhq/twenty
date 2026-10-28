@@ -62,10 +62,10 @@ const buildMaps = (
 });
 
 describe('buildUngateMergeCommandMenuItemUpdate', () => {
-  it('should target the standard merge command and its current expression', () => {
+  // The later record-permission command extends this expression, so only the target is shared with the constant
+  it('should target the standard merge command', () => {
     expect(STANDARD_COMMAND_MENU_ITEMS.mergeMultipleRecords).toMatchObject({
       universalIdentifier: MERGE_MULTIPLE_RECORDS_UNIVERSAL_IDENTIFIER,
-      conditionalAvailabilityExpression: UNGATED_MERGE_AVAILABILITY_EXPRESSION,
     });
   });
 

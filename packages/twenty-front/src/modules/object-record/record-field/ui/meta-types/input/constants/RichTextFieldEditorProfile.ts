@@ -5,7 +5,7 @@ import { MentionSuggestion } from '@/mention/extensions/MentionSuggestion';
 
 export const RICH_TEXT_FIELD_EDITOR_PROFILE = {
   chrome: 'document',
-  variant: 'app',
+  variant: 'note',
   minHeight: 400,
   enableFullScreen: false,
   parseLegacyDocument: parseLegacyMarkdownDocument,

@@ -24,6 +24,7 @@ import {
 } from 'twenty-shared/types';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ADD_VIEW_KANBAN_COLUMN_WIDTH_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/add-view-kanban-column-width-upgrade-command-name.constant';
@@ -125,7 +126,7 @@ export class ViewEntity
   isCompact: boolean;
 
   @Column({ nullable: false, default: false, type: 'boolean' })
-  isCustom: boolean;
+  isCustom: WasRemovedInUpgrade<boolean>;
 
   // Deprecated: superseded by objectMetadata.openRecordIn and the member preference.
   @Column({

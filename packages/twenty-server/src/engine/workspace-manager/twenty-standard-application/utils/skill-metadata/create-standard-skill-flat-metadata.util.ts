@@ -13,7 +13,6 @@ export type CreateStandardSkillContext = {
   icon: string | null;
   description: string | null;
   content: string;
-  isCustom: boolean;
   isSystem: boolean;
   isActive?: boolean;
 };
@@ -30,7 +29,6 @@ export const createStandardSkillFlatMetadata = ({
     icon,
     description,
     content,
-    isCustom,
     isSystem,
     isActive = true,
   },
@@ -48,7 +46,6 @@ export const createStandardSkillFlatMetadata = ({
     icon,
     description,
     content,
-    isCustom,
     isSystem,
     isActive,
     workspaceId,

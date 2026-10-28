@@ -482,11 +482,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'objectMetadataUniversalIdentifier',
     },
-    isCustom: {
-      toCompare: false,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     createdAt: {
       toCompare: false,
       toStringify: false,
@@ -690,11 +685,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'objectMetadataUniversalIdentifier',
-    },
-    isCustom: {
-      toCompare: false,
-      toStringify: false,
-      universalProperty: undefined,
     },
     createdAt: {
       toCompare: false,
@@ -1006,11 +996,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    isCustom: {
-      toCompare: false,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     createdAt: {
       toCompare: false,
       toStringify: false,
@@ -1232,11 +1217,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     isSystem: {
       toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
-    isCustom: {
-      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -2349,11 +2329,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     position: {
       toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
-    isCustom: {
-      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },

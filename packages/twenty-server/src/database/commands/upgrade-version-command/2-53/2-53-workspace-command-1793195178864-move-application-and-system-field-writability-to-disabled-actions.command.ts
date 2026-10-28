@@ -19,7 +19,7 @@ const WRITABILITY_MOVES = [
   { value: 'SYSTEM', shouldOpenAfterMove: false },
 ] as const;
 
-@RegisteredWorkspaceCommand('2.53.0', 1793181406864)
+@RegisteredWorkspaceCommand('2.53.0', 1793195178864)
 @Command({
   name: 'upgrade:2-53:move-application-and-system-field-writability-to-disabled-actions',
   description:
