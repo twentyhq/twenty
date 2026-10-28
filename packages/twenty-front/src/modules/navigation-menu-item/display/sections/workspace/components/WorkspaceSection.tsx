@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPlus, IconTool } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -31,14 +32,14 @@ export const WorkspaceSection = () => {
   const isMobile = useIsMobile();
   const workspaceSectionId = useDefaultWorkspaceSectionId();
   const items = useNavigationMenuItemSectionItems(workspaceSectionId);
+  const rootItems = useNavigationMenuItemSectionItems();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const { openNavigationSection } = useNavigationSection(
-    doNotTranslate('Workspace'),
-  );
+  const { openNavigationSection, isNavigationSectionOpen } =
+    useNavigationSection(doNotTranslate('Workspace'));
   const {
     selectedNavigationMenuItemId,
     onNavigationMenuItemClick,
@@ -66,35 +67,51 @@ export const WorkspaceSection = () => {
     </NavigationMenuItemAddDropdown>
   );
 
+  const hasRootItemsOutsideWorkspaceSection =
+    isDefined(workspaceSectionId) && rootItems.length > 0;
+
   return (
-    <WorkspaceSectionContainer
-      sectionTitle={t`Workspace`}
-      items={items}
-      containerId={workspaceSectionId}
-      rightIcon={
-        // Customising the menu is desktop-only.
-        isMobile ? undefined : (
-          <StyledRightIconsContainer>
-            {isLayoutCustomizationModeEnabled
-              ? addDropdown
-              : hasLayoutsPermission && (
-                  <div onMouseEnter={preloadNavigationMenuItemDndKit}>
-                    <LightIconButton
-                      emphasis="subtle"
-                      size="sm"
-                      onClick={handleEditClick}
-                      aria-label={t`Edit navigation`}
-                    >
-                      <IconTool />
-                    </LightIconButton>
-                  </div>
-                )}
-          </StyledRightIconsContainer>
-        )
-      }
-      selectedNavigationMenuItemId={selectedNavigationMenuItemId}
-      onNavigationMenuItemClick={onNavigationMenuItemClick}
-      onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-    />
+    <>
+      <WorkspaceSectionContainer
+        sectionTitle={t`Workspace`}
+        items={items}
+        containerId={workspaceSectionId}
+        rightIcon={
+          // Customising the menu is desktop-only.
+          isMobile ? undefined : (
+            <StyledRightIconsContainer>
+              {isLayoutCustomizationModeEnabled
+                ? addDropdown
+                : hasLayoutsPermission && (
+                    <div onMouseEnter={preloadNavigationMenuItemDndKit}>
+                      <LightIconButton
+                        emphasis="subtle"
+                        size="sm"
+                        onClick={handleEditClick}
+                        aria-label={t`Edit navigation`}
+                      >
+                        <IconTool />
+                      </LightIconButton>
+                    </div>
+                  )}
+            </StyledRightIconsContainer>
+          )
+        }
+        selectedNavigationMenuItemId={selectedNavigationMenuItemId}
+        onNavigationMenuItemClick={onNavigationMenuItemClick}
+        onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+      />
+      {hasRootItemsOutsideWorkspaceSection && isNavigationSectionOpen && (
+        <WorkspaceSectionContainer
+          sectionTitle=""
+          items={rootItems}
+          isTitleHidden
+          addMenuItemButton={false}
+          selectedNavigationMenuItemId={selectedNavigationMenuItemId}
+          onNavigationMenuItemClick={onNavigationMenuItemClick}
+          onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+        />
+      )}
+    </>
   );
 };
