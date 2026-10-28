@@ -80,6 +80,16 @@ export const StyledControlContainer = styled.div<{
   padding: ${({ $variant }) =>
     $variant === 'transparent' ? '0' : `0 ${themeCssVariables.spacing[2]}`};
   text-align: left;
+  transition: border-color 120ms ease-out;
+
+  @media (hover: hover) {
+    &:hover {
+      border-color: ${({ disabled }) =>
+        disabled
+          ? themeCssVariables.border.color.medium
+          : themeCssVariables.border.color.strong};
+    }
+  }
 `;
 
 const StyledLeadingContent = styled.div`

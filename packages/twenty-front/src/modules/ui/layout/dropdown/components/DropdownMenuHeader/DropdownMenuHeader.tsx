@@ -19,11 +19,12 @@ const StyledHeader = styled.li`
   flex-shrink: 0;
   font-size: ${({ onClick }) =>
     onClick ? themeCssVariables.font.size.sm : themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 
   height: ${themeCssVariables.spacing[6]};
 
   padding: ${themeCssVariables.spacing[1]};
+  transition: background-color 120ms ease-out;
 
   &:hover {
     background: ${({ onClick }) =>

@@ -12,10 +12,14 @@
   gap: var(--t-spacing-1);
   inline-size: 100%;
   padding-inline: var(--t-spacing-2);
+  transition:
+    border-color duration(fast) ease-out,
+    box-shadow duration(fast) ease-out;
 
   &:focus-within {
     --tw-input-group-border-color: var(--t-color-blue);
 
+    box-shadow: 0 0 0 3px var(--t-accent-secondary);
     color: var(--t-font-color-secondary);
   }
 

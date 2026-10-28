@@ -27,10 +27,10 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 const StyledPlusIconHeaderCell = styled.div<{
   shouldDisplayBorderBottom: boolean;
 }>`
-  background-color: ${themeCssVariables.background.primary};
+  background-color: ${themeCssVariables.background.secondary};
   border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
-      ? `1px solid ${themeCssVariables.border.color.light}`
+      ? `1px solid ${themeCssVariables.border.color.medium}`
       : 'none'};
 
   color: ${themeCssVariables.font.color.tertiary};
@@ -46,7 +46,7 @@ const StyledPlusIconHeaderCell = styled.div<{
 
   @media (hover: hover) {
     &:hover {
-      background: ${themeCssVariables.background.secondary};
+      background: ${themeCssVariables.background.tertiary};
     }
   }
 `;

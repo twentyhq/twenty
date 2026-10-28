@@ -14,8 +14,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 // Takes the first slot of the virtualized row grid, pitched at RECORD_TABLE_ROW_HEIGHT + 1 (bottom border).
 const StyledHeaderContainer = styled.div`
-  background-color: ${themeCssVariables.background.primary};
-  box-shadow: 0 -1px 0 ${themeCssVariables.background.primary};
+  background-color: ${themeCssVariables.background.secondary};
+  box-shadow: 0 -1px 0 ${themeCssVariables.background.secondary};
   display: flex;
   flex-direction: row;
   height: ${RECORD_TABLE_ROW_HEIGHT + 1}px;

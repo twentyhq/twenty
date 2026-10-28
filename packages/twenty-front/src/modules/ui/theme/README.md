@@ -22,7 +22,9 @@ The theme only overrides existing `--t-*` semantic CSS variables under `.light`.
 Root-level variables reach body portals and embedded app components as well as
 Linaria styles and `useTheme()` consumers. No extra provider is needed; interface
 scaling, font sizes, responsive layouts, and keyboard interactions remain owned
-by Twenty. The shared `twenty-ui` package is not modified.
+by Twenty. Popover scale-in motion and the input focus ring live in `twenty-ui`
+and apply to every theme. Radii are redefined inside the squircle `@supports`
+block too, otherwise the Klaim values would shrink Chromium's squircle corners.
 
 Inter is already bundled locally. The reference's optional Sen heading font is
 not added, and no remote fonts or assets are requested. Muted text and status

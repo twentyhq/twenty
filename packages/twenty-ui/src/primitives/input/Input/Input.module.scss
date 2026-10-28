@@ -24,8 +24,14 @@
     font-weight: var(--t-font-weight-medium);
   }
 
+  transition:
+    border-color duration(fast) ease-out,
+    box-shadow duration(fast) ease-out;
+
   &:focus {
     --tw-input-border-color: var(--t-color-blue);
+
+    box-shadow: 0 0 0 3px var(--t-accent-secondary);
   }
 
   &[aria-invalid='true'],
@@ -44,6 +50,7 @@
     block-size: auto;
     border: 0;
     border-radius: 0;
+    box-shadow: none;
     flex: 1;
     padding-inline: 0;
   }

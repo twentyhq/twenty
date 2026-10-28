@@ -11,7 +11,7 @@
   --t-background-primary-inverted: #182842;
   --t-background-primary-inverted-hover: #2a3e5d;
   --t-background-danger: #fcedea;
-  --t-background-transparent-primary: rgb(255 255 255 / 94%);
+  --t-background-transparent-primary: rgb(255 255 255 / 97%);
   --t-background-transparent-secondary: rgb(255 255 255 / 70%);
   --t-background-transparent-strong: rgb(24 40 66 / 16%);
   --t-background-transparent-medium: rgb(128 238 224 / 24%);
@@ -48,16 +48,21 @@
   --t-border-color-danger: #e8bdb7;
   --t-border-color-blue: #54bfb2;
   --t-border-color-transparent-strong: rgb(46 45 77 / 7%);
-  --t-border-radius-sm: 5px;
+  --t-border-radius-sm: 6px;
   --t-border-radius-md: 8px;
-  --t-border-radius-lg: 10px;
-  --t-border-radius-xl: 12px;
+  --t-border-radius-lg: 12px;
+  --t-border-radius-xl: 16px;
 
   --t-box-shadow-color: rgb(34 34 68 / 2%);
-  --t-box-shadow-light: 0 3px 9px rgb(34 34 68 / 3%);
+  --t-box-shadow-light:
+    0 1px 2px rgb(24 40 66 / 4%), 0 2px 6px rgb(24 40 66 / 4%);
   --t-box-shadow-sidebar: 1px 0 0 #e9e9f0;
   --t-box-shadow-strong:
-    0 8px 24px rgb(24 40 66 / 12%), 0 2px 6px rgb(24 40 66 / 6%);
+    0 0 0 1px rgb(24 40 66 / 3%), 0 4px 8px -2px rgb(24 40 66 / 6%),
+    0 16px 32px -8px rgb(24 40 66 / 14%);
+  --t-box-shadow-super-heavy:
+    0 0 0 1px rgb(24 40 66 / 4%), 0 8px 24px -8px rgb(24 40 66 / 10%),
+    0 32px 64px -16px rgb(24 40 66 / 24%);
 
   --t-accent-primary: #80eee0;
   --t-accent-secondary: #bcefe4;
@@ -115,4 +120,14 @@
   --t-snack-bar-info-background-color: #e6faf5;
   --t-snack-bar-default-color: #2e2d4d;
   --t-snack-bar-default-background-color: #f2f2f8;
+}
+
+/* Twenty doubles radii for squircle corners; keep that ratio over the Klaim radii. */
+@supports (corner-shape: squircle) {
+  .light {
+    --t-border-radius-sm: 12px;
+    --t-border-radius-md: 16px;
+    --t-border-radius-lg: 24px;
+    --t-border-radius-xl: 32px;
+  }
 }

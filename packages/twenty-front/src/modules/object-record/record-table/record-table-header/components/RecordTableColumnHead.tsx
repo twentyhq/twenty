@@ -10,16 +10,20 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTitle = styled.div`
   align-items: center;
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
   flex-direction: row;
+  font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[1.5]};
   height: ${themeCssVariables.spacing[8]};
+  letter-spacing: 0.01em;
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledIcon = styled.div`
+  color: ${themeCssVariables.font.color.light};
   display: flex;
   flex-shrink: 0;
 `;
@@ -48,7 +52,7 @@ export const RecordTableColumnHead = ({
   return (
     <StyledTitle className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}>
       <StyledIcon>
-        <Icon size={theme.icon.size.md} />
+        <Icon size={theme.icon.size.sm} />
       </StyledIcon>
       <FieldDescriptionTooltip
         label={fieldMetadataItem?.label}

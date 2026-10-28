@@ -7,10 +7,10 @@ const StyledHeaderCell = styled.div<{
   isResizing: boolean;
   isReadOnly: boolean;
 }>`
-  background-color: ${themeCssVariables.background.primary};
+  background-color: ${themeCssVariables.background.secondary};
   border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
-      ? `1px solid ${themeCssVariables.border.color.light}`
+      ? `1px solid ${themeCssVariables.border.color.medium}`
       : 'none'};
   border-right: 1px solid ${themeCssVariables.border.color.light};
 
@@ -26,21 +26,22 @@ const StyledHeaderCell = styled.div<{
   position: relative;
 
   text-align: left;
+  transition: background-color 120ms ease-out;
 
   @media (hover: hover) {
     &:hover {
       background: ${({ isResizing, isReadOnly }) =>
         isReadOnly || isResizing
-          ? themeCssVariables.background.primary
-          : themeCssVariables.background.secondary};
+          ? themeCssVariables.background.secondary
+          : themeCssVariables.background.tertiary};
     }
   }
 
   &:active {
     background: ${({ isResizing, isReadOnly }) =>
       isReadOnly || isResizing
-        ? themeCssVariables.background.primary
-        : themeCssVariables.background.tertiary};
+        ? themeCssVariables.background.secondary
+        : themeCssVariables.background.quaternary};
   }
 
   user-select: none;

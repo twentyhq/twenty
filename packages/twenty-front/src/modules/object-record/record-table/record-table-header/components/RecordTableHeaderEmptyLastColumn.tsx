@@ -16,10 +16,10 @@ import { themeCssVariables } from 'twenty-ui/theme';
 const StyledEmptyHeaderCell = styled.div<{
   shouldDisplayBorderBottom: boolean;
 }>`
-  background-color: ${themeCssVariables.background.primary};
+  background-color: ${themeCssVariables.background.secondary};
   border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
-      ? `1px solid ${themeCssVariables.border.color.light}`
+      ? `1px solid ${themeCssVariables.border.color.medium}`
       : 'none'};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   max-height: ${RECORD_TABLE_ROW_HEIGHT}px;

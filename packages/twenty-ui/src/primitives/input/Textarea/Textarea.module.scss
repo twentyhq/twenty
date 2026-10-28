@@ -29,8 +29,14 @@
     font-weight: var(--t-font-weight-medium);
   }
 
+  transition:
+    border-color duration(fast) ease-out,
+    box-shadow duration(fast) ease-out;
+
   &:focus {
     --tw-textarea-border-color: var(--t-color-blue);
+
+    box-shadow: 0 0 0 3px var(--t-accent-secondary);
   }
 
   &[aria-invalid='true'],
