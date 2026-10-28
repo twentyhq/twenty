@@ -52,6 +52,12 @@ export default defineNavigationMenuItem({
 - `twenty app pull` writes your navigation menu items back as `defineNavigationMenuItem()` files. An item a workspace member added to their own sidebar, and one pinned to a record, belong to that workspace rather than to your app and are reported instead; see [what pull does not write](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 
 <Note>
+  Tabs, sections and pinned commands are rolling out. Workspaces without the
+  new sidebar only list your app's items that sit at the root, so keep any
+  entry your app must always show outside its own tabs and sections for now.
+</Note>
+
+<Note>
   **Common pitfall:** creating an object without an associated navigation menu
   item makes that object unreachable from the sidebar. Unless it's a
   technical/internal object, every custom object should have a sidebar entry
