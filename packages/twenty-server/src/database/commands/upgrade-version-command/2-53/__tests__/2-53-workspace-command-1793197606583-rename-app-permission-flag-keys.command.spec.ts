@@ -1,15 +1,21 @@
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { type DataSource, type EntityManager } from 'typeorm';
+import { Test } from '@nestjs/testing';
+import { getDataSourceToken } from '@nestjs/typeorm';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
+
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { RenameAppPermissionFlagKeysCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793197606583-rename-app-permission-flag-keys.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
+
+const CREATED_AT = '2026-01-01T00:00:00.000Z';
 
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-5555-4555-8555-555555555555';
@@ -26,61 +32,134 @@ type CommandMenuItemMigrationArgs = {
 
 const OTHER_APPLICATION_ID = '20202020-3333-4333-8333-000000000003';
 
-const buildPermissionFlag = (
-  universalIdentifier: string,
-  key: string,
-  applicationUniversalIdentifier = TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+const buildPermissionFlag = ({
+  universalIdentifier,
+  key,
   applicationId = 'standard-application-id',
-): FlatPermissionFlag =>
-  ({
-    id: `id-${universalIdentifier}`,
-    universalIdentifier,
-    key,
-    applicationId,
-    applicationUniversalIdentifier,
-  }) as FlatPermissionFlag;
+  applicationUniversalIdentifier = TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+}: Pick<FlatPermissionFlag, 'universalIdentifier' | 'key'> &
+  Partial<
+    Pick<FlatPermissionFlag, 'applicationId' | 'applicationUniversalIdentifier'>
+  >): FlatPermissionFlag => ({
+  id: `id-${universalIdentifier}`,
+  universalIdentifier,
+  key,
+  applicationId,
+  applicationUniversalIdentifier,
+  workspaceId: WORKSPACE_ID,
+  label: key,
+  description: null,
+  icon: null,
+  permissionType: 'settings',
+  rolePermissionFlagIds: [],
+  rolePermissionFlagUniversalIdentifiers: [],
+  createdAt: CREATED_AT,
+  updatedAt: CREATED_AT,
+});
+
+const buildCommandMenuItem = (
+  overrides: Pick<
+    FlatCommandMenuItem,
+    | 'id'
+    | 'universalIdentifier'
+    | 'applicationUniversalIdentifier'
+    | 'conditionalAvailabilityExpression'
+    | 'conditionalPinnedExpression'
+  >,
+): FlatCommandMenuItem => ({
+  workspaceId: WORKSPACE_ID,
+  applicationId: `application-id-${overrides.applicationUniversalIdentifier}`,
+  label: 'Command menu item',
+  shortLabel: null,
+  icon: null,
+  position: 0,
+  isPinned: false,
+  isActive: true,
+  isSystemSideEffect: false,
+  engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+  availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+  availabilityObjectMetadataId: null,
+  availabilityObjectMetadataUniversalIdentifier: null,
+  navigationTargetObjectMetadataId: null,
+  navigationTargetObjectMetadataUniversalIdentifier: null,
+  frontComponentId: null,
+  frontComponentUniversalIdentifier: null,
+  pageLayoutId: null,
+  pageLayoutUniversalIdentifier: null,
+  workflowVersionId: null,
+  coreWorkflowVersionId: null,
+  hotKeys: null,
+  payload: null,
+  overrides: null,
+  universalOverrides: null,
+  createdAt: CREATED_AT,
+  updatedAt: CREATED_AT,
+  ...overrides,
+});
 
 const buildInitialPermissionFlags = () => [
-  buildPermissionFlag(
-    'e5f63b2d-5369-5df6-8f32-a8bd9e79e653',
-    'CONNECTED_ACCOUNTS',
-  ),
-  buildPermissionFlag('9faa55f7-2606-566b-9e1d-aefbedbd0136', 'APPLICATIONS'),
-  buildPermissionFlag('1c7f09a7-367d-568b-a0e8-c274eccd6ee3', 'AI'),
+  buildPermissionFlag({
+    universalIdentifier: 'e5f63b2d-5369-5df6-8f32-a8bd9e79e653',
+    key: 'CONNECTED_ACCOUNTS',
+  }),
+  buildPermissionFlag({
+    universalIdentifier: '9faa55f7-2606-566b-9e1d-aefbedbd0136',
+    key: 'APPLICATIONS',
+  }),
+  buildPermissionFlag({
+    universalIdentifier: '1c7f09a7-367d-568b-a0e8-c274eccd6ee3',
+    key: 'AI',
+  }),
 ];
 
 const buildRenamedPermissionFlags = () => [
-  buildPermissionFlag('e5f63b2d-5369-5df6-8f32-a8bd9e79e653', 'USER_APPS'),
-  buildPermissionFlag('9faa55f7-2606-566b-9e1d-aefbedbd0136', 'WORKSPACE_APPS'),
-  buildPermissionFlag('1c7f09a7-367d-568b-a0e8-c274eccd6ee3', 'AI'),
+  buildPermissionFlag({
+    universalIdentifier: 'e5f63b2d-5369-5df6-8f32-a8bd9e79e653',
+    key: 'USER_APPS',
+  }),
+  buildPermissionFlag({
+    universalIdentifier: '9faa55f7-2606-566b-9e1d-aefbedbd0136',
+    key: 'WORKSPACE_APPS',
+  }),
+  buildPermissionFlag({
+    universalIdentifier: '1c7f09a7-367d-568b-a0e8-c274eccd6ee3',
+    key: 'AI',
+  }),
 ];
 
-const buildInitialCommandMenuItems = () =>
-  [
-    {
-      id: 'standard-command-menu-item-id',
-      universalIdentifier: '447a65cc-8535-408e-9c48-db24affb7530',
-      applicationUniversalIdentifier:
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-      conditionalAvailabilityExpression: 'permissionFlags.CONNECTED_ACCOUNTS',
-      conditionalPinnedExpression: null,
-    },
-    {
-      id: 'custom-command-menu-item-id',
-      universalIdentifier: 'custom-command-menu-item',
-      applicationUniversalIdentifier:
-        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-      conditionalAvailabilityExpression: null,
-      conditionalPinnedExpression: 'permissionFlags.APPLICATIONS',
-    },
-    {
-      id: 'other-application-command-menu-item-id',
-      universalIdentifier: 'other-application-command-menu-item',
-      applicationUniversalIdentifier: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
-      conditionalAvailabilityExpression: 'permissionFlags.CONNECTED_ACCOUNTS',
-      conditionalPinnedExpression: null,
-    },
-  ] as FlatCommandMenuItem[];
+const buildCollidingPermissionFlag = () =>
+  buildPermissionFlag({
+    universalIdentifier: '20202020-4444-4444-8444-444444444444',
+    key: 'USER_APPS',
+    applicationId: OTHER_APPLICATION_ID,
+    applicationUniversalIdentifier: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+  });
+
+const buildInitialCommandMenuItems = () => [
+  buildCommandMenuItem({
+    id: 'standard-command-menu-item-id',
+    universalIdentifier: '447a65cc-8535-408e-9c48-db24affb7530',
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    conditionalAvailabilityExpression: 'permissionFlags.CONNECTED_ACCOUNTS',
+    conditionalPinnedExpression: null,
+  }),
+  buildCommandMenuItem({
+    id: 'custom-command-menu-item-id',
+    universalIdentifier: 'custom-command-menu-item',
+    applicationUniversalIdentifier:
+      WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    conditionalAvailabilityExpression: null,
+    conditionalPinnedExpression: 'permissionFlags.APPLICATIONS',
+  }),
+  buildCommandMenuItem({
+    id: 'other-application-command-menu-item-id',
+    universalIdentifier: 'other-application-command-menu-item',
+    applicationUniversalIdentifier: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+    conditionalAvailabilityExpression: 'permissionFlags.CONNECTED_ACCOUNTS',
+    conditionalPinnedExpression: null,
+  }),
+];
 
 const buildFailedMigrationResult = (code: string) => ({
   status: 'fail',
@@ -141,7 +220,7 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
     return { status: 'success' };
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     permissionFlags = buildInitialPermissionFlags();
     commandMenuItems = buildInitialCommandMenuItems();
     writes = [];
@@ -183,19 +262,21 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
           return { affected: matchingPermissionFlags.length };
         },
       ),
-    } as unknown as EntityManager;
+    };
 
     const coreDataSource = {
       transaction: jest.fn(
         async (
-          runInTransaction: (entityManager: EntityManager) => Promise<void>,
+          runInTransaction: (
+            transactionEntityManager: typeof entityManager,
+          ) => Promise<void>,
         ) => {
           await runInTransaction(entityManager);
 
           writes.push('permission flag keys');
         },
       ),
-    } as unknown as DataSource;
+    };
 
     findWorkspaceTwentyStandardAndCustomApplicationOrThrow = jest
       .fn()
@@ -214,21 +295,43 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
         applyCommandMenuItemMigration('side-effect', args),
     );
 
-    command = new RenameAppPermissionFlagKeysCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow,
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute,
-        invalidateAndRecompute,
-      } as unknown as WorkspaceCacheService,
-      {
-        validateBuildAndRunLegacyWorkspaceMigration,
-        validateBuildAndRunWorkspaceMigration,
-      } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-      coreDataSource,
-    );
+    const applicationService = {
+      findWorkspaceTwentyStandardAndCustomApplicationOrThrow,
+    } satisfies Pick<
+      ApplicationService,
+      'findWorkspaceTwentyStandardAndCustomApplicationOrThrow'
+    >;
+    const workspaceCacheService = {
+      getOrRecompute,
+      invalidateAndRecompute,
+    } satisfies Pick<
+      WorkspaceCacheService,
+      'getOrRecompute' | 'invalidateAndRecompute'
+    >;
+    const workspaceMigrationValidateBuildAndRunService = {
+      validateBuildAndRunLegacyWorkspaceMigration,
+      validateBuildAndRunWorkspaceMigration,
+    } satisfies Pick<
+      WorkspaceMigrationValidateBuildAndRunService,
+      | 'validateBuildAndRunLegacyWorkspaceMigration'
+      | 'validateBuildAndRunWorkspaceMigration'
+    >;
+
+    const module = await Test.createTestingModule({
+      providers: [
+        RenameAppPermissionFlagKeysCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        { provide: ApplicationService, useValue: applicationService },
+        { provide: WorkspaceCacheService, useValue: workspaceCacheService },
+        {
+          provide: WorkspaceMigrationValidateBuildAndRunService,
+          useValue: workspaceMigrationValidateBuildAndRunService,
+        },
+        { provide: getDataSourceToken(), useValue: coreDataSource },
+      ],
+    }).compile();
+
+    command = module.get(RenameAppPermissionFlagKeysCommand);
 
     log = jest.spyOn(command['logger'], 'log').mockImplementation();
     warn = jest.spyOn(command['logger'], 'warn').mockImplementation();
@@ -290,7 +393,12 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
     await command.down(buildArgs());
 
     expect(permissionFlags).toEqual(buildInitialPermissionFlags());
-    expect(commandMenuItems).toMatchObject(buildInitialCommandMenuItems());
+    expect(commandMenuItems).toEqual(
+      buildInitialCommandMenuItems().map((commandMenuItem) => ({
+        ...commandMenuItem,
+        updatedAt: expect.any(String),
+      })),
+    );
   });
 
   it('writes nothing once the workspace is renamed', async () => {
@@ -329,15 +437,7 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
   });
 
   it('aborts before any write when another flag already holds a new key', async () => {
-    permissionFlags = [
-      ...permissionFlags,
-      buildPermissionFlag(
-        '20202020-4444-4444-8444-444444444444',
-        'USER_APPS',
-        OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
-        OTHER_APPLICATION_ID,
-      ),
-    ];
+    permissionFlags = [...permissionFlags, buildCollidingPermissionFlag()];
 
     await expect(command.runOnWorkspace(buildArgs())).rejects.toThrow(
       `CONNECTED_ACCOUNTS cannot become USER_APPS: permission flag 20202020-4444-4444-8444-444444444444 of application "Invoice Exporter" (${OTHER_APPLICATION_UNIVERSAL_IDENTIFIER}) already uses that key. Permission flag keys cannot change: revoke each conflicting permission flag from every role, uninstall its application, then rerun the upgrade. Afterwards, grant the standard Workspace Apps or User Apps permission again where it was removed. upgrade --dry-run lists the workspaces that still collide.`,
@@ -346,15 +446,7 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
   });
 
   it('reports the collision on a dry run too', async () => {
-    permissionFlags = [
-      ...permissionFlags,
-      buildPermissionFlag(
-        '20202020-4444-4444-8444-444444444444',
-        'USER_APPS',
-        OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
-        OTHER_APPLICATION_ID,
-      ),
-    ];
+    permissionFlags = [...permissionFlags, buildCollidingPermissionFlag()];
 
     await expect(command.runOnWorkspace(buildArgs(true))).rejects.toThrow(
       'CONNECTED_ACCOUNTS cannot become USER_APPS',
@@ -382,14 +474,14 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
   it('still rewrites the next custom command menu item after one fails validation', async () => {
     commandMenuItems = [
       ...buildInitialCommandMenuItems(),
-      {
+      buildCommandMenuItem({
         id: 'second-custom-command-menu-item-id',
         universalIdentifier: 'second-custom-command-menu-item',
         applicationUniversalIdentifier:
           WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
         conditionalAvailabilityExpression: 'permissionFlags.CONNECTED_ACCOUNTS',
         conditionalPinnedExpression: null,
-      } as FlatCommandMenuItem,
+      }),
     ];
     validateBuildAndRunWorkspaceMigration.mockResolvedValueOnce(
       buildFailedMigrationResult('WORKFLOW_OR_FRONT_COMPONENT_REQUIRED'),

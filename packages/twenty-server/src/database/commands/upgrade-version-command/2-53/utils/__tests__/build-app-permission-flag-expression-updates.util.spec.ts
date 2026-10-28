@@ -1,6 +1,8 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 
 import { buildAppPermissionFlagExpressionUpdates } from 'src/database/commands/upgrade-version-command/2-53/utils/build-app-permission-flag-expression-updates.util';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 
 const NOW = '2026-10-28T12:00:00.000Z';
@@ -25,14 +27,40 @@ const buildCommandMenuItem = ({
   conditionalAvailabilityExpression: string | null;
   conditionalPinnedExpression?: string | null;
   applicationUniversalIdentifier?: string;
-}): FlatCommandMenuItem =>
-  ({
-    universalIdentifier,
-    conditionalAvailabilityExpression,
-    conditionalPinnedExpression,
-    applicationUniversalIdentifier,
-    updatedAt: '2026-01-01T00:00:00.000Z',
-  }) as FlatCommandMenuItem;
+}): FlatCommandMenuItem => ({
+  id: `id-${universalIdentifier}`,
+  universalIdentifier,
+  conditionalAvailabilityExpression,
+  conditionalPinnedExpression,
+  applicationUniversalIdentifier,
+  workspaceId: 'workspace-id',
+  applicationId: `application-id-${applicationUniversalIdentifier}`,
+  label: 'Command menu item',
+  shortLabel: null,
+  icon: null,
+  position: 0,
+  isPinned: false,
+  isActive: true,
+  isSystemSideEffect: false,
+  engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+  availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+  availabilityObjectMetadataId: null,
+  availabilityObjectMetadataUniversalIdentifier: null,
+  navigationTargetObjectMetadataId: null,
+  navigationTargetObjectMetadataUniversalIdentifier: null,
+  frontComponentId: null,
+  frontComponentUniversalIdentifier: null,
+  pageLayoutId: null,
+  pageLayoutUniversalIdentifier: null,
+  workflowVersionId: null,
+  coreWorkflowVersionId: null,
+  hotKeys: null,
+  payload: null,
+  overrides: null,
+  universalOverrides: null,
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+});
 
 const buildUpdates = (
   commandMenuItems: FlatCommandMenuItem[],

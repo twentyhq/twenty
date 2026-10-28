@@ -18,7 +18,7 @@ edits must be synced with apply or dev first.
 - Function selection checks both the local manifest identifiers and the remote
   installed application's ID. The `findOneApplication` lookup prevents
   copied or stale identifiers from selecting another installed app's function.
-  This needs `WORKSPACE_APPS` in addition to execution's `WORKFLOWS` permission.
+  This needs `APPLICATIONS` in addition to execution's `WORKFLOWS` permission.
 - The current server requires a user-bound token for execution. Browser-login
   OAuth remotes are supported; API-key targets fail before loading app source.
   The server still decides which functions that user can run: workspace custom

@@ -3,11 +3,13 @@ import {
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 
-import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
+import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 
 const buildRoleEntity = (overrides: Partial<RoleEntity> = {}): RoleEntity =>
-  ({
+  Object.assign(new RoleEntity(), {
     id: 'role-id',
     label: 'Role',
     universalIdentifier: 'role-universal-identifier',
@@ -29,7 +31,16 @@ const buildRoleEntity = (overrides: Partial<RoleEntity> = {}): RoleEntity =>
     fieldPermissions: [],
     rolePermissionFlags: [],
     ...overrides,
-  }) as RoleEntity;
+  });
+
+const buildRolePermissionFlagEntity = (
+  permissionFlag: Pick<PermissionFlagEntity, 'universalIdentifier' | 'key'>,
+): RolePermissionFlagEntity =>
+  Object.assign(new RolePermissionFlagEntity(), {
+    id: 'role-permission-flag-id',
+    roleId: 'role-id',
+    permissionFlag: Object.assign(new PermissionFlagEntity(), permissionFlag),
+  });
 
 describe('fromRoleEntityToRoleDto', () => {
   it('exposes the id of the application owning the role', () => {
@@ -40,10 +51,7 @@ describe('fromRoleEntityToRoleDto', () => {
 
   it('returns undefined permission flags when role permission flags are not loaded', () => {
     const roleDto = fromRoleEntityToRoleDto(
-      buildRoleEntity({
-        rolePermissionFlags:
-          undefined as unknown as RoleEntity['rolePermissionFlags'],
-      }),
+      buildRoleEntity({ rolePermissionFlags: undefined }),
     );
 
     expect(roleDto.permissionFlags).toBeUndefined();
@@ -53,14 +61,11 @@ describe('fromRoleEntityToRoleDto', () => {
     const roleDto = fromRoleEntityToRoleDto(
       buildRoleEntity({
         rolePermissionFlags: [
-          {
-            id: 'role-permission-flag-id',
-            roleId: 'role-id',
-            permissionFlag: {
-              key: PermissionFlagType.WORKSPACE,
-            },
-          },
-        ] as RoleEntity['rolePermissionFlags'],
+          buildRolePermissionFlagEntity({
+            universalIdentifier: 'permission-flag-universal-identifier',
+            key: PermissionFlagType.WORKSPACE,
+          }),
+        ],
       }),
     );
 
@@ -77,20 +82,31 @@ describe('fromRoleEntityToRoleDto', () => {
     const roleDto = fromRoleEntityToRoleDto(
       buildRoleEntity({
         rolePermissionFlags: [
-          {
-            id: 'role-permission-flag-id',
-            roleId: 'role-id',
-            permissionFlag: {
-              universalIdentifier: SystemPermissionFlag.WORKSPACE_APPS,
-              key: 'APPLICATIONS',
-            },
-          },
-        ] as RoleEntity['rolePermissionFlags'],
+          buildRolePermissionFlagEntity({
+            universalIdentifier: SystemPermissionFlag.WORKSPACE_APPS,
+            key: 'APPLICATIONS',
+          }),
+        ],
       }),
     );
 
     expect(roleDto.permissionFlags?.[0].flag).toBe(
       PermissionFlagType.WORKSPACE_APPS,
     );
+  });
+
+  it('exposes the stored key of an app-defined flag', () => {
+    const roleDto = fromRoleEntityToRoleDto(
+      buildRoleEntity({
+        rolePermissionFlags: [
+          buildRolePermissionFlagEntity({
+            universalIdentifier: '0b6c3a51-7a54-4ef6-8d4e-0f3f0a4b9b1e',
+            key: 'CAN_EXPORT_INVOICES',
+          }),
+        ],
+      }),
+    );
+
+    expect(roleDto.permissionFlags?.[0].flag).toBe('CAN_EXPORT_INVOICES');
   });
 });

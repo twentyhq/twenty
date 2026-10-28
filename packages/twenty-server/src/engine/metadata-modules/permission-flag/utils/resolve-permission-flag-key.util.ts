@@ -15,8 +15,7 @@ const PERMISSION_FLAG_TYPE_BY_UNIVERSAL_IDENTIFIER = new Map<
   ]),
 );
 
-// Standard rows keep their pre-rename key until upgrade:2-53:rename-app-permission-flag-keys
-// reaches their workspace; delete once that command leaves the cross-upgrade window
+// Stored standard keys lag code keys until upgrade:2-53:rename-app-permission-flag-keys; remove after
 export const resolvePermissionFlagKey = ({
   universalIdentifier,
   key,

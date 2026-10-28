@@ -27,8 +27,7 @@ import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permissi
 import { type LegacyStandardPermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-type-by-legacy-standard-key.constant';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
-// Old clients still read the pre-2.53 keys; delete once
-// upgrade:2-53:rename-app-permission-flag-keys leaves the cross-upgrade window
+// Old clients still read pre-2.53 keys; remove after upgrade:2-53:rename-app-permission-flag-keys
 const PERMISSION_FLAG_TYPE_WITH_LEGACY_KEYS = {
   ...PermissionFlagType,
   CONNECTED_ACCOUNTS: 'CONNECTED_ACCOUNTS',

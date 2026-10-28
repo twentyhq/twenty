@@ -6,8 +6,7 @@ import {
   PERMISSION_FLAG_TYPE_BY_LEGACY_STANDARD_KEY,
 } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-type-by-legacy-standard-key.constant';
 
-// Old clients still read the pre-2.53 keys; delete once
-// upgrade:2-53:rename-app-permission-flag-keys leaves the cross-upgrade window
+// Old clients still read pre-2.53 keys; remove after upgrade:2-53:rename-app-permission-flag-keys
 export const addLegacyStandardPermissionFlagKeys = (
   permissionFlags: PermissionFlagType[],
 ): (PermissionFlagType | LegacyStandardPermissionFlagKey)[] => [

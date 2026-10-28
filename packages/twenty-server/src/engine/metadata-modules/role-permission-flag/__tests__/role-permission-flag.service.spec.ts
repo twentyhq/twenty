@@ -14,6 +14,7 @@ import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/wo
 const WORKSPACE_ID = 'workspace-id';
 const ROLE_ID = 'role-id';
 const ROLE_UNIVERSAL_IDENTIFIER = '4b1f1c0e-62d6-4a43-9a3c-2a4f0e6f3c11';
+const STANDARD_APPLICATION_ID = 'standard-application-id';
 const APP_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER =
   'a3a0f7c2-5f8e-4f0e-9d7b-3c1d2e4f5a6b';
 const OTHER_APPLICATION_ID = 'other-application-id';
@@ -22,29 +23,44 @@ const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER =
 const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
   '7d3c4b2a-1e0f-4a9b-8c7d-6e5f4a3b2c1d';
 
-const STANDARD_WORKSPACE_APPS_PERMISSION_FLAG = {
+const buildFlatPermissionFlag = (
+  overrides: Pick<FlatPermissionFlag, 'id' | 'universalIdentifier' | 'key'> &
+    Partial<FlatPermissionFlag>,
+): FlatPermissionFlag => ({
+  workspaceId: WORKSPACE_ID,
+  applicationId: STANDARD_APPLICATION_ID,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  label: 'Permission flag',
+  description: null,
+  icon: null,
+  permissionType: 'settings',
+  rolePermissionFlagIds: [],
+  rolePermissionFlagUniversalIdentifiers: [],
+  createdAt: '2026-05-13T00:00:00.000Z',
+  updatedAt: '2026-05-13T00:00:00.000Z',
+  ...overrides,
+});
+
+const STANDARD_WORKSPACE_APPS_PERMISSION_FLAG = buildFlatPermissionFlag({
   id: 'workspace-apps-flag-id',
   universalIdentifier: SystemPermissionFlag.WORKSPACE_APPS,
-  applicationUniversalIdentifier:
-    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   key: 'APPLICATIONS',
-} as FlatPermissionFlag;
+});
 
-const STANDARD_USER_APPS_PERMISSION_FLAG = {
+const STANDARD_USER_APPS_PERMISSION_FLAG = buildFlatPermissionFlag({
   id: 'user-apps-flag-id',
   universalIdentifier: SystemPermissionFlag.USER_APPS,
-  applicationUniversalIdentifier:
-    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   key: PermissionFlagType.USER_APPS,
-} as FlatPermissionFlag;
+});
 
-const APP_PERMISSION_FLAG = {
+const APP_PERMISSION_FLAG = buildFlatPermissionFlag({
   id: 'app-flag-id',
   universalIdentifier: APP_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
   applicationId: OTHER_APPLICATION_ID,
   applicationUniversalIdentifier: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
   key: 'CAN_EXPORT_INVOICES',
-} as FlatPermissionFlag;
+});
 
 const buildService = ({
   permissionFlags = [
@@ -188,7 +204,7 @@ describe('RolePermissionFlagService.upsertPermissionFlags', () => {
     expect(findManyInstalledFlatApplications).not.toHaveBeenCalled();
   });
 
-  it('rejects an unknown key', async () => {
+  it('rejects an unknown key naming the key that was sent', async () => {
     const { service, validateBuildAndRunWorkspaceMigration } = buildService();
 
     await expect(
@@ -198,9 +214,37 @@ describe('RolePermissionFlagService.upsertPermissionFlags', () => {
       }),
     ).rejects.toMatchObject({
       code: PermissionsExceptionCode.INVALID_SETTING,
-      message: expect.stringContaining('CAN_DELETE_INVOICES'),
+      message: expect.stringMatching(/: CAN_DELETE_INVOICES$/),
     });
     expect(validateBuildAndRunWorkspaceMigration).not.toHaveBeenCalled();
+  });
+
+  it('grants each flag once when a key is sent twice', async () => {
+    const { service, validateBuildAndRunWorkspaceMigration } = buildService();
+
+    await service.upsertPermissionFlags({
+      workspaceId: WORKSPACE_ID,
+      input: {
+        roleId: ROLE_ID,
+        permissionFlagKeys: [
+          PermissionFlagType.WORKSPACE_APPS,
+          'CAN_EXPORT_INVOICES',
+          PermissionFlagType.WORKSPACE_APPS,
+          PermissionFlagType.USER_APPS,
+          'CAN_EXPORT_INVOICES',
+        ],
+      },
+    });
+
+    expect(
+      getCreatedPermissionFlagUniversalIdentifiers(
+        validateBuildAndRunWorkspaceMigration,
+      ),
+    ).toEqual([
+      SystemPermissionFlag.WORKSPACE_APPS,
+      APP_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+      SystemPermissionFlag.USER_APPS,
+    ]);
   });
 
   describe('upgrade:2-53:rename-app-permission-flag-keys', () => {

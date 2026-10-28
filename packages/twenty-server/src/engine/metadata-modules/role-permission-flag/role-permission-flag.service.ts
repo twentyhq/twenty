@@ -21,8 +21,7 @@ import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/be
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// Old clients still send the pre-2.53 keys; delete once
-// upgrade:2-53:rename-app-permission-flag-keys leaves the cross-upgrade window
+// Old clients still send pre-2.53 keys; remove after upgrade:2-53:rename-app-permission-flag-keys
 const PERMISSION_FLAG_TYPE_BY_LEGACY_KEY = new Map<string, string>(
   Object.entries(PERMISSION_FLAG_TYPE_BY_LEGACY_STANDARD_KEY),
 );
@@ -98,7 +97,7 @@ export class RolePermissionFlagService {
       );
     }
 
-    await this.throwIfAnyPermissionFlagKeyIsAmbiguous({
+    await this.validateNoAmbiguousPermissionFlagKeyOrThrow({
       workspaceId,
       permissionFlags,
       requestedKeys: permissionFlagsByInputKey,
@@ -203,9 +202,8 @@ export class RolePermissionFlagService {
     return resultFlags;
   }
 
-  // upgrade:2-53:rename-app-permission-flag-keys: a standard flag still stored under its
-  // old key, or an app flag stored under a legacy key, can share a requested key; fail closed
-  private async throwIfAnyPermissionFlagKeyIsAmbiguous({
+  // upgrade:2-53:rename-app-permission-flag-keys: a standard and an app flag can share a key; fail closed
+  private async validateNoAmbiguousPermissionFlagKeyOrThrow({
     workspaceId,
     permissionFlags,
     requestedKeys,

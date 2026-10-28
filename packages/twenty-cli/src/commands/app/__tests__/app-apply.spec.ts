@@ -539,17 +539,22 @@ describe('app apply', () => {
 
   afterAll(() => server.close());
 
-  it.each([true, false])(
-    'previews, installs, uploads without credentials, then syncs with deletion inference %s',
-    async (inferDeletion) => {
-      const { envelope, exitCode } = await runJson(
-        ...(inferDeletion ? [] : ['--no-delete']),
-      );
+  it.each([
+    { flags: [], inferDeletion: undefined },
+    { flags: ['--prune'], inferDeletion: true },
+    { flags: ['--no-prune'], inferDeletion: false },
+  ])(
+    'previews, installs, uploads without credentials, then syncs with $flags',
+    async ({ flags, inferDeletion }) => {
+      const { envelope, exitCode } = await runJson(...flags);
+      const deletionArgument = isDefined(inferDeletion)
+        ? { inferDeletionFromMissingEntities: inferDeletion }
+        : {};
 
       expect(exitCode).toBe(0);
       expect(envelope.data).toMatchObject({
         application: APPLICATION,
-        inferDeletionFromMissingEntities: inferDeletion,
+        inferDeletionFromMissingEntities: inferDeletion ?? null,
         registrationCreated: false,
         completedPhases: [
           'build',
@@ -584,16 +589,17 @@ describe('app apply', () => {
         (request) => getOperation(request) === 'sync',
       );
 
-      expect(readGraphqlRequest(preview).arguments).toMatchObject({
+      expect(readGraphqlRequest(preview).arguments).toEqual({
         manifest: MANIFEST,
-        inferDeletionFromMissingEntities: inferDeletion,
+        dryRun: true,
+        ...deletionArgument,
       });
       expect(isDefined(sync) && readGraphqlRequest(sync)).toMatchObject({
         query: expect.not.stringContaining('dryRun'),
-        arguments: {
-          manifest: MANIFEST,
-          inferDeletionFromMissingEntities: inferDeletion,
-        },
+      });
+      expect(isDefined(sync) && readGraphqlRequest(sync).arguments).toEqual({
+        manifest: MANIFEST,
+        ...deletionArgument,
       });
       expect(readGraphqlRequest(uploadTargets).arguments).toMatchObject({
         applicationUniversalIdentifier: APPLICATION.universalIdentifier,
@@ -622,6 +628,23 @@ describe('app apply', () => {
       expect(existsSync(state.snapshotPath)).toBe(false);
     },
   );
+
+  it('treats the deprecated --no-delete as --no-prune and warns about it', async () => {
+    const { exitCode, stderr } = await run('--no-delete');
+
+    expect(exitCode).toBe(0);
+    expect(stderr).toContain('--no-delete is deprecated, use --no-prune');
+    expect(
+      server.requests
+        .filter((request) =>
+          ['preview', 'sync'].includes(getOperation(request)),
+        )
+        .map((request) => readGraphqlRequest(request).arguments),
+    ).toEqual([
+      expect.objectContaining({ inferDeletionFromMissingEntities: false }),
+      expect.objectContaining({ inferDeletionFromMissingEntities: false }),
+    ]);
+  });
 
   it('accepts the lowercase identifier the server returns for an uppercase manifest identifier', async () => {
     await writeTooling({

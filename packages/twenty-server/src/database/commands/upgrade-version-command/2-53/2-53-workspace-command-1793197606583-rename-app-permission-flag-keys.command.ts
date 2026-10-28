@@ -55,7 +55,7 @@ export class RenameAppPermissionFlagKeysCommand extends ProvisionedWorkspaceComm
     workspaceId,
     options,
     direction,
-  }: RunOnWorkspaceArgs & {
+  }: Pick<RunOnWorkspaceArgs, 'workspaceId' | 'options'> & {
     direction: 'up' | 'down';
   }): Promise<void> {
     const { flatPermissionFlagMaps, flatCommandMenuItemMaps } =
@@ -182,7 +182,6 @@ export class RenameAppPermissionFlagKeysCommand extends ProvisionedWorkspaceComm
     }
   }
 
-  // Only workspaces with non-standard items to rewrite pay for the workspace lookup
   private async filterWorkspaceCustomCommandMenuItems({
     workspaceId,
     commandMenuItems,
@@ -294,8 +293,7 @@ export class RenameAppPermissionFlagKeysCommand extends ProvisionedWorkspaceComm
     }
   }
 
-  // Each update re-validates the whole item: an already invalid custom item keeps
-  // its old references instead of failing the workspace on every rerun
+  // Per item, so an already invalid custom item keeps its old keys instead of failing every rerun
   private async updateCustomCommandMenuItems({
     workspaceId,
     logPrefix,

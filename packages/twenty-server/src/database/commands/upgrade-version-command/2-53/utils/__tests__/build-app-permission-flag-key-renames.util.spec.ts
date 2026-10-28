@@ -19,13 +19,22 @@ const buildPermissionFlag = ({
   universalIdentifier: string;
   key: string;
   applicationUniversalIdentifier?: string;
-}): FlatPermissionFlag =>
-  ({
-    id: `id-${universalIdentifier}`,
-    universalIdentifier,
-    key,
-    applicationUniversalIdentifier,
-  }) as FlatPermissionFlag;
+}): FlatPermissionFlag => ({
+  id: `id-${universalIdentifier}`,
+  universalIdentifier,
+  key,
+  applicationUniversalIdentifier,
+  workspaceId: 'workspace-id',
+  applicationId: `application-id-${applicationUniversalIdentifier}`,
+  label: key,
+  description: null,
+  icon: null,
+  permissionType: 'settings',
+  rolePermissionFlagIds: [],
+  rolePermissionFlagUniversalIdentifiers: [],
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+});
 
 const indexByUniversalIdentifier = (permissionFlags: FlatPermissionFlag[]) =>
   Object.fromEntries(

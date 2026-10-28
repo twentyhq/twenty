@@ -5,8 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { getAppPermissionFlagKeyMappings } from 'src/database/commands/upgrade-version-command/2-53/utils/get-app-permission-flag-key-mappings.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 
-// Whole references only: permissionFlags.APPLICATIONS_X and
-// x.permissionFlags.APPLICATIONS are not flag reads and stay untouched
+// Whole flag reads only, not permissionFlags.APPLICATIONS_X or x.permissionFlags.APPLICATIONS
 const PERMISSION_FLAG_REFERENCE_PATTERN =
   /(?<![\w$.])permissionFlags\.([A-Za-z_$][\w$]*)/g;
 

@@ -14,13 +14,20 @@ import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/me
 
 const buildFlatRolePermissionFlag = (
   overrides: Partial<FlatRolePermissionFlag> = {},
-): FlatRolePermissionFlag =>
-  ({
-    id: 'role-permission-flag-id',
-    roleId: 'role-id',
-    permissionFlagUniversalIdentifier: 'permission-flag-universal-id',
-    ...overrides,
-  }) as FlatRolePermissionFlag;
+): FlatRolePermissionFlag => ({
+  id: 'role-permission-flag-id',
+  universalIdentifier: 'role-permission-flag-universal-id',
+  workspaceId: 'workspace-id',
+  applicationId: 'application-id',
+  applicationUniversalIdentifier: 'application-universal-id',
+  roleId: 'role-id',
+  roleUniversalIdentifier: 'role-universal-id',
+  permissionFlagId: 'permission-flag-id',
+  permissionFlagUniversalIdentifier: 'permission-flag-universal-id',
+  createdAt: '2026-05-13T00:00:00.000Z',
+  updatedAt: '2026-05-13T00:00:00.000Z',
+  ...overrides,
+});
 
 const buildFlatPermissionFlag = (
   overrides: Partial<FlatPermissionFlag> = {},
@@ -80,6 +87,17 @@ describe('fromFlatRolePermissionFlagToRolePermissionFlagDto', () => {
         ),
       ).flag,
     ).toBe(PermissionFlagType.USER_APPS);
+  });
+
+  it('exposes the stored key of an app-defined flag', () => {
+    expect(
+      fromFlatRolePermissionFlagToRolePermissionFlagDto(
+        buildFlatRolePermissionFlag(),
+        buildFlatPermissionFlagMaps(
+          buildFlatPermissionFlag({ key: 'CAN_EXPORT_INVOICES' }),
+        ),
+      ).flag,
+    ).toBe('CAN_EXPORT_INVOICES');
   });
 
   it('throws a permissions exception when the permission flag is missing', () => {
