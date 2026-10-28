@@ -104,6 +104,8 @@ const StyledContainer = styled.div<{
   & a[aria-current='page']::after {
     background: ${themeCssVariables.color.blue};
     block-size: 2px;
+    border-radius: ${themeCssVariables.border.radius.pill}
+      ${themeCssVariables.border.radius.pill} 0 0;
   }
 `;
 

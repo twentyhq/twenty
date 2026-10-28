@@ -34,6 +34,7 @@ const StyledAvatarTile = styled.div`
   background: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.xl};
+  box-shadow: ${themeCssVariables.boxShadow.light};
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
@@ -56,6 +57,7 @@ const StyledTitle = styled.div`
   display: flex;
   font-size: ${themeCssVariables.font.size.xl};
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  letter-spacing: -0.01em;
   margin-left: -5px;
   min-width: 0;
 `;

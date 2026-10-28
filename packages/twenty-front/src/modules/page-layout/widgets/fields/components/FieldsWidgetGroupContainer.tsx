@@ -1,9 +1,26 @@
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { Section } from 'twenty-ui/components/layout';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+
+const StyledChevronWrapper = styled.div<{ isExpanded: boolean }>`
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  transform: ${({ isExpanded }) =>
+    isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
+  transition:
+    transform calc(${themeCssVariables.animation.duration.normal} * 1s)
+      ${EASE_OUT_CSS},
+    color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS};
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
 
 const StyledHeader = styled.header`
   align-items: center;
@@ -12,21 +29,19 @@ const StyledHeader = styled.header`
   display: flex;
   height: 32px;
   justify-content: space-between;
+
+  @media (hover: hover) {
+    &:hover ${StyledChevronWrapper} {
+      color: ${themeCssVariables.font.color.primary};
+    }
+  }
 `;
 
 const StyledTitleLabel = styled.div`
   color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.lg};
+  font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.semiBold};
-`;
-
-const StyledChevronWrapper = styled.div<{ isExpanded: boolean }>`
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  transform: ${({ isExpanded }) =>
-    isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
-  transition: transform
-    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
+  letter-spacing: -0.01em;
 `;
 
 type FieldsWidgetGroupContainerProps = {

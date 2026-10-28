@@ -1,18 +1,28 @@
+import { RECORD_TABLE_ROW_BACKGROUND_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableRowBackgroundCssVariableName';
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { cx } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCell = styled.div`
-  background: ${themeCssVariables.background.primary};
+  background: var(
+    ${RECORD_TABLE_ROW_BACKGROUND_CSS_VARIABLE_NAME},
+    ${themeCssVariables.background.primary}
+  );
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   border-right: 1px solid ${themeCssVariables.border.color.light};
   color: ${themeCssVariables.font.color.primary};
+  font-variant-numeric: tabular-nums;
   padding: 0;
   text-align: left;
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
 
   &[data-selected] {
-    background: ${themeCssVariables.accent.quaternary};
+    ${RECORD_TABLE_ROW_BACKGROUND_CSS_VARIABLE_NAME}: ${
+      themeCssVariables.accent.tertiary
+    };
   }
 
   &[data-without-right-border] {

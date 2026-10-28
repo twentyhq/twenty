@@ -17,6 +17,7 @@ import { useIsRecordTableWidgetAggregateNonInteractive } from '@/object-record/r
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { cx } from '@linaria/core';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
 
@@ -57,6 +58,8 @@ const StyledColumnFooterCell = styled.div<{
 
   position: sticky;
   text-align: left;
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
 
   width: ${({ columnWidth }) => columnWidth}px;
 

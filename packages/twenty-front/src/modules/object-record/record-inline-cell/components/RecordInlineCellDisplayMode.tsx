@@ -1,3 +1,4 @@
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { styled } from '@linaria/react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -39,6 +40,11 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   overflow: hidden;
   padding-left: ${themeCssVariables.spacing[1]};
   padding-right: ${themeCssVariables.spacing[1]};
+  transition:
+    background-color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS},
+    outline-color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS};
 `;
 
 const StyledRecordInlineCellNormalModeInnerContainer = styled.div<{
@@ -47,6 +53,7 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div<{
   align-content: center;
   align-items: center;
   color: ${themeCssVariables.font.color.primary};
+  font-variant-numeric: tabular-nums;
   font-weight: ${({ isNextToLabel }) =>
     isNextToLabel
       ? themeCssVariables.font.weight.medium

@@ -1,6 +1,9 @@
+import { RECORD_TABLE_ROW_BACKGROUND_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableRowBackgroundCssVariableName';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+// Cells and the hover/focus portals mounted inside them read the row background
+// from this variable, so the tint stays opaque over sticky columns.
 const StyledTr = styled.div<{
   isDragging: boolean;
 }>`
@@ -14,12 +17,23 @@ const StyledTr = styled.div<{
 
   position: relative;
 
+  @media (hover: hover) {
+    &:hover {
+      ${RECORD_TABLE_ROW_BACKGROUND_CSS_VARIABLE_NAME}: ${
+        themeCssVariables.background.secondary
+      };
+    }
+  }
+
   &[data-focused='true'],
   &[data-active='true'] {
+    ${RECORD_TABLE_ROW_BACKGROUND_CSS_VARIABLE_NAME}: ${
+      themeCssVariables.accent.quaternary
+    };
+
     div.table-cell,
     div.table-cell-0-0 {
       &:not(:first-of-type) {
-        background-color: ${themeCssVariables.accent.quaternary};
         border-bottom: 1px solid ${themeCssVariables.border.color.medium};
         border-color: ${themeCssVariables.border.color.medium};
       }

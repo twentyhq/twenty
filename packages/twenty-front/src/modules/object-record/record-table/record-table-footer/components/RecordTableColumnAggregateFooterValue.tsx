@@ -8,6 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledText = styled.span`
   align-items: center;
+  color: ${themeCssVariables.font.color.light};
   display: flex;
   flex-grow: 1;
   gap: 4px;
@@ -40,6 +41,7 @@ const StyledValueContainer = styled.div`
 
 const StyledValue = styled.div`
   color: ${themeCssVariables.font.color.primary};
+  font-variant-numeric: tabular-nums;
   max-width: 100%;
 `;
 

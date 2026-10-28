@@ -1,3 +1,4 @@
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
@@ -22,10 +23,10 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
           return themeCssVariables.border.color.danger;
         case 'default':
         default:
-          return themeCssVariables.accent.tertiary;
+          return themeCssVariables.accent.secondary;
       }
     }};
-  border-radius: ${themeCssVariables.border.radius.smRound};
+  border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
   color: ${({ variant }) => {
     switch (variant) {
@@ -46,9 +47,23 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   font-weight: ${themeCssVariables.font.weight.medium};
   height: 24px;
   padding: ${themeCssVariables.spacing[0.5]};
-  padding-left: ${themeCssVariables.spacing[1]};
+  padding-left: ${themeCssVariables.spacing[2]};
+  transition:
+    background-color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS},
+    border-color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS};
   user-select: none;
   white-space: nowrap;
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: ${({ variant }) =>
+        variant === 'danger'
+          ? themeCssVariables.background.transparent.danger
+          : themeCssVariables.accent.tertiary};
+    }
+  }
 `;
 
 const StyledIcon = styled.div`
@@ -60,6 +75,7 @@ const StyledDelete = styled.button`
   align-items: center;
   background: none;
   border: none;
+  border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
   color: inherit;
   corner-shape: round;
@@ -70,8 +86,21 @@ const StyledDelete = styled.button`
   justify-content: center;
   margin: 0;
   padding: 0;
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
   user-select: none;
   width: 20px;
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: ${themeCssVariables.background.transparent.medium};
+    }
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px ${themeCssVariables.accent.secondary};
+    outline: none;
+  }
 `;
 
 const StyledLabelKey = styled.div`

@@ -1,3 +1,4 @@
+import { RECORD_TABLE_ROW_BACKGROUND_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableRowBackgroundCssVariableName';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldFocusStaticFocusedProvider } from '@/object-record/record-field/ui/contexts/FieldFocusContextProvider';
@@ -23,11 +24,10 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
   isRecordTableRowActive: boolean;
 }>`
   align-items: center;
-  background: ${themeCssVariables.background.transparent.secondary};
-  background-color: ${({ isRecordTableRowActive }) =>
-    isRecordTableRowActive
-      ? themeCssVariables.accent.quaternary
-      : themeCssVariables.background.primary};
+  background-color: var(
+    ${RECORD_TABLE_ROW_BACKGROUND_CSS_VARIABLE_NAME},
+    ${themeCssVariables.background.primary}
+  );
   border-radius: ${({ showInteractiveStyle }) =>
     showInteractiveStyle ? themeCssVariables.border.radius.sm : 'none'};
   box-sizing: border-box;
@@ -41,7 +41,7 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
     isRecordTableRowActive
       ? 'none'
       : showInteractiveStyle
-        ? `1px solid ${themeCssVariables.font.color.extraLight}`
+        ? `1px solid ${themeCssVariables.border.color.strong}`
         : `1px solid ${themeCssVariables.border.color.medium}`};
   outline-offset: -1px;
 

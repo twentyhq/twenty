@@ -1,35 +1,50 @@
+import { RECORD_TABLE_ROW_BACKGROUND_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableRowBackgroundCssVariableName';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { cx } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRecordTableTd = styled.div<{
-  backgroundColor: string;
-  borderColor: string;
-  isDragging?: boolean;
-  fontColor: string;
   hasRightBorder?: boolean;
   hasBottomBorder?: boolean;
-  zIndex: number;
 }>`
-  background: ${({ backgroundColor, isDragging }) =>
-    isDragging ? 'transparent' : backgroundColor};
+  background: var(
+    ${RECORD_TABLE_ROW_BACKGROUND_CSS_VARIABLE_NAME},
+    ${themeCssVariables.background.primary}
+  );
 
   border-bottom: 1px solid
-    ${({ borderColor, hasBottomBorder, isDragging }) =>
-      hasBottomBorder && !isDragging ? borderColor : 'transparent'};
-  border-right: ${({ borderColor, hasRightBorder }) =>
-    hasRightBorder ? `1px solid ${borderColor}` : 'none'};
+    ${({ hasBottomBorder }) =>
+      hasBottomBorder ? themeCssVariables.border.color.light : 'transparent'};
+  border-right: ${({ hasRightBorder }) =>
+    hasRightBorder
+      ? `1px solid ${themeCssVariables.border.color.light}`
+      : 'none'};
 
-  color: ${({ fontColor }) => fontColor};
+  color: ${themeCssVariables.font.color.primary};
+  font-variant-numeric: tabular-nums;
 
   padding: 0;
 
   text-align: left;
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
 
-  z-index: ${({ zIndex }) => zIndex};
+  z-index: ${TABLE_Z_INDEX.cell.sticky};
+
+  &[data-selected] {
+    ${RECORD_TABLE_ROW_BACKGROUND_CSS_VARIABLE_NAME}: ${
+      themeCssVariables.accent.tertiary
+    };
+  }
+
+  &[data-dragging] {
+    background: transparent;
+    border-bottom-color: transparent;
+  }
 `;
 
 export const RecordTableCellFirstRowFirstColumn = ({
@@ -45,27 +60,12 @@ export const RecordTableCellFirstRowFirstColumn = ({
   hasRightBorder?: boolean;
   hasBottomBorder?: boolean;
 }) => {
-  const theme = useTheme();
-
-  const zIndex = TABLE_Z_INDEX.cell.sticky;
-
-  const tdBackgroundColor = isSelected
-    ? theme.accent.quaternary
-    : theme.background.primary;
-
-  const borderColor = theme.border.color.light;
-
-  const fontColor = theme.font.color.primary;
-
   return (
     <StyledRecordTableTd
-      isDragging={isDragging}
-      backgroundColor={tdBackgroundColor}
-      borderColor={borderColor}
-      fontColor={fontColor}
+      data-selected={isSelected || undefined}
+      data-dragging={isDragging || undefined}
       hasRightBorder={hasRightBorder}
       hasBottomBorder={hasBottomBorder}
-      zIndex={zIndex}
       className={cx(
         'table-cell-0-0',
         getRecordTableColumnFieldWidthClassName(0),

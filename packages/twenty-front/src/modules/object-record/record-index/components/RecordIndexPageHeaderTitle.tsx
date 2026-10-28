@@ -16,6 +16,7 @@ const StyledTitle = styled.div`
 
 const StyledSelectedRecordsCount = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
+  font-variant-numeric: tabular-nums;
   padding-left: ${themeCssVariables.spacing['0.5']};
 `;
 

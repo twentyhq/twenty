@@ -27,14 +27,17 @@ const StyledIconContainer = styled.span`
 
 const StyledDropdownLabelAdornments = styled.span`
   align-items: center;
-  color: ${themeCssVariables.grayScale.gray8};
+  color: ${themeCssVariables.font.color.light};
   display: flex;
   flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
   gap: ${themeCssVariables.spacing[1]};
   margin-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledViewName = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
   margin-left: ${themeCssVariables.spacing[1]};
   max-width: 130px;
   min-width: 0;
