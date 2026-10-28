@@ -25,13 +25,7 @@ const StyledShownOnDrawerHover = styled.div`
   }
 `;
 
-type MainNavigationDrawerEditButtonProps = {
-  isExpanded: boolean;
-};
-
-export const MainNavigationDrawerEditButton = ({
-  isExpanded,
-}: MainNavigationDrawerEditButtonProps) => {
+export const MainNavigationDrawerEditButton = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
@@ -48,12 +42,12 @@ export const MainNavigationDrawerEditButton = ({
     <StyledShownOnDrawerHover onMouseEnter={preloadNavigationMenuItemDndKit}>
       <LightIconButton
         emphasis="standard"
-        size={isExpanded ? 'sm' : 'md'}
+        size="sm"
         onClick={enterLayoutCustomizationMode}
         aria-label={t`Customize sidebar`}
         tooltip={t`Customize sidebar`}
         tooltipDelay={TooltipDelay.longDelay}
-        tooltipPlace={isExpanded ? 'bottom' : 'right'}
+        tooltipPlace="bottom"
         tooltipOffset={5}
       >
         <IconPaint />

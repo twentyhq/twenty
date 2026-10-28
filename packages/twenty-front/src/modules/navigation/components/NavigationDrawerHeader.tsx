@@ -74,11 +74,6 @@ export const NavigationDrawerHeader = () => {
       <IconSearch />
     </LightIconButton>
   );
-  const headerAction = isCustomizableSidebarEnabled ? (
-    <MainNavigationDrawerEditButton isExpanded={isExpanded} />
-  ) : (
-    searchButton
-  );
 
   return (
     <StyledContainer>
@@ -89,7 +84,11 @@ export const NavigationDrawerHeader = () => {
         {isExpanded && (
           <StyledRightActions>
             <FrontComponentMediaSessionIndicator />
-            {headerAction}
+            {isCustomizableSidebarEnabled ? (
+              <MainNavigationDrawerEditButton />
+            ) : (
+              searchButton
+            )}
             <NavigationDrawerCollapseButton
               direction="left"
               size={isMobile ? 'md' : 'sm'}
@@ -100,7 +99,7 @@ export const NavigationDrawerHeader = () => {
       {!isExpanded && !isMobile && (
         <StyledCollapsedActions>
           <FrontComponentMediaSessionIndicator />
-          {headerAction}
+          {!isCustomizableSidebarEnabled && searchButton}
         </StyledCollapsedActions>
       )}
     </StyledContainer>
