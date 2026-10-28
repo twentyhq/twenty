@@ -1,31 +1,54 @@
 ---
 title: Panoramica
-description: Crea, testa e distribuisci la tua app — comandi CLI, test di integrazione, CI e pubblicazione su un server o su npm.
+description: Crea, testa e distribuisci la tua app — comandi CLI, test di integrazione, CI, traduzioni e pubblicazione su un server o su npm.
 ---
 
-Il **livello operativo** è tutto ciò che fai *alla* tua app piuttosto che *con* essa: eseguire comandi CLI, eseguire test di integrazione contro un server Twenty reale, configurare la CI e distribuire le release — sia come tarball distribuito su un singolo server, sia come pacchetto npm elencato nel marketplace.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
-```text
-   develop ─▶ test ─▶ build ─▶ deploy / publish
-   ───────    ────    ─────    ─────────────────
-   yarn       yarn    yarn     yarn twenty app:publish --private  (tarball → one server)
-   twenty     test    twenty
-   dev                dev:build    yarn twenty app:publish         (npm → marketplace)
-```
+## Cosa copre lo strato delle operazioni
+
+Il **livello operativo** è tutto ciò che fai *alla* tua app piuttosto che *con* essa: eseguire comandi CLI, eseguire test di integrazione su un server Twenty reale, configurare la CI, tradurre le sue stringhe e distribuire le release — sia come tarball distribuito su un singolo server, sia come pacchetto npm elencato nel marketplace.
+
+| Passaggio             | Comando                        |
+| --------------------- | ------------------------------ |
+| Sviluppo              | `twenty app dev`               |
+| Test                  | `yarn test`                    |
+| Compilazione          | `twenty app build`             |
+| Pubblica su un server | `twenty app publish --private` |
+| Pubblica su npm       | `twenty app publish`           |
 
 ## In questa sezione
 
-<CardGroup cols={2}>
-  <Card title="CLI" icon="terminal" href="/it/developers/extend/apps/operations/cli">
-    Riferimento a `yarn twenty` — exec, logs, uninstall, remotes.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/it/developers/extend/apps/operations/cli" img="/images/user-guide/halftone/card-page-cli.svg">
+    <CardTitle>CLI</CardTitle>
+    Accedi, esplora dati, crea app, esegui log e disinstalla con il CLI `twenty`.
   </Card>
-  <Card title="Sincronizzazione e ripristino" icon="compass" href="/it/developers/extend/apps/operations/sync-and-recovery">
-    Quale comando usare e quando, lettura del diff di sincronizzazione e una scaletta di ripristino.
+  <Card href="/it/developers/extend/apps/operations/sync-and-recovery" img="/images/user-guide/halftone/card-page-sync-recovery.svg">
+    <CardTitle>Sincronizzazione & recupero</CardTitle>
+    Quale comando quando, leggendo il diff, e una scala di recupero.
   </Card>
-  <Card title="Testing" icon="flask" href="/it/developers/extend/apps/operations/testing">
-    Configurazione di Vitest, test di integrazione, controllo dei tipi, workflow di CI.
+  <Card href="/it/developers/extend/apps/operations/testing" img="/images/user-guide/halftone/card-page-testing.svg">
+    <CardTitle>Testing</CardTitle>
+    Configurazione vitest, test di integrazione, controllo del tipo, flusso di lavoro CI.
   </Card>
-  <Card title="Pubblicazione" icon="upload" href="/it/developers/extend/apps/operations/publishing">
-    Crea, distribuisci un tarball, pubblica su npm, installa.
+  <Card href="/it/developers/extend/apps/operations/translations" img="/images/user-guide/halftone/card-page-translations.svg">
+    <CardTitle>Translations</CardTitle>
+    Segna stringhe, estrai cataloghi, spedisci la tua app in diverse lingue.
+  </Card>
+  <Card href="/it/developers/extend/apps/operations/publishing" img="/images/user-guide/halftone/card-page-publishing.svg">
+    <CardTitle>Publishing</CardTitle>
+    Build, deploy a tarball, publish to npm, install.
+  </Card>
+  <Card href="/it/developers/extend/apps/operations/marketplace-vetting" img="/images/documentation/banner-icons-v2/permissions.svg">
+    Controllo <CardTitle>Marketplace (WIP)</CardTitle>
+    Proposto sicurezza, qualità e controlli operativi per le versioni di app di terze parti.
+  </Card>
+  <Card href="/it/developers/extend/apps/operations/monitoring" img="/images/user-guide/halftone/card-page-monitoring.svg">
+    <CardTitle>Monitoraggio</CardTitle>
+    Errori, limiti di tasso, crediti e prestazioni delle funzioni tra installazioni.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="section-apps-operations" />

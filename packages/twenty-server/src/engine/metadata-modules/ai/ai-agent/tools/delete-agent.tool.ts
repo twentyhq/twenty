@@ -8,7 +8,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
-import { findManageableAgentOrThrow } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/find-manageable-agent-or-throw.util';
+import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/tools/services/manageable-agent.service';
 
 const deleteAgentInputSchema = z.object({
   id: z.uuid().describe('Id of the agent to delete'),
@@ -24,7 +24,10 @@ const deleteAgentInputSchema = z.object({
 export class DeleteAgentTool extends BaseTool<typeof deleteAgentInputSchema> {
   readonly inputSchema = deleteAgentInputSchema;
 
-  constructor(private readonly agentService: AgentService) {
+  constructor(
+    private readonly agentService: AgentService,
+    private readonly manageableAgentService: ManageableAgentService,
+  ) {
     super();
   }
 
@@ -32,9 +35,8 @@ export class DeleteAgentTool extends BaseTool<typeof deleteAgentInputSchema> {
     input,
     context,
   }: ToolExecuteArgs<typeof deleteAgentInputSchema>): Promise<ToolOutput> {
-    await findManageableAgentOrThrow({
+    await this.manageableAgentService.findManageableAgentOrThrow({
       agentId: input.id,
-      agentService: this.agentService,
       context,
     });
 

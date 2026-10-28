@@ -1,0 +1,95 @@
+---
+title: SearchInput
+description: Testo di ricerca controllato con azioni facoltative, come un popup di filtro.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SearchInputReference from '/snippets/ui/generated/components/input/search-input.mdx';
+
+## Panoramica
+
+`SearchInput` fornisce un'icona di ricerca e un input di testo. `onValueChange` riceve la nuova stringa; `onChange` riceve l'evento di modifica React nativo. Il filtraggio, il recupero e il debounce spettano alla tua applicazione.
+
+<StoryEmbed storyId="ui-input-searchinput--display" title="Esempio di SearchInput" height={110} />
+
+## Utilizzo
+
+```tsx
+import { useState } from 'react';
+import { SearchInput } from 'twenty-ui/components/input';
+
+export const RecordSearch = () => {
+  const [value, setValue] = useState('');
+
+  return (
+    <SearchInput
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search..."
+    />
+  );
+};
+```
+
+Usa `aria-label` o `aria-labelledby` per un nome accessibile.
+
+Le proprietà dell'input nativo, `className`, `style` e `ref` si applicano all'input stesso. L'`InputGroup` condiviso gestisce l'elemento decorativo di ricerca e il comportamento del focus. Il wrapper che dispone il campo e le relative azioni non accetta props; inserisci `SearchInput` nel tuo contenitore per dimensionarlo o posizionarlo. Usa `size="sm"` per un campo di ricerca compatto.
+
+## Azioni
+
+`actions` visualizza i controlli dopo il campo di ricerca. Crea un popup di filtro con un [Dropdown](/it/ui/components/navigation/dropdown) il cui trigger è un `IconButton` e assegna a tale pulsante un nome accessibile.
+
+```tsx
+import { useState } from 'react';
+import { IconButton, SearchInput } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconFilter } from 'twenty-ui/icon';
+
+export const FilteredPeopleSearch = () => {
+  const [search, setSearch] = useState('');
+  const [includeInactive, setIncludeInactive] = useState(false);
+
+  return (
+    <SearchInput
+      aria-label="Search people"
+      placeholder="Name or email"
+      value={search}
+      onValueChange={setSearch}
+      actions={
+        <Dropdown.Root type="panel">
+          <Dropdown.Trigger
+            render={
+              <IconButton aria-label="Filter people">
+                <IconFilter />
+              </IconButton>
+            }
+          />
+          <Dropdown.Content align="end">
+            <Dropdown.Section>
+              <SettingsRow
+                checked={includeInactive}
+                onCheckedChange={setIncludeInactive}
+              >
+                Include inactive people
+              </SettingsRow>
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Root>
+      }
+    />
+  );
+};
+```
+
+`disabled` disabilita solo l'input di testo; disabilita separatamente i controlli delle azioni. Con `size="sm"`, passa `size="sm"` anche ai controlli delle azioni.
+
+<StoryEmbed storyId="ui-input-searchinput--with-filter" title="SearchInput con un popup di filtro" height={320} />
+
+## Props
+
+<SearchInputReference />
+
+<PageBanner illustration="page-cover-search" />

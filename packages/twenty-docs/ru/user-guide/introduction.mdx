@@ -1,11 +1,32 @@
 ---
-title: Руководство пользователя
-description: Добро пожаловать в Руководство пользователя Twenty — ваш ресурс по расширенным настройкам и лучшим практикам.
+title: Мастер двадцать
+description: Пошаговое руководство по моделированию данных, автоматизации работы и запуску рабочей области.
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3} className="documentation-card-group documentation-card-group--patterned">
+<LandingActions>
+  <LandingButton href="/ru/user-guide/data-model/overview">Модель ваших данных</LandingButton>
+  <LandingButton href="/ru/user-guide/data-migration/overview" outlined>Импорт данных</LandingButton>
+</LandingActions>
+
+## Сделайте двадцать подходящий для вашей команды
+
+Двадцать построено для изменения с вашим бизнесом. В этом руководстве показано, как настроить рабочую область и формировать ее по мере вашего ухода, от данных, которые вы отслеживаете до экранов, ваша команда работает каждый день.
+
+* **Настройте ваши данные.** Объекты и поля моделирования вокруг вашего бизнеса, затем приведите ваши записи из CSV файлов или другой CRM.
+* **Подпишитесь на разговоры.** Синхронизируйте электронную почту и календарь так, чтобы все обменные участки в правильной карте и связывались с вашими контактами с почтовыми кампаниями.
+* **Организуйте работу.** Стройте виды, трубопроводы и страницы записей, которые использует ваша команда ежедневно.
+* **Автоматизируйте процесс работы.** Рука повторяющихся шагов для рабочих процессов и многошаговых задач для ИИ агентов.
+* **Оставайтесь в управлении.** Следите за своими номерами на панели инструментов, решайте, кто видит какие роли и управляет счетами и настройками.
+
+## Исследуйте руководство пользователя
+
+Каждый раздел охватывает одну часть Twenty, от вашей модели данных до биллинга и параметров.
+
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/ru/user-guide/data-model/overview" img="/images/documentation/banner-icons-v2/data-model.svg">
     <CardTitle>Модель данных</CardTitle>
     Настройте модель данных под процессы вашего бизнеса.
@@ -21,6 +42,11 @@ import { CardTitle } from "/snippets/card-title.mdx"
     Соберите встречи и письма вашей команды в одном месте.
   </Card>
 
+  <Card href="/ru/user-guide/email-campaigns/overview" img="/images/documentation/section-overview-icons-v1/email-campaigns.svg">
+    <CardTitle>Кампании по электронной почте</CardTitle>
+    Отправляйте кампании по электронной почте, созданные на основе данных CRM.
+  </Card>
+
   <Card href="/ru/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows-belt-v1.svg">
     <CardTitle>Рабочие процессы</CardTitle>
     Автоматизируйте процессы и интегрируйте с внешними инструментами.
@@ -33,7 +59,7 @@ import { CardTitle } from "/snippets/card-title.mdx"
 
   <Card href="/ru/user-guide/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
     <CardTitle>Макет</CardTitle>
-    Настройка навигации, представлений и страницы записи.
+    Настройка боковой панели, представлений и страницы записи.
   </Card>
 
   <Card href="/ru/user-guide/dashboards/overview" img="/images/documentation/banner-icons-v2/dashboards.svg">
@@ -56,4 +82,11 @@ import { CardTitle } from "/snippets/card-title.mdx"
     Настройте параметры рабочего пространства.
   </Card>
 
+  <Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+    <CardTitle>Discord</CardTitle>
+    задавайте вопросы и делитесь тем, что вы создаете с двадцатью сообществами.
+  </Card>
+
 </CardGroup>
+
+<PageBanner illustration="user-guide" />

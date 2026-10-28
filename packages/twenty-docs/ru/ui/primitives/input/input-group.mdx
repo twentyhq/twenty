@@ -1,0 +1,119 @@
+---
+title: InputGroup
+description: Добавляйте префиксы, суффиксы и действия вокруг текстового поля ввода.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InputGroupReference from '/snippets/ui/generated/input/input-group.mdx';
+
+## Обзор
+
+`InputGroup` предоставляет [Input](/ru/ui/primitives/input/input) общую границу и необязательное содержимое перед или после него. Установите `size` для группы, чтобы задать размер контейнера и значение по умолчанию для её поля ввода. Явно заданный размер дочернего элемента имеет приоритет над этим значением по умолчанию; группа по-прежнему управляет общей высотой макета.
+
+<StoryEmbed storyId="ui-input-inputgroup--display" title="Пример InputGroup" height={140} />
+
+## Использование
+
+```tsx
+import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WebsiteField = () => (
+  <Field.Root name="website">
+    <Field.Label>Website</Field.Label>
+    <InputGroup
+      startElement={
+        <Text render={<span />} aria-hidden>
+          https://
+        </Text>
+      }
+    >
+      <Input placeholder="example.com" />
+    </InputGroup>
+    <Field.Description>Enter the domain without https://.</Field.Description>
+  </Field.Root>
+);
+```
+
+`startElement` и `endElement` принимают узлы React. Префиксы и суффиксы являются визуальным содержимым; отправляемое значение поля ввода содержит только то, что вводит пользователь.
+
+## Визуальные варианты
+
+Сравните префиксы, суффиксы и комбинированные элементы оформления в обоих размерах поля ввода. Группа имеет тот же размер, что и поле ввода.
+
+<StoryEmbed storyId="ui-input-inputgroup--catalog" title="Визуальные варианты для группы ввода" height={300} />
+
+## Анатомия
+
+Поместите поле ввода внутрь `InputGroup`, а метки полей и сообщения оставьте за пределами общей границы.
+
+```text
+Field.Root
+├── Field.Label
+├── InputGroup
+│   └── Input
+└── Field.Description
+```
+
+| Часть или слот                                | Требование                | Назначение                                                                            |
+| --------------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------- |
+| `InputGroup`                                  | Обязательно               | Обеспечивает общую границу, макет и размер.                                           |
+| `Input` в качестве `children`                 | Обязательно               | Управляет значением поля ввода, нативными атрибутами и поведением при редактировании. |
+| `startElement`                                | Необязательный проп       | Добавляет префикс, значок или другое содержимое перед полем ввода.                    |
+| `endElement`                                  | Необязательный проп       | Добавляет суффикс или действие после поля ввода.                                      |
+| `Field.Root`, `Label`, `Description`, `Error` | Необязательная композиция | Связывает метку, вспомогательный текст и обратную связь валидации с полем ввода.      |
+
+`startElement` и `endElement` — это пропсы узлов React, а не отдельные компоненты. `InputGroup` не предоставляет метку и не управляет валидацией. Добавьте полю ввода доступное имя с помощью `Field.Label` или его собственных атрибутов маркировки.
+
+## Завершающее действие
+
+```tsx
+import { useState } from 'react';
+import { Button, Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+
+export const PasswordField = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Field.Root name="password">
+      <Field.Label>Password</Field.Label>
+      <InputGroup
+        endElement={
+          <Button
+            type="button"
+            aria-label={visible ? 'Hide password' : 'Show password'}
+            variant="ghost"
+            size="sm"
+            onClick={() => setVisible(!visible)}
+          >
+            {visible ? 'Hide' : 'Show'}
+          </Button>
+        }
+      >
+        <Input
+          type={visible ? 'text' : 'password'}
+          autoComplete="current-password"
+        />
+      </InputGroup>
+    </Field.Root>
+  );
+};
+```
+
+Размещайте метки, проверку и обработку значения на поле или элементе ввода. Задавайте кнопкам оформления собственные доступные имена и используйте `type="button"`, когда они не должны отправлять форму. Группа поддерживает размеры `sm` и `md`; по умолчанию используется `md`.
+
+## Настройка макета
+
+Нативные props, `className`, `style`, `render` и `ref` применяются к div макета. Пользовательский элемент `render` получает props макета и дочерние элементы. Сохраняйте предоставленный ref в этом элементе макета.
+
+Разместите `value`, `defaultValue`, `onValueChange`, `name`, `required`, `readOnly`, `disabled` и ref нативного элемента управления в `Input`. Группа не управляет состоянием поля ввода и не заменяет связь метки Field.
+
+## Свойства
+
+Справочник генерируется из публичных типов компонента. Нативные атрибуты, включая доступные имена и обработчики событий, также принимаются частями, которые отображают элементы.
+
+<InputGroupReference />
+
+<PageBanner illustration="page-cover-input" />

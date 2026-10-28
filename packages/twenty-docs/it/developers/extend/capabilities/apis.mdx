@@ -3,11 +3,13 @@ title: API
 description: Interroga e modifica i dati del tuo CRM in modo programmatico usando REST o GraphQL.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Twenty è stato progettato per essere adatto agli sviluppatori, offrendo potenti API che si adattano al tuo modello di dati personalizzato. Forniamo quattro tipi distinti di API per soddisfare diverse esigenze di integrazione.
-
 ## Approccio incentrato sullo sviluppatore
+
+Twenty è stato progettato per essere adatto agli sviluppatori, offrendo potenti API che si adattano al tuo modello di dati personalizzato. Forniamo quattro tipi distinti di API per soddisfare diverse esigenze di integrazione.
 
 Twenty genera API specifiche per il tuo modello di dati:
 
@@ -17,7 +19,7 @@ Twenty genera API specifiche per il tuo modello di dati:
 * **Documentazione personalizzata**: Generata specificamente per il modello di dati del tuo workspace
 
 <Note>
-La documentazione personalizzata delle tue API è disponibile in **Impostazioni → API & Webhooks** dopo aver creato una chiave API. Poiché Twenty genera API che corrispondono al tuo modello di dati personalizzato, la documentazione è unica per il tuo workspace.
+La documentazione personalizzata delle tue API è disponibile in **Impostazioni → Sviluppatori → API** dopo aver creato una chiave API. Poiché Twenty genera API che corrispondono al tuo modello di dati personalizzato, la documentazione è unica per il tuo workspace.
 </Note>
 
 ## I due tipi di API
@@ -70,7 +72,7 @@ Authorization: Bearer YOUR_API_KEY
 
 ### Crea una chiave API
 
-1. Vai a **Impostazioni → APIs & Webhooks**
+1. Vai a **Impostazioni → Sviluppatori → API**
 2. Fai clic su **+ Crea chiave**
 3. Configura:
    * **Nome**: Nome descrittivo per la chiave
@@ -98,9 +100,9 @@ La chiave erediterà le autorizzazioni di quel ruolo. Vedi [Autorizzazioni](/it/
 
 ### Gestisci chiavi API
 
-**Rigenera**: Impostazioni → APIs & Webhooks → Fai clic sulla chiave → **Rigenera**
+**Rigenera**: Impostazioni → Sviluppatori → API → Fai clic sulla chiave → **Rigenera**
 
-**Elimina**: Impostazioni → APIs & Webhooks → Fai clic sulla chiave → **Elimina**
+**Elimina**: Impostazioni → Sviluppatori → API → Fai clic sulla chiave → **Elimina**
 
 ## Playground API
 
@@ -108,7 +110,7 @@ Testa le tue API direttamente nel browser con il nostro playground integrato —
 
 ### Accedi al Playground
 
-1. Vai a **Impostazioni → APIs & Webhooks**
+1. Vai a **Impostazioni → Sviluppatori → API**
 2. Crea una chiave API (obbligatorio)
 3. Fai clic su **REST API** o **GraphQL API** per aprire il playground
 
@@ -145,3 +147,5 @@ Le richieste API sono limitate per garantire la stabilità della piattaforma:
 <Tip>
 Usa le operazioni batch per massimizzare il throughput — elabora fino a 60 record in una singola chiamata API invece di effettuare richieste individuali.
 </Tip>
+
+<PageBanner illustration="dev-api" />

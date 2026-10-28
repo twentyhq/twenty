@@ -224,7 +224,7 @@ msgstr "{0, plural, one {# chat} few {# chat-uri} other {# de chat-uri}}"
 #. placeholder {0}: emails.length
 #: src/modules/ai/components/AiChatApprovalEmailConfirmation.tsx
 msgid "{0, plural, one {# email selected · 0 emails skipped} other {# emails selected · 0 emails skipped}}"
-msgstr ""
+msgstr "{0, plural, one {# e-mail selectat · 0 e-mailuri omise} few {# e-mailuri selectate · 0 e-mailuri omise} other {# de e-mailuri selectate · 0 e-mailuri omise}}"
 
 #. js-lingui-id: XHO5F1
 #. placeholder {0}: failedResults.length
@@ -390,12 +390,18 @@ msgstr "Editare dispunere pentru {0}"
 msgid "{0} MB"
 msgstr "{0} MB"
 
-#. js-lingui-id: mmjR0w
+#. js-lingui-id: gx/V/r
 #. placeholder {0}: formatNumber(objectCount)
-#. placeholder {1}: formatNumber(fieldCount)
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
-msgid "{0} objects, {1} fields"
-msgstr ""
+msgid "{0} objects"
+msgstr "{0} obiecte"
+
+#. js-lingui-id: Z70Dyr
+#. placeholder {0}: formatNumber(objectCount)
+#. placeholder {1}: formatNumber(recordCount)
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
+msgid "{0} objects, {1} records"
+msgstr "{0} obiecte, {1} înregistrări"
 
 #. js-lingui-id: FGOUAP
 #. placeholder {0}: formatNumber(displayedRecords.length)
@@ -424,7 +430,9 @@ msgstr "{0} reîncercări"
 
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
+#. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
+#: src/modules/ai/components/AiChatInboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -438,7 +446,7 @@ msgstr "{0} selectate"
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "{0} selected · {1} skipped"
-msgstr ""
+msgstr "{0} selectate · {1} omise"
 
 #. js-lingui-id: peiknr
 #. placeholder {0}: activeFilterLabels.length
@@ -617,6 +625,11 @@ msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} oră} fe
 #. js-lingui-id: g0wkzt
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
+msgstr "{cardCount, plural, one {Aprobi # acțiune?} few {Aprobi # acțiuni?} other {Aprobi # acțiuni?}}"
+
+#. js-lingui-id: AnO6CC
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
+msgid "{channelStatusLabel} · {assignmentLabel}"
 msgstr ""
 
 #. js-lingui-id: chd+3h
@@ -657,12 +670,12 @@ msgstr "{creditsReward, plural, one {{label}, obține {formattedCreditsReward} c
 #. js-lingui-id: hldPZo
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringCreditsSection.tsx
 msgid "{creditsUsedLabel} credits by operation type in this period"
-msgstr ""
+msgstr "{creditsUsedLabel} credite după tipul de operațiune în această perioadă"
 
 #. js-lingui-id: XKF61U
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringCreditsSection.tsx
 msgid "{creditsUsedLabel} credits by operation type, across every install in this period"
-msgstr ""
+msgstr "{creditsUsedLabel} credite după tipul de operațiune, în toate instalările din această perioadă"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -735,7 +748,7 @@ msgstr "{formattedCreatedRecordsProgress} din {formattedRecordsToImportCount} î
 #. js-lingui-id: jkORJY
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "{formattedFailedRunCount} of {formattedRunCount} runs failed"
-msgstr ""
+msgstr "{formattedFailedRunCount} din {formattedRunCount} rulări au eșuat"
 
 #. js-lingui-id: EjjpWm
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -918,7 +931,7 @@ msgstr "{objectLabelSingular} înainte de actualizare"
 #. js-lingui-id: Jg9QRh
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 msgid "{p95DurationInMs} ms"
-msgstr ""
+msgstr "{p95DurationInMs} ms"
 
 #. js-lingui-id: dKtfA2
 #: src/modules/ai/components/AiChatParticipantMentionBar.tsx
@@ -933,12 +946,12 @@ msgstr "{participantLabels} vor fi adăugați ca participanți și vor avea acce
 #. js-lingui-id: jCjuhm
 #: src/modules/ai/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} are typing…"
-msgstr ""
+msgstr "{participantNames} tastează…"
 
 #. js-lingui-id: E0CZYQ
 #: src/modules/ai/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} is typing…"
-msgstr ""
+msgstr "{participantNames} tastează…"
 
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -958,17 +971,17 @@ msgstr "Înregistrarea {positionLabel} are prioritate"
 #. js-lingui-id: i2Rv/S
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 msgid "{positionLabel}: {name}"
-msgstr ""
+msgstr "{positionLabel}: {name}"
 
 #. js-lingui-id: tSROzD
 #: src/modules/ai/components/AiChatFormCardContent.tsx
 msgid "{prefilledCount} of {fieldCount} fields prefilled"
-msgstr ""
+msgstr "{prefilledCount} din {fieldCount} câmpuri precompletate"
 
 #. js-lingui-id: LA2w8d
 #: src/modules/settings/applications/components/SettingsApplicationConnectionProviderSection.tsx
 msgid "{providerDisplayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection."
-msgstr ""
+msgstr "{providerDisplayName} OAuth nu este încă configurat de administratorul serverului. Administratorul trebuie să completeze ID-ul clientului OAuth și secretul în înregistrarea aplicației înainte de a putea adăuga o conexiune."
 
 #. js-lingui-id: 2V2T+0
 #. placeholder {0}: formatNumber(queuedCount)
@@ -985,12 +998,12 @@ msgstr "{queuedMessage}, se omit {skipReasons}"
 #. js-lingui-id: N7gP92
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 msgid "{remainingCount} more"
-msgstr ""
+msgstr "încă {remainingCount}"
 
 #. js-lingui-id: uVxzex
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
-msgstr ""
+msgstr "{remainingDraftCount, plural, =0 {Nu mai sunt schițe după aceasta} one {încă o schiță după aceasta} few {încă # schițe după aceasta} other {încă # schițe după aceasta}}"
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1056,12 +1069,12 @@ msgstr "{selectedCount, plural, one {Reîncearcă {selectedCount} loc de muncă}
 #. js-lingui-id: 1MJWid
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 msgid "{selectedCount} records selected · {skippedCount} records skipped"
-msgstr ""
+msgstr "{selectedCount} înregistrări selectate · {skippedCount} înregistrări omise"
 
 #. js-lingui-id: saqVE2
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
 msgid "{selectedCount} selected"
-msgstr ""
+msgstr "{selectedCount} selectate"
 
 #. js-lingui-id: px4Svg
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -1265,28 +1278,28 @@ msgstr "~ {0} jetoane"
 #. js-lingui-id: QSuM4t
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "≈ 10,000 workflow steps"
-msgstr ""
+msgstr "≈ 10.000 de pași ai fluxului de lucru"
 
 #. js-lingui-id: tSb6yd
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "≈ 100 AI tasks/week"
-msgstr ""
+msgstr "≈ 100 de sarcini AI/săptămână"
 
 #. js-lingui-id: qjBGD6
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "≈ 40,000 workflow steps"
-msgstr ""
+msgstr "≈ 40.000 de pași ai fluxului de lucru"
 
 #. js-lingui-id: 0OnWsh
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "≈ 50,000 workflow steps"
-msgstr ""
+msgstr "≈ 50.000 de pași ai fluxului de lucru"
 
 #. js-lingui-id: bLGKEo
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "≈ 500 AI tasks/week"
-msgstr ""
+msgstr "≈ 500 de sarcini AI/săptămână"
 
 #. js-lingui-id: w++m8p
 #. placeholder {0}: formatNumber(tier.model.outputCostPerMillionTokens, { decimals: 2 })
@@ -1320,7 +1333,7 @@ msgstr "${price} per utilizator pe lună, facturat anual"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "$1 per credit, from $20/month"
-msgstr ""
+msgstr "1 USD per credit, de la 20 USD/lună"
 
 #. js-lingui-id: Cx0xl3
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -1351,7 +1364,7 @@ msgstr "1 credit este suficient, în medie, pentru una dintre acestea"
 #. js-lingui-id: 6CSq+c
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "1 credit/user/month"
-msgstr ""
+msgstr "1 credit/utilizator/lună"
 
 #. js-lingui-id: 4pzLrc
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
@@ -1361,7 +1374,7 @@ msgstr "1 obiect"
 #. js-lingui-id: 3kV0ez
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailChannelDomainStatusCell.tsx
 msgid "1 of 2 done"
-msgstr ""
+msgstr "1 din 2 finalizate"
 
 #. js-lingui-id: lKmQeh
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -1482,7 +1495,7 @@ msgstr "30+"
 #. js-lingui-id: OEhEma
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "4 credits/user/month"
-msgstr ""
+msgstr "4 credite/utilizator/lună"
 
 #. js-lingui-id: oaKnWD
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -1493,7 +1506,7 @@ msgstr "418 Sunt un ceainic"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "5 credits/month"
-msgstr ""
+msgstr "5 credite/lună"
 
 #. js-lingui-id: Z2TH0F
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -1729,6 +1742,7 @@ msgid "Account Owner"
 msgstr "Proprietarul contului"
 
 #. js-lingui-id: T3FM0r
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Account settings"
 msgstr "Setările contului"
@@ -1788,7 +1802,7 @@ msgstr "Acțiune la clic"
 #. js-lingui-id: pTIviA
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
 msgid "Action progress"
-msgstr ""
+msgstr "Progresul acțiunii"
 
 #. js-lingui-id: muKPyT
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
@@ -1971,7 +1985,7 @@ msgstr "Adăugați mai întâi o persoană cu o adresă de e-mail la această co
 #. js-lingui-id: +mN79K
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Add a recipient before sending"
-msgstr ""
+msgstr "Adaugă un destinatar înainte de trimitere"
 
 #. js-lingui-id: YFSF0K
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
@@ -2093,6 +2107,11 @@ msgstr "Adăugați card"
 msgid "Add CC"
 msgstr "Adaugă CC"
 
+#. js-lingui-id: PKjhUq
+#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+msgid "Add channel"
+msgstr ""
+
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
@@ -2102,12 +2121,12 @@ msgstr "Adaugă coloană"
 #. js-lingui-id: Khs0Op
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Add column left"
-msgstr ""
+msgstr "Adaugă coloană la stânga"
 
 #. js-lingui-id: vUgQaF
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Add column right"
-msgstr ""
+msgstr "Adaugă coloană la dreapta"
 
 #. js-lingui-id: 3iIvQg
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -2156,7 +2175,7 @@ msgstr "Adăugați detalii pentru invitați"
 #. js-lingui-id: 0+CYPj
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 msgid "Add Email"
-msgstr ""
+msgstr "Adaugă e-mail"
 
 #. js-lingui-id: WT0Ie4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -2332,7 +2351,7 @@ msgstr "Adaugă o metodă de plată"
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
 msgid "Add people or everyone"
-msgstr ""
+msgstr "Adaugă persoane sau pe toată lumea"
 
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -2343,7 +2362,7 @@ msgstr ""
 #. js-lingui-id: 7RdLYg
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
 msgid "Add Phone"
-msgstr ""
+msgstr "Adaugă telefon"
 
 #. js-lingui-id: Cw27zP
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -2380,17 +2399,17 @@ msgstr "Adăugați rută"
 #. js-lingui-id: qZd/ph
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 msgid "Add row"
-msgstr ""
+msgstr "Adaugă rând"
 
 #. js-lingui-id: tT/bSk
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Add row above"
-msgstr ""
+msgstr "Adaugă rând deasupra"
 
 #. js-lingui-id: 6QCZMo
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Add row below"
-msgstr ""
+msgstr "Adaugă rând dedesubt"
 
 #. js-lingui-id: O8tK4v
 #: src/modules/object-core/filters/components/CoreObjectFilterAddRuleButton.tsx
@@ -2486,7 +2505,7 @@ msgstr "Adaugă la favorite"
 #. js-lingui-id: pBsoKL
 #: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
 msgid "Add to favorites"
-msgstr ""
+msgstr "Adaugă la favorite"
 
 #. js-lingui-id: A7duaz
 #: src/modules/side-panel/hooks/useOpenAddToMessageListInSidePanel.ts
@@ -2623,7 +2642,7 @@ msgstr "Adresă 2"
 #: src/modules/object-record/record-form/components/RecordFormAddressFieldInput.tsx
 #: src/modules/ui/field/input/components/AddressInput.tsx
 msgid "Address details"
-msgstr ""
+msgstr "Detalii adresă"
 
 #. js-lingui-id: 7wCciB
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -2640,7 +2659,7 @@ msgstr ""
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Admin & Member"
-msgstr ""
+msgstr "Administrator și membru"
 
 #. js-lingui-id: SsHJsm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -2765,7 +2784,7 @@ msgstr "După un an"
 #. js-lingui-id: P3gmPX
 #: src/pages/auth/Authorize.tsx
 msgid "After you connect, you will be redirected to <0>{redirectHost}</0>"
-msgstr ""
+msgstr "După conectare, vei fi redirecționat către <0>{redirectHost}</0>"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -2898,7 +2917,7 @@ msgstr "Credite AI"
 #. placeholder {0}: userCreditsUsage.daysUntilReset
 #: src/modules/ai/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
-msgstr ""
+msgstr "Creditele AI se reînnoiesc în {0, plural, one {# zi} few {# zile} other {# de zile}}."
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -3040,7 +3059,7 @@ msgstr "Aliniere"
 
 #. js-lingui-id: N40H+G
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
@@ -3093,7 +3112,7 @@ msgstr "Toate aplicațiile"
 #: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
 #: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
 msgid "All channels"
-msgstr ""
+msgstr "Toate canalele"
 
 #. js-lingui-id: tZLcDK
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
@@ -3259,7 +3278,7 @@ msgstr "Toți membrii spațiului de lucru au deja acest rol"
 #. js-lingui-id: AWdiC+
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspaceSelect.tsx
 msgid "All workspaces"
-msgstr ""
+msgstr "Toate spațiile de lucru"
 
 #. js-lingui-id: pPTmfc
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
@@ -3467,7 +3486,7 @@ msgstr "A apărut o eroare."
 #. js-lingui-id: CKXJCD
 #: src/modules/object-record/record-index/export/utils/getRecordExportFields.ts
 msgid "An export field is no longer available."
-msgstr ""
+msgstr "Un câmp de export nu mai este disponibil."
 
 #. js-lingui-id: RGEGJZ
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers.ts
@@ -3649,7 +3668,7 @@ msgstr "Numele API (singular)"
 #. js-lingui-id: DEd/H4
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
 msgid "API rate limit"
-msgstr ""
+msgstr "Limită de rată API"
 
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -3659,17 +3678,17 @@ msgstr "Solicitare API"
 #. js-lingui-id: WmShEW
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "API requests"
-msgstr ""
+msgstr "Solicitări API"
 
 #. js-lingui-id: tKuLk5
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "API requests rejected and trigger jobs skipped"
-msgstr ""
+msgstr "Solicitări API respinse și sarcini de declanșare omise"
 
 #. js-lingui-id: T1wXO+
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "API requests rejected and trigger jobs skipped because the app hit a rate limit"
-msgstr ""
+msgstr "Solicitări API respinse și sarcini de declanșare omise deoarece aplicația a atins o limită de rată"
 
 #. js-lingui-id: Z3Brb2
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -3747,7 +3766,7 @@ msgid "Applicability"
 msgstr "Aplicabilitate"
 
 #. js-lingui-id: IrC12v
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+#: src/modules/settings/app-preferences/utils/getInstalledApplicationDisplayName.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -3841,7 +3860,7 @@ msgstr "Aplică{progressText}"
 #. js-lingui-id: YLFgbC
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "Approval review"
-msgstr ""
+msgstr "Revizuire aprobare"
 
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
@@ -3851,7 +3870,7 @@ msgstr "Aprobă"
 #. js-lingui-id: IkcmiN
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "Approve all {pendingCardCount}"
-msgstr ""
+msgstr "Aprobă toate {pendingCardCount}"
 
 #. js-lingui-id: 7kb4LU
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -3896,7 +3915,7 @@ msgstr "Aplicații"
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Apps preferences"
-msgstr ""
+msgstr "Preferințe aplicații"
 
 #. js-lingui-id: aDW39c
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
@@ -4156,6 +4175,7 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned"
 msgstr "Atribuit"
@@ -4178,10 +4198,10 @@ msgstr "Atribuit utilizatorilor care se alătură prin link de invitație, domen
 #. js-lingui-id: 7RNUhk
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 msgid "Assigned to you"
-msgstr ""
+msgstr "Alocat ție"
 
 #. js-lingui-id: ojKCLU
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
 msgstr "Responsabil"
@@ -4316,7 +4336,7 @@ msgstr "Se atașează această conversație la {objectLabel}"
 #. js-lingui-id: MZLSHw
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "attachment"
-msgstr ""
+msgstr "atașament"
 
 #. js-lingui-id: w/Sphq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -4503,17 +4523,17 @@ msgstr "Disponibilitate"
 #. js-lingui-id: C2F7IU
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Availability calendars"
-msgstr ""
+msgstr "Calendare de disponibilitate"
 
 #. js-lingui-id: caqRwP
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
 msgid "Availability was not checked for {uncheckedAttendeeList}. You can still send an invite."
-msgstr ""
+msgstr "Disponibilitatea nu a fost verificată pentru {uncheckedAttendeeList}. Poți trimite totuși o invitație."
 
 #. js-lingui-id: bUNt5P
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "Available times"
-msgstr ""
+msgstr "Ore disponibile"
 
 #. js-lingui-id: kfcRb0
 #: src/modules/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon.tsx
@@ -4569,7 +4589,7 @@ msgstr "Înapoi la inbox"
 #. js-lingui-id: 5CWqLx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Back to operations"
-msgstr ""
+msgstr "Înapoi la operațiuni"
 
 #. js-lingui-id: 9aZHfH
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -4755,7 +4775,7 @@ msgstr "bloc"
 #. js-lingui-id: 0yXkwb
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Block of code"
-msgstr ""
+msgstr "Bloc de cod"
 
 #. js-lingui-id: 6IhN7r
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -5132,12 +5152,12 @@ msgstr "Conturi de calendar"
 #. js-lingui-id: DZrVwO
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "Calendar availability could not be checked."
-msgstr ""
+msgstr "Disponibilitatea calendarului nu a putut fi verificată."
 
 #. js-lingui-id: bRk+FR
 #: src/modules/activities/calendar/utils/getTimelineCalendarEventLabel.ts
 msgid "Calendar event"
-msgstr ""
+msgstr "Eveniment de calendar"
 
 #. js-lingui-id: 6kmXOY
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
@@ -5381,7 +5401,7 @@ msgstr "Anulează răspunsul"
 #. js-lingui-id: 624oKO
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Cancel switch"
-msgstr ""
+msgstr "Anulează schimbarea"
 
 #. js-lingui-id: N6gPiD
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
@@ -5461,7 +5481,7 @@ msgstr "Nu se pot restaura înregistrări fără un filtru valid"
 #. js-lingui-id: V/7kWk
 #: src/modules/object-record/record-form/components/RecordFormFilesFieldInput.tsx
 msgid "Cannot upload more than {maxItemCount} files"
-msgstr ""
+msgstr "Nu puteți încărca mai mult de {maxItemCount} fișiere"
 
 #. js-lingui-id: H1Ddy9
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
@@ -5559,13 +5579,13 @@ msgstr "Certificat nevalid"
 #. js-lingui-id: o+XJ9D
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 msgid "Change"
-msgstr ""
+msgstr "Schimbă"
 
 #. js-lingui-id: Ki4LtI
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Change assignee"
-msgstr ""
+msgstr "Schimbă responsabilul"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -5601,7 +5621,7 @@ msgstr "Schimbă parola"
 #. js-lingui-id: 98W3AT
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 msgid "Change status in {scopeLabel}"
-msgstr ""
+msgstr "Schimbă starea în {scopeLabel}"
 
 #. js-lingui-id: EYSFEW
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
@@ -5633,29 +5653,29 @@ msgstr "Modificări"
 #. js-lingui-id: oRH6Dq
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "channel"
-msgstr ""
+msgstr "canal"
 
 #. js-lingui-id: HdE1If
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Channel"
-msgstr ""
+msgstr "Canal"
 
 #. js-lingui-id: CXcvq4
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "Channel name"
-msgstr ""
+msgstr "Numele canalului"
 
 #. js-lingui-id: XnhSY1
 #: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
 msgid "Channel options"
-msgstr ""
+msgstr "Opțiuni canal"
 
 #. js-lingui-id: 7oaGFi
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "channel role"
-msgstr ""
+msgstr "rol de canal"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
@@ -5684,7 +5704,7 @@ msgstr "Acțiuni de chat"
 #. js-lingui-id: eNENNb
 #: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
 msgid "Chat channels this role reads and replies in"
-msgstr ""
+msgstr "Canalele de chat în care acest rol citește și răspunde"
 
 #. js-lingui-id: eKz2ln
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
@@ -5734,12 +5754,12 @@ msgstr "Conversații"
 #. js-lingui-id: Yb1V6Z
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "check"
-msgstr ""
+msgstr "verificați"
 
 #. js-lingui-id: 10GIoH
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Check List"
-msgstr ""
+msgstr "Listă de verificare"
 
 #. js-lingui-id: oa2dNe
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -5754,7 +5774,7 @@ msgstr "Verificați datele evenimentului"
 #. js-lingui-id: EXMtgb
 #: src/modules/ai/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Check the merge result before trying again"
-msgstr ""
+msgstr "Verifică rezultatul îmbinării înainte de a încerca din nou"
 
 #. js-lingui-id: PaKTa7
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -5779,7 +5799,7 @@ msgstr "Verificați-vă căsuța de e-mail pentru a confirma noua adresă de e-m
 #. js-lingui-id: BGQXlj
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "checkbox"
-msgstr ""
+msgstr "bifă"
 
 #. js-lingui-id: w+pzSf
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperDetails.tsx
@@ -5789,7 +5809,7 @@ msgstr "Verificată numai când este salvată înregistrarea căreia îi aparți
 #. js-lingui-id: DMUK+4
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "Checking calendar availability…"
-msgstr ""
+msgstr "Se verifică disponibilitatea calendarului…"
 
 #. js-lingui-id: SxwQE8
 #: src/modules/settings/billing/hooks/useHandleCheckoutSession.ts
@@ -5827,12 +5847,12 @@ msgstr "Alegeți credite {intervalAdjective}"
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
 #: src/modules/ui/input/components/internal/date/components/DatePickerCalendar.tsx
 msgid "Choose a date"
-msgstr ""
+msgstr "Alege o dată"
 
 #. js-lingui-id: mXw+D5
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "Choose a date to see available times."
-msgstr ""
+msgstr "Alege o dată pentru a vedea orele disponibile."
 
 #. js-lingui-id: n5pcaT
 #: src/modules/ai/components/AiModelTierDropdown.tsx
@@ -5843,7 +5863,7 @@ msgstr "Alege un mod de model"
 #. js-lingui-id: Vgi70q
 #: src/modules/ai/components/AiChatApprovalMergeReview.tsx
 msgid "Choose a source record to keep"
-msgstr ""
+msgstr "Alege o înregistrare sursă de păstrat"
 
 #. js-lingui-id: sHa2Dg
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
@@ -5853,12 +5873,12 @@ msgstr "Alege un cheltuitor"
 #. js-lingui-id: ZLmzD4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone"
-msgstr ""
+msgstr "Alege un fus orar"
 
 #. js-lingui-id: 2cQMP+
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone."
-msgstr ""
+msgstr "Alege un fus orar."
 
 #. js-lingui-id: RGUZK1
 #: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
@@ -5883,17 +5903,17 @@ msgstr "Alege un spațiu de lucru"
 #. js-lingui-id: NuBVH7
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
 msgid "Choose an access level available to all selected recipients."
-msgstr ""
+msgstr "Alege un nivel de acces disponibil pentru toți destinatarii selectați."
 
 #. js-lingui-id: bTsJ+r
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an available calendar that can send invitations."
-msgstr ""
+msgstr "Alege un calendar disponibil care poate trimite invitații."
 
 #. js-lingui-id: 4yF6C2
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an organizer calendar"
-msgstr ""
+msgstr "Alege un calendar al organizatorului"
 
 #. js-lingui-id: 9fscAB
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
@@ -5985,7 +6005,7 @@ msgstr "Alege ce se întâmplă când dai clic pe o adresă de e-mail"
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Choose when you are available and which calendar sends invitations."
-msgstr ""
+msgstr "Alege când ești disponibil și ce calendar trimite invitațiile."
 
 #. js-lingui-id: kTDEu6
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -6005,7 +6025,7 @@ msgstr "Alegeți câmpurile utilizate la căutarea înregistrărilor."
 #. js-lingui-id: 6L95MS
 #: src/pages/settings/applications/components/SettingsApplicationConnectionMessageFolders.tsx
 msgid "Choose which folders this application imports"
-msgstr ""
+msgstr "Alege dosarele pe care le importă această aplicație"
 
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -6327,7 +6347,7 @@ msgstr "Cod - Funcție logică"
 #. js-lingui-id: N2eHWq
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Code Block"
-msgstr ""
+msgstr "Bloc de cod"
 
 #. js-lingui-id: 80c4+P
 #: src/modules/ai/components/MarkdownCodeBlock.tsx
@@ -6373,7 +6393,7 @@ msgstr "coffee.exe: on"
 #. js-lingui-id: ZjnNYv
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "collapse"
-msgstr ""
+msgstr "restrângere"
 
 #. js-lingui-id: H86f9p
 #: src/modules/ai/components/ThinkingToolStepRow.tsx
@@ -6419,7 +6439,7 @@ msgstr "Restrânge bara laterală"
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "collapsible"
-msgstr ""
+msgstr "pliabil"
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -6841,7 +6861,7 @@ msgstr "Confirmă"
 #. js-lingui-id: MrMPwB
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 msgid "Confirm approval"
-msgstr ""
+msgstr "Confirmă aprobarea"
 
 #. js-lingui-id: Gdj3Sa
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -6940,7 +6960,7 @@ msgstr "Conectați-vă e-mailul și calendarul pentru a vă vedea instant între
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Connect your own {0} account for this app to use on your behalf."
-msgstr ""
+msgstr "Conectează propriul cont {0} pentru ca această aplicație să îl utilizeze în numele tău."
 
 #. js-lingui-id: QHcLEN
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
@@ -7032,6 +7052,11 @@ msgstr "Conține"
 #. js-lingui-id: 4b3oEV
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBlockInsertList.tsx
 msgid "Content"
+msgstr "Conținut"
+
+#. js-lingui-id: SVyf2o
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
+msgid "Contents"
 msgstr "Conținut"
 
 #. js-lingui-id: M73whl
@@ -7151,7 +7176,7 @@ msgstr "Cheie conversație"
 #. js-lingui-id: 9xGqrK
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "Conversation list"
-msgstr ""
+msgstr "Listă de conversații"
 
 #. js-lingui-id: 5RinAt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
@@ -7166,7 +7191,7 @@ msgstr "Conversații"
 #. js-lingui-id: gM204O
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "Conversations in this channel will appear here."
-msgstr ""
+msgstr "Conversațiile din acest canal vor apărea aici."
 
 #. js-lingui-id: 5dVEtZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
@@ -7532,7 +7557,7 @@ msgstr "Nu s-au putut încărca spațiile de lucru instalate"
 #. js-lingui-id: 7zpK75
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFallback.tsx
 msgid "Couldn't load monitoring"
-msgstr ""
+msgstr "Monitorizarea nu a putut fi încărcată"
 
 #. js-lingui-id: zaNpE4
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -8017,7 +8042,7 @@ msgstr "Pachet de credite"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Credit packs"
-msgstr ""
+msgstr "Pachete de credite"
 
 #. js-lingui-id: qtEx+T
 #: src/modules/settings/billing/hooks/useCreditUpgradeAction.ts
@@ -8102,7 +8127,7 @@ msgstr "Credite utilizate"
 #. js-lingui-id: SF6cED
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringCreditsSection.tsx
 msgid "Credits used could not be loaded. Refresh to try again."
-msgstr ""
+msgstr "Creditele utilizate nu au putut fi încărcate. Reîmprospătează pentru a încerca din nou."
 
 #. js-lingui-id: biuDTg
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -8400,7 +8425,7 @@ msgstr "Furnizorii personalizați sunt gratuiți pentru până la {0} locuri. Ac
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Custom roles"
-msgstr ""
+msgstr "Roluri personalizate"
 
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -8583,7 +8608,7 @@ msgstr "Date și afișare"
 #. js-lingui-id: VytQpX
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Data export"
-msgstr ""
+msgstr "Export de date"
 
 #. js-lingui-id: xpZXLn
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -8631,7 +8656,7 @@ msgstr "Acord de prelucrare a datelor"
 #. js-lingui-id: hsPieC
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Data Processing Agreement (DPA)"
-msgstr ""
+msgstr "Acord de prelucrare a datelor (DPA)"
 
 #. js-lingui-id: Ix/CMz
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
@@ -9007,7 +9032,7 @@ msgstr "Șterge"
 #. js-lingui-id: KocE4m
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 msgid "Delete {channelName}?"
-msgstr ""
+msgstr "Șterge {channelName}?"
 
 #. js-lingui-id: EsGY/k
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -9102,12 +9127,12 @@ msgstr "Șterge aplicația"
 #: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 msgid "Delete channel"
-msgstr ""
+msgstr "Șterge canalul"
 
 #. js-lingui-id: GAohqx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Delete column"
-msgstr ""
+msgstr "Șterge coloana"
 
 #. js-lingui-id: Wkx6Ld
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable.tsx
@@ -9197,7 +9222,7 @@ msgstr "Ștergeți Rolul Permanent"
 #. js-lingui-id: 0cspe/
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Delete row"
-msgstr ""
+msgstr "Șterge rândul"
 
 #. js-lingui-id: rvJGTw
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -9327,6 +9352,11 @@ msgstr "Șters"
 msgid "Deleted {objectLabel}"
 msgstr "Șters {objectLabel}"
 
+#. js-lingui-id: 6T/COx
+#: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
+msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
+msgstr ""
+
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "Deleted member"
@@ -9362,7 +9392,7 @@ msgstr "Livrare"
 #. js-lingui-id: cFCKYZ
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "Deny"
-msgstr ""
+msgstr "Respinge"
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
@@ -9465,7 +9495,7 @@ msgstr "Detaliu pentru fiecare spațiu de lucru"
 #. js-lingui-id: Px+rYS
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "details"
-msgstr ""
+msgstr "detalii"
 
 #. js-lingui-id: URmyfc
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
@@ -9610,6 +9640,11 @@ msgstr "Deconectează contul"
 #. js-lingui-id: ZYnwzF
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
 msgid "Disconnected"
+msgstr "Deconectat"
+
+#. js-lingui-id: +etBOJ
+#: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
+msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
 msgstr ""
 
 #. js-lingui-id: xt4a74
@@ -9625,7 +9660,7 @@ msgstr "Descoperire pe {defaultDomain}"
 #. js-lingui-id: 1QfxQT
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Dismiss"
-msgstr ""
+msgstr "Închide"
 
 #. js-lingui-id: 3gfpE2
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainAiSetup.tsx
@@ -9797,9 +9832,9 @@ msgstr "Nu importați evenimentele marcate ca private"
 
 #. js-lingui-id: DPfwMq
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -9819,13 +9854,13 @@ msgstr "Puncte și virgulă"
 #. js-lingui-id: SBTQRZ
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "down to fields"
-msgstr ""
+msgstr "până la nivelul câmpurilor"
 
 #. js-lingui-id: 6ujaBZ
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "down to fields and rows"
-msgstr ""
+msgstr "până la nivelul câmpurilor și rândurilor"
 
 #. js-lingui-id: LE8J+K
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -10068,7 +10103,7 @@ msgstr "Fiecare index accelerează citirile pe câmpurile pe care le acoperă, d
 #. js-lingui-id: SpZVrK
 #: src/modules/settings/billing/components/SettingsBillingUserCreditsSection.tsx
 msgid "Each member gets an AI allowance, used before workspace credits"
-msgstr ""
+msgstr "Fiecare membru primește o alocație AI, utilizată înaintea creditelor spațiului de lucru"
 
 #. js-lingui-id: 79hamt
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -10088,12 +10123,12 @@ msgstr "Data cea mai devreme"
 #. js-lingui-id: /CWRQs
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Early"
-msgstr ""
+msgstr "Timpuriu"
 
 #. js-lingui-id: 6nz79V
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Early plan - You keep this price as long as you stay on it. It can't be picked again after you switch."
-msgstr ""
+msgstr "Plan Early - Păstrezi acest preț cât timp rămâi abonat la el. Nu poate fi selectat din nou după ce schimbi planul."
 
 #. js-lingui-id: tmDUtT
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
@@ -10279,7 +10314,7 @@ msgstr "Editează regula"
 #: src/modules/ai/components/AiChatThreadLabelsField.tsx
 #: src/modules/ai/components/AiChatThreadLabelsField.tsx
 msgid "Edit shared labels"
-msgstr ""
+msgstr "Editează etichetele partajate"
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -10392,7 +10427,7 @@ msgstr "Adrese de e-mail care au renunțat la e-mailurile de campanie, la un sub
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Email and chat"
-msgstr ""
+msgstr "E-mail și chat"
 
 #. js-lingui-id: AoN898
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -10567,7 +10602,7 @@ msgstr "E-mailurile deja predate furnizorului nu pot fi retrase. Această acțiu
 #. js-lingui-id: 2janZA
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailChannelDomainStatusCell.tsx
 msgid "Emails can be sent. Add the unsubscribe record to send campaigns."
-msgstr ""
+msgstr "E-mailurile pot fi trimise. Adaugă înregistrarea de dezabonare pentru a trimite campanii."
 
 #. js-lingui-id: USBKh+
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
@@ -10672,7 +10707,7 @@ msgstr "Filă goală"
 #. js-lingui-id: AXNBoL
 #: src/modules/advanced-text-editor/extensions/toggle/createToggleNodeView.ts
 msgid "Empty toggle. Click to add a block."
-msgstr ""
+msgstr "Comutator gol. Fă clic pentru a adăuga un bloc."
 
 #. js-lingui-id: PaQ3df
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -10719,7 +10754,7 @@ msgstr "Data de sfârșit trebuie să fie după data de început."
 #. js-lingui-id: xus58/
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "End time must be after start time."
-msgstr ""
+msgstr "Ora de încheiere trebuie să fie după ora de început."
 
 #. js-lingui-id: k1i50B
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
@@ -10831,7 +10866,7 @@ msgstr "Introduceți un număr"
 #. js-lingui-id: LsUGyx
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Enter a start and end time."
-msgstr ""
+msgstr "Introdu o oră de început și una de încheiere."
 
 #. js-lingui-id: 93ebCf
 #: src/modules/object-record/record-field/ui/form-types/components/FormUuidFieldInput.tsx
@@ -10841,17 +10876,17 @@ msgstr "Introduceți un UUID"
 #. js-lingui-id: /AaSIU
 #: src/modules/object-record/record-form/components/RecordFormLinksFieldInput.tsx
 msgid "Enter a valid domain"
-msgstr ""
+msgstr "Introdu un domeniu valid"
 
 #. js-lingui-id: qg4y3S
 #: src/modules/object-record/record-form/components/RecordFormEmailsFieldInput.tsx
 msgid "Enter a valid email"
-msgstr ""
+msgstr "Introdu o adresă de e-mail validă"
 
 #. js-lingui-id: w8A3K2
 #: src/modules/object-record/record-form/components/RecordFormPhonesFieldInput.tsx
 msgid "Enter a valid phone number"
-msgstr ""
+msgstr "Introdu un număr de telefon valid"
 
 #. js-lingui-id: DXBlEM
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemLinkEditor.tsx
@@ -11186,7 +11221,7 @@ msgstr "Eroare la activarea licenței Organizație"
 #. js-lingui-id: TK8eC3
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Error code"
-msgstr ""
+msgstr "Cod de eroare"
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -11332,7 +11367,7 @@ msgstr "Eroare în timpul schimbării abonamentului."
 #. js-lingui-id: UirGxE
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Errors"
-msgstr ""
+msgstr "Erori"
 
 #. js-lingui-id: 69KLIV
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
@@ -11386,7 +11421,7 @@ msgstr "Vizibilitatea evenimentului"
 #. js-lingui-id: tst44n
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Events"
-msgstr ""
+msgstr "Evenimente"
 
 #. js-lingui-id: lbS/kF
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -11441,7 +11476,7 @@ msgstr "la fiecare {stepNumStr} luni, între {startMonth} și {endMonth}"
 #. js-lingui-id: AdpwiL
 #: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
 msgid "Every channel, including the ones created later"
-msgstr ""
+msgstr "Fiecare canal, inclusiv cele create ulterior"
 
 #. js-lingui-id: LhmFKG
 #: src/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
@@ -11467,7 +11502,7 @@ msgstr "în fiecare minut"
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces."
-msgstr ""
+msgstr "Fiecare obiect din acest spațiu de lucru ca fișiere CSV într-o arhivă zip, păstrată timp de 1 zi. Funcționează pentru spațiile de lucru suspendate."
 
 #. js-lingui-id: SpXUci
 #: src/modules/applications/utils/getStandardApplicationReadme.ts
@@ -11814,7 +11849,7 @@ msgstr "Exportați fișiere CSV"
 #. js-lingui-id: QJwofm
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Export data"
-msgstr ""
+msgstr "Exportați date"
 
 #. js-lingui-id: ciTEKZ
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers.ts
@@ -11870,7 +11905,7 @@ msgstr "ID eveniment extern"
 #. js-lingui-id: 07Wl2A
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Extra credits"
-msgstr ""
+msgstr "Credite suplimentare"
 
 #. js-lingui-id: 4NR4Ja
 #: src/modules/ai/utils/getAiModelTierLabel.ts
@@ -11913,7 +11948,7 @@ msgstr "Descărcarea fișierului a eșuat"
 #. js-lingui-id: 1Iq+Fl
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "Failed installs, upgrades and uninstalls"
-msgstr ""
+msgstr "Instalări, actualizări și dezinstalări eșuate"
 
 #. js-lingui-id: tKcbYd
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -11923,7 +11958,7 @@ msgstr "Joburi eșuate"
 #. js-lingui-id: ZH1p6o
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "Failed runs"
-msgstr ""
+msgstr "Rulări eșuate"
 
 #. js-lingui-id: QvHpKb
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -12299,7 +12334,7 @@ msgstr "Nu s-a putut seta modul de mentenanță."
 #. placeholder {0}: error.message
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Failed to start the export. {0}"
-msgstr ""
+msgstr "Nu s-a reușit inițierea exportului. {0}"
 
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -12399,7 +12434,7 @@ msgstr "Actualizarea aplicației a eșuat."
 #. placeholder {0}: file.name
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx
 msgid "Failed to upload \"{0}\""
-msgstr ""
+msgstr "Nu s-a reușit încărcarea \"{0}\""
 
 #. js-lingui-id: eh+uU5
 #: src/modules/activities/emails/hooks/useUploadEmailImage.ts
@@ -12676,7 +12711,7 @@ msgstr "Al cincilea"
 #. js-lingui-id: 7Lk0LK
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "file"
-msgstr ""
+msgstr "fișier"
 
 #. js-lingui-id: J2eKUI
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
@@ -12788,6 +12823,12 @@ msgstr "Filtrați după tipul de obiect"
 msgid "Filter by record ID"
 msgstr "Filtrați după ID-ul înregistrării"
 
+#. js-lingui-id: jge9hE
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+msgid "Filter channel chats"
+msgstr ""
+
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Filter group rule options"
@@ -12884,7 +12925,7 @@ msgstr "Finalizați configurarea"
 #. js-lingui-id: 4dQFvz
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 msgid "Finished"
-msgstr ""
+msgstr "Finalizat"
 
 #. js-lingui-id: USZ2N6
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -12997,7 +13038,7 @@ msgstr "Foldere"
 #. js-lingui-id: 2z3uoE
 #: src/modules/ai/components/AiChatThreadFollowersField.tsx
 msgid "Follow for me"
-msgstr ""
+msgstr "Urmărește pentru mine"
 
 #. js-lingui-id: I7Exsw
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -13152,7 +13193,7 @@ msgstr "Franceză"
 #. js-lingui-id: 39y5bn
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Friday"
-msgstr ""
+msgstr "vineri"
 
 #. js-lingui-id: ejVYRQ
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
@@ -13284,7 +13325,7 @@ msgstr "Funcție"
 #. js-lingui-id: dP4xFL
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Function / event"
-msgstr ""
+msgstr "Funcție / eveniment"
 
 #. js-lingui-id: 3KlJeH
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
@@ -13309,7 +13350,7 @@ msgstr "Rulare funcție"
 #. js-lingui-id: CpTy3p
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "Function runs"
-msgstr ""
+msgstr "Rulări de funcții"
 
 #. js-lingui-id: Tn94cL
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
@@ -13319,7 +13360,7 @@ msgstr "Pas de funcție"
 #. js-lingui-id: xANKBj
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Functions"
-msgstr ""
+msgstr "Funcții"
 
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
@@ -13646,12 +13687,12 @@ msgstr "Verde"
 #. js-lingui-id: nKUR8Q
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "grid"
-msgstr ""
+msgstr "grilă"
 
 #. js-lingui-id: gWA5iK
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Grid of rows and columns"
-msgstr ""
+msgstr "Grilă de rânduri și coloane"
 
 #. js-lingui-id: L8fEEm
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -13696,7 +13737,7 @@ msgstr "Grupat {objectLabel}"
 #. js-lingui-id: owoCzo
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Grouped by error code and function"
-msgstr ""
+msgstr "Grupat după codul de eroare și funcție"
 
 #. js-lingui-id: 5FTAZt
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -13730,17 +13771,17 @@ msgstr ""
 #. js-lingui-id: Cr5XLk
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h4"
-msgstr ""
+msgstr "h4"
 
 #. js-lingui-id: /eRRek
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h5"
-msgstr ""
+msgstr "h5"
 
 #. js-lingui-id: CvW51C
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h6"
-msgstr ""
+msgstr "h6"
 
 #. js-lingui-id: Nf7oXL
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -13766,7 +13807,7 @@ msgstr "A expirat timpul"
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Have access"
-msgstr ""
+msgstr "Are acces"
 
 #. js-lingui-id: Gpb1xF
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -13781,7 +13822,7 @@ msgstr "Director de parteneriate"
 #. js-lingui-id: XckaIr
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
 msgid "Header column"
-msgstr ""
+msgstr "Coloană de antet"
 
 #. js-lingui-id: HUk3sK
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -13791,7 +13832,7 @@ msgstr "Numele antetului"
 #. js-lingui-id: Gi0VDy
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
 msgid "Header row"
-msgstr ""
+msgstr "Rând de antet"
 
 #. js-lingui-id: odaos8
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -13847,19 +13888,19 @@ msgstr ""
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 msgid "Heading 4"
-msgstr ""
+msgstr "Titlu 4"
 
 #. js-lingui-id: /zXDjr
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 msgid "Heading 5"
-msgstr ""
+msgstr "Titlu 5"
 
 #. js-lingui-id: YpCHKo
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 msgid "Heading 6"
-msgstr ""
+msgstr "Titlu 6"
 
 #. js-lingui-id: 6Ef36Q
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -14213,7 +14254,7 @@ msgstr "Pictogramă"
 #. js-lingui-id: DMpF70
 #: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
 msgid "Icon and color"
-msgstr ""
+msgstr "Pictogramă și culoare"
 
 #. js-lingui-id: XTWO+W
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -14317,7 +14358,7 @@ msgstr "Widget iFrame"
 #. js-lingui-id: teaneZ
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "image"
-msgstr ""
+msgstr "imagine"
 
 #. js-lingui-id: hG89Ed
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -14372,9 +14413,9 @@ msgid "imap.example.com"
 msgstr "imap.example.com"
 
 #. js-lingui-id: tSVr6t
+#: src/modules/settings/admin-panel/components/SettingsAdminUserWorkspaceActions.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
-#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Impersonate"
 msgstr "Impersonați"
@@ -14418,7 +14459,7 @@ msgid "Impersonation failed"
 msgstr "Impersonarea a eșuat"
 
 #. js-lingui-id: yImXof
-#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminUserWorkspaceActions.tsx
 msgid "Impersonation is disabled for this workspace"
 msgstr "Impersonarea este dezactivată pentru acest spațiu de lucru"
 
@@ -14508,7 +14549,7 @@ msgstr "Importând datele ..."
 #. js-lingui-id: bDESCJ
 #: src/modules/ai/components/AiChatThreadChannelIcon.tsx
 msgid "In {channelName}"
-msgstr ""
+msgstr "În {channelName}"
 
 #. js-lingui-id: HiyKEP
 #: src/modules/settings/developers/utils/formatExpiration.ts
@@ -14523,7 +14564,7 @@ msgstr "În {listName}"
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "In progress"
-msgstr ""
+msgstr "În progres"
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
@@ -14735,7 +14776,7 @@ msgstr "Introdu detaliile de facturare pentru a obține o perioadă de probă <0
 #. js-lingui-id: 7vtupL
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Insert your billing details to subscribe."
-msgstr ""
+msgstr "Introduceți detaliile de facturare pentru a vă abona."
 
 #. js-lingui-id: RE5y9j
 #: src/modules/onboarding/constants/ImportContactsPreviewEmails.ts
@@ -14841,7 +14882,7 @@ msgstr "Instalări"
 #. js-lingui-id: woDmxB
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Installs, upgrades and uninstalls"
-msgstr ""
+msgstr "Instalări, actualizări și dezinstalări"
 
 #. js-lingui-id: x8uKc7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
@@ -15070,7 +15111,7 @@ msgstr "Invită"
 #. js-lingui-id: ooKvCz
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
 msgid "Invite {selectedRecipientCount}"
-msgstr ""
+msgstr "Invită {selectedRecipientCount}"
 
 #. js-lingui-id: YiNcxh
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitationAccessPicker.tsx
@@ -15081,7 +15122,7 @@ msgstr "Invită ca"
 #. placeholder {0}: getRecordShareAccessLevelLabel(value)
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitationAccessPicker.tsx
 msgid "Invite as {0}"
-msgstr ""
+msgstr "Invită ca {0}"
 
 #. js-lingui-id: 0M8+El
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -15267,7 +15308,7 @@ msgstr "Iterator"
 #. js-lingui-id: R9VnB9
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
-msgstr ""
+msgstr "Conversațiile sale sunt mutate în {destinationChannelName}. Această acțiune nu poate fi anulată."
 
 #. js-lingui-id: J6OYmT
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -15312,7 +15353,7 @@ msgstr "Numele locului de muncă"
 #. js-lingui-id: YZJBRK
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
 msgid "Job rate limit"
-msgstr ""
+msgstr "Limită de rată pentru sarcini"
 
 #. js-lingui-id: 27z+FV
 #: src/pages/onboarding/CreateProfile.tsx
@@ -15495,7 +15536,7 @@ msgstr "Eticheta trebuie să conțină cel puțin un caracter alfanumeric"
 #. js-lingui-id: h8DugX
 #: src/modules/ai/components/AiChatThreadLabelsField.tsx
 msgid "Labels"
-msgstr ""
+msgstr "Etichete"
 
 #. js-lingui-id: vXIe7J
 #: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
@@ -15522,7 +15563,7 @@ msgstr "Mare"
 #. js-lingui-id: ie/1It
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Large heading that hides its content"
-msgstr ""
+msgstr "Titlu mare care își ascunde conținutul"
 
 #. js-lingui-id: 59o/ag
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -15579,12 +15620,12 @@ msgstr "Ultimele 15 minute"
 #. js-lingui-id: HyE+6E
 #: src/modules/settings/application-monitoring/constants/ApplicationMonitoringPeriods.ts
 msgid "Last 2 hours"
-msgstr ""
+msgstr "Ultimele 2 ore"
 
 #. js-lingui-id: VcuwXY
 #: src/modules/settings/application-monitoring/constants/ApplicationMonitoringPeriods.ts
 msgid "Last 2 hours (oldest → newest)"
-msgstr ""
+msgstr "Ultimele 2 ore (cel mai vechi → cel mai nou)"
 
 #. js-lingui-id: aK4uBd
 #: src/modules/log-console/constants/LogConsoleTimeRangePresets.ts
@@ -15595,7 +15636,7 @@ msgstr "Ultimele 24 ore"
 #. js-lingui-id: jdXtmv
 #: src/modules/settings/application-monitoring/constants/ApplicationMonitoringPeriods.ts
 msgid "Last 24 hours (oldest → newest)"
-msgstr ""
+msgstr "Ultimele 24 de ore (cel mai vechi → cel mai nou)"
 
 #. js-lingui-id: j5nqnO
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -15612,7 +15653,7 @@ msgstr "Ultimele 30 de zile"
 #. js-lingui-id: NDs7yf
 #: src/modules/settings/application-monitoring/constants/ApplicationMonitoringPeriods.ts
 msgid "Last 30 days (oldest → newest)"
-msgstr ""
+msgstr "Ultimele 30 de zile (cel mai vechi → cel mai nou)"
 
 #. js-lingui-id: gdAJ4I
 #: src/modules/log-console/constants/LogConsoleTimeRangePresets.ts
@@ -15635,7 +15676,7 @@ msgstr "Ultimele 7 zile"
 #. js-lingui-id: YG9c0q
 #: src/modules/settings/application-monitoring/constants/ApplicationMonitoringPeriods.ts
 msgid "Last 7 days (oldest → newest)"
-msgstr ""
+msgstr "Ultimele 7 zile (cel mai vechi → cel mai nou)"
 
 #. js-lingui-id: GQgBSj
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -15652,7 +15693,7 @@ msgstr "Ultimele 90 de zile"
 #. js-lingui-id: gOqp/L
 #: src/modules/settings/application-monitoring/constants/ApplicationMonitoringPeriods.ts
 msgid "Last 90 days (oldest → newest)"
-msgstr ""
+msgstr "Ultimele 90 de zile (cel mai vechi → cel mai nou)"
 
 #. js-lingui-id: ZdXEWi
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
@@ -15686,7 +15727,7 @@ msgstr "Ultima eroare"
 #. js-lingui-id: DHHybq
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 msgid "Last event"
-msgstr ""
+msgstr "Ultimul eveniment"
 
 #. js-lingui-id: c5zxSg
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
@@ -15733,7 +15774,7 @@ msgstr "Ultima reîmprospătare"
 #. js-lingui-id: U011Uh
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Last seen"
-msgstr ""
+msgstr "Văzut ultima dată"
 
 #. js-lingui-id: NYwqoV
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -16001,12 +16042,12 @@ msgstr "Titularul licenței"
 #. js-lingui-id: bSylfz
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "Lifecycle failures"
-msgstr ""
+msgstr "Eșecuri ale ciclului de viață"
 
 #. js-lingui-id: bveeMM
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Lifecycle runs and their failures"
-msgstr ""
+msgstr "Execuțiile ciclului de viață și eșecurile acestora"
 
 #. js-lingui-id: yOGTbg
 #: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
@@ -16153,14 +16194,14 @@ msgstr "Link-ul a fost copiat în clipboard"
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
 #: src/modules/page-layout/widgets/emails/components/WidgetActionEmails.tsx
 msgid "Link email threads"
-msgstr ""
+msgstr "Asociați conversații prin e-mail"
 
 #. js-lingui-id: ze7eaG
 #: src/modules/activities/calendar/components/CalendarEventsEmptyState.tsx
 #: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendar.tsx
 msgid "Link events"
-msgstr ""
+msgstr "Asociați evenimente"
 
 #. js-lingui-id: vH3ZQY
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemLinkEditor.tsx
@@ -16222,7 +16263,7 @@ msgstr "Lista a fost duplicată cu {memberCount, plural, one {# membru} few {# m
 #. js-lingui-id: BNkwyX
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "List item that hides its content"
-msgstr ""
+msgstr "Element de listă care își ascunde conținutul"
 
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
@@ -16232,7 +16273,7 @@ msgstr "Widget listă"
 #. js-lingui-id: PP59jq
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "List with checkboxes"
-msgstr ""
+msgstr "Listă cu casete de selectare"
 
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -16287,7 +16328,7 @@ msgstr "Încarcă mai multe"
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Load more chats"
-msgstr ""
+msgstr "Încarcă mai multe conversații"
 
 #. js-lingui-id: CZGQgK
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
@@ -16312,7 +16353,7 @@ msgstr "Se încarcă aplicațiile..."
 #. js-lingui-id: UDL15Z
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 msgid "Loading chats..."
-msgstr ""
+msgstr "Se încarcă conversațiile..."
 
 #. js-lingui-id: w81Nov
 #: src/modules/ai/components/AiChatEditorSection.tsx
@@ -16334,7 +16375,7 @@ msgstr "Se încarcă vizualizatorul de documente..."
 #. js-lingui-id: A6/Vxy
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
 msgid "Loading email threads"
-msgstr ""
+msgstr "Se încarcă conversațiile prin e-mail"
 
 #. js-lingui-id: qIaOZk
 #: src/modules/activities/emails/components/EmailLoader.tsx
@@ -16349,7 +16390,7 @@ msgstr "Se încarcă emojiurile"
 #. js-lingui-id: 0Jvyke
 #: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
 msgid "Loading events"
-msgstr ""
+msgstr "Se încarcă evenimentele"
 
 #. js-lingui-id: IFQsdb
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -16364,7 +16405,7 @@ msgstr "Se încarcă datele metrice..."
 #. js-lingui-id: Jz268F
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerLoadMoreFooter.tsx
 msgid "Loading more chats..."
-msgstr ""
+msgstr "Se încarcă mai multe conversații..."
 
 #. js-lingui-id: tVSmFT
 #: src/modules/activities/components/CustomResolverFetchMoreLoader.tsx
@@ -16387,12 +16428,12 @@ msgstr "Se încarcă configurația de reținere..."
 #. js-lingui-id: zTAQ2r
 #: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
 msgid "Loading roles"
-msgstr ""
+msgstr "Se încarcă rolurile"
 
 #. js-lingui-id: WvgJbz
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordSkeleton.tsx
 msgid "Loading sharing settings"
-msgstr ""
+msgstr "Se încarcă setările de partajare"
 
 #. js-lingui-id: VeVIIk
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -16539,7 +16580,7 @@ msgstr "Funcție logică"
 #. js-lingui-id: 9XdpdA
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "Logic function runs across every install in this period"
-msgstr ""
+msgstr "Execuțiile funcției logice în toate instalările din această perioadă"
 
 #. js-lingui-id: QTVVDd
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
@@ -16861,7 +16902,7 @@ msgstr "Margine"
 #. js-lingui-id: SYhBoR
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
 msgid "Mark all done"
-msgstr ""
+msgstr "Marchează toate ca realizate"
 
 #. js-lingui-id: yYix7P
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsGeneral.ts
@@ -16984,9 +17025,15 @@ msgid "MCP client configuration"
 msgstr "Configurare client MCP"
 
 #. js-lingui-id: Zw+Zv+
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "MCP server"
 msgstr "Server MCP"
+
+#. js-lingui-id: 8qgfac
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "MCP servers"
+msgstr "Servere MCP"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -17023,7 +17070,7 @@ msgstr "Mediu"
 #. js-lingui-id: 0AU71I
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Medium heading that hides its content"
-msgstr ""
+msgstr "Titlu mediu care își ascunde conținutul"
 
 #. js-lingui-id: IAcjOi
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -17087,7 +17134,7 @@ msgstr "Membri & invitați"
 #. js-lingui-id: pbIEgB
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 msgid "Mentioned you"
-msgstr ""
+msgstr "Te-a menționat"
 
 #. js-lingui-id: /bZzdR
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
@@ -17110,17 +17157,17 @@ msgstr "Îmbină"
 #. js-lingui-id: yDKct3
 #: src/modules/ai/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Merge {firstSourceName} and {secondSourceName}"
-msgstr ""
+msgstr "Îmbină {firstSourceName} și {secondSourceName}"
 
 #. js-lingui-id: TTHfsp
 #: src/modules/ai/components/AiChatApprovalMergeReview.tsx
 msgid "Merge all {pendingPairCount}"
-msgstr ""
+msgstr "Îmbină toate {pendingPairCount}"
 
 #. js-lingui-id: HNtOdD
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Merge cells"
-msgstr ""
+msgstr "Îmbină celulele"
 
 #. js-lingui-id: d2c8f+
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
@@ -17137,7 +17184,7 @@ msgstr "Îmbină înregistrările"
 #. js-lingui-id: PXTjHO
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Merge review tabs"
-msgstr ""
+msgstr "File de examinare a îmbinării"
 
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
@@ -17196,7 +17243,7 @@ msgstr "Mesaje"
 #. js-lingui-id: MlyoA4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "messaging provider"
-msgstr ""
+msgstr "furnizor de mesagerie"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -17256,9 +17303,10 @@ msgid "Min range"
 msgstr "Interval minim"
 
 #. js-lingui-id: oSrMRT
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "Mine"
-msgstr ""
+msgstr "Ale mele"
 
 #. js-lingui-id: 8GG+Pa
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -17268,7 +17316,7 @@ msgstr "Minim"
 #. js-lingui-id: clKD2b
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Minor subsection heading"
-msgstr ""
+msgstr "Titlu de subsecțiune minoră"
 
 #. js-lingui-id: 5IrCQY
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -17291,12 +17339,6 @@ msgstr "Minute"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Minutes between triggers"
 msgstr "Minute între acțiuni"
-
-#. js-lingui-id: G40We3
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
-msgid "Missing account"
-msgstr "Cont lipsă"
 
 #. js-lingui-id: 0z4Od/
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -17430,12 +17472,12 @@ msgstr "Monitorizează execuția sarcinii de sincronizare a e-mailurilor"
 #: src/pages/settings/applications/SettingsApplicationRegistrationMonitoring.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationMonitoring.tsx
 msgid "Monitoring"
-msgstr ""
+msgstr "Monitorizare"
 
 #. js-lingui-id: I+zwoy
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFallback.tsx
 msgid "Monitoring needs ClickHouse. Set {clickHouseUrlVariableName} on the server to collect app logs and metrics."
-msgstr ""
+msgstr "Monitorizarea necesită ClickHouse. Setați {clickHouseUrlVariableName} pe server pentru a colecta jurnalele și valorile aplicației."
 
 #. js-lingui-id: kY2ll9
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -17542,7 +17584,7 @@ msgstr "Mai multe opțiuni"
 #: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
 #: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
 msgid "More reactions"
-msgstr ""
+msgstr "Mai multe reacții"
 
 #. js-lingui-id: 2MjaQ8
 #: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
@@ -17558,7 +17600,7 @@ msgstr "Relație morph"
 #. js-lingui-id: 9nzqc5
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
 msgid "Most active first, out of {activeWorkspaceCountLabel} active in this period"
-msgstr ""
+msgstr "Cele mai active primele, din {activeWorkspaceCountLabel} active în această perioadă"
 
 #. js-lingui-id: SOHptZ
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -17585,7 +17627,7 @@ msgstr "Mutați în jos"
 #: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
 msgid "Move its chats to"
-msgstr ""
+msgstr "Mută conversațiile sale în"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
@@ -17618,7 +17660,7 @@ msgstr "Mutați într-o altă filă"
 #: src/modules/ai/components/AiChatThreadChannelPicker.tsx
 #: src/modules/ai/components/AiChatThreadChannelPicker.tsx
 msgid "Move to channel"
-msgstr ""
+msgstr "Mută în canal"
 
 #. js-lingui-id: JCPOml
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
@@ -17806,7 +17848,7 @@ msgstr "Numele nu poate fi gol."
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FullNameFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormFullNameFieldInput.tsx
 msgid "Name details"
-msgstr ""
+msgstr "Detalii despre nume"
 
 #. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -17960,9 +18002,8 @@ msgstr "Eveniment de calendar nou"
 
 #. js-lingui-id: BW0+uJ
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "New channel"
-msgstr ""
+msgstr "Canal nou"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatInboxListHeader.tsx
@@ -18173,7 +18214,7 @@ msgstr "Următorul"
 #. js-lingui-id: IbfvuD
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "Next approval"
-msgstr ""
+msgstr "Următoarea aprobare"
 
 #. js-lingui-id: L0DCk4
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -18198,12 +18239,12 @@ msgstr "Următoarea iterație"
 #. js-lingui-id: g8JmSC
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
 msgid "Next month"
-msgstr ""
+msgstr "Luna următoare"
 
 #. js-lingui-id: DnlugB
 #: src/modules/ai/components/AiChatApprovalMergeReview.tsx
 msgid "Next pair"
-msgstr ""
+msgstr "Următoarea pereche"
 
 #. js-lingui-id: 8+lM81
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
@@ -18244,7 +18285,7 @@ msgstr "Săptămâna viitoare"
 #. js-lingui-id: 97rmcs
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "Next: {nextTitles}"
-msgstr ""
+msgstr "Următoarele: {nextTitles}"
 
 #. js-lingui-id: ulck7h
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -18293,12 +18334,12 @@ msgstr "Fără acces"
 #. js-lingui-id: ETfwRt
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 msgid "No accounts yet"
-msgstr ""
+msgstr "Niciun cont încă"
 
 #. js-lingui-id: IeiB4r
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "No actions to review"
-msgstr ""
+msgstr "Nicio acțiune de examinat"
 
 #. js-lingui-id: glQp+P
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -18308,7 +18349,7 @@ msgstr "Niciun abonament activ."
 #. js-lingui-id: OdMetd
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "No activity in this period"
-msgstr ""
+msgstr "Nicio activitate în această perioadă"
 
 #. js-lingui-id: LM+N3q
 #: src/modules/activities/timeline-activities/components/EventList.tsx
@@ -18416,7 +18457,7 @@ msgstr "Nicio filă disponibilă"
 #. js-lingui-id: vmUMKh
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "No available times. Choose another date."
-msgstr ""
+msgstr "Nu există ore disponibile. Alegeți o altă dată."
 
 #. js-lingui-id: 8whThc
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -18432,12 +18473,12 @@ msgstr "Fără Body"
 #. js-lingui-id: 15bIDe
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars available."
-msgstr ""
+msgstr "Nu există კალendare disponibile."
 
 #. js-lingui-id: +Rmf7F
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars match your search."
-msgstr ""
+msgstr "Niciun calendar nu corespunde căutării dvs."
 
 #. js-lingui-id: O7I76L
 #: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
@@ -18457,7 +18498,7 @@ msgstr "Fără cod de apelare"
 #. js-lingui-id: ydE3k+
 #: src/modules/ai/components/AiChatThreadChannelPicker.tsx
 msgid "No channel"
-msgstr ""
+msgstr "Niciun canal"
 
 #. js-lingui-id: GgZThR
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -18472,12 +18513,12 @@ msgstr "Nu s-au găsit fire de chat."
 #. js-lingui-id: cnR7h2
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "No chats match your search"
-msgstr ""
+msgstr "Niciun chat nu corespunde căutării tale"
 
 #. js-lingui-id: nfEdoc
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 msgid "No chats yet"
-msgstr ""
+msgstr "Nicio conversație încă"
 
 #. js-lingui-id: qTxPPY
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
@@ -18527,7 +18568,7 @@ msgstr "Nu a fost înregistrat niciun consum de credite pentru acest utilizator.
 #. js-lingui-id: aNs+VA
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringCreditsSection.tsx
 msgid "No credits used in this period"
-msgstr ""
+msgstr "Niciun credit utilizat în această perioadă"
 
 #. js-lingui-id: kxH3HO
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
@@ -18610,7 +18651,7 @@ msgstr "Nu a avut loc niciun schimb de emailuri cu acest registru încă."
 #. js-lingui-id: dtnAuN
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
 msgid "No email threads found"
-msgstr ""
+msgstr "Nu s-au găsit conversații prin e-mail"
 
 #. js-lingui-id: quWMra
 #: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
@@ -18620,7 +18661,7 @@ msgstr "Nu a fost găsit niciun emoji"
 #. js-lingui-id: Qkn7jU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "No errors or warnings in this period"
-msgstr ""
+msgstr "Nicio eroare sau avertisment în această perioadă"
 
 #. js-lingui-id: SIR5Ix
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -18636,7 +18677,7 @@ msgstr "Niciun eveniment"
 #. js-lingui-id: dW40Uz
 #: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
 msgid "No events found"
-msgstr ""
+msgstr "Nu s-au găsit evenimente"
 
 #. js-lingui-id: wY82y3
 #: src/modules/activities/calendar/components/CalendarEventsEmptyState.tsx
@@ -18686,7 +18727,7 @@ msgstr "Nu s-au găsit dosare pentru acest cont"
 #. js-lingui-id: /2AEiG
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 msgid "No function ran in this period"
-msgstr ""
+msgstr "Nicio funcție nu a rulat în această perioadă"
 
 #. js-lingui-id: 9kCSLK
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
@@ -18710,7 +18751,7 @@ msgstr "Nu există câmpuri de intrare pentru această acțiune"
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "No install, upgrade or uninstall in this period"
-msgstr ""
+msgstr "Nicio instalare, actualizare sau dezinstalare în această perioadă"
 
 #. js-lingui-id: lj3GoP
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -18730,7 +18771,7 @@ msgstr "Nu au fost reîncercate locuri de muncă{errorDetails}"
 #. js-lingui-id: VkcRtM
 #: src/modules/ai/components/AiChatThreadLabelsField.tsx
 msgid "No labels available"
-msgstr ""
+msgstr "Nicio etichetă disponibilă"
 
 #. js-lingui-id: CYafz+
 #: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
@@ -18827,7 +18868,7 @@ msgstr "Nicio notă"
 #. js-lingui-id: XIpopT
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 msgid "No operations found"
-msgstr ""
+msgstr "Nu s-a găsit nicio operațiune"
 
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
@@ -18877,7 +18918,7 @@ msgstr "Nu a fost găsită nicio atestare de proveniență pentru acest pachet. 
 #. js-lingui-id: fHi2Mr
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "No rate limit hit in this period"
-msgstr ""
+msgstr "Nicio limită de rată atinsă în această perioadă"
 
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
@@ -18894,7 +18935,7 @@ msgstr "Nicio înregistrare"
 #. js-lingui-id: IdXXOw
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
 msgid "No record holds priority"
-msgstr ""
+msgstr "Nicio înregistrare nu are prioritate"
 
 #. js-lingui-id: ePgApM
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -18924,7 +18965,7 @@ msgstr "Nu s-au găsit înregistrări care să corespundă criteriilor de filtra
 #. js-lingui-id: To7xRG
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "No records to review"
-msgstr ""
+msgstr "Nicio înregistrare de examinat"
 
 #. js-lingui-id: gvIkAA
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -18997,7 +19038,7 @@ msgstr "Niciun rol atribuit acestui membru"
 #. js-lingui-id: s7Snbr
 #: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
 msgid "No roles"
-msgstr ""
+msgstr "Fără roluri"
 
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -19184,7 +19225,7 @@ msgstr "Nu există variabile de setat pentru această aplicație"
 #. js-lingui-id: 0l1DmS
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
 msgid "No version reported in this period"
-msgstr ""
+msgstr "Nicio versiune raportată în această perioadă"
 
 #. js-lingui-id: 0uWxPM
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -19224,7 +19265,7 @@ msgstr "Niciun spațiu de lucru nu a eșuat"
 #. js-lingui-id: KL0QQT
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 msgid "No workspace ran this app in this period"
-msgstr ""
+msgstr "Niciun spațiu de lucru nu a rulat această aplicație în această perioadă"
 
 #. js-lingui-id: rPAZRd
 #: src/modules/settings/lab/hooks/useLabPublicFeatureFlags.ts
@@ -19376,9 +19417,9 @@ msgid "Not measured at this effort yet. Showing the base model's reading."
 msgstr "Nu a fost încă măsurat la acest nivel de efort. Se afișează valoarea modelului de bază."
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
 msgid "Not open to you"
-msgstr ""
+msgstr "Nu îți este accesibil"
 
 #. js-lingui-id: cURAbX
 #: src/modules/workflow/workflow-trigger/constants/ManualTriggerIsPinnedOptions.ts
@@ -19431,7 +19472,7 @@ msgstr "Nu este partajat de {notSharedByFullName}"
 #. js-lingui-id: +3Co6p
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Not shared with"
-msgstr ""
+msgstr "Nu este partajat cu"
 
 #. js-lingui-id: mu1gVr
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
@@ -19670,7 +19711,6 @@ msgstr "Obiect la Nivel"
 
 #. js-lingui-id: B3toQF
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
@@ -19927,8 +19967,8 @@ msgid "Only you will be able to see your emails and events"
 msgstr "Numai dvs. veți putea vedea e-mailurile și evenimentele dvs."
 
 #. js-lingui-id: 1TNIig
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -19966,7 +20006,7 @@ msgstr "Deschide ca link"
 #. js-lingui-id: 6I7cJR
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "Open chat"
-msgstr ""
+msgstr "Deschide conversația"
 
 #. js-lingui-id: 4/tvYU
 #: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
@@ -19983,7 +20023,7 @@ msgstr "Deschideți Claude cu numele conectorului Twenty și URL-ul MCP precompl
 #. js-lingui-id: N4OQXf
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Open column menu"
-msgstr ""
+msgstr "Deschide meniul coloanei"
 
 #. js-lingui-id: uIKeEf
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton.tsx
@@ -20079,7 +20119,7 @@ msgstr "Deschideți Replit cu configurația serverului Twenty la distanță."
 #. js-lingui-id: iMBVhp
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Open row menu"
-msgstr ""
+msgstr "Deschide meniul rândului"
 
 #. js-lingui-id: d8DZWS
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsGeneral.ts
@@ -20119,7 +20159,7 @@ msgstr "Deschis"
 #. js-lingui-id: a7M/wC
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
 msgid "Opening chat..."
-msgstr ""
+msgstr "Se deschide conversația..."
 
 #. js-lingui-id: /25cjp
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -20327,12 +20367,12 @@ msgstr "Licența Organizație a fost activată cu succes"
 #. js-lingui-id: G5RhpL
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Organizer"
-msgstr ""
+msgstr "Organizator"
 
 #. js-lingui-id: vryTU3
 #: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
 msgid "Original message unavailable"
-msgstr ""
+msgstr "Mesajul original nu este disponibil"
 
 #. js-lingui-id: /IX/7x
 #: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
@@ -20419,7 +20459,7 @@ msgstr "Rezultat"
 #. js-lingui-id: nCQvd7
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
 msgid "Outcome unknown"
-msgstr ""
+msgstr "Rezultat necunoscut"
 
 #. js-lingui-id: gdC3cZ
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
@@ -20517,7 +20557,7 @@ msgstr ""
 #. js-lingui-id: creZpq
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 msgid "p95 duration"
-msgstr ""
+msgstr "durată p95"
 
 #. js-lingui-id: mGYa19
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -20738,7 +20778,7 @@ msgstr "În așteptare"
 #. js-lingui-id: 2B0V9T
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Pending requests"
-msgstr ""
+msgstr "Solicitări în așteptare"
 
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
@@ -20769,7 +20809,7 @@ msgstr "Pe"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "per member"
-msgstr ""
+msgstr "per membru"
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -20882,17 +20922,17 @@ msgstr "ID persoană"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Personal AI usage"
-msgstr ""
+msgstr "Utilizare personală a IA"
 
 #. js-lingui-id: /SoAQl
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Personal usage"
-msgstr ""
+msgstr "Utilizare personală"
 
 #. js-lingui-id: /XUQpE
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Personal usage limit resets in {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr ""
+msgstr "Limita de utilizare personală se resetează în {daysUntilReset, plural, one {# zi} few {# zile} other {# de zile}}."
 
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
@@ -20933,7 +20973,7 @@ msgstr "Alegeți o culoare"
 #. js-lingui-id: B8mlc2
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
 msgid "Pick a date"
-msgstr ""
+msgstr "Alegeți o dată"
 
 #. js-lingui-id: T1yaeQ
 #: src/modules/activities/emails/utils/buildCampaignDeliveryHint.ts
@@ -21052,7 +21092,7 @@ msgstr "Plan"
 #. js-lingui-id: h4k6l4
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Plan essentials"
-msgstr ""
+msgstr "Elementele esențiale ale planului"
 
 #. js-lingui-id: XduPHC
 #: src/modules/settings/billing/hooks/useApplyBillingSubscriptionChange.ts
@@ -21211,7 +21251,7 @@ msgstr "Cod poștal"
 #. js-lingui-id: 8LyT38
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "pre"
-msgstr ""
+msgstr "pre"
 
 #. js-lingui-id: iVFTRM
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
@@ -21299,7 +21339,7 @@ msgstr "Ultimele 7 zile"
 #. js-lingui-id: ap92qV
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "Previous approval"
-msgstr ""
+msgstr "Aprobarea anterioară"
 
 #. js-lingui-id: RCsICd
 #: src/modules/ai/components/AiChatInboxThreadPagination.tsx
@@ -21314,12 +21354,12 @@ msgstr "Iterația anterioară"
 #. js-lingui-id: 1xwZj/
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
 msgid "Previous month"
-msgstr ""
+msgstr "Luna anterioară"
 
 #. js-lingui-id: 7BDoFf
 #: src/modules/ai/components/AiChatApprovalMergeReview.tsx
 msgid "Previous pair"
-msgstr ""
+msgstr "Perechea anterioară"
 
 #. js-lingui-id: KaMwgJ
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
@@ -21344,7 +21384,7 @@ msgstr "Captura de ecran anterioară"
 #. js-lingui-id: rLvhNs
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Previous value:"
-msgstr ""
+msgstr "Valoarea anterioară:"
 
 #. js-lingui-id: aHCEmh
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -21516,7 +21556,7 @@ msgstr "Valoarea proprietății"
 #. js-lingui-id: nHD0EI
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Proposed value:"
-msgstr ""
+msgstr "Valoarea propusă:"
 
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -21657,12 +21697,12 @@ msgstr "Coada: {queueName}"
 #. js-lingui-id: 8wu9lr
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 msgid "Queued"
-msgstr ""
+msgstr "În coadă"
 
 #. js-lingui-id: Eldtfl
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 msgid "Queued messages"
-msgstr ""
+msgstr "Mesaje în coadă"
 
 #. js-lingui-id: WmhhWd
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21701,13 +21741,13 @@ msgstr "Aleatoriu"
 #. js-lingui-id: iZuzSU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringKpis.tsx
 msgid "Rate limited"
-msgstr ""
+msgstr "Limitat de rată"
 
 #. js-lingui-id: 5tEe0s
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Rate limits"
-msgstr ""
+msgstr "Limitări de rată"
 
 #. js-lingui-id: z1U/Fh
 #: src/modules/ui/field/input/components/RatingInput.tsx
@@ -21832,7 +21872,7 @@ msgstr "Definiție {entityTypeLabel} numai pentru citire, livrată de această a
 #. js-lingui-id: EqZQdT
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Read-only calendar"
-msgstr ""
+msgstr "Calendar doar pentru citire"
 
 #. js-lingui-id: mqj7ck
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -21843,11 +21883,6 @@ msgstr "Citiți, scrieți și ștergeți {target}"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Read/Edit/Delete permissions"
 msgstr "Permisiuni de citire/editare/ștergere"
-
-#. js-lingui-id: ckH3fT
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
-msgid "Ready"
-msgstr ""
 
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -21953,6 +21988,7 @@ msgid "Reconnect"
 msgstr "Reconectare"
 
 #. js-lingui-id: XsIxsL
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect needed"
@@ -22167,7 +22203,6 @@ msgstr "înregistrări"
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -22237,7 +22272,7 @@ msgstr "Reîmprospătează"
 #. js-lingui-id: IevXlZ
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "Refresh availability for this date."
-msgstr ""
+msgstr "Reîmprospătați disponibilitatea pentru această dată."
 
 #. js-lingui-id: pTGa/J
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -22282,6 +22317,11 @@ msgstr "Regiunea în care sunt procesate datele de inferență (opțional)"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Register as development instance"
 msgstr "Înregistrați ca instanță de dezvoltare"
+
+#. js-lingui-id: SqH8YF
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Register external MCP servers in Developers settings and expose their tools to AI chat."
+msgstr "Înregistrați servere MCP externe în setările Dezvoltatori și expuneți instrumentele acestora pentru chatul AI."
 
 #. js-lingui-id: ARGZDy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -22452,7 +22492,7 @@ msgstr "Elimină ca implicită"
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Remove connection?"
-msgstr ""
+msgstr "Eliminați conexiunea?"
 
 #. js-lingui-id: 2HpFUd
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -22564,7 +22604,7 @@ msgstr "Elimină mesajul din coadă"
 #. js-lingui-id: 6nFc2C
 #: src/modules/ai/components/AiChatComposerQuotePreview.tsx
 msgid "Remove quote"
-msgstr ""
+msgstr "Elimină citatul"
 
 #. js-lingui-id: PhLz3E
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsTable.tsx
@@ -22615,7 +22655,7 @@ msgstr "Elimină declanșatorul"
 #. js-lingui-id: XrlYG5
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Remove unavailable calendars"
-msgstr ""
+msgstr "Elimină calendarele indisponibile"
 
 #. js-lingui-id: Kl3J3D
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
@@ -22665,7 +22705,7 @@ msgstr "Se reînnoiește la"
 #. js-lingui-id: M7SqjM
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 msgid "Reopen"
-msgstr ""
+msgstr "Redeschide"
 
 #. js-lingui-id: co4jwi
 #. placeholder {0}: tab.title
@@ -22909,7 +22949,7 @@ msgstr "Resurse"
 #. js-lingui-id: qrqIfV
 #: src/modules/ai/components/AiChatThreadRequestActions.tsx
 msgid "Respond to request"
-msgstr ""
+msgstr "Răspunde la solicitare"
 
 #. js-lingui-id: ZlCDf+
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -23029,7 +23069,7 @@ msgstr "Reîncearcă în caz de eșec"
 #. js-lingui-id: F87htB
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Retry search"
-msgstr ""
+msgstr "Reîncearcă căutarea"
 
 #. js-lingui-id: AF7Zfa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -23200,7 +23240,7 @@ msgstr "Roluri"
 #: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
 msgid "Roles in this channel"
-msgstr ""
+msgstr "Roluri în acest canal"
 
 #. js-lingui-id: Q6o/eX
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
@@ -23262,7 +23302,7 @@ msgstr "Securitate la nivel de rând"
 #. js-lingui-id: OXexf7
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "rows"
-msgstr ""
+msgstr "rânduri"
 
 #. js-lingui-id: OIWtYf
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -23379,7 +23419,7 @@ msgstr "Rulări"
 #. js-lingui-id: F4I4hU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Runs and failures per version"
-msgstr ""
+msgstr "Execuții și eșecuri per versiune"
 
 #. js-lingui-id: RASTzS
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
@@ -23389,7 +23429,7 @@ msgstr "Rulările apar aici odată ce un flux de lucru sau o aplicație utilizea
 #. js-lingui-id: Y16LgE
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Runs, failures and 95th percentile duration"
-msgstr ""
+msgstr "Execuții, eșecuri și durată în percentila 95"
 
 #. js-lingui-id: eo1n1s
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -23420,7 +23460,7 @@ msgstr "Aceeași valoare pe fiecare latură"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "SAML/OIDC"
-msgstr ""
+msgstr "SAML/OIDC"
 
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
@@ -23530,7 +23570,7 @@ msgstr "Mentenanță programată: {startFormatted} — {endFormatted}"
 #. js-lingui-id: SxCO0O
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Scheduling preferences"
-msgstr ""
+msgstr "Preferințe de programare"
 
 #. js-lingui-id: QJ8HBJ
 #: src/modules/settings/developers/components/PlaygroundSetupForm.tsx
@@ -23567,7 +23607,7 @@ msgstr "Derulează în jos"
 #. js-lingui-id: SIucTL
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Scrollable record review"
-msgstr ""
+msgstr "Examinare derulabilă a înregistrărilor"
 
 #. js-lingui-id: hJjXGo
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -23727,7 +23767,7 @@ msgstr "Caută chei API"
 #. js-lingui-id: fLbp9m
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Search availability calendars"
-msgstr ""
+msgstr "Caută calendare de disponibilitate"
 
 #. js-lingui-id: 3mGNuB
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -23752,12 +23792,12 @@ msgstr "Căutați după numele spațiului de lucru, subdomeniu sau ID..."
 #. js-lingui-id: R/iIxI
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Search calendars"
-msgstr ""
+msgstr "Caută calendare"
 
 #. js-lingui-id: kYSv2r
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 msgid "Search chat titles..."
-msgstr ""
+msgstr "Caută titluri de conversații..."
 
 #. js-lingui-id: yI4D/V
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
@@ -23789,7 +23829,7 @@ msgstr "Caută moneda"
 #. js-lingui-id: BMsyzt
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
 msgid "Search email threads"
-msgstr ""
+msgstr "Căutați conversații prin e-mail"
 
 #. js-lingui-id: Sb71rQ
 #: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
@@ -23799,7 +23839,7 @@ msgstr "Caută emojiuri"
 #. js-lingui-id: Lncu40
 #: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
 msgid "Search events"
-msgstr ""
+msgstr "Căutați evenimente"
 
 #. js-lingui-id: AHePb2
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -23976,7 +24016,7 @@ msgstr "Se caută {objectLabel}"
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Searching chats..."
-msgstr ""
+msgstr "Se caută conversații..."
 
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -24165,7 +24205,7 @@ msgstr "Vezi ce pot face"
 #. js-lingui-id: ljobQ+
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "See which parts you need and how to set each one up."
-msgstr ""
+msgstr "Vedeți de ce componente aveți nevoie și cum să configurați fiecare dintre ele."
 
 #. js-lingui-id: eQ3co2
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -24203,7 +24243,7 @@ msgstr "Select"
 #. placeholder {0}: record.label
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Select {0}"
-msgstr ""
+msgstr "Selectați {0}"
 
 #. js-lingui-id: qR6X1R
 #: src/modules/object-record/advanced-filter/utils/getAdvancedFilterInputPlacedholderText.ts
@@ -24365,7 +24405,7 @@ msgstr "Selectați toate rândurile încărcate"
 #. js-lingui-id: rRpCVj
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Select all records"
-msgstr ""
+msgstr "Selectați toate înregistrările"
 
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
@@ -24389,12 +24429,12 @@ msgstr "Selectează o opțiune"
 #. js-lingui-id: Wh3uKH
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one available calendar to check for conflicts."
-msgstr ""
+msgstr "Selectați cel puțin un calendar disponibil pentru a verifica existența conflictelor."
 
 #. js-lingui-id: AXQ2Fr
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one working day."
-msgstr ""
+msgstr "Selectați cel puțin o zi lucrătoare."
 
 #. js-lingui-id: 0yxhOL
 #: src/modules/ai/components/AiChatThreadRow.tsx
@@ -24482,7 +24522,7 @@ msgstr "Selectați opțiunile"
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordPicker.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordPicker.tsx
 msgid "Select records"
-msgstr ""
+msgstr "Selectați înregistrări"
 
 #. js-lingui-id: 9c44h0
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -24554,12 +24594,12 @@ msgstr "Selectează limba și ajustează dimensiunea interfeței"
 #. js-lingui-id: ylXj1N
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Selected"
-msgstr ""
+msgstr "Selectat"
 
 #. js-lingui-id: CRzfBf
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
 msgid "Selected chats"
-msgstr ""
+msgstr "Conversații selectate"
 
 #. js-lingui-id: AM0pWl
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24582,7 +24622,7 @@ msgstr "Trimite"
 #. js-lingui-id: h3fYlJ
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Send all {pendingEmailCount}"
-msgstr ""
+msgstr "Trimite toate {pendingEmailCount}"
 
 #. js-lingui-id: mjK8F3
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -24640,7 +24680,7 @@ msgstr "Trimiteți invitații"
 #. js-lingui-id: Hvnq/n
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
 msgid "Send invite"
-msgstr ""
+msgstr "Trimite invitația"
 
 #. js-lingui-id: RmmhAh
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
@@ -24765,7 +24805,7 @@ msgstr "Accesul administratorului de server a fost actualizat."
 #. js-lingui-id: WJSW19
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
 msgid "Server route"
-msgstr ""
+msgstr "Rută de server"
 
 #. js-lingui-id: fHVf32
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
@@ -25013,7 +25053,7 @@ msgstr "Partajată prin cheie, între rulări"
 #: src/modules/ai/components/AiChatThreadLabelsField.tsx
 #: src/modules/ai/components/AiChatThreadLabelsField.tsx
 msgid "Shared conversation labels"
-msgstr ""
+msgstr "Etichete de conversație partajate"
 
 #. js-lingui-id: JTP6zD
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -25151,7 +25191,7 @@ msgstr "Afișați căsuța de primire"
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 msgid "Show less"
-msgstr ""
+msgstr "Afișează mai puțin"
 
 #. js-lingui-id: dlzDxE
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
@@ -25412,7 +25452,7 @@ msgstr "Cer"
 #. js-lingui-id: Z6Nf0i
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Small heading that hides its content"
-msgstr ""
+msgstr "Titlu mic care își ascunde conținutul"
 
 #. js-lingui-id: Ik7fz5
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -25427,7 +25467,7 @@ msgstr "Mai mic"
 #. js-lingui-id: vf0gTj
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Smallest heading"
-msgstr ""
+msgstr "Cel mai mic titlu"
 
 #. js-lingui-id: ZKXQ0a
 #: src/modules/ai/utils/getAiModelTierLabel.ts
@@ -25472,7 +25512,7 @@ msgstr "smtp.example.com"
 #. js-lingui-id: WP8c0O
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "snippet"
-msgstr ""
+msgstr "fragment"
 
 #. js-lingui-id: 7+i6oV
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
@@ -25485,7 +25525,7 @@ msgstr "Amână"
 #. js-lingui-id: aqkwib
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
 msgid "Snooze chat"
-msgstr ""
+msgstr "Amână conversația"
 
 #. js-lingui-id: xKw3A1
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
@@ -25503,8 +25543,8 @@ msgid "Snooze until {snoozedUntilLabel}"
 msgstr "Amână până la {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Snoozed"
 msgstr "Amânat"
@@ -25540,12 +25580,12 @@ msgstr "O parte din datele de jurnal au fost eliminate pentru a se încadra în 
 #. js-lingui-id: b5Z5wY
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Some selected calendars are no longer available."
-msgstr ""
+msgstr "Unele calendare selectate nu mai sunt disponibile."
 
 #. js-lingui-id: 2c+W2z
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
 msgid "Someone replies"
-msgstr ""
+msgstr "Când răspunde cineva"
 
 #. js-lingui-id: nwtY4N
 #: src/modules/object-core/components/CoreObjectIndexPageLayout.tsx
@@ -25670,7 +25710,7 @@ msgstr "Adresă de e-mail sursă"
 #. js-lingui-id: Jvqt/3
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Source records"
-msgstr ""
+msgstr "Înregistrări sursă"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -25720,7 +25760,7 @@ msgstr "Cheltuielile vor fi plafonate numai de alocarea planului dvs. și de cel
 #. js-lingui-id: sxPyTW
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Split cell"
-msgstr ""
+msgstr "Scindează celula"
 
 #. js-lingui-id: gsifzp
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -25825,7 +25865,7 @@ msgstr "Începe cu întreaga ta rețea"
 #. js-lingui-id: 75gEoC
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Start your subscription"
-msgstr ""
+msgstr "Începeți abonamentul"
 
 #. js-lingui-id: s+K73L
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -25885,7 +25925,6 @@ msgstr "Statistici"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
@@ -25895,7 +25934,6 @@ msgstr "Statistici"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
@@ -26235,7 +26273,7 @@ msgstr "Abonamentul va fi schimbat pe facturare lunară în data de {0}."
 #. js-lingui-id: U17bCx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Subsection heading"
-msgstr ""
+msgstr "Titlu de subsecțiune"
 
 #. js-lingui-id: pEToQK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -26245,7 +26283,7 @@ msgstr ""
 #. js-lingui-id: KAbcm2
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
 msgid "Succeeded"
-msgstr ""
+msgstr "Reușit"
 
 #. js-lingui-id: zzDlyQ
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
@@ -26355,7 +26393,7 @@ msgstr "Suportă raționare"
 #. js-lingui-id: LbFYgh
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Survives"
-msgstr ""
+msgstr "Este păstrat"
 
 #. js-lingui-id: UaISq3
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -26365,7 +26403,7 @@ msgstr "Suedeză"
 #. js-lingui-id: M7wPsD
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Switch"
-msgstr ""
+msgstr "Schimbă"
 
 #. js-lingui-id: 3D7mFh
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
@@ -26479,9 +26517,13 @@ msgstr "Sincronizare Etichetă și Nume API"
 msgid "Synchronize Objects Labels and API Names"
 msgstr "Sincronizează etichetele obiectelor și numele API"
 
+#. js-lingui-id: 4XvJjz
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
+msgstr ""
+
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and this account's credentials will be removed. Your emails and events will be retained and available after you reconnect."
 msgstr "Sincronizarea se va opri, iar datele de autentificare ale acestui cont vor fi eliminate. E-mailurile și evenimentele dvs. vor fi păstrate și disponibile după reconectare."
 
@@ -26564,7 +26606,7 @@ msgstr "Setări Tab"
 #. js-lingui-id: cFGrCP
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "table"
-msgstr ""
+msgstr "table"
 
 #. js-lingui-id: 4hJhzz
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
@@ -26621,7 +26663,7 @@ msgstr "Subdomeniul țintă al spațiului de lucru"
 #. js-lingui-id: 4O3LPI
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "task"
-msgstr ""
+msgstr "sarcină"
 
 #. js-lingui-id: R+s8S+
 #: src/modules/activities/tasks/components/TaskRow.tsx
@@ -26649,7 +26691,7 @@ msgstr "Membru al echipei"
 #. placeholder {0}: index + 1
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Teammate's email {0}"
-msgstr ""
+msgstr "E-mailul colegului {0}"
 
 #. js-lingui-id: g4mm2M
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -26704,7 +26746,7 @@ msgstr "Testează pasul"
 #. js-lingui-id: qSRD2n
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownTestStepItem.tsx
 msgid "Test this step to see its outputs"
-msgstr ""
+msgstr "Testează acest pas pentru a vedea rezultatele sale"
 
 #. js-lingui-id: 3nWPN6
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -26767,7 +26809,7 @@ msgstr "Editor de text"
 #. js-lingui-id: kv9l5H
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 msgid "That time is no longer available. Choose another time."
-msgstr ""
+msgstr "Acea oră nu mai este disponibilă. Alegeți o altă oră."
 
 #. js-lingui-id: Ldukks
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
@@ -26979,7 +27021,7 @@ msgstr "PDF-ul este pre-semnat de Twenty și executat cu entitatea dvs. juridic�
 #. js-lingui-id: iz994T
 #: src/modules/ai/components/AiChatApprovalMergeReview.tsx
 msgid "The priority record keeps its identity"
-msgstr ""
+msgstr "Înregistrarea prioritară își păstrează identitatea"
 
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -27227,7 +27269,7 @@ msgstr "Acest agent rulează doar când cineva îi trimite un mesaj."
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationMonitoring.tsx
 msgid "This app could not be found"
-msgstr ""
+msgstr "Această aplicație nu a fost găsită"
 
 #. js-lingui-id: 9rY+8P
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -27310,12 +27352,12 @@ msgstr "Aceasta anulează schimbarea programată la {upcomingPlanLabel} în data
 #. js-lingui-id: kcwAVF
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
 msgid "This chat could not be opened. Try selecting it again."
-msgstr ""
+msgstr "Această conversație nu a putut fi deschisă. Încercați să o selectați din nou."
 
 #. js-lingui-id: EGhCC8
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
 msgid "This chat is no longer available."
-msgstr ""
+msgstr "Această conversație nu mai este disponibilă."
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -27475,9 +27517,13 @@ msgstr "Această pagină nu este disponibilă."
 
 #. js-lingui-id: PIZjqy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes {accountHandle} and all of its synced emails and events. This action cannot be undone."
 msgstr "Aceasta șterge permanent {accountHandle} și toate e-mailurile și evenimentele sincronizate ale acestuia. Această acțiune nu poate fi anulată."
+
+#. js-lingui-id: vrBe2V
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
+msgstr ""
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -27492,12 +27538,12 @@ msgstr "Această acțiune șterge definitiv acest flux de lucru și tot istoricu
 #. js-lingui-id: FKONu5
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog.tsx
 msgid "This permanently removes {connectionLabel} from this application. The app loses access to it."
-msgstr ""
+msgstr "Această acțiune elimină permanent {connectionLabel} din această aplicație. Aplicația pierde accesul la aceasta."
 
 #. js-lingui-id: Pdot5f
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "This permanently removes {connectionLabel}. The app loses access to it."
-msgstr ""
+msgstr "Această acțiune elimină permanent {connectionLabel}. Aplicația pierde accesul la aceasta."
 
 #. js-lingui-id: R/PuIn
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -27680,7 +27726,7 @@ msgstr "Trei coloane una lângă alta"
 #. js-lingui-id: kkDQ8m
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Thursday"
-msgstr ""
+msgstr "joi"
 
 #. js-lingui-id: Vqn9Z1
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
@@ -27776,7 +27822,7 @@ msgstr "Fus orar"
 #. js-lingui-id: sdkj/e
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
 msgid "TipTap"
-msgstr ""
+msgstr "TipTap"
 
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -27794,7 +27840,7 @@ msgstr "Titlu"
 #. js-lingui-id: dMtLDE
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "to"
-msgstr ""
+msgstr "către"
 
 #. js-lingui-id: /jQctM
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
@@ -27826,18 +27872,18 @@ msgstr "Astăzi, {time}"
 #. js-lingui-id: l2E5x0
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "todo"
-msgstr ""
+msgstr "de făcut"
 
 #. js-lingui-id: ltWtmj
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "toggle"
-msgstr ""
+msgstr "comutare"
 
 #. js-lingui-id: JFciKP
 #: src/modules/advanced-text-editor/extensions/toggle/createToggleNodeView.ts
 msgid "Toggle"
-msgstr ""
+msgstr "Comutare"
 
 #. js-lingui-id: L3b7Bm
 #. placeholder {0}: recordGroupDefinition.title
@@ -27863,22 +27909,22 @@ msgstr "Comută toate permisiunile"
 #. js-lingui-id: VPezw3
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Toggle Heading 1"
-msgstr ""
+msgstr "Comută titlul 1"
 
 #. js-lingui-id: kl8o5X
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Toggle Heading 2"
-msgstr ""
+msgstr "Comută titlul 2"
 
 #. js-lingui-id: Ze1nB8
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Toggle Heading 3"
-msgstr ""
+msgstr "Comută titlul 3"
 
 #. js-lingui-id: IGPCtl
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Toggle List"
-msgstr ""
+msgstr "Comută lista"
 
 #. js-lingui-id: IHtFjq
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -27984,7 +28030,7 @@ msgstr "Top 10 spații de lucru după numărul de utilizatori"
 #. js-lingui-id: MhEOjf
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Top errors and warnings"
-msgstr ""
+msgstr "Principalele erori și avertismente"
 
 #. js-lingui-id: A4dnvW
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -28313,7 +28359,7 @@ msgstr "TTL"
 #. js-lingui-id: G3myU+
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Tuesday"
-msgstr ""
+msgstr "marți"
 
 #. js-lingui-id: Kz91g/
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -28511,9 +28557,10 @@ msgid "Unanswered"
 msgstr "Fără răspuns"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "Unassigned"
-msgstr ""
+msgstr "Neatribuit"
 
 #. js-lingui-id: jqzUyM
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
@@ -28583,7 +28630,7 @@ msgstr "Eroare neașteptată la analizarea expresiei cron"
 #. js-lingui-id: 6Y7jUZ
 #: src/modules/ai/components/AiChatThreadFollowersField.tsx
 msgid "Unfollow for me"
-msgstr ""
+msgstr "Nu mai urmări pentru mine"
 
 #. js-lingui-id: fo0VXg
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
@@ -28605,7 +28652,7 @@ msgstr "Dezinstalați această aplicație din toate spațiile de lucru înainte 
 #. js-lingui-id: J4CCwC
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Uninstalled"
-msgstr ""
+msgstr "Dezinstalat"
 
 #. js-lingui-id: v3XLn7
 #: src/modules/settings/applications/components/SettingsApplicationUninstallButton.tsx
@@ -28895,7 +28942,7 @@ msgstr "Pagină de dezabonare"
 #. js-lingui-id: 2pLYBx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailChannelDomainStatusCell.tsx
 msgid "Unsubscribe record not verified"
-msgstr ""
+msgstr "Înregistrarea de dezabonare nu a fost verificată"
 
 #. js-lingui-id: gOL19R
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribe.tsx
@@ -29287,7 +29334,7 @@ msgstr "Se actualizează abonamentul..."
 #. js-lingui-id: 1/ky9s
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "upload"
-msgstr ""
+msgstr "upload"
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/settings/components/SettingsImageInput.tsx
@@ -29302,7 +29349,7 @@ msgstr "Încarcă fișier .xlsx, .xls sau .csv"
 #. js-lingui-id: RWfTPd
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
 msgid "Upload a file or an image"
-msgstr ""
+msgstr "Încarcă un fișier sau o imagine"
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
@@ -29574,7 +29621,7 @@ msgstr "Folosiți acest nume pentru a găsi răspunsul în pașii ulteriori ai f
 #. js-lingui-id: hriIh7
 #: src/modules/settings/billing/components/SettingsBillingUserCreditsSection.tsx
 msgid "Use workspace credits after a member reaches their limit"
-msgstr ""
+msgstr "Folosește creditele spațiului de lucru după ce un membru își atinge limita"
 
 #. js-lingui-id: Z4/IP1
 #: src/modules/marketplace/utils/buildApplicationCapabilitySummary.ts
@@ -29720,7 +29767,7 @@ msgstr "Folosind valoarea implicită. Setați o valoare personalizată pentru a 
 #. js-lingui-id: XpFkxG
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Using workspace credits for {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr ""
+msgstr "Se folosesc creditele spațiului de lucru timp de {daysUntilReset, plural, one {# zi} few {# zile} other {# de zile}}."
 
 #. js-lingui-id: TIUH1Q
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -29935,6 +29982,7 @@ msgid "view"
 msgstr "vizualizare"
 
 #. js-lingui-id: jpctdh
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -30025,7 +30073,7 @@ msgstr "Vizualizare locuri de muncă"
 #. js-lingui-id: xV1CS4
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "View monitoring"
-msgstr ""
+msgstr "Vizualizează monitorizarea"
 
 #. js-lingui-id: sAPirx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyStateNotShared.tsx
@@ -30040,7 +30088,7 @@ msgstr "Doar vizualizare — poți citi această conversație."
 #. js-lingui-id: lD7M9Z
 #: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
 msgid "View original message"
-msgstr ""
+msgstr "Vizualizează mesajul original"
 
 #. js-lingui-id: hAAsm/
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -30215,7 +30263,7 @@ msgstr "Se așteaptă aprobarea ta"
 #. js-lingui-id: rZmwg4
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 msgid "Wake now"
-msgstr ""
+msgstr "Reia acum"
 
 #. js-lingui-id: THYlSm
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -30461,7 +30509,7 @@ msgstr "Site-uri web cărora li se permite să încorporeze acest spațiu de luc
 #. js-lingui-id: VAcXNz
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Wednesday"
-msgstr ""
+msgstr "miercuri"
 
 #. js-lingui-id: zx4BuL
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
@@ -30556,7 +30604,7 @@ msgstr "WhatsApp"
 #. js-lingui-id: 8ssTdk
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
 msgid "When {assistantName} finishes"
-msgstr ""
+msgstr "Când {assistantName} finalizează"
 
 #. js-lingui-id: m7GziZ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -30581,7 +30629,7 @@ msgstr "Când orice tranzacție cu o sumă peste $100,000 are etapa sau suma act
 #. js-lingui-id: le/9Ju
 #: src/modules/settings/billing/components/SettingsBillingUserCreditsSection.tsx
 msgid "When off, a member's AI chats pause until their personal usage resets"
-msgstr ""
+msgstr "Când este dezactivată, conversațiile IA ale unui membru sunt puse pe pauză până la resetarea utilizării sale personale"
 
 #. js-lingui-id: aEaoKJ
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -30697,7 +30745,7 @@ msgstr "Windsurf / Cascade"
 #. js-lingui-id: /Fq7wz
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 msgid "With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone."
-msgstr ""
+msgstr "Dacă nu există alt canal în care să fie mutate conversațiile sale, numai un canal gol poate fi șters. Această acțiune nu poate fi anulată."
 
 #. js-lingui-id: tVV1AC
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
@@ -30817,22 +30865,22 @@ msgstr "Fluxuri de lucru"
 #. js-lingui-id: OskBrZ
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Working days"
-msgstr ""
+msgstr "Zile lucrătoare"
 
 #. js-lingui-id: zBOlTP
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours"
-msgstr ""
+msgstr "Program de lucru"
 
 #. js-lingui-id: Gfrltr
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours end"
-msgstr ""
+msgstr "Sfârșitul programului de lucru"
 
 #. js-lingui-id: LYfzu/
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours start"
-msgstr ""
+msgstr "Începutul programului de lucru"
 
 #. js-lingui-id: pmUArF
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
@@ -30945,7 +30993,7 @@ msgstr "Crearea spațiului de lucru a eșuat"
 #. js-lingui-id: Rg6QK1
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Workspace credits"
-msgstr ""
+msgstr "Credite ale spațiului de lucru"
 
 #. js-lingui-id: xM1hP9
 #: src/modules/object-core/agents/components/CoreAgentModelCell.tsx
@@ -31031,7 +31079,7 @@ msgstr "Vizualizările spațiului de lucru necesită permisiunea de a gestiona v
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
 msgid "Workspaces"
-msgstr ""
+msgstr "Spații de lucru"
 
 #. js-lingui-id: 33fb3H
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
@@ -31286,7 +31334,7 @@ msgstr "Nu ai acces la această pagină de setări."
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "You have no {0} connection yet."
-msgstr ""
+msgstr "Nu aveți încă nicio conexiune {0}."
 
 #. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -31331,12 +31379,12 @@ msgstr "Nu veți mai primi aceste e-mailuri la {recipientEmailAddress}."
 #. js-lingui-id: wWFO2F
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "You'll be charged ${priceDisplay} per user today, then every month."
-msgstr ""
+msgstr "Veți fi taxat astăzi cu ${priceDisplay} per utilizator, apoi în fiecare lună."
 
 #. js-lingui-id: v5huc/
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "You'll be charged ${priceDisplay} per user today, then every year."
-msgstr ""
+msgstr "Veți fi taxat astăzi cu ${priceDisplay} per utilizator, apoi în fiecare an."
 
 #. js-lingui-id: Cl+hUj
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
@@ -31377,7 +31425,7 @@ msgstr "Cardul dvs. a fost salvat, dar plata necesită în continuare atenție."
 #. js-lingui-id: OD3Fzl
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Your connections could not be loaded. Check your connection and try again."
-msgstr ""
+msgstr "Conexiunile dvs. nu au putut fi încărcate. Verificați conexiunea și încercați din nou."
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -31407,7 +31455,7 @@ msgstr "Handlerul primește acest obiect. Corpul este gol deoarece cererile GET 
 #. js-lingui-id: HCqgJ0
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 msgid "Your inbox"
-msgstr ""
+msgstr "Căsuța dvs. de primire"
 
 #. js-lingui-id: RVi4Cv
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
@@ -31432,17 +31480,17 @@ msgstr "Abonamentul dvs. Organizație a fost anulat."
 #. js-lingui-id: j58uXD
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
 msgid "Your other email threads"
-msgstr ""
+msgstr "Celelalte conversații prin e-mail"
 
 #. js-lingui-id: NRHz0j
 #: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
 msgid "Your other events"
-msgstr ""
+msgstr "Celelalte evenimente"
 
 #. js-lingui-id: Wxs+Cg
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Your own AI usage, separate from the workspace credits"
-msgstr ""
+msgstr "Utilizarea dvs. proprie a IA, separată de creditele spațiului de lucru"
 
 #. js-lingui-id: 8mfOAZ
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
@@ -31463,7 +31511,7 @@ msgstr "Planul dvs. trece imediat la noul plan {planLabel}, cu o taxă proporți
 #. js-lingui-id: 1bRTxG
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Your plan shows the last {lookbackInHoursLabel} hours. The last {fullRetentionInDaysLabel} days are kept and visible with the Audit logs entitlement."
-msgstr ""
+msgstr "Planul dvs. afișează ultimele {lookbackInHoursLabel} ore. Ultimele {fullRetentionInDaysLabel} zile sunt păstrate și vizibile cu dreptul Audit logs."
 
 #. js-lingui-id: Bz74IS
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts

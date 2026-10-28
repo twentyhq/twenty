@@ -18,7 +18,10 @@ export const buildUngateMergeCommandMenuItemUpdate = ({
   direction,
   now,
 }: {
-  flatCommandMenuItemMaps: FlatEntityMaps<FlatCommandMenuItem>;
+  flatCommandMenuItemMaps: Pick<
+    FlatEntityMaps<FlatCommandMenuItem>,
+    'byUniversalIdentifier'
+  >;
   direction: 'up' | 'down';
   now: string;
 }): FlatCommandMenuItem | undefined => {

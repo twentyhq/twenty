@@ -1,12 +1,15 @@
 ---
 title: Docker Compose
+description: Запустите двадцать в производство с Docker Compose.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Обзор
 
 <Warning>
 Контейнеры Docker предназначены для продакшен-хостинга или саморазмещения. Для участия в разработке см. [Локальная настройка](/ru/developers/contribute/capabilities/local-setup).
 </Warning>
-
-## Обзор
 
 Это руководство предоставляет пошаговые инструкции по установке и настройке приложения Twenty с помощью Docker Compose. Цель заключается в том, чтобы сделать процесс простым и избежать распространенных ошибок, которые могут привести к сбоям в настройке.
 
@@ -27,14 +30,22 @@ title: Docker Compose
 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-Для установки конкретной версии или ветки:
+Для установки конкретной версии:
 
 ```bash
-VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+VERSION=v2.38.1 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-* Замените x.y.z на желаемый номер версии.
-* Замените branch-name на имя ветки, которую вы хотите установить.
+* `VERSION` должен быть полным тегом релиза, опубликованным на [Docker Hub](https://hub.docker.com/r/twentycrm/twenty/tags), например `v2.38.1`. Псевдонимы, такие как `v2` или `latest`, не принимаются.
+* Соответствующий `docker-compose.yml` загружается из git-тега `twenty/<version>`, поэтому релизы, выпущенные до появления этих тегов (v2.9.0 и более ранние), нельзя установить с помощью скрипта.
+
+Чтобы вместо этого получить файлы конфигурации из ветки, например для тестирования неопубликованных изменений:
+
+```bash
+BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* Замените branch-name на ветку, из которой нужно получить `docker-compose.yml` и `.env.example`. По умолчанию используется последний выпуск образа, если также не задана переменная `VERSION`.
 
 ## Вариант 2: Ручные шаги
 
@@ -72,11 +83,19 @@ VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.
 
 4. **Установите пароль для Postgres**
 
-   Обновите значение `PG_DATABASE_PASSWORD` в файле .env, используя надежный пароль без специальных символов.
+   Обновите значение `PG_DATABASE_PASSWORD` в файле .env, используя надежный пароль без специальных символов. Пароль вставляется в URL подключения Postgres без кодирования, поэтому такие символы, как `@`, `/`, `#` или `%`, нарушают строку подключения. Создайте его с помощью:
+
+   ```bash
+   openssl rand -hex 32
+   ```
 
    ```ini
    PG_DATABASE_PASSWORD=my_strong_password
    ```
+
+<Note>
+Переменные, которые `docker-compose.yml` передает без значения по умолчанию `:-`, например `SERVER_URL` и переменные `STORAGE_S3_*`, поступают на сервер как пустая строка, если они пусты или отсутствуют в `.env`, и сервер обрабатывает пустую строку как настроенное значение, а не как незаданное. Убедитесь, что для `SERVER_URL` задано значение, а при `STORAGE_TYPE=S_3` задайте все необходимые переменные `STORAGE_S3_*`: пустое значение `STORAGE_S3_NAME` нарушает каждую загрузку. Переменные со значением по умолчанию в `docker-compose.yml`, например части `PG_DATABASE_*` и `REDIS_URL`, используют это значение по умолчанию, если они пусты или отсутствуют.
+</Note>
 
 ### Шаг 2: Получите файл Docker Compose
 
@@ -125,6 +144,8 @@ SSL (HTTPS) требуется для правильной работы неко
 Например, API буфера обмена может потребовать защищенный контекст - некоторые функции, такие как кнопки копирования в приложении, могут не работать без включения HTTPS.
 
 Мы настоятельно рекомендуем настроить Twenty за обратным прокси-сервером с прекращением SSL для оптимальной безопасности и функциональности.
+
+<Tip>Прежде чем открывать Twenty для доступа из интернета, ознакомьтесь с [Защитой вашего экземпляра](/ru/developers/self-host/capabilities/security). Большинство команд могут оставить приложение закрытым и открыть только несколько путей.</Tip>
 
 #### Настройка `SERVER_URL`
 
@@ -259,3 +280,5 @@ docker compose up -d
 <Tip>
   Не хотите запускать и поддерживать Twenty самостоятельно? [Найдите сертифицированного партнёра по хостингу Twenty](https://twenty.com/partners/list?categories=HOSTING\&ref=docs-docker-compose), который развернёт, разместит и полностью возьмёт на себя управление вашим экземпляром. *(Или свяжитесь с нашей командой: [contact@twenty.com](mailto:contact@twenty.com).)*
 </Tip>
+
+<PageBanner illustration="dev-self-host" />

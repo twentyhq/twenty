@@ -76,7 +76,7 @@ msgstr "{0} måste vara ett one-to-many-relationsfält."
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
 msgid "{action} is disabled on object {0}"
-msgstr ""
+msgstr "{action} är inaktiverad för objektet {0}"
 
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -152,18 +152,18 @@ msgstr "En kampanj skickas fortfarande. Vänta tills den är klar eller avbryt d
 #. js-lingui-id: kZaUc+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
 msgid "A channel named \"{name}\" already exists"
-msgstr ""
+msgstr "En kanal med namnet \"{name}\" finns redan"
 
 #. js-lingui-id: y84xpa
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "A channel needs a name."
-msgstr ""
+msgstr "En kanal behöver ett namn."
 
 #. js-lingui-id: 3bCT2z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
 msgid "A channel with this name already exists."
-msgstr ""
+msgstr "En kanal med detta namn finns redan."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -263,12 +263,12 @@ msgstr "Ett mål för meddelandetrådar"
 #. js-lingui-id: oP9K0J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "A messaging provider with this name already exists for this application"
-msgstr ""
+msgstr "En meddelandeleverantör med detta namn finns redan för denna applikation"
 
 #. js-lingui-id: eynBqK
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "A messaging provider with this name already exists for this application."
-msgstr ""
+msgstr "En meddelandeleverantör med detta namn finns redan för denna applikation."
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -464,7 +464,7 @@ msgstr "En användare med denna e-postadress finns redan."
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type"
-msgstr ""
+msgstr "Ett giltigt agentChatChannelUniversalIdentifier krävs för typen AGENT_CHAT_CHANNEL"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -1090,7 +1090,7 @@ msgstr "Ett exportfält är inte längre tillgängligt."
 #. js-lingui-id: zv+Pcr
 #: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 msgid "An export is already running for this workspace."
-msgstr ""
+msgstr "En export körs redan för denna arbetsyta."
 
 #. js-lingui-id: jiELc8
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -1116,6 +1116,17 @@ msgstr "Ett internt fel uppstod vid hantering av krypterad data."
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."
 msgstr "En inbjudan har redan skickats till denna e-postadress."
+
+#. js-lingui-id: BCJWBj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "An MCP server with this name already exists"
+msgstr "En MCP-server med detta namn finns redan"
+
+#. js-lingui-id: SeiYVM
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "An MCP server with this name already exists."
+msgstr "En MCP-server med detta namn finns redan."
 
 #. js-lingui-id: CQ5DXU
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -1480,6 +1491,12 @@ msgstr "Tilldelad till mig"
 msgctxt "fieldMetadata.label"
 msgid "Assignee"
 msgstr "Tilldelad"
+
+#. js-lingui-id: VkxEa0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Assistant participant"
+msgstr ""
 
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2590,13 +2607,13 @@ msgstr "Ändring av loggkvarhållning kräver ett Organization-abonnemang."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel"
-msgstr ""
+msgstr "Kanal"
 
 #. js-lingui-id: gPIeS4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel archived at"
-msgstr ""
+msgstr "Kanal arkiverad"
 
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -2613,14 +2630,14 @@ msgstr "Kanal-ID"
 #. js-lingui-id: G+8qH5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel name is required"
-msgstr ""
+msgstr "Kanalnamn krävs"
 
 #. js-lingui-id: Nd2xnP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel not found"
-msgstr ""
+msgstr "Kanal hittades inte"
 
 #. js-lingui-id: ZJRMDQ
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2628,30 +2645,30 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel not found."
-msgstr ""
+msgstr "Kanal hittades inte."
 
 #. js-lingui-id: /84Bpj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "Channel role link not found"
-msgstr ""
+msgstr "Länk för kanalroll hittades inte"
 
 #. js-lingui-id: 86oa9B
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel snoozed until"
-msgstr ""
+msgstr "Kanal snoozad till"
 
 #. js-lingui-id: ieLfO5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Channel the thread is triaged in"
-msgstr ""
+msgstr "Kanal där tråden har triagerats"
 
 #. js-lingui-id: 7LMBzP
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Channels are not available yet. Try again in a few minutes."
-msgstr ""
+msgstr "Kanaler är inte tillgängliga ännu. Försök igen om några minuter."
 
 #. js-lingui-id: z851aK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -3156,7 +3173,7 @@ msgstr "Anslutning hittades inte."
 #. placeholder {0}: flatMessagingProvider.connectionProviderUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Connection provider \"{0}\" was not found in this application"
-msgstr ""
+msgstr "Anslutningsleverantören \"{0}\" hittades inte i denna applikation"
 
 #. js-lingui-id: xQ2DfP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3179,11 +3196,14 @@ msgstr "Anslutningsleverantörens namn krävs"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Connection provider not found"
 msgstr "Anslutningsleverantör hittades inte"
 
 #. js-lingui-id: b+xWjq
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connection provider not found."
 msgstr "Anslutningsleverantör hittades inte."
 
@@ -3200,22 +3220,22 @@ msgstr "Anslutningsleverantörens omfattning \"{scope}\" är ogiltig"
 #. js-lingui-id: lOJLh7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider scope cannot be changed"
-msgstr ""
+msgstr "Anslutningsleverantörens omfång kan inte ändras"
 
 #. js-lingui-id: rGTdmC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider scope cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
-msgstr ""
+msgstr "Anslutningsleverantörens omfång kan inte ändras efter skapandet: deklarera en ny anslutningsleverantör med ett nytt universalIdentifier"
 
 #. js-lingui-id: ouURJJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider type cannot be changed"
-msgstr ""
+msgstr "Anslutningsleverantörens typ kan inte ändras"
 
 #. js-lingui-id: Y4TItr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider type cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
-msgstr ""
+msgstr "Anslutningsleverantörens typ kan inte ändras efter skapandet: deklarera en ny anslutningsleverantör med ett nytt universalIdentifier"
 
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
@@ -3226,7 +3246,7 @@ msgstr "Anslutningsleverantör med namnet {0} finns redan för denna applikation
 #. js-lingui-id: pXXjt2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
-msgstr ""
+msgstr "Anslutningsleverantör med typen 'custom' måste referera till en authorize- och en callback-logikfunktion"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3741,7 +3761,7 @@ msgstr "Anpassat kommandomenyalternativ kan inte återställas till standardvär
 #. js-lingui-id: eCtxAR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Custom connection provider is missing its authorize or callback logic function"
-msgstr ""
+msgstr "Den anpassade anslutningsleverantören saknar sin authorize- eller callback-logikfunktion"
 
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -4310,12 +4330,12 @@ msgstr "Riktning"
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Disabled object permission actions must be a list"
-msgstr ""
+msgstr "Inaktiverade objektbehörighetsåtgärder måste vara en lista"
 
 #. js-lingui-id: EtelV5
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Disabled object permission actions must not repeat"
-msgstr ""
+msgstr "Inaktiverade objektbehörighetsåtgärder får inte upprepas"
 
 #. js-lingui-id: T/2cxH
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4328,6 +4348,17 @@ msgstr "Kassera utkast"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Discard Draft"
 msgstr "Kassera utkast"
+
+#. js-lingui-id: OaH7rc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Disconnect the MCP server before changing its URL"
+msgstr "Koppla från MCP-servern innan du ändrar dess URL"
+
+#. js-lingui-id: X9u5qJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Disconnect the MCP server before changing its URL."
+msgstr "Koppla från MCP-servern innan du ändrar dess URL."
 
 #. js-lingui-id: N4sZ6H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6763,6 +6794,31 @@ msgstr "Ogiltig parameter för gräns."
 msgid "Invalid logic function input."
 msgstr "Ogiltig indata för logikfunktionen."
 
+#. js-lingui-id: U2TpWH
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server input."
+msgstr "Ogiltig inmatning för MCP-server."
+
+#. js-lingui-id: PTN/J2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server name provided"
+msgstr "Ogiltigt MCP-servernamn angavs"
+
+#. js-lingui-id: 945sNP
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server name. Use lowercase letters, digits and underscores, starting with a letter."
+msgstr "Ogiltigt MCP-servernamn. Använd gemener, siffror och understreck och börja med en bokstav."
+
+#. js-lingui-id: 1pdxfJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server URL provided"
+msgstr "Ogiltig MCP-server-URL angavs"
+
+#. js-lingui-id: YDqREm
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server URL. Please provide a valid HTTP or HTTPS URL."
+msgstr "Ogiltig MCP-server-URL. Vänligen ange en giltig HTTP- eller HTTPS-URL."
+
 #. js-lingui-id: fNaXqL
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Invalid message channel input."
@@ -6776,7 +6832,7 @@ msgstr "Ogiltig inmatning för meddelandemapp."
 #. js-lingui-id: u3ER6+
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "Invalid messaging provider input."
-msgstr ""
+msgstr "Ogiltig inmatning för meddelandeleverantör."
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -7520,6 +7576,8 @@ msgstr "Etikettidentifierarens vyfält måste vara synligt"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Label is required"
 msgstr "Etikett är obligatorisk"
 
@@ -7998,6 +8056,17 @@ msgstr "maxNumberOfValues måste definieras i inställningarna och vara ett tal 
 msgid "May"
 msgstr "Maj"
 
+#. js-lingui-id: ES19km
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "MCP server not found"
+msgstr "MCP-servern hittades inte"
+
+#. js-lingui-id: 32QmfJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "MCP server not found."
+msgstr "MCP-servern hittades inte."
+
 #. js-lingui-id: DICk6O
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -8446,28 +8515,28 @@ msgstr "Meddelanden som skickats som en del av denna kampanj"
 #. js-lingui-id: DR7S+J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider connection provider cannot be changed"
-msgstr ""
+msgstr "Meddelandeleverantörens anslutningsleverantör kan inte ändras"
 
 #. js-lingui-id: S8RYm2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
-msgstr ""
+msgstr "Meddelandeleverantörens anslutningsleverantör kan inte ändras efter skapandet: deklarera en ny meddelandeleverantör med ett nytt universalIdentifier"
 
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
-msgstr ""
+msgstr "Meddelandeleverantörens visningsnamn krävs"
 
 #. js-lingui-id: PheN1+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider displayName is required"
-msgstr ""
+msgstr "Meddelandeleverantörens displayName krävs"
 
 #. js-lingui-id: NpU0GW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider name is required"
-msgstr ""
+msgstr "Meddelandeleverantörens namn krävs"
 
 #. js-lingui-id: kh1zio
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -8475,17 +8544,17 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider not found"
-msgstr ""
+msgstr "Meddelandeleverantör hittades inte"
 
 #. js-lingui-id: yyDEl+
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "Messaging provider not found."
-msgstr ""
+msgstr "Meddelandeleverantör hittades inte."
 
 #. js-lingui-id: Ih/vm6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider with name {name} already exists for this application"
-msgstr ""
+msgstr "Meddelandeleverantör med namnet {name} finns redan för denna applikation"
 
 #. js-lingui-id: IYFsjL
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -8584,7 +8653,7 @@ msgstr "Morph-relationsfältet måste ha ett morph-ID"
 #. js-lingui-id: /eQ78F
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Move this channel's chats to another channel before deleting it."
-msgstr ""
+msgstr "Flytta chattarna i denna kanal till en annan kanal innan du tar bort den."
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -8645,7 +8714,7 @@ msgstr "Namn är inte synkroniserat med etiketten."
 #. js-lingui-id: QrBCC2
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "Name is not valid: it must be camelCase, e.g. \"{camelCasedName}\""
-msgstr ""
+msgstr "Namnet är inte giltigt: det måste vara camelCase, t.ex. \"{camelCasedName}\""
 
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
@@ -9338,7 +9407,7 @@ msgstr "Ett av de valda fälten tillhör inte detta objekt."
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "One of these roles no longer exists."
-msgstr ""
+msgstr "En av dessa roller finns inte längre."
 
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -9425,13 +9494,13 @@ msgstr "Endast värdena i detta formulär kan ändras."
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Open chat"
-msgstr ""
+msgstr "Öppna chatt"
 
 #. js-lingui-id: 4QVn1g
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Open chat"
-msgstr ""
+msgstr "Öppna chatt"
 
 #. js-lingui-id: +ee5JG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10146,7 +10215,7 @@ msgstr "Välj ett specifikt underfält till \"{0}\" – sammansatta fält kan in
 #. js-lingui-id: r+tlvn
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Pick another channel to move the chats to."
-msgstr ""
+msgstr "Välj en annan kanal att flytta chattarna till."
 
 #. js-lingui-id: TtfDdb
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
@@ -10185,6 +10254,7 @@ msgid "Please provide a password for this connection."
 msgstr "Ange ett lösenord för den här anslutningen."
 
 #. js-lingui-id: NR22yi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Please provide a valid HTTP or HTTPS URL"
@@ -10388,7 +10458,7 @@ msgstr "Prompt får inte vara tom"
 #. js-lingui-id: KQ0Ots
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service.ts
 msgid "Property {property} cannot be updated"
-msgstr ""
+msgstr "Egenskapen {property} kan inte uppdateras"
 
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -11612,7 +11682,7 @@ msgstr "Skicka e-post"
 #. js-lingui-id: RPQott
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Send message logic function \"{sendMessageLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "Logikfunktionen för att skicka meddelanden \"{sendMessageLogicFunctionUniversalIdentifier}\" hittades inte i denna applikation"
 
 #. js-lingui-id: +dLR8z
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12167,7 +12237,7 @@ msgstr "Standardagenter kan inte ändras."
 #. js-lingui-id: rQq8lH
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Standard channels cannot be deleted."
-msgstr ""
+msgstr "Standardkanaler kan inte raderas."
 
 #. js-lingui-id: Ptv+nG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -12869,10 +12939,25 @@ msgstr "Företagets totala årliga omsättning"
 msgid "The connected {0} account is missing calendar permissions ({missingScopeList}). Please reconnect the account to grant calendar access."
 msgstr "Det anslutna {0}-kontot saknar kalenderbehörigheter ({missingScopeList}). Anslut kontot igen för att bevilja kalenderåtkomst."
 
+#. js-lingui-id: xYqYn7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider belongs to another application"
+msgstr "Anslutningsleverantören tillhör en annan applikation"
+
+#. js-lingui-id: 0kfc9m
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider must belong to the same application as the MCP server"
+msgstr "Anslutningsleverantören måste tillhöra samma applikation som MCP-servern"
+
+#. js-lingui-id: x9rG77
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The connection provider must belong to the same application as the MCP server."
+msgstr "Anslutningsleverantören måste tillhöra samma applikation som MCP-servern."
+
 #. js-lingui-id: fDWKx/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The connection provider this messaging provider uses was not found in its application."
-msgstr ""
+msgstr "Anslutningsleverantören som denna meddelandeleverantör använder hittades inte i dess applikation."
 
 #. js-lingui-id: j6q6l+
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -12981,7 +13066,7 @@ msgstr "Exportfilen är för stor. Exportera färre poster."
 #. js-lingui-id: bjRiGF
 #: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 msgid "The export is missing data and could not be completed."
-msgstr ""
+msgstr "Exporten saknar data och kunde inte slutföras."
 
 #. js-lingui-id: RKP94c
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -13089,7 +13174,7 @@ msgstr "Listan som denna kampanj skickades till"
 #. js-lingui-id: pSAncm
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that completes the connection was not found."
-msgstr ""
+msgstr "Logikfunktionen som slutför anslutningen hittades inte."
 
 #. js-lingui-id: gU/AgL
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13099,12 +13184,12 @@ msgstr "Logikfunktionen som identifierar det anslutna kontot hittades inte."
 #. js-lingui-id: 8gf2aA
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that starts the connection was not found."
-msgstr ""
+msgstr "Logikfunktionen som startar anslutningen hittades inte."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider sends with was not found in its application."
-msgstr ""
+msgstr "Logikfunktionen som denna meddelandeleverantör skickar med hittades inte i dess applikation."
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13420,12 +13505,12 @@ msgstr "Schemat för arbetsflödet är ogiltigt."
 #. js-lingui-id: /s75Zz
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
 msgid "The workflow select field must reference a field of the same type."
-msgstr ""
+msgstr "Arbetsflödets select-fält måste referera till ett fält av samma typ."
 
 #. js-lingui-id: 8xdW5z
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
 msgid "The workflow select field must reference an existing field."
-msgstr ""
+msgstr "Arbetsflödets select-fält måste referera till ett befintligt fält."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -13666,27 +13751,27 @@ msgstr "Den här ändringen skulle skada arbetsflödet och sparades inte"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This channel access no longer exists."
-msgstr ""
+msgstr "Denna kanalåtkomst finns inte längre."
 
 #. js-lingui-id: ++E+5T
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This channel is being changed. Try again in a moment."
-msgstr ""
+msgstr "Denna kanal ändras just nu. Försök igen om en stund."
 
 #. js-lingui-id: /mdJSV
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This chat has no owner, so it has to stay in a channel."
-msgstr ""
+msgstr "Denna chatt har ingen ägare och måste därför stanna i en kanal."
 
 #. js-lingui-id: 6zaKtA
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This chat is not in a channel."
-msgstr ""
+msgstr "Denna chatt finns inte i en kanal."
 
 #. js-lingui-id: TjTe43
 #: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
 msgid "This code belongs to a published workflow version. Edit it from a draft."
-msgstr ""
+msgstr "Den här koden tillhör en publicerad arbetsflödesversion. Redigera den från ett utkast."
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -13888,7 +13973,7 @@ msgstr "Den här gränsen ändrades medan du redigerade den. Ladda om och förs�
 #. js-lingui-id: STVycN
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This list of chats could not be loaded. Try again."
-msgstr ""
+msgstr "Den här listan med chattar kunde inte läsas in. Försök igen."
 
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
@@ -13918,7 +14003,7 @@ msgstr "Denna medlem har inte konfigurerat tvåfaktorsautentisering, så det fin
 #. js-lingui-id: NW6Nmf
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
-msgstr ""
+msgstr "Denna meddelandekanal kan inte skicka meddelanden."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -14008,7 +14093,7 @@ msgstr "Den här behörigheten är redan angiven för rollen"
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
 msgid "This permission is disabled on the object and cannot be granted"
-msgstr ""
+msgstr "Denna behörighet är inaktiverad för objektet och kan inte beviljas"
 
 #. js-lingui-id: wJWFt2
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -14068,12 +14153,12 @@ msgstr "Denna begäran förbereds fortfarande. Försök igen om en stund."
 #. js-lingui-id: T6c4z3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This role already has access to the channel"
-msgstr ""
+msgstr "Denna roll har redan åtkomst till kanalen"
 
 #. js-lingui-id: ce6Oq+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This role already has access to the channel."
-msgstr ""
+msgstr "Denna roll har redan åtkomst till kanalen."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -14880,7 +14965,7 @@ msgstr "Okänd"
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Unknown disabled object permission action"
-msgstr ""
+msgstr "Okänd inaktiverad objektbehörighetsåtgärd"
 
 #. js-lingui-id: of4ZuG
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -15176,6 +15261,11 @@ msgstr "Använd före ett samtal eller möte, och när användaren frågar vem p
 msgctxt "skill.description"
 msgid "Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes"
 msgstr "Använd för Python på data som postverktygen inte kan uttrycka: statistik, diagrambilder, tolkning av en uppladdad fil. Använd det inte för vanliga läsningar och skrivningar av poster"
+
+#. js-lingui-id: cW4z4t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Use lowercase letters, digits and underscores, starting with a letter"
+msgstr "Använd gemener, siffror och understreck och börja med en bokstav"
 
 #. js-lingui-id: Gltw+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -15901,7 +15991,7 @@ msgstr "Vi har för närvarande ett tillfälligt problem med vår databas. Vänl
 #. js-lingui-id: 1QdT9i
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not complete the connection. Please try again."
-msgstr ""
+msgstr "Vi kunde inte slutföra anslutningen. Försök igen."
 
 #. js-lingui-id: SO+/3j
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -15911,12 +16001,12 @@ msgstr "Vi kunde inte identifiera kontot som du auktoriserade. Försök igen."
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not send your message. Please try again."
-msgstr ""
+msgstr "Vi kunde inte skicka ditt meddelande. Försök igen."
 
 #. js-lingui-id: j7daTn
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
-msgstr ""
+msgstr "Vi kunde inte starta anslutningen. Försök igen."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -16013,7 +16103,7 @@ msgstr "När en snoozad tråd återvänder till inkorgen"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "When a thread snoozed in its channel comes back to it"
-msgstr ""
+msgstr "När en tråd som snoozats i sin kanal återvänder till den"
 
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -16049,7 +16139,7 @@ msgstr "När tråden skapades eller senast fick ett meddelande"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "When the thread was marked as done or snoozed in its channel"
-msgstr ""
+msgstr "När tråden markerades som klar eller snoozades i sin kanal"
 
 #. js-lingui-id: Kx3ltI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -16074,6 +16164,12 @@ msgstr "Huruvida aktuella deltagarregler motiverar detta mål"
 msgctxt "fieldMetadata.description"
 msgid "Whether new activity brings the thread back to the inbox"
 msgstr "Om ny aktivitet återför tråden till inkorgen"
+
+#. js-lingui-id: DYv22m
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether the assistant participates in this conversation"
+msgstr ""
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -17155,7 +17251,7 @@ msgstr "Din faktureringsprenumeration är skadad. Vänligen kontakta support."
 #. js-lingui-id: L8/bmN
 #: src/modules/emailing/utils/build-campaign-send-refusal-exception.util.ts
 msgid "Your daily limit is {limitValue, plural, one {# email} other {# emails}}, and this campaign would go over what's left today. Contact us to raise it."
-msgstr ""
+msgstr "Din dagliga gräns är {limitValue, plural, one {# e-postmeddelande} other {# e-postmeddelanden}}, och den här kampanjen skulle överskrida det som återstår i dag. Kontakta oss för att höja den."
 
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

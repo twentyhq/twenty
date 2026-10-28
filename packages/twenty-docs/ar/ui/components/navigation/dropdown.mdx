@@ -1,0 +1,444 @@
+---
+title: قائمة منسدلة
+description: قوائم إجراءات، وأدوات اختيار قابلة للبحث، ولوحات نماذج ذات عرض وتفاعل مشتركين.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DropdownReference from '/snippets/ui/generated/components/navigation/dropdown.mdx';
+
+## نظرة عامة
+
+يجمع `Dropdown` بين نافذة منبثقة متموضعة وصفوف مرئية والتنقل بلوحة المفاتيح والتركيز والإغلاق. يتولى تطبيقك مسؤولية البيانات والتصفية والجلب وتقسيم الصفحات. يتولى `SelectionGroup` مسؤولية قيم التحديد المستقلة داخل النافذة المنبثقة. استورده من `twenty-ui/components`.
+
+<StoryEmbed storyId="ui-components-dropdown--display" title="إجراءات القائمة المنسدلة" height={420} />
+
+يقبل Dropdown.Content إزاحات رقمية أو دوال لـ `sideOffset` و`alignOffset`. تتلقى دوال الإزاحة أبعاد الارتساء والنافذة المنبثقة، والجانب، والمحاذاة. استخدمها للحفاظ على تداخل منتقي الحقول المرتكز عند تحجيم الخلية.
+
+## استخدام
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconArchive, IconCopy, IconDownload } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordActions = () => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content aria-label="Record actions" width={240}>
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconCopy />}>
+          Duplicate
+        </Dropdown.ActionItem>
+        <Dropdown.Submenu>
+          <Dropdown.SubmenuTrigger startIcon={<IconDownload />}>
+            Export
+          </Dropdown.SubmenuTrigger>
+          <Dropdown.Content aria-label="Export formats">
+            <Dropdown.Section>
+              <Dropdown.ActionItem>CSV</Dropdown.ActionItem>
+              <Dropdown.ActionItem>Excel</Dropdown.ActionItem>
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Submenu>
+      </Dropdown.Section>
+      <Dropdown.Separator />
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconArchive />}>
+          Archive
+        </Dropdown.ActionItem>
+        <Dropdown.ActionItem
+          render={
+            <a href="#dropdown-documentation" aria-label="Documentation" />
+          }
+        >
+          Documentation
+        </Dropdown.ActionItem>
+      </Dropdown.Section>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## اختر نوع التفاعل
+
+عيّن `type` على `Dropdown.Root` ليتطابق مع محتويات النافذة المنبثقة.
+
+| النوع    | المحتوى                                          | التفاعل                                                                                                    |
+| -------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `menu`   | الأوامر وروابط التنقل                            | دلالات القائمة مع التنقل بالأسهم والبحث بالكتابة.                                                          |
+| `picker` | البحث والقيم القابلة للتحديد والأوامر الاختيارية | مربع حوار يحتوي على بحث ومربعات قوائم قابلة للتحديد وأوامر اختيارية. تتنقل مفاتيح الأسهم بين صفوف النتائج. |
+| `panel`  | المدخلات والنماذج والإجراءات الداعمة             | مربع حوار بسلوك إدخال أصلي وتنقل باستخدام Tab.                                                             |
+
+تتيح أدوات الانتقاء إجراءات الإنشاء ومجموعات التحديد المستقلة في الصفحة نفسها، بأي ترتيب. كل مجموعة أدوات انتقاء هي مربع قائمة، وتكشف خياراتها عن `aria-selected`. تستخدم مجموعات القوائم عناصر قائمة أزرار اختيار أو مربعات اختيار محددة. تستخدم مجموعات اللوحات أزرارًا تتضمن `aria-pressed`. تحتفظ الأوامر بدلالات الإجراء الخاصة بوضعها. امنح كل مجموعة و`Search` اسمًا قابلًا للوصول. أداة الانتقاء المخصصة هذه ليست Combobox أصلية.
+
+يأخذ `Content` اسمه المتاح من `Trigger`، أو من `SubmenuTrigger` في قائمة فرعية. مرر `aria-label` إلى `Content` عندما يعرض المشغّل قيمة، مثل الخيار المحدد، أو عندما لا يكون للجذر مشغّل. تكون لـ `aria-label` أو `aria-labelledby` الصريحين، و`Title` داخل `Header`، الأولوية على اسم المشغّل.
+
+يبقى [التحديد](/ar/ui/primitives/input/select) و[النافذة المنبثقة](/ar/ui/primitives/surfaces/popover) متاحين للتركيب المباشر.
+
+## البنية
+
+```text
+Dropdown.Root
+├── Dropdown.Trigger
+└── Dropdown.Content
+    ├── Dropdown.Header
+    │   ├── Dropdown.Close
+    │   └── Dropdown.Title
+    ├── Dropdown.Search
+    └── Dropdown.Section
+        ├── Dropdown.ActionItem
+        └── Dropdown.SelectionGroup
+            └── Dropdown.OptionItem
+```
+
+يتضمن `Content` البوابة وموضع العنصر. استخدم `width` و`side` و`align` و`sideOffset` و`alignOffset` للتحكم في الموضع، و`collisionPadding` لإبقاء النافذة المنبثقة أبعد عن حواف إطار العرض قبل أن تتحرك أو تنعكس (5 بكسلات افتراضيًا). يجمع `Section` الصفوف ذات التباعد المشترك، ويفصل `Separator` بين الأقسام. يحدّ `Section` ذو `scrollable` من ارتفاعه ويتيح التمرير؛ ضمّن بداخله أقسامًا معنونة لتمريرها كقائمة واحدة. تستخدم الصفوف [ListItem](/ar/ui/primitives/navigation/list-item) لمظهرها.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordActions = ({ onDuplicate }: { onDuplicate: () => void }) => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content>
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconCopy />} onClick={onDuplicate}>
+          Duplicate
+        </Dropdown.ActionItem>
+      </Dropdown.Section>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+مرر عناصر مشغّل مخصصة عبر `render` ليظل المشغّل عنصرًا تفاعليًا واحدًا. يجب أن تمرر المكونات المخصصة الخصائص وref المتوفرين. يقبل `ActionItem` أيضًا `render` للروابط.
+
+## إجراءات العناصر
+
+يقبل `ActionItem` و`OptionItem` ‏`actions` لعناصر التحكم اللاحقة، مثل زر تحرير علامة تبويب. استخدمها في صفحات `picker` و`panel` فقط: قد تحتوي `menu` على عناصر قائمة فقط، لذا لا يمكنها احتواء عناصر تحكم أخرى. عيّن `actionsVisibility="always"` لإبقائها مرئية؛ والقيمة الافتراضية هي `"hover"`. تُعرض عناصر التحكم الثانوية بجانب عنصر تحكم الصف الأساسي وتُفعّل بشكل مستقل: فهي لا تغلق النافذة المنبثقة، لذا أغلقها من معالج الإجراء عند الحاجة. تظل خاصية `render` والمرجع ref منطبقتين على عنصر التحكم الأساسي، لذا يمكنه أيضًا أن يعمل كمقبض سحب.
+
+استخدم `tabIndex={-1}` لإجراء ثانوي يقتصر على المؤشر وله بديل منفصل باستخدام لوحة المفاتيح. تستمر التنقلات باستخدام لوحة المفاتيح في التركيز على عنصر التحكم الأساسي وتنشيطه.
+
+## الرؤوس
+
+يرتب `Header` صفًا في أعلى النافذة المنبثقة. ضع فيه `Title` لتسمية النافذة المنبثقة بالعنوان بدلًا من المشغّل. يغلق `Close` النافذة المنبثقة بالطريقة نفسها التي يفعلها الضغط خارجها. يعرض افتراضيًا زر أيقونة بعلامة X، لذا امنحه `aria-label`، أو مرر `render` والعناصر التابعة لعنصر تحكم آخر. يمكن أن توجد عناصر تحكم أخرى، مثل زر يعود إلى خطوة سابقة، في الصف نفسه. استخدم `Dropdown.Back` عند التنقل في سجل صفحات الجذر.
+
+## البحث والتحديد
+
+يوفر `Search` الإدخال والتنقل إلى صفوف النتائج. مرر `value` و`onValueChange`؛ واحسب النتائج المطابقة أو اجلبها في تطبيقك. اعرض `Loading` أثناء انتظار طلب، و`Empty` عندما لا تتطابق أي نتائج. يقبل كلاهما نص الحالة الذي يوفّره المستدعي.
+
+<StoryEmbed storyId="ui-components-dropdown--picker-documentation" title="أداة اختيار قابلة للبحث مع إنشاء مضمن" height={420} />
+
+ضمّن الخيارات القابلة للتحديد في `SelectionGroup` وامنح كل خيار `value` ثابتًا وفريدًا ضمن المجموعة. تحتاج المجموعة غير المتحكم بها أيضًا إلى `id` فريد ضمن شجرة القائمة المنسدلة الخاصة بها، بما في ذلك القوائم الفرعية. تحتفظ مكونات `Root` المتداخلة بصورة مستقلة بمخزن التحديد الخاص بها. يستخدم التحديد الفردي سلسلة نصية أو `null` لعدم وجود تحديد. يستخدم التحديد المتعدد مصفوفة، بما في ذلك `[]` لعدم وجود تحديد.
+
+```tsx
+import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const PersonPicker = () => {
+  const [search, setSearch] = useState('');
+  const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
+  const people = ['Ada Lovelace', 'Grace Hopper'].filter((person) =>
+    person.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  return (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger render={<Button>Choose person</Button>} />
+      <Dropdown.Content>
+        <Dropdown.Search
+          aria-label="Search people"
+          value={search}
+          onValueChange={setSearch}
+        />
+        <Dropdown.SelectionGroup
+          id="person"
+          aria-label="Person"
+          value={selectedPerson}
+          onValueChange={setSelectedPerson}
+        >
+          {people.map((person) => (
+            <Dropdown.OptionItem key={person} value={person}>
+              {person}
+            </Dropdown.OptionItem>
+          ))}
+        </Dropdown.SelectionGroup>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  );
+};
+```
+
+مرر `value` و`onValueChange` للتحديد المتحكم به. يؤدي حذف `value` أو تمرير `undefined` إلى ترك التحديد غير متحكم به؛ وتعيّن `defaultValue` قيمته الأولية. تكون القيمة الافتراضية للمجموعة غير المتحكم بها هي `null`، أو `[]` مع `multiple`. يحافظ `id` الثابت الخاص بها على التحديد عبر الإغلاق وإعادة الفتح وعبر التنقل بين الصفحات. لا تؤدي إزالة خيار أو تصفيته إلى مسح معرّفه المحدد أو إصدار تغيير؛ ويُحدَّد الخيار مجددًا عند عودته. استخدم قيمة متحكمًا بها عندما يحتاج التطبيق إلى مسح الخيارات غير المتاحة.
+
+تتغير كل مجموعة بصورة مستقلة. يلتزم الخيار بأقرب مجموعة له، بينما توفر الصفحة النشطة مجموعة واحدة مرتبة للتنقل بالأسهم عبر المجموعات وصفوف الإجراءات. يحافظ التنشيط المتكرر لخيار فردي محدد على قيمته دون استدعاء رد نداء تغيير آخر. يبدّل التنشيط المتعدد الخيار في المصفوفة.
+
+<StoryEmbed storyId="ui-components-dropdown--selection-groups-documentation" title="تحديدات مستقلة للمالك والمراقب" height={440} />
+
+يُغلق التحديد الفردي افتراضيًا؛ بينما يبقى التحديد المتعدد مفتوحًا. يغيّر `SelectionGroup.closeOnSelect` القيمة الافتراضية للمجموعة، ويتجاوزها `OptionItem.closeOnSelect` لخيار واحد. تستخدم صفوف الإجراءات `closeOnClick` بصورة مستقلة. يحافظ التغيير الملغى على التحديد السابق ولا يغلق النافذة المنبثقة تلقائيًا.
+
+يتلقى `onValueChange` القيمة التالية وتفاصيل الحدث التي تتضمن `event` و`reason` و`trigger` و`cancel()` و`isCanceled`. السبب هو `item-press`، و`event` هو حدث التنشيط الأصلي. يتلقى `OptionItem.onSelect` التفاصيل نفسها قبل أن يلتزم مالكه. استدعِ `cancel()` في أي من ردّي النداء لمنع التحديد والإغلاق التلقائي.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+<Dropdown.SelectionGroup
+  id="watchers"
+  aria-label="Watchers"
+  multiple
+  defaultValue={[]}
+  onValueChange={(value, eventDetails) => {
+    if (value.length > 3) {
+      eventDetails.cancel();
+    }
+  }}
+>
+  <Dropdown.OptionItem value="ada">Ada Lovelace</Dropdown.OptionItem>
+  <Dropdown.OptionItem value="grace">Grace Hopper</Dropdown.OptionItem>
+</Dropdown.SelectionGroup>;
+```
+
+يتلقى البحث التركيز عند فتح أداة الانتقاء. من دون بحث، يتلقى أول خيار محدد وممكّن التركيز، أو أول صف ممكّن عند عدم وجود خيار محدد. أثناء تركيز `Search` ووجود استعلام غير فارغ، يتم تمييز أول `OptionItem` مؤهل عبر مجموعات الاختيار، ويقوم مفتاح Enter بتنشيطه. لا يتم اختيار صفوف الإجراءات بهذه الطريقة أبدًا. ينقل ArrowDown التركيز إلى أول صف مفعّل، بما في ذلك الإجراءات. تؤدي مغادرة البحث إلى مسح المعاينة و`aria-activedescendant`، حتى عند بقاء النافذة المنبثقة مفتوحة. تؤدي العودة إلى البحث إلى استعادة المعاينة للاستعلام الحالي.
+
+لا يقوم Enter بأي شيء عند وجود استعلام فارغ أو يتكون من مسافات بيضاء فقط، أو عند عدم بقاء أي خيار مؤهل. لا يؤدي تأليف النص باستخدام طريقة إدخال إلى تنشيط خيار أو نقل التركيز باستخدام مفاتيح الأسهم. عند تثبيت الصفوف فوق المطابقات، مثل القيمة الحالية أو صف "بلا"، اعرضها فقط عندما تطابق نص البحث. تظل النافذة المنبثقة مفتوحة عندما لا يتطابق أي خيار. تظل التصفية من مسؤولية المستدعي.
+
+<StoryEmbed storyId="ui-components-dropdown--multiple-selection-documentation" title="تحديد متعدد" height={420} />
+
+لا يزال `OptionItem` المستقل يقبل `selected` و`onSelect` للمتصلين الذين يتولون التحديد بأنفسهم. تستمد الخيارات المجمعة التحديد من قيمة المجموعة؛ لا تكرر تلك الحالة على الخيار. لا توفر مجموعات التحديد المخصصة إرسال النماذج الأصلي أو إعادة التعيين أو التحقق المطلوب أو سلوك القراءة فقط أو تكامل Field. استخدم [Select](/ar/ui/primitives/input/select) عند الحاجة إلى تعاقدات النماذج الأصلية هذه.
+
+## شبكات الأيقونات
+
+<StoryEmbed storyId="ui-components-dropdown--icon-grid-documentation" title="شبكة أيقونات مع تنسيق الخلية المحددة" height={360} />
+
+عيّن `columns` على `Section` لترتيب العناصر في أعمدة شبكة متساوية العرض. يتحكم العدد نفسه أيضًا في التنقل بلوحة المفاتيح: ينتقل Left وRight داخل صف، بينما ينتقل Up وDown بين الصفوف. يتخطى التنقل الخيارات المعطلة ويتبع اتجاه القراءة. عندما لا يبقى خيار مفعّل في العمود، ينتقل Up وDown إلى أقرب خيار مفعّل في الصف التالي. يعيد Up من الصف الأول إلى حقل البحث عندما لا يوجد قسم سابق. يستخدم الصف الأخير القصير آخر عنصر فيه عندما يكون العمود المطلوب مفقودًا. داخل قائمة فرعية، يغلق السهم للخلف القائمة الفرعية عندما لا يبقى أي خيار مفعّل إلى يسارها.
+
+اعرض كل أيقونة باعتبارها `OptionItem` بتسمية متاحة وزر أيقونة عبر `render`. استخدم `indicator="none"` لإظهار التحديد عبر خلفية الزر. يتلقى رد النداء `render` الحالة `{ selected, multiple, disabled }`؛ استخدمه لتنسيق خلية محددة وتمرير الخصائص والمرجع المتوفرين.
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconCalendar } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const IconGrid = () => (
+  <Dropdown.Root type="picker">
+    <Dropdown.Trigger render={<Button>Choose icon</Button>} />
+    <Dropdown.Content>
+      <Dropdown.SelectionGroup
+        id="icon"
+        aria-label="Icon"
+        defaultValue="calendar"
+      >
+        <Dropdown.Section columns={5}>
+          <Dropdown.OptionItem
+            value="calendar"
+            aria-label="Calendar"
+            indicator="none"
+            nativeButton
+            render={(props, state) => (
+              <LightIconButton
+                // oxlint-disable-next-line react/jsx-props-no-spreading
+                {...props}
+                size="md"
+                color={state.selected ? 'accent' : 'neutral'}
+                aria-label="Calendar"
+              >
+                <IconCalendar />
+              </LightIconButton>
+            )}
+          />
+        </Dropdown.Section>
+      </Dropdown.SelectionGroup>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## تركيز لوحة المفاتيح
+
+في صفحات `menu` و`picker`، تشكل الصفوف موضع توقف واحدًا لمفتاح Tab. تنقل مفاتيح الأسهم التركيز بين الأقسام والإجراءات والخيارات، وينقل المفتاحان Home وEnd إلى أول وآخر صف مفعّل، ما لم يكن حقل البحث عليه التركيز. لا يؤدي نقل التركيز مطلقًا إلى تحديد خيار؛ إذ يؤدي Enter أو Space إلى تنشيط الصف الذي عليه التركيز. تؤدي العودة باستخدام Tab إلى الصفوف إلى الرجوع إلى آخر صف كان عليه التركيز، أو إلى أول صف مفعّل بمجرد اختفاء ذلك الصف. يحتفظ البحث و`Back` بجوار البحث وأزرار الرأس وعناصر التحكم الأخرى داخل النافذة المنبثقة بمواضع توقف Tab الخاصة بها.
+
+يغلق Tab وShift+Tab عنصر `menu`، إلى جانب قوائمه الأصلية عندما يكون التركيز في قائمة فرعية. في `picker`، ينتقل Tab عبر عناصر التحكم في النافذة المنبثقة ويغلق النافذة المنبثقة عند مغادرة التركيز لها. يحتفظ `panel` بترتيب Tab الأصلي لعناصر التحكم فيه.
+
+## الصفحات والقوائم الفرعية
+
+استخدم `Page` للتنقل الذي يستبدل محتويات النافذة المنبثقة نفسها. غلّف الصفحة الأولى بـ `Page id="root"`، أو اختر صفحة أولية أخرى باستخدام `defaultPage`. عيّن `page` على إجراء للتنقل دون إغلاق. يعيد `Back` إلى الصفحة السابقة ويستعيد التركيز إلى الصف الذي استدعاها.
+
+تُركَّب الصفحات عند زيارتها لأول مرة وتبقى مركَّبة طوال تلك الجلسة المفتوحة. تؤدي العودة إلى صفحة إلى الحفاظ على بحثها المحلي ومسودات النماذج والأقسام القابلة للتمرير. تكون الصفحات غير النشطة مخفية وخاملة: فهي لا تشارك في التنقل بلوحة المفاتيح أو التركيز أو شجرة إمكانية الوصول، وتكون النوافذ المنبثقة المتداخلة لـ Dropdown غير نشطة.
+
+تبدأ إعادة الفتح جلسة جديدة عند `defaultPage` بمحتوى جديد، بما في ذلك عندما يكون `Content.keepMounted` مضبوطًا أو تُعاد فتح النافذة المنبثقة أثناء انتقال الخروج الخاص بها. يُعاد تعيين سجل الصفحات والبحث المحلي والمسودات. تبقى الصفحة الجاري إغلاقها مركَّبة أثناء انتقال الخروج الخاص بها.
+
+تبقى قيم `SelectionGroup` غير المتحكم بها مخزنة في `Root` تحت `id` الثابت لكل مجموعة وتستمر بعد إعادة الفتح. تبقى القيم التي يتحكم بها المستدعي مملوكة للمستدعي. على سبيل المثال، تبقى قيمة بحث مخزنة فوق `Content` دون تغيير إلى أن يحدّثها المستدعي. ضع حالة البحث المؤقتة أو المسودة في مكوّن داخل `Content` أو `Page` عندما ينبغي إعادة تعيينها مع الجلسة؛ واحتفظ بحالة التطبيق الدائمة فوق `Content`.
+
+يمكن للصفحة تجاوز `type` الخاص بالجذر. على سبيل المثال، يمكن لقائمة إجراءات أن تفتح صفحة أداة اختيار قابلة للبحث أو لوحة نموذج. يتلقى البحث التركيز عند الدخول إلى صفحة قابلة للبحث؛ وتركّز الصفحات الأخرى على صفها الأول بعد `Back`.
+
+<StoryEmbed storyId="ui-components-dropdown--pages-documentation" title="التنقل من القائمة إلى صفحة أداة الاختيار" height={420} />
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const FilterMenu = () => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Filters</Button>} />
+    <Dropdown.Content>
+      <Dropdown.Page id="root">
+        <Dropdown.Section>
+          <Dropdown.ActionItem page="status">Status</Dropdown.ActionItem>
+        </Dropdown.Section>
+      </Dropdown.Page>
+      <Dropdown.Page id="status" type="picker">
+        <Dropdown.Back>Filters</Dropdown.Back>
+        <Dropdown.Section>
+          <Dropdown.SelectionGroup id="status" aria-label="Status">
+            <Dropdown.OptionItem value="active">Active</Dropdown.OptionItem>
+            <Dropdown.OptionItem value="archived">Archived</Dropdown.OptionItem>
+          </Dropdown.SelectionGroup>
+        </Dropdown.Section>
+      </Dropdown.Page>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+للتنقل من التعليمات البرمجية، استدعِ `useDropdownPage` في مكون معروض داخل الجذر. تعيد `page` الحالية، و`goToPage(page)`، و`goBack()`، و`canGoBack`، و`isActive`. داخل الصفحة، تكون `isActive` صحيحة فقط عندما تكون تلك الصفحة نشطة وتكون قائمتها المنسدلة مفتوحة. استخدم `isActive` لإظهار النوافذ المنبثقة المخصصة للصفحة التي تُعرَض عبر بوابة، بحيث تختفي عندما تصبح الصفحة غير نشطة أو تُغلَق القائمة المنسدلة. على سبيل المثال، يمكن لخيار أن يعود إلى الصفحة السابقة بعد تحديد ما بينما تظل النافذة المنبثقة مفتوحة:
+
+```tsx
+import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
+
+export const StatusOptions = ({
+  status,
+  onStatusChange,
+}: {
+  status: string | null;
+  onStatusChange: (status: string | null) => void;
+}) => {
+  const { goBack } = useDropdownPage();
+
+  return (
+    <Dropdown.SelectionGroup
+      id="status"
+      aria-label="Status"
+      value={status}
+      closeOnSelect={false}
+      onValueChange={(value) => {
+        onStatusChange(value);
+        goBack();
+      }}
+    >
+      {['Active', 'Archived'].map((option) => (
+        <Dropdown.OptionItem key={option} value={option}>
+          {option}
+        </Dropdown.OptionItem>
+      ))}
+    </Dropdown.SelectionGroup>
+  );
+};
+```
+
+استخدم `Submenu` مع `SubmenuTrigger` و`Content` متداخل لقائمة جنبًا إلى جنب. يدخل Arrow Right إلى القائمة الفرعية؛ ويعود Arrow Left إلى القائمة الأصلية. يؤدي تحديد إجراء مغلق إلى إغلاق القائمة المنسدلة بأكملها.
+
+```text
+Dropdown.Content
+└── Dropdown.Submenu
+    ├── Dropdown.SubmenuTrigger
+    └── Dropdown.Content
+        └── Dropdown.ActionItem
+```
+
+## أدوات اختيار متداخلة مستقلة
+
+ضع `Dropdown.Root` آخر داخل `Content` عندما يفتح عنصر تحكم أداة الاختيار الخاصة به، مثل محدد اتجاه الفرز. يؤدي تحديد خيار داخلي إلى إغلاق أداة الاختيار تلك فقط واستعادة التركيز إلى مشغّلها. يغلق Escape والضغط خارج العنصر طبقة واحدة في كل مرة. استخدم `Submenu` للأوامر التي يجب أن تغلق شجرة القائمة بأكملها عند تحديدها.
+
+<StoryEmbed storyId="ui-components-dropdown--nested-documentation" title="أداة اختيار للفرز مع أداة اختيار متداخلة للاتجاه" height={420} />
+
+## اللوحات والحالة المتحكم بها
+
+استخدم `type="panel"` لمدخلات النموذج. يبقي تفاعل الإدخال اللوحة مفتوحة؛ ويمكن لإجراء الحفظ إغلاقها. أدر `open` و`onOpenChange` عندما يحتاج مكون آخر أو اختصار إلى فتح القائمة المنسدلة. احتفظ بهذه الحالة مع الميزة التي تنسق التفاعل.
+
+<StoryEmbed storyId="ui-components-dropdown--panel-documentation" title="لوحة نموذج متحكم بها" height={420} />
+
+يغلق Escape النافذة المنبثقة ويستعيد التركيز إلى مشغّلها. يؤدي التفاعل الخارجي أيضًا إلى إغلاقها، ولا يؤدي النقر الذي يغلقها إلى تنشيط ما يقع عليه. تبقى المفاتيح المضغوطة داخل النافذة المنبثقة بداخلها، باستثناء اختصارات Ctrl أو Cmd التي لا تعالجها القائمة المنسدلة، لكي تستمر اختصارات مستوى الصفحة في العمل. يقبل `Content` خيارات التركيز والبوابة من Popover، بما في ذلك هدف صريح لإعادة التركيز لمسارات عمل المحرر.
+
+## الإغلاق
+
+يغلق Escape والضغط خارج النافذة المنبثقة والخروج منها باستخدام Tab القائمة المنسدلة. مرر `onEscapeKeyDown` أو `onInteractOutside` إلى `Root` للتفاعل قبل إغلاقها، واستدعِ `event.preventDefault()` لإبقائها مفتوحة. `event.target` هو العنصر الذي تم الضغط عليه خارجًا، أو `null` عندما يغادر التركيز باستخدام Tab، و`event.type` هو نوع حدث DOM الذي شغّله، مثل `touchmove` للتمرير السريع خارج النافذة المنبثقة. يصل الضغط الخارجي الذي مُنع إلى العنصر الذي يقع عليه رغم ذلك.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ViewSettings = ({ isEditing }: { isEditing: boolean }) => (
+  <Dropdown.Root
+    type="panel"
+    onInteractOutside={(event) => {
+      if (isEditing) {
+        event.preventDefault();
+      }
+    }}
+  >
+    <Dropdown.Trigger render={<Button>View settings</Button>} />
+    <Dropdown.Content>
+      <Dropdown.ActionItem>Save view</Dropdown.ActionItem>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## الإرساء دون مشغّل
+
+يمكن أن يُفتح الجذر دون `Trigger`، على سبيل المثال كقائمة سياق. تحكم فيه باستخدام `open` و`onOpenChange`، ومرر `anchor` إلى `Content`: عنصر، أو ref، أو عنصر افتراضي يعيد مستطيلًا بإحداثيات إطار العرض. امنح `Content` قيمة `aria-label`، إذ لا يوجد مشغّل لتسميته باسمه. عند الإغلاق، يعود التركيز إلى العنصر الذي كان مركّزًا عليه عند فتح النافذة المنبثقة.
+
+<StoryEmbed storyId="ui-components-dropdown--context-menu-documentation" title="قائمة سياق مرساة للمؤشر" height={420} />
+
+```tsx
+import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+export const RecordContextMenu = ({ recordName }: { recordName: string }) => {
+  const [open, setOpen] = useState(false);
+  const [point, setPoint] = useState({ x: 0, y: 0 });
+
+  return (
+    <>
+      <p
+        onContextMenu={(event) => {
+          event.preventDefault();
+          setPoint({ x: event.clientX, y: event.clientY });
+          setOpen(true);
+        }}
+      >
+        {recordName}
+      </p>
+      <Dropdown.Root type="menu" open={open} onOpenChange={setOpen}>
+        <Dropdown.Content
+          aria-label="Record actions"
+          anchor={{
+            getBoundingClientRect: () => new DOMRect(point.x, point.y, 0, 0),
+          }}
+        >
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>
+    </>
+  );
+};
+```
+
+يؤدي النقر بزر الماوس الأيمن في مكان آخر أثناء فتح القائمة إلى نقلها إلى النقطة الجديدة.
+
+استدعِ `useDropdownPlacementOrThrow` داخل `Dropdown.Content` لقراءة قيمتَي `side` و`align` المحسومتين، بما في ذلك الانقلابات الناتجة عن التصادمات. استخدم الجانب المحسوم لوضع عناصر التحكم في البحث والإنشاء الخاصة بالمنتقي بجانب المشغّل. أبقِ عناصر التحكم بترتيبها المرئي في DOM لكي تتبع التنقلات باستخدام لوحة المفاتيح التخطيط. يتلقى البحث الموجود أسفل النتائج التركيز من `ArrowDown` عند النتيجة الأخيرة؛ ويؤدي `ArrowUp` من ذلك البحث إلى العودة إلى النتيجة الأخيرة.
+
+## التسميات
+
+يمتلك كل جزء نصه: وفّر `Search.placeholder` وأسماء المتاحة الأصلية وسمات `Close` المتاحة والعناصر التابعة لـ `Back` و`Loading` و`Empty`. القيمة الافتراضية لـ `Back` هي `Back`؛ ولا تحتوي حالتا التحميل والفراغ على رسالة مضمّنة. تقبل أجزاء العنصر `shortcutJoinLabel` لاستبدال `then` الافتراضي بين خطوات الاختصارات المتسلسلة. يكون لـ `aria-labelledby` الأصلي الأولوية على `aria-label`.
+
+## الإزاحة
+
+<DropdownReference />
+
+<PageBanner illustration="page-cover-input" />

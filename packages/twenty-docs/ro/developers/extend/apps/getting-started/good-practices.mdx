@@ -1,0 +1,86 @@
+---
+title: Bune practici
+description: Cum să dezvolți o aplicație care funcționează și se extinde eficient în multe spații de lucru.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+API-ul Twenty acceptă **500 de solicitări pe minut per înregistrare a aplicației** pentru solicitările pe care le efectuează o aplicație în nume propriu: execuții fără o persoană în spatele lor (cron, webhooks, hook-uri de instalare) și clienți creați cu `runAs: 'application'`. Bugetul este partajat de fiecare spațiu de lucru care a instalat aplicația, iar solicitările care îl depășesc sunt respinse cu un `429`. Solicitările efectuate ca persoana care a declanșat o execuție sunt contorizate în schimb pentru limitele acelei persoane. Practicile de mai jos mențin o aplicație în cadrul acelui buget pe măsură ce numărul instalărilor sale crește și în limitele serviciilor pe care le apelează.
+
+* **Distribuiți rulările cron de parcurgere cu o întârziere aleatorie.** Un declanșator cron pornește în fiecare spațiu de lucru în același minut, astfel încât fiecare instalare consumă simultan din bugetul partajat. Limitați handlerul cron la adăugarea în coadă, cu un `delayMs` aleatoriu într-o fereastră mare, precum o oră. Adăugările de joburi în coadă sunt, de asemenea, limitate la 2.000 pe minut pentru fiecare înregistrare a aplicației, iar o declanșare cron peste această limită este omisă în spațiile de lucru rămase, deci păstrați o parcurgere idempotentă și lăsați următoarea declanșare să recupereze.
+
+```ts src/logic-functions/enqueue-nightly-sweep.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
+
+const NIGHTLY_SWEEP = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const SPREAD_WINDOW_MS = 60 * 60 * 1000;
+
+export default defineLogicFunction({
+  universalIdentifier: 'b7c2e4d1-0f5a-4c3e-9d8b-6a1f2e3c4d5b',
+  name: 'enqueue-nightly-sweep',
+  timeoutSeconds: 30,
+  cronTriggerSettings: { pattern: '0 3 * * *' },
+  handler: async () => {
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier: NIGHTLY_SWEEP,
+      jobs: [{ payload: {} }],
+      delayMs: Math.floor(Math.random() * SPREAD_WINDOW_MS),
+    });
+  },
+});
+```
+
+```text
+   pattern "0 3 * * *"                  the server, every minute
+                                                  │
+              ┌───────────────┬───────────────────┼───────────────┐
+              ▼               ▼                   ▼               ▼
+        workspace A     workspace B     workspace C   ...   workspace N
+          03:00:00        03:00:00        03:00:00            03:00:00
+              │               │                   │               │
+              └───────────────┴─────────┬─────────┴───────────────┘
+                                        ▼
+                      500 requests per minute for the whole app
+                                   N × calls  →  429
+```
+
+Cu o întârziere aleatorie într-o fereastră de o oră, aceleași execuții sunt distribuite:
+
+```text
+   pattern "0 3 * * *"  +  random delayMs in [0, 60 min)
+                                                  │
+              ┌───────────────┬───────────────────┼───────────────┐
+              ▼               ▼                   ▼               ▼
+        workspace A     workspace B     workspace C   ...   workspace N
+          03:00:00        03:00:00        03:00:00            03:00:00
+           + 12 min        + 41 min        + 03 min            + 27 min
+              │               │                   │               │
+              ▼               ▼                   ▼               ▼
+          03:12:00        03:41:00        03:03:00            03:27:00
+              │               │                   │               │
+              └───────────────┴─────────┬─────────┴───────────────┘
+                                        ▼
+                      500 requests per minute for the whole app
+                          N × calls spread over 60 minutes  →  OK
+```
+
+* **Grupați în loturi declanșatorii evenimentelor din baza de date.** O scriere în masă, precum o sincronizare a cutiei poștale, emite câte un eveniment pentru fiecare înregistrare, mii în câteva secunde, iar o execuție pentru fiecare eveniment înseamnă câte o solicitare pentru fiecare înregistrare. Setați `batchMode: true`, declarați `updatedFields` și reduceți lotul la înregistrări distincte înainte de a apela API-ul. Consultați [Gruparea în loturi a evenimentelor din baza de date](/ro/developers/extend/apps/logic/logic-functions#batching-database-events).
+
+* **Efectuați o solicitare per lot, nu per înregistrare.** Limita contorizează solicitările, nu înregistrările: un `createMany` cu `upsert: true` care conține 200 de înregistrări reprezintă o solicitare, iar 200 de actualizări individuale reprezintă 200. Citiți cu filtre `in` și scrieți cu `createMany` sau `updateMany`.
+
+* **Reduceți rafalele la un singur job întârziat.** Când evenimentele dezvăluie o activitate mai mare decât evenimentul în sine, adăugarea acesteia în coadă o dată pentru fiecare eveniment o multiplică cu dimensiunea rafalei. Adăugați în coadă un singur job cu `delayMs` și un `jobId` determinist care include o fereastră de timp; coada ignoră un id pe care îl deține deja. Consultați [Alegeți propriul id de job](/ro/developers/extend/apps/logic/background-jobs#choose-your-own-job-id).
+
+* **Eșalonați distribuirea cu `delayMs`.** Joburile adăugate în coadă fără întârziere devin toate eligibile simultan și consumă bugetul în același minut. Grupați-le în intervale pe minut și întârziați pagina următoare cu numărul de intervale utilizate. Consultați [Joburi în fundal](/ro/developers/extend/apps/logic/background-jobs).
+
+* **Reîncercați un `429` cu backoff sau adăugați din nou în coadă cu o întârziere.** SDK-ul client generează o eroare pentru orice răspuns non-2xx, iar o execuție care așteaptă în interior își consumă propriul timeout. Reîncercați cu backoff exponențial și o limită pentru încercări sau returnați activitatea în coadă cu o întârziere.
+
+* **Memorați în cache ceea ce nu se modifică.** O căutare la fiecare eveniment necesită o solicitare pentru o valoare fixată la momentul conectării, cum ar fi o identitate sau un id de echipă. Stocați-o în [stocarea cheie-valoare](/ro/developers/extend/apps/logic/key-value-store) atunci când conexiunea este înregistrată.
+
+* **Grupați în loturi solicitările către API-uri externe.** Un serviciu extern are propria limită de rată, iar o funcție logică are un timeout, astfel încât `n` solicitări per execuție le multiplică pe ambele. Când furnizorul oferă un endpoint pentru loturi, trimiteți o solicitare pentru întregul lot în loc de una pentru fiecare înregistrare și împărțiți lotul în bucăți până la maximul furnizorului.
+
+* **Faceți parametrii impliciți editabili de utilizator.** O valoare codificată direct într-o funcție logică sau într-un flux de lucru, precum un prag, o dimensiune de lot sau o opțiune implicită, se potrivește unui singur spațiu de lucru și necesită o versiune nouă pentru fiecare altul. Declarați-o ca variabilă de aplicație cu o valoare implicită și citiți-o la momentul execuției, astfel încât administratorii spațiului de lucru să o poată ajusta din setările aplicației. Consultați [Configurația aplicației](/ro/developers/extend/apps/config/application).
+
+<PageBanner illustration="card-page-campaign-practices" />

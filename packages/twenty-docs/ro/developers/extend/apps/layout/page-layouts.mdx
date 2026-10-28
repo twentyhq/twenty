@@ -1,14 +1,19 @@
 ---
 title: Layouturi de pagină
-description: Personalizează paginile de detaliu ale înregistrărilor — filele, widgeturile și locul în care se redau componentele front-end — folosind definePageLayout și definePageLayoutTab.
+description: Personalizează paginile de detaliu ale înregistrărilor — filele, widgeturile și locul în care se redau componentele front-end — folosind definePageLayout, definePageLayoutTab și definePageLayoutWidget.
 ---
 
-Un **layout de pagină** controlează modul în care este aranjată pagina de detalii a unei înregistrări: ce file apar și ce widgeturi conțin acestea. Folosește `definePageLayout()` pentru a declara un layout pentru un obiect pe care îl deții sau `definePageLayoutTab()` pentru a adăuga o singură filă la un layout care există deja (al tău sau un layout standard Twenty).
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-| Caz de utilizare                                                                        | Entitate              |
-| --------------------------------------------------------------------------------------- | --------------------- |
-| Definește întregul layout pentru o pagină de înregistrare pe un obiect pe care îl deții | `definePageLayout`    |
-| Adaugă o filă la un layout existent (obiectul tău sau unul standard)                    | `definePageLayoutTab` |
+## Prezentare generală
+
+Un **layout de pagină** controlează modul în care este aranjată pagina de detalii a unei înregistrări: ce file apar și ce widgeturi conțin acestea. Folosește `definePageLayout()` pentru a declara un layout pentru un obiect pe care îl deții, `definePageLayoutTab()` pentru a adăuga o singură filă la un layout care există deja (al tău sau unul standard Twenty one) sau `definePageLayoutWidget()` pentru a adăuga un singur widget la o filă care există deja.
+
+| Caz de utilizare                                                                                                | Entitate                 |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| Definește întregul layout pentru o pagină de înregistrare pe un obiect pe care îl deții                         | `definePageLayout`       |
+| Adaugă o filă la un layout existent (obiectul tău sau unul standard)                                            | `definePageLayoutTab`    |
+| Adaugă un widget la o filă existentă (fila Acasă a unei pagini de înregistrare sau o filă pe care ai definit-o) | `definePageLayoutWidget` |
 
 ## definePageLayout
 
@@ -36,6 +41,7 @@ export default definePageLayout({
           universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
           title: 'Hello World',
           type: 'FRONT_COMPONENT',
+          heightBehavior: 'TAB_VIEWPORT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
@@ -50,17 +56,23 @@ export default definePageLayout({
 
 ### Puncte cheie
 
-* `type` este unul dintre `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` sau `'STANDALONE_PAGE'`. Folosiți `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific.
+* `type` este unul dintre `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'`, `'STANDALONE_PAGE'` sau `'RECORD_FORM'`. Folosiți `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific. `'RECORD_FORM'` descrie formularul de creare al unui obiect și conține widgeturi `FORM_FIELD`, fiecare redând un singur câmp. Twenty oferă câte un aspect `'RECORD_FORM'` pentru fiecare obiect, cu câte un widget pentru fiecare câmp care poate fi creat, astfel încât rareori trebuie să creați unul; acesta nu redă încă formulare de înregistrare.
 * `objectUniversalIdentifier` specifică la ce obiect se aplică această machetă.
-* Fiecare `tab` definește o secțiune a paginii cu un `title`, `position` și `layoutMode`: `VERTICAL_LIST` pentru paginile de înregistrări și paginile independente, `GRID` pentru dashboard-uri și `CANVAS` pentru un singur widget care ar trebui să umple zona de vizualizare a filei. O filă `VERTICAL_LIST` stivuiește widgeturile pe verticală. Widgeturile încorporate care își gestionează propria derulare, cum ar fi cronologiile, fișierele, notițele, sarcinile și fluxurile de lucru, umplu o zonă de vizualizare; câmpurile, componentele frontale, graficele și alte widgeturi fit-content se redau la înălțimea conținutului sau la înălțimea configurată. O filă `GRID` își aranjează întotdeauna widgeturile ca carduri pe o grilă cu 12 coloane. Un widget `CANVAS` nu are o poziție explicită; dacă o filă canvas conține mai multe widgeturi, acestea sunt redate la înălțimea conținutului lor în loc să umple zona de vizualizare.
+* Fiecare `tab` definește o secțiune a paginii cu un `title`, `position` și `layoutMode`: utilizați `VERTICAL_LIST` pentru pagini ale înregistrărilor și pagini independente și `GRID` pentru dashboard-uri. O filă `VERTICAL_LIST` stivuiește widgeturile pe verticală. Widgeturile integrate care își gestionează propria derulare, precum cronologiile, fișierele, notițele, sarcinile, fluxurile de lucru și conversațiile, ocupă în mod implicit o singură zonă de vizualizare; câmpurile, componentele frontale, graficele și alte widgeturi cu ajustare la conținut se redau la înălțimea conținutului sau la înălțimea configurată. O filă `GRID` își aranjează întotdeauna widgeturile ca carduri pe o grilă cu 12 coloane.
+* Widgeturile dintr-o filă `VERTICAL_LIST` moștenesc modul de aspect al filei, iar ordinea lor provine din matricea `widgets`. Nu setați `position`; setați opționalul `heightBehavior` de nivel superior la `'TAB_VIEWPORT'` atunci când un widget trebuie să ocupe o zonă de vizualizare completă a filei și să își gestioneze propria derulare sau la `'FIT_CONTENT'` pentru a suprascrie o setare implicită integrată pentru înălțime completă. Widgeturile precedente nu reduc această înălțime. Este permis un singur widget `TAB_VIEWPORT` activ per filă și acesta trebuie să fie după widgeturile adaptate la conținut.
+* Widgeturile `GRID` continuă să utilizeze `position: { layoutMode: PageLayoutTabLayoutMode.GRID, row, column, rowSpan, columnSpan }`. `heightBehavior` de nivel superior este valid doar pentru filele `VERTICAL_LIST`; utilizarea sa cu `GRID` sau `CANVAS` reprezintă o eroare de validare.
+* Filele Canvas existente și pozițiile explicite ale widgeturilor rămân acceptate. SDK-ul afișează avertismente privind deprecierea, împreună cu înlocuirile recomandate.
 * Setează explicit `layoutMode`. Dacă îl omiți, vei obține `VERTICAL_LIST` pe un `STANDALONE_PAGE` și `GRID` în rest, ceea ce rareori îți dorești pe o pagină de înregistrare.
 * Fiecare `widget` dintr-o filă poate reda un [front component](/ro/developers/extend/apps/layout/front-components), o listă de relații sau alte tipuri de widgeturi integrate.
-* Un widget `FRONT_COMPONENT` poate seta `headerCommandMenuItemUniversalIdentifiers` la o matrice ordonată de identificatori universali ai elementelor de meniu de comandă din aceeași aplicație. Aceste acțiuni apar ca butoane cu pictograme în antetul cardului widgetului și își păstrează verificările de disponibilitate și de permisiuni la nivel de comandă. Identificatorii trebuie să fie unici și trebuie să se rezolve atunci când aplicația este instalată.
+* Un widget `FRONT_COMPONENT` poate seta `headerCommandMenuItemUniversalIdentifiers` la o matrice ordonată de identificatori universali ai elementelor meniului de comenzi din aceeași aplicație. Aceste acțiuni apar ca butoane cu pictograme în antetul cardului widgetului și își păstrează verificările de disponibilitate și permisiuni la nivel de comandă. Identificatorii trebuie să fie unici și trebuie să se rezolve atunci când aplicația este instalată.
 * `position` pe file le controlează ordinea. Folosește valori mai mari (de ex., 50) pentru a plasa filele personalizate după cele integrate.
+* `twenty app pull` scrie aspectele paginilor înapoi, cu filele și widgeturile lor inline. Un widget pe care exportul nu îl poate include încă, cum ar fi unul care afișează propria componentă front-end a aplicației dvs. sau unul de tipul `VIEW` depreciat, este raportat de pull în loc să fie scris; consultați [ce nu scrie pull](/ro/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 
 ### Widget-uri Câmp
 
-Un widget `FIELD` redă un câmp al înregistrării. Pentru câmpurile de relație, acesta poate încorpora și o listă de înregistrări asociate:
+Un widget `FIELD` redă un câmp al înregistrării curente. Pentru câmpurile de relație, acesta poate încorpora și o vizualizare a înregistrărilor asociate cu înregistrarea curentă.
+
+Pentru a încorpora o vizualizare care nu este limitată la înregistrarea curentă, utilizați un [widget de tabel de înregistrări](#record-table-widgets).
 
 ```ts
 {
@@ -78,7 +90,33 @@ Un widget `FIELD` redă un câmp al înregistrării. Pentru câmpurile de relaț
 
 * `fieldMetadataId` primește identificatorul universal al unui câmp de pe obiectul layout-ului.
 * `fieldDisplayMode` este unul dintre `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` sau `'TABLE'`. `TABLE` încorporează o vizualizare care listează înregistrările unui câmp de relație de tip unu-la-mulți.
+* `isUIEditable` se aplică câmpurilor de relație în modul de afișare `TABLE`. Valoarea implicită este `true`; setați-o la `false` pentru a împiedica editarea înregistrărilor din tabelul sau kanbanul încorporat.
 * `nestedRelationFieldMetadataId` este opțional și primește identificatorul universal al unui câmp de relație unu-la-mulți de pe obiectul țintă al relației, pentru a afișa în listă înregistrări aflate la două salturi de relație distanță (de ex., o pagină Company care afișează oportunitățile persoanelor companiei sau o pagină Person care afișează oportunitățile companiei persoanei). Primul salt poate fi un câmp de relație unu-la-mulți sau mulți-la-unu, al doilea trebuie să fie unu-la-mulți (relațiile de tip junction nu sunt acceptate) și necesită `fieldDisplayMode: 'TABLE'` — combinarea lui cu orice alt mod de afișare reprezintă o eroare de validare, deoarece un widget îmbricat este întotdeauna redat ca o vizualizare încorporată.
+
+### Widgeturi de tabel de înregistrări
+
+Un widget `RECORD_TABLE` încorporează o vizualizare salvată într-un tablou de bord, într-o pagină de înregistrare sau într-o pagină independentă. Vizualizarea salvată determină înregistrările, câmpurile, filtrele, sortările și aspectul afișate în widget.
+
+```ts
+{
+  universalIdentifier: 'd1d2d3d4-d5d6-4000-8000-000000000004',
+  title: 'Open opportunities',
+  type: 'RECORD_TABLE',
+  configuration: {
+    configurationType: 'RECORD_TABLE',
+    viewUniversalIdentifier: OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER,
+    recordLimit: 8,
+    isUIEditable: false,
+  },
+}
+```
+
+* `viewUniversalIdentifier` identifică vizualizarea de afișat.
+* `recordLimit` este opțional și limitează numărul de înregistrări afișate de widget.
+* `isUIEditable` se aplică vizualizărilor de tabel și kanban. Acesta permite editarea celulelor din tabel sau editarea, mutarea și crearea cardurilor kanban. Valoarea implicită este `true` pentru aspectele `RECORD_PAGE` și `false` pentru alte aspecte.
+* `isUIEditable` controlează doar acțiunile din interfața cu utilizatorul. Permisiunile pentru înregistrări se aplică în continuare, iar setările vizualizării rămân editabile numai în editorul de aspect al paginii.
+
+Administratorii spațiului de lucru pot configura același comportament cu **Permite editarea** în editorii de [widgeturi din tabloul de bord](/ro/user-guide/dashboards/capabilities/widgets#editing-records) și [pagini de înregistrare](/ro/user-guide/layout/capabilities/record-pages#editing-related-records).
 
 ## definePageLayoutTab
 
@@ -155,3 +193,74 @@ export default definePageLayoutTab({
 * `position` controlează ordonarea în raport cu filele existente din layoutul țintă. Alege o valoare care să plaseze fila ta acolo unde dorești, relativ la filele predefinite.
 
 * Folosește aceasta în loc de `definePageLayout` atunci când vrei doar să adaugi la un layout existent. Folosește `definePageLayout` atunci când deții întregul layout.
+
+* `twenty app pull` scrie înapoi o filă pe care ai adăugat-o la un aspect de pagină care nu îți aparține ca fișier `definePageLayoutTab()`, cu widgeturile sale inline, în aceleași limite ca widgeturile unui `definePageLayout()`.
+
+## definePageLayoutWidget
+
+Folosește această opțiune atunci când vrei doar să **adaugi** un widget într-o filă care există deja — de exemplu, o componentă front în fila Home a paginii standard Company sau o diagramă în fila Home a paginii de înregistrare a propriului obiect.
+
+```ts src/page-layout-widgets/example-home-widget.ts
+import {
+  definePageLayoutWidget,
+  PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayoutWidget({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000003',
+  pageLayoutTabUniversalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.home
+      .universalIdentifier,
+  title: 'Hello World',
+  type: 'FRONT_COMPONENT',
+  position: {
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    index: 1000,
+    heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+  },
+  configuration: {
+    configurationType: 'FRONT_COMPONENT',
+    frontComponentUniversalIdentifier:
+      HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+### Puncte cheie
+
+* `pageLayoutTabUniversalIdentifier` este **obligatoriu** și trebuie să indice către o filă care există deja la momentul instalării: o filă standard Twenty (`STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.\<object>RecordPage.tabs.\<tab>.universalIdentifier`), o filă a unuia dintre propriile tale layouturi sau o filă a paginii de înregistrare pe care Twenty o generează pentru unul dintre obiectele tale. Filele generate au identificatori deterministici, astfel încât îi poți calcula:
+
+  ```ts
+  import {
+    getSystemPageLayoutTabUniversalIdentifier,
+    getSystemRecordPageLayoutUniversalIdentifier,
+  } from 'twenty-sdk/define';
+
+  const EXAMPLE_HOME_TAB_UNIVERSAL_IDENTIFIER =
+    getSystemPageLayoutTabUniversalIdentifier({
+      objectMetadataApplicationUniversalIdentifier:
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+      pageLayoutUniversalIdentifier:
+        getSystemRecordPageLayoutUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier:
+            APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+        }),
+      title: 'Home',
+    });
+  ```
+
+* `position` este **obligatoriu**, deoarece fila nu face parte din manifestul tău, iar modul său de layout nu poate fi dedus. Potrivește modul de layout al filei: filele paginii de înregistrare sunt liste verticale, așadar folosește `{ layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index }` cu un index mai mare decât cel al widgeturilor integrate (widgetul Fields este la 0).
+
+* Pentru o listă verticală, setați `position.heightBehavior` la `PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT` pentru a umple zona de vizualizare a unei file sau la `PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT` pentru a utiliza conținutul widgetului sau înălțimea configurată. Importați această enumerare din `twenty-sdk/define`, ca în exemplul de mai sus. Dacă este omis, widgetul își păstrează valoarea implicită integrată. Doar un widget activ per filă poate umple zona de vizualizare, iar indexul său trebuie să îl plaseze după toate widgeturile cu conținut adaptat. `heightBehavior` nu este acceptat în pozițiile `GRID` sau `CANVAS`.
+
+* `configuration` funcționează exact ca un widget definit inline în `definePageLayout` sau `definePageLayoutTab`: face referire la [componente front](/ro/developers/extend/apps/layout/front-components), vizualizări, câmpuri și așa mai departe.
+
+* Folosește această opțiune în loc de `definePageLayoutTab` atunci când fila există deja și vrei doar să plasezi un widget pe ea. Folosește `definePageLayoutTab` atunci când vrei o filă proprie.
+
+* `twenty app pull` scrie înapoi un widget pe care l-ai adăugat la o filă care nu îți aparține ca fișier `definePageLayoutWidget()`, în aceleași limite ca widgeturile unui `definePageLayout()`.
+
+<PageBanner illustration="card-page-page-layouts" />

@@ -3,6 +3,8 @@ title: Widgeturi
 description: Explorați tipurile de widgeturi și opțiunile de vizualizare din Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { ChartIcon } from '/snippets/chart-icon.mdx';
 
 ## Widgeturi disponibile
@@ -138,6 +140,16 @@ Vedeți înregistrările filtrate direct în tabloul de bord.
 * Indicatori din dialer
 * Conținut în timp real din instrumentul de secvențe de vânzări
 
+#### Editarea înregistrărilor
+
+Widgeturile de tabel și kanban din tabloul de bord sunt doar pentru citire în mod implicit. Pentru a permite utilizatorilor să editeze înregistrări dintr-un widget:
+
+1. Editează tabloul de bord
+2. Selectați widgetul
+3. Activați **Permite editarea** în setările widgetului
+
+Pentru tabele, aceasta activează editarea celulelor. Pentru panourile kanban, aceasta activează editarea cardurilor, mutarea lor între coloane și crearea înregistrărilor. Permisiunile rolurilor se aplică în continuare.
+
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Text îmbogățit</span>
 
 Adăugați text formatat și conținut direct în tabloul de bord.
@@ -167,3 +179,5 @@ Adăugați text formatat și conținut direct în tabloul de bord.
 1. Faceți clic pe widget
 2. Deschideți **Opțiuni**
 3. Faceți clic pe **Duplicare widget**
+
+<PageBanner illustration="dashboards" />

@@ -45,6 +45,15 @@ describe('defineWorkflow', () => {
     });
   });
 
+  it('accepts a workflow flagged as system', () => {
+    const systemWorkflow = { ...workflow, isSystem: true };
+
+    expect(defineWorkflow(systemWorkflow)).toMatchObject({
+      success: true,
+      config: systemWorkflow,
+    });
+  });
+
   it.each([
     {
       problem: 'a step type applications cannot use',
@@ -62,6 +71,11 @@ describe('defineWorkflow', () => {
         },
       },
       error: expect.stringMatching(/^version\.trigger\.type: .*MANUAL/),
+    },
+    {
+      problem: 'an isSystem that is not a boolean',
+      definition: { ...workflow, isSystem: 'true' },
+      error: 'isSystem: Invalid input: expected boolean, received string',
     },
     {
       problem: 'a cycle',

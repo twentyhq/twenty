@@ -1,0 +1,57 @@
+---
+title: Bloque de comandos
+description: Muestra líneas de comandos con una acción opcional.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CommandBlockReference from '/snippets/ui/generated/components/data-display/command-block.mdx';
+
+## Resumen
+
+`CommandBlock` muestra cada comando proporcionado con un indicador de símbolo del sistema. No ejecuta comandos ni permite copiarlos automáticamente. Proporcione `actions` con cualquier nodo de React, como un [Botón](/es/ui/primitives/input/button), enlace o estado. El texto de los comandos usa la semántica de `pre` y `code`, conserva los saltos de línea y se ajusta dentro del ancho disponible. Los marcadores de la solicitud son decorativos.
+
+<StoryEmbed storyId="ui-components-data-display-commandblock--display" title="Ejemplo de CommandBlock" height={130} />
+
+## Uso
+
+```tsx
+import { useState } from 'react';
+import { CommandBlock } from 'twenty-ui/components/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const InstallCommand = () => {
+  const [copyLabel, setCopyLabel] = useState('Copy command');
+
+  return (
+    <CommandBlock
+      commands={['yarn add twenty-ui']}
+      actions={
+        <Button
+          onClick={async () => {
+            try {
+              await navigator.clipboard.writeText('yarn add twenty-ui');
+              setCopyLabel('Copied');
+            } catch {
+              setCopyLabel('Select and copy the command');
+            }
+          }}
+        >
+          {copyLabel}
+        </Button>
+      }
+    />
+  );
+};
+```
+
+Los atributos nativos, los controladores de eventos, las clases, los estilos y las refs se aplican al `div` externo. Use `render` para componer otro elemento raíz, por ejemplo `render={<section aria-label="Installation commands" />}`. `CommandBlockProps` se exporta desde `twenty-ui/components/data-display`.
+
+Al migrar, reemplace `button` por `actions`.
+
+## "Props"
+
+<CommandBlockReference />
+
+<PageBanner illustration="card-page-cli" />

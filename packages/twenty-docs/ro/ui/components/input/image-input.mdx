@@ -1,0 +1,109 @@
+---
+title: ImageInput
+description: Selectarea imaginilor, previzualizarea și acțiunile de încărcare gestionate de apelant.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ImageInputReference from '/snippets/ui/generated/components/input/image-input.mdx';
+
+## Prezentare generală
+
+`ImageInput` combină o previzualizare a imaginii, un selector nativ de fișiere și acțiuni de încărcare, eliminare sau anulare. `onFileSelect` se declanșează atunci când este selectat un fișier. Aplicația dvs. validează și încarcă fișierul, gestionează progresul și anularea încărcării și furnizează URL-ul previzualizării prin `src`.
+
+<StoryEmbed storyId="ui-input-imageinput--display" title="Alege, previzualizează și elimină o imagine" height={140} />
+
+## Utilizare
+
+```tsx
+import { useState } from 'react';
+import { ImageInput } from 'twenty-ui/components/input';
+
+export const WorkspaceImage = () => {
+  const [preview, setPreview] = useState<{
+    src?: string;
+    reader?: FileReader;
+  }>({});
+
+  return (
+    <ImageInput
+      helperText="Choose a square image for your workspace."
+      src={preview.src}
+      onFileSelect={(file) => {
+        const reader = new FileReader();
+        setPreview((current) => ({ src: current.src, reader }));
+        reader.onload = () => {
+          setPreview((current) => {
+            if (current.reader !== reader) {
+              return current;
+            }
+
+            return { src: reader.result?.toString() };
+          });
+        };
+        reader.readAsDataURL(file);
+      }}
+      onRemove={() => setPreview({})}
+    />
+  );
+};
+```
+
+Exemplul păstrează previzualizarea curentă în timp ce citește un înlocuitor și ignoră citirile din selecțiile eliminate sau înlocuite.
+
+## Selectare și previzualizare
+
+Previzualizarea și butonul Încărcare deschid același selector nativ de fișiere. `onFileSelect` primește obiectul `File` selectat; acesta nu începe singur o încărcare. Anularea sau revenirea cu o selecție goală lasă imaginea curentă neschimbată. Câmpul de introducere a fișierului se golește după selecție, astfel încât același fișier poate fi selectat din nou, iar obiectul `File` din callback rămâne utilizabil.
+
+Componentele Front acceptă selecția nativă și conținutul `File` ușor de citit. Fluxurile React și Preact construite cu SDK-ul sunt verificate în Chromium cu activare prin indicator, Enter și Space. Selectorul se deschide numai printr-un clic de încredere în interiorul componentei. URL-urile de obiect create de worker și atribuite unui `src` de imagine acceptă previzualizări.
+
+`accept` are implicit valoarea `image/*` și filtrează selectorul de fișiere. Validați formatele, dimensiunile și mărimea permise în aplicația dvs. Acest selector bazat pe callback-uri nu reține un fișier pentru trimiterea nativă a formularului. Butoanele sale de acțiune folosesc `type="button"`, așa că nu trimit un formular înconjurător.
+
+O imagine goală sau nereușită afișează un substituent. Modificarea `src` reîncearcă previzualizarea, inclusiv după ce încărcarea unei imagini anterioare a eșuat. Eliminarea apelează `onRemove`; actualizați `src` după ce aplicația dvs. elimină imaginea. Aplicația gestionează URL-urile locale de previzualizare și revocă URL-urile de obiect create de worker atunci când acestea nu mai sunt necesare. Rendererul gestionează curățarea URL-urilor de previzualizare ale gazdei sale.
+
+## Proprietăți pentru rădăcină și câmpul de introducere a fișierului
+
+`className`, `style` și `ref` se aplică div-ului rădăcină. Referința implicită a rădăcinii primește un `HTMLDivElement`; utilizați `inputRef` pentru câmpul ascuns de introducere a fișierului. Utilizați `render={<div ... />}` pentru a furniza atribute native ale rădăcinii sau gestionare de evenimente. Păstrați acea rădăcină ca neinteractivă, deoarece modulul conține deja butoane. `dir` se aplică atât rădăcinii, cât și câmpului de introducere a fișierului; utilizați `dir="rtl"` pentru aspectul de la dreapta la stânga.
+
+Atributele native ale câmpului de introducere a fișierului sunt proprietăți de nivel superior, inclusiv `accept`, `capture`, `name`, `id`, `title`, `form`, `required`, atribute de accesibilitate, atribute de date și gestionare de evenimente. Acestea se aplică câmpului de introducere ascuns. `inputRef` primește `HTMLInputElement`-ul său. Controlul utilizează întotdeauna `type="file"`, acceptă un fișier și își resetează valoarea după fiecare selecție. `children`, `dangerouslySetInnerHTML`, `type`, `multiple`, `value`, `defaultValue` și `hidden` nu pot fi personalizate.
+
+Validarea nativă `required` vede în continuare un câmp de introducere gol după selecție, deoarece câmpul se resetează. Validați încărcările finalizate în aplicația dvs.
+
+`onChange` primește evenimentul nativ de modificare cât timp câmpul de introducere încă conține fișierul selectat. Câmpul de introducere se resetează apoi înainte de declanșarea `onFileSelect`. Proprietățile evenimentelor native urmează contractul de câmp de introducere al React. `onAbort` este acțiunea de anulare a încărcării.
+
+## Stări de încărcare și dezactivare
+
+`isUploading` marchează rădăcina ca ocupată și face indisponibile selectarea și eliminarea. Controalele care erau disponibile rămân focalizabile, astfel încât focalizarea de la tastatură să nu se piardă când începe o încărcare. Furnizați `onAbort` pentru a înlocui Încărcare cu Anulare în timpul unei încărcări. Anularea funcționează înainte de existența primului URL al imaginii. Aplicația gestionează anularea și setează `isUploading` înapoi la `false` când încărcarea se încheie.
+
+`disabled` dezactivează fiecare acțiune. Selectarea necesită `onFileSelect`. Eliminarea necesită atât `onRemove`, cât și un `src` nevid.
+
+<StoryEmbed storyId="ui-input-imageinput--uploading" title="Încărcare de imagine cu o acțiune de anulare" height={140} />
+
+## Etichete, instrucțiuni și erori
+
+Furnizați șiruri localizate pentru `uploadLabel`, `removeLabel` și `abortLabel`. Acestea au implicit valorile `Upload`, `Remove` și `Abort`. Eticheta de încărcare denumește și butonul de previzualizare, precum și câmpul ascuns de introducere a fișierului. Atributele native de accesibilitate pot furniza un nume diferit pentru câmpul de introducere a fișierului. `aria-describedby` descrie și butoanele de selecție și se combină cu textul ajutător și textul de eroare ale aplicației.
+
+`helperText` și `errorMessage` aparțin aplicației. Ambele descriu controalele de selectare, iar erorile sunt anunțate ca alerte. Nu există limite de fișiere sau instrucțiuni de produs încorporate.
+
+<StoryEmbed storyId="ui-input-imageinput--with-error" title="Intrare pentru imagine cu instrucțiuni și o eroare" height={160} />
+
+## Migrare
+
+Înlocuiți `onUpload` cu `onFileSelect`. Păstrați `accept` ca proprietate de nivel superior. Callback-ul primește în continuare un `File`; păstrați codul existent de validare și încărcare în aplicația dvs.
+
+```tsx
+import { ImageInput } from 'twenty-ui/components/input';
+
+export const WorkspaceImageSelector = ({
+  uploadImage,
+}: {
+  uploadImage: (file: File) => void;
+}) => <ImageInput onFileSelect={uploadImage} accept="image/png, image/jpeg" />;
+```
+
+## Proprietăți
+
+<ImageInputReference />
+
+<PageBanner illustration="page-cover-image" />

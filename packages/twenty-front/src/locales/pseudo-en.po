@@ -385,11 +385,17 @@ msgstr ""
 msgid "{0} MB"
 msgstr ""
 
-#. js-lingui-id: mmjR0w
+#. js-lingui-id: gx/V/r
 #. placeholder {0}: formatNumber(objectCount)
-#. placeholder {1}: formatNumber(fieldCount)
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
-msgid "{0} objects, {1} fields"
+msgid "{0} objects"
+msgstr ""
+
+#. js-lingui-id: Z70Dyr
+#. placeholder {0}: formatNumber(objectCount)
+#. placeholder {1}: formatNumber(recordCount)
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
+msgid "{0} objects, {1} records"
 msgstr ""
 
 #. js-lingui-id: FGOUAP
@@ -419,7 +425,9 @@ msgstr ""
 
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
+#. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
+#: src/modules/ai/components/AiChatInboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -612,6 +620,11 @@ msgstr ""
 #. js-lingui-id: g0wkzt
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
+msgstr ""
+
+#. js-lingui-id: AnO6CC
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
+msgid "{channelStatusLabel} · {assignmentLabel}"
 msgstr ""
 
 #. js-lingui-id: chd+3h
@@ -1724,6 +1737,7 @@ msgid "Account Owner"
 msgstr ""
 
 #. js-lingui-id: T3FM0r
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Account settings"
 msgstr ""
@@ -2086,6 +2100,11 @@ msgstr ""
 #. js-lingui-id: 02qdT/
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Add CC"
+msgstr ""
+
+#. js-lingui-id: PKjhUq
+#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+msgid "Add channel"
 msgstr ""
 
 #. js-lingui-id: AgvHni
@@ -3035,7 +3054,7 @@ msgstr ""
 
 #. js-lingui-id: N40H+G
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
@@ -3742,7 +3761,7 @@ msgid "Applicability"
 msgstr ""
 
 #. js-lingui-id: IrC12v
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+#: src/modules/settings/app-preferences/utils/getInstalledApplicationDisplayName.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -4151,6 +4170,7 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned"
 msgstr ""
@@ -4176,7 +4196,7 @@ msgid "Assigned to you"
 msgstr ""
 
 #. js-lingui-id: ojKCLU
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
 msgstr ""
@@ -7029,6 +7049,11 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
+#. js-lingui-id: SVyf2o
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
+msgid "Contents"
+msgstr ""
+
 #. js-lingui-id: M73whl
 #: src/modules/settings/admin-panel/components/SettingsAdminChatMessage.tsx
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
@@ -9322,6 +9347,11 @@ msgstr ""
 msgid "Deleted {objectLabel}"
 msgstr ""
 
+#. js-lingui-id: 6T/COx
+#: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
+msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
+msgstr ""
+
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "Deleted member"
@@ -9607,6 +9637,11 @@ msgstr ""
 msgid "Disconnected"
 msgstr ""
 
+#. js-lingui-id: +etBOJ
+#: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
+msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
+msgstr ""
+
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Discoverable"
@@ -9792,9 +9827,9 @@ msgstr ""
 
 #. js-lingui-id: DPfwMq
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -12747,6 +12782,12 @@ msgstr ""
 msgid "Filter by record ID"
 msgstr ""
 
+#. js-lingui-id: jge9hE
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+msgid "Filter channel chats"
+msgstr ""
+
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Filter group rule options"
@@ -14331,9 +14372,9 @@ msgid "imap.example.com"
 msgstr ""
 
 #. js-lingui-id: tSVr6t
+#: src/modules/settings/admin-panel/components/SettingsAdminUserWorkspaceActions.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
-#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Impersonate"
 msgstr ""
@@ -14377,7 +14418,7 @@ msgid "Impersonation failed"
 msgstr ""
 
 #. js-lingui-id: yImXof
-#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminUserWorkspaceActions.tsx
 msgid "Impersonation is disabled for this workspace"
 msgstr ""
 
@@ -16943,8 +16984,14 @@ msgid "MCP client configuration"
 msgstr ""
 
 #. js-lingui-id: Zw+Zv+
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "MCP server"
+msgstr ""
+
+#. js-lingui-id: 8qgfac
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "MCP servers"
 msgstr ""
 
 #. js-lingui-id: upbzgm
@@ -17215,7 +17262,8 @@ msgid "Min range"
 msgstr ""
 
 #. js-lingui-id: oSrMRT
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "Mine"
 msgstr ""
 
@@ -17249,12 +17297,6 @@ msgstr ""
 #. js-lingui-id: APfhM/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Minutes between triggers"
-msgstr ""
-
-#. js-lingui-id: G40We3
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
-msgid "Missing account"
 msgstr ""
 
 #. js-lingui-id: 0z4Od/
@@ -17918,7 +17960,6 @@ msgid "New calendar event"
 msgstr ""
 
 #. js-lingui-id: BW0+uJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "New channel"
 msgstr ""
@@ -19335,7 +19376,7 @@ msgid "Not measured at this effort yet. Showing the base model's reading."
 msgstr ""
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
 msgid "Not open to you"
 msgstr ""
 
@@ -19629,7 +19670,6 @@ msgstr ""
 
 #. js-lingui-id: B3toQF
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
@@ -19886,8 +19926,8 @@ msgid "Only you will be able to see your emails and events"
 msgstr ""
 
 #. js-lingui-id: 1TNIig
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -21803,11 +21843,6 @@ msgstr ""
 msgid "Read/Edit/Delete permissions"
 msgstr ""
 
-#. js-lingui-id: ckH3fT
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
-msgid "Ready"
-msgstr ""
-
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -21912,6 +21947,7 @@ msgid "Reconnect"
 msgstr ""
 
 #. js-lingui-id: XsIxsL
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect needed"
@@ -22126,7 +22162,6 @@ msgstr ""
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -22240,6 +22275,11 @@ msgstr ""
 #. js-lingui-id: E1qk3l
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Register as development instance"
+msgstr ""
+
+#. js-lingui-id: SqH8YF
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Register external MCP servers in Developers settings and expose their tools to AI chat."
 msgstr ""
 
 #. js-lingui-id: ARGZDy
@@ -25462,8 +25502,8 @@ msgid "Snooze until {snoozedUntilLabel}"
 msgstr ""
 
 #. js-lingui-id: rz6s8e
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Snoozed"
 msgstr ""
@@ -25844,7 +25884,6 @@ msgstr ""
 
 #. js-lingui-id: uAQUqI
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
@@ -25854,7 +25893,6 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
@@ -26438,9 +26476,13 @@ msgstr ""
 msgid "Synchronize Objects Labels and API Names"
 msgstr ""
 
+#. js-lingui-id: 4XvJjz
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
+msgstr ""
+
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and this account's credentials will be removed. Your emails and events will be retained and available after you reconnect."
 msgstr ""
 
@@ -27434,8 +27476,12 @@ msgstr ""
 
 #. js-lingui-id: PIZjqy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes {accountHandle} and all of its synced emails and events. This action cannot be undone."
+msgstr ""
+
+#. js-lingui-id: vrBe2V
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
 msgstr ""
 
 #. js-lingui-id: uFl6b9
@@ -28470,7 +28516,8 @@ msgid "Unanswered"
 msgstr ""
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "Unassigned"
 msgstr ""
 
@@ -29894,6 +29941,7 @@ msgid "view"
 msgstr ""
 
 #. js-lingui-id: jpctdh
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx

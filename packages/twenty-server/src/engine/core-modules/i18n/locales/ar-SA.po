@@ -76,7 +76,7 @@ msgstr "{0} يجب أن يكون حقل علاقة واحد إلى متعدد."
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
 msgid "{action} is disabled on object {0}"
-msgstr ""
+msgstr "تم تعطيل {action} على الكائن {0}"
 
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -152,18 +152,18 @@ msgstr "لا تزال إحدى الحملات قيد الإرسال. انتظر 
 #. js-lingui-id: kZaUc+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
 msgid "A channel named \"{name}\" already exists"
-msgstr ""
+msgstr "توجد قناة باسم \"{name}\" بالفعل"
 
 #. js-lingui-id: y84xpa
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "A channel needs a name."
-msgstr ""
+msgstr "تحتاج القناة إلى اسم."
 
 #. js-lingui-id: 3bCT2z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
 msgid "A channel with this name already exists."
-msgstr ""
+msgstr "توجد قناة بهذا الاسم بالفعل."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -263,12 +263,12 @@ msgstr "هدف سلسلة رسائل"
 #. js-lingui-id: oP9K0J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "A messaging provider with this name already exists for this application"
-msgstr ""
+msgstr "موفّر مراسلة بهذا الاسم موجود بالفعل لهذا التطبيق"
 
 #. js-lingui-id: eynBqK
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "A messaging provider with this name already exists for this application."
-msgstr ""
+msgstr "موفّر مراسلة بهذا الاسم موجود بالفعل لهذا التطبيق."
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -464,7 +464,7 @@ msgstr "يوجد مستخدم بهذا البريد الإلكتروني بال�
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type"
-msgstr ""
+msgstr "يلزم توفّر agentChatChannelUniversalIdentifier صالح لنوع AGENT_CHAT_CHANNEL"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -1090,7 +1090,7 @@ msgstr "لم يعد حقل التصدير متاحًا."
 #. js-lingui-id: zv+Pcr
 #: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 msgid "An export is already running for this workspace."
-msgstr ""
+msgstr "هناك تصدير قيد التشغيل بالفعل لمساحة العمل هذه."
 
 #. js-lingui-id: jiELc8
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -1116,6 +1116,17 @@ msgstr "حدث خطأ داخلي أثناء معالجة البيانات الم
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."
 msgstr "تم إرسال دعوة بالفعل إلى هذا البريد الإلكتروني."
+
+#. js-lingui-id: BCJWBj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "An MCP server with this name already exists"
+msgstr "يوجد بالفعل خادم MCP بهذا الاسم"
+
+#. js-lingui-id: SeiYVM
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "An MCP server with this name already exists."
+msgstr "يوجد بالفعل خادم MCP بهذا الاسم."
 
 #. js-lingui-id: CQ5DXU
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -1480,6 +1491,12 @@ msgstr "مُعين إليّ"
 msgctxt "fieldMetadata.label"
 msgid "Assignee"
 msgstr "المسند إليه"
+
+#. js-lingui-id: VkxEa0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Assistant participant"
+msgstr ""
 
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2590,13 +2607,13 @@ msgstr "يتطلب تغيير مدة الاحتفاظ بالسجلات اشتر�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel"
-msgstr ""
+msgstr "قناة"
 
 #. js-lingui-id: gPIeS4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel archived at"
-msgstr ""
+msgstr "تاريخ أرشفة القناة"
 
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -2613,14 +2630,14 @@ msgstr "معرّف القناة"
 #. js-lingui-id: G+8qH5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel name is required"
-msgstr ""
+msgstr "اسم القناة مطلوب"
 
 #. js-lingui-id: Nd2xnP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel not found"
-msgstr ""
+msgstr "القناة غير موجودة"
 
 #. js-lingui-id: ZJRMDQ
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2628,30 +2645,30 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
 msgid "Channel not found."
-msgstr ""
+msgstr "القناة غير موجودة."
 
 #. js-lingui-id: /84Bpj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "Channel role link not found"
-msgstr ""
+msgstr "لم يتم العثور على رابط دور القناة"
 
 #. js-lingui-id: 86oa9B
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Channel snoozed until"
-msgstr ""
+msgstr "تم تأجيل القناة حتى"
 
 #. js-lingui-id: ieLfO5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Channel the thread is triaged in"
-msgstr ""
+msgstr "القناة التي تم فيها فرز سلسلة المحادثة"
 
 #. js-lingui-id: 7LMBzP
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Channels are not available yet. Try again in a few minutes."
-msgstr ""
+msgstr "القنوات غير متاحة بعد. حاول مرة أخرى بعد بضع دقائق."
 
 #. js-lingui-id: z851aK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -3156,7 +3173,7 @@ msgstr "الاتصال غير موجود."
 #. placeholder {0}: flatMessagingProvider.connectionProviderUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Connection provider \"{0}\" was not found in this application"
-msgstr ""
+msgstr "لم يتم العثور على موفّر الاتصال \"{0}\" في هذا التطبيق"
 
 #. js-lingui-id: xQ2DfP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3179,11 +3196,14 @@ msgstr "اسم موفّر الاتصال مطلوب"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Connection provider not found"
 msgstr "لم يتم العثور على موفّر الاتصال"
 
 #. js-lingui-id: b+xWjq
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connection provider not found."
 msgstr "لم يتم العثور على موفّر الاتصال."
 
@@ -3200,22 +3220,22 @@ msgstr "نطاق موفّر الاتصال \"{scope}\" غير صالح"
 #. js-lingui-id: lOJLh7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider scope cannot be changed"
-msgstr ""
+msgstr "لا يمكن تغيير نطاق موفّر الاتصال"
 
 #. js-lingui-id: rGTdmC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider scope cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
-msgstr ""
+msgstr "لا يمكن تغيير نطاق موفّر الاتصال بعد الإنشاء: عرّف موفّر اتصال جديدًا باستخدام universalIdentifier جديد"
 
 #. js-lingui-id: ouURJJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider type cannot be changed"
-msgstr ""
+msgstr "لا يمكن تغيير نوع موفّر الاتصال"
 
 #. js-lingui-id: Y4TItr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider type cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
-msgstr ""
+msgstr "لا يمكن تغيير نوع موفّر الاتصال بعد الإنشاء: عرّف موفّر اتصال جديدًا باستخدام universalIdentifier جديد"
 
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
@@ -3226,7 +3246,7 @@ msgstr "موفّر اتصال بالاسم {0} موجود بالفعل لهذا 
 #. js-lingui-id: pXXjt2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
-msgstr ""
+msgstr "يجب أن يشير موفّر الاتصال من النوع 'custom' إلى دالة منطق authorize ودالة منطق callback"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3741,7 +3761,7 @@ msgstr "لا يمكن إعادة تعيين عنصر قائمة أوامر مخ�
 #. js-lingui-id: eCtxAR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Custom connection provider is missing its authorize or callback logic function"
-msgstr ""
+msgstr "يفتقد موفّر الاتصال المخصص دالة المنطق authorize أو callback"
 
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -4310,12 +4330,12 @@ msgstr "الاتجاه"
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Disabled object permission actions must be a list"
-msgstr ""
+msgstr "يجب أن تكون إجراءات أذونات الكائن المعطلة قائمة"
 
 #. js-lingui-id: EtelV5
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Disabled object permission actions must not repeat"
-msgstr ""
+msgstr "يجب ألا تتكرر إجراءات أذونات الكائن المعطلة"
 
 #. js-lingui-id: T/2cxH
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4328,6 +4348,17 @@ msgstr "تجاهل المسودة"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Discard Draft"
 msgstr "تجاهل المسودة"
+
+#. js-lingui-id: OaH7rc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Disconnect the MCP server before changing its URL"
+msgstr "افصل خادم MCP قبل تغيير عنوان URL الخاص به"
+
+#. js-lingui-id: X9u5qJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Disconnect the MCP server before changing its URL."
+msgstr "افصل خادم MCP قبل تغيير عنوان URL الخاص به."
 
 #. js-lingui-id: N4sZ6H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6763,6 +6794,31 @@ msgstr "معامل الحد غير صالح."
 msgid "Invalid logic function input."
 msgstr "مدخل دالة المنطق غير صالح."
 
+#. js-lingui-id: U2TpWH
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server input."
+msgstr "إدخال خادم MCP غير صالح."
+
+#. js-lingui-id: PTN/J2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server name provided"
+msgstr "تم تقديم اسم خادم MCP غير صالح"
+
+#. js-lingui-id: 945sNP
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server name. Use lowercase letters, digits and underscores, starting with a letter."
+msgstr "اسم خادم MCP غير صالح. استخدم أحرفًا صغيرة وأرقامًا وشرطات سفلية، بدءًا بحرف."
+
+#. js-lingui-id: 1pdxfJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server URL provided"
+msgstr "تم تقديم عنوان URL لخادم MCP غير صالح"
+
+#. js-lingui-id: YDqREm
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server URL. Please provide a valid HTTP or HTTPS URL."
+msgstr "عنوان URL لخادم MCP غير صالح. يرجى تقديم عنوان URL صالح بهيئة HTTP أو HTTPS."
+
 #. js-lingui-id: fNaXqL
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Invalid message channel input."
@@ -6776,7 +6832,7 @@ msgstr "إدخال مجلد الرسائل غير صالح."
 #. js-lingui-id: u3ER6+
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "Invalid messaging provider input."
-msgstr ""
+msgstr "إدخال موفّر المراسلة غير صالح."
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -7520,6 +7576,8 @@ msgstr "يجب أن يكون حقل عرض معرف التسمية مرئيًا"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Label is required"
 msgstr "التسمية مطلوبة"
 
@@ -7998,6 +8056,17 @@ msgstr "يجب تعريف maxNumberOfValues في الإعدادات وأن يك�
 msgid "May"
 msgstr "مايو"
 
+#. js-lingui-id: ES19km
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "MCP server not found"
+msgstr "خادم MCP غير موجود"
+
+#. js-lingui-id: 32QmfJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "MCP server not found."
+msgstr "خادم MCP غير موجود."
+
 #. js-lingui-id: DICk6O
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -8446,28 +8515,28 @@ msgstr "الرسائل المرسلة كجزء من هذه الحملة"
 #. js-lingui-id: DR7S+J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider connection provider cannot be changed"
-msgstr ""
+msgstr "لا يمكن تغيير موفّر الاتصال الخاص بموفّر المراسلة"
 
 #. js-lingui-id: S8RYm2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
-msgstr ""
+msgstr "لا يمكن تغيير موفّر الاتصال الخاص بموفّر المراسلة بعد الإنشاء: عرّف موفّر مراسلة جديدًا باستخدام universalIdentifier جديد"
 
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
-msgstr ""
+msgstr "اسم العرض لموفّر المراسلة مطلوب"
 
 #. js-lingui-id: PheN1+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider displayName is required"
-msgstr ""
+msgstr "يلزم إدخال displayName لموفّر المراسلة."
 
 #. js-lingui-id: NpU0GW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider name is required"
-msgstr ""
+msgstr "اسم موفّر المراسلة مطلوب"
 
 #. js-lingui-id: kh1zio
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -8475,17 +8544,17 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider not found"
-msgstr ""
+msgstr "موفّر المراسلة غير موجود"
 
 #. js-lingui-id: yyDEl+
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "Messaging provider not found."
-msgstr ""
+msgstr "موفّر المراسلة غير موجود."
 
 #. js-lingui-id: Ih/vm6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider with name {name} already exists for this application"
-msgstr ""
+msgstr "موفّر مراسلة بالاسم {name} موجود بالفعل لهذا التطبيق"
 
 #. js-lingui-id: IYFsjL
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -8582,7 +8651,7 @@ msgstr "يجب أن يحتوي حقل علاقة morph على معرّف morph"
 #. js-lingui-id: /eQ78F
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Move this channel's chats to another channel before deleting it."
-msgstr ""
+msgstr "انقل دردشات هذه القناة إلى قناة أخرى قبل حذفها."
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -8643,7 +8712,7 @@ msgstr "الاسم غير متزامن مع التسمية."
 #. js-lingui-id: QrBCC2
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "Name is not valid: it must be camelCase, e.g. \"{camelCasedName}\""
-msgstr ""
+msgstr "الاسم غير صالح: يجب أن يكون بصيغة camelCase، مثل \"{camelCasedName}\""
 
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
@@ -9336,7 +9405,7 @@ msgstr "أحد الحقول المحددة لا ينتمي إلى هذا الك�
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "One of these roles no longer exists."
-msgstr ""
+msgstr "لم يعد أحد هذه الأدوار موجودًا."
 
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -9423,13 +9492,13 @@ msgstr "يمكن تغيير قيم هذا النموذج فقط."
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Open chat"
-msgstr ""
+msgstr "فتح الدردشة"
 
 #. js-lingui-id: 4QVn1g
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Open chat"
-msgstr ""
+msgstr "فتح الدردشة"
 
 #. js-lingui-id: +ee5JG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10144,7 +10213,7 @@ msgstr "اختر حقلاً فرعياً محدداً من \"{0}\" — لا يم
 #. js-lingui-id: r+tlvn
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Pick another channel to move the chats to."
-msgstr ""
+msgstr "اختر قناة أخرى لنقل الدردشات إليها."
 
 #. js-lingui-id: TtfDdb
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
@@ -10183,6 +10252,7 @@ msgid "Please provide a password for this connection."
 msgstr "يرجى تقديم كلمة مرور لهذا الاتصال."
 
 #. js-lingui-id: NR22yi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Please provide a valid HTTP or HTTPS URL"
@@ -10386,7 +10456,7 @@ msgstr "لا يمكن أن يكون الموجّه فارغًا"
 #. js-lingui-id: KQ0Ots
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service.ts
 msgid "Property {property} cannot be updated"
-msgstr ""
+msgstr "لا يمكن تحديث الخاصية {property}"
 
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -11608,7 +11678,7 @@ msgstr "إرسال البريد الإلكتروني"
 #. js-lingui-id: RPQott
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Send message logic function \"{sendMessageLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "لم يتم العثور على دالة المنطق لإرسال الرسالة \"{sendMessageLogicFunctionUniversalIdentifier}\" في هذا التطبيق"
 
 #. js-lingui-id: +dLR8z
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12163,7 +12233,7 @@ msgstr "لا يمكن تعديل الوكلاء القياسيين."
 #. js-lingui-id: rQq8lH
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Standard channels cannot be deleted."
-msgstr ""
+msgstr "لا يمكن حذف القنوات القياسية."
 
 #. js-lingui-id: Ptv+nG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -12863,10 +12933,25 @@ msgstr "إجمالي الإيرادات السنوية للشركة"
 msgid "The connected {0} account is missing calendar permissions ({missingScopeList}). Please reconnect the account to grant calendar access."
 msgstr "يفتقد حساب {0} المتصل أذونات التقويم ({missingScopeList}). يُرجى إعادة ربط الحساب لمنح الوصول إلى التقويم."
 
+#. js-lingui-id: xYqYn7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider belongs to another application"
+msgstr "موفر الاتصال تابع لتطبيق آخر"
+
+#. js-lingui-id: 0kfc9m
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider must belong to the same application as the MCP server"
+msgstr "يجب أن يكون موفر الاتصال تابعًا للتطبيق نفسه الذي يتبعه خادم MCP"
+
+#. js-lingui-id: x9rG77
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The connection provider must belong to the same application as the MCP server."
+msgstr "يجب أن يكون موفر الاتصال تابعًا للتطبيق نفسه الذي يتبعه خادم MCP."
+
 #. js-lingui-id: fDWKx/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The connection provider this messaging provider uses was not found in its application."
-msgstr ""
+msgstr "لم يتم العثور على موفّر الاتصال الذي يستخدمه موفّر المراسلة هذا في تطبيقه."
 
 #. js-lingui-id: j6q6l+
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -12975,7 +13060,7 @@ msgstr "ملف التصدير كبير جدًا. يُرجى تصدير عدد أ
 #. js-lingui-id: bjRiGF
 #: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 msgid "The export is missing data and could not be completed."
-msgstr ""
+msgstr "يفتقد التصدير بيانات وتعذّر إكماله."
 
 #. js-lingui-id: RKP94c
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -13083,7 +13168,7 @@ msgstr "القائمة التي أُرسلت إليها هذه الحملة"
 #. js-lingui-id: pSAncm
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that completes the connection was not found."
-msgstr ""
+msgstr "لم يتم العثور على دالة المنطق التي تُكمل الاتصال."
 
 #. js-lingui-id: gU/AgL
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13093,12 +13178,12 @@ msgstr "لم يتم العثور على دالة المنطق التي تحدد 
 #. js-lingui-id: 8gf2aA
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that starts the connection was not found."
-msgstr ""
+msgstr "لم يتم العثور على دالة المنطق التي تبدأ الاتصال."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider sends with was not found in its application."
-msgstr ""
+msgstr "لم يتم العثور على دالة المنطق التي يستخدمها موفّر المراسلة هذا للإرسال في تطبيقه."
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13414,12 +13499,12 @@ msgstr "جدول سير العمل غير صالح."
 #. js-lingui-id: /s75Zz
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
 msgid "The workflow select field must reference a field of the same type."
-msgstr ""
+msgstr "يجب أن يشير حقل التحديد في سير العمل إلى حقل من النوع نفسه."
 
 #. js-lingui-id: 8xdW5z
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
 msgid "The workflow select field must reference an existing field."
-msgstr ""
+msgstr "يجب أن يشير حقل التحديد في سير العمل إلى حقل موجود."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -13660,27 +13745,27 @@ msgstr "سيؤدي هذا التغيير إلى إفساد سير العمل، �
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This channel access no longer exists."
-msgstr ""
+msgstr "لم يعد هذا الوصول إلى القناة موجودًا."
 
 #. js-lingui-id: ++E+5T
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This channel is being changed. Try again in a moment."
-msgstr ""
+msgstr "يجري تغيير هذه القناة. حاول مرة أخرى بعد لحظة."
 
 #. js-lingui-id: /mdJSV
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This chat has no owner, so it has to stay in a channel."
-msgstr ""
+msgstr "لا مالك لهذه الدردشة، لذا يجب أن تبقى في قناة."
 
 #. js-lingui-id: 6zaKtA
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This chat is not in a channel."
-msgstr ""
+msgstr "هذه الدردشة ليست في قناة."
 
 #. js-lingui-id: TjTe43
 #: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
 msgid "This code belongs to a published workflow version. Edit it from a draft."
-msgstr ""
+msgstr "ينتمي هذا الرمز إلى إصدار منشور من سير عمل. حرّره من مسودة."
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -13882,7 +13967,7 @@ msgstr "تم تغيير هذا الحد أثناء تعديله. أعد التح
 #. js-lingui-id: STVycN
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This list of chats could not be loaded. Try again."
-msgstr ""
+msgstr "تعذّر تحميل قائمة الدردشات هذه. حاول مرة أخرى."
 
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
@@ -13912,7 +13997,7 @@ msgstr "لم يُعد هذا العضو المصادقة الثنائية، لذ
 #. js-lingui-id: NW6Nmf
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
-msgstr ""
+msgstr "لا يمكن لقناة الرسائل هذه إرسال رسائل."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -14002,7 +14087,7 @@ msgstr "تم تعيين هذا الإذن للدور بالفعل"
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
 msgid "This permission is disabled on the object and cannot be granted"
-msgstr ""
+msgstr "هذا الإذن معطل على الكائن ولا يمكن منحه"
 
 #. js-lingui-id: wJWFt2
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -14062,12 +14147,12 @@ msgstr "لا يزال هذا الطلب قيد التجهيز. حاول مرة �
 #. js-lingui-id: T6c4z3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This role already has access to the channel"
-msgstr ""
+msgstr "لدى هذا الدور حق الوصول إلى القناة بالفعل"
 
 #. js-lingui-id: ce6Oq+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 msgid "This role already has access to the channel."
-msgstr ""
+msgstr "لدى هذا الدور حق الوصول إلى القناة بالفعل."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -14874,7 +14959,7 @@ msgstr "غير معروف"
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Unknown disabled object permission action"
-msgstr ""
+msgstr "إجراء إذن كائن معطل غير معروف"
 
 #. js-lingui-id: of4ZuG
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -15170,6 +15255,11 @@ msgstr "استخدمه قبل مكالمة أو اجتماع، وكلما سأل
 msgctxt "skill.description"
 msgid "Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes"
 msgstr "استخدمه لعمليات Python على بيانات لا تستطيع أدوات السجلات التعبير عنها: الإحصاءات، وصور المخططات، وتحليل ملف مرفوع. لا تستخدمه لقراءات السجلات وعمليات الكتابة العادية"
+
+#. js-lingui-id: cW4z4t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Use lowercase letters, digits and underscores, starting with a letter"
+msgstr "استخدم أحرفًا صغيرة وأرقامًا وشرطات سفلية، بدءًا بحرف"
 
 #. js-lingui-id: Gltw+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -15895,7 +15985,7 @@ msgstr "نحن نواجه مشكلة مؤقتة في قاعدة البيانات
 #. js-lingui-id: 1QdT9i
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not complete the connection. Please try again."
-msgstr ""
+msgstr "تعذّر إكمال الاتصال. يُرجى المحاولة مرة أخرى."
 
 #. js-lingui-id: SO+/3j
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -15905,12 +15995,12 @@ msgstr "تعذر علينا تحديد الحساب الذي فوّضته. يُ�
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not send your message. Please try again."
-msgstr ""
+msgstr "تعذّر إرسال رسالتك. يُرجى المحاولة مرة أخرى."
 
 #. js-lingui-id: j7daTn
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
-msgstr ""
+msgstr "تعذّر بدء الاتصال. يُرجى المحاولة مرة أخرى."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -16007,7 +16097,7 @@ msgstr "عندما تعود سلسلة مؤجلة إلى صندوق الوارد
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "When a thread snoozed in its channel comes back to it"
-msgstr ""
+msgstr "وقت عودة سلسلة محادثات مؤجلة في قناتها إليها"
 
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -16043,7 +16133,7 @@ msgstr "عندما أُنشئت السلسلة أو تلقت آخر رسالة"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "When the thread was marked as done or snoozed in its channel"
-msgstr ""
+msgstr "وقت وضع علامة «تم» على سلسلة المحادثات أو تأجيلها في قناتها"
 
 #. js-lingui-id: Kx3ltI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -16068,6 +16158,12 @@ msgstr "ما إذا كانت قواعد المشاركين الحالية تبر
 msgctxt "fieldMetadata.description"
 msgid "Whether new activity brings the thread back to the inbox"
 msgstr "ما إذا كان النشاط الجديد يعيد السلسلة إلى صندوق الوارد"
+
+#. js-lingui-id: DYv22m
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether the assistant participates in this conversation"
+msgstr ""
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -17149,7 +17245,7 @@ msgstr "اشتراك الفواتير تالفة. يُرجى التواصل مع
 #. js-lingui-id: L8/bmN
 #: src/modules/emailing/utils/build-campaign-send-refusal-exception.util.ts
 msgid "Your daily limit is {limitValue, plural, one {# email} other {# emails}}, and this campaign would go over what's left today. Contact us to raise it."
-msgstr ""
+msgstr "حدك اليومي هو {limitValue, plural, zero {# رسالة بريد إلكتروني} one {# رسالة بريد إلكتروني} two {# رسالتا بريد إلكتروني} few {# رسائل بريد إلكتروني} many {# رسالة بريد إلكتروني} other {# رسالة بريد إلكتروني}}، وستتجاوز هذه الحملة المتبقي اليوم. تواصل معنا لرفعه."
 
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

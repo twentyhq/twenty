@@ -1,7 +1,10 @@
 ---
 title: Calendario & Email
+sidebarTitle: Panoramica
 description: Collega i tuoi account email e calendario a Twenty.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Opzioni di Connessione
 
@@ -35,19 +38,19 @@ Per altri fornitori di email e calendario:
 4. Testa la connessione
 
 <Note>
-**Self-hosting su una rete air-gapped o interna**: Per impostazione predefinita, Twenty rifiuta le connessioni in uscita verso indirizzi IP privati/interni (protezione SSRF). Se il tuo server di posta o calendario è in esecuzione su un IP locale/privato (ad es. un server on-premise su una LAN), le connessioni verso di esso verranno bloccate. Per consentirle, imposta la seguente variabile di ambiente sul server:
+**Self-hosting su una rete interna**: Per impostazione predefinita, Twenty rifiuta le connessioni in uscita verso indirizzi IP privati/interni (protezione SSRF). Se il server del provider di posta, calendario o identità è in esecuzione su un IP locale/privato (ad es. un server on-premise su una LAN), le connessioni verso di esso verranno bloccate. Per consentirle, elenca i nomi host o i letterali IP nella seguente variabile di ambiente sul server:
 
 ```
-OUTBOUND_HTTP_SAFE_MODE_ENABLED=false
+OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS=mail.internal,keycloak,192.168.1.10
 ```
 
-Questo disabilita la modalità sicura per **tutte** le richieste in uscita (azioni del flusso di lavoro HTTP, webhook e connessioni IMAP/SMTP/CalDAV), quindi impostalo solo su reti affidabili e isolate in cui la protezione SSRF non è necessaria.
+Le voci vengono confrontate solo in base al nome host (`keycloak`, non `http://keycloak:8080/realms/…`), senza caratteri jolly. Ogni altra richiesta in uscita (azioni del workflow HTTP, webhook, connessioni SSO e IMAP/SMTP/CalDAV) rimane protetta e persino un host consentito non può mai raggiungere l'intervallo di indirizzi dei metadati cloud. Impostala su `*` per disabilitare completamente la protezione, operazione appropriata solo su reti affidabili e isolate. Se in precedenza hai impostato `OUTBOUND_HTTP_SAFE_MODE_ENABLED=false`, rimuovilo: finché è impostato, la protezione rimane completamente disattivata e l'elenco viene ignorato.
 </Note>
 
 ### Caselle Multiple
 
 * **Account Illimitati**: Collega vari account email per utente
-* **Gestione Account**: Passa tra diverse caselle di posta
+* **Selezione del mittente**: scegli quale account invia ogni email che scrivi in Twenty
 * **Impostazioni di Sincronizzazione**: Configura impostazioni differenti per ciascuna casella
 
 <Warning>
@@ -74,10 +77,9 @@ Scegli diversi livelli di visibilità per le tue email:
 <Note>Quando è attivata, i contatti vengono collegati automaticamente ai relativi record di Azienda in base al loro dominio email. Se l'Azienda non esiste ancora, Twenty la crea per te.</Note>
 
 <Note>
-**Sincronizzazione delle email interne**: Il comportamento "email interne non sincronizzate" è l’impostazione predefinita, ma può essere disattivato. L’interruttore si trova nelle impostazioni avanzate:
-1. Apri **Impostazioni** e abilita l’interruttore **Avanzate** in fondo alla pagina delle impostazioni
-2. Vai a **Generale → Sicurezza**
-3. Abilita l’interruttore **Sincronizza email interne** per includere le email in cui tutti i partecipanti condividono lo stesso dominio
+**Sincronizzazione delle email interne**: Il comportamento "email interne non sincronizzate" è l’impostazione predefinita, ma può essere disattivato:
+1. Vai a **Impostazioni → Comunicazione**
+2. Abilita l’interruttore **Sincronizza email interne** per includere le email in cui tutti i partecipanti condividono lo stesso dominio
 
 Questa è un’impostazione valida per l’intero spazio di lavoro (utile per università o organizzazioni con dominio condiviso).
 </Note>
@@ -98,7 +100,7 @@ Questo ti offre un controllo preciso su quali email appaiono nel tuo CRM senza s
 **Cosa viene sincronizzato:**
 
 * **Email Esterne**: Tutte le email con contatti esterni dalle cartelle selezionate
-* **Email Interne**: Non sincronizzate per impostazione predefinita (le email dello stesso dominio rimangono private). Abilita l’interruttore **Avanzate** in fondo a **Impostazioni**, quindi attiva **Sincronizza email interne** in **Generale → Sicurezza** per includerle a livello di spazio di lavoro.
+* **Email Interne**: Non sincronizzate per impostazione predefinita (le email dello stesso dominio rimangono private). Attiva **Sincronizza email interne** in **Impostazioni → Comunicazione** per includerle nell'intero spazio di lavoro.
 * **Allegati**: In arrivo nel H1 2026
 
 **Nota**: Non forniamo un indirizzo email CC per la sincronizzazione selettiva. Invece, usa la funzionalità Cartella Messaggi sopra per ottenere lo stesso livello di controllo su quali email sincronizzano con Twenty.
@@ -142,3 +144,5 @@ Scegli cosa sarà visibile ad altri utenti nel tuo spazio di lavoro:
 
 * [Funzionalità della casella di posta](/it/user-guide/calendar-emails/capabilities/mailbox)
 * [Risolvi i problemi delle email mancanti](/it/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)
+
+<PageBanner illustration="calendar-emails" />

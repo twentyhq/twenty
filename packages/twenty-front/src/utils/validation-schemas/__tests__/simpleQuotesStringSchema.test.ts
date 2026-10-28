@@ -44,14 +44,14 @@ describe('simpleQuotesStringSchema', () => {
     });
 
     i18n.activate(SOURCE_LOCALE);
-    const sourceResult = simpleQuotesStringSchema.safeParse('unquoted');
+    const sourceMessage =
+      simpleQuotesStringSchema.safeParse('unquoted').error?.issues[0].message;
 
     i18n.activate('fr-FR');
-    const translatedResult = simpleQuotesStringSchema.safeParse('unquoted');
+    const translatedMessage =
+      simpleQuotesStringSchema.safeParse('unquoted').error?.issues[0].message;
 
-    expect(sourceResult.error?.issues[0].message).toBe(errorMessage.message);
-    expect(translatedResult.error?.issues[0].message).toBe(
-      'Entourez le texte de guillemets simples',
-    );
+    expect(sourceMessage).toBe(errorMessage.message);
+    expect(translatedMessage).toBe('Entourez le texte de guillemets simples');
   });
 });

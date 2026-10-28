@@ -1,0 +1,62 @@
+---
+title: Evaluación del Marketplace (en curso)
+description: Requisitos propuestos para que las aplicaciones de terceros reciban una insignia de Verificada.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Cómo funciona el veterinario
+
+<Warning>
+  **Trabajo en curso.** Esta página y sus requisitos pueden evolucionar. La evaluación de terceros
+  aún no está disponible. Consulta
+  [Publicación](/es/developers/extend/apps/operations/publishing#marketplace-visibility-and-vetting)
+  para conocer el comportamiento actual del marketplace.
+</Warning>
+
+La evaluación se aplica a una versión y un paquete exactos de la aplicación. Cada actualización necesita revisión y
+aprobación de Twenty. Las aplicaciones evaluadas pueden volver a evaluarse a medida que las dependencias o los servicios
+evolucionen.
+
+## Lista de verificación de evaluación
+
+Todos los elementos aplicables deben aprobarse. Recomendamos usar un agente para autoevaluar
+cada criterio con pruebas y las correcciones necesarias antes de enviarlo.
+
+* [ ] **Editor.** [Reclama tu aplicación](/es/developers/extend/apps/operations/publishing#claiming-your-app)
+  y [publica con procedencia](/es/developers/extend/apps/operations/publishing#ci-publishing).
+* [ ] **Seguridad.** Supera la revisión de seguridad interna de Twenty y resuelve los
+  hallazgos bloqueantes.
+* [ ] **Permisos.** Solicita solo los
+  [permisos](/es/developers/extend/apps/config/roles) necesarios para las funciones de la aplicación.
+* [ ] **Funcionalidad.** La configuración y los flujos de trabajo principales son fáciles de seguir y funcionan como
+  se anuncia, sin bloqueos, trabajo perdido ni registros duplicados. Sin funciones de marcador de posición
+  ni controles defectuosos.
+* [ ] **Rendimiento.** Respeta los límites de frecuencia compartidos de API y trabajos, controla la limitación de solicitudes y
+  sigue las
+  [buenas prácticas de desarrollo de aplicaciones](/es/developers/extend/apps/getting-started/good-practices).
+* [ ] **Utilidad.** Completa una tarea significativa de CRM para un público más amplio que
+  la configuración de un solo cliente. Los conectores pequeños y las automatizaciones sin interfaz cumplen los requisitos.
+* [ ] **Experiencia nativa.** Reutiliza objetos, vistas y flujos de trabajo nativos cuando corresponda.
+  Si la aplicación tiene una UI, usa
+  [`twenty-ui`](/es/developers/extend/apps/layout/front-components#using-twenty-ui-components)
+  y ajusta los diseños, las interacciones y las convenciones de accesibilidad de Twenty.
+* [ ] **Privacidad.** Explica qué datos salen del espacio de trabajo, adónde van y por qué,
+  incluidos los proveedores de IA, cuánto tiempo se conservan y cómo se pueden eliminar.
+* [ ] **Mantenimiento y compatibilidad.** Declara las versiones compatibles de Twenty, mantén estables los
+  identificadores de entidad y corrige los errores críticos y las integraciones defectuosas con el
+  tiempo.
+* [ ] **Logotipo y galería.** Proporciona un logotipo original y reconocible e imágenes
+  pulidas de la aplicación real. Sigue las
+  [directrices de imágenes](/es/developers/extend/apps/operations/publishing#marketplace-metadata).
+* [ ] **Listado y README.** Describe con precisión las funciones y afiliaciones en
+  el nombre, la descripción y las capturas de pantalla. Mantén el README breve, bien formateado
+  y centrado en el valor de la aplicación.
+* [ ] **Precios.** Indica claramente si la aplicación es gratuita o de pago, los precios de los planes,
+  la frecuencia de facturación y los servicios de terceros de pago necesarios.
+* [ ] **Documentación y soporte.** Proporciona instrucciones de configuración, un ejemplo funcional
+  y un contacto de soporte. Si usas rutas compartidas, completa la
+  [configuración](/es/developers/extend/apps/operations/publishing#setting-up-server-routes)
+  y verifica que los eventos lleguen al espacio de trabajo correcto.
+
+<PageBanner illustration="card-page-marketplace-vetting" />
