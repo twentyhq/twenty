@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { IconNewSection, IconPlus } from 'twenty-ui/icon';
+import { IconPlus } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 import { NAVIGATION_MENU_ITEM_AI_SECTION_TYPES } from '@/navigation-menu-item/common/constants/NavigationMenuItemAiSectionTypes';
@@ -35,14 +35,11 @@ export const NavigationMenuItemAddSectionButton = ({
     ...(hasAiPermission ? NAVIGATION_MENU_ITEM_AI_SECTION_TYPES : []),
   ];
 
-  const isInSidebar = (type: NavigationMenuItemBuiltInSectionType) =>
-    sections.some((section) => section.type === type);
-
   const groups = [
     {
-      id: 'available',
+      id: 'built-in',
       options: builtInSectionTypes
-        .filter((type) => !isInSidebar(type))
+        .filter((type) => !sections.some((section) => section.type === type))
         .map((type) => {
           const { Icon, color } = NAVIGATION_MENU_ITEM_BUILT_IN_SECTIONS[type];
 
@@ -53,17 +50,6 @@ export const NavigationMenuItemAddSectionButton = ({
             onClick: () => createBuiltInSection({ parentId, type }),
           };
         }),
-    },
-    {
-      id: 'in-sidebar',
-      label: t`Already in sidebar`,
-      options: builtInSectionTypes.filter(isInSidebar).map((type) => ({
-        id: type,
-        label: getDefaultSectionLabel(type),
-        Icon: NAVIGATION_MENU_ITEM_BUILT_IN_SECTIONS[type].Icon,
-        isDisabled: true,
-        onClick: () => createBuiltInSection({ parentId, type }),
-      })),
     },
     {
       id: 'custom',
@@ -88,7 +74,7 @@ export const NavigationMenuItemAddSectionButton = ({
           trigger={
             <div tabIndex={-1}>
               <NavigationDrawerItem
-                Icon={IconNewSection}
+                Icon={IconPlus}
                 label={t`Add section`}
                 triggerEvent="CLICK"
                 variant="tertiary"

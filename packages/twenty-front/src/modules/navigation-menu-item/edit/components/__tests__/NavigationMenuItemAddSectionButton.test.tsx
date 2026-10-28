@@ -59,7 +59,7 @@ describe('NavigationMenuItemAddSectionButton', () => {
     expect(screen.queryByText('Inbox')).not.toBeInTheDocument();
   });
 
-  it('lists the sections already in the sidebar after the others, disabled, then Custom section', async () => {
+  it('only offers the sections the tab does not have yet, then Custom section', async () => {
     renderAddSectionButton(
       [PermissionFlagType.AI],
       [
@@ -72,17 +72,14 @@ describe('NavigationMenuItemAddSectionButton', () => {
 
     await userEvent.click(screen.getByText('Add section'));
 
-    expect(await screen.findByText('Already in sidebar')).toBeVisible();
-    expect(screen.getByRole('menuitem', { name: 'Favorites' })).toBeDisabled();
     expect(
-      screen.getAllByRole('menuitem').map((item) => item.textContent),
+      (await screen.findAllByRole('menuitem')).map((item) => item.textContent),
     ).toEqual([
       'Inbox',
       'Favorite chats',
       'Channels',
       'Recent chats',
       'Agents',
-      'Favorites',
       'Custom section',
     ]);
   });
