@@ -35,7 +35,7 @@ import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function
 import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name.util';
 import { getLambdaLayerNameFromArn } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-layer-name-from-arn.util';
 import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name.util';
-import { getLambdaWorkspaceCustomDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-workspace-custom-deps-layer-name.util';
+import { getLambdaWorkspaceCustomSharedDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-workspace-custom-shared-deps-layer-name.util';
 import { reprefixLambdaZipEntries } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/reprefix-lambda-zip-entries.util';
 import { sanitizeApplicationPackageJson } from 'src/engine/core-modules/logic-function/logic-function-resource/utils/sanitize-application-package-json.util';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
@@ -107,7 +107,7 @@ export class LambdaLayerManagerService {
     }
 
     return [
-      this.getWorkspaceCustomDepsLayerName(flatApplication),
+      this.getWorkspaceCustomSharedDepsLayerName(flatApplication),
       applicationDepsLayerName,
     ];
   }
@@ -115,7 +115,8 @@ export class LambdaLayerManagerService {
   private async ensureWorkspaceCustomDepsLayer(
     flatApplication: FlatApplication,
   ): Promise<string> {
-    const layerName = this.getWorkspaceCustomDepsLayerName(flatApplication);
+    const layerName =
+      this.getWorkspaceCustomSharedDepsLayerName(flatApplication);
     const existingArn = await this.awsClient.getExistingLayerArn(layerName);
 
     if (isDefined(existingArn)) {
@@ -162,7 +163,7 @@ export class LambdaLayerManagerService {
     return workspace?.workspaceCustomApplicationId === flatApplication.id;
   }
 
-  private getWorkspaceCustomDepsLayerName(
+  private getWorkspaceCustomSharedDepsLayerName(
     flatApplication: FlatApplication,
   ): string {
     if (!isDefined(flatApplication.yarnLockChecksum)) {
@@ -172,7 +173,7 @@ export class LambdaLayerManagerService {
       );
     }
 
-    return getLambdaWorkspaceCustomDepsLayerName({
+    return getLambdaWorkspaceCustomSharedDepsLayerName({
       yarnLockChecksum: flatApplication.yarnLockChecksum,
       namespace: this.options.resourceNamespace,
     });

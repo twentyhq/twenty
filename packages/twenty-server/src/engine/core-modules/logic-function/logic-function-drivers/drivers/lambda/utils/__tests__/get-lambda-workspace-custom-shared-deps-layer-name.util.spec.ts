@@ -1,9 +1,9 @@
-import { getLambdaWorkspaceCustomDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-workspace-custom-deps-layer-name.util';
+import { getLambdaWorkspaceCustomSharedDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-workspace-custom-shared-deps-layer-name.util';
 
-describe('getLambdaWorkspaceCustomDepsLayerName', () => {
+describe('getLambdaWorkspaceCustomSharedDepsLayerName', () => {
   it('names the layer shared by workspace custom applications after their yarn.lock', () => {
     expect(
-      getLambdaWorkspaceCustomDepsLayerName({
+      getLambdaWorkspaceCustomSharedDepsLayerName({
         yarnLockChecksum: 'abc123',
         namespace: 'ns123',
       }),
@@ -12,7 +12,7 @@ describe('getLambdaWorkspaceCustomDepsLayerName', () => {
 
   it('omits the namespace segment when it is an empty string', () => {
     expect(
-      getLambdaWorkspaceCustomDepsLayerName({
+      getLambdaWorkspaceCustomSharedDepsLayerName({
         yarnLockChecksum: 'abc123',
         namespace: '',
       }),
