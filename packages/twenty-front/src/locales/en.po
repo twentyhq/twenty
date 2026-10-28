@@ -17304,12 +17304,6 @@ msgstr "Minutes"
 msgid "Minutes between triggers"
 msgstr "Minutes between triggers"
 
-#. js-lingui-id: G40We3
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
-msgid "Missing account"
-msgstr "Missing account"
-
 #. js-lingui-id: 0z4Od/
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Missing authorization URL"
@@ -21959,6 +21953,7 @@ msgid "Reconnect"
 msgstr "Reconnect"
 
 #. js-lingui-id: XsIxsL
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect needed"
