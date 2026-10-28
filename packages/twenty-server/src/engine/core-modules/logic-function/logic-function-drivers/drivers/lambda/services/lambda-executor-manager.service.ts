@@ -300,7 +300,7 @@ export class LambdaExecutorManagerService {
       isDefined(lambdaExecutor) &&
       isActive &&
       !flatApplication.isSdkLayerStale &&
-      // TODO: use layerManager.hasExpectedLayers once the 2-53 upgrade folder is removed
+      // TODO: use layerManager.hasExpectedLayers once the 2-54 upgrade folder is removed
       (await this.legacyDepsLayerBridge.hasExpectedLayers({
         lambdaExecutor,
         flatApplication,
@@ -319,7 +319,7 @@ export class LambdaExecutorManagerService {
     let depsLayerArn: string;
 
     try {
-      // TODO: use layerManager.ensureDepsLayer once the 2-53 upgrade folder is removed
+      // TODO: use layerManager.ensureDepsLayer once the 2-54 upgrade folder is removed
       depsLayerArn = await this.legacyDepsLayerBridge.resolveDepsLayerArn({
         lambdaExecutor,
         flatApplication,

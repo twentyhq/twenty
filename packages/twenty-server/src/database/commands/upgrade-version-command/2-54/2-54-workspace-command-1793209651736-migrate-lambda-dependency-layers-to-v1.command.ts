@@ -40,9 +40,9 @@ type LambdaDepsLayerServices = {
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
-@RegisteredWorkspaceCommand('2.53.0', 1793203857853)
+@RegisteredWorkspaceCommand('2.54.0', 1793209651736)
 @Command({
-  name: 'upgrade:2-53:migrate-lambda-dependency-layers-to-v1',
+  name: 'upgrade:2-54:migrate-lambda-dependency-layers-to-v1',
   description:
     'Recompute application dependency checksums from the stored files and move logic functions to their v1 dependency layer',
 })

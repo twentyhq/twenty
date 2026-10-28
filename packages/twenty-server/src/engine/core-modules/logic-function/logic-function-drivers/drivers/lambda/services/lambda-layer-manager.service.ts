@@ -29,7 +29,7 @@ import {
   SDK_LAYER_PREFIX_IN_ZIP,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
-import { DEPENDENCY_CHECKSUMS_SEEDED_IN_2_52 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/legacy-deps-layer/dependency-checksums-seeded-in-2-52.constant';
+import { DEPENDENCY_CHECKSUMS_SEEDED_BEFORE_2_54 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/legacy-deps-layer/dependency-checksums-seeded-before-2-54.constant';
 import { type LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name.util';
@@ -188,7 +188,7 @@ export class LambdaLayerManagerService {
 
     return [
       defaultPackageFields,
-      ...Object.values(DEPENDENCY_CHECKSUMS_SEEDED_IN_2_52),
+      ...Object.values(DEPENDENCY_CHECKSUMS_SEEDED_BEFORE_2_54),
     ].some((knownChecksums) =>
       isMatchingDependencyChecksums({
         declaredChecksums: flatApplication,
