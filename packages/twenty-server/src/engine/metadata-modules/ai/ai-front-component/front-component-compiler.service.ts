@@ -172,7 +172,10 @@ export class FrontComponentCompilerService extends DriverFactoryBase<
     if (!built.success) {
       throw new FrontComponentException(
         built.error,
-        FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        built.code === 'BUILD_FAILED'
+          ? FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED
+          : FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        { userFriendlyMessage: built.userFriendlyMessage },
       );
     }
     if (
@@ -279,7 +282,10 @@ export class FrontComponentCompilerService extends DriverFactoryBase<
         if (!result.success) {
           throw new FrontComponentException(
             result.error,
-            FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+            result.code === 'BUILD_FAILED'
+              ? FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED
+              : FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+            { userFriendlyMessage: result.userFriendlyMessage },
           );
         }
         if (
