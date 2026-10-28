@@ -1,6 +1,7 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 
+import { UNGATED_MERGE_AVAILABILITY_EXPRESSION } from 'src/database/commands/upgrade-version-command/2-53/utils/build-ungate-merge-command-menu-item-update.util';
 import { buildMergeCommandRecordPermissionAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-53/utils/build-merge-command-record-permission-availability-updates.util';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
@@ -11,8 +12,7 @@ import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty
 const NOW = '2026-10-27T12:00:00.000Z';
 const MERGE_UNIVERSAL_IDENTIFIER =
   STANDARD_COMMAND_MENU_ITEMS.mergeMultipleRecords.universalIdentifier;
-const PREVIOUS_EXPRESSION =
-  'not isSelectAll and numberOfSelectedRecords >= 2 and isDefined(objectMetadataItem.duplicateCriteria) and objectPermissions.canUpdateObjectRecords and objectPermissions.canDestroyObjectRecords and numberOfSelectedRecords <= 9';
+const PREVIOUS_EXPRESSION = UNGATED_MERGE_AVAILABILITY_EXPRESSION;
 const CURRENT_EXPRESSION =
   STANDARD_COMMAND_MENU_ITEMS.mergeMultipleRecords
     .conditionalAvailabilityExpression;

@@ -1,12 +1,14 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { UNGATED_MERGE_AVAILABILITY_EXPRESSION } from 'src/database/commands/upgrade-version-command/2-53/utils/build-ungate-merge-command-menu-item-update.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 
+// Runs after the 2.53 ungate command, so it starts from the ungated expression
 const PREVIOUS_MERGE_AVAILABILITY_EXPRESSION =
-  'not isSelectAll and numberOfSelectedRecords >= 2 and isDefined(objectMetadataItem.duplicateCriteria) and objectPermissions.canUpdateObjectRecords and objectPermissions.canDestroyObjectRecords and numberOfSelectedRecords <= 9';
+  UNGATED_MERGE_AVAILABILITY_EXPRESSION;
 const MERGE_AVAILABILITY_EXPRESSION = `${PREVIOUS_MERGE_AVAILABILITY_EXPRESSION} and noneEquals(selectedRecords, "recordPermissions.canUpdate", false) and noneEquals(selectedRecords, "recordPermissions.canDelete", false)`;
 
 export const buildMergeCommandRecordPermissionAvailabilityUpdates = ({

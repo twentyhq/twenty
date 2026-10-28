@@ -29264,6 +29264,11 @@ msgstr "Upgrade auf Organization"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "Führen Sie ein Upgrade auf Organization durch, um SSO zu konfigurieren."
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr ""
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
