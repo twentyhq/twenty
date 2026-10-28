@@ -1,0 +1,63 @@
+---
+title: DirectionProvider
+description: Coordine las interacciones direccionales del teclado y del puntero con la dirección del documento.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import DirectionProviderReference from '/snippets/ui/generated/layout/direction-provider.mdx';
+
+## Resumen
+
+`DirectionProvider` proporciona dirección `ltr` o `rtl` a los controles de UI de Twenty. No renderiza un elemento DOM ni establece un atributo HTML `dir`. Establezca tanto la dirección del proveedor como la dirección coincidente del documento.
+
+<StoryEmbed storyId="ui-layout-directionprovider--display" title="Ejemplo de DirectionProvider" height={160} />
+
+## Uso
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/components/input';
+import { DirectionProvider } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type DirectionalChoicesProps = { direction: 'ltr' | 'rtl' };
+
+export const DirectionalChoices = ({ direction }: DirectionalChoicesProps) => (
+  <DirectionProvider direction={direction}>
+    <Text dir={direction}>
+      <SegmentedControl
+        aria-label="Billing period"
+        defaultValue="annual"
+        options={[
+          { label: 'Annual', value: 'annual' },
+          { label: 'Monthly', value: 'monthly' },
+        ]}
+      />
+    </Text>
+  </DirectionProvider>
+);
+```
+
+La aplicación anfitriona proporciona etiquetas traducidas y elige la dirección. El contexto de dirección afecta a las interacciones direccionales; el atributo HTML controla el texto y el diseño. Por ejemplo, [SegmentedControl](/es/ui/components/input/segmented-control) invierte la navegación horizontal con las flechas y [ResizeHandle](/es/ui/primitives/layout/resize-handle) invierte el cambio de tamaño horizontal.
+
+## Ámbito y estado
+
+Coloque un proveedor alrededor de los controles que comparten una dirección. Los proveedores anidados pueden anular la dirección de un subárbol; empareje cada anulación con un atributo `dir` coincidente. `direction` pertenece a la aplicación y tiene como valor predeterminado `ltr`, igual que Base UI. Los elementos secundarios son opcionales. Importe `DirectionProviderProps` desde el mismo punto de entrada. El proveedor no tiene destino DOM, propiedades nativas ni ref. El proveedor no traduce contenido ni elige automáticamente la dirección según la configuración regional.
+
+## Portales y diseño
+
+Los portales Dropdown, Popover, Tooltip, Select, Dialog y Toast conservan la dirección del proveedor incluso cuando su contenedor está fuera del elemento con `dir`. Sin un proveedor, heredan la dirección de su contenedor. Mantenga coherentes la dirección del proveedor y la dirección HTML del desencadenador. Un `ThemeProvider` con ámbito definido sigue siendo el propietario del contenedor de portal predeterminado.
+
+Los submenús se abren hacia `inline-end`. ArrowRight abre un submenú en LTR; ArrowLeft lo abre en RTL. La tecla opuesta vuelve al elemento principal. La colocación explícita de ventanas emergentes `left` y `right` sigue indicando lados físicos. La gestión de colisiones puede mover una ventana emergente cuando el espacio es limitado.
+
+El texto, la sangría, las esquinas de los botones adjuntos y los iconos direccionales de revelación siguen la dirección de lectura. Los iconos proporcionados conservan su orientación. `AvatarGroup.overlap` sigue nombrando un borde físico; el avatar exterior no se extiende más allá de ese borde en ninguna dirección.
+
+<StoryEmbed storyId="ui-layout-directionprovider--reading-directions" title="Diseños de izquierda a derecha y de derecha a izquierda" height={1260} />
+
+## "Props"
+
+<DirectionProviderReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

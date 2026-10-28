@@ -1,0 +1,89 @@
+---
+title: CountPager
+description: تنقّل في مجموعة محدودة باستخدام عناصر التحكّم السابق والتالي ونص موضع منسّق.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CountPagerReference from '/snippets/ui/generated/components/navigation/count-pager.mdx';
+
+## نظرة عامة
+
+يجمع `CountPager` بين زري السابق والتالي ونص موضع ينسّقه المستدعي. استخدمه للتنقّل عبر مجموعة صغيرة، مثل عناصر المراجعة أو الطلبات.
+
+<StoryEmbed storyId="ui-components-countpager--display" title="مثال على عدّاد الصفحات" height={100} />
+
+## استخدام
+
+```tsx
+import { useState } from 'react';
+import { CountPager } from 'twenty-ui/components/navigation';
+
+export const ReviewPager = () => {
+  const [index, setIndex] = useState(0);
+
+  return (
+    <CountPager
+      aria-label="Review item"
+      index={index}
+      count={3}
+      onIndexChange={setIndex}
+      positionText={`${index + 1} of 3`}
+      previousLabel="Previous item"
+      nextLabel="Next item"
+    />
+  );
+};
+```
+
+## تنقّل متحكَّم به
+
+وفّر `index` يبدأ من الصفر، و`count` الخاص بالمجموعة، و`onIndexChange`. يؤدي تفعيل زر متاح إلى طلب الفهرس المجاور. يحدّث تطبيقك الفهرس ويعرض المحتوى المقابل.
+
+يُعطَّل زر السابق عند العنصر الأول، ويُعطَّل زر التالي عند العنصر الأخير. يُعطَّل الزران كليهما لمجموعة فارغة أو تحتوي على عنصر واحد، أو عند ضبط `disabled`، أو عندما يكون الفهرس أو العدد المقدَّم غير صالح. يجب أن تكون الأعداد أعدادًا صحيحة غير سالبة، وأن يكون الفهرس عددًا صحيحًا ضمن حدود المجموعة.
+
+لا يؤدي تغيير الخصائص أبدًا إلى استدعاء `onIndexChange`. عندما تختفي العناصر أو تتغير المجموعة، يختار تطبيقك العنصر النشط التالي. يبقى تحميل البيانات، والهويات الثابتة للعناصر، والحفاظ على المسودات، وتنفيذ العنصر المعروض مسؤولية التطبيق.
+
+## نص الموضع وموضعه
+
+`positionText` مطلوب ويبقى تحت تحكم التطبيق. نسّق الأرقام والوحدات والترجمات قبل تمريرها إلى عدّاد الصفحات. بالنسبة إلى مجموعة فارغة، وفّر قيمة ذات معنى مثل `No items`؛ لا ينشئ المكوّن تسمية لحالة فارغة.
+
+يعرض `positionPlacement="between"` الافتراضي السابق ونص الموضع والتالي. اضبط `positionPlacement="start"` لوضع النص قبل الزرين كليهما. يملأ النص بعد ذلك العرض المتاح بحيث تتم محاذاة الإجراءات في نهاية الصف.
+
+```tsx
+import { useState } from 'react';
+import { CountPager } from 'twenty-ui/components/navigation';
+
+export const RequestPager = () => {
+  const [index, setIndex] = useState(0);
+
+  return (
+    <CountPager
+      aria-label="Pending requests"
+      index={index}
+      count={3}
+      onIndexChange={setIndex}
+      positionText={`Request ${index + 1} of 3`}
+      previousLabel="Previous request"
+      nextLabel="Next request"
+      positionPlacement="start"
+      style={{ width: 280, maxWidth: '100%' }}
+    />
+  );
+};
+```
+
+## إمكانية الوصول والتركيب
+
+يكون الجذر افتراضيًا مجموعة. وفّر اسمًا متاحًا سياقيًا باستخدام `aria-label` أو `aria-labelledby`، بالإضافة إلى `previousLabel` و`nextLabel` لزري الأيقونات. يستخدم نص الموضع منطقة مباشرة مهذبة بحيث يمكن الإعلان عن التغييرات دون نقل التركيز.
+
+تستخدم عناصر التحكّم أزرارًا أصلية مع مظهر [LightIconButton](/ar/ui/components/input/light-icon-button) المشترك. ينتقل Tab بين عناصر التحكّم الممكّنة، ويُفعّل Enter أو Space الزر الذي عليه التركيز. لا يمكن لعناصر التحكّم المعطّلة التنقّل. لا ترسل نقرات عدّاد الصفحات نموذجًا محيطًا.
+
+تستهدف السمات الأصلية و`className` و`style` و`ref` الجذر. استخدم `render` لتركيب عنصر جذر مختلف مع الحفاظ على الخصائص وref المقدَّمين. أبقِ الأزرار ودلالات تفاعلها كما هي.
+
+## الإزاحة
+
+<CountPagerReference />
+
+<PageBanner illustration="dashboards" />

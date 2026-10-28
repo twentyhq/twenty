@@ -1,8 +1,9 @@
 ---
 title: Флаги функций
+description: Скрыть экспериментальные функции за флагами уровня рабочего пространства.
 ---
 
-Флаги функций используются для скрытия экспериментальных функций. Для Twenty они устанавливаются на уровне рабочей области, а не на уровне пользователя.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Добавление нового флага функции
 
@@ -44,3 +45,5 @@ const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
 | идентификатор | ключ                     | workspaceId | значение |
 | ------------- | ------------------------ | ----------- | -------- |
 | Случайный     | `IS_FEATURENAME_ENABLED` | WorkspaceID | `истина` |
+
+<PageBanner illustration="page-cover-switch" />

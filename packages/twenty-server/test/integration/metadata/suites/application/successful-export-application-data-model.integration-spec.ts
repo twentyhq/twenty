@@ -1766,8 +1766,7 @@ const findWorkspaceCustomFlatApplication = async () =>
     })
   ).workspaceCustomFlatApplication;
 
-// A full sync of the workspace custom application also rewrites its dependency files and SDK client,
-// which the seeded workspace does not have, so the publish runs the metadata step of the sync
+// The seeded workspace lacks the dependency files a full sync of its custom application needs
 const applyWorkspaceCustomApplicationManifest = async (manifest: Manifest) =>
   (
     await getAppProviderByClassName<ApplicationManifestMigrationService>(
@@ -1817,17 +1816,18 @@ describe('Application export - workflows built in the workflow builder', () => {
     },
   });
 
-  const findWorkflowVersions = async () =>
-    global.testDataSource.query(
+  const findWorkflowVersions = async () => {
+    const versions: {
+      id: string;
+      status: string;
+      steps: { settings: { input: { url: string } } }[];
+    }[] = await global.testDataSource.query(
       `SELECT id, status, steps FROM core."workflowVersion" WHERE "coreWorkflowId" = $1`,
       [coreWorkflowId],
-    ) as Promise<
-      {
-        id: string;
-        status: string;
-        steps: { settings: { input: { url: string } } }[];
-      }[]
-    >;
+    );
+
+    return versions;
+  };
 
   const exportWorkspaceCustomApplication = async () => {
     const { universalIdentifier } = await findWorkspaceCustomFlatApplication();

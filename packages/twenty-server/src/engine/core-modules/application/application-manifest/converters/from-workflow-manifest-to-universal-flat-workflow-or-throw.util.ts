@@ -24,6 +24,7 @@ import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/typ
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
 import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const fromFlatWorkflowVersionToUniversalFlatWorkflowVersion = ({
   workspaceId: _workspaceId,
@@ -31,6 +32,29 @@ const fromFlatWorkflowVersionToUniversalFlatWorkflowVersion = ({
   ...universalFlatWorkflowVersion
 }: FlatWorkflowVersion): UniversalFlatWorkflowVersion & { id: string } =>
   universalFlatWorkflowVersion;
+
+const buildPublishedFlatUniversalWorkflowVersion = ({
+  trigger,
+  ...version
+}: Pick<
+  UniversalFlatWorkflowVersion,
+  | 'universalIdentifier'
+  | 'applicationUniversalIdentifier'
+  | 'coreWorkflowId'
+  | 'workflowId'
+  | 'steps'
+  | 'createdAt'
+  | 'updatedAt'
+> & {
+  id: string;
+  trigger: WorkflowTrigger;
+}): UniversalFlatWorkflowVersion & { id: string } => ({
+  ...version,
+  workspaceWorkflowVersionId: null,
+  isSystemSideEffect: true,
+  status: WorkflowVersionStatus.ACTIVE,
+  triggers: [trigger],
+});
 
 export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
   manifest,
@@ -80,17 +104,26 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
     })
       ? activeVersion
       : undefined;
-  const versionId = keptActiveVersion?.id ?? existingVersion?.id ?? v4();
-  // The builder publishes workspace custom application workflows too, so each changed definition is
-  // a new version, and published versions stay as the runs that reference them saw them
-  const versionUniversalIdentifier =
-    keptActiveVersion?.universalIdentifier ??
-    (isWorkspaceCustomApplication
-      ? v4()
-      : getWorkflowVersionUniversalIdentifier({
-          applicationUniversalIdentifier,
-          workflowUniversalIdentifier: definition.universalIdentifier,
-        }));
+  // Each changed definition of a builder-published workflow is a new version, so runs keep what they ran
+  const flatUniversalWorkflowVersion = isDefined(keptActiveVersion)
+    ? fromFlatWorkflowVersionToUniversalFlatWorkflowVersion(keptActiveVersion)
+    : buildPublishedFlatUniversalWorkflowVersion({
+        id: existingVersion?.id ?? v4(),
+        universalIdentifier: isWorkspaceCustomApplication
+          ? v4()
+          : getWorkflowVersionUniversalIdentifier({
+              applicationUniversalIdentifier,
+              workflowUniversalIdentifier: definition.universalIdentifier,
+            }),
+        applicationUniversalIdentifier,
+        coreWorkflowId: workflowId,
+        workflowId: existingWorkflow?.workspaceWorkflowId ?? null,
+        trigger,
+        steps,
+        createdAt: existingVersion?.createdAt ?? now,
+        updatedAt: now,
+      });
+  const versionId = flatUniversalWorkflowVersion.id;
   const commandMenuItem = fromWorkflowManifestToUniversalFlatCommandMenuItem({
     manifest: definition,
     applicationUniversalIdentifier,
@@ -117,22 +150,7 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
       : createHash('sha256')
           .update(JSON.stringify(sortKeysDeeply({ trigger, steps })))
           .digest('hex'),
-    flatUniversalWorkflowVersion: isDefined(keptActiveVersion)
-      ? fromFlatWorkflowVersionToUniversalFlatWorkflowVersion(keptActiveVersion)
-      : {
-          id: versionId,
-          universalIdentifier: versionUniversalIdentifier,
-          applicationUniversalIdentifier,
-          coreWorkflowId: workflowId,
-          workflowId: existingWorkflow?.workspaceWorkflowId ?? null,
-          workspaceWorkflowVersionId: null,
-          isSystemSideEffect: true,
-          status: WorkflowVersionStatus.ACTIVE,
-          triggers: [trigger],
-          steps,
-          createdAt: existingVersion?.createdAt ?? now,
-          updatedAt: now,
-        },
+    flatUniversalWorkflowVersion,
     ...(isDefined(commandMenuItem)
       ? { flatUniversalCommandMenuItem: commandMenuItem }
       : {}),

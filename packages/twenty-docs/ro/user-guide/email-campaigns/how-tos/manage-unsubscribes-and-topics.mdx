@@ -1,0 +1,112 @@
+---
+title: Gestionați dezabonările și subiectele
+description: Vedeți cine s-a dezabonat și permiteți-le persoanelor să aleagă actualizările pe care le primesc.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Fiecare campanie include un link de dezabonare. Twenty ține evidența persoanelor care îl folosesc. Subiectele le oferă persoanelor mai mult control: se pot dezabona de la newsletter, continuând să primească actualizări despre produse.
+
+## Cum funcționează dezabonarea
+
+Fiecare e-mail de campanie include:
+
+* O propoziție în subsol: "Nu doriți aceste e-mailuri? Dezabonare."
+* Antetele de dezabonare cu un clic pe care Gmail, Yahoo și alte aplicații de e-mail le folosesc pentru a afișa propriul buton **Dezabonare**.
+
+Linkul deschide o pagină de dezabonare pe domeniul dvs., de exemplu `links.yourcompany.com`:
+
+* **Fără subiecte publice**: persoanele văd un buton **Dezabonare**.
+* **Subiecte publice**: persoanele văd o casetă de selectare pentru fiecare subiect. Pot debifa subiecte și pot face clic pe **Actualizare** sau pe **Dezabonare de la toate**.
+
+O dezabonare intră în vigoare imediat. Twenty exclude persoana respectivă din campaniile ulterioare.
+
+<img src="/images/user-guide/email-campaigns/unsubscribe-page-preview.png" style={{ width: '100%' }} />
+
+<Note>
+  Butonul de dezabonare din Gmail, Yahoo și alte aplicații de e-mail elimină o persoană
+  din toate campaniile dvs., nu doar de la subiectul din e-mailul primit.
+</Note>
+
+## Partea 1: Creați subiecte
+
+Subiectele sunt tipuri de e-mailuri, precum **Newsletter**, **Actualizări despre produse** sau **Evenimente**.
+
+1. Accesați **Setări → Comunicare**.
+2. Sub **Dezabonare**, faceți clic pe **Gestionați dezabonarea**.
+3. Deschideți fila **Subiecte** și faceți clic pe **Adăugați subiect**.
+4. În **Nume**, introduceți numele pe care îl văd persoanele, de exemplu `Newsletter`.
+5. În **Descriere**, puteți explica e-mailurile pentru echipa dvs.
+6. Activați **Listat pe pagina de dezabonare** pentru a afișa subiectul destinatarilor.
+7. Faceți clic pe **Salvează**.
+
+| Vizibilitate | Comportament                                                                                                                             |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Public**   | Persoanele văd subiectul pe pagina de dezabonare și se pot dezabona numai de la acesta.                                                  |
+| **Privat**   | Persoanele nu îl văd niciodată. Utilizați-l pentru a grupa campaniile pentru echipa dvs. Respectă în continuare opțiunile de dezabonare. |
+
+Subiectele noi sunt private până când activați **Listat pe pagina de dezabonare**.
+
+<img src="/images/user-guide/email-campaigns/new-topic-form.png" style={{ width: '100%' }} />
+
+## Partea 2: Utilizați un subiect într-o campanie
+
+În fila **E-mail** a campaniei, alegeți un subiect din **Subiect de dezabonare**. Câmpul apare după ce creați primul subiect.
+
+Când campania este trimisă, Twenty exclude:
+
+* Persoanele care s-au dezabonat de la acest subiect.
+* Persoanele care s-au dezabonat de la toate.
+
+Persoanele care s-au dezabonat doar de la un alt subiect îl primesc în continuare.
+
+## Partea 3: Vedeți cine s-a dezabonat
+
+1. Accesați **Setări → Comunicare**.
+2. Sub **Dezabonare**, faceți clic pe **Gestionați dezabonarea**.
+3. Deschideți fila **Persoane dezabonate**.
+
+Lista afișează fiecare adresă care nu mai primește campanii:
+
+| Coloană              | Ce afișează                                                                                              |
+| -------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Adresă de e-mail** | Adresa pe care Twenty o exclude.                                                                         |
+| **Scope**            | **Toate e-mailurile** sau subiectul de la care s-au dezabonat.                                           |
+| **Motiv**            | **Dezabonat**, **E-mail returnat** (adresa nu există) sau **Reclamație** (au raportat e-mailul ca spam). |
+| **Dată**             | Momentul în care s-a întâmplat.                                                                          |
+
+Utilizați căutarea și filtrele pentru a găsi o adresă, un motiv sau un subiect.
+
+<img src="/images/user-guide/email-campaigns/unsubscribers-tab.png" style={{ width: '100%' }} />
+
+<Warning>
+  E-mailurile returnate și reclamațiile de spam sunt permanente. Trimiterea din nou către acele adrese
+  poate afecta reputația domeniului dvs., așa că Twenty nu permite acest lucru.
+</Warning>
+
+## Previzualizați pagina de dezabonare
+
+Fila **Pagina de dezabonare** afișează ce văd persoanele cu subiectele dvs. publice actuale. Nimic nu este salvat în previzualizare.
+
+## Depanare
+
+<Accordion title="Destinatarii văd doar un buton Dezabonare, nu subiectele mele">
+  Doar subiectele publice apar pe pagina de dezabonare. Deschideți subiectul și activați
+  **Listat pe pagina de dezabonare**.
+</Accordion>
+
+<Accordion title="Cineva s-a dezabonat de la un subiect, dar nu mai primește nimic">
+  Este posibil să fi folosit butonul de dezabonare din aplicația de e-mail, care îl elimină
+  din toate campaniile. Doar linkul din subsolul e-mailului îi permite să aleagă
+  subiecte specifice.
+</Accordion>
+
+<Accordion title="O persoană a fost exclusă, dar dorește să primească din nou e-mailuri">
+  Dacă aveți subiecte publice, pot deschide linkul de dezabonare dintr-un e-mail
+  primit în ultimele 30 de zile, pot bifa subiectele dorite și pot face clic pe **Actualizare**.
+  E-mailurile returnate și reclamațiile de spam nu pot fi anulate.
+</Accordion>
+
+<PageBanner illustration="section-email-campaigns" />
