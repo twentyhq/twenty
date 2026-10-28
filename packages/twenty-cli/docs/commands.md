@@ -314,7 +314,7 @@ twenty app plan --path ./apps/billing --no-prune --json
 twenty app plan --prune
 ```
 
-`app plan` builds once with the CLI pipeline, releases the temporary snapshot, then requests the server's metadata preview with `dryRun: true`. It uses the usual connection selection and requires the server's `APPLICATIONS` permission. The server enforces authorization, ownership and manifest/version compatibility. No registration, installation, upload or metadata synchronization is performed, and planning never advances a pull base. The local build can generate app artifacts, just as `app build` does.
+`app plan` builds once with the CLI pipeline, releases the temporary snapshot, then requests the server's metadata preview with `dryRun: true`. It uses the usual connection selection and requires the server's Workspace Apps (`WORKSPACE_APPS`; `APPLICATIONS` on servers before 2.53) permission. The server enforces authorization, ownership and manifest/version compatibility. No registration, installation, upload or metadata synchronization is performed, and planning never advances a pull base. The local build can generate app artifacts, just as `app build` does.
 
 JSON marks plans with `plan: true`. A plan is not a saved approval: remote changes can alter what a later apply does. A missing owned application registration returns `PLAN_UNAVAILABLE` (exit 1). Register the app with `twenty app apply --create`, then plan again.
 
@@ -329,7 +329,7 @@ twenty app apply --no-prune
 twenty app apply --prune
 ```
 
-`app apply` builds the app once with the CLI pipeline and keeps that build's snapshot until it finishes, so the files it uploads are the ones it built. It then asks the workspace for a fresh plan, shows it, and applies it: it installs the development app if needed, uploads the snapshot files, synchronizes the manifest, and regenerates the app's typed API client. It needs the server's `APPLICATIONS` and `UPLOAD_FILE` permissions.
+`app apply` builds the app once with the CLI pipeline and keeps that build's snapshot until it finishes, so the files it uploads are the ones it built. It then asks the workspace for a fresh plan, shows it, and applies it: it installs the development app if needed, uploads the snapshot files, synchronizes the manifest, and regenerates the app's typed API client. It needs the server's `WORKSPACE_APPS` and `UPLOAD_FILE` permissions.
 
 - **New apps.** An app without a registration needs `--create`, or a yes at the prompt in an interactive terminal. The CLI then registers the app (the server also requires `API_KEYS_AND_WEBHOOKS` for this), installs it, and plans its changes before uploading anything. Without approval it stops with `CREATE_REQUIRED` (exit 2). The registration's client secret is never requested.
 - **Deletions.** Entities missing from source are deleted by default (except in the workspace custom application), as in `app plan`; `--no-prune` keeps them, `--prune` deletes them in every app, and the choice is sent to both the plan and the sync. JSON reports `inferDeletionFromMissingEntities: null` when neither flag is passed. Object and field deletions permanently delete stored data, so they need `--yes` or a yes at the prompt. Otherwise the command stops with `CONFIRMATION_REQUIRED` (exit 2) before changing anything. `--yes` never changes which entities are deleted.
@@ -351,7 +351,7 @@ twenty app dev --path ./apps/billing --format ndjson --no-prune
 `app dev` builds and syncs once, then watches for edits. Each attempt uses the
 same CLI build and strict project TypeScript checks as `app apply`. A failed
 build prints diagnostics and keeps watching; it never uploads an incomplete
-revision. It needs the same `APPLICATIONS` and `UPLOAD_FILE` permissions as apply.
+revision. It needs the same `WORKSPACE_APPS` and `UPLOAD_FILE` permissions as apply.
 
 The CLI watches the app folder and the external local files read by definition
 loading, bundling and typechecking, including linked packages and extended
@@ -419,7 +419,7 @@ twenty app pull --path ./apps/billing --json
 twenty app pull --universal-identifier <uuid> --verbose
 ```
 
-`app pull` reads the app's definition and exports its workspace metadata into the existing project. It uses the selected connection and the server's `APPLICATIONS` permission; the server decides which apps this workspace can export. It does not register an app or change the workspace. When a project has no application definition, provide `--universal-identifier`. A project declaring a different app is refused before writing.
+`app pull` reads the app's definition and exports its workspace metadata into the existing project. It uses the selected connection and the server's `WORKSPACE_APPS` permission; the server decides which apps this workspace can export. It does not register an app or change the workspace. When a project has no application definition, provide `--universal-identifier`. A project declaring a different app is refused before writing.
 
 The project must have `twenty-sdk` installed, version `>=1.23.0`, with its public `twenty-sdk/define` and `twenty-sdk/front-component` exports. Pull also checks that the SDK provides the authoring APIs required by the generated files. Missing APIs fail with `SDK_SOURCE_UNSUPPORTED`; install a compatible version (2.50.0 or later). Pull does not require a project TypeScript compiler. Run `twenty app typecheck` afterwards to check the generated definitions against your installed SDK.
 
@@ -445,7 +445,7 @@ twenty app install --path ./apps/billing --json
 twenty app install --universal-identifier <id> --remote staging --json
 ```
 
-`app install` installs a package already registered on the target server. It reads the local app definition to find its universal identifier, without building or typechecking the app; `--universal-identifier` works without a local project. Identifiers are sent in lowercase. It requires `APPLICATIONS` permission.
+`app install` installs a package already registered on the target server. It reads the local app definition to find its universal identifier, without building or typechecking the app; `--universal-identifier` works without a local project. Identifiers are sent in lowercase. It requires `WORKSPACE_APPS` permission.
 
 The server selects the registered package and version. Local source changes are not uploaded. For a private package, run `app publish --private` first; publishing to npm alone does not create a server registration. Installation can run app hooks and update an existing installation. Use `app apply` to sync local source instead.
 
@@ -461,7 +461,7 @@ twenty app uninstall --yes --json
 twenty app uninstall --universal-identifier <id> --yes
 ```
 
-`app uninstall` reads the local app definition to find its universal identifier, without building or typechecking the app. It checks that the app is installed on the target and that the workspace allows uninstalling it, then uninstalls it. `--universal-identifier` works without a local project. It needs the server's `APPLICATIONS` permission.
+`app uninstall` reads the local app definition to find its universal identifier, without building or typechecking the app. It checks that the app is installed on the target and that the workspace allows uninstalling it, then uninstalls it. `--universal-identifier` works without a local project. It needs the server's `WORKSPACE_APPS` permission.
 
 Uninstalling runs the app's uninstall hook and deletes everything the app owns, including its objects, fields and their data. It always needs `--yes`, or a yes at the prompt in an interactive terminal; otherwise it stops with `CONFIRMATION_REQUIRED` (exit 2) before changing anything. An app that is not installed returns `APP_NOT_INSTALLED` (exit 4), and one the workspace does not allow to uninstall returns `APP_NOT_UNINSTALLABLE` (exit 6).
 
@@ -487,7 +487,7 @@ Payloads must be JSON objects, supplied inline, through `@file`, or through `-`
 for stdin; the default is `{}`. The selected function must belong to both the
 local app manifest and the installed app on the target workspace.
 
-The current server requires a signed-in user and the `APPLICATIONS` and
+The current server requires a signed-in user and the `WORKSPACE_APPS` and
 `WORKFLOWS` settings permissions. Sign in with `twenty auth login --url <url>
 --name dev`, then pass `--remote dev`. API keys, including environment API-key
 targets, cannot execute logic functions. The server additionally restricts
