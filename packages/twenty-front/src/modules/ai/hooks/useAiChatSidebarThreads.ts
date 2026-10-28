@@ -4,6 +4,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatFavoriteChannelsSelector } from '@/ai/states/selectors/agentChatFavoriteChannelsSelector';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
+import { excludeFavoriteAgentChatThreads } from '@/ai/utils/excludeFavoriteAgentChatThreads';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -27,10 +28,10 @@ export const useAiChatSidebarThreads = () => {
     agentChatFavoriteChannelsSelector,
   );
 
-  const favoriteThreadIds = new Set(
-    agentChatFavoriteThreads.map(({ id }) => id),
-  );
-  const recentThreads = threads.filter(({ id }) => !favoriteThreadIds.has(id));
+  const recentThreads = excludeFavoriteAgentChatThreads({
+    threads,
+    favoriteThreads: agentChatFavoriteThreads,
+  });
 
   return {
     isAiChatInboxEnabled,

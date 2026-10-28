@@ -8,13 +8,18 @@ export const getNavigationMenuItemsInSection = <
     NavigationMenuItem,
     'id' | 'type' | 'folderId'
   >,
->(
-  items: TNavigationMenuItem[],
-  sectionId: string | null,
-): TNavigationMenuItem[] =>
+>({
+  items,
+  sectionId,
+}: {
+  items: TNavigationMenuItem[];
+  sectionId: string | null;
+}): TNavigationMenuItem[] =>
   items.filter(
     (item) =>
       !isNavigationMenuItemContainer(item) &&
-      getNavigationMenuItemSectionId(items, item.folderId ?? null) ===
-        sectionId,
+      getNavigationMenuItemSectionId({
+        items,
+        containerId: item.folderId ?? null,
+      }) === sectionId,
   );

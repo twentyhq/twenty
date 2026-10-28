@@ -68,6 +68,13 @@ export const NavigationDrawerAiChatFavoritesSection = ({
     visibleItemLimit,
   });
 
+  const visibleChannels = visibleItems.flatMap((favoriteItem) =>
+    favoriteItem.type === 'channel' ? [favoriteItem.channel] : [],
+  );
+  const visibleThreads = visibleItems.flatMap((favoriteItem) =>
+    favoriteItem.type === 'thread' ? [favoriteItem.thread] : [],
+  );
+
   if (!isShownWhenEmpty && channels.length === 0 && threads.length === 0) {
     return null;
   }
@@ -79,27 +86,26 @@ export const NavigationDrawerAiChatFavoritesSection = ({
       rightIcon={rightIcon}
       alwaysShowRightIcon={alwaysShowRightIcon}
     >
-      {visibleItems.map((favoriteItem) =>
-        favoriteItem.type === 'channel' ? (
-          <NavigationDrawerAiChatChannelItem
-            key={favoriteItem.channel.id}
-            channel={favoriteItem.channel}
-            summary={agentChatChannelSummaries[favoriteItem.channel.id]}
-            destinationChannels={agentChatAccessibleChannels.filter(
-              ({ id }) => id !== favoriteItem.channel.id,
-            )}
-            canManage={canManageChannels}
-            isExpandable={false}
-          />
-        ) : (
-          <NavigationDrawerAiChatThreadItem
-            key={favoriteItem.thread.id}
-            thread={favoriteItem.thread}
-            isActive={currentThreadId === favoriteItem.thread.id}
-            onClick={onThreadClick}
-          />
-        ),
-      )}
+      {visibleChannels.map((channel) => (
+        <NavigationDrawerAiChatChannelItem
+          key={channel.id}
+          channel={channel}
+          summary={agentChatChannelSummaries[channel.id]}
+          destinationChannels={agentChatAccessibleChannels.filter(
+            ({ id }) => id !== channel.id,
+          )}
+          canManage={canManageChannels}
+          isExpandable={false}
+        />
+      ))}
+      {visibleThreads.map((thread) => (
+        <NavigationDrawerAiChatThreadItem
+          key={thread.id}
+          thread={thread}
+          isActive={currentThreadId === thread.id}
+          onClick={onThreadClick}
+        />
+      ))}
       {isOverVisibleItemLimit && (
         <NavigationDrawerSectionSeeMoreItem
           isShowingAllItems={isShowingAllItems}

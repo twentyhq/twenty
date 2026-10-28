@@ -1,6 +1,7 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { buildOptimisticNavigationMenuItem } from '@/navigation-menu-item/common/utils/buildOptimisticNavigationMenuItem';
 import { getWorkspaceSidebarOrphanItemsInDisplayOrder } from '@/navigation-menu-item/display/utils/getWorkspaceSidebarOrphanItemsInDisplayOrder';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -67,26 +68,26 @@ describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
   });
 
   it('lists only the items of the requested tab or section, without tabs and sections themselves', () => {
-    const tab = {
+    const tab = buildOptimisticNavigationMenuItem({
       id: 'tab-id',
       type: NavigationMenuItemType.TAB,
       name: 'Developers',
       position: 0,
-    } as NavigationMenuItem;
-    const section = {
+    });
+    const section = buildOptimisticNavigationMenuItem({
       id: 'section-id',
       type: NavigationMenuItemType.SECTION,
       name: 'Tools',
       folderId: 'tab-id',
       position: 0,
-    } as NavigationMenuItem;
-    const tabLink = {
+    });
+    const tabLink = buildOptimisticNavigationMenuItem({
       id: 'tab-link-id',
       type: NavigationMenuItemType.LINK,
       link: '/settings/developers',
       folderId: 'tab-id',
       position: 1,
-    } as NavigationMenuItem;
+    });
     const workspaceItems = [tab, section, tabLink, objectBackedItem];
 
     const homeItems = getWorkspaceSidebarOrphanItemsInDisplayOrder({

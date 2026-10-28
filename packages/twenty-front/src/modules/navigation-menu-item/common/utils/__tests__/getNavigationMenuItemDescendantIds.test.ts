@@ -11,17 +11,17 @@ describe('getNavigationMenuItemDescendantIds', () => {
       { id: 'home-item', folderId: null },
     ];
 
-    expect(getNavigationMenuItemDescendantIds(items, 'tab').sort()).toEqual(
-      ['folder', 'link', 'section', 'view'].sort(),
-    );
+    expect(
+      getNavigationMenuItemDescendantIds({ items, parentId: 'tab' }).sort(),
+    ).toEqual(['folder', 'link', 'section', 'view'].sort());
   });
 
   it('returns nothing for an item without children', () => {
     expect(
-      getNavigationMenuItemDescendantIds(
-        [{ id: 'link', folderId: null }],
-        'link',
-      ),
+      getNavigationMenuItemDescendantIds({
+        items: [{ id: 'link', folderId: null }],
+        parentId: 'link',
+      }),
     ).toEqual([]);
   });
 });

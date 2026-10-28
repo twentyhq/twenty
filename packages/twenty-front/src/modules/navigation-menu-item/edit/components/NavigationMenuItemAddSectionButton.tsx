@@ -46,7 +46,6 @@ export const NavigationMenuItemAddSectionButton = ({
           id: type,
           label: getDefaultSectionLabel(type),
           Icon: NAVIGATION_MENU_ITEM_BUILT_IN_SECTIONS[type].Icon,
-          isDisabled: isAlreadyInSidebar,
           isAlreadyInSidebar,
           onClick: () => createBuiltInSection({ parentId, type }),
         };

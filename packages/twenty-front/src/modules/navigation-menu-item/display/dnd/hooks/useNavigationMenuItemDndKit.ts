@@ -26,7 +26,7 @@ type DragStartPayload = DragDropProviderDragStartEvent<DraggableData>;
 type DragOverPayload = DragDropProviderDragOverEvent<DraggableData>;
 type DragEndPayload = DragDropProviderDragEndEvent<DraggableData>;
 
-const isSectionDragSource = (source: { type?: unknown } | null) =>
+const isSectionDragSource = (source: DragEndPayload['operation']['source']) =>
   source?.type === NAVIGATION_MENU_SECTION_DND_TYPE;
 
 export type NavigationMenuItemDndKitContextValues = {
@@ -202,6 +202,18 @@ export const useNavigationMenuItemDndKit = (
     [getNavItemById, sectionType, computeForbiddenTargetId],
   );
 
+  const handleSectionDragEnd = ({ canceled, operation }: DragEndPayload) => {
+    if (
+      canceled ||
+      !isDefined(operation.source) ||
+      !isDefined(operation.target)
+    ) {
+      return;
+    }
+
+    void moveNextTo(String(operation.source.id), String(operation.target.id));
+  };
+
   const handleDragEnd = (event: DragEndPayload) => {
     const { operation } = event;
     const source = operation.source;
@@ -216,9 +228,7 @@ export const useNavigationMenuItemDndKit = (
     setForbiddenDropTargetId(null);
 
     if (isSectionDragSource(source)) {
-      if (!event.canceled && isDefined(target)) {
-        void moveNextTo(draggableId, String(target.id));
-      }
+      handleSectionDragEnd(event);
       return;
     }
 

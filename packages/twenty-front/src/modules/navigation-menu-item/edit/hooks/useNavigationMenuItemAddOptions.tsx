@@ -71,10 +71,13 @@ export const useNavigationMenuItemAddOptions = ({
   const parentItem = currentItems.find((item) => item.id === folderId);
   const isInsideFolder =
     isDefined(parentItem) && isNavigationMenuItemFolder(parentItem);
-  const sectionItems = getNavigationMenuItemsInSection(
-    currentItems,
-    getNavigationMenuItemSectionId(currentItems, folderId ?? null),
-  );
+  const sectionItems = getNavigationMenuItemsInSection({
+    items: currentItems,
+    sectionId: getNavigationMenuItemSectionId({
+      items: currentItems,
+      containerId: folderId ?? null,
+    }),
+  });
   const getAlreadyInSectionText = (isAlreadyInSection: boolean) =>
     isAlreadyInSection ? t`Already in this section` : undefined;
 

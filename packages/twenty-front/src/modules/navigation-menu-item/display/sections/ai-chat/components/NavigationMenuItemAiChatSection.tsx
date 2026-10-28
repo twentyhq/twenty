@@ -112,7 +112,7 @@ export const NavigationMenuItemAiChatSection = ({
       }
 
       if (recentThreads.length === 0 && !isEditable) {
-        return null;
+        return <AgentChatThreadsFetchMoreTrigger />;
       }
 
       return (

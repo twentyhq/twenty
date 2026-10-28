@@ -1,5 +1,5 @@
 import { Command } from 'nest-commander';
-import { FeatureFlagKey, NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -7,7 +7,6 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { buildStandardNavigationMenuItemToCreate } from 'src/database/commands/upgrade-version-command/2-53/utils/build-standard-navigation-menu-item-to-create.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -31,7 +30,6 @@ export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspace
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(workspaceIteratorService);
   }
@@ -40,20 +38,6 @@ export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspace
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const isCustomizableSidebarEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
-        workspaceId,
-      );
-
-    if (!isCustomizableSidebarEnabled) {
-      this.logger.log(
-        `Customizable sidebar disabled for workspace ${workspaceId}, skipping`,
-      );
-
-      return;
-    }
-
     const { flatNavigationMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatNavigationMenuItemMaps',

@@ -123,7 +123,10 @@ export const useNavigationMenuItemMoveRemove = (
 
     await deleteItems([
       navigationMenuItemId,
-      ...getNavigationMenuItemDescendantIds(currentItems, navigationMenuItemId),
+      ...getNavigationMenuItemDescendantIds({
+        items: currentItems,
+        parentId: navigationMenuItemId,
+      }),
     ]);
   };
 

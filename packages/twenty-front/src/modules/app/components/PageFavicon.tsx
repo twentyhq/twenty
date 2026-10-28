@@ -3,6 +3,7 @@ import { type FaviconWithAttentionDot } from '@/app/types/FaviconWithAttentionDo
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { Helmet } from '@dr.pogodin/react-helmet';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
@@ -17,7 +18,7 @@ export const PageFavicon = ({ attentionDotColor }: PageFaviconProps) => {
   const [faviconWithAttentionDot, setFaviconWithAttentionDot] =
     useState<FaviconWithAttentionDot | null>(null);
 
-  const faviconUrl = workspacePublicData?.logo
+  const faviconUrl = isNonEmptyString(workspacePublicData?.logo)
     ? (getImageAbsoluteURI({
         imageUrl: workspacePublicData.logo,
         baseUrl: REACT_APP_SERVER_BASE_URL,

@@ -83,7 +83,6 @@ export const NavigationMenuItemAddCommandButton = ({
                   id: commandKey,
                   label: t(label),
                   Icon,
-                  isDisabled: isAlreadyInSidebar,
                   isAlreadyInSidebar,
                   onClick: () => pinCommand(commandKey),
                 };

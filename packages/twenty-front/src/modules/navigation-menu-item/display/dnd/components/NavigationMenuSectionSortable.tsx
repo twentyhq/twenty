@@ -59,18 +59,21 @@ export const NavigationMenuSectionSortable = ({
   });
   const { source } = useDragOperation();
 
-  const dropPosition =
-    isDropTarget &&
-    isDefined(source) &&
-    isSortable(source) &&
-    source.id !== section.id
-      ? source.index < index
-        ? 'after'
-        : 'before'
-      : undefined;
+  const getDropPosition = () => {
+    if (
+      !isDropTarget ||
+      !isDefined(source) ||
+      !isSortable(source) ||
+      source.id === section.id
+    ) {
+      return undefined;
+    }
+
+    return source.index < index ? 'after' : 'before';
+  };
 
   return (
-    <StyledSectionSortableRoot ref={ref} data-drop-position={dropPosition}>
+    <StyledSectionSortableRoot ref={ref} data-drop-position={getDropPosition()}>
       {children}
     </StyledSectionSortableRoot>
   );

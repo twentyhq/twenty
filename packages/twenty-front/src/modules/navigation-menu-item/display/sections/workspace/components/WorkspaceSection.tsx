@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPlus, IconTool } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -56,18 +55,10 @@ export const WorkspaceSection = () => {
       <IconPlus />
     </LightIconButton>
   );
-  const addDropdown = isDefined(workspaceSectionId) ? (
+  const addDropdown = (
     <NavigationMenuItemAddDropdown
       instanceId="workspace-header"
-      folderId={workspaceSectionId}
-      position={0}
-      onOpen={openNavigationSection}
-    >
-      {addButton}
-    </NavigationMenuItemAddDropdown>
-  ) : (
-    <NavigationMenuItemAddDropdown
-      instanceId="workspace-header"
+      folderId={workspaceSectionId ?? undefined}
       position={0}
       onOpen={openNavigationSection}
     >

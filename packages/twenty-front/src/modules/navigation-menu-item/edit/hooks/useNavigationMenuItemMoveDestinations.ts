@@ -63,7 +63,7 @@ export const useNavigationMenuItemMoveDestinations = ({
   const currentParentId = item.folderId ?? null;
   const excludedIds = new Set([
     item.id,
-    ...getNavigationMenuItemDescendantIds(items, item.id),
+    ...getNavigationMenuItemDescendantIds({ items, parentId: item.id }),
   ]);
 
   const isAlreadyInDestinationSection = (containerId: string | null) =>

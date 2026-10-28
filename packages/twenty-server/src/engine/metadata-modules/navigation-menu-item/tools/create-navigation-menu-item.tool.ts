@@ -28,6 +28,10 @@ const commonOptionalFields = {
     ),
 };
 
+const workspaceScopeField = z
+  .literal('workspace')
+  .describe('Tabs and sections are shared with the whole workspace.');
+
 const requiredNameField = z
   .string()
   .trim()
@@ -52,13 +56,13 @@ const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
   }),
   z.object({
     type: z.literal(NavigationMenuItemType.TAB),
-    scope: navigationMenuItemScopeSchema,
+    scope: workspaceScopeField,
     name: requiredNameField,
     ...commonOptionalFields,
   }),
   z.object({
     type: z.literal(NavigationMenuItemType.SECTION),
-    scope: navigationMenuItemScopeSchema,
+    scope: workspaceScopeField,
     name: requiredNameField,
     ...commonOptionalFields,
   }),
@@ -71,7 +75,7 @@ const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
       NavigationMenuItemType.AI_CHAT_CHANNELS,
       NavigationMenuItemType.FAVORITES,
     ]),
-    scope: navigationMenuItemScopeSchema,
+    scope: workspaceScopeField,
     name: derivedNameField,
     ...commonOptionalFields,
   }),

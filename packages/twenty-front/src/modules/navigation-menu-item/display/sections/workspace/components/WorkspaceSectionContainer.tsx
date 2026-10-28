@@ -147,7 +147,7 @@ export const WorkspaceSectionContainer = ({
     };
   };
 
-  const workspaceSectionList = isLayoutCustomizationModeEnabled ? (
+  const editableWorkspaceSectionList = (
     <Suspense
       fallback={
         <WorkspaceSectionListEditModeFallback
@@ -167,7 +167,8 @@ export const WorkspaceSectionContainer = ({
         addMenuItemButton={addMenuItemButton}
       />
     </Suspense>
-  ) : (
+  );
+  const readOnlyWorkspaceSectionList = (
     <WorkspaceSectionListReadOnly
       filteredItems={visibleItems}
       folderChildrenById={filteredFolderChildrenById}
@@ -182,6 +183,9 @@ export const WorkspaceSectionContainer = ({
       }
     />
   );
+  const workspaceSectionList = isLayoutCustomizationModeEnabled
+    ? editableWorkspaceSectionList
+    : readOnlyWorkspaceSectionList;
 
   return (
     <NavigationMenuItemContainerContext.Provider value={{ containerId }}>

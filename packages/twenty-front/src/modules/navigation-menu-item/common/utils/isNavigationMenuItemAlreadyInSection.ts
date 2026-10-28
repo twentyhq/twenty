@@ -26,13 +26,13 @@ export const isNavigationMenuItemAlreadyInSection = ({
 }): boolean => {
   const movedItemIds = new Set([
     itemId,
-    ...getNavigationMenuItemDescendantIds(items, itemId),
+    ...getNavigationMenuItemDescendantIds({ items, parentId: itemId }),
   ]);
   const sectionTargetKeys = new Set(
-    getNavigationMenuItemsInSection(
+    getNavigationMenuItemsInSection({
       items,
-      getNavigationMenuItemSectionId(items, containerId),
-    )
+      sectionId: getNavigationMenuItemSectionId({ items, containerId }),
+    })
       .filter((sectionItem) => !movedItemIds.has(sectionItem.id))
       .map(getNavigationMenuItemTargetKey)
       .filter(isDefined),

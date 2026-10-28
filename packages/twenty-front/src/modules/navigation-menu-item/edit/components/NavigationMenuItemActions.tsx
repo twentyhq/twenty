@@ -58,40 +58,36 @@ export const NavigationMenuItemActions = ({
     void action();
     onClose();
   };
+  const moveAndInsertOptions: NavigationMenuItemOption[] = [
+    {
+      id: 'move',
+      label: moveToLabel,
+      Icon: IconFolderSymlink,
+      isDisabled: !hasMoveDestination,
+      hasSubMenu: true,
+      onClick: () => goToPage('move'),
+    },
+    {
+      id: 'before',
+      label: t`Add menu item before`,
+      Icon: IconRowInsertTop,
+      hasSubMenu: true,
+      onClick: () =>
+        onAdd({ folderId: item.folderId ?? undefined, position: index }),
+    },
+    {
+      id: 'after',
+      label: t`Add menu item after`,
+      Icon: IconRowInsertBottom,
+      hasSubMenu: true,
+      onClick: () =>
+        onAdd({ folderId: item.folderId ?? undefined, position: index + 1 }),
+    },
+  ];
   const isCommand = item.type === NavigationMenuItemType.COMMAND;
   const actions: NavigationMenuItemOption[] = [
     ...reorderOptions,
-    ...(isCommand
-      ? []
-      : [
-          {
-            id: 'move',
-            label: moveToLabel,
-            Icon: IconFolderSymlink,
-            isDisabled: !hasMoveDestination,
-            hasSubMenu: true,
-            onClick: () => goToPage('move'),
-          },
-          {
-            id: 'before',
-            label: t`Add menu item before`,
-            Icon: IconRowInsertTop,
-            hasSubMenu: true,
-            onClick: () =>
-              onAdd({ folderId: item.folderId ?? undefined, position: index }),
-          },
-          {
-            id: 'after',
-            label: t`Add menu item after`,
-            Icon: IconRowInsertBottom,
-            hasSubMenu: true,
-            onClick: () =>
-              onAdd({
-                folderId: item.folderId ?? undefined,
-                position: index + 1,
-              }),
-          },
-        ]),
+    ...(isCommand ? [] : moveAndInsertOptions),
     {
       id: 'remove',
       label: t`Remove from sidebar`,

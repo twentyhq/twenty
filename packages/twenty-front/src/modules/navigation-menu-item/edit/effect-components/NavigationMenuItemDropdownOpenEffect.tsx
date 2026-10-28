@@ -7,8 +7,7 @@ type NavigationMenuItemDropdownOpenEffectProps = {
   onOpen: () => void;
 };
 
-// An item created from an add menu is selected by that menu, which cannot
-// reach this row because it does not exist yet when the click happens.
+// A row created from an add menu does not exist yet when that menu's click runs
 export const NavigationMenuItemDropdownOpenEffect = ({
   dropdownId,
   onOpen,
