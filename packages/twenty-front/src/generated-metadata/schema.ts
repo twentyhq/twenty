@@ -2420,6 +2420,7 @@ export enum FeatureFlagKey {
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
+  IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
@@ -2701,6 +2702,39 @@ export type GetAuthorizationUrlForSso = {
 export type GetAuthorizationUrlForSsoInput = {
   identityProviderId: Scalars['UUID']['input'];
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type GettingStartedProgress = {
+  __typename?: 'GettingStartedProgress';
+  completedSteps: Array<GettingStartedStep>;
+  creditsEarned: Scalars['Float']['output'];
+  isHidden: Scalars['Boolean']['output'];
+  selectedStep?: Maybe<GettingStartedStep>;
+  snoozedUntil?: Maybe<Scalars['String']['output']>;
+  stepRewards: Array<GettingStartedStepReward>;
+  steps: Array<GettingStartedStep>;
+};
+
+export enum GettingStartedStep {
+  CONNECT_MAILBOX = 'CONNECT_MAILBOX',
+  FOLLOW_UP_DEALS = 'FOLLOW_UP_DEALS',
+  HANDOVER_DEALS = 'HANDOVER_DEALS',
+  IMPORT_DATA = 'IMPORT_DATA',
+  INSTALL_APP = 'INSTALL_APP',
+  INVITE_TEAM = 'INVITE_TEAM'
+}
+
+export type GettingStartedStepReward = {
+  __typename?: 'GettingStartedStepReward';
+  creditsEach: Scalars['Float']['output'];
+  remainingCount: Scalars['Int']['output'];
+  step: GettingStartedStep;
+};
+
+export type GettingStartedWorkflow = {
+  __typename?: 'GettingStartedWorkflow';
+  versionId: Scalars['String']['output'];
+  workflowId: Scalars['String']['output'];
 };
 
 export type GrantApplicationCapabilitiesInput = {
@@ -3532,6 +3566,7 @@ export type Mutation = {
   installMarketplaceApp: Scalars['Boolean']['output'];
   markAgentChatThreadAsDoneInChannel: Scalars['Boolean']['output'];
   moveAgentChatThreadToChannel: Scalars['Boolean']['output'];
+  prepareGettingStartedWorkflow: GettingStartedWorkflow;
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
   removeAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
@@ -3609,6 +3644,7 @@ export type Mutation = {
   updateCommandMenuItem: CommandMenuItem;
   updateEmailGroupChannel: MessageChannel;
   updateFrontComponent: FrontComponent;
+  updateGettingStarted: GettingStartedProgress;
   updateLabPublicFeatureFlag: FeatureFlag;
   updateManyNavigationMenuItems: Array<NavigationMenuItem>;
   updateManyObjects: Array<Object>;
@@ -4435,6 +4471,11 @@ export type MutationMoveAgentChatThreadToChannelArgs = {
 };
 
 
+export type MutationPrepareGettingStartedWorkflowArgs = {
+  activate: Scalars['Boolean']['input'];
+};
+
+
 export type MutationRemoveAgentChatMessageReactionArgs = {
   emoji: Scalars['String']['input'];
   messageId: Scalars['UUID']['input'];
@@ -4822,6 +4863,11 @@ export type MutationUpdateEmailGroupChannelArgs = {
 
 export type MutationUpdateFrontComponentArgs = {
   input: UpdateFrontComponentInput;
+};
+
+
+export type MutationUpdateGettingStartedArgs = {
+  input: UpdateGettingStartedInput;
 };
 
 
@@ -5800,6 +5846,7 @@ export type Query = {
   getViewSorts: Array<ViewSort>;
   getViews: Array<View>;
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDto;
+  gettingStartedProgress: GettingStartedProgress;
   githubClaimAuthorizationUrl: Scalars['String']['output'];
   isApplicationStopped: Scalars['Boolean']['output'];
   lineChartData: LineChartData;
@@ -7319,6 +7366,13 @@ export type UpdateFrontComponentInput = {
 export type UpdateFrontComponentInputUpdates = {
   description?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateGettingStartedInput = {
+  completedStep?: InputMaybe<GettingStartedStep>;
+  isHidden?: InputMaybe<Scalars['Boolean']['input']>;
+  selectedStep?: InputMaybe<GettingStartedStep>;
+  snoozedUntil?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateLabPublicFeatureFlagInput = {
