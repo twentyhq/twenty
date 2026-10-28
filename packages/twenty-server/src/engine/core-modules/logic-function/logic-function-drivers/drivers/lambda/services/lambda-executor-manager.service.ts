@@ -56,6 +56,15 @@ type ExecutorBuildContext = {
   applicationUniversalIdentifier: string;
 };
 
+const EXECUTOR_BUILD_LOCK_OPTIONS = {
+  ttl: BUILD_LOCK_TTL_MS,
+  ms: BUILD_LOCK_RETRY_MS,
+  maxRetries: BUILD_LOCK_MAX_RETRIES,
+};
+
+const getExecutorBuildLockKey = (logicFunctionId: string) =>
+  `lambda-build:${logicFunctionId}`;
+
 export class LambdaExecutorManagerService {
   private readonly logger = new Logger(LambdaExecutorManagerService.name);
 
@@ -106,7 +115,7 @@ export class LambdaExecutorManagerService {
       return;
     }
 
-    const lockKey = `lambda-build:${context.flatLogicFunction.id}`;
+    const lockKey = getExecutorBuildLockKey(context.flatLogicFunction.id);
 
     try {
       await this.cacheLockService.withLock(
@@ -130,11 +139,7 @@ export class LambdaExecutorManagerService {
           );
         },
         lockKey,
-        {
-          ttl: BUILD_LOCK_TTL_MS,
-          ms: BUILD_LOCK_RETRY_MS,
-          maxRetries: BUILD_LOCK_MAX_RETRIES,
-        },
+        EXECUTOR_BUILD_LOCK_OPTIONS,
       );
     } catch (error) {
       const isLockAcquisitionTimeout =
@@ -159,6 +164,60 @@ export class LambdaExecutorManagerService {
         `Lock acquisition timed out for ${lockKey} but executor is up to date, proceeding`,
       );
     }
+  }
+
+  async migrateDepsLayer(context: ExecutorBuildContext): Promise<boolean> {
+    const {
+      flatLogicFunction,
+      flatApplication,
+      applicationUniversalIdentifier,
+    } = context;
+
+    return this.cacheLockService.withLock(
+      async () => {
+        const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
+
+        if (!isDefined(lambdaExecutor)) {
+          return false;
+        }
+
+        const outdatedDepsLayerArns =
+          await this.layerManager.findOutdatedDepsLayerArns({
+            lambdaExecutor,
+            flatApplication,
+            applicationUniversalIdentifier,
+          });
+
+        if (outdatedDepsLayerArns.length === 0) {
+          return false;
+        }
+
+        const depsLayerArn = await this.layerManager.ensureDepsLayer({
+          flatApplication,
+          applicationUniversalIdentifier,
+        });
+        const keptLayerArns = (lambdaExecutor.Configuration?.Layers ?? [])
+          .map((layer) => layer.Arn)
+          .filter(isDefined)
+          .filter((layerArn) => !outdatedDepsLayerArns.includes(layerArn))
+          .filter((layerArn) => layerArn !== depsLayerArn);
+
+        const lambdaClient = await this.awsClient.getLambdaClient();
+
+        await lambdaClient.send(
+          new UpdateFunctionConfigurationCommand({
+            FunctionName: flatLogicFunction.id,
+            Layers: [depsLayerArn, ...keptLayerArns],
+          }),
+        );
+        await this.awsClient.waitFunctionUpdated(flatLogicFunction.id);
+        await this.clearLambdaExecutorCache(flatLogicFunction);
+
+        return true;
+      },
+      getExecutorBuildLockKey(flatLogicFunction.id),
+      EXECUTOR_BUILD_LOCK_OPTIONS,
+    );
   }
 
   private async refreshBuildContext(
@@ -298,11 +357,11 @@ export class LambdaExecutorManagerService {
       isDefined(lambdaExecutor) &&
       isActive &&
       !flatApplication.isSdkLayerStale &&
-      this.layerManager.hasExpectedLayers({
+      (await this.layerManager.hasExpectedLayers({
         lambdaExecutor,
         flatApplication,
         applicationUniversalIdentifier,
-      });
+      }));
 
     return { canSkip, lambdaExecutor };
   }
@@ -318,7 +377,8 @@ export class LambdaExecutorManagerService {
     let depsLayerArn: string;
 
     try {
-      depsLayerArn = await this.layerManager.ensureDepsLayer({
+      depsLayerArn = await this.layerManager.resolveDepsLayerArn({
+        lambdaExecutor,
         flatApplication,
         applicationUniversalIdentifier,
       });

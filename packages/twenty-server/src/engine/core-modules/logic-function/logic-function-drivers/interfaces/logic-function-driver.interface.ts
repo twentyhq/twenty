@@ -37,6 +37,9 @@ export type LogicFunctionInstallPrebuiltBundleParams = {
   applicationUniversalIdentifier: string;
 };
 
+export type LogicFunctionMigrateDepsLayerParams =
+  LogicFunctionInstallPrebuiltBundleParams;
+
 export type LogicFunctionTranspileParams = {
   sourceCode: string;
   sourceFileName: string;
@@ -69,6 +72,9 @@ export interface LogicFunctionDriver {
   getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null>;
+  migrateDepsLayer?(
+    params: LogicFunctionMigrateDepsLayerParams,
+  ): Promise<boolean>;
 }
 
 export enum LogicFunctionDriverType {

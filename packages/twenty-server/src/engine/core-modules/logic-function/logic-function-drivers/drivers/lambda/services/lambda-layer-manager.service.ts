@@ -11,7 +11,14 @@ import { EMPTY_YARN_LOCK_CONTENT } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
+import { WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies-directory-name';
+import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
   BUILD_LOCK_RETRY_MS,
@@ -23,8 +30,12 @@ import {
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { type LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { findOutdatedLambdaDepsLayerArns } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/find-outdated-lambda-deps-layer-arns.util';
 import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name.util';
+import { getLambdaLayerNameFromArn } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-layer-name-from-arn.util';
 import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name.util';
+import { getLambdaWorkspaceCustomDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-workspace-custom-deps-layer-name.util';
+import { getLegacyLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-legacy-lambda-deps-layer-name.util';
 import { reprefixLambdaZipEntries } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/reprefix-lambda-zip-entries.util';
 import { sanitizeApplicationPackageJson } from 'src/engine/core-modules/logic-function/logic-function-resource/utils/sanitize-application-package-json.util';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
@@ -38,6 +49,11 @@ import {
 type LayerAppContext = {
   flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
+};
+
+type DepsLayerDependencies = {
+  packageJson: string;
+  yarnLock: string;
 };
 
 const LAYER_LOCK_OPTIONS = {
@@ -60,47 +76,65 @@ export class LambdaLayerManagerService {
     private readonly sdkClientArchiveService: SdkClientArchiveService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
-  async ensureDepsLayer(context: LayerAppContext): Promise<string> {
-    const layerName = getLambdaDepsLayerName({
-      flatApplication: context.flatApplication,
-      namespace: this.options.resourceNamespace,
-    });
+  async ensureDepsLayer(
+    context: LayerAppContext,
+    { fallbackLayerArn }: { fallbackLayerArn?: string } = {},
+  ): Promise<string> {
+    const workspaceCustomDepsLayerName =
+      await this.getWorkspaceCustomDepsLayerName(context.flatApplication);
+    const depsLayerName = this.getDepsLayerName(context);
 
-    const existingArn = await this.awsClient.getExistingLayerArn(layerName);
+    for (const layerName of [workspaceCustomDepsLayerName, depsLayerName]) {
+      if (!isDefined(layerName)) {
+        continue;
+      }
 
-    if (isDefined(existingArn)) {
-      return existingArn;
+      const existingArn = await this.awsClient.getExistingLayerArn(layerName);
+
+      if (isDefined(existingArn)) {
+        return existingArn;
+      }
     }
 
-    const { packageJson, yarnLock } =
-      await this.getVerifiedDependencies(context);
+    if (isDefined(fallbackLayerArn)) {
+      return fallbackLayerArn;
+    }
 
-    return this.cacheLockService.withLock(
-      async () => {
-        const arnCreatedWhileWaiting =
-          await this.awsClient.getExistingLayerArn(layerName);
+    if (isDefined(workspaceCustomDepsLayerName)) {
+      const defaultDependencies =
+        await this.findWorkspaceCustomDefaultDependencies(
+          context.flatApplication,
+        );
 
-        if (isDefined(arnCreatedWhileWaiting)) {
-          return arnCreatedWhileWaiting;
-        }
+      if (isDefined(defaultDependencies)) {
+        return this.buildDepsLayer({
+          layerName: workspaceCustomDepsLayerName,
+          dependencies: defaultDependencies,
+        });
+      }
+    }
 
-        await this.createDepsLayer({ layerName, packageJson, yarnLock });
+    return this.buildDepsLayer({
+      layerName: depsLayerName,
+      dependencies: await this.getVerifiedDependencies(context),
+    });
+  }
 
-        const newArn = await this.awsClient.getExistingLayerArn(layerName);
-
-        if (!isDefined(newArn)) {
-          throw new Error(
-            `Layer '${layerName}' was not created by the yarn install Lambda`,
-          );
-        }
-
-        return newArn;
-      },
-      `lambda-deps-layer:${layerName}`,
-      LAYER_LOCK_OPTIONS,
-    );
+  async resolveDepsLayerArn({
+    lambdaExecutor,
+    ...context
+  }: LayerAppContext & {
+    lambdaExecutor: GetFunctionCommandOutput | undefined;
+  }): Promise<string> {
+    return this.ensureDepsLayer(context, {
+      fallbackLayerArn: this.findLegacyDepsLayerArn({
+        lambdaExecutor,
+        flatApplication: context.flatApplication,
+      }),
+    });
   }
 
   async ensureSdkLayer(context: LayerAppContext): Promise<string> {
@@ -214,23 +248,19 @@ export class LambdaLayerManagerService {
     await this.deleteAllLayerVersions(layerName);
   }
 
-  hasExpectedLayers({
+  async hasExpectedLayers({
     lambdaExecutor,
     flatApplication,
     applicationUniversalIdentifier,
   }: LayerAppContext & {
     lambdaExecutor: GetFunctionCommandOutput;
-  }): boolean {
+  }): Promise<boolean> {
     const layers = lambdaExecutor.Configuration?.Layers;
 
     if (!isDefined(layers) || layers.length !== 2) {
       return false;
     }
 
-    const depsLayerName = getLambdaDepsLayerName({
-      flatApplication,
-      namespace: this.options.resourceNamespace,
-    });
     const sdkLayerName = getLambdaSdkLayerName({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
@@ -241,10 +271,169 @@ export class LambdaLayerManagerService {
       lambdaExecutor.Tags?.[LAMBDA_SDK_CLIENT_CHECKSUM_TAG] ===
         flatApplication.sdkClientCoreChecksum;
 
-    return (
-      layers.some((layer) => layer.Arn?.includes(depsLayerName)) &&
-      layers.some((layer) => layer.Arn?.includes(sdkLayerName)) &&
-      isOnCurrentSdkClient
+    if (
+      !isOnCurrentSdkClient ||
+      !layers.some((layer) => layer.Arn?.includes(sdkLayerName))
+    ) {
+      return false;
+    }
+
+    const isOnLegacyDepsLayer = isDefined(
+      this.findLegacyDepsLayerArn({ lambdaExecutor, flatApplication }),
+    );
+
+    if (isOnLegacyDepsLayer) {
+      return true;
+    }
+
+    const depsLayerNames = await this.getV1DepsLayerNames({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
+
+    return layers.some((layer) => {
+      const layerName = isDefined(layer.Arn)
+        ? getLambdaLayerNameFromArn(layer.Arn)
+        : undefined;
+
+      return isDefined(layerName) && depsLayerNames.includes(layerName);
+    });
+  }
+
+  async findOutdatedDepsLayerArns({
+    lambdaExecutor,
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: LayerAppContext & {
+    lambdaExecutor: GetFunctionCommandOutput;
+  }): Promise<string[]> {
+    return findOutdatedLambdaDepsLayerArns({
+      layerArns: (lambdaExecutor.Configuration?.Layers ?? [])
+        .map((layer) => layer.Arn)
+        .filter(isDefined),
+      depsLayerNames: await this.getV1DepsLayerNames({
+        flatApplication,
+        applicationUniversalIdentifier,
+      }),
+      sdkLayerName: getLambdaSdkLayerName({
+        workspaceId: flatApplication.workspaceId,
+        applicationUniversalIdentifier,
+      }),
+    });
+  }
+
+  private findLegacyDepsLayerArn({
+    lambdaExecutor,
+    flatApplication,
+  }: {
+    lambdaExecutor: GetFunctionCommandOutput | undefined;
+    flatApplication: FlatApplication;
+  }): string | undefined {
+    const legacyDepsLayerName = getLegacyLambdaDepsLayerName({
+      flatApplication,
+      namespace: this.options.resourceNamespace,
+    });
+
+    return lambdaExecutor?.Configuration?.Layers?.find(
+      (layer) =>
+        isDefined(layer.Arn) &&
+        getLambdaLayerNameFromArn(layer.Arn) === legacyDepsLayerName,
+    )?.Arn;
+  }
+
+  private getDepsLayerName({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: LayerAppContext): string {
+    return getLambdaDepsLayerName({
+      flatApplication,
+      applicationUniversalIdentifier,
+      namespace: this.options.resourceNamespace,
+    });
+  }
+
+  private async getV1DepsLayerNames(
+    context: LayerAppContext,
+  ): Promise<string[]> {
+    const workspaceCustomDepsLayerName =
+      await this.getWorkspaceCustomDepsLayerName(context.flatApplication);
+
+    return [
+      workspaceCustomDepsLayerName,
+      this.getDepsLayerName(context),
+    ].filter(isDefined);
+  }
+
+  private async getWorkspaceCustomDepsLayerName(
+    flatApplication: FlatApplication,
+  ): Promise<string | undefined> {
+    if (!isDefined(flatApplication.yarnLockChecksum)) {
+      return undefined;
+    }
+
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      flatApplication.workspaceId,
+    );
+
+    if (workspace?.workspaceCustomApplicationId !== flatApplication.id) {
+      return undefined;
+    }
+
+    return getLambdaWorkspaceCustomDepsLayerName({
+      yarnLockChecksum: flatApplication.yarnLockChecksum,
+      namespace: this.options.resourceNamespace,
+    });
+  }
+
+  private async findWorkspaceCustomDefaultDependencies(
+    flatApplication: FlatApplication,
+  ): Promise<DepsLayerDependencies | undefined> {
+    const { yarnLockChecksum, packageJsonContent, yarnLockContent } =
+      await getDefaultApplicationPackageFields({
+        directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
+      });
+
+    if (yarnLockChecksum !== flatApplication.yarnLockChecksum) {
+      return undefined;
+    }
+
+    return {
+      packageJson: sanitizeApplicationPackageJson(packageJsonContent),
+      yarnLock: yarnLockContent,
+    };
+  }
+
+  private async buildDepsLayer({
+    layerName,
+    dependencies,
+  }: {
+    layerName: string;
+    dependencies: DepsLayerDependencies;
+  }): Promise<string> {
+    return this.cacheLockService.withLock(
+      async () => {
+        const arnCreatedWhileWaiting =
+          await this.awsClient.getExistingLayerArn(layerName);
+
+        if (isDefined(arnCreatedWhileWaiting)) {
+          return arnCreatedWhileWaiting;
+        }
+
+        await this.createDepsLayer({ layerName, ...dependencies });
+
+        const newArn = await this.awsClient.getExistingLayerArn(layerName);
+
+        if (!isDefined(newArn)) {
+          throw new Error(
+            `Layer '${layerName}' was not created by the yarn install Lambda`,
+          );
+        }
+
+        return newArn;
+      },
+      `lambda-deps-layer:${layerName}`,
+      LAYER_LOCK_OPTIONS,
     );
   }
 
@@ -315,7 +504,7 @@ export class LambdaLayerManagerService {
   private async getVerifiedDependencies({
     flatApplication,
     applicationUniversalIdentifier,
-  }: LayerAppContext): Promise<{ packageJson: string; yarnLock: string }> {
+  }: LayerAppContext): Promise<DepsLayerDependencies> {
     const { packageJsonContent, yarnLockContent } =
       await this.applicationDependencyFilesService.getVerifiedDependencyContentsOrThrow(
         {
@@ -324,6 +513,16 @@ export class LambdaLayerManagerService {
           declaredChecksums: flatApplication,
         },
       );
+
+    if (
+      isDefined(flatApplication.yarnLockChecksum) &&
+      !isDefined(yarnLockContent)
+    ) {
+      throw new ApplicationException(
+        `Application ${applicationUniversalIdentifier} declares a yarn.lock that is not stored`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
 
     return {
       packageJson: sanitizeApplicationPackageJson(packageJsonContent),

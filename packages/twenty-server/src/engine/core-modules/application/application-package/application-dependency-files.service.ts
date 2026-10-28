@@ -6,6 +6,7 @@ import {
   assertMatchingDependencyChecksumsOrThrow,
   type DependencyChecksums,
 } from 'src/engine/core-modules/application/application-package/utils/assert-matching-dependency-checksums-or-throw.util';
+import { computeApplicationPackageChecksums } from 'src/engine/core-modules/application/application-package/utils/compute-application-package-checksums.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -46,6 +47,17 @@ export class ApplicationDependencyFilesService {
     });
 
     return { packageJsonContent, yarnLockContent, storedFilesChecksums };
+  }
+
+  async computeStoredDependencyChecksums(
+    applicationIdentifier: ApplicationIdentifier,
+  ): Promise<{
+    packageJsonChecksum: string;
+    yarnLockChecksum: string | null;
+  }> {
+    return computeApplicationPackageChecksums(
+      await this.getDependencyContents(applicationIdentifier),
+    );
   }
 
   private async getDependencyContents({

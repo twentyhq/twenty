@@ -11,6 +11,7 @@ import {
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
   type LogicFunctionInstallPrebuiltBundleParams,
+  type LogicFunctionMigrateDepsLayerParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
@@ -69,6 +70,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       options.sdkClientArchiveService,
       options.cacheLockService,
       options.workspaceCacheService,
+      options.coreEntityCacheService,
     );
     this.executorManager = new LambdaExecutorManagerService(
       options,
@@ -121,6 +123,12 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null> {
     return this.executorManager.getInstalledBundleChecksum(flatLogicFunction);
+  }
+
+  async migrateDepsLayer(
+    params: LogicFunctionMigrateDepsLayerParams,
+  ): Promise<boolean> {
+    return this.executorManager.migrateDepsLayer(params);
   }
 
   async execute({
