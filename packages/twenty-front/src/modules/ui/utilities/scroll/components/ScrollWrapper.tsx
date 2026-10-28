@@ -10,12 +10,13 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 
 const StyledScrollWrapper = styled.div<{ autoHeight?: boolean }>`
   &.scroll-wrapper-x-enabled {
-    overflow-x: overlay;
+    overflow-x: auto;
   }
   &.scroll-wrapper-y-enabled {
-    overflow-y: overlay;
+    overflow-y: auto;
   }
   height: ${({ autoHeight }) => (autoHeight ? 'auto' : '100%')};
+  min-height: 0;
   overflow-x: hidden;
   overflow-y: hidden;
   width: 100%;
