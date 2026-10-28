@@ -1,14 +1,20 @@
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { PERMISSION_FLAG_PERMISSION_TYPES } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-permission-type.constant';
 import { PermissionFlagExceptionCode } from 'src/engine/metadata-modules/permission-flag/permission-flag.exception';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+
+const RESERVED_PERMISSION_FLAG_KEYS = new Set<string>(
+  Object.values(PermissionFlagType),
+);
 
 export const validateFlatPermissionFlagCreation = ({
   flatEntityToValidate: flatPermissionFlagToValidate,
@@ -48,6 +54,18 @@ export const validateFlatPermissionFlagCreation = ({
     });
   }
 
+  const isKeyReserved =
+    !belongsToTwentyStandardApp(flatPermissionFlagToValidate) &&
+    RESERVED_PERMISSION_FLAG_KEYS.has(flatPermissionFlagToValidate.key);
+
+  if (isKeyReserved) {
+    validationResult.errors.push({
+      code: PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_KEY,
+      message: t`Permission flag definition key "${flatPermissionFlagToValidate.key}" is reserved for a standard permission flag`,
+      userFriendlyMessage: msg`This key is reserved for a standard permission flag`,
+    });
+  }
+
   const collidingPermissionFlag = Object.values(
     optimisticFlatPermissionFlagMaps.byUniversalIdentifier,
   ).find(
@@ -58,7 +76,7 @@ export const validateFlatPermissionFlagCreation = ({
         flatPermissionFlagToValidate.universalIdentifier,
   );
 
-  if (isDefined(collidingPermissionFlag)) {
+  if (!isKeyReserved && isDefined(collidingPermissionFlag)) {
     validationResult.errors.push({
       code: PermissionFlagExceptionCode.PERMISSION_FLAG_ALREADY_EXISTS,
       message: t`Permission flag definition with key "${flatPermissionFlagToValidate.key}" is already registered in this workspace.`,

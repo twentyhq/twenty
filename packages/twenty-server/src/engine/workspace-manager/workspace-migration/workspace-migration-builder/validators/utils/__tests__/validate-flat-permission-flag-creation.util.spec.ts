@@ -1,9 +1,15 @@
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
+
 import { PermissionFlagExceptionCode } from 'src/engine/metadata-modules/permission-flag/permission-flag.exception';
 import { validateFlatPermissionFlagCreation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util';
 
 import {
   buildCreationArgs,
   buildFlatPermissionFlag,
+  buildStandardAppFlatPermissionFlag,
 } from './flat-permission-flag-validation.test-util';
 
 describe('validateFlatPermissionFlagCreation', () => {
@@ -81,6 +87,63 @@ describe('validateFlatPermissionFlagCreation', () => {
       PermissionFlagExceptionCode.PERMISSION_FLAG_ALREADY_EXISTS,
     );
     expect(result.errors[0].message).toContain('CAN_DO_THING');
+  });
+
+  it.each([
+    PermissionFlagType.CONNECTED_ACCOUNTS,
+    PermissionFlagType.WORKFLOWS,
+  ])(
+    'should report an error when an app flag uses the reserved key %s',
+    (key) => {
+      const result = validateFlatPermissionFlagCreation(
+        buildCreationArgs({
+          flatEntityToValidate: buildFlatPermissionFlag({
+            universalIdentifier: 'new-flag',
+            key,
+          }),
+        }),
+      );
+
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].code).toBe(
+        PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_KEY,
+      );
+      expect(result.errors[0].message).toContain(key);
+    },
+  );
+
+  it('should only report the reservation when an app flag reuses the key of an existing standard flag', () => {
+    const result = validateFlatPermissionFlagCreation(
+      buildCreationArgs({
+        flatEntityToValidate: buildFlatPermissionFlag({
+          universalIdentifier: 'new-flag',
+          key: PermissionFlagType.CONNECTED_ACCOUNTS,
+        }),
+        existingFlags: [
+          buildStandardAppFlatPermissionFlag({
+            universalIdentifier: SystemPermissionFlag.CONNECTED_ACCOUNTS,
+            key: PermissionFlagType.CONNECTED_ACCOUNTS,
+          }),
+        ],
+      }),
+    );
+
+    expect(result.errors.map(({ code }) => code)).toEqual([
+      PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_KEY,
+    ]);
+  });
+
+  it('should accept a standard permission flag key on a flag owned by the standard app', () => {
+    const result = validateFlatPermissionFlagCreation(
+      buildCreationArgs({
+        flatEntityToValidate: buildStandardAppFlatPermissionFlag({
+          universalIdentifier: SystemPermissionFlag.CONNECTED_ACCOUNTS,
+          key: PermissionFlagType.CONNECTED_ACCOUNTS,
+        }),
+      }),
+    );
+
+    expect(result.errors).toEqual([]);
   });
 
   it('should report an error for an unsupported permission type', () => {
