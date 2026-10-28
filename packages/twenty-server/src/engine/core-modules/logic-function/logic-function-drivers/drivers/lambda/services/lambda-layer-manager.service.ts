@@ -102,18 +102,12 @@ export class LambdaLayerManagerService {
       namespace: this.options.resourceNamespace,
     });
 
-    if (
-      !(await this.isWorkspaceCustomApplication(flatApplication)) ||
-      !isDefined(flatApplication.yarnLockChecksum)
-    ) {
+    if (!(await this.isWorkspaceCustomApplication(flatApplication))) {
       return [applicationDepsLayerName];
     }
 
     return [
-      getLambdaWorkspaceCustomDepsLayerName({
-        yarnLockChecksum: flatApplication.yarnLockChecksum,
-        namespace: this.options.resourceNamespace,
-      }),
+      this.getWorkspaceCustomDepsLayerName(flatApplication),
       applicationDepsLayerName,
     ];
   }
@@ -121,30 +115,21 @@ export class LambdaLayerManagerService {
   private async ensureWorkspaceCustomDepsLayer(
     flatApplication: FlatApplication,
   ): Promise<string> {
-    const { yarnLockChecksum } = flatApplication;
-
-    if (!isDefined(yarnLockChecksum)) {
-      return this.ensureApplicationDepsLayer(flatApplication);
-    }
-
-    const layerName = getLambdaWorkspaceCustomDepsLayerName({
-      yarnLockChecksum,
-      namespace: this.options.resourceNamespace,
-    });
+    const layerName = this.getWorkspaceCustomDepsLayerName(flatApplication);
     const existingArn = await this.awsClient.getExistingLayerArn(layerName);
 
     if (isDefined(existingArn)) {
       return existingArn;
     }
 
-    const dependencies =
-      await this.findWorkspaceCustomDepsLayerDependencies(flatApplication);
-
-    if (!isDefined(dependencies)) {
+    if (!(await this.canBuildWorkspaceCustomDepsLayer(flatApplication))) {
       return this.ensureApplicationDepsLayer(flatApplication);
     }
 
-    return this.buildDepsLayer({ layerName, dependencies });
+    return this.buildDepsLayer({
+      layerName,
+      dependencies: await this.getVerifiedDependencies(flatApplication),
+    });
   }
 
   private async ensureApplicationDepsLayer(
@@ -175,6 +160,40 @@ export class LambdaLayerManagerService {
     );
 
     return workspace?.workspaceCustomApplicationId === flatApplication.id;
+  }
+
+  private getWorkspaceCustomDepsLayerName(
+    flatApplication: FlatApplication,
+  ): string {
+    if (!isDefined(flatApplication.yarnLockChecksum)) {
+      throw new ApplicationException(
+        `Workspace custom application ${flatApplication.universalIdentifier} has no yarn.lock`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    return getLambdaWorkspaceCustomDepsLayerName({
+      yarnLockChecksum: flatApplication.yarnLockChecksum,
+      namespace: this.options.resourceNamespace,
+    });
+  }
+
+  private async canBuildWorkspaceCustomDepsLayer(
+    flatApplication: FlatApplication,
+  ): Promise<boolean> {
+    const defaultPackageFields = await getDefaultApplicationPackageFields({
+      directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
+    });
+
+    return [
+      defaultPackageFields,
+      ...Object.values(DEPENDENCY_CHECKSUMS_SEEDED_IN_2_52),
+    ].some((knownChecksums) =>
+      isMatchingDependencyChecksums({
+        declaredChecksums: flatApplication,
+        filesChecksums: knownChecksums,
+      }),
+    );
   }
 
   async ensureSdkLayer(flatApplication: FlatApplication): Promise<string> {
@@ -337,41 +356,6 @@ export class LambdaLayerManagerService {
 
       return isDefined(layerName) && depsLayerNames.includes(layerName);
     });
-  }
-
-  private async findWorkspaceCustomDepsLayerDependencies(
-    flatApplication: FlatApplication,
-  ): Promise<DepsLayerDependencies | undefined> {
-    const defaultDependencies = await getDefaultApplicationPackageFields({
-      directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
-    });
-
-    if (
-      isMatchingDependencyChecksums({
-        declaredChecksums: flatApplication,
-        filesChecksums: defaultDependencies,
-      })
-    ) {
-      return {
-        packageJson: sanitizeApplicationPackageJson(
-          defaultDependencies.packageJsonContent,
-        ),
-        yarnLock: defaultDependencies.yarnLockContent,
-      };
-    }
-
-    const isOnSeededDependencies = Object.values(
-      DEPENDENCY_CHECKSUMS_SEEDED_IN_2_52,
-    ).some((seededChecksums) =>
-      isMatchingDependencyChecksums({
-        declaredChecksums: flatApplication,
-        filesChecksums: seededChecksums,
-      }),
-    );
-
-    return isOnSeededDependencies
-      ? this.getVerifiedDependencies(flatApplication)
-      : undefined;
   }
 
   private async buildDepsLayer({
