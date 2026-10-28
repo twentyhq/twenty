@@ -7,7 +7,7 @@ import { AiChatFormStatusRenderer } from '@/ai/components/AiChatFormStatusRender
 import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStatusRenderer';
 import { AiChatToolCallApprovalStatusRenderer } from '@/ai/components/AiChatToolCallApprovalStatusRenderer';
 import { AiChatToolWidget } from '@/ai/components/AiChatToolWidget';
-import { LazyMarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
+import { AiChatTextPart } from '@/ai/components/AiChatTextPart';
 import { useFrontComponentIdByToolName } from '@/ai/hooks/useFrontComponentIdByToolName';
 import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
 import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderStandalone';
@@ -50,8 +50,9 @@ const MessagePartRenderer = ({
   switch (part.type) {
     case 'text':
       return (
-        <LazyMarkdownContent
+        <AiChatTextPart
           text={part.text}
+          isStreaming={isStreaming && part.state === 'streaming'}
           displayMode={isDefined(isUserMessage) ? displayMode : 'default'}
         />
       );
@@ -172,7 +173,6 @@ export const AiChatAssistantMessageRenderer = ({
       ? renderItemsWithoutThinkingSteps
       : groupedRenderItems;
 
-  const lastRenderItemIndex = renderItems.length - 1;
   // the duration covers the whole message, so only the steps right before the final answer carry it
   const lastThinkingStepsRenderItemIndex = renderItems.findLastIndex(
     (renderItem) => renderItem.type === 'thinking-steps',
@@ -197,18 +197,17 @@ export const AiChatAssistantMessageRenderer = ({
               key={index}
               parts={renderItem.parts}
               isLastMessageStreaming={isLastMessageStreaming}
-              hasAssistantTextResponseStarted={renderItems
-                .slice(index + 1)
-                .some(
-                  (nextRenderItem) =>
-                    nextRenderItem.type === 'part' &&
-                    nextRenderItem.part.type === 'text' &&
-                    nextRenderItem.part.text.trim().length > 0,
-                )}
               isTrailingWhileStreaming={
                 isLastMessageStreaming &&
                 !hasError &&
-                index === lastRenderItemIndex
+                renderItems
+                  .slice(index + 1)
+                  .every(
+                    (nextRenderItem) =>
+                      nextRenderItem.type === 'part' &&
+                      nextRenderItem.part.type === 'text' &&
+                      nextRenderItem.part.text.trim().length === 0,
+                  )
               }
               workDurationMs={
                 index === lastThinkingStepsRenderItemIndex
