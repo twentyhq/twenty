@@ -24,11 +24,26 @@ const Column = styled.div`
 `;
 
 const SectionContent = ({ section }: { section: AppReadmeSection }) => {
+  if (section.hasSubheadings) {
+    return (
+      <ExplainerGrid>
+        <Column>
+          <Heading as="h2" size="sm" weight="light">
+            {section.title}
+          </Heading>
+        </Column>
+        <Column>
+          <AppReadmeMarkdown markdown={section.markdown} />
+        </Column>
+      </ExplainerGrid>
+    );
+  }
+
   const firstListIndex = section.blocks.findIndex(
     (block) => block.kind === 'list',
   );
 
-  if (firstListIndex === 0 && !section.hasSubheadings) {
+  if (firstListIndex === 0) {
     return (
       <SectionStack>
         <SectionIntro>
@@ -43,10 +58,7 @@ const SectionContent = ({ section }: { section: AppReadmeSection }) => {
     );
   }
 
-  const asideBlocks =
-    firstListIndex > 0 ? section.blocks.slice(0, firstListIndex) : [];
-  const mainBlocks =
-    firstListIndex > 0 ? section.blocks.slice(firstListIndex) : section.blocks;
+  const mainBlocksStart = Math.max(firstListIndex, 0);
 
   return (
     <ExplainerGrid>
@@ -54,16 +66,16 @@ const SectionContent = ({ section }: { section: AppReadmeSection }) => {
         <Heading as="h2" size="sm" weight="light">
           {section.title}
         </Heading>
-        {!section.hasSubheadings && (
-          <AppReadmeBlocks blocks={asideBlocks} listLayout="stack" />
-        )}
+        <AppReadmeBlocks
+          blocks={section.blocks.slice(0, mainBlocksStart)}
+          listLayout="stack"
+        />
       </Column>
       <Column>
-        {section.hasSubheadings ? (
-          <AppReadmeMarkdown markdown={section.markdown} />
-        ) : (
-          <AppReadmeBlocks blocks={mainBlocks} listLayout="stack" />
-        )}
+        <AppReadmeBlocks
+          blocks={section.blocks.slice(mainBlocksStart)}
+          listLayout="stack"
+        />
       </Column>
     </ExplainerGrid>
   );
