@@ -208,6 +208,7 @@ export class ObjectMetadataResolver {
     return context.loaders.indexMetadataConnectionLoader.load({
       objectMetadata,
       workspaceId: workspace.id,
+      workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       filter,
       paging,
     });

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
+import { isWorkspaceCustomIndex } from 'twenty-shared/metadata';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -18,6 +19,7 @@ import { findManyItemsWithCursorPagination } from 'src/engine/metadata-modules/p
 
 export type IndexMetadataConnectionLoaderPayload = {
   workspaceId: string;
+  workspaceCustomApplicationId: string;
   objectMetadata: Pick<ObjectMetadataEntity, 'id'>;
   filter: IndexFilterInput;
   paging: CursorPagingInput;
@@ -46,42 +48,50 @@ export class IndexMetadataConnectionLoaderFactory {
           },
         );
 
-      return dataLoaderParams.map(({ objectMetadata, paging, filter }) => {
-        const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: objectMetadata.id,
-          flatEntityMaps: flatObjectMetadataMaps,
-        });
-        const flatIndexMetadatas =
-          findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-            flatEntityIds: flatObjectMetadata.indexMetadataIds,
-            flatEntityMaps: flatIndexMaps,
+      return dataLoaderParams.map(
+        ({ objectMetadata, paging, filter, workspaceCustomApplicationId }) => {
+          const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityId: objectMetadata.id,
+            flatEntityMaps: flatObjectMetadataMaps,
           });
-        const filteredFlatIndexMetadatas = applyMetadataFilterToItems({
-          items: flatIndexMetadatas,
-          filter,
-          columnByFilterField: INDEX_FILTER_COLUMN_BY_FILTER_FIELD,
-        });
-        const connection = findManyItemsWithCursorPagination({
-          items: filteredFlatIndexMetadatas,
-          paging,
-        });
+          const flatIndexMetadatas =
+            findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+              flatEntityIds: flatObjectMetadata.indexMetadataIds,
+              flatEntityMaps: flatIndexMaps,
+            });
+          const filteredFlatIndexMetadatas = applyMetadataFilterToItems({
+            items: flatIndexMetadatas.map((flatIndex) => ({
+              ...flatIndex,
+              isCustom: isWorkspaceCustomIndex({
+                indexMetadata: flatIndex,
+                workspaceCustomApplicationId,
+              }),
+            })),
+            filter,
+            columnByFilterField: INDEX_FILTER_COLUMN_BY_FILTER_FIELD,
+          });
+          const connection = findManyItemsWithCursorPagination({
+            items: filteredFlatIndexMetadatas,
+            paging,
+          });
 
-        return {
-          ...connection,
-          edges: connection.edges.map((edge) => ({
-            ...edge,
-            node: {
-              ...edge.node,
-              indexFieldMetadatas: edge.node.flatIndexFieldMetadatas,
-              createdAt: new Date(edge.node.createdAt),
-              updatedAt: new Date(edge.node.updatedAt),
-              indexWhereClause: edge.node.indexWhereClause ?? undefined,
-              objectMetadataId: objectMetadata.id,
-              workspaceId,
-            },
-          })),
-        };
-      });
+          return {
+            ...connection,
+            edges: connection.edges.map((edge) => ({
+              ...edge,
+              node: {
+                ...edge.node,
+                indexFieldMetadatas: edge.node.flatIndexFieldMetadatas,
+                createdAt: new Date(edge.node.createdAt),
+                updatedAt: new Date(edge.node.updatedAt),
+                indexWhereClause: edge.node.indexWhereClause ?? undefined,
+                objectMetadataId: objectMetadata.id,
+                workspaceId,
+              },
+            })),
+          };
+        },
+      );
     });
   }
 }

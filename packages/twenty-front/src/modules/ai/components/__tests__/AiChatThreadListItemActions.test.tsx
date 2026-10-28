@@ -43,7 +43,7 @@ const SALES_CHANNEL = {
   icon: 'IconCoins',
   color: 'green',
   position: 1,
-  isCustom: true,
+  applicationId: 'workspace-custom-application-id',
   isAccessible: true,
   roleIds: [],
 };

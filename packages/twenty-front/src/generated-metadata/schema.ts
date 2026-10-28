@@ -34,6 +34,7 @@ export type Agent = {
   description?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
+  /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
   isCustom: Scalars['Boolean']['output'];
   isSystem: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
@@ -49,10 +50,12 @@ export type Agent = {
 
 export type AgentChatChannel = {
   __typename?: 'AgentChatChannel';
+  applicationId: Scalars['UUID']['output'];
   color?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   isAccessible?: Maybe<Scalars['Boolean']['output']>;
+  /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
   isCustom: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   position: Scalars['Float']['output'];
@@ -2763,12 +2766,15 @@ export type Impersonate = {
 
 export type Index = {
   __typename?: 'Index';
+  applicationId: Scalars['UUID']['output'];
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
   indexFieldMetadataList: Array<IndexField>;
   indexType: IndexType;
   indexWhereClause?: Maybe<Scalars['String']['output']>;
+  /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
   isCustom?: Maybe<Scalars['Boolean']['output']>;
+  isSystemSideEffect: Scalars['Boolean']['output'];
   isUnique: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -2795,7 +2801,6 @@ export type IndexField = {
 export type IndexFilter = {
   and?: InputMaybe<Array<IndexFilter>>;
   id?: InputMaybe<UuidFilterComparison>;
-  isCustom?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<IndexFilter>>;
 };
 
@@ -6901,6 +6906,7 @@ export type Skill = {
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   isActive: Scalars['Boolean']['output'];
+  /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
   isCustom: Scalars['Boolean']['output'];
   isSystem: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
@@ -8138,6 +8144,7 @@ export type View = {
   id: Scalars['UUID']['output'];
   isActive: Scalars['Boolean']['output'];
   isCompact: Scalars['Boolean']['output'];
+  /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
   isCustom: Scalars['Boolean']['output'];
   isSystemSideEffect: Scalars['Boolean']['output'];
   kanbanAggregateOperation?: Maybe<AggregateOperations>;

@@ -21,7 +21,6 @@ const buildAgent = (overrides: Partial<CoreAgent>): CoreAgent => ({
   roleId: null,
   modelConfiguration: null,
   applicationId: null,
-  isCustom: true,
   isSystem: false,
   triggers: [],
   createdAt: '2026-01-01T00:00:00.000Z',

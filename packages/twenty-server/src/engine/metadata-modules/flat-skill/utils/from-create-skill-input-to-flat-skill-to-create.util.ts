@@ -33,7 +33,6 @@ export const fromCreateSkillInputToUniversalFlatSkillToCreate = ({
     icon: icon ?? null,
     description: description ?? null,
     content,
-    isCustom: true,
     isSystem: false,
     isActive: true,
     createdAt: now,
