@@ -203,7 +203,7 @@ export default {
         "Boolean": {},
         "AgentChatChannel": {
             "applicationId": [
-                524
+                527
             ],
             "color": [
                 1
@@ -5417,7 +5417,7 @@ export default {
         },
         "Index": {
             "applicationId": [
-                524
+                527
             ],
             "createdAt": [
                 209
