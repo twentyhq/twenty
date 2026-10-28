@@ -17,6 +17,7 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
 import { resolveEffectiveUniversalFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity.util';
 import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
+import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = '20202020-aaaa-4aaa-8aaa-000000000001';
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
@@ -76,9 +77,11 @@ const existingViewGroup: FlatViewGroup = {
 const updateView = ({
   groupingOverride,
   updateViewInput,
+  existingTranslations,
 }: {
   groupingOverride: string | null;
   updateViewInput: Omit<UpdateViewInput, 'id'>;
+  existingTranslations?: Record<string, { name?: string }>;
 }) => {
   const existingViewGroups = isNull(groupingOverride)
     ? []
@@ -124,6 +127,7 @@ const updateView = ({
       [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
         mainGroupByFieldMetadataId: groupingOverride,
         type: isNull(groupingOverride) ? ViewType.TABLE : ViewType.KANBAN,
+        ...(existingTranslations && { translations: existingTranslations }),
       },
     },
     universalOverrides: null,
@@ -221,5 +225,105 @@ describe('fromUpdateViewInputToFlatViewToUpdateOrThrow', () => {
 
     expect(result.flatViewGroupsToDelete).toEqual([existingViewGroup]);
     expect(result.flatViewGroupsToCreate).toEqual([]);
+  });
+
+  describe('translations', () => {
+    const resolveNameInLocale = ({
+      overrides,
+      locale,
+    }: {
+      overrides: unknown;
+      locale: 'en' | 'fr-FR' | 'zh-CN';
+    }) =>
+      resolveViewName({
+        view: {
+          name: 'By Stage',
+          overrides: overrides as Parameters<
+            typeof resolveViewName
+          >[0]['view']['overrides'],
+        },
+        i18nContext: {
+          locale,
+          i18nInstance: { _: (id: string) => id },
+          isStandardApp: false,
+          workspaceCustomApplicationUniversalIdentifier:
+            WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+          ownerApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+      });
+
+    it('stores per-locale name translations authored by the workspace', () => {
+      const { flatViewToUpdate } = updateView({
+        groupingOverride: COMPANY_FIELD_ID,
+        updateViewInput: {
+          translations: [
+            { locale: 'fr-FR', property: 'name', value: 'Par étape' },
+            { locale: 'zh-CN', property: 'name', value: '按阶段' },
+          ],
+        },
+      });
+
+      const workspaceOverrides =
+        flatViewToUpdate.universalOverrides?.[
+          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER
+        ];
+
+      expect(workspaceOverrides?.type).toBe(ViewType.KANBAN);
+      expect(workspaceOverrides?.translations).toEqual({
+        'fr-FR': { name: 'Par étape' },
+        'zh-CN': { name: '按阶段' },
+      });
+
+      expect(
+        resolveNameInLocale({
+          overrides: flatViewToUpdate.universalOverrides,
+          locale: 'fr-FR',
+        }),
+      ).toBe('Par étape');
+      expect(
+        resolveNameInLocale({
+          overrides: flatViewToUpdate.universalOverrides,
+          locale: 'zh-CN',
+        }),
+      ).toBe('按阶段');
+      expect(
+        resolveNameInLocale({
+          overrides: flatViewToUpdate.universalOverrides,
+          locale: 'en',
+        }),
+      ).toBe('By Stage');
+    });
+
+    it('removes a translation when its value is empty and keeps the others', () => {
+      const { flatViewToUpdate } = updateView({
+        groupingOverride: null,
+        existingTranslations: {
+          'fr-FR': { name: 'Par étape' },
+          'zh-CN': { name: '按阶段' },
+        },
+        updateViewInput: {
+          translations: [{ locale: 'fr-FR', property: 'name', value: null }],
+        },
+      });
+
+      expect(
+        flatViewToUpdate.universalOverrides?.[
+          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER
+        ]?.translations,
+      ).toEqual({ 'zh-CN': { name: '按阶段' } });
+    });
+
+    it('throws when translating a non-translatable property', () => {
+      expect(() =>
+        updateView({
+          groupingOverride: null,
+          updateViewInput: {
+            translations: [
+              { locale: 'fr-FR', property: 'icon', value: 'IconStar' },
+            ],
+          },
+        }),
+      ).toThrow('Cannot translate view properties: icon');
+    });
   });
 });

@@ -1,5 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
@@ -10,6 +11,7 @@ import {
   IsUUID,
   Max,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import {
   AggregateOperations,
@@ -21,6 +23,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
+import { MetadataTranslationOverrideInput } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translation-override.input';
 import { KANBAN_COLUMN_MAX_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-max-width.constant';
 import { KANBAN_COLUMN_MIN_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-min-width.constant';
 import { VIEW_OPEN_RECORD_IN_DEPRECATION } from 'src/engine/metadata-modules/view/constants/view-open-record-in-deprecation.constant';
@@ -121,4 +124,10 @@ export class UpdateViewInput {
   @IsOptional()
   @Field(() => Int, { nullable: true })
   groupLoadLimit?: number | null;
+
+  @Type(() => MetadataTranslationOverrideInput)
+  @ValidateNested({ each: true })
+  @IsOptional()
+  @Field(() => [MetadataTranslationOverrideInput], { nullable: true })
+  translations?: MetadataTranslationOverrideInput[];
 }

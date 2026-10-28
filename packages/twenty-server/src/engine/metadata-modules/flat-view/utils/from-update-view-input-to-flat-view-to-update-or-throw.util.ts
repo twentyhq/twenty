@@ -3,6 +3,7 @@ import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
+  isNonEmptyArray,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
@@ -16,9 +17,12 @@ import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/f
 import { fromViewOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view/utils/from-view-overrides-to-universal-overrides.util';
 import { handleFlatViewUpdateSideEffect } from 'src/engine/metadata-modules/flat-view/utils/handle-flat-view-update-side-effect.util';
 import { validateViewGroupLoadLimitOrThrow } from 'src/engine/metadata-modules/flat-view/utils/validate-view-group-load-limit-or-throw.util';
+import { findInvalidTranslationOverrideProperties } from 'src/engine/metadata-modules/overrides/utils/find-invalid-translation-override-properties.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
+import { mergeTranslationsIntoOverrides } from 'src/engine/metadata-modules/overrides/utils/merge-translations-into-overrides.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
+import { type ViewOverrides } from 'src/engine/metadata-modules/view/entities/view.entity';
 import {
   ViewException,
   ViewExceptionCode,
@@ -69,9 +73,24 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     );
   }
 
+  const { translations = [], ...updateViewInputWithoutTranslations } =
+    rawUpdateViewInput;
+
+  const invalidTranslationProperties = findInvalidTranslationOverrideProperties(
+    translations,
+    'view',
+  );
+
+  if (isNonEmptyArray(invalidTranslationProperties)) {
+    throw new ViewException(
+      `Cannot translate view properties: ${invalidTranslationProperties.join(', ')}`,
+      ViewExceptionCode.INVALID_VIEW_DATA,
+    );
+  }
+
   // NOT NULL column: null means the default, as on create and in manifests
   const { groupLoadLimit, ...updateViewInputWithoutGroupLoadLimit } =
-    rawUpdateViewInput;
+    updateViewInputWithoutTranslations;
 
   const editableProperties = extractAndSanitizeObjectStringFields(
     {
@@ -91,7 +110,7 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     isSystemSideEffect: existingFlatViewToUpdate.isSystemSideEffect,
   });
 
-  const { overrides, updatedEditableProperties } =
+  const { overrides: sanitizedOverrides, updatedEditableProperties } =
     sanitizeOverridableEntityInput({
       metadataName: 'view',
       existingFlatEntity: existingFlatViewToUpdate,
@@ -100,6 +119,18 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
       callerApplicationUniversalIdentifier,
       workspaceCustomApplicationUniversalIdentifier,
     });
+
+  const overrides = mergeTranslationsIntoOverrides<ViewOverrides>({
+    metadataName: 'view',
+    existingOverrides: sanitizedOverrides,
+    translationEntries: translations,
+    authorUniversalIdentifier: callerApplicationUniversalIdentifier,
+    authorContext: {
+      workspaceCustomApplicationUniversalIdentifier,
+      ownerApplicationUniversalIdentifier:
+        existingFlatViewToUpdate.applicationUniversalIdentifier,
+    },
+  });
 
   const mergedRecord = mergeUpdateInExistingRecord({
     existing: existingFlatViewToUpdate,
