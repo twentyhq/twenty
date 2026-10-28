@@ -3,7 +3,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useCreateOneIndexMetadataItem } from '@/object-metadata/hooks/useCreateOneIndexMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { getIsIndexMetadataItemCustom } from '@/object-metadata/utils/getIsIndexMetadataItemCustom';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SEARCH_VECTOR_FIELD_NAME } from '@/object-record/constants/SearchVectorFieldName';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -19,6 +18,7 @@ import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
+import { isWorkspaceCustomIndex } from 'twenty-shared/metadata';
 import { AppPath, RelationType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Callout, useToast } from 'twenty-ui/components/feedback';
@@ -101,8 +101,8 @@ export const SettingsObjectNewIndex = () => {
 
   const customIndexCount = activeObjectMetadataItem.indexMetadatas.filter(
     (indexMetadata) =>
-      getIsIndexMetadataItemCustom({
-        indexMetadataItem: indexMetadata,
+      isWorkspaceCustomIndex({
+        indexMetadata,
         workspaceCustomApplicationId:
           currentWorkspace?.workspaceCustomApplication?.id,
       }),

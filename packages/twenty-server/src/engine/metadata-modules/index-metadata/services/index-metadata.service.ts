@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isWorkspaceCustomIndex } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -20,7 +21,6 @@ import {
   IndexMetadataExceptionCode,
 } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
-import { isWorkspaceCustomIndex } from 'src/engine/metadata-modules/index-metadata/utils/is-workspace-custom-index.util';
 import { validateIndexTypeAgainstFieldsOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util';
 import { validateNoDuplicateUniqueIndexOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -214,7 +214,7 @@ export class IndexMetadataService {
         (flatIndex) =>
           flatIndex.objectMetadataId === createIndexInput.objectMetadataId &&
           isWorkspaceCustomIndex({
-            flatIndex,
+            indexMetadata: flatIndex,
             workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
           }),
       ).length;
@@ -350,7 +350,7 @@ export class IndexMetadataService {
     // and search performance. Dropping one corrupts the data model.
     if (
       !isWorkspaceCustomIndex({
-        flatIndex: flatIndexToDelete,
+        indexMetadata: flatIndexToDelete,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       })
     ) {

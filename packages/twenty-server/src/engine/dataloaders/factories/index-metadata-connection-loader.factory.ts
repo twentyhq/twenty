@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
+import { isWorkspaceCustomIndex } from 'twenty-shared/metadata';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -10,7 +11,6 @@ import {
   type IndexFilterInput,
 } from 'src/engine/metadata-modules/index-metadata/dtos/index-filter.input';
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
-import { isWorkspaceCustomIndex } from 'src/engine/metadata-modules/index-metadata/utils/is-workspace-custom-index.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
 import { type CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
@@ -63,7 +63,7 @@ export class IndexMetadataConnectionLoaderFactory {
             items: flatIndexMetadatas.map((flatIndex) => ({
               ...flatIndex,
               isCustom: isWorkspaceCustomIndex({
-                flatIndex,
+                indexMetadata: flatIndex,
                 workspaceCustomApplicationId,
               }),
             })),

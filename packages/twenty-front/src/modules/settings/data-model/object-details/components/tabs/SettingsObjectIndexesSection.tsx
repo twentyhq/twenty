@@ -2,7 +2,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useDeleteOneIndexMetadataItem } from '@/object-metadata/hooks/useDeleteOneIndexMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getIsIndexMetadataItemCustom } from '@/object-metadata/utils/getIsIndexMetadataItemCustom';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
@@ -17,6 +16,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
+import { isWorkspaceCustomIndex } from 'twenty-shared/metadata';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -95,8 +95,8 @@ export const SettingsObjectIndexesSection = ({
       id: indexMetadataItem.id,
       name: indexMetadataItem.name,
       isUnique: indexMetadataItem.isUnique,
-      isCustom: getIsIndexMetadataItemCustom({
-        indexMetadataItem,
+      isCustom: isWorkspaceCustomIndex({
+        indexMetadata: indexMetadataItem,
         workspaceCustomApplicationId,
       }),
       indexType: indexMetadataItem.indexType,
