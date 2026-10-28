@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { getNextRevealedTextLength } from '@/ai/utils/getNextRevealedTextLength';
 
@@ -28,37 +28,30 @@ export const useSmoothlyRevealedText = ({
   const isRevealing =
     isAppendedText && textReveal.revealedText.length < text.length;
 
-  useEffect(() => {
-    if (!isRevealing) {
-      return;
-    }
-
-    const animationFrameId = requestAnimationFrame((frameAtInMs) => {
-      setTextReveal({
-        revealedText: text.slice(
-          0,
-          getNextRevealedTextLength({
-            text,
-            revealedLength: textReveal.revealedText.length,
-            elapsedMs: frameAtInMs - (textReveal.revealedAtInMs ?? frameAtInMs),
-          }),
-        ),
-        revealedAtInMs: frameAtInMs,
-      });
+  const revealNextFrame = (frameAtInMs: number) => {
+    setTextReveal({
+      revealedText: text.slice(
+        0,
+        getNextRevealedTextLength({
+          text,
+          revealedLength: textReveal.revealedText.length,
+          elapsedMs: frameAtInMs - (textReveal.revealedAtInMs ?? frameAtInMs),
+        }),
+      ),
+      revealedAtInMs: frameAtInMs,
     });
-
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [isRevealing, text, textReveal]);
+  };
 
   const revealedText = isAppendedText ? textReveal.revealedText : text;
 
   if (revealedText.trim().length > 0) {
-    return { revealedText, isRevealing };
+    return { revealedText, isRevealing, revealNextFrame };
   }
 
   // the first word shows at once so a starting answer never renders empty
   return {
     revealedText: /^\s*\S+/.exec(text)?.[0] ?? revealedText,
     isRevealing,
+    revealNextFrame,
   };
 };
