@@ -17,7 +17,6 @@ import { frontComponentVendorResultSchema } from 'src/engine/metadata-modules/ai
 import { FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-max-build-output-bytes.constant';
 import { FRONT_COMPONENT_WRAPPER_NAME } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-wrapper-name.constant';
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
-import { frontComponentQuerySchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-query.schema';
 import { readFrontComponentSharedDependenciesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-shared-dependencies-checksum.util';
 import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
@@ -106,10 +105,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<
         FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
       );
     }
-    const source = buildFrontComponentEntrySource({
-      ...input,
-      query: frontComponentQuerySchema.parse(input.query),
-    });
+    const source = buildFrontComponentEntrySource(input);
     const driver = this.getCurrentDriver();
     const dependencies =
       await this.workspaceDependencies.readOrThrow(workspaceId);
