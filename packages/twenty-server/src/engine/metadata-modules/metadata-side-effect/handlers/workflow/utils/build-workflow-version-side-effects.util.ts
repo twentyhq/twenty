@@ -3,6 +3,7 @@ import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectOperationsByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operations-by-metadata-name.type';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
@@ -28,19 +29,11 @@ export const buildWorkflowVersionSideEffects = ({
     relatedFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
       universalIdentifier
     ];
-  const archivedVersions =
-    version.status === WorkflowVersionStatus.ACTIVE
-      ? workflowVersions
-          .filter(
-            (workflowVersion) =>
-              workflowVersion.status === WorkflowVersionStatus.ACTIVE &&
-              workflowVersion.universalIdentifier !== universalIdentifier,
-          )
-          .map((workflowVersion) => ({
-            ...workflowVersion,
-            status: WorkflowVersionStatus.ARCHIVED,
-          }))
-      : [];
+  const archivedVersions = archiveOtherActiveVersions({
+    versionStatus: version.status,
+    universalIdentifier,
+    workflowVersions,
+  });
   const archivedVersionRecord = fromArrayToUniqueKeyRecord({
     array: archivedVersions,
     uniqueKey: 'universalIdentifier',
@@ -67,6 +60,31 @@ export const buildWorkflowVersionSideEffects = ({
       }),
     },
   };
+};
+
+const archiveOtherActiveVersions = ({
+  versionStatus,
+  universalIdentifier,
+  workflowVersions,
+}: {
+  versionStatus: WorkflowVersionStatus;
+  universalIdentifier: string;
+  workflowVersions: FlatWorkflowVersion[];
+}): FlatWorkflowVersion[] => {
+  if (versionStatus !== WorkflowVersionStatus.ACTIVE) {
+    return [];
+  }
+
+  return workflowVersions
+    .filter(
+      (workflowVersion) =>
+        workflowVersion.status === WorkflowVersionStatus.ACTIVE &&
+        workflowVersion.universalIdentifier !== universalIdentifier,
+    )
+    .map((workflowVersion) => ({
+      ...workflowVersion,
+      status: WorkflowVersionStatus.ARCHIVED,
+    }));
 };
 
 // A command's version binding cannot be updated, so commands bound to other versions are replaced

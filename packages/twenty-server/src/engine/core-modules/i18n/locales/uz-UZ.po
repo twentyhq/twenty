@@ -3781,6 +3781,7 @@ msgstr "Maxsus (custom) obyekt uchun yorliq identifikatori maydoni yetishmaydi."
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Maxsus rollar Tashkilot tarifining bir qismidir."
 
@@ -5409,11 +5410,6 @@ msgstr "TS_VECTOR turi maydoni tizim maydoni bo‘lishi kerak"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "TS_VECTOR turi maydoni \"searchVector\" deb nomlangan bo‘lishi kerak"
-
-#. js-lingui-id: VkSxbb
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
-msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr "TS_VECTOR turidagi maydon SYSTEM yozish huquqiga ega bo‘lishi kerak"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

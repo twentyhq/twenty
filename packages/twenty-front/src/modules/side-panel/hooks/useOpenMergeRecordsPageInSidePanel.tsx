@@ -3,6 +3,7 @@ import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
+import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { SidePanelPages } from 'twenty-shared/types';
 
@@ -50,6 +51,8 @@ export const useOpenMergeRecordsPageInSidePanel = ({
       }),
       objectMetadataItem.id,
     );
+
+    store.set(mergeSettingsState.atom, { conflictPriorityIndex: 0 });
 
     await updateSidePanelNavigationMorphItemsByPage({
       pageId,

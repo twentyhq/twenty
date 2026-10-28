@@ -110,9 +110,11 @@ export const SettingsAccountGroupTableRow = ({
         {isDefined(builtInAccountApp) && shouldShowSyncStatus && (
           <SettingsConnectedAccountSyncStatus account={builtInAccount} />
         )}
-        {isDefined(builtInAccount) && (
-          <SettingsAppPreferencesRowDropdownMenu account={builtInAccount} />
-        )}
+        <SettingsAppPreferencesRowDropdownMenu
+          group={group}
+          hasAccountSettings={hasSettings}
+          builtInAccountApp={builtInAccountApp}
+        />
       </TableCell>
     </TableRow>
   );

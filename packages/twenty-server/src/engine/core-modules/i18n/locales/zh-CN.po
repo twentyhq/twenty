@@ -3781,6 +3781,7 @@ msgstr "自定义对象缺少标签标识字段。"
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "自定义角色是组织计划的一部分。"
 
@@ -5409,11 +5410,6 @@ msgstr "字段类型 TS_VECTOR 必须是系统字段"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "字段类型 TS_VECTOR 必须命名为 \"searchVector\""
-
-#. js-lingui-id: VkSxbb
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
-msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr "字段类型 TS_VECTOR 必须具有 SYSTEM 可写性。"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

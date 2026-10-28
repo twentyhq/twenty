@@ -2,6 +2,7 @@ import {
   activateCoreWorkflowVersion,
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
+  deactivateCoreWorkflowVersion,
   deleteCoreWorkflows,
   runCoreWorkflowVersion,
   updateCoreWorkflowVersionStep,
@@ -2012,6 +2013,33 @@ describe('Application export - workflows built in the workflow builder', () => {
           workflow.universalIdentifier === workflowUniversalIdentifier,
       ),
     ).toEqual(buildManifest('http://localhost:1/after'));
+  }, 60000);
+
+  it('shows the published command again after a deactivation and reactivation', async () => {
+    const [activeVersion] = (await findWorkflowVersions()).filter(
+      ({ status }) => status === 'ACTIVE',
+    );
+
+    await deactivateCoreWorkflowVersion({
+      coreWorkflowVersionId: activeVersion.id,
+    });
+    await activateCoreWorkflowVersion({
+      coreWorkflowVersionId: activeVersion.id,
+    });
+
+    const commandMenuItems: {
+      isActive: boolean;
+      overrides: Record<string, { isActive?: boolean }> | null;
+    }[] = await global.testDataSource.query(
+      `SELECT "isActive", overrides FROM core."commandMenuItem" WHERE "coreWorkflowVersionId" = $1`,
+      [activeVersion.id],
+    );
+
+    expect(commandMenuItems).toHaveLength(1);
+    expect(commandMenuItems[0].isActive).toBe(true);
+    expect(
+      Object.values(commandMenuItems[0].overrides ?? {}),
+    ).not.toContainEqual(expect.objectContaining({ isActive: false }));
   }, 60000);
 });
 

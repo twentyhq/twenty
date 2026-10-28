@@ -1,22 +1,24 @@
 /* @license Enterprise */
 
-import {
-  FeatureFlagKey,
-  MetadataReadability,
-  ObjectSharingReach,
-} from 'twenty-shared/types';
+import { type ObjectPermissionAction } from 'twenty-shared/application';
+import { FeatureFlagKey, MetadataReadability } from 'twenty-shared/types';
 
-import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+
 import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
+import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
 
 // A record shared by name reaches people whose role cannot otherwise access
 // its object, but only to view or edit it: deleting it, creating siblings or
 // managing its access stay with the roles that can access the object
-const OPERATION_TYPES_GRANTABLE_BEYOND_ROLE: OperationType[] = [
-  'select',
-  'update',
+const OPERATIONS_GRANTABLE_BEYOND_ROLE: {
+  operationType: OperationType;
+  objectPermissionAction: ObjectPermissionAction;
+}[] = [
+  { operationType: 'select', objectPermissionAction: 'canReadObjectRecords' },
+  { operationType: 'update', objectPermissionAction: 'canUpdateObjectRecords' },
 ];
 
 export type ObjectSharing = {
@@ -25,53 +27,47 @@ export type ObjectSharing = {
   operationTypesGrantedBeyondRole: OperationType[];
 };
 
-const resolveSharingMode = ({
-  flatObjectMetadata,
-  isRecordSharingEnabled,
-}: {
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'readability' | 'isSystem'>;
-  isRecordSharingEnabled: boolean;
-}): RecordSharingMode => {
-  switch (flatObjectMetadata.readability) {
-    case MetadataReadability.PRIVATE:
-      return RecordSharingMode.PRIVATE;
-    case MetadataReadability.INHERITED:
-      return RecordSharingMode.INHERITED;
-    default:
-      return isRecordSharingEnabled &&
-        isRecordShareExceptionObject(flatObjectMetadata)
-        ? RecordSharingMode.OPEN_BY_DEFAULT
-        : RecordSharingMode.ROLE_ONLY;
-  }
-};
-
 export const resolveObjectSharing = ({
   flatObjectMetadata,
   featureFlagsMap,
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
-    'readability' | 'isSystem' | 'sharingReach'
+    'readability' | 'isSystem' | 'disabledObjectPermissionActions'
   >;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 }): ObjectSharing => {
   const isRecordSharingEnabled =
     featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
-  const sharingMode = resolveSharingMode({
-    flatObjectMetadata,
-    isRecordSharingEnabled,
-  });
-  const canShareBeyondRole =
-    isRecordSharingEnabled &&
-    sharingMode !== RecordSharingMode.ROLE_ONLY &&
-    !flatObjectMetadata.isSystem &&
-    flatObjectMetadata.sharingReach === ObjectSharingReach.WORKSPACE;
+
+  // Private records are only reached through their shares, whatever the flag
+  const sharingMode =
+    flatObjectMetadata.readability === MetadataReadability.PRIVATE
+      ? RecordSharingMode.PRIVATE
+      : isRecordSharingEnabled &&
+          isRecordShareExceptionObject(flatObjectMetadata)
+        ? RecordSharingMode.OPEN_BY_DEFAULT
+        : RecordSharingMode.ROLE_ONLY;
+
+  if (!isRecordSharingEnabled || flatObjectMetadata.isSystem) {
+    return {
+      sharingMode,
+      canShareBeyondRole: false,
+      operationTypesGrantedBeyondRole: [],
+    };
+  }
+
+  const operationTypesGrantedBeyondRole =
+    OPERATIONS_GRANTABLE_BEYOND_ROLE.filter(
+      ({ objectPermissionAction }) =>
+        !flatObjectMetadata.disabledObjectPermissionActions?.includes(
+          objectPermissionAction,
+        ),
+    ).map(({ operationType }) => operationType);
 
   return {
     sharingMode,
-    canShareBeyondRole,
-    operationTypesGrantedBeyondRole: canShareBeyondRole
-      ? OPERATION_TYPES_GRANTABLE_BEYOND_ROLE
-      : [],
+    canShareBeyondRole: isNonEmptyArray(operationTypesGrantedBeyondRole),
+    operationTypesGrantedBeyondRole,
   };
 };

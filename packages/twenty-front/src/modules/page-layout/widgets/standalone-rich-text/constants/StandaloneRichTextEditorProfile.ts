@@ -4,7 +4,7 @@ import { parseLegacyMarkdownDocument } from '@/advanced-text-editor/utils/parseL
 
 export const STANDALONE_RICH_TEXT_EDITOR_PROFILE = {
   chrome: 'document',
-  variant: 'app',
+  variant: 'widget',
   minHeight: 0,
   enableFullScreen: false,
   parseLegacyDocument: parseLegacyMarkdownDocument,

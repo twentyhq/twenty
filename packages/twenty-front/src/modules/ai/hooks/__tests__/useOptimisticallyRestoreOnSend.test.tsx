@@ -9,6 +9,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
 const ARCHIVED_PARTICIPANT = {
+  __typename: 'AgentChatThreadParticipant' as const,
   threadId: THREAD_ID,
   lastReadAt: LAST_ACTIVITY_AT,
   archivedAt: '2026-10-01T11:00:00.000Z',
@@ -53,6 +54,7 @@ describe('useOptimisticallyRestoreOnSend', () => {
     expect(
       store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
     ).toEqual({
+      __typename: 'AgentChatThreadParticipant' as const,
       threadId: THREAD_ID,
       lastReadAt: sentAt,
       archivedAt: null,

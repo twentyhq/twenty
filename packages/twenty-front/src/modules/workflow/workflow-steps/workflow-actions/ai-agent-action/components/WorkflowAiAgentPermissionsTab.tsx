@@ -14,7 +14,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type Agent, GetRoleDocument } from '~/generated-metadata/graphql';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
+import { GetRoleDocument } from '~/generated-metadata/graphql';
 import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -63,7 +64,7 @@ type WorkflowAiAgentPermissionsTabProps = {
   stepId: string;
   readonly: boolean;
   isAgentLoading: boolean;
-  refetchAgent: () => Promise<{ data?: { findOneAgent?: Agent } }>;
+  refetchAgent: () => Promise<{ data?: { findOneAgent?: FlatAgent } }>;
 };
 
 export const WorkflowAiAgentPermissionsTab = ({

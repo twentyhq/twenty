@@ -9,6 +9,7 @@ export const DATABASE_CRUD_OPERATIONS = [
   'upsert_many',
   'delete_one',
   'delete_many',
+  'merge_many',
 ] as const;
 
 export type DatabaseCrudOperation = (typeof DATABASE_CRUD_OPERATIONS)[number];

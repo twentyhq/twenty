@@ -13,6 +13,7 @@ import { ADD_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/comman
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel-role.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'agentChatChannel', schema: 'core' })
@@ -49,8 +50,8 @@ export class AgentChatChannelEntity
   @Column({ nullable: false, type: 'float', default: 0 })
   position: number;
 
-  @Column({ nullable: false, default: false })
-  isCustom: boolean;
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  isCustom: WasRemovedInUpgrade<boolean>;
 
   @OneToMany(
     () => AgentChatChannelRoleEntity,

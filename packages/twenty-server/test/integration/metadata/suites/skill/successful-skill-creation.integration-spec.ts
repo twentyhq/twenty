@@ -34,7 +34,6 @@ describe('Skill creation should succeed', () => {
       icon: null,
       description: null,
       content: 'This is the skill content with instructions',
-      isCustom: true,
       isActive: true,
     });
   });
@@ -58,7 +57,6 @@ describe('Skill creation should succeed', () => {
     expect(data.createSkill).toMatchObject({
       id: expect.any(String),
       ...input,
-      isCustom: true,
       isActive: true,
     });
   });
@@ -107,7 +105,6 @@ describe('Skill creation should succeed', () => {
       name: 'longContentSkill',
       label: 'Long Content Skill',
       content: longContent,
-      isCustom: true,
       isActive: true,
     });
   });
@@ -140,7 +137,6 @@ Do the second thing.
       name: 'markdownSkill',
       label: 'Markdown Skill',
       content: markdownContent,
-      isCustom: true,
       isActive: true,
     });
   });

@@ -9,5 +9,5 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 export const isRecordShareExceptionObject = (
   flatObjectMetadata: Pick<FlatObjectMetadata, 'readability' | 'isSystem'>,
 ): boolean =>
-  flatObjectMetadata.readability === MetadataReadability.OPEN &&
+  flatObjectMetadata.readability !== MetadataReadability.PRIVATE &&
   !flatObjectMetadata.isSystem;

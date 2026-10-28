@@ -1,61 +1,23 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataReadability } from 'twenty-shared/types';
 
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 
-const createObject = (
-  universalIdentifier: string,
-  readability = MetadataReadability.OPEN,
-) => ({
+const createObject = (universalIdentifier: string) => ({
   universalIdentifier,
   applicationUniversalIdentifier: 'test-application',
   isActive: true,
-  readability,
 });
 
 describe('getDatabaseCrudToolFlatObjects', () => {
-  it('excludes internal history and record sharing objects from generic tools', () => {
+  it('keeps active objects available for subsequent permission checks', () => {
     const company = createObject(STANDARD_OBJECTS.company.universalIdentifier);
-    const systemObjects = [
-      STANDARD_OBJECTS.agentChatThread,
-      STANDARD_OBJECTS.agentMessage,
-      STANDARD_OBJECTS.agentMessagePart,
-      STANDARD_OBJECTS.agentTurn,
-      STANDARD_OBJECTS.recordShare,
-    ].map(({ universalIdentifier }) =>
-      createObject(universalIdentifier, MetadataReadability.SYSTEM),
-    );
+    const systemObject = { ...createObject('test-object'), isSystem: true };
 
-    expect(
-      getDatabaseCrudToolFlatObjects(
-        Object.fromEntries(
-          [company, ...systemObjects].map((objectMetadata) => [
-            objectMetadata.universalIdentifier,
-            objectMetadata,
-          ]),
-        ),
-      ),
-    ).toEqual([company]);
+    expect(getDatabaseCrudToolFlatObjects({ company, systemObject })).toEqual([
+      company,
+      systemObject,
+    ]);
   });
-
-  it.each([
-    MetadataReadability.OPEN,
-    MetadataReadability.APPLICATION,
-    MetadataReadability.PRIVATE,
-    MetadataReadability.INHERITED,
-  ])(
-    'keeps %s objects available for subsequent permission checks',
-    (readability) => {
-      const objectMetadata = {
-        ...createObject('test-object', readability),
-        isSystem: true,
-      };
-
-      expect(getDatabaseCrudToolFlatObjects({ objectMetadata })).toEqual([
-        objectMetadata,
-      ]);
-    },
-  );
 
   it('continues excluding missing, inactive and workflow objects', () => {
     const inactive = { ...createObject('inactive'), isActive: false };

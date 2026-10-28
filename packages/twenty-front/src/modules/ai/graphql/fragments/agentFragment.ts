@@ -11,7 +11,6 @@ export const AGENT_FRAGMENT = gql`
     modelId
     responseFormat
     roleId
-    isCustom
     isSystem
     modelConfiguration
     triggers
