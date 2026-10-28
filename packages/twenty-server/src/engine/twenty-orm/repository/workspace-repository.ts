@@ -159,6 +159,7 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   ) => Promise<T>;
 };
 
+// One result column per subject, under Postgres's 1664-column limit
 const ROW_ACCESS_POLICY_SUBJECT_BATCH_SIZE = 1_000;
 
 export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
