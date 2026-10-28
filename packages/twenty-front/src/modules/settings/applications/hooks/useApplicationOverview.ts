@@ -8,7 +8,7 @@ import {
   FindMarketplaceAppDetailDocument,
 } from '~/generated-metadata/graphql';
 import { getApplicationCoverImageUrl } from '@/settings/applications/utils/getApplicationCoverImageUrl';
-import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
+import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
 
 type UseApplicationOverviewArgs = {
   application?: Pick<

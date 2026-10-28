@@ -3,8 +3,8 @@ import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCu
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type Application } from '~/generated-metadata/graphql';
-import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
-import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
+import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '@/settings/applications/constants/CustomApplicationIllustrations';
+import { STANDARD_APPLICATION_ILLUSTRATIONS } from '@/settings/applications/constants/StandardApplicationIllustrations';
 
 type GetApplicationCoverImageUrlArgs = {
   application?: Pick<Application, 'id' | 'universalIdentifier'> | null;
