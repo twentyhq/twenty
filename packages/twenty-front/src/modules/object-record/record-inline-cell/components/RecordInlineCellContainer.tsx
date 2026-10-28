@@ -40,7 +40,7 @@ const StyledValueContainer = styled.div<{ readonly: boolean }>`
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number }>`
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};
   width: ${({ width }) => (width !== undefined ? `${width}px` : 'auto')};
 `;
