@@ -32,6 +32,10 @@ describe('currentUserCanManageGranolaOrThrow', () => {
       mockPermissionFlags(['WORKFLOWS', permissionFlag]);
 
       expect(await currentUserCanManageGranolaOrThrow()).toBe(true);
+      expect(queryMock).toHaveBeenCalledTimes(1);
+      expect(queryMock).toHaveBeenCalledWith({
+        currentUser: { currentUserWorkspace: { permissionFlags: true } },
+      });
     },
   );
 

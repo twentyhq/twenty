@@ -1,4 +1,5 @@
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
+import { toApplicationLifecycleJobError } from 'src/engine/core-modules/application/application-install/utils/to-application-lifecycle-job-error.util';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -21,11 +22,15 @@ export class TriggerUpgradeApplicationJob {
     data: TriggerUpgradeApplicationJobData,
     { updateProgress }: MessageQueueJobProgressContext,
   ): Promise<void> {
-    await this.applicationUpgradeService.upgradeApplication({
-      appRegistrationId: data.applicationRegistrationId,
-      targetVersion: data.targetVersion,
-      workspaceId: data.workspaceId,
-      updateProgress,
-    });
+    try {
+      await this.applicationUpgradeService.upgradeApplication({
+        appRegistrationId: data.applicationRegistrationId,
+        targetVersion: data.targetVersion,
+        workspaceId: data.workspaceId,
+        updateProgress,
+      });
+    } catch (error) {
+      throw toApplicationLifecycleJobError(error);
+    }
   }
 }

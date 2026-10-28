@@ -105,6 +105,7 @@ export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends Provis
       const result =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             allFlatEntityOperationByMetadataName: {
               pageLayoutWidget: {
                 flatEntityToCreate: [],

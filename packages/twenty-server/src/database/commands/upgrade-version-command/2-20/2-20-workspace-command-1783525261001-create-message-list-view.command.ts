@@ -94,7 +94,9 @@ export class CreateMessageListViewCommand extends ProvisionedWorkspaceCommandRun
 
     const viewFieldsToCreate = LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.filter(
       (universalIdentifier) =>
-        !isDefined(flatViewFieldMaps.byUniversalIdentifier[universalIdentifier]),
+        !isDefined(
+          flatViewFieldMaps.byUniversalIdentifier[universalIdentifier],
+        ),
     ).map((universalIdentifier) => {
       const standardViewField =
         findFlatEntityByUniversalIdentifier<FlatViewField>({
@@ -130,6 +132,7 @@ export class CreateMessageListViewCommand extends ProvisionedWorkspaceCommandRun
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:
