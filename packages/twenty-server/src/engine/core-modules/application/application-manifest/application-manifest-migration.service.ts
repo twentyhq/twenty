@@ -175,12 +175,14 @@ export class ApplicationManifestMigrationService {
     ownerFlatApplication,
     dryRun = false,
     inferDeletionFromMissingEntities = true,
+    shouldDeferActions,
   }: {
     manifest: Manifest;
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
     dryRun?: boolean;
     inferDeletionFromMissingEntities?: boolean;
+    shouldDeferActions?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -245,8 +247,7 @@ export class ApplicationManifestMigrationService {
       toAllUniversalFlatEntityMaps,
       existingAllFlatEntityMaps,
       idByUniversalIdentifierByMetadataName,
-      // Its workflows run as workspace workflows, which may already call any app's actions
-      canReferenceOtherApplicationsWorkflowActions:
+      isWorkspaceCustomApplication:
         ownerFlatApplication.id === workspaceCustomFlatApplication?.id,
       now,
     });
@@ -290,6 +291,7 @@ export class ApplicationManifestMigrationService {
           ownerFlatApplication.universalIdentifier,
         idByUniversalIdentifierByMetadataName,
         dryRun: isDryRun,
+        shouldDeferActions,
       });
 
     const validateBuildRunStart = performance.now();

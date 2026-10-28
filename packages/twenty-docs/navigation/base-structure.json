@@ -456,6 +456,7 @@
                 "developers/extend/apps/logic/workflows",
                 "developers/extend/apps/logic/connections",
                 "developers/extend/apps/logic/messaging-channels",
+                "developers/extend/apps/logic/inbox",
                 "developers/extend/apps/logic/credits"
               ]
             },

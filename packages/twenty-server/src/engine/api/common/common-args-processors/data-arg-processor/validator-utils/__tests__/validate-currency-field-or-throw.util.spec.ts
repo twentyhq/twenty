@@ -27,9 +27,30 @@ describe('validateCurrencyFieldOrThrow', () => {
 
       expect(result).toEqual(currencyValue);
     });
+
+    it('should accept a null or empty currencyCode', () => {
+      expect(
+        validateCurrencyFieldOrThrow({ currencyCode: null }, 'testField'),
+      ).toEqual({ currencyCode: null });
+      expect(
+        validateCurrencyFieldOrThrow({ currencyCode: '' }, 'testField'),
+      ).toEqual({ currencyCode: '' });
+    });
   });
 
   describe('invalid inputs', () => {
+    it.each(['XYZ', 'usd', 'toString'])(
+      'should throw when currencyCode is %s',
+      (currencyCode) => {
+        expect(() =>
+          validateCurrencyFieldOrThrow(
+            { amountMicros: 1000000, currencyCode },
+            'testField',
+          ),
+        ).toThrow(CommonQueryRunnerException);
+      },
+    );
+
     it('should throw when value is not an object', () => {
       expect(() =>
         validateCurrencyFieldOrThrow('not an object', 'testField'),

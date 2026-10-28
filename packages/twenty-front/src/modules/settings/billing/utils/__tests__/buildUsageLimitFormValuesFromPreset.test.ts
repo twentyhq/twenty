@@ -13,13 +13,16 @@ type OperatorOnlyScopes =
   UsageQuotaDefinitions['definitions'][number]['operatorOnlyScopes'];
 
 const AI_DEFINITION = {
+  __typename: 'UsageQuotaDefinition' as const,
   resourceType: UsageResourceType.AI,
   allowedOperations: [
     {
+      __typename: 'UsageLimitOperationDefinition' as const,
       operationType: UsageOperationType.ALL,
       allowedUnits: [UsageUnit.CREDIT],
     },
     {
+      __typename: 'UsageLimitOperationDefinition' as const,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       allowedUnits: [UsageUnit.CREDIT, UsageUnit.TOKEN],
     },
@@ -31,7 +34,14 @@ const AI_DEFINITION = {
 const buildDefinitions = (
   operatorOnlyScopes: OperatorOnlyScopes = [],
 ): UsageQuotaDefinitions => ({
-  definitions: [{ ...AI_DEFINITION, operatorOnlyScopes }],
+  __typename: 'UsageQuotaDefinitions',
+  definitions: [
+    {
+      ...AI_DEFINITION,
+      operatorOnlyScopes,
+      __typename: 'UsageQuotaDefinition',
+    },
+  ],
   isIntraWorkspaceLimitEntitled: true,
   hasAllowancePeriod: false,
 });
@@ -82,6 +92,7 @@ describe('buildUsageLimitFormValuesFromPreset', () => {
             spenderType: 'workspace',
             unit: UsageUnit.CREDIT,
             periodUnit: 'month',
+            __typename: 'UsageQuotaOperatorOnlyScope',
           },
         ]),
         presetId: 'aiCredits',

@@ -1,4 +1,5 @@
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { toApplicationLifecycleJobError } from 'src/engine/core-modules/application/application-install/utils/to-application-lifecycle-job-error.util';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -20,11 +21,15 @@ export class TriggerInstallApplicationJob {
     data: TriggerInstallApplicationJobData,
     { updateProgress }: MessageQueueJobProgressContext,
   ): Promise<void> {
-    await this.applicationInstallService.installApplication({
-      appRegistrationId: data.applicationRegistrationId,
-      workspaceId: data.workspaceId,
-      hasUserApprovedCapabilities: true,
-      updateProgress,
-    });
+    try {
+      await this.applicationInstallService.installApplication({
+        appRegistrationId: data.applicationRegistrationId,
+        workspaceId: data.workspaceId,
+        hasUserApprovedCapabilities: true,
+        updateProgress,
+      });
+    } catch (error) {
+      throw toApplicationLifecycleJobError(error);
+    }
   }
 }

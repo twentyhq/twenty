@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { buildManyToOneForeignKeyDefinition } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/build-many-to-one-foreign-key-definition.util';
@@ -42,10 +41,22 @@ export class ValidateForeignKeyDeferredActionHandlerService implements DeferredW
       return;
     }
 
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityMaps: flatObjectMetadataMaps,
       flatEntityId: flatFieldMetadata.objectMetadataId,
     });
+
+    const flatTargetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: flatFieldMetadata.relationTargetObjectMetadataId,
+    });
+
+    if (
+      !isDefined(flatObjectMetadata) ||
+      !isDefined(flatTargetObjectMetadata)
+    ) {
+      return;
+    }
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
       workspaceId,
