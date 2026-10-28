@@ -1199,6 +1199,82 @@ describe('Application export - data model', () => {
     }
   }, 60000);
 
+  it('only deletes workspace Custom application entities missing from the manifest when deletion is explicitly requested', async () => {
+    const { data: applicationsData } = await findManyApplications({
+      expectToFail: false,
+    });
+    const customApplication = applicationsData.findManyApplications.find(
+      ({ name }) => name === WORKSPACE_CUSTOM_APPLICATION_NAME,
+    );
+
+    jestExpectToBeDefined(customApplication);
+
+    const personObject = (
+      await findManyObjectMetadata({
+        expectToFail: false,
+        input: { filter: {}, paging: { first: 1000 } },
+        gqlFields: 'id nameSingular',
+      })
+    ).objects.find(({ nameSingular }) => nameSingular === 'person');
+
+    jestExpectToBeDefined(personObject);
+
+    const { data: createdViewData } = await createOneView({
+      expectToFail: false,
+      input: {
+        name: 'Pruned Custom Application People',
+        objectMetadataId: personObject.id,
+        type: ViewType.TABLE,
+        icon: 'IconUser',
+      },
+    });
+
+    try {
+      const { data } = await exportApplication({
+        universalIdentifier: customApplication.universalIdentifier,
+        expectToFail: false,
+      });
+      const { manifest } = data.exportApplication;
+      const prunedView = manifest.views.find(
+        ({ name }) => name === 'Pruned Custom Application People',
+      );
+
+      jestExpectToBeDefined(prunedView);
+
+      const manifestWithoutView = {
+        ...manifest,
+        views: manifest.views.filter((view) => view !== prunedView),
+      };
+      const planWith = async (inferDeletionFromMissingEntities?: boolean) => {
+        const dryRun = await syncApplication({
+          manifest: manifestWithoutView,
+          dryRun: true,
+          inferDeletionFromMissingEntities,
+          expectToFail: false,
+        });
+
+        expect(dryRun.errors).toBeUndefined();
+
+        return dryRun.data.syncApplication.actions;
+      };
+
+      expect(await planWith(undefined)).toEqual([]);
+      expect(await planWith(false)).toEqual([]);
+      expect(await planWith(true)).toContainEqual(
+        expect.objectContaining({
+          type: 'delete',
+          metadataName: 'view',
+          universalIdentifier: prunedView.universalIdentifier,
+        }),
+      );
+    } finally {
+      await destroyOneView({
+        expectToFail: false,
+        viewId: createdViewData.createView.id,
+      });
+    }
+  }, 60000);
+
   it('should round-trip a role with object, field and flag permissions created through the metadata API in the workspace Custom application without any action', async () => {
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
