@@ -89,10 +89,13 @@ describe('FlatSkillValidatorService', () => {
     expect(errorCodes(result)).toEqual(['SKILL_IS_STANDARD']);
   });
 
-  it('refuses an override that empties the skill content', () => {
+  it.each([
+    ['empties the skill content', { content: '' }],
+    ['sets the skill label to null', { label: null }],
+  ])('refuses an override that %s', (_description, override) => {
     const result = validateWorkspaceUpdate({
       overrides: {
-        [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: { content: '' },
+        [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: override,
       },
     });
 
