@@ -9536,6 +9536,9 @@ export default {
             "isActive": [
                 4
             ],
+            "isAuditLogged": [
+                4
+            ],
             "isLabelSyncedWithName": [
                 4
             ],

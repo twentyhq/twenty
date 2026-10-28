@@ -14,6 +14,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
     isRemote
     isActive
     isSystem
+    isAuditLogged
     isUIEditable
     isUICreatable
     writability
