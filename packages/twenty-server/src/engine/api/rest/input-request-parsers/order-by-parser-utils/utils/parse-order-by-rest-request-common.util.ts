@@ -13,7 +13,7 @@ import {
 const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 
 export const parseOrderBy = (
-  orderByQuery: string | string[] | ParsedQs | ParsedQs[] | undefined,
+  orderByQuery: ParsedQs[string],
 ): ObjectRecordOrderBy => {
   if (typeof orderByQuery !== 'string') {
     return addDefaultOrderById([{}]);

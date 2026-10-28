@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { type IconComponent } from 'twenty-ui/icon';
-import { ICON } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { THEME_COMMON, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledMetadata = styled.span`
   align-items: center;
@@ -26,7 +25,7 @@ export const CallRecordingRowMetadata = ({
 }: CallRecordingRowMetadataProps) => (
   <StyledMetadata>
     <StyledMetadataIconContainer>
-      <Icon size={ICON.size.md} />
+      <Icon size={THEME_COMMON.icon.size.md} />
     </StyledMetadataIconContainer>
     {text}
   </StyledMetadata>
