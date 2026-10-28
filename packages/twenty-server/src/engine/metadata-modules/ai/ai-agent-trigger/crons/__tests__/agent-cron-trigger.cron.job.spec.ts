@@ -8,6 +8,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AgentCronTriggerCronJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/crons/agent-cron-trigger.cron.job';
 import { RunAgentTriggerJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/run-agent-trigger.job';
 import { AgentTriggerThrottlerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-throttler.service';
@@ -27,13 +28,21 @@ const buildCronTrigger = (isActive = true): AgentTrigger => ({
   settings: { pattern: '0 9 * * 1' },
 });
 
-const buildFlatAgentMaps = (triggers: AgentTrigger[]) =>
+const buildFlatAgentMaps = ({
+  triggers,
+  agentOverrides = null,
+}: {
+  triggers: AgentTrigger[];
+  agentOverrides?: AgentEntity['overrides'];
+}) =>
   addFlatEntityToFlatEntityMapsOrThrow({
     flatEntity: {
       id: AGENT_ID,
       universalIdentifier: AGENT_ID,
       workspaceId: WORKSPACE_ID,
       triggers,
+      isActive: true,
+      overrides: agentOverrides,
       deletedAt: null,
     } as never,
     flatEntityMaps: createEmptyFlatEntityMaps(),
@@ -47,7 +56,7 @@ describe('AgentCronTriggerCronJob', () => {
   let flatAgentMaps: ReturnType<typeof buildFlatAgentMaps>;
 
   beforeEach(async () => {
-    flatAgentMaps = buildFlatAgentMaps([buildCronTrigger()]);
+    flatAgentMaps = buildFlatAgentMaps({ triggers: [buildCronTrigger()] });
     messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     cronTriggerDeduplicationService = {
       shouldDispatch: jest.fn().mockResolvedValue(true),
@@ -123,13 +132,28 @@ describe('AgentCronTriggerCronJob', () => {
   });
 
   it('should ignore inactive cron triggers', async () => {
-    flatAgentMaps = buildFlatAgentMaps([buildCronTrigger(false)]);
+    flatAgentMaps = buildFlatAgentMaps({ triggers: [buildCronTrigger(false)] });
 
     await job.handle();
 
     expect(
       cronTriggerDeduplicationService.shouldDispatch,
     ).not.toHaveBeenCalled();
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
+
+  it('should ignore the triggers of an agent the workspace archived', async () => {
+    flatAgentMaps = buildFlatAgentMaps({
+      triggers: [buildCronTrigger()],
+      agentOverrides: {
+        'workspace-custom-application-universal-identifier': {
+          isActive: false,
+        },
+      },
+    });
+
+    await job.handle();
+
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
