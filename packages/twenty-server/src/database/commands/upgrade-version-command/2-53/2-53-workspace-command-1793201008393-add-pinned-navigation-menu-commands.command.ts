@@ -9,44 +9,22 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { buildStandardNavigationMenuItemToCreate } from 'src/database/commands/upgrade-version-command/2-53/utils/build-standard-navigation-menu-item-to-create.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const HOME_SECTION_TYPES: NavigationMenuItemType[] = [
-  NavigationMenuItemType.SECTION,
-  NavigationMenuItemType.AI_CHAT_INBOX,
-  NavigationMenuItemType.AI_CHAT_FAVORITES,
-  NavigationMenuItemType.AI_CHAT_RECENTS,
-  NavigationMenuItemType.AI_AGENTS,
-  NavigationMenuItemType.AI_CHAT_CHANNELS,
+const DEFAULT_PINNED_COMMANDS = [
+  STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommandsSearch,
+  STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommandsNewChat,
 ];
 
-const getPositionUnderInbox = (homeSections: FlatNavigationMenuItem[]) => {
-  const inboxSectionIndex = homeSections.findIndex(
-    (section) => section.type === NavigationMenuItemType.AI_CHAT_INBOX,
-  );
-
-  if (inboxSectionIndex === -1) {
-    return (homeSections[0]?.position ?? 0) - 1;
-  }
-
-  const inboxSection = homeSections[inboxSectionIndex];
-  const sectionBelowInbox = homeSections[inboxSectionIndex + 1];
-
-  return isDefined(sectionBelowInbox)
-    ? (inboxSection.position + sectionBelowInbox.position) / 2
-    : inboxSection.position + 1;
-};
-
-@RegisteredWorkspaceCommand('2.53.0', 1793183524022)
+@RegisteredWorkspaceCommand('2.53.0', 1793201008393)
 @Command({
-  name: 'upgrade:2-53:add-favorites-navigation-menu-section',
+  name: 'upgrade:2-53:add-pinned-navigation-menu-commands',
   description:
-    'Place the Favorites section on Home just under the Inbox, for workspaces whose sidebar has none',
+    'Pin Search and New chat at the top of the sidebar, for workspaces that have no pinned commands',
 })
-export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspaceCommandRunner {
+export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -65,22 +43,18 @@ export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspa
         'flatNavigationMenuItemMaps',
       ]);
 
-    const workspaceNavigationMenuItems = Object.values(
+    const hasPinnedCommands = Object.values(
       flatNavigationMenuItemMaps.byUniversalIdentifier,
-    ).filter(
-      (navigationMenuItem): navigationMenuItem is FlatNavigationMenuItem =>
-        isDefined(navigationMenuItem) &&
-        !isDefined(navigationMenuItem.userWorkspaceId),
-    );
-
-    const hasFavoritesSection = workspaceNavigationMenuItems.some(
+    ).some(
       (navigationMenuItem) =>
-        navigationMenuItem.type === NavigationMenuItemType.FAVORITES,
+        isDefined(navigationMenuItem) &&
+        !isDefined(navigationMenuItem.userWorkspaceId) &&
+        navigationMenuItem.type === NavigationMenuItemType.PINNED_COMMANDS,
     );
 
-    if (hasFavoritesSection) {
+    if (hasPinnedCommands) {
       this.logger.log(
-        `Favorites section already present for workspace ${workspaceId}, skipping`,
+        `Pinned commands already present for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -88,7 +62,7 @@ export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspa
 
     if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Would add the Favorites section for workspace ${workspaceId}`,
+        `[DRY RUN] Would pin the default commands for workspace ${workspaceId}`,
       );
 
       return;
@@ -99,26 +73,37 @@ export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspa
         { workspaceId },
       );
 
-    const homeSections = workspaceNavigationMenuItems
-      .filter(
-        (navigationMenuItem) =>
-          !isDefined(navigationMenuItem.folderId) &&
-          HOME_SECTION_TYPES.includes(navigationMenuItem.type),
-      )
-      .sort((sectionA, sectionB) => sectionA.position - sectionB.position);
-
     const now = new Date().toISOString();
-    const favoritesSection = STANDARD_NAVIGATION_MENU_ITEMS.favoritesSection;
 
-    const favoritesSectionToCreate = buildStandardNavigationMenuItemToCreate({
-      id: v4(),
-      universalIdentifier: favoritesSection.universalIdentifier,
-      type: favoritesSection.type,
-      position: getPositionUnderInbox(homeSections),
+    const creationContext = {
       workspaceId,
       twentyStandardFlatApplication,
       now,
-    });
+    };
+    const pinnedCommands = STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommands;
+    const pinnedCommandsId = v4();
+
+    const flatNavigationMenuItemsToCreate = [
+      buildStandardNavigationMenuItemToCreate({
+        ...creationContext,
+        id: pinnedCommandsId,
+        universalIdentifier: pinnedCommands.universalIdentifier,
+        type: pinnedCommands.type,
+        position: pinnedCommands.position,
+      }),
+      ...DEFAULT_PINNED_COMMANDS.map((command) =>
+        buildStandardNavigationMenuItemToCreate({
+          ...creationContext,
+          id: v4(),
+          universalIdentifier: command.universalIdentifier,
+          type: command.type,
+          folderId: pinnedCommandsId,
+          folderUniversalIdentifier: command.folderUniversalIdentifier,
+          position: command.position,
+          commandKey: command.commandKey,
+        }),
+      ),
+    ];
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
@@ -129,7 +114,7 @@ export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspa
             twentyStandardFlatApplication.universalIdentifier,
           allFlatEntityOperationByMetadataName: {
             navigationMenuItem: {
-              flatEntityToCreate: [favoritesSectionToCreate],
+              flatEntityToCreate: flatNavigationMenuItemsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -139,14 +124,14 @@ export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspa
 
     if (validateAndBuildResult.status === 'fail') {
       this.logger.error(
-        `Failed to add the Favorites section:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+        `Failed to pin the default commands:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
 
       throw new Error(
-        `Failed to add the Favorites section for workspace ${workspaceId}`,
+        `Failed to pin the default commands for workspace ${workspaceId}`,
       );
     }
 
-    this.logger.log(`Added the Favorites section for workspace ${workspaceId}`);
+    this.logger.log(`Pinned the default commands for workspace ${workspaceId}`);
   }
 }

@@ -9,30 +9,44 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { buildStandardNavigationMenuItemToCreate } from 'src/database/commands/upgrade-version-command/2-53/utils/build-standard-navigation-menu-item-to-create.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const INBOX_AND_CHATS_SECTION_TYPES: NavigationMenuItemType[] = [
+const HOME_SECTION_TYPES: NavigationMenuItemType[] = [
+  NavigationMenuItemType.SECTION,
   NavigationMenuItemType.AI_CHAT_INBOX,
   NavigationMenuItemType.AI_CHAT_FAVORITES,
-  NavigationMenuItemType.AI_CHAT_CHANNELS,
   NavigationMenuItemType.AI_CHAT_RECENTS,
+  NavigationMenuItemType.AI_AGENTS,
+  NavigationMenuItemType.AI_CHAT_CHANNELS,
 ];
 
-const CHATS_TAB_SECTION_DEFINITIONS = [
-  STANDARD_NAVIGATION_MENU_ITEMS.chatsTabFavoriteChats,
-  STANDARD_NAVIGATION_MENU_ITEMS.chatsTabChannels,
-  STANDARD_NAVIGATION_MENU_ITEMS.chatsTabRecentChats,
-];
+const getPositionUnderInbox = (homeSections: FlatNavigationMenuItem[]) => {
+  const inboxSectionIndex = homeSections.findIndex(
+    (section) => section.type === NavigationMenuItemType.AI_CHAT_INBOX,
+  );
 
-@RegisteredWorkspaceCommand('2.53.0', 1793183524016)
+  if (inboxSectionIndex === -1) {
+    return (homeSections[0]?.position ?? 0) - 1;
+  }
+
+  const inboxSection = homeSections[inboxSectionIndex];
+  const sectionBelowInbox = homeSections[inboxSectionIndex + 1];
+
+  return isDefined(sectionBelowInbox)
+    ? (inboxSection.position + sectionBelowInbox.position) / 2
+    : inboxSection.position + 1;
+};
+
+@RegisteredWorkspaceCommand('2.53.0', 1793201008395)
 @Command({
-  name: 'upgrade:2-53:add-inbox-and-chats-navigation-menu-items',
+  name: 'upgrade:2-53:add-favorites-navigation-menu-section',
   description:
-    'Add the Inbox section to Home and the Chats tab, holding the favorite chats, channels and recent chats sections, to workspaces whose sidebar has none of them',
+    'Place the Favorites section on Home just under the Inbox, for workspaces whose sidebar has none',
 })
-export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorkspaceCommandRunner {
+export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -51,20 +65,22 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
         'flatNavigationMenuItemMaps',
       ]);
 
-    const hasInboxOrChats = Object.values(
+    const workspaceNavigationMenuItems = Object.values(
       flatNavigationMenuItemMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .some(
-        (navigationMenuItem) =>
-          navigationMenuItem.universalIdentifier ===
-            STANDARD_NAVIGATION_MENU_ITEMS.chatsTab.universalIdentifier ||
-          INBOX_AND_CHATS_SECTION_TYPES.includes(navigationMenuItem.type),
-      );
+    ).filter(
+      (navigationMenuItem): navigationMenuItem is FlatNavigationMenuItem =>
+        isDefined(navigationMenuItem) &&
+        !isDefined(navigationMenuItem.userWorkspaceId),
+    );
 
-    if (hasInboxOrChats) {
+    const hasFavoritesSection = workspaceNavigationMenuItems.some(
+      (navigationMenuItem) =>
+        navigationMenuItem.type === NavigationMenuItemType.FAVORITES,
+    );
+
+    if (hasFavoritesSection) {
       this.logger.log(
-        `Inbox section or Chats tab already present for workspace ${workspaceId}, skipping`,
+        `Favorites section already present for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -72,7 +88,7 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
 
     if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Would add the Inbox section and the Chats tab for workspace ${workspaceId}`,
+        `[DRY RUN] Would add the Favorites section for workspace ${workspaceId}`,
       );
 
       return;
@@ -83,47 +99,26 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
         { workspaceId },
       );
 
-    const now = new Date().toISOString();
-    const chatsTabId = v4();
+    const homeSections = workspaceNavigationMenuItems
+      .filter(
+        (navigationMenuItem) =>
+          !isDefined(navigationMenuItem.folderId) &&
+          HOME_SECTION_TYPES.includes(navigationMenuItem.type),
+      )
+      .sort((sectionA, sectionB) => sectionA.position - sectionB.position);
 
-    const creationContext = {
+    const now = new Date().toISOString();
+    const favoritesSection = STANDARD_NAVIGATION_MENU_ITEMS.favoritesSection;
+
+    const favoritesSectionToCreate = buildStandardNavigationMenuItemToCreate({
+      id: v4(),
+      universalIdentifier: favoritesSection.universalIdentifier,
+      type: favoritesSection.type,
+      position: getPositionUnderInbox(homeSections),
       workspaceId,
       twentyStandardFlatApplication,
       now,
-    };
-
-    const { inboxSection, chatsTab } = STANDARD_NAVIGATION_MENU_ITEMS;
-
-    const flatNavigationMenuItemsToCreate = [
-      buildStandardNavigationMenuItemToCreate({
-        ...creationContext,
-        id: v4(),
-        universalIdentifier: inboxSection.universalIdentifier,
-        type: inboxSection.type,
-        position: inboxSection.position,
-      }),
-      buildStandardNavigationMenuItemToCreate({
-        ...creationContext,
-        id: chatsTabId,
-        universalIdentifier: chatsTab.universalIdentifier,
-        type: chatsTab.type,
-        name: chatsTab.name,
-        icon: chatsTab.icon,
-        position: chatsTab.position,
-      }),
-      ...CHATS_TAB_SECTION_DEFINITIONS.map((chatsTabSection) =>
-        buildStandardNavigationMenuItemToCreate({
-          ...creationContext,
-          id: v4(),
-          universalIdentifier: chatsTabSection.universalIdentifier,
-          type: chatsTabSection.type,
-          folderId: chatsTabId,
-          folderUniversalIdentifier: chatsTabSection.folderUniversalIdentifier,
-          position: chatsTabSection.position,
-          visibleItemLimit: chatsTabSection.visibleItemLimit,
-        }),
-      ),
-    ];
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
@@ -134,7 +129,7 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
             twentyStandardFlatApplication.universalIdentifier,
           allFlatEntityOperationByMetadataName: {
             navigationMenuItem: {
-              flatEntityToCreate: flatNavigationMenuItemsToCreate,
+              flatEntityToCreate: [favoritesSectionToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -144,16 +139,14 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
 
     if (validateAndBuildResult.status === 'fail') {
       this.logger.error(
-        `Failed to add the Inbox section and the Chats tab:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+        `Failed to add the Favorites section:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
 
       throw new Error(
-        `Failed to add the Inbox section and the Chats tab for workspace ${workspaceId}`,
+        `Failed to add the Favorites section for workspace ${workspaceId}`,
       );
     }
 
-    this.logger.log(
-      `Added the Inbox section and the Chats tab for workspace ${workspaceId}`,
-    );
+    this.logger.log(`Added the Favorites section for workspace ${workspaceId}`);
   }
 }

@@ -13,18 +13,23 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const DEFAULT_PINNED_COMMANDS = [
-  STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommandsSearch,
-  STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommandsNewChat,
+const TAB_AND_SECTION_TYPES: NavigationMenuItemType[] = [
+  NavigationMenuItemType.TAB,
+  NavigationMenuItemType.SECTION,
+  NavigationMenuItemType.AI_CHAT_INBOX,
+  NavigationMenuItemType.AI_CHAT_FAVORITES,
+  NavigationMenuItemType.AI_CHAT_RECENTS,
+  NavigationMenuItemType.AI_AGENTS,
+  NavigationMenuItemType.AI_CHAT_CHANNELS,
 ];
 
-@RegisteredWorkspaceCommand('2.53.0', 1793183524020)
+@RegisteredWorkspaceCommand('2.53.0', 1793201008390)
 @Command({
-  name: 'upgrade:2-53:add-pinned-navigation-menu-commands',
+  name: 'upgrade:2-53:add-workspace-navigation-menu-section',
   description:
-    'Pin Search and New chat at the top of the sidebar, for workspaces that have no pinned commands',
+    'Add the Workspace sidebar section and move the workspace items listed at the root of Home into it',
 })
-export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspaceCommandRunner {
+export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -43,18 +48,20 @@ export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspace
         'flatNavigationMenuItemMaps',
       ]);
 
-    const hasPinnedCommands = Object.values(
+    const workspaceSection = STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection;
+    const navigationMenuItems = Object.values(
       flatNavigationMenuItemMaps.byUniversalIdentifier,
-    ).some(
-      (navigationMenuItem) =>
-        isDefined(navigationMenuItem) &&
-        !isDefined(navigationMenuItem.userWorkspaceId) &&
-        navigationMenuItem.type === NavigationMenuItemType.PINNED_COMMANDS,
-    );
+    ).filter(isDefined);
 
-    if (hasPinnedCommands) {
+    if (
+      navigationMenuItems.some(
+        (navigationMenuItem) =>
+          navigationMenuItem.universalIdentifier ===
+          workspaceSection.universalIdentifier,
+      )
+    ) {
       this.logger.log(
-        `Pinned commands already present for workspace ${workspaceId}, skipping`,
+        `Workspace sidebar section already present for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -62,48 +69,49 @@ export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspace
 
     if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Would pin the default commands for workspace ${workspaceId}`,
+        `[DRY RUN] Would add the Workspace sidebar section for workspace ${workspaceId}`,
       );
 
       return;
     }
 
-    const { twentyStandardFlatApplication } =
+    const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
 
     const now = new Date().toISOString();
+    const workspaceSectionId = v4();
+    const movableApplicationIds = new Set([
+      twentyStandardFlatApplication.id,
+      workspaceCustomFlatApplication.id,
+    ]);
 
-    const creationContext = {
+    const workspaceSectionToCreate = buildStandardNavigationMenuItemToCreate({
+      id: workspaceSectionId,
+      universalIdentifier: workspaceSection.universalIdentifier,
+      type: workspaceSection.type,
+      name: workspaceSection.name,
+      position: workspaceSection.position,
       workspaceId,
       twentyStandardFlatApplication,
       now,
-    };
-    const pinnedCommands = STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommands;
-    const pinnedCommandsId = v4();
+    });
 
-    const flatNavigationMenuItemsToCreate = [
-      buildStandardNavigationMenuItemToCreate({
-        ...creationContext,
-        id: pinnedCommandsId,
-        universalIdentifier: pinnedCommands.universalIdentifier,
-        type: pinnedCommands.type,
-        position: pinnedCommands.position,
-      }),
-      ...DEFAULT_PINNED_COMMANDS.map((command) =>
-        buildStandardNavigationMenuItemToCreate({
-          ...creationContext,
-          id: v4(),
-          universalIdentifier: command.universalIdentifier,
-          type: command.type,
-          folderId: pinnedCommandsId,
-          folderUniversalIdentifier: command.folderUniversalIdentifier,
-          position: command.position,
-          commandKey: command.commandKey,
-        }),
-      ),
-    ];
+    const rootItemsToMove = navigationMenuItems
+      .filter(
+        (navigationMenuItem) =>
+          !isDefined(navigationMenuItem.userWorkspaceId) &&
+          !isDefined(navigationMenuItem.folderId) &&
+          !TAB_AND_SECTION_TYPES.includes(navigationMenuItem.type) &&
+          movableApplicationIds.has(navigationMenuItem.applicationId),
+      )
+      .map((navigationMenuItem) => ({
+        ...navigationMenuItem,
+        folderId: workspaceSectionId,
+        folderUniversalIdentifier: workspaceSection.universalIdentifier,
+        updatedAt: now,
+      }));
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
@@ -114,9 +122,9 @@ export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspace
             twentyStandardFlatApplication.universalIdentifier,
           allFlatEntityOperationByMetadataName: {
             navigationMenuItem: {
-              flatEntityToCreate: flatNavigationMenuItemsToCreate,
+              flatEntityToCreate: [workspaceSectionToCreate],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [],
+              flatEntityToUpdate: rootItemsToMove,
             },
           },
         },
@@ -124,14 +132,16 @@ export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspace
 
     if (validateAndBuildResult.status === 'fail') {
       this.logger.error(
-        `Failed to pin the default commands:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+        `Failed to add the Workspace sidebar section:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
 
       throw new Error(
-        `Failed to pin the default commands for workspace ${workspaceId}`,
+        `Failed to add the Workspace sidebar section for workspace ${workspaceId}`,
       );
     }
 
-    this.logger.log(`Pinned the default commands for workspace ${workspaceId}`);
+    this.logger.log(
+      `Added the Workspace sidebar section with ${rootItemsToMove.length} items for workspace ${workspaceId}`,
+    );
   }
 }
