@@ -4,6 +4,7 @@ import {
   type WorkflowTriggerManifest,
 } from 'twenty-shared/application';
 import {
+  ConnectedAccountProvider,
   FieldMetadataType,
   RecordFilterGroupLogicalOperator,
   RelationType,
@@ -15,7 +16,10 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { fromFlatWorkflowToWorkflowManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-workflow-to-workflow-manifest.util';
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
-import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import {
+  type WorkflowManifestConnectedAccountReference,
+  type WorkflowManifestReferences,
+} from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 
@@ -33,7 +37,25 @@ const FUNCTION_ID = '70000000-0000-4000-8000-000000000000';
 const AGENT_ID = '80000000-0000-4000-8000-000000000000';
 const RECORD_FILTER_ID = '90000000-0000-4000-8000-000000000000';
 
+const SALES_HANDLE = 'sales@example.com';
+const WORKSPACE_MEMBER_ID = 'a0000000-0000-4000-8000-000000000000';
+
+const connectedAccount = (
+  overrides: Partial<WorkflowManifestConnectedAccountReference>,
+): WorkflowManifestConnectedAccountReference => ({
+  id: 'sales-account-id',
+  handle: SALES_HANDLE,
+  provider: ConnectedAccountProvider.GOOGLE,
+  connectionParameters: null,
+  archivedAt: null,
+  scopes: ['https://www.googleapis.com/auth/calendar.events'],
+  scope: 'WORKSPACE',
+  calendarChannels: [{ isSyncEnabled: true }],
+  ...overrides,
+});
+
 const references: WorkflowManifestReferences = {
+  connectedAccounts: [connectedAccount({})],
   logicFunctionIdByUniversalIdentifier: new Map([
     [FUNCTION_ID, 'logic-function-id'],
   ]),
@@ -183,6 +205,27 @@ const STEP_INPUTS = {
     recordId: '{{trigger.recordId}}',
     timeout: { days: 1 },
   },
+  SEND_EMAIL: {
+    connectedAccountHandle: SALES_HANDLE,
+    recipients: { to: '{{trigger.properties.after.email}}', cc: '', bcc: '' },
+    subject: 'Welcome',
+    files: [],
+  },
+  DRAFT_EMAIL: {
+    connectedAccountId: '{{trigger.properties.after.assigneeId}}',
+    recipients: { to: 'jane@example.com', cc: '', bcc: '' },
+    files: [],
+  },
+  CREATE_CALENDAR_EVENT: {
+    connectedAccountHandle: SALES_HANDLE,
+    title: 'Kick-off',
+    startsAt: '2026-11-02T09:00:00.000Z',
+    endsAt: '2026-11-02T09:30:00.000Z',
+    isFullDay: false,
+    attendees: '',
+    sendInvitations: true,
+    addConferencing: false,
+  },
   EMPTY: {},
 };
 
@@ -216,6 +259,22 @@ const buildWorkflow = ({
   name: 'Triage tickets',
   version: { trigger, steps },
 });
+
+const sendEmailWorkflow = (accountReference: Record<string, string>) => {
+  const { connectedAccountHandle: _connectedAccountHandle, ...input } =
+    STEP_INPUTS.SEND_EMAIL;
+
+  return buildWorkflow({
+    steps: [
+      buildStep({
+        type: 'SEND_EMAIL',
+        overrides: {
+          input: { ...input, ...accountReference },
+        } as Partial<WorkflowStepManifest>,
+      }),
+    ],
+  });
+};
 
 const syncWorkflow = (manifest: WorkflowManifest) => {
   const { flatUniversalWorkflowVersion, ...workflow } =
@@ -368,6 +427,44 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       );
     });
 
+    describe('connected accounts', () => {
+      it('stores the account a handle resolves to and exports its handle back', () => {
+        const synced = syncWorkflow(
+          sendEmailWorkflow({ connectedAccountId: 'sales-account-id' }),
+        );
+
+        expect(
+          synced.flatWorkflowVersion.steps?.[0]?.settings.input,
+        ).toMatchObject({ connectedAccountId: 'sales-account-id' });
+        expect(exportWorkflow(synced)).toEqual({
+          manifest: sendEmailWorkflow({ connectedAccountHandle: SALES_HANDLE }),
+        });
+      });
+
+      it('exports a step on an account private to a member as its id', () => {
+        const manifest = sendEmailWorkflow({
+          connectedAccountId: 'sales-account-id',
+        });
+
+        expect(
+          exportWorkflow({
+            ...syncWorkflow(manifest),
+            exportReferences: {
+              ...references,
+              connectedAccounts: [connectedAccount({ scope: 'USER' })],
+            },
+          }),
+        ).toEqual({ manifest });
+      });
+
+      it.each(['{{trigger.properties.after.assigneeId}}', WORKSPACE_MEMBER_ID])(
+        'keeps the account value %s as it was declared',
+        (connectedAccountId) => {
+          expectRoundTrip(sendEmailWorkflow({ connectedAccountId }));
+        },
+      );
+    });
+
     it('omits values the sync derives', () => {
       const result = exportWorkflow(
         syncWorkflow(
@@ -490,22 +587,19 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
   });
 
   describe('unsupported workflows', () => {
-    it.each([
-      WorkflowActionType.CODE,
-      WorkflowActionType.SEND_EMAIL,
-      WorkflowActionType.DRAFT_EMAIL,
-      WorkflowActionType.SEND_CHAT_MESSAGE,
-      WorkflowActionType.CREATE_CALENDAR_EVENT,
-    ])('reports a %s step', (type) => {
-      const synced = syncWorkflow(buildWorkflow({}));
-      const [step] = synced.flatWorkflowVersion.steps ?? [];
+    it.each([WorkflowActionType.CODE, WorkflowActionType.SEND_CHAT_MESSAGE])(
+      'reports a %s step',
+      (type) => {
+        const synced = syncWorkflow(buildWorkflow({}));
+        const [step] = synced.flatWorkflowVersion.steps ?? [];
 
-      Object.assign(step, { type });
+        Object.assign(step, { type });
 
-      expect(exportWorkflow(synced)).toEqual({
-        reason: `${type} steps are not supported in application workflows`,
-      });
-    });
+        expect(exportWorkflow(synced)).toEqual({
+          reason: `${type} steps are not supported in application workflows`,
+        });
+      },
+    );
 
     it('reports a record filter on a field of a related record', () => {
       const synced = syncWorkflow(
@@ -642,6 +736,75 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
           },
         }),
       ).toEqual({ reason: 'workflow watching a field that is not exported' });
+    });
+
+    it.each([
+      {
+        case: 'an archived account',
+        account: connectedAccount({ archivedAt: new Date() }),
+        reason: `workflow step on archived connected account ${SALES_HANDLE}`,
+      },
+      {
+        case: 'an account that cannot send email',
+        account: connectedAccount({ provider: ConnectedAccountProvider.OIDC }),
+        reason: `workflow step on connected account ${SALES_HANDLE}, which cannot send email`,
+      },
+    ])('reports a step on $case', ({ account, reason }) => {
+      const synced = syncWorkflow(
+        buildWorkflow({ steps: [buildStep({ type: 'SEND_EMAIL' })] }),
+      );
+
+      expect(
+        exportWorkflow({
+          ...synced,
+          exportReferences: { ...references, connectedAccounts: [account] },
+        }),
+      ).toEqual({ reason });
+    });
+
+    it('reports a calendar step on an account whose calendar sync is disabled', () => {
+      const synced = syncWorkflow(
+        buildWorkflow({
+          steps: [buildStep({ type: 'CREATE_CALENDAR_EVENT' })],
+        }),
+      );
+
+      expect(
+        exportWorkflow({
+          ...synced,
+          exportReferences: {
+            ...references,
+            connectedAccounts: [
+              connectedAccount({
+                calendarChannels: [{ isSyncEnabled: false }],
+              }),
+            ],
+          },
+        }),
+      ).toEqual({
+        reason: `workflow step on connected account ${SALES_HANDLE}, which cannot create calendar events`,
+      });
+    });
+
+    it('reports a step on an account whose handle names an older account', () => {
+      const synced = syncWorkflow(
+        sendEmailWorkflow({ connectedAccountId: 'sales-account-id' }),
+      );
+
+      expect(
+        exportWorkflow({
+          ...synced,
+          exportReferences: {
+            ...references,
+            connectedAccounts: [
+              connectedAccount({ id: 'older-account-id' }),
+              connectedAccount({}),
+            ],
+          },
+        }),
+      ).toEqual({
+        reason: `workflow step on connected account ${SALES_HANDLE}, whose handle names an older account of the workspace`,
+      });
     });
 
     it('reports a version the sync would not reproduce', () => {

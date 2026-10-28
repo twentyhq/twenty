@@ -1,5 +1,6 @@
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions-or-throw.util';
 
 import { type DropAgentTurnEvaluationObjectCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791216273979-drop-agent-turn-evaluation-object.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -78,6 +79,7 @@ describe('2-46 workspace command - drop agent turn evaluation object (integratio
     expect(await findEvaluationObject()).toBeDefined();
     expect(await countEvaluationTables()).toBe(1);
 
+    await waitForDeferredWorkspaceMigrationActionsOrThrow();
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
     expect(await findEvaluationObject()).toBeUndefined();

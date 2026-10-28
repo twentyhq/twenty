@@ -1,5 +1,8 @@
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECT_FIELDS, STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECT_FIELDS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -152,6 +155,7 @@ export class MakeStandardChildObjectsInheritedCommand extends ProvisionedWorkspa
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,

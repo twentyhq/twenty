@@ -53,6 +53,7 @@ export class PermissionsService {
       flatRolePermissionFlagMaps,
       rolesPermissions,
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'userWorkspaceRoleMap',
@@ -60,6 +61,7 @@ export class PermissionsService {
       'flatRolePermissionFlagMaps',
       'rolesPermissions',
       'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
       'flatApplicationMaps',
     ]);
 
@@ -86,6 +88,7 @@ export class PermissionsService {
         intersectionOf: { userWorkspaceRoleId: flatRole.id },
         rolesPermissions,
         flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
         flatApplicationMaps,
       }),
     };

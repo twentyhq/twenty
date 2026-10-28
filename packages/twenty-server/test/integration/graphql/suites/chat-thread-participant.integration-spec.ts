@@ -90,11 +90,12 @@ type Participant = {
 };
 
 const OPEN_THREADS_SUMMARY = parse(
-  `query OpenThreadsSummary { agentChatOpenThreadsSummary { openThreadCount needsInputThreadCount hasUnreadOpenThread hasUnreadMentionThread hasUnreadAssignedThread } }`,
+  `query OpenThreadsSummary { agentChatOpenThreadsSummary { openThreadCount unreadOpenThreadCount needsInputThreadCount hasUnreadOpenThread hasUnreadMentionThread hasUnreadAssignedThread } }`,
 );
 
 type OpenThreadsSummary = {
   openThreadCount: number;
+  unreadOpenThreadCount: number;
   needsInputThreadCount: number;
   hasUnreadOpenThread: boolean;
   hasUnreadMentionThread: boolean;
@@ -1117,6 +1118,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(await findOpenThreadsSummary()).toMatchObject({
       openThreadCount: before.openThreadCount + 1,
+      unreadOpenThreadCount: before.unreadOpenThreadCount,
       needsInputThreadCount: before.needsInputThreadCount + 1,
       hasUnreadOpenThread: before.hasUnreadOpenThread,
     });
@@ -1127,7 +1129,22 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(await findOpenThreadsSummary()).toMatchObject({
       openThreadCount: before.openThreadCount + 1,
+      unreadOpenThreadCount: before.unreadOpenThreadCount + 1,
       hasUnreadOpenThread: true,
+    });
+
+    await runInboxAction('READ', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(await findOpenThreadsSummary()).toMatchObject({
+      openThreadCount: before.openThreadCount + 1,
+      unreadOpenThreadCount: before.unreadOpenThreadCount,
+      hasUnreadOpenThread: before.hasUnreadOpenThread,
+    });
+
+    await runInboxAction('UNREAD', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
     await runInboxAction('ARCHIVE', threadId, {
@@ -1159,6 +1176,7 @@ describe('Chat thread participant state through the authenticated API', () => {
   });
 
   it('flags the open chats the member was mentioned in or assigned that are unread', async () => {
+    const initialSummary = await findOpenThreadsSummary();
     const mentionedThreadId = await createTestThread();
     const assignedThreadId = await createTestThread();
 
@@ -1168,6 +1186,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     await assign(assignedThreadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
 
     expect(await findOpenThreadsSummary()).toMatchObject({
+      unreadOpenThreadCount: initialSummary.unreadOpenThreadCount + 2,
       hasUnreadMentionThread: true,
       hasUnreadAssignedThread: true,
     });
@@ -1186,14 +1205,19 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     const before = await findOpenThreadsSummary();
 
+    expect(before.unreadOpenThreadCount).toBe(
+      initialSummary.unreadOpenThreadCount,
+    );
+
     // Activity brings back a chat filed under done, but not one the member left
     await global.testDataSource.query(
       `UPDATE ${SCHEMA}."agentChatThread" SET "lastActivityAt" = clock_timestamp() WHERE id = ANY($1)`,
       [[mentionedThreadId, assignedThreadId]],
     );
 
-    expect((await findOpenThreadsSummary()).openThreadCount).toBe(
-      before.openThreadCount + 1,
-    );
+    expect(await findOpenThreadsSummary()).toMatchObject({
+      openThreadCount: before.openThreadCount + 1,
+      unreadOpenThreadCount: before.unreadOpenThreadCount + 1,
+    });
   });
 });

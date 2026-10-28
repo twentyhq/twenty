@@ -45,16 +45,15 @@ export class AlignMessageCampaignCommandsCommand extends ProvisionedWorkspaceCom
         now,
       });
 
-    const commandMenuItemsToCreate = buildMissingStandardCommandMenuItemsToCreate(
-      {
+    const commandMenuItemsToCreate =
+      buildMissingStandardCommandMenuItemsToCreate({
         commandMenuItemNames: ['cancelMessageCampaign'],
         flatCommandMenuItemByUniversalIdentifier:
           flatCommandMenuItemMaps.byUniversalIdentifier,
         flatObjectMetadataMaps,
         workspaceId,
         now,
-      },
-    );
+      });
 
     if (
       commandMenuItemsToUpdate.length === 0 &&
@@ -74,6 +73,7 @@ export class AlignMessageCampaignCommandsCommand extends ProvisionedWorkspaceCom
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: commandMenuItemsToCreate,
