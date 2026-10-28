@@ -11,9 +11,5 @@ export const getRecordBoardColumnAccentStyle = (
   return {
     [RECORD_BOARD_COLUMN_ACCENT_CSS_VARIABLE_NAMES.accent]:
       themeCssVariables.color[themeColor],
-    [RECORD_BOARD_COLUMN_ACCENT_CSS_VARIABLE_NAMES.headerSurface]:
-      themeCssVariables.tag.background[themeColor],
-    [RECORD_BOARD_COLUMN_ACCENT_CSS_VARIABLE_NAMES.surface]:
-      themeCssVariables.color[`${themeColor}2`],
   } as CSSProperties;
 };

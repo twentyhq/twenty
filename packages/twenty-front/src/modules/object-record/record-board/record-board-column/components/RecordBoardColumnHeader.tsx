@@ -8,7 +8,6 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
 import { RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-board/constants/RecordBoardColumnWidthCssVariableName';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { RECORD_BOARD_COLUMN_ACCENT_CSS_VARIABLE_NAMES } from '@/object-record/record-board/constants/RecordBoardColumnAccentCssVariableNames';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnHeaderTitle } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderTitle';
 import { RecordBoardColumnResizeHandler } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnResizeHandler';
@@ -39,21 +38,15 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 
 const StyledHeader = styled.div<{ isReadOnly: boolean }>`
-  background-color: var(
-    ${RECORD_BOARD_COLUMN_ACCENT_CSS_VARIABLE_NAMES.headerSurface}
-  );
+  align-items: center;
+  background-color: ${themeCssVariables.background.tertiary};
   border-radius: ${themeCssVariables.border.radius.md}
     ${themeCssVariables.border.radius.md} 0 0;
-  border-top: 3px solid
-    var(${RECORD_BOARD_COLUMN_ACCENT_CSS_VARIABLE_NAMES.accent});
   box-sizing: border-box;
   cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing['0.5']};
   height: 100%;
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]} 0;
+  padding: 0 ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[3]};
   width: 100%;
 `;
 
@@ -88,16 +81,15 @@ const StyledHeaderContainer = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   justify-content: space-between;
-  min-height: 24px;
   width: 100%;
 `;
 
 const StyledLeftContainer = styled.div`
   align-items: center;
   display: flex;
+  gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
   overflow: hidden;
-  padding-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledRightContainer = styled.div`
@@ -134,8 +126,8 @@ const StyledTagContainer = styled.div`
 const StyledAggregateDropdownContainer = styled.div<{
   isNonInteractive: boolean;
 }>`
-  color: ${themeCssVariables.font.color.secondary};
   display: flex;
+  flex-shrink: 0;
   font-variant-numeric: tabular-nums;
   pointer-events: ${({ isNonInteractive }) =>
     isNonInteractive ? 'none' : 'auto'};
@@ -273,6 +265,17 @@ export const RecordBoardColumnHeader = () => {
                   </DropdownRoot>
                 )}
               </StyledDropdownContainer>
+              <StyledAggregateDropdownContainer
+                isNonInteractive={isAggregateDropdownNonInteractive}
+                inert={isAggregateDropdownNonInteractive || undefined}
+              >
+                <RecordGroupAggregateDropdown
+                  aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
+                  dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
+                  objectMetadataItem={objectMetadataItem}
+                  aggregateLabel={recordIndexAggregateDisplayLabel}
+                />
+              </StyledAggregateDropdownContainer>
             </StyledLeftContainer>
             <StyledRightContainer>
               {!isRecordBoardViewSettingsReadOnly && (
@@ -303,17 +306,6 @@ export const RecordBoardColumnHeader = () => {
               )}
             </StyledRightContainer>
           </StyledHeaderContainer>
-          <StyledAggregateDropdownContainer
-            isNonInteractive={isAggregateDropdownNonInteractive}
-            inert={isAggregateDropdownNonInteractive || undefined}
-          >
-            <RecordGroupAggregateDropdown
-              aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
-              dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
-              objectMetadataItem={objectMetadataItem}
-              aggregateLabel={recordIndexAggregateDisplayLabel}
-            />
-          </StyledAggregateDropdownContainer>
         </StyledHeader>
       </DragDropItemSortableHandle>
       {isColumnResizable && <RecordBoardColumnResizeHandler />}

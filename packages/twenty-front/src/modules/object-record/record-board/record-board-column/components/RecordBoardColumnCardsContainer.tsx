@@ -17,7 +17,13 @@ const StyledColumnCardsContainer = styled.div`
 `;
 
 const StyledNewButtonContainer = styled.div`
-  padding-bottom: ${themeCssVariables.spacing[4]};
+  display: flex;
+  flex-direction: column;
+  padding-bottom: ${themeCssVariables.spacing[2]};
+
+  & > button {
+    justify-content: flex-start;
+  }
 `;
 
 type RecordBoardColumnCardsContainerProps = {

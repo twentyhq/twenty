@@ -1,4 +1,3 @@
-import { RECORD_BOARD_COLUMN_ACCENT_CSS_VARIABLE_NAMES } from '@/object-record/record-board/constants/RecordBoardColumnAccentCssVariableNames';
 import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -11,10 +10,7 @@ const StyledBoardCard = styled.div<{
   background-color: var(--record-card-background-color);
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.md};
-  box-shadow:
-    inset 3px 0 0
-      var(${RECORD_BOARD_COLUMN_ACCENT_CSS_VARIABLE_NAMES.accent}, transparent),
-    ${themeCssVariables.boxShadow.light};
+  box-shadow: ${themeCssVariables.boxShadow.light};
   color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
   opacity: ${({ isDragging }) => (isDragging ? DRAG_SOURCE_OPACITY : 1)};
@@ -29,7 +25,9 @@ const StyledBoardCard = styled.div<{
   }
 
   &[data-focused='true'] {
-    --record-card-background-color: ${themeCssVariables.background.tertiary};
+    --record-card-background-color: ${themeCssVariables.background.secondary};
+
+    border-color: ${themeCssVariables.border.color.strong};
   }
 
   &[data-active='true'] {
@@ -40,13 +38,7 @@ const StyledBoardCard = styled.div<{
 
   &:hover {
     border: 1px solid ${themeCssVariables.border.color.medium};
-    box-shadow:
-      inset 3px 0 0
-        var(
-          ${RECORD_BOARD_COLUMN_ACCENT_CSS_VARIABLE_NAMES.accent},
-          transparent
-        ),
-      ${themeCssVariables.boxShadow.strong};
+    box-shadow: ${themeCssVariables.boxShadow.strong};
 
     &[data-active='true'] {
       border: 1px solid ${themeCssVariables.color.blue7};

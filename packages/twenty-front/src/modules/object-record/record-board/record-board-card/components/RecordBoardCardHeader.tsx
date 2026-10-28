@@ -41,7 +41,6 @@ const StyledCheckboxContainer = styled.div`
 const StyledRecordChipContainer = styled.div`
   display: flex;
   flex: 1 1 auto;
-  font-size: ${themeCssVariables.font.size.lg};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   overflow: hidden;
 `;

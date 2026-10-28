@@ -27,9 +27,8 @@ const StyledFieldValue = styled.div`
   display: contents;
 
   &[data-amount='true'] {
-    font-size: ${themeCssVariables.font.size.lg};
     font-variant-numeric: tabular-nums;
-    font-weight: ${themeCssVariables.font.weight.semiBold};
+    font-weight: ${themeCssVariables.font.weight.medium};
   }
 `;
 

@@ -6,15 +6,10 @@ import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/
 import { ViewType } from '@/views/types/ViewType';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledColumnContainer = styled.div`
   display: flex;
   flex: 1;
-
-  & > *:not(:first-of-type) {
-    border-left: 1px solid ${themeCssVariables.border.color.light};
-  }
 `;
 
 const StyledAddGroupColumnDivider = styled.div`

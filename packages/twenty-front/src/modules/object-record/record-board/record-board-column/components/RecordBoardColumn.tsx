@@ -1,9 +1,7 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { RECORD_BOARD_COLUMN_ACCENT_CSS_VARIABLE_NAMES } from '@/object-record/record-board/constants/RecordBoardColumnAccentCssVariableNames';
 import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
-import { getRecordBoardColumnAccentStyle } from '@/object-record/record-board/utils/getRecordBoardColumnAccentStyle';
 import { RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-board/constants/RecordBoardColumnWidthCssVariableName';
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
@@ -36,15 +34,13 @@ const StyledColumn = styled.div`
 `;
 
 const StyledColumnPanel = styled.div`
-  background-color: var(
-    ${RECORD_BOARD_COLUMN_ACCENT_CSS_VARIABLE_NAMES.surface}
-  );
+  background-color: ${themeCssVariables.background.tertiary};
   border-radius: 0 0 ${themeCssVariables.border.radius.md}
     ${themeCssVariables.border.radius.md};
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]} 0;
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[1.5]} 0;
 `;
 
 type RecordBoardColumnProps = {
@@ -92,11 +88,7 @@ export const RecordBoardColumn = ({
         columnIndex: recordBoardColumnIndex,
       }}
     >
-      <StyledColumn
-        ref={ref}
-        data-record-board-column-id={recordBoardColumnId}
-        style={getRecordBoardColumnAccentStyle(recordGroupDefinition.color)}
-      >
+      <StyledColumn ref={ref} data-record-board-column-id={recordBoardColumnId}>
         <StyledColumnPanel>
           <RecordBoardColumnCardsContainer
             recordBoardColumnId={recordBoardColumnId}
