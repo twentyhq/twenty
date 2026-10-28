@@ -1,0 +1,139 @@
+---
+title: شارة
+description: اعرض معلومات مضمنة موجزة بمحتوى يقدمه المستدعي.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import BadgeReference from '/snippets/ui/generated/data-display/badge.mdx';
+
+## نظرة عامة
+
+تعرض `Badge` معلومات مضمنة موجزة، بما في ذلك التسميات القصيرة والأعداد. استخدم [Tag](/ar/ui/primitives/data-display/tag) للفئات، و[Chip](/ar/ui/primitives/data-display/chip) لعناصر التحكم الموجزة، أو [Status](/ar/ui/primitives/data-display/status) لحالة مسماة مع مؤشر.
+
+<StoryEmbed storyId="ui-data-display-badge--display" title="مثال على الشارة" height={90} />
+
+## استخدام
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+
+export const PreviewLabel = () => <Badge>Preview</Badge>;
+```
+
+مرر نصًا أو أرقامًا أو عقدًا كعناصر فرعية. تعرض الشارة المحتوى الذي توفره ولا تضيف أي تنسيق للعدد أو قواعد للظهور. العنصر الافتراضي هو `span` غير تفاعلي.
+
+## مع أيقونة
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { IconPaperclip } from 'twenty-ui/icon';
+
+export const AttachmentLabel = () => (
+  <Badge>
+    <IconPaperclip size={12} aria-hidden />
+    Attachment
+  </Badge>
+);
+```
+
+الأيقونات هي عقد فرعية عادية. امنح الأيقونات الزخرفية `aria-hidden` واحتفظ بتسمية مرئية لشرح المحتوى.
+
+## المظهر
+
+<StoryEmbed storyId="ui-data-display-badge--catalog" title="أحجام وأشكال الشارات" height={200} />
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const BadgeAppearances = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <Badge size="sm" color="tertiary" shape="pill">
+      Preview
+    </Badge>
+    <Badge size="md" color="inherit">
+      In review
+    </Badge>
+    <Badge size="xs" color="primary" shape="circle">
+      3
+    </Badge>
+    <Badge size="xs" color="secondary" shape="circle">
+      12
+    </Badge>
+    <Badge color="accent">Last used</Badge>
+  </Text>
+);
+```
+
+يقبل `size` القيم `xs` أو `sm` أو `md`. يقبل `color` القيم `tertiary` و`inherit` و`primary` و`secondary` و`accent`. يقترن تنسيق `accent` بتعبئة accent-tertiary ونص accent11 في كلا النسقين. تحتفظ معالجة `primary` الصلبة بتعبئتها الزرقاء ونصها ذي اللون المميز. يقبل `shape` القيمة `pill` أو `circle`. القيم الافتراضية هي `sm` و`tertiary` و`pill`. تتميز المعالجة الدائرية بعرض ثابت يساوي ارتفاعها. استخدم `pill` للمحتوى الأطول، بما في ذلك الأعداد المختصرة.
+
+<StoryEmbed storyId="ui-data-display-badge--colors" title="ألوان نص الشارات" height={140} />
+
+<StoryEmbed storyId="ui-data-display-badge--accent" title="شارات ذات لون مميز ناعمة في السمتين الفاتحة والداكنة" height={140} />
+
+## الأعداد والظهور
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+type InboxButtonProps = {
+  count: number;
+};
+
+export const InboxButton = ({ count }: InboxButtonProps) => (
+  <Button aria-label={`Inbox, ${count} unread messages`}>
+    Inbox
+    {count > 0 && (
+      <Badge size="xs" color="primary" shape="pill" aria-hidden>
+        {count > 99 ? '99+' : count}
+      </Badge>
+    )}
+  </Button>
+);
+```
+
+يتولى تطبيقك مسؤولية تنسيق الأرقام والاختصارات والتقييد وظهور الصفر والتسميات المترجمة. ضمّن المعنى الكامل في الاسم المتاح لعنصر التحكم المحيط عندما يكون عدده المضغوط زخرفيًا. يمكن للشارة المستقلة استخدام سمات الإتاحة الأصلية، بما في ذلك `aria-label` أو `aria-labelledby`.
+
+## التركيب الأصلي
+
+```tsx
+import { useRef } from 'react';
+import { Badge } from 'twenty-ui/primitives/data-display';
+
+export const BuildStatus = () => {
+  const badgeRef = useRef<HTMLSpanElement>(null);
+
+  return (
+    <Badge ref={badgeRef} title="Current build status" data-build="preview">
+      Preview
+    </Badge>
+  );
+};
+```
+
+تستهدف السمات الأصلية ومعالجات الأحداث و`className` و`style` و`ref` عنصر الجذر الفعلي. يقبل `render` عنصرًا أو دالة رد نداء من خلال تركيب Base UI. اختر مالكًا أصليًا مناسبًا للمحتوى التفاعلي:
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ReleaseLink = () => (
+  <Badge render={<Button href="#release-notes" size="sm" />}>
+    Release notes
+  </Badge>
+);
+```
+
+يتولى Button المعروض سلوك التنقل ودلالات الرابط. تحتفظ الشارة بوضعها الافتراضي التقديمي ولا تستنتج التفاعل من محتواها.
+
+## الإزاحة
+
+تُنشأ الأنواع والقيم الافتراضية من النوع العام `BadgeProps`. تُقبل أيضًا السمات الأصلية ومعالجات الأحداث.
+
+<BadgeReference />
+
+<PageBanner illustration="page-cover-checkbox" />

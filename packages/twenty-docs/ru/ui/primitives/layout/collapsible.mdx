@@ -1,0 +1,75 @@
+---
+title: Сворачиваемый
+description: Создавайте доступный триггер и анимированную панель с управляемым или неуправляемым раскрытием.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CollapsibleReference from '/snippets/ui/generated/layout/collapsible.mdx';
+
+## Обзор
+
+`Collapsible` предоставляет контракты Root, Trigger и Panel из Base UI. Root управляет состоянием раскрытия, Trigger обеспечивает активацию с клавиатуры и связь с панелью, а Panel отвечает за анимацию и время существования содержимого.
+
+<StoryEmbed storyId="ui-layout-collapsible--display" title="Пример сворачиваемого блока" height={160} />
+
+## Использование
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportDetails = () => (
+  <Collapsible.Root defaultOpen style={{ width: 360, maxWidth: '100%' }}>
+    <Collapsible.Trigger render={<Button />}>
+      Import details
+    </Collapsible.Trigger>
+    <Collapsible.Panel>
+      <Text
+        style={{
+          paddingTop: 12,
+          color: 'var(--t-font-color-secondary)',
+          lineHeight: 1.5,
+        }}
+      >
+        Match each CSV column to a record field before importing.
+      </Text>
+    </Collapsible.Panel>
+  </Collapsible.Root>
+);
+```
+
+Используйте `defaultOpen` для неконтролируемого раскрытия. Используйте `open` и `onOpenChange`, когда приложение управляет состоянием. Колбэк получает запрошенное логическое значение и сведения о событии Base UI, включая `reason`, `event` и `cancel()`. Отмена изменения сохраняет текущее состояние. Внешне управляемая панель может не включать Trigger, если ее состояние задается другим элементом управления или условием приложения.
+
+Триггеры наследуют состояние `disabled` от Root и могут переопределить его с помощью собственного свойства `disabled`. Нативный триггер поддерживает Enter и Space и автоматически предоставляет `aria-expanded` и `aria-controls`. Дайте каждому триггеру осмысленное доступное имя.
+
+## Структура
+
+```text
+Collapsible.Root
+├── Collapsible.Trigger
+└── Collapsible.Panel
+    └── Content
+```
+
+## Нативная настройка
+
+Root и Panel отображают `div`; Trigger отображает `button`. Каждая часть принимает нативные атрибуты, обработчики, `className`, `style`, refs и композицию Base UI `render`. Колбэки класса и стиля получают состояние части. Передавайте все предоставленные свойства и ref из пользовательских компонентов рендеринга. Установите `nativeButton={false}`, когда Trigger отображает элемент, не являющийся кнопкой.
+
+Публичные типы включают `CollapsibleRootProps`, `CollapsibleTriggerProps`, `CollapsiblePanelProps`, три типа состояния частей, а также `CollapsibleRootChangeEventDetails` и `CollapsibleRootChangeEventReason`.
+
+## Анимация и время жизни содержимого
+
+Panel по умолчанию использует `dimension="height"`. Используйте `dimension="width"` для горизонтального разворачивания и при необходимости ограничивайте ширину содержимого. Значение `containAnimation` по умолчанию — `true`: оно обрезает переполнение и размещает содержимое в столбец. Установите значение `false`, когда содержимое должно выходить за границы во время перехода.
+
+Свойство `duration` компонента Panel выбирает предустановку темы (`instant`, `fast`, `normal` или `slow`); по умолчанию используется `normal`. Настройки уменьшения движения отключают переходы.
+
+По умолчанию панель удаляется из DOM после закрытия. Используйте `keepMounted`, чтобы сохранить локальное состояние содержимого при скрытии закрытой панели. `hiddenUntilFound` позволяет поиску по странице в браузере отображать закрытое содержимое и имеет приоритет над `keepMounted`.
+
+## Свойства
+
+<CollapsibleReference />
+
+<PageBanner illustration="layout" />

@@ -3,9 +3,10 @@ title: نموذج البيانات
 description: تعرّف على كيفية تنظيم Twenty لبياناتك باستخدام الكائنات والحقول والعلاقات.
 ---
 
-import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-كل شيء في Twenty مبني حول **الكائنات** و**الحقول** — وهي اللبنات الأساسية لنموذج البيانات لديك.
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## كائنات
 
@@ -39,8 +40,13 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 على عكس أنظمة إدارة علاقات العملاء (CRM) التقليدية حيث تكون مقيّدًا بحقول محددة مسبقًا على كائنات محددة مسبقًا، يتيح لك Twenty نمذجة بياناتك بالطريقة نفسها التي يعمل بها نشاطك التجاري بالضبط. تحصل الكائنات المخصّصة على نفس المعاملة من الدرجة الأولى مثل الكائنات المضمّنة — بما في ذلك نقاط نهاية واجهة برمجة التطبيقات (API endpoints)، وطرق العرض، والأذونات، ومشغلات سير العمل.
 
-<Card title="تعرف بعمق على نموذج البيانات" icon="arrow-right" href="/ar/user-guide/data-model/overview">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ar/user-guide/data-model/overview" img="/images/documentation/banner-icons-v2/data-model.svg">
+  <CardTitle>تعمّق في نموذج البيانات</CardTitle>
   مرجع كامل للكائنات والحقول والعلاقات وكيفية تهيئتها.
 </Card>
+</CardGroup>
 
 <VimeoEmbed videoId="1185511827" title="نموذج البيانات" />
+
+<PageBanner illustration="getting-started-data-model" />

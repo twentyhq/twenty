@@ -302,15 +302,11 @@ IMPORTANT: this replaces the full rule set for the role + object. Predicates or 
                 "description": "Parent group id for nested groups",
               },
               "positionInRowLevelPermissionPredicateGroup": {
-                "anyOf": [
-                  {
-                    "type": "number",
-                  },
-                  {
-                    "type": "null",
-                  },
-                ],
                 "description": "Position of this group within its parent",
+                "type": [
+                  "number",
+                  "null",
+                ],
               },
             },
             "required": [
@@ -357,15 +353,11 @@ IMPORTANT: this replaces the full rule set for the role + object. Predicates or 
                 "type": "string",
               },
               "positionInRowLevelPermissionPredicateGroup": {
-                "anyOf": [
-                  {
-                    "type": "number",
-                  },
-                  {
-                    "type": "null",
-                  },
-                ],
                 "description": "Position of this predicate within its group",
+                "type": [
+                  "number",
+                  "null",
+                ],
               },
               "rowLevelPermissionPredicateGroupId": {
                 "anyOf": [
@@ -380,15 +372,11 @@ IMPORTANT: this replaces the full rule set for the role + object. Predicates or 
                 "description": "Id of the predicate group this predicate belongs to",
               },
               "subFieldName": {
-                "anyOf": [
-                  {
-                    "type": "string",
-                  },
-                  {
-                    "type": "null",
-                  },
-                ],
                 "description": "Sub-field for composite fields (e.g. "firstName" of a FULL_NAME field)",
+                "type": [
+                  "string",
+                  "null",
+                ],
               },
               "value": {
                 "anyOf": [
@@ -433,15 +421,11 @@ IMPORTANT: this replaces the full rule set for the role + object. Predicates or 
                 "description": "Dynamic comparison: id of a field on the workspaceMember object whose value for the CURRENT user is substituted at query time. Use the workspaceMember "id" field to express "matches the current user", or a many-to-one relation field to compare against a relation on the record pointing at the same object.",
               },
               "workspaceMemberSubFieldName": {
-                "anyOf": [
-                  {
-                    "type": "string",
-                  },
-                  {
-                    "type": "null",
-                  },
-                ],
                 "description": "Sub-field of the workspace member field when it is a composite field",
+                "type": [
+                  "string",
+                  "null",
+                ],
               },
             },
             "required": [

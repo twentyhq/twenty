@@ -1,0 +1,57 @@
+---
+title: فاصل
+description: افصل المحتوى المتجاور باستخدام فاصل أفقي أو عمودي.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SeparatorReference from '/snippets/ui/generated/layout/separator.mdx';
+
+## نظرة عامة
+
+`Separator` يعرض `div` مع `role="separator"` واتجاه يمكن الوصول إليه. يستخدم عقد الفاصل في Base UI، بما في ذلك الخصائص الأصلية والمراجع وتركيب `render`. استورد `SeparatorProps` من نقطة الإدخال نفسها.
+
+<StoryEmbed storyId="ui-layout-separator--display" title="فاصل أفقي" height={130} />
+
+## استخدام
+
+```tsx
+import { Separator } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSources = () => (
+  <Text style={{ display: 'grid', gap: 'var(--t-spacing-3)' }}>
+    <Text>Import records from a CSV file.</Text>
+    <Separator />
+    <Text>Connect an external data source.</Text>
+  </Text>
+);
+```
+
+## الاتجاه والمظهر
+
+القيمة الافتراضية لـ `orientation` هي `horizontal`. الهوامش الافتراضية هي صفر في كلا الاتجاهين. تملأ الفواصل الأفقية العرض المتاح. تمتد الفواصل العمودية على طول حاوية flex الخاصة بها. امنح الفاصل العمودي المستقل ارتفاعًا. تحكم في التباعد عبر التخطيط الأب، أو استخدم `style` أو `className` الأصليين للهوامش الصريحة ولون الخط. يقبل Base UI أيضًا دوالًا تعتمد على الاتجاه لهذه الخصائص.
+
+<StoryEmbed storyId="ui-layout-separator--vertical-documentation" title="فاصل عمودي" height={150} />
+
+## فواصل معنونة
+
+استخدم [LabeledSeparator](/ar/ui/components/layout/labeled-separator) لتسمية نصية بين خطوط الفاصل أو في نهاية خط. يوفر التخطيط واسم فاصل واحدًا يمكن الوصول إليه.
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+
+export const SignInDivider = () => <LabeledSeparator>Or</LabeledSeparator>;
+```
+
+## الترحيل
+
+استبدل المساعد الأفقي السابق بـ `Separator`. أزل `noMargin`، لأن الهوامش الافتراضية أصبحت الآن صفرًا. للاحتفاظ بالتباعد الافتراضي السابق، أضف `style={{ marginBlock: 'var(--t-spacing-3)' }}`. استبدل `color` بـ `style={{ backgroundColor: color }}`. استخدم `LabeledSeparator` للفواصل المسمّاة، ومرّر التسمية كعناصر فرعية، وأعِد تسمية `textPosition` إلى `labelPosition`. استبدل الفواصل المستخدمة فقط للتباعد غير المرئي بتباعد التخطيط.
+
+## الخصائص
+
+<SeparatorReference />
+
+<PageBanner illustration="layout" />

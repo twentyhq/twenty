@@ -1,0 +1,131 @@
+---
+title: OverflowingTextWithTooltip
+description: Обрезайте длинный текст и показывайте его полное значение во всплывающей подсказке.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import OverflowingTextWithTooltipReference from '/snippets/ui/generated/typography/overflowing-text-with-tooltip.mdx';
+
+## Обзор
+
+`OverflowingTextWithTooltip` обрезает содержимое в пределах доступной ширины. Компонент проверяет переполнение при наведении указателя и получении фокуса, а затем показывает всплывающую подсказку только при необходимости. Компонент управляет видимостью всплывающей подсказки внутри себя и не предоставляет управляемых или неуправляемых свойств состояния открытия. Используйте [OverflowingTextTooltipModeProvider](/ru/ui/primitives/typography/overflowing-text-tooltip-mode-provider), чтобы изменить момент, когда поддерево проверяет усечение, или отключить всплывающую подсказку.
+
+<StoryEmbed storyId="ui-surfaces-overflowingtextwithtooltip--display" title="Пример OverflowingTextWithTooltip" height={180} />
+
+## Использование
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordTitle = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text="Quarterly account review and renewal preparation"
+      isFocusable
+    />
+  </Text>
+);
+```
+
+Ограничьте ширину окружающего макета, чтобы могло происходить обрезание. `isFocusable` добавляет текст в порядок перехода по Tab и открывает всплывающую подсказку при получении фокуса или щелчке. Сохраняйте важную информацию доступной для пользователей, которые не могут наводить указатель.
+
+## Выберите типографику
+
+`size`, `weight` и `color` соответствуют [Текст](/ru/ui/primitives/typography/text). Они необязательны и при отсутствии наследуются независимо друг от друга. Явно заданная типографика применяется к отображаемому тексту; всплывающая подсказка сохраняет свой общий вид.
+
+```tsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceCaption = () => (
+  <OverflowingTextWithTooltip
+    text="Quarterly account review and renewal preparation"
+    size="xs"
+    weight="semibold"
+    color="light"
+    style={{ maxWidth: 220 }}
+  />
+);
+```
+
+## Многострочное содержимое
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordDescription = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text="Review the account history, confirm the renewal date, and prepare the next conversation with the customer."
+      lineClamp={2}
+      isTooltipMultiline
+      isFocusable
+    />
+  </Text>
+);
+```
+
+`lineClamp` соответствует Text и ограничивает количество отображаемых строк; используйте положительное целое число. `isTooltipMultiline` сохраняет пробелы и переводы строк внутри всплывающей подсказки. Без ограничения количества строк текст обрезается в одной строке.
+
+## Пользовательское содержимое и задержка
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const ImportResult = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text={<strong>24 records imported successfully</strong>}
+      tooltipContent="24 records imported successfully"
+      tooltipPlace="top"
+      tooltipDelay={300}
+      isFocusable
+    />
+  </Text>
+);
+```
+
+Для содержимого React требуется строковое значение `tooltipContent`. Для строкового текста это свойство может переопределять метку всплывающей подсказки; в противном случае используется сам текст. Пустая или отсутствующая метка не открывает всплывающую подсказку. Строковые URL-адреса остаются обычным текстом. Явно указывайте ссылки в `text` или через `render`. Содержимое ссылок и навигация остаются под контролем вызывающего кода.
+
+`alwaysShowTooltip` разрешает показывать всплывающую подсказку даже без обрезания. `tooltipDelay` управляет задержкой при наведении и по умолчанию составляет 500 миллисекунд. `tooltipPlace` по умолчанию имеет значение `bottom`.
+
+Нативные атрибуты, стили, имена классов, обработчики событий и рефы применяются к отображаемому элементу Text, по умолчанию к `div`. `render` может заменить этот элемент, сохранив поведение усечения и всплывающей подсказки. `OverflowingTextWithTooltipProps` экспортируется из `twenty-ui/primitives/typography`. Типографика наследуется из окружающей разметки, если не указано явное свойство typography. Установите `truncate={false}` для переноса строк; выберите либо `truncate`, либо `lineClamp`. Фокусируемые отображаемые элементы и переданный вызывающим кодом `tabIndex` также показывают всплывающую подсказку при фокусе. Используйте [Text](/ru/ui/primitives/typography/text) и [Tooltip](/ru/ui/primitives/surfaces/tooltip) напрямую, когда нужна пользовательская композиция. Интерактивное содержимое всплывающего окна следует размещать в [Popover](/ru/ui/primitives/surfaces/popover).
+
+## Явные ссылки
+
+```tsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+
+export const DocumentationLink = () => (
+  <OverflowingTextWithTooltip
+    text="https://twenty.com/developers"
+    render={
+      <a href="https://twenty.com/developers" aria-label="Documentation" />
+    }
+    style={{ maxWidth: 160, display: 'block' }}
+  />
+);
+```
+
+Используйте одну ссылку для всей метки или укажите отдельные ссылки в содержимом React с простым `tooltipContent`. Компонент не добавляет собственных ссылок. Содержимое всплывающей подсказки должно быть информационным.
+
+## Миграция
+
+Замените `displayedMaxRows` на `lineClamp`. Прежние параметры `size="small"` и `size="large"` управляли высотой, а не размером шрифта. `large` задавал высоту 16px. Новый `size` выбирает размеры шрифта темы и не принимает устаревшие псевдонимы; для ограничений высоты используйте нативные `style` или `className`. `color` теперь принимает семантические цвета; произвольные цвета CSS перенесите в `style={{ color: customColor }}`. Перенесите намеренное распознавание URL в содержимое, контролируемое вызывающим кодом. В этом компоненте больше нет автоматического преобразования в ссылки.
+
+## Свойства
+
+<OverflowingTextWithTooltipReference />
+
+<PageBanner illustration="section-document-generator" />

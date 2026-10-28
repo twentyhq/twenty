@@ -131,6 +131,37 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
     }
     case 'FORM':
       input = step.input.map((formField) => {
+        if (formField.type === 'SELECT' || formField.type === 'MULTI_SELECT') {
+          const { selectedFieldUniversalIdentifier, ...settings } =
+            formField.settings ?? {};
+          if (typeof selectedFieldUniversalIdentifier !== 'string') {
+            throw new ApplicationException(
+              'Select fields require the universal identifier of the field whose options they offer',
+              ApplicationExceptionCode.INVALID_INPUT,
+              {
+                userFriendlyMessage: msg`The workflow select field must reference an existing field.`,
+              },
+            );
+          }
+          const selectedField = field(selectedFieldUniversalIdentifier);
+          if (selectedField.type !== formField.type) {
+            throw new ApplicationException(
+              `Select field ${formField.name} must reference a ${formField.type} field`,
+              ApplicationExceptionCode.INVALID_INPUT,
+              {
+                userFriendlyMessage: msg`The workflow select field must reference a field of the same type.`,
+              },
+            );
+          }
+          return {
+            ...formField,
+            settings: {
+              selectType: 'EXISTING_FIELD',
+              ...settings,
+              selectedFieldId: selectedField.id,
+            },
+          };
+        }
         if (formField.type !== 'RECORD') {
           return formField;
         }

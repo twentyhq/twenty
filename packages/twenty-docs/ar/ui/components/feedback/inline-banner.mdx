@@ -1,0 +1,77 @@
+---
+title: InlineBanner
+description: ملاحظات مضمنة مع محتوى العقدة والأيقونات والإجراءات.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InlineBannerReference from '/snippets/ui/generated/components/feedback/inline-banner.mdx';
+
+## نظرة عامة
+
+يجمع `InlineBanner` بين [اللافتة](/ar/ui/primitives/feedback/banner) وتخطيط مضمن بحواف مستديرة وأيقونة معلومات زخرفية. يتشارك عقود `status` و`variant` و`color` و`icon` و`action` المستقلة الخاصة بـ Banner. مظهره الافتراضي هو `soft` وحالته الافتراضية هي `info`.
+
+<StoryEmbed storyId="ui-feedback-inlinebanner--display" title="لافتة مضمنة بإجراء" height={130} />
+
+## استخدام
+
+```tsx
+import { InlineBanner } from 'twenty-ui/components/feedback';
+
+export const ModelsBanner = ({ onConfigure }: { onConfigure: () => void }) => (
+  <InlineBanner
+    status="error"
+    action={
+      <InlineBanner.Action onClick={onConfigure}>
+        Configure models
+      </InlineBanner.Action>
+    }
+  >
+    No AI models are enabled.
+  </InlineBanner>
+);
+```
+
+يملأ التخطيط `standard` العرض المتاح. تُقتطع العناصر الفرعية للنص العادي، مع إظهار النص الكامل في تلميح عند التركيز باستخدام لوحة المفاتيح أو تمرير المؤشر أو اللمس. تُعرَض العناصر الفرعية للعُقد الغنية مباشرةً، لذا تحتفظ الروابط وعناصر التحكم المضمّنة بدلالاتها الخاصة. استخدم تنسيقًا طباعيًا صريحًا عندما يحتاج المحتوى الغني إلى اقتطاع.
+
+استخدم `layout="compact"` للمحتوى الملتفّ، والتباعد الأقرب، وعرض محتوى أقصى يبلغ 512px. أضف `fullWidth` لإزالة ذلك الحد وملء العرض المتاح للعنصر الأب، بما في ذلك الحشو والحدود. تكون قيمته الافتراضية `false` ولا يغيّر التخطيط القياسي الذي يملأ عنصره الأب بالفعل. لا يحتوي على هامش سفلي. التخطيط مستقل عن مظهرَي `solid` أو `soft`. يزيل `embedded` الهامش السفلي للتخطيط القياسي.
+
+```tsx
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { IconInfoCircle } from 'twenty-ui/icon';
+
+export const ConnectionBanner = () => (
+  <InlineBanner
+    layout="compact"
+    status="warning"
+    color="blue"
+    icon={<IconInfoCircle aria-hidden="true" />}
+    action={
+      <InlineBanner.Action href="/settings/accounts">
+        Connection settings
+      </InlineBanner.Action>
+    }
+  >
+    Connect your account to sync contacts.
+  </InlineBanner>
+);
+```
+
+<StoryEmbed storyId="ui-feedback-inlinebanner--compact-link" title="لافتة صغيرة برابط وجهة" height={120} />
+
+يوفر `InlineBanner.Action` زرًا صغيرًا بإطار يرث اللون المعروض للشعار، بما في ذلك تجاوزات لوحة الألوان الصريحة والمظاهر الصلبة. يدعم تفاعلات Button والروابط وrefs والعرض المخصص. يقبل موضع `action` أيضًا عناصر تحكم عشوائية.
+
+الهدف الجذر هو `div`. تستهدف الخصائص الأصلية و`className` و`style` و`ref` ذلك الجذر؛ ويمكن لـ Base UI `render` إنشاء عنصر آخر ويتلقى حالة Banner المحلولة. يقبل `action` أي ReactNode، بما في ذلك عناصر تحكم متعددة بواجهات Button أو الرابط الكاملة الخاصة بها. يزيل `icon={null}` الرمز الافتراضي.
+
+يتحكم المستدعي في ما إذا كان الشعار يُعرض وما إذا كان ينبغي الإعلان عن التغييرات. وفّر `role="status"` و`aria-live="polite"`، أو غلاف منطقة مباشرة مناسبًا، عند الحاجة. لا يعيّن Status دلالات المنطقة المباشرة. سمِّ عناصر تحكم الإجراءات، وعلّم الرموز المخصصة الزخرفية باستخدام `aria-hidden`.
+
+## الترحيل
+
+استبدل `message` بـ `children`، و`LeftIcon={Icon}` بـ `icon={<Icon />}`، وإعدادات `button` بعقدة `action`. استخدم `InlineBanner.Action` للحفاظ على محاذاة تنسيق الإجراء مع الشعار. استبدل `variant="compact"` بـ `layout="compact"`؛ إذ أصبح التخطيط القياسي هو التخطيط الافتراضي الآن. استخدم `status="error"` لمعنى الخطأ أو `color="red"` لتجاوز لوحة الألوان.
+
+## الخصائص
+
+<InlineBannerReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

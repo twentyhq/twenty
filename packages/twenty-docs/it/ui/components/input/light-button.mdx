@@ -1,0 +1,72 @@
+---
+title: LightButton
+description: Presenta azioni leggere con enfasi standard o discreta.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import LightButtonReference from '/snippets/ui/generated/components/input/light-button.mdx';
+
+## Panoramica
+
+Usa il componente condiviso `LightButton` per un'azione leggera. Compone
+[Button](/it/ui/primitives/input/button) con una superficie ghost, dimensioni ridotte, peso
+del carattere normale e nessuna elevazione.
+
+<StoryEmbed storyId="ui-components-lightbutton--display" title="Esempio di LightButton" height={100} />
+
+## Utilizzo
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+
+export const FilterAction = () => <LightButton>Add filter</LightButton>;
+```
+
+## Opzioni visive
+
+Confronta l'enfasi standard e discreta nei comuni stati delle azioni.
+
+<StoryEmbed storyId="ui-components-lightbutton--catalog" title="Enfasi e stati del pulsante leggero" height={230} />
+
+## Gestione dello stato
+
+`LightButton` usa il modello di stato di Button e non aggiunge alcuno stato proprio. La tua applicazione fornisce `loading` e `disabled`; `emphasis` modifica solo l'aspetto. Consulta l'[esempio di gestione dello stato di Button](/it/ui/primitives/input/button#state-ownership) per gestire un'azione asincrona. Non sono disponibili modalità di selezione controllata e non controllata.
+
+## Enfasi e icone
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const FilterActions = () => (
+  <LightButton emphasis="subtle" startIcon={<IconPlus />}>
+    Add filter
+  </LightButton>
+);
+```
+
+Il valore predefinito `emphasis="standard"` usa testo neutro secondario.
+`emphasis="subtle"` usa testo neutro terziario su superfici ghost, outline e
+soft. I colori semantici e le superfici solide mantengono il rispettivo trattamento del contrasto.
+
+Sostituisci `variant`, `color`, `size` o `elevated` quando necessario.
+[ButtonGroup](/it/ui/primitives/input/button-group) può impostare dimensione, superficie
+e colore condivisi. L'aspetto esplicito dell'elemento figlio ha la precedenza sul gruppo, seguito dai
+valori predefiniti del componente. L'enfasi discreta non sostituisce il colore semantico.
+
+## Interazione
+
+`LightButton` accetta gli attributi nativi di Button, refs, gestori di eventi, slot
+delle icone, stati di caricamento e disabilitato e composizione di render. Il valore predefinito nativo
+è `type="button"`. Imposta `type="submit"` per l'invio oppure usa `href` per un link.
+Fornisci `render` per scegliere una radice personalizzata, incluso un link del router di proprietà dell'applicazione. Imposta `nativeButton={false}` e `role="link"` per un renderer di navigazione.
+I pulsanti nativi personalizzati mantengono `nativeButton` su true.
+
+## Props
+
+<LightButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

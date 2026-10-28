@@ -19,8 +19,15 @@ export const SettingsAppPreferencesAppsSection = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
   const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
-  const { applicationsWithPreferences, hasApplicationsLoadError, refetch } =
-    useApplicationsWithPreferences();
+  const {
+    applicationsWithPreferences,
+    loading,
+    hasLoadedApplicationsWithPreferences,
+    hasApplicationsLoadError,
+    refetch,
+  } = useApplicationsWithPreferences();
+  const isLoadingApplications =
+    loading && !hasLoadedApplicationsWithPreferences;
 
   const rows: AppPreferencesRow[] = [
     ...enabledBuiltInAccountApps.map(
@@ -54,6 +61,7 @@ export const SettingsAppPreferencesAppsSection = () => {
         ) : undefined
       }
       items={rows}
+      isLoading={isLoadingApplications}
       columns={[
         { label: t`App`, Cell: SettingsAppPreferencesAppNameCell },
         {

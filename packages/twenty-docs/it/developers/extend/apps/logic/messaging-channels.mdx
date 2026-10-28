@@ -1,0 +1,461 @@
+---
+title: Canali di messaggistica
+description: Porta le conversazioni da qualsiasi provider nei record Message e Message Thread di Twenty.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+Un **canale di messaggistica** consente alla tua app di inserire le conversazioni da un provider esterno — LinkedIn, WhatsApp, SMS, una casella di posta in-app — negli stessi record `Message` e `Message Thread` che Twenty usa per l'email. Le conversazioni importate vengono visualizzate nei record Person, Company e Opportunity delle persone che vi partecipano, nella cronologia e nella ricerca, senza un'interfaccia utente personalizzata.
+
+Il modello dei messaggi di Twenty è deliberatamente neutrale rispetto al canale: un messaggio ha partecipanti, testo, un timestamp e una conversazione; un partecipante ha un `handle` e un collegamento facoltativo a una Person. Nessun elemento è specifico dell'email. Un canale è ciò che associa un flusso di tali messaggi a un account presso un provider.
+
+<Note>
+**Beta — e potrebbe non essere ancora attiva nella tua istanza.** I canali di messaggistica gestiti dall'app sono nuovi; l'API descritta qui potrebbe cambiare e potrebbe non essere disponibile nella versione di Twenty in esecuzione. Verifica che `createMessageChannel` esista nel tuo SDK prima di basarti su di esso.
+</Note>
+
+## Prerequisiti
+
+Un canale appartiene sempre a una delle [connessioni](/it/developers/extend/apps/logic/connections) della tua app — la credenziale tramite cui comunica. Prima di poter creare un canale, ti serve un provider di connessione.
+
+## Creazione di un canale
+
+Crea il canale una volta per ogni account connesso, dall'hook `onConnect` del provider di connessione. In questo modo, la durata del canale corrisponde a quella della credenziale.
+
+```ts src/logic-functions/handlers/linkedin-register-connection-handler.ts
+import { createMessageChannel, getConnection } from 'twenty-sdk/logic-function';
+import { MessageChannelVisibility } from 'twenty-shared/types';
+
+export const linkedinRegisterConnectionHandler = async (payload: {
+  connectedAccountId: string;
+}) => {
+  const connection = await getConnection(payload.connectedAccountId);
+  const profile = await fetchLinkedinProfile(connection.accessToken);
+
+  const channel = await createMessageChannel({
+    connectedAccountId: connection.id,
+    handle: profile.memberUrn,
+    displayName: profile.name,
+    // LinkedIn DMs are personal, so other members see participants and dates
+    // but not subjects or bodies.
+    visibility: MessageChannelVisibility.METADATA,
+  });
+
+  return { channelId: channel.id };
+};
+```
+
+### `handle`
+
+L'identità dell'account **come viene denominata dal provider** — un URN membro di LinkedIn, un numero di telefono E.164, un ID utente con ambito workspace. Twenty lo tratta come opaco. È ciò rispetto a cui confronti i payload in entrata e ciò che determina se un messaggio importato è in entrata o in uscita.
+
+Scegli l'identificatore più stabile offerto dal provider. Un handle che cambia quando l'utente si rinomina dividerà la sua cronologia tra due canali.
+
+### `visibility`
+
+`visibility` è **obbligatorio**, senza valore predefinito, perché determina chi nel workspace può leggere queste conversazioni:
+
+| Valore             | Gli altri membri vedono                  |
+| ------------------ | ---------------------------------------- |
+| `METADATA`         | solo partecipanti e date                 |
+| `SUBJECT`          | quanto sopra, più l'oggetto              |
+| `SHARE_EVERYTHING` | quanto sopra, più il corpo del messaggio |
+
+Il membro proprietario della connessione sottostante legge sempre integralmente i propri messaggi, indipendentemente da questa impostazione.
+
+Scegli in base a quanto sono private le comunicazioni del provider, non in base a ciò che è comodo visualizzare. Le caselle di posta personali (messaggi diretti LinkedIn, WhatsApp personale) richiedono `METADATA`; quelle condivise (una casella di posta del supporto, un numero del team) richiedono `SHARE_EVERYTHING`.
+
+<Warning>
+`visibility` è l'unica barriera tra le conversazioni private di un membro e il resto del workspace. Twenty ti obbliga deliberatamente a specificarlo invece di ereditare un valore predefinito che potrebbe condividere troppo.
+</Warning>
+
+## Acquisizione dei messaggi
+
+Una volta che il canale esiste, `ingestMessages` vi scrive le conversazioni. Il threading, la deduplicazione, l'associazione al canale e la privacy per messaggio vengono gestiti lato server — lo stesso percorso usato dall'importazione email di Twenty.
+
+```ts src/logic-functions/handlers/linkedin-inbound-handler.ts
+import { ingestMessages } from 'twenty-sdk/logic-function';
+import { MessageParticipantRole } from 'twenty-shared/types';
+
+export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) => {
+  const ingested = await ingestMessages({
+    messageChannelId: payload.channelId,
+    messages: payload.events.map((event) => ({
+      externalId: event.messageUrn,
+      threadExternalId: event.conversationUrn,
+      text: event.body,
+      receivedAt: new Date(event.createdAt),
+      participants: [
+        {
+          role: MessageParticipantRole.FROM,
+          handle: event.sender.memberUrn,
+          displayName: event.sender.name,
+        },
+        ...event.recipients.map((recipient) => ({
+          role: MessageParticipantRole.TO,
+          handle: recipient.memberUrn,
+          displayName: recipient.name,
+        })),
+      ],
+    })),
+  });
+
+  return { ingested: ingested.length };
+};
+```
+
+### Cosa fa il server per te
+
+**Deduplicazione.** `externalId` è la chiave. L'acquisizione due volte dello stesso messaggio non crea né modifica nulla, quindi è sicuro riprodurre un webhook riconsegnato e un recupero dati può sovrapporsi a un flusso in tempo reale. Il `messageId` restituito è stabile tra le riproduzioni. Le chiamate a un canale vengono serializzate, quindi una riconsegna che arriva mentre l'originale è ancora in fase di scrittura attende invece di entrare in competizione con esso.
+
+**Threading.** I messaggi che condividono un `threadExternalId` confluiscono in un unico Thread di messaggi, che appare quindi nei record Persona, Azienda e Opportunità dei relativi partecipanti.
+
+**Direzione.** Derivata, non dichiarata: il messaggio è in uscita quando l'handle del partecipante `FROM` è uguale all'handle del canale, altrimenti è in entrata. Esattamente un partecipante deve avere `FROM` — la direzione, la colonna del mittente del thread e l'anteprima della cronologia lo leggono, quindi un messaggio senza di esso viene rifiutato anziché essere visualizzato come una conversazione vuota.
+
+**La deduplicazione è limitata al canale.** `externalId` deve essere univoco solo all'interno di un canale, che è ciò che la maggior parte dei provider garantisce effettivamente — molti numerano i messaggi per conversazione o per account. La conseguenza è che due membri nella stessa conversazione del provider ricevono ciascuno il proprio Messaggio anziché uno condiviso. È intenzionale: unirli richiederebbe a ogni app di garantire uno spazio dei nomi globale che non controlla, e sbagliare assocerebbe il corpo di un membro al canale di un altro membro.
+
+**Privacy.** Ogni messaggio eredita la `visibility` del proprio canale. Nulla di ciò che acquisisci è più visibile del canale in cui lo acquisisci.
+
+### Elaborazione in batch
+
+Una chiamata corrisponde a una transazione entro un timeout della funzione logica, con un massimo di **100 messaggi**. Suddividi in pagine un recupero dati del provider anziché inviarlo interamente:
+
+```ts
+for (const page of chunk(allHistoricalMessages, 100)) {
+  await ingestMessages({ messageChannelId, messages: page });
+}
+```
+
+Un batch è tutto o niente e la ripetizione di un `externalId` all'interno di un singolo batch viene rifiutata — deduplica prima dell'invio. Il corpo di un messaggio è limitato a 256KB.
+
+### Collegamento dei partecipanti alle Persone
+
+Un partecipante non collegato porta la conversazione alla pagina senza record, quindi ogni partecipante dovrebbe finire collegato a una Persona. Ci sono due modi per arrivarci: lasciare che Twenty faccia corrispondere gli handle a un campo persona, oppure risolvere autonomamente la persona.
+
+#### Corrispondenza su un campo persona
+
+Quando gli handle del provider sono valori che le persone memorizzano già in un contatto — un numero di telefono, un URL del profilo, un nome utente — dichiara quel campo quando crei il canale:
+
+```ts
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
+await createMessageChannel({
+  connectedAccountId: connection.id,
+  handle: '+33612345678',
+  visibility: MessageChannelVisibility.METADATA,
+  participantHandleFieldUniversalIdentifier:
+    STANDARD_OBJECTS.person.fields.phones.universalIdentifier,
+});
+```
+
+Qualsiasi campo persona attivo di tipo email, telefoni, link o testo funziona, incluso uno aggiunto dalla tua app con [`defineField`](/it/developers/extend/apps/data/extending-objects) (ad esempio, un nome utente Instagram). Venti quindi:
+
+* **memorizza gli handle nella forma canonica del campo**: numeri di telefono come `+` e cifre (invia numeri E.164), link in minuscolo senza schema, `www`, frammento o barra finale, mantenendo la stringa di query come inviata poiché può identificare il profilo (`linkedin.com/in/ada`, `facebook.com/profile.php?id=111`), email e testo in minuscolo. L'handle del canale stesso viene memorizzato allo stesso modo e un handle senza un valore utilizzabile viene rifiutato.
+* **collega ogni partecipante che lasci non collegato** alla persona il cui campo contiene quel valore, prima i valori principali, poi la persona più vecchia.
+* **associa nuovamente quando le persone cambiano**: l'aggiunta del valore a una persona collega le sue conversazioni passate, mentre la sua rimozione le dissocia.
+
+Un `personId` che passi ha comunque la precedenza, anche quando qualcun altro acquisisce o perde successivamente quel valore. Il campo viene impostato una sola volta, alla creazione; se viene eliminato o disattivato, l'acquisizione nel canale viene rifiutata anziché memorizzare handle che Twenty non può più normalizzare.
+
+Scegli handle che siano sia stabili sia memorizzati nei contatti. Per LinkedIn, ciò significa l'URL del profilo pubblico anziché l'URN del membro; conserva la tua mappatura se hai bisogno dell'URN per chiamare il provider.
+
+#### Risolvi autonomamente la persona
+
+Senza un campo dichiarato, **la tua app deve indicare chi è un partecipante**. Passa `personId` insieme all'handle:
+
+```ts
+participants: [
+  {
+    role: MessageParticipantRole.FROM,
+    handle: event.sender.memberUrn,
+    displayName: event.sender.name,
+    personId: await resolvePersonIdFromLinkedinUrn(event.sender.memberUrn),
+  },
+]
+```
+
+Risolvi l'ID nel modo in cui l'identità del tuo provider è archiviata — usando `Person.linkedinLink` o un campo di identità aggiunto dalla tua app con [`defineField`](/it/developers/extend/apps/data/extending-objects). Gli ID sconosciuti vengono rifiutati subito anziché essere memorizzati come collegamenti pendenti.
+
+Una volta collegato un partecipante, Twenty crea le destinazioni del thread e la conversazione viene visualizzata nella pagina del record di quella Persona e in quella della sua azienda, esattamente come avviene per un thread email.
+
+È accettato anche `workspaceMemberId`, per un partecipante che è membro di questo spazio di lavoro anziché un contatto. Serve **solo per l'attribuzione**: le destinazioni del thread vengono create esclusivamente da `personId` — come per le email — quindi un partecipante collegato solo a un membro dello spazio di lavoro viene visualizzato nel thread ma non associa la conversazione ad alcuna pagina di record. Passa `personId` quando vuoi che il thread venga associato a una pagina di record.
+
+<Note>
+Una corrispondenza tardiva non va persa. Reimportando un messaggio con un'identità che da allora hai risolto, viene collegato il partecipante già presente — abbinato in base al messaggio, all'handle e al ruolo, quindi un nome visualizzato che nel frattempo è cambiato o è stato omesso non lo divide in due. Un nome omesso mantiene quello già memorizzato; uno nuovo lo sostituisce. L'invio di un `personId` diverso corregge un collegamento precedente anziché aggiungerne un secondo.
+
+Non è ancora possibile *cancellare* un'identità: null viene trattato come "lasciala invariata", non come "scollega". Correggere un collegamento errato significa fornire quello corretto.
+</Note>
+
+I partecipanti che lasci scollegati vengono comunque memorizzati e visualizzati nel thread — semplicemente non associano la conversazione a un record.
+
+## Invio delle risposte
+
+Un provider di messaggistica dichiara come un'app invia messaggi su un canale. Indica il provider di connessione tramite i cui account comunica e la funzione logica che recapita una risposta, quindi una connessione (ad esempio, un account Unipile) può supportare diversi tipi di messaggistica, ciascuno con il proprio gestore:
+
+```ts src/messaging-providers/linkedin-messaging.ts
+import { defineMessagingProvider } from 'twenty-sdk/define';
+
+export default defineMessagingProvider({
+  universalIdentifier: '8a9b0c1d-2e3f-4a5b-8c6d-7e8f9a0b1c2d',
+  name: 'linkedin-messaging',
+  displayName: 'LinkedIn Messages',
+  connectionProvider: {
+    universalIdentifier: '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
+  },
+  sendMessageLogicFunction: {
+    universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
+  },
+});
+```
+
+Associalo a un canale quando crei il canale o in seguito con `updateMessageChannel` (il passaggio di `null` annulla l'associazione):
+
+```ts
+await createMessageChannel({
+  connectedAccountId: connection.id,
+  handle: profile.memberUrn,
+  visibility: 'METADATA',
+  messagingProvider: {
+    universalIdentifier: '8a9b0c1d-2e3f-4a5b-8c6d-7e8f9a0b1c2d',
+  },
+});
+```
+
+Il provider di messaggistica deve appartenere alla tua app e utilizzare il provider di connessione dell'account del canale; il relativo provider di connessione non può cambiare dopo la prima sincronizzazione. La modifica della funzione di invio in una versione successiva si applica a ogni canale associato al provider.
+
+Le risposte vengono inviate con la mutazione `sendAppChannelMessage`, che accetta il canale, il thread, il testo e un `idempotencyKey` (un UUID generato dal client per ogni risposta e riutilizzato quando la ritenta) ed esegue la funzione del provider:
+
+```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
+import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
+
+export const linkedinSendMessageHandler = async ({
+  connectedAccountId,
+  threadExternalId,
+  text,
+  idempotencyKey,
+}: SendAppMessagePayload) => {
+  const sent = await sendLinkedinMessage({
+    connectedAccountId,
+    conversationUrn: threadExternalId,
+    text,
+    idempotencyKey,
+  });
+
+  return { externalId: sent.messageUrn, sentAt: sent.createdAt };
+};
+```
+
+Il payload contiene `messagingProviderName`, il `threadExternalId` della conversazione così come è stato importato, il `text`, l'`idempotencyKey` e i `recipients`: i partecipanti all'ultimo messaggio del thread diversi dall'identificativo del canale stesso, in modo che non venga inviato alcun messaggio a chi ha partecipato solo a uno scambio precedente. Preferisci la conversazione del provider ai `recipients` quando la sua API invia a un ID conversazione. Restituisce l'ID del provider per il messaggio inviato come `externalId`.
+
+Twenty registra quindi la risposta nel thread come messaggio in uscita dal canale, con gli stessi destinatari, così viene visualizzata immediatamente. Quando il tuo webhook recapita in seguito lo stesso messaggio, la sua importazione con quell'`externalId` non cambia nulla.
+
+La funzione viene eseguita all'interno della richiesta `sendAppChannelMessage`. Se genera un'eccezione o non restituisce alcun `externalId`, la mutazione non riesce e non viene registrato nulla.
+
+Una volta che la funzione restituisce un valore, Twenty conserva la consegna per 24 ore per il membro, il canale, il thread e l'`idempotencyKey`. Se la registrazione della risposta non riesce, la mutazione non riesce e ritentandola con la stessa chiave viene registrata la risposta recapitata senza richiamare la funzione; un nuovo tentativo di una risposta già registrata la restituisce. Un nuovo tentativo mentre la prima chiamata sta ancora inviando attende che termini. Una nuova chiave corrisponde a una nuova risposta. La tua funzione può comunque essere chiamata due volte per una risposta se il client ritenta con una nuova chiave o dopo queste 24 ore, oppure se la funzione stessa non riesce dopo che il provider ha accettato il messaggio; inoltra quindi `idempotencyKey` al provider quando la sua API supporta invii idempotenti. Un canale con `isSyncEnabled: false` rifiuta le risposte senza chiamare la tua funzione. Un canale senza provider di messaggistica, o il cui provider non dispone di `sendMessageLogicFunction` o non esiste più, non può inviare; le sue conversazioni rimangono invariate. Richiede `"engines": { "twenty": ">=2.52.0" }`.
+
+## Elenco e aggiornamento dei canali
+
+```ts
+import {
+  listMessageChannels,
+  updateMessageChannel,
+} from 'twenty-sdk/logic-function';
+
+// Every channel this app owns, across all its connections
+const channels = await listMessageChannels();
+
+// Just the ones on a given connection
+const forConnection = await listMessageChannels({
+  connectedAccountId: connection.id,
+});
+
+// Rename it, re-scope who can read it, or pause ingestion
+await updateMessageChannel({ id: channel.id, displayName: 'Ada (LinkedIn)' });
+await updateMessageChannel({ id: channel.id, isSyncEnabled: false });
+```
+
+La modifica di `visibility` tramite `updateMessageChannel` ridefinisce l'ambito di ogni messaggio già importato nel canale, non solo di quelli successivi. L'acquisizione in un canale con `isSyncEnabled: false` viene rifiutata, quindi mettere in pausa un canale interrompe il flusso senza eliminare nulla.
+
+La tua app vede solamente i canali creati sulle proprie connessioni. I canali appartenenti ad altre app e i canali email di Twenty sono invisibili all'app.
+
+Un canale è inoltre accessibile solo dalla persona tramite la cui connessione comunica, quando tale connessione è privata per quella persona. Un'esecuzione attivata da un altro membro dell'area di lavoro non può vederlo, modificarlo o acquisirvi dati; un'esecuzione senza nessuno alle spalle — un cron, un webhook, un hook di installazione — agisce come l'applicazione e raggiunge ogni canale posseduto dall'app.
+
+## Cartelle
+
+Alcuni provider suddividono un account in sottoflussi: caselle di posta in un helpdesk condiviso, numeri in un account WhatsApp, canali in uno spazio di lavoro Slack. Dichiarali come **cartelle** nel canale, gli stessi record che Twenty utilizza per le cartelle delle caselle di posta e le etichette di Gmail, e contrassegna ogni messaggio con le cartelle a cui appartiene.
+
+Le cartelle sono facoltative. Un canale senza cartelle funziona esattamente come descritto sopra.
+
+### Dichiarazione delle cartelle alla connessione
+
+`syncMessageFolders` accetta l'elenco **completo** delle cartelle del canale e fa corrispondere le cartelle archiviate, usando `externalId` come chiave:
+
+* un valore `externalId` sconosciuto crea una cartella
+* un valore noto viene rinominato se il relativo `name` è cambiato
+* una cartella archiviata assente dall'elenco viene rimossa, insieme ai relativi collegamenti ai messaggi. I messaggi stessi rimangono.
+
+Il punto naturale in cui chiamarla è l'hook `onConnect` del provider di connessione, subito dopo aver creato il canale. Ecco una configurazione completa per un'app di helpdesk, in cui ogni casella di posta diventa una cartella:
+
+```ts src/connection-providers/helpdesk-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+import {
+  HELPDESK_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+export default defineConnectionProvider({
+  universalIdentifier: HELPDESK_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  name: 'helpdesk',
+  displayName: 'Helpdesk',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  onConnectLogicFunction: {
+    universalIdentifier: HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+```ts src/logic-functions/helpdesk-on-connect.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import {
+  createMessageChannel,
+  enqueueJobs,
+  getConnection,
+  listMessageChannels,
+  syncMessageFolders,
+} from 'twenty-sdk/logic-function';
+import { MessageChannelVisibility } from 'twenty-shared/types';
+
+import {
+  HELPDESK_BACKFILL_FOLDER_UNIVERSAL_IDENTIFIER,
+  HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+export default defineLogicFunction({
+  universalIdentifier: HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+  name: 'helpdesk-on-connect',
+  timeoutSeconds: 60,
+  handler: async ({ connectedAccountId }: { connectedAccountId: string }) => {
+    const connection = await getConnection(connectedAccountId);
+    const inboxes = await fetchHelpdeskInboxes(connection.accessToken);
+
+    const [existingChannel] = await listMessageChannels({ connectedAccountId });
+
+    const channel =
+      existingChannel ??
+      (await createMessageChannel({
+        connectedAccountId,
+        handle: connection.handle,
+        visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      }));
+
+    const folders = await syncMessageFolders({
+      messageChannelId: channel.id,
+      folders: inboxes.map((inbox) => ({
+        externalId: inbox.id,
+        name: inbox.name,
+      })),
+    });
+
+    const syncedFolders = folders.filter((folder) => folder.isSynced);
+
+    if (syncedFolders.length > 0) {
+      await enqueueJobs({
+        logicFunctionUniversalIdentifier:
+          HELPDESK_BACKFILL_FOLDER_UNIVERSAL_IDENTIFIER,
+        jobs: syncedFolders.map((folder) => ({
+          payload: {
+            messageChannelId: channel.id,
+            folderExternalId: folder.externalId,
+          },
+        })),
+      });
+    }
+  },
+});
+```
+
+Alcuni aspetti su cui si basa questo esempio:
+
+* **Un canale per connessione.** L'hook riutilizza il canale della connessione quando ne ha già uno, poiché `onConnect` viene messo in coda e potrebbe essere eseguito di nuovo. Impostazioni mostra le cartelle di quel singolo canale, quindi non suddividere una connessione tra più canali.
+* **Sincronizzazione ripetibile.** Reinviare l'elenco completo è sicuro: le cartelle invariate vengono lasciate inalterate. Chiama di nuovo `syncMessageFolders` ogni volta che l'elenco del provider potrebbe essere cambiato, tramite un cron o il webhook "casella di posta creata" del provider.
+* **Backfill per cartella.** Ogni cartella sincronizzata riceve il proprio [processo in background](/it/developers/extend/apps/logic/background-jobs), che scorre la cronologia del provider e chiama `ingestMessages`.
+
+### Scegli quali cartelle importare
+
+Ogni cartella ha un flag `isSynced`. I membri attivano e disattivano le cartelle in **Cartelle** nella pagina della connessione (**Impostazioni → Applicazioni →** la tua app **→** la connessione), che appare quando il canale ha delle cartelle.
+
+Una nuova cartella inizia sincronizzata, a meno che non passi `isSynced: false`. Omettere `isSynced` in una sincronizzazione successiva conserva il valore archiviato, quindi un aggiornamento del provider non reimposta mai ciò che un membro ha scelto. La tua app può comunque impostare il flag passando il valore a `syncMessageFolders`.
+
+<Note>
+`isSynced` è **indicativo** nei canali dell'app: Twenty lo archivia ma non filtra l'importazione in base a esso, e non viene eseguito alcun backfill di una cartella quando viene attivata. La tua app lo legge con `listMessageFolders` (filtrato per `messageChannelId`, oppure in tutti i suoi canali quando viene chiamato senza filtro), ignora i messaggi delle cartelle non sincronizzate ed esegue il backfill di una cartella quando viene sincronizzata.
+</Note>
+
+```ts
+import { listMessageFolders } from 'twenty-sdk/logic-function';
+
+const folders = await listMessageFolders({ messageChannelId: channel.id });
+
+const syncedInboxIds = new Set(
+  folders.filter((folder) => folder.isSynced).map((folder) => folder.externalId),
+);
+```
+
+### Assegnazione di tag ai messaggi
+
+Passa le cartelle a cui appartiene un messaggio come `folderExternalIds` durante l'importazione:
+
+```ts
+import { ingestMessages } from 'twenty-sdk/logic-function';
+
+await ingestMessages({
+  messageChannelId: channel.id,
+  messages: [
+    {
+      externalId: message.id,
+      threadExternalId: conversation.id,
+      text: message.text,
+      receivedAt: new Date(message.createdAt),
+      participants,
+      folderExternalIds: [conversation.inboxId],
+    },
+  ],
+});
+```
+
+Ogni ID deve appartenere a una cartella già dichiarata nel canale; un ID sconosciuto rifiuta l'intero batch. I collegamenti si sommano: reimportare un messaggio con un'altra cartella aggiunge tale cartella e conserva quelle precedenti, quindi una conversazione spostata tra caselle di posta finisce in entrambe.
+
+## Ritiro di un canale
+
+Chiama `deleteMessageChannel(id)` dall'hook `onDisconnect` del provider di connessione affinché un canale non sopravviva mai alla credenziale tramite cui comunica.
+
+```ts src/logic-functions/handlers/linkedin-disconnect-handler.ts
+import {
+  deleteMessageChannel,
+  listMessageChannels,
+} from 'twenty-sdk/logic-function';
+
+export const linkedinDisconnectHandler = async (payload: {
+  connectedAccountId: string;
+}) => {
+  const channels = await listMessageChannels({
+    connectedAccountId: payload.connectedAccountId,
+  });
+
+  await Promise.all(channels.map((channel) => deleteMessageChannel(channel.id)));
+};
+```
+
+L'eliminazione di un canale elimina i messaggi importati tramite esso e qualsiasi conversazione rimasta senza messaggi. Per interrompere l'importazione mantenendo la cronologia, imposta invece `isSyncEnabled: false`.
+
+## Cosa non fa un canale
+
+* **Non viene sottoposto a polling.** La pipeline di importazione di Twenty esegue il polling dei provider di caselle di posta tramite un cron. I canali dell'app funzionano solo tramite push: nulla recupera dati per tuo conto, quindi la tua app è responsabile dell'inserimento dei messaggi, tramite una route webhook o una funzione logica cron.
+* **Non avvia conversazioni.** Le risposte vengono inviate a un thread esistente tramite un [provider di messaggistica](#sending-replies); un primo messaggio a una nuova persona deve essere avviato dalla tua app.
+* **Risolve i contatti solo tramite un campo dichiarato.** Senza di esso, Twenty non può stabilire a chi appartiene un URN LinkedIn, quindi i canali dell'app [collegano esplicitamente i partecipanti durante l'acquisizione](#resolve-the-person-yourself).
+* **Non crea contatti.** La creazione automatica di Twenty ricava persone e aziende dai domini email, il che è privo di significato per la maggior parte dei provider, quindi è disattivata per i canali delle app. Crea tu stesso la Persona, quindi passa il relativo `personId`.
+
+<PageBanner illustration="card-page-messaging-channels" />

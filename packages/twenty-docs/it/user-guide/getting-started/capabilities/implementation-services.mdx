@@ -3,15 +3,23 @@ title: Servizi di Implementazione
 description: Che tu abbia bisogno d'aiuto per iniziare o creare personalizzazioni avanzate, abbiamo una soluzione.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
 ## Partner di Implementazione
 
 Collabora con partner certificati di Twenty per personalizzazioni avanzate, integrazioni e supporto dedicato all’implementazione.
 
-<CardGroup cols={2}>
-  <Card title="Esplora i partner certificati" icon="search" href="https://twenty.com/partners/list?ref=docs-implementation-services">
-    Trova un partner e contattalo direttamente — filtra per area geografica, lingua e competenze.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="https://twenty.com/partners/list?ref=docs-implementation-services" img="/images/user-guide/halftone/community-certified-partners.svg">
+    <CardTitle>Sfoglia i partner certificati</CardTitle>
+    Trova un partner e raggiungi direttamente — filtra per regione, lingua e competenza.
   </Card>
-  <Card title="Fatti abbinare da Twenty" icon="mail" href="mailto:contact@twenty.com">
-    Dicci di cosa hai bisogno e ti metteremo in contatto con il partner giusto.
+  <Card href="mailto:contact@twenty.com" img="/images/user-guide/halftone/community-partner-matching.svg">
+    <CardTitle>Get matched by Twenty</CardTitle>
+    Tell us what you need and we will connect you with the right partner.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="community-certified-partners" />

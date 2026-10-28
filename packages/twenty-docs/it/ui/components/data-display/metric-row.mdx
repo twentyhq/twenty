@@ -1,0 +1,77 @@
+---
+title: Riga metrica
+description: Allinea un'etichetta della metrica e un valore formattato con un indicatore di avanzamento facoltativo.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import MetricRowReference from '/snippets/ui/generated/components/data-display/metric-row.mdx';
+
+## Panoramica
+
+`MetricRow` allinea un'etichetta, un'icona facoltativa e un valore preformattato. Un elemento facoltativo [ProgressRing](/it/ui/primitives/feedback/progress-ring) utilizza l'etichetta visibile come nome accessibile.
+
+<StoryEmbed storyId="ui-data-display-metricrow--display" title="Esempio di riga della metrica" height={100} />
+
+## Utilizzo
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+import { IconFiles } from 'twenty-ui/icon';
+
+export const ImportMetric = () => (
+  <MetricRow
+    startIcon={<IconFiles size={14} />}
+    value="75 of 100"
+    progress={75}
+  >
+    Imported files
+  </MetricRow>
+);
+```
+
+Passa un'etichetta di testo non vuota come elementi figlio obbligatori e il valore formattato tramite `value`. Aggiungi `progress` quando la metrica ha una percentuale nota.
+
+L'applicazione gestisce i calcoli, le unità, la formattazione dei numeri e il significato della metrica. `progressColor` accetta un colore CSS per l'arco riempito.
+
+## Valori senza avanzamento
+
+Ometti `progress` per mostrare un valore semplice. Lo zero numerico viene visualizzato come `0`; il contenuto non viene mai sostituito con un segnaposto. Fornisci un segnaposto personalizzato quando i dati non sono disponibili.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+
+export const CompletedMetric = () => (
+  <MetricRow value={0}>Completed imports</MetricRow>
+);
+```
+
+## Composizione e accessibilità
+
+Il contenuto dell'etichetta accetta nodi. Il relativo testo accessibile assegna un nome all'anello di avanzamento tramite `aria-labelledby`, incluso il testo annidato. Fornisci un'etichetta visibile significativa. Un valore stringa non vuoto viene inoltre esposto come testo del valore accessibile. Per il contenuto del valore formattato, fornisci `progressValueText` quando una percentuale non descrive completamente la metrica. Questo testo sostituisce il valore di fallback della stringa. Senza di esso, gli altri contenuti mantengono il testo del valore percentuale dell'anello. Un `progressValueText` vuoto utilizza anch'esso la percentuale, anche quando `value` è una stringa. Il nodo `startIcon` facoltativo è decorativo. Il chiamante ne controlla le dimensioni e il tratto.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const FormattedStorageMetric = () => (
+  <MetricRow
+    value={<Text render={<bdi />}>12 / 20 GB</Text>}
+    progress={60}
+    progressValueText="12 of 20 gigabytes used"
+  >
+    <Text render={<strong />}>Storage</Text>
+  </MetricRow>
+);
+```
+
+Sostituisci `startIcon={IconDatabase}` con `startIcon={<IconDatabase size={14} />}`. I valori rimangono preformattati dall'applicazione.
+
+Gli attributi nativi, `className`, `style` e `ref` si applicano alla riga esterna. `render` può sostituire quell'elemento. L'avanzamento rimane controllato e limitato da 0 a 100, con lo stesso comportamento per la riduzione del movimento di `ProgressRing`.
+
+## Props
+
+<MetricRowReference />
+
+<PageBanner illustration="dashboards" />

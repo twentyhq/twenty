@@ -1,0 +1,64 @@
+name: Open i18n pull request reusable workflow
+
+# Actions may not open PRs in this repo, so the Twenty PR app does. Its key stays
+# out of the callers' jobs that run yarn install.
+
+on:
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
+      title:
+        required: true
+        type: string
+    secrets:
+      TWENTY_PR_PRIVATE_KEY:
+        required: true
+      TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY:
+        required: true
+
+permissions: {}
+
+jobs:
+  open-pull-request:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mint Twenty PR token
+        id: twenty-pr-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_PR_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_PR_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: twenty
+          permission-pull-requests: write
+
+      - name: Create a pull request
+        env:
+          GH_TOKEN: ${{ steps.twenty-pr-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+          BRANCH: ${{ inputs.branch }}
+          TITLE: ${{ inputs.title }}
+        run: |
+          OPEN_PRS=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq length)
+          if [ "$OPEN_PRS" = 0 ]; then
+            gh pr create -B main -H "$BRANCH" --title "$TITLE" --body 'Created by Github action'
+          fi
+
+      - name: Mint twenty-infra dispatch token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: twenty-infra
+          permission-actions: write
+
+      - name: Trigger i18n automerge
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh workflow run automerge-i18n.yaml --repo twentyhq/twenty-infra --ref main

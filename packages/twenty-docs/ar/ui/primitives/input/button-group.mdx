@@ -1,0 +1,102 @@
+---
+title: ButtonGroup
+description: جمّع الأزرار ذات الصلة ذات المظهر المشترك والإطار الاختياري.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ButtonGroupReference from '/snippets/ui/generated/input/button-group.mdx';
+
+## نظرة عامة
+
+امنح المجموعة اسمًا متاحًا وضع الأزرار ذات الصلة داخلها. تضم المجموعة الحدود المتجاورة ويمكنها تطبيق الإعدادات الافتراضية للحجم والمتغير واللون. تحتفظ الأزرار بمحطات Tab الخاصة بها.
+
+<StoryEmbed storyId="ui-input-button-buttongroup--display" title="مجموعة الأزرار" height={100} />
+
+## استخدام
+
+```tsx
+import { IconCheckbox, IconNotes, IconTimelineEvent } from 'twenty-ui/icon';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const ActivityActions = () => (
+  <ButtonGroup aria-label="Create activity" size="sm">
+    <Button startIcon={<IconNotes />}>Note</Button>
+    <Button startIcon={<IconCheckbox />}>Task</Button>
+    <Button startIcon={<IconTimelineEvent />}>Activity</Button>
+  </ButtonGroup>
+);
+```
+
+## ملكية الحالة
+
+ينسّق `ButtonGroup` المظهر، وليس التحديد. لا يحتوي على وضع تحديد متحكَّم فيه أو غير متحكَّم فيه. يتلقى كل زر معالج الإجراء الخاص به وحالة التطبيق؛ راجع [مثال ملكية حالة الزر](/ar/ui/primitives/input/button#state-ownership) لسلوك التحميل.
+
+لخيار متنافيًا بشكل متبادل، استخدم [RadioGroup](/ar/ui/primitives/input/radio-group)، الذي يملك التحديد لعناصر التحكّم اللاسلكية الخاصة به.
+
+## أسبقية المظهر
+
+تُحل كل خاصية مظهر بشكل مستقل: خاصية الطفل الصريحة، ثم الإعداد الافتراضي للمجموعة، ثم الإعداد الافتراضي للمكوّن. ينطبق هذا على كل من Button وIconButton، بما في ذلك `IconButton size="xs"` الصريح. تصل الإعدادات الافتراضية إلى العناصر الفرعية عبر الأجزاء والأغلفة ومرتكزات تلميحات الأدوات.
+
+يمكن للمجموعة توفير `color="inherit"` على سطح ملوّن. يجب أن يُحلّ العنصر الفرعي الذي يرث اللون إلى صيغة غير مصمتة أيضًا. تتقدم تجاوزات لون العنصر الفرعي وصيغته الصريحة، لذا يمكن للعنصر الفرعي اختيار صيغة غير مصمتة أو لون دلالي عندما توفّر المجموعة لونًا مصمتًا والوراثة معًا.
+
+أبقِ الأزرار المتصلة بالحجم نفسه بحيث تتراصف حوافها. يتجاوز هذا المثال المتغير واللون مع وراثة حجم المجموعة.
+
+```tsx
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const ActivityActions = () => (
+  <ButtonGroup
+    aria-label="Activity actions"
+    variant="solid"
+    color="accent"
+    size="sm"
+  >
+    <Button variant="ghost" color="danger">
+      Delete activity
+    </Button>
+    <Button color="neutral">Duplicate activity</Button>
+    <Button>New activity</Button>
+  </ButtonGroup>
+);
+```
+
+<StoryEmbed storyId="ui-input-button-buttongroup--appearance-overrides" title="مظهر فردي في مجموعة أزرار" height={100} />
+
+## عناصر تحكّم منفصلة
+
+عيّن `attached={false}` للحفاظ على الزوايا المستديرة لكل عنصر تحكّم وفجوة قدرها 2px. تظل الإعدادات الافتراضية للمجموعة سارية عبر الأغلفة وارتكازات تلميحات الأدوات؛ وتكون لخصائص العناصر الفرعية الصريحة الأولوية.
+
+## عناصر تحكّم مؤطّرة
+
+عيّن `framed` لإضافة خلفية شبه شفافة وحدود وحشوة بمقدار 2px وزوايا متحدة المركز. يعمل الإطار مع عناصر التحكّم المتصلة أو المنفصلة ويحافظ على المظهر الصريح للعناصر الفرعية. استخدم `size="xs"` على [IconButton](/ar/ui/components/input/icon-button) للإجراءات المدمجة بحجم 20px.
+
+<StoryEmbed storyId="ui-components-iconbutton--framed-group-documentation" title="مجموعة الأزرار المؤطّرة" height={100} />
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus, IconTrash } from 'twenty-ui/icon';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const CompactRecordActions = () => (
+  <ButtonGroup framed attached={false} aria-label="Record actions">
+    <IconButton size="xs" aria-label="Add" variant="ghost">
+      <IconPlus />
+    </IconButton>
+    <IconButton size="xs" aria-label="Delete" variant="ghost" disabled>
+      <IconTrash />
+    </IconButton>
+  </ButtonGroup>
+);
+```
+
+## تحديث المجموعات الموجودة
+
+استبدل `IconButtonGroup` ومصفوفة `iconButtons` الخاصة به بـ `ButtonGroup framed attached={false}` وعناصر فرعية صريحة. استبدل `InsideButton` بـ `LightIconButton size="xs"`. يمتلك كل زر اسمه المتاح ومعالج الإجراء وحالة التعطيل وتلميح الأداة الاختياري.
+
+## الإزاحة
+
+<ButtonGroupReference />
+
+<PageBanner illustration="page-cover-pointer" />

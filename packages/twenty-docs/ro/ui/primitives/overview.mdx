@@ -1,0 +1,112 @@
+---
+title: Primitivele
+sidebarTitle: Prezentare generală
+description: Controale fundamentale pentru construirea de interfețe cu Twenty UI.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Primitivele sunt controalele fundamentale din Twenty UI. Acestea includ elemente de intrare, elemente de afișare, navigare și controale compuse, cum ar fi Select, Popover și AlertDialog. Fiecare primitivă primește date și funcții callback de la aplicația dvs.
+
+Importați primitive dintr-un punct de intrare al familiei, cum ar fi `twenty-ui/primitives/input`. Punctul de intrare agregat `twenty-ui/primitives` exportă, de asemenea, fiecare familie de primitive. Consultați [Noțiuni introductive](/ro/ui/getting-started) pentru instalare și configurarea temei.
+
+[Componente](/ro/ui/components/overview) combină aceste primitive în presetări de design partajate și elemente reutilizabile de construcție a aplicațiilor.
+
+## Proprietatea asupra stării
+
+Folosiți starea necontrolată atunci când un component își poate gestiona propriile interacțiuni. O proprietate implicită furnizează starea inițială. Folosiți starea controlată atunci când aplicația trebuie să coordoneze acea stare cu alte controale, navigarea sau datele aplicației.
+
+| Stare                                         | Stare inițială necontrolată | Stare controlată | Callback de schimbare |
+| --------------------------------------------- | --------------------------- | ---------------- | --------------------- |
+| Câmp de introducere, selecție sau filă activă | `defaultValue`              | `valoare`        | `onValueChange`       |
+| Casetă de selectare sau comutator             | `defaultChecked`            | `checked`        | `onCheckedChange`     |
+| Vizibilitatea ferestrei popup                 | `defaultOpen`               | `open`           | `onOpenChange`        |
+
+În modul controlat, transmiteți starea curentă și actualizați-o în callbackul de schimbare. În modul necontrolat, puteți în continuare să monitorizați modificările fără a prelua proprietatea asupra stării. Adăugarea unui callback singur nu face ca un component să fie controlat.
+
+Alegeți un mod pentru fiecare stare și păstrați-l pe durata de viață a componentului. Proprietățile implicite inițializează starea; modificarea lor ulterioară nu înlocuiește starea curentă. Evitați transmiterea atât a proprietății implicite, cât și a celei controlate pentru aceeași stare.
+
+Unele componente au mai multe stări independente. De exemplu, [Select](/ro/ui/primitives/input/select#open-state) poate avea o valoare controlată și o vizibilitate necontrolată a ferestrei popup.
+
+Starea aparține părții care gestionează interacțiunea. Configurați selecția butoanelor radio în [RadioGroup](/ro/ui/primitives/input/radio-group), nu în fiecare Radio. Componentele de afișare, precum Text, nu au un mod controlat sau necontrolat. [Toast](/ro/ui/components/feedback/toast) deleagă aplicației gestionarea vizibilității și eliminării sale.
+
+## Compoziție
+
+Primitivele compuse expun părți precum `Select.Root`, `Select.Trigger` și `Select.Popup`. Păstrați părțile asociate sub aceeași rădăcină în arborele de componente, astfel încât să partajeze starea și relațiile de accesibilitate. Secțiunea de anatomie a fiecărei componente identifică părțile necesare și conținutul opțional.
+
+Sloturile precum `InputGroup.startElement` și `ListItem.actions` acceptă noduri React ca props. Acestea adaugă conținut în structura unei componente. Părțile și sloturile sunt API-uri diferite; utilizați numele enumerate în ghidul componentei.
+
+### Compoziția popupului
+
+Select, Popover și Autocomplete expun părți separate `Portal`, `Positioner` și `Popup`:
+
+| Parte        | Responsabilitate                                                   |
+| ------------ | ------------------------------------------------------------------ |
+| `Portal`     | Containerul de destinație și montarea                              |
+| `Positioner` | Poziționarea, ancora, decalajele și gestionarea coliziunilor       |
+| `Popup`      | Conținutul, comportamentul de focalizare, atributele native și ref |
+| `Arrow`      | Săgeată opțională în interiorul popupului                          |
+
+Imbricați Popup în Positioner și Positioner în Portal. Plasați conținutul în Popup și adăugați Arrow în mod explicit atunci când este necesar. Portal poate muta DOM-ul randat într-un alt container, păstrând ierarhia și contextul componentelor. Consultați [tematizarea](/ro/ui/theming#scope-an-override) pentru containere portal cu domeniu de aplicare.
+
+Fiecare parte randată își păstrează propriile atribute native, ținta ref și compoziția de randare. [Autocomplete](/ro/ui/primitives/input/autocomplete) păstrează, de asemenea, părțile instalate upstream pentru colecție, grupare, grilă, filtrare și stare.
+
+[Dialog](/ro/ui/primitives/surfaces/dialog) și [AlertDialog](/ro/ui/primitives/surfaces/alert-dialog) expun părți separate `Portal`, `Backdrop`, `Viewport` și `Popup`. Configurează montarea și destinația pentru Portal, aspectul suprapunerii pentru Backdrop și Viewport, precum și dimensiunea și focalizarea conținutului pentru Popup. Fiecare parte își păstrează propriile atribute native, ținta ref și compoziția de randare. Aceste API-uri de dialog sunt pentru UI independentă și gazda Twenty. Componentele Front utilizează [API-ul de dialog al gazdei SDK](/ro/developers/extend/apps/layout/front-components#host-communication-api).
+
+### Componente personalizate
+
+Pentru părțile care acceptă `render`, transmiteți un element sau o componentă compatibilă pentru a înlocui elementul implicit. De exemplu, `Popover.Trigger` poate utiliza un `Button` Twenty UI, păstrându-și comportamentul de declanșator.
+
+Un înveliș personalizat trebuie să transmită proprietățile și ref furnizate către elementul interactiv. Acest lucru păstrează gestionarele de evenimente, atributele de accesibilitate, poziționarea și restabilirea focalizării. Acest exemplu le redirecționează prin `Button`, care le atașează butonului său nativ.
+
+```tsx
+import { type ComponentPropsWithRef } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+type HelpButtonProps = ComponentPropsWithRef<typeof Button>;
+
+const HelpButton = ({ ref, ...props }: HelpButtonProps) => (
+  <Button {...props} ref={ref} variant="outline" />
+);
+
+export const ImportHelp = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<HelpButton>Import help</HelpButton>} />
+    <Popover.Portal>
+      <Popover.Positioner>
+        <Popover.Popup>
+          <Popover.Title>Import a CSV file</Popover.Title>
+          <Popover.Description>
+            Use a header row to identify your columns.
+          </Popover.Description>
+          <Popover.Close render={<Button>Got it</Button>} />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+Transmiteți butonul prin `render` și păstrați fiecare acțiune ca un singur control interactiv. Păstrați gestionarele și ref furnizate învelișului dvs. când adăugați propriul comportament. Ref trebuie să ajungă la elementul care primește focalizarea.
+
+Utilizați un buton nativ pentru părțile de tip buton. Pentru părțile care expun `nativeButton`, setați `nativeButton={false}` numai atunci când elementul randat nu este un buton nativ. O componentă personalizată care randează în cele din urmă un buton, precum `HelpButton`, păstrează comportamentul implicit al butonului.
+
+## Răsfoiți primitivele
+
+Fiecare pagină include exemple de utilizare, recomandări privind interacțiunea și o referință API generată.
+
+| Familie        | Primitive                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Accesibilitate | [Ascuns vizual](/ro/ui/primitives/accessibility/visually-hidden)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| Date afișate   | [Avatar](/ro/ui/primitives/data-display/avatar), [Etichetă](/ro/ui/primitives/data-display/chip), [Eșantion de culoare](/ro/ui/primitives/data-display/color-sample), [Insignă](/ro/ui/primitives/data-display/badge), [Stare](/ro/ui/primitives/data-display/status), [Etichetă](/ro/ui/primitives/data-display/tag)                                                                                                                                                                                                                                                                                                                                                                           |
+| Feedback       | [Banner](/ro/ui/primitives/feedback/banner), [Încărcător](/ro/ui/primitives/feedback/loader), [Progres](/ro/ui/primitives/feedback/progress), [Bară de progres](/ro/ui/primitives/feedback/progress-bar), [Inel de progres](/ro/ui/primitives/feedback/progress-ring), [Schelet](/ro/ui/primitives/feedback/skeleton)                                                                                                                                                                                                                                                                                                                                                                           |
+| Formulare      | [Completare automată](/ro/ui/primitives/input/autocomplete), [Buton](/ro/ui/primitives/input/button), [Grup de butoane](/ro/ui/primitives/input/button-group), [Casetă de selectare](/ro/ui/primitives/input/checkbox), [Câmp](/ro/ui/primitives/input/field), [Intrare](/ro/ui/primitives/input/input), [Grup de intrări](/ro/ui/primitives/input/input-group), [Câmp numeric](/ro/ui/primitives/input/number-field), [Buton radio](/ro/ui/primitives/input/radio), [Grup de butoane radio](/ro/ui/primitives/input/radio-group), [Selectare](/ro/ui/primitives/input/select), [Glisor](/ro/ui/primitives/input/slider), [Comutator](/ro/ui/primitives/input/switch), [Zonă de text](/ro/ui/primitives/input/textarea) |
+| Aspect         | [Pliabil](/ro/ui/primitives/layout/collapsible), [Separator](/ro/ui/primitives/layout/separator), [Mâner de redimensionare](/ro/ui/primitives/layout/resize-handle), [Furnizor de direcție](/ro/ui/primitives/layout/direction-provider)                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Navigare       | [Fir de navigare](/ro/ui/primitives/navigation/breadcrumb), [Element de listă](/ro/ui/primitives/navigation/list-item), [File](/ro/ui/primitives/navigation/tabs)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Suprafețe      | [Dialog de alertă](/ro/ui/primitives/surfaces/alert-dialog), [Card](/ro/ui/primitives/surfaces/card), [Dialog](/ro/ui/primitives/surfaces/dialog), [Popover](/ro/ui/primitives/surfaces/popover), [Indiciu](/ro/ui/primitives/surfaces/tooltip)                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Tipografie     | [Titlu](/ro/ui/primitives/typography/heading), [Text depășit cu indicație](/ro/ui/primitives/typography/overflowing-text-with-tooltip), [Furnizor de mod pentru indicația textului depășit](/ro/ui/primitives/typography/overflowing-text-tooltip-mode-provider), [Comandă rapidă](/ro/ui/primitives/typography/shortcut), [Text](/ro/ui/primitives/typography/text)                                                                                                                                                                                                                                                                                                                         |
+
+<PageBanner illustration="section-ui-primitives" />

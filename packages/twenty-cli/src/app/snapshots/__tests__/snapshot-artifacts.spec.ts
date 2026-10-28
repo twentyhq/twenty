@@ -16,6 +16,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { stop } from 'esbuild';
+import { EMPTY_YARN_LOCK_CONTENT } from 'twenty-shared/application';
 import { isPlainObject } from 'twenty-shared/utils';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -393,7 +394,7 @@ describe('CLI snapshots produce repeatable artifacts', () => {
       signal: new AbortController().signal,
     });
     await symlink(join(root, 'node_modules'), join(appPath, 'node_modules'));
-    await rm(join(appPath, 'yarn.lock'));
+    await writeFile(join(appPath, 'yarn.lock'), EMPTY_YARN_LOCK_CONTENT);
     const configPath = join(appPath, 'tsconfig.json');
     const config = JSON.parse(await readFile(configPath, 'utf8'));
     config.exclude.push('vitest*.config.ts');
