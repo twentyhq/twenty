@@ -1,0 +1,477 @@
+---
+title: اختيار
+description: اختر قيمة واحدة أو أكثر من قائمة منبثقة من الخيارات.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SelectReference from '/snippets/ui/generated/input/select.mdx';
+
+## نظرة عامة
+
+استخدم `Select` لقيمة نموذج يتم اختيارها من قائمة. يظل [Dropdown](/ar/ui/components/navigation/dropdown) واجهة برمجة التطبيقات الرئيسية الأعلى مستوى للقوائم وأدوات الاختيار واللوحات والصفحات التي تجمع بين مهام سير العمل هذه.
+
+<StoryEmbed storyId="ui-input-select--display" title="مثال على التحديد" height={240} />
+
+## استخدام
+
+### الحالة غير المتحكم بها
+
+استخدم `defaultValue` لتعيين الأولوية الأولية. يتولى مكوّن الاختيار إدارة تغييرات التحديد اللاحقة.
+
+```tsx
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => (
+  <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
+    <Select.Trigger aria-label="Priority">
+      <Select.Value placeholder="Choose a priority" />
+      <Select.Icon />
+    </Select.Trigger>
+    <Select.Portal>
+      <Select.Positioner
+        align="start"
+        sideOffset={8}
+        alignItemWithTrigger={false}
+      >
+        <Select.Popup>
+          {PRIORITIES.map(({ value, label }) => (
+            <Select.Item key={value} value={value}>
+              <Select.ItemText>{label}</Select.ItemText>
+              <Select.ItemIndicator />
+            </Select.Item>
+          ))}
+        </Select.Popup>
+      </Select.Positioner>
+    </Select.Portal>
+  </Select.Root>
+);
+```
+
+وفّر `items` في `Root` لكي يعرض `Value` تسمية العنصر المحدد؛ وبدونها، يعرض المشغّل القيمة الأولية. يمكن أن تكون القيمة المحددة `null` عندما لا يكون هناك شيء محدد.
+
+## البنية التشريحية العربية
+
+ركّب الأجزاء العامة داخل `Select.Root`. يعرض `Trigger` و`Item` عناصرهما الفرعية فقط. أضف `Icon` و`ItemText` و`ItemIndicator` صراحةً عندما تريد السهم المتعرج والتسمية وعلامة الاختيار الافتراضية.
+
+```text
+Select.Root
+├── Select.Label
+├── Select.Trigger
+│   ├── Select.Value
+│   └── Select.Icon
+└── Select.Portal
+    ├── Select.Backdrop
+    └── Select.Positioner
+        └── Select.Popup
+            ├── Select.Arrow
+            ├── Select.ScrollUpArrow
+            ├── Select.List
+            │   ├── Select.Group
+            │   │   ├── Select.GroupLabel
+            │   │   └── Select.Item
+            │   │       ├── Select.ItemText
+            │   │       └── Select.ItemIndicator
+            │   └── Select.Separator
+            └── Select.ScrollDownArrow
+```
+
+| الجزء                              | الغرض                                                                                  |
+| ---------------------------------- | -------------------------------------------------------------------------------------- |
+| `Root`                             | يدير التحديد وحالة الفتح والقيم العامة والتكامل مع النموذج الأصلي.                     |
+| `Label`                            | يربط تسمية مرئية بالمشغّل.                                                             |
+| `المشغّل`                          | يفتح القائمة ويحتوي على القيمة المعروضة.                                               |
+| `القيمة`                           | يعرض التسمية المحددة أو نصًا نائبًا.                                                   |
+| `Icon`                             | يعرض سهمًا افتراضيًا أو عناصر فرعية مخصصة في المشغّل.                                  |
+| `Portal`                           | ينقل محتوى النافذة المنبثقة إلى حاوية البوابة الخاصة بالسمة أو إلى حاوية محددة صراحةً. |
+| `Backdrop`                         | يوفر خلفية اختيارية أثناء فتح النافذة المنبثقة.                                        |
+| `Positioner`                       | يدير هندسة المرساة والموضع والإزاحات وسلوك التصادم.                                    |
+| `Popup`                            | يعرض سطح النافذة المنبثقة دون إضافة بوابة أو محدِّد موضع.                              |
+| `قائمة`                            | يوفر حاوية تمرير منفصلة للخيارات.                                                      |
+| `Item`                             | يوفر سلوك التحديد لخيار واحد.                                                          |
+| `ItemText`                         | يحدد تسمية الخيار المستخدمة للكتابة الاستباقية ومحاذاة القيمة المحددة.                 |
+| `ItemIndicator`                    | يعرض علامة الصح الافتراضية للخيار المحدد أو عناصر فرعية مخصصة.                         |
+| `Arrow`                            | يضع سهمًا اختياريًا مقابل مرساة النافذة المنبثقة.                                      |
+| `ScrollUpArrow`, `ScrollDownArrow` | مرّر قائمة طويلة عند التمرير فوقها.                                                    |
+| `Group`, `GroupLabel`              | جمّع الخيارات ذات الصلة تحت تسمية.                                                     |
+| `Separator`                        | يفصل المجموعات بصريًا.                                                                 |
+
+تُعد `Portal` و`List` و`Backdrop` والأسهم والمؤشرات اختيارية. استخدم `Positioner` حول `Popup` لتحديد الموضع، بما في ذلك عند عرض النافذة المنبثقة ضمن السطر من دون بوابة.
+
+## الحالة المتحكم بها
+
+مرر `value` وحدّثه باستخدام `onValueChange` لإدارة الأولوية نفسها في حالة React. تتلقى دالة الاستدعاء القيمة التالية وتفاصيل الحدث.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => {
+  const [priority, setPriority] = useState<string | null>('normal');
+
+  return (
+    <Select.Root
+      name="priority"
+      value={priority}
+      onValueChange={setPriority}
+      items={PRIORITIES}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value placeholder="Choose a priority" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+## تحديد متعدد
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const LANGUAGES = [
+  { value: 'en', label: 'English' },
+  { value: 'fr', label: 'French' },
+  { value: 'es', label: 'Spanish' },
+];
+
+export const LanguageSelect = () => {
+  const [languages, setLanguages] = useState<string[]>(['en']);
+
+  return (
+    <Select.Root
+      multiple
+      value={languages}
+      onValueChange={setLanguages}
+      items={LANGUAGES}
+    >
+      <Select.Trigger aria-label="Languages">
+        <Select.Value placeholder="Choose languages" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {LANGUAGES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+مع `multiple`، تكون القيمة مصفوفة. استخدم `defaultValue={['en']}` بدلاً من `value` و`onValueChange` لتحديد متعدد غير متحكم به. تمثّل الأنواع العامة للجذر قيمة الخيار وما إذا كان التحديد المتعدد مفعّلًا.
+
+## حالة الفتح
+
+التحديد وظهور النافذة المنبثقة مستقلان عن بعضهما. تترك الأمثلة أعلاه ظهور النافذة المنبثقة غير متحكم به. يؤدي تحديد قيمة واحدة إلى إغلاق النافذة المنبثقة؛ بينما يبقيها التحديد المتعدد مفتوحة. استخدم `defaultOpen` لتعيين ظهورها الأولي؛ وقيمته الافتراضية هي `false`.
+
+مرر `open` وحدّثه باستخدام `onOpenChange` للتحكم في الظهور. يتحكم هذا المثال في النافذة المنبثقة مع ترك الأولوية المحددة غير متحكم بها.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Select.Root
+      name="priority"
+      defaultValue="normal"
+      items={PRIORITIES}
+      open={open}
+      onOpenChange={setOpen}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value placeholder="Choose a priority" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+## التركيب مع حقل
+
+غلّف قائمة الاختيار في `Field.Root` لربط المُشغِّل بتسمية مرئية ونص مساعد. يتولى الحقل وضع التسميات والتحقق؛ وتحتفظ قائمة الاختيار بحالة التحديد والنافذة المنبثقة الخاصة بها.
+
+```tsx
+import { Field, Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PriorityField = () => (
+  <Field.Root name="priority">
+    <Field.Label>Priority</Field.Label>
+    <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
+      <Select.Trigger>
+        <Select.Value />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+    <Field.Description>
+      Choose how soon this record needs attention.
+    </Field.Description>
+  </Field.Root>
+);
+```
+
+## تركيب العنصر
+
+ركّب محتوى عشوائيًا داخل `Item`. ضع التسمية القابلة للبحث في `ItemText`؛ ولا يصبح المحتوى الإضافي تسمية الكتابة الاستباقية الخاصة به. وفّر عناصر فرعية إلى `Icon` أو `ItemIndicator` لاستبدال أيقوناتهما الافتراضية، أو احذف هذه الأجزاء تمامًا.
+
+```tsx
+import { Select } from 'twenty-ui/primitives/input';
+
+export const PrioritySelect = () => (
+  <Select.Root defaultValue="high" items={{ high: 'High' }}>
+    <Select.Trigger aria-label="Priority">
+      <Select.Value />
+      <Select.Icon />
+    </Select.Trigger>
+    <Select.Portal>
+      <Select.Positioner
+        align="start"
+        sideOffset={8}
+        alignItemWithTrigger={false}
+      >
+        <Select.Popup>
+          <Select.Item value="high">
+            <Select.ItemText>High</Select.ItemText>
+            <span>Needs attention today</span>
+            <Select.ItemIndicator />
+          </Select.Item>
+        </Select.Popup>
+      </Select.Positioner>
+    </Select.Portal>
+  </Select.Root>
+);
+```
+
+تقبل جميع الأجزاء التي تعرض عناصر سمات أصلية ومراجع وواجهات برمجة تركيب `render` و`className` و`style` الخاصة بـ Base UI. على سبيل المثال، استخدم `render={<Button />}` على `Trigger` لتركيبه مع زر Twenty UI. لعنصر عرض ليس زرًا، عيّن أيضًا `nativeButton={false}`.
+
+## الموضع
+
+عيّن `size="sm"` أو `size="md"` على `Trigger`. ينتمي الموضع إلى `Positioner`؛ وتنتمي وجهة البوابة إلى `Portal`.
+
+يحافظ `Positioner` على الإعدادات الافتراضية لـ Base UI: `side="bottom"` و`align="center"` و`sideOffset={0}` و`alignItemWithTrigger={true}`. تنطبق محاذاة العنصر المحدد على إدخال المؤشر عند توفر مساحة كافية. عيّن `alignItemWithTrigger={false}` لاستخدام التموضع المرتكز باستمرار. تختار الأمثلة أعلاه `align="start"` و`sideOffset={8}` صراحةً.
+
+```tsx
+import { useRef, useState } from 'react';
+import { Button, Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PositionedPrioritySelect = () => {
+  const anchorRef = useRef<HTMLButtonElement>(null);
+  const boundaryRef = useRef<HTMLDivElement>(null);
+  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
+    null,
+  );
+
+  return (
+    <div ref={boundaryRef}>
+      <Button ref={anchorRef}>Position anchor</Button>
+      <Select.Root defaultValue="normal" items={PRIORITIES}>
+        <Select.Trigger aria-label="Priority">
+          <Select.Value />
+          <Select.Icon />
+        </Select.Trigger>
+        <Select.Portal container={portalContainer}>
+          <Select.Positioner
+            anchor={anchorRef}
+            positionMethod="fixed"
+            side="inline-end"
+            align="start"
+            alignItemWithTrigger={false}
+            sideOffset={({ anchor }) => anchor.width / 4}
+            alignOffset={4}
+            collisionBoundary={boundaryRef.current ?? undefined}
+            collisionPadding={12}
+            collisionAvoidance={{ side: 'flip', align: 'shift' }}
+            sticky
+          >
+            <Select.Popup>
+              <Select.Arrow />
+              <Select.List>
+                {PRIORITIES.map(({ value, label }) => (
+                  <Select.Item key={value} value={value}>
+                    <Select.ItemText>{label}</Select.ItemText>
+                    <Select.ItemIndicator />
+                  </Select.Item>
+                ))}
+              </Select.List>
+            </Select.Popup>
+          </Select.Positioner>
+        </Select.Portal>
+      </Select.Root>
+      <div ref={setPortalContainer} />
+    </div>
+  );
+};
+```
+
+يدعم `Positioner` أيضًا المراسي الافتراضية ودوال الإزاحة و`arrowPadding` و`disableAnchorTracking`. تستخدم `Portal` [حاوية البوابة الخاصة بالسمة](/ar/ui/theming#scope-an-override) ما لم توفر `container`. ينتظر `container={null}` محدد صراحةً حتى تصبح تلك الحاوية متاحة.
+
+<StoryEmbed storyId="ui-input-select-portals--positioning-documentation" title="تحديد بمرساة مخصصة وقائمة قابلة للتمرير" height={480} />
+
+## النماذج الأصلية وتفاصيل رد النداء
+
+عيّن `name` على `Root` لتضمين القيمة المحددة في `FormData`. يرسل التحديد المتعدد إدخالًا واحدًا لكل قيمة محددة. يربط `form` حقل الإدخال المخفي بنموذج خارجي، ويمنح `inputRef` الوصول إلى ذلك الحقل. تحتفظ `required` و`disabled` و`autoComplete` بسلوك النموذج الأصلي لـ Base UI.
+
+يتلقى `onValueChange` و`onOpenChange` الحالة التالية وتفاصيل الحدث المصدر، بما في ذلك `reason` و`event` الأصلي و`cancel()` و`allowPropagation()`. يمنع استدعاء `cancel()` تغيير الحالة الداخلية المقابل. تتطلب منك الجذور المتحكَّم بها الاستمرار في تحديث `value` أو `open`.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+type PrioritySelectProps = { canSetHighPriority: boolean };
+
+export const PrioritySelect = ({ canSetHighPriority }: PrioritySelectProps) => {
+  const [priority, setPriority] = useState<string | null>('normal');
+
+  return (
+    <Select.Root
+      items={PRIORITIES}
+      value={priority}
+      onValueChange={(nextPriority, details) => {
+        if (nextPriority === 'high' && !canSetHighPriority) {
+          details.cancel();
+          return;
+        }
+        setPriority(nextPriority);
+      }}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+تمثل أنواع الجذر العامة قيمة الخيار وما إذا كان التحديد المتعدد مفعّلًا. تدعم قيم الكائنات `itemToStringLabel` و`itemToStringValue` و`isItemEqualToValue`. استخدم `null` لتحديد مفرد فارغ ومصفوفة فارغة لتحديد متعدد فارغ.
+
+## لوحة المفاتيح
+
+يمكن لمستخدمي لوحة المفاتيح فتح القائمة من المشغّل، والتنقل بين الخيارات باستخدام مفاتيح الأسهم، والكتابة للعثور على خيار. ينتقل Home وEnd إلى الخيارين الأول والأخير. يحدد Enter خيارًا؛ ويغلق Escape النافذة المنبثقة ويستعيد تركيز المشغّل. يبقي التحديد المتعدد النافذة المنبثقة مفتوحة أثناء تبديل الخيارات.
+
+ضع تسمية للمشغّل باستخدام `Select.Label` أو اسم قابل للوصول أو [Field](/ar/ui/primitives/input/field). لا يمنح النص النائب وحده اسمًا لعنصر التحكم.
+
+## الخصائص
+
+يتم إنشاء المرجع من الأنواع العامة للمكوّن. تُقبل أيضًا السمات الأصلية، بما في ذلك الأسماء المتاحة ومعالجات الأحداث، على الأجزاء التي تعرض عناصر.
+
+<SelectReference />
+
+<PageBanner illustration="page-cover-input" />

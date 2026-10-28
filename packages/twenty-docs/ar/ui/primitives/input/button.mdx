@@ -1,0 +1,269 @@
+---
+title: زر
+description: شغّل الإجراءات أو انتقل باستخدام أزرار منسّقة.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ButtonReference from '/snippets/ui/generated/input/button.mdx';
+
+## نظرة عامة
+
+استخدم `Button` لإجراء ما وقدّم تسميته المرئية كعناصر فرعية. استخدم [IconButton](/ar/ui/components/input/icon-button) لعناصر التحكم التي تحتوي على أيقونة فقط، مع اسم يمكن الوصول إليه من `aria-label` أو `aria-labelledby`.
+
+لإعدادات التصميم الافتراضية المتكررة، استخدم [MainButton](/ar/ui/components/input/main-button)
+أو [LightButton](/ar/ui/components/input/light-button) من `twenty-ui/components`.
+كلاهما يشتركان في خصائص Button الأصلية ومراجعها وحالتها وسلوك العرض الخاص بها.
+
+<StoryEmbed title="عرض الزر" storyId="ui-input-button-button--display" height={100} />
+
+## استخدام
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SaveChanges = () => <Button>Save changes</Button>;
+```
+
+## المظهر
+
+قارن المتغيرات والألوان الدلالية والأحجام والحالات الشائعة بشكل منفصل. تغيّر كل مجموعة خيارًا واحدًا مع إبقاء الخيارات الأخرى ثابتة.
+
+<StoryEmbed storyId="ui-input-button-button--catalog" title="مظهر الزر" height={630} />
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const CreateRecord = () => (
+  <Button variant="solid" color="accent" size="sm" startIcon={<IconPlus />}>
+    Create record
+  </Button>
+);
+```
+
+اختر `solid` أو `outline` أو `soft` أو `ghost` أو `link` بشكل مستقل عن اللون `neutral` أو `accent` أو `danger` أو `success`. الأحجام هي `sm` و`md`؛ والقيم الافتراضية هي `outline` و`neutral` و`md`. يملأ `fullWidth` العرض المتاح. يقبل `startIcon` و`endIcon` العناصر ويكونان للزينة. يضيف `elevated` ظلاً وتمويهًا للخلفية. تكتسب أزرار المخطط المحايدة أيضًا سطحًا ذا حدود بألوان نص وتفاعل متطابقة. تحتفظ المتغيرات الأخرى والألوان الدلالية بلوحتها الحالية. قيمته الافتراضية هي `false` ولا يغيّر الحجم أو الموضع. يعرض `shortcut` تلميحات لوحة المفاتيح على الشاشات الأكبر؛ اربط الاختصارات في تطبيقك.
+
+استخدم `color="inherit"` لعناصر التحكم على سطح ملوّن. يتبع التصنيف والأيقونات ومؤشر التحميل والحد الخارجي لون النص المحيط. تستخدم تعبئات التفاعل اللون الأسود الشفاف. تستقر الأزرار ذات الحدود الخارجية على سطح شفاف بحد `currentColor` بنسبة 25%، وتستخدم تعبئات سوداء بنسبة 10% و20% عند التمرير والضغط. يستخدم Ghost تعبئات سوداء شفافة وبنسب 10% و20%؛ ويستخدم Soft نسب 10% و20% و30%. يبقى Link بلا تعبئة.
+
+يدعم `inherit` كلاً من `outline` و`ghost` و`soft` و`link`. يؤدي الجمع المحلول بين `solid` و`inherit` إلى ظهور خطأ وقت التشغيل، بما في ذلك القيم الافتراضية التي يوفرها ButtonGroup أو غلاف. تكون القيمة الافتراضية لـ`MainButton` هي solid، لذا وفّر متغيرًا غير solid عند توريث اللون.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SurfaceActions = () => (
+  <>
+    <Button color="inherit" variant="outline">
+      Save
+    </Button>
+    <Button color="inherit" variant="ghost">
+      Cancel
+    </Button>
+  </>
+);
+```
+
+يستخدم `link` نصًا مضغوطًا من دون حد أو خلفية مملوءة. يتبع ارتفاع محتواه في كلا الحجمين، مع خط أصغر وحشوة أضيق. يستخدم لونه المحايد نصًا أقوى عند التمرير. لا يحدد المظهر الدلالات: استخدم `onClick` للإجراءات و`href` للتنقل.
+
+يمنع `disabled` و`loading` التنشيط. يحافظ التحميل على إمكانية الوصول إلى التسمية ويشير إلى حالة انشغال. بشكل افتراضي، يؤدي `loadingPosition="center"` إلى إخفاء المحتوى مع الحفاظ على مساحة تخطيطه وتوسيط مؤشر التحميل. عيّن `loadingPosition` إلى `start` أو `end` للإبقاء على العناصر الفرعية والأيقونة المقابلة مرئية، مع استبدال الأيقونة المقابلة بمؤشر التحميل.
+
+يتولى تطبيقك تنسيق التقدم والتسمية المترجمة. مرّر عبارة الحالة الكاملة كعناصر فرعية، على سبيل المثال `Installing (42%)`.
+
+<StoryEmbed title="تحميل الزر في النهاية" storyId="ui-input-button-button--loading-at-end" height={100} />
+
+## ملكية الحالة
+
+يُشغّل `Button` إجراءً ولا يدير قيمة محددة، لذا ليس له وضع تحديد متحكَّم به أو غير متحكَّم به. توفّر خاصية `value` الأصلية الخاصة به بيانات النموذج، وليس حالة التحديد.
+
+يتحكم تطبيقك في `loading` و`disabled`، وتكون قيمتهما الافتراضية `false`. لا يؤدي النقر على زر إلى تغيير هذه الخصائص أو إظهار التحميل تلقائيًا أثناء تشغيل معالج غير متزامن. مرّر حالة التطبيق الحالية صراحةً.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+
+type SaveRecordProps = { onSave: () => Promise<void> };
+
+export const SaveRecord = ({ onSave }: SaveRecordProps) => {
+  const [loading, setLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  const handleSave = async () => {
+    setLoading(true);
+    setHasError(false);
+
+    try {
+      await onSave();
+    } catch {
+      setHasError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <Button loading={loading} onClick={handleSave}>
+        Save record
+      </Button>
+      {hasError && <p role="alert">Unable to save the record. Try again.</p>}
+    </>
+  );
+};
+```
+
+يبدأ التطبيق التحميل ويمسحه حول عملية الحفظ. يمنع الزر التفعيل أثناء التحميل ويصبح متاحًا مجددًا عند انتهاء العملية، بما في ذلك بعد حدوث خطأ. يستخدم `MainButton` و`LightButton` نموذج الحالة نفسه.
+
+## مشغلات النوافذ المنبثقة
+
+أنشئ مشغّل نافذة منبثقة باستخدام `Button` أو `LightButton` أو غلاف Button آخر عبر `render`. يوفّر المشغّل `data-popup-open`، لذا يحتفظ الزر بخلفية التمرير الخاصة به أثناء فتح النافذة المنبثقة ويستخدم خلفيته النشطة عند التمرير أو الضغط. يحتفظ كل متغير ولون بلوحة الألوان الخاصة به. تظل خلفيات الروابط شفافة، وتحافظ الأزرار المعطلة أو قيد التحميل على مظهرها المعطل. تحتفظ الأزرار التي تحتوي على `aria-pressed="true"` بتنسيق التبديل الحالي الخاص بها. لا تضبط حالة النافذة المنبثقة `aria-pressed` ولا تمثل قيمة محددة.
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const DetailsPopup = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<LightButton>Show details</LightButton>} />
+    <Popover.Portal>
+      <Popover.Positioner>
+        <Popover.Popup>
+          <Popover.Title>Details</Popover.Title>
+          <Popover.Description>
+            More information about this record.
+          </Popover.Description>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+## الميزات القادمة
+
+يتحكم تطبيقك في توفر الميزة وتسميتها. أنشئ زرًا معطّلًا يحتوي على `Badge` كعناصر فرعية بحيث يبقى النص جزءًا من الاسم المتاح للزر. وفّر نصًا مترجمًا محليًا من تطبيقك.
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const UpcomingAction = () => (
+  <Button disabled>
+    <Text
+      render={<span />}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 'var(--t-spacing-1)',
+      }}
+    >
+      Upcoming action
+      <Badge>Coming soon</Badge>
+    </Text>
+  </Button>
+);
+```
+
+يعمل هذا التركيب أيضًا مع `MainButton` و`LightButton`. يستبدل الخاصيتين المحذوفتين `soon` و`soonLabel`.
+
+## أيقونات متحركة
+
+استخدم `AnimatedIconCrossfade` مع `Button` لتغيير أيقونته عند تغيّر حالة التطبيق. مرّر العنصر المتحرك إلى `startIcon` والتسمية كعناصر فرعية.
+
+```tsx
+import { useState } from 'react';
+import { IconPencil, IconX } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
+
+export const EditActions = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <Button
+      size="sm"
+      aria-expanded={isEditing}
+      onClick={() => setIsEditing(!isEditing)}
+      startIcon={
+        <AnimatedIconCrossfade
+          isActive={isEditing}
+          activeIcon={<IconX size={14} />}
+          inactiveIcon={<IconPencil size={14} />}
+        />
+      }
+    >
+      Edit actions
+    </Button>
+  );
+};
+```
+
+عندما تكون الأيقونة إجراءً بحد ذاتها، استخدم `IconButton` أو `LightIconButton` وحرّك محتوى أيقونتها. عندما يتحكم رأس الإفصاح في التوسيع، أبقِ سهمه الزاوي للزينة واعرض `aria-expanded` على عنصر التحكم في الرأس. أبقِ أنماط الحركة مع الميزة واحترم `prefers-reduced-motion`.
+
+<StoryEmbed title="زر بأيقونة متحركة" storyId="ui-components-layout-animatediconcrossfade--display" height={100} />
+
+## الروابط والنماذج
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const DocumentationLink = () => (
+  <Button
+    variant="link"
+    href="https://twenty.com"
+    target="_blank"
+    rel="noreferrer"
+    hrefLang="en"
+    referrerPolicy="no-referrer"
+  >
+    Read documentation
+  </Button>
+);
+```
+
+من دون `render` مخصص، يعرض `href` رابط ارتساء بدلالات الرابط، ما لم تضبط `nativeButton` صراحةً على `true`. تصل سمات الارتساء الأصلية، مثل `download` و`hrefLang` و`ping` و`referrerPolicy`، إلى رابط الارتساء. تحتفظ الخصائص المشتركة مع الأزرار الأصلية بأنواع Base UI الخاصة بها. لتوفير نوع MIME لرابط ارتساء، ضعه على العارض، على سبيل المثال `render={<a href="/records.csv" type="text/csv">Download records</a>}` مع `nativeButton={false}` و`role="link"`. لا يمكن للروابط المعطلة أو قيد التحميل أن تُفعَّل.
+
+استخدم `render` لتكوين عنصر آخر أو رابط موجّه. يصف `nativeButton` العنصر المعروض، وتكون قيمته الافتراضية `true` للعارضات المخصصة. اضبط `nativeButton={false}` و`role="link"` لرابط ارتساء للتنقل. يمكن لمكوّن الارتساء أو الموجّه امتلاك وجهته من دون `href` لـ `Button`.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordsLink = () => (
+  <Button nativeButton={false} role="link" render={<a href="/records" />}>
+    Open records
+  </Button>
+);
+```
+
+لزر `\<button>` أصلي مخصص، أبقِ `nativeButton` على true. لعنصر إجراء غير أصلي مثل `\<div>`، استخدم `nativeButton={false}`؛ توفّر Base UI سلوك الزر عبر لوحة المفاتيح. يُحافَظ على `nativeButton` أو `role` الصريح حتى عند توفير `href` أيضًا.
+
+تكون القيمة الافتراضية للأزرار هي `type="button"`. اضبط `type="submit"` أو `type="reset"` صراحةً للنماذج. تصل السمات الأصلية ومعالجات الأحداث وتفاصيل الأحداث والمراجع إلى الجذر المعروض. يتلقى المرجع عنصر الزر أو رابط الارتساء أو عنصر الجذر المخصص الفعلي. تحتفظ معالجات لوحة المفاتيح بأساليب أحداث Base UI، بما في ذلك `preventBaseUIHandler()` لإلغاء إجراء لوحة المفاتيح المضمّن. يتلقى رد النداء الخاص بالعرض في Base UI كلاً من خصائص الجذر وحالة التعطيل الحالية؛ انشر الخصائص على جذرك للاحتفاظ بسلوك التكوين.
+
+## القيم الافتراضية للمجموعة
+
+يوفّر [ButtonGroup](/ar/ui/primitives/input/button-group) متغيرًا ولونًا وحجمًا مشتركًا. تكون للخاصية الصريحة في عنصر فرعي أولوية على القيمة الافتراضية للمجموعة. عندما لا يضبط أيٌّ منهما خاصية، تُطبَّق القيمة الافتراضية للمكوّن.
+
+## الترحيل من ClickToActionLink
+
+استورد `Button` من `twenty-ui/primitives/input` واستبدل `ClickToActionLink` بـ `Button variant="link"`. احتفظ بـ `href` و`target` و`rel` للتنقل. تُعرض الإجراءات من دون `href` الآن كزر أصلي مع التفعيل عبر لوحة المفاتيح. تُمرَّر السمات والأحداث والمراجع الأصلية إلى العنصر الجذر.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+type LogOutProps = { onLogOut: () => void };
+
+export const LogOut = ({ onLogOut }: LogOutProps) => (
+  <Button variant="link" onClick={onLogOut}>
+    Log out
+  </Button>
+);
+```
+
+## الإزاحة
+
+<ButtonReference />
+
+مرّر `shortcut={['Mod', 'Enter']}` للمفاتيح المتزامنة أو `shortcut={[['G'], ['P']]}` للضغطات المتتالية. راجع [Shortcut](/ar/ui/primitives/typography/shortcut) للاطلاع على التركيبات المتداخلة ومنسّق السلاسل المشترك.
+
+<PageBanner illustration="page-cover-pointer" />

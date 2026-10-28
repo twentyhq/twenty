@@ -1,0 +1,103 @@
+---
+title: Pulsante di reazione
+description: Attiva/disattiva una reazione emoji con un conteggio e uno stato premuto controllato.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ReactionButtonReference from '/snippets/ui/generated/components/input/reaction-button.mdx';
+
+## Panoramica
+
+`ReactionButton` compone [Button](/it/ui/primitives/input/button) in una reazione emoji compatta con un conteggio. L'applicazione fornisce lo stato premuto, il nome accessibile e il gestore delle modifiche.
+
+<StoryEmbed storyId="ui-components-reactionbutton--display" title="Reazione utile controllata con una descrizione comando e un'azione di reimpostazione" height={160} />
+
+## Utilizzo
+
+```tsx
+import { useState } from 'react';
+import {
+  ReactionButton,
+  type ReactionButtonProps,
+} from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const ReactionButtonExample = ({
+  emoji = '👍',
+  disabled,
+  loading,
+}: Partial<Pick<ReactionButtonProps, 'emoji' | 'disabled' | 'loading'>>) => {
+  const [pressed, setPressed] = useState(false);
+  const count = pressed ? 3 : 2;
+
+  return (
+    <Text
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: themeCssVariables.spacing[2],
+      }}
+    >
+      <Text>Was this helpful?</Text>
+      <Text
+        render={<span />}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: themeCssVariables.spacing[1],
+        }}
+      >
+        <Tooltip content={`${count} people found this helpful`}>
+          <ReactionButton
+            aria-label="Helpful"
+            emoji={emoji}
+            count={count}
+            pressed={pressed}
+            onPressedChange={setPressed}
+            disabled={disabled}
+            loading={loading}
+          />
+        </Tooltip>
+        <Button size="sm" variant="ghost" onClick={() => setPressed(false)}>
+          Reset
+        </Button>
+      </Text>
+    </Text>
+  );
+};
+```
+
+## Aspetto
+
+Il controllo è alto 24px, con angoli arrotondati, un'emoji da 16px e un piccolo conteggio. Le reazioni premute usano la superficie di accento e il testo del tema. Le reazioni non premute usano una superficie trasparente e testo secondario.
+
+`count` accetta un numero o una stringa formattata dal chiamante. L'applicazione gestisce la formattazione e l'abbreviazione dei numeri, nonché la scelta di visualizzare una reazione con conteggio zero.
+
+<StoryEmbed storyId="ui-components-reactionbutton--catalog" title="Selezione delle reazioni, conteggi e stati non disponibili" height={300} />
+
+## Gestione dello stato
+
+`pressed` è obbligatorio ed è controllato dall'applicazione. L'attivazione chiama `onPressedChange` con il valore successivo richiesto. Il componente continua a mostrare i valori `pressed` e `count` forniti finché l'applicazione non li aggiorna.
+
+Impostare `loading` mentre una mutazione è in sospeso per mostrare l'indicatore di caricamento di Button e impedire attivazioni ripetute. Mantiene il valore `pressed` fornito e contrassegna il controllo come occupato. Usare `disabled` quando la reazione non è disponibile. La selezione, i conteggi, le autorizzazioni, la persistenza e gli eventuali aggiornamenti ottimistici restano nell'applicazione.
+
+Il `onClick` nativo viene eseguito prima della richiesta di modifica. La chiamata a `event.preventDefault()` in quel gestore annulla la richiesta. Altri attributi, gestori, stili, nomi di classe e ref nativi del pulsante vengono passati al pulsante. Il controllo usa sempre `type="button"`.
+
+## Accessibilità e descrizioni comando
+
+Fornire `aria-label` o `aria-labelledby` con un nome di reazione localizzato. L'emoji e il conteggio sono decorativi e nascosti alla tecnologia assistiva, quindi, quando necessario, includere le informazioni sul conteggio o sui partecipanti nel nome o nella descrizione forniti. Mantenere stabile il nome della reazione quando il suo stato cambia; `aria-pressed` comunica la selezione.
+
+Il pulsante nativo supporta lo stato attivo con Tab e l'attivazione con Invio o Spazio. Sia `disabled` sia `loading` impediscono l'attivazione. Il ref punta al pulsante nativo.
+
+Comporre [Tooltip](/it/ui/primitives/surfaces/tooltip) per i dettagli sui partecipanti al passaggio del mouse e quando riceve lo stato attivo da tastiera, come mostrato sopra, oppure passare un `title` nativo. Il contenuto della descrizione comando appartiene al chiamante e non sostituisce il nome accessibile. Le etichette accessibili lunghe non ingrandiscono il controllo visibile.
+
+## Props
+
+<ReactionButtonReference />
+
+<PageBanner illustration="page-cover-emoji" />

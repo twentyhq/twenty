@@ -1,0 +1,119 @@
+---
+title: InputGroup
+description: Adăugați prefixe, sufixe și acțiuni în jurul unei intrări de text.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InputGroupReference from '/snippets/ui/generated/input/input-group.mdx';
+
+## Prezentare generală
+
+`InputGroup` oferă unui [Input](/ro/ui/primitives/input/input) o margine comună și conținut opțional înainte sau după. Setați `size` pe grup pentru a dimensiona containerul și pentru a furniza o valoare implicită pentru intrarea sa. Dimensiunea explicită a elementului copil are prioritate față de această valoare implicită; grupul controlează în continuare înălțimea aspectului partajat.
+
+<StoryEmbed storyId="ui-input-inputgroup--display" title="Exemplu InputGroup" height={140} />
+
+## Utilizare
+
+```tsx
+import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WebsiteField = () => (
+  <Field.Root name="website">
+    <Field.Label>Website</Field.Label>
+    <InputGroup
+      startElement={
+        <Text render={<span />} aria-hidden>
+          https://
+        </Text>
+      }
+    >
+      <Input placeholder="example.com" />
+    </InputGroup>
+    <Field.Description>Enter the domain without https://.</Field.Description>
+  </Field.Root>
+);
+```
+
+`startElement` și `endElement` acceptă noduri React. Prefixele și sufixele sunt conținut vizual; valoarea trimisă a intrării conține doar ceea ce introduce utilizatorul.
+
+## Opțiuni vizuale
+
+Compară ornamentele de prefix, sufix și combinate la ambele dimensiuni ale câmpului de introducere. Grupul are aceeași dimensiune ca și câmpul de introducere.
+
+<StoryEmbed storyId="ui-input-inputgroup--catalog" title="Opțiuni vizuale pentru grupul de câmpuri de introducere" height={300} />
+
+## Anatomie
+
+Plasați inputul în interiorul `InputGroup` și păstrați etichetele câmpurilor și mesajele în afara chenarului comun.
+
+```text
+Field.Root
+├── Field.Label
+├── InputGroup
+│   └── Input
+└── Field.Description
+```
+
+| Parte sau slot                                | Cerință              | Scop                                                                       |
+| --------------------------------------------- | -------------------- | -------------------------------------------------------------------------- |
+| `InputGroup`                                  | Obligatoriu          | Furnizează chenarul comun, aspectul și dimensiunea.                        |
+| `Input` ca `children`                         | Obligatoriu          | Deține valoarea inputului, atributele native și comportamentul de editare. |
+| `startElement`                                | Prop opțional        | Adaugă un prefix, o pictogramă sau alt conținut înaintea inputului.        |
+| `endElement`                                  | Prop opțional        | Adaugă un sufix sau o acțiune după input.                                  |
+| `Field.Root`, `Label`, `Description`, `Error` | Compoziție opțională | Asociază o etichetă, text de ajutor și feedback de validare cu inputul.    |
+
+`startElement` și `endElement` sunt props de noduri React, nu componente separate. `InputGroup` nu furnizează o etichetă și nu gestionează validarea. Oferiți inputului un nume accesibil, fie prin `Field.Label`, fie prin propriile atribute de etichetare.
+
+## Acțiune la final
+
+```tsx
+import { useState } from 'react';
+import { Button, Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+
+export const PasswordField = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Field.Root name="password">
+      <Field.Label>Password</Field.Label>
+      <InputGroup
+        endElement={
+          <Button
+            type="button"
+            aria-label={visible ? 'Hide password' : 'Show password'}
+            variant="ghost"
+            size="sm"
+            onClick={() => setVisible(!visible)}
+          >
+            {visible ? 'Hide' : 'Show'}
+          </Button>
+        }
+      >
+        <Input
+          type={visible ? 'text' : 'password'}
+          autoComplete="current-password"
+        />
+      </InputGroup>
+    </Field.Root>
+  );
+};
+```
+
+Adăugați etichete, validare și gestionarea valorii pe câmp sau pe intrare. Dați butoanelor de decorare propriile nume accesibile și utilizați `type="button"` când acestea nu trebuie să trimită formularul. Grupul acceptă dimensiunile `sm` și `md`, iar valoarea implicită este `md`.
+
+## Personalizați aspectul
+
+Proprietățile native, `className`, `style`, `render` și `ref` vizează div-ul aspectului. Un element `render` personalizat primește proprietățile aspectului și elementele copil. Păstrați referința furnizată pe acel element de aspect.
+
+Puneți `value`, `defaultValue`, `onValueChange`, `name`, `required`, `readOnly`, `disabled` și referința controlului nativ pe `Input`. Grupul nu gestionează starea intrării și nu înlocuiește asocierea etichetei Field.
+
+## Proprietăți
+
+Referința este generată din tipurile publice ale componentei. Atributele native, inclusiv numele accesibile și gestionarele de evenimente, sunt acceptate și pentru părțile care redau elemente.
+
+<InputGroupReference />
+
+<PageBanner illustration="page-cover-input" />

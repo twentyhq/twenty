@@ -1,0 +1,139 @@
+---
+title: Distintivo
+description: Visualizza informazioni concise in linea con contenuti forniti dal chiamante.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import BadgeReference from '/snippets/ui/generated/data-display/badge.mdx';
+
+## Panoramica
+
+`Badge` visualizza informazioni concise in linea, incluse brevi etichette e conteggi. Usa [Tag](/it/ui/primitives/data-display/tag) per le categorie, [Chip](/it/ui/primitives/data-display/chip) per controlli compatti oppure [Status](/it/ui/primitives/data-display/status) per uno stato denominato con un indicatore.
+
+<StoryEmbed storyId="ui-data-display-badge--display" title="Esempio di Badge" height={90} />
+
+## Utilizzo
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+
+export const PreviewLabel = () => <Badge>Preview</Badge>;
+```
+
+Passa testo, numeri o nodi come elementi figlio. Badge visualizza il contenuto fornito e non aggiunge alcuna formattazione dei conteggi né regole di visibilità. L'elemento predefinito è uno `span` non interattivo.
+
+## Con un'icona
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { IconPaperclip } from 'twenty-ui/icon';
+
+export const AttachmentLabel = () => (
+  <Badge>
+    <IconPaperclip size={12} aria-hidden />
+    Attachment
+  </Badge>
+);
+```
+
+Le icone sono normali nodi figlio. Assegna alle icone decorative `aria-hidden` e mantieni un'etichetta visibile per spiegare il contenuto.
+
+## Aspetto
+
+<StoryEmbed storyId="ui-data-display-badge--catalog" title="Dimensioni e forme dei badge" height={200} />
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const BadgeAppearances = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <Badge size="sm" color="tertiary" shape="pill">
+      Preview
+    </Badge>
+    <Badge size="md" color="inherit">
+      In review
+    </Badge>
+    <Badge size="xs" color="primary" shape="circle">
+      3
+    </Badge>
+    <Badge size="xs" color="secondary" shape="circle">
+      12
+    </Badge>
+    <Badge color="accent">Last used</Badge>
+  </Text>
+);
+```
+
+`size` accetta `xs`, `sm` o `md`. `color` accetta `tertiary`, `inherit`, `primary`, `secondary` o `accent`. Il trattamento `accent` abbina un riempimento accent-tertiary al testo accent11 in entrambi i temi. Il trattamento `primary` solido mantiene il riempimento blu e il testo on-accent. `shape` accetta `pill` o `circle`. I valori predefiniti sono `sm`, `tertiary` e `pill`. La variante circolare ha una larghezza fissa uguale alla sua altezza. Usa `pill` per contenuti più lunghi, inclusi i conteggi abbreviati.
+
+<StoryEmbed storyId="ui-data-display-badge--colors" title="Colori del testo del badge" height={140} />
+
+<StoryEmbed storyId="ui-data-display-badge--accent" title="Badge con accento tenue nei temi chiaro e scuro" height={140} />
+
+## Conteggi e visibilità
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+type InboxButtonProps = {
+  count: number;
+};
+
+export const InboxButton = ({ count }: InboxButtonProps) => (
+  <Button aria-label={`Inbox, ${count} unread messages`}>
+    Inbox
+    {count > 0 && (
+      <Badge size="xs" color="primary" shape="pill" aria-hidden>
+        {count > 99 ? '99+' : count}
+      </Badge>
+    )}
+  </Button>
+);
+```
+
+La tua applicazione gestisce la formattazione dei numeri, le abbreviazioni, la limitazione, la visibilità dello zero e le etichette tradotte. Includi il significato completo nel nome accessibile del controllo circostante quando il suo conteggio compatto è decorativo. Un badge autonomo può usare attributi accessibili nativi, inclusi `aria-label` o `aria-labelledby`.
+
+## Composizione nativa
+
+```tsx
+import { useRef } from 'react';
+import { Badge } from 'twenty-ui/primitives/data-display';
+
+export const BuildStatus = () => {
+  const badgeRef = useRef<HTMLSpanElement>(null);
+
+  return (
+    <Badge ref={badgeRef} title="Current build status" data-build="preview">
+      Preview
+    </Badge>
+  );
+};
+```
+
+Gli attributi nativi, i gestori di eventi, `className`, `style` e `ref` hanno come destinazione l'effettivo elemento radice. `render` accetta un elemento o una callback tramite la composizione di Base UI. Scegli un proprietario nativo appropriato per i contenuti interattivi:
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ReleaseLink = () => (
+  <Badge render={<Button href="#release-notes" size="sm" />}>
+    Release notes
+  </Badge>
+);
+```
+
+Il Button renderizzato gestisce il comportamento di navigazione e la semantica del link. Badge mantiene il suo comportamento predefinito di presentazione e non deduce l'interazione dal suo contenuto.
+
+## Props
+
+I tipi e i valori predefiniti sono generati dal tipo pubblico `BadgeProps`. Sono accettati anche attributi nativi e gestori di eventi.
+
+<BadgeReference />
+
+<PageBanner illustration="page-cover-checkbox" />

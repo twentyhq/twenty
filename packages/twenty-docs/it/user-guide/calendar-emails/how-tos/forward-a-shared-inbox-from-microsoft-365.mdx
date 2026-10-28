@@ -1,0 +1,127 @@
+---
+title: Inoltrare una posta in arrivo condivisa da Microsoft 365 a Twenty
+description: Invia la posta da una cassetta postale condivisa di Microsoft 365 a un canale email di Twenty.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+Un canale email fornisce al tuo spazio di lavoro un indirizzo condiviso, ad esempio `contact@yourcompany.com`. La posta inviata a quell'indirizzo deve in qualche modo raggiungere Twenty. Puoi farlo inoltrando la cassetta postale all'indirizzo privato fornito da Twenty.
+
+La configurazione è composta da due parti: crea il canale in Twenty, quindi collegalo in Microsoft.
+
+## Parte 1: crea il canale in Twenty
+
+1. Vai a **Impostazioni → Comunicazione**.
+2. Fai clic su **Aggiungi canale email**.
+
+<img src="/images/user-guide/emails/inbound-channels/03-twenty-add-email-channel.png" style={{ width: '100%' }} />
+
+3. In **Indirizzo email di origine**, inserisci l'indirizzo condiviso al quale desideri ricevere la posta, ad esempio `contact@yourcompany.com`.
+4. In **Nome visualizzato**, inserisci il nome che vedono i destinatari, ad esempio `Twenty Contact`.
+5. Fai clic su **Salva**.
+
+<img src="/images/user-guide/emails/inbound-channels/04-twenty-new-channel-form.png" style={{ width: '100%' }} />
+
+6. Twenty ora mostra un **Indirizzo di inoltro**. Ha il seguente aspetto: `ch_2cd282d193b5@inbound.twenty.com`. Fai clic su **Copia**.
+
+<img src="/images/user-guide/emails/inbound-channels/05-twenty-forwarding-address.png" style={{ width: '100%' }} />
+
+<Note>
+  Ogni canale riceve il proprio indirizzo di inoltro. Non collegare mai due cassette postali allo
+  stesso indirizzo, altrimenti la loro posta finirà nello stesso posto.
+</Note>
+
+## Parte 2: crea la cassetta postale condivisa
+
+Salta questa parte se `contact@yourcompany.com` esiste già in Microsoft 365.
+
+1. Apri il [Centro di amministrazione di Exchange](https://admin.cloud.microsoft/exchange).
+2. Vai a **Destinatari → Cassette postali**.
+3. Fai clic su **Aggiungi una cassetta postale condivisa**.
+
+<img src="/images/user-guide/emails/inbound-channels/01-exchange-add-shared-mailbox.png" style={{ width: '100%' }} />
+
+4. Compila il campo **Nome visualizzato**.
+5. Compila il campo **Indirizzo email** e seleziona il tuo dominio.
+6. Clicca **Crea**. Occorre circa un minuto perché venga visualizzata nell'elenco.
+
+<img src="/images/user-guide/emails/inbound-channels/02-exchange-shared-mailbox-form.png" style={{ width: '100%' }} />
+
+## Parte 3: inoltra la cassetta postale a Twenty
+
+1. In **Destinatari → Cassette postali**, fai clic sulla cassetta postale per aprirla.
+2. Fai clic su **Inoltro email**.
+
+<img src="/images/user-guide/emails/inbound-channels/06-exchange-email-forwarding-link.png" style={{ width: '100%' }} />
+
+3. Attiva **Inoltra tutte le email inviate a questa cassetta postale**.
+4. Scegli **Inoltra a un indirizzo email esterno** e incolla l'indirizzo di inoltro copiato da Twenty.
+5. Seleziona **Recapita il messaggio sia all'indirizzo di inoltro sia alla cassetta postale** affinché il tuo team conservi una copia in Outlook.
+6. Fai clic su **Salva**.
+
+<img src="/images/user-guide/emails/inbound-channels/07-exchange-manage-forwarding.png" style={{ width: '100%' }} />
+
+<img src="/images/user-guide/emails/inbound-channels/08-exchange-forwarding-saved.png" style={{ width: '100%' }} />
+
+Microsoft indica che l'applicazione delle modifiche può richiedere fino a 5 minuti.
+
+## Parte 4: consenti l'inoltro a indirizzi esterni
+
+È facile non notare questo passaggio. Senza di esso, nessuna email raggiunge Twenty.
+
+Per impostazione predefinita, Microsoft 365 blocca l'inoltro automatico a indirizzi esterni all'organizzazione. L'email viene rifiutata e il mittente originale riceve un messaggio di mancato recapito con il seguente testo:
+
+```
+5.7.520 Access denied, Your organization does not allow external forwarding.
+```
+
+Per consentirlo:
+
+1. Apri il [portale Microsoft Defender](https://security.microsoft.com).
+2. Vai a **Email e collaborazione → Criteri e regole → Criteri per le minacce → Anti-spam**.
+3. Apri il tuo **criterio antispam in uscita** oppure creane uno nuovo che si applichi solo alle cassette postali condivise.
+4. Fai clic su **Modifica impostazioni di protezione**.
+5. Imposta **Regole di inoltro automatico** su **Attivato - L'inoltro è abilitato**.
+6. Salva.
+
+<Warning>
+  Attivare questa opzione per l'intero tenant consente a qualsiasi account compromesso di inoltrare
+  la posta all'esterno. Crea un criterio limitato solo alle cassette postali condivise che stai
+  collegando, anziché modificare quello predefinito.
+</Warning>
+
+## Parte 5: testalo
+
+Invia un'email da un indirizzo esterno (va bene un Gmail personale) a `contact@yourcompany.com`. Dovrebbe comparire in Twenty entro uno o due minuti.
+
+## Risoluzione dei problemi
+
+<Accordion title="I mittenti ricevono un messaggio di mancato recapito 5.7.520">
+  L'inoltro esterno è ancora bloccato. Ripeti la Parte 4 e conferma che il criterio modificato
+  si applichi a questa cassetta postale.
+</Accordion>
+
+<Accordion title="Non arriva nulla e non c'è alcun messaggio di mancato recapito">
+  Confronta carattere per carattere l'indirizzo di inoltro in Exchange con quello
+  in Twenty. Un singolo carattere errato significa che la posta non viene recapitata in alcun luogo
+  utile e viene eliminata senza avviso.
+</Accordion>
+
+<Accordion title="La posta non compare più in Outlook">
+  **Recapita il messaggio sia all'indirizzo di inoltro sia alla cassetta postale** non è stato selezionato.
+  Selezionalo e salva.
+</Accordion>
+
+<Accordion title="Il canale riceve email ma non può inviarle">
+  La ricezione e l'invio sono operazioni separate. L'invio richiede che il tuo dominio sia
+  verificato nella sezione **Dominio di invio** del canale, il che significa aggiungere
+  i record di **Autenticazione del dominio** elencati da Twenty. Consulta Canali
+  email per sapere quali
+  record sono necessari per ogni utilizzo.
+</Accordion>
+
+Stai usando un altro provider? Consulta [Google Workspace](/it/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace) o [qualsiasi altro provider di posta](/it/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider).
+
+<PageBanner illustration="page-cover-email" />
