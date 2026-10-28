@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
-import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
-import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
+import { isNewerSemver } from '@/settings/applications/utils/isNewerSemver';
+import { isUpgradableApplicationSourceType } from '@/settings/applications/utils/isUpgradableApplicationSourceType';
 
 export const hasApplicationUpdate = ({
   sourceType,

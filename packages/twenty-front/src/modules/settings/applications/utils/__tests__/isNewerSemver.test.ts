@@ -1,4 +1,4 @@
-import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
+import { isNewerSemver } from '@/settings/applications/utils/isNewerSemver';
 
 const isNumberedBetaNewer = () =>
   isNewerSemver('1.0.0-beta.11', '1.0.0-beta.2');

@@ -1,5 +1,5 @@
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
-import { hasApplicationUpdate } from '~/pages/settings/applications/utils/hasApplicationUpdate';
+import { hasApplicationUpdate } from '@/settings/applications/utils/hasApplicationUpdate';
 
 describe('hasApplicationUpdate', () => {
   it.each([

@@ -28,6 +28,7 @@ export const LINEAR_INSTALLED_APPLICATION = {
   id: LINEAR_APPLICATION_ID,
   universalIdentifier: LINEAR_APPLICATION_ID,
   name: 'Linear',
+  description: 'Syncs issues and projects with your workspace.',
   logoUrl: null,
   createdAt: '2024-01-01T00:00:00.000Z',
 };
