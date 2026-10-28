@@ -1,1 +1,1 @@
-export const PULL_MINIMUM_SDK_VERSION = '2.46.0';
+export const PULL_MINIMUM_SDK_VERSION = '2.50.0';

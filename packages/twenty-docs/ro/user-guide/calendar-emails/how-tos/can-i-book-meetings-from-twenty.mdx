@@ -3,13 +3,33 @@ title: Pot să programez întâlniri din Twenty?
 description: Informații despre programarea întâlnirilor direct din Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Starea actuală
 
-Integrarea Twenty pentru calendar este concepută pentru a **sincroniza și afișa** evenimentele existente din calendarul dumneavoastră.
+Da. Integrarea calendarului din Twenty sincronizează și afișează evenimentele existente și puteți crea, de asemenea, un eveniment nou direct din pagina unei înregistrări. Evenimentul este creat în calendarul conectat, nu doar în Twenty.
+
+## Cum să creați o întâlnire din Twenty
+
+Condiție prealabilă: un cont Google, Microsoft sau CalDAV conectat, cu sincronizarea calendarului activată
+
+1. Deschideți o înregistrare de tip Persoană, Companie sau Oportunitate.
+2. Faceți clic pe acțiunea **Creați un eveniment în calendar**
+3. Selectați contul de calendar în care să creați evenimentul
+4. Adăugați invitați, un titlu, o locație și o descriere
+5. Setați începutul și sfârșitul (sau comutați **Toată ziua**) și verificați fusul orar
+6. Comutați **Invitații** pentru a trimite e-mailuri invitaților și **Apel video** pentru a adăuga un link de întâlnire
+7. Faceți clic pe **Creați eveniment**
+
+Înregistrarea de la care ați pornit este asociată automat cu evenimentul, astfel încât întâlnirea apare în cronologia acesteia.
+
+<Note>
+Acțiunea este ascunsă dacă rolul dvs. nu are permisiunea „Creați un eveniment în calendar” și este dezactivată dacă înregistrarea nu are o adresă de e-mail pentru invitație.
+</Note>
 
 ## Programarea întâlnirilor prin fluxuri de lucru
 
-Cât timp nu este posibil să programezi ședințe manual, le poți programa în douăzeci folosind fluxuri de lucru.
+De asemenea, puteți crea evenimente automat cu fluxuri de lucru:
 
 1. Creați un nou flux de lucru
 2. Selectați orice declanșator, în funcție de nevoile dumneavoastră
@@ -19,7 +39,10 @@ Cât timp nu este posibil să programezi ședințe manual, le poți programa în
 
 ## Ce puteți face
 
+* **Creați evenimente** în calendarul conectat dintr-o înregistrare
 * **Vizualizați istoricul întâlnirilor** pe înregistrările Persoane, Companii și Oportunități
 * **Vizualizați întâlnirile viitoare** cu contactele din CRM-ul dumneavoastră
 * **Urmăriți contextul întâlnirilor** alături de comunicările prin e-mail
 * **Creați automat contacte** din participanții la întâlniri
+
+<PageBanner illustration="calendar-emails" />

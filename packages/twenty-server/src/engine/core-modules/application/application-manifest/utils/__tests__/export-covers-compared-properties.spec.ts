@@ -19,6 +19,7 @@ import {
   type ViewManifest,
   type SkillManifest,
   type ViewSortManifest,
+  type WorkflowManifest,
 } from 'twenty-shared/application';
 import {
   AggregateOperations,
@@ -37,6 +38,7 @@ import {
   ViewVisibility,
   WidgetType,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { fromFlatAgentToAgentManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-agent-to-agent-manifest.util';
 import { fromFlatSkillToSkillManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-skill-to-skill-manifest.util';
@@ -78,6 +80,8 @@ import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/e
 import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-manifest-to-universal-flat-view-filter.util';
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
+import { fromFlatWorkflowToWorkflowManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-workflow-to-workflow-manifest.util';
+import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
 import { ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-universal-flat-entity-properties-to-compare-and-stringify.constant';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -340,6 +344,61 @@ const ROW_LEVEL_PERMISSION_KIND_GAPS = {
     'soft-deleted row-level permission predicates and groups are reported as excluded instead of exported',
 };
 
+const WORKFLOW_MANIFEST: WorkflowManifest = {
+  universalIdentifier: APP_UID,
+  name: 'Workflow',
+  version: {
+    trigger: {
+      universalIdentifier: OBJECT_UID,
+      type: 'MANUAL',
+      nextStepIds: [FIELD_UID],
+    },
+    steps: [
+      {
+        universalIdentifier: FIELD_UID,
+        name: 'Empty',
+        type: 'EMPTY',
+        nextStepIds: [],
+        input: {},
+      },
+    ],
+  },
+};
+
+const exportWorkflowManifestOrThrow = (manifest: WorkflowManifest) => {
+  const references = { logicFunctionIdByUniversalIdentifier: new Map() };
+  const { flatUniversalWorkflowVersion, ...universalFlatWorkflow } =
+    fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
+      manifest,
+      applicationUniversalIdentifier: APP_UID,
+      now: NOW,
+      ...references,
+    });
+
+  if (!isDefined(flatUniversalWorkflowVersion)) {
+    throw new Error('Expected the synced workflow version');
+  }
+  const conversion = fromFlatWorkflowToWorkflowManifest({
+    flatWorkflow: {
+      ...universalFlatWorkflow,
+      workspaceId: 'workspace-id',
+      applicationId: 'application-id',
+    },
+    flatWorkflowVersion: {
+      ...flatUniversalWorkflowVersion,
+      workspaceId: 'workspace-id',
+      applicationId: 'application-id',
+    },
+    references,
+  });
+
+  if ('reason' in conversion) {
+    throw new Error(conversion.reason);
+  }
+
+  return conversion.manifest;
+};
+
 const AGENT_MANIFEST: AgentManifest = {
   universalIdentifier: APP_UID,
   name: 'lead-scorer',
@@ -398,6 +457,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
           description: 'An object',
           icon: 'IconBox',
           color: 'blue',
+          disabledObjectPermissionActions: ['canDestroyObjectRecords'],
           imageIdentifierFieldMetadataUniversalIdentifier: FIELD_UID,
           labelIdentifierFieldMetadataUniversalIdentifier: FIELD_UID,
         }),
@@ -778,6 +838,23 @@ const EXPORTED_KINDS: ExportedKind[] = [
     renamedProperties: {},
     workspaceLocalProperties: [],
     knownGaps: {},
+  },
+  {
+    metadataName: 'workflow',
+    emittedProperties: Object.keys(
+      exportWorkflowManifestOrThrow(WORKFLOW_MANIFEST),
+    ),
+    renamedProperties: { versionDefinitionHash: 'version' },
+    workspaceLocalProperties: [],
+    knownGaps: {
+      isSystem: 'system workflows are reported as excluded',
+      visibility:
+        'private workflows are reported as excluded, exported workflows are visible to the workspace',
+      lastPublishedVersionId:
+        'legacy workspace version pointer, always null for synced application workflows',
+      lastPublishedCoreWorkflowVersionId:
+        'the sync points it at the version it derives from the definition',
+    },
   },
   {
     metadataName: 'agent',

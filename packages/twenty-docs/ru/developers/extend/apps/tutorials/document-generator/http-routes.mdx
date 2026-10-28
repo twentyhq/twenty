@@ -3,6 +3,12 @@ title: 3. HTTP-маршруты
 description: Включает функцию по HTTP и отображает документы как веб-страницы.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Обзор
+
 Этот же обработчик также может отвечать на HTTP-запросы. Мы добавим два маршрута:
 
 * **POST** конечная точка интерфейса для генерации документа, и
@@ -70,13 +76,19 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { documentHtmlPage } from 'src/utils/render-document';
 
 const htmlResponse = (html: string, status = 200): Response =>
-  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  new Response(html, {
+    status,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+  });
 
 const handler = async (event: RoutePayload): Promise<Response> => {
   const documentId = event.queryStringParameters?.id;
 
   if (!documentId) {
-    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+    return htmlResponse(
+      documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'),
+      400,
+    );
   }
 
   // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
@@ -89,10 +101,18 @@ const handler = async (event: RoutePayload): Promise<Response> => {
 
   const document = documents?.edges?.[0]?.node;
   if (!document?.id) {
-    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+    return htmlResponse(
+      documentHtmlPage(
+        'Document not found',
+        `No document with id ${documentId}.`,
+      ),
+      404,
+    );
   }
 
-  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+  return htmlResponse(
+    documentHtmlPage(document.name ?? 'Document', document.content ?? ''),
+  );
 };
 
 export default defineLogicFunction({
@@ -115,8 +135,8 @@ export default defineLogicFunction({
 
 ## Попробовать
 
-С помощью шаблона и персона в вашей рабочей области, вызовите маршрут (захватите токен из
-**Settings → APIs и Webhooks**):
+Имея шаблон и Person в рабочем пространстве, вызовите маршрут (получите токен в
+**Настройки → Разработчики → API**):
 
 ```bash filename="Terminal"
 curl -X POST http://localhost:2020/s/documents/generate \
@@ -136,14 +156,18 @@ http://localhost:2020/s/documents/view?id=<documentId>
 </Frame>
 
 <Tip>
-Вы также можете транслировать журналы функций в процессе тестирования с помощью
-`yarn twenty dev:function:logs` или вызвать их напрямую с помощью
-`yarn twenty dev:function:exec`.
+  Вы также можете транслировать логи функции во время тестирования с помощью `twenty app logs` или
+  вызвать её напрямую с помощью `twenty app exec`.
 </Tip>
 
 **После этого шага:** приложение может генерировать документы по HTTP и отдавать их как
 веб-страницы. Теперь давайте сделаем его пригодным для использования без `curl`.
 
-<Card title="Далее: построение пользовательского интерфейса →" icon="layout-columns" href="/ru/developers/extend/apps/tutorials/document-generator/building-the-ui">
-  Виды, навигация, команда и передний компонент.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ru/developers/extend/apps/tutorials/document-generator/building-the-ui" img="/images/user-guide/halftone/card-page-tutorial-ui.svg">
+  <CardTitle>Далее: создание интерфейса →</CardTitle>
+  Представления, навигация, команда и фронтенд-компонент.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-http" />

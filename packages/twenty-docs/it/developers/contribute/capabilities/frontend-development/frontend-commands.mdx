@@ -2,6 +2,8 @@
 title: Comandi frontend
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Comandi utili
 
 ### Avviare l'app
@@ -73,13 +75,13 @@ Il progetto ha una struttura chiara e semplice, con un codice boilerplate minimo
 
 [React Router](https://reactrouter.com/) gestisce il routing.
 
-Per evitare [re-render](/it/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) inutili, tutta la logica del routing è in un `useEffect` in `PageChangeEffect`.
+Per evitare [re-render](/l/it/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) inutili, tutta la logica del routing è in un `useEffect` in `PageChangeEffect`.
 
 ### Gestione dello stato
 
 [Jotai](https://jotai.org/) gestisce lo stato.
 
-Vedi [best practices](/it/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) per ulteriori informazioni sulla gestione dello stato.
+Vedi [best practices](/l/it/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) per ulteriori informazioni sulla gestione dello stato.
 
 ## Testing
 
@@ -88,3 +90,5 @@ Vedi [best practices](/it/developers/contribute/capabilities/frontend-developmen
 Jest è principalmente per testare le funzioni utility, e non i componenti stessi.
 
 Storybook è per testare il comportamento di componenti isolati, oltre che per mostrare il sistema di design.
+
+<PageBanner illustration="card-page-cli" />

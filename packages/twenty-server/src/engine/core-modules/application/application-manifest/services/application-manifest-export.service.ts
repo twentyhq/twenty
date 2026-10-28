@@ -17,12 +17,14 @@ import { reconstructPageLayoutsManifest } from 'src/engine/core-modules/applicat
 import { reconstructRolesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-roles-manifest.util';
 import { reconstructSkillsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-skills-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
+import { reconstructWorkflowsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-workflows-manifest.util';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -46,6 +48,7 @@ export class ApplicationManifestExportService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async exportApplication({
@@ -96,6 +99,11 @@ export class ApplicationManifestExportService {
     const exportedObjectUniversalIdentifiers = new Set(
       objects.map(({ universalIdentifier }) => universalIdentifier),
     );
+    const resolvableFieldUniversalIdentifiers =
+      getResolvableReferenceUniversalIdentifiers({
+        coverage: dataModelCoverage,
+        metadataName: 'fieldMetadata',
+      });
     const {
       permissionFlags,
       roles,
@@ -104,11 +112,7 @@ export class ApplicationManifestExportService {
       applicationAllFlatEntityMaps,
       allFlatEntityMaps,
       exportedObjectUniversalIdentifiers,
-      resolvableFieldUniversalIdentifiers:
-        getResolvableReferenceUniversalIdentifiers({
-          coverage: dataModelCoverage,
-          metadataName: 'fieldMetadata',
-        }),
+      resolvableFieldUniversalIdentifiers,
     });
     const {
       views,
@@ -144,6 +148,19 @@ export class ApplicationManifestExportService {
             coverage: pageLayoutsCoverage,
             metadataName: 'pageLayout',
           }),
+      });
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+    const { workflows, coverage: workflowsCoverage } =
+      reconstructWorkflowsManifest({
+        applicationAllFlatEntityMaps,
+        allFlatEntityMaps,
+        exportedObjectUniversalIdentifiers,
+        resolvableFieldUniversalIdentifiers,
+        canReferenceOtherApplicationsWorkflowActions:
+          flatApplication.id === workspaceCustomFlatApplication.id,
       });
     const { agents, coverage: agentsCoverage } = reconstructAgentsManifest({
       applicationAllFlatEntityMaps,
@@ -191,6 +208,7 @@ export class ApplicationManifestExportService {
       commandMenuItems: [],
       timelineActivityTypes: [],
       settingsMenuItems: [],
+      workflows,
       ...(isDefined(translations) ? { translations } : {}),
     };
 
@@ -211,6 +229,7 @@ export class ApplicationManifestExportService {
           ...viewsCoverage,
           ...pageLayoutsCoverage,
           ...navigationMenuItemsCoverage,
+          ...workflowsCoverage,
           ...agentsCoverage,
           ...skillsCoverage,
         ],

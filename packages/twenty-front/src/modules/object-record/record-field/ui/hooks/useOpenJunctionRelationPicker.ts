@@ -1,9 +1,9 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getJunctionRelationPickerData } from '@/object-record/record-field/ui/utils/junction/getJunctionRelationPickerData';
+import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -19,16 +19,19 @@ export const useOpenJunctionRelationPicker = () => {
     ({
       recordPickerInstanceId,
       junctionRecords,
-      targetFields,
+      junctionConfig,
     }: {
       recordPickerInstanceId: string;
       junctionRecords: ObjectRecord[] | undefined | null;
-      targetFields: FieldMetadataItem[];
+      junctionConfig: Pick<
+        ValidJunctionConfig,
+        'junctionObjectMetadata' | 'targetFields'
+      >;
     }) => {
       const { pickableMorphItems, searchableObjectMetadataItems } =
         getJunctionRelationPickerData({
           junctionRecords,
-          targetFields,
+          junctionConfig,
           objectMetadataItems: store.get(objectMetadataItemsSelector.atom),
         });
 

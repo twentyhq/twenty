@@ -3,6 +3,10 @@ title: استهداف البيانات الوصفية النظامية
 description: حلّ المعرّفات العالمية الحتمية للبيانات الوصفية التي يوفّرها Twenty تلقائيًا على كل كائن، بحيث يمكن لتطبيقك الرجوع إليها من دون ترميز ثابت.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
+
 كل كائن في Twenty يأتي مع **بيانات وصفية نظامية** لا تقوم أنت بتعريفها، مثل مجموعة من الحقول وعرض القائمة الرئيسي مع أعمدته. يقوم الخادم بإنشاء كل ذلك عند توفير الكائن، وتنمو هذه المجموعة مع نمو Twenty.
 
 نظرًا لأنك لا تعرّفها، فلا يوجد ثابت `universalIdentifier` لتقوم باستيراده. بدلًا من ذلك، يقوم الخادم **باستخلاص** كل معرّف بشكل حتمي، ويعرض `twenty-sdk` نفس طريقة الاستخلاص بحيث يمكن لملف البيان (manifest) لديك حلّ القيمة الدقيقة التي يستخدمها الخادم.
@@ -64,7 +68,7 @@ export default defineView({
   universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
   name: 'All records',
   objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
-  icon: 'IconList',
+  icon: 'IconTable',
   position: 0,
   fields: [
     {
@@ -204,3 +208,5 @@ import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
   `getFieldUniversalIdentifier`. في الكائنات التي تعرّفها، استدعِ حقل
   `name` باستخدام المعرّف الذي منحته له في `defineObject()`.
 </Note>
+
+<PageBanner illustration="section-apps-data" />

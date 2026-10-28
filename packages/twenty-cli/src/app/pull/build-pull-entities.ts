@@ -9,6 +9,7 @@ import {
   ROLE_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
   VIEW_FIELD_ENUM_BINDINGS,
+  WORKFLOW_ENUM_BINDINGS,
   type EnumBinding,
 } from '@/app/pull/write-define-file';
 import {
@@ -43,6 +44,7 @@ export const PULL_ENTITY_KINDS = [
   'pageLayoutTab',
   'navigationMenuItem',
   'pageLayoutWidget',
+  'workflow',
   'skill',
   'agent',
 ] as const;
@@ -370,6 +372,23 @@ export const buildPullEntities = (
       parentName: isDefined(objectUniversalIdentifier)
         ? getObjectNameForPullFile({ objectUniversalIdentifier, manifest })
         : null,
+    });
+  }
+
+  for (const workflowManifest of manifest.workflows ?? []) {
+    entities.push({
+      kind: 'workflow',
+      universalIdentifier: workflowManifest.universalIdentifier,
+      definer: 'defineWorkflow',
+      config: workflowManifest,
+      enumBindings: WORKFLOW_ENUM_BINDINGS,
+      defaultFolder: 'src/workflows',
+      fileSuffix: '.workflow.ts',
+      fileBaseName: toFileBaseName({
+        segments: [workflowManifest.name],
+        universalIdentifier: workflowManifest.universalIdentifier,
+      }),
+      parentName: null,
     });
   }
 

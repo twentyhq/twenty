@@ -1,0 +1,461 @@
+---
+title: Каналы сообщений
+description: Переносите переписки от любого провайдера в записи Message и Message Thread Twenty.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Обзор
+
+**Канал сообщений** позволяет вашему приложению помещать переписки от внешнего провайдера — LinkedIn, WhatsApp, SMS, встроенного почтового ящика — в те же записи `Message` и `Message Thread`, которые Twenty использует для электронной почты. Импортированные вами цепочки отображаются в записях Person, Company и Opportunity людей, участвующих в них, на временной шкале и в поиске — без специального интерфейса.
+
+Модель сообщений Twenty намеренно нейтральна к каналам: у сообщения есть участники, текст, временная метка и цепочка; у участника есть `handle` и необязательная связь с Person. В ней нет ничего специфичного для электронной почты. Канал связывает поток таких сообщений с одной учетной записью у одного провайдера.
+
+<Note>
+**Бета-версия — возможно, еще недоступна в вашем экземпляре.** Каналы сообщений, принадлежащие приложению, появились недавно; описанный здесь API может измениться и может быть недоступен в используемой вами версии Twenty. Прежде чем использовать `createMessageChannel`, убедитесь, что он существует в вашем SDK.
+</Note>
+
+## Требования
+
+Канал всегда принадлежит одному из [подключений](/ru/developers/extend/apps/logic/connections) вашего приложения — учетным данным, через которые он взаимодействует. Прежде чем создать канал, вам нужен провайдер подключений.
+
+## Создание канала
+
+Создавайте канал один раз для каждой подключенной учетной записи из хука `onConnect` провайдера подключений. Так срок существования канала будет соответствовать сроку действия учетных данных.
+
+```ts src/logic-functions/handlers/linkedin-register-connection-handler.ts
+import { createMessageChannel, getConnection } from 'twenty-sdk/logic-function';
+import { MessageChannelVisibility } from 'twenty-shared/types';
+
+export const linkedinRegisterConnectionHandler = async (payload: {
+  connectedAccountId: string;
+}) => {
+  const connection = await getConnection(payload.connectedAccountId);
+  const profile = await fetchLinkedinProfile(connection.accessToken);
+
+  const channel = await createMessageChannel({
+    connectedAccountId: connection.id,
+    handle: profile.memberUrn,
+    displayName: profile.name,
+    // LinkedIn DMs are personal, so other members see participants and dates
+    // but not subjects or bodies.
+    visibility: MessageChannelVisibility.METADATA,
+  });
+
+  return { channelId: channel.id };
+};
+```
+
+### `идентификатор`
+
+Идентификатор учетной записи **в том виде, в каком его называет провайдер** — URN участника LinkedIn, номер телефона E.164, идентификатор пользователя в рабочей области. Twenty рассматривает его как непрозрачный. Именно с ним вы сопоставляете входящие полезные нагрузки, и он определяет, является ли импортированное сообщение входящим или исходящим.
+
+Выбирайте наиболее стабильный идентификатор, предлагаемый провайдером. Идентификатор, который меняется при переименовании пользователя, разделит его историю между двумя каналами.
+
+### `visibility`
+
+`visibility` является **обязательным**, без значения по умолчанию, поскольку он определяет, кто в рабочей области может читать эти переписки:
+
+| Значение           | Другие участники видят                     |
+| ------------------ | ------------------------------------------ |
+| `METADATA`         | только участников и даты                   |
+| `SUBJECT`          | вышеперечисленное, а также тему            |
+| `SHARE_EVERYTHING` | вышеперечисленное, а также текст сообщения |
+
+Участник, владеющий базовым подключением, всегда видит свои сообщения полностью, независимо от этой настройки.
+
+Выбирайте значение исходя из степени приватности сообщений провайдера, а не из удобства отображения. Для личных почтовых ящиков (личные сообщения LinkedIn, личный WhatsApp) следует использовать `METADATA`; для общих (ящик поддержки, командный номер) — `SHARE_EVERYTHING`.
+
+<Warning>
+`visibility` — единственное, что отделяет личные переписки одного участника от остальной рабочей области. Twenty намеренно требует указывать это значение, а не наследовать значение по умолчанию, которое может открыть слишком много.
+</Warning>
+
+## Приём сообщений
+
+После создания канала `ingestMessages` записывает в него беседы. Обработка цепочек, дедупликация, привязка к каналу и конфиденциальность каждого сообщения обрабатываются на стороне сервера — тем же способом, который Twenty использует для собственного импорта электронной почты.
+
+```ts src/logic-functions/handlers/linkedin-inbound-handler.ts
+import { ingestMessages } from 'twenty-sdk/logic-function';
+import { MessageParticipantRole } from 'twenty-shared/types';
+
+export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) => {
+  const ingested = await ingestMessages({
+    messageChannelId: payload.channelId,
+    messages: payload.events.map((event) => ({
+      externalId: event.messageUrn,
+      threadExternalId: event.conversationUrn,
+      text: event.body,
+      receivedAt: new Date(event.createdAt),
+      participants: [
+        {
+          role: MessageParticipantRole.FROM,
+          handle: event.sender.memberUrn,
+          displayName: event.sender.name,
+        },
+        ...event.recipients.map((recipient) => ({
+          role: MessageParticipantRole.TO,
+          handle: recipient.memberUrn,
+          displayName: recipient.name,
+        })),
+      ],
+    })),
+  });
+
+  return { ingested: ingested.length };
+};
+```
+
+### Что сервер делает для вас
+
+**Дедупликация.** `externalId` — это ключ. Повторный приём одного и того же сообщения ничего не создаёт и ничего не изменяет, поэтому повторно доставленный вебхук можно безопасно воспроизвести, а дозагрузка может пересекаться с потоком в реальном времени. Возвращаемый `messageId` остаётся неизменным при повторных воспроизведениях. Вызовы для одного канала выполняются последовательно, поэтому повторная доставка, поступившая, пока исходное сообщение ещё записывается, ожидает вместо одновременного выполнения с ним.
+
+**Обработка цепочек.** Сообщения с общим `threadExternalId` попадают в одну цепочку сообщений, которая затем отображается в записях Person, Company и Opportunity её участников.
+
+**Направление.** Определяется, а не указывается: сообщение является исходящим, если идентификатор участника `FROM` совпадает с идентификатором канала, и входящим в противном случае. Ровно один участник должен иметь `FROM` — направление, столбец отправителя цепочки и предпросмотр на временной шкале считывают его, поэтому сообщение без него отклоняется, а не отображается как пустая беседа.
+
+**Дедупликация ограничена каналом.** `externalId` должен быть уникальным только в пределах одного канала, что фактически гарантирует большинство провайдеров — многие нумеруют сообщения по беседе или по учётной записи. В результате два участника одной беседы у провайдера получают каждый своё собственное сообщение, а не общее. Это сделано намеренно: их объединение потребовало бы от каждого приложения гарантировать глобальное пространство имён, которым оно не управляет, а ошибка привязала бы содержимое сообщения одного участника к каналу другого.
+
+**Конфиденциальность.** Каждое сообщение наследует `visibility` своего канала. Ничто из того, что вы принимаете, не будет более видимым, чем канал, в который вы это принимаете.
+
+### Пакетная обработка
+
+Один вызов — это одна транзакция в пределах одного тайм-аута функции логики, с ограничением в **100 сообщений**. Разбивайте дозагрузку от провайдера на страницы, а не отправляйте её целиком:
+
+```ts
+for (const page of chunk(allHistoricalMessages, 100)) {
+  await ingestMessages({ messageChannelId, messages: page });
+}
+```
+
+Пакет обрабатывается по принципу «всё или ничего», а повторение одного `externalId` в одном пакете отклоняется — удалите дубликаты перед отправкой. Размер содержимого сообщения ограничен 256 КБ.
+
+### Привязка участников к People
+
+Несвязанный участник переводит беседу на страницу без записи, поэтому каждый участник должен быть связан с персоной. Есть два способа сделать это: позволить Twenty сопоставлять идентификаторы с полем персоны или самостоятельно определить персону.
+
+#### Сопоставление по полю персоны
+
+Если идентификаторы поставщика представляют собой значения, которые пользователи уже хранят в контакте — номер телефона, URL профиля или имя пользователя, — укажите это поле при создании канала:
+
+```ts
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
+await createMessageChannel({
+  connectedAccountId: connection.id,
+  handle: '+33612345678',
+  visibility: MessageChannelVisibility.METADATA,
+  participantHandleFieldUniversalIdentifier:
+    STANDARD_OBJECTS.person.fields.phones.universalIdentifier,
+});
+```
+
+Подойдет любое активное поле персоны типа emails, phones, links или text, включая поле, добавленное вашим приложением с помощью [`defineField`](/ru/developers/extend/apps/data/extending-objects) (например, имя пользователя Instagram). Итак, Twenty:
+
+* **хранит идентификаторы в канонической форме поля**: телефоны в виде `+` и цифр (отправляйте номера E.164), ссылки в нижнем регистре без схемы, `www`, фрагмента или завершающего слеша, с сохранением строки запроса в отправленном виде, поскольку она может идентифицировать профиль (`linkedin.com/in/ada`, `facebook.com/profile.php?id=111`), электронные адреса и текст в нижнем регистре. Собственный идентификатор канала хранится так же, а идентификатор без пригодного значения отклоняется.
+* **связывает каждого участника, которого вы оставляете несвязанным**, с персоной, в поле которой хранится это значение: сначала основные значения, затем самая старая персона.
+* **повторно сопоставляет при изменении персон**: добавление значения персоне связывает ее прошлые разговоры, а удаление значения освобождает их.
+
+Переданный вами `personId` по-прежнему имеет приоритет, в том числе когда другой человек позднее получает или теряет это значение. Поле задается один раз, при создании; если его удалить или деактивировать, прием данных в канал будет отклонен, а не сохранит идентификаторы, которые Twenty больше не может нормализовать.
+
+Выбирайте идентификаторы, которые одновременно стабильны и хранятся у контактов. Для LinkedIn это означает URL общедоступного профиля, а не URN участника; если URN нужен для вызова провайдера, сохраняйте собственное сопоставление.
+
+#### Определите персону самостоятельно
+
+Без объявленного поля **ваше приложение должно указать, кем является участник**. Передайте `personId` вместе с идентификатором:
+
+```ts
+participants: [
+  {
+    role: MessageParticipantRole.FROM,
+    handle: event.sender.memberUrn,
+    displayName: event.sender.name,
+    personId: await resolvePersonIdFromLinkedinUrn(event.sender.memberUrn),
+  },
+]
+```
+
+Определите идентификатор в зависимости от того, как хранится идентификатор вашего провайдера — через `Person.linkedinLink` или поле идентификатора, добавленное вашим приложением с помощью [`defineField`](/ru/developers/extend/apps/data/extending-objects). Неизвестные идентификаторы отклоняются сразу, а не сохраняются как висячие ссылки.
+
+После привязки участника Twenty создаёт цели цепочки, и разговор отображается на странице записи этого Person и его компании, точно так же, как цепочка электронных писем.
+
+Также принимается `workspaceMemberId` — для участника, который является участником этого рабочего пространства, а не контактом. Это **только для атрибуции**: цели цепочки создаются исключительно из `personId` — так же, как для электронной почты, — поэтому участник, привязанный только к участнику рабочего пространства, отображается в цепочке, но не привязывает разговор ни к одной странице записи. Передавайте `personId`, когда хотите привязать цепочку к какой-либо записи.
+
+<Note>
+Позднее сопоставление не теряется. Повторная загрузка сообщения с идентификатором, который вы с тех пор определили, привязывает уже существующего участника — сопоставленного по сообщению, идентификатору и роли, поэтому отображаемое имя, изменившееся или отсутствовавшее за это время, не разделяет его на два. Если имя не указано, сохраняется уже сохранённое; новое имя заменяет его. Передача другого `personId` исправляет предыдущую ссылку, а не добавляет вторую.
+
+Пока нет способа *очистить* идентификатор: null воспринимается как "оставить без изменений", а не как "отвязать". Исправление неверной ссылки означает передачу правильной.
+</Note>
+
+Участники, которых вы оставляете непривязанными, всё равно сохраняются и отображаются в цепочке — они просто не привязывают разговор к записи.
+
+## Отправка ответов
+
+Провайдер обмена сообщениями определяет, как приложение отправляет сообщения в канале. Он задаёт провайдера подключений, через учётные записи которого он взаимодействует, и логическую функцию, доставляющую ответ, поэтому одно подключение (например, учётная запись Unipile) может поддерживать несколько типов обмена сообщениями, каждый со своим обработчиком:
+
+```ts src/messaging-providers/linkedin-messaging.ts
+import { defineMessagingProvider } from 'twenty-sdk/define';
+
+export default defineMessagingProvider({
+  universalIdentifier: '8a9b0c1d-2e3f-4a5b-8c6d-7e8f9a0b1c2d',
+  name: 'linkedin-messaging',
+  displayName: 'LinkedIn Messages',
+  connectionProvider: {
+    universalIdentifier: '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
+  },
+  sendMessageLogicFunction: {
+    universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
+  },
+});
+```
+
+Привяжите к нему канал при создании канала или позднее с помощью `updateMessageChannel` (передача `null` отменяет привязку):
+
+```ts
+await createMessageChannel({
+  connectedAccountId: connection.id,
+  handle: profile.memberUrn,
+  visibility: 'METADATA',
+  messagingProvider: {
+    universalIdentifier: '8a9b0c1d-2e3f-4a5b-8c6d-7e8f9a0b1c2d',
+  },
+});
+```
+
+Провайдер обмена сообщениями должен принадлежать вашему приложению и использовать провайдера подключений учётной записи канала; его провайдера подключений нельзя изменить после первой синхронизации. Изменение функции отправки в более поздней версии применяется ко всем каналам, привязанным к провайдеру.
+
+Ответы отправляются с помощью мутации `sendAppChannelMessage`, которая принимает канал, ветку, текст и `idempotencyKey` (UUID, который клиент создаёт для каждого ответа и повторно использует при повторной попытке), а также запускает функцию провайдера:
+
+```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
+import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
+
+export const linkedinSendMessageHandler = async ({
+  connectedAccountId,
+  threadExternalId,
+  text,
+  idempotencyKey,
+}: SendAppMessagePayload) => {
+  const sent = await sendLinkedinMessage({
+    connectedAccountId,
+    conversationUrn: threadExternalId,
+    text,
+    idempotencyKey,
+  });
+
+  return { externalId: sent.messageUrn, sentAt: sent.createdAt };
+};
+```
+
+Полезная нагрузка содержит `messagingProviderName`, `threadExternalId` беседы в том виде, в котором вы его получили, `text`, `idempotencyKey` и `recipients`: участников последнего сообщения ветки, кроме собственного идентификатора канала, поэтому сообщение не отправляется тому, кто участвовал только в более раннем обмене сообщениями. Если API провайдера отправляет сообщения по идентификатору беседы, предпочитайте собственную беседу провайдера вместо `recipients`. Верните идентификатор провайдера для отправленного сообщения в качестве `externalId`.
+
+Затем Twenty записывает ответ в ветке как исходящее сообщение от канала с теми же получателями, поэтому он отображается сразу. Когда ваш вебхук позже доставит то же сообщение, его получение с этим `externalId` ничего не изменит.
+
+Функция выполняется внутри запроса `sendAppChannelMessage`. Если она выдаёт исключение или не возвращает `externalId`, мутация завершается с ошибкой и ничего не записывается.
+
+После возврата вашей функции Twenty хранит сведения о доставке в течение 24 часов для участника, канала, ветки и `idempotencyKey`. Если после этого не удаётся записать ответ, мутация завершается с ошибкой, а повторная попытка с тем же ключом записывает доставленный ответ без повторного вызова вашей функции; повторная попытка для уже записанного ответа возвращает его. Повторная попытка, пока первый вызов всё ещё отправляет сообщение, ожидает его завершения. Новый ключ означает новый ответ. Ваша функция всё ещё может быть вызвана дважды для одного ответа, если клиент повторяет попытку с новым ключом или по истечении этих 24 часов, либо если сама ваша функция завершается с ошибкой после того, как провайдер принял сообщение; поэтому передавайте `idempotencyKey` провайдеру, если его API поддерживает идемпотентную отправку. Канал с `isSyncEnabled: false` отклоняет ответы, не вызывая вашу функцию. Канал без провайдера обмена сообщениями или канал, у провайдера которого нет `sendMessageLogicFunction` либо который больше не существует, не может отправлять сообщения; его беседы остаются без изменений. Требуется `"engines": { "twenty": ">=2.52.0" }`.
+
+## Просмотр и обновление каналов
+
+```ts
+import {
+  listMessageChannels,
+  updateMessageChannel,
+} from 'twenty-sdk/logic-function';
+
+// Every channel this app owns, across all its connections
+const channels = await listMessageChannels();
+
+// Just the ones on a given connection
+const forConnection = await listMessageChannels({
+  connectedAccountId: connection.id,
+});
+
+// Rename it, re-scope who can read it, or pause ingestion
+await updateMessageChannel({ id: channel.id, displayName: 'Ada (LinkedIn)' });
+await updateMessageChannel({ id: channel.id, isSyncEnabled: false });
+```
+
+Изменение `visibility` через `updateMessageChannel` меняет область доступа для всех сообщений, уже импортированных в канал, а не только для последующих. Приём в канал с `isSyncEnabled: false` отклоняется, поэтому приостановка канала останавливает поток, ничего не удаляя.
+
+Ваше приложение видит только каналы, созданные для его собственных подключений. Каналы, принадлежащие другим приложениям, а также собственные почтовые каналы Twenty для него невидимы.
+
+Канал также доступен только человеку, через чье подключение он взаимодействует, если это подключение является личным. Запуск, инициированный другим участником рабочего пространства, не может его видеть, изменять или принимать в него сообщения; запуск без пользователя — cron, вебхук, хук установки — действует от имени приложения и получает доступ ко всем каналам, которыми владеет приложение.
+
+## Папки
+
+Некоторые провайдеры разделяют одну учетную запись на подканалы: входящие в общей службе поддержки, номера в учетной записи WhatsApp, каналы в рабочем пространстве Slack. Объявите их как **папки** в канале — те же записи, которые Twenty использует для папок почтовых ящиков и ярлыков Gmail, — и пометьте каждое сообщение папками, к которым оно относится.
+
+Папки необязательны. Канал без папок работает именно так, как описано выше.
+
+### Объявление папок при подключении
+
+`syncMessageFolders` принимает **полный** список папок канала и приводит сохраненные папки в соответствие с ним, используя `externalId` в качестве ключа:
+
+* неизвестный `externalId` создает папку
+* известная папка переименовывается, если ее `name` изменилось
+* сохраненная папка, отсутствующая в списке, удаляется вместе с ее связями с сообщениями. Сами сообщения остаются.
+
+Естественное место для его вызова — хук `onConnect` провайдера подключения, сразу после создания канала. Ниже приведена полная настройка для приложения службы поддержки, в котором каждый входящий ящик становится папкой:
+
+```ts src/connection-providers/helpdesk-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+import {
+  HELPDESK_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+export default defineConnectionProvider({
+  universalIdentifier: HELPDESK_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  name: 'helpdesk',
+  displayName: 'Helpdesk',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  onConnectLogicFunction: {
+    universalIdentifier: HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+```ts src/logic-functions/helpdesk-on-connect.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import {
+  createMessageChannel,
+  enqueueJobs,
+  getConnection,
+  listMessageChannels,
+  syncMessageFolders,
+} from 'twenty-sdk/logic-function';
+import { MessageChannelVisibility } from 'twenty-shared/types';
+
+import {
+  HELPDESK_BACKFILL_FOLDER_UNIVERSAL_IDENTIFIER,
+  HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+export default defineLogicFunction({
+  universalIdentifier: HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+  name: 'helpdesk-on-connect',
+  timeoutSeconds: 60,
+  handler: async ({ connectedAccountId }: { connectedAccountId: string }) => {
+    const connection = await getConnection(connectedAccountId);
+    const inboxes = await fetchHelpdeskInboxes(connection.accessToken);
+
+    const [existingChannel] = await listMessageChannels({ connectedAccountId });
+
+    const channel =
+      existingChannel ??
+      (await createMessageChannel({
+        connectedAccountId,
+        handle: connection.handle,
+        visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      }));
+
+    const folders = await syncMessageFolders({
+      messageChannelId: channel.id,
+      folders: inboxes.map((inbox) => ({
+        externalId: inbox.id,
+        name: inbox.name,
+      })),
+    });
+
+    const syncedFolders = folders.filter((folder) => folder.isSynced);
+
+    if (syncedFolders.length > 0) {
+      await enqueueJobs({
+        logicFunctionUniversalIdentifier:
+          HELPDESK_BACKFILL_FOLDER_UNIVERSAL_IDENTIFIER,
+        jobs: syncedFolders.map((folder) => ({
+          payload: {
+            messageChannelId: channel.id,
+            folderExternalId: folder.externalId,
+          },
+        })),
+      });
+    }
+  },
+});
+```
+
+Несколько моментов, на которые опирается этот пример:
+
+* **Один канал на подключение.** Хук повторно использует канал подключения, если он уже есть, поскольку `onConnect` ставится в очередь и может быть запущен снова. В настройках отображаются папки этого единственного канала, поэтому не разделяйте одно подключение между несколькими каналами.
+* **Повторяемая синхронизация.** Повторная отправка полного списка безопасна: неизмененные папки остаются без изменений. Вызывайте `syncMessageFolders` снова всякий раз, когда список провайдера мог измениться: по cron или при вебхуке провайдера "inbox created".
+* **Дозаполнение для каждой папки.** Каждая синхронизированная папка получает собственное [фоновое задание](/ru/developers/extend/apps/logic/background-jobs), которое постранично обрабатывает историю провайдера и вызывает `ingestMessages`.
+
+### Выбор папок для импорта
+
+У каждой папки есть флаг `isSynced`. Участники включают и выключают папки в разделе **Папки** на странице подключения (**Настройки → Приложения →** ваше приложение **→** подключение), которая появляется, когда у канала есть папки.
+
+Новая папка изначально синхронизируется, если не передать `isSynced: false`. Если не указывать `isSynced` при последующей синхронизации, сохраненное значение остается, поэтому обновление данных провайдера никогда не сбрасывает выбор участника. Ваше приложение по-прежнему может само установить флаг, передав его в `syncMessageFolders`.
+
+<Note>
+`isSynced` носит **рекомендательный характер** для каналов приложений: Twenty сохраняет его, но не фильтрует по нему прием данных, и при включении папки ничего не выполняет ее дозаполнение. Ваше приложение считывает его с помощью `listMessageFolders` (с фильтрацией по `messageChannelId` или по всем своим каналам при вызове без фильтра), пропускает сообщения из несинхронизированных папок и дозаполняет папку, когда она становится синхронизированной.
+</Note>
+
+```ts
+import { listMessageFolders } from 'twenty-sdk/logic-function';
+
+const folders = await listMessageFolders({ messageChannelId: channel.id });
+
+const syncedInboxIds = new Set(
+  folders.filter((folder) => folder.isSynced).map((folder) => folder.externalId),
+);
+```
+
+### Добавление тегов к сообщениям
+
+При приеме укажите папки, к которым относится сообщение, в `folderExternalIds`:
+
+```ts
+import { ingestMessages } from 'twenty-sdk/logic-function';
+
+await ingestMessages({
+  messageChannelId: channel.id,
+  messages: [
+    {
+      externalId: message.id,
+      threadExternalId: conversation.id,
+      text: message.text,
+      receivedAt: new Date(message.createdAt),
+      participants,
+      folderExternalIds: [conversation.inboxId],
+    },
+  ],
+});
+```
+
+Каждый идентификатор должен принадлежать папке, уже объявленной в канале; неизвестный идентификатор отклоняет всю пакетную операцию. Связи накапливаются: повторный прием сообщения с другой папкой добавляет эту папку и сохраняет предыдущие, поэтому беседа, перемещенная между входящими ящиками, оказывается в обоих.
+
+## Удаление канала
+
+Вызовите `deleteMessageChannel(id)` из хука `onDisconnect` провайдера подключений, чтобы канал никогда не существовал дольше учетных данных, через которые он взаимодействует.
+
+```ts src/logic-functions/handlers/linkedin-disconnect-handler.ts
+import {
+  deleteMessageChannel,
+  listMessageChannels,
+} from 'twenty-sdk/logic-function';
+
+export const linkedinDisconnectHandler = async (payload: {
+  connectedAccountId: string;
+}) => {
+  const channels = await listMessageChannels({
+    connectedAccountId: payload.connectedAccountId,
+  });
+
+  await Promise.all(channels.map((channel) => deleteMessageChannel(channel.id)));
+};
+```
+
+При удалении канала удаляются сообщения, импортированные через него, а также все цепочки, в которых не осталось сообщений. Чтобы прекратить импорт, сохранив историю, установите вместо этого `isSyncEnabled: false`.
+
+## Чего канал не делает
+
+* **Он не опрашивается.** Конвейер импорта Twenty опрашивает провайдеров почтовых ящиков по cron-расписанию. Каналы приложений работают только через отправку: ничего не загружается от вашего имени, поэтому ваше приложение отвечает за получение сообщений через маршрут вебхука или функцию логики cron.
+* **Он не начинает беседы.** Ответы отправляются в существующую ветку через [провайдера обмена сообщениями](#sending-replies); первое сообщение новому человеку необходимо начать из вашего приложения.
+* **Контакты определяются только через объявленное поле.** Без него Twenty не может определить, кому принадлежит URN LinkedIn, поэтому каналы приложений [явно связывают участников при приеме данных](#resolve-the-person-yourself).
+* **Он не создаёт контакты.** Автоматическое создание в Twenty выводит людей и компании из доменов электронной почты, что не имеет смысла для большинства провайдеров, поэтому для каналов приложений оно отключено. Создайте Person самостоятельно, затем передайте его `personId`.
+
+<PageBanner illustration="card-page-messaging-channels" />

@@ -829,7 +829,7 @@ exports[`Application export - data model exports the whole application as a stab
     "defaultRoleUniversalIdentifier": "<TEST_ROLE>",
     "description": "Test application",
     "displayName": "Test Application",
-    "packageJsonChecksum": null,
+    "packageJsonChecksum": "683017432d86b305dd3ee551aa9c54eb",
     "universalIdentifier": "<TEST_APP>",
     "yarnLockChecksum": null,
   },
@@ -1268,5 +1268,6 @@ exports[`Application export - data model exports the whole application as a stab
       "visibility": "WORKSPACE",
     },
   ],
+  "workflows": [],
 }
 `;

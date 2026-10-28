@@ -3,7 +3,12 @@ title: Prezentare generală
 description: TypeScript pe server care rulează în Twenty — declanșat de rute HTTP, programări cron, evenimente de bază de date, instrumente IA sau acțiuni de workflow.
 ---
 
-**Stratul de logică** al unei aplicații Twenty este codul care *rulează* — handler-e TypeScript pe server care reacționează la cereri HTTP, programări cron și modificări ale înregistrărilor; abilități și agenți IA care trăiesc în workspace; și conexiuni OAuth care permit funcțiilor tale să acționeze în numele utilizatorului în servicii terțe.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Ce acoperă stratul logic
+
+**Stratul de logică** al unei aplicații Twenty este codul care *rulează* — handler-e TypeScript pe server care reacționează la cereri HTTP, programări cron și modificări ale înregistrărilor; abilități și agenți IA care trăiesc în workspace; conexiuni (OAuth sau un flux personalizat de conectare) care permit funcțiilor tale să acționeze în numele utilizatorului în servicii terțe; și canale de mesagerie care aduc o căsuță de intrare externă în Twenty.
 
 ```text
             ┌─ HTTP route      ──┐
@@ -23,21 +28,38 @@ description: TypeScript pe server care rulează în Twenty — declanșat de rut
 
 ## În această secțiune
 
-<CardGroup cols={2}>
-  <Card title="Funcții logice" icon="bolt" href="/ro/developers/extend/apps/logic/logic-functions">
-    Blocul de bază — tipuri de declanșatoare, payload-uri și clientul API cu tipuri.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ro/developers/extend/apps/logic/logic-functions" img="/images/user-guide/halftone/card-page-logic-functions.svg">
+    <CardTitle>Logic Funcții</CardTitle>
+    Piesa de bază a construcției - declanșează tipuri, încărcături și clientul API tastat.
   </Card>
-  <Card title="Abilități și agenți" icon="robot" href="/ro/developers/extend/apps/logic/skills-and-agents">
-    Instrucțiuni reutilizabile pentru agenți IA și asistenți cu prompturi de sistem personalizate.
+  <Card href="/ro/developers/extend/apps/logic/skills-and-agents" img="/images/user-guide/halftone/card-page-skills-agents.svg">
+    <CardTitle>Abilități & Agenți</CardTitle>
+    Instrucțiuni de utilizare AI pentru agenți și asistenți cu instrucțiuni de sistem personalizat.
   </Card>
-  <Card title="Conexiuni" icon="plug" href="/ro/developers/extend/apps/logic/connections">
-    Credențiale OAuth pe care aplicația ta le deține pentru servicii terțe — Linear, GitHub, Slack și altele.
+  <Card href="/ro/developers/extend/apps/logic/workflows" img="/images/user-guide/halftone/workflows-belt-v1.svg">
+    <CardTitle>Workflows</CardTitle>
+    Ready-made workflows instalat cu aplicația ta: declanșatoare, pași și cum rulează.
   </Card>
-  <Card title="Stocare cheie-valoare" icon="database" href="/ro/developers/extend/apps/logic/key-value-store">
-    Păstrează starea între execuțiile funcțiilor de logică — cache-uri, cursoare și revendicări între spații de lucru.
+  <Card href="/ro/developers/extend/apps/logic/connections" img="/images/user-guide/halftone/card-page-connections.svg">
+    <CardTitle>Conexiuni</CardTitle>
+    OAuth credențialele aplicației tale pentru servicii terțe — Linear, GitHub, Slack, și multe altele.
   </Card>
-  <Card title="Sarcini în fundal" icon="stack-2" href="/ro/developers/extend/apps/logic/background-jobs">
-    Pune în coadă execuția unei funcții logice de către workeri pentru a depăși limita de timp per execuție.
+  <Card href="/ro/developers/extend/apps/logic/messaging-channels" img="/images/user-guide/halftone/card-page-messaging-channels.svg">
+    <CardTitle>Canale de Mesagerie</CardTitle>
+    Atrageți conversații de la orice furnizor la înregistrările de mesaje și discuții ale Twenty's - citirea și de-duplicarea incluse.
+  </Card>
+  <Card href="/ro/developers/extend/apps/logic/key-value-store" img="/images/user-guide/halftone/card-page-key-value-store.svg">
+    <CardTitle>Key-Value Store</CardTitle>
+    Persistă starea între funcții logice rulează - geocutii, cursori și revendicări de spațiu de lucru încrucișat.
+  </Card>
+  <Card href="/ro/developers/extend/apps/logic/background-jobs" img="/images/user-guide/halftone/card-page-background-jobs.svg">
+    <CardTitle>Background Jobs</CardTitle>
+    Enqueue o funcție logică rulată pe lucrători pentru a trece de perioada de timp pe drum.
+  </Card>
+  <Card href="/ro/developers/extend/apps/logic/credits" img="/images/user-guide/halftone/card-page-charging-credits.svg">
+    <CardTitle>Incarca Credite</CardTitle>
+    Declară pentru ce factura aplicatiei tale si incarca credite de workspace pentru ea.
   </Card>
 </CardGroup>
 
@@ -57,4 +79,8 @@ Funcțiile rulează în sandbox, în procese Node.js izolate și accesează work
 
 <Note>
 **Hook-uri de instalare** — cod care rulează înainte sau după instalare — folosesc același runtime, dar au propriile lor funcții define și se află sub [Config → Install Hooks](/ro/developers/extend/apps/config/install-hooks).
+
+[**verificarea stării de funcționare**](/ro/developers/extend/apps/logic/logic-functions#health-check) o partajează și ea. Nu declară niciun declanșator: Twenty o apelează la cerere atunci când se deschide pagina de setări a aplicației.
 </Note>
+
+<PageBanner illustration="section-apps-logic" />

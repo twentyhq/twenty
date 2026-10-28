@@ -2,6 +2,8 @@
 title: Ghid de actualizare
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Linii directoare generale
 
 **Faceți întotdeauna o copie de rezervă a bazei de date înainte de a începe procesul de actualizare** rulând:
@@ -23,6 +25,16 @@ Dacă utilizați Docker Compose, urmați acești pași:
 3. Porniți Twenty: `docker compose up -d`
 
 Serverul rulează automat toate migrațiile de actualizare necesare la pornire. Nu este necesară nicio comandă manuală.
+
+### Prefixul cache-ului Redis
+
+`REDIS_CACHE_PREFIX` este opțional și are implicit un șir gol. Lăsându-l gol, numele cheilor de cache existente sunt păstrate exact, fără două puncte suplimentare și fără migrarea cheilor.
+
+Pentru implementările Redis Enterprise sau Azure Managed Redis care raportează erori `CROSSSLOT` în timpul operațiunilor de cache, setați `REDIS_CACHE_PREFIX={twenty-cache}` pe fiecare server, worker și comandă de actualizare. Acoladele fac ca toate cheile de stocare în cache să partajeze un singur slot hash Redis. Acest lucru nu distribuie datele din cache între fragmente. `REDIS_QUEUE_PREFIX` se aplică numai cozilor și rămâne separat.
+
+De exemplu, `engine:workspace:flatObjectMetadataMaps:123:hash` devine `{twenty-cache}:engine:workspace:flatObjectMetadataMaps:123:hash` numai când este configurat acel prefix. `cache:flush` utilizează automat prefixul configurat.
+
+Schimbarea prefixului comută la un spațiu de nume de cache separat. Opriți toate serverele și toate procesele worker Twenty înainte de a-l schimba, apoi reporniți-le cu aceeași valoare. Intrările existente sub prefixul anterior rămân neatinse. Dacă reutilizați un prefix folosit anterior, rulați `yarn command:prod cache:flush` cu acea valoare înainte de repornire pentru a elimina intrările învechite. Implementările progresive cu valori de prefix diferite nu sunt acceptate.
 
 ## Actualizarea la v2.34+ — PostgreSQL 15 este versiunea minimă
 
@@ -69,7 +81,7 @@ Instance
     At:               2026-04-16T11:43:58.823Z
 
 Workspace
-  Apple (20202020-1c25-4d02-bf25-6aeccf7ea419)
+  App*** (20202020-***)
       Inferred version: 1.23.0
       Latest command:   1.23.0_UpdateGlobalObjectContextCommandMenuItemsCommand_1780000005000
       Status:           Up to date
@@ -83,10 +95,11 @@ Summary
 
 ### Opțiuni
 
-| Opțiune                   | Descriere                                                                               |
-| ------------------------- | --------------------------------------------------------------------------------------- |
-| `-w, --workspace-id <id>` | Filtrați după un spațiu de lucru specific. Poate fi specificată de mai multe ori.       |
-| `-f, --failed-only`       | Ascunde spațiile de lucru la zi, afișând doar pe cele rămase în urmă și pe cele eșuate. |
+| Opțiune                   | Descriere                                                                                                                                                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-w, --workspace-id <id>` | Filtrați după un spațiu de lucru specific. Poate fi specificată de mai multe ori.                                                                                                                           |
+| `-f, --failed-only`       | Ascunde spațiile de lucru la zi, afișând doar pe cele rămase în urmă și pe cele eșuate.                                                                                                                     |
+| `--show-full-identifiers` | Afișează numele complete și ID-urile spațiilor de lucru. În mod implicit, sunt afișate doar primele trei caractere ale fiecărui nume de spațiu de lucru și prima secțiune a fiecărui ID de spațiu de lucru. |
 
 ## Depanare
 
@@ -103,3 +116,5 @@ Aceasta afișează doar spațiile de lucru care sunt rămase în urmă sau au e�
 ## Înainte de v1.23
 
 Dacă instanța dvs. este mai veche decât v1.23, trebuie să actualizați incremental prin fiecare versiune majoră etichetată (de la v1.6 la v1.7, apoi de la v1.7 la v1.8 și așa mai departe) până ajungeți la v1.23. De acolo, puteți sări direct la cea mai recentă versiune.
+
+<PageBanner illustration="card-page-sync-recovery" />

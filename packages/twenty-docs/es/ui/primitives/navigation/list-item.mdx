@@ -1,0 +1,403 @@
+---
+title: ListItem
+description: Compone filas uniformes con iconos, descripciones, indicadores y acciones.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
+
+## Resumen
+
+`ListItem` proporciona el diseño visual compartido por las filas de listas y menús. De forma predeterminada, representa un `div` para contenido pasivo. Usa [ListItemButton](/es/ui/components/navigation/list-item-button) para filas de acciones comunes. Compón `ListItem` con un ancla para la navegación o con un propietario semántico personalizado cuando sea necesario. Usa [Dropdown](/es/ui/components/navigation/dropdown) o [Select](/es/ui/primitives/input/select) cuando necesites un contenedor emergente o de selección completo.
+
+<StoryEmbed storyId="ui-navigation-listitem--display" title="Ejemplo de ListItem" height={100} />
+
+## Uso
+
+```tsx
+import { IconBell } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const NotificationRow = () => (
+  <ListItem startIcon={<IconBell />}>Notifications</ListItem>
+);
+```
+
+## Anatomía
+
+`ListItem` expone espacios de contenido mediante propiedades. Estos espacios organizan el contenido dentro de una fila; no son componentes exportados por separado.
+
+```text
+ListItem
+├── startIcon
+├── children
+├── description
+├── actions
+└── endIcon
+```
+
+| Espacio                               | Requisito                                     | Propósito                                                                                           |
+| ------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `children`                            | Obligatorio para una etiqueta de fila visible | Proporciona el texto principal.                                                                     |
+| `startIcon`, `endIcon`                | Opcional                                      | Agrega iconos, avatares, metadatos o controles independientes en cualquiera de los extremos.        |
+| `description`                         | Opcional                                      | Agrega contenido complementario en línea, debajo de la etiqueta o al final.                         |
+| `acciones`                            | Opcional                                      | Añade contenido final, como una acción que puede recibir el foco por separado.                      |
+| `indicator`, `shortcut`, `hasSubmenu` | Opcional                                      | Configura las marcas de selección integradas, las indicaciones de atajos y el indicador de submenú. |
+
+La fila proporciona la disposición. `render` acepta un elemento o una devolución de llamada que recibe props nativas y estado visual. Distribuye esas props en la raíz real al usar una devolución de llamada. Los atributos nativos, controladores de eventos, `className`, `style` y `ref` llegan a esa raíz. Para una fila con botones de acción independientes, mantén la fila en sí no interactiva para que esos botones sigan siendo controles independientes.
+
+## Filas de varias líneas
+
+Establece `descriptionPlacement="below"` para colocar el contenido complementario debajo de la etiqueta. El título mantiene su comportamiento de truncamiento existente y el contenido complementario se ajusta al ancho disponible. La ubicación predeterminada `inline` y la ubicación `end` mantienen su apariencia existente.
+
+<StoryEmbed storyId="ui-navigation-listitem-multiline--display" title="Ejemplo de ListItem multilínea" height={150} />
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PlanningRow = () => (
+  <ListItem
+    descriptionPlacement="below"
+    startIcon={<Avatar name="Alex Morgan" size="md" imageProps={{ alt: '' }} />}
+    description="Review the proposed timeline and confirm the next steps with the team."
+    endIcon={
+      <Text render={<span />} size="sm" color="secondary">
+        09:48
+      </Text>
+    }
+  >
+    Quarterly planning
+  </ListItem>
+);
+```
+
+Para vistas previas más cortas, pasa un componente [Texto](/es/ui/primitives/typography/text) con `truncate` o `lineClamp` como `description`. El contenido personalizado controla su propio diseño y sus etiquetas accesibles.
+
+### Estados visuales independientes
+
+Todo el estado visual pertenece a quien realiza la llamada. `active` identifica la fila abierta o actual sin seleccionarla. `selected` representa la selección y `focused` representa un resaltado de navegación con teclado sin mover el foco del DOM. `active` aplica el fondo de la fila actual. Establece `selectionAppearance="accent"` para aplicar un relleno de acento a las filas seleccionadas, independientemente de la ubicación de la descripción. La apariencia predeterminada conserva el estilo de selección existente basado en indicadores. `focused` aplica el fondo resaltado compartido, incluso cuando un propietario lo usa para el resaltado con el puntero. El contorno visible al enfocar sigue el foco real del teclado en la raíz o en sus controles.
+
+Estas props no añaden estados accesibles. Proporciona `aria-current`, `aria-selected` o el estado `checked` de un control en el propietario semántico adecuado. El foco real del teclado también conserva el contorno nativo visible al enfocar.
+
+### Controles independientes
+
+Mantén la raíz `div` predeterminada cuando una fila contenga una casilla de verificación real o botones de acción independientes. Usa `startIcon` para la casilla de verificación y `actions` para los botones. El `indicator` decorativo es innecesario cuando una casilla de verificación real ya muestra la selección.
+
+```tsx
+import { useState } from 'react';
+import { Button, Checkbox } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type SelectablePlanningRowProps = {
+  active?: boolean;
+  disabled?: boolean;
+  onOpen: () => void;
+};
+
+export const SelectablePlanningRow = ({
+  active = false,
+  disabled = false,
+  onOpen,
+}: SelectablePlanningRowProps) => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItem
+      active={active}
+      selected={selected}
+      selectionAppearance="accent"
+      disabled={disabled}
+      descriptionPlacement="below"
+      description="Review the proposed timeline and confirm the next steps with the team."
+      startIcon={
+        <Checkbox
+          aria-label="Select quarterly planning"
+          checked={selected}
+          onCheckedChange={setSelected}
+          disabled={disabled}
+        />
+      }
+      actions={
+        <Button variant="ghost" size="sm" onClick={onOpen} disabled={disabled}>
+          Open
+        </Button>
+      }
+    >
+      Quarterly planning
+    </ListItem>
+  );
+};
+```
+
+La selección y la apertura son interacciones independientes. La aplicación controla la propagación de eventos y cualquier activación de filas o política de teclado. `ListItem.disabled` solo cambia la apariencia; pasa `disabled` a cada control real para impedir su activación.
+
+El comportamiento existente de visibilidad de acciones se aplica a las filas multilínea: `actionsVisibility="hover"` muestra las acciones al pasar el cursor o al enfocar dentro de la fila y las mantiene visibles en dispositivos táctiles. Establécelo en `always` para acciones persistentes, incluso mientras esté abierta una ventana emergente controlada por quien realiza la llamada. Con anchos de fila de 480 px o menos, las acciones multilínea se desplazan a su propia línea y se ajustan según sea necesario.
+
+## Fila de acción
+
+Usa [ListItemButton](/es/ui/components/navigation/list-item-button) para combinar el estilo de fila con la interacción nativa de botón. Pasa `disabled` una vez para controlar tanto la apariencia como la activación.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+type DuplicateActionProps = {
+  onDuplicate: () => void;
+  disabled?: boolean;
+};
+
+export const DuplicateAction = ({
+  onDuplicate,
+  disabled = false,
+}: DuplicateActionProps) => (
+  <ListItemButton
+    disabled={disabled}
+    startIcon={<IconCopy />}
+    description="Create a copy"
+    onClick={onDuplicate}
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+Un propietario de botón personalizado aún puede componer `ListItem` mediante `render`. Ese propietario proporciona enfoque nativo, activación con Intro y Espacio, y comportamiento deshabilitado. `ListItem.disabled` proporciona solo el estilo visual correspondiente. `shortcut` muestra sugerencias; tu aplicación registra los atajos.
+
+<StoryEmbed storyId="ui-navigation-listitem--button-owner" title="Composición de botón personalizado" height={100} />
+
+## Navegación y enlaces explícitos
+
+Pasa un ancla mediante `render` cuando toda la fila navegue. Coloca los atributos de ancla, incluidos `href`, `target` y `rel`, en ese elemento.
+
+```tsx
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const DocumentationLink = () => (
+  <ListItem render={<a href="https://twenty.com/developers" />}>
+    Typography documentation
+  </ListItem>
+);
+```
+
+<StoryEmbed storyId="ui-navigation-listitem--link-owner" title="Fila de enlace" height={100} />
+
+Las etiquetas de cadena siguen siendo texto, incluidas las cadenas con formato de URL. ListItem no crea enlaces. Para enlazar una parte de una fila no interactiva, proporciona un ancla como contenido propiedad del llamador. Mantén esa fila como un `div` para evitar enlaces o botones anidados. Las etiquetas de cadena conservan su truncamiento y su información sobre herramientas de desbordamiento; el contenido personalizado puede usar [OverflowingTextWithTooltip](/es/ui/primitives/typography/overflowing-text-with-tooltip) con un ancla renderizada explícita.
+
+Los enlaces no tienen un atributo `disabled` nativo. Si un destino no está disponible, el propietario del enlace debe proporcionar la semántica, el orden de tabulación y la política de navegación adecuados. Aplicarle estilo solo con `ListItem.disabled` no impide la navegación.
+
+## Propietario de elemento emergente
+
+Usa `Dropdown.ActionItem` o `Dropdown.OptionItem` dentro de su contenedor emergente. Estas partes ya componen el diseño de ListItem y exponen sus ranuras visuales. El propietario emergente proporciona roles, enfoque, navegación con teclado, activación y comportamiento deshabilitado.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+type RecordActionsProps = { onDuplicate: () => void };
+
+export const RecordActions = ({ onDuplicate }: RecordActionsProps) => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content>
+      <Dropdown.ActionItem onClick={onDuplicate}>
+        Duplicate record
+      </Dropdown.ActionItem>
+      <Dropdown.ActionItem disabled>Unavailable action</Dropdown.ActionItem>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+<StoryEmbed storyId="ui-components-dropdown--display" title="Contenedor de elementos de Dropdown" height={420} />
+
+## Política de eventos nativos
+
+ListItem reenvía objetos y controladores de eventos nativos. Los clics se propagan normalmente, incluidos los clics en controles de acción finales. Coloca cualquier límite intencional en el propietario interactivo o en el controlador del llamador.
+
+```tsx
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type OpenRecordProps = { onOpen: () => void };
+
+export const OpenRecord = ({ onOpen }: OpenRecordProps) => (
+  <ListItem
+    render={<button type="button" />}
+    onClick={(event) => {
+      event.stopPropagation();
+      onOpen();
+    }}
+  >
+    Open record
+  </ListItem>
+);
+```
+
+El llamador también es responsable de cualquier política de `preventDefault()`, como impedir la navegación de un enlace. Pasar `onClick` no añade un rol, no hace que un `div` pueda operarse con el teclado ni cambia la propagación.
+
+## Arrastre gestionado por la aplicación y navegación del editor
+
+Compón filas reordenables con `ListItem` dentro del host de arrastre de tu aplicación. Coloca los atributos y los listeners de arrastre del host en su controlador y pasa el controlador o el asa mediante `startIcon`. Mantén controles independientes de visibilidad, edición y eliminación en `actions`. El host de arrastre gestiona la reordenación con puntero y teclado, el arrastre deshabilitado y las etiquetas accesibles del controlador.
+
+Para las sugerencias del editor, mantenga el cuadro de lista existente del editor y el propietario de la opción activa. Procese cada `ListItem` con `role="option"` y `aria-selected`, y use `focused` para la apariencia de la fila activa. El editor controla la navegación con las flechas y la activación con Enter mientras el foco permanece en la superficie de edición. Evite los cambios de foco con pointer-down cuando el editor los requiera y gestione la selección con el puntero en el controlador de filas de la aplicación.
+
+Para las sugerencias en una página Dropdown, use `Dropdown.OptionItem` o `Dropdown.ActionItem` para que esa página controle la navegación y la activación. No agregue un segundo controlador para Enter o Space a un propietario que ya se activa desde el teclado.
+
+## Fila de configuración
+
+Usa [SettingsRow](/es/ui/components/settings/settings-row) para una fila de interruptor con etiqueta. Compone `ListItem` y `Switch`, gestiona su asociación accesible y usa el estado deshabilitado del interruptor para la apariencia de la fila.
+
+## Indicador de selección
+
+```tsx
+import { useState } from 'react';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const ShowArchivedToggle = () => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItem
+      render={<button type="button" aria-pressed={selected} />}
+      selected={selected}
+      indicator="check"
+      onClick={() => setSelected(!selected)}
+    >
+      Show archived records
+    </ListItem>
+  );
+};
+```
+
+`active`, `selected`, `focused` y `disabled` controlan de forma independiente el estilo de las filas. No registran acciones, no mueven el enfoque del DOM, no añaden roles o estados accesibles ni suprimen eventos. Los indicadores `check` y `checkbox` son decorativos; usa un [Checkbox](/es/ui/primitives/input/checkbox) real para un control de formulario. Establece `aria-pressed`, `aria-selected` u otra semántica de estado en el propietario que la necesite.
+
+## Filas de selector
+
+La selección pertenece al elemento padre. `ListItem` no tiene un estado de selección no controlado: pasa `selected` y actualízalo desde `onClick`. Usa `indicator="check"` para una única opción y `indicator="checkbox"` para varias opciones. Ambos indicadores son decorativos; el propietario interactivo gestiona la activación.
+
+En un cuadro de lista existente, pase `role="option"` y `aria-selected`, y mantenga el foco y la gestión de las teclas de flecha en el cuadro de lista. Para un widget de selección completo, use [Select](/es/ui/primitives/input/select). Los botones de selección independientes pueden usar `aria-pressed`, como en estos ejemplos.
+
+### Selección única
+
+Coloque un [Avatar](/es/ui/primitives/data-display/avatar) en `startIcon` para identificar un registro. Use `description` para el texto de apoyo y `descriptionPlacement="end"` para un valor al final.
+
+<StoryEmbed storyId="ui-navigation-listitem-picker--single-selection" title="Filas de selección única" height={170} />
+
+```tsx
+import { useState } from 'react';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const AssigneeButtons = () => {
+  const [assignee, setAssignee] = useState<string | null>(null);
+
+  return (
+    <div role="group" aria-label="Assignee">
+      {['Alex Morgan', 'Sam Taylor'].map((name) => (
+        <ListItem
+          key={name}
+          render={<button type="button" />}
+          aria-pressed={assignee === name}
+          selected={assignee === name}
+          indicator="check"
+          startIcon={<Avatar name={name} size="md" imageProps={{ alt: '' }} />}
+          onClick={() => setAssignee(name)}
+        >
+          {name}
+        </ListItem>
+      ))}
+    </div>
+  );
+};
+```
+
+### Selección múltiple
+
+Compón [Tag](/es/ui/primitives/data-display/tag) como contenido de la fila para valores etiquetados, o coloca [ColorSample](/es/ui/primitives/data-display/color-sample) en `startIcon` para una elección de color. Una fila también puede contener texto sin formato o un avatar.
+
+<StoryEmbed storyId="ui-navigation-listitem-picker--multiple-selection" title="Filas de selección múltiple" height={170} />
+
+```tsx
+import { useState } from 'react';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const TeammateButtons = () => {
+  const [teammates, setTeammates] = useState<string[]>([]);
+
+  const toggleTeammate = (name: string) => {
+    setTeammates((current) =>
+      current.includes(name)
+        ? current.filter((teammate) => teammate !== name)
+        : [...current, name],
+    );
+  };
+
+  return (
+    <div role="group" aria-label="Teammates">
+      {['Alex Morgan', 'Sam Taylor'].map((name) => (
+        <ListItem
+          key={name}
+          render={<button type="button" />}
+          aria-pressed={teammates.includes(name)}
+          selected={teammates.includes(name)}
+          indicator="checkbox"
+          onClick={() => toggleTeammate(name)}
+        >
+          <Tag color="blue">{name}</Tag>
+        </ListItem>
+      ))}
+    </div>
+  );
+};
+```
+
+El indicador de casilla de verificación no es un control de formulario y no envía un valor. Use [Checkbox](/es/ui/primitives/input/checkbox) cuando necesite participación en formularios. Establece `disabled` nativo en el botón renderizado para impedir la activación y eliminarlo del orden de tabulación. También pasa `ListItem.disabled` para su apariencia visual.
+
+## Ranuras
+
+Usa `startIcon` y `endIcon` para iconos o contenido controlado por quien realiza la llamada, `description` para texto de apoyo, `actions` para contenido al final y `hasSubmenu` para un indicador de submenú. `descriptionPlacement` acepta `inline`, `end` o `below`. `color="danger"` aplica estilo a una acción destructiva. Evita anidar controles interactivos dentro de una fila representada como botón.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type ContactRowProps = { onOpen: () => void };
+
+export const ContactRow = ({ onOpen }: ContactRowProps) => (
+  <ListItem
+    description="Account owner"
+    actions={
+      <Button
+        type="button"
+        aria-label="Open Alex Morgan's profile"
+        variant="ghost"
+        size="sm"
+        onClick={onOpen}
+      >
+        Open
+      </Button>
+    }
+  >
+    Alex Morgan
+  </ListItem>
+);
+```
+
+## Etiquetas
+
+Usa `shortcutJoinLabel` para personalizar el texto entre pasos secuenciales de atajos de teclado. El valor predeterminado es `then`; una cadena vacía elimina el texto de unión. La misma prop está disponible en las partes de elementos de `Dropdown`.
+
+## "Props"
+
+La referencia se genera a partir de los tipos de componentes públicos. Se aceptan atributos y controladores nativos de `div`, incluidos nombres accesibles y eventos nativos. Coloca los atributos específicos de botón o ancla en el elemento proporcionado mediante `render`. Tanto `ref` como la referencia del elemento renderizado apuntan a la raíz real del DOM.
+
+<ListItemReference />
+
+Pasa `shortcut={['Mod', 'Enter']}` para teclas simultáneas o `shortcut={[['G'], ['P']]}` para pulsaciones sucesivas. Consulta [Shortcut](/es/ui/primitives/typography/shortcut) para ver combinaciones anidadas y el formateador de cadenas compartido.
+
+<PageBanner illustration="section-apps-data" />

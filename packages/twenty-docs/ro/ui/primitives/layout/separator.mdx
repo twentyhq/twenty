@@ -1,0 +1,57 @@
+---
+title: Separator
+description: Separați conținutul adiacent cu un separator orizontal sau vertical.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SeparatorReference from '/snippets/ui/generated/layout/separator.mdx';
+
+## Prezentare generală
+
+`Separator` redă un `div` cu `role="separator"` și o orientare accesibilă. Utilizează contractul de separator Base UI, inclusiv proprietăți native, referințe și compunerea `render`. Importă `SeparatorProps` din același punct de intrare.
+
+<StoryEmbed storyId="ui-layout-separator--display" title="Separator orizontal" height={130} />
+
+## Utilizare
+
+```tsx
+import { Separator } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSources = () => (
+  <Text style={{ display: 'grid', gap: 'var(--t-spacing-3)' }}>
+    <Text>Import records from a CSV file.</Text>
+    <Separator />
+    <Text>Connect an external data source.</Text>
+  </Text>
+);
+```
+
+## Orientare și aspect
+
+`orientation` are valoarea implicită `horizontal`. Marginile au valoarea implicită zero în ambele orientări. Separatoarele orizontale umplu lățimea disponibilă. Separatoarele verticale se întind de-a lungul containerului lor flex. Oferă unui separator vertical independent o înălțime. Controlează spațierea prin aspectul părinte sau utilizează `style` nativ sau `className` pentru margini explicite și culoarea liniei. Base UI acceptă, de asemenea, funcții ale orientării pentru aceste proprietăți.
+
+<StoryEmbed storyId="ui-layout-separator--vertical-documentation" title="Separator vertical" height={150} />
+
+## Separatoare cu etichetă
+
+Utilizați [LabeledSeparator](/ro/ui/components/layout/labeled-separator) pentru o etichetă text între liniile de separare sau la sfârșitul unei linii de separare. Acesta oferă aspectul și un singur nume accesibil pentru separator.
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+
+export const SignInDivider = () => <LabeledSeparator>Or</LabeledSeparator>;
+```
+
+## Migrare
+
+Înlocuiește utilitarul orizontal anterior cu `Separator`. Elimină `noMargin`, deoarece marginile au acum valoarea implicită zero. Pentru a păstra spațierea implicită anterioară, adaugă `style={{ marginBlock: 'var(--t-spacing-3)' }}`. Înlocuiește `color` cu `style={{ backgroundColor: color }}`. Utilizați `LabeledSeparator` pentru separatoare etichetate, transmiteți eticheta ca children și redenumiți `textPosition` în `labelPosition`. Înlocuiește separatoarele utilizate doar pentru spațiere invizibilă cu spațiere de aspect.
+
+## Proprietăți
+
+<SeparatorReference />
+
+<PageBanner illustration="layout" />
