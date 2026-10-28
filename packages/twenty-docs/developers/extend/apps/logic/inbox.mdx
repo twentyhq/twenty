@@ -89,7 +89,7 @@ await sendInboxMessage({
 ```
 
 - `formatInboxMention({ workspaceMemberId, label })` writes a mention of a workspace member, and `formatInboxRecordReference({ objectNameSingular, recordId, label })` a chip that links to any record.
-- The inbox shows `label` as written, so pass the name members know. Both helpers throw on an empty label rather than write a chip with no text.
+- The inbox shows `label` as written, so pass the name members know. Both helpers throw on an empty label, and on one with brackets or line breaks, rather than write a chip the inbox cannot render.
 - A mention only renders. It does not add the member to the conversation or notify them, so list everyone who should receive the message in `workspaceMemberIds`.
 - `INBOX_ASSISTANT_MENTION` is the text the composer writes when a member mentions the assistant (`@Ada`), so your messages name it the same way.
 - `extractMentionedWorkspaceMemberIds(text)` reads mentions back: it returns the ids of the workspace members mentioned in a text, each once and in order of first mention, and skips other references.

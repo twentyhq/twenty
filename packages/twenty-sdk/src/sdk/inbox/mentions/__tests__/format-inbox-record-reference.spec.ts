@@ -24,4 +24,17 @@ describe('formatInboxRecordReference', () => {
       }),
     ).toThrow(/needs a label/);
   });
+
+  it.each(['Acme [EMEA]', 'Acme\nEMEA'])(
+    'refuses the label %j, which the inbox cannot render',
+    (label) => {
+      expect(() =>
+        formatInboxRecordReference({
+          objectNameSingular: 'company',
+          recordId: COMPANY_ID,
+          label,
+        }),
+      ).toThrow(/brackets or line breaks/);
+    },
+  );
 });

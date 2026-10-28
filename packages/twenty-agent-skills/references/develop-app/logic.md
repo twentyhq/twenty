@@ -91,7 +91,7 @@ When adding AI behavior:
 - A conversation its owner deleted is gone for every member and is not recreated.
 - The app's default role needs `SystemPermissionFlag.AI`, and every member needs the AI permission.
 - The message is always from the app. In a logic function the call uses the app's access and ignores `runAs`; in a front component it carries the component's token, so the member looking at the page needs the AI permission too, and an expired token is refreshed once before the call is retried.
-- Write mentions with `formatInboxMention({ workspaceMemberId, label })` and record chips with `formatInboxRecordReference({ objectNameSingular, recordId, label })`, never by hand. The inbox shows the label as written, so both throw on an empty one. A mention only renders: list every recipient in `workspaceMemberIds`.
+- Write mentions with `formatInboxMention({ workspaceMemberId, label })` and record chips with `formatInboxRecordReference({ objectNameSingular, recordId, label })`, never by hand. The inbox shows the label as written, so both throw on an empty label or one with brackets or line breaks. A mention only renders: list every recipient in `workspaceMemberIds`.
 - `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant, and `extractMentionedWorkspaceMemberIds(text)` returns the members a text mentions, each once.
 
 ## Connection Providers
