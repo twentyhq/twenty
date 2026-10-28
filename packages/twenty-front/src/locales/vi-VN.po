@@ -630,7 +630,7 @@ msgstr "{cardCount, plural, other {Phê duyệt # hành động?}}"
 #. js-lingui-id: AnO6CC
 #: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr ""
+msgstr "{channelStatusLabel} · {assignmentLabel}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -1566,11 +1566,6 @@ msgstr "Cần có phương thức thanh toán để duy trì không gian làm vi
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "Một khoản thanh toán cho gói đăng ký của bạn đã thất bại. Các tính năng cao cấp của bạn vẫn hoạt động trong khi chúng tôi thử lại."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "Một bản ghi có thể được chia sẻ với bất kỳ ai, kể cả những người có vai trò không thể truy cập đối tượng này. Họ chỉ nhận được bản ghi đó để xem hoặc chỉnh sửa."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1677,11 +1672,6 @@ msgstr "Thông tin về ứng dụng của bạn"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Các DPA đã được chấp nhận và ký cho không gian làm việc này, kèm phiên bản và ngày của mẫu."
-
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "Quyền truy cập cũng được kế thừa từ các bản ghi liên quan."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2110,7 +2100,7 @@ msgstr "Thêm CC"
 #. js-lingui-id: PKjhUq
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "Add channel"
-msgstr ""
+msgstr "Thêm kênh"
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -3568,11 +3558,6 @@ msgstr "Mọi thiết bị"
 #: src/modules/views/components/AnyFieldSearchChip.tsx
 msgid "Any field"
 msgstr "Bất kỳ trường nào"
-
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "Bất kỳ ai trong không gian làm việc"
 
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5295,11 +5280,6 @@ msgstr "Chiến dịch được lên lịch vào {sendTime}"
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Đã hủy lịch chiến dịch và đưa lại vào bản nháp của bạn"
 
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "Chỉ có thể xem: vai trò của họ không thể chỉnh sửa {objectLabelPlural}"
-
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
@@ -6935,19 +6915,22 @@ msgstr "Kết nối với không gian làm việc này"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "Kết nối qua IMAP/SMTP"
 
+#. js-lingui-id: vPwoq6
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
+#: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
+msgid "Connect with {appName}"
+msgstr "Kết nối với {appName}"
+
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "Kết nối với Google"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Kết nối với Microsoft"
 
@@ -9355,7 +9338,7 @@ msgstr "Đã xóa {objectLabel}"
 #. js-lingui-id: 6T/COx
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
-msgstr ""
+msgstr "Đã xóa {successfulCount} trong số {totalCount} kết nối. Không thể xóa: {failedLabels}."
 
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
@@ -9645,7 +9628,7 @@ msgstr "Đã ngắt kết nối"
 #. js-lingui-id: +etBOJ
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
-msgstr ""
+msgstr "Đã ngắt kết nối {successfulCount} trong số {totalCount} kết nối. Không thể ngắt kết nối: {failedLabels}."
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -12225,11 +12208,6 @@ msgstr "Không thể đăng xuất thiết bị này"
 msgid "Failed to merge records"
 msgstr "Không thể hợp nhất bản ghi"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "Không thể hợp nhất bản ghi. Vui lòng thử lại."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"
@@ -12827,7 +12805,7 @@ msgstr "Lọc theo ID bản ghi"
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 msgid "Filter channel chats"
-msgstr ""
+msgstr "Lọc các cuộc trò chuyện trong kênh"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -17186,6 +17164,16 @@ msgstr "Ghép hồ sơ"
 msgid "Merge review tabs"
 msgstr "Các tab xem xét ghép"
 
+#. js-lingui-id: 1uAvIV
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merged {objectLabel}"
+msgstr ""
+
+#. js-lingui-id: v4CzQ/
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merging {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
@@ -18330,11 +18318,6 @@ msgstr "Không tìm thấy {objectLabelSingular}"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "No access"
 msgstr "Không có quyền truy cập"
-
-#. js-lingui-id: ETfwRt
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
-msgid "No accounts yet"
-msgstr "Chưa có tài khoản nào"
 
 #. js-lingui-id: IeiB4r
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
@@ -19925,11 +19908,6 @@ msgstr "chỉ vào {firstDay} và {secondDay}"
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {0}"
 msgstr "chỉ vào {remainingDays} và {0}"
-
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "Chỉ những người đã có thể truy cập các bản ghi này"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -22125,7 +22103,6 @@ msgstr "Lựa chọn bản ghi"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "Chia sẻ bản ghi"
 
@@ -23182,11 +23159,6 @@ msgstr "vai trò"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Role"
 msgstr "Vai trò"
-
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "Quyền của vai trò và trường vẫn được áp dụng."
 
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
@@ -25070,11 +25042,6 @@ msgstr "Email hộp thư dùng chung"
 msgid "Shared record"
 msgstr "Bản ghi được chia sẻ"
 
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "Việc chia sẻ không bao giờ vượt quá các vai trò và bộ lọc hàng của chúng. Dùng tính năng này cho các đối tượng nhạy cảm."
-
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Sharing record"
@@ -26520,7 +26487,7 @@ msgstr "Đồng bộ nhãn và tên API của đối tượng"
 #. js-lingui-id: 4XvJjz
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
-msgstr ""
+msgstr "Việc đồng bộ hóa sẽ dừng và thông tin xác thực sẽ bị xóa đối với các mục sau. Email và sự kiện của bạn sẽ được giữ lại và vẫn khả dụng sau khi bạn kết nối lại."
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -27523,7 +27490,7 @@ msgstr "Thao tác này sẽ xóa vĩnh viễn {accountHandle} cùng tất cả e
 #. js-lingui-id: vrBe2V
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
-msgstr ""
+msgstr "Thao tác này sẽ xóa vĩnh viễn các mục sau đây cùng tất cả email và sự kiện đã đồng bộ của chúng. Không thể hoàn tác thao tác này."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29300,6 +29267,11 @@ msgstr "Nâng cấp lên Tổ chức"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "Nâng cấp lên Organization để cấu hình SSO."
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr "Nâng cấp lên Tổ chức để tạo vai trò tùy chỉnh"
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
@@ -30337,6 +30309,7 @@ msgid "Watch members demo"
 msgstr "Xem bản demo thành viên"
 
 #. js-lingui-id: Rxoy7e
+#: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Hiện tại chúng tôi đang gặp sự cố với ứng dụng này; trong khi chúng tôi khắc phục, hoạt động của ứng dụng có thể bị ảnh hưởng."
@@ -30689,11 +30662,6 @@ msgstr "Mô hình này có hỗ trợ lập luận theo chuỗi hay không"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "Bước này ghi vào cuộc trò chuyện nào với người nhận"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "Bản ghi {objectLabel} có thể được chia sẻ với những ai. Vai trò vẫn quyết định những gì mọi người thấy theo mặc định."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30766,11 +30734,6 @@ msgstr "Không có mã quốc gia"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "không cần thẻ tín dụng"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "Không thể xem: vai trò của họ không thể truy cập {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)

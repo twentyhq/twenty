@@ -630,7 +630,7 @@ msgstr "{cardCount, plural, one {Aprovar # acció?} other {Aprovar # accions?}}"
 #. js-lingui-id: AnO6CC
 #: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr ""
+msgstr "{channelStatusLabel} · {assignmentLabel}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -1566,11 +1566,6 @@ msgstr "Cal un mètode de pagament per mantenir actiu el vostre espai de treball
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "S'ha produït un error en un pagament de la vostra subscripció. Les vostres funcions premium es mantenen actives mentre ho tornem a intentar."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "Un registre es pot compartir amb qualsevol persona, fins i tot amb persones el rol de les quals no pot accedir a aquest objecte. Només reben aquest registre, per visualitzar-lo o editar-lo."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1677,11 +1672,6 @@ msgstr "Quant a la teva aplicació"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Acords de tractament de dades acceptats i signats per a aquest espai de treball, amb la seva versió de plantilla i data."
-
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "L'accés també s'hereta dels registres relacionats."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2110,7 +2100,7 @@ msgstr "Afegeix CC"
 #. js-lingui-id: PKjhUq
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "Add channel"
-msgstr ""
+msgstr "Afegeix un canal"
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -3568,11 +3558,6 @@ msgstr "Qualsevol dispositiu"
 #: src/modules/views/components/AnyFieldSearchChip.tsx
 msgid "Any field"
 msgstr "Qualsevol camp"
-
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "Qualsevol persona de l'espai de treball"
 
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5295,11 +5280,6 @@ msgstr "Campanya programada per a {sendTime}"
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "S'ha desprogramat la campanya i ha tornat als vostres esborranys"
 
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "Només pot visualitzar: el seu rol no pot editar {objectLabelPlural}"
-
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
@@ -6935,19 +6915,22 @@ msgstr "Connecta't a aquest espai de treball"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "Connecta amb IMAP/SMTP"
 
+#. js-lingui-id: vPwoq6
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
+#: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
+msgid "Connect with {appName}"
+msgstr "Connecta amb {appName}"
+
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "Connecta amb Google"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Connecta amb Microsoft"
 
@@ -9355,7 +9338,7 @@ msgstr "{objectLabel} eliminats"
 #. js-lingui-id: 6T/COx
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
-msgstr ""
+msgstr "S'han suprimit {successfulCount} de {totalCount} connexions. No s'han pogut suprimir: {failedLabels}."
 
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
@@ -9645,7 +9628,7 @@ msgstr "Desconnectat"
 #. js-lingui-id: +etBOJ
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
-msgstr ""
+msgstr "S'han desconnectat {successfulCount} de {totalCount} connexions. No s'han pogut desconnectar: {failedLabels}."
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -12225,11 +12208,6 @@ msgstr "No s’ha pogut tancar la sessió en aquest dispositiu"
 msgid "Failed to merge records"
 msgstr "No s'han pogut fusionar els registres"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "No s'ha pogut fusionar els registres. Torna-ho a provar."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"
@@ -12827,7 +12805,7 @@ msgstr "Filtra per ID del registre"
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 msgid "Filter channel chats"
-msgstr ""
+msgstr "Filtra els xats del canal"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -17186,6 +17164,16 @@ msgstr "Fusionar registres"
 msgid "Merge review tabs"
 msgstr "Fusiona les pestanyes de revisió"
 
+#. js-lingui-id: 1uAvIV
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merged {objectLabel}"
+msgstr ""
+
+#. js-lingui-id: v4CzQ/
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merging {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
@@ -18330,11 +18318,6 @@ msgstr "No s'ha trobat cap {objectLabelSingular}"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "No access"
 msgstr "Sense accés"
-
-#. js-lingui-id: ETfwRt
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
-msgid "No accounts yet"
-msgstr "Encara no hi ha comptes"
 
 #. js-lingui-id: IeiB4r
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
@@ -19925,11 +19908,6 @@ msgstr "només el {firstDay} i {secondDay}"
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {0}"
 msgstr "només els {remainingDays} i {0}"
-
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "Només les persones que ja poden accedir a aquests registres"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -22125,7 +22103,6 @@ msgstr "Selecció de registre"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "Compartició de registres"
 
@@ -23182,11 +23159,6 @@ msgstr "rol"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Role"
 msgstr "Rol"
-
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "Els permisos de rol i de camp encara s'apliquen."
 
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
@@ -25070,11 +25042,6 @@ msgstr "Correus electrònics de safata d'entrada compartida"
 msgid "Shared record"
 msgstr "Registre compartit"
 
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "La compartició mai no va més enllà dels rols i dels seus filtres de files. Feu-la servir per a objectes sensibles."
-
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Sharing record"
@@ -26520,7 +26487,7 @@ msgstr "Sincronitzar Etiquetes d'Objectes i Noms d'API"
 #. js-lingui-id: 4XvJjz
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
-msgstr ""
+msgstr "La sincronització s'aturarà i les credencials se suprimiran per als elements següents. Els vostres correus electrònics i esdeveniments es conservaran i estaran disponibles després que us torneu a connectar."
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -27523,7 +27490,7 @@ msgstr "Això suprimeix permanentment {accountHandle} i tots els seus correus el
 #. js-lingui-id: vrBe2V
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
-msgstr ""
+msgstr "Això elimina permanentment els elements següents i tots els seus correus electrònics i esdeveniments sincronitzats. Aquesta acció no es pot desfer."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29300,6 +29267,11 @@ msgstr "Actualitza a Organització"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "Actualitzeu a Organization per configurar l'SSO."
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr "Actualitza a Organization per crear rols personalitzats"
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
@@ -30337,6 +30309,7 @@ msgid "Watch members demo"
 msgstr "Mira la demo de membres"
 
 #. js-lingui-id: Rxoy7e
+#: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Actualment tenim problemes amb aquesta aplicació; és possible que el seu comportament es vegi afectat mentre treballem en una solució."
@@ -30689,11 +30662,6 @@ msgstr "Si aquest model admet el raonament en cadena"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "A quina conversa amb el destinatari escriu aquest pas"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "Amb qui es pot compartir un registre de {objectLabel}. Els rols encara decideixen què veu la gent per defecte."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30766,11 +30734,6 @@ msgstr "Sense prefix de trucada"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "sense targeta de crèdit"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "No el veurà: el seu rol no pot accedir a {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)

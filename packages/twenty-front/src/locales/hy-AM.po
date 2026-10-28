@@ -630,7 +630,7 @@ msgstr "{cardCount, plural, one {Հաստատե՞լ # գործողություն
 #. js-lingui-id: AnO6CC
 #: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr ""
+msgstr "{channelStatusLabel} · {assignmentLabel}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -1566,11 +1566,6 @@ msgstr "Աշխատանքային տարածքը ակտիվ պահելու համ
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "Ձեր բաժանորդագրության վճարումը չհաջողվեց։ Ձեր պրեմիում գործառույթները կմնան ակտիվ, մինչ մենք նորից կփորձենք այն։"
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "Գրառումը կարող է համօգտագործվել ցանկացածի հետ, նույնիսկ այն մարդկանց, որոնց դերը հասանելիություն չունի այս օբյեկտին։ Նրանք ստանում են միայն այդ գրառումը՝ դիտելու կամ խմբագրելու համար։"
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1677,11 +1672,6 @@ msgstr "Ձեր հավելվածի մասին"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Այս աշխատանքային տարածքի համար ընդունված և ստորագրված DPA-ներ՝ դրանց ձևանմուշի տարբերակով և ամսաթվով։"
-
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "Հասանելիությունը ժառանգվում է նաև կապված գրառումներից։"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2110,7 +2100,7 @@ msgstr "Ավելացնել CC"
 #. js-lingui-id: PKjhUq
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "Add channel"
-msgstr ""
+msgstr "Ավելացնել ալիք"
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -3568,11 +3558,6 @@ msgstr "Ցանկացած սարք"
 #: src/modules/views/components/AnyFieldSearchChip.tsx
 msgid "Any field"
 msgstr "Ցանկացած դաշտ"
-
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "Աշխատանքային տարածքում ցանկացածը"
 
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5295,11 +5280,6 @@ msgstr "Արշավը պլանավորված է {sendTime}-ի համար"
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Արշավի պլանավորումը չեղարկվել է, և այն վերադարձել է ձեր սևագրեր"
 
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "Կարող է միայն դիտել. նրա դերը չի կարող խմբագրել {objectLabelPlural}-ը"
-
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
@@ -6935,19 +6915,22 @@ msgstr "Միացեք այս աշխատանքային տարածքին"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "Միացնել IMAP/SMTP-ով"
 
+#. js-lingui-id: vPwoq6
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
+#: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
+msgid "Connect with {appName}"
+msgstr "Միացնել {appName}-ը"
+
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "Միացնել Google-ը"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Միացնել Microsoft-ը"
 
@@ -9355,7 +9338,7 @@ msgstr "Ջնջվել է {objectLabel}"
 #. js-lingui-id: 6T/COx
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
-msgstr ""
+msgstr "{totalCount} կապերից ջնջվել է {successfulCount}-ը։ Չհաջողվեց ջնջել՝ {failedLabels}։"
 
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
@@ -9645,7 +9628,7 @@ msgstr "Անջատված"
 #. js-lingui-id: +etBOJ
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
-msgstr ""
+msgstr "{totalCount} կապերից անջատվել է {successfulCount}-ը։ Չհաջողվեց անջատել՝ {failedLabels}։"
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -12225,11 +12208,6 @@ msgstr "Չհաջողվեց այս սարքում ավարտել սեսիան"
 msgid "Failed to merge records"
 msgstr "Չհաջողվեց միավորել գրառումները"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "Չհաջողվեց միավորել գրառումները։ Խնդրում ենք կրկին փորձել։"
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"
@@ -12827,7 +12805,7 @@ msgstr "Ֆիլտրել գրառման ID-ով"
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 msgid "Filter channel chats"
-msgstr ""
+msgstr "Զտել ալիքի զրույցները"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -17186,6 +17164,16 @@ msgstr "Միավորել գրառումները"
 msgid "Merge review tabs"
 msgstr "Միավորման վերանայման ներդիրներ"
 
+#. js-lingui-id: 1uAvIV
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merged {objectLabel}"
+msgstr ""
+
+#. js-lingui-id: v4CzQ/
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merging {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
@@ -18330,11 +18318,6 @@ msgstr "Չի գտնվել ոչ մի {objectLabelSingular}"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "No access"
 msgstr "Մուտք չկա"
-
-#. js-lingui-id: ETfwRt
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
-msgid "No accounts yet"
-msgstr "Դեռ հաշիվներ չկան"
 
 #. js-lingui-id: IeiB4r
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
@@ -19925,11 +19908,6 @@ msgstr "միայն {firstDay} և {secondDay} օրերին"
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {0}"
 msgstr "միայն {remainingDays} և {0} օրերին"
-
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "Միայն մարդիկ, որոնք արդեն կարող են մուտք գործել այս գրառումները"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -22125,7 +22103,6 @@ msgstr "Գրառման ընտրություն"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "Գրառման համօգտագործում"
 
@@ -23182,11 +23159,6 @@ msgstr "դեր"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Role"
 msgstr "Դեր"
-
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "Դերի և դաշտի թույլտվությունները շարունակում են գործել։"
 
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
@@ -25070,11 +25042,6 @@ msgstr "Համօգտագործված մուտքի արկղի էլ. նամակն�
 msgid "Shared record"
 msgstr "Համօգտագործված գրառում"
 
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "Համօգտագործումը երբեք չի գերազանցում դերերն ու դրանց տողային ֆիլտրերը։ Օգտագործեք այն զգայուն օբյեկտների համար։"
-
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Sharing record"
@@ -26520,7 +26487,7 @@ msgstr "Համաժամեցնել օբյեկտների պիտակները և API 
 #. js-lingui-id: 4XvJjz
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
-msgstr ""
+msgstr "Հետևյալի համար համաժամացումը կդադարեցվի, և հավատարմագրերը կհեռացվեն։ Ձեր էլ. նամակներն ու իրադարձությունները կպահպանվեն և հասանելի կլինեն վերամիանալուց հետո։"
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -27523,7 +27490,7 @@ msgstr "Սա ընդմիշտ ջնջում է {accountHandle}-ը և դրա բոլ�
 #. js-lingui-id: vrBe2V
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
-msgstr ""
+msgstr "Սա ընդմիշտ ջնջում է հետևյալները և դրանց բոլոր համաժամացված էլ. նամակներն ու իրադարձությունները։ Այս գործողությունը հնարավոր չէ հետարկել։"
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29300,6 +29267,11 @@ msgstr "Թարմացնել մինչև Organization"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "Թարմացրեք մինչև Organization՝ SSO-ն կարգավորելու համար։"
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr "Անցեք Կազմակերպություն պլանին՝ հատուկ դերեր ստեղծելու համար"
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
@@ -30337,6 +30309,7 @@ msgid "Watch members demo"
 msgstr "Դիտել անդամների ցուցադրությունը"
 
 #. js-lingui-id: Rxoy7e
+#: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Մենք ներկայումս խնդիրներ ենք ունենում այս հավելվածի հետ, և մինչ մենք աշխատում ենք լուծման վրա, դրա աշխատանքը կարող է վատթարանալ։"
@@ -30689,11 +30662,6 @@ msgstr "Արդյոք այս մոդելը աջակցում է մտածողութ�
 msgid "Which conversation with the recipient this step writes to"
 msgstr "Ստացողի հետ որ զրույցում է այս քայլը գրում"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "Ում հետ կարող է համօգտագործվել {objectLabel}-ի գրառումը։ Դերերը շարունակում են որոշել, թե մարդիկ լռելյայն ինչ են տեսնում։"
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30766,11 +30734,6 @@ msgstr "Առանց երկրի կոդի"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "առանց վարկային քարտի"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "Չի տեսնի այն. նրանց դերը չի կարող մուտք գործել {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)

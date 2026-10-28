@@ -5,6 +5,7 @@ import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { getAuthenticationHint } from '@/target/get-authentication-hint';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
+import { extractMetadataValidation } from '@/transport/graphql/extract-metadata-validation';
 import { pickSafeResponseHeaders } from '@/transport/pick-safe-response-headers';
 
 const toPublicGraphqlError = (error: unknown) => {
@@ -43,11 +44,15 @@ export const createGraphqlError = ({
 }) => {
   const publicErrors = errors.map(toPublicGraphqlError);
   const errorCodes = publicErrors.map((error) => error.code);
+  const validation = extractMetadataValidation(errors);
   const details = {
     status,
     headers: pickSafeResponseHeaders(headers),
     errors: publicErrors,
     data: data ?? null,
+    ...(validation.errors.length > 0
+      ? { validationErrors: validation.errors }
+      : {}),
   };
 
   if (status === 401 || errorCodes.includes('UNAUTHENTICATED')) {
@@ -71,7 +76,7 @@ export const createGraphqlError = ({
 
   return new CliError({
     code: 'GRAPHQL_ERROR',
-    message: summarizeMessages(publicErrors),
+    message: validation.summary ?? summarizeMessages(publicErrors),
     details,
   });
 };

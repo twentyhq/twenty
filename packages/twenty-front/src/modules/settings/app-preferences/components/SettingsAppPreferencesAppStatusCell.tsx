@@ -1,78 +1,31 @@
 import { SettingsConnectedAccountSyncStatus } from '@/settings/app-preferences/components/SettingsConnectedAccountSyncStatus';
-import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
-import { type AppPreferencesRow } from '@/settings/app-preferences/types/AppPreferencesRow';
-import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
-import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
-import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
-import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
+import { type AppPreferencesAppStatus } from '@/settings/app-preferences/types/AppPreferencesAppStatus';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/primitives/data-display';
+import { Status, Tag } from 'twenty-ui/primitives/data-display';
 
 type SettingsAppPreferencesAppStatusCellProps = {
-  item: AppPreferencesRow;
+  status?: AppPreferencesAppStatus;
 };
 
 export const SettingsAppPreferencesAppStatusCell = ({
-  item,
+  status,
 }: SettingsAppPreferencesAppStatusCellProps) => {
   const { t } = useLingui();
-  const { groups, loading } = useMyAccountGroups();
 
-  if (loading) {
-    return null;
-  }
-
-  if (item.type === 'builtIn') {
-    const activeAccounts = groups
-      .map((group) => group.builtInAccount)
-      .filter(isDefined)
-      .filter(
-        (account) =>
-          !isDefined(account.archivedAt) &&
-          getBuiltInAccountAppsUsingAccount(account).some(
-            (app) => app.id === item.builtInAccountApp.id,
-          ),
+  switch (status?.type) {
+    case 'accountSyncIssue':
+      return <SettingsConnectedAccountSyncStatus account={status.account} />;
+    case 'reconnectNeeded':
+      return <Status color="red">{t`Reconnect needed`}</Status>;
+    case 'missingConfiguration':
+      return <Status color="red">{t`Missing configuration`}</Status>;
+    case 'notConnected':
+      return (
+        <Tag color="gray" weight="regular" truncate={false}>
+          {t`Not connected`}
+        </Tag>
       );
-    const findAccountWithStatus = (status: SyncStatus) =>
-      activeAccounts.find(
-        (account) =>
-          computeSyncStatus(
-            account.messageChannels[0],
-            account.calendarChannels[0],
-          ) === status,
-      );
-    const brokenAccount =
-      findAccountWithStatus(SyncStatus.FAILED) ??
-      findAccountWithStatus(SyncStatus.PENDING_CONFIGURATION);
-
-    if (!isDefined(brokenAccount)) {
+    default:
       return null;
-    }
-
-    return <SettingsConnectedAccountSyncStatus account={brokenAccount} />;
   }
-
-  const { application, connectionProviders, missingRequiredVariables } =
-    item.applicationWithPreferences;
-  const activeConnections = groups.flatMap((group) =>
-    group.appAccounts.filter(
-      (account) =>
-        account.applicationId === application.id &&
-        !isDefined(account.archivedAt),
-    ),
-  );
-
-  if (activeConnections.some(isApplicationConnectionReconnectNeeded)) {
-    return <Status color="red">{t`Reconnect needed`}</Status>;
-  }
-
-  const isAppInUse =
-    !isNonEmptyArray(connectionProviders) || isNonEmptyArray(activeConnections);
-
-  if (!isAppInUse || !isNonEmptyArray(missingRequiredVariables)) {
-    return null;
-  }
-
-  return <Status color="red">{t`Missing configuration`}</Status>;
 };

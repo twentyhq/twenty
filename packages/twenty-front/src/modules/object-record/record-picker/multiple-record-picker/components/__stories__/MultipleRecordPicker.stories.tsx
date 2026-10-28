@@ -346,7 +346,12 @@ export const InactivePagesSkipSearch: Story = {
               data: {
                 search: {
                   edges: [],
-                  pageInfo: { hasNextPage: false, endCursor: null },
+                  pageInfo: {
+                    hasNextPage: false,
+                    endCursor: null,
+                    __typename: 'SearchResultPageInfo',
+                  },
+                  __typename: 'SearchResultConnection',
                 },
               },
             });

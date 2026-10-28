@@ -18,7 +18,6 @@ export type CreateStandardAgentContext = {
   prompt: string;
   modelId: ModelId;
   responseFormat: AgentResponseFormat;
-  isCustom: boolean;
   isSystem: boolean;
   modelConfiguration: ModelConfiguration | null;
 };
@@ -37,7 +36,6 @@ export const createStandardAgentFlatMetadata = ({
     prompt,
     modelId,
     responseFormat,
-    isCustom,
     isSystem,
     modelConfiguration,
   },
@@ -57,7 +55,6 @@ export const createStandardAgentFlatMetadata = ({
     prompt,
     modelId,
     responseFormat,
-    isCustom,
     isSystem,
     modelConfiguration,
     triggers: [],

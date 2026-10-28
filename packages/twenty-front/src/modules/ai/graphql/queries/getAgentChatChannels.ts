@@ -9,7 +9,7 @@ export const GET_AGENT_CHAT_CHANNELS = gql`
       color
       position
       roleIds
-      isCustom
+      applicationId
       isAccessible
     }
   }

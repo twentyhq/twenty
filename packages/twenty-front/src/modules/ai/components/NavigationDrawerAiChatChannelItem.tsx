@@ -22,7 +22,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type AgentChatChannel } from '~/generated-metadata/graphql';
+import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
 import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
 const StyledIconPickerTrigger = styled.div`

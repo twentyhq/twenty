@@ -72,6 +72,7 @@ Puntos clave:
 * `nextStepIds` conecta el grafo. El desencadenador apunta a los primeros pasos, y cada paso apunta a los pasos que se ejecutan después de él.
 * Un paso lee la salida anterior con `{{trigger.\<path>}}` o `{{\<step universalIdentifier>.\<path>}}`.
 * La compilación valida toda la definición: los tipos de desencadenador o de paso no compatibles, los enlaces de pasos rotos y las referencias a pasos desconocidos hacen que falle.
+* `isSystem` (opcional, el valor predeterminado es `false`) oculta el flujo de trabajo de las listas que excluyen los flujos de trabajo del sistema. Solo cambia lo que se muestra.
 
 ## Referencia a otras entidades
 

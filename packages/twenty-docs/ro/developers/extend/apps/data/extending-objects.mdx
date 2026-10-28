@@ -48,8 +48,6 @@ export default defineField({
 
 * Locația fișierului depinde de dumneavoastră. Convenția este `src/fields/\<name>.field.ts`, dar CLI-ul detectează câmpuri oriunde în `src/`.
 
-* `writability` poate fi de asemenea setată per câmp: `MetadataWritability.APPLICATION` restricționează scrierile la propriile funcții logice ale aplicației tale, `MetadataWritability.SYSTEM` este rezervat pentru date administrate de platformă. Capacitatea de scriere a unui câmp poate fi doar mai strictă decât nivelul obiectului său, iar citirile nu sunt afectate. Vezi [Objects](/ro/developers/extend/apps/data/objects) pentru semantica completă.
-
 * `isSearchable: true` poate fi setat pe `defineField()` cu aceleași constrângeri ca și câmpurile inline (obiect țintă căutabil, tip de câmp compatibil cu textul), astfel încât înregistrările obiectului țintă să poată fi găsite prin valorile câmpului dvs. în căutarea în text complet.
 
 * `isAuditLogged: false` poate fi setat pe `defineField()` pentru a păstra modificările câmpului în afara cronologiei înregistrării țintă, ceea ce este important mai ales pentru câmpurile pe care aplicația dvs. le rescrie conform unui program.

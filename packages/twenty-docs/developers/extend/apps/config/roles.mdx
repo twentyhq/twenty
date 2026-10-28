@@ -217,6 +217,7 @@ Notes:
 - Exactly **one** `defineApplicationRole(...)` is allowed per app — the manifest build will fail if it finds more than one.
 - Use `defineRole()` (not `defineApplicationRole()`) for any **additional** roles your app ships.
 - Setting `defaultRoleUniversalIdentifier` explicitly on `defineApplication()` is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`. The identifier must match a role your app defines, or the build fails.
+- A role that workspace members or API keys can be assigned (`canBeAssignedToUsers` or `canBeAssignedToApiKeys`, both `true` when omitted) is a custom role and requires the **Organization plan or above**: on other plans the install is refused. Keep both `false` on roles that only your app and its agents run as.
 
 ### Agent roles
 

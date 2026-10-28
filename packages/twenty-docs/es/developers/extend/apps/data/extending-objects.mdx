@@ -48,8 +48,6 @@ export default defineField({
 
 * La ubicación del archivo depende de ti. La convención es `src/fields/\<name>.field.ts`, pero la CLI detecta campos en cualquier lugar de `src/`.
 
-* La `writability` también se puede configurar por campo: `MetadataWritability.APPLICATION` restringe las escrituras a las funciones lógicas de tu propia app, `MetadataWritability.SYSTEM` está reservado para los datos gestionados por la plataforma. La capacidad de escritura de un campo solo puede ser más estricta que el nivel de su objeto, y las lecturas no se ven afectadas. Consulta [Objetos](/es/developers/extend/apps/data/objects) para ver la semántica completa.
-
 * Se puede establecer `isSearchable: true` en `defineField()` con las mismas restricciones que los campos en línea (objeto de destino en el que se pueden realizar búsquedas, tipo de campo compatible con texto), de modo que los registros del objeto de destino se puedan encontrar mediante los valores de su campo en la búsqueda de texto completo.
 
 * Se puede establecer `isAuditLogged: false` en `defineField()` para mantener los cambios del campo fuera de la cronología del registro de destino, lo cual es especialmente importante para los campos que tu aplicación reescribe según una programación.

@@ -9,6 +9,7 @@ import {
 
 import { ADD_IS_SYSTEM_TO_SKILL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-40/add-is-system-to-skill-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('skill')
@@ -40,8 +41,8 @@ export class SkillEntity
   @Column({ nullable: false, type: 'text' })
   content: string;
 
-  @Column({ default: false })
-  isCustom: boolean;
+  @Column({ type: 'boolean', default: false })
+  isCustom: WasRemovedInUpgrade<boolean>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_IS_SYSTEM_TO_SKILL_UPGRADE_COMMAND_NAME,
