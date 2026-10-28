@@ -10,7 +10,7 @@ import {
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { fromWorkflowStepManifestToActionOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util';
-import { type WorkflowManifestConnectedAccountReference } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { type ConnectedAccountForWorkflowStepResolution } from 'src/engine/metadata-modules/connected-account/types/connected-account-for-workflow-step-resolution.type';
 
 const STEP_ID = '11111111-1111-4111-8111-111111111111';
 const REFERENCE_ID = '22222222-2222-4222-8222-222222222222';
@@ -386,8 +386,8 @@ describe('application workflow actions', () => {
     const GOOGLE_CALENDAR_EVENTS_SCOPE =
       'https://www.googleapis.com/auth/calendar.events';
     const connectedAccount = (
-      overrides: Partial<WorkflowManifestConnectedAccountReference>,
-    ): WorkflowManifestConnectedAccountReference => ({
+      overrides: Partial<ConnectedAccountForWorkflowStepResolution>,
+    ): ConnectedAccountForWorkflowStepResolution => ({
       id: 'account-id',
       handle: 'sales@example.com',
       provider: ConnectedAccountProvider.GOOGLE,
@@ -405,7 +405,7 @@ describe('application workflow actions', () => {
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
         connectionParameters: {
           IMAP: { host: 'imap.example.com', port: 993 },
-        } as WorkflowManifestConnectedAccountReference['connectionParameters'],
+        } as ConnectedAccountForWorkflowStepResolution['connectionParameters'],
         scopes: null,
         calendarChannels: [],
       }),
@@ -418,7 +418,7 @@ describe('application workflow actions', () => {
     }: {
       type: 'SEND_EMAIL' | 'DRAFT_EMAIL' | 'CREATE_CALENDAR_EVENT';
       handle: string;
-      accounts?: WorkflowManifestConnectedAccountReference[];
+      accounts?: ConnectedAccountForWorkflowStepResolution[];
     }) => {
       const { connectedAccountId: _connectedAccountId, ...input } =
         inputs[type];
