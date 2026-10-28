@@ -229,6 +229,7 @@ export class DevSeederMetadataService {
     objectMetadataSeed: ObjectMetadataSeed;
   }): Promise<void> {
     await this.objectMetadataService.createOneObject({
+      shouldDeferActions: false,
       createObjectInput: objectMetadataSeed,
       workspaceId,
     });
@@ -259,6 +260,7 @@ export class DevSeederMetadataService {
     }));
 
     await this.fieldMetadataService.createManyFields({
+      shouldDeferActions: false,
       createFieldInputs,
       workspaceId,
     });
@@ -355,6 +357,7 @@ export class DevSeederMetadataService {
     );
 
     await this.fieldMetadataService.updateOneField({
+      shouldDeferActions: false,
       workspaceId,
       updateFieldInput: {
         id: fieldId,
@@ -421,6 +424,7 @@ export class DevSeederMetadataService {
     }));
 
     await this.fieldMetadataService.createManyFields({
+      shouldDeferActions: false,
       createFieldInputs,
       workspaceId,
     });
@@ -446,6 +450,7 @@ export class DevSeederMetadataService {
     }
 
     await this.fieldMetadataService.createManyFields({
+      shouldDeferActions: false,
       createFieldInputs: [
         {
           type: FieldMetadataType.RELATION,

@@ -58,7 +58,7 @@
     "twenty-ui": "workspace:*"
   },
   "engines": {
-    "node": "^24.5.0",
+    "node": "^26.5.1",
     "yarn": "^4.0.2"
   }
 }

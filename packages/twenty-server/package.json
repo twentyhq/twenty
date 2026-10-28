@@ -102,8 +102,8 @@
     "express-session": "^1.18.2",
     "file-type": "^21.3.2",
     "fuse.js": "^7.1.0",
-    "gaxios": "7.1.5",
-    "googleapis": "173.0.0",
+    "gaxios": "8.3.2",
+    "googleapis": "188.0.0",
     "graphql": "16.14.2",
     "graphql-fields": "2.0.3",
     "graphql-redis-subscriptions": "2.7.0",
@@ -234,7 +234,7 @@
     "twenty-shared": "workspace:*"
   },
   "engines": {
-    "node": "^24.5.0",
+    "node": "^26.5.1",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   }

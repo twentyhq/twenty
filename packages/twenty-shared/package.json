@@ -10,7 +10,7 @@
     "build": "npx vite build"
   },
   "engines": {
-    "node": "^24.5.0",
+    "node": "^26.5.1",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   },
