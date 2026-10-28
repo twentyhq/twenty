@@ -49,11 +49,29 @@ type DepsLayerDependencies = {
   yarnLock: string;
 };
 
+type DependencyChecksums = {
+  packageJsonChecksum: string;
+  yarnLockChecksum: string;
+};
+
 const LAYER_LOCK_OPTIONS = {
   ttl: BUILD_LOCK_TTL_MS,
   ms: BUILD_LOCK_RETRY_MS,
   maxRetries: BUILD_LOCK_MAX_RETRIES,
 };
+
+// Only for the current release (2.53): the files 2.52 seeded Workspace apps
+// with, at the upgrade or at workspace creation, also share a layer
+const DEPENDENCY_CHECKSUMS_SEEDED_IN_2_52: DependencyChecksums[] = [
+  {
+    packageJsonChecksum: '7d84e53bcbc345d9652b048470f59695',
+    yarnLockChecksum: '6a09947c24d8cba9011da22936fe3e87',
+  },
+  {
+    packageJsonChecksum: '444fb064df1febd5f30c8bcadf58e536',
+    yarnLockChecksum: '225201a4fd2b60ab92c865fce0fd18d6',
+  },
+];
 
 export class LambdaLayerManagerService {
   private readonly logger = new Logger(LambdaLayerManagerService.name);
@@ -83,13 +101,13 @@ export class LambdaLayerManagerService {
       await this.getWorkspaceCustomDepsLayerName(flatApplication);
 
     if (isDefined(workspaceCustomDepsLayerName)) {
-      const defaultDependencies =
-        await this.findWorkspaceCustomDefaultDependencies(flatApplication);
+      const sharedDependencies =
+        await this.findWorkspaceCustomSharedDependencies(flatApplication);
 
-      if (isDefined(defaultDependencies)) {
+      if (isDefined(sharedDependencies)) {
         return this.buildDepsLayer({
           layerName: workspaceCustomDepsLayerName,
-          dependencies: defaultDependencies,
+          dependencies: sharedDependencies,
         });
       }
     }
@@ -315,22 +333,32 @@ export class LambdaLayerManagerService {
     });
   }
 
-  private async findWorkspaceCustomDefaultDependencies(
+  private async findWorkspaceCustomSharedDependencies(
     flatApplication: FlatApplication,
   ): Promise<DepsLayerDependencies | undefined> {
-    const { yarnLockChecksum, packageJsonContent, yarnLockContent } =
-      await getDefaultApplicationPackageFields({
-        directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
-      });
+    const isOnDependencyChecksums = ({
+      packageJsonChecksum,
+      yarnLockChecksum,
+    }: DependencyChecksums) =>
+      flatApplication.packageJsonChecksum === packageJsonChecksum &&
+      flatApplication.yarnLockChecksum === yarnLockChecksum;
 
-    if (yarnLockChecksum !== flatApplication.yarnLockChecksum) {
-      return undefined;
+    const defaultDependencies = await getDefaultApplicationPackageFields({
+      directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
+    });
+
+    if (isOnDependencyChecksums(defaultDependencies)) {
+      return {
+        packageJson: sanitizeApplicationPackageJson(
+          defaultDependencies.packageJsonContent,
+        ),
+        yarnLock: defaultDependencies.yarnLockContent,
+      };
     }
 
-    return {
-      packageJson: sanitizeApplicationPackageJson(packageJsonContent),
-      yarnLock: yarnLockContent,
-    };
+    return DEPENDENCY_CHECKSUMS_SEEDED_IN_2_52.some(isOnDependencyChecksums)
+      ? this.getVerifiedDependencies(flatApplication)
+      : undefined;
   }
 
   private async buildDepsLayer({
