@@ -89,11 +89,11 @@ export const NavigationMenuItemAddSectionButton = ({
               }),
             },
             {
-              id: 'blank',
+              id: 'custom',
               options: [
                 {
-                  id: 'blank',
-                  label: t`Blank section`,
+                  id: 'custom',
+                  label: t`Custom section`,
                   Icon: IconPlus,
                   onClick: () => createSection(parentId),
                 },
