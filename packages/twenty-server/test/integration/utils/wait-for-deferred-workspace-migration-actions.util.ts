@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 const POLL_INTERVAL_MS = 25;
 const TIMEOUT_MS = 30_000;
 
@@ -26,11 +28,11 @@ export const waitForDeferredWorkspaceMigrationActions =
         return;
       }
 
-      const failedAction = inFlightActions.find(
-        (action) => action.lastError !== null,
+      const failedAction = inFlightActions.find((action) =>
+        isDefined(action.lastError),
       );
 
-      if (failedAction !== undefined) {
+      if (isDefined(failedAction)) {
         throw new Error(
           `Deferred action ${failedAction.name} ${failedAction.id} failed after ${failedAction.attempts} attempt(s): ${failedAction.lastError}`,
         );
