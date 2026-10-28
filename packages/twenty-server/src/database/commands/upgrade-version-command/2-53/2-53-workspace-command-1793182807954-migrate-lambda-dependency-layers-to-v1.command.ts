@@ -67,10 +67,11 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
       }
 
       const dependencyChecksums = await this.applicationDependencyFilesService
-        .computeStoredDependencyChecksums({
+        .getDependencyContents({
           workspaceId,
           applicationUniversalIdentifier: flatApplication.universalIdentifier,
         })
+        .then(({ storedFilesChecksums }) => storedFilesChecksums)
         .catch((error: unknown) => {
           this.logger.warn(
             `Skipping dependency checksum backfill of application ${flatApplication.id} in workspace ${workspaceId}: ${getErrorMessage(error)}`,

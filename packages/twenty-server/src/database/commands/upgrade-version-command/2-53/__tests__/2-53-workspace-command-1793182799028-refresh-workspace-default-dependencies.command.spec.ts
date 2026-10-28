@@ -57,9 +57,9 @@ const runCommand = async ({
       uploadDefaultPackageFilesAndSetFileIds,
     } as unknown as ApplicationService,
     {
-      computeStoredDependencyChecksums: jest
+      getDependencyContents: jest
         .fn()
-        .mockResolvedValue(storedChecksums),
+        .mockResolvedValue({ storedFilesChecksums: storedChecksums }),
     } as unknown as ApplicationDependencyFilesService,
   );
 

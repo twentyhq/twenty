@@ -16,15 +16,13 @@ type ApplicationIdentifier = {
   applicationUniversalIdentifier: string;
 };
 
-type StoredDependencyChecksums = {
-  packageJsonChecksum: string;
-  yarnLockChecksum: string | null;
-};
-
 type StoredDependencyFiles = {
   packageJsonContent: string;
   yarnLockContent: string | null;
-  storedFilesChecksums: StoredDependencyChecksums;
+  storedFilesChecksums: {
+    packageJsonChecksum: string;
+    yarnLockChecksum: string | null;
+  };
 };
 
 @Injectable()
@@ -57,17 +55,7 @@ export class ApplicationDependencyFilesService {
     return { packageJsonContent, yarnLockContent, storedFilesChecksums };
   }
 
-  async computeStoredDependencyChecksums(
-    applicationIdentifier: ApplicationIdentifier,
-  ): Promise<StoredDependencyChecksums> {
-    const { storedFilesChecksums } = await this.getDependencyContents(
-      applicationIdentifier,
-    );
-
-    return storedFilesChecksums;
-  }
-
-  private async getDependencyContents({
+  async getDependencyContents({
     workspaceId,
     applicationUniversalIdentifier,
   }: ApplicationIdentifier): Promise<StoredDependencyFiles> {

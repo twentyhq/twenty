@@ -44,10 +44,11 @@ export class RefreshWorkspaceDefaultDependenciesCommand extends ProvisionedWorks
       );
 
     const storedChecksums = await this.applicationDependencyFilesService
-      .computeStoredDependencyChecksums({
+      .getDependencyContents({
         workspaceId,
         applicationUniversalIdentifier: application.universalIdentifier,
       })
+      .then(({ storedFilesChecksums }) => storedFilesChecksums)
       .catch((error: unknown) => {
         this.logger.warn(
           `Skipping the dependencies of the Workspace app of workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
