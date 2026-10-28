@@ -3781,6 +3781,7 @@ msgstr "커스텀 객체에 레이블 식별자 필드가 없습니다."
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "사용자 지정 역할은 Organization 요금제에 포함되어 있습니다."
 
