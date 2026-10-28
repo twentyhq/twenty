@@ -5,18 +5,22 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
 import {
+  BUILDER_LAMBDA_MEMORY_MB,
+  BUILDER_LAMBDA_TIMEOUT_SECONDS,
+  LAMBDA_EPHEMERAL_STORAGE_MB,
+  YARN_INSTALL_LAMBDA_MEMORY_MB,
+  YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
   BUILD_LOCK_RETRY_MS,
   BUILD_LOCK_MAX_RETRIES,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
-import { FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-lambda-limits.constant';
-import { FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-vendor-lambda-limits.constant';
-import { ensureFrontComponentLambdaExists } from 'src/engine/metadata-modules/ai/ai-front-component/utils/ensure-front-component-lambda-exists.util';
 import { WorkspaceFrontComponentDependenciesService } from 'src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
 import { frontComponentVendorResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-vendor-result.schema';
 import { FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-max-build-output-bytes.constant';
 import { FRONT_COMPONENT_WRAPPER_NAME } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-wrapper-name.constant';
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
+import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
+import { convertFrontComponentBuildFailureToException } from 'src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util';
 import { readFrontComponentSharedDependenciesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-shared-dependencies-checksum.util';
 import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
@@ -79,7 +83,11 @@ export class FrontComponentCompilerService extends DriverFactoryBase<
       ...options,
       cacheStorageService: this.cacheStorage,
     });
-    const toolFunctions = new LambdaToolFunctionsService(options, awsClient);
+    const toolFunctions = new LambdaToolFunctionsService(
+      options,
+      awsClient,
+      this.cacheLockService,
+    );
     return {
       type: LogicFunctionDriverType.LAMBDA as const,
       awsClient,
@@ -105,7 +113,19 @@ export class FrontComponentCompilerService extends DriverFactoryBase<
         FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
       );
     }
-    const source = buildFrontComponentEntrySource(input);
+    let source: string;
+
+    try {
+      source = buildFrontComponentEntrySource(input);
+    } catch (error) {
+      if (!(error instanceof FrontComponentBuildException)) {
+        throw error;
+      }
+      throw convertFrontComponentBuildFailureToException({
+        error: error.message,
+        code: error.code,
+      });
+    }
     const driver = this.getCurrentDriver();
     const dependencies =
       await this.workspaceDependencies.readOrThrow(workspaceId);
@@ -125,19 +145,16 @@ export class FrontComponentCompilerService extends DriverFactoryBase<
       contents: [
         workspaceId,
         handlerSource,
-        String(FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS.memoryMb),
-        String(FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS.timeoutSeconds),
-        String(FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS.ephemeralStorageMb),
+        String(BUILDER_LAMBDA_MEMORY_MB),
+        String(BUILDER_LAMBDA_TIMEOUT_SECONDS),
+        String(LAMBDA_EPHEMERAL_STORAGE_MB),
       ],
     });
     if (driver.type === LogicFunctionDriverType.LAMBDA) {
-      await ensureFrontComponentLambdaExists({
-        awsClient: driver.awsClient,
-        toolFunctions: driver.toolFunctions,
-        cacheLockService: this.cacheLockService,
-        options: driver.options,
+      await driver.toolFunctions.ensureToolLambdaExists({
         functionName,
-        limits: FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS,
+        memoryMb: BUILDER_LAMBDA_MEMORY_MB,
+        timeoutSeconds: BUILDER_LAMBDA_TIMEOUT_SECONDS,
         copyFiles: (directory) =>
           fileSystemPromises.copyFile(
             join(FRONT_COMPONENT_BUILD_ASSETS_DIRECTORY, 'index.js'),
@@ -166,13 +183,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<
       }),
     );
     if (!built.success) {
-      throw new FrontComponentException(
-        built.error,
-        built.code === 'BUILD_FAILED'
-          ? FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED
-          : FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-        { userFriendlyMessage: built.userFriendlyMessage },
-      );
+      throw convertFrontComponentBuildFailureToException(built);
     }
     if (
       createHash('sha256').update(built.compiledSource).digest('hex') !==
@@ -228,9 +239,9 @@ export class FrontComponentCompilerService extends DriverFactoryBase<
         workspaceId,
         handlerSource,
         ...yarnEngineFiles,
-        String(FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS.memoryMb),
-        String(FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS.timeoutSeconds),
-        String(FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS.ephemeralStorageMb),
+        String(YARN_INSTALL_LAMBDA_MEMORY_MB),
+        String(YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS),
+        String(LAMBDA_EPHEMERAL_STORAGE_MB),
       ],
     });
     const key = `ai-front-component-vendor:${driver.type === LogicFunctionDriverType.LOCAL ? 'local:' : ''}${functionName}:${dependencies.revision}`;
@@ -242,13 +253,10 @@ export class FrontComponentCompilerService extends DriverFactoryBase<
           !isDefined(cached) &&
           driver.type === LogicFunctionDriverType.LAMBDA
         ) {
-          await ensureFrontComponentLambdaExists({
-            awsClient: driver.awsClient,
-            toolFunctions: driver.toolFunctions,
-            cacheLockService: this.cacheLockService,
-            options: driver.options,
+          await driver.toolFunctions.ensureToolLambdaExists({
             functionName,
-            limits: FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS,
+            memoryMb: YARN_INSTALL_LAMBDA_MEMORY_MB,
+            timeoutSeconds: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
             copyFiles: async (directory) => {
               await Promise.all([
                 fileSystemPromises.copyFile(
@@ -276,13 +284,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<
             })),
         );
         if (!result.success) {
-          throw new FrontComponentException(
-            result.error,
-            result.code === 'BUILD_FAILED'
-              ? FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED
-              : FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-            { userFriendlyMessage: result.userFriendlyMessage },
-          );
+          throw convertFrontComponentBuildFailureToException(result);
         }
         if (
           createHash('sha256').update(result.source).digest('hex') !==
@@ -302,7 +304,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<
       },
       key,
       {
-        ttl: (FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS.timeoutSeconds + 60) * 1000,
+        ttl: (YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS + 60) * 1000,
         ms: BUILD_LOCK_RETRY_MS,
         maxRetries: BUILD_LOCK_MAX_RETRIES,
       },
@@ -319,8 +321,8 @@ export class FrontComponentCompilerService extends DriverFactoryBase<
     const driver = this.getCurrentDriver();
     const timeoutMs =
       (input.action === 'buildDependencies'
-        ? FRONT_COMPONENT_VENDOR_LAMBDA_LIMITS.timeoutSeconds
-        : FRONT_COMPONENT_BUILDER_LAMBDA_LIMITS.timeoutSeconds) * 1000;
+        ? YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS
+        : BUILDER_LAMBDA_TIMEOUT_SECONDS) * 1000;
 
     if (driver.type === LogicFunctionDriverType.LOCAL) {
       return invokeFrontComponentBuilderLocally({
