@@ -187,6 +187,16 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "workflowActionTriggerSettings",
     ],
   },
+  "mcpServer": {
+    "propertiesToCompare": [
+      "name",
+      "label",
+      "url",
+      "connectionProviderUniversalIdentifier",
+      "isActive",
+    ],
+    "propertiesToStringify": [],
+  },
   "messagingProvider": {
     "propertiesToCompare": [
       "name",
@@ -225,6 +235,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isUIEditable",
       "writability",
       "readability",
+      "disabledObjectPermissionActions",
       "readabilityParentFieldUniversalIdentifiers",
       "sharingReach",
       "isUICreatable",
@@ -233,6 +244,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     ],
     "propertiesToStringify": [
       "overrides",
+      "disabledObjectPermissionActions",
       "readabilityParentFieldUniversalIdentifiers",
       "duplicateCriteria",
     ],

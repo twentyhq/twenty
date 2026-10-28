@@ -1,31 +1,54 @@
 ---
 title: Prezentare generală
-description: Construiește, testează și livrează aplicația ta — comenzi CLI, teste de integrare, CI și publicare pe un server sau pe npm.
+description: Construiește, testează și livrează aplicația ta — comenzi CLI, teste de integrare, CI, traduceri și publicare pe un server sau pe npm.
 ---
 
-**Stratul de operațiuni** este tot ceea ce faci *asupra* aplicației tale, mai degrabă decât *cu* ea: invocarea comenzilor CLI, rularea testelor de integrare pe un server Twenty real, configurarea CI și livrarea versiunilor — fie ca un tarball implementat pe un singur server, fie ca un pachet npm listat în marketplace.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
-```text
-   develop ─▶ test ─▶ build ─▶ deploy / publish
-   ───────    ────    ─────    ─────────────────
-   yarn       yarn    yarn     yarn twenty app:publish --private  (tarball → one server)
-   twenty     test    twenty
-   dev                dev:build    yarn twenty app:publish         (npm → marketplace)
-```
+## Ce acoperă nivelul operațiunilor
+
+**Stratul de operațiuni** este tot ceea ce faci *asupra* aplicației tale, mai degrabă decât *cu* ea: invocarea comenzilor CLI, rularea testelor de integrare pe un server Twenty real, configurarea CI, traducerea șirurilor sale și lansarea versiunilor — fie ca un tarball implementat pe un singur server, fie ca un pachet npm listat în marketplace.
+
+| Pas                    | Comandă                        |
+| ---------------------- | ------------------------------ |
+| Dezvoltare             | `twenty app dev`               |
+| Test                   | `yarn test`                    |
+| Build                  | `twenty app build`             |
+| Publicare pe un server | `twenty app publish --private` |
+| Publică pe npm         | `twenty app publish`           |
 
 ## În această secțiune
 
-<CardGroup cols={2}>
-  <Card title="CLI" icon="terminal" href="/ro/developers/extend/apps/operations/cli">
-    Referință pentru `yarn twenty` — exec, logs, uninstall, remotes.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ro/developers/extend/apps/operations/cli" img="/images/user-guide/halftone/card-page-cli.svg">
+    <CardTitle>CLI</CardTitle>
+    Conectați-vă , explorați date, construiți aplicații, executați, loguri și dezinstalați cu CLI-ul `twenty`.
   </Card>
-  <Card title="Sincronizare și recuperare" icon="compass" href="/ro/developers/extend/apps/operations/sync-and-recovery">
-    Ce comandă și când, citirea diferențelor de sincronizare și o schemă de recuperare.
+  <Card href="/ro/developers/extend/apps/operations/sync-and-recovery" img="/images/user-guide/halftone/card-page-sync-recovery.svg">
+    <CardTitle>Sincronizare & Recuperare</CardTitle>
+    Care comandă atunci când citirea sincronizării este diferită și o scară de recuperare.
   </Card>
-  <Card title="Testare" icon="flask" href="/ro/developers/extend/apps/operations/testing">
-    Configurare Vitest, teste de integrare, verificare a tipurilor, flux de lucru CI.
+  <Card href="/ro/developers/extend/apps/operations/testing" img="/images/user-guide/halftone/card-page-testing.svg">
+    <CardTitle>Testarea</CardTitle>
+    Cea mai mare configurare, teste de integrare, verificare tip, flux de lucru CI.
   </Card>
-  <Card title="Publicare" icon="upload" href="/ro/developers/extend/apps/operations/publishing">
-    Construire, implementare a unui tarball, publicare pe npm, instalare.
+  <Card href="/ro/developers/extend/apps/operations/translations" img="/images/user-guide/halftone/card-page-translations.svg">
+    <CardTitle>Traducerile</CardTitle>
+    Marchează șiruri, extrage cataloage, expediază aplicația în mai multe limbi.
+  </Card>
+  <Card href="/ro/developers/extend/apps/operations/publishing" img="/images/user-guide/halftone/card-page-publishing.svg">
+    <CardTitle>Publicare</CardTitle>
+    Construiește, implementează un tarball, publică pe npm, instalează.
+  </Card>
+  <Card href="/ro/developers/extend/apps/operations/marketplace-vetting" img="/images/documentation/banner-icons-v2/permissions.svg">
+    <CardTitle>Verificare Marketplace (WIP)</CardTitle>
+    Propune verificări de securitate, calitate și operaționale pentru versiunile de aplicații terțe.
+  </Card>
+  <Card href="/ro/developers/extend/apps/operations/monitoring" img="/images/user-guide/halftone/card-page-monitoring.svg">
+    <CardTitle>Monitorizare</CardTitle>
+    Erori, limite de rată, credite și performanța funcțiilor în toate instalările.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="section-apps-operations" />

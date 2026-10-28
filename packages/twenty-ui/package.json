@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "2.52.0",
+  "version": "2.53.0",
   "description": "Twenty's shared React UI component library.",
   "license": "MIT",
   "repository": {
@@ -83,7 +83,7 @@
     "clsx": "^2.1.1",
     "react-datepicker": "^9.1.0",
     "type-fest": "^4.10.1",
-    "zod": "^4.1.11"
+    "zod": "^4.6.6"
   },
   "peerDependencies": {
     "@monaco-editor/react": "^4.7.0",

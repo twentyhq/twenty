@@ -1,0 +1,105 @@
+---
+title: Rând de detalii
+description: Aliniați etichetele detaliilor cu valorile pe mai multe rânduri și acțiunile opționale.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DetailsRowReference from '/snippets/ui/generated/components/data-display/details-row.mdx';
+
+## Prezentare generală
+
+`DetailsRow` asociază o etichetă cu o valoare într-o listă de descrieri. Adăugați o pictogramă decorativă, mai multe elemente de valoare sau o acțiune furnizată de aplicația dvs.
+
+<StoryEmbed storyId="ui-data-display-detailsrow--display" title="Exemplu de rând de detalii" height={220} />
+
+## Utilizare
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+import { IconNotes, IconTag, IconUser } from 'twenty-ui/icon';
+import { Chip, Tag } from 'twenty-ui/primitives/data-display';
+import { Card } from 'twenty-ui/primitives/surfaces';
+
+export const CollectionDetails = () => (
+  <Card.Root>
+    <Card.Content>
+      <dl style={{ display: 'grid', gap: 8, margin: 0 }}>
+        <DetailsRow label="Owner" startIcon={<IconUser size={16} />}>
+          <Chip>Jordan Lee</Chip>
+        </DetailsRow>
+        <DetailsRow label="Categories" startIcon={<IconTag size={16} />}>
+          <Tag color="blue">Research</Tag>
+          <Tag color="purple">Design</Tag>
+        </DetailsRow>
+        <DetailsRow label="Description" startIcon={<IconNotes size={16} />}>
+          A shared collection of customer research and design decisions.
+        </DetailsRow>
+      </dl>
+    </Card.Content>
+  </Card.Root>
+);
+```
+
+Plasați fiecare rând direct într-un `dl`. Transmiteți eticheta prin `label` și valoarea acesteia prin `children`. Aplicația gestionează etichetele, localizarea, valorile formatate și substituenții pentru valorile lipsă.
+
+## Aliniere și încadrare pe mai multe rânduri
+
+Etichetele și valorile se încadrează pe mai multe rânduri în loc să fie trunchiate. Mai multe elemente de valoare, precum cipurile sau etichetele, se încadrează pe rânduri suplimentare. Rândurile își aliniază conținutul în partea de sus pe măsură ce acesta crește.
+
+Coloana etichetei are implicit `7rem` și este limitată la 40% din lățimea rândului pentru a lăsa spațiu valorii în containere înguste. Setați aceeași valoare `labelWidth` pentru rândurile surori pentru a le ajusta alinierea. Numerele utilizează pixeli; sunt acceptate și lungimi CSS precum `'8rem'`.
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+
+export const PublicationDetails = () => (
+  <dl style={{ display: 'grid', gap: 8, margin: 0, maxWidth: 360 }}>
+    <DetailsRow label="Primary contributor" labelWidth={128}>
+      Jordan Lee
+    </DetailsRow>
+    <DetailsRow label="Review notes" labelWidth={128}>
+      Include findings from the customer interviews before publication.
+    </DetailsRow>
+  </dl>
+);
+```
+
+## Acțiuni
+
+Utilizați `action` pentru un control lângă valoare. Rândul nu adaugă comportament de editare, clic sau tastatură. Furnizați un control cu un nume accesibil și conectați gestionarul acestuia la comportamentul aplicației.
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconCopy } from 'twenty-ui/icon';
+
+export const ContactDetails = ({ onCopy }: { onCopy: () => void }) => (
+  <dl style={{ margin: 0 }}>
+    <DetailsRow
+      label="Email"
+      action={
+        <LightIconButton aria-label="Copy email address" onClick={onCopy}>
+          <IconCopy size={16} />
+        </LightIconButton>
+      }
+    >
+      jordan@example.com
+    </DetailsRow>
+  </dl>
+);
+```
+
+## Compoziție și accesibilitate
+
+Fiecare rând redă o grupare `div` cu o etichetă `dt` și un `dd` care conține valoarea și acțiunea opțională. Apelantul furnizează elementul `dl` care le încadrează. Furnizați text cu semnificație în etichetă. Elementul opțional `startIcon` este ascuns pentru tehnologia de asistență, iar apelantul îi controlează dimensiunile.
+
+Atributele native, `className`, `style` și `ref` vizează elementul extern `div`. Când utilizați `render` cu un înveliș personalizat, păstrați acel `div` direct în `dl` și transmiteți mai departe toate proprietățile furnizate și referința. Păstrați acțiunile în slotul lor, astfel încât termenul și definiția să rămână copiii direcți ai rândului.
+
+Utilizați [MetricRow](/ro/ui/components/data-display/metric-row) pentru o metrică cu progres opțional. `DetailsRow` furnizează doar structura etichetei, a valorii și a acțiunii.
+
+## Proprietăți
+
+<DetailsRowReference />
+
+<PageBanner illustration="page-cover-input" />

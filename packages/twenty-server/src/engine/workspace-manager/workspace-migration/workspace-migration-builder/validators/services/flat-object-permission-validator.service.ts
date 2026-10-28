@@ -10,6 +10,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateObjectPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 
 @Injectable()
@@ -92,6 +93,13 @@ export class FlatObjectPermissionValidatorService {
         userFriendlyMessage: msg`Object metadata not found`,
       });
     }
+
+    validationResult.errors.push(
+      ...validateObjectPermissionGrantsNoDisabledAction({
+        flatObjectPermission: flatObjectPermissionToValidate,
+        flatObjectMetadata: referencedObjectMetadata,
+      }),
+    );
 
     const duplicateForSameRoleAndObject = Object.values(
       optimisticFlatObjectPermissionMaps.byUniversalIdentifier,
@@ -200,6 +208,17 @@ export class FlatObjectPermissionValidatorService {
         });
       }
     }
+
+    validationResult.errors.push(
+      ...validateObjectPermissionGrantsNoDisabledAction({
+        flatObjectPermission: updatedFlatObjectPermission,
+        flatObjectMetadata: findFlatEntityByUniversalIdentifier({
+          universalIdentifier:
+            updatedFlatObjectPermission.objectMetadataUniversalIdentifier,
+          flatEntityMaps: flatObjectMetadataMaps,
+        }),
+      }),
+    );
 
     const duplicateForSameRoleAndObject = Object.values(
       optimisticFlatObjectPermissionMaps.byUniversalIdentifier,

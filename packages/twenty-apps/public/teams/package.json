@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/teams",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Sync Microsoft Teams meeting transcripts into Twenty Call Recordings, with optional AI summaries.",
   "author": "Twenty",
   "license": "MIT",

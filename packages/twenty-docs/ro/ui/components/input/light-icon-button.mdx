@@ -1,0 +1,84 @@
+---
+title: LightIconButton
+description: Prezentați acțiuni ușoare cu pictograme, cu accent standard sau subtil.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import LightIconButtonReference from '/snippets/ui/generated/components/input/light-icon-button.mdx';
+
+## Prezentare generală
+
+`LightIconButton` compune [IconButton](/ro/ui/components/input/icon-button) cu o suprafață ghost și o dimensiune mică. Furnizați un nume accesibil și conținut decorativ pentru pictogramă.
+
+<StoryEmbed storyId="ui-input-button-lighticonbutton--display" title="Buton cu pictogramă luminos" height={100} />
+
+## Utilizare
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchAction = () => (
+  <LightIconButton aria-label="Search">
+    <IconSearch />
+  </LightIconButton>
+);
+```
+
+Accentul standard utilizează text neutru secundar; accentul subtil utilizează text terțiar. Aspectul explicit al elementului copil are prioritate față de valorile ButtonGroup, urmat de valorile implicite ale componentei. Culorile semantice își păstrează propriul tratament de contrast. Controalele mici au 24px cu o pictogramă de 14px; controalele medii au 32px cu o pictogramă de 16px. Controalele compacte utilizează `size="xs"` și au 20px.
+
+## Opțiuni vizuale
+
+Comparați accentuarea la dimensiuni mici și medii, inclusiv stările selectată, de încărcare și dezactivată.
+
+<StoryEmbed storyId="ui-input-button-lighticonbutton--catalog" title="Accentuarea, dimensiunile și stările butonului cu pictogramă deschisă la culoare" height={410} />
+
+## Stare și interacțiune
+
+Butonul gestionează activarea de la tastatură, comportamentul de dezactivare și încărcare, referințele, atributele native și compunerea randării. Valoarea implicită nativă este `type="button"`. Utilizați `aria-pressed` pentru comutatoare și `aria-expanded` pentru elementele de extindere. Aplicația gestionează aceste stări și poate seta `color="accent"` pentru a evidenția o acțiune selectată. Focalizarea de la tastatură utilizează indicatorul de focalizare partajat.
+
+Textul indicativ este opțional și nu înlocuiește un nume accesibil din `aria-label` sau `aria-labelledby`. Setați `href` pentru un link. Pentru rutarea gestionată de aplicație, furnizați `render`, `nativeButton={false}` și `role="link"`.
+
+## Actualizarea controalelor existente
+
+Importați `LightIconButton` din `twenty-ui/components`. Înlocuiți `Icon={IconPlus}` cu copii `<IconPlus />`, `small`/`medium` cu `sm`/`md`, `accent="tertiary"` cu `emphasis="subtle"` și `testId` cu `data-testid`. Înlocuiți indicatorii sintetici `active` și `focus` cu starea semantică și focalizarea reală de la tastatură.
+
+Înlocuiți `LightIconButtonGroup` cu [ButtonGroup](/ro/ui/primitives/input/button-group) utilizând `attached={false}` și copii expliciți. Setați `disabled` pentru acțiunile indisponibile, inclusiv pentru acțiunile fără un handler de clic. Containerele și declanșatoarele de indicii pot rămâne în jurul fiecărui copil.
+
+## Acțiuni pentru rând
+
+Utilizați un [ListItem](/ro/ui/primitives/navigation/list-item) pasiv cu un slot `actions` pentru controale independente. Transmiteți direct un `LightIconButton` sau utilizați `ButtonGroup` pentru mai multe butoane. Fiecare buton are propriul nume accesibil, propriul gestionar de clic și propria stare de dezactivare. Încadrați direct declanșatoarele listelor derulante în jurul butonului.
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconEyeOff, IconTrash } from 'twenty-ui/icon';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const RecordActions = () => (
+  <ListItem
+    actions={
+      <ButtonGroup attached={false}>
+        <LightIconButton aria-label="Hide record">
+          <IconEyeOff />
+        </LightIconButton>
+        <LightIconButton aria-label="Delete record" disabled>
+          <IconTrash />
+        </LightIconButton>
+      </ButtonGroup>
+    }
+  >
+    Record
+  </ListItem>
+);
+```
+
+Un buton fără handler `onClick` poate rămâne activat atunci când o listă derulantă din jur gestionează interacțiunea sa. Setați explicit `disabled` pentru butoanele indisponibile. Păstrați controalele independente lângă un [ListItemButton](/ro/ui/components/navigation/list-item-button) acționabil, astfel încât fiecare să își păstreze propriul focus și propria activare.
+
+## Proprietăți
+
+<LightIconButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

@@ -278,6 +278,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    disabledObjectPermissionActions: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     readabilityParentFieldUniversalIdentifiers: {
       toCompare: true,
       toStringify: true,
@@ -1841,6 +1846,43 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     deletedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  mcpServer: {
+    name: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    url: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    connectionProviderId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'connectionProviderUniversalIdentifier',
+    },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,

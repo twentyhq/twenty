@@ -1,14 +1,24 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isBoolean, isNonEmptyString } from '@sniptt/guards';
+import { type ModelConfiguration } from 'twenty-shared/ai';
 import {
   AGENT_TRIGGER_EVENT_NAME_PATTERN,
   AGENT_TRIGGER_LIMITS,
   AGENT_TRIGGER_TYPES,
   type AgentManifest,
 } from 'twenty-shared/application';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { validate as uuidValidate } from 'uuid';
 
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
+
+// Keyed by every ModelConfiguration key so a new capability fails to compile until listed
+const MODEL_CAPABILITIES: Record<keyof ModelConfiguration, true> = {
+  webSearch: true,
+  twitterSearch: true,
+};
+
+const MODEL_CAPABILITY_NAMES = new Set(Object.keys(MODEL_CAPABILITIES));
 
 export const defineAgent: DefineEntity<AgentManifest> = (config) => {
   const errors: string[] = [];
@@ -34,6 +44,47 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
     warnings.push(
       `Agent '${config.name}' has no responseFormat, it will default to { type: 'text' }. Set it explicitly to control the agent's output shape.`,
     );
+  }
+
+  if (isDefined(config.isSystem) && !isBoolean(config.isSystem)) {
+    errors.push(`Agent '${config.name}' isSystem must be a boolean`);
+  }
+
+  if (
+    isDefined(config.modelConfiguration) &&
+    !isPlainObject(config.modelConfiguration)
+  ) {
+    errors.push(`Agent '${config.name}' modelConfiguration must be an object`);
+  }
+
+  for (const [capability, capabilityConfiguration] of Object.entries(
+    isPlainObject(config.modelConfiguration) ? config.modelConfiguration : {},
+  )) {
+    if (!MODEL_CAPABILITY_NAMES.has(capability)) {
+      errors.push(
+        `Agent '${config.name}' modelConfiguration.${capability} is not supported, use one of: ${[...MODEL_CAPABILITY_NAMES].join(', ')}`,
+      );
+      continue;
+    }
+
+    if (
+      !isPlainObject(capabilityConfiguration) ||
+      !isBoolean(capabilityConfiguration.enabled)
+    ) {
+      errors.push(
+        `Agent '${config.name}' modelConfiguration.${capability}.enabled must be a boolean`,
+      );
+      continue;
+    }
+
+    if (
+      isDefined(capabilityConfiguration.configuration) &&
+      !isPlainObject(capabilityConfiguration.configuration)
+    ) {
+      errors.push(
+        `Agent '${config.name}' modelConfiguration.${capability}.configuration must be an object`,
+      );
+    }
   }
 
   if (

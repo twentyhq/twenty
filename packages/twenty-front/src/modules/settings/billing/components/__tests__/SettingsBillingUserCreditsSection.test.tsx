@@ -101,7 +101,7 @@ describe('SettingsBillingUserCreditsSection', () => {
     });
 
     const toggle = await screen.findByRole('switch', {
-      name: 'Use workspace credits when a member runs out',
+      name: 'Use workspace credits after a member reaches their limit',
     });
 
     expect(toggle).toBeChecked();
@@ -127,6 +127,6 @@ describe('SettingsBillingUserCreditsSection', () => {
       userCreditsFallback: UserCreditsFallback.WORKSPACE_CREDITS,
     });
 
-    expect(screen.queryByText('User credits')).not.toBeInTheDocument();
+    expect(screen.queryByText('Personal AI usage')).not.toBeInTheDocument();
   });
 });

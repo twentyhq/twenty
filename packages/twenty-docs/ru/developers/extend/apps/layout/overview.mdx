@@ -3,6 +3,11 @@ title: Обзор
 description: Разместите своё приложение внутри интерфейса Twenty — элементы боковой панели, сохранённые представления, вкладки страницы записи и изолированные React‑компоненты.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Что покрывает слой макета
+
 **Слой компоновки** приложения Twenty — это всё, что видит пользователь: где приложение отображается в боковой панели, какие списки представлений оно поставляет, как устроены его страницы деталей записей и какие пользовательские React‑компоненты отображаются внутри этих страниц.
 
 ```text
@@ -24,35 +29,42 @@ description: Разместите своё приложение внутри и�
 
 ## В этом разделе
 
-<CardGroup cols={2}>
-  <Card title="Представления" icon="list" href="/ru/developers/extend/apps/layout/views">
-    `defineView` — сохранённые конфигурации списков: видимые столбцы, фильтры, группы.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ru/developers/extend/apps/layout/views" img="/images/documentation/section-overview-icons-v1/views-pipelines.svg">
+    <CardTitle>Views</CardTitle>
+    `defineView` — сохраненные конфигурации списков: видимые столбцы, фильтры, группы.
   </Card>
-  <Card title="Элементы меню навигации" icon="menu-2" href="/ru/developers/extend/apps/layout/navigation-menu-items">
-    `defineNavigationMenuItem` — элементы боковой панели, ссылающиеся на представления или внешние URL.
+  <Card href="/ru/developers/extend/apps/layout/navigation-menu-items" img="/images/user-guide/halftone/card-page-navigation.svg">
+    <CardTitle>Пункты меню навигации</CardTitle>
+    `defineNavigationMenuItem` — проводки боковой панели, указывающие на просмотры или внешние URL.
   </Card>
-  <Card title="Макеты страниц" icon="layout-columns" href="/ru/developers/extend/apps/layout/page-layouts">
-    `definePageLayout` и `definePageLayoutTab` — вкладки и виджеты на странице деталей записи.
+  <Card href="/ru/developers/extend/apps/layout/page-layouts" img="/images/user-guide/halftone/card-page-page-layouts.svg">
+    <CardTitle>Page Layouts</CardTitle>
+    `definePageLayout`, `definePageLayoutTab` и `definePageLayoutWidget` — вкладки и виджеты на странице записи.
   </Card>
-  <Card title="Компоненты фронтенда" icon="window-maximize" href="/ru/developers/extend/apps/layout/front-components">
-    `defineFrontComponent` — изолированные React‑компоненты, которые отображаются внутри Twenty.
+  <Card href="/ru/developers/extend/apps/layout/front-components" img="/images/user-guide/halftone/card-page-front-components.svg">
+    <CardTitle>Front Components</CardTitle>
+    `defineFrontComponent` — песочница, отображающая внутри Twenty.
   </Card>
-  <Card title="Элементы меню команд" icon="terminal" href="/ru/developers/extend/apps/layout/command-menu-items">
-    `defineCommandMenuItem` — регистрирует фронтенд‑компоненты как элементы Cmd+K и быстрые действия.
+  <Card href="/ru/developers/extend/apps/layout/command-menu-items" img="/images/user-guide/halftone/card-page-command-menu.svg">
+    <CardTitle>Пункты меню команд</CardTitle>
+    `defineCommandMenuItem` — регистрировать передние компоненты как Cmd+K записи и быстрые действия.
   </Card>
 </CardGroup>
 
 ## Где отображается приложение
 
-| Область отображения                      | Что определяет                                                                                                              | Сущность                                  |
-| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **Боковая панель**                       | Пользовательский элемент, который ссылается на сохранённое представление или внешний URL                                    | `defineNavigationMenuItem`                |
-| **Список записей**                       | Сохранённая конфигурация для объекта — видимые столбцы, порядок, фильтры, группы                                            | `defineView`                              |
-| **Страница деталей записи**              | Вкладки и виджеты на странице записи (вашего собственного объекта или стандартного)                                         | `definePageLayout`, `definePageLayoutTab` |
-| **Внутри любого из перечисленного выше** | Пользовательский React‑виджет — кнопки, формы, панели мониторинга, интеграции                                               | `defineFrontComponent`                    |
-| **Настройки приложения**                 | Настраиваемый раздел конфигурации на вкладке «Настройки» приложения, используемый вместо стандартного интерфейса переменных | `defineSettingsFrontComponent`            |
-| **Меню команд (Cmd+K)**                  | Закреплённое быстрое действие или скрытая команда                                                                           | `defineCommandMenuItem`                   |
+| Область отображения                      | Что определяет                                                                           | Сущность                                                            |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Боковая панель**                       | Пользовательский элемент, который ссылается на сохранённое представление или внешний URL | `defineNavigationMenuItem`                                          |
+| **Список записей**                       | Сохранённая конфигурация для объекта — видимые столбцы, порядок, фильтры, группы         | `defineView`                                                        |
+| **Страница деталей записи**              | Вкладки и виджеты на странице записи (вашего собственного объекта или стандартного)      | `definePageLayout`, `definePageLayoutTab`, `definePageLayoutWidget` |
+| **Внутри любого из перечисленного выше** | Пользовательский React‑виджет — кнопки, формы, панели мониторинга, интеграции            | `defineFrontComponent`                                              |
+| **Настройки приложения**                 | Элемент в меню настроек приложения; объявите столько, сколько нужно                      | `defineSettingsMenuItem`                                            |
+| **Меню команд (Cmd+K)**                  | Закреплённое быстрое действие или скрытая команда                                        | `defineCommandMenuItem`                                             |
 
 Фронтенд‑компоненты выполняются внутри изолированного Web Worker с использованием Remote DOM — они отображаются *нативно* на странице (не внутри iframe), но не могут напрямую обращаться к хостовой странице или DOM. Взаимодействие с Twenty происходит через хостовый API обмена сообщениями.
 
 Они все еще находятся в активной разработке: песочница реализует частичный DOM, поэтому сложные варианты использования могут завершаться сбоем. См. раздел [Текущие ограничения](/ru/developers/extend/apps/layout/front-components#current-limitations).
+
+<PageBanner illustration="section-apps-layout" />

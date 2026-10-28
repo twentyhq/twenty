@@ -1,0 +1,221 @@
+---
+title: Card
+description: Grupați informațiile conexe într-o suprafață cu chenar.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CardReference from '/snippets/ui/generated/surfaces/card.mdx';
+
+## Prezentare generală
+
+`Card` grupează informațiile și acțiunile asociate sub un singur export denumit. Combinați `Card.Root`, `Card.Header`, `Card.Content` și `Card.Footer` pentru a separa un titlu, un corp și acțiuni asociate. Părțile nu gestionează selecția, focalizarea sau starea aplicației. Aplicația gestionează comportamentul tuturor controalelor plasate în interiorul acestora.
+
+<StoryEmbed storyId="ui-surfaces-card--display" title="Exemplu de card" height={200} />
+
+## Utilizare
+
+```tsx
+import { useId } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Heading, Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSummary = () => {
+  const titleId = useId();
+
+  return (
+    <Card.Root fullWidth role="region" aria-labelledby={titleId}>
+      <Card.Header>
+        <Heading id={titleId} level={2}>
+          Import summary
+        </Heading>
+      </Card.Header>
+      <Card.Content>
+        <Text>24 records are ready to import.</Text>
+      </Card.Content>
+      <Card.Footer>
+        <Button>Review records</Button>
+      </Card.Footer>
+    </Card.Root>
+  );
+};
+```
+
+Utilizați [Titlu](/ro/ui/primitives/typography/heading) la nivelul cerut de pagina înconjurătoare. Plasați acțiunile în [Buton](/ro/ui/primitives/input/button) sau într-un link nativ, astfel încât utilizatorii de tastatură și de tehnologii asistive să le poată activa.
+
+## Anatomie
+
+```text
+Card.Root (outer surface)
+├── Card.Header (optional)
+├── Card.Content (optional, repeatable)
+├── Card.Footer (optional)
+├── Card.Action (optional, inside an action area)
+└── Card.Control (optional, independent control or tooltip target)
+```
+
+Importați `Card` din `twenty-ui/primitives/surfaces`. `Card.Root` furnizează bordura exterioară și decuparea, dar nu creează intern nicio secțiune. Nicio parte nu necesită o altă parte sau o anumită ordine a secțiunilor. Secțiunile funcționează și independent, fără `Card.Root` sau context.
+
+Root, Header, Content și Footer redau implicit un `div` și acceptă atribute div native, handleri de evenimente, `className`, `style` și o referință DOM `ref`. Action redă un buton nativ cu `type="button"`, iar Control redă un span. Utilizează `render` cu un element sau un callback pentru a alege o țintă semantică. Nicio parte nu deduce un element sau un rol din `onClick`.
+
+`CardRootProps`, `CardHeaderProps`, `CardContentProps`, `CardFooterProps`, `CardActionProps` și `CardControlProps` sunt exportate din `twenty-ui/primitives/surfaces`, `twenty-ui/primitives` și pachetul rădăcină.
+
+## Aspect și separatoare
+
+`Card.Root` are în mod implicit un fundal transparent. `fullWidth` umple containerul său, iar `backgroundColor` modifică fundalul exterior. Secțiunile copil au propriile fundaluri.
+
+`Card.Header` are un fundal principal, spațiere interioară și o bordură inferioară. `Card.Content` are un fundal secundar și spațiere interioară; `divider` opțional adaugă o bordură inferioară. `Card.Footer` are un fundal principal, spațiere interioară și o bordură superioară, cu excepția cazului în care `divider={false}`. Evitați adăugarea a două borduri la aceeași delimitare de secțiune.
+
+```tsx
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSections = () => (
+  <Card.Root>
+    <Card.Content divider>
+      <Text>24 records are ready to import.</Text>
+    </Card.Content>
+    <Card.Content divider>
+      <Text>3 records need review.</Text>
+    </Card.Content>
+    <Card.Footer divider={false}>
+      <Text>Last checked just now.</Text>
+    </Card.Footer>
+  </Card.Root>
+);
+```
+
+## Compoziție interactivă
+
+Alegeți un buton nativ pentru o acțiune sau o ancoră pentru navigare prin `render`. Furnizați atribute specifice țintei, precum `type`, `disabled`, `href` și `target`, pe acel element. Proprietarul efectiv furnizează comportamentul pentru tastatură, focalizare, dezactivare și link. Card nu adaugă aceste comportamente la un `div` de afișare.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type ReviewCardProps = {
+  disabled?: boolean;
+  onReview: () => void;
+  onDismiss: () => void;
+};
+
+export const ReviewCard = ({
+  disabled,
+  onReview,
+  onDismiss,
+}: ReviewCardProps) => (
+  <Card.Root>
+    <Card.Content
+      render={<button type="button" disabled={disabled} />}
+      onClick={onReview}
+    >
+      <Text render={<span />}>Review 24 ready records</Text>
+    </Card.Content>
+    <Card.Footer>
+      <Button onClick={onDismiss}>Dismiss</Button>
+    </Card.Footer>
+  </Card.Root>
+);
+```
+
+Butonul de acțiune și butonul de închidere sunt elemente surori în interiorul unui card de afișare. Nu plasați un alt buton, link, câmp de introducere sau alt control interactiv în interiorul unui proprietar de buton sau link. Când un buton conține părți Card, redați acele părți ca elemente de text, precum `span`.
+
+```tsx
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportLinkCard = () => (
+  <Card.Root render={<a href="/imports" />} fullWidth>
+    <Card.Content>
+      <Text>View imports</Text>
+    </Card.Content>
+  </Card.Root>
+);
+```
+
+Proprietarii de butoane și linkuri native păstrează aspectul cardului și primesc un contur de focalizare vizibil. Proprietarii expliciți de butoane și linkuri se evidențiază la trecerea cursorului. Proprietarii dezactivați își păstrează aspectul dezactivat. Proprietarii personalizați trebuie să furnizeze comportamentul de interacțiune, inclusiv activarea de la tastatură și gestionarea dezactivării, când este cazul.
+
+## Acțiuni extinse și controale independente
+
+Utilizează `Card.Action` atunci când o acțiune principală acoperă o secțiune de card care conține și controale independente. Plasează acțiunea direct în Card.Root, Card.Header, Card.Content sau Card.Footer. Acea parte directă definește zona extinsă. Păstrează o singură acțiune principală per zonă și păstrează formularele extinse sau alte secțiuni independente în afara ei.
+
+`Card.Action` este în mod implicit un buton nativ. Oferă unei acțiuni goale un nume accesibil cu `aria-label` sau `aria-labelledby` și utilizează `aria-describedby` pentru textul de suport. O ancoră nativă sau un link de router furnizat prin `render` își păstrează propriul comportament de navigare, țintă, clic cu tastă modificatoare și meniu contextual. Proprietarii personalizați nu primesc niciun rol de buton sintetic, gestionar de tastatură sau oprire de tabulare. Pune atributele native specifice țintei pe elementul randat.
+
+`Card.Control` ridică un control independent sau o țintă de tooltip deasupra acțiunii extinse. Compune elementul existent prin `render` pentru a-i păstra aspectul și atributele. Controalele rămân elemente-surori ale acțiunii principale, nu copii ai unui buton sau link. Card nu deduce care descendenți sunt interactivi și nu le transmite clicurile către acțiunea principală. Aplicațiile gestionează orice procesare suplimentară necesară pentru textul simplu ridicat.
+
+```tsx
+import { useId } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CustomerImportActions = () => {
+  const titleId = useId();
+
+  return (
+    <Card.Root>
+      <Card.Content>
+        <Card.Action
+          aria-labelledby={titleId}
+          render={<a href="/imports/review" />}
+        />
+        <Text id={titleId}>Review customer import</Text>
+        <Card.Control render={<Button variant="ghost" />}>
+          Import options
+        </Card.Control>
+      </Card.Content>
+    </Card.Root>
+  );
+};
+```
+
+Zonele de acțiune activate utilizează culoarea comună de survolare Card, inclusiv atunci când se trece cu cursorul peste un control independent. O zonă de acțiune imbricată își gestionează propria evidențiere și nu își evidențiază strămoșii. Acțiunile de buton și link native afișează un contur de focalizare interior de 2 px în jurul zonei extinse. Un buton nativ dezactivat este eliminat din navigarea prin tastatură, iar zona sa nu este evidențiată, inclusiv un buton furnizat prin `render`. Linkurile și controalele asociate prin etichete rămân responsabile pentru propriul comportament de dezactivare; proprietatea `disabled` a Action suprimă, de asemenea, tratamentul comun al zonei de acțiune.
+
+Pentru un rând Switch sau Radio, randează Action ca `<label htmlFor={controlId} />` și atribuie acel ID controlului efectiv. Păstrează eticheta sa vizibilă și descrierea accesibilă asociate cu controlul. Eticheta nu creează nicio țintă suplimentară pentru tastatură sau niciun inel de focalizare. Switch și Radio își păstrează propriul comportament de focalizare și tastatură. Pune formularul extins al unei opțiuni radio într-un Card.Content separat, astfel încât eticheta să acopere doar antetul de selecție.
+
+<StoryEmbed storyId="ui-surfaces-card-interactions--stretched-actions" title="Acțiuni extinse cu controale independente" height={360} />
+
+## Părți independente și învelitori personalizate
+
+O secțiune poate fi utilizată fără suprafața exterioară. Învelitorile pot utiliza tipul de props exportat și îl pot transmite pentru a păstra atributele native, gestionarii de evenimente, referințele, compoziția de redare, clasele și stilurile. Cu o țintă personalizată, plasați referința specifică țintei pe elementul furnizat. Base UI îmbină acea referință cu referința părții și props compuse.
+
+```tsx
+import { Card, type CardContentProps } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type SummaryContentProps = CardContentProps;
+
+const SummaryContent = ({ children, ...props }: SummaryContentProps) => (
+  <Card.Content {...props}>{children}</Card.Content>
+);
+
+export const StandaloneSummary = () => (
+  <SummaryContent aria-label="Import summary" style={{ maxWidth: 360 }}>
+    <Text>24 records are ready to import.</Text>
+  </SummaryContent>
+);
+```
+
+## Migrație
+
+Înlocuiți cele patru importuri separate cu `import { Card } from 'twenty-ui/primitives/surfaces'`. Pachetul rădăcină și `twenty-ui/primitives` exportă, de asemenea, același obiect `Card`.
+
+| API anterior                                    | API compus                                           |
+| ----------------------------------------------- | ---------------------------------------------------- |
+| `Card` ca componentă                            | `Card.Root`                                          |
+| `CardHeader`                                    | `Card.Header`                                        |
+| `CardContent`                                   | `Card.Content`                                       |
+| `CardFooter`                                    | `Card.Footer`                                        |
+| `ComponentProps\<typeof Card>` | `ComponentProps\<typeof Card.Root>` |
+| `styled(Card)`                                  | `styled(Card.Root)`                                  |
+
+Aplicați aceleași nume de membri etichetelor JSX, învelitorilor stilizate și tipurilor de props. Exporturile părților autonome sunt eliminate fără aliasuri de compatibilitate. Props de aspect, valorile implicite de stilizare și utilizarea independentă a secțiunilor rămân disponibile. Înlocuiți `isClickable` și `hasHoverHighlight` cu un proprietar nativ explicit prin `render`. Mutați gestionarii de acțiuni de pe învelitorile numai pentru afișare, păstrați denumirile accesibile și mențineți controalele imbricate în afara acțiunii principale. Utilizați `render={<button type="button" disabled={disabled} />}` pentru o acțiune și `render={<a href="/imports" />}` pentru navigare. Referințele DOM indică acum partea efectiv redată.
+
+## Proprietăți
+
+<CardReference />
+
+<PageBanner illustration="section-ui-primitives" />

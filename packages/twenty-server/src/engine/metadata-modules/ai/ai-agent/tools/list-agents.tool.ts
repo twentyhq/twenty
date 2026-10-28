@@ -18,7 +18,7 @@ const listAgentsInputSchema = z.object({});
   category: ToolCategory.AGENT,
   requiredPermissionFlags: [PermissionFlagType.AI_SETTINGS],
   requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
-  description: `List the AI agents of the workspace with their prompt, model, role and triggers. System agents (those backing workflow AI steps or installed by an application) are not included.`,
+  description: `List the AI agents of the workspace with their prompt, model, role and triggers. System agents, such as those backing workflow AI steps, are not included. Agents installed by an application are listed, but only that application can change them.`,
 })
 export class ListAgentsTool extends BaseTool<typeof listAgentsInputSchema> {
   readonly inputSchema = listAgentsInputSchema;

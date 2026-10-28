@@ -1,0 +1,117 @@
+---
+title: Usa l'IA per le campagne di vendita
+description: Usa l'IA e i workflow per creare elenchi di vendita mirati e redigere la campagna.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+L'IA è utile quando hai un obiettivo di vendita ma non vuoi iniziare con un elenco vuoto o un'email vuota. Indica cosa stai cercando di fare. Può esaminare il tuo CRM, creare un elenco mirato e preparare una campagna per quell'elenco. Rivedi il lavoro, invia un test, quindi decidi se inviarla.
+
+<Note>
+  L'AI può preparare una campagna, ma non può inviarla. L'invio è sempre una tua
+  decisione.
+</Note>
+
+<Note>
+  Le campagne sono uno-a-molti. L'AI crea una bozza con un oggetto e un corpo dell'email
+  per l'elenco selezionato; non scrive una bozza separata per ogni lead.
+</Note>
+
+## In cosa può aiutarti l'AI
+
+| Attività                | Esempio                                                                                                      |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Trova persone**       | "Trova responsabili decisionali presso aziende software in Germania con un titolo Head o VP."                |
+| **Crea un elenco**      | "Crea un elenco per le opportunità aperte nel settore sanitario."                                            |
+| **Prepara la campagna** | Scrivi l'oggetto, il testo, l'invito all'azione e la personalizzazione per l'attività commerciale.           |
+| **Personalizza**        | Aggiungi variabili come `{{name.firstName}}` affinché la campagna includa quel valore al momento dell'invio. |
+| **Migliora una bozza**  | "Rendi questo testo più diretto", "Aggiungi una CTA per una demo" oppure "Dammi tre oggetti."                |
+
+L'AI rispetta le tue autorizzazioni. Può solo visualizzare e modificare i record a cui il tuo ruolo può accedere.
+
+## Abbina l'AI ai flussi di lavoro
+
+L'AI ti aiuta a decidere cosa dire e a chi dirlo. I flussi di lavoro mantengono pronti i dati e gli elenchi per la campagna successiva.
+
+Gli elenchi e i membri dell'elenco sono record in Twenty. Un flusso di lavoro può crearli o aggiornarli man mano che il tuo CRM cambia. Questo ti offre un modo ripetibile per creare segmenti commerciali invece di ricominciare da zero ogni volta.
+
+| Attività commerciale        | Cosa fa il flusso di lavoro                                                                                          | Dove aiuta l'AI                                             |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Nuovi lead ICP**          | Quando un nuovo lead soddisfa i tuoi criteri, aggiungilo a un elenco per attività in uscita.                         | Prepara una campagna per quel segmento.                     |
+| **Opportunità in stallo**   | Trova le trattative inattive da un determinato periodo e crea un elenco per il follow-up.                            | Prepara una campagna per l'elenco di follow-up selezionato. |
+| **Espansione dell'account** | Aggiungi contatti quando un account raggiunge una data di rinnovo, cambia piano o raggiunge un'altra pietra miliare. | Prepara una campagna per l'elenco di rinnovo o espansione.  |
+
+I flussi di lavoro preparano o aggiornano l'elenco. L'AI può analizzare i dati del CRM e preparare una campagna per quell'elenco. Continui a rivedere il pubblico e a scegliere quando inviare.
+
+Consulta [Flussi di lavoro](/it/user-guide/workflows/overview) per creare l'automazione alla base di un'attività commerciale.
+
+## Parte 1: Apri l'AI
+
+Premi `@` in qualsiasi punto di Twenty oppure premi `Cmd+K` (`Ctrl+K` su Windows) e scegli **Ask AI**.
+
+## Parte 2: Crea il tuo pubblico
+
+Indica all'AI chi deve ricevere l'email. Usa i campi nel tuo spazio di lavoro, proprio come faresti parlando con un collega.
+
+> Crea un elenco chiamato "Aggiornamento prodotto Q4" con tutte le persone presso aziende che hanno più di 50 dipendenti e operano nel settore sanitario.
+
+L'AI cerca nei tuoi record, crea l'elenco e aggiunge le persone che trova. Apri l'elenco e controlla i membri prima di inviare.
+
+<Warning>
+  Aggiungi solo persone che hanno accettato di ricevere le tue email. Il tuo CRM può includere persone
+  con cui hai solo scambiato email. Consulta
+  [Best practice per le campagne email](/it/user-guide/email-campaigns/how-tos/email-campaign-best-practices).
+</Warning>
+
+## Parte 3: Scrivi la campagna
+
+Indica all'AI l'obiettivo, i punti chiave, il tono e l'invito all'azione di cui hai bisogno.
+
+> Scrivi un follow-up per le persone con opportunità aperte nel settore sanitario. Mantieni l'oggetto sotto i 50 caratteri. Inizia con una breve introduzione amichevole che saluti ogni persona per nome, indica tre motivi per cui la dashboard di reportistica può aiutare il suo team e termina con un pulsante "Prenota una demo" che rimanda a https://example.com/demo.
+
+L'AI crea una bozza con nome, oggetto e corpo dell'email. Aprila da **Campagne** per rivederla nell'editor.
+
+<img src="/images/user-guide/email-campaigns/ai-chat-campaign.png" style={{ width: '50%' }} />
+
+Per apportare modifiche, continua a chattare. Apri prima la campagna affinché l'AI sappia a quale ti riferisci:
+
+* "Rendi il tono più diretto."
+* "Riduci l'introduzione a due frasi."
+* "Sostituisci il testo del pulsante con Prenota una demo."
+* "Suggerisci altri tre oggetti."
+
+Puoi modificare tu stesso la bozza in qualsiasi momento.
+
+## Parte 4: Rivedi e invia
+
+<img src="/images/user-guide/email-campaigns/campaign-composer.png" style={{ width: '100%' }} />
+
+L'AI scrive la bozza. Scegli il mittente, il pubblico e l'orario di invio:
+
+1. Apri la scheda **Email** della campagna.
+2. Scegli l'indirizzo **Da**, l'elenco in **A** e, facoltativamente, un **Argomento di annullamento dell'iscrizione**.
+3. Leggi l'email. Controlla i dati, i link e i prezzi.
+4. Fai clic su **Test** e inviati una copia.
+5. Fai clic su **Invia**, quindi scegli **Invia ora** o **Invia più tardi**.
+
+Ogni passaggio è descritto in dettaglio in [Invia la tua prima campagna](/it/user-guide/email-campaigns/how-tos/send-your-first-campaign).
+
+## Suggerimenti per prompt efficaci
+
+* **Usa il nome del campo.** "Persone presso aziende nel settore sanitario" è più chiaro di "lead del settore sanitario".
+* **Fornisci i dati.** Non conosce la tua offerta, il prezzo o il tuo approccio commerciale, a meno che non glielo indichi o che l'informazione non sia nel tuo CRM.
+* **Assegnagli un compito.** Indica a chi è rivolto, cosa vuoi che facciano e perché è importante per loro.
+* **Chiedi opzioni.** Prova tre oggetti o due versioni dello stesso messaggio per segmenti diversi.
+* **Controlla la dimensione dell'elenco.** Chiedi "Quante persone sono nell'elenco Aggiornamento prodotto Q4?" prima di inviare.
+
+## Limitazioni
+
+* L'AI può modificare solo le campagne che sono ancora in stato **Bozza**.
+* Gli argomenti di annullamento dell'iscrizione e l'elenco di annullamento dell'iscrizione vengono gestiti in **Impostazioni**, non tramite l'AI. Consulta [Gestire le disiscrizioni e gli argomenti](/it/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics).
+* L'AI può sbagliare i dati. Leggi sempre l'email prima di inviarla.
+
+Consulta [Chatbot AI](/it/user-guide/ai/capabilities/ai-chatbot) per ulteriori informazioni su ciò che l'AI può fare nel tuo spazio di lavoro.
+
+<PageBanner illustration="card-page-ai-campaign" />

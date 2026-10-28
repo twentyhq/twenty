@@ -72,6 +72,7 @@ export {
   DEFAULT_APPLICATION_VARIABLE_SCOPE,
 } from './applicationVariablesType';
 export type { AppMessageChannel } from './appMessageChannelType';
+export type { AppMessageFolder } from './appMessageFolderType';
 export type { AssetManifest } from './assetManifestType';
 export type {
   BillableOperationManifest,
@@ -84,10 +85,12 @@ export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventN
 export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';
 export { AGENT_TRIGGER_TYPES } from './constants/AgentTriggerTypes';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
+export { APPLICATION_PACKAGE_YARN_LOCK_PATH } from './constants/ApplicationPackageYarnLockPath';
 export { ASSETS_DIR } from './constants/AssetDirectory';
 export { CONNECTION_PROVIDER_SCOPES } from './constants/ConnectionProviderScopes';
 export { DEFAULT_CONNECTION_PROVIDER_SCOPE } from './constants/DefaultConnectionProviderScope';
 export { DEFAULT_SETTINGS_MENU_ITEM_POSITION } from './constants/DefaultSettingsMenuItemPosition';
+export { EMPTY_YARN_LOCK_CONTENT } from './constants/EmptyYarnLockContent';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
 export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontComponentWidgetPageLayoutTypes';
@@ -275,6 +278,8 @@ export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
+export { computeDependencyFileChecksum } from './utils/computeDependencyFileChecksum';
+export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
 export type { EffectiveObjectPermissions } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,

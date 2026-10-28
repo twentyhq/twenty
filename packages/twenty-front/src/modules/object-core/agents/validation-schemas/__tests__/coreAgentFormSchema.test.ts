@@ -13,14 +13,14 @@ describe('coreAgentFormSchema', () => {
     i18n.load('fr-FR', { [errorMessage.id]: 'Le modèle est requis' });
 
     i18n.activate(SOURCE_LOCALE);
-    const sourceResult = coreAgentFormSchema.shape.modelId.safeParse('');
+    const sourceMessage =
+      coreAgentFormSchema.shape.modelId.safeParse('').error?.issues[0].message;
 
     i18n.activate('fr-FR');
-    const translatedResult = coreAgentFormSchema.shape.modelId.safeParse('');
+    const translatedMessage =
+      coreAgentFormSchema.shape.modelId.safeParse('').error?.issues[0].message;
 
-    expect(sourceResult.error?.issues[0].message).toBe(errorMessage.message);
-    expect(translatedResult.error?.issues[0].message).toBe(
-      'Le modèle est requis',
-    );
+    expect(sourceMessage).toBe(errorMessage.message);
+    expect(translatedMessage).toBe('Le modèle est requis');
   });
 });
