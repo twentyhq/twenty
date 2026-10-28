@@ -356,14 +356,14 @@ const StyledEditorContainer = styled.div<{
 
     table {
       border-collapse: collapse;
-      table-layout: var(--editor-table-layout);
-      width: var(--editor-table-width);
+      table-layout: fixed;
+      width: 100%;
 
       td,
       th {
-        border: 1px solid var(--editor-table-border-color);
+        border: 1px solid ${themeCssVariables.border.color.medium};
         box-sizing: border-box;
-        min-width: var(--editor-table-cell-min-width);
+        min-width: 1em;
         padding: var(--editor-table-cell-padding);
         position: relative;
         vertical-align: top;
@@ -374,8 +374,8 @@ const StyledEditorContainer = styled.div<{
       }
 
       th {
-        background-color: var(--editor-table-header-background);
-        font-weight: var(--editor-table-header-font-weight);
+        background-color: ${themeCssVariables.background.tertiary};
+        font-weight: ${themeCssVariables.font.weight.medium};
         text-align: left;
       }
 

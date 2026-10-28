@@ -97,12 +97,6 @@ type AdvancedTextEditorTypography = {
   guideColor: string;
   toggleIconColor: string;
   toggleIconSize: string;
-  tableLayout: string;
-  tableWidth: string;
-  tableCellMinWidth: string;
-  tableBorderColor: Record<'light' | 'dark', string>;
-  tableHeaderBackground: string;
-  tableHeaderFontWeight: string;
   taskCheckedColor: string;
 };
 
@@ -129,15 +123,6 @@ const APP_TYPOGRAPHY: AdvancedTextEditorTypography = {
   guideColor: 'transparent',
   toggleIconColor: themeCssVariables.font.color.tertiary,
   toggleIconSize: themeCssVariables.spacing[2],
-  tableLayout: 'fixed',
-  tableWidth: '100%',
-  tableCellMinWidth: '1em',
-  tableBorderColor: {
-    light: themeCssVariables.border.color.medium,
-    dark: themeCssVariables.border.color.medium,
-  },
-  tableHeaderBackground: themeCssVariables.background.tertiary,
-  tableHeaderFontWeight: themeCssVariables.font.weight.medium,
   taskCheckedColor: themeCssVariables.font.color.tertiary,
 };
 
@@ -167,15 +152,6 @@ const NOTE_TYPOGRAPHY: AdvancedTextEditorTypography = {
   guideColor: themeCssVariables.border.color.strong,
   toggleIconColor: themeCssVariables.font.color.primary,
   toggleIconSize: '10.5px',
-  tableLayout: 'auto',
-  tableWidth: 'auto',
-  tableCellMinWidth: '120px',
-  tableBorderColor: {
-    light: themeCssVariables.border.color.strong,
-    dark: themeCssVariables.border.color.inverted,
-  },
-  tableHeaderBackground: 'transparent',
-  tableHeaderFontWeight: themeCssVariables.font.weight.semiBold,
   taskCheckedColor: 'inherit',
 };
 
@@ -236,11 +212,6 @@ export const getAdvancedTextEditorTypographyStyle = (
     '--editor-guide-color': typography.guideColor,
     '--editor-toggle-icon-color': typography.toggleIconColor,
     '--editor-toggle-icon-size': typography.toggleIconSize,
-    '--editor-table-layout': typography.tableLayout,
-    '--editor-table-width': typography.tableWidth,
-    '--editor-table-cell-min-width': typography.tableCellMinWidth,
-    '--editor-table-border-color': typography.tableBorderColor[colorScheme],
-    '--editor-table-header-font-weight': typography.tableHeaderFontWeight,
     '--editor-code-block-padding': spacing.codeBlockPadding,
     '--editor-divider-spacing': spacing.dividerSpacing,
     '--editor-task-checkbox-margin': spacing.taskCheckboxMargin,
@@ -250,7 +221,6 @@ export const getAdvancedTextEditorTypographyStyle = (
     '--editor-task-checked-color': typography.taskCheckedColor,
     '--editor-table-wrapper-padding': spacing.tableWrapperPadding,
     '--editor-table-cell-padding': spacing.tableCellPadding,
-    '--editor-table-header-background': typography.tableHeaderBackground,
     '--editor-toggle-row-height': spacing.toggleRowHeight,
   } as CSSProperties;
 };
