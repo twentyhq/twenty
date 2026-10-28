@@ -89,21 +89,18 @@ describe('fromUpdateSkillInputToFlatSkillToUpdateOrThrow', () => {
     });
   });
 
-  it('ignores a null on a non-nullable property instead of storing it', () => {
+  it('ignores a null isActive instead of storing it', () => {
     const result = updateAsWorkspace({
       id: appSkill.id,
-      label: null as unknown as string,
-      content: 'Summarize the record in one line',
+      label: 'Summarize briefly',
       isActive: null as unknown as boolean,
     });
 
+    expect(result.isActive).toBe(true);
     expect(
       result.overrides?.[WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER],
-    ).toEqual({ content: 'Summarize the record in one line' });
-    expect(fromFlatSkillToSkillDto(result)).toMatchObject({
-      label: 'Summarize',
-      isActive: true,
-    });
+    ).toEqual({ label: 'Summarize briefly' });
+    expect(fromFlatSkillToSkillDto(result).isActive).toBe(true);
   });
 
   it('refuses to rename another application skill', () => {

@@ -77,7 +77,6 @@ describe('reconstructSkillsManifest', () => {
     });
   });
 
-  // Sync keeps the workspace's isActive and overrides, so they don't stop the export
   it.each([
     [
       DEACTIVATED_SKILL_UNIVERSAL_IDENTIFIER,

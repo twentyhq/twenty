@@ -2,7 +2,6 @@ import { msg } from '@lingui/core/macro';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
-  removePropertiesFromRecord,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -24,14 +23,6 @@ import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/over
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
-
-const NON_NULLABLE_AGENT_UPDATE_PROPERTIES = [
-  'label',
-  'prompt',
-  'modelId',
-  'triggers',
-  'isActive',
-] as const;
 
 type FlatRoleTargetToUpdateCreateDelete = {
   flatRoleTargetToUpdate?: FlatRoleTarget;
@@ -157,18 +148,16 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
     });
   }
 
-  const { name, ...inputEditableAgentProperties } =
+  const { name, isActive, ...otherEditableAgentProperties } =
     extractAndSanitizeObjectStringFields(
       rawUpdateAgentInput,
       FLAT_AGENT_EDITABLE_PROPERTIES,
     );
-  // GraphQL accepts an explicit null for any optional input, but these columns are never null
-  const updatedEditableAgentProperties = removePropertiesFromRecord(
-    inputEditableAgentProperties,
-    NON_NULLABLE_AGENT_UPDATE_PROPERTIES.filter(
-      (property) => inputEditableAgentProperties[property] === null,
-    ),
-  );
+  // GraphQL accepts an explicit null for any optional input, but isActive is never null
+  const updatedEditableAgentProperties = {
+    ...otherEditableAgentProperties,
+    ...(isDefined(isActive) ? { isActive } : {}),
+  };
 
   const shouldOverride = isCallerOverridingEntity({
     callerApplicationUniversalIdentifier,
@@ -192,7 +181,7 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
   const updatedName = computeUpdatedAgentName({
     shouldOverride,
     name,
-    label: inputEditableAgentProperties.label,
+    label: updatedEditableAgentProperties.label,
   });
 
   const { overrides, updatedEditableProperties } =
