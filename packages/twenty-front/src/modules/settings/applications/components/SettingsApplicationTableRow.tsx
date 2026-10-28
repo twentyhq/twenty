@@ -12,6 +12,7 @@ import { msg, t } from '@lingui/core/macro';
 import { type MessageDescriptor } from '@lingui/core';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { Tag } from 'twenty-ui/primitives/data-display';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
@@ -51,7 +52,7 @@ const SOURCE_TYPE_LABELS: Record<
 };
 
 const getSourceTypeLabel = (sourceType?: ApplicationRegistrationSourceType) =>
-  sourceType ? t(SOURCE_TYPE_LABELS[sourceType]) : t`Built-in`;
+  isDefined(sourceType) ? t(SOURCE_TYPE_LABELS[sourceType]) : t`Built-in`;
 
 export const SettingsApplicationTableRow = ({
   action,

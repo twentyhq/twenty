@@ -282,18 +282,27 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
   ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
 ];
 
+const withGranolaConnectionProvider = (
+  applicationPreferences: ReturnType<
+    typeof buildApplicationPreferences
+  >[number],
+) => {
+  if (applicationPreferences.applicationId !== GRANOLA_APPLICATION_ID) {
+    return applicationPreferences;
+  }
+
+  return {
+    ...applicationPreferences,
+    connectionProviders: [GRANOLA_CONNECTION_PROVIDER],
+  };
+};
+
 export const CONNECTED_GRANOLA_GRAPHQL_HANDLERS = [
   graphql.query('MyApplicationPreferences', () =>
     HttpResponse.json({
       data: {
         myApplicationPreferences: buildApplicationPreferences().map(
-          (applicationPreferences) =>
-            applicationPreferences.applicationId === GRANOLA_APPLICATION_ID
-              ? {
-                  ...applicationPreferences,
-                  connectionProviders: [GRANOLA_CONNECTION_PROVIDER],
-                }
-              : applicationPreferences,
+          withGranolaConnectionProvider,
         ),
       },
     }),
