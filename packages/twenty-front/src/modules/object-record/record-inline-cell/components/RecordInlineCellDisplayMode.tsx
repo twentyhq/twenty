@@ -41,10 +41,16 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   padding-right: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
+const StyledRecordInlineCellNormalModeInnerContainer = styled.div<{
+  isNextToLabel: boolean;
+}>`
   align-content: center;
   align-items: center;
   color: ${themeCssVariables.font.color.primary};
+  font-weight: ${({ isNextToLabel }) =>
+    isNextToLabel
+      ? themeCssVariables.font.weight.medium
+      : themeCssVariables.font.weight.regular};
   height: fit-content;
 
   overflow: hidden;
@@ -59,6 +65,7 @@ const StyledEmptyField = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.light};
   display: flex;
+  font-weight: ${themeCssVariables.font.weight.regular};
   height: 20px;
 `;
 
@@ -72,7 +79,7 @@ export const RecordInlineCellDisplayMode = ({
 }>) => {
   const { t } = useLingui();
 
-  const { editModeContentOnly, label, buttonIcon, readonly } =
+  const { editModeContentOnly, label, buttonIcon, readonly, showLabel } =
     useRecordInlineCellContext();
 
   const { isForbidden } = useContext(FieldContext);
@@ -92,7 +99,10 @@ export const RecordInlineCellDisplayMode = ({
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const emptyPlaceHolder = label ?? t`Empty`;
+  const isNextToLabel = showLabel === true;
+
+  // A visible label already names the field, so repeating it would read as a value.
+  const emptyPlaceHolder = isNextToLabel ? t`Empty` : (label ?? t`Empty`);
 
   const shouldShowValue = !isFieldEmpty || isFieldInputOnly || isForbidden;
 
@@ -105,7 +115,9 @@ export const RecordInlineCellDisplayMode = ({
         readonly={readonly}
         onClick={onClick}
       >
-        <StyledRecordInlineCellNormalModeInnerContainer>
+        <StyledRecordInlineCellNormalModeInnerContainer
+          isNextToLabel={isNextToLabel}
+        >
           {shouldShowValue ? (
             children
           ) : shouldShowEmptyPlaceholder ? (
