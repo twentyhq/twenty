@@ -50,6 +50,7 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
   allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
+  applicationDefaultRoleUniversalIdentifier?: string;
   idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
   dryRun?: boolean;
   shouldDeferActions?: boolean;
@@ -67,6 +68,7 @@ type ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs = {
   allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
   isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
+  applicationDefaultRoleUniversalIdentifier?: string;
   providedIdByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
   dryRun?: boolean;
   shouldDeferActions?: boolean;
@@ -298,6 +300,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
+    applicationDefaultRoleUniversalIdentifier,
     idByUniversalIdentifierByMetadataName,
     dryRun,
     shouldDeferActions,
@@ -351,6 +354,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       workspaceId,
       isSystemBuild,
       applicationUniversalIdentifier,
+      applicationDefaultRoleUniversalIdentifier,
       providedIdByUniversalIdentifierByMetadataName:
         idByUniversalIdentifierByMetadataName,
       dryRun,
@@ -366,6 +370,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild,
     applicationUniversalIdentifier,
+    applicationDefaultRoleUniversalIdentifier,
     providedIdByUniversalIdentifierByMetadataName,
     dryRun,
     shouldDeferActions,
@@ -415,6 +420,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         isSystemBuild,
         inferDeletionFromMissingEntities,
         applicationUniversalIdentifier,
+        applicationDefaultRoleUniversalIdentifier,
       },
       fromToAllFlatEntityMaps,
       workspaceId,

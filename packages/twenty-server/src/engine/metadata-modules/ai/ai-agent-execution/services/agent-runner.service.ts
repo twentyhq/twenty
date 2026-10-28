@@ -33,6 +33,7 @@ import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-ex
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import {
   type AgentChatStreamClaim,
@@ -730,7 +731,16 @@ export class AgentRunnerService {
       );
     }
 
-    return agent;
+    const effectiveAgent = resolveEffectiveAgent(agent);
+
+    if (!effectiveAgent.isActive) {
+      throw new AiException(
+        `Agent "${effectiveAgent.label}" is archived`,
+        AiExceptionCode.AGENT_IS_INACTIVE,
+      );
+    }
+
+    return effectiveAgent;
   }
 
   // A record of the run, not its outcome, so a write failure must not fail the run

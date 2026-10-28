@@ -20,7 +20,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.53.0', 1793203595093)
+@RegisteredWorkspaceCommand('2.53.0', 1793208282645)
 @Command({
   name: 'upgrade:2-53:rename-app-permission-flag-keys',
   description: doNotTranslate(

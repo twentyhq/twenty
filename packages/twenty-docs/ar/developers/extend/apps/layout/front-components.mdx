@@ -447,6 +447,34 @@ try {
 }
 ```
 
+## النشر في البريد الوارد
+
+يتم أيضًا تصدير `sendInboxMessage` ومساعدات الإشارة إلى [البريد الوارد](/ar/developers/extend/apps/logic/inbox) من `twenty-sdk/front-component`، لذا يمكن للمكوّن نشر رسالة دون وجود دالة منطقية بينهما. الرسالة من تطبيقك، ويحمل الاستدعاء رمز المكوّن، لذا يحتاج العضو الذي يشاهد الصفحة إلى إذن `AI`، شأنه شأن كل مستلم.
+
+لعرض المحادثة بعد ذلك، انتقل إليها باستخدام `threadId` الذي يعيده الاستدعاء:
+
+```tsx
+import {
+  AppPath,
+  navigate,
+  sendInboxMessage,
+} from 'twenty-sdk/front-component';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: 'weekly-digest',
+  idempotencyKey: `weekly-digest-${weekNumber}`,
+  title: 'Your weekly digest',
+  text: 'Three deals moved to negotiation this week.',
+});
+
+await navigate(AppPath.AiChatInbox, { threadId });
+```
+
+* يأخذ `workspaceMemberIds` معرّفات أعضاء مساحة العمل، وليس معرّف المستخدم الذي يعيده `useUserId()`.
+* تُفتح المحادثة لمشاركيها فقط، لذا انتقل إليها عندما يكون العضو الذي يشاهد الصفحة أحد المستلمين.
+* البريد الوارد هو مسار صفحة رئيسية: يفتحه `navigate` هناك، ولا يمكن لـ `openSidePanelPage` فتحه في اللوحة الجانبية.
+
 ## الوصول إلى سياق وقت التشغيل
 
 داخل مكوّنك، استخدم خطافات SDK للوصول إلى المستخدم الحالي، والسجل، ومثيل المكوّن:

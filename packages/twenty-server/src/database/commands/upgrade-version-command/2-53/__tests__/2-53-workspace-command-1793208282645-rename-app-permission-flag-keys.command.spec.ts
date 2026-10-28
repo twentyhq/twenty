@@ -5,7 +5,7 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { RenameAppPermissionFlagKeysCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793203595093-rename-app-permission-flag-keys.command';
+import { RenameAppPermissionFlagKeysCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793208282645-rename-app-permission-flag-keys.command';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
