@@ -45,7 +45,11 @@ export const fromUpdateSkillInputToFlatSkillToUpdateOrThrow = ({
     isSystemSideEffect: false,
   });
 
-  if (!shouldOverride && !existingFlatSkill.isCustom) {
+  if (
+    !shouldOverride &&
+    existingFlatSkill.applicationUniversalIdentifier !==
+      workspaceCustomApplicationUniversalIdentifier
+  ) {
     throw new SkillException(
       'Cannot update standard skill',
       SkillExceptionCode.SKILL_IS_STANDARD,

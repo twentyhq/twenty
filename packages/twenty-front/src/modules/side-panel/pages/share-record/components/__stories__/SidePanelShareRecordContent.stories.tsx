@@ -11,7 +11,6 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SidePanelShareRecordContent } from '@/side-panel/pages/share-record/components/SidePanelShareRecordContent';
 import {
-  ObjectSharingReach,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -139,7 +138,6 @@ const meta: Meta<typeof SidePanelShareRecordContent> = {
   args: {
     recordUrl: 'https://example.com/chat/shared-chat',
     objectLabelPlural: 'Chats',
-    sharingReach: ObjectSharingReach.WORKSPACE,
     sharingState: {
       sharing: SHARING,
       loading: false,
@@ -354,7 +352,6 @@ export const ChangeAccessWithoutMovingRecipients: Story = {
       <SidePanelShareRecordContent
         recordUrl={args.recordUrl}
         objectLabelPlural={args.objectLabelPlural}
-        sharingReach={args.sharingReach}
         sharingState={{
           ...args.sharingState,
           sharing,

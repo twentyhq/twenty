@@ -20,7 +20,6 @@ const appSkill: FlatSkill = {
   icon: 'IconBook',
   description: null,
   content: 'Summarize the record',
-  isCustom: false,
   isSystem: false,
   isActive: true,
   overrides: null,
@@ -36,7 +35,6 @@ const workspaceSkill: FlatSkill = {
     WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
   name: 'translate',
   label: 'Translate',
-  isCustom: true,
 };
 
 const flatSkillMaps = [appSkill, workspaceSkill].reduce<

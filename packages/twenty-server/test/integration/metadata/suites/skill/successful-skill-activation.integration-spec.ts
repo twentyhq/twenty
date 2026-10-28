@@ -41,7 +41,6 @@ describe('Skill activation should succeed', () => {
     expect(data.createSkill).toMatchObject({
       id: skillId,
       isActive: true,
-      isCustom: true,
     });
 
     await deleteSkill({

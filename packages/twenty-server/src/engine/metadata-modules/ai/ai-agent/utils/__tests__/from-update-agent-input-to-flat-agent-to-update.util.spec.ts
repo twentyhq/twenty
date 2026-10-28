@@ -24,7 +24,6 @@ const appAgent: FlatAgent = {
   responseFormat: { type: 'text' },
   modelConfiguration: null,
   triggers: [],
-  isCustom: false,
   isSystem: true,
   isActive: true,
   overrides: null,
@@ -41,7 +40,6 @@ const workspaceAgent: FlatAgent = {
     WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
   name: 'writer',
   label: 'Writer',
-  isCustom: true,
   isSystem: false,
 };
 

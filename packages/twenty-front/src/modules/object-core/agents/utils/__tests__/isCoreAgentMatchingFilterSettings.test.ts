@@ -14,7 +14,6 @@ const buildAgent = (overrides: Partial<CoreAgent>): CoreAgent => ({
   label: 'Lead qualifier',
   prompt: 'Prompt',
   modelId: 'workspace-default-model',
-  isCustom: true,
   isSystem: false,
   isActive: true,
   triggers: [],

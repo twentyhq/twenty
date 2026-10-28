@@ -32,7 +32,6 @@ const buildAgent = ({
   modelId: 'workspace-default-model',
   responseFormat: null,
   roleId: null,
-  isCustom: true,
   isSystem,
   isActive: true,
   modelConfiguration: null,

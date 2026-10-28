@@ -15,7 +15,6 @@ export const fromFlatSkillToSkillDto = (flatSkill: FlatSkill): SkillDTO => {
     icon: effectiveFlatSkill.icon ?? undefined,
     description: effectiveFlatSkill.description ?? undefined,
     content: effectiveFlatSkill.content,
-    isCustom: effectiveFlatSkill.isCustom,
     isSystem: effectiveFlatSkill.isSystem,
     isActive: effectiveFlatSkill.isActive,
     workspaceId: effectiveFlatSkill.workspaceId,

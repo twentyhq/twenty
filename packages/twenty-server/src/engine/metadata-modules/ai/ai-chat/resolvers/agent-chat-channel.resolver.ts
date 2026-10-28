@@ -1,5 +1,12 @@
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Int, Mutation, Query } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -28,6 +35,7 @@ import { AgentChatChannelThreadsService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
@@ -59,6 +67,16 @@ export class AgentChatChannelResolver {
     private readonly channelThreadsService: AgentChatChannelThreadsService,
     private readonly permissionsService: PermissionsService,
   ) {}
+
+  @ResolveField(() => Boolean, {
+    deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
+  })
+  isCustom(
+    @Parent() channel: AgentChatChannelDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): boolean {
+    return channel.applicationId === workspace.workspaceCustomApplicationId;
+  }
 
   @Query(() => AgentChatChannelThreadIdsDTO)
   async agentChatChannelThreadIds(

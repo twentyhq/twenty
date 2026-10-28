@@ -21,7 +21,6 @@ const standardSkill: UniversalFlatSkill = {
   icon: null,
   description: null,
   content: 'Build workflows',
-  isCustom: false,
   isSystem: false,
   isActive: true,
   overrides: null,

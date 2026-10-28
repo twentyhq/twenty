@@ -601,45 +601,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       );
     });
 
-    it('should not hand the child records captured with a deletion to the workflow', async () => {
-      const capturedEvent = {
-        ...mockPayload.events[0],
-        properties: {
-          before: { field1: 'old', field2: 'old' },
-          inheritedReadabilityChildRecords: {
-            noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }],
-          },
-        },
-      };
-
-      setTriggerMap([
-        {
-          type: AutomatedTriggerType.DATABASE_EVENT,
-          workflowId,
-          settings: {
-            eventName: 'deleteEvent',
-          },
-        },
-      ]);
-
-      await listener.handleObjectRecordDeleteEvent({
-        ...mockPayload,
-        name: 'deleteEvent',
-        events: [capturedEvent],
-      });
-
-      expect(messageQueueService.add).toHaveBeenCalledWith(
-        WorkflowTriggerJob.name,
-        expect.objectContaining({
-          payload: {
-            ...capturedEvent,
-            properties: { before: { field1: 'old', field2: 'old' } },
-          },
-        }),
-        { retryLimit: 3 },
-      );
-    });
-
     it('should handle destroy events correctly', async () => {
       const destroyPayload: WorkspaceEventBatch<any> = {
         ...mockPayload,
@@ -767,59 +728,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         expect.objectContaining({ payload: privatePayload.events[1] }),
         { retryLimit: 3 },
       );
-    });
-
-    it('should not trigger workflow for a system object and no resolved role', async () => {
-      const systemPayload: WorkspaceEventBatch<ObjectRecordUpdateEvent> = {
-        ...mockPayload,
-        objectMetadata: createMockFlatObjectMetadata({
-          readability: MetadataReadability.SYSTEM,
-        }),
-      };
-
-      workspaceCacheService.getOrRecompute.mockImplementation(((
-        _workspaceId: string,
-        keys: string[],
-      ) =>
-        Promise.resolve(
-          !keys.includes('workflowAutomatedTriggerMaps')
-            ? {
-                flatObjectMetadataMaps: { byUniversalIdentifier: {} },
-                featureFlagsMap: {},
-                flatApplicationMaps: {
-                  byId: {},
-                  idByUniversalIdentifier: {},
-                },
-                flatRoleMaps: { byUniversalIdentifier: {} },
-                rolesPermissions: {},
-                roleIdsWithAllRecordsAccess: [],
-                flatRowLevelPermissionPredicateMaps:
-                  createEmptyFlatEntityMaps(),
-                flatRowLevelPermissionPredicateGroupMaps:
-                  createEmptyFlatEntityMaps(),
-                flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
-              }
-            : {
-                flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
-                workflowAutomatedTriggerMaps: {
-                  byWorkflowId: {
-                    [workflowId]: {
-                      type: AutomatedTriggerType.DATABASE_EVENT,
-                      coreWorkflowVersionId: `core-version-${workflowId}`,
-                      workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
-                      workflowId,
-                      applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
-                      settings: { eventName: databaseEventName },
-                    },
-                  },
-                },
-              },
-        )) as never);
-
-      await listener.handleObjectRecordUpdateEvent(systemPayload);
-
-      expect(recordShareStorageService.findByRecordIds).not.toHaveBeenCalled();
-      expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
     it('should handle multiple events in a batch', async () => {

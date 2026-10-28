@@ -120,8 +120,7 @@ When adding permissions:
 - Grant the smallest useful scope.
 - Keep sensitive objects and fields out of broad roles.
 - Check whether the app introduces side effects through logic functions before granting write access.
-- To keep some permissions from being granted on an object, set `disabledObjectPermissionActions` on `defineObject()`, for example `['canDestroyObjectRecords']`. Allowed values are the object permission flags: `'canReadObjectRecords'`, `'canUpdateObjectRecords'`, `'canSoftDeleteObjectRecords'` and `'canDestroyObjectRecords'`. It only blocks granting them on that object; roles granting an action on all objects are unaffected.
-- For sensitive objects, set `sharingReach: ObjectSharingReach.ROLE_ACCESS` on `defineObject()` (imported from `twenty-sdk/define`) so records can only be shared with people whose role already reaches them. The default, `ObjectSharingReach.WORKSPACE`, lets a record be shared with anyone in the workspace. It only matters while record sharing is enabled, and objects with `APPLICATION` or `SYSTEM` readability are never shared.
+- To keep some permissions from being granted on an object, set `disabledObjectPermissionActions` on `defineObject()`, for example `['canDestroyObjectRecords']`. Allowed values are the object permission flags: `'canReadObjectRecords'`, `'canUpdateObjectRecords'`, `'canSoftDeleteObjectRecords'` and `'canDestroyObjectRecords'`. Users, API keys and agents never get these actions on that object, whatever their role grants; the app's own logic functions keep them. List the update, soft-delete and destroy flags to make an object only the app can write.
 
 ## Verification
 

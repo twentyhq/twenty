@@ -30,6 +30,7 @@ const StyledImageContainer = styled.div`
 `;
 
 const StyledImage = styled.img`
+  display: block;
   height: auto;
   max-width: 100%;
 `;

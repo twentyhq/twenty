@@ -18,7 +18,7 @@ type Agent {
   icon: String
   id: UUID!
   isActive: Boolean!
-  isCustom: Boolean!
+  isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystem: Boolean!
   label: String!
   modelConfiguration: JSON
@@ -32,11 +32,12 @@ type Agent {
 }
 
 type AgentChatChannel {
+  applicationId: UUID!
   color: String
   icon: String
   id: UUID!
   isAccessible: Boolean
-  isCustom: Boolean!
+  isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   name: String!
   position: Float!
   roleIds: [UUID!]!
@@ -56,9 +57,13 @@ type AgentChatChannelRole {
 }
 
 type AgentChatChannelSummary {
+  assignedToMeCount: Int!
   channelId: UUID!
+  doneCount: Int!
+  hasUnreadAssignedToMe: Boolean!
   hasUnreadOpen: Boolean!
   openCount: Int!
+  snoozedCount: Int!
 }
 
 type AgentChatChannelThreadIds {
@@ -2605,12 +2610,14 @@ type Impersonate {
 }
 
 type Index {
+  applicationId: UUID!
   createdAt: DateTime!
   id: UUID!
   indexFieldMetadataList: [IndexField!]!
   indexType: IndexType!
   indexWhereClause: String
-  isCustom: Boolean
+  isCustom: Boolean @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
+  isSystemSideEffect: Boolean!
   isUnique: Boolean!
   name: String!
   updatedAt: DateTime!
@@ -2636,7 +2643,7 @@ type IndexField {
 input IndexFilter {
   and: [IndexFilter!]
   id: UUIDFilterComparison
-  isCustom: BooleanFieldComparison
+  isCustom: BooleanFieldComparison @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   or: [IndexFilter!]
 }
 
@@ -4661,7 +4668,7 @@ type Skill {
   icon: String
   id: UUID!
   isActive: Boolean!
-  isCustom: Boolean!
+  isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystem: Boolean!
   label: String!
   name: String!
@@ -5870,7 +5877,7 @@ type View {
   id: UUID!
   isActive: Boolean!
   isCompact: Boolean!
-  isCustom: Boolean!
+  isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystemSideEffect: Boolean!
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID

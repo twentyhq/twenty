@@ -5,7 +5,10 @@ import {
   ObjectOpenRecordIn,
   ObjectSharingReach,
 } from 'twenty-shared/types';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import {
+  type ObjectPermissionAction,
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -29,6 +32,7 @@ export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   writability?: MetadataWritability;
   readability?: MetadataReadability;
   readabilityParentFieldMetadataNames?: AllStandardObjectFieldName<O>[];
+  disabledObjectPermissionActions?: ObjectPermissionAction[];
   openRecordIn?: ObjectOpenRecordIn;
   shortcut?: string | null;
   duplicateCriteria?: string[][] | null;
@@ -77,6 +81,7 @@ export const createStandardObjectFlatMetadata = <
     writability = MetadataWritability.OPEN,
     readability = MetadataReadability.OPEN,
     readabilityParentFieldMetadataNames,
+    disabledObjectPermissionActions,
     openRecordIn = ObjectOpenRecordIn.USER_CHOICE,
     shortcut = null,
     duplicateCriteria = null,
@@ -135,7 +140,7 @@ export const createStandardObjectFlatMetadata = <
     writability,
     readability,
     readabilityParentFieldUniversalIdentifiers,
-    disabledObjectPermissionActions: null,
+    disabledObjectPermissionActions: disabledObjectPermissionActions ?? null,
     sharingReach: ObjectSharingReach.WORKSPACE,
     openRecordIn,
     isLabelSyncedWithName: false,

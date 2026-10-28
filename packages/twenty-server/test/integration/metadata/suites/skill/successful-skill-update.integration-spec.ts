@@ -1,3 +1,4 @@
+import { STANDARD_SKILL } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-skill.constant';
 import { createSkill } from 'test/integration/metadata/suites/skill/utils/create-skill.util';
 import { deleteSkill } from 'test/integration/metadata/suites/skill/utils/delete-skill.util';
 import { findSkills } from 'test/integration/metadata/suites/skill/utils/find-skills.util';
@@ -134,10 +135,12 @@ describe('Skill update should succeed', () => {
     const { data } = await findSkills({
       expectToFail: false,
       input: undefined,
-      gqlFields: 'id label isCustom',
+      gqlFields: 'id name label',
     });
 
-    const standardSkill = data.skills.find((skill) => !skill.isCustom);
+    const standardSkill = data.skills.find((skill) =>
+      Object.keys(STANDARD_SKILL).includes(skill.name),
+    );
 
     expect(standardSkill).toBeDefined();
 

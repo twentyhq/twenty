@@ -205,6 +205,7 @@ export class SkillService {
     const flatSkillToDelete = fromDeleteSkillInputToFlatSkillOrThrow({
       flatSkillMaps: existingFlatSkillMaps,
       skillId: id,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 
     const validateAndBuildResult =
