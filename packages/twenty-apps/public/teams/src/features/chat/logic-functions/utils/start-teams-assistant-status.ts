@@ -10,6 +10,8 @@ import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-fun
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
 import { startTeamsAssistantStream } from 'src/features/chat/logic-functions/utils/start-teams-assistant-stream';
 
+const PENDING_UPDATE_WAIT_MS = 5000;
+
 // Teams only streams in one-on-one chats, so other conversations get a plain reply at the end.
 export const startTeamsAssistantStatus = async ({
   serviceUrl,
@@ -67,7 +69,17 @@ export const startTeamsAssistantStatus = async ({
   return {
     finish: async (text) => {
       timers.forEach(clearTimeout);
-      await pendingUpdate;
+
+      let waitTimer: ReturnType<typeof setTimeout> | undefined;
+
+      await Promise.race([
+        pendingUpdate,
+        new Promise<void>((resolve) => {
+          waitTimer = setTimeout(resolve, PENDING_UPDATE_WAIT_MS);
+        }),
+      ]);
+      clearTimeout(waitTimer);
+
       await writer.finish(text).catch((error: unknown) => {
         console.warn(
           `[teams] could not finish the stream in ${conversationId}`,

@@ -138,6 +138,25 @@ describe('startTeamsAssistantStatus', () => {
     warnSpy.mockRestore();
   });
 
+  it('should not hold the answer behind a status update that never returns', async () => {
+    updateMock.mockReturnValueOnce(new Promise<void>(() => undefined));
+
+    const status = await startTeamsAssistantStatus(PERSONAL);
+
+    await vi.advanceTimersByTimeAsync(
+      TEAMS_ASSISTANT_STATUS_STEPS[0].afterSeconds * 1000,
+    );
+
+    const finished = status.finish('Acme has 3 open deals.');
+
+    await vi.advanceTimersByTimeAsync(5000);
+    await finished;
+
+    expect(finishMock).toHaveBeenCalledExactlyOnceWith(
+      'Acme has 3 open deals.',
+    );
+  });
+
   it('should only reply at the end outside personal chats', async () => {
     const status = await startTeamsAssistantStatus({
       ...CONVERSATION,
