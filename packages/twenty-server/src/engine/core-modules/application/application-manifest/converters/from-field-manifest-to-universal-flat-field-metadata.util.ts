@@ -87,7 +87,7 @@ const resolveManifestFieldOptions = (
     : fieldManifest.options;
 };
 
-// Published manifests still declare writability without disabledFieldPermissionActions
+// TODO: remove once published app manifests declare disabledFieldPermissionActions
 const resolveManifestFieldDisabledFieldPermissionActions = (
   fieldManifest: FieldManifest,
 ): UniversalFlatFieldMetadata['disabledFieldPermissionActions'] => {

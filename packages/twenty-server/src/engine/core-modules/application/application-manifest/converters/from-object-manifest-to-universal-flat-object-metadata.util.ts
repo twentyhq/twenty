@@ -12,7 +12,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
-// Published manifests still declare writability/readability without disabledObjectPermissionActions
+// TODO: remove once published app manifests declare disabledObjectPermissionActions
 const resolveManifestObjectDisabledObjectPermissionActions = (
   objectManifest: ObjectManifest,
 ): UniversalFlatObjectMetadata['disabledObjectPermissionActions'] => {
