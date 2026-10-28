@@ -4,6 +4,7 @@ import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/cons
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { JOB_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/job-latency-ms-bucket-boundaries.constant';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 const mockGetJobs = jest.fn();
@@ -392,12 +393,19 @@ describe('BullMQDriver queue wait metric', () => {
       attemptsStarted: 1,
     });
 
-    expect(recordHistogram).toHaveBeenCalledWith(
-      expect.objectContaining({
-        key: MetricsKeys.JobDurationMs,
-        attributes: { queue: MessageQueue.workflowQueue, job_name: 'job' },
-      }),
+    const durationCalls = recordHistogram.mock.calls.filter(
+      ([options]) => options.key === MetricsKeys.JobDurationMs,
     );
+
+    expect(durationCalls).toHaveLength(1);
+    expect(durationCalls[0][0]).toEqual({
+      key: MetricsKeys.JobDurationMs,
+      value: expect.any(Number),
+      unit: 'ms',
+      attributes: { queue: MessageQueue.workflowQueue, job_name: 'job' },
+      bucketBoundaries: JOB_LATENCY_MS_BUCKET_BOUNDARIES,
+    });
+    expect(durationCalls[0][0].value).toBeGreaterThanOrEqual(0);
   });
 });
 
