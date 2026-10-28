@@ -4,12 +4,13 @@ import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/core-modules/record-share/record-share.exception';
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
-import { type RecordSharePrincipalMaps } from 'src/engine/core-modules/record-share/types/record-share-principal-maps.type';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util';
 
@@ -17,8 +18,10 @@ export const validateShareWithPrincipalsOrThrow = ({
   shareWith,
   flatWorkspaceMemberMaps,
   flatRoleMaps,
-}: RecordSharePrincipalMaps & {
+}: {
   shareWith: ShareWithInput[];
+  flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  flatRoleMaps: FlatRoleMaps;
 }): Pick<RecordShareInput, 'principalId' | 'principalType' | 'accessLevel'>[] =>
   shareWith.map((shareWithEntry) => {
     const resolvedPrincipal = resolveShareWithPrincipalOrThrow(shareWithEntry);

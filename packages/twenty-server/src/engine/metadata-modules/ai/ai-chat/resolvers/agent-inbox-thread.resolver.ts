@@ -16,15 +16,11 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { AuthenticationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
-import { recordShareGraphqlApiExceptionHandler } from 'src/engine/core-modules/record-share/utils/record-share-graphql-api-exception-handler.util';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { InboxThreadRecordInputDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/inbox-thread-record.input';
-import { ShareInboxThreadInputDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/share-inbox-thread.input';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-access.service';
-import { AgentInboxSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-sharing.service';
 import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 
@@ -49,7 +45,6 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 export class AgentInboxThreadResolver {
   constructor(
     private readonly inboxAccessService: AgentInboxAccessService,
-    private readonly inboxSharingService: AgentInboxSharingService,
     private readonly threadTargetService: AgentChatThreadTargetService,
   ) {}
 
@@ -87,25 +82,6 @@ export class AgentInboxThreadResolver {
       workspaceId: authContext.workspace.id,
       authContext,
     });
-
-    return true;
-  }
-
-  @Mutation(() => Boolean)
-  async shareInboxThread(
-    @Args('input') input: ShareInboxThreadInputDTO,
-  ): Promise<boolean> {
-    try {
-      await this.inboxSharingService.shareThread({
-        ...input,
-        authContext: this.getCallerAuthContext(),
-      });
-    } catch (error) {
-      if (error instanceof RecordShareException) {
-        recordShareGraphqlApiExceptionHandler(error);
-      }
-      throw error;
-    }
 
     return true;
   }

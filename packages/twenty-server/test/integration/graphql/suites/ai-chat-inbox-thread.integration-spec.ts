@@ -16,12 +16,13 @@ import {
   type ApplicationWithResources,
   setupApplicationWithResources,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
-import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 
+import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -43,24 +44,9 @@ const DETACH_RECORD = parse(
   'mutation DetachRecord($input: InboxThreadRecordInput!) { detachRecordFromInboxThread(input: $input) }',
 );
 
-const SHARE_THREAD = parse(
-  'mutation ShareThread($input: ShareInboxThreadInput!) { shareInboxThread(input: $input) }',
-);
-
 const SEND_INBOX_MESSAGE = parse(
   'mutation SendInboxMessage($input: SendInboxMessageInput!) { sendInboxMessage(input: $input) { threadId } }',
 );
-
-const CHAT_THREAD = parse(
-  'query ChatThread($id: UUID!) { chatThread(id: $id) { id } }',
-);
-
-type RecordShareGrant = {
-  workspaceMemberId?: string;
-  roleId?: string;
-  everyone?: boolean;
-  accessLevel: RecordShareAccessLevel;
-};
 
 type GraphqlResponse = {
   body: {
@@ -84,8 +70,6 @@ describe('Inbox thread mutations for members and applications', () => {
   let application: ApplicationWithResources;
   let applicationToken: string;
   let applicationRoleId: string;
-  let memberRoleId: string;
-  let guestRoleId: string;
 
   type LinkRecordArgs = {
     threadId: string;
@@ -117,32 +101,6 @@ describe('Inbox thread mutations for members and applications', () => {
   const detachRecord = (args: LinkRecordArgs) =>
     linkRecord({ ...args, mutation: DETACH_RECORD });
 
-  const shareThread = ({
-    threadId,
-    grants,
-    token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
-  }: {
-    threadId: string;
-    grants: RecordShareGrant[];
-    token?: string;
-  }): Promise<GraphqlResponse> =>
-    makeMetadataApiRequest(
-      { query: SHARE_THREAD, variables: { input: { threadId, grants } } },
-      token,
-    );
-
-  const readThread = ({
-    threadId,
-    token,
-  }: {
-    threadId: string;
-    token: string;
-  }): Promise<GraphqlResponse> =>
-    makeMetadataApiRequest(
-      { query: CHAT_THREAD, variables: { id: threadId } },
-      token,
-    );
-
   const readCompanyLinks = (
     threadId: string,
   ): Promise<{ deletedAt: Date | null }[]> =>
@@ -153,43 +111,28 @@ describe('Inbox thread mutations for members and applications', () => {
       [threadId, companyId],
     );
 
-  const readManualShares = (
-    threadId: string,
-  ): Promise<
-    {
-      principalType: RecordSharePrincipalType;
-      principalId: string;
-      accessLevel: RecordShareAccessLevel;
-    }[]
-  > =>
-    global.testDataSource.query(
-      `SELECT "principalType", "principalId", "accessLevel" FROM ${SCHEMA}."recordShare"
-       WHERE "recordId" = $1 AND "rowCause" = 'MANUAL'
-       ORDER BY "principalType" ASC, "principalId" ASC`,
-      [threadId],
-    );
-
-  const readParticipantMemberIds = async (
-    threadId: string,
-  ): Promise<string[]> =>
-    (
-      await global.testDataSource.query(
-        `SELECT "workspaceMemberId" FROM ${SCHEMA}."agentChatThreadParticipant"
-         WHERE "threadId" = $1`,
-        [threadId],
-      )
-    ).map(
-      ({ workspaceMemberId }: { workspaceMemberId: string }) =>
-        workspaceMemberId,
-    );
-
-  const readThreadUpdatedAt = async (threadId: string): Promise<Date> =>
-    (
-      await global.testDataSource.query(
-        `SELECT "updatedAt" FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
-        [threadId],
-      )
-    )[0].updatedAt;
+  const grantApplicationRoleAccess = async ({
+    threadId,
+    accessLevel,
+  }: {
+    threadId: string;
+    accessLevel: RecordShareAccessLevel;
+  }): Promise<void> =>
+    setManualRecordShare({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      enabled: true,
+      share: {
+        objectMetadataId:
+          await getAppProviderByClassName<AgentChatSharingService>(
+            'AgentChatSharingService',
+          ).getThreadObjectMetadataId(SEED_APPLE_WORKSPACE_ID),
+        recordId: threadId,
+        principalId: applicationRoleId,
+        principalType: RecordSharePrincipalType.ROLE,
+        accessLevel,
+        sourceId: threadId,
+      },
+    });
 
   const createMemberThread = async (): Promise<string> => {
     const threadId = randomUUID();
@@ -292,8 +235,6 @@ describe('Inbox thread mutations for members and applications', () => {
       `SELECT "defaultRoleId" FROM core."application" WHERE id = $1`,
       [application.id],
     );
-    ({ id: memberRoleId } = await findOneRoleByLabel({ label: 'Member' }));
-    ({ id: guestRoleId } = await findOneRoleByLabel({ label: 'Guest' }));
   });
 
   afterAll(async () => {
@@ -428,30 +369,15 @@ describe('Inbox thread mutations for members and applications', () => {
         await attachRecord({ threadId, token: applicationToken }),
         { code: 'NOT_FOUND', subCode: AiExceptionCode.THREAD_NOT_FOUND },
       );
-      expectGraphqlError(
-        await shareThread({
-          threadId,
-          token: applicationToken,
-          grants: [
-            { everyone: true, accessLevel: RecordShareAccessLevel.READ },
-          ],
-        }),
-        { code: 'NOT_FOUND', subCode: AiExceptionCode.THREAD_NOT_FOUND },
-      );
-      expect(await readManualShares(threadId)).toEqual([]);
+      expect(await readCompanyLinks(threadId)).toEqual([]);
     });
 
     it('refuses an application whose role can only read the conversation', async () => {
       const threadId = await createMemberThread();
 
-      await shareThread({
+      await grantApplicationRoleAccess({
         threadId,
-        grants: [
-          {
-            roleId: applicationRoleId,
-            accessLevel: RecordShareAccessLevel.READ,
-          },
-        ],
+        accessLevel: RecordShareAccessLevel.READ,
       });
 
       expectGraphqlError(
@@ -461,275 +387,18 @@ describe('Inbox thread mutations for members and applications', () => {
       expect(await readCompanyLinks(threadId)).toEqual([]);
     });
 
-    it('lets an application whose role was granted the conversation attach records, but not share it', async () => {
+    it('lets an application whose role was granted the conversation attach records', async () => {
       const threadId = await createMemberThread();
 
-      expect(
-        (
-          await shareThread({
-            threadId,
-            grants: [
-              {
-                roleId: applicationRoleId,
-                accessLevel: RecordShareAccessLevel.READ_WRITE,
-              },
-            ],
-          })
-        ).body,
-      ).toEqual({ data: { shareInboxThread: true } });
+      await grantApplicationRoleAccess({
+        threadId,
+        accessLevel: RecordShareAccessLevel.READ_WRITE,
+      });
+
       expect(
         (await attachRecord({ threadId, token: applicationToken })).body,
       ).toEqual({ data: { attachRecordToInboxThread: true } });
-      expectGraphqlError(
-        await shareThread({
-          threadId,
-          token: applicationToken,
-          grants: [
-            {
-              workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-              accessLevel: RecordShareAccessLevel.READ,
-            },
-          ],
-        }),
-        { code: 'NOT_FOUND', subCode: AiExceptionCode.THREAD_NOT_FOUND },
-      );
-      expect(await readManualShares(threadId)).toEqual([
-        {
-          principalType: RecordSharePrincipalType.ROLE,
-          principalId: applicationRoleId,
-          accessLevel: RecordShareAccessLevel.READ_WRITE,
-        },
-      ]);
-    });
-  });
-
-  describe('sharing conversations', () => {
-    it('lets a member read a conversation shared with them, without adding it to their inbox', async () => {
-      const threadId = await createMemberThread();
-      const updatedAtBeforeShare = await readThreadUpdatedAt(threadId);
-
-      expectGraphqlError(
-        await readThread({ threadId, token: APPLE_JONY_MEMBER_ACCESS_TOKEN }),
-        { code: 'NOT_FOUND' },
-      );
-
-      expect(
-        (
-          await shareThread({
-            threadId,
-            grants: [
-              {
-                workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-                accessLevel: RecordShareAccessLevel.READ,
-              },
-            ],
-          })
-        ).body,
-      ).toEqual({ data: { shareInboxThread: true } });
-
-      expect(
-        (await readThread({ threadId, token: APPLE_JONY_MEMBER_ACCESS_TOKEN }))
-          .body,
-      ).toEqual({ data: { chatThread: { id: threadId } } });
-      expect(await readParticipantMemberIds(threadId)).toEqual([
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      ]);
-      expect((await readThreadUpdatedAt(threadId)).getTime()).toBeGreaterThan(
-        updatedAtBeforeShare.getTime(),
-      );
-    });
-
-    it('shares with a member, a role and everyone in one call', async () => {
-      const threadId = await createMemberThread();
-
-      expect(
-        (
-          await shareThread({
-            threadId,
-            grants: [
-              {
-                workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-                accessLevel: RecordShareAccessLevel.READ_WRITE,
-              },
-              {
-                roleId: memberRoleId,
-                accessLevel: RecordShareAccessLevel.READ,
-              },
-              { everyone: true, accessLevel: RecordShareAccessLevel.READ },
-            ],
-          })
-        ).body,
-      ).toEqual({ data: { shareInboxThread: true } });
-      expect(await readManualShares(threadId)).toEqual(
-        expect.arrayContaining([
-          {
-            principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-            principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-            accessLevel: RecordShareAccessLevel.READ_WRITE,
-          },
-          {
-            principalType: RecordSharePrincipalType.ROLE,
-            principalId: memberRoleId,
-            accessLevel: RecordShareAccessLevel.READ,
-          },
-          {
-            principalType: RecordSharePrincipalType.EVERYONE,
-            principalId: expect.any(String),
-            accessLevel: RecordShareAccessLevel.READ,
-          },
-        ]),
-      );
-      expect(await readManualShares(threadId)).toHaveLength(3);
-    });
-
-    it('takes a member grant away with NONE', async () => {
-      const threadId = await createMemberThread();
-
-      await shareThread({
-        threadId,
-        grants: [
-          {
-            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-            accessLevel: RecordShareAccessLevel.READ,
-          },
-        ],
-      });
-
-      expect(
-        (
-          await shareThread({
-            threadId,
-            grants: [
-              {
-                workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-                accessLevel: RecordShareAccessLevel.NONE,
-              },
-            ],
-          })
-        ).body,
-      ).toEqual({ data: { shareInboxThread: true } });
-      expect(await readManualShares(threadId)).toEqual([]);
-      expectGraphqlError(
-        await readThread({ threadId, token: APPLE_JONY_MEMBER_ACCESS_TOKEN }),
-        { code: 'NOT_FOUND' },
-      );
-    });
-
-    it('writes no grant when one principal cannot hold the conversation', async () => {
-      const threadId = await createMemberThread();
-
-      expectGraphqlError(
-        await shareThread({
-          threadId,
-          grants: [
-            {
-              workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-              accessLevel: RecordShareAccessLevel.READ,
-            },
-            { roleId: guestRoleId, accessLevel: RecordShareAccessLevel.READ },
-          ],
-        }),
-        { code: 'BAD_USER_INPUT', subCode: 'INVALID_SHARE_WITH' },
-      );
-      expect(await readManualShares(threadId)).toEqual([]);
-    });
-
-    it('writes no grant when one principal is not in the workspace', async () => {
-      const threadId = await createMemberThread();
-
-      expectGraphqlError(
-        await shareThread({
-          threadId,
-          grants: [
-            {
-              workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-              accessLevel: RecordShareAccessLevel.READ,
-            },
-            { roleId: randomUUID(), accessLevel: RecordShareAccessLevel.READ },
-          ],
-        }),
-        { code: 'BAD_USER_INPUT', subCode: 'INVALID_SHARE_WITH' },
-      );
-      expect(await readManualShares(threadId)).toEqual([]);
-    });
-
-    it('refuses to share with a member who cannot use chats', async () => {
-      const threadId = await createMemberThread();
-
-      expectGraphqlError(
-        await shareThread({
-          threadId,
-          grants: [
-            {
-              workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
-              accessLevel: RecordShareAccessLevel.READ,
-            },
-          ],
-        }),
-        {
-          code: 'BAD_USER_INPUT',
-          subCode: AiExceptionCode.CHAT_THREAD_GRANTEE_CANNOT_USE_CHATS,
-        },
-      );
-      expect(await readManualShares(threadId)).toEqual([]);
-    });
-
-    it('refuses a participant who can edit the conversation but not manage its sharing', async () => {
-      const threadId = await createMemberThread();
-
-      await shareThread({
-        threadId,
-        grants: [
-          {
-            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-            accessLevel: RecordShareAccessLevel.READ_WRITE,
-          },
-        ],
-      });
-
-      expectGraphqlError(
-        await shareThread({
-          threadId,
-          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-          grants: [
-            { everyone: true, accessLevel: RecordShareAccessLevel.READ },
-          ],
-        }),
-        { code: 'NOT_FOUND' },
-      );
-      expect(await readManualShares(threadId)).toEqual([
-        {
-          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-          principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          accessLevel: RecordShareAccessLevel.READ_WRITE,
-        },
-      ]);
-    });
-
-    it('shares as the application that started the conversation, without adding it to the inbox of the member', async () => {
-      const threadId = await createApplicationThread();
-
-      expect(
-        (
-          await shareThread({
-            threadId,
-            token: applicationToken,
-            grants: [
-              {
-                workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-                accessLevel: RecordShareAccessLevel.READ,
-              },
-            ],
-          })
-        ).body,
-      ).toEqual({ data: { shareInboxThread: true } });
-      expect(
-        (await readThread({ threadId, token: APPLE_JONY_MEMBER_ACCESS_TOKEN }))
-          .body,
-      ).toEqual({ data: { chatThread: { id: threadId } } });
-      expect(await readParticipantMemberIds(threadId)).toEqual([
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      ]);
+      expect(await readCompanyLinks(threadId)).toEqual([{ deletedAt: null }]);
     });
   });
 });

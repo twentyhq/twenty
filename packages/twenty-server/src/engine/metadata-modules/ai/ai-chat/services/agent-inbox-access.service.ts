@@ -64,7 +64,7 @@ export class AgentInboxAccessService {
     return thread;
   }
 
-  async getThreadOrThrow({
+  private async getThreadOrThrow({
     workspaceId,
     threadId,
   }: {
@@ -95,14 +95,6 @@ export class AgentInboxAccessService {
       }));
 
     if (!canApplicationWriteThread) {
-      throwAgentChatThreadNotFound();
-    }
-  }
-
-  async assertApplicationParticipatesInThreadOrThrow(
-    args: ApplicationThreadAccessArgs & { threadId: string },
-  ): Promise<void> {
-    if (!(await this.doesApplicationParticipateInThread(args))) {
       throwAgentChatThreadNotFound();
     }
   }
