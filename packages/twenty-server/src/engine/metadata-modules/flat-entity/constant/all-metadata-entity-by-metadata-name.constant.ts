@@ -13,6 +13,7 @@ import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { McpServerEntity } from 'src/engine/metadata-modules/mcp-server/entities/mcp-server.entity';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -69,6 +70,7 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   rolePermissionFlag: RolePermissionFlagEntity,
   permissionFlag: PermissionFlagEntity,
   webhook: WebhookEntity,
+  mcpServer: McpServerEntity,
   applicationVariable: ApplicationVariableEntity,
   viewSort: ViewSortEntity,
   connectionProvider: ConnectionProviderEntity,

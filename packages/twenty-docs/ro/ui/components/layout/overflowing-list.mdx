@@ -1,0 +1,139 @@
+---
+title: OverflowingList
+description: Încadrați un rând de elemente în spațiul disponibil și afișați lista completă într-o fereastră pop-up.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import OverflowingListReference from '/snippets/ui/generated/components/layout/overflowing-list.mdx';
+
+## Prezentare generală
+
+`OverflowingList` își măsoară lățimea disponibilă, păstrează elementele care încap într-un rând compact și oferă un buton `+N` care deschide lista completă într-o fereastră pop-up. Numărul se actualizează când se modifică containerul, conținutul elementului sau lista ordonată. Listele goale și listele care încap nu au buton de depășire sau fereastră pop-up expusă.
+
+<StoryEmbed storyId="ui-components-overflowinglist--display" title="Exemplu de listă cu depășire" height={280} />
+
+Furnizați lista completă ordonată ca elemente cu chei. Aplicația dvs. deține conținutul, acțiunile și datele fiecărui element. Rândul compact rămâne vizibil când se deschide fereastra pop-up. Fereastra pop-up repetă lista completă, inclusiv elementele care încap în rând.
+
+## Utilizare
+
+```tsx
+import { OverflowingList, Section } from 'twenty-ui/components/layout';
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+const TAGS = ['Customer', 'Partner', 'Priority', 'Renewal'];
+
+export const CompanyTags = () => (
+  <Section.Root>
+    <Section.Header
+      title="Company tags"
+      description="Open the count to see all tags."
+    />
+    <OverflowingList
+      style={{ width: 180 }}
+      showOverflowCount
+      overflowLabel="Show all company tags"
+    >
+      {TAGS.map((label) => (
+        <Tag
+          key={label}
+          color="blue"
+          truncate={false}
+          style={{ width: 80, minWidth: 'fit-content' }}
+        >
+          {label}
+        </Tag>
+      ))}
+    </OverflowingList>
+  </Section.Root>
+);
+```
+
+## Vizibilitatea numărului
+
+| `showOverflowCount` | Comportament când elementele depășesc spațiul disponibil                                                          |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Omis                | Afișează numărul la trecerea cursorului, la focalizarea cu tastatura sau cât timp fereastra pop-up este deschisă. |
+| `true`              | Menține numărul vizibil.                                                                                          |
+| `fals`              | Ascunde numărul și decupează rândul. O fereastră pop-up deschisă rămâne deschisă până când este închisă.          |
+
+Modul implicit menține vizibilitatea curentă a numărului în timp ce un element în linie este focalizat, astfel încât afișarea numărului să nu împingă acel element în afara rândului. Focalizarea butonului cu numărul face numărul vizibil.
+
+Utilizați `false` când interfața înconjurătoare oferă o altă modalitate de a accesa elementele ascunse. Schimbarea la `false` ascunde numărul fără a închide o fereastră pop-up deja deschisă. `open` și `defaultOpen` pot expune în continuare lista completă când elementele depășesc spațiul disponibil. Eliminarea elementelor care depășesc spațiul disponibil sau lărgirea listei până când încape totul închide fereastra pop-up și elimină butonul cu numărul. Numărul descrie întotdeauna elementele din afara rândului compact.
+
+`maxInlineCount` limitează numărul de elemente vizibile din rând. Lățimea disponibilă poate reduce și mai mult acel număr. Fereastra pop-up conține în continuare lista completă. Nu preia elementele lipsă și nu virtualizează fereastra pop-up.
+
+## Starea ferestrei pop-up
+
+Lista își gestionează starea ferestrei pop-up când `open` este omis. Utilizați `defaultOpen` pentru starea sa inițială. Valoarea implicită este `false`; o fereastră pop-up deschisă inițial necesită în continuare elemente care depășesc spațiul disponibil.
+
+Transmiteți `open` și actualizați-l în `onOpenChange` pentru a gestiona starea ferestrei pop-up. Callbackul primește valoarea booleană solicitată și detaliile evenimentului [Popover](/ro/ui/primitives/surfaces/popover) instalat, inclusiv `reason`, `event`, `trigger`, `cancel()` și `preventUnmountOnClose()`. Apelarea `cancel()` împiedică modificarea de stare solicitată. În utilizarea controlată, actualizați-vă starea doar pentru modificările pe care le acceptați.
+
+Transmiteți `actionsRef` pentru a primi metodele Popover `close()` și `unmount()`. `close()` solicită închiderea prin `onOpenChange` și respectă anularea. Dacă callbackul dvs. apelează `preventUnmountOnClose()` pentru a rula o ieșire gestionată de apelant, apelați `actionsRef.current?.unmount()` când acea ieșire se finalizează. Aceasta eliberează fereastra pop-up reținută fără a elimina lista și permite deschiderea ei din nou.
+
+```tsx
+import { useState } from 'react';
+import { OverflowingList } from 'twenty-ui/components/layout';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+const TEAMS = ['Design', 'Engineering', 'Support', 'Operations'];
+
+export const ControlledTeamList = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <OverflowingList
+      open={open}
+      onOpenChange={setOpen}
+      showOverflowCount
+      overflowLabel="Show all teams"
+      style={{ width: 220 }}
+      triggerProps={{ render: <Button variant="outline" size="sm" /> }}
+    >
+      {TEAMS.map((team) => (
+        <Tag key={team} color="blue">
+          {team}
+        </Tag>
+      ))}
+    </OverflowingList>
+  );
+};
+```
+
+<StoryEmbed storyId="ui-components-overflowinglist--controlled" title="Stare controlată cu un declanșator personalizat" height={280} />
+
+## Ținte native și compoziție
+
+Atributele, handler-ele, stilurile, numele de clase și ref-urile native `div` din `OverflowingList` vizează rădăcina rândului compact. Utilizați `triggerProps` pentru butonul cu numărul și `popupProps` pentru div-ul de conținut al ferestrei pop-up. Ambele își păstrează proprietățile native, handler-ele, ref-ul și compoziția `render` cu elemente/funcții ale părții lor Popover.
+
+Personalizați declanșatorul cu `triggerProps.render`, ca în exemplul controlat, sau furnizați `triggerProps.children` pentru a înlocui `+N`. Componentele personalizate trebuie să [transmită mai departe proprietățile și ref-ul furnizate](/ro/ui/primitives/overview#custom-components). Componentele personalizate pentru ferestre pop-up trebuie, de asemenea, să redea elementele copil furnizate; OverflowingList gestionează conținutul elementelor. `overflowLabel` are implicit valoarea "Show all items". Numele accesibil al butonului implicit combină numărul său cu acea etichetă, de exemplu "+3 Show all teams". Suprascrieți `triggerProps['aria-label']` sau `popupProps['aria-label']` când conținutul lor necesită un nume diferit.
+
+`OverflowingList` oprește implicit propagarea `click`, `mousedown`, `pointerdown`, `keydown` și `keyup` pe declanșator și pe fereastra pop-up. Astfel, deschiderea ferestrei pop-up și interacțiunea cu elementele sale nu activează un câmp sau un selector înconjurător. Un handler furnizat prin `triggerProps` sau `popupProps` înlocuiește valoarea implicită pentru acel eveniment. Apelați `event.stopPropagation()` în handler pentru a păstra blocarea sau omiteți-l pentru a permite propagarea acelui eveniment. Celelalte evenimente își păstrează valorile implicite. Handler-ele de pe un element `render` personalizat se compun cu proprietățile furnizate ca de obicei.
+
+Când o suprascriere a clicului din fereastra pop-up permite propagarea, portalul Base UI instalat poate trimite acel clic de două ori către un strămoș React înconjurător, cu același eveniment nativ. Acest lucru se produce și cu un `Popover` simplu. OverflowingList păstrează acest comportament din amonte; nu garantează un callback al strămoșului pentru fiecare eveniment pop-up nativ când propagarea este activată.
+
+## Tastatură și focalizare
+
+Enter, Space și activarea cu indicatorul deschid o fereastră pop-up nemodală. Escape și interacțiunea din exterior o închid. Închiderea obișnuită restabilește focalizarea pe butonul cu numărul. Focalizarea deja existentă pe un element în linie vizibil sau pe un control exterior este păstrată. Fereastra pop-up acceptă conținut, linkuri și butoane cu comportamentul lor nativ de tastatură; nu le transformă în elemente de meniu și nu adaugă navigare cu săgeți de meniu.
+
+Utilizați `popupProps.initialFocus` și `popupProps.finalFocus` pentru a personaliza focalizarea la deschidere și închidere prin contractul Popover instalat.
+
+Fiecare listă își gestionează independent măsurătorile responsive. Demontarea unei liste eliberează observatorii acesteia și lasă celelalte liste funcționale.
+
+## Redare pe server și hidratare
+
+Marcajul serverului include primele `maxInlineCount` elemente sau toate elementele când limita este omisă. Măsurarea lățimii și conținutul ferestrei pop-up devin disponibile după montarea clientului.
+
+Hidratarea reutilizează rândul provizoriu și aplică măsurarea responsivă după montarea clientului. Elementele copil ale rândului și ale ferestrei pop-up sunt instanțe redate separate. Păstrați starea partajată între acele locații în apelant.
+
+## Migrare
+
+Fereastra pop-up continuă să afișeze lista completă și utilizează implicit "Show all items". `showOverflowCount={false}` păstrează rândul decupat și ascunde numărul. Nu închide o fereastră pop-up deja deschisă. Declanșatorul și fereastra pop-up își păstrează blocarea implicită pentru click, mousedown, pointerdown, keydown și keyup. Suprascrieți un handler individual prin `triggerProps` sau `popupProps` când interfața înconjurătoare trebuie să primească acel eveniment.
+
+## Proprietăți
+
+<OverflowingListReference />
+
+<PageBanner illustration="section-apps-data" />

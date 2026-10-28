@@ -3,7 +3,11 @@ title: Structura proiectului
 description: Ce conține o aplicație Twenty generată — fișiere, foldere și ce face fiecare.
 ---
 
-O aplicație nouă generată de `npx create-twenty-app` arată astfel:
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+O aplicație nouă generată de `twenty app init` arată astfel:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -15,6 +19,8 @@ my-twenty-app/
       universal-identifiers.ts              # Auto-generated UUIDs and metadata
     front-components/
       main-page.tsx                         # Welcome page component
+    logic-functions/
+      health-check.ts                       # Reports whether the app can run
     navigation-menu-items/
       main-page.navigation-menu-item.ts     # Sidebar entry for the welcome page
     page-layouts/
@@ -29,6 +35,8 @@ my-twenty-app/
     publish.yml                             # Publish to npm on version tags (with provenance)
   public/
     logo.svg                                # Static assets
+  locales/
+    en.json                                 # Source catalog; add <locale>.json files next to it
   vitest.config.ts                          # Integration test runner config
   vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
@@ -38,41 +46,47 @@ my-twenty-app/
 
 ## Fișiere cheie
 
-| Fișier / Folder                                                            | Scop                                                                                                                            |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `src/application-config.ts`                                                | **Necesar.** Fișierul principal de configurare pentru aplicație.                                                                |
-| `src/default-role.ts`                                                      | Rol implicit care controlează la ce pot avea acces funcțiile logice.                                                            |
-| `src/constants/universal-identifiers.ts`                                   | UUID-uri generate automat și metadate (nume afișat, descriere).                                                                 |
-| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | O pagină de bun venit inițială: o componentă de interfață randată de un layout de pagină autonom, accesibilă din bara laterală. |
-| `src/__tests__/`                                                           | Un test unitar plus un test de integrare (cu configurarea sa globală) care sincronizează aplicația cu un server real.           |
-| `public/`                                                                  | Resurse statice (imagini, fonturi) servite împreună cu aplicația.                                                               |
-| `AGENTS.md` / `CLAUDE.md`                                                  | Ghid pentru agenții AI de programare care lucrează la aplicație.                                                                |
-| `CHANGELOG.md` / `SETUP.md`                                                | Jurnal de modificări notabile și instrucțiuni de configurare pentru dezvoltare locală.                                          |
+| Fișier / Folder                                                            | Scop                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/application-config.ts`                                                | **Necesar.** Fișierul principal de configurare pentru aplicație.                                                                                                                                                                                                                                                                                                                                                                              |
+| `src/default-role.ts`                                                      | Rol implicit care controlează la ce pot avea acces funcțiile logice.                                                                                                                                                                                                                                                                                                                                                                          |
+| `src/constants/universal-identifiers.ts`                                   | UUID-uri generate automat și metadate (nume afișat, descriere).                                                                                                                                                                                                                                                                                                                                                                               |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | O pagină de bun venit inițială: o componentă de interfață randată de un layout de pagină autonom, accesibilă din bara laterală.                                                                                                                                                                                                                                                                                                               |
+| `src/logic-functions/health-check.ts`                                      | O [verificare a stării de sănătate](/ro/developers/extend/apps/logic/logic-functions#health-check) de bază care raportează `ok`. Completați-o pentru a evidenția problemele de configurare pe care doar aplicația dvs. le poate detecta.                                                                                                                                                                                                         |
+| `src/__tests__/`                                                           | Un test unitar plus un test de integrare (cu configurarea sa globală) care sincronizează aplicația cu un server real.                                                                                                                                                                                                                                                                                                                         |
+| `public/`                                                                  | Resurse statice (imagini, fonturi) servite împreună cu aplicația.                                                                                                                                                                                                                                                                                                                                                                             |
+| `locales/`                                                                 | Cataloage de traduceri. `en.json` este catalogul sursă pe care îl completează `twenty app translations extract`; setul de fișiere de aici este ceea ce publică o sincronizare, astfel încât un folder gol declară că nu există traduceri. `locales/compiled/` este scris de `twenty app pull` pentru intrările ale căror șiruri sursă nu se află încă în arbore, este publicat și printr-o sincronizare și nu este destinat editării manuale. |
+| `AGENTS.md` / `CLAUDE.md`                                                  | Ghid pentru agenții AI de programare care lucrează la aplicație.                                                                                                                                                                                                                                                                                                                                                                              |
+| `CHANGELOG.md` / `SETUP.md`                                                | Jurnal de modificări notabile și instrucțiuni de configurare pentru dezvoltare locală.                                                                                                                                                                                                                                                                                                                                                        |
 
 <Note>
-**Organizarea fișierelor ține de dvs.** Folderele de mai sus sunt convenții — SDK-ul detectează entitățile prin analiză AST pe apelurile `export default defineEntity(...)`, indiferent unde se află fișierul.
+  **Organizarea fișierelor ține de dvs.** Folderele de mai sus sunt convenții —
+  CLI-ul detectează entitățile prin analiză AST pe apelurile `export default defineEntity(...)`
+  indiferent unde se află fișierul.
 </Note>
 
 ## Dependențe
 
-Ambele pachete Twenty SDK trebuie plasate sub `devDependencies`, nu sub `dependencies`:
+Pachetele SDK și UI Twenty aparțin în `devDependencies`:
 
 ```json filename="package.json"
 {
   "dependencies": {},
   "devDependencies": {
-    "twenty-client-sdk": "2.20.0",
-    "twenty-sdk": "2.20.0",
-    "twenty-ui": "1.0.0-alpha.1"
+    "twenty-client-sdk": "2.40.0",
+    "twenty-sdk": "2.40.0",
+    "twenty-ui": "2.40.0"
   }
 }
 ```
 
-Generatorul de schelete fixează versiunile `twenty-sdk` și `twenty-client-sdk` la propria sa versiune — păstrează-le sincronizate când faci upgrade.
+`twenty app init` fixează `twenty-sdk`, `twenty-client-sdk` și `twenty-ui` la propria sa versiune. Menține-le pe toate trei sincronizate atunci când faci actualizarea.
 
-* **`twenty-sdk`** livrează CLI-ul `twenty` și uneltele de build/scaffolding. Acesta rulează doar în timpul dezvoltării și al build-ului și nu este niciodată importat de runtime-ul aplicației tale publicate.
+* **`twenty-sdk`** oferă definiții de aplicații, ajutoare pentru timpul de execuție și integrare cu motorul de randare. Utilizați pachetul **`twenty`** instalat separat pentru comenzile CLI și instrumentele de compilare/generare a structurii de bază.
 * **`twenty-client-sdk`** este importat de codul aplicației tale (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), dar Twenty îl furnizează la runtime — funcțiile de logică îl obțin dintr-un strat SDK generat, iar componentele de interfață îl rezolvă din module livrate de server. Copia instalată local este folosită doar pentru verificarea tipurilor și pentru build-ul la momentul de deploy, astfel că nu trebuie niciodată inclusă în bundle-ul livrat.
 
-Păstrarea oricărui pachet sub `dependencies` îl include în bundle-ul de runtime al aplicației instalate, unde reprezintă o încărcătură inutilă. `twenty dev:build` emite un avertisment atunci când oricare dintre ele este încă listat sub `dependencies`.
+Păstrarea oricărui pachet sub `dependencies` îl include în bundle-ul de runtime al aplicației instalate, unde reprezintă o încărcătură inutilă. `twenty app build` emite un avertisment atunci când oricare dintre ele este încă listat sub `dependencies`.
 
 Adaugă dependențele de runtime proprii ale aplicației tale (bibliotecile pe care funcțiile tale de logică chiar le importă la runtime) sub `dependencies`, ca de obicei. Menține arborele suplu: `dependencies` sunt instalate într-un strat de execuție limitat la 250 MB necomprimat, iar o operațiune de sync sau install eșuează cu o eroare privind dimensiunea dependințelor dacă se depășește această limită — bibliotecile de UI și uneltele de dezvoltare trebuie să fie în `devDependencies`.
+
+<PageBanner illustration="card-page-frontend-architecture" />

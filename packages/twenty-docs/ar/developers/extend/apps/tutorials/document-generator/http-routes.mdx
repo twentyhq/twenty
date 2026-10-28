@@ -3,6 +3,12 @@ title: ٣. مسارات HTTP
 description: قم بتفعيل الوظيفة على HTTP وتقديم الوثائق كصفحات ويب.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## نظرة عامة
+
 نفس المعالج يمكنه أيضا الإجابة على طلبات HTTP. سوف نضيف مسارين:
 
 * نقطة النهاية **POST** مكالمات واجهة المستخدم لإنشاء وثيقة، و
@@ -15,7 +21,7 @@ description: قم بتفعيل الوظيفة على HTTP وتقديم الوث�
 
 ## مسار POST - توليد حسب الطلب
 
-هذا يعيد استخدام `GenerateDocumentHandler`، لذلك لا يوجد منطق لتكراره - مجرد محول رقيق
+هذا يعيد استخدام `generateDocumentHandler`، لذلك لا يوجد منطق لتكراره - مجرد محول رقيق
 الذي يقرأ الجسم المطلوب.
 
 ```ts filename="src/logic-functions/generate-document-route.ts"
@@ -70,13 +76,19 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { documentHtmlPage } from 'src/utils/render-document';
 
 const htmlResponse = (html: string, status = 200): Response =>
-  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  new Response(html, {
+    status,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+  });
 
 const handler = async (event: RoutePayload): Promise<Response> => {
   const documentId = event.queryStringParameters?.id;
 
   if (!documentId) {
-    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+    return htmlResponse(
+      documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'),
+      400,
+    );
   }
 
   // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
@@ -89,10 +101,18 @@ const handler = async (event: RoutePayload): Promise<Response> => {
 
   const document = documents?.edges?.[0]?.node;
   if (!document?.id) {
-    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+    return htmlResponse(
+      documentHtmlPage(
+        'Document not found',
+        `No document with id ${documentId}.`,
+      ),
+      404,
+    );
   }
 
-  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+  return htmlResponse(
+    documentHtmlPage(document.name ?? 'Document', document.content ?? ''),
+  );
 };
 
 export default defineLogicFunction({
@@ -114,8 +134,8 @@ export default defineLogicFunction({
 
 ## جرب ذلك
 
-مع قالب وشخص في مساحة العمل الخاصة بك، اتصل بالمسار (التقط الرمز المميز من
-**الإعدادات → APIs & Webhooks**):
+باستخدام قالب وشخص في مساحة العمل الخاصة بك، استدعِ المسار (احصل على رمز من
+**Settings → Developers → API**):
 
 ```bash filename="Terminal"
 curl -X POST http://localhost:2020/s/documents/generate \
@@ -135,14 +155,17 @@ http://localhost:2020/s/documents/view?id=<documentId>
 </Frame>
 
 <Tip>
-يمكنك أيضًا بث سجلات الدالة أثناء اختبارها باستخدام
-`yarn 20 dev:function:logs`، أو استدعاء ذلك مباشرة باستخدام
-`yarn 20 dev:function:exec`.
+  يمكنك أيضًا بث سجلات دالة أثناء الاختبار باستخدام `twenty app logs`، أو
+  استدعاؤها مباشرةً باستخدام `twenty app exec`.
 </Tip>
 
-**بعد هذه الخطوة:** يمكن للتطبيق إنشاء مستندات عبر HTTP وخدمتها كصفحات ويب
-الآن دعونا نجعله قابلا للاستخدام بدون "تعطيل".
+**بعد هذه الخطوة:** يمكن للتطبيق إنشاء مستندات عبر HTTP وخدمتها كصفحات ويب الآن دعونا نجعله قابلا للاستخدام بدون "تعطيل".
 
-<Card title="التالي : بناء واجهة المستخدم →" icon="layout-columns" href="/ar/developers/extend/apps/tutorials/document-generator/building-the-ui">
-  المشاهدة، الملاحة، الأوامر، والعنصر الأمامي.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ar/developers/extend/apps/tutorials/document-generator/building-the-ui" img="/images/user-guide/halftone/card-page-tutorial-ui.svg">
+  <CardTitle>التالي: بناء واجهة المستخدم →</CardTitle>
+  طرق العرض، والتنقل، وأمر، ومكوّن أمامي.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-http" />

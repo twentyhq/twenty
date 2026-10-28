@@ -3,6 +3,10 @@ title: Server MCP
 description: Conectați asistenți AI la spațiul dvs. de lucru Twenty folosind Model Context Protocol.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Twenty expune un server [MCP](https://modelcontextprotocol.io/) astfel încât asistenții AI — Claude Desktop, Claude Code, Cursor, ChatGPT și alții — să poată citi și scrie datele tale din CRM prin limbaj natural.
 
 Folosește **URL-ul spațiului de lucru** (URL-ul pe care îl folosești pentru a accesa Twenty) drept punct final MCP. Pe Twenty Cloud, URL-ul spațiului tău de lucru poate fi `https://{mycompany}.twenty.com` sau un domeniu personalizat. Serverul este disponibil la:
@@ -68,13 +72,13 @@ Dacă clientul tău MCP nu suportă OAuth sau preferi acreditări statice, furni
 Cheia ta API oferă acces la datele spațiului de lucru. Ține-o în afara controlului versiunilor și a dotfiles partajate.
 </Warning>
 
-Pentru a crea o cheie API, mergi la **Settings → MCP & APIs → API → + Create key**. Vezi [API-uri](/ro/developers/extend/api#create-an-api-key) pentru detalii.
+Pentru a crea o cheie API, mergi la **Settings → Developers → API → + Create key**. Vezi [API-uri](/ro/developers/extend/api#create-an-api-key) pentru detalii.
 
 ## Pornire rapidă
 
 ### 1. Copiază configurația
 
-Mergi la **Settings → MCP & APIs → MCP** în Twenty. Alege metoda de autentificare (OAuth sau Cheie API), copiază fragmentul JSON (va folosi deja URL-ul spațiului tău de lucru) și lipește-l în fișierul de configurare al clientului tău MCP.
+Mergi la **Settings → AI → MCP** în Twenty. Alege metoda de autentificare (OAuth sau Cheie API), copiază fragmentul JSON (va folosi deja URL-ul spațiului tău de lucru) și lipește-l în fișierul de configurare al clientului tău MCP.
 
 | Client             | Locația fișierului de configurare                                                                                                                                                       |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -103,6 +107,12 @@ După conectare, serverul MCP expune instrumente care oglindesc API-ul Twenty. F
 2. **`execute_tool`** — rulează un instrument
 
 Nu este nevoie să reții numele instrumentelor. Întreabă-ți asistentul AI ce poate face și va apela `learn_tools` automat.
+
+Numele operațiunilor de înregistrare respectă o gramatică, astfel încât un asistent le poate construi fără un apel de descoperire: `find_many_companies`, `find_one_person`, `update_one_opportunity`. Dacă un nume este greșit, `learn_tools` îl raportează în `notFound` împreună cu numele care se potrivesc cel mai bine.
+
+Pentru orice altceva, `get_tool_catalog` parcurge instrumentele rămase, câte o categorie odată. Este o soluție de rezervă: un apel nefiltrat returnează sute de operațiuni, iar majoritatea asistenților vor trunchia răspunsul.
+
+`/mcp?mode=direct` enumeră fiecare instrument direct și necesită un client care încarcă instrumente la cerere.
 
 ## Permisiuni
 
@@ -135,3 +145,5 @@ Punctul final MCP, punctele finale OAuth și metadatele de descoperire derivă t
 **Timeout de conexiune**
 
 * Confirmă că URL-ul punctului final MCP este accesibil de pe calculatorul tău. Pentru instanțele auto-găzduite, verifică faptul că serverul rulează și că `SERVER_URL` este setat corect.
+
+<PageBanner illustration="card-page-connections" />

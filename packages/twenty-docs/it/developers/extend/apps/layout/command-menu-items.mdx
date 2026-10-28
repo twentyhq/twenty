@@ -3,6 +3,10 @@ title: Voci del menu comandi
 description: Esponi i componenti front-end come azioni rapide e voci del menu comandi (Cmd+K) con defineCommandMenuItem.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 Un **elemento del menu comandi** è il collegamento tra l'utente e un [front component](/it/developers/extend/apps/layout/front-components). Registra il componente nel menu comandi (Cmd+K) di Twenty e, opzionalmente, come pulsante di azione rapida fissato nell'angolo in alto a destra della pagina.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
@@ -31,6 +35,7 @@ export default defineCommandMenuItem({
 | `availabilityType`                      | No           | Controlla dove compare il comando: `'GLOBAL'` (sempre disponibile), `'GLOBAL_OBJECT_CONTEXT'` (solo sulle pagine con un contesto oggetto — pagine indice e pagine record), `'RECORD_SELECTION'` (solo quando sono selezionati dei record) o `'FALLBACK'` (mostrato quando nessun altro comando corrisponde) |
 | `availabilityObjectUniversalIdentifier` | No           | Limita il comando alle pagine di uno specifico tipo di oggetto (ad es. solo sui record Company)                                                                                                                                                                                                             |
 | `conditionalAvailabilityExpression`     | No           | Un'espressione booleana che controlla dinamicamente la visibilità (vedi sotto)                                                                                                                                                                                                                              |
+| `conditionalPinnedExpression`           | No           | Un'espressione booleana che restringe `isPinned`: il comando viene visualizzato come pulsante di azione rapida solo finché è valida, altrimenti rimane nel menu dei comandi. Stessa sintassi e stesse variabili di `conditionalAvailabilityExpression`                                                      |
 
 ## Comandi headless
 
@@ -115,3 +120,5 @@ Combinano le variabili in espressioni booleane:
 | `none(array, prop)`                 | `true` se la proprietà è falsy su ogni elemento                      |
 | `noneDefined(array, prop)`          | `true` se la proprietà è undefined su ogni elemento                  |
 | `noneEquals(array, prop, value)`    | `true` se la proprietà non è uguale al valore su alcun elemento      |
+
+<PageBanner illustration="card-page-command-menu" />

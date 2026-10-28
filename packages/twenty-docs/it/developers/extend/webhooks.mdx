@@ -3,13 +3,17 @@ title: Webhooks
 description: Ricevi una notifica quando i record cambiano — HTTP POST al tuo endpoint a ogni creazione, aggiornamento o eliminazione.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Panoramica
 
 Twenty invia un HTTP POST al tuo URL ogni volta che un record viene creato, aggiornato o eliminato. Tutti i tipi di oggetto sono supportati, inclusi gli oggetti personalizzati.
 
 ## Crea un Webhook
 
-1. Vai a **Impostazioni → API e Webhook → Webhook**
+1. Vai a **Impostazioni → Sviluppatori → Webhook**
 2. Clicca su **+ Crea webhook**
 3. Inserisci l'URL del tuo webhook (deve essere pubblicamente accessibile)
 4. Clicca su **Salva**
@@ -114,3 +118,5 @@ const isValid = crypto.timingSafeEqual(
 | **Trigger webhook del Workflow** | IN        | Ricevi dati in Twenty da sistemi esterni                                 |
 
 Per la ricezione di dati esterni, vedi [Configura un trigger webhook](/it/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
+
+<PageBanner illustration="card-page-webhooks" />

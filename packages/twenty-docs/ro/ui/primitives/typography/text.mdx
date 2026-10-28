@@ -1,0 +1,105 @@
+---
+title: Text
+description: Compune tipografia temei cu trunchiere pe o singură linie sau cu un număr limitat de linii.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TextReference from '/snippets/ui/generated/typography/text.mdx';
+
+## Prezentare generală
+
+`Text` oferă gestionarea tipografiei și a depășirii conținutului. Redă implicit un `div`. Omite `size`, `weight` și `color` pentru a continua să moștenească tipografia din elementele din jur.
+
+<StoryEmbed storyId="ui-typography-text--display" title="Exemplu de text" height={90} />
+
+## Utilizare
+
+Oferiți textului o lățime constrânsă, apoi setați `truncate` pentru a afișa puncte de suspensie când acesta depășește spațiul disponibil:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ContactName = () => (
+  <Text truncate style={{ maxWidth: 160 }}>
+    Alexandra Montgomery
+  </Text>
+);
+```
+
+## Alege tipografia
+
+`size` utilizează scara de dimensiuni existentă a temei. Schimbă dimensiunea fontului, fără valori implicite pentru înălțime, familia de fonturi sau înălțimea liniei:
+
+| Dimensiune | Valoarea temei |
+| ---------- | -------------- |
+| `xxs`      | `0.625rem`     |
+| `xs`       | `0.85rem`      |
+| `sm`       | `0.92rem`      |
+| `md`       | `1rem`         |
+| `lg`       | `1.23rem`      |
+| `xl`       | `1.54rem`      |
+| `xxl`      | `1.85rem`      |
+
+`weight` acceptă `regular` (400), `medium` (500) sau `semibold` (600). `color` acceptă `primary`, `secondary`, `tertiary` sau `light`. Fiecare prop omis este moștenit independent. Dimensiunea vizuală nu modifică elementul semantic.
+
+<StoryEmbed storyId="ui-typography-text--typography-catalog" title="Scara tipografică pentru text" height={410} />
+
+Pentru legende, combinați dimensiunea mică, grosimea semibold și culoarea deschisă:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Caption = () => (
+  <Text size="xs" weight="semibold" color="light">
+    Workspace
+  </Text>
+);
+```
+
+Utilizați `style` nativ pentru culori în timpul execuției și constrângeri de aspect ale părintelui. Clasele apelantului și compunerea randării vizează același element de text. Text nu adaugă valori implicite de tipografie atunci când aceste props sunt omise.
+
+## Limitați numărul de linii
+
+<StoryEmbed storyId="ui-typography-text--catalog" title="Opțiuni de depășire a textului" height={210} />
+
+Utilizați `lineClamp` cu un număr întreg pozitiv. Alegeți fie `truncate`, fie `lineClamp`; proprietățile lor sunt reciproc exclusive.
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Summary = () => (
+  <Text lineClamp={2} style={{ maxWidth: 240 }}>
+    Follow up with the customer about their onboarding milestones and upcoming
+    renewal.
+  </Text>
+);
+```
+
+## Alegeți un element
+
+Utilizați `render` când textul necesită un alt element semantic:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Description = () => (
+  <Text render={<p />}>Account description</Text>
+);
+```
+
+Trunchierea afectează prezentarea vizuală; nu scurtează textul din DOM. Oferiți o modalitate de a citi întregul conținut atunci când porțiunea vizibilă este insuficientă.
+
+## Proprietăți
+
+Atributele native, elementele copil, referințele, numele claselor și stilurile vizează elementul de text randat. `TextProps` este exportat din `twenty-ui/primitives/typography`. Conținutul textului este randat fără modificări, inclusiv linkurile furnizate de apelant.
+
+<TextReference />
+
+## Migrare
+
+`color` selectează acum o culoare semantică a temei. Mutați valorile arbitrare de culoare CSS dintr-un atribut `color` nativ în `style={{ color: customColor }}`. Stilurile, clasele și compunerea randării existente continuă să vizeze elementul de text.
+
+<PageBanner illustration="section-document-generator" />

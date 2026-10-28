@@ -3,6 +3,8 @@ title: Importar datos mediante la API
 description: Cuándo y cómo usar las API de Twenty para importaciones de datos a gran escala.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Resumen
 
 Twenty ofrece tanto **GraphQL** como **API REST** para la importación programática de datos. Utiliza la API cuando la importación mediante CSV no sea práctica para tu volumen de datos o cuando necesites importaciones automatizadas y recurrentes.
@@ -119,7 +121,7 @@ La API de GraphQL admite **upsert por lotes** — actualizar si el registro exis
 
 Para ver los objetos y campos disponibles:
 
-1. Ve a **Configuración → API y Webhooks**
+1. Ve a **Configuración → Desarrolladores → API**
 2. Explora la **Metadata API**
 3. Visualiza todos los objetos estándar y personalizados con sus campos
 
@@ -174,3 +176,5 @@ Contáctanos en [contact@twenty.com](mailto:contact@twenty.com) o explora nuestr
 Para conocer todos los detalles de implementación, ejemplos de código y referencia de esquemas:
 
 * [Documentación de la API](/es/developers/extend/api)
+
+<PageBanner illustration="dev-api" />

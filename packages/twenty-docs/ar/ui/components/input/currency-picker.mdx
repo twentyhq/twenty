@@ -1,0 +1,153 @@
+---
+title: CurrencyPicker
+description: اختر عملة باستخدام منتقي كامل أو ركّب أجزاءها في قائمة منسدلة.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CurrencyPickerReference from '/snippets/ui/generated/components/input/currency-picker.mdx';
+
+## نظرة عامة
+
+يجمع `CurrencyPicker` بين مشغّل عملة مضغوط وخيارات قابلة للبحث و[قائمة منسدلة](/ar/ui/components/navigation/dropdown). وفّر كتالوج عملات واستخدم مكوّناً واحداً للاختيار العادي. ركّب `Root` و`Trigger` و`Options` مع Dropdown عندما تحتاج النافذة المنبثقة إلى محتوى أو صفحات أخرى.
+
+<StoryEmbed storyId="ui-input-currencypicker--display" title="منتقي العملات" height={420} />
+
+## استخدام
+
+لكل عملة `code` فريد و`name` وخصائص `symbol` و`disabled` اختيارية. الرمز هو معرّف الاختيار الثابت. لا يأتي المنتقي مع كتالوج عملات ولا يختار قيمة افتراضية للتطبيق.
+
+```tsx
+import { CurrencyPicker } from 'twenty-ui/components/input';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro', symbol: '€' },
+  { code: 'USD', name: 'US Dollar', symbol: '$' },
+];
+
+export const InvoiceCurrency = () => (
+  <CurrencyPicker
+    currencies={CURRENCIES}
+    defaultValue="USD"
+    aria-label="Invoice currency"
+    optionsProps={{
+      searchLabel: 'Search currencies',
+      emptyLabel: 'No currencies found',
+    }}
+    contentProps={{ width: 280 }}
+  />
+);
+```
+
+استخدم `defaultValue` للاختيار غير المتحكَّم فيه. للاختيار المتحكَّم فيه، مرّر `value` وحدّثه من `onValueChange`. تتلقى دالة الاستدعاء الرمز التالي أو `null` وتفاصيل اختيار Dropdown التي تحتوي على `event` و`reason` و`trigger` و`cancel` و`isCanceled`. استدعِ `details.cancel()` للحفاظ على الاختيار الحالي وإبقاء النافذة المنبثقة مفتوحة. لا يؤدي اختيار الرمز الحالي إلى إطلاق تغيير آخر.
+
+يمسح `null` الاختيار. يبقى السلسلة الفارغة رمزاً صالحاً ولا تمسحه. تبقى القيمة غير المعروفة دون تغيير وتظهر كرمزها الخام في المشغّل؛ ولا تضيف خياراً إلى الكتالوج. يحدّث تعديل متحكَّم فيه لاحق أو تغيير في الكتالوج المشغّل والصف المحدد.
+
+```tsx
+import { useState } from 'react';
+import { CurrencyPicker } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro' },
+  { code: 'USD', name: 'US Dollar' },
+];
+
+export const ClearableCurrency = () => {
+  const [value, setValue] = useState<string | null>('USD');
+
+  return (
+    <>
+      <CurrencyPicker
+        currencies={CURRENCIES}
+        value={value}
+        onValueChange={setValue}
+        aria-label="Invoice currency"
+        triggerProps={{ placeholder: 'Choose a currency' }}
+      />
+      <Button onClick={() => setValue(null)}>Clear currency</Button>
+    </>
+  );
+};
+```
+
+## تركيب متقدم
+
+يُعِدّ `CurrencyPicker.Root` الكتالوج ويتولى الاختيار لكلا الجزأين. لا يضيف أي عنصر DOM ويجب أن يكون داخل `Dropdown.Root`. أبقِ `Trigger` و`Options` تحت جذر المنتقي نفسه، بما في ذلك عندما تكون الخيارات في صفحة Dropdown أخرى. تكشف العناصر الأبناء لدالة العرض الخاصة بالجذر عن `value` و`selectedCurrency` و`disabled` للتسميات والمحتوى الداعم المملوكين للمستدعي.
+
+```tsx
+import { CurrencyPicker } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro' },
+  { code: 'USD', name: 'US Dollar' },
+];
+
+export const ComposedCurrency = () => (
+  <Dropdown.Root type="picker">
+    <CurrencyPicker.Root
+      currencies={CURRENCIES}
+      defaultValue="USD"
+      closeOnSelect={false}
+    >
+      {({ value }) => (
+        <>
+          <CurrencyPicker.Trigger
+            aria-label={`Invoice currency: ${value ?? 'none'}`}
+            placeholder="Choose a currency"
+          />
+          <Dropdown.Content aria-label="Invoice currency" width={280}>
+            <Dropdown.Title>Invoice currency</Dropdown.Title>
+            <CurrencyPicker.Options
+              searchLabel="Search currencies"
+              emptyLabel="No currencies found"
+            />
+          </Dropdown.Content>
+        </>
+      )}
+    </CurrencyPicker.Root>
+  </Dropdown.Root>
+);
+```
+
+يتولى Dropdown الفتح وموضع النافذة المنبثقة والصفحات والتنقل في البحث والتركيز. يستخدم المنتقي مجموعة اختيار Dropdown للقيم المحددة المستمرة وسياسة الإغلاق. القيمة الافتراضية لـ `Root.closeOnSelect` هي `true`؛ استخدم `false` لإبقاء النافذة المنبثقة مفتوحة بعد اختيار عملة. تنقل مفاتيح الأسهم وHome وEnd التركيز دون تغيير القيمة. يحدد Enter أو Space أو التنشيط بالمؤشر خياراً مفعّلاً. تبقى العملات المعطّلة مرئية ولا يمكن تحديدها.
+
+## البحث والترتيب
+
+الخيارات قابلة للبحث افتراضياً. يتجاهل البحث المسافات البيضاء المحيطة ويطابق الرموز والأسماء والرموز التعبيرية وتسمية `Name (CODE)` الافتراضية دون حساسية لحالة الأحرف، باستخدام القواعد نفسها في كل لغة متصفح. تستبدل `getSearchText` على الجذر النص القابل للبحث لكل عملة. تخصيص العرض ونص البحث مستقلان.
+
+تحتفظ النتائج بترتيب الكتالوج. عيّن `selectedFirst` في الصيغة المختصرة أو الجذر لنقل العملة المحددة قبل المطابقات الأخرى. يزيل الاستعلام الذي يستبعدها صفها أيضاً. لا تنشئ القيمة غير المعروفة نتيجة محددة. تعرض النتائج الفارغة `emptyLabel` في منطقة حالة.
+
+عيّن `Options.searchable={false}` لحذف حقل البحث. تستهدف `Options.searchProps` إدخال البحث الأصلي، بما في ذلك `ref` و`render` وسمات إمكانية الوصول و`value` المتحكَّم فيه أو `defaultValue` غير المتحكَّم فيه. تتلقى `searchProps.onValueChange` الاستعلام. في الاستخدام المختصر، مرّر هذه الخيارات عبر `optionsProps`.
+
+يتلقى حقل البحث التركيز عند فتح منتقي قابل للبحث. يؤدي Enter مع استعلام غير فارغ إلى تنشيط أول نتيجة مفعّلة. مع استعلام فارغ، انقل التركيز إلى خيار قبل تحديده. يظل تنشيط البحث أثناء تركيب IME والبحث الجديد عند إعادة الفتح خاضعين لعقود البحث وجلسة الصفحة المشتركة في Dropdown.
+
+## العرض والأهداف الأصلية
+
+يعرض المشغّل الرمز المحدد افتراضياً. تتلقى `renderValue` القيمة `{ value, selectedCurrency, disabled }` لتخصيص هذا العرض دون البحث عن العملة مجدداً. تتجاوز `Trigger.children` عرض القيمة، ويوفر `Trigger.placeholder` العرض الفارغ. تخصص `getOptionLabel` محتوى كل خيار، مع تسمية `Name (CODE)` الافتراضية. تنتمي أسماء العملات ورموزها وتسمياتها ومحتوى الخيارات إلى المستدعي.
+
+تستهدف سمات الزر الأصلية للصيغة المختصرة ومعالجات الأحداث و`className` و`style` و`ref` و`render` مشغّلها. تخصص `triggerProps` ذلك الزر نفسه. استخدم `optionsProps` لعنصر div المغلف للخيارات و`searchProps` المتداخلة فيه للإدخال. تخصص `contentProps` النافذة المنبثقة لـ Dropdown. تنسّق `open` و`defaultOpen` و`onOpenChange` حالة فتح الصيغة المختصرة.
+
+في الاستخدام المركب، تستهدف السمات الأصلية و`ref` و`render` على `Trigger` زره، بينما تستهدف تلك الموجودة على `Options` عنصر div المغلف لها. تسمّي `Options.listLabel` مربع قائمة الاختيار الداخلي فقط. مرّر الخصائص وref المزوّدين من مكوّن `render` مخصص. لا يغيّر تنسيق الغلاف الهدف الأصلي للإدخال.
+
+عيّن `disabled` في الصيغة المختصرة أو الجذر لتعطيل الفتح والبحث والاختيار. يمكن لخاصية `disabled` الخاصة بجزء ما تعطيل ذلك الجزء أيضاً. الاختيار قيمة للمنتقي؛ يظل إرسال النموذج الأصلي وإعادة التعيين والتحقق المطلوب والتكامل مع Field خارج واجهة برمجة التطبيقات هذه.
+
+## التسميات والتكامل مع التطبيق
+
+القيمة الافتراضية لـ `searchLabel` هي `Search` وتوفر العنصر النائب للبحث والاسم القابل للوصول. القيمة الافتراضية لـ `emptyLabel` هي `No results` وتقبل المحتوى. وفّر تسميات المصدر المترجمة واسم مشغّل قابل للوصول وأي عنصر نائب من تطبيقك. يأخذ محتوى Dropdown اسم المشغّل ما لم تقم `Dropdown.Title` أو تسمية محتوى صريحة بتسميته. يأخذ مربع قائمة الاختيار عنوان Dropdown المسجل أو اسم المشغّل افتراضياً. عيّن `Options.listLabel` لمنح مربع القائمة هذا فقط اسماً قابلاً للوصول خاصاً به، أو مرّر `optionsProps.listLabel` في الاستخدام المختصر. تسمّي `aria-label` و`aria-labelledby` الأصليتان على `Options` غلافه فقط. يحتفظ المشغّل باسمه القابل للوصول الخاص به.
+
+يتولى التطبيق تحرير المبلغ وتخزين العملة وتنسيقها وتحميل الكتالوج وقيمته الأولية. ينبغي لمهايئ أن يربط رموز العملات المخزنة وسلوك المسح بـ `value` و`onValueChange`، مع الحفاظ على قواعد التنسيق والبدائل في التطبيق. احتفظ بأسماء العملات والتسميات المترجمة في التطبيق.
+
+## عارض المكوّن الأمامي
+
+تغطي تركيبات sandbox لـ React وPreact البحث والاختيار المختصر والمركب، وعناصر التحكم والخيارات المعطلة، ومراجع المشغّل، والمسح باستخدام null، والتحديثات الخارجية المتحكَّم فيها، وإعادة الفتح، واستعادة التركيز باستخدام Escape. كما تتحقق من أن مسح استعلام سابق وكتابة `$` يحافظان على استعلام الرمز.
+
+تعتمد رؤية النافذة المنبثقة وهندستها والتمرير ورفضها على دعم Dropdown والبوابة في العارض المشترك. يستخدم المنتقي ذلك التنفيذ المشترك.
+
+## الخصائص
+
+<CurrencyPickerReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

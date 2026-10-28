@@ -1268,5 +1268,6 @@ exports[`Application export - data model exports the whole application as a stab
       "visibility": "WORKSPACE",
     },
   ],
+  "workflows": [],
 }
 `;
