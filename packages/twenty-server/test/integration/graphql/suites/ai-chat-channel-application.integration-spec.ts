@@ -300,7 +300,7 @@ describe('Inbox channels managed by an application', () => {
       channelManager,
       otherChannelManager,
       channelReader,
-    ]) {
+    ].filter(isDefined)) {
       await cleanupApplicationAndAppRegistration({
         applicationUniversalIdentifier: application.universalIdentifier,
       });
@@ -631,6 +631,10 @@ describe('Uninstalling an application that created inbox channels', () => {
   afterAll(async () => {
     for (const threadId of createdThreadIds.splice(0)) {
       await destroyAgentChatThread({ threadId });
+    }
+
+    if (!isDefined(uninstalledApplication)) {
+      return;
     }
 
     await cleanupApplicationAndAppRegistration({
