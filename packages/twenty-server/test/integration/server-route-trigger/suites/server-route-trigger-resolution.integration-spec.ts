@@ -40,6 +40,9 @@ const CUSTOM_APP_ONLY_IDENTIFIER = '22222222-2222-4222-8222-222222222222';
 const CUSTOM_APP_SHADOW_RESOLVER_UNIVERSAL_IDENTIFIER =
   '33333333-3333-4333-8333-333333333333';
 
+const CUSTOM_APP_LEGACY_COLLISION_FUNCTION_ID =
+  '44444444-4444-4444-8444-444444444444';
+
 const OWNER_RESPONSE = { answeredBy: 'owner' };
 
 const OWNER_RESOLVER_BUILT_HANDLER_CODE = `export const main = async () => ({
@@ -296,6 +299,26 @@ describe('ServerRouteTrigger resolver resolution (integration)', () => {
       } finally {
         await removeWorkspaceCustomAppRouteClaimant({
           id: OWNER_RESOLVER_UNIVERSAL_IDENTIFIER,
+        });
+      }
+    }, 60000);
+
+    it('does not count a Custom app function as a claimant when it shares the installed app universalIdentifier', async () => {
+      await seedWorkspaceCustomAppRouteClaimant({
+        id: CUSTOM_APP_LEGACY_COLLISION_FUNCTION_ID,
+        universalIdentifier: OWNER_RESOLVER_UNIVERSAL_IDENTIFIER,
+      });
+
+      try {
+        const response = await callServerRoute({
+          identifier: OWNER_RESOLVER_UNIVERSAL_IDENTIFIER,
+        });
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(OWNER_RESPONSE);
+      } finally {
+        await removeWorkspaceCustomAppRouteClaimant({
+          id: CUSTOM_APP_LEGACY_COLLISION_FUNCTION_ID,
         });
       }
     }, 60000);

@@ -1,10 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { Request } from 'express';
 import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository, type SelectQueryBuilder } from 'typeorm';
+import { type SelectQueryBuilder } from 'typeorm';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
@@ -36,7 +35,6 @@ import { ServerRouteAuthorizationHeaderService } from 'src/engine/core-modules/s
 import { buildServerRouteFailureLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-failure-log-entry.util';
 import { isAppFacingServerRouteError } from 'src/engine/core-modules/server-route-trigger/utils/is-app-facing-server-route-error.util';
 import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-name.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -65,8 +63,6 @@ export class ServerRouteTriggerService {
   constructor(
     @InjectWorkspaceScopedRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -217,40 +213,31 @@ export class ServerRouteTriggerService {
   }
 
   private createResolverQueryBuilder(): SelectQueryBuilder<LogicFunctionEntity> {
-    return this.logicFunctionRepository
-      .createQueryBuilder('logicFunction')
-      .innerJoinAndSelect('logicFunction.application', 'application')
-      .innerJoinAndSelect(
-        'application.applicationRegistration',
-        'applicationRegistration',
-      )
-      .where('logicFunction.serverRouteTriggerSettings IS NOT NULL')
-      .andWhere(
-        'logicFunction.workspaceId = applicationRegistration.ownerWorkspaceId',
-      );
-  }
-
-  // The route identifier (primary key or universalIdentifier) is caller-chosen
-  // on createOneLogicFunction, and the Custom app is per-workspace, so a
-  // function there must never answer a public route: it would otherwise shadow
-  // an installed app's webhook across workspaces. Installed apps live in their
-  // own application rows and are unaffected.
-  private async isOwnedByWorkspaceCustomApplication(
-    resolver: LogicFunctionEntity,
-  ): Promise<boolean> {
-    const applicationId = resolver.application?.id;
-
-    if (!isDefined(applicationId)) {
-      return false;
-    }
-
-    const workspace = await this.workspaceRepository.findOne({
-      select: { id: true, workspaceCustomApplicationId: true },
-      where: { id: resolver.workspaceId },
-      withDeleted: true,
-    });
-
-    return workspace?.workspaceCustomApplicationId === applicationId;
+    return (
+      this.logicFunctionRepository
+        .createQueryBuilder('logicFunction')
+        .innerJoinAndSelect('logicFunction.application', 'application')
+        .innerJoinAndSelect(
+          'application.applicationRegistration',
+          'applicationRegistration',
+        )
+        .where('logicFunction.serverRouteTriggerSettings IS NOT NULL')
+        .andWhere(
+          'logicFunction.workspaceId = applicationRegistration.ownerWorkspaceId',
+        )
+        // A workspace's Custom application holds user-authored logic functions,
+        // not installed-app webhook receivers, and their id and universalIdentifier
+        // are caller-chosen. Exclude it so a Custom-app function can never answer a
+        // public route and shadow an installed app's webhook across workspaces.
+        .andWhere(
+          `NOT EXISTS (
+           SELECT 1
+           FROM core."workspace" "customApplicationWorkspace"
+           WHERE "customApplicationWorkspace"."id" = application."workspaceId"
+             AND "customApplicationWorkspace"."workspaceCustomApplicationId" = application."id"
+         )`,
+        )
+    );
   }
 
   private async findResolverOrThrow(
@@ -260,29 +247,19 @@ export class ServerRouteTriggerService {
       .andWhere('logicFunction.id = :id', { id: identifier })
       .getOne();
 
-    if (
-      isDefined(resolverById) &&
-      !(await this.isOwnedByWorkspaceCustomApplication(resolverById))
-    ) {
+    if (isDefined(resolverById)) {
       return {
         resolver: resolverById,
         isResolvedThroughLegacyIdentifier: false,
       };
     }
 
-    const legacyCandidateRows = await this.createResolverQueryBuilder()
+    const legacyCandidates = await this.createResolverQueryBuilder()
       .andWhere('logicFunction.universalIdentifier = :universalIdentifier', {
         universalIdentifier: identifier,
       })
+      .limit(2)
       .getMany();
-
-    const legacyCandidates: LogicFunctionEntity[] = [];
-
-    for (const candidate of legacyCandidateRows) {
-      if (!(await this.isOwnedByWorkspaceCustomApplication(candidate))) {
-        legacyCandidates.push(candidate);
-      }
-    }
 
     if (legacyCandidates.length > 1) {
       this.logger.error(
