@@ -10,6 +10,7 @@ import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/ju
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { useRecordCreationFormContextOrThrow } from '@/object-record/record-form/contexts/RecordCreationFormContext';
+import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
@@ -106,7 +107,9 @@ const setup = () => {
   );
 
   const start = () => {
-    let creation: Promise<unknown> | undefined;
+    let creation:
+      | Promise<RecordPickerPickableMorphItem | undefined>
+      | undefined;
     act(() => {
       creation = result.current.createJunctionRecordWithNestedTarget({
         searchInput: 'New task',
@@ -181,7 +184,7 @@ it('creates and links a target for each submission, including Create another', a
 
   await submit({ draftRecord: { title: 'First task' }, shouldKeepOpen: true });
   await submit({ draftRecord: { title: 'Second task' } });
-  let createdTarget: unknown;
+  let createdTarget: RecordPickerPickableMorphItem | undefined;
   await act(async () => {
     createdTarget = await creation;
   });

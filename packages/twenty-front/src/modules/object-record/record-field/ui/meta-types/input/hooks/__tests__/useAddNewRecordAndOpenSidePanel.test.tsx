@@ -82,6 +82,12 @@ const ROCKET_OWNED_PETS: Relation = {
   sourceField: 'ownedPets',
   targetField: 'polymorphicOwner',
 };
+const PET_CARE_AGREEMENT_PET: Relation = {
+  sourceObject: 'petCareAgreement',
+  targetObject: 'pet',
+  sourceField: 'pet',
+  targetField: 'caretakers',
+};
 
 const setup = (relation: Relation) => {
   const sourceObject = getMockObjectMetadataItemOrThrow(relation.sourceObject);
@@ -212,6 +218,45 @@ it('links the parent from a to-one picker and hides Create another', async () =>
     objectNameSingular: 'person',
     idToUpdate: 'parent-record',
     updateOneRecordInput: { companyId: createdRecord.id },
+  });
+  await expect(creation).resolves.toBe(createdRecord.id);
+});
+
+it('reuses the saved target and applies edits when retrying a failed attachment', async () => {
+  const attachmentError = new Error('The parent could not be updated');
+  mockUpdateOneRecord
+    .mockRejectedValueOnce(attachmentError)
+    .mockRejectedValueOnce(attachmentError);
+  const { start, submit } = setup(PET_CARE_AGREEMENT_PET);
+  const creation = start('Rex');
+  const draftRecord = {
+    name: 'Rex',
+    polymorphicOwnerRocketId: 'rocket-record',
+  };
+
+  await submit({ draftRecord });
+  await submit({ draftRecord });
+
+  expect(mockCreateOneRecord).toHaveBeenCalledTimes(1);
+  expect(mockUpdateOneRecord).toHaveBeenCalledTimes(2);
+  expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
+
+  await submit({ draftRecord: { name: 'Rex renamed' } });
+
+  const [[createdRecord]] = mockCreateOneRecord.mock.calls;
+  expect(mockCreateOneRecord).toHaveBeenCalledTimes(1);
+  expect(mockUpdateOneRecord).toHaveBeenNthCalledWith(3, {
+    objectNameSingular: 'pet',
+    idToUpdate: createdRecord.id,
+    updateOneRecordInput: {
+      name: 'Rex renamed',
+      polymorphicOwnerRocketId: null,
+    },
+  });
+  expect(mockUpdateOneRecord).toHaveBeenLastCalledWith({
+    objectNameSingular: 'petCareAgreement',
+    idToUpdate: 'parent-record',
+    updateOneRecordInput: { petId: createdRecord.id },
   });
   await expect(creation).resolves.toBe(createdRecord.id);
 });

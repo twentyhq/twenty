@@ -15,16 +15,19 @@ export const useRecordCreationForm = () => {
   );
 
   const createRecordWithOptionalForm = useCallback(
-    (request: RecordCreationRequest) =>
-      isRecordCreationFormEnabled
-        ? requestRecordCreation(request)
-        : request.createRecord(
-            computeRecordFormCreateRecordInput({
-              draftRecord: request.initialDraftRecord ?? {},
-              fieldMetadataItems: request.objectMetadataItem.fields,
-              objectMetadataItems,
-            }),
-          ),
+    (request: RecordCreationRequest) => {
+      if (isRecordCreationFormEnabled) {
+        return requestRecordCreation(request);
+      }
+
+      return request.createRecord(
+        computeRecordFormCreateRecordInput({
+          draftRecord: request.initialDraftRecord ?? {},
+          fieldMetadataItems: request.objectMetadataItem.fields,
+          objectMetadataItems,
+        }),
+      );
+    },
     [isRecordCreationFormEnabled, objectMetadataItems, requestRecordCreation],
   );
 
