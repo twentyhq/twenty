@@ -138,6 +138,7 @@ export class CommonApiContextBuilderService {
     const {
       rolesPermissions,
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       flatApplicationMaps,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
@@ -147,6 +148,7 @@ export class CommonApiContextBuilderService {
       [
         'rolesPermissions',
         'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
         'flatApplicationMaps',
         'userWorkspaceRoleMap',
         'apiKeyRoleMap',
@@ -174,6 +176,7 @@ export class CommonApiContextBuilderService {
       rolesPermissions,
       rolePermissionConfig: resolvedRolePermissionConfig,
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       flatApplicationMaps,
     });
   }

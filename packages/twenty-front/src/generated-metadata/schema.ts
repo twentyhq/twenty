@@ -124,6 +124,7 @@ export type AgentChatOpenThreadsSummary = {
   hasUnreadOpenThread: Scalars['Boolean']['output'];
   needsInputThreadCount: Scalars['Int']['output'];
   openThreadCount: Scalars['Int']['output'];
+  unreadOpenThreadCount: Scalars['Int']['output'];
 };
 
 export type AgentChatThread = {
@@ -2432,6 +2433,7 @@ export type Field = {
   createdAt: Scalars['DateTime']['output'];
   defaultValue?: Maybe<Scalars['JSON']['output']>;
   description?: Maybe<Scalars['String']['output']>;
+  disabledFieldPermissionActions?: Maybe<Array<Scalars['String']['output']>>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   isActive?: Maybe<Scalars['Boolean']['output']>;

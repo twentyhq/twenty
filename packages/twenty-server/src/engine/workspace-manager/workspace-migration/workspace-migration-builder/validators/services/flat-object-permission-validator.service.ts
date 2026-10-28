@@ -99,6 +99,8 @@ export class FlatObjectPermissionValidatorService {
         flatObjectPermission: flatObjectPermissionToValidate,
         flatObjectMetadata: referencedObjectMetadata,
         flatRole: referencedRole,
+        applicationDefaultRoleUniversalIdentifier:
+          buildOptions.applicationDefaultRoleUniversalIdentifier,
       }),
     );
 
@@ -219,6 +221,8 @@ export class FlatObjectPermissionValidatorService {
           flatEntityMaps: flatObjectMetadataMaps,
         }),
         flatRole: referencedRole,
+        applicationDefaultRoleUniversalIdentifier:
+          buildOptions.applicationDefaultRoleUniversalIdentifier,
       }),
     );
 

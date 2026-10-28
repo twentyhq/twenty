@@ -144,6 +144,7 @@ const buildLegacyCalendarEventRecordingPreferenceFieldMetadata = ({
   isAuditLogged: true,
   isUIEditable: true,
   writability: MetadataWritability.OPEN,
+  disabledFieldPermissionActions: null,
   isLabelSyncedWithName: false,
   overrides: null,
   defaultValue: "'AUTO'",

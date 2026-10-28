@@ -94,6 +94,7 @@ export interface AgentChatOpenThreadsSummary {
     hasUnreadOpenThread: Scalars['Boolean']
     needsInputThreadCount: Scalars['Int']
     openThreadCount: Scalars['Int']
+    unreadOpenThreadCount: Scalars['Int']
     __typename: 'AgentChatOpenThreadsSummary'
 }
 
@@ -1518,6 +1519,7 @@ export interface Field {
     createdAt: Scalars['DateTime']
     defaultValue?: Scalars['JSON']
     description?: Scalars['String']
+    disabledFieldPermissionActions?: Scalars['String'][]
     icon?: Scalars['String']
     id: Scalars['UUID']
     isActive?: Scalars['Boolean']
@@ -4290,6 +4292,7 @@ export interface AgentChatOpenThreadsSummaryGenqlSelection{
     hasUnreadOpenThread?: boolean | number
     needsInputThreadCount?: boolean | number
     openThreadCount?: boolean | number
+    unreadOpenThreadCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5971,6 +5974,7 @@ export interface FieldGenqlSelection{
     createdAt?: boolean | number
     defaultValue?: boolean | number
     description?: boolean | number
+    disabledFieldPermissionActions?: boolean | number
     icon?: boolean | number
     id?: boolean | number
     isActive?: boolean | number
