@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronRight } from 'twenty-ui/icon';
+import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -38,6 +38,16 @@ const StyledLabelContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledIconContainer = styled.span`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+
+  .section-title-container:hover & {
+    color: ${themeCssVariables.font.color.secondary};
+  }
+`;
+
 const StyledChevron = styled.div`
   align-items: center;
   display: flex;
@@ -68,6 +78,7 @@ const StyledRightIcon = styled.div<StyledRightIconProps>`
 
 type NavigationDrawerSectionTitleProps = {
   onClick?: () => void;
+  Icon?: IconComponent;
   label: string;
   rightIcon?: React.ReactNode;
   alwaysShowRightIcon?: boolean;
@@ -76,6 +87,7 @@ type NavigationDrawerSectionTitleProps = {
 
 export const NavigationDrawerSectionTitle = ({
   onClick,
+  Icon,
   label,
   rightIcon,
   alwaysShowRightIcon = false,
@@ -94,6 +106,11 @@ export const NavigationDrawerSectionTitle = ({
   return (
     <StyledTitle className="section-title-container">
       <StyledLabelContainer onClick={handleTitleClick}>
+        {isDefined(Icon) && (
+          <StyledIconContainer>
+            <Icon size="12px" stroke={theme.icon.stroke.lg} />
+          </StyledIconContainer>
+        )}
         <StyledDisplayLabel size="xs" weight="semibold" color="tertiary">
           {label}
         </StyledDisplayLabel>

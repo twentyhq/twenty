@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -71,28 +70,24 @@ export const NavigationMenuItemAddSectionButton = ({
   return (
     <NavigationDrawerSection>
       <NavigationMenuItemEntrance>
-        <NavigationDrawerSectionTitle
-          label={t`Add section`}
-          onClick={() =>
-            openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId })
+        <NavigationMenuItemGroupedOptionsMenu
+          dropdownId={dropdownId}
+          title={t`Add section`}
+          isTriggerNativeButton={false}
+          trigger={
+            <div>
+              <NavigationDrawerSectionTitle
+                Icon={IconPlus}
+                label={t`Add section`}
+                onClick={() =>
+                  openDropdown({
+                    dropdownComponentInstanceIdFromProps: dropdownId,
+                  })
+                }
+              />
+            </div>
           }
-          alwaysShowRightIcon
-          rightIcon={
-            <NavigationMenuItemGroupedOptionsMenu
-              dropdownId={dropdownId}
-              title={t`Add section`}
-              trigger={
-                <LightIconButton
-                  emphasis="subtle"
-                  size="sm"
-                  aria-label={t`Add section`}
-                >
-                  <IconPlus />
-                </LightIconButton>
-              }
-              groups={groups}
-            />
-          }
+          groups={groups}
         />
       </NavigationMenuItemEntrance>
     </NavigationDrawerSection>
