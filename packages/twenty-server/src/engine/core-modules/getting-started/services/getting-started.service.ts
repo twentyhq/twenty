@@ -29,14 +29,10 @@ import { GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY } from 'src/engine/core-modu
 import { GETTING_STARTED_STEP_DEFINITIONS } from 'src/engine/core-modules/getting-started/constants/getting-started-step-definitions.constant';
 import { GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX } from 'src/engine/core-modules/getting-started/constants/getting-started-step-user-var-key-prefix.constant';
 import { GETTING_STARTED_STEPS_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-steps-user-var-key.constant';
-import { type CompleteGettingStartedStepInput } from 'src/engine/core-modules/getting-started/dtos/complete-getting-started-step.input';
 import { type GettingStartedProgressDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-progress.dto';
 import { type UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
+import { GettingStartedStepStatus } from 'src/engine/core-modules/getting-started/enums/getting-started-step-status.enum';
 import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
-import {
-  GettingStartedException,
-  GettingStartedExceptionCode,
-} from 'src/engine/core-modules/getting-started/getting-started.exception';
 import { type GettingStartedKeyValueTypeMap } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
 import { type GettingStartedSelectionContext } from 'src/engine/core-modules/getting-started/types/getting-started-selection-context.type';
 import { selectGettingStartedSteps } from 'src/engine/core-modules/getting-started/utils/select-getting-started-steps.util';
@@ -160,36 +156,22 @@ export class GettingStartedService {
       });
     }
 
-    return this.getProgress({
-      userId,
-      userEmail,
-      workspaceId,
-      userWorkspaceId,
-    });
-  }
-
-  async completeStepFromClient({
-    userId,
-    userEmail,
-    workspaceId,
-    userWorkspaceId,
-    input,
-  }: GettingStartedScope & {
-    input: CompleteGettingStartedStepInput;
-  }): Promise<GettingStartedProgressDTO> {
-    if (!GETTING_STARTED_STEP_DEFINITIONS[input.step].isClientCompletable) {
-      throw new GettingStartedException(
-        `Step ${input.step} can only be completed by the server`,
-        GettingStartedExceptionCode.INVALID_STEP,
-      );
+    if (input.stepStatus?.status === GettingStartedStepStatus.DONE) {
+      await this.completeStep({
+        userId,
+        workspaceId,
+        step: input.stepStatus.step,
+        threadId: input.stepStatus.threadId ?? undefined,
+      });
     }
 
-    await this.completeStep({
-      userId,
-      workspaceId,
-      step: input.step,
-      threadId: input.threadId ?? undefined,
-    });
+    if (input.stepStatus?.status === GettingStartedStepStatus.TODO) {
+      await this.userVarsService.delete({
+        userId,
+        workspaceId,
+        key: `${GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX}${input.stepStatus.step}`,
+      });
+    }
 
     return this.getProgress({
       userId,
@@ -210,22 +192,10 @@ export class GettingStartedService {
     step: GettingStartedStep;
     threadId?: string;
   }): Promise<void> {
-    const key = `${GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX}${step}` as const;
-
-    const completion = await this.userVarsService.get({
+    await this.userVarsService.setIfNotExists({
       userId,
       workspaceId,
-      key,
-    });
-
-    if (isDefined(completion)) {
-      return;
-    }
-
-    await this.userVarsService.set({
-      userId,
-      workspaceId,
-      key,
+      key: `${GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX}${step}`,
       value: { completedAt: new Date().toISOString(), threadId },
     });
   }

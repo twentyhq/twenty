@@ -5,7 +5,6 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { CompleteGettingStartedStepInput } from 'src/engine/core-modules/getting-started/dtos/complete-getting-started-step.input';
 import { GettingStartedProgressDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-progress.dto';
 import { UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
 import { GettingStartedGraphqlApiExceptionFilter } from 'src/engine/core-modules/getting-started/filters/getting-started-graphql-api-exception.filter';
@@ -66,22 +65,6 @@ export class GettingStartedResolver {
     @Args('input') input: UpdateGettingStartedInput,
   ): Promise<GettingStartedProgressDTO> {
     return this.gettingStartedService.updateProgress({
-      userId: user.id,
-      userEmail: user.email,
-      workspaceId: workspace.id,
-      userWorkspaceId,
-      input,
-    });
-  }
-
-  @Mutation(() => GettingStartedProgressDTO)
-  async completeGettingStartedStep(
-    @AuthUser() user: AuthContextUser,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-    @Args('input') input: CompleteGettingStartedStepInput,
-  ): Promise<GettingStartedProgressDTO> {
-    return this.gettingStartedService.completeStepFromClient({
       userId: user.id,
       userEmail: user.email,
       workspaceId: workspace.id,

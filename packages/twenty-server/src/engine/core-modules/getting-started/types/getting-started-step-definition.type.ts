@@ -5,7 +5,6 @@ import { type GettingStartedWorkflowTemplate } from 'src/engine/core-modules/get
 
 export type GettingStartedStepDefinition = {
   permissionFlag: PermissionFlagType;
-  isClientCompletable: boolean;
 } & (
   | {
       kind: GettingStartedStepKind.BUILT_IN | GettingStartedStepKind.AI_THREAD;
