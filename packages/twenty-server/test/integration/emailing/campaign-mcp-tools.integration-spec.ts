@@ -1,4 +1,10 @@
+import gql from 'graphql-tag';
 import { executeToolThroughMcp } from 'test/integration/ai/utils/execute-tool-through-mcp.util';
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -7,14 +13,6 @@ import { v4 } from 'uuid';
 
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-
-const WORKSPACE_SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
-const MESSAGE_CAMPAIGN_TABLE = `${WORKSPACE_SCHEMA}."messageCampaign"`;
-const MESSAGE_LIST_TABLE = `${WORKSPACE_SCHEMA}."messageList"`;
-const MESSAGE_LIST_MEMBER_TABLE = `${WORKSPACE_SCHEMA}."messageListMember"`;
-const MESSAGE_SUPPRESSION_TABLE = `${WORKSPACE_SCHEMA}."messageSuppression"`;
-const PERSON_TABLE = `${WORKSPACE_SCHEMA}."person"`;
 
 const SENDABLE_BODY_TEMPLATE = JSON.stringify({
   type: 'doc',
@@ -22,23 +20,59 @@ const SENDABLE_BODY_TEMPLATE = JSON.stringify({
   content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Hello' }] }],
 });
 
+const CREATE_MESSAGE_SUPPRESSION = gql`
+  mutation CreateMessageSuppression($input: CreateMessageSuppressionInput!) {
+    createMessageSuppression(input: $input) {
+      id
+    }
+  }
+`;
+
+const DELETE_MESSAGE_SUPPRESSION = gql`
+  mutation DeleteMessageSuppression($id: UUID!) {
+    deleteMessageSuppression(id: $id)
+  }
+`;
+
+const createRecord = async (
+  objectMetadataSingularName: string,
+  input: Record<string, unknown>,
+) => {
+  const { errors } = await createOneOperation({
+    objectMetadataSingularName,
+    input,
+  });
+
+  expect(errors).toBeUndefined();
+};
+
+const destroyRecord = (objectMetadataSingularName: string, recordId: string) =>
+  makeGraphqlApiRequest(
+    destroyOneOperationFactory({
+      objectMetadataSingularName,
+      gqlFields: 'id',
+      recordId,
+    }),
+  );
+
 describe('Campaign lifecycle tools through MCP (integration)', () => {
   const domain = `${v4()}.example.com`;
   const listId = v4();
   const personId = v4();
   const memberId = v4();
   const campaignId = v4();
-  const suppressionId = v4();
   const suppressedEmailAddress = `mcp-suppressed-${v4()}@example.com`;
+  let suppressionId: string;
   let wasMessageCampaignEnabled: boolean;
 
   const readCampaignStatus = async (): Promise<string> => {
-    const [{ status }] = await testDataSource.query(
-      `SELECT "status" FROM ${MESSAGE_CAMPAIGN_TABLE} WHERE "id" = $1`,
-      [campaignId],
-    );
+    const { data } = await findOneOperation({
+      objectMetadataSingularName: 'messageCampaign',
+      gqlFields: 'status',
+      filter: { id: { eq: campaignId } },
+    });
 
-    return status;
+    return data.findResponse.status;
   };
 
   beforeAll(async () => {
@@ -63,56 +97,39 @@ describe('Campaign lifecycle tools through MCP (integration)', () => {
       [SEED_APPLE_WORKSPACE_ID, domain, `unsubscribe.${domain}`],
     );
 
-    await testDataSource.query(
-      `INSERT INTO ${MESSAGE_LIST_TABLE} ("id", "name") VALUES ($1, 'MCP tools list')`,
-      [listId],
-    );
+    await createRecord('messageList', { id: listId, name: 'MCP tools list' });
+    await createRecord('person', {
+      id: personId,
+      emails: { primaryEmail: `mcp-tools-${personId}@example.com` },
+    });
+    await createRecord('messageListMember', { id: memberId, listId, personId });
+    await createRecord('messageCampaign', {
+      id: campaignId,
+      name: 'MCP tools campaign',
+      subject: 'Monthly newsletter',
+      bodyTemplate: SENDABLE_BODY_TEMPLATE,
+      fromAddress: { primaryEmail: `campaigns@${domain}` },
+      listId,
+    });
 
-    await testDataSource.query(
-      `INSERT INTO ${PERSON_TABLE} ("id", "emailsPrimaryEmail") VALUES ($1, $2)`,
-      [personId, `mcp-tools-${personId}@example.com`],
-    );
+    const suppressionResponse = await makeMetadataApiRequest({
+      query: CREATE_MESSAGE_SUPPRESSION,
+      variables: { input: { emailAddress: suppressedEmailAddress } },
+    });
 
-    await testDataSource.query(
-      `INSERT INTO ${MESSAGE_LIST_MEMBER_TABLE} ("id", "listId", "personId")
-       VALUES ($1, $2, $3)`,
-      [memberId, listId, personId],
-    );
-
-    await testDataSource.query(
-      `INSERT INTO ${MESSAGE_CAMPAIGN_TABLE}
-         ("id", "name", "status", "subject", "bodyTemplate", "fromAddressPrimaryEmail", "listId")
-       VALUES ($1, 'MCP tools campaign', 'DRAFT', 'Monthly newsletter', $2, $3, $4)`,
-      [campaignId, SENDABLE_BODY_TEMPLATE, `campaigns@${domain}`, listId],
-    );
-
-    await testDataSource.query(
-      `INSERT INTO ${MESSAGE_SUPPRESSION_TABLE} ("id", "emailAddress", "reason", "source")
-       VALUES ($1, $2, 'UNSUBSCRIBE', 'SYSTEM')`,
-      [suppressionId, suppressedEmailAddress],
-    );
+    expect(suppressionResponse.body.errors).toBeUndefined();
+    suppressionId = suppressionResponse.body.data.createMessageSuppression.id;
   });
 
   afterAll(async () => {
-    await testDataSource.query(
-      `DELETE FROM ${MESSAGE_SUPPRESSION_TABLE} WHERE "id" = $1`,
-      [suppressionId],
-    );
-    await testDataSource.query(
-      `DELETE FROM ${MESSAGE_CAMPAIGN_TABLE} WHERE "id" = $1`,
-      [campaignId],
-    );
-    await testDataSource.query(
-      `DELETE FROM ${MESSAGE_LIST_MEMBER_TABLE} WHERE "id" = $1`,
-      [memberId],
-    );
-    await testDataSource.query(`DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`, [
-      personId,
-    ]);
-    await testDataSource.query(
-      `DELETE FROM ${MESSAGE_LIST_TABLE} WHERE "id" = $1`,
-      [listId],
-    );
+    await makeMetadataApiRequest({
+      query: DELETE_MESSAGE_SUPPRESSION,
+      variables: { id: suppressionId },
+    });
+    await destroyRecord('messageCampaign', campaignId);
+    await destroyRecord('messageListMember', memberId);
+    await destroyRecord('person', personId);
+    await destroyRecord('messageList', listId);
     await testDataSource.query(
       `DELETE FROM "core"."emailingDomain" WHERE "domain" = $1`,
       [domain],
