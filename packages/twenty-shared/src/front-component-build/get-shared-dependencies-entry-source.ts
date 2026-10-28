@@ -1,5 +1,5 @@
-import { type SharedDependenciesExportNames } from '@/app/bundles/front-component-build/shared-dependencies-build/types/shared-dependencies-export-names.type';
-import { toSharedDependenciesNamespaceIdentifier } from '@/app/bundles/front-component-build/shared-dependencies-build/utils/to-shared-dependencies-namespace-identifier';
+import { type SharedDependenciesExportNames } from '@/front-component-build/shared-dependencies-export-names.type';
+import { toSharedDependenciesNamespaceIdentifier } from '@/front-component-build/to-shared-dependencies-namespace-identifier';
 
 export const getSharedDependenciesEntrySource = (
   exportNamesBySpecifier: Map<string, SharedDependenciesExportNames>,
