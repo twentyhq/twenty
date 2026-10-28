@@ -16909,11 +16909,6 @@ msgstr "Arbetsytans schema hittades inte."
 msgid "Workspace setup"
 msgstr "Konfiguration av arbetsyta"
 
-#. js-lingui-id: 5TbIzO
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util.ts
-msgid "Workspace workflows cannot be adopted by an application."
-msgstr "Arbetsytans arbetsflöden kan inte tas över av en applikation."
-
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."

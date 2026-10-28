@@ -16903,11 +16903,6 @@ msgstr "Werkruimteschema niet gevonden."
 msgid "Workspace setup"
 msgstr "Werkruimte instellen"
 
-#. js-lingui-id: 5TbIzO
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util.ts
-msgid "Workspace workflows cannot be adopted by an application."
-msgstr "Werkruimteworkflows kunnen niet door een applicatie worden overgenomen."
-
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."

@@ -16903,11 +16903,6 @@ msgstr "Workspace-ի սխեման չի գտնվել։"
 msgid "Workspace setup"
 msgstr "Աշխատանքային տարածքի կարգավորում"
 
-#. js-lingui-id: 5TbIzO
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util.ts
-msgid "Workspace workflows cannot be adopted by an application."
-msgstr "Աշխատանքային տարածքի աշխատանքային հոսքերը չեն կարող ընդունվել հավելվածի կողմից։"
-
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."

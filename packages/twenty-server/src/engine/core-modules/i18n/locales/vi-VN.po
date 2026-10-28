@@ -16903,11 +16903,6 @@ msgstr "Không tìm thấy lược đồ không gian làm việc."
 msgid "Workspace setup"
 msgstr "Thiết lập không gian làm việc"
 
-#. js-lingui-id: 5TbIzO
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util.ts
-msgid "Workspace workflows cannot be adopted by an application."
-msgstr "Các quy trình làm việc của không gian làm việc không thể được một ứng dụng tiếp nhận."
-
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."

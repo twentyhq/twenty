@@ -16903,11 +16903,6 @@ msgstr "Esquema del espacio de trabajo no encontrado."
 msgid "Workspace setup"
 msgstr "Configuración del espacio de trabajo"
 
-#. js-lingui-id: 5TbIzO
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util.ts
-msgid "Workspace workflows cannot be adopted by an application."
-msgstr "Los flujos de trabajo del espacio de trabajo no pueden ser adoptados por una aplicación."
-
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
