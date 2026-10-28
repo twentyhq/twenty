@@ -1,13 +1,17 @@
 .backdrop {
-  background: var(--t-background-overlay-primary);
+  background: var(--t-background-overlay-secondary);
   inset: 0;
   position: fixed;
-  transition: opacity duration(normal) ease-out;
+  transition: opacity duration(fast) easing(out);
   z-index: 39;
 
   &[data-starting-style],
   &[data-ending-style] {
     opacity: 0;
+  }
+
+  &[data-ending-style] {
+    transition-timing-function: ease-in;
   }
 }
 
@@ -42,7 +46,7 @@
 
 .popup {
   background: var(--t-background-primary);
-  border-radius: var(--t-border-radius-md);
+  border-radius: var(--t-border-radius-lg);
   box-shadow: var(--t-box-shadow-super-heavy);
   box-sizing: border-box;
   color: var(--t-font-color-primary);
@@ -57,7 +61,9 @@
   outline: none;
   overflow: auto;
   overscroll-behavior: contain;
-  transition: opacity duration(normal) ease-out;
+  transition:
+    opacity duration(fast) easing(out),
+    transform duration(fast) easing(out);
 
   &[hidden] {
     display: none;
@@ -66,6 +72,20 @@
   &[data-starting-style],
   &[data-ending-style] {
     opacity: 0;
+    transform: scale(0.96);
+  }
+
+  &[data-ending-style] {
+    transition-timing-function: ease-in;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity duration(fast) easing(out);
+
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: none;
+    }
   }
 
   &[data-size='sm'] {
@@ -124,6 +144,7 @@
   color: var(--t-font-color-primary);
   font-size: var(--t-font-size-lg);
   font-weight: var(--t-font-weight-semi-bold);
+  letter-spacing: -0.01em;
   margin: 0;
 }
 

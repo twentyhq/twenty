@@ -1,5 +1,16 @@
+@use 'sass:map';
+
 // duration(fast) => calc(var(--t-animation-duration-fast) * 1s)
 // Theme animation durations are stored unitless; this scales them to seconds.
 @function duration($name) {
   @return calc(var(--t-animation-duration-#{$name}) * 1s);
+}
+
+// Mirrors EASE_OUT in twenty-front so both packages share one motion curve.
+$easings: (
+  out: cubic-bezier(0.2, 0, 0, 1),
+);
+
+@function easing($name) {
+  @return map.get($easings, $name);
 }

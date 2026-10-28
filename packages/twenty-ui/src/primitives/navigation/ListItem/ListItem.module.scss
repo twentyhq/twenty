@@ -24,7 +24,9 @@
   position: relative;
   text-align: start;
   text-decoration: none;
-  transition: background duration(instant) ease;
+  transition:
+    background-color duration(instant) easing(out),
+    color duration(instant) easing(out);
   user-select: none;
 
   @include focus-ring;
@@ -32,7 +34,13 @@
   @include hover-capable {
     &:hover {
       --tw-list-item-background: var(--tw-list-item-hover-background);
+      --tw-list-item-color: var(--t-font-color-primary);
     }
+  }
+
+  &[data-highlighted],
+  &[data-selected] {
+    --tw-list-item-color: var(--t-font-color-primary);
   }
 
   &[data-highlighted],
@@ -125,7 +133,7 @@
   align-items: center;
   display: inline-flex;
   flex: none;
-  transition: opacity duration(instant) ease;
+  transition: opacity duration(instant) easing(out);
 }
 
 @include hover-capable-without-touch {

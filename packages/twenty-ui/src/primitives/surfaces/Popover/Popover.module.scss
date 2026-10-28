@@ -20,8 +20,8 @@
   overflow: visible;
   transform-origin: var(--transform-origin);
   transition:
-    opacity duration(fast) ease-out,
-    transform duration(fast) ease-out;
+    opacity duration(fast) easing(out),
+    transform duration(fast) easing(out);
 
   &[data-starting-style],
   &[data-ending-style] {
@@ -34,7 +34,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    transition: opacity duration(fast) ease-out;
+    transition: opacity duration(fast) easing(out);
 
     &[data-starting-style],
     &[data-ending-style] {

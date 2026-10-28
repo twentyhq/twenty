@@ -27,6 +27,7 @@
   border-radius: var(--t-border-radius-sm-round);
   corner-shape: round;
   text-decoration: none;
+  transition: background-color duration(fast) easing(out);
 
   &[data-truncate] > .label {
     min-inline-size: 0;

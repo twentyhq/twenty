@@ -10,16 +10,20 @@
   &:hover,
   &:active {
     background: transparent;
+    transform: none;
   }
 
   &::after {
     background: transparent;
-    block-size: 1px;
+    block-size: 2px;
+    border-start-end-radius: var(--t-border-radius-xs);
+    border-start-start-radius: var(--t-border-radius-xs);
     content: '';
     inset-block-end: 0;
     inset-inline: 0;
     pointer-events: none;
     position: absolute;
+    transition: background-color duration(fast) easing(out);
     z-index: 1;
   }
 

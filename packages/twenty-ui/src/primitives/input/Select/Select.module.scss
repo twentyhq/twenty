@@ -6,8 +6,16 @@
   gap: var(--t-spacing-2);
   text-align: start;
 
+  @include hover-capable {
+    &:hover:not([data-disabled]):not([data-popup-open]):not(:focus) {
+      --tw-input-border-color: var(--t-border-color-strong);
+    }
+  }
+
   &[data-popup-open] {
     --tw-input-border-color: var(--t-color-blue);
+
+    box-shadow: 0 0 0 3px var(--t-accent-secondary);
   }
 
   &[data-placeholder] .value {
@@ -65,15 +73,28 @@
   overflow: auto;
   overscroll-behavior: contain;
   padding: var(--t-spacing-1);
-  transition: opacity duration(fast) ease-out;
+  transform-origin: var(--transform-origin);
+  transition:
+    opacity duration(fast) easing(out),
+    transform duration(fast) easing(out);
 
   &[data-starting-style],
   &[data-ending-style] {
     opacity: 0;
+    transform: scale(0.97);
   }
 
   &[data-ending-style] {
     transition-timing-function: ease-in;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity duration(fast) easing(out);
+
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: none;
+    }
   }
 }
 

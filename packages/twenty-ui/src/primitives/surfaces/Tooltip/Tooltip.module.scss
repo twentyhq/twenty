@@ -9,9 +9,9 @@
 .popup {
   backdrop-filter: var(--t-blur-strong);
   background-color: var(--t-tooltip-background);
-  border-radius: var(--t-border-radius-md);
+  border-radius: var(--t-border-radius-sm);
   box-sizing: border-box;
-  box-shadow: var(--t-box-shadow-light);
+  box-shadow: var(--t-box-shadow-strong);
   color: var(--t-tooltip-color);
   font-size: var(--t-font-size-sm);
   font-weight: var(--t-font-weight-regular);
@@ -23,12 +23,16 @@
     var(--tw-tooltip-max-width, 300px),
     var(--available-width)
   );
-  will-change: opacity;
-  transition: opacity 0.15s ease-out;
+  transform-origin: var(--transform-origin);
+  will-change: opacity, transform;
+  transition:
+    opacity duration(fast) easing(out),
+    transform duration(fast) easing(out);
 
   &[data-starting-style],
   &[data-ending-style] {
     opacity: 0;
+    transform: scale(0.96);
   }
 
   // No exit transition: the shared tooltip is reused across anchors, and a
@@ -40,8 +44,8 @@
 
   &[data-with-exit-animation] {
     transition:
-      opacity duration(fast) ease-out,
-      transform duration(fast) cubic-bezier(0.2, 0, 0, 1);
+      opacity duration(fast) easing(out),
+      transform duration(fast) easing(out);
 
     &[data-ending-style] {
       transition-duration: duration(fast);
@@ -147,5 +151,10 @@
   .popup,
   .popup[data-with-exit-animation] {
     transition: none;
+
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: none;
+    }
   }
 }

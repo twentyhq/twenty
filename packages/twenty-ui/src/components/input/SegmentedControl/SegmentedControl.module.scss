@@ -76,8 +76,8 @@
   min-inline-size: 0;
   padding: 0 var(--t-spacing-2);
   transition:
-    background 0.1s ease,
-    color 0.1s ease;
+    background-color duration(fast) easing(out),
+    color duration(fast) easing(out);
   user-select: none;
   white-space: nowrap;
 

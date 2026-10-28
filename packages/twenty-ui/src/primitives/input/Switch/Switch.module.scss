@@ -11,10 +11,10 @@
   border-radius: var(--t-border-radius-pill);
   corner-shape: round;
   appearance: none;
-  background-color: var(--t-background-transparent-medium);
+  background-color: var(--t-background-transparent-strong);
   color: var(--t-color-blue);
   cursor: pointer;
-  transition: background-color duration(normal) ease;
+  transition: background-color duration(fast) easing(out);
 
   &[data-checked] {
     background-color: currentColor;
@@ -32,6 +32,7 @@
 
 .sm {
   --tw-switch-thumb-size: 12px;
+  --tw-switch-thumb-travel: 8px;
 
   inline-size: 24px;
   block-size: 16px;
@@ -39,6 +40,7 @@
 
 .md {
   --tw-switch-thumb-size: 16px;
+  --tw-switch-thumb-travel: 12px;
 
   inline-size: 32px;
   block-size: 20px;
@@ -54,10 +56,15 @@
   border-radius: 50%;
   corner-shape: round;
   background-color: var(--t-background-primary);
-  transition: inset-inline-start duration(normal) ease;
+  box-shadow: var(--t-box-shadow-light);
+  transition: transform duration(fast) easing(out);
 
   &[data-checked] {
-    inset-inline-start: calc(100% - var(--tw-switch-thumb-size) - 2px);
+    transform: translateX(var(--tw-switch-thumb-travel));
+  }
+
+  &[data-checked]:dir(rtl) {
+    transform: translateX(calc(-1 * var(--tw-switch-thumb-travel)));
   }
 
   @media (prefers-reduced-motion: reduce) {

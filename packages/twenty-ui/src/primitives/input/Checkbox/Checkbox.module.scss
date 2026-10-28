@@ -17,6 +17,7 @@
   flex-shrink: 0;
   padding: var(--tw-checkbox-padding);
   position: relative;
+  transition: background-color duration(fast) easing(out);
 }
 
 .solid {
@@ -131,6 +132,17 @@
   display: inline-block;
   block-size: var(--tw-checkbox-box-size);
   inline-size: var(--tw-checkbox-box-size);
+  transition:
+    background-color duration(fast) easing(out),
+    border-color duration(fast) easing(out);
+}
+
+@include hover-capable {
+  .root:not([data-disabled]):not([data-checked]):not(
+      [data-indeterminate]
+    ):hover::before {
+    border-color: var(--tw-checkbox-accent);
+  }
 }
 
 .indicator {
@@ -141,6 +153,24 @@
   margin-block: auto;
   position: absolute;
   inline-size: var(--tw-checkbox-icon-size);
+  transition:
+    opacity duration(fast) easing(out),
+    transform duration(fast) easing(out);
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity duration(fast) easing(out);
+
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: none;
+    }
+  }
 }
 
 .indicator[data-unchecked] {

@@ -28,7 +28,7 @@
   border-radius: 0;
   overflow: hidden;
   position: relative;
-  transition: width duration(normal) linear;
+  transition: width duration(normal) easing(out);
 
   &[data-with-border-radius] {
     border-radius: var(--t-border-radius-pill);

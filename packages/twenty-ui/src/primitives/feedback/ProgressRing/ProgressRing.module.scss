@@ -31,7 +31,7 @@
 .indicator {
   fill: none;
   stroke: var(--progress-ring-color, var(--t-color-blue));
-  transition: stroke-dashoffset duration(normal) ease;
+  transition: stroke-dashoffset duration(normal) easing(out);
 }
 
 @keyframes progressRingIndeterminate {

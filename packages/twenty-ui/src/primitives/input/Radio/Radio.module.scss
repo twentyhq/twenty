@@ -24,8 +24,13 @@
   flex-shrink: 0;
   justify-content: center;
   margin-inline-start: 3px;
+  outline: 0 solid transparent;
   transform: scale(0.95);
-  transition: transform duration(normal) ease;
+  transition:
+    background-color duration(fast) easing(out),
+    border-color duration(fast) easing(out),
+    outline-color duration(fast) easing(out),
+    transform duration(fast) easing(out);
 }
 
 .sm .control {
@@ -50,6 +55,15 @@
   border-radius: 50%;
   corner-shape: round;
   inline-size: 6px;
+  transition:
+    opacity duration(fast) easing(out),
+    transform duration(fast) easing(out);
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.4);
+  }
 }
 
 .md .indicator {
@@ -85,6 +99,15 @@
 @media (prefers-reduced-motion: reduce) {
   .control {
     transition: none;
+  }
+
+  .indicator {
+    transition: opacity duration(fast) easing(out);
+
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: none;
+    }
   }
 }
 

@@ -16,6 +16,7 @@
   background: var(--tw-avatar-background);
   text-decoration: none;
   position: relative;
+  transition: box-shadow duration(fast) easing(out);
 
   &[data-shape='rounded-square'] {
     border-radius: var(--t-border-radius-sm);

@@ -3,17 +3,23 @@
 .button {
   @include focus-ring;
 
-  --tw-button-background: var(--t-background-transparent-lighter);
-  --tw-button-border: var(--t-background-transparent-light);
+  --tw-button-background: var(--t-background-primary);
+  --tw-button-border: var(--t-border-color-strong);
   --tw-button-color: var(--t-font-color-secondary);
   --tw-button-hover: var(--t-background-tertiary);
   --tw-button-active: var(--t-background-quaternary);
+  --tw-button-highlight: 0 0 transparent;
+  --tw-button-shadow: var(--t-box-shadow-light);
+  --tw-button-elevation: 0 0 transparent;
 
   align-items: center;
   background: var(--tw-button-background);
   block-size: var(--tw-button-size, var(--t-spacing-8));
   border: 1px solid var(--tw-button-border);
   border-radius: var(--tw-button-radius, var(--t-border-radius-md));
+  box-shadow:
+    var(--tw-button-highlight), var(--tw-button-shadow),
+    var(--tw-button-elevation);
   border-end-end-radius: var(
     --tw-button-border-end-end-radius,
     var(--tw-button-radius, var(--t-border-radius-md))
@@ -44,7 +50,12 @@
   padding: 0 var(--tw-button-padding-inline, var(--t-spacing-2));
   position: relative;
   text-decoration: none;
-  transition: background 0.1s ease;
+  transition:
+    background-color duration(fast) easing(out),
+    border-color duration(fast) easing(out),
+    box-shadow duration(fast) easing(out),
+    color duration(fast) easing(out),
+    transform duration(fast) easing(out);
   vertical-align: middle;
   white-space: nowrap;
 
@@ -55,7 +66,8 @@
     inline-size: 100%;
   }
   &[data-elevated] {
-    box-shadow: var(--t-box-shadow-light);
+    --tw-button-elevation: var(--t-box-shadow-light);
+
     backdrop-filter: var(--t-blur-medium);
 
     &[data-color='neutral'][data-variant='outline'] {
@@ -64,6 +76,7 @@
       --tw-button-color: var(--t-font-color-tertiary);
       --tw-button-hover: var(--t-background-transparent-lighter);
       --tw-button-active: var(--t-background-transparent-medium);
+      --tw-button-shadow: 0 0 transparent;
 
       &[aria-pressed='true'] {
         --tw-button-background: var(--tw-button-active);
@@ -76,16 +89,19 @@
     --tw-button-color: var(--t-font-color-inverted);
     --tw-button-hover: var(--t-background-primary-inverted-hover);
     --tw-button-active: var(--t-background-primary-inverted-hover);
+    --tw-button-highlight: inset 0 1px 0 rgb(255 255 255 / 12%);
   }
   &[data-variant='ghost'] {
     --tw-button-background: transparent;
     --tw-button-border: transparent;
+    --tw-button-shadow: 0 0 transparent;
     --tw-button-hover: var(--t-background-transparent-light);
     --tw-button-active: var(--t-background-transparent-medium);
   }
   &[data-variant='soft'] {
     --tw-button-background: var(--t-background-transparent-light);
     --tw-button-border: transparent;
+    --tw-button-shadow: 0 0 transparent;
     --tw-button-hover: var(--t-background-transparent-medium);
     --tw-button-active: var(--t-background-transparent-strong);
   }
@@ -110,6 +126,11 @@
     }
     &:active {
       background: var(--tw-button-active);
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      &:not([data-variant='link']):active {
+        transform: scale(0.98);
+      }
     }
   }
   &[data-disabled] {
@@ -166,10 +187,12 @@ $colors: (
       --tw-button-color: color(display-p3 1 1 1);
       --tw-button-hover: #{map.get($tokens, hover)};
       --tw-button-active: #{map.get($tokens, active)};
+      --tw-button-highlight: inset 0 1px 0 rgb(255 255 255 / 16%);
     }
     &[data-variant='outline'] {
       --tw-button-background: transparent;
       --tw-button-border: #{map.get($tokens, border)};
+      --tw-button-shadow: 0 0 transparent;
     }
     &[data-variant='soft'] {
       --tw-button-background: #{map.get($tokens, soft)};
@@ -184,6 +207,7 @@ $colors: (
   --tw-button-color: currentColor;
   --tw-button-hover: rgb(0 0 0 / 10%);
   --tw-button-active: rgb(0 0 0 / 20%);
+  --tw-button-shadow: 0 0 transparent;
 
   &[data-variant='outline'] {
     --tw-button-border: color-mix(in srgb, currentColor 25%, transparent);
@@ -201,6 +225,7 @@ $colors: (
   --tw-button-border: transparent;
   --tw-button-hover: transparent;
   --tw-button-active: transparent;
+  --tw-button-shadow: 0 0 transparent;
 
   block-size: var(--tw-button-size, auto);
   border: 0;

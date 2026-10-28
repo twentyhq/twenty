@@ -18,6 +18,7 @@
   gap: var(--t-spacing-1);
   min-inline-size: 0;
   text-align: inherit;
+  transition: background-color duration(fast) easing(out);
 
   &:not([data-truncate]) {
     min-inline-size: fit-content;

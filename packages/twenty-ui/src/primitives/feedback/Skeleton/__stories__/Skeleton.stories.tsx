@@ -69,7 +69,7 @@ export const Default: Story = {
       shapeStyle.getPropertyValue('--t-background-tertiary').trim(),
     );
     await expect(highlightColor).toBe(
-      shapeStyle.getPropertyValue('--t-background-transparent-lighter').trim(),
+      shapeStyle.getPropertyValue('--t-background-primary').trim(),
     );
     await expect(highlight.backgroundImage).toBe(
       `linear-gradient(90deg, ${shapeStyle.backgroundColor} 0%, ${highlightColor} 50%, ${shapeStyle.backgroundColor} 100%)`,

@@ -64,6 +64,7 @@
   padding: 0;
   position: relative;
   text-decoration: none;
+  transition: color duration(fast) easing(out);
   user-select: none;
 
   @include focus-ring;
@@ -116,6 +117,7 @@
   min-inline-size: 0;
   padding-block: var(--tw-tabs-padding-block);
   padding-inline: var(--tw-tabs-padding-inline);
+  transition: background-color duration(fast) easing(out);
   white-space: nowrap;
 }
 
@@ -140,6 +142,7 @@
 
 .startIcon {
   color: var(--tw-tabs-icon-color);
+  transition: color duration(fast) easing(out);
 
   > svg {
     block-size: calc(var(--t-icon-size-md) * 1px);
@@ -156,28 +159,48 @@
   @include focus-ring;
 }
 
+// Positioned with transform so the slide stays on the compositor; RTL flips the sign.
 .indicator {
-  --tw-tabs-indicator-offset: var(--active-tab-left);
-
   background: var(--t-border-color-inverted);
-  block-size: 1px;
+  block-size: 2px;
+  border-start-end-radius: var(--t-border-radius-xs);
+  border-start-start-radius: var(--t-border-radius-xs);
   inline-size: var(--active-tab-width);
   inset-block-end: 0;
-  inset-inline-start: var(--tw-tabs-indicator-offset);
+  inset-inline-start: 0;
   pointer-events: none;
   position: absolute;
+  transform: translateX(var(--active-tab-left));
+  transition:
+    transform duration(fast) easing(out),
+    inline-size duration(fast) easing(out);
   z-index: 1;
 
   &:dir(rtl) {
-    --tw-tabs-indicator-offset: var(--active-tab-right);
+    transform: translateX(calc(-1 * var(--active-tab-right)));
   }
 
   &[data-orientation='vertical'] {
     block-size: var(--active-tab-height);
-    inline-size: 1px;
-    inset-block-start: var(--active-tab-top);
+    border-radius: 0;
+    border-end-start-radius: var(--t-border-radius-xs);
+    border-start-start-radius: var(--t-border-radius-xs);
+    inline-size: 2px;
+    inset-block-start: 0;
     inset-block-end: auto;
     inset-inline-start: auto;
     inset-inline-end: 0;
+    transform: translateY(var(--active-tab-top));
+    transition:
+      transform duration(fast) easing(out),
+      block-size duration(fast) easing(out);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &[data-orientation='vertical'] {
+      transition: none;
+    }
   }
 }
