@@ -25,12 +25,14 @@ export const PageFavicon = ({ attentionDotColor }: PageFaviconProps) => {
       }) ?? DEFAULT_WORKSPACE_LOGO)
     : DEFAULT_WORKSPACE_LOGO;
 
-  const href =
+  const isFaviconWithAttentionDotCurrent =
     isDefined(attentionDotColor) &&
     faviconWithAttentionDot?.faviconUrl === faviconUrl &&
-    faviconWithAttentionDot.dotColor === attentionDotColor
-      ? faviconWithAttentionDot.dataUrl
-      : faviconUrl;
+    faviconWithAttentionDot.dotColor === attentionDotColor;
+
+  const href = isFaviconWithAttentionDotCurrent
+    ? faviconWithAttentionDot.dataUrl
+    : faviconUrl;
 
   return (
     <>

@@ -44,7 +44,7 @@ export const useNavigationMenuItemMoveDestinations = ({
   item,
   section,
 }: {
-  item: NavigationMenuItem;
+  item: Pick<NavigationMenuItem, 'id' | 'folderId' | 'type'>;
   section: NavigationMenuItemSection;
 }): NavigationMenuItemMoveDestinationGroup[] => {
   const { t } = useLingui();

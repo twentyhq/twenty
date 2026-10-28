@@ -21,7 +21,9 @@ export const useNavigationMenuItemCommandRunner = () => {
     switch (commandKey) {
       case 'NEW_CHAT':
         return hasAiPermission;
-      default:
+      case 'SEARCH':
+      case 'SETTINGS':
+      case 'ALL_COMMANDS':
         return true;
     }
   };
