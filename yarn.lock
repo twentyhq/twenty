@@ -20010,10 +20010,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/qs@npm:6.9.16":
-  version: 6.9.16
-  resolution: "@types/qs@npm:6.9.16"
-  checksum: 10c0/a4e871b80fff623755e356fd1f225aea45ff7a29da30f99fddee1a05f4f5f33485b314ab5758145144ed45708f97e44595aa9a8368e9bbc083932f931b12dbb6
+"@types/qs@npm:*, @types/qs@npm:^6.15.1, @types/qs@npm:^6.9.0, @types/qs@npm:^6.9.18":
+  version: 6.15.1
+  resolution: "@types/qs@npm:6.15.1"
+  checksum: 10c0/1dfdbcb4cf2a8f66d57f0b9a9fe6b1c7091cb816687b6698c1351eaf31f62e412cea9b7453a9637b570cd5fad8dced527e5a9e69b4fcc6e318daacd8b749f094
   languageName: node
   linkType: hard
 
@@ -46368,7 +46368,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/lodash.camelcase": "npm:^4.3.7"
     "@types/lodash.escaperegexp": "npm:^4.1.9"
-    "@types/qs": "npm:6.9.16"
+    "@types/qs": "npm:^6.15.1"
     "@types/uuid": "npm:^9.0.2"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     addressparser: "npm:1.0.1"
