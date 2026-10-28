@@ -3,7 +3,7 @@ title: Navigation Menu Items
 description: Add custom entries to the workspace sidebar — links to saved views or external URLs.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
+import { PageBanner } from '/snippets/page-banner.mdx';
 
 ## Overview
 
@@ -31,19 +31,24 @@ export default defineNavigationMenuItem({
 
 - `type` determines what the menu item links to. Each type pairs with a specific identifier field:
 
-  | Type                                 | What it does                         | Required field                                                                |
-  | ------------------------------------ | ------------------------------------ | ----------------------------------------------------------------------------- |
-  | `NavigationMenuItemType.VIEW`        | Opens a saved view                   | `viewUniversalIdentifier`                                                     |
-  | `NavigationMenuItemType.LINK`        | Opens an external URL                | `link`                                                                        |
-  | `NavigationMenuItemType.FOLDER`      | Groups nested items under a label    | `name` (and child items reference the folder via `folderUniversalIdentifier`) |
-  | `NavigationMenuItemType.OBJECT`      | Opens an object's default index page | `targetObjectUniversalIdentifier`                                             |
-  | `NavigationMenuItemType.PAGE_LAYOUT` | Opens a standalone page layout       | `pageLayoutUniversalIdentifier`                                               |
+  | Type                                 | What it does                                | Required field                                                                |
+  | ------------------------------------ | ------------------------------------------- | ----------------------------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | Opens a saved view                          | `viewUniversalIdentifier`                                                     |
+  | `NavigationMenuItemType.LINK`        | Opens an external URL                       | `link`                                                                        |
+  | `NavigationMenuItemType.FOLDER`      | Groups nested items under a label           | `name` (and child items reference the folder via `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.OBJECT`      | Opens an object's default index page        | `targetObjectUniversalIdentifier`                                             |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | Opens a standalone page layout              | `pageLayoutUniversalIdentifier`                                               |
+  | `NavigationMenuItemType.TAB`         | Adds a sidebar tab next to Home             | `name` (and its sections reference the tab via `folderUniversalIdentifier`)   |
+  | `NavigationMenuItemType.SECTION`     | Groups items under a section title in a tab | `name` (and its items reference the section via `folderUniversalIdentifier`)  |
+  | `NavigationMenuItemType.COMMAND`     | Pins a command at the top of every tab      | `commandKey`, inside the `PINNED_COMMANDS` item                               |
 
 - `position` controls ordering in the sidebar.
 - The enum also contains `NavigationMenuItemType.RECORD`, used internally for user-created record favorites, and `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, used for chat channels pinned to favorites. Neither is usable from an app manifest (there is no field to reference a record or a channel).
 - `icon` and `color` are optional and customize how the entry looks.
 - `visibleItemLimit` is optional and only applies to sections: how many entries the section lists before a **See more** row. Leave it out to list them all.
-- `folderUniversalIdentifier` is also available on any item to nest it inside a `FOLDER`-type parent.
+- `commandKey` is one of `SEARCH`, `NEW_CHAT`, `ALL_COMMANDS` or `SETTINGS`.
+- The enum also contains the built-in sections of the default sidebar: `AI_CHAT_INBOX`, `AI_CHAT_FAVORITES`, `AI_CHAT_CHANNELS`, `AI_CHAT_RECENTS`, `AI_AGENTS` and `FAVORITES`, plus `PINNED_COMMANDS`, the item that holds the pinned commands. They need no field besides `position` and `folderUniversalIdentifier`.
+- `folderUniversalIdentifier` is also available on any item to nest it inside a `FOLDER`, `SECTION` or `TAB` parent.
 - `twenty app pull` writes your navigation menu items back as `defineNavigationMenuItem()` files. An item a workspace member added to their own sidebar, and one pinned to a record, belong to that workspace rather than to your app and are reported instead; see [what pull does not write](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 
 <Note>
