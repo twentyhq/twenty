@@ -3,11 +3,18 @@ title: استكشاف الأخطاء وإصلاحها
 description: مشكلات التشغيل الأول الشائعة — Docker، إصدار Node، Yarn، والتبعيات.
 ---
 
-* **أخطاء Docker** — تأكّد من أن Docker Desktop (أو الـ daemon) قيد التشغيل قبل `yarn twenty docker:start`. ستعرض رسالة الخطأ أمر البدء المناسب لنظام التشغيل لديك.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## المشكلات الشائعة
+
+* **أخطاء الخادم المحلي**، تحقّق من بيئة تطوير Docker أو المستودع لديك. لا تدير واجهة CLI المستقلة الحاويات.
 * **إصدار Node غير صحيح** — تحتاج إلى 24.5+ (`engines.node: ^24.5.0`). تحقّق باستخدام `node -v`.
 * **Yarn 4 غير موجود** — شغّل `corepack enable`.
 * **تبعيات تالفة** — `rm -rf node_modules && yarn install`.
+* **ملف `yarn.lock` فارغ** — يفشل البناء مع ظهور "yarn.lock is empty" عندما يكون ملف القفل موجودًا ولكنه لا يحتوي على أي محتوى؛ شغّل `yarn install` لإعادة إنشائه.
 * **أخطاء `twenty-sdk` بعد الترقية إلى v2.8.0** — تم نقله من `dependencies` إلى `devDependencies` في الإصدار v2.8.0. انظر إلى [بنية المشروع → التبعيات](/ar/developers/extend/apps/getting-started/project-structure#dependencies).
-* **`twenty dev:build` يُصدر تحذيرًا بشأن `twenty-client-sdk` تحت `dependencies`** — يتم توفيره في وقت التشغيل بواسطة Twenty، لذلك يجب نقله إلى `devDependencies` جنبًا إلى جنب مع `twenty-sdk`. انظر إلى [بنية المشروع → التبعيات](/ar/developers/extend/apps/getting-started/project-structure#dependencies).
+* **يُصدر `twenty app build` تحذيرًا بشأن `twenty-client-sdk` ضمن `dependencies`** — يتم توفيره في وقت التشغيل بواسطة Twenty، لذا يجب نقله إلى `devDependencies` إلى جانب `twenty-sdk`. انظر إلى [بنية المشروع → التبعيات](/ar/developers/extend/apps/getting-started/project-structure#dependencies).
 
 هل علِقت؟ اطلب المساعدة على [خادم Twenty على Discord](https://discord.com/channels/1130383047699738754/1130386664812982322).
+
+<PageBanner illustration="card-page-bug-requests" />

@@ -1,0 +1,57 @@
+---
+title: كتلة الأوامر
+description: اعرض أسطر الأوامر مع إجراء اختياري.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CommandBlockReference from '/snippets/ui/generated/components/data-display/command-block.mdx';
+
+## نظرة عامة
+
+يعرض `CommandBlock` كل أمر مُقدَّم مع علامة موجّه. لا ينفّذ الأوامر ولا يوفّر النسخ تلقائيًا. زوّد `actions` بأي عقدة React، مثل [زر](/ar/ui/primitives/input/button) أو رابط أو حالة. يستخدم نص الأمر دلالات `pre` و`code`، ويحافظ على فواصل الأسطر، ويلتف ضمن العرض المتاح. علامات الموجّه زخرفية.
+
+<StoryEmbed storyId="ui-components-data-display-commandblock--display" title="مثال CommandBlock" height={130} />
+
+## استخدام
+
+```tsx
+import { useState } from 'react';
+import { CommandBlock } from 'twenty-ui/components/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const InstallCommand = () => {
+  const [copyLabel, setCopyLabel] = useState('Copy command');
+
+  return (
+    <CommandBlock
+      commands={['yarn add twenty-ui']}
+      actions={
+        <Button
+          onClick={async () => {
+            try {
+              await navigator.clipboard.writeText('yarn add twenty-ui');
+              setCopyLabel('Copied');
+            } catch {
+              setCopyLabel('Select and copy the command');
+            }
+          }}
+        >
+          {copyLabel}
+        </Button>
+      }
+    />
+  );
+};
+```
+
+تستهدف السمات الأصلية، ومعالجات الأحداث، والفئات، والأنماط، والمراجع عنصر `div` الخارجي. استخدم `render` لتكوين جذر آخر، على سبيل المثال `render={<section aria-label="Installation commands" />}`. يتم تصدير `CommandBlockProps` من `twenty-ui/components/data-display`.
+
+عند الترحيل، استبدل `button` بـ `actions`.
+
+## الخصائص
+
+<CommandBlockReference />
+
+<PageBanner illustration="card-page-cli" />

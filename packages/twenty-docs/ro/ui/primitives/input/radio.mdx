@@ -1,0 +1,167 @@
+---
+title: Radio
+description: Redă o opțiune într-un grup de butoane radio care se exclud reciproc.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import RadioReference from '/snippets/ui/generated/input/radio.mdx';
+
+## Prezentare generală
+
+`Radio` reprezintă o opțiune în cadrul [RadioGroup](/ro/ui/primitives/input/radio-group). Atribuie fiecărei opțiuni o `value` distinctă și o etichetă vizibilă. Grupul deține valoarea selectată.
+
+<StoryEmbed storyId="ui-input-radio--display" title="Exemplu de buton radio" height={140} />
+
+## Utilizare
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const ContactMethod = () => (
+  <RadioGroup
+    name="contactMethod"
+    defaultValue="email"
+    aria-label="Preferred contact method"
+  >
+    <Radio value="email">Email</Radio>
+    <Radio value="phone">Phone</Radio>
+    <Radio value="post" disabled>
+      Postal mail (unavailable)
+    </Radio>
+  </RadioGroup>
+);
+```
+
+Proprietatea `size` acceptă `sm` sau `md` și are ca valoare implicită `sm`. Utilizați aceeași dimensiune pentru opțiunile dintr-un grup.
+
+## Opțiuni vizuale
+
+Comparați stările selectată și dezactivată, dimensiunile și aspectele implicite și de card. Folosiți un grup etichetat de opțiuni pentru o alegere efectivă.
+
+<StoryEmbed storyId="ui-input-radio--catalog" title="Opțiuni vizuale pentru butoanele radio" height={380} />
+
+## Părți complete
+
+`Radio.Root` și `Radio.Indicator` expun părțile Base UI instalate fără asamblarea stilizată. Compuneți-le atunci când aveți nevoie de conținut personalizat sau de plasarea indicatorului. Elementul apelabil `Radio` oferă aspectul și indicatorul radio de la Twenty pentru opțiunile obișnuite.
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const StorageChoice = () => (
+  <RadioGroup aria-label="Storage" defaultValue="ssd">
+    <Radio.Root value="ssd">
+      <Radio.Indicator keepMounted render={<span />}>
+        ✓
+      </Radio.Indicator>
+      SSD
+    </Radio.Root>
+    <Radio.Root value="hdd">HDD</Radio.Root>
+  </RadioGroup>
+);
+```
+
+Butoanele radio standard și `Radio.Root` redau un element span cu semantică de buton radio și un input nativ ascuns adiacent. Butoanele radio de tip card redau un div. `ref` vizează rădăcina redată; `inputRef` vizează intrarea. `Radio.Indicator` redă un span, iar referința sa vizează acel element. `render`, `className` și `style` bazate pe stare, atributele native și gestionarii de evenimente își păstrează contractele din amonte. Tipurile publice includ `RadioProps`, `RadioRootProps`, `RadioRootState`, `RadioIndicatorProps` și `RadioIndicatorState`.
+
+## Opțiuni card
+
+Folosește `variant="card"` pentru opțiuni pe întreaga lățime, cu un indicator radio inserat. Butoanele radio de tip card își păstrează implicit rădăcina div. Utilizați `render` pentru a alege explicit un alt element. Când acel element este un buton nativ, setați și `nativeButton`. Păstrează controalele interactive în afara conținutului cardului.
+
+Oferiți grupului suficientă lățime pentru conținutul său și lăsați spațiu pentru indicator în partea din dreapta sus. Un titlu, o pictogramă și o scurtă descriere ajută la explicarea fiecărei opțiuni.
+
+<StoryEmbed storyId="ui-input-radio--cards-documentation" title="Opțiuni de card radio" height={290} />
+
+```tsx
+import { IconLayoutKanban, IconTable } from 'twenty-ui/icon';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+const VIEWS = [
+  {
+    value: 'table',
+    title: 'Table view',
+    description: 'Browse records in rows.',
+    Icon: IconTable,
+  },
+  {
+    value: 'board',
+    title: 'Board view',
+    description: 'Track progress across columns.',
+    Icon: IconLayoutKanban,
+  },
+];
+
+export const ViewChoice = () => (
+  <RadioGroup
+    aria-label="Default view"
+    defaultValue="table"
+    style={{ width: 280 }}
+  >
+    {VIEWS.map(({ value, title, description, Icon }) => (
+      <Radio key={value} variant="card" value={value}>
+        <span style={{ display: 'grid', gap: 8, paddingInlineEnd: 24 }}>
+          <Icon size={20} aria-hidden />
+          <Text
+            render={<span />}
+            style={{ fontWeight: 'var(--t-font-weight-medium)' }}
+          >
+            {title}
+          </Text>
+          <Text
+            render={<span />}
+            style={{ color: 'var(--t-font-color-secondary)', lineHeight: 1.5 }}
+          >
+            {description}
+          </Text>
+        </span>
+      </Radio>
+    ))}
+  </RadioGroup>
+);
+```
+
+## Compunere nativă explicită
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingChoice = () => (
+  <RadioGroup aria-label="Billing interval" defaultValue="monthly">
+    <Radio
+      variant="card"
+      value="monthly"
+      nativeButton
+      render={<button type="button" />}
+    >
+      Monthly
+    </Radio>
+    <Radio
+      variant="card"
+      value="yearly"
+      nativeButton
+      render={<button type="button" />}
+    >
+      Yearly
+    </Radio>
+  </RadioGroup>
+);
+```
+
+Referința vizează butonul compus. Pentru rădăcini personalizate care nu sunt butoane, lăsați `nativeButton` la false și transmiteți proprietățile de randare furnizate și referința către elementul efectiv.
+
+## Tastatură și selecție
+
+Tab intră în grup sau îl părăsește. Tastele săgeată se deplasează între opțiunile activate și selectează opțiunea focalizată. Spațiu selectează butonul radio focalizat. Butonul radio Base UI instalat suprimă selectarea cu Enter atât pentru rădăcinile implicite, cât și pentru butoanele native compuse. Gestionarele de selectare și de modificare aparțin de `RadioGroup`; consultați [exemplul său necontrolat](/ro/ui/primitives/input/radio-group#uncontrolled-state) și [exemplul controlat](/ro/ui/primitives/input/radio-group#controlled-state).
+
+Săgețile pentru butoane radio modifică selecția pe măsură ce mută focalizarea. [Dropdown.SelectionGroup](/ro/ui/components/navigation/dropdown) mută focalizarea cu săgețile și confirmă o alegere cu Enter sau Space.
+
+`Radio` și `Radio.Root` sunt generice în raport cu tipul valorii. Păstrați acest tip consecvent cu grupul său. Atributele native, precum `aria-describedby`, pot asocia o opțiune cu text de ajutor suplimentar.
+
+## Proprietăți
+
+Referința este generată din tipurile publice ale componentelor. Atributele native, inclusiv numele accesibile și gestionarele de evenimente, sunt acceptate și pentru părțile care redau elemente.
+
+<RadioReference />
+
+<PageBanner illustration="page-cover-switch" />

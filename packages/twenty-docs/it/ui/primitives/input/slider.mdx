@@ -1,0 +1,176 @@
+---
+title: Cursore
+description: Scegli un valore numerico o un intervallo con cursori trascinabili e accessibili tramite tastiera.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SliderReference from '/snippets/ui/generated/input/slider.mdx';
+
+## Panoramica
+
+`Slider` supporta un singolo numero o un array di numeri per un intervallo. Componi l'etichetta, la traccia, l'indicatore e i cursori all'interno di `Root`.
+
+<StoryEmbed storyId="ui-input-slider--display" title="Esempio di cursore" height={120} />
+
+## Utilizzo
+
+### Stato non controllato
+
+Usa `defaultValue` per impostare il volume iniziale. Lo slider gestisce le modifiche successive.
+
+```tsx
+import { Slider } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const VolumeSlider = () => (
+  <Slider.Root name="volume" defaultValue={40} min={0} max={100} step={1}>
+    <Text
+      render={<div />}
+      style={{ display: 'flex', justifyContent: 'space-between' }}
+    >
+      <Slider.Label>Volume</Slider.Label>
+      <Slider.Value />
+    </Text>
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+## Scelte visive
+
+Confronta almeno i colori di accento e di successo ai valori minimo, centrale, massimo e disabilitato. Gli slider abilitati rimangono interattivi.
+
+<StoryEmbed storyId="ui-input-slider--catalog" title="Scelte visive per lo slider" height={340} />
+
+## Anatomia
+
+Inserisci la barra e le maniglie all'interno di `Slider.Control`, che gestisce l'interazione del puntatore. Questa struttura mostra uno slider con una sola maniglia.
+
+```text
+Slider.Root
+├── Slider.Label
+├── Slider.Value
+└── Slider.Control
+    └── Slider.Track
+        ├── Slider.Indicator
+        └── Slider.Thumb
+```
+
+| Parte       | Requisito                          | Scopo                                                                           |
+| ----------- | ---------------------------------- | ------------------------------------------------------------------------------- |
+| `Root`      | Obbligatorio                       | Gestisce il valore, i limiti, il passaggio e l'orientamento.                    |
+| `Control`   | Obbligatorio                       | Gestisce l'interazione del puntatore e posiziona le maniglie.                   |
+| `Track`     | Necessario per la barra stilizzata | Mostra l'intero intervallo di valori.                                           |
+| `Thumb`     | Una per ogni valore regolabile     | Fornisce una maniglia selezionabile con interazione da tastiera.                |
+| `Label`     | Consigliato                        | Fornisce un'etichetta visibile; ogni maniglia necessita di un nome accessibile. |
+| `Valore`    | Facoltativo                        | Visualizza il valore numerico corrente.                                         |
+| `Indicator` | Facoltativo                        | Mostra la parte selezionata della traccia.                                      |
+
+Per un intervallo, aggiungi una maniglia per ogni valore con il relativo `index` e un nome accessibile distinto. Le etichette e l'output numerico rimangono all'esterno di `Control`, quindi non diventano parte dell'area trascinabile.
+
+## Stato controllato
+
+Passa `value` e aggiornalo con `onValueChange` per gestire lo stesso volume nello stato di React. Il callback riceve il valore successivo e i dettagli dell'evento.
+
+```tsx
+import { useState } from 'react';
+import { Slider } from 'twenty-ui/primitives/input';
+
+export const VolumeSlider = () => {
+  const [volume, setVolume] = useState(40);
+
+  return (
+    <Slider.Root
+      name="volume"
+      value={volume}
+      onValueChange={setVolume}
+      min={0}
+      max={100}
+      step={1}
+    >
+      <Slider.Label>Volume</Slider.Label>
+      <Slider.Value />
+      <Slider.Control>
+        <Slider.Track>
+          <Slider.Indicator />
+          <Slider.Thumb />
+        </Slider.Track>
+      </Slider.Control>
+    </Slider.Root>
+  );
+};
+```
+
+Usa `onValueChange` per mantenere aggiornato il valore controllato durante un'interazione. `onValueCommitted` gestisce il valore finale al termine dell'interazione, ad esempio per salvarlo. Entrambi i callback sono disponibili anche in modalità non controllata senza gestire il valore.
+
+I dettagli della modifica includono l'`event` di origine, il `reason` dell'interazione, l'`activeThumbIndex` e `cancel()`. I dettagli di commit utilizzano il contratto generico degli eventi di Base UI e non includono l'annullamento delle modifiche. Una modifica annullata non viene confermata.
+
+## Intervallo
+
+```tsx
+import { Slider } from 'twenty-ui/primitives/input';
+
+export const PriceRange = () => (
+  <Slider.Root
+    defaultValue={[25, 75]}
+    min={0}
+    max={100}
+    minStepsBetweenValues={10}
+  >
+    <Slider.Label>Price range</Slider.Label>
+    <Slider.Value />
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb index={0} aria-label="Minimum price" />
+        <Slider.Thumb index={1} aria-label="Maximum price" />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+Assegna ai cursori dell'intervallo nomi accessibili distinti e un `index` corrispondente al relativo valore. `minStepsBetweenValues` imposta la distanza minima in passaggi. Il tipo generico del valore della radice è un numero o un array di numeri in sola lettura.
+
+Per controllare un intervallo, memorizza l'array nello stato di React e passalo tramite `value` e `onValueChange`, proprio come per un singolo valore.
+
+## Tastiera e aspetto
+
+I tasti freccia regolano un cursore attivo di un passaggio. Home e Fine lo spostano verso i limiti rispettando i vincoli dell'intervallo. `orientation="vertical"` modifica il layout e la direzione della tastiera. Usa `disabled` su `Root` per impedire modifiche.
+
+Imposta `color="success"` per la tavolozza alternativa; il valore predefinito è `accent`.
+
+Il valore predefinito di `thumbAlignment` è `edge`. Passa `center` o `edge-client-only` per sovrascriverlo. La composizione nativa di `className`, `style` e `render` rimane disponibile in ogni parte, incluse le funzioni di stato.
+
+<Note>
+  Con l'allineamento `edge` e `edge-client-only`, Base UI 1.8 e 1.9 non
+  ricalcolano mai le dimensioni di una manopola dopo il ridimensionamento del relativo `Slider.Control`, e uno slider montato
+  quando è nascosto mantiene nascoste le proprie manopole una volta visualizzato
+  ([mui/base-ui#5995](https://github.com/mui/base-ui/issues/5995)). I componenti front di React
+  riscontrano lo stesso problema al primo rendering. Usa
+  `thumbAlignment="center"` finché una versione di Base UI non include la correzione
+  ([mui/base-ui#6000](https://github.com/mui/base-ui/pull/6000)).
+</Note>
+
+## Integrazione nativa e tipi
+
+`Slider.Root` deduce un numero o un array numerico di sola lettura da `value` o `defaultValue`, mantenendo tale tipo in entrambe le callback. `SliderRootProps` accetta entrambi per impostazione predefinita; utilizza `SliderRootProps\<number>` per gli helper a valore singolo o `SliderRootProps\<readonly number[]>` per gli helper di intervallo.
+
+Ogni parte ha un tipo di props esportato in `twenty-ui/primitives/input`: `SliderRootProps`, `SliderControlProps`, `SliderTrackProps`, `SliderIndicatorProps`, `SliderThumbProps`, `SliderLabelProps` e `SliderValueProps`.
+
+Le ref puntano a elementi div per Root, Control, Track, Indicator, Thumb e Label, e a un elemento output per Value. La ref di un Thumb punta alla sua maniglia visibile; il relativo nome accessibile e il valore del modulo nativo appartengono all'input di intervallo annidato. Utilizza `name` e `form` su Root per l'invio nativo, con un input per ciascun valore dell'intervallo.
+
+## Props
+
+Il riferimento viene generato dai tipi dei componenti pubblici. Gli attributi nativi, inclusi i nomi accessibili e i gestori di eventi, sono accettati anche nelle parti che eseguono il rendering di elementi.
+
+<SliderReference />
+
+<PageBanner illustration="section-apps-config" />

@@ -3,6 +3,10 @@ title: Roluri și permisiuni
 description: Declarați ce obiecte și câmpuri pot citi și scrie funcțiile de logică și componentele front-end ale aplicației dvs.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Un **rol** este un set de permisiuni: ce obiecte poate citi sau scrie o aplicație, ce câmpuri poate vedea și ce capabilități la nivel de platformă poate folosi. Funcțiile de logică și componentele front-end ale fiecărei aplicații moștenesc permisiunile rolului marcat cu `defineApplicationRole()` (consultați [Rolul implicit pentru funcții](#the-default-function-role) mai jos).
 
 ```ts src/roles/restricted-company-role.ts
@@ -21,6 +25,7 @@ export default defineRole({
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
+  canAccessAllAgentChatChannels: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
@@ -50,6 +55,10 @@ export default defineRole({
 ```
 
 ## Securitate la nivel de rând
+
+Permisiunile la nivel de rând necesită **planul Organization sau unul superior** — consultați
+[pagina de prețuri](https://twenty.com/pricing). Ce se întâmplă într-un plan fără acest drept este prezentat în
+notele de la finalul acestei secțiuni.
 
 Permisiunile pentru obiecte și câmpuri decid *ce obiecte și câmpuri* poate accesa un rol. **Predicate de
 permisiuni la nivel de rând** merg mai departe și decid *ce înregistrări* poate vedea și asupra cărora poate acționa un rol — de
@@ -164,8 +173,14 @@ Notițe:
 * Oferă fiecărui predicat și fiecărui grup un `universalIdentifier` stabil (orice uuid) — acesta este cheia entității
   de-a lungul actualizărilor, iar predicatele fac referire la grupuri prin el.
 * Predicatele pot face referire la obiecte și câmpuri deținute de aplicația ta sau de obiectele standard ale Twenty.
-* Securitatea la nivel de rând este aplicată pentru spațiile de lucru din planurile care o includ; predicatele se sincronizează în continuare
-  pe alte planuri, doar că nu sunt aplicate.
+* Securitatea la nivel de rând este aplicată pentru spațiile de lucru din **planul Organization sau unul superior**. În cazul altor
+  planuri, predicatele declarate într-un manifest de aplicație se sincronizează în continuare, însă pur și simplu nu sunt aplicate.
+* API-ul Metadata se comportă diferit față de manifest în acest caz: fără acest drept,
+  `upsertRowLevelPermissionPredicates` este respins cu
+  `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` în loc să fie sincronizat. Prin urmare, un spațiu de lucru dintr-un plan care nu
+  include securitatea la nivel de rând nu poate crea predicate în afara unui manifest de aplicație, chiar
+  dacă câmpul `rowLevelPermissionPredicates` este prezent în tipul `Role` atunci când inspectați
+  schema.
 
 ## Rolul implicit pentru funcții
 
@@ -201,11 +216,18 @@ Notițe:
 
 * Exact **un** `defineApplicationRole(...)` este permis per aplicație — build-ul manifestului va eșua dacă găsește mai mult de unul.
 * Utilizați `defineRole()` (nu `defineApplicationRole()`) pentru orice roluri **suplimentare** cu care este livrată aplicația.
-* Setarea explicită a `defaultRoleUniversalIdentifier` în `defineApplication()` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`.
+* Setarea explicită a `defaultRoleUniversalIdentifier` în `defineApplication()` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`. Identificatorul trebuie să corespundă unui rol definit de aplicația dvs., altfel compilarea eșuează.
+
+### Roluri agent
+
+Rolul aplicației este cel pe care un spațiu de lucru îl examinează atunci când îți instalează aplicația, deci trebuie să acopere tot ceea ce poate face aplicația însăși. Orice rol pe care îl atribui unui agent prin `roleUniversalIdentifier` în `defineAgent()` nu trebuie să acorde mai mult decât rolul aplicației: nicio acțiune asupra obiectelor, niciun acces la câmpuri, niciun indicator de permisiune sau domeniu de aplicare la nivel de rând pe care rolul aplicației nu le are. Dacă o face, compilarea eșuează cu o eroare care enumeră permisiunile acordate în exces. Rolurile pe care aplicația ta le furnizează pentru membrii spațiului de lucru sau cheile API nu sunt supuse acestei reguli, deoarece aplicația nu rulează niciodată cu acestea.
 
 ## Cele mai bune practici
 
 * Porniți de la rolul generat de scaffolding, apoi restrângeți-l progresiv — rolul implicit acordă acces larg la citire, ceea ce rareori este de dorit în producție.
 * Înlocuiți `objectPermissions` și `fieldPermissions` cu obiectele și câmpurile de care au nevoie efectiv funcțiile dvs.
 * `permissionFlagUniversalIdentifiers` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum.
+* Un indicator de permisiune pe care aplicația dvs. îl declară cu `definePermissionFlag()` are un `permissionType`: `'tool'` (implicit) pentru o capabilitate care poate fi acordată unui agent sau unui utilizator și `'settings'` pentru un indicator care deblochează o zonă de setări.
 * Vedeți un exemplu funcțional: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
+
+<PageBanner illustration="card-page-roles" />

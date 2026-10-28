@@ -1,0 +1,165 @@
+---
+title: ListItemButton
+description: Pulsanti di azione nativi con l'aspetto condiviso delle righe di elenco.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ListItemButtonReference from '/snippets/ui/generated/components/navigation/list-item-button.mdx';
+
+## Panoramica
+
+Usa `ListItemButton` per le righe di azione e i pulsanti di selezione autonomi. Combina il layout di [ListItem](/it/ui/primitives/navigation/list-item) con un pulsante nativo, incluse l'attivazione con Invio e Spazio, la gestione dello stato attivo e del comportamento disabilitato. Il valore predefinito è `type="button"`.
+
+<StoryEmbed storyId="ui-components-listitembutton--display" title="Esempio di ListItemButton" height={110} />
+
+## Utilizzo
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+export const DuplicateAction = ({
+  onDuplicate,
+}: {
+  onDuplicate: () => void;
+}) => (
+  <ListItemButton
+    startIcon={<IconCopy />}
+    description="Create a copy"
+    onClick={onDuplicate}
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+## Azioni e stato disabilitato
+
+Passa direttamente `onClick` e `disabled`. I pulsanti disabilitati usano l'aspetto della riga corrispondente, impediscono l'attivazione e rimangono nell'ordine di tabulazione.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+type DuplicateActionProps = {
+  onDuplicate: () => void;
+  disabled?: boolean;
+};
+
+export const DuplicateAction = ({
+  onDuplicate,
+  disabled = false,
+}: DuplicateActionProps) => (
+  <ListItemButton
+    disabled={disabled}
+    onClick={onDuplicate}
+    startIcon={<IconCopy />}
+    description="Create a copy"
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+<StoryEmbed storyId="ui-components-listitembutton--disabled" title="Riga di azione disabilitata" height={110} />
+
+Imposta `focusableWhenDisabled` per mantenere attivabile lo stato attivo di un pulsante disabilitato. Usa `aria-disabled` e continua a bloccare l'attivazione. Gli attributi, gli eventi, gli stili, i nomi delle classi e un riferimento `HTMLButtonElement` del pulsante nativo raggiungono il pulsante. Gli eventi si propagano normalmente; i chiamanti forniscono qualsiasi criterio per `stopPropagation()` o `preventDefault()`.
+
+## Selezione e slot visivi
+
+L'applicazione gestisce gli stati indipendenti `active`, `selected` e `focused`. Usa `active` per la riga aperta o corrente. Abbina `selected` allo stato accessibile appropriato, ad esempio `aria-pressed` per un pulsante di attivazione/disattivazione. `focused` evidenzia la riga senza spostare lo stato attivo del DOM. Gli indicatori e i suggerimenti per le scorciatoie sono decorativi; la tua applicazione registra le scorciatoie e gestisce la navigazione.
+
+```tsx
+import { useState } from 'react';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+
+export const ShowArchivedToggle = () => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItemButton
+      aria-pressed={selected}
+      selected={selected}
+      indicator="check"
+      onClick={() => setSelected(!selected)}
+    >
+      Show archived records
+    </ListItemButton>
+  );
+};
+```
+
+<StoryEmbed storyId="ui-components-listitembutton--selected" title="Riga di azione selezionata" height={110} />
+
+Usa `startIcon`, `endIcon`, `description` e `descriptionPlacement` per i contenuti di supporto. `color="danger"` contrassegna un'azione distruttiva. `shortcutJoinLabel` controlla il testo tra scorciatoie sequenziali e `hasSubmenu` visualizza un indicatore di sottomenu.
+
+## Contenuto di supporto su più righe
+
+Imposta `descriptionPlacement="below"` per disporre il testo di supporto sotto l'etichetta. L'etichetta mantiene il proprio comportamento di troncamento. Passa [Text](/it/ui/primitives/typography/text) con `truncate` o `lineClamp` come `description` quando hai bisogno di un'anteprima più breve. I posizionamenti `inline` e `end` mantengono il loro aspetto esistente.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type PlanningActionProps = {
+  active?: boolean;
+  disabled?: boolean;
+  onOpen: () => void;
+};
+
+export const PlanningAction = ({
+  active = false,
+  disabled = false,
+  onOpen,
+}: PlanningActionProps) => (
+  <ListItemButton
+    active={active}
+    disabled={disabled}
+    descriptionPlacement="below"
+    description="Review the proposed timeline and confirm the next steps with the team."
+    startIcon={<Avatar name="Alex Morgan" size="md" imageProps={{ alt: '' }} />}
+    onClick={onOpen}
+  >
+    Quarterly planning
+  </ListItemButton>
+);
+```
+
+`active` applica lo sfondo della riga corrente. Imposta `selectionAppearance="accent"` per un riempimento accentato sulle righe selezionate con qualsiasi posizionamento della descrizione; il valore predefinito mantiene lo stile di selezione esistente basato sull'indicatore. `focused` applica lo sfondo evidenziato condiviso; il contorno focus-visible segue lo stato attivo effettivo della tastiera. Queste prop non aggiungono uno stato accessibile né spostano lo stato attivo. L'attivazione nativa dei pulsanti e il comportamento disabilitato rimangono invariati.
+
+## Controlli indipendenti
+
+Mantieni pulsanti e caselle di controllo indipendenti accanto a `ListItemButton`, affinché ciascuno mantenga il proprio stato attivo e la propria attivazione. Non annidarli nei relativi slot di contenuto o icona. Il componente non dispone di uno slot `actions`. Usa un `ListItem` con la relativa radice `div` predefinita per [una riga con controlli indipendenti](/it/ui/primitives/navigation/list-item#independent-controls) e fornisci il comportamento disabilitato e la propagazione degli eventi per ciascun controllo.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+type ContactActionsProps = {
+  onOpen: () => void;
+  onDetails: () => void;
+};
+
+export const ContactActions = ({ onOpen, onDetails }: ContactActionsProps) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ListItemButton onClick={onOpen} description="Account owner">
+      Alex Morgan
+    </ListItemButton>
+    <Button onClick={onDetails} aria-label="Open Alex Morgan's details">
+      Details
+    </Button>
+  </div>
+);
+```
+
+<StoryEmbed storyId="ui-components-listitembutton--independent-action" title="Controlli di azione affiancati" height={110} />
+
+Usa `ListItem` per contenuti passivi, link o proprietari semantici personalizzati. Usa le parti degli elementi [Dropdown](/it/ui/components/navigation/dropdown) e [Select](/it/ui/primitives/input/select) esistenti all'interno dei rispettivi proprietari popup, che forniscono ruoli e navigazione tramite tastiera.
+
+## Props
+
+<ListItemButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

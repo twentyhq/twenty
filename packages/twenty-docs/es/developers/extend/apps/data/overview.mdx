@@ -3,6 +3,11 @@ title: Resumen
 description: "Da forma a los datos que tu aplicación agrega a un espacio de trabajo: objetos, campos y relaciones."
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Qué cubre la capa de datos
+
 La **capa de datos** de una aplicación de Twenty es el conjunto de datos que tu aplicación *agrega* a un espacio de trabajo — los nuevos tipos de registros que declara, las columnas que agrega a los objetos existentes y cómo esos registros se conectan entre sí.
 
 ```text
@@ -24,18 +29,22 @@ La **capa de datos** de una aplicación de Twenty es el conjunto de datos que tu
 
 ## En esta sección
 
-<CardGroup cols={2}>
-  <Card title="Objetos" icon="table" href="/es/developers/extend/apps/data/objects">
-    `defineObject` — declara nuevos tipos de registros con sus propios campos.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/es/developers/extend/apps/data/objects" img="/images/user-guide/halftone/card-page-objects.svg">
+    <CardTitle>Objects</CardTitle>
+    `defineObject` — declarar nuevos tipos de registro con sus propios campos.
   </Card>
-  <Card title="Extender objetos" icon="wand" href="/es/developers/extend/apps/data/extending-objects">
-    `defineField` — agrega campos a objetos estándar o de otras aplicaciones.
+  <Card href="/es/developers/extend/apps/data/extending-objects" img="/images/user-guide/halftone/card-page-extending-objects.svg">
+    <CardTitle>Extender Objetos</CardTitle>
+    `defineField` - añadir campos a objetos estándar u otras aplicaciones.
   </Card>
-  <Card title="Relaciones" icon="sitemap" href="/es/developers/extend/apps/data/relations">
+  <Card href="/es/developers/extend/apps/data/relations" img="/images/user-guide/halftone/card-page-relations.svg">
+    <CardTitle>Relaciones</CardTitle>
     Conexiones bidireccionales `MANY_TO_ONE` / `ONE_TO_MANY` entre objetos.
   </Card>
-  <Card title="Tipos de actividad de la cronología" icon="history" href="/es/developers/extend/apps/data/timeline-activity-types">
-    Defina eventos de auditoría automáticos y eventos explícitos de la aplicación para cronologías de registros.
+  <Card href="/es/developers/extend/apps/data/timeline-activity-types" img="/images/user-guide/halftone/card-page-timeline.svg">
+    <CardTitle>Tipos de actividad de línea de tiempo</CardTitle>
+    Definir eventos de auditoría automática y eventos explícitos de la aplicación para grabar cronología.
   </Card>
 </CardGroup>
 
@@ -47,9 +56,9 @@ La **capa de datos** de una aplicación de Twenty es el conjunto de datos que tu
 | **Campo**                              | Una columna en un objeto. Los campos independientes pueden ampliar objetos que no creaste (por ejemplo, agregar `loyaltyTier` a Company) | `defineField()`                          |
 | **Relación**                           | Un vínculo bidireccional entre dos objetos: ambos lados se declaran como campos                                                          | `defineField()` con `FieldType.RELATION` |
 | **Índice**                             | Un índice de base de datos para acelerar una consulta recurrente sobre uno de tus objetos                                                | `defineIndex()`                          |
-| **Tipo de actividad de la cronología** | Un evento de auditoría automático o un evento de dominio explícito mostrado en las líneas de tiempo de los registros.                    | `defineTimelineActivityType()`           |
+| **Tipo de actividad de la cronología** | Un evento de auditoría automático o un evento de dominio explícito mostrado en las líneas de tiempo de los registros                     | `defineTimelineActivityType()`           |
 
-El SDK detecta estos mediante análisis AST en tiempo de compilación, por lo que la organización de archivos depende de ti; la convención es `src/objects/`, `src/fields/`, `src/indexes/` y `src/timeline-activity-types/`. Los UUID `universalIdentifier` estables vinculan todo a través de los despliegues.
+La CLI detecta estos mediante análisis AST en tiempo de compilación, por lo que la organización de archivos depende de ti; la convención es `src/objects/`, `src/fields/`, `src/indexes/` y `src/timeline-activity-types/`. Los UUID `universalIdentifier` estables vinculan todo a través de los despliegues.
 
 ## Índices (opcional)
 
@@ -98,3 +107,5 @@ Ordena el arreglo `fields` de la forma en que Postgres debería usarlo: la colum
 <Note>
 ¿Buscas **Application Config** o **Roles & Permissions**? Esos describen la propia aplicación en lugar de los datos que agrega; se encuentran en [Config](/es/developers/extend/apps/config/overview). ¿Buscas **Connections** (Linear, GitHub, Slack OAuth)? Estas existen para ser llamadas *desde* las funciones lógicas y se encuentran en [Logic](/es/developers/extend/apps/logic/connections).
 </Note>
+
+<PageBanner illustration="section-apps-data" />
