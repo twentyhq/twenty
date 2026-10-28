@@ -18,6 +18,20 @@ const fieldsWithDisabledActionsByObjectIdCache = new WeakMap<
   Map<string, FlatFieldMetadataWithDisabledActions[]>
 >();
 
+const getMorphTargetIds = (
+  flatFieldMetadata: OrmFlatFieldMetadata,
+  morphTargetIdsByMorphId: Map<string, string[]>,
+): string[] => {
+  if (
+    !isMorphRelationHead(flatFieldMetadata) ||
+    !isDefined(flatFieldMetadata.morphId)
+  ) {
+    return [];
+  }
+
+  return morphTargetIdsByMorphId.get(flatFieldMetadata.morphId) ?? [];
+};
+
 // A morph relation head has no column of its own: its disabled actions apply to every target column
 export const getFlatFieldMetadatasWithDisabledActionsByObjectId = (
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
@@ -60,14 +74,10 @@ export const getFlatFieldMetadatasWithDisabledActionsByObjectId = (
       continue;
     }
 
-    const restrictedFieldIds =
-      isMorphRelationHead(flatFieldMetadata) &&
-      isDefined(flatFieldMetadata.morphId)
-        ? [
-            flatFieldMetadata.id,
-            ...(morphTargetIdsByMorphId.get(flatFieldMetadata.morphId) ?? []),
-          ]
-        : [flatFieldMetadata.id];
+    const restrictedFieldIds = [
+      flatFieldMetadata.id,
+      ...getMorphTargetIds(flatFieldMetadata, morphTargetIdsByMorphId),
+    ];
 
     fieldsByObjectId.set(flatFieldMetadata.objectMetadataId, [
       ...(fieldsByObjectId.get(flatFieldMetadata.objectMetadataId) ?? []),
