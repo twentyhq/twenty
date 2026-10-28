@@ -47,7 +47,6 @@ export class LogicFunctionFromSourceService {
     input: CreateLogicFunctionFromSourceInput;
     workspaceId: string;
   }): Promise<LogicFunctionDTO> {
-    // Server routes are declared only through an application manifest, never ad-hoc Custom-app functions.
     if (isDefined(input.serverRouteTriggerSettings)) {
       throw new LogicFunctionException(
         'serverRouteTriggerSettings cannot be set on a logic function created from source',
