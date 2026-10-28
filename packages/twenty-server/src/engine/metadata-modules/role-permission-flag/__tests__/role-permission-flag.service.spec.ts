@@ -159,9 +159,12 @@ const getRolePermissionFlagOperation = (
 ): {
   flatEntityToCreate: { permissionFlagUniversalIdentifier: string }[];
   flatEntityToDelete: { permissionFlagUniversalIdentifier: string }[];
-} =>
-  validateBuildAndRunWorkspaceMigration.mock.calls[0][0]
+} => {
+  expect(validateBuildAndRunWorkspaceMigration).toHaveBeenCalledTimes(1);
+
+  return validateBuildAndRunWorkspaceMigration.mock.calls[0][0]
     .allFlatEntityOperationByMetadataName.rolePermissionFlag;
+};
 
 const getCreatedPermissionFlagUniversalIdentifiers = (
   validateBuildAndRunWorkspaceMigration: jest.Mock,
