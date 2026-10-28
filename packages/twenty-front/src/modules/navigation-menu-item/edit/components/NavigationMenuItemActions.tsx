@@ -69,7 +69,7 @@ export const NavigationMenuItemActions = ({
     },
     {
       id: 'before',
-      label: t`Add menu item before`,
+      label: t`Add item before`,
       Icon: IconRowInsertTop,
       hasSubMenu: true,
       onClick: () =>
@@ -77,7 +77,7 @@ export const NavigationMenuItemActions = ({
     },
     {
       id: 'after',
-      label: t`Add menu item after`,
+      label: t`Add item after`,
       Icon: IconRowInsertBottom,
       hasSubMenu: true,
       onClick: () =>

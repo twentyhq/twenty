@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -14,8 +15,9 @@ import { useCreateNavigationMenuTabOrSection } from '@/navigation-menu-item/edit
 import { getNavigationMenuAddSectionDropdownId } from '@/navigation-menu-item/edit/utils/getNavigationMenuAddSectionDropdownId';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 
 type NavigationMenuItemAddSectionButtonProps = {
   parentId: string | null;
@@ -30,6 +32,8 @@ export const NavigationMenuItemAddSectionButton = ({
   const { getDefaultSectionLabel } = useNavigationMenuItemSectionLabel();
   const { createSection, createBuiltInSection } =
     useCreateNavigationMenuTabOrSection();
+  const { openDropdown } = useOpenDropdown();
+  const dropdownId = getNavigationMenuAddSectionDropdownId(parentId);
   const builtInSectionTypes: NavigationMenuItemBuiltInSectionType[] = [
     NavigationMenuItemType.FAVORITES,
     ...(hasAiPermission ? NAVIGATION_MENU_ITEM_AI_SECTION_TYPES : []),
@@ -67,21 +71,28 @@ export const NavigationMenuItemAddSectionButton = ({
   return (
     <NavigationDrawerSection>
       <NavigationMenuItemEntrance>
-        <NavigationMenuItemGroupedOptionsMenu
-          dropdownId={getNavigationMenuAddSectionDropdownId(parentId)}
-          title={t`Add section`}
-          isTriggerNativeButton={false}
-          trigger={
-            <div tabIndex={-1}>
-              <NavigationDrawerItem
-                Icon={IconPlus}
-                label={t`Add section`}
-                triggerEvent="CLICK"
-                variant="tertiary"
-              />
-            </div>
+        <NavigationDrawerSectionTitle
+          label={t`Add section`}
+          onClick={() =>
+            openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId })
           }
-          groups={groups}
+          alwaysShowRightIcon
+          rightIcon={
+            <NavigationMenuItemGroupedOptionsMenu
+              dropdownId={dropdownId}
+              title={t`Add section`}
+              trigger={
+                <LightIconButton
+                  emphasis="subtle"
+                  size="sm"
+                  aria-label={t`Add section`}
+                >
+                  <IconPlus />
+                </LightIconButton>
+              }
+              groups={groups}
+            />
+          }
         />
       </NavigationMenuItemEntrance>
     </NavigationDrawerSection>
