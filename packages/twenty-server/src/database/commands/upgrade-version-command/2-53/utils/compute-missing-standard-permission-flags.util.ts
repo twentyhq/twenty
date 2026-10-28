@@ -7,8 +7,14 @@ export const computeMissingStandardPermissionFlags = ({
   standardFlatPermissionFlagMaps,
   existingFlatPermissionFlagMaps,
 }: {
-  standardFlatPermissionFlagMaps: FlatEntityMaps<FlatPermissionFlag>;
-  existingFlatPermissionFlagMaps: FlatEntityMaps<FlatPermissionFlag>;
+  standardFlatPermissionFlagMaps: Pick<
+    FlatEntityMaps<FlatPermissionFlag>,
+    'byUniversalIdentifier'
+  >;
+  existingFlatPermissionFlagMaps: Pick<
+    FlatEntityMaps<FlatPermissionFlag>,
+    'byUniversalIdentifier'
+  >;
 }): {
   permissionFlagsToCreate: FlatPermissionFlag[];
   permissionFlagsSkippedForKeyClash: FlatPermissionFlag[];

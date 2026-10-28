@@ -188,17 +188,19 @@ export class FlatRolePermissionFlagValidatorService {
       }
     }
 
-    if (isDefined(flatEntityUpdate.permissionFlagUniversalIdentifier)) {
+    const updatedPermissionFlagUniversalIdentifier =
+      flatEntityUpdate.permissionFlagUniversalIdentifier;
+
+    if (isDefined(updatedPermissionFlagUniversalIdentifier)) {
       const referencedPermissionFlag = findFlatEntityByUniversalIdentifier({
-        universalIdentifier:
-          flatEntityUpdate.permissionFlagUniversalIdentifier as string,
+        universalIdentifier: updatedPermissionFlagUniversalIdentifier,
         flatEntityMaps: flatPermissionFlagMaps,
       });
 
       if (!isDefined(referencedPermissionFlag)) {
         validationResult.errors.push(
           getPermissionFlagNotFoundError(
-            flatEntityUpdate.permissionFlagUniversalIdentifier as string,
+            updatedPermissionFlagUniversalIdentifier,
           ),
         );
       }

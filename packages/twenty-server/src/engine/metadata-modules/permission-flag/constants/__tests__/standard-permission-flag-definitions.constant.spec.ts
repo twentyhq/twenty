@@ -1,7 +1,6 @@
 import { STANDARD_PERMISSION_FLAG_DEFINITIONS } from 'src/engine/metadata-modules/permission-flag/constants/standard-permission-flag-definitions.constant';
 
-// Existing workspaces only get a new standard flag from an upgrade command, as
-// upgrade:2-53:backfill-standard-permission-flags does; ship one, then add the key here
+// Existing workspaces get a new standard flag only from an upgrade command: ship one, then add the key here
 const STANDARD_PERMISSION_FLAG_KEYS_BACKFILLED_IN_EXISTING_WORKSPACES = [
   'API_KEYS_AND_WEBHOOKS',
   'WORKSPACE',
