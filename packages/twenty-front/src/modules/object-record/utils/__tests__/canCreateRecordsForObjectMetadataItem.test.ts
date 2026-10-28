@@ -1,9 +1,7 @@
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
-import { MetadataWritability } from '~/generated-metadata/graphql';
 
 const creatableObjectMetadataItem = {
   isUICreatable: true,
-  writability: MetadataWritability.OPEN,
   isUIEditable: true,
   isRemote: false,
 };
@@ -15,7 +13,7 @@ const objectPermissionsAllowingUpdate = {
 };
 
 describe('canCreateRecordsForObjectMetadataItem', () => {
-  it('should return true for a creatable, editable, OPEN, non-remote object with update permission', () => {
+  it('should return true for a creatable, editable, non-remote object with update permission', () => {
     const result = canCreateRecordsForObjectMetadataItem({
       objectPermissions: objectPermissionsAllowingUpdate,
       objectMetadataItem: creatableObjectMetadataItem,
@@ -30,18 +28,6 @@ describe('canCreateRecordsForObjectMetadataItem', () => {
       objectMetadataItem: {
         ...creatableObjectMetadataItem,
         isUICreatable: false,
-      },
-    });
-
-    expect(result).toBe(false);
-  });
-
-  it('should return false when the object writability is not OPEN', () => {
-    const result = canCreateRecordsForObjectMetadataItem({
-      objectPermissions: objectPermissionsAllowingUpdate,
-      objectMetadataItem: {
-        ...creatableObjectMetadataItem,
-        writability: MetadataWritability.SYSTEM,
       },
     });
 

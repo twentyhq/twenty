@@ -220,11 +220,11 @@ describe('Agent update should fail', () => {
     const { data } = await findAgents({
       expectToFail: false,
       input: undefined,
-      gqlFields: 'id name isCustom',
+      gqlFields: 'id name',
     });
 
     const helperAgent = data.findManyAgents.find(
-      (agent) => agent.name === 'helper' && agent.isCustom === false,
+      (agent) => agent.name === 'helper',
     );
 
     expect(helperAgent).toBeDefined();

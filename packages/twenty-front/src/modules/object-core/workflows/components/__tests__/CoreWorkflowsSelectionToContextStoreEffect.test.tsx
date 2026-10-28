@@ -19,6 +19,8 @@ const buildCoreWorkflow = (id: string, name: string): CoreWorkflow => ({
   visibility: WorkflowVisibility.WORKSPACE,
   canChangeVisibility: true,
   updatedAt: '2026-10-01T10:00:00.000Z',
+  __typename: 'CoreWorkflowDTO',
+  workspaceWorkflowId: undefined,
 });
 
 const renderEffect = (selectedCoreWorkflows: CoreWorkflow[]) => {

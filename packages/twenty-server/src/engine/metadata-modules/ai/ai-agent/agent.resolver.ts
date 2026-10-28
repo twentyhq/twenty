@@ -1,5 +1,5 @@
 import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -17,6 +17,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 
 import { AgentService } from './agent.service';
 
@@ -46,13 +47,23 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   AiGraphqlApiExceptionInterceptor,
 )
-@MetadataResolver()
+@MetadataResolver(() => AgentDTO)
 @UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 export class AgentResolver {
   constructor(
     private readonly agentService: AgentService,
     private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
+
+  @ResolveField(() => Boolean, {
+    deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
+  })
+  isCustom(
+    @Parent() agent: AgentDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): boolean {
+    return agent.applicationId === workspace.workspaceCustomApplicationId;
+  }
 
   @Query(() => [AgentDTO])
   async findManyAgents(

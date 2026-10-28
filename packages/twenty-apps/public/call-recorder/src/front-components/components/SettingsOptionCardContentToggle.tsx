@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useId } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { Separator } from 'src/front-components/components/Separator';
 import {

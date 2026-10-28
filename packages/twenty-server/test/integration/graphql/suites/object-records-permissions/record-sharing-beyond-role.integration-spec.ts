@@ -6,7 +6,6 @@ import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
-  ObjectSharingReach,
   RecordShareAccessLevel,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -114,12 +113,6 @@ describe('Records shared beyond the role that can access their object', () => {
       },
     });
 
-  const setSharingReach = (sharingReach: ObjectSharingReach) =>
-    updateOneObjectMetadata({
-      expectToFail: false,
-      input: { idToUpdate: objectMetadataId, updatePayload: { sharingReach } },
-    });
-
   const findIdsAsJony = async () => {
     const response = await makeGraphqlApiRequest(
       findManyOperationFactory({
@@ -197,7 +190,6 @@ describe('Records shared beyond the role that can access their object', () => {
       recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
     });
     await setMemberObjectAccess(false);
-    await setSharingReach(ObjectSharingReach.WORKSPACE);
   });
 
   afterAll(async () => {
@@ -329,83 +321,6 @@ describe('Records shared beyond the role that can access their object', () => {
     );
   });
 
-  it('should refuse to share with someone the object cannot reach', async () => {
-    await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
-
-    const response = await setShare({ principal: JONY });
-
-    expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
-      'INVALID_SHARE_WITH',
-    );
-
-    expect(
-      (await setShare({ principal: { roleId: memberRoleId } })).body.errors?.[0]
-        ?.extensions?.subCode,
-    ).toBe('INVALID_SHARE_WITH');
-
-    await setMemberObjectAccess(true);
-
-    expect((await setShare({ principal: JONY })).body.errors).toBeUndefined();
-    expect(
-      (await setShare({ principal: { roleId: memberRoleId } })).body.errors,
-    ).toBeUndefined();
-  });
-
-  it('should refuse a share the row filter of the recipient would hide, but let the role filter each member on read', async () => {
-    await setMemberObjectAccess(true);
-    await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
-    await upsertRowLevelPermissionPredicates({
-      expectToFail: false,
-      input: {
-        roleId: memberRoleId,
-        objectMetadataId,
-        predicates: [
-          {
-            fieldMetadataId: nameFieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            value: 'Visible',
-          },
-        ],
-        predicateGroups: [],
-      },
-    });
-
-    try {
-      const response = await setShare({ principal: JONY });
-
-      expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
-        'INVALID_SHARE_WITH',
-      );
-      expect(
-        await shares.findByRecordIds({
-          workspaceId,
-          objectMetadataId,
-          recordIds: [SHARED_RECORD_ID],
-        }),
-      ).toEqual([]);
-      expect(
-        (await setShare({ principal: { roleId: memberRoleId } })).body.errors,
-      ).toBeUndefined();
-    } finally {
-      await upsertRowLevelPermissionPredicates({
-        expectToFail: false,
-        input: {
-          roleId: memberRoleId,
-          objectMetadataId,
-          predicates: [],
-          predicateGroups: [],
-        },
-      });
-    }
-  });
-
-  it('should stay within the role when the object limits sharing to it', async () => {
-    await setShare({ principal: JONY });
-    await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
-
-    expect((await findIdsAsJony()).errors).toBeDefined();
-  });
-
   it('should let a named grant reach a record the row filter of the role hides', async () => {
     await setMemberObjectAccess(true);
     await upsertRowLevelPermissionPredicates({
@@ -438,10 +353,6 @@ describe('Records shared beyond the role that can access their object', () => {
       expect(
         (await renameAsJony('Edited under a row filter')).body.errors,
       ).toBeUndefined();
-
-      await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
-
-      expect((await findIdsAsJony()).ids).toEqual([OTHER_RECORD_ID]);
     } finally {
       await upsertRowLevelPermissionPredicates({
         expectToFail: false,
@@ -506,10 +417,6 @@ describe('Records shared beyond the role that can access their object', () => {
 
     expect((await findIdsAsJony()).ids).toEqual([SHARED_RECORD_ID]);
     expect([...(await resolveAdmittedRecordIds())]).toEqual([SHARED_RECORD_ID]);
-
-    await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
-
-    expect([...(await resolveAdmittedRecordIds())]).toEqual([]);
   });
 
   it('should keep grants within the role while the flag is off', async () => {
@@ -520,45 +427,6 @@ describe('Records shared beyond the role that can access their object', () => {
       expect((await findIdsAsJony()).errors).toBeDefined();
     } finally {
       await setRecordSharingEnabled(true);
-    }
-  });
-
-  it('should let admins change the reach of a standard object', async () => {
-    const { data } = await makeMetadataApiRequest({
-      query: parse(
-        `query { objects(paging: { first: 1000 }) { edges { node { id nameSingular sharingReach } } } }`,
-      ),
-    }).then((response) => response.body);
-    const company = data.objects.edges
-      .map(({ node }: { node: { nameSingular: string } }) => node)
-      .find(
-        ({ nameSingular }: { nameSingular: string }) =>
-          nameSingular === 'company',
-      );
-
-    expect(company.sharingReach).toBe(ObjectSharingReach.WORKSPACE);
-
-    try {
-      const { data: updated } = await updateOneObjectMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: company.id,
-          updatePayload: { sharingReach: ObjectSharingReach.ROLE_ACCESS },
-        },
-        gqlFields: 'sharingReach',
-      });
-
-      expect(updated.updateOneObject.sharingReach).toBe(
-        ObjectSharingReach.ROLE_ACCESS,
-      );
-    } finally {
-      await updateOneObjectMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: company.id,
-          updatePayload: { sharingReach: ObjectSharingReach.WORKSPACE },
-        },
-      });
     }
   });
 });

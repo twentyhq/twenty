@@ -250,8 +250,6 @@ describe('versioned agent history upgrade (integration)', () => {
       objectNames: seededHistoryObjectNames,
     });
 
-    // Recreate the pre-2.47 state this upgrade rolls back from: the core
-    // tables, and the route 2.42 recorded on every workspace it moved
     const runner = dataSource.createQueryRunner();
     try {
       await new DropCoreAgentHistoryTablesFastInstanceCommand().down(runner);

@@ -217,6 +217,7 @@ Notițe:
 * Exact **un** `defineApplicationRole(...)` este permis per aplicație — build-ul manifestului va eșua dacă găsește mai mult de unul.
 * Utilizați `defineRole()` (nu `defineApplicationRole()`) pentru orice roluri **suplimentare** cu care este livrată aplicația.
 * Setarea explicită a `defaultRoleUniversalIdentifier` în `defineApplication()` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`. Identificatorul trebuie să corespundă unui rol definit de aplicația dvs., altfel compilarea eșuează.
+* Un rol căruia îi pot fi alocați membri ai spațiului de lucru sau chei API (`canBeAssignedToUsers` sau `canBeAssignedToApiKeys`, ambele `true` când sunt omise) este un rol personalizat și necesită **planul Organization sau unul superior**: pe alte planuri, instalarea este refuzată. Păstrează-le pe ambele ca `false` pentru rolurile pe care rulează doar aplicația ta și agenții acesteia.
 
 ### Roluri agent
 

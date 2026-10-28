@@ -502,10 +502,12 @@ export class ObjectMetadataService {
     createObjectInput,
     workspaceId,
     ownerFlatApplication,
+    shouldDeferActions,
   }: {
     createObjectInput: CreateObjectInput;
     workspaceId: string;
     ownerFlatApplication?: FlatApplication;
+    shouldDeferActions?: boolean;
   }): Promise<FlatObjectMetadata> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -546,6 +548,7 @@ export class ObjectMetadataService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions,
           allFlatEntityOperationByMetadataName: {
             objectMetadata: {
               flatEntityToCreate: [flatObjectMetadataToCreate],

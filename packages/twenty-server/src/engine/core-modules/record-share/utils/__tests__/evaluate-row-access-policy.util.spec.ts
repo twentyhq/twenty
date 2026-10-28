@@ -83,17 +83,14 @@ const recordShares: RecordShareGrant[] = [
 ];
 
 const buildContext = (
-  overrides: Partial<RowAccessEvaluationContext<RowAccessRecord>> = {},
-): RowAccessEvaluationContext<RowAccessRecord> => ({
+  overrides: Partial<RowAccessEvaluationContext> = {},
+): RowAccessEvaluationContext => ({
   flatFieldMetadataMaps,
   shouldIgnoreSoftDeleteDefaultFilter: false,
   fetchRecordShares: jest.fn(async ({ recordIds }) =>
     recordShares.filter((recordShare) =>
       recordIds.includes(recordShare.recordId),
     ),
-  ),
-  resolveRecordIdsReadableThroughParents: jest.fn(
-    async () => new Set<string>(),
   ),
   ...overrides,
 });
@@ -186,30 +183,5 @@ describe('evaluateRowAccessPolicy', () => {
       objectMetadataId: flatObjectMetadata.id,
       recordIds: ['active-private', 'archived-shared'],
     });
-  });
-
-  it('asks parents only about records not shared directly', async () => {
-    const context = buildContext({
-      resolveRecordIdsReadableThroughParents: jest.fn(
-        async () => new Set(['active-private']),
-      ),
-    });
-
-    expect(
-      await evaluate(
-        {
-          kind: 'inheritedReadability',
-          parents: [],
-          isOpenWhenDetached: false,
-          ...shareTarget,
-        },
-        context,
-      ),
-    ).toEqual(new Set(['active-shared', 'archived-shared', 'active-private']));
-    expect(context.resolveRecordIdsReadableThroughParents).toHaveBeenCalledWith(
-      expect.objectContaining({
-        records: [expect.objectContaining({ id: 'active-private' })],
-      }),
-    );
   });
 });

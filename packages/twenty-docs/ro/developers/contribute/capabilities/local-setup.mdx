@@ -12,13 +12,12 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 Înainte de a instala și utiliza Twenty, asigurați-vă că instalați următoarele pe computerul dvs:
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* [Node v24.5.0](https://nodejs.org/en/download)
+* [Node v26](https://nodejs.org/en/download)
 * [yarn v4](https://yarnpkg.com/getting-started/install)
 * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
 <Warning>
-`npm` nu va funcționa, ar trebui să folosiți `yarn` în schimb. Yarn este acum livrat cu Node.js, așa că nu este nevoie să-l instalați separat.
-Trebuie doar să rulați `corepack enable` pentru a activa Yarn dacă nu ați făcut acest lucru deja.
+`npm` nu va funcționa, ar trebui să folosiți `yarn` în schimb. Node 26 nu mai include Corepack, deci instalați-l o dată cu `npm install -g corepack`, apoi rulați `corepack enable` pentru a activa Yarn.
 </Warning>
 
 </Tab>
@@ -64,6 +63,7 @@ nvm install # installs recommended node version
 
 nvm use # use recommended node version
 
+npm install -g corepack
 corepack enable
 ```
 
