@@ -11,7 +11,6 @@ import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-dr
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
-// Needs input, Mentions and Assigned narrow Open, so they hang under it
 const OPEN_SUB_FILTER_STATUSES = [
   AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
   AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,

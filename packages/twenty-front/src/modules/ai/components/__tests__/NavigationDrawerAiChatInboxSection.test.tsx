@@ -83,7 +83,13 @@ const renderInboxSection = ({
     </JotaiProvider>,
   );
 
-const expectInboxRowToHaveText = (name: RegExp, text: RegExp) =>
+const expectInboxRowToHaveText = ({
+  name,
+  text,
+}: {
+  name: RegExp;
+  text: RegExp;
+}) =>
   waitFor(() =>
     expect(
       screen.getByRole('button', { name }).closest('.navigation-drawer-item'),
@@ -113,10 +119,10 @@ describe('NavigationDrawerAiChatInboxSection', () => {
       summary: { ...READ_SUMMARY, hasUnreadOpenThread: true },
     });
 
-    await expectInboxRowToHaveText(
-      /^Open\s*, unread$/,
-      /^Open\s*, unread\s*2$/,
-    );
+    await expectInboxRowToHaveText({
+      name: /^Open\s*, unread$/,
+      text: /^Open\s*, unread\s*2$/,
+    });
     expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Done' })).toBeVisible();
   });
@@ -124,13 +130,13 @@ describe('NavigationDrawerAiChatInboxSection', () => {
   it('shows Open as read when every open chat is read', async () => {
     renderInboxSection();
 
-    await expectInboxRowToHaveText(/^Open$/, /^Open\s*2$/);
+    await expectInboxRowToHaveText({ name: /^Open$/, text: /^Open\s*2$/ });
   });
 
   it('shows only Open until See more reveals the other statuses', async () => {
     renderInboxSection({ visibleItemLimit: 1 });
 
-    await expectInboxRowToHaveText(/^Open$/, /^Open\s*2$/);
+    await expectInboxRowToHaveText({ name: /^Open$/, text: /^Open\s*2$/ });
     expect(screen.queryByRole('button', { name: 'Snoozed' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Done' })).toBeNull();
 
@@ -207,7 +213,10 @@ describe('NavigationDrawerAiChatInboxSection', () => {
       summary: { ...READ_SUMMARY, needsInputThreadCount: 1 },
     });
 
-    await expectInboxRowToHaveText(/^Needs input$/, /^Needs input\s*1$/);
+    await expectInboxRowToHaveText({
+      name: /^Needs input$/,
+      text: /^Needs input\s*1$/,
+    });
   });
 
   it('keeps Needs input and its count in view outside the inbox', async () => {
@@ -216,7 +225,10 @@ describe('NavigationDrawerAiChatInboxSection', () => {
       summary: { ...READ_SUMMARY, needsInputThreadCount: 3 },
     });
 
-    await expectInboxRowToHaveText(/^Needs input$/, /^Needs input\s*3$/);
+    await expectInboxRowToHaveText({
+      name: /^Needs input$/,
+      text: /^Needs input\s*3$/,
+    });
     expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
   });
 
@@ -229,10 +241,10 @@ describe('NavigationDrawerAiChatInboxSection', () => {
       },
     });
 
-    await expectInboxRowToHaveText(
-      /^Mentions\s*, unread$/,
-      /^Mentions\s*, unread\s*2$/,
-    );
+    await expectInboxRowToHaveText({
+      name: /^Mentions\s*, unread$/,
+      text: /^Mentions\s*, unread\s*2$/,
+    });
   });
 
   it('keeps the statuses narrowing Open with unread chats in view outside the inbox', async () => {
@@ -245,10 +257,10 @@ describe('NavigationDrawerAiChatInboxSection', () => {
       },
     });
 
-    await expectInboxRowToHaveText(
-      /^Assigned\s*, unread$/,
-      /^Assigned\s*, unread\s*1$/,
-    );
+    await expectInboxRowToHaveText({
+      name: /^Assigned\s*, unread$/,
+      text: /^Assigned\s*, unread\s*1$/,
+    });
     expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
   });
 
@@ -271,9 +283,9 @@ describe('NavigationDrawerAiChatInboxSection', () => {
       },
     });
 
-    await expectInboxRowToHaveText(
-      /^Assigned\s*, unread$/,
-      /^Assigned\s*, unread\s*3$/,
-    );
+    await expectInboxRowToHaveText({
+      name: /^Assigned\s*, unread$/,
+      text: /^Assigned\s*, unread\s*3$/,
+    });
   });
 });

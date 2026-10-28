@@ -4,7 +4,15 @@ import { NAVIGATION_MENU_CONTAINER_ITEMS_SECTION_POSITION } from '@/navigation-m
 import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
 import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 
-const CONTAINER_ITEMS_SIBLING_ID = 'container-items';
+const CONTAINER_ITEMS_SIBLING = {
+  id: 'container-items',
+  position: NAVIGATION_MENU_CONTAINER_ITEMS_SECTION_POSITION,
+};
+
+const byPosition = (
+  first: Pick<NavigationMenuItem, 'position'>,
+  second: Pick<NavigationMenuItem, 'position'>,
+) => first.position - second.position;
 
 export const getNavigationMenuItemSortedSiblings = ({
   items,
@@ -28,15 +36,9 @@ export const getNavigationMenuItemSortedSiblings = ({
       (isContainer ? isSameKind(item) : visibleItemIds.has(item.id)),
   );
 
-  return (
-    isSection
-      ? [
-          ...siblings,
-          {
-            id: CONTAINER_ITEMS_SIBLING_ID,
-            position: NAVIGATION_MENU_CONTAINER_ITEMS_SECTION_POSITION,
-          },
-        ]
-      : siblings
-  ).sort((a, b) => a.position - b.position);
+  if (!isSection) {
+    return siblings.sort(byPosition);
+  }
+
+  return [...siblings, CONTAINER_ITEMS_SIBLING].sort(byPosition);
 };

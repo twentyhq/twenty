@@ -23,13 +23,15 @@ export const useNavigationMenuItemMoveRemove = (
       (item) => item.id === navigationMenuItemId,
     );
 
-    return isDefined(navigationMenuItem)
-      ? getNavigationMenuItemSortedSiblings({
-          items: currentItems,
-          navigationMenuItem,
-          visibleItemIds,
-        })
-      : null;
+    if (!isDefined(navigationMenuItem)) {
+      return null;
+    }
+
+    return getNavigationMenuItemSortedSiblings({
+      items: currentItems,
+      navigationMenuItem,
+      visibleItemIds,
+    });
   };
 
   const moveUp = async (navigationMenuItemId: string) => {

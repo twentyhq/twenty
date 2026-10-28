@@ -55,12 +55,18 @@ export const NavigationMenuItemTypeTooltip = ({
     COMMAND: { label: t`Command`, Icon: IconCommand },
   };
 
-  const { label, Icon } = isNavigationMenuItemBuiltInSectionType(type)
-    ? {
-        label: getDefaultSectionLabel(type),
-        Icon: NAVIGATION_MENU_ITEM_BUILT_IN_SECTIONS[type].Icon,
-      }
-    : labelsByType[type];
+  const getTypeLabelAndIcon = () => {
+    if (!isNavigationMenuItemBuiltInSectionType(type)) {
+      return labelsByType[type];
+    }
+
+    return {
+      label: getDefaultSectionLabel(type),
+      Icon: NAVIGATION_MENU_ITEM_BUILT_IN_SECTIONS[type].Icon,
+    };
+  };
+
+  const { label, Icon } = getTypeLabelAndIcon();
 
   return (
     <Tooltip
