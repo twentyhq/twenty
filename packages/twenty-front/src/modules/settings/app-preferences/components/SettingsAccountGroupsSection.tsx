@@ -1,6 +1,7 @@
 import { SettingsAccountGroupTableRow } from '@/settings/app-preferences/components/SettingsAccountGroupTableRow';
 import { SettingsAccountGroupsEmptyState } from '@/settings/app-preferences/components/SettingsAccountGroupsEmptyState';
 import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsAccountGroupTableGridTemplateColumns';
+import { SETTINGS_BUILT_IN_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsBuiltInAccountAppAccountGroupTableGridTemplateColumns';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
@@ -51,15 +52,17 @@ export const SettingsAccountGroupsSection = ({
       )
     : allGroups;
 
+  const gridTemplateColumns = isDefined(builtInAccountApp)
+    ? SETTINGS_BUILT_IN_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS
+    : SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS;
+
   const tableHeaderRow = (
-    <TableRow
-      gridTemplateColumns={SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS}
-    >
+    <TableRow gridTemplateColumns={gridTemplateColumns}>
       <TableHeader>{t`Account`}</TableHeader>
       {isDefined(builtInAccountApp) ? (
         <TableHeader>{t`Permissions`}</TableHeader>
       ) : (
-        <TableHeader>{t`Used by`}</TableHeader>
+        <TableHeader align="right">{t`Used by`}</TableHeader>
       )}
       <TableHeader />
     </TableRow>
@@ -84,10 +87,14 @@ export const SettingsAccountGroupsSection = ({
         <Table>
           {tableHeaderRow}
           <SettingsTableRowsSkeletonLoader
-            gridTemplateColumns={
-              SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS
-            }
-            columns={[{}, { width: 140 }, {}]}
+            gridTemplateColumns={gridTemplateColumns}
+            columns={[
+              {},
+              isDefined(builtInAccountApp)
+                ? { width: 140 }
+                : { align: 'right', width: 48 },
+              {},
+            ]}
           />
         </Table>
       ) : groups.length === 0 ? (
@@ -103,9 +110,7 @@ export const SettingsAccountGroupsSection = ({
                 <SettingsAccountGroupTableRow
                   key={group.id}
                   group={group}
-                  gridTemplateColumns={
-                    SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS
-                  }
+                  gridTemplateColumns={gridTemplateColumns}
                   builtInAccountApp={builtInAccountApp}
                 />
               ))}

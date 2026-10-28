@@ -95,8 +95,11 @@ export const SettingsAccountGroupTableRow = ({
           account={builtInAccount}
         />
       ) : (
-        <TableCell>
+        <TableCell align="right" gap={themeCssVariables.spacing[4]}>
           <SettingsAccountGroupUsedBy group={group} />
+          {shouldShowSyncStatus && (
+            <SettingsConnectedAccountSyncStatus account={builtInAccount} />
+          )}
         </TableCell>
       )}
       <TableCell
@@ -104,7 +107,7 @@ export const SettingsAccountGroupTableRow = ({
         gap={themeCssVariables.spacing[4]}
         onClick={(event) => event.stopPropagation()}
       >
-        {shouldShowSyncStatus && (
+        {isDefined(builtInAccountApp) && shouldShowSyncStatus && (
           <SettingsConnectedAccountSyncStatus account={builtInAccount} />
         )}
         {isDefined(builtInAccount) && (
