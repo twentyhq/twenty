@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AddChatAssistantParticipationCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793111719062-add-chat-assistant-participation.command';
 import { AddInboxAndChatsNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793174702016-add-inbox-and-chats-navigation-menu-items.command';
 import { AddWorkspaceNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793174702017-add-workspace-navigation-menu-section.command';
 import { AddPinnedNavigationMenuCommandsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793174702020-add-pinned-navigation-menu-commands.command';
@@ -19,6 +20,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [
+    AddChatAssistantParticipationCommand,
     AddInboxAndChatsNavigationMenuItemsCommand,
     AddWorkspaceNavigationMenuSectionCommand,
     AddPinnedNavigationMenuCommandsCommand,

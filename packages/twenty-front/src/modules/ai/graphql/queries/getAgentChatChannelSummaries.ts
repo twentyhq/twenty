@@ -6,6 +6,10 @@ export const GET_AGENT_CHAT_CHANNEL_SUMMARIES = gql`
       channelId
       openCount
       hasUnreadOpen
+      assignedToMeCount
+      hasUnreadAssignedToMe
+      snoozedCount
+      doneCount
     }
   }
 `;

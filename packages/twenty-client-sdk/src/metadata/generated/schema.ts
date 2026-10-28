@@ -57,9 +57,13 @@ export interface AgentChatChannelRole {
 }
 
 export interface AgentChatChannelSummary {
+    assignedToMeCount: Scalars['Int']
     channelId: Scalars['UUID']
+    doneCount: Scalars['Int']
+    hasUnreadAssignedToMe: Scalars['Boolean']
     hasUnreadOpen: Scalars['Boolean']
     openCount: Scalars['Int']
+    snoozedCount: Scalars['Int']
     __typename: 'AgentChatChannelSummary'
 }
 
@@ -2552,6 +2556,7 @@ export interface Object {
     indexMetadataList: Index[]
     indexMetadatas: ObjectIndexMetadatasConnection
     isActive: Scalars['Boolean']
+    isAuditLogged: Scalars['Boolean']
     isLabelSyncedWithName: Scalars['Boolean']
     isRemote: Scalars['Boolean']
     isSearchable: Scalars['Boolean']
@@ -4240,9 +4245,13 @@ export interface AgentChatChannelRoleGenqlSelection{
 }
 
 export interface AgentChatChannelSummaryGenqlSelection{
+    assignedToMeCount?: boolean | number
     channelId?: boolean | number
+    doneCount?: boolean | number
+    hasUnreadAssignedToMe?: boolean | number
     hasUnreadOpen?: boolean | number
     openCount?: boolean | number
+    snoozedCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7032,6 +7041,7 @@ export interface ObjectGenqlSelection{
     /** Limit or page results. */
     paging: CursorPaging} })
     isActive?: boolean | number
+    isAuditLogged?: boolean | number
     isLabelSyncedWithName?: boolean | number
     isRemote?: boolean | number
     isSearchable?: boolean | number

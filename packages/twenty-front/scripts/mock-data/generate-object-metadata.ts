@@ -22,6 +22,7 @@ const METADATA_QUERY = `
           isRemote
           isActive
           isSystem
+          isAuditLogged
           isUIEditable
           isUICreatable
           createdAt

@@ -2,5 +2,10 @@ import { type AgentChatChannelSummary as AgentChatChannelSummaryRow } from '~/ge
 
 export type AgentChatChannelSummary = Pick<
   AgentChatChannelSummaryRow,
-  'openCount' | 'hasUnreadOpen'
+  | 'openCount'
+  | 'hasUnreadOpen'
+  | 'assignedToMeCount'
+  | 'hasUnreadAssignedToMe'
+  | 'snoozedCount'
+  | 'doneCount'
 >;

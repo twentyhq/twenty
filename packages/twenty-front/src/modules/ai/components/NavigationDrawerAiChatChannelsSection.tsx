@@ -17,6 +17,7 @@ import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-d
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSectionSeeMoreItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionSeeMoreItem';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useNavigationSectionVisibleItems } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSectionVisibleItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -51,6 +52,8 @@ export const NavigationDrawerAiChatChannelsSection = ({
     PermissionFlagType.AI_SETTINGS,
   );
   const { openAgentChatChannel } = useOpenAgentChatChannel();
+  const isNavigationDrawerContentExpanded =
+    useIsNavigationDrawerContentExpanded();
   const [newChannelName, setNewChannelName] = useState<string | null>(null);
 
   // Listed only for who manages channels, so they keep a way to set them up
@@ -89,7 +92,7 @@ export const NavigationDrawerAiChatChannelsSection = ({
     const channelId = await createAgentChatChannel(trimmedName);
 
     if (isDefined(channelId)) {
-      openAgentChatChannel(channelId);
+      openAgentChatChannel({ channelId });
     }
   };
 
@@ -145,10 +148,10 @@ export const NavigationDrawerAiChatChannelsSection = ({
           placeholder={t`Channel name`}
         />
       ) : (
-        agentChatAccessibleChannels.length === 0 &&
-        canManageChannels && (
+        canManageChannels &&
+        isNavigationDrawerContentExpanded && (
           <NavigationDrawerItem
-            label={t`New channel`}
+            label={t`Add channel`}
             Icon={IconPlus}
             variant="tertiary"
             onClick={startCreate}
