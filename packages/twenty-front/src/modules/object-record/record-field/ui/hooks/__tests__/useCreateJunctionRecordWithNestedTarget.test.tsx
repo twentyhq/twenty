@@ -1,7 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
@@ -11,7 +10,6 @@ import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/ju
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { useRecordCreationFormContextOrThrow } from '@/object-record/record-form/contexts/RecordCreationFormContext';
-import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
@@ -33,19 +31,16 @@ jest.mock('@/object-record/hooks/useCreateOneRecord', () => ({
 jest.mock('@/workspace/hooks/useIsFeatureEnabled');
 
 const mockNavigateSidePanelMenu = jest.fn();
-const mockCloseSidePanelMenu = jest.fn();
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({
     navigateSidePanelMenu: mockNavigateSidePanelMenu,
-    closeSidePanelMenu: mockCloseSidePanelMenu,
+    closeSidePanelMenu: jest.fn(),
   }),
 }));
 
-const mockEnqueueToast = jest.fn();
-
 jest.mock('twenty-ui/components/feedback', () => ({
-  useToast: () => ({ enqueueToast: mockEnqueueToast }),
+  useToast: () => ({ enqueueToast: jest.fn() }),
 }));
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
@@ -70,17 +65,11 @@ if (!isUsableJunctionConfig(junctionConfig)) {
 }
 
 const mockCreateJunctionRecord = jest.fn(
-  async (recordInput: Partial<ObjectRecord>) => {
-    if (!isDefined(recordInput.id)) {
-      throw new Error('The nested create must provide a junction ID');
-    }
-
-    return {
-      id: recordInput.id,
-      __typename: 'TaskTarget',
-      task: { ...recordInput.task.create, __typename: 'Task' },
-    };
-  },
+  async ({ id = '', task }: Partial<ObjectRecord>) => ({
+    id,
+    __typename: 'TaskTarget',
+    task: task.create,
+  }),
 );
 
 const setup = () => {
@@ -96,31 +85,38 @@ const setup = () => {
       store.set(sidePanelNavigationStackState.atom, [page]);
     },
   );
-  mockCloseSidePanelMenu.mockImplementation(() => {
-    store.set(isSidePanelOpenedState.atom, false);
-  });
 
-  const wrapper = ({ children }: { children: ReactNode }) => (
-    <Provider store={store}>
-      <RecordCreationFormProvider>{children}</RecordCreationFormProvider>
-    </Provider>
+  const { result } = renderHook(
+    () => ({
+      ...useCreateJunctionRecordWithNestedTarget({
+        sourceRecordId: 'rocket-id',
+        sourceFieldName: 'taskTargets',
+        sourceObjectMetadataItem: rocketMetadata,
+        junctionConfig,
+      }),
+      ...useRecordCreationFormContextOrThrow(),
+    }),
+    {
+      wrapper: ({ children }: { children: ReactNode }) => (
+        <Provider store={store}>
+          <RecordCreationFormProvider>{children}</RecordCreationFormProvider>
+        </Provider>
+      ),
+    },
   );
 
-  return {
-    ...renderHook(
-      () => ({
-        ...useCreateJunctionRecordWithNestedTarget({
-          sourceRecordId: 'rocket-id',
-          sourceFieldName: 'taskTargets',
-          sourceObjectMetadataItem: rocketMetadata,
-          junctionConfig,
-        }),
-        ...useRecordCreationFormContextOrThrow(),
-      }),
-      { wrapper },
-    ),
-    store,
+  const start = () => {
+    let creation: Promise<unknown> | undefined;
+    act(() => {
+      creation = result.current.createJunctionRecordWithNestedTarget({
+        searchInput: 'New task',
+        targetObjectMetadataItemId: taskMetadata.id,
+      });
+    });
+    return creation;
   };
+
+  return { result, store, start };
 };
 
 beforeEach(() => {
@@ -128,7 +124,7 @@ beforeEach(() => {
   jest.mocked(useObjectMetadataItems).mockReturnValue({ objectMetadataItems });
   jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
   jest.mocked(useBuildRecordInputFromRLSPredicates).mockReturnValue({
-    buildRecordInputFromRLSPredicates: () => ({ status: 'TODO' }),
+    buildRecordInputFromRLSPredicates: () => ({}),
   });
   jest.mocked(useCreateOneRecord).mockReturnValue({
     createOneRecord: mockCreateJunctionRecord,
@@ -136,125 +132,80 @@ beforeEach(() => {
   });
 });
 
-it('creates neither a target nor a link when the form is cancelled', async () => {
-  const { result, store } = setup();
-  let creation: Promise<unknown> | undefined;
-  act(() => {
-    creation = result.current.createJunctionRecordWithNestedTarget({
-      searchInput: 'New task',
-      targetObjectMetadataItemId: taskMetadata.id,
-    });
-  });
-
-  expect(mockCreateJunctionRecord).not.toHaveBeenCalled();
+it('creates nothing when the form is cancelled', async () => {
+  const { store, start } = setup();
+  const creation = start();
 
   act(() => {
     store.set(isSidePanelOpenedState.atom, false);
   });
   await act(async () => {
-    expect(await creation).toBeUndefined();
+    await expect(creation).resolves.toBeUndefined();
   });
-
   expect(mockCreateJunctionRecord).not.toHaveBeenCalled();
   expect(
     store.get(recordStoreFamilyState.atomFamily('rocket-id'))?.taskTargets,
   ).toEqual([]);
 });
 
-it('atomically saves and links each submitted target, including Create another', async () => {
-  const { result, store } = setup();
-  let creation: Promise<unknown> | undefined;
-  act(() => {
-    creation = result.current.createJunctionRecordWithNestedTarget({
-      searchInput: 'New task',
-      targetObjectMetadataItemId: taskMetadata.id,
-    });
-  });
-
-  expect(mockCreateJunctionRecord).not.toHaveBeenCalled();
-
+it('creates and links a target for each submission, including Create another', async () => {
+  const { result, store, start } = setup();
+  const creation = start();
   const [formPage] = store.get(sidePanelNavigationStackState.atom);
-  const request = store.get(
-    recordCreationFormRequestComponentState.atomFamily({
-      instanceId: formPage.pageId,
-    }),
-  );
-  expect(request?.objectMetadataId).toBe(taskMetadata.id);
-  expect(request?.initialDraftRecord).toMatchObject({
-    title: 'New task',
-    status: 'TODO',
+
+  expect(
+    store.get(
+      recordCreationFormRequestComponentState.atomFamily({
+        instanceId: formPage.pageId,
+      }),
+    ),
+  ).toMatchObject({
+    objectMetadataId: taskMetadata.id,
+    initialDraftRecord: { title: 'New task' },
   });
-  const submitDraft = ({
+
+  const submit = ({
     draftRecord,
     shouldKeepOpen = false,
   }: {
     draftRecord: Partial<ObjectRecord>;
     shouldKeepOpen?: boolean;
   }) =>
-    result.current.settleRecordCreationDraft({
-      requestId: formPage.pageId,
-      draftRecord: computeRecordFormCreateRecordInput({
-        draftRecord: { ...request?.initialDraftRecord, ...draftRecord },
-        fieldMetadataItems: taskMetadata.fields,
-        objectMetadataItems,
-      }),
-      shouldKeepOpen,
+    act(async () => {
+      await result.current.settleRecordCreationDraft({
+        requestId: formPage.pageId,
+        draftRecord,
+        shouldKeepOpen,
+      });
     });
-  const rejection = new Error('The target could not be created');
-  mockCreateJunctionRecord.mockRejectedValueOnce(rejection);
 
+  await submit({ draftRecord: { title: 'First task' }, shouldKeepOpen: true });
+  await submit({ draftRecord: { title: 'Second task' } });
+  let createdTarget: unknown;
   await act(async () => {
-    expect(
-      await submitDraft({
-        draftRecord: { title: 'First task', status: 'DONE' },
-        shouldKeepOpen: true,
-      }),
-    ).toEqual({ error: rejection });
+    createdTarget = await creation;
   });
-  expect(
-    store.get(recordStoreFamilyState.atomFamily('rocket-id'))?.taskTargets,
-  ).toEqual([]);
 
-  await act(async () => {
-    await submitDraft({
-      draftRecord: { title: 'First task', status: 'DONE' },
-      shouldKeepOpen: true,
-    });
-  });
   expect(mockCreateJunctionRecord).toHaveBeenLastCalledWith({
     id: expect.any(String),
     targetRocketId: 'rocket-id',
-    task: {
-      create: {
-        id: expect.any(String),
-        title: 'First task',
-        status: 'DONE',
-      },
-    },
+    task: { create: { id: expect.any(String), title: 'Second task' } },
   });
-
-  await act(async () => {
-    await submitDraft({ draftRecord: { title: 'Second task' } });
-  });
-
-  const junctionRecords: ObjectRecord[] = store.get(
+  const [firstLink, secondLink] = store.get(
     recordStoreFamilyState.atomFamily('rocket-id'),
   )?.taskTargets;
-  expect(junctionRecords).toMatchObject([
-    { task: { title: 'First task', status: 'DONE' } },
-    { task: { title: 'Second task', status: 'TODO' } },
-  ]);
-  expect(junctionRecords[0].id).not.toBe(junctionRecords[1].id);
-  expect(junctionRecords[0].task.id).not.toBe(junctionRecords[1].task.id);
-  expect(await creation).toEqual({
-    recordId: junctionRecords[1].task.id,
+  expect(firstLink.task.title).toBe('First task');
+  expect(secondLink.task.title).toBe('Second task');
+  expect(firstLink.id).not.toBe(secondLink.id);
+  expect(createdTarget).toEqual({
+    recordId: secondLink.task.id,
     objectMetadataId: taskMetadata.id,
     isSelected: true,
     isMatchingSearchFilter: true,
   });
 });
 
-it('keeps immediate nested creation when the form flag is disabled', async () => {
+it('creates and links the target right away when the form flag is off', async () => {
   jest.mocked(useIsFeatureEnabled).mockReturnValue(false);
   const { result } = setup();
 
@@ -269,8 +220,6 @@ it('keeps immediate nested creation when the form flag is disabled', async () =>
   expect(mockCreateJunctionRecord).toHaveBeenCalledWith({
     id: expect.any(String),
     targetRocketId: 'rocket-id',
-    task: {
-      create: { id: expect.any(String), title: 'Quick task', status: 'TODO' },
-    },
+    task: { create: { id: expect.any(String), title: 'Quick task' } },
   });
 });

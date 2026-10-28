@@ -1,10 +1,10 @@
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordCreationFormCancellationEffect } from '@/object-record/record-form/components/RecordCreationFormCancellationEffect';
 import {
   RecordCreationFormContextProvider,
   type RecordCreationFormContextValue,
 } from '@/object-record/record-form/contexts/RecordCreationFormContext';
+import { type RecordCreationRequest } from '@/object-record/record-form/types/RecordCreationRequest';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
@@ -21,7 +21,7 @@ import { v4 } from 'uuid';
 
 type PendingRecordCreation = {
   requestId: string;
-  createRecord: (draftRecord: Partial<ObjectRecord>) => Promise<ObjectRecord>;
+  createRecord: RecordCreationRequest['createRecord'];
   resolve: (createdRecord: ObjectRecord | null) => void;
   isSettling: boolean;
 };
@@ -121,14 +121,7 @@ export const RecordCreationFormProvider = ({
       initialDraftRecord,
       canCreateAnother = true,
       createRecord,
-    }: {
-      objectMetadataItem: EnrichedObjectMetadataItem;
-      initialDraftRecord?: Partial<ObjectRecord>;
-      canCreateAnother?: boolean;
-      createRecord: (
-        draftRecord: Partial<ObjectRecord>,
-      ) => Promise<ObjectRecord>;
-    }) => {
+    }: RecordCreationRequest) => {
       const topSidePanelPage = store.get(isSidePanelOpenedState.atom)
         ? store.get(sidePanelNavigationStackState.atom).at(-1)
         : undefined;

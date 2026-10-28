@@ -47,9 +47,7 @@ export const useCreateNewRecord = ({
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const { isRecordCreationFormEnabled, requestRecordCreation } =
-    useRecordCreationForm({
-      objectMetadataItem,
-    });
+    useRecordCreationForm();
 
   const navigate = useNavigateApp();
 
@@ -98,6 +96,7 @@ export const useCreateNewRecord = ({
 
       const createdRecord = isRecordCreationFormEnabled
         ? await requestRecordCreation({
+            objectMetadataItem,
             initialDraftRecord: {
               ...buildRecordInputFromRLSPredicates(),
               ...buildRecordInput?.(),
