@@ -394,14 +394,14 @@ msgstr "{0} مگابایت"
 #. placeholder {0}: formatNumber(objectCount)
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "{0} objects"
-msgstr ""
+msgstr "{0} شیء"
 
 #. js-lingui-id: Z70Dyr
 #. placeholder {0}: formatNumber(objectCount)
 #. placeholder {1}: formatNumber(recordCount)
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "{0} objects, {1} records"
-msgstr ""
+msgstr "{0} شیء، {1} رکورد"
 
 #. js-lingui-id: FGOUAP
 #. placeholder {0}: formatNumber(displayedRecords.length)
@@ -7043,7 +7043,7 @@ msgstr "محتوا"
 #. js-lingui-id: SVyf2o
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Contents"
-msgstr ""
+msgstr "محتوا"
 
 #. js-lingui-id: M73whl
 #: src/modules/settings/admin-panel/components/SettingsAdminChatMessage.tsx
