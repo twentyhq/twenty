@@ -2,8 +2,6 @@ import { mkdir, rm } from 'fs/promises';
 import { resolve } from 'path';
 import { build } from 'esbuild';
 
-import { createLinguiPlugin } from './utils/create-lingui-plugin';
-
 const buildAssets = async () => {
   const directory = resolve(
     __dirname,
@@ -28,9 +26,6 @@ const buildAssets = async () => {
     target: 'node22',
     format: 'cjs',
     external: ['esbuild'],
-    plugins: [
-      createLinguiPlugin({ swcConfigPath: resolve(__dirname, '../.swcrc') }),
-    ],
     tsconfig: resolve(__dirname, '../tsconfig.json'),
   });
 };

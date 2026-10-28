@@ -10,8 +10,6 @@ import { frontComponentVendorResultSchema } from 'src/engine/metadata-modules/ai
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
 import { invokeFrontComponentBuilderLocally } from 'src/engine/metadata-modules/ai/ai-front-component/utils/invoke-front-component-builder-locally.util';
 
-import { createLinguiPlugin } from '../../../../../../../scripts/utils/create-lingui-plugin';
-
 const charMap: Record<string, string> = {
   '<': '\\u003C',
   '>': '\\u003E',
@@ -72,9 +70,6 @@ describe('invokeFrontComponentBuilderLocally', () => {
       format: 'cjs',
       tsconfig: resolve(__dirname, '../../../../../../../tsconfig.json'),
       plugins: [
-        createLinguiPlugin({
-          swcConfigPath: resolve(__dirname, '../../../../../../../.swcrc'),
-        }),
         {
           name: 'installed-esbuild',
           setup(pluginBuild) {
@@ -149,13 +144,10 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
     const result = await invoke(request);
 
     expect(result).toEqual(await handler(request));
+    expect(result).not.toHaveProperty('userFriendlyMessage');
     expect(result).toMatchObject({
       success: false,
       code: 'INVALID_INPUT',
-      userFriendlyMessage: {
-        id: expect.any(String),
-        message: 'Invalid front component source.',
-      },
     });
   });
 

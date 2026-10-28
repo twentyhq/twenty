@@ -57,7 +57,7 @@ export const executeFrontComponentBuilderRequest = async ({
       success: false as const,
       error: error.message,
       ...(error instanceof FrontComponentBuildException
-        ? { code: error.code, userFriendlyMessage: error.userFriendlyMessage }
+        ? { code: error.code }
         : {}),
     };
   }

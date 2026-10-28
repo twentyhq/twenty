@@ -1,6 +1,3 @@
-import { setupI18n } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from 'twenty-shared/types';
 
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
@@ -34,15 +31,19 @@ describe('executeFrontComponentBuilderRequest', () => {
   it.each([
     ['buildComponent', 'INVALID_INPUT'],
     ['buildComponent', 'BUILD_FAILED'],
+    ['buildComponent', 'INVALID_SETTINGS'],
+    ['buildComponent', 'BUILD_TIMEOUT'],
+    ['buildComponent', 'OUTPUT_TOO_LARGE'],
     ['buildDependencies', 'INVALID_INPUT'],
     ['buildDependencies', 'BUILD_FAILED'],
+    ['buildDependencies', 'BUILD_TIMEOUT'],
+    ['buildDependencies', 'OUTPUT_TOO_LARGE'],
   ] as const)(
-    'preserves a translatable %s %s error through JSON transport and response validation',
+    'preserves the %s %s code and diagnostic through JSON transport and response validation',
     async (action, code) => {
       const error = new FrontComponentBuildException({
         message: 'Compiler diagnostic',
         code,
-        userFriendlyMessage: msg`Failed to build front component.`,
       });
       const build =
         action === 'buildComponent'
@@ -63,27 +64,12 @@ describe('executeFrontComponentBuilderRequest', () => {
           : frontComponentVendorResultSchema;
       const result = schema.parse(JSON.parse(JSON.stringify(response)));
 
-      expect(result).toMatchObject({
+      expect(response).toEqual({
         success: false,
         error: 'Compiler diagnostic',
         code,
       });
-      if (result.success || !isDefined(result.userFriendlyMessage)) {
-        throw new Error('Expected a translatable build failure');
-      }
-      const i18n = setupI18n({
-        locale: 'fr',
-        messages: {
-          fr: {
-            [result.userFriendlyMessage.id]:
-              'Impossible de compiler le composant.',
-          },
-        },
-      });
-
-      expect(i18n._(result.userFriendlyMessage)).toBe(
-        'Impossible de compiler le composant.',
-      );
+      expect(result).toEqual(response);
     },
   );
 

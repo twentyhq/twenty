@@ -11,9 +11,14 @@ import {
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
 import { COMMON_LAYER_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/common-layer-dependencies-dirname';
 import {
+  BUILD_LOCK_MAX_RETRIES,
+  BUILD_LOCK_RETRY_MS,
+  BUILD_LOCK_TTL_MS,
   BUILDER_FUNCTION_NAME_PREFIX,
   BUILDER_HANDLER_PATH,
   BUILDER_LAMBDA_MEMORY_MB,
@@ -57,6 +62,7 @@ export class LambdaToolFunctionsService {
       'lambdaRole' | 'resourceNamespace' | 'resourceTags'
     >,
     private readonly awsClient: LambdaAwsClientService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async transpile(
@@ -178,7 +184,7 @@ export class LambdaToolFunctionsService {
     return parsedResult;
   }
 
-  async ensureCommonLayerExists(): Promise<string> {
+  private async ensureCommonLayerExists(): Promise<string> {
     const commonLayerName = await this.getCommonLayerName();
     const existingArn =
       await this.awsClient.getExistingLayerArn(commonLayerName);
@@ -221,88 +227,86 @@ export class LambdaToolFunctionsService {
     }
   }
 
-  private async ensureYarnInstallLambdaExists(): Promise<void> {
-    const yarnInstallFunctionName = await this.getYarnInstallFunctionName();
-    const lambdaClient = await this.awsClient.getLambdaClient();
+  async ensureToolLambdaExists({
+    functionName,
+    memoryMb,
+    timeoutSeconds,
+    copyFiles,
+  }: {
+    functionName: string;
+    memoryMb: number;
+    timeoutSeconds: number;
+    copyFiles: (directory: string) => Promise<void>;
+  }): Promise<void> {
+    const existingFunction = await this.awsClient.getFunction(functionName);
 
-    if (isDefined(await this.awsClient.getFunction(yarnInstallFunctionName))) {
+    if (existingFunction?.Configuration?.State === 'Active') {
       return;
     }
 
-    const commonLayerArn = await this.ensureCommonLayerExists();
+    await this.cacheLockService.withLock(
+      async () => {
+        if (isDefined(await this.awsClient.getFunction(functionName))) {
+          await this.awsClient.waitFunctionActive(functionName);
 
-    const temporaryDirManager = new TemporaryDirManager();
-    const { sourceTemporaryDir, lambdaZipPath } =
-      await temporaryDirManager.init();
+          return;
+        }
 
-    try {
-      await copyYarnInstall(sourceTemporaryDir);
+        const commonLayerArn = await this.ensureCommonLayerExists();
+        const temporaryDirManager = new TemporaryDirManager();
+        const { sourceTemporaryDir, lambdaZipPath } =
+          await temporaryDirManager.init();
 
-      await createZipFile(sourceTemporaryDir, lambdaZipPath);
+        try {
+          await copyFiles(sourceTemporaryDir);
+          await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-      const params: CreateFunctionCommandInput = {
-        Code: {
-          ZipFile: await fs.readFile(lambdaZipPath),
-        },
-        FunctionName: yarnInstallFunctionName,
-        Layers: [commonLayerArn],
-        Handler: 'index.handler',
-        Role: this.options.lambdaRole,
-        Tags: this.options.resourceTags,
-        Runtime: LogicFunctionRuntime.NODE22,
-        Timeout: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
-        MemorySize: YARN_INSTALL_LAMBDA_MEMORY_MB,
-        EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
-      };
+          const lambdaClient = await this.awsClient.getLambdaClient();
+          const params: CreateFunctionCommandInput = {
+            Code: { ZipFile: await fs.readFile(lambdaZipPath) },
+            FunctionName: functionName,
+            Layers: [commonLayerArn],
+            Handler: 'index.handler',
+            Role: this.options.lambdaRole,
+            Tags: this.options.resourceTags,
+            Runtime: LogicFunctionRuntime.NODE22,
+            Timeout: timeoutSeconds,
+            MemorySize: memoryMb,
+            EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
+          };
 
-      await lambdaClient.send(new CreateFunctionCommand(params));
-    } finally {
-      await temporaryDirManager.clean();
-    }
+          await lambdaClient.send(new CreateFunctionCommand(params));
+        } finally {
+          await temporaryDirManager.clean();
+        }
 
-    await this.awsClient.waitFunctionActive(yarnInstallFunctionName);
+        await this.awsClient.waitFunctionActive(functionName);
+      },
+      `lambda-tool-build:${functionName}`,
+      {
+        ttl: BUILD_LOCK_TTL_MS,
+        ms: BUILD_LOCK_RETRY_MS,
+        maxRetries: BUILD_LOCK_MAX_RETRIES,
+      },
+    );
+  }
+
+  private async ensureYarnInstallLambdaExists(): Promise<void> {
+    await this.ensureToolLambdaExists({
+      functionName: await this.getYarnInstallFunctionName(),
+      memoryMb: YARN_INSTALL_LAMBDA_MEMORY_MB,
+      timeoutSeconds: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
+      copyFiles: copyYarnInstall,
+    });
   }
 
   private async ensureBuilderLambdaExists(): Promise<void> {
-    const builderFunctionName = await this.getBuilderFunctionName();
-    const lambdaClient = await this.awsClient.getLambdaClient();
-
-    if (isDefined(await this.awsClient.getFunction(builderFunctionName))) {
-      return;
-    }
-
-    const commonLayerArn = await this.ensureCommonLayerExists();
-
-    const temporaryDirManager = new TemporaryDirManager();
-    const { sourceTemporaryDir, lambdaZipPath } =
-      await temporaryDirManager.init();
-
-    try {
-      await copyBuilder(sourceTemporaryDir);
-
-      await createZipFile(sourceTemporaryDir, lambdaZipPath);
-
-      const params: CreateFunctionCommandInput = {
-        Code: {
-          ZipFile: await fs.readFile(lambdaZipPath),
-        },
-        FunctionName: builderFunctionName,
-        Layers: [commonLayerArn],
-        Handler: 'index.handler',
-        Role: this.options.lambdaRole,
-        Tags: this.options.resourceTags,
-        Runtime: LogicFunctionRuntime.NODE22,
-        Timeout: BUILDER_LAMBDA_TIMEOUT_SECONDS,
-        MemorySize: BUILDER_LAMBDA_MEMORY_MB,
-        EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
-      };
-
-      await lambdaClient.send(new CreateFunctionCommand(params));
-    } finally {
-      await temporaryDirManager.clean();
-    }
-
-    await this.awsClient.waitFunctionActive(builderFunctionName);
+    await this.ensureToolLambdaExists({
+      functionName: await this.getBuilderFunctionName(),
+      memoryMb: BUILDER_LAMBDA_MEMORY_MB,
+      timeoutSeconds: BUILDER_LAMBDA_TIMEOUT_SECONDS,
+      copyFiles: copyBuilder,
+    });
   }
 
   private async getCommonLayerName(): Promise<string> {
