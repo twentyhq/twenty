@@ -2435,6 +2435,7 @@ export type Field = {
   createdAt: Scalars['DateTime']['output'];
   defaultValue?: Maybe<Scalars['JSON']['output']>;
   description?: Maybe<Scalars['String']['output']>;
+  disabledFieldPermissionActions?: Maybe<Array<Scalars['String']['output']>>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   isActive?: Maybe<Scalars['Boolean']['output']>;

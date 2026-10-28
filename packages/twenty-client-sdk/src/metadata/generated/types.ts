@@ -4825,6 +4825,9 @@ export default {
             "description": [
                 1
             ],
+            "disabledFieldPermissionActions": [
+                1
+            ],
             "icon": [
                 1
             ],
