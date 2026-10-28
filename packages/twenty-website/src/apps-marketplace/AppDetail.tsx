@@ -14,11 +14,9 @@ import {
 import { Body, Button, ExternalLink, Heading, SectionShell } from '@/ui';
 
 import { AppLogo } from './AppLogo';
-import { AppReadmeBlocks } from './AppReadmeBlocks';
-import { AppReadmeSections } from './AppReadmeSections';
+import { AppReadme } from './AppReadme';
 import { buildAppInstallUrl } from './build-app-install-url';
 import { type MarketplaceAppDetail } from './marketplace-app';
-import { parseAppReadme } from './parse-app-readme';
 
 const HeroRow = styled.div`
   align-items: flex-start;
@@ -161,7 +159,6 @@ type AppDetailProps = {
 export function AppDetail({ app }: AppDetailProps) {
   const i18n = getServerI18n();
   const installUrl = buildAppInstallUrl(app.universalIdentifier);
-  const readme = parseAppReadme(app.aboutDescription ?? '');
 
   return (
     <>
@@ -210,7 +207,9 @@ export function AppDetail({ app }: AppDetailProps) {
                 ))}
               </ScreenshotList>
             )}
-            <AppReadmeBlocks blocks={readme.intro} listLayout="stack" />
+            {app.aboutDescription !== undefined && (
+              <AppReadme markdown={app.aboutDescription} />
+            )}
           </MainColumn>
 
           <Sidebar>
@@ -245,8 +244,6 @@ export function AppDetail({ app }: AppDetailProps) {
           </Sidebar>
         </ContentGrid>
       </SectionShell>
-
-      <AppReadmeSections sections={readme.sections} />
     </>
   );
 }

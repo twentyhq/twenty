@@ -1,25 +1,9 @@
-const TRANSFORMED_MODULES = [
-  'twenty-ui',
-  'twenty-shared',
-  'mdast-util-[^/]+',
-  'micromark[^/]*',
-  'unist-util-[^/]+',
-  'decode-named-character-reference',
-  'character-entities[^/]*',
-  'devlop',
-  'ccount',
-  'escape-string-regexp',
-  'markdown-table',
-  'longest-streak',
-  'zwitch',
-].join('|');
-
 const baseProject = {
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/test/setup-jest-dom.ts'],
   transformIgnorePatterns: [
-    `/node_modules/(?!(${TRANSFORMED_MODULES})/.*)`,
-    `../../node_modules/(?!(${TRANSFORMED_MODULES})/.*)`,
+    '/node_modules/(?!(twenty-ui|twenty-shared)/.*)',
+    '../../node_modules/(?!(twenty-ui|twenty-shared)/.*)',
   ],
   transform: {
     '^.+\\.(ts|js|tsx|jsx|mjs)$': [

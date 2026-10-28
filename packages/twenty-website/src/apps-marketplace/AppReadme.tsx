@@ -1,61 +1,66 @@
 import { styled } from '@linaria/react';
+import Markdown, { type Components } from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import {
   color,
   FONT_WEIGHT,
   fontFamily,
-  fontSize,
   radius,
   semanticColor,
   spacing,
   typeRampDeclarations,
 } from '@/tokens';
-import { RichText } from '@/ui';
+import { ExternalLink } from '@/ui';
+
+const LEADING_TITLE_PATTERN = /^\s*#\s[^\n]*\n+/;
 
 const Prose = styled.div`
+  ${typeRampDeclarations('bodyMd')}
   color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('sans')};
   overflow-wrap: anywhere;
 
-  &[data-size='sm'] {
-    ${typeRampDeclarations('bodySm')}
-  }
-
-  &[data-size='xs'] {
-    ${typeRampDeclarations('bodyXs')}
-  }
-
-  &[data-tone='ink'] {
-    color: ${semanticColor.ink};
-  }
-
   & > * + * {
-    margin-top: ${spacing(3)};
+    margin-top: ${spacing(4)};
   }
 
-  & > * + h3,
-  & > * + h4 {
+  & > * + h2 {
+    margin-top: ${spacing(10)};
+  }
+
+  & > * + h3 {
     margin-top: ${spacing(6)};
   }
 
-  & strong,
-  & h3,
-  & h4 {
+  & h2 {
+    ${typeRampDeclarations('headingXs')}
+    color: ${semanticColor.ink};
+    font-family: ${fontFamily('serif')};
+    font-weight: ${FONT_WEIGHT.light};
+  }
+
+  & h3 {
     color: ${semanticColor.ink};
     font-weight: ${FONT_WEIGHT.medium};
   }
 
-  & h3 {
-    font-size: ${fontSize(4.5)};
+  & strong {
+    color: ${semanticColor.ink};
+    font-weight: ${FONT_WEIGHT.medium};
   }
 
   & ul,
   & ol {
-    padding-left: ${spacing(5)};
+    padding-left: ${spacing(6)};
   }
 
   & li + li {
-    margin-top: ${spacing(1)};
+    margin-top: ${spacing(2)};
+  }
+
+  & blockquote {
+    ${typeRampDeclarations('bodySm')}
   }
 
   & code {
@@ -101,20 +106,25 @@ const Prose = styled.div`
   }
 `;
 
-type AppReadmeMarkdownProps = {
-  markdown: string;
-  size?: 'sm' | 'xs';
-  tone?: 'muted' | 'ink';
+const COMPONENTS: Components = {
+  a: ({ href, children }) =>
+    href?.startsWith('http') === true ? (
+      <ExternalLink href={href}>{children}</ExternalLink>
+    ) : (
+      <a href={href}>{children}</a>
+    ),
 };
 
-export function AppReadmeMarkdown({
-  markdown,
-  size = 'sm',
-  tone = 'muted',
-}: AppReadmeMarkdownProps) {
+type AppReadmeProps = {
+  markdown: string;
+};
+
+export function AppReadme({ markdown }: AppReadmeProps) {
   return (
-    <Prose data-size={size} data-tone={tone}>
-      <RichText markdown={markdown} />
+    <Prose>
+      <Markdown components={COMPONENTS} remarkPlugins={[remarkGfm]}>
+        {markdown.replace(LEADING_TITLE_PATTERN, '')}
+      </Markdown>
     </Prose>
   );
 }
