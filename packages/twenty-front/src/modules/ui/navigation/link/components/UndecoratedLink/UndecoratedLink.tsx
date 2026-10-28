@@ -1,4 +1,4 @@
-import { css } from '@linaria/core';
+import { css, cx } from '@linaria/core';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -11,6 +11,7 @@ const styles = {
 };
 
 type UndecoratedLinkProps = {
+  className?: string;
   to: string | number;
   children: React.ReactNode;
   replace?: boolean;
@@ -19,6 +20,7 @@ type UndecoratedLinkProps = {
 };
 
 export const UndecoratedLink = ({
+  className,
   children,
   to,
   replace = false,
@@ -30,7 +32,7 @@ export const UndecoratedLink = ({
       to={to as string}
       replace={replace}
       onClick={onClick}
-      className={styles.undecoratedLink}
+      className={cx(styles.undecoratedLink, className)}
       style={fullWidth ? { width: '100%' } : undefined}
     >
       {children}

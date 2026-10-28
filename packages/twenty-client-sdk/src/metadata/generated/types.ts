@@ -253,13 +253,25 @@ export default {
             ]
         },
         "AgentChatChannelSummary": {
+            "assignedToMeCount": [
+                10
+            ],
             "channelId": [
                 524
+            ],
+            "doneCount": [
+                10
+            ],
+            "hasUnreadAssignedToMe": [
+                4
             ],
             "hasUnreadOpen": [
                 4
             ],
             "openCount": [
+                10
+            ],
+            "snoozedCount": [
                 10
             ],
             "__typename": [

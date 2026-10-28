@@ -56,9 +56,13 @@ type AgentChatChannelRole {
 }
 
 type AgentChatChannelSummary {
+  assignedToMeCount: Int!
   channelId: UUID!
+  doneCount: Int!
+  hasUnreadAssignedToMe: Boolean!
   hasUnreadOpen: Boolean!
   openCount: Int!
+  snoozedCount: Int!
 }
 
 type AgentChatChannelThreadIds {
