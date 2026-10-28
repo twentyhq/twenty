@@ -1,7 +1,5 @@
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
-import { GettingStartedMailboxConnectedEffect } from '@/getting-started/components/GettingStartedMailboxConnectedEffect';
-import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsConnectedAccountsTableHeader } from '@/settings/accounts/components/SettingsConnectedAccountsTableHeader';
@@ -17,20 +15,14 @@ import {
   AppPath,
   ConnectedAccountProvider,
   CoreObjectNameSingular,
-  EmailOperation,
 } from 'twenty-shared/types';
-import {
-  canConnectedAccountPerformEmailOperation,
-  getAppPath,
-  isDefined,
-} from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
 import { IconGoogle, IconLock, IconMicrosoft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   CalendarChannelVisibility,
-  GettingStartedStep,
   MessageChannelVisibility,
 } from '~/generated-metadata/graphql';
 
@@ -66,16 +58,6 @@ export const GettingStartedMailboxAction = () => {
     (account) => !isDefined(account.archivedAt),
   );
   const hasActiveAccounts = activeAccounts.length > 0;
-  const hasDraftCapableAccount = activeAccounts.some((connectedAccount) =>
-    canConnectedAccountPerformEmailOperation({
-      connectedAccount,
-      operation: EmailOperation.DRAFT,
-    }),
-  );
-  const { progress } = useGettingStartedProgress();
-  const isMailboxStepCompleted =
-    progress?.completedSteps.includes(GettingStartedStep.CONNECT_MAILBOX) ??
-    false;
   const { objectMetadataItem: personObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Person,
@@ -109,9 +91,6 @@ export const GettingStartedMailboxAction = () => {
 
   return (
     <StyledColumn>
-      {hasDraftCapableAccount && !isMailboxStepCompleted && (
-        <GettingStartedMailboxConnectedEffect />
-      )}
       <Callout
         status="neutral"
         icon={<IconLock />}

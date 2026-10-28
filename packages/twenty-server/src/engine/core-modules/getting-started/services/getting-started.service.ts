@@ -93,10 +93,25 @@ export class GettingStartedService {
       Object.values(GettingStartedStep).includes(step),
     );
 
-    const completedSteps = steps.filter((step) =>
+    const isSavedAsCompleted = (step: GettingStartedStep) =>
       isDefined(
         userVars.get(`${GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX}${step}`),
+      );
+
+    const alreadyDoneSteps = await this.findAlreadyDoneSteps({
+      workspaceId,
+      userWorkspaceId,
+      steps: steps.filter((step) => !isSavedAsCompleted(step)),
+    });
+
+    await Promise.all(
+      alreadyDoneSteps.map((step) =>
+        this.completeStep({ userId, workspaceId, step }),
       ),
+    );
+
+    const completedSteps = steps.filter(
+      (step) => isSavedAsCompleted(step) || alreadyDoneSteps.includes(step),
     );
 
     const savedSelectedStep = userVars.get(
@@ -238,25 +253,13 @@ export class GettingStartedService {
     'userId'
   >): Promise<GettingStartedSelectionContext> {
     const [
-      connectedAccounts,
+      hasConnectedMailbox,
       hasInstalledFeaturedApp,
       companyEnrichment,
       personEnrichment,
     ] = await Promise.all([
-      this.connectedAccountRepository.find({
-        where: {
-          workspaceId,
-          userWorkspaceId,
-          provider: In(getEmailProvidersForOperation(EmailOperation.DRAFT)),
-          archivedAt: IsNull(),
-        },
-        select: { provider: true, connectionParameters: true },
-      }),
-      this.applicationRepository.exists(workspaceId, {
-        where: {
-          universalIdentifier: In(GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS),
-        },
-      }),
+      this.hasConnectedMailbox({ workspaceId, userWorkspaceId }),
+      this.hasInstalledFeaturedApp(workspaceId),
       this.findWorkspaceEnrichment({
         workspaceId,
         key: COMPANY_ENRICHMENT_KEY,
@@ -269,12 +272,7 @@ export class GettingStartedService {
 
     return {
       isWorkEmail: isWorkEmail(userEmail),
-      hasConnectedMailbox: connectedAccounts.some((connectedAccount) =>
-        canConnectedAccountPerformEmailOperation({
-          connectedAccount,
-          operation: EmailOperation.DRAFT,
-        }),
-      ),
+      hasConnectedMailbox,
       hasInstalledFeaturedApp,
       companyEnrichment,
       personEnrichment: matchWorkspacePersonEnrichmentToUserEmail({
@@ -282,6 +280,69 @@ export class GettingStartedService {
         userEmail,
       }),
     };
+  }
+
+  private async findAlreadyDoneSteps({
+    workspaceId,
+    userWorkspaceId,
+    steps,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    steps: GettingStartedStep[];
+  }): Promise<GettingStartedStep[]> {
+    const [hasConnectedMailbox, hasInstalledFeaturedApp] = await Promise.all([
+      steps.includes(GettingStartedStep.CONNECT_MAILBOX)
+        ? this.hasConnectedMailbox({ workspaceId, userWorkspaceId })
+        : false,
+      steps.includes(GettingStartedStep.INSTALL_APP)
+        ? this.hasInstalledFeaturedApp(workspaceId)
+        : false,
+    ]);
+
+    return steps.filter((step) => {
+      switch (step) {
+        case GettingStartedStep.CONNECT_MAILBOX:
+          return hasConnectedMailbox;
+        case GettingStartedStep.INSTALL_APP:
+          return hasInstalledFeaturedApp;
+        default:
+          return false;
+      }
+    });
+  }
+
+  private async hasConnectedMailbox({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<boolean> {
+    const connectedAccounts = await this.connectedAccountRepository.find({
+      where: {
+        workspaceId,
+        userWorkspaceId,
+        provider: In(getEmailProvidersForOperation(EmailOperation.DRAFT)),
+        archivedAt: IsNull(),
+      },
+      select: { provider: true, connectionParameters: true },
+    });
+
+    return connectedAccounts.some((connectedAccount) =>
+      canConnectedAccountPerformEmailOperation({
+        connectedAccount,
+        operation: EmailOperation.DRAFT,
+      }),
+    );
+  }
+
+  private hasInstalledFeaturedApp(workspaceId: string): Promise<boolean> {
+    return this.applicationRepository.exists(workspaceId, {
+      where: {
+        universalIdentifier: In(GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS),
+      },
+    });
   }
 
   private async findWorkspaceEnrichment<

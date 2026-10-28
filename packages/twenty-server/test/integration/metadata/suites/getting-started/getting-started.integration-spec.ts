@@ -94,7 +94,7 @@ describe('gettingStarted (e2e)', () => {
   afterAll(deleteGettingStartedUserVars);
 
   describe('gettingStartedProgress', () => {
-    it('stores the steps chosen on the first read and keeps them once a mailbox is connected', async () => {
+    it('stores the steps chosen on the first read, then completes the mailbox step once a mailbox is connected', async () => {
       const activeMailboxes: { id: string }[] =
         await globalThis.testDataSource.query(
           `SELECT "id" FROM core."connectedAccount" WHERE "userWorkspaceId" = $1 AND "archivedAt" IS NULL`,
@@ -138,7 +138,10 @@ describe('gettingStarted (e2e)', () => {
         kind: 'WORKFLOW',
         permissionFlag: 'WORKFLOWS',
       });
-      expect(completedSteps).not.toContain('CONNECT_MAILBOX');
+      expect(completedSteps).toContain('CONNECT_MAILBOX');
+      expect(
+        await findJaneUserVar('GETTING_STARTED_STEP_CONNECT_MAILBOX'),
+      ).toMatchObject({ completedAt: expect.any(String) });
     });
 
     it('drops stored steps the catalog no longer has', async () => {
