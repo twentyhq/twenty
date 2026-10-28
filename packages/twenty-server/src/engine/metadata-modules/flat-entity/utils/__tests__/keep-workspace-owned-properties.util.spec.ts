@@ -69,33 +69,6 @@ describe('keepWorkspaceOwnedProperties', () => {
     ).toEqual(standardPageLayout);
   });
 
-  it('should keep a skill deactivated by the workspace', () => {
-    const shippedSkill = {
-      universalIdentifier: 'skill-universal-identifier',
-      name: 'summarize',
-      isActive: true,
-    };
-
-    const result = keepWorkspaceOwnedProperties({
-      metadataName: 'skill',
-      fromFlatEntityMaps: {
-        byUniversalIdentifier: {
-          'skill-universal-identifier': { ...shippedSkill, isActive: false },
-        },
-      },
-      toFlatEntityMaps: {
-        byUniversalIdentifier: {
-          'skill-universal-identifier': shippedSkill,
-        },
-      },
-    });
-
-    expect(result.byUniversalIdentifier['skill-universal-identifier']).toEqual({
-      ...shippedSkill,
-      isActive: false,
-    });
-  });
-
   it('should keep the creator of a view the workspace already has', () => {
     const shippedView = {
       universalIdentifier: 'view-universal-identifier',

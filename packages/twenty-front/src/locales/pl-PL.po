@@ -857,10 +857,10 @@ msgstr "{label} (przestarzałe)"
 msgid "{label}, {statusLabel}"
 msgstr "{label}, {statusLabel}"
 
-#. js-lingui-id: hr3CkB
+#. js-lingui-id: g4xrfh
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
-msgid "{label}, unread"
-msgstr "{label}, nieprzeczytane"
+msgid "{label}, {unreadOpenThreadCount} unread"
+msgstr ""
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -8904,11 +8904,6 @@ msgstr "Domyślny widok"
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Defaults to the step name"
 msgstr "Domyślnie jest to nazwa kroku"
-
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
-msgstr "Odroczone działania migracji obszaru roboczego"
 
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -23338,11 +23333,6 @@ msgstr "Uruchamiaj kod, aby analizować pliki i dane"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "Uruchom funkcję"
-
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr "Uruchamiaj w tle wolne części zmian modelu danych po ich zapisaniu."
 
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx

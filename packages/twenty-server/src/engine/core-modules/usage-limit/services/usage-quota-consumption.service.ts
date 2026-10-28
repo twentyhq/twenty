@@ -24,6 +24,7 @@ import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -203,9 +204,9 @@ export class UsageQuotaConsumptionService {
           await this.applicationRepository.find(workspaceId, { where })
         ).map((application) => [application.id, application.name]);
       case 'agent':
-        return (await this.agentRepository.find(workspaceId, { where })).map(
-          (agent) => [agent.id, agent.label],
-        );
+        return (await this.agentRepository.find(workspaceId, { where }))
+          .map((agentRow) => resolveEffectiveAgent(agentRow))
+          .map((agent) => [agent.id, agent.label]);
       case 'logicFunction':
         return (
           await this.logicFunctionRepository.find(workspaceId, { where })

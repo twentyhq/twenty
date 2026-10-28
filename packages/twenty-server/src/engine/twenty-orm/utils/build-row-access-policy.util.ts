@@ -1,8 +1,10 @@
+import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildNamedRecordGrantExpression } from 'src/engine/core-modules/record-share/utils/build-named-record-grant-expression.util';
 import { buildRecordShareGate } from 'src/engine/core-modules/record-share/utils/build-record-share-gate.util';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
+import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
   type RowAccessExpression,
   type RowAccessPolicy,
@@ -16,8 +18,12 @@ import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils
 export const buildRowAccessPolicy = ({
   subject,
   environment,
+  hypotheticalRecordShareAccessLevel,
   ...target
-}: RowAccessPolicyContext & RowAccessPolicyTarget): RowAccessPolicy => {
+}: RowAccessPolicyContext &
+  RowAccessPolicyTarget & {
+    hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
+  }): RowAccessPolicy => {
   if (subject.isSystemContext) {
     return { kind: 'open' };
   }
@@ -34,15 +40,24 @@ export const buildRowAccessPolicy = ({
     return { kind: 'denied' };
   }
 
-  const namedRecordGrant = resolveObjectSharing({
+  const canGrantOperationBeyondRole = resolveObjectSharing({
     flatObjectMetadata: target.flatObjectMetadata,
     featureFlagsMap: environment.featureFlagsMap,
-  }).operationTypesGrantedBeyondRole.includes(target.operationType)
+  }).operationTypesGrantedBeyondRole.includes(target.operationType);
+  const hasHypotheticalRecordShare =
+    isDefined(hypotheticalRecordShareAccessLevel) &&
+    resolveRequiredRecordShareAccessLevels(target.operationType).includes(
+      hypotheticalRecordShareAccessLevel,
+    );
+  const isHypotheticalRecordShareBeyondRole =
+    hasHypotheticalRecordShare && canGrantOperationBeyondRole;
+  const namedRecordGrant = canGrantOperationBeyondRole
     ? buildNamedRecordGrantExpression(context, target)
     : undefined;
 
   if (
     isDefined(subject.objectsPermissions) &&
+    !isHypotheticalRecordShareBeyondRole &&
     !isObjectOperationPermitted({
       objectMetadata: target.flatObjectMetadata,
       operationType: target.operationType,
@@ -54,12 +69,18 @@ export const buildRowAccessPolicy = ({
       : { kind: 'denied' };
   }
 
+  if (isHypotheticalRecordShareBeyondRole) {
+    return { kind: 'open' };
+  }
+
   const recordShareGate = buildRecordShareGate({ ...context, ...target });
 
   const roleFilter = buildRoleFilterExpression(context, target);
   const operands = [
     roleFilter,
-    recordShareGate.kind === 'gated' ? recordShareGate.expression : undefined,
+    !hasHypotheticalRecordShare && recordShareGate.kind === 'gated'
+      ? recordShareGate.expression
+      : undefined,
   ].filter(isDefined);
 
   if (operands.length === 0) {

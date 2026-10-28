@@ -7,6 +7,7 @@ import {
   type CreateStandardFieldArgs,
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import { PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-field-permission-actions.constant';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const buildMessageSuppressionStandardFlatFieldMetadatas = (
@@ -38,6 +39,8 @@ export const buildMessageSuppressionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   emailAddress: {
@@ -62,6 +65,8 @@ export const buildMessageSuppressionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   reason: {
@@ -83,6 +88,8 @@ export const buildMessageSuppressionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   source: {
@@ -104,6 +111,8 @@ export const buildMessageSuppressionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   providerEventId: {
@@ -128,6 +137,8 @@ export const buildMessageSuppressionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   unsubscribeTopicId: {
@@ -155,6 +166,8 @@ export const buildMessageSuppressionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   createdAt: {
@@ -177,6 +190,8 @@ export const buildMessageSuppressionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   updatedAt: {
@@ -199,6 +214,8 @@ export const buildMessageSuppressionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   deletedAt: {
@@ -220,6 +237,8 @@ export const buildMessageSuppressionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
 });
