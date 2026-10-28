@@ -4,12 +4,11 @@ import {
   TEAMS_ASSISTANT_INITIAL_STATUS,
   TEAMS_ASSISTANT_STATUS_STEPS,
 } from 'src/features/chat/logic-functions/constants/teams-assistant-status-steps';
+import { TEAMS_PERSONAL_CONVERSATION_TYPE } from 'src/features/chat/logic-functions/constants/teams-personal-conversation-type';
 import { type TeamsAssistantStatusWriter } from 'src/features/chat/logic-functions/types/teams-assistant-status-writer.type';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
 import { startTeamsAssistantStream } from 'src/features/chat/logic-functions/utils/start-teams-assistant-stream';
-
-const PERSONAL_CONVERSATION_TYPE = 'personal';
 
 // Teams only streams in one-on-one chats, so other conversations get a plain reply at the end.
 export const startTeamsAssistantStatus = async ({
@@ -31,7 +30,7 @@ export const startTeamsAssistantStatus = async ({
   };
 
   const writer =
-    conversationType === PERSONAL_CONVERSATION_TYPE
+    conversationType === TEAMS_PERSONAL_CONVERSATION_TYPE
       ? await startTeamsAssistantStream({
           serviceUrl,
           conversationId,
@@ -56,7 +55,12 @@ export const startTeamsAssistantStatus = async ({
     setTimeout(() => {
       pendingUpdate = pendingUpdate
         .then(() => writer.update(step.text))
-        .catch(() => undefined);
+        .catch((error: unknown) => {
+          console.warn(
+            `[teams] could not update the status in ${conversationId}`,
+            error,
+          );
+        });
     }, step.afterSeconds * 1000),
   );
 

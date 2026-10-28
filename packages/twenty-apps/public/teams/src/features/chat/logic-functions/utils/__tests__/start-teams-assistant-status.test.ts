@@ -117,6 +117,9 @@ describe('startTeamsAssistantStatus', () => {
   });
 
   it('should keep going when a status update fails', async () => {
+    const warnSpy = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
     updateMock.mockRejectedValueOnce(new Error('429'));
 
     const status = await startTeamsAssistantStatus(PERSONAL);
@@ -130,6 +133,9 @@ describe('startTeamsAssistantStatus', () => {
     expect(finishMock).toHaveBeenCalledExactlyOnceWith(
       'Acme has 3 open deals.',
     );
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+
+    warnSpy.mockRestore();
   });
 
   it('should only reply at the end outside personal chats', async () => {
