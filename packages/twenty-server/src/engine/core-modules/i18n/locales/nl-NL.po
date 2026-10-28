@@ -8125,6 +8125,11 @@ msgctxt "pageLayoutWidget.title"
 msgid "Members"
 msgstr "Leden"
 
+#. js-lingui-id: UODtG8
+#: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
+msgid "Merge"
+msgstr ""
+
 #. js-lingui-id: uHk5U2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
