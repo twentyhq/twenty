@@ -1,0 +1,45 @@
+---
+title: Árbol JSON
+description: Explora valores JSON con nodos expandibles y etiquetas personalizadas.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import JsonTreeReference from '/snippets/ui/generated/components/data-display/json-tree.mdx';
+
+## Resumen
+
+`JsonTree` muestra un `value` JSON o una matriz de `entries` con nombre. Proporciona todas las etiquetas de valores vacíos y de expansión/contracción para que tu aplicación controle el texto.
+
+<StoryEmbed storyId="ui-jsonvisualizer-jsontree--display" title="Detalles de registro expandibles" height={320} />
+
+## "Uso"
+
+```tsx
+import { JsonTree } from 'twenty-ui/components/data-display';
+
+export const RecordDetails = () => (
+  <JsonTree
+    value={{ name: 'Acme', active: true, contacts: [] }}
+    emptyStringLabel="Empty text"
+    emptyArrayLabel="No items"
+    emptyObjectLabel="No properties"
+    arrowButtonCollapsedLabel="Expand node"
+    arrowButtonExpandedLabel="Collapse node"
+  />
+);
+```
+
+Cada entrada tiene un `id`, una `label` y un `value` JSON. Usa entradas cuando las etiquetas mostradas difieran de las claves almacenadas. De forma predeterminada, se expanden las profundidades 0 y 1. Anula `shouldExpandNodeInitially={({ depth }) => depth === 0}` para expandir solo la raíz; la expansión posterior corresponde a cada nodo.
+
+`getNodeHighlighting(keyPath)` devuelve `blue`, `red`, `partial-blue` o `undefined`. `onNodeValueClick` recibe el texto mostrado: los valores hoja como cadenas y la etiqueta vacía correspondiente para cadenas, matrices y objetos vacíos. El árbol muestra datos y no los edita.
+
+Cuando se proporciona `onNodeValueClick`, los valores son botones nativos nombrados por el texto mostrado. Tab mueve el foco a un valor; Intro, Espacio o un clic con el puntero lo activan. Sin la devolución de llamada, los valores siguen siendo texto no interactivo. Los botones de valor no envían los formularios que los contienen.
+
+## "Props"
+
+<JsonTreeReference />
+
+<PageBanner illustration="page-cover-hierarchy" />

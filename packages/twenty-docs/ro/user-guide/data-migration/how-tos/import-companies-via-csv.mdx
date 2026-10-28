@@ -3,6 +3,8 @@ title: Importați companii via CSV
 description: Ghid complet, pas cu pas, pentru importul companiilor în Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Prezentare generală
 
 Acest ghid vă arată cum să importați companiile în Twenty. **Companiile ar trebui importate mai întâi** deoarece Persoanele și Oportunitățile se leagă de Companii.
@@ -123,7 +125,7 @@ Dacă aveți câmpuri Select sau Multi-Select:
 3. Sau creați opțiuni noi, dacă este necesar
 
 <Note>
-Opțiunile Select folosesc **nume API**, nu etichete de afișare. Accesați **Setări → Model de date** → activați **Mod avansat** pentru a vedea numele API.
+Opțiunile Select folosesc **nume API**, nu etichete de afișare. Pentru a le vedea, deschide câmpul în **Settings → Data Model**, apoi alege **Show API values** din meniul **⋮** de lângă **Options**.
 </Note>
 
 ## Pasul 6: Revizuiți și remediați erorile
@@ -199,3 +201,5 @@ Aveți probleme? Verificați:
 * [Cum să remediați erorile de import](/ro/user-guide/data-migration/how-tos/fix-import-errors)
 * [Referință pentru maparea câmpurilor](/ro/user-guide/data-migration/capabilities/field-mapping)
 * [Constrângeri de unicitate](/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
+
+<PageBanner illustration="data-migration" />

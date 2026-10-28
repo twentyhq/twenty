@@ -1,0 +1,269 @@
+---
+title: Кнопка
+description: Выполняйте действия или осуществляйте навигацию с помощью стилизованных кнопок.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ButtonReference from '/snippets/ui/generated/input/button.mdx';
+
+## Обзор
+
+Используйте `Button` для действия и передавайте его видимую метку в качестве дочернего элемента. Используйте [IconButton](/ru/ui/components/input/icon-button) для элементов управления только со значком, задав доступное имя через `aria-label` или `aria-labelledby`.
+
+Для повторяющихся вариантов дизайна по умолчанию используйте [MainButton](/ru/ui/components/input/main-button)
+или [LightButton](/ru/ui/components/input/light-button) из `twenty-ui/components`.
+Оба используют нативные свойства, refs, состояние и поведение рендеринга Button.
+
+<StoryEmbed title="Отображение кнопки" storyId="ui-input-button-button--display" height={100} />
+
+## Использование
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SaveChanges = () => <Button>Save changes</Button>;
+```
+
+## Внешний вид
+
+Сравните варианты, семантические цвета, размеры и типичные состояния по отдельности. В каждой группе изменяется один параметр, а остальные остаются неизменными.
+
+<StoryEmbed storyId="ui-input-button-button--catalog" title="Внешний вид кнопки" height={630} />
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const CreateRecord = () => (
+  <Button variant="solid" color="accent" size="sm" startIcon={<IconPlus />}>
+    Create record
+  </Button>
+);
+```
+
+Выбирайте `solid`, `outline`, `soft`, `ghost` или `link` независимо от цвета `neutral`, `accent`, `danger` или `success`. Доступны размеры `sm` и `md`; по умолчанию используются `outline`, `neutral` и `md`. `fullWidth` заполняет доступную ширину. `startIcon` и `endIcon` принимают элементы и являются декоративными. `elevated` добавляет тень и размытие фона. Нейтральные кнопки с контуром также получают поверхность с границей и соответствующими цветами текста и взаимодействия. Другие варианты и семантические цвета сохраняют существующую палитру. По умолчанию используется `false` и не изменяет размер или положение. `shortcut` отображает подсказки по клавишам на больших экранах; настройте сочетания клавиш в вашем приложении.
+
+Используйте `color="inherit"` для элементов управления на цветной поверхности. Метка, значки, индикатор загрузки и контурная граница используют цвет окружающего текста. Для заливок при взаимодействии используется полупрозрачный черный цвет. Кнопки с контуром располагаются на прозрачной поверхности с границей `currentColor` непрозрачностью 25% и используют черные заливки непрозрачностью 10% и 20% при наведении и нажатии. `Ghost` использует прозрачную, 10%- и 20%-ные черные заливки; `soft` использует 10%-, 20%- и 30%-ные. `Link` остается без заливки.
+
+`inherit` поддерживает `outline`, `ghost`, `soft` и `link`. Разрешенная комбинация `solid` и `inherit` вызывает ошибку времени выполнения, включая значения по умолчанию, заданные ButtonGroup или оберткой. `MainButton` по умолчанию использует `solid`, поэтому при наследовании цвета укажите вариант, отличный от `solid`.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SurfaceActions = () => (
+  <>
+    <Button color="inherit" variant="outline">
+      Save
+    </Button>
+    <Button color="inherit" variant="ghost">
+      Cancel
+    </Button>
+  </>
+);
+```
+
+`link` использует компактный текст без рамки или залитого фона. При любом размере он соответствует высоте своего содержимого, с меньшим шрифтом и более узкими отступами. Его нейтральный цвет использует более выразительный текст при наведении. Внешний вид не определяет семантику: используйте `onClick` для действий и `href` для навигации.
+
+`disabled` и `loading` предотвращают активацию. Загрузка сохраняет доступность метки и сообщает о состоянии занятости. По умолчанию `loadingPosition="center"` скрывает содержимое, сохраняя отведенное для него место в макете, и размещает индикатор загрузки по центру. Установите для `loadingPosition` значение `start` или `end`, чтобы дочерние элементы и противоположный значок оставались видимыми, заменяя соответствующий значок индикатором загрузки.
+
+Ваше приложение отвечает за форматирование прогресса и переведенную метку. Передайте полную фразу состояния в качестве дочерних элементов, например `Installing (42%)`.
+
+<StoryEmbed title="Загрузка кнопки в конце" storyId="ui-input-button-button--loading-at-end" height={100} />
+
+## Управление состоянием
+
+`Button` запускает действие и не управляет выбранным значением, поэтому у него нет контролируемого или неконтролируемого режима выбора. Его нативное свойство `value` передает данные формы, а не состояние выбора.
+
+Ваше приложение управляет `loading` и `disabled`, для которых по умолчанию установлено значение `false`. Нажатие кнопки не изменяет эти свойства и не показывает автоматически состояние загрузки во время работы асинхронного обработчика. Явно передавайте текущее состояние приложения.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+
+type SaveRecordProps = { onSave: () => Promise<void> };
+
+export const SaveRecord = ({ onSave }: SaveRecordProps) => {
+  const [loading, setLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  const handleSave = async () => {
+    setLoading(true);
+    setHasError(false);
+
+    try {
+      await onSave();
+    } catch {
+      setHasError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <Button loading={loading} onClick={handleSave}>
+        Save record
+      </Button>
+      {hasError && <p role="alert">Unable to save the record. Try again.</p>}
+    </>
+  );
+};
+```
+
+Приложение включает и сбрасывает состояние загрузки во время операции сохранения. Кнопка предотвращает активацию во время загрузки и снова становится доступной после завершения операции, в том числе после ошибки. `MainButton` и `LightButton` используют одинаковую модель состояния.
+
+## Триггеры всплывающих окон
+
+Создайте триггер всплывающего окна с помощью `Button`, `LightButton` или другой обёртки Button через `render`. Триггер предоставляет `data-popup-open`, поэтому кнопка сохраняет фон при наведении, пока всплывающее окно открыто, и использует активный фон при наведении или нажатии. Каждый вариант и цвет сохраняет собственную палитру. Фон ссылок остаётся прозрачным, а отключённые кнопки или кнопки в состоянии загрузки сохраняют отключённый вид. Кнопки с `aria-pressed="true"` сохраняют существующее оформление переключателя. Состояние всплывающего окна не устанавливает `aria-pressed` и не представляет выбранное значение.
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const DetailsPopup = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<LightButton>Show details</LightButton>} />
+    <Popover.Portal>
+      <Popover.Positioner>
+        <Popover.Popup>
+          <Popover.Title>Details</Popover.Title>
+          <Popover.Description>
+            More information about this record.
+          </Popover.Description>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+## Будущие возможности
+
+Ваше приложение управляет доступностью функции и её меткой. Создайте отключенную кнопку с `Badge` в качестве дочернего элемента, чтобы метка оставалась частью доступного имени кнопки. Предоставьте локализованный текст из вашего приложения.
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const UpcomingAction = () => (
+  <Button disabled>
+    <Text
+      render={<span />}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 'var(--t-spacing-1)',
+      }}
+    >
+      Upcoming action
+      <Badge>Coming soon</Badge>
+    </Text>
+  </Button>
+);
+```
+
+Эта композиция также работает с `MainButton` и `LightButton`. Она заменяет удалённые свойства `soon` и `soonLabel`.
+
+## Анимированные значки
+
+Используйте `Button` с `AnimatedIconCrossfade`, чтобы изменять его значок при изменении состояния приложения. Передайте анимированный элемент в `startIcon`, а метку — в качестве дочернего элемента.
+
+```tsx
+import { useState } from 'react';
+import { IconPencil, IconX } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
+
+export const EditActions = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <Button
+      size="sm"
+      aria-expanded={isEditing}
+      onClick={() => setIsEditing(!isEditing)}
+      startIcon={
+        <AnimatedIconCrossfade
+          isActive={isEditing}
+          activeIcon={<IconX size={14} />}
+          inactiveIcon={<IconPencil size={14} />}
+        />
+      }
+    >
+      Edit actions
+    </Button>
+  );
+};
+```
+
+Если значок сам является действием, используйте `IconButton` или `LightIconButton` и анимируйте содержимое его значка. Когда заголовок раскрывающегося блока управляет раскрытием, сохраняйте его шеврон декоративным и указывайте `aria-expanded` в элементе управления заголовка. Храните стили анимации вместе с функцией и учитывайте `prefers-reduced-motion`.
+
+<StoryEmbed title="Кнопка с анимированным значком" storyId="ui-components-layout-animatediconcrossfade--display" height={100} />
+
+## Ссылки и формы
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const DocumentationLink = () => (
+  <Button
+    variant="link"
+    href="https://twenty.com"
+    target="_blank"
+    rel="noreferrer"
+    hrefLang="en"
+    referrerPolicy="no-referrer"
+  >
+    Read documentation
+  </Button>
+);
+```
+
+Без пользовательского `render` `href` отображает якорь с семантикой ссылки, если только вы явно не установите `nativeButton` в `true`. Нативные атрибуты якоря, такие как `download`, `hrefLang`, `ping` и `referrerPolicy`, передаются якорю. Свойства, общие с нативными кнопками, сохраняют свои типы Base UI. Чтобы указать MIME-тип якоря, задайте его в средстве рендеринга, например `render={<a href="/records.csv" type="text/csv">Download records</a>}` с `nativeButton={false}` и `role="link"`. Отключенные и загружающиеся ссылки нельзя активировать.
+
+Используйте `render` для компоновки другого элемента или ссылки маршрутизатора. `nativeButton` описывает отображаемый элемент и по умолчанию имеет значение `true` для пользовательских средств рендеринга. Установите `nativeButton={false}` и `role="link"` для якоря навигации. Якорь или компонент маршрутизатора может иметь собственный адрес назначения без `href` у `Button`.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordsLink = () => (
+  <Button nativeButton={false} role="link" render={<a href="/records" />}>
+    Open records
+  </Button>
+);
+```
+
+Для пользовательского нативного `\<button>` оставьте `nativeButton` равным true. Для ненативного элемента действия, такого как `\<div>`, используйте `nativeButton={false}`; Base UI обеспечивает поведение кнопки с клавиатуры. Явно заданные `nativeButton` или `role` сохраняются, даже если также указан `href`.
+
+Для кнопок по умолчанию используется `type="button"`. Для форм явно задавайте `type="submit"` или `type="reset"`. Нативные атрибуты, обработчики событий, сведения о событиях и ссылки передаются отображаемому корневому элементу. Ссылка получает фактическую кнопку, якорь или пользовательский корневой элемент. Обработчики клавиатуры сохраняют методы событий Base UI, включая `preventBaseUIHandler()` для отмены встроенного действия клавиатуры. Колбэк рендеринга Base UI получает как свойства корневого элемента, так и текущее отключенное состояние; распределите свойства по корневому элементу, чтобы сохранить поведение композиции.
+
+## Значения по умолчанию группы
+
+[ButtonGroup](/ru/ui/primitives/input/button-group) предоставляет общие вариант, цвет и размер. Явно заданное свойство у дочернего элемента имеет приоритет над значением по умолчанию группы. Если ни один из них не задает свойство, применяется значение компонента по умолчанию.
+
+## Миграция с ClickToActionLink
+
+Импортируйте `Button` из `twenty-ui/primitives/input` и замените `ClickToActionLink` на `Button variant="link"`. Сохраните `href`, `target` и `rel` для навигации. Действия без `href` теперь отображают нативную кнопку с активацией с клавиатуры. Нативные атрибуты, события и ссылки передаются корневому элементу.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+type LogOutProps = { onLogOut: () => void };
+
+export const LogOut = ({ onLogOut }: LogOutProps) => (
+  <Button variant="link" onClick={onLogOut}>
+    Log out
+  </Button>
+);
+```
+
+## Свойства
+
+<ButtonReference />
+
+Передайте `shortcut={['Mod', 'Enter']}` для одновременного нажатия клавиш или `shortcut={[['G'], ['P']]}` для последовательных нажатий. См. [Shortcut](/ru/ui/primitives/typography/shortcut) для вложенных комбинаций и общего форматтера строк.
+
+<PageBanner illustration="page-cover-pointer" />

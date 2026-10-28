@@ -9,6 +9,7 @@ import { ApplicationMonitoring } from '@/settings/application-monitoring/compone
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
 import { SETTINGS_CONTENT_MAX_WIDTH } from '@/settings/constants/SettingsContentMaxWidth';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { UsageOperationType } from '~/generated-metadata/graphql';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 
 const StyledSettingsContent = styled.div`
@@ -65,15 +66,20 @@ const MONITORING: ApplicationMonitoringData = {
       failedCount: 2,
     },
   ],
-  creditUsage: [
-    ['2026-10-13', 21],
-    ['2026-10-14', 24.5],
-    ['2026-10-16', 30],
-    ['2026-10-17', 62],
-    ['2026-10-18', 47],
-  ].map(([day, creditsUsed]) => ({
+  creditUsage: (
+    [
+      ['2026-10-13', UsageOperationType.CODE_EXECUTION, 21],
+      ['2026-10-14', UsageOperationType.CODE_EXECUTION, 24.5],
+      ['2026-10-16', UsageOperationType.CODE_EXECUTION, 30],
+      ['2026-10-17', UsageOperationType.CODE_EXECUTION, 12],
+      ['2026-10-17', UsageOperationType.AI_WORKFLOW_TOKEN, 50],
+      ['2026-10-18', UsageOperationType.CODE_EXECUTION, 7],
+      ['2026-10-18', UsageOperationType.AI_WORKFLOW_TOKEN, 40],
+    ] as const
+  ).map(([day, operationType, creditsUsed]) => ({
     bucketStart: `${day}T00:00:00.000Z`,
-    creditsUsed: Number(creditsUsed),
+    operationType,
+    creditsUsed,
   })),
   issues: [
     {
@@ -173,10 +179,14 @@ export const Default: Story = {
         name: 'Installs, upgrades and uninstalls',
       }),
     ).toBeVisible();
-    expect(await canvas.findByText('Errors')).toBeVisible();
-    expect(await canvas.findByText('API requests')).toBeVisible();
+    expect(await canvas.findByText(/^Errors \([\d,]+\)$/)).toBeVisible();
+    expect(await canvas.findByText(/^API requests \([\d,]+\)$/)).toBeVisible();
+    expect(canvas.getByText('Code Execution (94)')).toBeVisible();
+    expect(canvas.getByText('Agents (90)')).toBeVisible();
     expect(
-      canvas.getByText('184 credits across every install in this period'),
+      canvas.getByText(
+        '184 credits by operation type, across every install in this period',
+      ),
     ).toBeVisible();
     expect(canvas.queryByText(/Your plan shows/)).not.toBeInTheDocument();
   },

@@ -19,7 +19,13 @@ export const mapApplicationMonitoringRows = ({
   period: ApplicationMonitoringPeriod;
   lookbackInHours: number;
   rows: ApplicationMonitoringRows;
-  creditUsage: { bucketStart: Date; creditsUsedMicro: number }[] | null;
+  creditUsage:
+    | {
+        bucketStart: Date;
+        operationType: string;
+        creditsUsedMicro: number;
+      }[]
+    | null;
 }): ApplicationMonitoringDTO => {
   const [totals] = rows.totals;
 
@@ -54,6 +60,7 @@ export const mapApplicationMonitoringRows = ({
     creditUsage:
       creditUsage?.map((bucket) => ({
         bucketStart: bucket.bucketStart,
+        operationType: bucket.operationType,
         creditsUsed: toDisplayCredits(bucket.creditsUsedMicro),
       })) ?? null,
     issues: rows.issues.map((row) => ({

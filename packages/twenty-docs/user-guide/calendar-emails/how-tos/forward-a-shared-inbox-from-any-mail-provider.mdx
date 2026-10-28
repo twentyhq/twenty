@@ -3,7 +3,13 @@ title: Forward a Shared Inbox from Any Email Provider
 description: Point a shared inbox at a Twenty email channel, whatever mail provider you use.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
 Twenty receives shared inbox mail by having your provider send a copy of every incoming message to a private address that Twenty generates for you. Once that is in place, the inbox appears in your workspace.
+
+Forwarding is the first part of an email channel. To also reply or send campaigns from it, see [Email Channels](/user-guide/calendar-emails/capabilities/email-channels).
 
 Microsoft 365 and Google Workspace each have their own guide:
 
@@ -114,5 +120,9 @@ Send an email from an outside address (a personal Gmail works) to `contact@yourc
 <Accordion title="The channel receives mail but cannot send">
   Receiving and sending are separate. Sending requires your domain to be
   verified under the channel's **Sending domain** section, which means adding
-  the DNS records Twenty lists there.
+  the **Domain authentication** records Twenty lists there. See [Email
+  Channels](/user-guide/calendar-emails/capabilities/email-channels) for which
+  records each use needs.
 </Accordion>
+
+<PageBanner illustration="page-cover-email" />

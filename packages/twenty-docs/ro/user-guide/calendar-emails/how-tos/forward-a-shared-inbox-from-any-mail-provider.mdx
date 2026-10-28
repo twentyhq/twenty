@@ -1,0 +1,119 @@
+---
+title: Redirecționați o căsuță de primire partajată de la orice furnizor de e-mail
+description: Direcționați o căsuță de primire partajată către un canal de e-mail Twenty, indiferent de furnizorul de e-mail pe care îl utilizați.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Twenty primește e-mailurile din căsuța de primire partajată solicitând furnizorului dvs. să trimită o copie a fiecărui mesaj primit la o adresă privată pe care Twenty o generează pentru dvs. Odată configurată, căsuța de primire apare în spațiul dvs. de lucru.
+
+Redirecționarea este prima parte a unui canal de e-mail. Pentru a răspunde sau a trimite și campanii din acesta, consultați [Canale de e-mail](/ro/user-guide/calendar-emails/capabilities/email-channels).
+
+Microsoft 365 și Google Workspace au fiecare propriul ghid:
+
+* [Microsoft 365](/ro/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365)
+* [Google Workspace](/ro/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace)
+
+Această pagină acoperă toți ceilalți furnizori.
+
+## Partea 1: Creați canalul în Twenty
+
+1. Accesați **Setări → Comunicare**.
+2. Faceți clic pe **Adăugați canal de e-mail**.
+
+<img src="/images/user-guide/emails/inbound-channels/03-twenty-add-email-channel.png" style={{ width: '100%' }} />
+
+3. În **Adresa de e-mail sursă**, introduceți adresa partajată la care doriți să primiți e-mailuri, de exemplu `contact@yourcompany.com`.
+4. În **Numele afișat**, introduceți numele pe care îl văd destinatarii.
+5. Faceți clic pe **Salvează**.
+
+<img src="/images/user-guide/emails/inbound-channels/04-twenty-new-channel-form.png" style={{ width: '100%' }} />
+
+6. Twenty afișează acum o **Adresă de redirecționare**. Se termină cu `@inbound.twenty.com`. Faceți clic pe **Copiați**.
+
+<img src="/images/user-guide/emails/inbound-channels/05-twenty-forwarding-address.png" style={{ width: '100%' }} />
+
+<Note>
+  Fiecare canal are propria adresă de redirecționare. Nu direcționați niciodată două cutii poștale către
+  aceeași adresă, altfel e-mailurile lor vor ajunge în același loc.
+</Note>
+
+## Partea 2: Alegeți tipul potrivit de redirecționare
+
+Majoritatea furnizorilor oferă mai multe modalități de a redirecționa e-mailuri, iar aici funcționează doar una dintre ele.
+
+Twenty citește antetul `From` al fiecărui mesaj primit pentru a determina cine l-a scris. Astfel, un mesaj este asociat cu persoana și compania potrivite.
+
+* **Redirecționarea automată pe serverul de e-mail** păstrează expeditorul original. Clientul dvs. rămâne expeditorul, mesajul este asociat cu înregistrarea sa, iar răspunsurile sunt trimise înapoi către acesta. Unii furnizori numesc această opțiune **Redirect**, iar alții o numesc **Forwarding**. Aceasta este opțiunea pe care trebuie să o utilizați.
+* **Redirecționarea ca atașament**, sau orice regulă care compune un mesaj nou, înlocuiește expeditorul cu propria dvs. adresă. Atunci, fiecare conversație pare să provină de la dvs. și niciun mesaj nu este asociat cu un contact.
+
+Utilizați setarea de redirecționare automată din contul dvs. de e-mail sau de pe serverul dvs. de e-mail. Nu utilizați o regulă care retrimite mesajul ca e-mail nou.
+
+<Warning>
+  Evitați, de asemenea, regulile care elimină atașamentele sau convertesc mesajele în text simplu.
+  Twenty stochează fiecare mesaj exact așa cum sosește.
+</Warning>
+
+Dacă opțiunea există, alegeți-o pe cea care **păstrează o copie** în cutia poștală originală, astfel încât echipa dvs. să poată continua să utilizeze căsuța de primire ca înainte.
+
+## Partea 3: Găsiți-vă furnizorul
+
+Urmați instrucțiunile furnizorului dvs., utilizând ca destinație adresa de redirecționare pe care ați copiat-o în Partea 1.
+
+| Furnizor                   | Ghidul acestuia                                                                                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Amazon SES                 | [Redirecționați e-mailurile primite către o destinație externă](https://aws.amazon.com/blogs/messaging-and-targeting/forward-incoming-email-to-an-external-destination/) |
+| Amazon WorkMail            | [Reguli de e-mail](https://docs.aws.amazon.com/workmail/latest/userguide/email-rules.html)                                                                               |
+| Bluehost                   | [Creați redirecționări de cont și domeniu](https://www.bluehost.com/help/article/create-account-and-domain-forwarders)                                                   |
+| cPanel                     | [Redirecționări](https://docs.cpanel.net/cpanel/email/forwarders/)                                                                                                       |
+| DreamHost                  | [Adăugați o adresă de e-mail numai pentru redirecționare](https://help.dreamhost.com/hc/en-us/articles/215724207-Add-a-forward-only-email-address)                       |
+| Exchange (găzduit automat) | [Configurați redirecționarea e-mailurilor pentru o cutie poștală](https://learn.microsoft.com/en-us/exchange/recipients/user-mailboxes/email-forwarding)                 |
+| GoDaddy                    | [Redirecționați e-mailurile primite către o altă adresă](https://www.godaddy.com/help/forward-incoming-email-to-another-email-address-32282)                             |
+| iCloud Mail                | [Redirecționați e-mailurile pe iCloud.com](https://support.apple.com/en-us/102376)                                                                                       |
+| Namecheap                  | [Configurați redirecționarea gratuită a e-mailurilor](https://www.namecheap.com/support/knowledgebase/article.aspx/308/2214/how-to-set-up-free-email-forwarding)         |
+| OVHcloud                   | [Redirecționare e-mail](https://help.ovhcloud.com/csm/en-emails-redirection)                                                                                             |
+| Rackspace                  | [Configurați redirecționarea e-mailurilor Rackspace](https://docs.rackspace.com/docs/set-up-rackspace-email-forwarding)                                                  |
+| Zoho Mail                  | [Redirecționare e-mail](https://www.zoho.com/mail/help/email-forwarding.html)                                                                                            |
+
+Dacă furnizorul dvs. nu este listat, îl puteți conecta în continuare. În aproape orice produs de e-mail, setarea apare sub un nume precum **Forwarding**, **Redirect**, **Forwarders**, **Aliases**, **Rules** sau **Filters**, fie în setările cutiei poștale, fie în setările domeniului.
+
+## Partea 4: Testați
+
+Trimiteți un e-mail de la o adresă externă (puteți utiliza un Gmail personal) către `contact@yourcompany.com`. Ar trebui să apară în Twenty în decurs de unul sau două minute.
+
+## Depanare
+
+<Accordion title="Nu sosește nimic">
+  Comparați adresă de redirecționare caracter cu caracter cu cea din Twenty.
+  Un singur caracter greșit înseamnă că e-mailul nu ajunge nicăieri și este eliminat fără notificare.
+</Accordion>
+
+<Accordion title="E-mailurile sosesc, dar fiecare mesaj afișează propria dvs. adresă ca expeditor">
+  Regula reconstruiește mesajul în loc să îl redirecționeze, astfel încât adresa dvs.
+  ajunge în antetul `From`. Treceți la setarea de
+  redirecționare sau redirecționare directă a furnizorului dvs. și dezactivați orice opțiune care redirecționează ca
+  atașament.
+</Accordion>
+
+<Accordion title="Expeditorul primește un mesaj de respingere că redirecționarea nu este permisă">
+  Furnizorul dvs. blochează redirecționarea automată către domenii externe. Căutați o setare de
+  securitate sau antispam care permite redirecționarea externă și activați-o
+  numai pentru această cutie poștală.
+</Accordion>
+
+<Accordion title="E-mailurile nu mai apar în căsuța de primire originală">
+  Regula mută mesajele în loc să le copieze. Modificați-o pentru a păstra o copie,
+  sau adăugați o a doua regulă care livrează mesajele în căsuța de primire.
+</Accordion>
+
+<Accordion title="Canalul primește e-mailuri, dar nu poate trimite">
+  Primirea și trimiterea sunt separate. Trimiterea necesită ca domeniul dvs. să fie
+  verificat în secțiunea **Domeniu de trimitere** a canalului, ceea ce înseamnă adăugarea
+  înregistrărilor de **autentificare a domeniului** pe care Twenty le listează acolo. Consultați Canale de
+  e-mail pentru a vedea de ce
+  înregistrări are nevoie fiecare caz de utilizare.
+</Accordion>
+
+<PageBanner illustration="page-cover-email" />

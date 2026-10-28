@@ -1,0 +1,191 @@
+---
+title: Аватар
+description: Представляйте человека или запись с помощью изображения, инициала или значка.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import AvatarReference from '/snippets/ui/generated/data-display/avatar.mdx';
+
+## Обзор
+
+`Avatar` отображает изображение с резервной первой буквой. Используйте его рядом с названием записи или внутри [Chip](/ru/ui/primitives/data-display/chip). Его корневым элементом по умолчанию является презентационный `span`.
+
+<StoryEmbed storyId="ui-data-display-avatar--display" title="Пример Avatar" height={90} />
+
+## Использование
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const WorkspaceAvatar = () => (
+  <Avatar
+    name="Acme"
+    colorSeed="acme-app"
+    shape="square"
+    variant="outline"
+    size="md"
+  />
+);
+```
+
+Если изображение отсутствует или не загружается, резервный вариант отображает первую букву имени после удаления пробелов в верхнем регистре. Для пустого имени отображается `-`. `colorSeed` выбирает стабильные цвета резервного варианта и по умолчанию использует `name`; используйте идентификатор записи, чтобы цвет оставался стабильным при изменении имени.
+
+Изображение и резервный вариант по умолчанию являются декоративными. `name` задаёт видимый инициал и цвета резервного варианта, не добавляя доступную метку. Если аватар является единственным представлением человека или записи, задайте `imageProps={{ alt: name }}`, чтобы добавить метку и для изображения, и для резервного варианта по умолчанию. Оставляйте аватар декоративным, если видимое имя или помеченный владелец уже предоставляют эту информацию.
+
+`imageProps` принимает полный набор свойств изображения, включая `srcSet`, `sizes`, `crossOrigin`, `referrerPolicy`, нативные события, refs и `render`. Его `src` переопределяет сокращённое свойство `src`. `fallbackProps` принимает полный набор свойств резервного варианта, включая `delay`, дочерние элементы, маркировку, refs и `render`. Пользовательский `render` резервного варианта определяет его семантику доступности; если он декоративный, явно задайте `aria-hidden`.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type RecordAvatarProps = {
+  name: string;
+  imageUrl?: string;
+  initials: string;
+};
+
+export const RecordAvatar = ({
+  name,
+  imageUrl,
+  initials,
+}: RecordAvatarProps) => (
+  <Avatar
+    name={name}
+    src={imageUrl}
+    size="lg"
+    imageProps={{ alt: name, decoding: 'async', referrerPolicy: 'no-referrer' }}
+    fallbackProps={{ children: initials, delay: 150 }}
+  />
+);
+```
+
+## Скомпонуйте части
+
+Используйте `Avatar.Root`, `Avatar.Image` и `Avatar.Fallback`, когда вы управляете структурой компонента. Root задаёт размер, форму и внешний вид резервного варианта; он не создаёт дочерние элементы или доступные метки.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type ContactAvatarProps = {
+  name: string;
+  imageUrl?: string;
+  initials: string;
+};
+
+export const ContactAvatar = ({
+  name,
+  imageUrl,
+  initials,
+}: ContactAvatarProps) => (
+  <Avatar.Root name={name} shape="circle" size="xxl">
+    <Avatar.Image src={imageUrl} alt={name} decoding="async" />
+    <Avatar.Fallback role="img" aria-label={name} delay={150}>
+      {initials}
+    </Avatar.Fallback>
+  </Avatar.Root>
+);
+```
+
+<StoryEmbed storyId="ui-data-display-avatar--parts" title="Части аватара" height={110} />
+
+Части используют общее состояние загрузки изображения Base UI. По умолчанию Image отображает `img` после успешной загрузки, а Fallback отображает `span`, пока изображение отсутствует, загружается или не удалось загрузить. `delay` откладывает первоначальное отображение резервного варианта на миллисекунды; значение по умолчанию — `0`. Изменённый источник загружается повторно и может заменить текущее изображение или резервный вариант.
+
+`Avatar.Image` предоставляет `onLoadingStatusChange` со значениями статуса `idle`, `loading`, `loaded` и `error`. Колбэк запускается, когда Base UI сообщает об изменении статуса, отличного от `idle`; размонтирование части Image сбрасывает общее состояние корня на `idle`. Root, Image и Fallback принимают зависящие от состояния функции `className`, `style` и `render` с `imageLoadingStatus`; Image также предоставляет `transitionStatus`.
+
+Используйте `keepMounted` для Image, если отображаемое изображение должно загружаться на месте, в том числе с `loading="lazy"` или оптимизированным компонентом изображения. Перенаправляйте нативные атрибуты, события и ref из пользовательских рендереров изображений. Смонтированное изображение всё ещё может загружаться или завершиться ошибкой; проверяйте состояние загрузки, а не считайте его наличие признаком успеха.
+
+Рендерер front-компонента сейчас поддерживает путь предварительной загрузки по умолчанию с `src`. Его изображение-хост не получает `srcSet`, `sizes`, `loading`, `decoding` или `referrerPolicy`. Изменяющаяся пользовательская функция `render` с `keepMounted` может оставить декодированное изображение скрытым, поскольку worker не может прочитать состояние его завершения или размеры. Используйте там предварительную загрузку по умолчанию, пока эти возможности рендерера не станут доступны.
+
+Публичные типы `AvatarRootProps`, `AvatarImageProps`, `AvatarFallbackProps`, `AvatarRootState`, `AvatarImageState`, `AvatarFallbackState` и `AvatarImageLoadingStatus` экспортируются из `twenty-ui/primitives/data-display`. Refs указывают на отображаемый DOM-элемент: по умолчанию это `span`, `img` и `span` либо элемент, переданный через `render`.
+
+## Форма и внешний вид
+
+<StoryEmbed storyId="ui-data-display-avatar--catalog" title="Размеры и формы аватара" height={320} />
+
+`shape` принимает значения `square`, `rounded-square` или `circle`. Размеры: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), `xl` (32px) и `xxl` (40px). И `xl`, и `xxl` используют резервный текст размером 16px.
+
+Прежний размер `xl` в 40px теперь называется `xxl`. Замените существующие использования `size="xl"` на `size="xxl"`, если они должны оставаться размером 40px.
+
+`variant="outline"` добавляет границу к резервному варианту. Переопределения `color`, `backgroundColor` и `borderColor` настраивают резервный вариант, тогда как загруженное изображение сохраняет исходный вид.
+
+```tsx
+import { IconUser } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const ContactIcon = () => (
+  <Avatar
+    icon={<IconUser />}
+    shape="rounded-square"
+    size="xxl"
+    role="img"
+    aria-label="Contact"
+  />
+);
+```
+
+`icon` имеет приоритет как над изображением, так и над резервной первой буквой. Сам значок декоративный, поэтому добавьте метку корневому элементу, если он передаёт информацию. `pulsing` анимирует непрозрачность и учитывает предпочтения уменьшенного движения.
+
+## Открыть профиль
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type ProfileAvatarProps = {
+  onOpenProfile: () => void;
+  disabled?: boolean;
+};
+
+export const ProfileAvatar = ({
+  onOpenProfile,
+  disabled = false,
+}: ProfileAvatarProps) => (
+  <Avatar
+    name="Jane"
+    shape="circle"
+    size="lg"
+    render={
+      <button
+        type="button"
+        disabled={disabled}
+        aria-label="Open Jane's profile"
+        onClick={onOpenProfile}
+      />
+    }
+  />
+);
+```
+
+<StoryEmbed storyId="ui-data-display-avatar--button-composition" title="Аватар, скомпонованный как кнопка" height={110} />
+
+Для действий скомпонуйте нативную кнопку. Она управляет фокусом, активацией клавишами Enter и Space и отключённым состоянием. Задайте доступное имя, соответствующее действию. Разместите `onClick` и `disabled` на отображаемой кнопке; сокращённый Avatar не имеет свойств `onClick`, `disabled` или `nativeButton`.
+
+Для навигации скомпонуйте якорь с `href` или ссылку маршрутизатора, сохраняющую семантику якоря. Нативные ссылки активируются клавишей Enter. Сохраняйте навигационное и отключённое поведение в ссылке или интерактивном компоненте, который вы компонуете.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const ProfileLink = () => (
+  <Avatar
+    name="Jane"
+    shape="circle"
+    size="lg"
+    render={<a href="/people/jane" aria-label="Open Jane's profile" />}
+  />
+);
+```
+
+## Перенос кликабельных аватаров
+
+Для действий скомпонуйте нативную кнопку через `render`, а для навигации — якорь или ссылку маршрутизатора. Перенесите `onClick` и `disabled` на этот элемент и удалите `nativeButton`. Задайте элементу полезное доступное имя и избегайте вложенных интерактивных элементов. `Avatar.Root` и другие явные части сохраняют полный контракт событий Base UI.
+
+Сокращённые аватары по умолчанию декоративны. `name` не задаёт имя изображению, резервному варианту или интерактивному элементу-владельцу. Используйте непустой `imageProps.alt` только в том случае, если аватар передаёт идентичность, которая ещё не указана видимым текстом или меткой элемента-владельца. При использовании явных частей самостоятельно задавайте альтернативный текст изображения и метки резервного варианта или декоративные атрибуты, а переведённый контент храните в приложении.
+
+## Свойства
+
+Типы и значения по умолчанию генерируются из общедоступных типов компонента. Явные части принимают нативные атрибуты и обработчики событий. Сокращённый Avatar не включает `onClick`; задайте его элементу-владельцу, переданному через `render`.
+
+<AvatarReference />
+
+<PageBanner illustration="page-cover-profile" />

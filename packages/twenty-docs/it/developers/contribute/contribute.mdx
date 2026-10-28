@@ -3,9 +3,9 @@ title: Contribuire
 description: Contribuisci allo sviluppo open source di Twenty.
 ---
 
-<Frame>
-  <img src="/images/user-guide/github/github-header.png" alt="AI" />
-</Frame>
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Panoramica
 
@@ -21,11 +21,15 @@ Twenty è open source e accoglie i contributi della comunità. Che tu stia risol
 
 ## Per iniziare
 
-<CardGroup cols={2}>
-  <Card title="Segnalazioni di bug e richieste" icon="bug" href="/it/developers/contribute/capabilities/bug-and-requests">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/it/developers/contribute/capabilities/bug-and-requests" img="/images/user-guide/halftone/card-page-bug-requests.svg">
+    <CardTitle>Bug Reports & Requests</CardTitle>
     Segnala problemi o richiedi funzionalità
   </Card>
-  <Card title="Sviluppo Frontend" icon="browser" href="/it/developers/contribute/capabilities/frontend-development/folder-architecture-front">
+  <Card href="/it/developers/contribute/capabilities/frontend-development/folder-architecture-front" img="/images/user-guide/halftone/card-page-frontend-architecture.svg">
+    <CardTitle>Sviluppo Frontend</CardTitle>
     Contribuisci all'interfaccia utente
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-contribute" />
