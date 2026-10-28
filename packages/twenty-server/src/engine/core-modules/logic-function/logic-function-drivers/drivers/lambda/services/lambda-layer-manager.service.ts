@@ -85,13 +85,13 @@ export class LambdaLayerManagerService {
       await this.getWorkspaceCustomDepsLayerName(flatApplication);
 
     if (isDefined(workspaceCustomDepsLayerName)) {
-      const sharedDependencies =
-        await this.findWorkspaceCustomSharedDependencies(flatApplication);
+      const workspaceCustomDepsLayerDependencies =
+        await this.findWorkspaceCustomDepsLayerDependencies(flatApplication);
 
-      if (isDefined(sharedDependencies)) {
+      if (isDefined(workspaceCustomDepsLayerDependencies)) {
         return this.buildDepsLayer({
           layerName: workspaceCustomDepsLayerName,
-          dependencies: sharedDependencies,
+          dependencies: workspaceCustomDepsLayerDependencies,
         });
       }
     }
@@ -316,7 +316,7 @@ export class LambdaLayerManagerService {
     });
   }
 
-  private async findWorkspaceCustomSharedDependencies(
+  private async findWorkspaceCustomDepsLayerDependencies(
     flatApplication: FlatApplication,
   ): Promise<DepsLayerDependencies | undefined> {
     const defaultDependencies = await getDefaultApplicationPackageFields({
