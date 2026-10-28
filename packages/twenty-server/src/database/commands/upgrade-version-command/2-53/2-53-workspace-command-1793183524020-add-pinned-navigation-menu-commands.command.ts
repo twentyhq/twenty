@@ -13,26 +13,18 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const INBOX_AND_CHATS_SECTION_TYPES: NavigationMenuItemType[] = [
-  NavigationMenuItemType.AI_CHAT_INBOX,
-  NavigationMenuItemType.AI_CHAT_FAVORITES,
-  NavigationMenuItemType.AI_CHAT_CHANNELS,
-  NavigationMenuItemType.AI_CHAT_RECENTS,
+const DEFAULT_PINNED_COMMANDS = [
+  STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommandsSearch,
+  STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommandsNewChat,
 ];
 
-const CHATS_TAB_SECTION_DEFINITIONS = [
-  STANDARD_NAVIGATION_MENU_ITEMS.chatsTabFavoriteChats,
-  STANDARD_NAVIGATION_MENU_ITEMS.chatsTabChannels,
-  STANDARD_NAVIGATION_MENU_ITEMS.chatsTabRecentChats,
-];
-
-@RegisteredWorkspaceCommand('2.53.0', 1793174702016)
+@RegisteredWorkspaceCommand('2.53.0', 1793183524020)
 @Command({
-  name: 'upgrade:2-53:add-inbox-and-chats-navigation-menu-items',
+  name: 'upgrade:2-53:add-pinned-navigation-menu-commands',
   description:
-    'Add the Inbox section to Home and the Chats tab, holding the favorite chats, channels and recent chats sections, to workspaces whose sidebar has none of them',
+    'Pin Search and New chat at the top of the sidebar, for workspaces that have no pinned commands',
 })
-export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorkspaceCommandRunner {
+export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -51,20 +43,18 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
         'flatNavigationMenuItemMaps',
       ]);
 
-    const hasInboxOrChats = Object.values(
+    const hasPinnedCommands = Object.values(
       flatNavigationMenuItemMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .some(
-        (navigationMenuItem) =>
-          navigationMenuItem.universalIdentifier ===
-            STANDARD_NAVIGATION_MENU_ITEMS.chatsTab.universalIdentifier ||
-          INBOX_AND_CHATS_SECTION_TYPES.includes(navigationMenuItem.type),
-      );
+    ).some(
+      (navigationMenuItem) =>
+        isDefined(navigationMenuItem) &&
+        !isDefined(navigationMenuItem.userWorkspaceId) &&
+        navigationMenuItem.type === NavigationMenuItemType.PINNED_COMMANDS,
+    );
 
-    if (hasInboxOrChats) {
+    if (hasPinnedCommands) {
       this.logger.log(
-        `Inbox section or Chats tab already present for workspace ${workspaceId}, skipping`,
+        `Pinned commands already present for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -72,7 +62,7 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
 
     if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Would add the Inbox section and the Chats tab for workspace ${workspaceId}`,
+        `[DRY RUN] Would pin the default commands for workspace ${workspaceId}`,
       );
 
       return;
@@ -84,43 +74,33 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
       );
 
     const now = new Date().toISOString();
-    const chatsTabId = v4();
 
     const creationContext = {
       workspaceId,
       twentyStandardFlatApplication,
       now,
     };
-
-    const { inboxSection, chatsTab } = STANDARD_NAVIGATION_MENU_ITEMS;
+    const pinnedCommands = STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommands;
+    const pinnedCommandsId = v4();
 
     const flatNavigationMenuItemsToCreate = [
       buildStandardNavigationMenuItemToCreate({
         ...creationContext,
-        id: v4(),
-        universalIdentifier: inboxSection.universalIdentifier,
-        type: inboxSection.type,
-        position: inboxSection.position,
+        id: pinnedCommandsId,
+        universalIdentifier: pinnedCommands.universalIdentifier,
+        type: pinnedCommands.type,
+        position: pinnedCommands.position,
       }),
-      buildStandardNavigationMenuItemToCreate({
-        ...creationContext,
-        id: chatsTabId,
-        universalIdentifier: chatsTab.universalIdentifier,
-        type: chatsTab.type,
-        name: chatsTab.name,
-        icon: chatsTab.icon,
-        position: chatsTab.position,
-      }),
-      ...CHATS_TAB_SECTION_DEFINITIONS.map((chatsTabSection) =>
+      ...DEFAULT_PINNED_COMMANDS.map((command) =>
         buildStandardNavigationMenuItemToCreate({
           ...creationContext,
           id: v4(),
-          universalIdentifier: chatsTabSection.universalIdentifier,
-          type: chatsTabSection.type,
-          folderId: chatsTabId,
-          folderUniversalIdentifier: chatsTabSection.folderUniversalIdentifier,
-          position: chatsTabSection.position,
-          visibleItemLimit: chatsTabSection.visibleItemLimit,
+          universalIdentifier: command.universalIdentifier,
+          type: command.type,
+          folderId: pinnedCommandsId,
+          folderUniversalIdentifier: command.folderUniversalIdentifier,
+          position: command.position,
+          commandKey: command.commandKey,
         }),
       ),
     ];
@@ -144,16 +124,14 @@ export class AddInboxAndChatsNavigationMenuItemsCommand extends ProvisionedWorks
 
     if (validateAndBuildResult.status === 'fail') {
       this.logger.error(
-        `Failed to add the Inbox section and the Chats tab:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+        `Failed to pin the default commands:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
 
       throw new Error(
-        `Failed to add the Inbox section and the Chats tab for workspace ${workspaceId}`,
+        `Failed to pin the default commands for workspace ${workspaceId}`,
       );
     }
 
-    this.logger.log(
-      `Added the Inbox section and the Chats tab for workspace ${workspaceId}`,
-    );
+    this.logger.log(`Pinned the default commands for workspace ${workspaceId}`);
   }
 }

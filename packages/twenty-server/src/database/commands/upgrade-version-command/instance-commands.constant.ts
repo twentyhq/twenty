@@ -262,10 +262,10 @@ import { AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand } f
 import { BackfillApplicationAutoUpgradeSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-slow-1793170402367-backfill-application-auto-upgrade';
 import { AddMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438837-add-messaging-provider';
 import { AddMcpServerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793150000000-add-mcp-server';
-import { AddTabAndSectionNavigationMenuItemTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793174702015-add-tab-and-section-navigation-menu-item-types';
-import { AddVisibleItemLimitToNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793174702018-add-visible-item-limit-to-navigation-menu-item';
-import { AddCommandNavigationMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793174702019-add-command-navigation-menu-items';
-import { AddFavoritesNavigationMenuItemTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793174702021-add-favorites-navigation-menu-item-type';
+import { AddTabAndSectionNavigationMenuItemTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793183524015-add-tab-and-section-navigation-menu-item-types';
+import { AddVisibleItemLimitToNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793183524018-add-visible-item-limit-to-navigation-menu-item';
+import { AddCommandNavigationMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793183524019-add-command-navigation-menu-items';
+import { AddFavoritesNavigationMenuItemTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793183524021-add-favorites-navigation-menu-item-type';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
