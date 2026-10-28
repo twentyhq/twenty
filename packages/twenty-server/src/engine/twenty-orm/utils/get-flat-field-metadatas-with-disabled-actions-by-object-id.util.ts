@@ -1,4 +1,9 @@
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  isDefined,
+  isMorphRelationHead,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -13,6 +18,7 @@ const fieldsWithDisabledActionsByObjectIdCache = new WeakMap<
   Map<string, FlatFieldMetadataWithDisabledActions[]>
 >();
 
+// A morph relation head has no column of its own: its disabled actions apply to every target column
 export const getFlatFieldMetadatasWithDisabledActionsByObjectId = (
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
 ): Map<string, FlatFieldMetadataWithDisabledActions[]> => {
@@ -24,24 +30,48 @@ export const getFlatFieldMetadatasWithDisabledActionsByObjectId = (
     return cached;
   }
 
+  const flatFieldMetadatas = Object.values(
+    flatFieldMetadataMaps.byUniversalIdentifier,
+  ).filter(isDefined);
+  const morphTargetIdsByMorphId = new Map<string, string[]>();
+
+  for (const flatFieldMetadata of flatFieldMetadatas) {
+    if (
+      flatFieldMetadata.type !== FieldMetadataType.MORPH_RELATION ||
+      !isDefined(flatFieldMetadata.morphId) ||
+      isMorphRelationHead(flatFieldMetadata)
+    ) {
+      continue;
+    }
+
+    morphTargetIdsByMorphId.set(flatFieldMetadata.morphId, [
+      ...(morphTargetIdsByMorphId.get(flatFieldMetadata.morphId) ?? []),
+      flatFieldMetadata.id,
+    ]);
+  }
+
   const fieldsByObjectId = new Map<
     string,
     FlatFieldMetadataWithDisabledActions[]
   >();
 
-  for (const flatFieldMetadata of Object.values(
-    flatFieldMetadataMaps.byUniversalIdentifier,
-  )) {
-    if (
-      !isDefined(flatFieldMetadata) ||
-      !isNonEmptyArray(flatFieldMetadata.disabledFieldPermissionActions)
-    ) {
+  for (const flatFieldMetadata of flatFieldMetadatas) {
+    if (!isNonEmptyArray(flatFieldMetadata.disabledFieldPermissionActions)) {
       continue;
     }
 
+    const restrictedFieldIds =
+      isMorphRelationHead(flatFieldMetadata) &&
+      isDefined(flatFieldMetadata.morphId)
+        ? [
+            flatFieldMetadata.id,
+            ...(morphTargetIdsByMorphId.get(flatFieldMetadata.morphId) ?? []),
+          ]
+        : [flatFieldMetadata.id];
+
     fieldsByObjectId.set(flatFieldMetadata.objectMetadataId, [
       ...(fieldsByObjectId.get(flatFieldMetadata.objectMetadataId) ?? []),
-      flatFieldMetadata,
+      ...restrictedFieldIds.map((id) => ({ ...flatFieldMetadata, id })),
     ]);
   }
 
