@@ -622,7 +622,7 @@ const asApplication = new RestApiClient({ runAs: 'application' });
 
 </Note>
 
-Вспомогательные функции SDK, обращающиеся к собственным ресурсам вашего приложения, всегда используют его доступ и игнорируют `runAs`: [хранилище «ключ — значение»](/ru/developers/extend/apps/logic/key-value-store), [подключения](/ru/developers/extend/apps/logic/connections), [каналы сообщений](/ru/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` и [списание кредитов](/ru/developers/extend/apps/logic/credits). `sendInboxMessage` также использует права доступа вашего приложения и игнорирует `runAs`, хотя записывает в чаты указанных вами участников.
+Вспомогательные функции SDK, обращающиеся к собственным ресурсам вашего приложения, всегда используют его доступ и игнорируют `runAs`: [хранилище «ключ — значение»](/ru/developers/extend/apps/logic/key-value-store), [подключения](/ru/developers/extend/apps/logic/connections), [каналы сообщений](/ru/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` и [списание кредитов](/ru/developers/extend/apps/logic/credits).
 
 #### Предоставление функции в качестве инструмента ИИ или действия рабочего процесса
 

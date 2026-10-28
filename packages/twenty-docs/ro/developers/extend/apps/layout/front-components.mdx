@@ -453,6 +453,34 @@ try {
 }
 ```
 
+## Publicarea în cutia de intrare
+
+`sendInboxMessage` și ajutoarele pentru mențiuni din [cutia de intrare](/ro/developers/extend/apps/logic/inbox) sunt exportate și din `twenty-sdk/front-component`, astfel încât o componentă poate publica un mesaj fără o funcție logică intermediară. Mesajul provine din aplicația ta, iar apelul include tokenul componentei, astfel încât membrul care vizualizează pagina are nevoie de permisiunea `AI`, la fel ca fiecare destinatar.
+
+Pentru a afișa conversația ulterior, navighează la aceasta folosind `threadId` returnat de apel:
+
+```tsx
+import {
+  AppPath,
+  navigate,
+  sendInboxMessage,
+} from 'twenty-sdk/front-component';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: 'weekly-digest',
+  idempotencyKey: `weekly-digest-${weekNumber}`,
+  title: 'Your weekly digest',
+  text: 'Three deals moved to negotiation this week.',
+});
+
+await navigate(AppPath.AiChatInbox, { threadId });
+```
+
+* `workspaceMemberIds` acceptă ID-uri ale membrilor spațiului de lucru, nu ID-ul de utilizator returnat de `useUserId()`.
+* O conversație se deschide numai pentru participanții săi, așadar navighează la aceasta atunci când membrul care vizualizează pagina este unul dintre destinatari.
+* Cutia de intrare este o rută a paginii principale: `navigate` o deschide acolo, iar `openSidePanelPage` nu o poate deschide în panoul lateral.
+
 ## Accesarea contextului de rulare
 
 În interiorul componentei, folosiți hook-urile SDK pentru a accesa utilizatorul curent, înregistrarea curentă și instanța componentei:

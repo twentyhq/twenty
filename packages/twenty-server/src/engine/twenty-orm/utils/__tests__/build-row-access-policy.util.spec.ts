@@ -327,4 +327,110 @@ describe('buildRowAccessPolicy', () => {
     expect(policy.condition.sql).toContain('recordShare');
     expect(policy.condition.sql).not.toContain('rowCause');
   });
+  describe('with a prospective named share', () => {
+    const prospectiveShareArguments = {
+      subject: readEverything,
+      environment: sharingEnvironment,
+      tableAlias: person.nameSingular,
+      flatObjectMetadata: person,
+      operationType: 'update',
+      hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ_WRITE,
+    } satisfies Parameters<typeof buildCompiledRowAccessPolicy>[0];
+
+    it('requires an edit-level share to preview update access', () => {
+      expect(buildCompiledRowAccessPolicy(prospectiveShareArguments)).toEqual({
+        kind: 'open',
+      });
+      const readOnly = buildCompiledRowAccessPolicy({
+        ...prospectiveShareArguments,
+        hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ,
+      });
+
+      expect(readOnly.kind).toBe('gated');
+    });
+
+    it('preserves the member-bound row filter when sharing cannot reach beyond the role', () => {
+      const policy = buildCompiledRowAccessPolicy({
+        ...prospectiveShareArguments,
+        environment,
+        subject: {
+          ...readEverything,
+          resolveRowLevelPermissionRecordFilter: () => NOTE_FILTER,
+        },
+      });
+
+      expect(policy).toMatchObject({
+        kind: 'gated',
+        condition: {
+          sql: expect.stringContaining('"person"."title" = :restricted'),
+        },
+      });
+      expect(policy).toMatchObject({
+        condition: { sql: expect.not.stringContaining('recordShare') },
+      });
+    });
+
+    it('preserves a disabled edit action', () => {
+      expect(
+        buildCompiledRowAccessPolicy({
+          ...prospectiveShareArguments,
+          flatObjectMetadata: {
+            ...person,
+            disabledObjectPermissionActions: [
+              'canUpdateObjectRecords' as const,
+            ],
+          },
+        }),
+      ).toEqual({ kind: 'denied' });
+    });
+
+    it('honors ownership for an object that disables editing', () => {
+      expect(
+        buildCompiledRowAccessPolicy({
+          ...prospectiveShareArguments,
+          subject: { ...readEverything, isOwningApplication: () => true },
+          flatObjectMetadata: {
+            ...person,
+            disabledObjectPermissionActions: [
+              'canUpdateObjectRecords' as const,
+            ],
+          },
+        }),
+      ).toEqual({ kind: 'open' });
+    });
+
+    it('does not use a prospective share to bypass a disabled read action', () => {
+      expect(
+        buildCompiledRowAccessPolicy({
+          ...prospectiveShareArguments,
+          operationType: 'select',
+          flatObjectMetadata: {
+            ...person,
+            disabledObjectPermissionActions: ['canReadObjectRecords' as const],
+          },
+        }),
+      ).toEqual({ kind: 'denied' });
+    });
+
+    it('reaches beyond missing role access only when record sharing is enabled', () => {
+      const withoutObjectPermission: RowAccessPolicySubject = {
+        ...readEverything,
+        objectsPermissions: {},
+      };
+
+      expect(
+        buildCompiledRowAccessPolicy({
+          ...prospectiveShareArguments,
+          environment,
+          subject: withoutObjectPermission,
+        }),
+      ).toEqual({ kind: 'denied' });
+      expect(
+        buildCompiledRowAccessPolicy({
+          ...prospectiveShareArguments,
+          subject: withoutObjectPermission,
+        }),
+      ).toEqual({ kind: 'open' });
+    });
+  });
 });

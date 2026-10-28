@@ -121,6 +121,7 @@ When adding permissions:
 - Keep sensitive objects and fields out of broad roles.
 - Check whether the app introduces side effects through logic functions before granting write access.
 - To keep some permissions from being granted on an object, set `disabledObjectPermissionActions` on `defineObject()`, for example `['canDestroyObjectRecords']`. Allowed values are the object permission flags: `'canReadObjectRecords'`, `'canUpdateObjectRecords'`, `'canSoftDeleteObjectRecords'` and `'canDestroyObjectRecords'`. Users, API keys and agents never get these actions on that object, whatever their role grants; the app's own logic functions keep them. List the update, soft-delete and destroy flags to make an object only the app can write.
+- To do the same on one field, set `disabledFieldPermissionActions` on the field, with `'canReadFieldValue'` and/or `'canUpdateFieldValue'`. `['canUpdateFieldValue']` makes a field only the app can write, which suits values the app computes or syncs.
 
 ## Verification
 
