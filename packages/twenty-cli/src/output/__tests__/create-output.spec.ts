@@ -233,7 +233,7 @@ describe('terminal progress', () => {
           validationErrors: [
             {
               metadataName: 'fieldMetadata',
-              entity: 'invalidField',
+              entityLabel: 'invalidField',
               message: 'Field name "123" is invalid',
             },
             {

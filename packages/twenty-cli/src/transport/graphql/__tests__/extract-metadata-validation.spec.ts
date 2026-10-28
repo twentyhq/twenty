@@ -44,12 +44,12 @@ describe('extractMetadataValidation', () => {
       errors: [
         {
           metadataName: 'fieldMetadata',
-          entity: 'invalidField',
+          entityLabel: 'invalidField',
           message: 'Field name "123" is invalid',
         },
         {
           metadataName: 'fieldMetadata',
-          entity: 'status',
+          entityLabel: 'status',
           message: 'A field with this name already exists',
         },
       ],

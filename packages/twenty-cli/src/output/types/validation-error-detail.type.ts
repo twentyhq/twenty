@@ -1,5 +1,5 @@
 export type ValidationErrorDetail = {
   metadataName: string;
-  entity?: string;
+  entityLabel?: string;
   message: string;
 };

@@ -17,10 +17,10 @@ const ENTITY_LABEL_KEYS = [
 ] as const;
 
 const readEntityLabel = (
-  entity: FailedMetadataValidation['flatEntityMinimalInformation'],
+  entityInformation: FailedMetadataValidation['flatEntityMinimalInformation'],
 ): string | undefined => {
   for (const key of ENTITY_LABEL_KEYS) {
-    const value = entity[key];
+    const value = entityInformation[key];
 
     if (isNonEmptyString(value)) {
       return value;
@@ -56,7 +56,7 @@ const collectDetails = ({
         continue;
       }
 
-      const entity = readEntityLabel(failure.flatEntityMinimalInformation);
+      const entityLabel = readEntityLabel(failure.flatEntityMinimalInformation);
 
       for (const error of failure.errors) {
         if (!isPlainObject(error) || !isString(error.message)) {
@@ -65,7 +65,7 @@ const collectDetails = ({
 
         details.push({
           metadataName,
-          ...(isDefined(entity) ? { entity } : {}),
+          ...(isDefined(entityLabel) ? { entityLabel } : {}),
           message: error.message,
         });
 

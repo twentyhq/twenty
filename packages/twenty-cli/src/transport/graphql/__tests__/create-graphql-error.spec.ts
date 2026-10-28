@@ -50,7 +50,7 @@ describe('createGraphqlError', () => {
     expect(error.details?.validationErrors).toEqual([
       {
         metadataName: 'fieldMetadata',
-        entity: 'invalidField',
+        entityLabel: 'invalidField',
         message: 'Field name "123" is invalid',
       },
     ]);

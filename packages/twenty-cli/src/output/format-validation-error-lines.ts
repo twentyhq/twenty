@@ -7,7 +7,7 @@ export const formatValidationErrorLines = (
 ): string =>
   details
     .map(
-      ({ metadataName, entity, message }) =>
-        `• ${metadataName}${isDefined(entity) ? ` ${entity}` : ''}: ${message}`,
+      ({ metadataName, entityLabel, message }) =>
+        `• ${metadataName}${isDefined(entityLabel) ? ` ${entityLabel}` : ''}: ${message}`,
     )
     .join('\n');
