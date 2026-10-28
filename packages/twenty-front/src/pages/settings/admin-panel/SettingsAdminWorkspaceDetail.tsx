@@ -303,7 +303,7 @@ export const SettingsAdminWorkspaceDetail = () => {
         icon={
           <Avatar
             src={getAbsoluteImageUrl(workspaceLogo)}
-            name={workspaceName}
+            name={workspace?.name ?? ''}
             colorSeed={getWorkspaceAvatarColorSeed(workspace?.name)}
             size="md"
           />

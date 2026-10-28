@@ -61,7 +61,7 @@ export const SettingsAdminApplicationMonitoringWorkspacesTable = ({
             >
               <Avatar
                 src={getAbsoluteImageUrl(workspace.workspaceLogoUrl)}
-                name={getAdminApplicationMonitoringWorkspaceLabel(workspace)}
+                name={workspace.workspaceName ?? ''}
                 colorSeed={getWorkspaceAvatarColorSeed(workspace.workspaceName)}
                 size="md"
               />

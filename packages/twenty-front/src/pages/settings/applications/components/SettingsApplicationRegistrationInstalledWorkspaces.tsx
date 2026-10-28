@@ -171,7 +171,7 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
                 >
                   <Avatar
                     src={getAbsoluteImageUrl(workspace.logo ?? undefined)}
-                    name={workspace.displayName ?? '—'}
+                    name={workspace.displayName ?? ''}
                     colorSeed={getWorkspaceAvatarColorSeed(
                       workspace.displayName,
                     )}
