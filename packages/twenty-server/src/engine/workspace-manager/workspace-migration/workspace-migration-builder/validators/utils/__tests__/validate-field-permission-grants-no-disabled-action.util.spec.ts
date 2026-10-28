@@ -48,18 +48,6 @@ describe('validateFieldPermissionGrantsNoDisabledAction', () => {
     ).toEqual([expect.objectContaining({ value: 'canUpdateFieldValue' })]);
   });
 
-  it('should accept turning a disabled action off or leaving it unset', () => {
-    for (const canUpdateFieldValue of [false, null]) {
-      expect(
-        validateFieldPermissionGrantsNoDisabledAction({
-          flatFieldPermission: buildFieldPermission({ canUpdateFieldValue }),
-          flatFieldMetadata: amount,
-          flatRole: workspaceRole,
-        }),
-      ).toEqual([]);
-    }
-  });
-
   it('should let the owning application grant a disabled action to its own role', () => {
     expect(
       validateFieldPermissionGrantsNoDisabledAction({

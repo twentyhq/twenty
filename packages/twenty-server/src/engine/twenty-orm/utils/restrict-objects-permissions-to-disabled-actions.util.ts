@@ -1,5 +1,7 @@
+import { type FieldPermissionAction } from 'twenty-shared/application';
 import {
   type ObjectsPermissions,
+  type RestrictedFieldPermissions,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -9,6 +11,54 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getFlatFieldMetadatasWithDisabledActionsByObjectId } from 'src/engine/twenty-orm/utils/get-flat-field-metadatas-with-disabled-actions-by-object-id.util';
+
+const RESTRICTED_FIELD_PERMISSION_BY_FIELD_PERMISSION_ACTION: Record<
+  FieldPermissionAction,
+  keyof RestrictedFieldPermissions
+> = {
+  canReadFieldValue: 'canRead',
+  canUpdateFieldValue: 'canUpdate',
+};
+
+const getDisabledObjectPermissionActions = ({
+  flatObjectMetadata,
+  actingApplicationId,
+}: {
+  flatObjectMetadata: FlatObjectMetadata;
+  actingApplicationId: string | undefined;
+}) => {
+  if (flatObjectMetadata.applicationId === actingApplicationId) {
+    return [];
+  }
+
+  return flatObjectMetadata.disabledObjectPermissionActions ?? [];
+};
+
+const restrictFieldsToDisabledActions = ({
+  restrictedFields,
+  fieldsWithDisabledActions,
+}: {
+  restrictedFields: RestrictedFieldsPermissions;
+  fieldsWithDisabledActions: OrmFlatFieldMetadata[];
+}): RestrictedFieldsPermissions => {
+  const updatedRestrictedFields = { ...restrictedFields };
+
+  for (const flatFieldMetadata of fieldsWithDisabledActions) {
+    updatedRestrictedFields[flatFieldMetadata.id] = {
+      ...updatedRestrictedFields[flatFieldMetadata.id],
+      ...Object.fromEntries(
+        (flatFieldMetadata.disabledFieldPermissionActions ?? []).map(
+          (action) => [
+            RESTRICTED_FIELD_PERMISSION_BY_FIELD_PERMISSION_ACTION[action],
+            false,
+          ],
+        ),
+      ),
+    };
+  }
+
+  return updatedRestrictedFields;
+};
 
 export const restrictObjectsPermissionsToDisabledActions = ({
   objectsPermissions,
@@ -37,10 +87,10 @@ export const restrictObjectsPermissionsToDisabledActions = ({
       continue;
     }
 
-    const disabledObjectPermissionActions =
-      flatObjectMetadata.applicationId === actingApplicationId
-        ? []
-        : (flatObjectMetadata.disabledObjectPermissionActions ?? []);
+    const disabledObjectPermissionActions = getDisabledObjectPermissionActions({
+      flatObjectMetadata,
+      actingApplicationId,
+    });
     const fieldsWithDisabledActions = (
       fieldsWithDisabledActionsByObjectId.get(objectMetadataId) ?? []
     ).filter(
@@ -55,32 +105,16 @@ export const restrictObjectsPermissionsToDisabledActions = ({
       continue;
     }
 
-    const restrictedFields: RestrictedFieldsPermissions = {
-      ...objectPermissions.restrictedFields,
-    };
-
-    for (const flatFieldMetadata of fieldsWithDisabledActions) {
-      const disabledFieldPermissionActions =
-        flatFieldMetadata.disabledFieldPermissionActions ?? [];
-
-      restrictedFields[flatFieldMetadata.id] = {
-        ...restrictedFields[flatFieldMetadata.id],
-        ...(disabledFieldPermissionActions.includes('canReadFieldValue')
-          ? { canRead: false }
-          : {}),
-        ...(disabledFieldPermissionActions.includes('canUpdateFieldValue')
-          ? { canUpdate: false }
-          : {}),
-      };
-    }
-
     restrictedObjectsPermissions ??= { ...objectsPermissions };
     restrictedObjectsPermissions[objectMetadataId] = {
       ...objectPermissions,
       ...Object.fromEntries(
         disabledObjectPermissionActions.map((action) => [action, false]),
       ),
-      restrictedFields,
+      restrictedFields: restrictFieldsToDisabledActions({
+        restrictedFields: objectPermissions.restrictedFields,
+        fieldsWithDisabledActions,
+      }),
     };
   }
 

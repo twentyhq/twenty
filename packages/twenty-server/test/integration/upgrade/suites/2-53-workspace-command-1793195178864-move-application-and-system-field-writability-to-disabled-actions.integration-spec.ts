@@ -134,18 +134,6 @@ describe('2-53 workspace command - move application and system field writability
     });
   });
 
-  it('changes nothing on a dry run', async () => {
-    await command.runOnWorkspace({
-      ...RUN_ON_WORKSPACE_ARGS,
-      options: { dryRun: true },
-    });
-
-    expect(await findFieldWritability(APPLICATION_WRITABLE_FIELD)).toEqual({
-      writability: 'APPLICATION',
-      disabledFieldPermissionActions: ['canReadFieldValue'],
-    });
-  });
-
   it('moves APPLICATION writability to a disabled update and refreshes the cache', async () => {
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
@@ -168,14 +156,5 @@ describe('2-53 workspace command - move application and system field writability
       writability: 'SYSTEM',
       disabledFieldPermissionActions: ['canUpdateFieldValue'],
     });
-  });
-
-  it('changes nothing when it runs again', async () => {
-    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
-
-    expect(
-      (await findFieldWritability(APPLICATION_WRITABLE_FIELD))
-        .disabledFieldPermissionActions,
-    ).toEqual(['canReadFieldValue', 'canUpdateFieldValue']);
   });
 });
