@@ -24,7 +24,10 @@ const getDisabledObjectPermissionActions = ({
   flatObjectMetadata,
   actingApplicationId,
 }: {
-  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadata: Pick<
+    FlatObjectMetadata,
+    'applicationId' | 'disabledObjectPermissionActions'
+  >;
   actingApplicationId: string | undefined;
 }) => {
   if (flatObjectMetadata.applicationId === actingApplicationId) {
