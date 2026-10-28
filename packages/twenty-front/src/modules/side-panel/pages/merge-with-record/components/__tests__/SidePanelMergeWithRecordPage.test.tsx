@@ -101,6 +101,20 @@ describe('SidePanelMergeWithRecordPage', () => {
     ]);
   });
 
+  it('opens a single merge when the record is clicked twice while loading', async () => {
+    openMergeRecordsPageInSidePanel.mockReturnValue(new Promise(() => {}));
+    jotaiStore.set(
+      mergeWithRecordSourceComponentState.atomFamily({ instanceId: PAGE_ID }),
+      { objectNameSingular: 'company', recordId: 'acme-1' },
+    );
+
+    render(<SidePanelMergeWithRecordPage />, { wrapper: Wrapper });
+
+    await userEvent.dblClick(screen.getByText('Acme Inc'));
+
+    expect(openMergeRecordsPageInSidePanel).toHaveBeenCalledTimes(1);
+  });
+
   it('renders nothing without a record to merge from', () => {
     const { container } = render(<SidePanelMergeWithRecordPage />, {
       wrapper: Wrapper,

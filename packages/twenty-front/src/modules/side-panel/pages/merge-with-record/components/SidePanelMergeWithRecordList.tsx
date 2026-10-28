@@ -22,10 +22,12 @@ const StyledSearchContainer = styled.div`
   padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
+type SidePanelMergeWithRecordListProps = MergeWithRecordSource;
+
 export const SidePanelMergeWithRecordList = ({
   objectNameSingular,
   recordId,
-}: MergeWithRecordSource) => {
+}: SidePanelMergeWithRecordListProps) => {
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebounce(search.trim(), 300);
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -42,8 +44,22 @@ export const SidePanelMergeWithRecordList = ({
   const { openMergeRecordsPageInSidePanel } =
     useOpenMergeRecordsPageInSidePanel({ objectNameSingular });
 
-  const handleSelect = (otherRecordId: string) =>
-    openMergeRecordsPageInSidePanel([recordId, otherRecordId]);
+  // A double click would otherwise push two merge pages while the records load
+  const [isOpeningMerge, setIsOpeningMerge] = useState(false);
+
+  const handleSelect = async (otherRecordId: string) => {
+    if (isOpeningMerge) {
+      return;
+    }
+
+    setIsOpeningMerge(true);
+
+    try {
+      await openMergeRecordsPageInSidePanel([recordId, otherRecordId]);
+    } finally {
+      setIsOpeningMerge(false);
+    }
+  };
 
   return (
     <>

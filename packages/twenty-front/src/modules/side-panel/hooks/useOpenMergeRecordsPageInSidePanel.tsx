@@ -1,6 +1,7 @@
 import { useSidePanelUpdateNavigationMorphItemsByPage } from '@/side-panel/hooks/useSidePanelUpdateNavigationMorphItemsByPage';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
@@ -13,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { msg, t } from '@lingui/core/macro';
 import { useCallback } from 'react';
+import { useToast } from 'twenty-ui/components/feedback';
 import { IconArrowMerge } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
@@ -26,6 +28,7 @@ export const useOpenMergeRecordsPageInSidePanel = ({
 }: UseOpenMergeRecordsPageInSidePanelProps) => {
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
+  const { enqueueToast } = useToast();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -43,6 +46,27 @@ export const useOpenMergeRecordsPageInSidePanel = ({
   // The first record is the default priority record
   const openMergeRecordsPageInSidePanel = useCallback(
     async (objectRecordIds: string[]) => {
+      try {
+        const { data } =
+          await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
+            query: findManyRecordsQuery,
+            variables: { filter: { id: { in: objectRecordIds } } },
+          });
+        const recordConnection = data?.[objectMetadataItem.namePlural];
+
+        if (isDefined(recordConnection)) {
+          upsertRecordsInStore({
+            partialRecords: getRecordsFromRecordConnection({
+              recordConnection,
+            }),
+          });
+        }
+      } catch (error) {
+        enqueueToast(getToastOptionsFromError({ error }));
+
+        return;
+      }
+
       const pageId = v4();
 
       store.set(
@@ -60,19 +84,6 @@ export const useOpenMergeRecordsPageInSidePanel = ({
         objectRecordIds,
       });
 
-      const { data } =
-        await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
-          query: findManyRecordsQuery,
-          variables: { filter: { id: { in: objectRecordIds } } },
-        });
-      const recordConnection = data?.[objectMetadataItem.namePlural];
-
-      if (isDefined(recordConnection)) {
-        upsertRecordsInStore({
-          partialRecords: getRecordsFromRecordConnection({ recordConnection }),
-        });
-      }
-
       navigateSidePanel({
         page: SidePanelPages.MergeRecords,
         pageTitle: t(msg`Merge records`),
@@ -84,6 +95,7 @@ export const useOpenMergeRecordsPageInSidePanel = ({
       objectMetadataItem.id,
       objectMetadataItem.namePlural,
       apolloCoreClient,
+      enqueueToast,
       findManyRecordsQuery,
       upsertRecordsInStore,
       navigateSidePanel,
