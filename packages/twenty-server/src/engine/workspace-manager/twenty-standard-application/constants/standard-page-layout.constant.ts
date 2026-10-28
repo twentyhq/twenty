@@ -23,6 +23,7 @@ import {
   STANDARD_WORKFLOW_PAGE_LAYOUT_CONFIG,
   STANDARD_WORKFLOW_RUN_PAGE_LAYOUT_CONFIG,
   STANDARD_WORKFLOW_VERSION_PAGE_LAYOUT_CONFIG,
+  STANDARD_WORKSPACE_MEMBER_PAGE_LAYOUT_CONFIG,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config';
 import { type StandardRecordPageLayouts } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-page-layout-config.type';
 
@@ -56,6 +57,7 @@ export const STANDARD_PAGE_LAYOUTS = {
     STANDARD_WORKFLOW_AUTOMATED_TRIGGER_PAGE_LAYOUT_CONFIG,
   workflowVersionRecordPage: STANDARD_WORKFLOW_VERSION_PAGE_LAYOUT_CONFIG,
   workflowRunRecordPage: STANDARD_WORKFLOW_RUN_PAGE_LAYOUT_CONFIG,
+  workspaceMemberRecordPage: STANDARD_WORKSPACE_MEMBER_PAGE_LAYOUT_CONFIG,
 } as const;
 
 const { myFirstDashboard: _myFirstDashboard, ...recordPageLayouts } =
