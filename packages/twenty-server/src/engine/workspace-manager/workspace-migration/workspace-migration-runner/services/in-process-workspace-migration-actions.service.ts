@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -35,10 +37,8 @@ export class InProcessWorkspaceMigrationActionsService {
   }
 
   async isRunningActionsInProcess(workspaceId: string): Promise<boolean> {
-    return (
-      (await this.cacheStorageService.get<boolean>(
-        this.getKey(workspaceId),
-      )) === true
+    return isDefined(
+      await this.cacheStorageService.get<boolean>(this.getKey(workspaceId)),
     );
   }
 
