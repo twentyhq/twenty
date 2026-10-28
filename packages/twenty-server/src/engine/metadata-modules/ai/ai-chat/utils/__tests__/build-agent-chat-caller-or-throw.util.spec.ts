@@ -1,18 +1,18 @@
-import { ForbiddenException } from '@nestjs/common';
-
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { buildAgentChatCallerOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-caller-or-throw.util';
 
 const APPLICATION = {
   id: 'application-id',
+  defaultRoleId: 'application-role-id',
   sourceType: ApplicationRegistrationSourceType.LOCAL,
-} as FlatApplication;
+};
 
 const OAUTH_ONLY_APPLICATION = {
   id: 'oauth-only-application-id',
+  defaultRoleId: null,
   sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-} as FlatApplication;
+};
 
 describe('buildAgentChatCallerOrThrow', () => {
   it('acts as the member when the request carries one, even through an application', () => {
@@ -40,7 +40,7 @@ describe('buildAgentChatCallerOrThrow', () => {
           workspaceMemberId: undefined,
           callingApplication,
         }),
-      ).toThrow(ForbiddenException);
+      ).toThrow(AuthException);
     }
   });
 });
