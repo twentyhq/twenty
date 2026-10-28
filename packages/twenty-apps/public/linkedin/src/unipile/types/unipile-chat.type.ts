@@ -1,3 +1,4 @@
+import { type UnipileChatParticipant } from 'src/unipile/types/unipile-chat-participant.type';
 import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 
 export type UnipileChat = {
@@ -7,5 +8,5 @@ export type UnipileChat = {
   is_1to1: boolean;
   user_id?: string;
   user?: UnipileUser;
-  participants?: UnipileUser[];
+  participants?: UnipileChatParticipant[];
 };

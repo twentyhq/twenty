@@ -10,5 +10,7 @@ export const getLinkedinChatCounterparts = (
     return [chat.user];
   }
 
-  return chat.participants ?? [];
+  return (chat.participants ?? [])
+    .filter((participant) => !participant.is_self)
+    .map((participant) => participant.user);
 };

@@ -1,8 +1,15 @@
-import { type UnipileAccount } from 'src/unipile/types/unipile-account.type';
-import { callUnipileApi } from 'src/unipile/utils/call-unipile-api.util';
+import { UnipileAccounts } from '@unipile/sdk';
 
-export const getUnipileAccount = (accountId: string): Promise<UnipileAccount> =>
-  callUnipileApi<UnipileAccount>({
-    method: 'GET',
-    path: `/accounts/${encodeURIComponent(accountId)}`,
+import { type UnipileAccount } from 'src/unipile/types/unipile-account.type';
+import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-options.util';
+
+export const getUnipileAccount = async (
+  accountId: string,
+): Promise<UnipileAccount> => {
+  const { data } = await new UnipileAccounts().getAccount({
+    ...getUnipileRequestOptions(),
+    path: { account_id: accountId },
   });
+
+  return data;
+};

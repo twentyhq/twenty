@@ -1,20 +1,21 @@
+import { UnipileHostedAuth } from '@unipile/sdk';
+
 import { UNIPILE_HOSTED_AUTH_LINK_TTL_MILLISECONDS } from 'src/unipile/constants/unipile-hosted-auth-link-ttl-milliseconds.constant';
 import { type UnipileProvider } from 'src/unipile/types/unipile-provider.type';
-import { callUnipileApi } from 'src/unipile/utils/call-unipile-api.util';
+import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-options.util';
 import { splitCallbackUrlState } from 'src/unipile/utils/split-callback-url-state.util';
 
 export const createUnipileHostedAuthLink = async ({
   provider,
   callbackUrl,
 }: {
-  provider: UnipileProvider;
+  provider: Exclude<UnipileProvider, 'mock'>;
   callbackUrl: string;
 }): Promise<string> => {
   const { redirectUri, state } = splitCallbackUrlState(callbackUrl);
 
-  const { link } = await callUnipileApi<{ link: string }>({
-    method: 'POST',
-    path: '/auth/link',
+  const { data } = await new UnipileHostedAuth().createAuthLink({
+    ...getUnipileRequestOptions(),
     body: {
       providers: [provider],
       redirect_uri: redirectUri,
@@ -25,5 +26,5 @@ export const createUnipileHostedAuthLink = async ({
     },
   });
 
-  return link;
+  return data.link;
 };

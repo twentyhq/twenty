@@ -32,7 +32,8 @@
     "twenty-client-sdk": "portal:../../../twenty-client-sdk"
   },
   "dependencies": {
-    "@sniptt/guards": "^0.2.0"
+    "@sniptt/guards": "^0.2.0",
+    "@unipile/sdk": "^2.59.0"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",

@@ -1,14 +1,19 @@
-import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
-import { callUnipileApi } from 'src/unipile/utils/call-unipile-api.util';
+import { UnipileMessaging } from '@unipile/sdk';
 
-export const getUnipileChat = ({
+import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
+import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-options.util';
+
+export const getUnipileChat = async ({
   accountId,
   chatId,
 }: {
   accountId: string;
   chatId: string;
-}): Promise<UnipileChat> =>
-  callUnipileApi<UnipileChat>({
-    method: 'GET',
-    path: `/${encodeURIComponent(accountId)}/chats/${encodeURIComponent(chatId)}`,
+}): Promise<UnipileChat> => {
+  const { data } = await new UnipileMessaging().getChat({
+    ...getUnipileRequestOptions(),
+    path: { account_id: accountId, chat_id: chatId },
   });
+
+  return data;
+};

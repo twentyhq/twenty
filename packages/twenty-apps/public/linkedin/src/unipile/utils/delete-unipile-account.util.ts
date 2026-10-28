@@ -1,17 +1,17 @@
-import { callUnipileApi } from 'src/unipile/utils/call-unipile-api.util';
-import { UnipileApiError } from 'src/unipile/utils/unipile-api-error.util';
+import { UnipileAccounts } from '@unipile/sdk';
+
+import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-options.util';
 
 export const deleteUnipileAccount = async (accountId: string): Promise<void> => {
-  try {
-    await callUnipileApi<void>({
-      method: 'DELETE',
-      path: `/accounts/${encodeURIComponent(accountId)}`,
-    });
-  } catch (error) {
-    if (error instanceof UnipileApiError && error.status === 404) {
-      return;
-    }
+  const { error, response } = await new UnipileAccounts().removeAccount({
+    ...getUnipileRequestOptions(),
+    throwOnError: false,
+    path: { account_id: accountId },
+  });
 
-    throw error;
+  if (error !== undefined && response.status !== 404) {
+    throw new Error(
+      `Unipile account ${accountId} removal failed with ${response.status}: ${JSON.stringify(error)}`,
+    );
   }
 };

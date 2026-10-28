@@ -419,6 +419,7 @@ __metadata:
     "@sniptt/guards": "npm:^0.2.0"
     "@types/node": "npm:^24.7.2"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
+    "@unipile/sdk": "npm:^2.59.0"
     oxlint: "npm:^0.16.0"
     twenty-client-sdk: "portal:../../../twenty-client-sdk"
     twenty-sdk: "portal:../../../twenty-sdk"
@@ -564,6 +565,13 @@ __metadata:
   bin:
     tsgo: bin/tsgo
   checksum: 10c0/42c527da5c4d61884e50591dba0a37e6d98f992e355037213f2039d606dd9fddfbacee308d40b4f3b4cfa06f79b07b7e86b45b92a83a9e60741f65e07a031982
+  languageName: node
+  linkType: hard
+
+"@unipile/sdk@npm:^2.59.0":
+  version: 2.59.0
+  resolution: "@unipile/sdk@npm:2.59.0"
+  checksum: 10c0/d616ef89b2dc8978c39463ae9960084eea59a6721b3e91c669cacb151bc287e83d93e84a53d4f07225e610fd25ba277fcbb519af5d3102c7b60588e74b73dfe7
   languageName: node
   linkType: hard
 
