@@ -4,6 +4,8 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+import * as esbuild from 'esbuild';
+
 import { enumerateSharedDependenciesExportNames } from 'twenty-shared/front-component-build';
 
 jest.useRealTimers();
@@ -77,5 +79,24 @@ throw new Error('must not execute');`,
         },
       }),
     ).rejects.toBe(error);
+  });
+
+  it('rejects incomplete input metadata instead of returning partial exports', async () => {
+    await writeFile(join(appPath, 'index.cjs'), 'exports.example = true;');
+
+    await expect(
+      enumerateSharedDependenciesExportNames({
+        appPath,
+        specifier: './index.cjs',
+        build: async (options) => {
+          const result = await esbuild.build({ ...options, metafile: true });
+
+          return {
+            ...result,
+            metafile: { ...result.metafile, inputs: {} },
+          };
+        },
+      }),
+    ).rejects.toThrow('Missing dependency input metadata for "index.cjs".');
   });
 });

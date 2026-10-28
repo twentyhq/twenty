@@ -45,18 +45,24 @@ export const enumerateSharedDependenciesExportNames = async ({
     isDefined(entry.entryPoint),
   );
 
-  if (!isDefined(output?.entryPoint))
+  if (!isDefined(output?.entryPoint)) {
     throw new Error('Missing dependency entry point.');
+  }
 
   const exports = new Set(output.exports);
   const visited = new Set<string>();
   const collectReexportedNames = async (path: string): Promise<void> => {
-    if (visited.has(path)) return;
+    if (visited.has(path)) {
+      return;
+    }
     visited.add(path);
 
     const input = result.metafile?.inputs[path];
 
-    if (!isDefined(input)) return;
+    if (!isDefined(input)) {
+      throw new Error(`Missing dependency input metadata for "${path}".`);
+    }
+
     const source = await readFile(resolve(appPath, path), 'utf8');
     let reexports: string[];
 
@@ -70,7 +76,9 @@ export const enumerateSharedDependenciesExportNames = async ({
       const parsed = parse(transformed.code);
 
       for (const name of parsed.exports) {
-        if (name !== '__esModule') exports.add(name);
+        if (name !== '__esModule') {
+          exports.add(name);
+        }
       }
       reexports = parsed.reexports;
     } else {
@@ -79,14 +87,18 @@ export const enumerateSharedDependenciesExportNames = async ({
         source,
         ts.ScriptTarget.Latest,
       );
-      reexports = sourceFile.statements.flatMap((statement) =>
-        ts.isExportDeclaration(statement) &&
-        !isDefined(statement.exportClause) &&
-        isDefined(statement.moduleSpecifier) &&
-        ts.isStringLiteral(statement.moduleSpecifier)
-          ? [statement.moduleSpecifier.text]
-          : [],
-      );
+      reexports = sourceFile.statements.flatMap((statement) => {
+        if (
+          !ts.isExportDeclaration(statement) ||
+          isDefined(statement.exportClause) ||
+          !isDefined(statement.moduleSpecifier) ||
+          !ts.isStringLiteral(statement.moduleSpecifier)
+        ) {
+          return [];
+        }
+
+        return [statement.moduleSpecifier.text];
+      });
     }
 
     for (const reexport of reexports) {
@@ -94,12 +106,16 @@ export const enumerateSharedDependenciesExportNames = async ({
         (entry) => entry.original === reexport && !entry.external,
       );
 
-      if (isDefined(imported)) await collectReexportedNames(imported.path);
+      if (isDefined(imported)) {
+        await collectReexportedNames(imported.path);
+      }
     }
   };
 
   // The virtual JSX wrapper declares all of its exports in the build metadata.
-  if (!isWrappedJsxRuntime) await collectReexportedNames(output.entryPoint);
+  if (!isWrappedJsxRuntime) {
+    await collectReexportedNames(output.entryPoint);
+  }
 
   return {
     namedExports: [...exports].filter((name) => name !== 'default').sort(),
