@@ -75,8 +75,8 @@ export type {
 } from './command';
 
 export { sendInboxMessage } from '@/sdk/inbox/send-inbox-message';
-export { formatInboxMention } from '@/sdk/inbox/mentions/format-inbox-mention';
-export { formatInboxRecordReference } from '@/sdk/inbox/mentions/format-inbox-record-reference';
+export { inboxMention } from '@/sdk/inbox/mentions/inbox-mention';
+export { inboxReferenceRecord } from '@/sdk/inbox/mentions/inbox-reference-record';
 export { INBOX_ASSISTANT_MENTION } from '@/sdk/inbox/mentions/inbox-assistant-mention';
 export type { SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';
 export type { SendInboxMessageResult } from 'twenty-shared/application';

@@ -65,20 +65,16 @@ The inbox renders reference tokens in `text` as chips. Write them with these hel
 
 ```ts src/logic-functions/flag-idle-deal.ts
 import {
-  formatInboxMention,
-  formatInboxRecordReference,
+  inboxMention,
+  inboxReferenceRecord,
   sendInboxMessage,
 } from 'twenty-sdk/logic-function';
 
-const ownerMention = formatInboxMention({
-  workspaceMemberId: owner.id,
-  label: owner.name.firstName,
-});
+const ownerMention = await inboxMention({ workspaceMemberId: owner.id });
 
-const dealReference = formatInboxRecordReference({
+const dealReference = await inboxReferenceRecord({
   objectNameSingular: 'opportunity',
   recordId: opportunity.id,
-  label: opportunity.name,
 });
 
 await sendInboxMessage({
@@ -90,8 +86,9 @@ await sendInboxMessage({
 });
 ```
 
-- `formatInboxMention({ workspaceMemberId, label })` writes a mention of a workspace member, and `formatInboxRecordReference({ objectNameSingular, recordId, label })` a chip that links to any record.
-- The inbox shows `label` as written, so pass the name members know. Both helpers throw on an empty label, and on one with brackets or line breaks, rather than write a chip the inbox cannot render.
+- `inboxMention({ workspaceMemberId })` writes a mention of a workspace member, and `inboxReferenceRecord({ objectNameSingular, recordId })` a chip that links to any record.
+- Both read the label the chip shows, as the composer does: the member's full name, or their email when the name is empty, and the record's label identifier, such as a company name. Brackets become parentheses and line breaks become spaces, so the chip always renders.
+- They read with the same access as the rest of the call, so that access needs to reach the member or record. A record reference makes two requests, one for the object's label field and one for the record.
 - A mention only renders. It does not add the member to the conversation or notify them, so list everyone who should receive the message in `workspaceMemberIds`.
 - `INBOX_ASSISTANT_MENTION` is the text the composer writes when a member mentions the assistant (`@Ada`), so your messages name it the same way.
 

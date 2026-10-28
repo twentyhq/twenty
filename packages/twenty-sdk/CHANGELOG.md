@@ -46,12 +46,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   await navigate(AppPath.AiChatInbox, { threadId });
   ```
 
-- **Inbox mention helpers in `twenty-sdk/logic-function` and `twenty-sdk/front-component`.** `formatInboxMention({ workspaceMemberId, label })` and `formatInboxRecordReference({ objectNameSingular, recordId, label })` write the tokens the inbox renders as chips, and throw on a label the inbox cannot render: an empty one, or one with brackets or line breaks. `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
+- **Inbox mention helpers in `twenty-sdk/logic-function` and `twenty-sdk/front-component`.** `inboxMention({ workspaceMemberId })` and `inboxReferenceRecord({ objectNameSingular, recordId })` write the tokens the inbox renders as chips, labeled like the composer labels them: the member's full name, or the record's label identifier. `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
 
   ```ts
-  import { formatInboxMention } from 'twenty-sdk/logic-function';
+  import { inboxMention } from 'twenty-sdk/logic-function';
 
-  const text = `${formatInboxMention({ workspaceMemberId, label: 'Jane' })}, the report is ready.`;
+  const text = `${await inboxMention({ workspaceMemberId })}, the report is ready.`;
   ```
 
 - **`useSelectedRecordsFilter` in `twenty-sdk/front-component`.** Returns a record filter matching exactly the records the user selected, or `null` when there is no selection context. Under Select all, `useSelectedRecordIds()` is empty because the selection is defined by the view's filters, search and unticked rows; query the records with this filter, or pass it to a logic function. Twenty servers that predate it return `null`.
