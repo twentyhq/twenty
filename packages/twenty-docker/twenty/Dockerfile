@@ -2,7 +2,12 @@
 # Base image
 # ===========================================================================
 
-FROM node:24.22.1-alpine3.23@sha256:0468540aa58203ff9e40c2aab3907c52644ab818af6176b1c70a026137dc92a2 AS node-base
+FROM node:26.12.1-alpine3.23@sha256:bc2b334006f15c7167bbeb2f08f28c2df883f7594a0470e04454ebe7560cfe68 AS node-base
+
+# Node 26 images no longer bundle Yarn; run the release pinned in .yarnrc.yml.
+RUN printf '%s\n' '#!/bin/sh' 'exec node "/app/$(sed -n "s/^yarnPath: //p" /app/.yarnrc.yml)" "$@"' \
+      > /usr/local/bin/yarn && \
+    chmod +x /usr/local/bin/yarn
 
 # ===========================================================================
 # Dependency stages
@@ -143,7 +148,7 @@ LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
 
 # Remove unused, unpatchable components the scanner flags (none are executed at
 # runtime, and none can be fixed by upgrading our deps or Node):
-#  - the bundled npm CLI: the app uses yarn via corepack and never invokes npm,
+#  - the bundled npm CLI: the app uses yarn (see node-base) and never invokes npm,
 #    and npm's bundled ip-address has no patched release;
 #  - example/ apps vendored inside dependencies, e.g. passport-microsoft's
 #    example/login ships a package-lock.json for an old Express demo
@@ -151,11 +156,6 @@ LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
 #  - the Node dev headers: only node-gyp needs them and native addons are
 #    compiled in the build stages; their vendored openssl/opensslv.h is what
 #    scanners fingerprint whenever OpenSSL patches ahead of Node releases.
-# The pinned node:24.22.1-alpine base carries the October 2026 security fixes.
-# Do not pin below 24.18.0: 24.17.0's http.Agent keep-alive regression
-# (nodejs/node#64004) flooded prod with false "Premature close" fetch failures.
-# Keep the base current when Node ships 24.x security releases; the scanner
-# flags the statically-linked node binary itself.
 RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx \
       /usr/local/include/node && \
     find /app/node_modules -type d -name example -prune -exec rm -rf {} +
