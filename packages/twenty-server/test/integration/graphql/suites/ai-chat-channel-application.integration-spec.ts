@@ -216,10 +216,13 @@ describe('Inbox channels managed by an application', () => {
   let channelReader: ApplicationUnderTest;
   let generalChannelId: string;
 
-  const createChannel = async (
-    input: Record<string, unknown>,
-    token: string,
-  ) => {
+  const createChannel = async ({
+    input,
+    token,
+  }: {
+    input: Record<string, unknown>;
+    token: string;
+  }) => {
     const response = await makeMetadataApiRequest(
       { query: CREATE_CHANNEL, variables: { input } },
       token,
@@ -233,32 +236,43 @@ describe('Inbox channels managed by an application', () => {
     return response;
   };
 
-  const createChannelOrThrow = async (
-    input: Record<string, unknown>,
-    token: string,
-  ): Promise<string> => {
-    const response = await createChannel(input, token);
+  const createChannelOrThrow = async ({
+    input,
+    token,
+  }: {
+    input: Record<string, unknown>;
+    token: string;
+  }): Promise<string> => {
+    const response = await createChannel({ input, token });
 
     assertGraphQLSuccessfulResponse(response);
 
     return response.body.data.createAgentChatChannel.id;
   };
 
-  const updateChannel = (
-    channelId: string,
-    input: Record<string, unknown>,
-    token: string,
-  ) =>
+  const updateChannel = ({
+    channelId,
+    input,
+    token,
+  }: {
+    channelId: string;
+    input: Record<string, unknown>;
+    token: string;
+  }) =>
     makeMetadataApiRequest(
       { query: UPDATE_CHANNEL, variables: { channelId, input } },
       token,
     );
 
-  const deleteChannel = (
-    channelId: string,
-    token: string,
-    destinationChannelId: string | null = null,
-  ) =>
+  const deleteChannel = ({
+    channelId,
+    token,
+    destinationChannelId = null,
+  }: {
+    channelId: string;
+    token: string;
+    destinationChannelId?: string | null;
+  }) =>
     makeMetadataApiRequest(
       {
         query: DELETE_CHANNEL,
@@ -304,7 +318,7 @@ describe('Inbox channels managed by an application', () => {
     }
 
     for (const channelId of createdChannelIds.splice(0)) {
-      await deleteChannel(channelId, APPLE_JANE_ADMIN_ACCESS_TOKEN);
+      await deleteChannel({ channelId, token: APPLE_JANE_ADMIN_ACCESS_TOKEN });
     }
 
     for (const { application } of [
@@ -319,10 +333,10 @@ describe('Inbox channels managed by an application', () => {
   }, 120_000);
 
   it('lists every channel to an application managing AI settings, accessible through its role only', async () => {
-    const channelId = await createChannelOrThrow(
-      { name: buildChannelName(), roleIds: [channelManager.roleId] },
-      channelManager.token,
-    );
+    const channelId = await createChannelOrThrow({
+      input: { name: buildChannelName(), roleIds: [channelManager.roleId] },
+      token: channelManager.token,
+    });
 
     const channels = await listChannels(channelManager.token);
 
@@ -338,14 +352,14 @@ describe('Inbox channels managed by an application', () => {
   });
 
   it('lists only the channels open to the role of an application without AI settings, and keeps their settings closed', async () => {
-    const openChannelId = await createChannelOrThrow(
-      { name: buildChannelName(), roleIds: [channelReader.roleId] },
-      APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    );
-    const closedChannelId = await createChannelOrThrow(
-      { name: buildChannelName() },
-      APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    );
+    const openChannelId = await createChannelOrThrow({
+      input: { name: buildChannelName(), roleIds: [channelReader.roleId] },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+    const closedChannelId = await createChannelOrThrow({
+      input: { name: buildChannelName() },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
 
     const channelIds = (await listChannels(channelReader.token)).map(
       ({ id }) => id,
@@ -359,10 +373,10 @@ describe('Inbox channels managed by an application', () => {
       { query: CHANNEL_ROLES },
       channelReader.token,
     );
-    const createResponse = await createChannel(
-      { name: buildChannelName() },
-      channelReader.token,
-    );
+    const createResponse = await createChannel({
+      input: { name: buildChannelName() },
+      token: channelReader.token,
+    });
 
     for (const response of [rolesResponse, createResponse]) {
       expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
@@ -389,18 +403,18 @@ describe('Inbox channels managed by an application', () => {
     const universalIdentifier = randomUUID();
     const name = buildChannelName();
 
-    const channelId = await createChannelOrThrow(
-      { name, universalIdentifier },
-      channelManager.token,
-    );
-    const repeatedResponse = await createChannel(
-      {
+    const channelId = await createChannelOrThrow({
+      input: { name, universalIdentifier },
+      token: channelManager.token,
+    });
+    const repeatedResponse = await createChannel({
+      input: {
         name: buildChannelName(),
         universalIdentifier: universalIdentifier.toUpperCase(),
         roleIds: [channelManager.roleId],
       },
-      channelManager.token,
-    );
+      token: channelManager.token,
+    });
 
     assertGraphQLSuccessfulResponse(repeatedResponse);
     expect(repeatedResponse.body.data.createAgentChatChannel).toMatchObject({
@@ -420,7 +434,10 @@ describe('Inbox channels managed by an application', () => {
 
     const responses = await Promise.all(
       [buildChannelName(), buildChannelName()].map((name) =>
-        createChannel({ name, universalIdentifier }, channelManager.token),
+        createChannel({
+          input: { name, universalIdentifier },
+          token: channelManager.token,
+        }),
       ),
     );
 
@@ -443,19 +460,19 @@ describe('Inbox channels managed by an application', () => {
   it('refuses the universal identifier of a channel another application owns', async () => {
     const universalIdentifier = randomUUID();
 
-    await createChannelOrThrow(
-      { name: buildChannelName(), universalIdentifier },
-      channelManager.token,
-    );
+    await createChannelOrThrow({
+      input: { name: buildChannelName(), universalIdentifier },
+      token: channelManager.token,
+    });
 
-    const otherApplicationResponse = await createChannel(
-      { name: buildChannelName(), universalIdentifier },
-      otherChannelManager.token,
-    );
-    const memberResponse = await createChannel(
-      { name: buildChannelName(), universalIdentifier },
-      APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    );
+    const otherApplicationResponse = await createChannel({
+      input: { name: buildChannelName(), universalIdentifier },
+      token: otherChannelManager.token,
+    });
+    const memberResponse = await createChannel({
+      input: { name: buildChannelName(), universalIdentifier },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
 
     for (const response of [otherApplicationResponse, memberResponse]) {
       expect(response.body.errors[0].extensions).toMatchObject({
@@ -466,17 +483,17 @@ describe('Inbox channels managed by an application', () => {
   });
 
   it('updates and deletes its own channel, keeping the access it adds as its own', async () => {
-    const channelId = await createChannelOrThrow(
-      { name: buildChannelName(), universalIdentifier: randomUUID() },
-      channelManager.token,
-    );
+    const channelId = await createChannelOrThrow({
+      input: { name: buildChannelName(), universalIdentifier: randomUUID() },
+      token: channelManager.token,
+    });
     const renamedName = buildChannelName();
 
-    const updateResponse = await updateChannel(
+    const updateResponse = await updateChannel({
       channelId,
-      { name: renamedName, roleIds: [channelManager.roleId] },
-      channelManager.token,
-    );
+      input: { name: renamedName, roleIds: [channelManager.roleId] },
+      token: channelManager.token,
+    });
 
     assertGraphQLSuccessfulResponse(updateResponse);
     expect(updateResponse.body.data.updateAgentChatChannel).toMatchObject({
@@ -492,33 +509,33 @@ describe('Inbox channels managed by an application', () => {
     ]);
 
     assertGraphQLSuccessfulResponse(
-      await deleteChannel(channelId, channelManager.token),
+      await deleteChannel({ channelId, token: channelManager.token }),
     );
     expect(await readChannelApplicationId(channelId)).toBeUndefined();
   });
 
   it('answers as if a channel it does not own did not exist', async () => {
-    const memberChannelId = await createChannelOrThrow(
-      { name: buildChannelName() },
-      APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    );
-    const otherApplicationChannelId = await createChannelOrThrow(
-      { name: buildChannelName() },
-      otherChannelManager.token,
-    );
+    const memberChannelId = await createChannelOrThrow({
+      input: { name: buildChannelName() },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+    const otherApplicationChannelId = await createChannelOrThrow({
+      input: { name: buildChannelName() },
+      token: otherChannelManager.token,
+    });
 
     const responses = await Promise.all([
       ...[memberChannelId, otherApplicationChannelId, generalChannelId].flatMap(
         (channelId) => [
-          updateChannel(
+          updateChannel({
             channelId,
-            { name: buildChannelName() },
-            channelManager.token,
-          ),
-          deleteChannel(channelId, channelManager.token),
+            input: { name: buildChannelName() },
+            token: channelManager.token,
+          }),
+          deleteChannel({ channelId, token: channelManager.token }),
         ],
       ),
-      deleteChannel(randomUUID(), channelManager.token),
+      deleteChannel({ channelId: randomUUID(), token: channelManager.token }),
     ]);
 
     for (const response of responses) {
@@ -531,25 +548,25 @@ describe('Inbox channels managed by an application', () => {
   });
 
   it('moves the chats of its deleted channel only to a channel its role can open', async () => {
-    const channelId = await createChannelOrThrow(
-      { name: buildChannelName(), roleIds: [channelManager.roleId] },
-      channelManager.token,
-    );
-    const destinationChannelId = await createChannelOrThrow(
-      { name: buildChannelName(), roleIds: [channelManager.roleId] },
-      channelManager.token,
-    );
+    const channelId = await createChannelOrThrow({
+      input: { name: buildChannelName(), roleIds: [channelManager.roleId] },
+      token: channelManager.token,
+    });
+    const destinationChannelId = await createChannelOrThrow({
+      input: { name: buildChannelName(), roleIds: [channelManager.roleId] },
+      token: channelManager.token,
+    });
     const threadId = await createThreadInChannel(channelId);
 
-    const withoutDestinationResponse = await deleteChannel(
+    const withoutDestinationResponse = await deleteChannel({
       channelId,
-      channelManager.token,
-    );
-    const closedDestinationResponse = await deleteChannel(
+      token: channelManager.token,
+    });
+    const closedDestinationResponse = await deleteChannel({
       channelId,
-      channelManager.token,
-      generalChannelId,
-    );
+      token: channelManager.token,
+      destinationChannelId: generalChannelId,
+    });
 
     expect(withoutDestinationResponse.body.errors[0].extensions).toMatchObject({
       code: 'CONFLICT',
@@ -562,11 +579,11 @@ describe('Inbox channels managed by an application', () => {
     expect(await readThreadChannelId(threadId)).toBe(channelId);
 
     assertGraphQLSuccessfulResponse(
-      await deleteChannel(
+      await deleteChannel({
         channelId,
-        channelManager.token,
+        token: channelManager.token,
         destinationChannelId,
-      ),
+      }),
     );
     expect(await readThreadChannelId(threadId)).toBe(destinationChannelId);
     expect(await readChannelGrants(threadId)).toEqual([
@@ -578,29 +595,29 @@ describe('Inbox channels managed by an application', () => {
     const workspaceCustomApplicationId =
       await findWorkspaceCustomApplicationId();
     const universalIdentifier = randomUUID();
-    const memberChannelId = await createChannelOrThrow(
-      { name: buildChannelName(), universalIdentifier },
-      APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    );
-    const repeatedMemberChannelId = await createChannelOrThrow(
-      { name: buildChannelName(), universalIdentifier },
-      APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    );
-    const applicationChannelId = await createChannelOrThrow(
-      { name: buildChannelName() },
-      channelManager.token,
-    );
+    const memberChannelId = await createChannelOrThrow({
+      input: { name: buildChannelName(), universalIdentifier },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+    const repeatedMemberChannelId = await createChannelOrThrow({
+      input: { name: buildChannelName(), universalIdentifier },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+    const applicationChannelId = await createChannelOrThrow({
+      input: { name: buildChannelName() },
+      token: channelManager.token,
+    });
 
     expect(repeatedMemberChannelId).toBe(memberChannelId);
     expect(await readChannelApplicationId(memberChannelId)).toBe(
       workspaceCustomApplicationId,
     );
 
-    const updateResponse = await updateChannel(
-      applicationChannelId,
-      { roleIds: [channelReader.roleId] },
-      APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    );
+    const updateResponse = await updateChannel({
+      channelId: applicationChannelId,
+      input: { roleIds: [channelReader.roleId] },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
 
     assertGraphQLSuccessfulResponse(updateResponse);
     expect(await readChannelRoleApplicationIds(applicationChannelId)).toEqual([
@@ -611,7 +628,10 @@ describe('Inbox channels managed by an application', () => {
     ]);
 
     assertGraphQLSuccessfulResponse(
-      await deleteChannel(applicationChannelId, APPLE_JANE_ADMIN_ACCESS_TOKEN),
+      await deleteChannel({
+        channelId: applicationChannelId,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      }),
     );
     expect(
       await readChannelApplicationId(applicationChannelId),
