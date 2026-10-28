@@ -13,6 +13,7 @@ local step = tonumber(ARGV[1])
 local chunkSize = tonumber(ARGV[2])
 local prefix = ARGV[3]
 local now = tonumber(ARGV[4])
+local graceMs = tonumber(ARGV[5])
 local ticketOffset = tonumber(ARGV[6])
 local scoreBase = 4294967296
 
@@ -98,7 +99,7 @@ if processed < chunkSize then
     cursor = 0
   elseif phase == 'd' then
     phase = 'g'
-    cursor = now + tonumber(ARGV[5])
+    cursor = now + graceMs
   else
     redis.call('DEL', KEYS[1])
 
