@@ -56,7 +56,8 @@ const StyledEditorContainer = styled.div<{
     height: 100%;
     line-height: var(--editor-line-height);
     overflow-wrap: anywhere;
-    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+    padding: var(--editor-padding);
+    white-space: pre-wrap;
 
     p.is-editor-empty:first-of-type:not([data-placeholder=''])::before {
       ${FORM_FIELD_PLACEHOLDER_STYLES}
@@ -175,6 +176,14 @@ const StyledEditorContainer = styled.div<{
       display: none;
     }
 
+    .toggle-block[data-open='false'] > .toggle-block-content > :first-child {
+      margin-bottom: 0;
+    }
+
+    .toggle-block-content > p:first-child {
+      padding-block: max(0px, (var(--editor-toggle-row-height) - 1lh) / 2);
+    }
+
     .toggle-block-add-button {
       background: none;
       border: none;
@@ -218,6 +227,7 @@ const StyledEditorContainer = styled.div<{
 
       & > :is(ul, ol) {
         --editor-parent-list-offset: var(--editor-list-item-offset);
+        margin-top: var(--editor-nested-list-spacing);
       }
     }
 
@@ -247,7 +257,7 @@ const StyledEditorContainer = styled.div<{
       border-radius: ${themeCssVariables.border.radius.md};
       margin: 0 0 var(--editor-block-spacing);
       overflow-x: auto;
-      padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+      padding: var(--editor-code-block-padding);
 
       code {
         background-color: transparent;
@@ -269,6 +279,13 @@ const StyledEditorContainer = styled.div<{
           user-select: none;
         }
 
+        & > label > input {
+          height: var(--editor-task-checkbox-height);
+          margin: var(--editor-task-checkbox-margin);
+          vertical-align: var(--editor-task-checkbox-vertical-align);
+          width: var(--editor-task-checkbox-width);
+        }
+
         & > div {
           flex: 1 1 auto;
           min-width: 0;
@@ -276,6 +293,11 @@ const StyledEditorContainer = styled.div<{
 
         & > div > p {
           margin: 0;
+          min-height: var(--editor-task-checkbox-height);
+        }
+
+        & > div > :is(ul, ol) {
+          margin-top: var(--editor-nested-list-spacing);
         }
       }
 
@@ -288,8 +310,7 @@ const StyledEditorContainer = styled.div<{
     .tableWrapper {
       margin: 0 0 var(--editor-block-spacing);
       overflow-x: auto;
-      padding: 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]}
-        0;
+      padding: var(--editor-table-wrapper-padding);
     }
 
     table {
@@ -302,7 +323,7 @@ const StyledEditorContainer = styled.div<{
         border: 1px solid ${themeCssVariables.border.color.medium};
         box-sizing: border-box;
         min-width: 1em;
-        padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+        padding: var(--editor-table-cell-padding);
         position: relative;
         vertical-align: top;
 
@@ -405,6 +426,13 @@ const StyledEditorContainer = styled.div<{
       border-left: none;
       border-right: none;
       border-top: 1px solid ${themeCssVariables.border.color.medium};
+      margin: var(--editor-divider-spacing) 0;
+
+      & + .block-divider {
+        margin-top: calc(
+          2 * var(--editor-divider-spacing) - var(--editor-block-spacing)
+        );
+      }
 
       &.ProseMirror-selectednode {
         box-shadow: 0 0 0 ${themeCssVariables.spacing[2]}
@@ -455,7 +483,7 @@ const StyledEditorContainer = styled.div<{
     }
 
     :is(h1, h2, h3, h4, h5, h6):first-child {
-      margin-top: 0;
+      margin-top: var(--editor-heading-first-spacing-top);
     }
 
     :is(
