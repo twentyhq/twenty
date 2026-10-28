@@ -34,7 +34,6 @@
     "@types/qs": "6.9.16",
     "chokidar": "^3.6.0",
     "tmp": "^0.2.7",
-    "@angular-devkit/core": "19.2.24",
     "yeoman-environment": "6.0.1",
     "googleapis/googleapis-common": "8.0.1",
     "@cyntler/react-doc-viewer/ajv": "8.20.0",
