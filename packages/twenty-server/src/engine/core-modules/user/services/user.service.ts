@@ -592,6 +592,10 @@ export class UserService {
         workspace,
       );
 
+    await this.emailVerificationService.deleteExistingTokenOrThrowDuringCooldown(
+      { userId: user.id },
+    );
+
     await this.emailVerificationService.sendVerificationEmail({
       userId: user.id,
       email: normalizedEmail,
