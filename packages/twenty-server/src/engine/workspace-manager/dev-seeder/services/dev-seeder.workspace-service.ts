@@ -62,7 +62,6 @@ import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } f
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { runWithDeferredWorkspaceMigrationActionsMode } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/storage/deferred-workspace-migration-actions-mode.storage';
 
 @Injectable()
 export class DevSeederWorkspaceService {
@@ -98,18 +97,6 @@ export class DevSeederWorkspaceService {
     workspaceId: SeededWorkspacesIds,
     options?: { light?: boolean },
   ): Promise<void> {
-    await runWithDeferredWorkspaceMigrationActionsMode('IN_PROCESS', () =>
-      this.seedDevWorkspace({ workspaceId, options }),
-    );
-  }
-
-  private async seedDevWorkspace({
-    workspaceId,
-    options,
-  }: {
-    workspaceId: SeededWorkspacesIds;
-    options?: { light?: boolean };
-  }): Promise<void> {
     const light = options?.light ?? false;
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';

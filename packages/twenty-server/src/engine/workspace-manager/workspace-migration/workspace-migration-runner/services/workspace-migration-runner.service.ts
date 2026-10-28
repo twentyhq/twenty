@@ -31,9 +31,9 @@ import { SCHEMA_AFFECTING_WORKSPACE_MIGRATION_METADATA_NAMES } from 'src/engine/
 import { isSchemaAffectingWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-schema-affecting-workspace-migration.util';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
-import { getDeferredWorkspaceMigrationActionsMode } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/storage/deferred-workspace-migration-actions-mode.storage';
 import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
+import { getDefaultShouldDeferWorkspaceMigrationActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/default-should-defer-workspace-migration-actions.util';
 import { getMetadataNamesToLoadForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-metadata-names-to-load-for-workspace-migration.util';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 
@@ -179,6 +179,7 @@ export class WorkspaceMigrationRunnerService {
   run = async (args: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
+    shouldDeferActions?: boolean;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
@@ -240,9 +241,11 @@ export class WorkspaceMigrationRunnerService {
   private executeRun = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
+    shouldDeferActions: shouldDeferActionsOverride,
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
+    shouldDeferActions?: boolean;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
@@ -369,7 +372,9 @@ export class WorkspaceMigrationRunnerService {
     const shouldDeferActions =
       featureFlagsMap[
         FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
-      ] && getDeferredWorkspaceMigrationActionsMode() === 'DEFERRED';
+      ] &&
+      (shouldDeferActionsOverride ??
+        getDefaultShouldDeferWorkspaceMigrationActions());
 
     this.logger.perfTime('Runner', 'Transaction execution');
 

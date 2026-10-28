@@ -16,7 +16,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
-import { runWithDeferredWorkspaceMigrationActionsMode } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/storage/deferred-workspace-migration-actions-mode.storage';
 
 @Injectable()
 export class WorkspaceManagerService {
@@ -36,16 +35,7 @@ export class WorkspaceManagerService {
     private readonly applicationService: ApplicationService,
   ) {}
 
-  public async init(args: {
-    workspace: WorkspaceEntity;
-    userId: string;
-  }): Promise<void> {
-    await runWithDeferredWorkspaceMigrationActionsMode('IN_PROCESS', () =>
-      this.initWorkspace(args),
-    );
-  }
-
-  private async initWorkspace({
+  public async init({
     workspace,
     userId,
   }: {
