@@ -97,7 +97,10 @@ export class LambdaLayerManagerService {
     }
 
     return this.buildDepsLayer({
-      layerName: this.getDepsLayerName(flatApplication),
+      layerName: getLambdaDepsLayerName({
+        flatApplication,
+        namespace: this.options.resourceNamespace,
+      }),
       dependencies: await this.getVerifiedDependencies(flatApplication),
     });
   }
@@ -122,7 +125,10 @@ export class LambdaLayerManagerService {
 
     return [
       workspaceCustomDepsLayerName,
-      this.getDepsLayerName(flatApplication),
+      getLambdaDepsLayerName({
+        flatApplication,
+        namespace: this.options.resourceNamespace,
+      }),
     ].filter(isDefined);
   }
 
@@ -285,13 +291,6 @@ export class LambdaLayerManagerService {
         : undefined;
 
       return isDefined(layerName) && depsLayerNames.includes(layerName);
-    });
-  }
-
-  private getDepsLayerName(flatApplication: FlatApplication): string {
-    return getLambdaDepsLayerName({
-      flatApplication,
-      namespace: this.options.resourceNamespace,
     });
   }
 
