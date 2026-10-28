@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
-import { moveAgentChatChannelThreadsToGeneral } from 'src/engine/metadata-modules/ai/ai-chat/utils/move-agent-chat-channel-threads-to-general.util';
 import {
   FlatDeleteAgentChatChannelAction,
   UniversalDeleteAgentChatChannelAction,
@@ -41,12 +40,6 @@ export class DeleteAgentChatChannelActionHandlerService extends WorkspaceMigrati
     await agentChatChannelRepository.delete({
       id: flatAction.entityId,
       workspaceId,
-    });
-
-    await moveAgentChatChannelThreadsToGeneral({
-      manager: queryRunner.manager,
-      workspaceId,
-      channelId: flatAction.entityId,
     });
   }
 

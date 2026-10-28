@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isDefined, removeUndefinedFields } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isNonEmptyArray,
+  removeUndefinedFields,
+} from 'twenty-shared/utils';
+import { DataSource } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -12,6 +18,8 @@ import { findAgentChatChannelRoleUniversalIdentifiersOrThrow } from 'src/engine/
 import { findFlatAgentChatChannelOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-flat-agent-chat-channel-or-throw.util';
 import { validateAgentChatChannelNameOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/validate-agent-chat-channel-name-or-throw.util';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
+import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
+import { replaceAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-agent-chat-channel-rule-grants.util';
 import { type FlatAgentChatChannelRole } from 'src/engine/metadata-modules/flat-agent-chat-channel-role/types/flat-agent-chat-channel-role.type';
 import { type FlatAgentChatChannel } from 'src/engine/metadata-modules/flat-agent-chat-channel/types/flat-agent-chat-channel.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -42,6 +50,8 @@ type ChannelMaps = Pick<
 @Injectable()
 export class AgentChatChannelMetadataService {
   constructor(
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -285,6 +295,92 @@ export class AgentChatChannelMetadataService {
     return addRoleIdsToFlatAgentChatChannel({
       channel,
       flatAgentChatChannelRoleMaps,
+    });
+  }
+
+  // Migrations cannot change an entity's application, hence the direct writes
+  async transferApplicationChannelsToWorkspace({
+    workspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<void> {
+    const workspaceCustomFlatApplication =
+      await this.findWorkspaceCustomFlatApplication(workspaceId);
+
+    const transferredChannelIds = await this.coreDataSource.transaction(
+      async (manager) => {
+        const transferredChannels = await manager.query<{ id: string }[]>(
+          `WITH transferred_channel AS (
+             UPDATE core."agentChatChannel"
+             SET "applicationId" = $3, "updatedAt" = now()
+             WHERE "workspaceId" = $1 AND "applicationId" = $2
+             RETURNING id
+           )
+           SELECT id FROM transferred_channel`,
+          [workspaceId, applicationId, workspaceCustomFlatApplication.id],
+        );
+        const channelIds = transferredChannels.map(({ id }) => id);
+
+        if (!isNonEmptyArray(channelIds)) {
+          return channelIds;
+        }
+
+        await acquireAgentChatChannelGrantLocks({
+          manager,
+          workspaceId,
+          channelIds,
+          mode: 'exclusive',
+        });
+
+        await manager.query(
+          `DELETE FROM core."agentChatChannelRole" channel_role
+           USING core."role" application_role
+           WHERE channel_role."workspaceId" = $1
+             AND channel_role."channelId" = ANY($2::uuid[])
+             AND application_role.id = channel_role."roleId"
+             AND application_role."applicationId" = $3`,
+          [workspaceId, channelIds, applicationId],
+        );
+
+        await manager.query(
+          `UPDATE core."agentChatChannelRole"
+           SET "applicationId" = $4, "updatedAt" = now()
+           WHERE "workspaceId" = $1
+             AND "channelId" = ANY($2::uuid[])
+             AND "applicationId" = $3`,
+          [
+            workspaceId,
+            channelIds,
+            applicationId,
+            workspaceCustomFlatApplication.id,
+          ],
+        );
+
+        for (const channelId of channelIds) {
+          await replaceAgentChatChannelRuleGrants({
+            manager,
+            workspaceId,
+            scope: { channelId },
+          });
+        }
+
+        return channelIds;
+      },
+    );
+
+    if (!isNonEmptyArray(transferredChannelIds)) {
+      return;
+    }
+
+    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: [
+        'flatAgentChatChannelMaps',
+        'flatAgentChatChannelRoleMaps',
+        'flatRoleMaps',
+      ],
     });
   }
 

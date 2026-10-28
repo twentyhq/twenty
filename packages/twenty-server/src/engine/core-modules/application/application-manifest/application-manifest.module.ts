@@ -16,6 +16,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationTranslationModule } from 'src/engine/core-modules/application/application-translation/application-translation.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
+import { AgentChatChannelModule } from 'src/engine/metadata-modules/agent-chat-channel/agent-chat-channel.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
@@ -26,6 +27,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 @Module({
   imports: [
     TypeOrmModule.forFeature([ApplicationEntity, FrontComponentEntity]),
+    AgentChatChannelModule,
     ApplicationLookupModule,
     ApplicationModule,
     ApplicationHealthModule,
