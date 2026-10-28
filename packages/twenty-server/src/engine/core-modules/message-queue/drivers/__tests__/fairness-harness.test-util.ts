@@ -307,12 +307,7 @@ const createRedisClientDouble = (redis: Redis): RedisClientDouble => ({
 
 type EnqueueInput = { label: string; workspaceId?: string } & Pick<
   QueueJobOptions,
-  | 'groupKeys'
-  | 'priority'
-  | 'delay'
-  | 'id'
-  | 'retryLimit'
-  | 'backoff'
+  'groupKeys' | 'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff'
 >;
 
 export const createFairnessHarness = async ({
