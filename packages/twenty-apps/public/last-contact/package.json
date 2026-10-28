@@ -31,7 +31,7 @@
     "react-dom": "^19.0.0",
     "twenty-client-sdk": "2.42.0",
     "twenty-sdk": "2.42.0",
-    "twenty-ui": "^2.41.0",
+    "twenty-ui": "^2.51.3",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.1.12"

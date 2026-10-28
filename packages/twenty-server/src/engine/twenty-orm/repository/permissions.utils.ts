@@ -17,8 +17,6 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { validateWritabilityOrThrow } from 'src/engine/twenty-orm/repository/validate-writability-or-throw.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
@@ -40,7 +38,6 @@ type ValidateOperationIsPermittedOrThrowArgs = {
   objectIdByNameSingular: Record<string, string>;
   selectedColumns: string[];
   updatedColumns: string[];
-  authContext?: WorkspaceAuthContext;
   featureFlagsMap?: Partial<Record<FeatureFlagKey, boolean>>;
 };
 
@@ -53,7 +50,6 @@ export const validateOperationIsPermittedOrThrow = ({
   objectIdByNameSingular,
   selectedColumns,
   updatedColumns,
-  authContext,
   featureFlagsMap = {},
 }: ValidateOperationIsPermittedOrThrowArgs) => {
   const objectMetadataIdForEntity = objectIdByNameSingular[entityName];
@@ -81,15 +77,6 @@ export const validateOperationIsPermittedOrThrow = ({
     objectMetadata,
     flatFieldMetadataMaps,
   );
-
-  validateWritabilityOrThrow({
-    operationType,
-    objectMetadata,
-    updatedColumns,
-    columnNameToFieldMetadataIdMap,
-    flatFieldMetadataMaps,
-    authContext,
-  });
 
   const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
 
