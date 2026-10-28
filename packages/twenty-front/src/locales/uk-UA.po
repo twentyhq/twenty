@@ -12208,11 +12208,6 @@ msgstr "Не вдалося вийти з цього пристрою"
 msgid "Failed to merge records"
 msgstr "Не вдалося об'єднати записи"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "Не вдалося об’єднати записи. Будь ласка, спробуйте ще раз."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"

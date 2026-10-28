@@ -12208,11 +12208,6 @@ msgstr "خروج از این دستگاه ناموفق بود"
 msgid "Failed to merge records"
 msgstr "ادغام رکوردها ناموفق بود"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "ادغام رکوردها ناموفق بود. لطفاً دوباره تلاش کنید."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"

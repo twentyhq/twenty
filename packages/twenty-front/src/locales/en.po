@@ -12203,11 +12203,6 @@ msgstr "Failed to log out this device"
 msgid "Failed to merge records"
 msgstr "Failed to merge records"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "Failed to merge records. Please try again."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"

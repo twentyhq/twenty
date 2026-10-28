@@ -12208,11 +12208,6 @@ msgstr "Kon nie van hierdie toestel afmeld nie"
 msgid "Failed to merge records"
 msgstr "Kon nie rekords saamvoeg nie"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "Kon nie rekords saamvoeg nie. Probeer asseblief weer."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"

@@ -12208,11 +12208,6 @@ msgstr "Kunne ikke logge denne enhed ud"
 msgid "Failed to merge records"
 msgstr "Kunne ikke sammenflette poster"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "Kunne ikke flette poster. Prøv venligst igen."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"

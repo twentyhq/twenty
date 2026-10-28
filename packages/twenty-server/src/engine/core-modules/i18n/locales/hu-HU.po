@@ -13589,6 +13589,11 @@ msgstr "Nincs korábbi bevezetési lépés, amelyre vissza lehetne lépni."
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Ezeket a mezőket nem lehet frissíteni, amíg a munkaterület nincs aktiválva: {fieldsList}."
 
+#. js-lingui-id: 4RZeZG
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "These records hold data in fields your role cannot see. Ask someone with access to those fields to merge them."
+msgstr ""
+
 #. js-lingui-id: YZk5x6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "These two relation fields do not point to the same object"

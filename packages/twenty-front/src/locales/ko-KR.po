@@ -12208,11 +12208,6 @@ msgstr "이 기기에서 로그아웃하지 못했습니다."
 msgid "Failed to merge records"
 msgstr "레코드 병합 실패"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "레코드 병합에 실패했습니다. 다시 시도해 주세요."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"

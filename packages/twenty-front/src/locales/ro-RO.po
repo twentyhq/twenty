@@ -12208,11 +12208,6 @@ msgstr "Deconectarea acestui dispozitiv a eșuat"
 msgid "Failed to merge records"
 msgstr "Îmbinarea înregistrărilor a eșuat"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "Nu s-a reușit îmbinarea înregistrărilor. Vă rugăm să încercați din nou."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"
