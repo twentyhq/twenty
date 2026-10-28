@@ -17,7 +17,11 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Fragment, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -40,6 +44,10 @@ const StyledEmptyState = styled.div`
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledWorkspaceTableBody = styled(TableBody)`
+  padding: ${themeCssVariables.spacing[1]} 0;
 `;
 
 const RECENT_USERS_GRID_TEMPLATE_COLUMNS = '1fr 2fr 1fr 36px';
@@ -92,14 +100,10 @@ export const SettingsAdminGeneral = () => {
           totalUsers: currentWorkspace.workspaceMembersCount ?? 0,
         }
       : undefined);
-  const workspaces = isDefined(pinnedWorkspace)
-    ? [
-        pinnedWorkspace,
-        ...topWorkspaces.filter(
-          (workspace) => workspace.id !== pinnedWorkspace.id,
-        ),
-      ]
-    : topWorkspaces;
+  const workspaceGroups = [
+    isDefined(pinnedWorkspace) ? [pinnedWorkspace] : [],
+    topWorkspaces.filter((workspace) => workspace.id !== pinnedWorkspace?.id),
+  ].filter(isNonEmptyArray);
 
   return (
     <>
@@ -235,7 +239,7 @@ export const SettingsAdminGeneral = () => {
           </StyledSearchInputContainer>
           {isLoadingWorkspaces ? (
             <SettingsSectionSkeletonLoader />
-          ) : workspaces.length === 0 ? (
+          ) : workspaceGroups.length === 0 ? (
             <StyledEmptyState>
               {t`No workspaces found matching your search criteria.`}
             </StyledEmptyState>
@@ -248,48 +252,51 @@ export const SettingsAdminGeneral = () => {
                 <TableHeader align="right">{t`Users`}</TableHeader>
                 <TableHeader />
               </TableRow>
-              <TableBody>
-                {workspaces.map((workspace, workspaceIndex) => (
-                  <Fragment key={workspace.id}>
-                    <TableRow
-                      gridTemplateColumns={TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS}
-                      to={getSettingsPath(
-                        SettingsPath.AdminPanelWorkspaceDetail,
-                        { workspaceId: workspace.id },
-                      )}
-                    >
-                      <TableCell
-                        color={themeCssVariables.font.color.primary}
-                        gap={themeCssVariables.spacing[2]}
-                        overflow="hidden"
+              {workspaceGroups.map((workspaces, workspaceGroupIndex) => (
+                <Fragment key={workspaces[0].id}>
+                  {workspaceGroupIndex > 0 && <Separator />}
+                  <StyledWorkspaceTableBody>
+                    {workspaces.map((workspace) => (
+                      <TableRow
+                        key={workspace.id}
+                        gridTemplateColumns={
+                          TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS
+                        }
+                        to={getSettingsPath(
+                          SettingsPath.AdminPanelWorkspaceDetail,
+                          { workspaceId: workspace.id },
+                        )}
                       >
-                        <Avatar
-                          src={getAbsoluteImageUrl(workspace.logoUrl)}
-                          name={workspace.name || ''}
-                          colorSeed={workspace.id}
-                          size="md"
-                        />
-                        <OverflowingTextWithTooltip
-                          text={workspace.name || '\u2014'}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        {formatNumber(workspace.totalUsers)}
-                      </TableCell>
-                      <TableCell align="center">
-                        <IconChevronRight
-                          size={theme.icon.size.md}
-                          stroke={theme.icon.stroke.sm}
-                          color={theme.font.color.tertiary}
-                        />
-                      </TableCell>
-                    </TableRow>
-                    {isDefined(pinnedWorkspace) &&
-                      workspaceIndex === 0 &&
-                      workspaces.length > 1 && <Separator />}
-                  </Fragment>
-                ))}
-              </TableBody>
+                        <TableCell
+                          color={themeCssVariables.font.color.primary}
+                          gap={themeCssVariables.spacing[2]}
+                          overflow="hidden"
+                        >
+                          <Avatar
+                            src={getAbsoluteImageUrl(workspace.logoUrl)}
+                            name={workspace.name || ''}
+                            colorSeed={workspace.id}
+                            size="md"
+                          />
+                          <OverflowingTextWithTooltip
+                            text={workspace.name || '\u2014'}
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          {formatNumber(workspace.totalUsers)}
+                        </TableCell>
+                        <TableCell align="center">
+                          <IconChevronRight
+                            size={theme.icon.size.md}
+                            stroke={theme.icon.stroke.sm}
+                            color={theme.font.color.tertiary}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </StyledWorkspaceTableBody>
+                </Fragment>
+              ))}
             </Table>
           )}
         </Section.Root>
