@@ -89,8 +89,7 @@ export class WorkspaceCommandRunnerService {
     }
   }
 
-  // The worker may not be running during an upgrade, and the next schema
-  // change is rejected while index builds or foreign key checks are queued.
+  // No worker may run during upgrades, and queued schema actions block the next command.
   private async runPendingDeferredActions({
     workspaceId,
     options,
