@@ -602,9 +602,10 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     assertMutationNotOnRemoteObject(flatObjectMetadata);
 
-    if (!isDefined(flatObjectMetadata.duplicateCriteria)) {
+    // Merge deletes through the repository, so it would bypass the delete and update hooks guarding system objects.
+    if (flatObjectMetadata.isSystem) {
       throw new CommonQueryRunnerException(
-        `Merge is only available for objects with duplicate criteria. Object '${flatObjectMetadata.nameSingular}' does not have duplicate criteria defined.`,
+        `Merge is not available on system object '${flatObjectMetadata.nameSingular}'.`,
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: msg`This type of record cannot be merged.` },
       );

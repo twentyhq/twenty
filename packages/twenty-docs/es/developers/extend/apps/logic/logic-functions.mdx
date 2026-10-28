@@ -1040,7 +1040,7 @@ const { createCompany } = await client.mutation({
   },
 });
 
-// Only on an object whose readability is PRIVATE: choose who can read the created record
+// Only on an object whose records are private: choose who can read the created record
 const { createContract } = await client.mutation({
   createContract: {
     __args: {
@@ -1059,7 +1059,7 @@ const { createContract } = await client.mutation({
 });
 ```
 
-`shareWith` solo importa en un objeto cuya legibilidad sea `PRIVATE`; todos los objetos son `OPEN` de forma predeterminada y, en un objeto `OPEN`, se ignora el argumento. En un objeto `PRIVATE`, enumera quién obtiene acceso al registro creado: cada entrada se dirige exactamente a uno de `workspaceMemberId`, `roleId` o `everyone: true` con un `accessLevel` de `READ`, `READ_WRITE` o `FULL`. Un miembro del espacio de trabajo que crea un registro siempre recibe una concesión de propietario `FULL`, por lo que el argumento es opcional para él; una función lógica que actúa como su aplicación o una clave de API también recibe una concesión `FULL` para su rol, y quienes realizan dichas llamadas, al igual que una llamada del sistema, deben pasar `shareWith` o se rechaza la creación. Cada entrada debe indicar un miembro o un rol del espacio de trabajo. Una función lógica o clave de API comparte mediante su rol, por lo que cada titular de ese rol obtiene el mismo acceso a los registros que crea; asigne a una clave cuyos registros deban permanecer privados para ella un rol propio.
+`shareWith` solo es relevante en un objeto cuyos registros son privados; en otros casos, el argumento se ignora. En dicho objeto, enumera quién obtiene acceso al registro creado: cada entrada se dirige exactamente a uno de `workspaceMemberId`, `roleId` o `everyone: true` con un `accessLevel` de `READ`, `READ_WRITE` o `FULL`. Un miembro del espacio de trabajo que crea un registro siempre recibe una concesión de propietario `FULL`, por lo que el argumento es opcional para él; una función lógica que actúa como su aplicación o una clave de API también recibe una concesión `FULL` para su rol, y quienes realizan dichas llamadas, al igual que una llamada del sistema, deben pasar `shareWith` o se rechaza la creación. Cada entrada debe indicar un miembro o un rol del espacio de trabajo. Una función lógica o clave de API comparte mediante su rol, por lo que cada titular de ese rol obtiene el mismo acceso a los registros que crea; asigne a una clave cuyos registros deban permanecer privados para ella un rol propio.
 
 El cliente usa una sintaxis de conjunto de selección: pasa `true` para incluir un campo, usa `__args` para los argumentos y anida objetos para las relaciones. Obtienes autocompletado completo y verificación de tipos basados en el esquema de tu espacio de trabajo.
 
