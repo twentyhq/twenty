@@ -32,6 +32,7 @@ import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
 import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
+import { getFlatEntityMapsKeysToInvalidateForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-flat-entity-maps-keys-to-invalidate-for-workspace-migration.util';
 import { getMetadataNamesToLoadForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-metadata-names-to-load-for-workspace-migration.util';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 
@@ -286,6 +287,13 @@ export class WorkspaceMigrationRunnerService {
       getMetadataFlatEntityMapsKey,
     );
 
+    // The load set above is broad (relations + validation deps) because
+    // actions need related maps to execute and validate. Invalidation must be
+    // narrower: only the maps the actions actually mutate, otherwise a lone
+    // viewField reorder would recompute flatObjectMetadataMaps/flatFieldMetadataMaps.
+    const flatEntityMapsKeysToInvalidate =
+      getFlatEntityMapsKeysToInvalidateForWorkspaceMigration(actions);
+
     const cachedAllFlatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps<
         typeof allFlatEntityMapsKeys
@@ -516,7 +524,7 @@ export class WorkspaceMigrationRunnerService {
 
       try {
         await this.invalidateCache({
-          allFlatEntityMapsKeys,
+          allFlatEntityMapsKeys: flatEntityMapsKeysToInvalidate,
           workspaceId,
           hasSchemaMetadataChanged,
           hasMorphRelationFieldChanged,
@@ -547,7 +555,7 @@ export class WorkspaceMigrationRunnerService {
 
     try {
       await this.invalidateCache({
-        allFlatEntityMapsKeys,
+        allFlatEntityMapsKeys: flatEntityMapsKeysToInvalidate,
         workspaceId,
         hasSchemaMetadataChanged,
         hasMorphRelationFieldChanged,
@@ -575,7 +583,7 @@ export class WorkspaceMigrationRunnerService {
       performance.now() - postCommitInvalidateStart;
 
     this.logger.perf(
-      `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+      `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${flatEntityMapsKeysToInvalidate.length} flat-maps keys`,
       'Runner',
     );
 
