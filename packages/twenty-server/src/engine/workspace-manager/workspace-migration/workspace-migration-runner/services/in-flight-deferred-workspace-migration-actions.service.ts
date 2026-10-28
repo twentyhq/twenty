@@ -23,8 +23,7 @@ export class InFlightDeferredWorkspaceMigrationActionsService {
   async throwIfSchemaAffectingActionsAreInProgress(
     workspaceId: string,
   ): Promise<void> {
-    // Most deferred actions finish within a second, so a back-to-back data
-    // model change waits for them instead of failing right away.
+    // Back-to-back data model changes wait for the worker instead of failing.
     const deadline =
       Date.now() + IN_FLIGHT_SCHEMA_AFFECTING_DEFERRED_ACTIONS_WAIT_TIMEOUT_MS;
 
