@@ -3,7 +3,8 @@ title: App
 description: Estendi Twenty con il codice — oggetti personalizzati, logica lato server, componenti UI e agenti IA, tutti come pacchetti TypeScript.
 ---
 
-La maggior parte dei CRM ti offre un pannello di configurazione. Twenty ti offre una piattaforma. Le app sono il modo in cui gli sviluppatori estendono Twenty oltre ciò che offre la UI — definendo modelli di dati, logica lato server, componenti UI e funzionalità di IA come codice, quindi distribuendoli a uno o più workspace.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Perché esistono le app
 
@@ -33,8 +34,13 @@ Tutto viene rilevato tramite analisi AST in fase di build — nessun file di con
 
 ## L'esperienza di sviluppo
 
-Scrivi la tua app come un progetto TypeScript sulla tua macchina. La CLI osserva i file sorgente e li sincronizza in tempo reale con un server Twenty in esecuzione — modifica un file e vedi il cambiamento nell'UI entro un secondo. Il client API tipizzato viene rigenerato automaticamente quando lo schema cambia. Quando sei pronto, `yarn twenty app:publish --private` esegue il push su un server di produzione, oppure `yarn twenty app:publish` elenca la tua app su npm e sul marketplace di Twenty.
+Scrivi la tua app come un progetto TypeScript sulla tua macchina. La CLI osserva i file sorgente e li sincronizza in tempo reale con un server Twenty in esecuzione — modifica un file e vedi il cambiamento nell'UI entro un secondo. Il client API tipizzato viene rigenerato automaticamente quando lo schema cambia. Quando sei pronto, `twenty app publish --private` esegue il push su un server di produzione, oppure `twenty app publish` elenca la tua app su npm e sul marketplace di Twenty.
 
-<Card title="Crea la tua prima app" icon="arrow-right" href="/it/developers/extend/apps/getting-started/quick-start">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/it/developers/extend/apps/getting-started/quick-start" img="/images/documentation/banner-icons-v2/dev-apps.svg">
+  <CardTitle>Crea la tua prima app</CardTitle>
   Procedura guidata in tre fasi — crea lo scaffold, esegui un server locale, sincronizza le tue modifiche.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="getting-started-apps" />

@@ -69,6 +69,8 @@ Key points:
 - `modelId` (optional) overrides the default AI model used by the agent.
 - `responseFormat` (optional) sets the agent's default output shape. Defaults to `{ type: 'text' }` for free-form text. Use `{ type: 'json', schema }` to force structured JSON output. A `runAgent()` call or a workflow AI step can ask for a different shape, which takes precedence.
 - `roleUniversalIdentifier` (optional) binds the agent to a role your app defines. That role must not grant more than the application role, or the build fails; see [Agent roles](/developers/extend/apps/config/roles#agent-roles).
+- `modelConfiguration` (optional) turns on the model's native tools, as the agent settings page does: `{ webSearch: { enabled: true }, twitterSearch: { enabled: true } }`. Each tool only works on models that support it. Leave it out to keep them off.
+- `isSystem` (optional, defaults to `false`) hides the agent from agent lists, like the agents Twenty creates for workflow AI steps. It only changes what is displayed: an app's agents can only be changed through the app, whatever this flag says.
 
 By default an agent returns free-form text. To get structured output, set `responseFormat` to `{ type: 'json' }` and provide a `schema`:
 

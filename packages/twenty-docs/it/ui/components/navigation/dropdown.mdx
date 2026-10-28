@@ -1,0 +1,444 @@
+---
+title: Menu a discesa
+description: Menu di azioni, selettori ricercabili e pannelli di moduli con presentazione e interazione condivise.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DropdownReference from '/snippets/ui/generated/components/navigation/dropdown.mdx';
+
+## Panoramica
+
+`Dropdown` combina un popup posizionato, righe visive, navigazione da tastiera, focus e chiusura. L'applicazione gestisce dati, filtraggio, recupero e paginazione. `SelectionGroup` gestisce valori di selezione indipendenti all'interno del popup. Importalo da `twenty-ui/components`.
+
+<StoryEmbed storyId="ui-components-dropdown--display" title="Azioni del menu a discesa" height={420} />
+
+Dropdown.Content accetta offset numerici o funzioni per `sideOffset` e `alignOffset`. Le funzioni di offset ricevono le dimensioni dell'ancora e del popup, il lato e l'allineamento. Usale per preservare la sovrapposizione di un selettore di campi ancorato quando la cella viene scalata.
+
+## Utilizzo
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconArchive, IconCopy, IconDownload } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordActions = () => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content aria-label="Record actions" width={240}>
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconCopy />}>
+          Duplicate
+        </Dropdown.ActionItem>
+        <Dropdown.Submenu>
+          <Dropdown.SubmenuTrigger startIcon={<IconDownload />}>
+            Export
+          </Dropdown.SubmenuTrigger>
+          <Dropdown.Content aria-label="Export formats">
+            <Dropdown.Section>
+              <Dropdown.ActionItem>CSV</Dropdown.ActionItem>
+              <Dropdown.ActionItem>Excel</Dropdown.ActionItem>
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Submenu>
+      </Dropdown.Section>
+      <Dropdown.Separator />
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconArchive />}>
+          Archive
+        </Dropdown.ActionItem>
+        <Dropdown.ActionItem
+          render={
+            <a href="#dropdown-documentation" aria-label="Documentation" />
+          }
+        >
+          Documentation
+        </Dropdown.ActionItem>
+      </Dropdown.Section>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## Scegli un tipo di interazione
+
+Imposta `type` su `Dropdown.Root` affinché corrisponda ai contenuti del popup.
+
+| Tipo     | Contenuto                                           | Interazione                                                                                                                                   |
+| -------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `menu`   | Comandi e link di navigazione                       | Semantica del menu con navigazione tramite frecce e ricerca durante la digitazione.                                                           |
+| `picker` | Ricerca, valori selezionabili e comandi facoltativi | Una finestra di dialogo contenente ricerca, listbox selezionabili e comandi facoltativi. I tasti freccia navigano tra le righe dei risultati. |
+| `panel`  | Input, moduli e azioni di supporto                  | Una finestra di dialogo con comportamento nativo degli input e navigazione con Tab.                                                           |
+
+I selettori consentono azioni di creazione e gruppi di selezione indipendenti nella stessa pagina, in qualsiasi ordine. Ogni gruppo del selettore è una listbox e le relative opzioni espongono `aria-selected`. I gruppi di menu usano elementi di menu radio o casella di controllo selezionati. I gruppi di pannelli usano pulsanti con `aria-pressed`. I comandi mantengono la semantica dell'azione della rispettiva modalità. Assegna un nome accessibile a ogni gruppo e a `Search`. Questo selettore personalizzato non è una Combobox nativa.
+
+`Content` ottiene il proprio nome accessibile da `Trigger`, oppure da `SubmenuTrigger` in un sottomenu. Passa `aria-label` a `Content` quando il trigger mostra un valore, ad esempio l'opzione selezionata, oppure quando la radice non ha un trigger. Un `aria-label` o `aria-labelledby` esplicito e un `Title` all'interno di un `Header` hanno la precedenza sul nome del trigger.
+
+[Select](/it/ui/primitives/input/select) e [Popover](/it/ui/primitives/surfaces/popover) rimangono disponibili per la composizione diretta.
+
+## Anatomia
+
+```text
+Dropdown.Root
+├── Dropdown.Trigger
+└── Dropdown.Content
+    ├── Dropdown.Header
+    │   ├── Dropdown.Close
+    │   └── Dropdown.Title
+    ├── Dropdown.Search
+    └── Dropdown.Section
+        ├── Dropdown.ActionItem
+        └── Dropdown.SelectionGroup
+            └── Dropdown.OptionItem
+```
+
+`Content` include il portale e il posizionatore. Usa `width`, `side`, `align`, `sideOffset` e `alignOffset` per controllare il posizionamento, e `collisionPadding` per mantenere il popup più distante dai bordi della viewport prima che si sposti o si ribalti (5 pixel per impostazione predefinita). `Section` raggruppa righe con spaziatura condivisa e `Separator` divide le sezioni. Una `Section` `scrollable` limita l'altezza e scorre; annida al suo interno sezioni etichettate per farle scorrere come un unico elenco. Le righe usano [ListItem](/it/ui/primitives/navigation/list-item) per il proprio aspetto.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordActions = ({ onDuplicate }: { onDuplicate: () => void }) => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content>
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconCopy />} onClick={onDuplicate}>
+          Duplicate
+        </Dropdown.ActionItem>
+      </Dropdown.Section>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+Passa elementi trigger personalizzati tramite `render` affinché il trigger rimanga un unico elemento interattivo. I componenti personalizzati devono inoltrare le props fornite e ref. `ActionItem` accetta anche `render` per i link.
+
+## Azioni dell'elemento
+
+`ActionItem` e `OptionItem` accettano `actions` per i controlli finali, ad esempio il pulsante di modifica di una scheda. Usali solo nelle pagine `picker` e `panel`: un `menu` può contenere solo voci di menu, quindi non può contenere altri controlli. Imposta `actionsVisibility="always"` per mantenerle visibili; il valore predefinito è `"hover"`. I controlli secondari vengono visualizzati accanto al controllo principale della riga e si attivano in modo indipendente: non chiudono il popup, quindi chiudilo dal gestore dell'azione quando necessario. La prop `render` e il ref si applicano ancora al controllo principale, quindi può anche fungere da maniglia di trascinamento.
+
+Usa `tabIndex={-1}` per un'azione secondaria basata solo sul puntatore che dispone di un'alternativa separata da tastiera. La navigazione da tastiera continua a mettere a fuoco e attivare il controllo principale.
+
+## Intestazioni
+
+`Header` dispone una riga nella parte superiore del popup. Inserisci un `Title` al suo interno per assegnare al popup il nome del titolo anziché quello del trigger. `Close` chiude il popup come farebbe una pressione esterna. Per impostazione predefinita esegue il rendering di un pulsante icona con una X, quindi assegnagli un `aria-label` oppure passa `render` e figli per un altro controllo. Altri controlli, come un pulsante che torna a un passaggio precedente, possono trovarsi nella stessa riga. Usa `Dropdown.Back` per navigare nella cronologia delle pagine della radice.
+
+## Ricerca e selezione
+
+`Search` fornisce l'input e la navigazione nelle righe dei risultati. Passa `value` e `onValueChange`; calcola o recupera i risultati corrispondenti nella tua applicazione. Esegui il rendering di `Loading` mentre una richiesta è in attesa e di `Empty` quando nessun risultato corrisponde. Entrambi accettano testo di stato fornito dal chiamante.
+
+<StoryEmbed storyId="ui-components-dropdown--picker-documentation" title="Selettore ricercabile con creazione in linea" height={420} />
+
+Racchiudi le opzioni selezionabili in `SelectionGroup` e assegna a ogni opzione un `value` stabile e univoco all'interno del gruppo. Un gruppo non controllato richiede anche un `id` univoco all'interno del relativo albero a discesa, inclusi i sottomenu. I componenti `Root` nidificati in modo indipendente mantengono il proprio archivio delle selezioni. La selezione singola usa una stringa o `null` per l'assenza di selezione. La selezione multipla usa un array, incluso `[]` per l'assenza di selezione.
+
+```tsx
+import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const PersonPicker = () => {
+  const [search, setSearch] = useState('');
+  const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
+  const people = ['Ada Lovelace', 'Grace Hopper'].filter((person) =>
+    person.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  return (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger render={<Button>Choose person</Button>} />
+      <Dropdown.Content>
+        <Dropdown.Search
+          aria-label="Search people"
+          value={search}
+          onValueChange={setSearch}
+        />
+        <Dropdown.SelectionGroup
+          id="person"
+          aria-label="Person"
+          value={selectedPerson}
+          onValueChange={setSelectedPerson}
+        >
+          {people.map((person) => (
+            <Dropdown.OptionItem key={person} value={person}>
+              {person}
+            </Dropdown.OptionItem>
+          ))}
+        </Dropdown.SelectionGroup>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  );
+};
+```
+
+Passa `value` e `onValueChange` per la selezione controllata. Omettendo `value`, oppure passando `undefined`, la selezione resta non controllata; `defaultValue` ne imposta il valore iniziale. Un gruppo non controllato usa per impostazione predefinita `null`, oppure `[]` con `multiple`. Il relativo `id` stabile mantiene la selezione tra chiusura e riapertura e durante la navigazione tra pagine. La rimozione o il filtraggio di un'opzione non cancella il relativo identificatore selezionato né emette una modifica; l'opzione viene selezionata di nuovo quando ricompare. Usa un valore controllato quando l'applicazione deve cancellare scelte non disponibili.
+
+Ogni gruppo cambia in modo indipendente. Un'opzione viene confermata nel gruppo più vicino, mentre la pagina attiva fornisce una raccolta ordinata per la navigazione con i tasti freccia tra gruppi e righe di azione. L'attivazione ripetuta di un'opzione singola selezionata ne mantiene il valore senza un altro callback di modifica. L'attivazione multipla attiva o disattiva l'opzione nell'array.
+
+<StoryEmbed storyId="ui-components-dropdown--selection-groups-documentation" title="Selezioni indipendenti del proprietario e dell'osservatore" height={440} />
+
+La selezione singola si chiude per impostazione predefinita; la selezione multipla resta aperta. `SelectionGroup.closeOnSelect` modifica l'impostazione predefinita del gruppo e `OptionItem.closeOnSelect` la sostituisce per una singola opzione. Le righe di azione usano `closeOnClick` in modo indipendente. Una modifica annullata conserva la selezione precedente e non chiude automaticamente il popup.
+
+`onValueChange` riceve il valore successivo e i dettagli dell'evento con `event`, `reason`, `trigger`, `cancel()` e `isCanceled`. Il motivo è `item-press` e `event` è l'evento di attivazione originale. `OptionItem.onSelect` riceve gli stessi dettagli prima che il relativo proprietario confermi. Chiama `cancel()` in uno dei due callback per impedire la selezione e la chiusura automatica.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+<Dropdown.SelectionGroup
+  id="watchers"
+  aria-label="Watchers"
+  multiple
+  defaultValue={[]}
+  onValueChange={(value, eventDetails) => {
+    if (value.length > 3) {
+      eventDetails.cancel();
+    }
+  }}
+>
+  <Dropdown.OptionItem value="ada">Ada Lovelace</Dropdown.OptionItem>
+  <Dropdown.OptionItem value="grace">Grace Hopper</Dropdown.OptionItem>
+</Dropdown.SelectionGroup>;
+```
+
+La ricerca riceve lo stato attivo all'apertura del selettore. Senza ricerca, la prima opzione selezionata abilitata riceve lo stato attivo, oppure la prima riga abilitata quando non è presente alcuna opzione selezionata. Mentre `Search` ha lo stato attivo ed è presente una query non vuota, viene evidenziato il primo `OptionItem` idoneo tra i gruppi di selezione e il tasto Invio lo attiva. Le righe delle azioni non vengono mai selezionate in questo modo. Freccia giù sposta lo stato attivo sulla prima riga abilitata, incluse le azioni. L'uscita dalla ricerca cancella l'anteprima e `aria-activedescendant`, anche quando il popup rimane aperto. Tornando alla ricerca viene ripristinata l'anteprima per la query corrente.
+
+Invio non ha alcun effetto per una query vuota o composta solo da spazi vuoti, oppure quando non rimane alcuna opzione idonea. La composizione del testo con un metodo di input non attiva un'opzione né sposta lo stato attivo con i tasti freccia. Quando le righe sono fissate sopra le corrispondenze, come il valore corrente o una riga "nessuno", visualizzale solo quando corrispondono al testo di ricerca. Il popup rimane aperto quando nessuna opzione corrisponde. Il filtraggio resta gestito dal chiamante.
+
+<StoryEmbed storyId="ui-components-dropdown--multiple-selection-documentation" title="Selezione multipla" height={420} />
+
+`OptionItem` autonomo accetta comunque `selected` e `onSelect` per i chiamanti che gestiscono personalmente la selezione. Le opzioni raggruppate derivano la selezione dal valore del gruppo; non duplicare questo stato nell'opzione. I gruppi di selezione personalizzati non forniscono l'invio nativo dei moduli, il ripristino, la convalida obbligatoria, il comportamento di sola lettura né l'integrazione con Field. Usa [Select](/it/ui/primitives/input/select) quando sono necessari questi contratti dei moduli nativi.
+
+## Griglie di icone
+
+<StoryEmbed storyId="ui-components-dropdown--icon-grid-documentation" title="Griglia di icone con stile della cella selezionata" height={360} />
+
+Imposta `columns` su `Section` per disporre gli elementi in colonne di griglia di uguale larghezza. Lo stesso numero determina la navigazione da tastiera: Sinistra e Destra si spostano all'interno di una riga, mentre Su e Giù si spostano tra le righe. La navigazione salta le opzioni disabilitate e segue la direzione di lettura. Quando nella colonna non rimane alcuna opzione abilitata, Su e Giù si spostano all'opzione abilitata più vicina della riga successiva. Su dalla prima riga riporta al campo di ricerca quando non esiste una sezione precedente. Una breve riga finale usa il suo ultimo elemento quando manca la colonna richiesta. All'interno di un sottomenu, la freccia indietro chiude il sottomenu quando non rimane alcuna opzione abilitata alla sua sinistra.
+
+Esegui il rendering di ciascuna icona come `OptionItem` con un'etichetta accessibile e un pulsante icona tramite `render`. Usa `indicator="none"` per mostrare la selezione tramite lo sfondo del pulsante. Il callback `render` riceve lo stato `{ selected, multiple, disabled }`; usalo per definire lo stile di una cella selezionata e inoltrare le props e il ref forniti.
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconCalendar } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const IconGrid = () => (
+  <Dropdown.Root type="picker">
+    <Dropdown.Trigger render={<Button>Choose icon</Button>} />
+    <Dropdown.Content>
+      <Dropdown.SelectionGroup
+        id="icon"
+        aria-label="Icon"
+        defaultValue="calendar"
+      >
+        <Dropdown.Section columns={5}>
+          <Dropdown.OptionItem
+            value="calendar"
+            aria-label="Calendar"
+            indicator="none"
+            nativeButton
+            render={(props, state) => (
+              <LightIconButton
+                // oxlint-disable-next-line react/jsx-props-no-spreading
+                {...props}
+                size="md"
+                color={state.selected ? 'accent' : 'neutral'}
+                aria-label="Calendar"
+              >
+                <IconCalendar />
+              </LightIconButton>
+            )}
+          />
+        </Dropdown.Section>
+      </Dropdown.SelectionGroup>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## Focus della tastiera
+
+Nelle pagine `menu` e `picker`, le righe formano un unico punto di tabulazione. I tasti freccia spostano il focus tra sezioni, azioni e opzioni, mentre Home e Fine si spostano alla prima e all'ultima riga abilitata, a meno che il campo di ricerca non abbia il focus. Lo spostamento del focus non seleziona mai un'opzione; Invio o Spazio attivano la riga con focus. Tornando alle righe con Tab si torna all'ultima riga con focus oppure, quando tale riga non è più presente, alla prima riga abilitata. La ricerca, `Back` accanto a una ricerca, i pulsanti dell'intestazione e altri controlli all'interno del popup mantengono i propri punti di tabulazione.
+
+Tab e Maiusc+Tab chiudono un `menu`, insieme ai relativi menu padre quando il focus è in un sottomenu. In un `picker`, Tab si sposta tra i controlli del popup e chiude il popup quando il focus ne esce. Un `panel` mantiene l'ordine di tabulazione nativo dei propri controlli.
+
+## Pagine e sottomenu
+
+Usa `Page` per una navigazione che sostituisce i contenuti dello stesso popup. Racchiudi la prima pagina in `Page id="root"`, oppure scegli un'altra pagina iniziale con `defaultPage`. Imposta `page` su un'azione per navigare senza chiudere. `Back` torna alla pagina precedente e ripristina il focus sulla riga che l'ha invocato.
+
+Le pagine vengono montate alla prima visita e rimangono montate per quella sessione aperta. Tornando a una pagina vengono preservate la relativa ricerca locale, le bozze dei moduli e le sezioni scorrevoli. Le pagine inattive sono nascoste e inerti: non partecipano alla navigazione tramite tastiera, allo stato attivo o all'albero di accessibilità, e le relative finestre popup `Dropdown` nidificate sono inattive.
+
+La riapertura avvia una nuova sessione in `defaultPage` con contenuti nuovi, anche quando è impostato `Content.keepMounted` o la finestra popup si riapre durante la transizione di uscita. La cronologia delle pagine, la ricerca locale e le bozze vengono reimpostate. La pagina in chiusura rimane montata durante la transizione di uscita.
+
+I valori non controllati di `SelectionGroup` rimangono memorizzati in `Root` sotto l'`id` stabile di ciascun gruppo e persistono dopo la riapertura. I valori controllati dal chiamante restano di proprietà del chiamante. Ad esempio, un valore di ricerca memorizzato sopra `Content` rimane invariato finché il chiamante non lo aggiorna. Inserisci lo stato temporaneo della ricerca o delle bozze in un componente all'interno di `Content` o `Page` quando deve essere reimpostato con la sessione; mantieni lo stato persistente dell'applicazione sopra `Content`.
+
+Una pagina può sovrascrivere `type` della radice. Ad esempio, un menu di azioni può aprire una pagina del selettore ricercabile o un pannello di moduli. La ricerca riceve il focus entrando in una pagina ricercabile; le altre pagine focalizzano la prima riga dopo `Back`.
+
+<StoryEmbed storyId="ui-components-dropdown--pages-documentation" title="Navigazione dalla pagina menu alla pagina selettore" height={420} />
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const FilterMenu = () => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Filters</Button>} />
+    <Dropdown.Content>
+      <Dropdown.Page id="root">
+        <Dropdown.Section>
+          <Dropdown.ActionItem page="status">Status</Dropdown.ActionItem>
+        </Dropdown.Section>
+      </Dropdown.Page>
+      <Dropdown.Page id="status" type="picker">
+        <Dropdown.Back>Filters</Dropdown.Back>
+        <Dropdown.Section>
+          <Dropdown.SelectionGroup id="status" aria-label="Status">
+            <Dropdown.OptionItem value="active">Active</Dropdown.OptionItem>
+            <Dropdown.OptionItem value="archived">Archived</Dropdown.OptionItem>
+          </Dropdown.SelectionGroup>
+        </Dropdown.Section>
+      </Dropdown.Page>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+Per navigare dal codice, chiama `useDropdownPage` in un componente di cui è eseguito il rendering all'interno della radice. Restituisce `page`, `goToPage(page)`, `goBack()`, `canGoBack` e `isActive` correnti. All'interno di una pagina, `isActive` è true solo mentre quella pagina è attiva e il relativo menu a discesa è aperto. Usa `isActive` per mostrare le finestre popup personalizzate di una pagina sottoposte a portale, in modo che scompaiano quando la pagina diventa inattiva o il menu a discesa si chiude. Ad esempio, un'opzione può tornare alla pagina precedente dopo una selezione mentre il popup rimane aperto:
+
+```tsx
+import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
+
+export const StatusOptions = ({
+  status,
+  onStatusChange,
+}: {
+  status: string | null;
+  onStatusChange: (status: string | null) => void;
+}) => {
+  const { goBack } = useDropdownPage();
+
+  return (
+    <Dropdown.SelectionGroup
+      id="status"
+      aria-label="Status"
+      value={status}
+      closeOnSelect={false}
+      onValueChange={(value) => {
+        onStatusChange(value);
+        goBack();
+      }}
+    >
+      {['Active', 'Archived'].map((option) => (
+        <Dropdown.OptionItem key={option} value={option}>
+          {option}
+        </Dropdown.OptionItem>
+      ))}
+    </Dropdown.SelectionGroup>
+  );
+};
+```
+
+Usa `Submenu` con `SubmenuTrigger` e un `Content` annidato per un menu affiancato. Freccia destra entra nel sottomenu; Freccia sinistra torna al relativo menu padre. La selezione di un'azione di chiusura chiude l'intero menu a discesa.
+
+```text
+Dropdown.Content
+└── Dropdown.Submenu
+    ├── Dropdown.SubmenuTrigger
+    └── Dropdown.Content
+        └── Dropdown.ActionItem
+```
+
+## Selettori annidati indipendenti
+
+Inserisci un altro `Dropdown.Root` all'interno di `Content` quando un controllo apre il proprio selettore, ad esempio un selettore della direzione di ordinamento. La selezione di un'opzione interna chiude solo quel selettore e ripristina il focus sul relativo trigger. Esc e le pressioni esterne chiudono un livello alla volta. Usa `Submenu` per i comandi che devono chiudere l'intero albero del menu quando vengono selezionati.
+
+<StoryEmbed storyId="ui-components-dropdown--nested-documentation" title="Selettore di ordinamento con un selettore della direzione annidato" height={420} />
+
+## Pannelli e stato controllato
+
+Usa `type="panel"` per gli input dei moduli. L'interazione con gli input mantiene aperto il pannello; un'azione di salvataggio può chiuderlo. Gestisci `open` e `onOpenChange` quando un altro componente o una scorciatoia deve aprire il menu a discesa. Mantieni tale stato nella funzionalità che coordina l'interazione.
+
+<StoryEmbed storyId="ui-components-dropdown--panel-documentation" title="Pannello di modulo controllato" height={420} />
+
+Esc chiude il popup e ripristina il focus sul relativo trigger. Anche l'interazione esterna lo chiude e il clic che lo chiude non attiva l'elemento su cui termina. I tasti premuti all'interno del popup restano al suo interno, eccetto le scorciatoie Ctrl o Cmd che il menu a discesa non gestisce, quindi le scorciatoie a livello di pagina continuano a funzionare. `Content` accetta opzioni di focus e portale da Popover, incluso un target esplicito per il ripristino del focus per i flussi di lavoro dell'editor.
+
+## Chiusura
+
+Esc, una pressione esterna al popup e l'uscita da esso con Tab chiudono il menu a discesa. Passa `onEscapeKeyDown` o `onInteractOutside` a `Root` per reagire prima che si chiuda e chiama `event.preventDefault()` per mantenerlo aperto. `event.target` è l'elemento premuto all'esterno, oppure `null` quando lo stato attivo si sposta con Tab, e `event.type` è il tipo di evento DOM che lo ha attivato, ad esempio `touchmove` per uno scorrimento con gesto all'esterno del popup. Una pressione esterna impedita raggiunge comunque l'elemento su cui termina.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ViewSettings = ({ isEditing }: { isEditing: boolean }) => (
+  <Dropdown.Root
+    type="panel"
+    onInteractOutside={(event) => {
+      if (isEditing) {
+        event.preventDefault();
+      }
+    }}
+  >
+    <Dropdown.Trigger render={<Button>View settings</Button>} />
+    <Dropdown.Content>
+      <Dropdown.ActionItem>Save view</Dropdown.ActionItem>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## Ancoraggio senza trigger
+
+Una radice può aprirsi senza un `Trigger`, ad esempio come menu contestuale. Controllalo con `open` e `onOpenChange`, e passa `anchor` a `Content`: un elemento, un ref o un elemento virtuale che restituisce un rettangolo nelle coordinate della viewport. Assegna a `Content` un `aria-label`, poiché non esiste un trigger da cui ottenere il nome. Alla chiusura, il focus torna all'elemento che era focalizzato quando il popup si è aperto.
+
+<StoryEmbed storyId="ui-components-dropdown--context-menu-documentation" title="Menu contestuale ancorato al puntatore" height={420} />
+
+```tsx
+import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+export const RecordContextMenu = ({ recordName }: { recordName: string }) => {
+  const [open, setOpen] = useState(false);
+  const [point, setPoint] = useState({ x: 0, y: 0 });
+
+  return (
+    <>
+      <p
+        onContextMenu={(event) => {
+          event.preventDefault();
+          setPoint({ x: event.clientX, y: event.clientY });
+          setOpen(true);
+        }}
+      >
+        {recordName}
+      </p>
+      <Dropdown.Root type="menu" open={open} onOpenChange={setOpen}>
+        <Dropdown.Content
+          aria-label="Record actions"
+          anchor={{
+            getBoundingClientRect: () => new DOMRect(point.x, point.y, 0, 0),
+          }}
+        >
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>
+    </>
+  );
+};
+```
+
+Facendo clic con il pulsante destro altrove mentre il menu è aperto, questo si sposta nel nuovo punto.
+
+Chiama `useDropdownPlacementOrThrow` all'interno di `Dropdown.Content` per leggere i relativi `side` e `align` risolti, incluse le inversioni dovute alle collisioni. Usa il lato risolto per posizionare la ricerca e i controlli di creazione di un selettore accanto al relativo trigger. Mantieni i controlli nel loro ordine visivo nel DOM, in modo che la navigazione tramite tastiera segua il layout. Una ricerca sotto i risultati riceve lo stato attivo da `ArrowDown` sull'ultimo risultato; `ArrowUp` da tale ricerca torna all'ultimo risultato.
+
+## Etichette
+
+Ogni parte gestisce il proprio testo: fornisci `Search.placeholder` e nomi accessibili nativi, attributi accessibili per `Close` e figli per `Back`, `Loading` e `Empty`. `Back` è per impostazione predefinita `Back`; gli stati di caricamento e vuoto non hanno alcun messaggio integrato. Le parti degli elementi accettano `shortcutJoinLabel` per sostituire il valore predefinito `then` tra passaggi sequenziali delle scorciatoie. Il valore nativo `aria-labelledby` ha la precedenza su `aria-label`.
+
+## Props
+
+<DropdownReference />
+
+<PageBanner illustration="page-cover-input" />

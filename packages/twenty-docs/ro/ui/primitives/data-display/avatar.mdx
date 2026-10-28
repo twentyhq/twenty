@@ -1,0 +1,191 @@
+---
+title: Avatar
+description: Reprezentați o persoană sau o înregistrare cu o imagine, o inițială sau o pictogramă.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import AvatarReference from '/snippets/ui/generated/data-display/avatar.mdx';
+
+## Prezentare generală
+
+`Avatar` afișează o imagine cu o variantă de rezervă bazată pe prima literă. Utilizați-l lângă numele unei înregistrări sau într-un [Chip](/ro/ui/primitives/data-display/chip). Rădăcina sa implicită este un `span` de prezentare.
+
+<StoryEmbed storyId="ui-data-display-avatar--display" title="Exemplu de avatar" height={90} />
+
+## Utilizare
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const WorkspaceAvatar = () => (
+  <Avatar
+    name="Acme"
+    colorSeed="acme-app"
+    shape="square"
+    variant="outline"
+    size="md"
+  />
+);
+```
+
+Când imaginea lipsește sau nu se poate încărca, varianta de rezervă afișează cu majuscule prima literă a numelui fără spații la început sau la sfârșit. Un nume gol afișează `-`. `colorSeed` alege culori stabile pentru varianta de rezervă și are ca valoare implicită `name`; utilizați un identificator de înregistrare pentru a păstra culoarea stabilă când numele se schimbă.
+
+Imaginea și alternativa implicită sunt decorative. `name` furnizează inițiala vizuală și culorile alternative fără a adăuga o etichetă accesibilă. Când avatarul este singura reprezentare a unei persoane sau înregistrări, setați `imageProps={{ alt: name }}` pentru a eticheta atât imaginea, cât și alternativa implicită. Păstrați avatarul decorativ când un nume vizibil sau un proprietar etichetat oferă deja acele informații.
+
+`imageProps` acceptă contractul complet pentru imagine, inclusiv `srcSet`, `sizes`, `crossOrigin`, `referrerPolicy`, evenimente native, referințe și `render`. Valoarea sa `src` suprascrie forma prescurtată `src`. `fallbackProps` acceptă contractul complet pentru alternativă, inclusiv `delay`, elemente copil, etichetare, referințe și `render`. Un `render` alternativ personalizat gestionează semantica sa de accesibilitate; setați explicit `aria-hidden` când este decorativ.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type RecordAvatarProps = {
+  name: string;
+  imageUrl?: string;
+  initials: string;
+};
+
+export const RecordAvatar = ({
+  name,
+  imageUrl,
+  initials,
+}: RecordAvatarProps) => (
+  <Avatar
+    name={name}
+    src={imageUrl}
+    size="lg"
+    imageProps={{ alt: name, decoding: 'async', referrerPolicy: 'no-referrer' }}
+    fallbackProps={{ children: initials, delay: 150 }}
+  />
+);
+```
+
+## Compuneți părțile
+
+Utilizați `Avatar.Root`, `Avatar.Image` și `Avatar.Fallback` când controlați structura. Root furnizează dimensiunea, forma și aspectul alternativei; nu generează elemente copil sau etichete accesibile.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type ContactAvatarProps = {
+  name: string;
+  imageUrl?: string;
+  initials: string;
+};
+
+export const ContactAvatar = ({
+  name,
+  imageUrl,
+  initials,
+}: ContactAvatarProps) => (
+  <Avatar.Root name={name} shape="circle" size="xxl">
+    <Avatar.Image src={imageUrl} alt={name} decoding="async" />
+    <Avatar.Fallback role="img" aria-label={name} delay={150}>
+      {initials}
+    </Avatar.Fallback>
+  </Avatar.Root>
+);
+```
+
+<StoryEmbed storyId="ui-data-display-avatar--parts" title="Părți ale avatarului" height={110} />
+
+Părțile partajează starea de încărcare a imaginii din Base UI. În mod implicit, Image redă un `img` după o încărcare reușită, iar Fallback redă un `span` cât timp imaginea lipsește, se încarcă sau nu s-a încărcat. `delay` amână afișarea inițială a alternativei în milisecunde și are implicit valoarea `0`. O sursă modificată este încărcată din nou și poate înlocui imaginea curentă sau alternativa.
+
+`Avatar.Image` expune `onLoadingStatusChange` cu valorile de stare `idle`, `loading`, `loaded` și `error`. Callbackul rulează când Base UI raportează o schimbare de stare diferită de inactivă; demontarea părții Image resetează starea rădăcinii partajate la `idle`. Root, Image și Fallback acceptă funcții `className`, `style` și `render` care țin cont de stare, cu `imageLoadingStatus`; Image expune și `transitionStatus`.
+
+Utilizați `keepMounted` pe Image când imaginea redată trebuie să se încarce pe loc, inclusiv cu `loading="lazy"` sau cu o componentă de imagine optimizată. Transmiteți atributele native, evenimentele și referința din redatoarele de imagini personalizate. O imagine montată poate fi încă în curs de încărcare sau poate să nu se fi încărcat; verificați starea de încărcare în loc să considerați prezența ei drept succes.
+
+Redatorul componentei front acceptă în prezent calea implicită de preîncărcare cu `src`. Imaginea sa gazdă nu primește `srcSet`, `sizes`, `loading`, `decoding` sau `referrerPolicy`. O funcție `render` personalizată care se modifică, împreună cu `keepMounted`, poate lăsa ascunsă o imagine decodificată, deoarece lucrătorul nu poate citi starea de finalizare sau dimensiunile acesteia. Utilizați acolo preîncărcarea implicită până când aceste capacități ale redatorului devin disponibile.
+
+Tipurile publice `AvatarRootProps`, `AvatarImageProps`, `AvatarFallbackProps`, `AvatarRootState`, `AvatarImageState`, `AvatarFallbackState` și `AvatarImageLoadingStatus` sunt exportate din `twenty-ui/primitives/data-display`. Referințele vizează elementul DOM redat: implicit `span`, `img` și `span` sau elementul furnizat prin `render`.
+
+## Formă și aspect
+
+<StoryEmbed storyId="ui-data-display-avatar--catalog" title="Dimensiuni și forme ale avatarurilor" height={320} />
+
+`shape` acceptă `square`, `rounded-square` sau `circle`. Dimensiunile sunt `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), `xl` (32px) și `xxl` (40px). Atât `xl`, cât și `xxl` folosesc text de rezervă de 16px.
+
+Fosta dimensiune `xl` de 40px este acum `xxl`. Actualizați utilizările existente ale `size="xl"` la `size="xxl"` atunci când trebuie să rămână de 40px.
+
+`variant="outline"` adaugă o bordură variantei de rezervă. Suprascrierile `color`, `backgroundColor` și `borderColor` personalizează varianta de rezervă, în timp ce o imagine încărcată își păstrează aspectul original.
+
+```tsx
+import { IconUser } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const ContactIcon = () => (
+  <Avatar
+    icon={<IconUser />}
+    shape="rounded-square"
+    size="xxl"
+    role="img"
+    aria-label="Contact"
+  />
+);
+```
+
+O `icon` are prioritate atât față de imagine, cât și față de varianta de rezervă bazată pe prima literă. Pictograma în sine este decorativă, așadar etichetați rădăcina când transmite informații. `pulsing` animează opacitatea și respectă preferințele privind mișcarea redusă.
+
+## Deschideți un profil
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type ProfileAvatarProps = {
+  onOpenProfile: () => void;
+  disabled?: boolean;
+};
+
+export const ProfileAvatar = ({
+  onOpenProfile,
+  disabled = false,
+}: ProfileAvatarProps) => (
+  <Avatar
+    name="Jane"
+    shape="circle"
+    size="lg"
+    render={
+      <button
+        type="button"
+        disabled={disabled}
+        aria-label="Open Jane's profile"
+        onClick={onOpenProfile}
+      />
+    }
+  />
+);
+```
+
+<StoryEmbed storyId="ui-data-display-avatar--button-composition" title="Avatar compus ca buton" height={110} />
+
+Compuneți un buton nativ pentru acțiuni. Acesta gestionează focalizarea, activarea cu Enter și Spațiu și comportamentul dezactivat. Furnizați un nume accesibil specific acțiunii. Puneți `onClick` și `disabled` pe butonul redat; Avatar prescurtat nu are proprietatea `onClick`, `disabled` sau `nativeButton`.
+
+Pentru navigare, compuneți o ancoră cu un `href` sau un link de rutare care păstrează semantica ancorei. Linkurile native se activează cu Enter. Păstrați comportamentul de navigare și cel dezactivat în linkul sau componenta interactivă pe care o compuneți.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const ProfileLink = () => (
+  <Avatar
+    name="Jane"
+    shape="circle"
+    size="lg"
+    render={<a href="/people/jane" aria-label="Open Jane's profile" />}
+  />
+);
+```
+
+## Migrați avatarele pe care se poate face clic
+
+Compuneți un buton nativ prin `render` pentru acțiuni sau o ancoră ori un link de rutare pentru navigare. Mutați `onClick` și `disabled` pe acel element principal și eliminați `nativeButton`. Oferiți elementului principal un nume accesibil util și evitați imbricarea elementelor interactive. `Avatar.Root` și celelalte părți explicite păstrează contractul complet de evenimente Base UI.
+
+Avatarele prescurtate sunt decorative în mod implicit. `name` nu denumește imaginea, alternativa sau elementul principal interactiv. Utilizați un `imageProps.alt` nevid doar când avatarul transmite o identitate care nu este deja furnizată de text vizibil sau de o etichetă a elementului principal. Cu părți explicite, furnizați dvs. textul alternativ al imaginii și etichetele alternative sau atributele decorative și păstrați conținutul tradus în aplicația dvs.
+
+## Proprietăți
+
+Tipurile și valorile implicite sunt generate din tipurile publice ale componentei. Părțile explicite acceptă atribute native și gestionari de evenimente. Avatar prescurtat omite `onClick`; furnizați-l pe elementul principal transmis prin `render`.
+
+<AvatarReference />
+
+<PageBanner illustration="page-cover-profile" />

@@ -72,6 +72,12 @@ msgstr "{0} moet een één-op-veel- of veel-op-één-relatieveld zijn."
 msgid "{0} must be a one-to-many relation field."
 msgstr "{0} moet een één-op-veel-relatieveld zijn."
 
+#. js-lingui-id: LP7rtP
+#. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
+msgid "{action} is disabled on object {0}"
+msgstr "{action} is uitgeschakeld voor object {0}"
+
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
@@ -103,16 +109,6 @@ msgstr "{hostnameCount} hostnamen gevonden voor domein \"{domainName}\". Verwach
 #: src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util.ts
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} van {aggregateFieldLabel}"
-
-#. js-lingui-id: TJ2Qca
-#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
-msgid "{providerDisplayName} only supports connections shared with the workspace."
-msgstr "{providerDisplayName} ondersteunt alleen verbindingen die met de werkruimte worden gedeeld."
-
-#. js-lingui-id: Hz1hn8
-#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
-msgid "{providerDisplayName} only supports personal connections."
-msgstr "{providerDisplayName} ondersteunt alleen persoonlijke verbindingen."
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -152,6 +148,22 @@ msgstr "Een doel voor een agendagebeurtenis"
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
 msgstr "Er wordt nog een campagne verzonden. Wacht tot deze is voltooid of annuleer deze voordat u deze afzender verwijdert."
+
+#. js-lingui-id: kZaUc+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
+msgid "A channel named \"{name}\" already exists"
+msgstr "Er bestaat al een kanaal met de naam \"{name}\""
+
+#. js-lingui-id: y84xpa
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "A channel needs a name."
+msgstr "Een kanaal heeft een naam nodig."
+
+#. js-lingui-id: 3bCT2z
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util.ts
+msgid "A channel with this name already exists."
+msgstr "Er bestaat al een kanaal met deze naam."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -247,6 +259,16 @@ msgstr "Een marketing-e-mail kan slechts naar één ontvanger tegelijk worden ve
 msgctxt "objectMetadata.description"
 msgid "A message thread target"
 msgstr "Een doel voor een berichtenthread"
+
+#. js-lingui-id: oP9K0J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "A messaging provider with this name already exists for this application"
+msgstr "Er bestaat al een berichtenprovider met deze naam voor deze applicatie"
+
+#. js-lingui-id: eynBqK
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "A messaging provider with this name already exists for this application."
+msgstr "Er bestaat al een berichtenprovider met deze naam voor deze applicatie."
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -433,15 +455,16 @@ msgstr "Een titel is vereist om een agenda-afspraak te maken"
 msgid "A two-factor authentication recovery code was generated for you"
 msgstr "Er is een herstelcode voor tweefactorauthenticatie voor je gegenereerd"
 
-#. js-lingui-id: 28Abul
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "A user variable cannot have a value: each member sets their own."
-msgstr "Een gebruikersvariabele kan geen waarde hebben: elk lid stelt zijn eigen waarde in."
-
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A user with this email already exists."
 msgstr "Er bestaat al een gebruiker met dit e-mailadres."
+
+#. js-lingui-id: wSP1qx
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type"
+msgstr "Een geldige agentChatChannelUniversalIdentifier is vereist voor het type AGENT_CHAT_CHANNEL"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -558,11 +581,6 @@ msgstr "Een workflowversie"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Een werkruimtelid"
-
-#. js-lingui-id: 7co7Js
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "A workspace variable must have a value."
-msgstr "Een werkruimtevariabele moet een waarde hebben."
 
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -1062,10 +1080,17 @@ msgid "An error occurred."
 msgstr "Er is een fout opgetreden."
 
 #. js-lingui-id: CKXJCD
-#: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
-#: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
+#: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
+#: src/engine/core-modules/record-export/services/record-export-query.service.ts
+#: src/engine/core-modules/record-export/services/record-export-query.service.ts
+#: src/engine/core-modules/record-export/utils/expand-morph-relation-export-fields.util.ts
 msgid "An export field is no longer available."
 msgstr "Een exportveld is niet langer beschikbaar."
+
+#. js-lingui-id: zv+Pcr
+#: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
+msgid "An export is already running for this workspace."
+msgstr "Er wordt al een export uitgevoerd voor deze werkruimte."
 
 #. js-lingui-id: jiELc8
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -1091,6 +1116,17 @@ msgstr "Er is een interne fout opgetreden tijdens het verwerken van versleutelde
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."
 msgstr "Er is al een uitnodiging naar dit e-mailadres verzonden."
+
+#. js-lingui-id: BCJWBj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "An MCP server with this name already exists"
+msgstr "Er bestaat al een MCP-server met deze naam"
+
+#. js-lingui-id: SeiYVM
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "An MCP server with this name already exists."
+msgstr "Er bestaat al een MCP-server met deze naam."
 
 #. js-lingui-id: CQ5DXU
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -1455,6 +1491,12 @@ msgstr "Toegewezen aan mij"
 msgctxt "fieldMetadata.label"
 msgid "Assignee"
 msgstr "Toegewezene"
+
+#. js-lingui-id: VkxEa0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Assistant participant"
+msgstr ""
 
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2561,6 +2603,18 @@ msgstr "Cc"
 msgid "Changing log retention requires an Organization subscription."
 msgstr "Het wijzigen van de bewaartermijn voor logs vereist een Organization-abonnement."
 
+#. js-lingui-id: zBdJe6
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Channel"
+msgstr "Kanaal"
+
+#. js-lingui-id: gPIeS4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Channel archived at"
+msgstr "Kanaal gearchiveerd op"
+
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -2572,6 +2626,49 @@ msgstr "Kanaal-ID"
 msgctxt "fieldMetadata.label"
 msgid "Channel ID"
 msgstr "Kanaal-ID"
+
+#. js-lingui-id: G+8qH5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "Channel name is required"
+msgstr "Kanaalnaam is vereist"
+
+#. js-lingui-id: Nd2xnP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "Channel not found"
+msgstr "Kanaal niet gevonden"
+
+#. js-lingui-id: ZJRMDQ
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service.ts
+msgid "Channel not found."
+msgstr "Kanaal niet gevonden."
+
+#. js-lingui-id: /84Bpj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "Channel role link not found"
+msgstr "Koppeling tussen kanaal en rol niet gevonden"
+
+#. js-lingui-id: 86oa9B
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Channel snoozed until"
+msgstr "Kanaal uitgesteld tot"
+
+#. js-lingui-id: ieLfO5
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Channel the thread is triaged in"
+msgstr "Kanaal waarin de thread is getrieerd"
+
+#. js-lingui-id: 7LMBzP
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Channels are not available yet. Try again in a few minutes."
+msgstr "Kanalen zijn nog niet beschikbaar. Probeer het over een paar minuten opnieuw."
 
 #. js-lingui-id: z851aK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -3072,6 +3169,12 @@ msgstr "Gekoppeld account niet gevonden."
 msgid "Connection not found."
 msgstr "Verbinding niet gevonden."
 
+#. js-lingui-id: CQZ2kU
+#. placeholder {0}: flatMessagingProvider.connectionProviderUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Connection provider \"{0}\" was not found in this application"
+msgstr "Verbindingsprovider \"{0}\" is niet gevonden in deze applicatie"
+
 #. js-lingui-id: xQ2DfP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider display name is required"
@@ -3093,11 +3196,14 @@ msgstr "Naam van de verbindingsprovider is vereist"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Connection provider not found"
 msgstr "Verbindingsprovider niet gevonden"
 
 #. js-lingui-id: b+xWjq
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connection provider not found."
 msgstr "Verbindingsprovider niet gevonden."
 
@@ -3111,11 +3217,36 @@ msgstr "Verbindingsprovider oauthConfig.{label} is vereist"
 msgid "Connection provider scope \"{scope}\" is invalid"
 msgstr "Het bereik van de verbindingsprovider \"{scope}\" is ongeldig"
 
+#. js-lingui-id: lOJLh7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider scope cannot be changed"
+msgstr "Het bereik van de verbindingsprovider kan niet worden gewijzigd"
+
+#. js-lingui-id: rGTdmC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider scope cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
+msgstr "Het bereik van de verbindingsprovider kan na het maken niet worden gewijzigd: declareer een nieuwe verbindingsprovider met een nieuwe universalIdentifier"
+
+#. js-lingui-id: ouURJJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider type cannot be changed"
+msgstr "Het type van de verbindingsprovider kan niet worden gewijzigd"
+
+#. js-lingui-id: Y4TItr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider type cannot be changed after creation: declare a new connection provider with a new universalIdentifier"
+msgstr "Het type van de verbindingsprovider kan na het maken niet worden gewijzigd: declareer een nieuwe verbindingsprovider met een nieuwe universalIdentifier"
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with name {0} already exists for this application"
 msgstr "Er bestaat al een verbindingsprovider met de naam {0} voor deze applicatie"
+
+#. js-lingui-id: pXXjt2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
+msgstr "Een verbindingsprovider van het type 'custom' moet verwijzen naar een authorize- en een callback-logicafunctie"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3626,6 +3757,11 @@ msgstr "Cron-triggers hebben een geldig cron-patroon nodig, zoals \"0 9 * * 1\""
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Custom command menu item cannot be reset to default."
 msgstr "Aangepast opdrachtmenu-item kan niet worden teruggezet naar standaard."
+
+#. js-lingui-id: eCtxAR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Custom connection provider is missing its authorize or callback logic function"
+msgstr "Bij de aangepaste verbindingsprovider ontbreekt de authorize- of callback-logicafunctie"
 
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -4191,6 +4327,16 @@ msgctxt "fieldMetadata.label"
 msgid "Direction"
 msgstr "Richting"
 
+#. js-lingui-id: jPdYe/
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
+msgid "Disabled object permission actions must be a list"
+msgstr "Uitgeschakelde objectmachtigingsacties moeten een lijst zijn"
+
+#. js-lingui-id: EtelV5
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
+msgid "Disabled object permission actions must not repeat"
+msgstr "Uitgeschakelde objectmachtigingsacties mogen niet worden herhaald"
+
 #. js-lingui-id: T/2cxH
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -4202,6 +4348,17 @@ msgstr "Concept Verwerpen"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Discard Draft"
 msgstr "Concept Verwerpen"
+
+#. js-lingui-id: OaH7rc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Disconnect the MCP server before changing its URL"
+msgstr "Koppel de MCP-server los voordat je de URL wijzigt"
+
+#. js-lingui-id: X9u5qJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Disconnect the MCP server before changing its URL."
+msgstr "Koppel de MCP-server los voordat je de URL wijzigt."
 
 #. js-lingui-id: N4sZ6H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -4886,7 +5043,6 @@ msgstr "Ervaring"
 #. js-lingui-id: PCGpYB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Export"
 msgstr "Exporteren"
@@ -4901,12 +5057,6 @@ msgstr "{objectLabel} exporteren"
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Export not found."
 msgstr "Export niet gevonden."
-
-#. js-lingui-id: xvfw7w
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Export to PDF"
-msgstr "Exporteer naar PDF"
 
 #. js-lingui-id: c5P53s
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6644,6 +6794,31 @@ msgstr "Ongeldige limietparameter."
 msgid "Invalid logic function input."
 msgstr "Ongeldige invoer voor logische functie."
 
+#. js-lingui-id: U2TpWH
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server input."
+msgstr "Ongeldige invoer voor MCP-server."
+
+#. js-lingui-id: PTN/J2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server name provided"
+msgstr "Ongeldige MCP-servernaam opgegeven"
+
+#. js-lingui-id: 945sNP
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server name. Use lowercase letters, digits and underscores, starting with a letter."
+msgstr "Ongeldige MCP-servernaam. Gebruik kleine letters, cijfers en underscores, beginnend met een letter."
+
+#. js-lingui-id: 1pdxfJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Invalid MCP server URL provided"
+msgstr "Ongeldige MCP-server-URL opgegeven"
+
+#. js-lingui-id: YDqREm
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Invalid MCP server URL. Please provide a valid HTTP or HTTPS URL."
+msgstr "Ongeldige MCP-server-URL. Geef een geldige HTTP- of HTTPS-URL op."
+
 #. js-lingui-id: fNaXqL
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Invalid message channel input."
@@ -6653,6 +6828,11 @@ msgstr "Ongeldige invoer voor berichtkanaal."
 #: src/engine/metadata-modules/message-folder/message-folder.exception.ts
 msgid "Invalid message folder input."
 msgstr "Ongeldige invoer voor berichtenmap."
+
+#. js-lingui-id: u3ER6+
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "Invalid messaging provider input."
+msgstr "Ongeldige invoer voor berichtenprovider."
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -7035,6 +7215,7 @@ msgstr "Ongeldige waarde voor positie: \"{inspectedValue}\""
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 msgid "Invalid value for rich text."
 msgstr "Ongeldige waarde voor rich text."
 
@@ -7395,6 +7576,8 @@ msgstr "Labelidentificatie-aankoop moet zichtbaar zijn"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 msgid "Label is required"
 msgstr "Label is vereist."
 
@@ -7873,6 +8056,17 @@ msgstr "maxNumberOfValues moet in de instellingen gedefinieerd zijn en een getal
 msgid "May"
 msgstr "Mei"
 
+#. js-lingui-id: ES19km
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "MCP server not found"
+msgstr "MCP-server niet gevonden"
+
+#. js-lingui-id: 32QmfJ
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "MCP server not found."
+msgstr "MCP-server niet gevonden."
+
 #. js-lingui-id: DICk6O
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -8318,6 +8512,50 @@ msgctxt "fieldMetadata.description"
 msgid "Messages sent as part of this campaign"
 msgstr "Berichten verzonden als onderdeel van deze campagne"
 
+#. js-lingui-id: DR7S+J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider connection provider cannot be changed"
+msgstr "De verbindingsprovider van de berichtenprovider kan niet worden gewijzigd"
+
+#. js-lingui-id: S8RYm2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
+msgstr "De verbindingsprovider van de berichtenprovider kan na het maken niet worden gewijzigd: declareer een nieuwe berichtenprovider met een nieuwe universalIdentifier"
+
+#. js-lingui-id: A2qm/C
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider display name is required"
+msgstr "Weergavenaam van de berichtenprovider is vereist"
+
+#. js-lingui-id: PheN1+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider displayName is required"
+msgstr "Weergavenaam van berichtenprovider is vereist"
+
+#. js-lingui-id: NpU0GW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider name is required"
+msgstr "Naam van de berichtenprovider is vereist"
+
+#. js-lingui-id: kh1zio
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider not found"
+msgstr "Berichtenprovider niet gevonden"
+
+#. js-lingui-id: yyDEl+
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "Messaging provider not found."
+msgstr "Berichtenprovider niet gevonden."
+
+#. js-lingui-id: Ih/vm6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider with name {name} already exists for this application"
+msgstr "Er bestaat al een berichtenprovider met de naam {name} voor deze applicatie"
+
 #. js-lingui-id: IYFsjL
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
@@ -8410,6 +8648,11 @@ msgstr "Maand eerst"
 msgid "Morph relation field must have a morph id"
 msgstr "Morph-relatieveld moet een morph-id hebben"
 
+#. js-lingui-id: /eQ78F
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Move this channel's chats to another channel before deleting it."
+msgstr "Verplaats de chats van dit kanaal naar een ander kanaal voordat je het verwijdert."
+
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
@@ -8465,6 +8708,11 @@ msgstr ""
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Name is not synced with label."
 msgstr "Naam is niet gesynchroniseerd met label."
+
+#. js-lingui-id: QrBCC2
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+msgid "Name is not valid: it must be camelCase, e.g. \"{camelCasedName}\""
+msgstr "Naam is niet geldig: deze moet camelCase zijn, bijvoorbeeld \"{camelCasedName}\""
 
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
@@ -9153,6 +9401,12 @@ msgstr ""
 msgid "One of the selected fields does not belong to this object."
 msgstr "Een van de geselecteerde velden hoort niet bij dit object."
 
+#. js-lingui-id: mhOSep
+#: src/engine/metadata-modules/ai/ai.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "One of these roles no longer exists."
+msgstr "Een van deze rollen bestaat niet meer."
+
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "One or more records were not found."
@@ -9233,6 +9487,18 @@ msgstr "Alleen de persoon die deze workflow heeft gemaakt, kan wijzigen wie deze
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
 msgid "Only the values of this form can be changed."
 msgstr "Alleen de waarden van dit formulier kunnen worden gewijzigd."
+
+#. js-lingui-id: 9rFxst
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Open chat"
+msgstr "Chat openen"
+
+#. js-lingui-id: 4QVn1g
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Open chat"
+msgstr "Chat openen"
 
 #. js-lingui-id: +ee5JG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9944,6 +10210,11 @@ msgstr "Kies een verzendtijd in de toekomst."
 msgid "Pick a specific sub-field of \"{0}\" — composite fields can't be indexed as a whole."
 msgstr "Kies een specifiek subveld van \"{0}\" — samengestelde velden kunnen niet als geheel worden geïndexeerd."
 
+#. js-lingui-id: r+tlvn
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Pick another channel to move the chats to."
+msgstr "Kies een ander kanaal om de chats naartoe te verplaatsen."
+
 #. js-lingui-id: TtfDdb
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
 msgid "Pick at least one field for the index."
@@ -9981,6 +10252,7 @@ msgid "Please provide a password for this connection."
 msgstr "Geef een wachtwoord op voor deze verbinding."
 
 #. js-lingui-id: NR22yi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Please provide a valid HTTP or HTTPS URL"
@@ -10125,12 +10397,6 @@ msgctxt "pageLayoutWidget.title"
 msgid "Preview"
 msgstr "Voorbeeld"
 
-#. js-lingui-id: ysRzX6
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Previous AI Chats"
-msgstr "Vorige AI-chats"
-
 #. js-lingui-id: +DJKfQ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Primary axis group by field is required for bar chart"
@@ -10186,6 +10452,11 @@ msgstr "Verwerken"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
 msgid "Prompt cannot be empty"
 msgstr "Prompt mag niet leeg zijn"
+
+#. js-lingui-id: KQ0Ots
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service.ts
+msgid "Property {property} cannot be updated"
+msgstr "Eigenschap {property} kan niet worden bijgewerkt"
 
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -10930,6 +11201,7 @@ msgid "Role name is invalid"
 msgstr "Rolnaam is ongeldig"
 
 #. js-lingui-id: MvTCyk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -11402,6 +11674,11 @@ msgstr "E-mail verzenden"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Send Email"
 msgstr "E-mail verzenden"
+
+#. js-lingui-id: RPQott
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Send message logic function \"{sendMessageLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "Logicafunctie voor het verzenden van berichten \"{sendMessageLogicFunctionUniversalIdentifier}\" is niet gevonden in deze applicatie"
 
 #. js-lingui-id: +dLR8z
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11952,6 +12229,11 @@ msgstr "Fase"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Standard agents cannot be modified."
 msgstr "Standaardagenten kunnen niet worden gewijzigd."
+
+#. js-lingui-id: rQq8lH
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Standard channels cannot be deleted."
+msgstr "Standaardkanalen kunnen niet worden verwijderd."
 
 #. js-lingui-id: Ptv+nG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -12651,6 +12933,26 @@ msgstr "De totale jaarlijkse omzet van het bedrijf"
 msgid "The connected {0} account is missing calendar permissions ({missingScopeList}). Please reconnect the account to grant calendar access."
 msgstr "Het gekoppelde {0}-account mist agendarechten ({missingScopeList}). Koppel het account opnieuw om agendatoegang te verlenen."
 
+#. js-lingui-id: xYqYn7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider belongs to another application"
+msgstr "De verbindingsprovider behoort tot een andere applicatie"
+
+#. js-lingui-id: 0kfc9m
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "The connection provider must belong to the same application as the MCP server"
+msgstr "De verbindingsprovider moet tot dezelfde applicatie behoren als de MCP-server"
+
+#. js-lingui-id: x9rG77
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The connection provider must belong to the same application as the MCP server."
+msgstr "De verbindingsprovider moet tot dezelfde applicatie behoren als de MCP-server."
+
+#. js-lingui-id: fDWKx/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The connection provider this messaging provider uses was not found in its application."
+msgstr "De verbindingsprovider die deze berichtenprovider gebruikt, is niet gevonden in de bijbehorende applicatie."
+
 #. js-lingui-id: j6q6l+
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The connection-provider manifest is missing required fields."
@@ -12755,6 +13057,11 @@ msgstr "De export is mislukt. Probeer het opnieuw of exporteer minder records."
 msgid "The export file is too large. Please export fewer records."
 msgstr "Het exportbestand is te groot. Exporteer minder records."
 
+#. js-lingui-id: bjRiGF
+#: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
+msgid "The export is missing data and could not be completed."
+msgstr "Er ontbreken gegevens in de export en deze kon niet worden voltooid."
+
 #. js-lingui-id: RKP94c
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12858,10 +13165,25 @@ msgctxt "fieldMetadata.description"
 msgid "The list this campaign was sent to"
 msgstr "De lijst waarnaar deze campagne is verzonden"
 
+#. js-lingui-id: pSAncm
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function that completes the connection was not found."
+msgstr "De logicafunctie die de verbinding voltooit, is niet gevonden."
+
 #. js-lingui-id: gU/AgL
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that identifies the connected account was not found."
 msgstr "De logicafunctie die het gekoppelde account identificeert, is niet gevonden."
+
+#. js-lingui-id: 8gf2aA
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function that starts the connection was not found."
+msgstr "De logicafunctie die de verbinding start, is niet gevonden."
+
+#. js-lingui-id: usqJwo
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider sends with was not found in its application."
+msgstr "De logicafunctie waarmee deze berichtenprovider berichten verstuurt, is niet gevonden in de bijbehorende applicatie."
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13174,6 +13496,16 @@ msgstr "De workflow verwijst naar metadata die niet beschikbaar zijn voor deze a
 msgid "The workflow schedule is invalid."
 msgstr "Het workflowschema is ongeldig."
 
+#. js-lingui-id: /s75Zz
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow select field must reference a field of the same type."
+msgstr "Het selectievak voor de workflow moet verwijzen naar een veld van hetzelfde type."
+
+#. js-lingui-id: 8xdW5z
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+msgid "The workflow select field must reference an existing field."
+msgstr "Het selectievak voor de workflow moet verwijzen naar een bestaand veld."
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13409,6 +13741,32 @@ msgstr "De lijst van deze campagne bevindt zich in de prullenbak. Herstel deze o
 msgid "This change would corrupt the workflow, it was not saved"
 msgstr "Deze wijziging zou de workflow beschadigen en is niet opgeslagen"
 
+#. js-lingui-id: ThXjDv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "This channel access no longer exists."
+msgstr "Deze kanaaltoegang bestaat niet meer."
+
+#. js-lingui-id: ++E+5T
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This channel is being changed. Try again in a moment."
+msgstr "Dit kanaal wordt gewijzigd. Probeer het zo opnieuw."
+
+#. js-lingui-id: /mdJSV
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This chat has no owner, so it has to stay in a channel."
+msgstr "Deze chat heeft geen eigenaar en moet daarom in een kanaal blijven."
+
+#. js-lingui-id: 6zaKtA
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This chat is not in a channel."
+msgstr "Deze chat bevindt zich niet in een kanaal."
+
+#. js-lingui-id: TjTe43
+#: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
+msgid "This code belongs to a published workflow version. Edit it from a draft."
+msgstr "Deze code hoort bij een gepubliceerde workflowversie. Bewerk deze vanuit een concept."
+
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
@@ -13423,11 +13781,6 @@ msgstr "Dit gekoppelde account kan niet worden gebruikt voor deze actie."
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
 msgstr "Deze verbinding is niet toegestaan."
-
-#. js-lingui-id: 5G7DBW
-#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
-msgid "This connection provider does not support this kind of connection."
-msgstr "Deze verbindingsprovider ondersteunt dit type verbinding niet."
 
 #. js-lingui-id: DtHdRF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
@@ -13611,6 +13964,11 @@ msgstr "Deze limiet kan niet worden opgeslagen."
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "Deze limiet is gewijzigd terwijl je deze bewerkte. Laad opnieuw en probeer het opnieuw."
 
+#. js-lingui-id: STVycN
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This list of chats could not be loaded. Try again."
+msgstr "Deze lijst met chats kon niet worden geladen. Probeer het opnieuw."
+
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log filter is not valid."
@@ -13635,6 +13993,11 @@ msgstr "Dit lid kan niet antwoorden in deze chat en daarom kan de chat niet aan 
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "This member hasn't set up two-factor authentication, so there is nothing to recover."
 msgstr "Dit lid heeft tweefactorauthenticatie niet ingesteld, dus er valt niets te herstellen."
+
+#. js-lingui-id: NW6Nmf
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "This message channel cannot send messages."
+msgstr "Dit berichtenkanaal kan geen berichten verzenden."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -13721,6 +14084,11 @@ msgstr "Deze organisatiesleutel is al in gebruik op een andere serverinstantie. 
 msgid "This permission is already set for the role"
 msgstr "Deze machtiging is al ingesteld voor de rol"
 
+#. js-lingui-id: IlFhXC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
+msgid "This permission is disabled on the object and cannot be granted"
+msgstr "Deze machtiging is uitgeschakeld voor het object en kan niet worden verleend"
+
 #. js-lingui-id: wJWFt2
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This plan is not available."
@@ -13776,6 +14144,16 @@ msgstr "Dit verzoek wacht niet langer op een antwoord."
 msgid "This request is still getting ready. Try again in a moment."
 msgstr "Dit verzoek wordt nog voorbereid. Probeer het zo opnieuw."
 
+#. js-lingui-id: T6c4z3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "This role already has access to the channel"
+msgstr "Deze rol heeft al toegang tot het kanaal"
+
+#. js-lingui-id: ce6Oq+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service.ts
+msgid "This role already has access to the channel."
+msgstr "Deze rol heeft al toegang tot het kanaal."
+
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This role cannot be assigned to agents."
@@ -13806,7 +14184,7 @@ msgstr "Deze rol kan niet worden bewerkt."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Deze rol kan niet worden aangepast omdat het een systeemrol is. Alleen aangepaste rollen kunnen worden bewerkt."
 
@@ -14578,6 +14956,11 @@ msgstr "Universele identifier is gereserveerd voor door het systeem beheerde met
 msgid "Unknown"
 msgstr "Onbekend"
 
+#. js-lingui-id: 0CuayF
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
+msgid "Unknown disabled object permission action"
+msgstr "Onbekende uitgeschakelde objectmachtigingsactie"
+
 #. js-lingui-id: of4ZuG
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -14873,6 +15256,11 @@ msgctxt "skill.description"
 msgid "Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes"
 msgstr "Gebruik voor Python-bewerkingen op gegevens die de recordtools niet kunnen uitvoeren: statistieken, grafiekafbeeldingen, een geüpload bestand parseren. Gebruik dit niet voor gewone recordlees- en schrijfbewerkingen"
 
+#. js-lingui-id: cW4z4t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service.ts
+msgid "Use lowercase letters, digits and underscores, starting with a letter"
+msgstr "Gebruik kleine letters, cijfers en underscores, beginnend met een letter"
+
 #. js-lingui-id: Gltw+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
@@ -14967,11 +15355,6 @@ msgstr "Gebruiker bestaat al"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "Aan de gebruiker is al een rol toegewezen."
-
-#. js-lingui-id: +FdZ1+
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "User application variable cannot have a value"
-msgstr "Gebruikersapplicatievariabele kan geen waarde hebben"
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -15458,12 +15841,6 @@ msgstr "Weergave niet gevonden na upsert"
 msgid "View not found for widget"
 msgstr "Weergave voor de widget niet gevonden"
 
-#. js-lingui-id: pAoCL6
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "View Previous AI Chats"
-msgstr "Bekijk Vorige AI-chats"
-
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -15605,10 +15982,25 @@ msgstr "Gevolgde velden zijn alleen van toepassing op databasegebeurtenistrigger
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "We ondervinden een tijdelijk probleem met onze database. Probeer het later opnieuw."
 
+#. js-lingui-id: 1QdT9i
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not complete the connection. Please try again."
+msgstr "We konden de verbinding niet voltooien. Probeer het opnieuw."
+
 #. js-lingui-id: SO+/3j
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "We konden het account dat u hebt geautoriseerd niet identificeren. Probeer het opnieuw."
+
+#. js-lingui-id: rj0Dtg
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not send your message. Please try again."
+msgstr "We konden je bericht niet verzenden. Probeer het opnieuw."
+
+#. js-lingui-id: j7daTn
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not start the connection. Please try again."
+msgstr "We konden de verbinding niet starten. Probeer het opnieuw."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -15701,6 +16093,12 @@ msgctxt "fieldMetadata.description"
 msgid "When a snoozed thread comes back to the inbox"
 msgstr "Wanneer een gesnoozede thread terugkeert naar de inbox"
 
+#. js-lingui-id: zdfiR1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When a thread snoozed in its channel comes back to it"
+msgstr "Wanneer een in het kanaal uitgestelde thread ernaar terugkeert"
+
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -15731,6 +16129,12 @@ msgctxt "fieldMetadata.description"
 msgid "When the thread was created or last received a message"
 msgstr "Wanneer de thread is aangemaakt of voor het laatst een bericht heeft ontvangen"
 
+#. js-lingui-id: 5JPMXf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When the thread was marked as done or snoozed in its channel"
+msgstr "Wanneer de thread in het kanaal als voltooid is gemarkeerd of is uitgesteld"
+
 #. js-lingui-id: Kx3ltI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -15754,6 +16158,12 @@ msgstr "Of de huidige deelnemersregels dit doel rechtvaardigen"
 msgctxt "fieldMetadata.description"
 msgid "Whether new activity brings the thread back to the inbox"
 msgstr "Of nieuwe activiteit de thread terugbrengt naar de inbox"
+
+#. js-lingui-id: DYv22m
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether the assistant participates in this conversation"
+msgstr ""
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -16245,11 +16655,6 @@ msgstr "Werkruimte"
 msgid "Workspace {workspaceId} is not found."
 msgstr "Werkruimte {workspaceId} is niet gevonden."
 
-#. js-lingui-id: Ulbao6
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
-msgid "Workspace application variable must have a value"
-msgstr "Werkruimteapplicatievariabele moet een waarde hebben"
-
 #. js-lingui-id: lNgTSN
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Workspace cannot be deleted: subscription is not yet canceled."
@@ -16435,6 +16840,7 @@ msgstr "Werkruimte niet gevonden voor abonnementsgebeurtenis."
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+#: src/engine/core-modules/workspace-data-export/workspace-data-export.exception.ts
 #: src/engine/core-modules/workspace/workspace.exception.ts
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -16835,6 +17241,11 @@ msgstr "Uw AWS SES-account bevindt zich nog in de sandbox, dus dit domein kan ni
 #: src/engine/core-modules/billing/utils/build-phase-update-params-or-throw.util.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "Uw factureringsabonnement is beschadigd. Neem contact op met ondersteuning."
+
+#. js-lingui-id: L8/bmN
+#: src/modules/emailing/utils/build-campaign-send-refusal-exception.util.ts
+msgid "Your daily limit is {limitValue, plural, one {# email} other {# emails}}, and this campaign would go over what's left today. Contact us to raise it."
+msgstr "Je dagelijkse limiet is {limitValue, plural, one {# e-mail} other {# e-mails}}, en deze campagne zou hoger uitkomen dan wat er vandaag nog over is. Neem contact met ons op om deze te verhogen."
 
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

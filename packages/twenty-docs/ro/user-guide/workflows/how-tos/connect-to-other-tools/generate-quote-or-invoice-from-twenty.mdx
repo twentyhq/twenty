@@ -3,7 +3,7 @@ title: Generați o ofertă sau o factură din Twenty
 description: Creați automat facturi în instrumente externe atunci când se închid oportunitățile.
 ---
 
-Trimiteți automat datele oportunității către sistemul dvs. de facturare (Stripe, QuickBooks, Xero etc.) atunci când o oportunitate este câștigată.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Structura fluxului de lucru
 
@@ -37,10 +37,10 @@ Declanșatorul se activează la orice actualizare a unei Oportunități. Filtrul
 
 Înregistrarea Oportunității s-ar putea să nu includă toate câmpurile Companiei de care aveți nevoie pentru factură. Adăugați o acțiune **Search Record**:
 
-| Setare             | Valoare                                   |
-| ------------------ | ----------------------------------------- |
-| **Obiect**         | Companie                                  |
-| **Potrivire după** | ID egal cu `{{trigger.object.companyId}}` |
+| Setare             | Valoare                                             |
+| ------------------ | --------------------------------------------------- |
+| **Obiect**         | Companie                                            |
+| **Potrivire după** | ID egal cu `{{trigger.properties.after.companyId}}` |
 
 Aceasta preia înregistrarea completă a Companiei cu adresa de facturare, ID fiscal etc.
 
@@ -142,3 +142,5 @@ Body: {{code.invoice}}
 * [Declanșatoare ale fluxurilor de lucru](/ro/user-guide/workflows/capabilities/workflow-triggers)
 * [Acțiuni ale fluxurilor de lucru](/ro/user-guide/workflows/capabilities/workflow-actions)
 * [Automatizări pentru Closed Won](/ro/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+
+<PageBanner illustration="section-document-generator" />

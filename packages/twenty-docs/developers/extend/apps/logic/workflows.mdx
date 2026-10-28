@@ -71,6 +71,7 @@ Key points:
 - `nextStepIds` wires the graph. The trigger points to the first steps, and each step points to the steps that run after it.
 - A step reads earlier output with `{{trigger.<path>}}` or `{{<step universalIdentifier>.<path>}}`.
 - The build validates the whole definition: unsupported trigger or step types, broken step links and references to unknown steps fail it.
+- `isSystem` (optional, defaults to `false`) hides the workflow from the lists that leave out system workflows. It only changes what is displayed.
 
 ## Referencing other entities
 
@@ -101,6 +102,8 @@ Application workflows support these step types: `LOGIC_FUNCTION`, `AI_AGENT`, `H
 Their inputs match the steps of the [workflow builder](/user-guide/workflows/capabilities/workflow-actions), with universal identifiers in place of names:
 - Record steps take `objectUniversalIdentifier` instead of an object name.
 - Filters and sorts point at fields with `fieldMetadataUniversalIdentifier`.
+- Filter operands take `ViewFilterOperand` values, exported by `twenty-sdk/define`. Filter group operators take string values such as `'AND'` or `'OR'`.
+- Form fields of type `RECORD` name their object with `settings.objectUniversalIdentifier`. Fields of type `SELECT` and `MULTI_SELECT` offer the options of an existing field of the same type, named with `settings.selectedFieldUniversalIdentifier`.
 - To run your own code, use a `LOGIC_FUNCTION` step. The builder's Code step is not available.
 - Email and calendar steps run only if your app's role has the matching permission flag: `SystemPermissionFlag.SEND_EMAIL_TOOL` for `SEND_EMAIL` and `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` for `CREATE_CALENDAR_EVENT`. The workspace grants it by installing the app, and the step can then use any connected account in the workspace, like a workflow built in the app.
 - Connected account ids are local to each workspace, so don't hardcode one. Pass the account as a variable. Email steps also take a workspace member id, such as `{{trigger.properties.after.assigneeId}}`, which resolves to that member's first account able to send.

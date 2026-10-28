@@ -1,0 +1,186 @@
+---
+title: Taxarea creditelor
+description: Declarați pentru ce facturează aplicația dvs. și taxați credite ale spațiului de lucru dintr-o funcție logică.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+<Warning>
+  Încă nu este disponibilă. Taxarea creditelor pentru aplicații se lansează oficial în octombrie. Această pagină este publicată anticipat pentru partenerii care doresc să experimenteze cu aceasta.
+</Warning>
+
+Aplicațiile care costă bani pentru a rula — un înregistrator de apeluri care plătește un furnizor de transcriere, o aplicație de îmbogățire care plătește per potrivire — taxează spațiul de lucru în **credite**. Tot ceea ce facturează o aplicație este declarat într-un singur bloc `billing` din configurația aplicației dvs:
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, variables...
+  billing: {
+    description: '$20/month + $0.02 per minute recorded',
+    recurring: {
+      platformFee: {
+        period: 'MONTH',
+        amountMicroCredits: 20_000_000,
+        label: 'Platform fee',
+      },
+    },
+    operations: {
+      recordMeeting: {
+        operationType: 'CALL_RECORDING',
+        label: 'Meeting recording',
+      },
+    },
+  },
+});
+```
+
+* `recurring` — taxe fixe și per membru pe care **platforma** le aplică pentru dvs., o dată per perioadă de facturare.
+* `operations` — pentru ce taxați pe măsură ce este utilizat, dintr-o funcție logică.
+* `description` — un rând prietenos afișat cumpărătorilor în listarea dvs. din marketplace.
+
+Toate trei ajung la același contor de credite și la aceeași defalcare din **Setări > Utilizare**, astfel încât un spațiu de lucru vede o singură factură.
+
+## Taxe recurente
+
+O taxă recurentă este o taxă de abonament: o sumă lunară fixă, o sumă per membru al spațiului de lucru sau ambele. Declarați suma, iar platforma o taxează. Aplicația dvs. nu apelează niciodată `chargeCredits` pentru acestea.
+
+```ts src/application-config.ts
+billing: {
+  recurring: {
+    platformFee: {
+      period: 'MONTH',
+      amountMicroCredits: 20_000_000,
+      label: 'Platform fee',
+    },
+    seat: {
+      period: 'MONTH',
+      amountMicroCredits: 5_000_000,
+      per: 'WORKSPACE_MEMBER',
+      label: 'Per member',
+    },
+  },
+},
+```
+
+| Câmp                 | Descriere                                                                                                                                                                          |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `perioadă`           | `MONTH` — singura perioadă disponibilă astăzi                                                                                                                                      |
+| `amountMicroCredits` | Sumă în microcredite (1 USD = 1.000.000), un număr întreg pozitiv de până la 100.000.000 ($100). Pentru o taxă `WORKSPACE_MEMBER`, aceasta este tariful **per membru**, nu totalul |
+| `per`                | Omiteți pentru o taxă fixă. `WORKSPACE_MEMBER` înmulțește suma cu numărul de membri din spațiul de lucru când este taxată perioada                                                 |
+| `label`              | Ce citesc administratorii pentru acel rând în Utilizare                                                                                                                            |
+
+Cum sunt aplicate:
+
+* O dată per perioadă de facturare a spațiului de lucru, la propria limită de perioadă a spațiului de lucru, nu în prima zi a lunii.
+* Nu sunt proporționale. O aplicație instalată la mijlocul perioadei este taxată cu suma integrală pentru acea perioadă; dezinstalarea oprește perioada următoare, nu rambursează perioada curentă.
+* Taxele per membru iau în calcul toți membrii spațiului de lucru în momentul în care este aplicată taxa, astfel încât un spațiu de lucru care crește la mijlocul perioadei plătește numărul mai mare începând cu perioada următoare.
+* Doar pentru abonamente lunare. Un spațiu de lucru cu un plan anual nu este taxat cu o taxă `MONTH`, în loc să fie taxat o dată pentru întregul an.
+* Limitate. Un tarif declarat peste $100 sau o taxă per membru al cărei tarif, înmulțit cu numărul de membri, ar depăși $1.000 pentru perioadă sunt refuzate și nu sunt percepute. Platforma aplică singură aceste taxe, astfel încât nu va înregistra un debit pe care nu îl poate justifica.
+
+## Operațiuni facturabile
+
+O operațiune este ceea ce taxează aplicația dvs. pe măsură ce funcționează. Fiecare intrare asociază un nume de operațiune ales de dvs. cu categoria de facturare pe care platforma o contorizează, plus eticheta afișată administratorilor spațiului de lucru în **Setări > Utilizare**.
+
+```ts src/application-config.ts
+billing: {
+  operations: {
+    recordMeeting: {
+      operationType: 'CALL_RECORDING',
+      label: 'Meeting recording',
+    },
+    summarizeMeeting: {
+      operationType: 'AI_CHAT_TOKEN',
+      label: 'Meeting summary',
+    },
+  },
+},
+```
+
+`operationType` trebuie să fie una dintre categoriile de facturare ale platformei: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`. Aceasta decide cum este contorizată cheltuiala și ce unitate de numărare se aplică (tokenuri, invocări, minute) — nu este ceea ce citesc administratorii. `label` este.
+
+Compilarea respinge un `operationType` necunoscut, un `label` gol și un nume utilizat atât de o taxă recurentă, cât și de o operațiune.
+
+## Taxare
+
+Taxați o operațiune declarată după nume:
+
+```ts
+import { chargeCredits } from 'twenty-sdk/billing';
+
+await chargeCredits({
+  operation: 'recordMeeting',
+  creditsUsedMicro: 250_000,
+  quantity: 12,
+});
+```
+
+`creditsUsedMicro` este suma în microcredite (1 USD = 1.000.000). `quantity` reprezintă numărul de unități acoperite de taxă, în unitatea implicată de categoria operațiunii — minute pentru `CALL_RECORDING`, invocări pentru `CODE_EXECUTION` și așa mai departe.
+
+Notițe:
+
+* Declararea operațiunilor permite ca Utilizare să împartă cheltuiala aplicației dvs. în funcție de ceea ce a taxat. O aplicație care nu declară nimic este totuși raportată, ca o singură secțiune sub numele său afișat.
+* Taxarea unei operațiuni pe care manifestul dvs. nu o declară este respinsă. Adăugați-o la `billing.operations` și sincronizați.
+* Mai multe operațiuni pot partaja un singur `operationType`. Două operațiuni de îmbogățire contorizate ambele ca `CODE_EXECUTION` sunt în continuare afișate ca două secțiuni etichetate.
+* Fără `operation`, numiți direct categoria de facturare cu `operationType`, opțional cu un `resourceContext` în formă liberă. Cele două forme se exclud reciproc: `operation` conține eticheta, `operationType` nu.
+* Taxarea nu face niciodată ca funcția dvs. să eșueze. O eroare de facturare este înregistrată și ignorată, iar apelul nu face nimic în afara mediului de rulare al funcției logice, astfel încât rulările locale și testele să nu se blocheze.
+
+## Verificarea înainte de a cheltui
+
+Un spațiu de lucru poate rămâne fără credite. Când se întâmplă acest lucru, funcția ta este refuzată înainte ca codul tău să pornească, iar activitatea proprie a platformei se oprește și ea: `runAgent` returnează o eroare în loc să ruleze, iar celelalte puncte de intrare AI refuză direct. `sendInboxMessage` nu rulează niciun model și nu adaugă niciun cost AI propriu, deși apelul de funcție care o invocă este facturat ca oricare altul; răspunsul unui membru este facturat ca orice tur de chat. Hookurile de dezinstalare și deconectare reprezintă excepția și rulează întotdeauna, astfel încât o aplicație să poată fi eliminată în continuare în mod curat. O execuție care reușește să treacă poate totuși eșua târziu, la un apel al platformei pe care nu l-a scris, dacă spațiul de lucru rămâne fără credite în timpul rulării.
+
+Întrebați mai întâi:
+
+```ts
+import { getCreditAvailability } from 'twenty-sdk/billing';
+
+const { hasAvailableCredits } = await getCreditAvailability();
+
+if (!hasAvailableCredits) {
+  return;
+}
+```
+
+Când creditele nu sunt disponibile, este furnizat un `reason`: `no-credits`, `no-subscription` sau `workspace-suspended`. `no-credits` acoperă, de asemenea, o limită de **Toată utilizarea** pe care un administrator a setat-o pentru aplicația dvs. în **Setări → Facturare → Limite**: spațiul de lucru poate avea în continuare credite, dar aplicația dvs. nu le poate cheltui.
+
+Notițe:
+
+* Indică dacă aplicația dvs. poate cheltui în acest spațiu de lucru, nu cât a mai rămas. Aplicația dvs. nu vede soldul, planul sau limitele acestuia.
+* Eșuează deschis. Dacă verificarea expiră sau serverul nu poate fi accesat, raportează că există credite disponibile, astfel încât o problemă de infrastructură să nu oprească aplicația dvs. Tratați-l ca pe un indiciu care merită respectat, nu ca pe o decizie de autorizare.
+* Este o instantanee. Creditele se pot epuiza între verificare și lucrare — inclusiv din cauza propriilor debitări, deoarece fiecare debitare pe care o efectuați modifică același contor pe care îl citește acesta.
+* Restricția nu este aplicată uniform. Nu toate căile de e-mail de ieșire sunt condiționate de credite, astfel că un `false` aici vă indică faptul că aplicația dvs. nu ar trebui să cheltuiască acum, în loc să prezică exact care apeluri vor eșua.
+
+## Informarea utilizatorilor despre costuri
+
+Declararea taxelor îi spune platformei cum să *contorizeze* aplicația dvs.; nu îi spune unui cumpărător cât va plăti. Setează `billing.description` pentru asta — un rând scurt și prietenos, afișat în listarea ta din marketplace, înainte ca cineva să instaleze.
+
+```ts src/application-config.ts
+billing: {
+  description: '$0.02 per minute recorded, billed to your Twenty credits',
+},
+```
+
+Este text liber în mod intenționat: prețurile reale au niveluri, minime și tarife per unitate pe care un singur număr nu le poate exprima. Păstrează-l într-un singur rând.
+
+O aplicație care declară `operations` sau `recurring` îi solicită, de asemenea, administratorului care instalează consimțământul: ecranul de instalare afișează "Facturează credite spațiului tău de lucru", iar pagina aplicației afișează "Facturează credite", cu `description` la trecerea cursorului.
+
+## Atribuire
+
+Cheltuiala este atribuită persoanei care a declanșat rularea, astfel încât apare în **Utilizare după utilizator**. Rulările fără nicio persoană în spatele lor (un webhook, un cron) nu au o persoană declanșatoare — transmiteți `userWorkspaceId` dacă aplicația dvs. știe cui îi aparține cheltuiala. Acesta trebuie să aparțină spațiului de lucru în care este instalată aplicația și este ignorat atunci când rularea are un utilizator declanșator.
+
+```ts
+await chargeCredits({
+  operation: 'recordMeeting',
+  creditsUsedMicro: 250_000,
+  quantity: 12,
+  userWorkspaceId: ownerUserWorkspaceId,
+});
+```
+
+De unde puteți obține unul: `context.userWorkspaceId` într-o rulare declanșată sau [`listConnections()`](/ro/developers/extend/apps/logic/connections), care returnează `userWorkspaceId` al proprietarului fiecărei conexiuni.
+
+Taxele recurente nu au o persoană declanșatoare, astfel încât sunt raportate doar pentru aplicație, niciodată pentru un membru.
+
+<PageBanner illustration="card-page-charging-credits" />

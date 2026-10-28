@@ -1,0 +1,119 @@
+---
+title: Entrada
+description: Un campo de entrada de texto con atributos nativos, integración con campos y dos tamaños.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InputReference from '/snippets/ui/generated/input/input.mdx';
+
+## Resumen
+
+`Input` renderiza un campo de entrada de texto y acepta atributos de entrada nativos como `type`, `name`, `required`, `disabled` y `autoComplete`.
+
+<StoryEmbed storyId="ui-input-input--display" title="Ejemplo de Input" height={140} />
+
+## "Uso"
+
+### Estado no controlado
+
+Usa `defaultValue` para establecer la dirección de correo electrónico inicial. La entrada controla los cambios posteriores.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root>
+    <Field.Label>Email</Field.Label>
+    <Input
+      name="email"
+      type="email"
+      autoComplete="email"
+      defaultValue="alex@example.com"
+    />
+    <Field.Description>Use your work email address.</Field.Description>
+  </Field.Root>
+);
+```
+
+## Opciones visuales
+
+Compare los campos de entrada pequeños y medianos en sus estados predeterminado, enfocado, no válido y deshabilitado. Use comentarios de validación junto con estilos no válidos.
+
+<StoryEmbed storyId="ui-input-input--catalog" title="Opciones visuales para el campo de entrada" height={380} />
+
+## Apariencia simple
+
+Usa `variant="plain"` dentro de una fila o superficie existente. Elimina el relleno, el borde, las esquinas redondeadas y el espaciado interno, y usa la altura natural. El elemento principal proporciona el espaciado y las dimensiones de la fila. El estilo del texto, del marcador de posición y del estado deshabilitado sigue siendo compartido. El contorno azul sigue el comportamiento nativo `:focus-visible` del navegador. En los controles de texto, esto puede incluir el foco del puntero y el enfoque automático, así como el foco del teclado. El estado no válido utiliza un contorno de peligro sin cambiar el diseño.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const InlineSubject = () => (
+  <Field.Root>
+    <Field.Label>Subject</Field.Label>
+    <Input variant="plain" placeholder="Add a subject" />
+  </Field.Root>
+);
+```
+
+`InputGroup` proporciona automáticamente a su campo de entrada una apariencia simple y mantiene el grupo como el único marco de foco y validación. Sus alturas `sm` y `md` se mantienen en 24px y 32px. Los campos de entrada simples independientes no utilizan la altura fija asociada a `size`.
+
+## Estado controlado
+
+Pasa `value` y actualízalo con `onValueChange` para controlar la misma dirección de correo electrónico en el estado de React. La función de devolución de llamada recibe el siguiente valor de cadena y los detalles del evento.
+
+```tsx
+import { useState } from 'react';
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => {
+  const [email, setEmail] = useState('alex@example.com');
+
+  return (
+    <Field.Root>
+      <Field.Label>Email</Field.Label>
+      <Input
+        name="email"
+        type="email"
+        autoComplete="email"
+        value={email}
+        onValueChange={setEmail}
+      />
+      <Field.Description>Use your work email address.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+## Añadir un adorno
+
+`InputGroup` controla el borde circundante y la altura del diseño. El tamaño de la entrada se determina a partir del `size` explícito del elemento secundario, luego del valor predeterminado del grupo y, por último, de `md`. La entrada agrupada se extiende dentro del borde compartido, por lo que se debe usar el `size` del grupo para cambiar la altura general del campo.
+
+```tsx
+import { IconSearch } from 'twenty-ui/icon';
+import { Input, InputGroup } from 'twenty-ui/primitives/input';
+
+export const CompactSearch = () => (
+  <InputGroup size="sm" startElement={<IconSearch size={16} aria-hidden />}>
+    <Input aria-label="Search contacts" />
+  </InputGroup>
+);
+```
+
+## Personalización del control nativo y del contenedor
+
+Los atributos nativos, los controladores, `className`, `style` y `ref` se aplican a la entrada. La ref recibe un `HTMLInputElement`. Use `render` para componer otro componente de entrada y reenviar las props proporcionadas y la ref a su entrada nativa.
+
+`onChange` recibe un evento de cambio de React para la entrada nativa. `onValueChange(value, details)` recibe la siguiente cadena y los detalles del evento de Base UI, incluidos `event`, `reason`, `cancel` y `allowPropagation`. El evento tiene como destino la entrada. Cancelar los detalles conserva la política de validación de Base UI; no deshace una edición nativa. Quienes controlan el componente deciden qué valor confirmar.
+
+Coloque los estilos de diseño, los atributos y las refs en `InputGroup` al personalizar el contenedor circundante. El grupo no posee ningún valor. El comportamiento nativo de `name`, `form`, `required`, `readOnly`, `disabled`, envío y restablecimiento permanece en la entrada, mientras que la nomenclatura y validación de Field se proporcionan mediante `Field.Root`.
+
+## "Props"
+
+La referencia incluye props específicos del componente y props heredados de Base UI. También se aceptan atributos de entrada nativos. Una entrada independiente usa `md` de forma predeterminada; dentro de un grupo, si se omite el `size` de la entrada, hereda el tamaño del grupo.
+
+<InputReference />
+
+<PageBanner illustration="page-cover-input" />

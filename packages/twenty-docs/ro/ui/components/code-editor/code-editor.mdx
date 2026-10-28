@@ -1,0 +1,194 @@
+---
+title: CodeEditor
+description: Editează și afișează cod într-un editor Monaco stilizat cu tema Twenty.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CodeEditorReference from '/snippets/ui/generated/components/code-editor/code-editor.mdx';
+import CodeEditorHeaderReference from '/snippets/ui/generated/components/code-editor/code-editor-header.mdx';
+
+## Prezentare generală
+
+`CodeEditor` redă un editor [Monaco](https://microsoft.github.io/monaco-editor/) care urmează tema Twenty în modurile luminos și întunecat. `CodeEditorHeader` adaugă deasupra o bară pentru un titlu, file sau acțiuni. Ambele provin din `twenty-ui/components/code-editor`, un punct de intrare separat, astfel încât restul Twenty UI funcționează fără Monaco.
+
+<StoryEmbed storyId="ui-components-codeeditor--display" title="Exemplu de editor de cod" height={280} />
+
+## Utilizare
+
+```tsx
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
+
+export const WorkspaceEditor = () => (
+  <>
+    <CodeEditorHeader title="workspace.json" />
+    <CodeEditor
+      variant="with-header"
+      language="json"
+      defaultValue={JSON.stringify(
+        { name: 'Acme', plan: 'Pro', seats: 12 },
+        null,
+        2,
+      )}
+      height={160}
+    />
+  </>
+);
+```
+
+## Configurare
+
+Instalează dependențele peer opționale ale editorului:
+
+```bash
+yarn add @monaco-editor/react monaco-editor
+```
+
+Editorul încarcă pachetul `monaco-editor` instalat de tine, în locul unei copii de pe un CDN. Monaco rulează funcționalități de limbaj, cum ar fi validarea și completarea automată, în lucrători web, iar crearea acestor lucrători depinde de bundlerul tău. Înainte ca un editor să se monteze, definește `MonacoEnvironment.getWorker` așa cum este descris în [ghidul de integrare ESM al Monaco](https://github.com/microsoft/monaco-editor/blob/main/docs/integrate-esm.md). Fără aceasta, editorul se redă în continuare, dar funcționalitățile de limbaj nu sunt disponibile.
+
+Editorul de cod nu rulează încă în [componente front](/ro/developers/extend/apps/layout/front-components).
+
+## Conținut controlat
+
+```tsx
+import { useState } from 'react';
+import { isDefined } from 'twenty-ui/utilities';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+
+export const PayloadEditor = () => {
+  const [payload, setPayload] = useState('{\n  "name": "Acme"\n}');
+
+  return (
+    <CodeEditor
+      language="json"
+      value={payload}
+      onChange={(value) => {
+        if (isDefined(value)) {
+          setPayload(value);
+        }
+      }}
+      height={200}
+    />
+  );
+};
+```
+
+`CodeEditorProps` include contractul editorului Monaco React instalat. `onChange(value, event)` primește conținutul (`string | undefined`) și evenimentul original `IModelContentChangedEvent`, inclusiv intervalele modificate, versiunea și detaliile de anulare/refacere. Gestionează o valoare nedefinită la limita la care aplicația ta necesită un șir de caractere.
+
+`beforeMount(monaco)` rulează după definirea temei Twenty și înainte de crearea editorului. `onMount(editor, monaco)` primește instanța editorului după aplicarea temei selectate. `onValidate(markers)` primește diagnosticele Monaco neschimbate. `overrideServices` este transmis la crearea editorului.
+
+Un `Loader` Twenty este afișat până când se încarcă Monaco. Transmiteți `loading` pentru a personaliza acel conținut sau setați `isLoading` pentru a-l menține vizibil în timp ce se încarcă propriile date. `isLoading` demontează un editor existent și respectă regulile Monaco React de eliminare a modelelor.
+
+## Modele și valori
+
+Utilizați `defaultValue`, `defaultLanguage` și `defaultPath` pentru a inițializa un model necontrolat sau `value`, `language` și `path` pentru actualizări. Aceste proprietăți păstrează comportamentul Monaco React, inclusiv regulile sale pentru alegerea valorilor inițiale și reutilizarea URI-ului unui model existent. Modificarea `defaultValue` nu suprascrie un model care există deja.
+
+Modificarea `path` selectează sau creează un model. `saveViewState` este implicit true și restaurează poziția cursorului și starea de derulare a modelului la revenire. `line` afișează o linie când editorul este montat sau când proprietatea se modifică. `keepCurrentModel` este implicit false; când este true, apelantul este responsabil pentru eliminarea modelului păstrat.
+
+```tsx
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+
+export const FileEditor = () => (
+  <CodeEditor
+    defaultPath="file:///workspace/settings.json"
+    defaultLanguage="json"
+    defaultValue={'{\n  "name": "Acme"\n}'}
+    saveViewState
+  />
+);
+```
+
+## Integrare nativă
+
+`ref` indică spre div-ul extern al grupului Twenty, care utilizează implicit `display: contents`. Aceasta menține secțiunea Monaco în dimensionarea și aspectul flex ale părintelui. Div-ul extern nu are o casetă de aspect măsurabilă.
+
+Utilizați `containerProps` pentru atributele native, gestionarii de evenimente, clasa și stilul div-ului extern. Fundalul, chenarul, spațierea internă și dimensiunile necesită suprascrierea valorii sale `display`. Preferați secțiunea `wrapperProps` a Monaco React pentru stiluri de aspect și un ref nativ măsurabil. `className` vizează div-ul containerului editorului din acea secțiune; utilizați `onMount` pentru instanța editorului Monaco.
+
+Secțiunea Monaco React conține propriul conținut de încărcare până când editorul este pregătit. În timpul configurării inițiale a Monaco inclusă în pachet sau când este activ `isLoading`, Twenty redă un încărcător separat fără `wrapperProps` sau `className`. `containerProps` și `ref` externe rămân disponibile în aceste stări.
+
+```tsx
+import { useRef } from 'react';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+
+export const NamedEditor = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <CodeEditor
+      ref={containerRef}
+      containerProps={{ id: 'payload-editor' }}
+      wrapperProps={{ 'data-editor-surface': 'payload' }}
+      options={{ ariaLabel: 'Payload code' }}
+    />
+  );
+};
+```
+
+## Adaugă un antet
+
+```tsx
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
+import { Button } from 'twenty-ui/primitives/input';
+
+type ScriptEditorProps = {
+  script: string;
+  onRun: () => void;
+};
+
+export const ScriptEditor = ({ script, onRun }: ScriptEditorProps) => (
+  <div>
+    <CodeEditorHeader
+      title="index.ts"
+      endElement={
+        <Button size="sm" onClick={onRun}>
+          Run
+        </Button>
+      }
+    />
+    <CodeEditor language="typescript" value={script} variant="with-header" />
+  </div>
+);
+```
+
+`variant="with-header"` elimină marginea superioară a editorului, astfel încât să se alăture antetului. Folosește `borderless` atunci când editorul se află într-o suprafață care are deja o margine.
+
+Antetul acceptă conținut de nod în `title`, `startElement` și `endElement`. Utilizați fragmente pentru mai multe file sau acțiuni. Proprietățile native, `className`, `style` și `ref` vizează elementul său div rădăcină. Utilizați `render` pentru a înlocui acea rădăcină, de exemplu `render={<header />}`. Proprietatea `title` furnizează conținut vizibil; pentru a seta un atribut nativ title, transmiteți-l pe elementul furnizat pentru `render`.
+
+## Dimensiune și aspect
+
+Editorul are implicit 450px înălțime și 100% lățime. `width` și `height` acceptă pixeli sau o lungime CSS.
+
+Dimensionarea urmează această ordine:
+
+1. `resizable` pornește de la înălțimea redată, inclusiv lungimile CSS, în limitele de la 50px la 500px ale mânerului de redimensionare. Adaugă un mâner după montarea Monaco. Tragerea sau introducerea de la tastatură setează apoi o înălțime în pixeli. Modificarea `height` o resetează în aceleași limite.
+2. În caz contrar, `autoHeight` utilizează înălțimea conținutului Monaco. Înălțimea explicită sau implicită este utilizată până când conținutul este măsurat.
+3. În caz contrar, se aplică valoarea explicită sau implicită pentru `height`.
+
+Monaco React activează implicit `automaticLayout`. Dacă îl dezactivați în `options`, aplicația dvs. trebuie să apeleze `editor.layout()` când containerul își schimbă dimensiunea. `wrapperProps.style` nativ este transmis neschimbat și poate suprascrie lățimea sau înălțimea secțiunii.
+
+Transmite un `resizeLabel` localizat pentru a denumi mânerul de redimensionare pentru cititoarele de ecran.
+
+Twenty furnizează valori implicite pentru font, formatare, bară de derulare, minimapă și spațiere internă. `contentPadding="comfortable"` lărgește, de asemenea, spațiul dintre numerele liniilor și cod. `options` ale apelantului înlocuiesc valorile implicite corespunzătoare, inclusiv întregul obiect `padding` și `lineDecorationsWidth`.
+
+O valoare explicită pentru `theme` are prioritate față de `options.theme`; în caz contrar, editorul urmează tema luminoasă sau întunecată Twenty. Definiți teme Monaco personalizate în `beforeMount`. Temele Monaco sunt globale, astfel încât modificarea uneia afectează alte editoare Monaco de pe aceeași pagină. `transparentBackground` controlează independent aspectul wrapperului Twenty.
+
+## Validare
+
+Monaco raportează propriile diagnostice, cum ar fi erorile de sintaxă JSON, prin `onValidate`. Pentru a le adăuga pe ale tale, returnează date despre marcatori din `setMarkers`. Se execută la montare, la selectarea modelului și la fiecare modificare a conținutului modelului, inclusiv la actualizările valorilor controlate, și înlocuiește markerii personalizați pentru modelul curent.
+
+## Tastatură
+
+Cât timp editorul are focalizarea, oprește propagarea evenimentelor de tastatură. Gestionarele de taste React de pe componentele părinte și comenzile rapide la nivel de document nu primesc apăsările de taste introduse în editor.
+
+## Proprietăți
+
+### CodeEditor
+
+<CodeEditorReference />
+
+### CodeEditorHeader
+
+<CodeEditorHeaderReference />
+
+<PageBanner illustration="dev-api" />

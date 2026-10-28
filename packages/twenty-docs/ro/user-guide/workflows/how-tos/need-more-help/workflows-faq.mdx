@@ -3,6 +3,10 @@ title: Întrebări frecvente despre fluxuri de lucru
 description: Întrebări frecvente despre fluxurile de lucru din Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Întrebări frecvente
+
 <AccordionGroup>
 
   <Accordion title="De ce nu pot activa un flux de lucru?">
@@ -39,20 +43,8 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     Consultați [Declanșatoare ale fluxurilor de lucru](/ro/user-guide/workflows/capabilities/workflow-triggers) pentru detalii.
   </Accordion>
 
-  <Accordion title="Nu văd un nod If/Else. Ce ar trebui să fac?">
-    Un nod If/Else explicit nu este încă disponibil, dar se află pe foaia noastră de parcurs.
-
-    **Soluție temporară**: Creați mai multe ramuri din pasul dvs., fiecare începând cu o acțiune **Filter**:
-
-    ```
-    Step 1
-       │
-       ├── Branch A: Filter (condition = true) → Actions...
-       │
-       └── Branch B: Filter (condition = false) → Actions...
-    ```
-
-    Doar ramura în care condiția filtrului este îndeplinită își va executa acțiunile următoare.
+  <Accordion title="Cum adaug un nod If/Else?">
+    Adăugați o acțiune **If/else** din secțiunea **Flow** a selectorului de acțiuni, la fel cum ați adăuga orice altă acțiune. Configurați o condiție pe ramura **If**, adăugați opțional ramuri **Else if** cu propriile condiții și o ramură finală **Else** care preia toate celelalte cazuri — rulează doar prima ramură care corespunde.
 
     Consultați [Cum să utilizați ramurile](/ro/user-guide/workflows/capabilities/workflow-branches) pentru un ghid pas cu pas.
   </Accordion>
@@ -103,7 +95,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     * Sau tastați direct `{{stepName.fieldName}}`
 
     **Exemple**:
-    * Datele declanșatorului: `{{trigger.object.email}}`
+    * Date de declanșare: `{{trigger.properties.after.name}}` pentru un declanșator de înregistrare, `{{trigger.payload.name}}` pentru un declanșator manual pe o înregistrare selectată
     * Rezultatele căutării: `{{searchRecords[0].name}}`
     * Rezultatul codului: `{{code.calculatedValue}}`
 
@@ -234,3 +226,5 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
   </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="card-page-billing-faq" />

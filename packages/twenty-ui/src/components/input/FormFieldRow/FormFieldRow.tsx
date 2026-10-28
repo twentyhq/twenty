@@ -1,10 +1,10 @@
 import { useRender } from '@base-ui/react/use-render';
-import { isNumber } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { type CSSProperties } from 'react';
 
 import { Separator } from '@ui/primitives/layout/Separator/Separator';
 import { Text } from '@ui/primitives/typography/Text/Text';
+import { formatCssLength } from '@ui/utilities/internal/formatCssLength';
 import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -18,6 +18,7 @@ export const FormFieldRow = ({
   trailingProps,
   children,
   labelWidth = 80,
+  contentPaddingInline,
   isHoverable = false,
   hasDivider = true,
   render,
@@ -28,10 +29,12 @@ export const FormFieldRow = ({
 }: FormFieldRowProps) => {
   const rowStyle: CSSProperties & {
     '--form-field-row-label-width': string;
+    '--form-field-row-content-padding-inline'?: string;
   } = {
-    '--form-field-row-label-width': isNumber(labelWidth)
-      ? `${labelWidth}px`
-      : labelWidth,
+    '--form-field-row-label-width': formatCssLength(labelWidth),
+    '--form-field-row-content-padding-inline': isDefined(contentPaddingInline)
+      ? formatCssLength(contentPaddingInline)
+      : undefined,
     ...style,
   };
 

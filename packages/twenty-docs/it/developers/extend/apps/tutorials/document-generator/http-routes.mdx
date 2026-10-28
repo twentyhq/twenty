@@ -3,6 +3,12 @@ title: 3. Percorsi HTTP
 description: Attivare la funzione su HTTP e rendere i documenti come pagine web.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Panoramica
+
 Lo stesso gestore può anche rispondere alle richieste HTTP. Aggiungeremo due percorsi:
 
 * un endpoint **POST** per generare un documento, e
@@ -70,13 +76,19 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { documentHtmlPage } from 'src/utils/render-document';
 
 const htmlResponse = (html: string, status = 200): Response =>
-  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  new Response(html, {
+    status,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+  });
 
 const handler = async (event: RoutePayload): Promise<Response> => {
   const documentId = event.queryStringParameters?.id;
 
   if (!documentId) {
-    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+    return htmlResponse(
+      documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'),
+      400,
+    );
   }
 
   // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
@@ -89,10 +101,18 @@ const handler = async (event: RoutePayload): Promise<Response> => {
 
   const document = documents?.edges?.[0]?.node;
   if (!document?.id) {
-    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+    return htmlResponse(
+      documentHtmlPage(
+        'Document not found',
+        `No document with id ${documentId}.`,
+      ),
+      404,
+    );
   }
 
-  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+  return htmlResponse(
+    documentHtmlPage(document.name ?? 'Document', document.content ?? ''),
+  );
 };
 
 export default defineLogicFunction({
@@ -115,8 +135,8 @@ sanitizzato) e lo lascia in un pulito, pagina stampabile che mostra solo il cont
 
 ## Provalo
 
-Con un modello e una persona nel tuo workspace, chiama il percorso (prendi un token da
-**Impostazioni → API & Webhooks**):
+Con un modello e una Persona nel tuo spazio di lavoro, chiama la route (recupera un token da
+**Impostazioni → Sviluppatori → API**):
 
 ```bash filename="Terminal"
 curl -X POST http://localhost:2020/s/documents/generate \
@@ -136,14 +156,18 @@ http://localhost:2020/s/documents/view?id=<documentId>
 </Frame>
 
 <Tip>
-Puoi anche trasmettere i log di una funzione durante il test con
-`yarn venti dev:function:logs`, o invocarlo direttamente con
-`yarn venti dev:function:exec`.
+  Puoi anche trasmettere i log di una funzione durante il test con `twenty app logs`, oppure
+  invocarla direttamente con `twenty app exec`.
 </Tip>
 
 **Dopo questo passaggio:** l'app può generare documenti su HTTP e servirli come pagine web
 . Ora rendiamo utilizzabile senza `curl`.
 
-<Card title="Il prossimo: costruire l'interfaccia utente →" icon="layout-columns" href="/it/developers/extend/apps/tutorials/document-generator/building-the-ui">
-  Viste, navigazione, un comando e un componente anteriore.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/it/developers/extend/apps/tutorials/document-generator/building-the-ui" img="/images/user-guide/halftone/card-page-tutorial-ui.svg">
+  <CardTitle>Successivo: creazione dell'interfaccia utente →</CardTitle>
+  Viste, navigazione, un comando e un componente front-end.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-http" />
