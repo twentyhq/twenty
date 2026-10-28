@@ -415,7 +415,13 @@ export class ObjectRecordEventPublisher {
   }: {
     roleIds: string[];
     intersectionOf: RoleIdsBySource;
-    permissionsContext: StreamPermissionsContext;
+    permissionsContext: Pick<
+      StreamPermissionsContext,
+      | 'rolesPermissions'
+      | 'flatObjectMetadataMaps'
+      | 'flatFieldMetadataMaps'
+      | 'flatApplicationMaps'
+    >;
   }): ObjectsPermissions | undefined {
     if (
       !roleIds.every((roleId) =>
