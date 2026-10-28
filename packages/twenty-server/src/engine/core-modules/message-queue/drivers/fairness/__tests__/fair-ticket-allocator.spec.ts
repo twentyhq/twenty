@@ -130,5 +130,24 @@ describe('FairTicketAllocator', () => {
         }),
       ).toBeUndefined();
     });
+
+    it('retries with EVAL only when Redis does not know the script', async () => {
+      const runCommand = jest
+        .fn()
+        .mockRejectedValue(new Error('READONLY replica is read only'));
+      const allocator = new FairTicketAllocator({
+        getClient: async () => ({ runCommand }) as never,
+        keyPrefix: KEY_PREFIX,
+      });
+
+      expect(
+        await allocator.allocateTickets({
+          queueName: QUEUE,
+          requests: [{ groupKeys: ['workspace:A'], jobCount: 1 }],
+        }),
+      ).toBeUndefined();
+      expect(runCommand).toHaveBeenCalledTimes(1);
+      expect(runCommand).toHaveBeenCalledWith('evalsha', expect.any(Array));
+    });
   });
 });

@@ -1,11 +1,19 @@
 export const FAIR_TAG_SCRIPT = `
-local virtualTime = tonumber(redis.call('GET', KEYS[1]) or '0')
+local virtualTimeKey = KEYS[1]
+local weightsKey = KEYS[2]
+local firstClockKeyIndex = 3
+local clockTtlMs = ARGV[1]
 local distinctKeyCount = tonumber(ARGV[2])
+local firstGroupKeyArgIndex = 3
+local requestCount = tonumber(ARGV[firstGroupKeyArgIndex + distinctKeyCount])
+local firstRequestArgIndex = firstGroupKeyArgIndex + distinctKeyCount + 1
+
+local virtualTime = tonumber(redis.call('GET', virtualTimeKey) or '0')
 local clocks = {}
 local weights = {}
 
 for i = 1, distinctKeyCount do
-  local clock = tonumber(redis.call('GET', KEYS[2 + i]))
+  local clock = tonumber(redis.call('GET', KEYS[firstClockKeyIndex + i - 1]))
 
   clocks[i] = virtualTime
 
@@ -13,7 +21,7 @@ for i = 1, distinctKeyCount do
     clocks[i] = clock
   end
 
-  local weight = tonumber(redis.call('HGET', KEYS[2], ARGV[2 + i]))
+  local weight = tonumber(redis.call('HGET', weightsKey, ARGV[firstGroupKeyArgIndex + i - 1]))
 
   if weight == nil or weight <= 0 then
     weight = 1
@@ -24,9 +32,9 @@ end
 
 local tickets = {}
 local ticketCount = 0
-local position = 4 + distinctKeyCount
+local position = firstRequestArgIndex
 
-for _ = 1, tonumber(ARGV[3 + distinctKeyCount]) do
+for _ = 1, requestCount do
   local jobCount = tonumber(ARGV[position])
   local keyCount = tonumber(ARGV[position + 1])
   local tag = virtualTime
@@ -55,7 +63,7 @@ for _ = 1, tonumber(ARGV[3 + distinctKeyCount]) do
 end
 
 for i = 1, distinctKeyCount do
-  redis.call('SET', KEYS[2 + i], tostring(clocks[i]), 'PX', ARGV[1])
+  redis.call('SET', KEYS[firstClockKeyIndex + i - 1], tostring(clocks[i]), 'PX', clockTtlMs)
 end
 
 return table.concat(tickets, ' ')

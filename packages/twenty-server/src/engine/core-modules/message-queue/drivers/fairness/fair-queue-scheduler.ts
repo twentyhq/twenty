@@ -53,7 +53,7 @@ export class FairQueueScheduler {
       const groupKeys = isNonEmptyArray(options?.groupKeys)
         ? [...new Set(options.groupKeys)]
         : getDefaultGroupKeys(jobData);
-      const signature = groupKeys.join('\u0000');
+      const signature = JSON.stringify(groupKeys);
       const request = requestByGroupKeys.get(signature) ?? {
         groupKeys,
         jobIndexes: [],

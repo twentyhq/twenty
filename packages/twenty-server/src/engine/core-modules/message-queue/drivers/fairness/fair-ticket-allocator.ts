@@ -37,6 +37,9 @@ export class FairTicketAllocator {
     const distinctGroupKeys = [
       ...new Set(requests.flatMap(({ groupKeys }) => groupKeys)),
     ];
+    const groupKeyIndexes = new Map(
+      distinctGroupKeys.map((groupKey, index) => [groupKey, index + 1]),
+    );
     const keys = [
       `${fairKeyPrefix}vtime`,
       `${fairKeyPrefix}weights`,
@@ -52,7 +55,7 @@ export class FairTicketAllocator {
       ...requests.flatMap(({ groupKeys, jobCount }) => [
         jobCount,
         groupKeys.length,
-        ...groupKeys.map((groupKey) => distinctGroupKeys.indexOf(groupKey) + 1),
+        ...groupKeys.map((groupKey) => groupKeyIndexes.get(groupKey) ?? 0),
       ]),
     ];
 
@@ -65,14 +68,20 @@ export class FairTicketAllocator {
           ...keys,
           ...args,
         ])
-        .catch(() =>
-          client.runCommand('eval', [
+        .catch((error: unknown) => {
+          if (
+            !(error instanceof Error && error.message.startsWith('NOSCRIPT'))
+          ) {
+            throw error;
+          }
+
+          return client.runCommand('eval', [
             FAIR_TAG_SCRIPT,
             keys.length,
             ...keys,
             ...args,
-          ]),
-        );
+          ]);
+        });
       const values = String(rawTickets).split(' ').map(Number);
       const tickets = requests.map((_, index) => ({
         tag: values[2 * index],
