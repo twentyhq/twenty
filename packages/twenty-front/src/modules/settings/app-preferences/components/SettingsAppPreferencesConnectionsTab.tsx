@@ -1,7 +1,7 @@
 import { SettingsAppPreferencesConnectionsTable } from '@/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable';
 import { useMyPersonalConnectedAccounts } from '@/settings/app-preferences/hooks/useMyPersonalConnectedAccounts';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
-import { getApplicationPreferencesConnectionsPath } from '@/settings/app-preferences/utils/getApplicationPreferencesConnectionsPath';
+import { getApplicationPreferencesGeneralPath } from '@/settings/app-preferences/utils/getApplicationPreferencesGeneralPath';
 import { SettingsApplicationAddConnectionButton } from '@/settings/applications/components/SettingsApplicationAddConnectionButton';
 import { SettingsApplicationConnectionProviderSection } from '@/settings/applications/components/SettingsApplicationConnectionProviderSection';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
@@ -81,7 +81,7 @@ export const SettingsAppPreferencesConnectionsTab = ({
                   <SettingsApplicationAddConnectionButton
                     applicationId={applicationId}
                     providerName={provider.name}
-                    redirectLocation={getApplicationPreferencesConnectionsPath(
+                    redirectLocation={getApplicationPreferencesGeneralPath(
                       applicationId,
                     )}
                   />

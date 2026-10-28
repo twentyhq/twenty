@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-27 20:14\n"
+"PO-Revision-Date: 2026-10-28 14:17\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -694,6 +694,11 @@ msgstr "템플릿에 들어맞지 않는 *비즈니스*"
 msgid "A business that does not fit a template"
 msgstr "템플릿에 들어맞지 않는 비즈니스"
 
+#. js-lingui-id: I0Cpfd
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A command menu in sections"
+msgstr "섹션으로 구성된 명령 메뉴"
+
 #. js-lingui-id: SR9TmK
 #: src/sections/product-hero/ProductHero.tsx
 msgid "A CRM for teams that *move fast*"
@@ -770,6 +775,16 @@ msgstr "*직관적인 인터페이스*를 갖춘 최신 CRM"
 msgid "A new breadcrumb navigation across the app, improved keyboard menu navigation, and a new focus state for table views."
 msgstr "앱 전체에 새로운 브레드크럼 내비게이션이 추가되고, 키보드 메뉴 내비게이션이 개선되었으며, 테이블 뷰에 새로운 포커스 상태가 도입되었습니다."
 
+#. js-lingui-id: tIDKH9
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A new Classify step uses AI to answer questions you set about a record, like which category an email belongs to, and passes each answer to the next steps."
+msgstr "새로운 분류 단계는 AI를 사용하여 이메일이 어떤 카테고리에 속하는지와 같이 레코드에 대해 설정한 질문에 답하고, 각 답변을 다음 단계로 전달합니다."
+
+#. js-lingui-id: i2bJp4
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A new editor for notes and tasks"
+msgstr "메모 및 작업을 위한 새 편집기"
+
 #. js-lingui-id: aYUQpm
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new maintenance mode helps admins pause workspace changes during sensitive operations."
@@ -779,6 +794,11 @@ msgstr "새로운 유지 관리 모드로, 관리자가 민감한 작업 중에 
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new onboarding experience"
 msgstr "새로운 온보딩 경험 제공하기"
+
+#. js-lingui-id: pj2AXy
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A page for every attachment"
+msgstr "모든 첨부 파일을 위한 페이지"
 
 #. js-lingui-id: P5BDuh
 #: src/case-studies/case-study-stories.ts
@@ -818,6 +838,11 @@ msgstr "실제 스테이징 환경"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A rebuilt setup flow guides new teams through workspace creation, contact import, and teammate invitations."
 msgstr "새롭게 구축된 설정 흐름이 새 팀이 워크스페이스를 만들고, 연락처를 가져오고, 팀원을 초대하도록 안내합니다."
+
+#. js-lingui-id: ZpC2fq
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A relation to a junction object can now skip it and show the records on the other side, like a many-to-many relation. Set it up in the relation field’s settings, in Advanced mode."
+msgstr "이제 연결 객체와의 관계에서 연결 객체를 건너뛰고 다대다 관계처럼 반대편의 레코드를 표시할 수 있습니다. 고급 모드의 관계 필드 설정에서 구성하세요."
 
 #. js-lingui-id: WjUlJr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -932,6 +957,11 @@ msgstr "월간 또는 연간 플랜에 크레딧 팩을 추가하세요. 사용�
 msgid "Add a Section"
 msgstr "섹션 추가"
 
+#. js-lingui-id: HjFWMR
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Add context to a chat from the + menu"
+msgstr "+ 메뉴에서 채팅에 컨텍스트 추가"
+
 #. js-lingui-id: iNSn2+
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add files directly to records so documents, screenshots, and other assets stay attached to the right work."
@@ -996,6 +1026,11 @@ msgstr "애드온"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Added \"Group By\" in tables to better organize entries, like grouping companies by industry for clearer data visualization. This feature is available in the table Options menu."
 msgstr "테이블에 \"Group By\" 기능이 추가되어, 회사를 산업별로 그룹화하는 등 항목을 더 잘 정리해 데이터를 시각화할 수 있습니다. 이 기능은 테이블 옵션 메뉴에서 사용할 수 있습니다."
+
+#. js-lingui-id: 92+0S0
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Adding a menu item opens a searchable list right in the sidebar, and folders and links are edited in a small editor next to it."
+msgstr "메뉴 항목을 추가하면 사이드바에서 바로 검색 가능한 목록이 열리고, 폴더와 링크는 옆의 작은 편집기에서 편집할 수 있습니다."
 
 #. js-lingui-id: 8i1KwT
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -1110,6 +1145,16 @@ msgstr "에이전틱 워크플로"
 #: src/sections/compare/compare-data.ts
 msgid "Agents and Data Cloud bundled"
 msgstr "에이전트와 Data Cloud 번들"
+
+#. js-lingui-id: 7uiZOn
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Agents get their own pages"
+msgstr "에이전트에 전용 페이지 추가"
+
+#. js-lingui-id: R8ADJv
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Agents now have a list and a page each, like workflows. Create and edit agents there instead of in settings."
+msgstr "이제 에이전트도 워크플로와 마찬가지로 각각 목록과 페이지를 갖습니다. 설정 대신 այնտեղ에서 에이전트를 만들고 편집하세요."
 
 #. js-lingui-id: vZKKhf
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -1259,6 +1304,11 @@ msgstr "항상"
 #: src/sections/testimonials/testimonials.data.ts
 msgid "Amrendra Pratap Singh"
 msgstr "Amrendra Pratap Singh"
+
+#. js-lingui-id: J0tGZf
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "An email sent from a record is now linked to that record, even when the recipient isn’t its point of contact."
+msgstr "이제 레코드에서 보낸 이메일은 수신자가 해당 레코드의 연락처가 아니어도 그 레코드에 연결됩니다."
 
 #. js-lingui-id: t4V3jR
 #: src/sections/pricing-plans/plans-data.ts
@@ -1448,6 +1498,11 @@ msgstr "AI로 레코드에 파일 첨부"
 msgid "Attachment Visualizer"
 msgstr "첨부 파일 시각화 도구"
 
+#. js-lingui-id: DDl94x
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Attachments open on their own page with an inline preview, and the attachments table shows what each file belongs to in a single Attached to column."
+msgstr "첨부 파일이 인라인 미리보기와 함께 자체 페이지에서 열리고, 첨부 파일 테이블에는 각 파일의 소속을 하나의 연결 대상 열에 표시합니다."
+
 #. js-lingui-id: fxL/Km
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Attachments without the chaos."
@@ -1487,6 +1542,11 @@ msgstr "자동화"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Available on YouTube!"
 msgstr "YouTube에서 만나보세요!"
+
+#. js-lingui-id: Lj+SZB
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Average, min and max for ratings"
+msgstr "평점의 평균, 최솟값 및 최댓값"
 
 #. js-lingui-id: 4OP74a
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -1825,6 +1885,11 @@ msgstr "캘린더 / 예약 링크"
 msgid "Calendar View for Objects"
 msgstr "오브젝트용 캘린더 뷰"
 
+#. js-lingui-id: XF6oYz
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Call recordings on record pages"
+msgstr "레코드 페이지의 통화 녹음"
+
 #. js-lingui-id: RZgOeI
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Call recordings that have no video now come with an audio player, so click-to-seek and transcript highlighting work there too."
@@ -1993,6 +2058,11 @@ msgstr "모델을 이름으로 선택하는 대신 단일 슬라이더에서 매
 msgid "Choose where records open"
 msgstr "레코드가 열리는 위치 선택"
 
+#. js-lingui-id: WZRyy5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Choose whether to import private events"
+msgstr "비공개 이벤트를 가져올지 선택"
+
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose which part of a name or address field a view should sort by directly from the sort chip."
@@ -2007,6 +2077,11 @@ msgstr "도시 *"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Classic never dies. It just gets extended one more time."
 msgstr "클래식은 절대 죽지 않습니다. 한 번 더 연장될 뿐이죠."
+
+#. js-lingui-id: cJbhDP
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Classify records in workflows"
+msgstr "워크플로에서 레코드 분류"
 
 #. js-lingui-id: u8JHrO
 #: src/partners-marketplace/FilterBar.tsx
@@ -2023,6 +2098,11 @@ msgstr "더 명확해진 대시보드 숫자"
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Click Become a partner and complete the short application: who you are, what you cover, and one real Twenty project with proof. We review every application against real, shipped work — acceptance is selective."
 msgstr "파트너 되기를 클릭하고 간단한 신청서를 작성하세요. 자신이 누구인지, 어떤 서비스를 제공하는지, 그리고 증빙 자료가 있는 실제 Twenty 프로젝트 한 건을 입력합니다. 모든 신청서는 실제로 출시된 작업물을 기준으로 검토하며, 선별적으로 승인합니다."
+
+#. js-lingui-id: glfrZq
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Clicking a call in the Call recordings widget now opens its calendar event, with the summary, transcript and participants in one place."
+msgstr "이제 통화 녹음 위젯에서 통화를 클릭하면 요약, 대화 내용, 참가자를 한곳에서 볼 수 있는 해당 캘린더 이벤트가 열립니다."
 
 #. js-lingui-id: yz7wBu
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -2091,6 +2171,11 @@ msgstr "공동 창립자, NetZero"
 msgid "Colombia 🇨🇴"
 msgstr "Colombia 🇨🇴"
 
+#. js-lingui-id: WgI3ng
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Colored icons across the app"
+msgstr "앱 전반의 색상 아이콘"
+
 #. js-lingui-id: b5bnuN
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Column-to-field mapping (including relations)"
@@ -2101,6 +2186,11 @@ msgstr "컬럼–필드 매핑(관계 포함)"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Coming soon!"
 msgstr "곧 제공됩니다!"
+
+#. js-lingui-id: 5B0hTq
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Commands are grouped into sections such as Pinned, Selection, the current object, and Create record, instead of one long list."
+msgstr "명령이 하나의 긴 목록 대신 고정됨, 선택 항목, 현재 객체, 레코드 만들기 등의 섹션으로 그룹화됩니다."
 
 #. js-lingui-id: KGD9Kt
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -2313,6 +2403,11 @@ msgstr "복사"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Copy a call recording's transcript or video link directly from the record page."
 msgstr "레코드 페이지에서 통화 녹음의 대화 내용 또는 동영상 링크를 직접 복사하세요."
+
+#. js-lingui-id: +Sa0Ex
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Copy emails, phones and links on hover"
+msgstr "마우스를 올려 이메일, 전화번호 및 링크 복사"
 
 #. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2716,6 +2811,11 @@ msgstr "커스터마이징 앱"
 #: src/case-studies/case-study-catalog.ts
 msgid "Customizations"
 msgstr "커스터마이징"
+
+#. js-lingui-id: X/83bp
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Customize the sidebar in place"
+msgstr "사이드바에서 바로 맞춤 설정"
 
 #. js-lingui-id: dy0yuR
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3199,6 +3299,11 @@ msgstr "동작 편집"
 msgid "Edit deactivated objects"
 msgstr "비활성화된 객체 편집"
 
+#. js-lingui-id: J27hBl
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Edit field values in place"
+msgstr "필드 값을 바로 편집"
+
 #. js-lingui-id: 0cnnX+
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Edit long-form text directly inside record page widgets with automatic saving."
@@ -3208,6 +3313,11 @@ msgstr "자동 저장을 사용하여 레코드 페이지 위젯 내에서 긴 �
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Editable text widgets"
 msgstr "편집 가능한 텍스트 위젯"
+
+#. js-lingui-id: lofEfT
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Editing an email, phone, link or file now opens the input on that item’s row instead of below the list, and link labels can be edited from the cell. Full names take one input that splits into first and last name as you type."
+msgstr "이제 이메일, 전화번호, 링크 또는 파일을 편집하면 목록 아래가 아니라 해당 항목의 행에서 입력란이 열리며, 셀에서 링크 레이블을 편집할 수 있습니다. 전체 이름은 하나의 입력란을 사용하며 입력하는 동안 이름과 성으로 분리됩니다."
 
 #. js-lingui-id: 4CJ4xV
 #: src/case-studies/case-study-catalog.ts
@@ -3304,6 +3414,11 @@ msgstr "CRM 레코드에 연결된 이메일과 이벤트"
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Emails and meetings log themselves"
 msgstr "이메일과 미팅이 자동으로 기록됩니다"
+
+#. js-lingui-id: s4kwSO
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Emails stay on the record you sent them from"
+msgstr "이메일이 보낸 레코드에 유지됨"
 
 #. js-lingui-id: gqv5ZL
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -3699,6 +3814,11 @@ msgstr "필드"
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Fields"
 msgstr "필드"
+
+#. js-lingui-id: tJtUhq
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Fields, views, widgets and records that come from an installed app show the app’s logo on their icon."
+msgstr "설치된 앱에서 가져온 필드, 보기, 위젯 및 레코드는 아이콘에 해당 앱의 로고를 표시합니다."
 
 #. js-lingui-id: z+q1Th
 #: src/partner-application/data/partner-country-options.ts
@@ -4143,6 +4263,11 @@ msgstr "Google 및 Microsoft 이메일과 캘린더 동기화"
 msgid "Google Calendar Integration"
 msgstr "Google Calendar 연동"
 
+#. js-lingui-id: lW8GOS
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Granola meeting notes in Twenty"
+msgstr "Twenty의 Granola 회의 노트"
+
 #. js-lingui-id: 1W3PAd
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Granular Email Folder Sync"
@@ -4322,6 +4447,11 @@ msgstr "시간당 요율 *"
 msgid "Hover a column header or a field label to read that field’s description, instead of opening settings to find it."
 msgstr "설정을 열어 찾는 대신 열 머리글이나 필드 레이블 위에 마우스를 올려 해당 필드의 설명을 확인하세요."
 
+#. js-lingui-id: crYO+H
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Hover an email, phone or link in the side panel to copy it in one click, as you already could in tables."
+msgstr "테이블에서 이미 가능했던 것처럼 사이드 패널의 이메일, 전화번호 또는 링크에 마우스를 올려 한 번의 클릭으로 복사하세요."
+
 #. js-lingui-id: XnFo3G
 #: src/case-studies/case-study-stories.ts
 msgid "How AC&T Education Migration and Flycoder replaced a shuttered vendor CRM with self-hosted Twenty, with 90%+ lower cost and full ownership."
@@ -4400,6 +4530,11 @@ msgstr "Twenty가 데이터를 수집, 사용, 보호하는 방식 — GDPR 및 
 #: src/case-studies/case-study-stories.ts
 msgid "How W3villa Technologies shipped W3Grads, an AI mock interview platform for institutions, on Twenty as the operational backbone."
 msgstr "W3villa Technologies가 Twenty를 운영 백본으로 삼아, 기관용 AI 모의 면접 플랫폼인 W3Grads를 어떻게 출시했는지에 대한 이야기입니다."
+
+#. js-lingui-id: slTOKD
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "HTML in workflow emails"
+msgstr "워크플로 이메일의 HTML"
 
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
@@ -5075,6 +5210,11 @@ msgstr "일반 객체와 마찬가지로, 작업과 회사에 사용자 지정 �
 msgid "Limited personal AI usage"
 msgstr "제한된 개인 AI 사용량"
 
+#. js-lingui-id: nlPPL5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Link emails and meetings to a deal"
+msgstr "이메일과 회의를 거래에 연결"
+
 #. js-lingui-id: kvxPie
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
@@ -5288,6 +5428,11 @@ msgstr "수동 트리거 워크플로가 이제 일괄 선택을 지원하여, �
 msgid "Manual work at core"
 msgstr "핵심에 자리한 수작업"
 
+#. js-lingui-id: MzFWad
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Many-to-many relations"
+msgstr "다대다 관계"
+
 #. js-lingui-id: VJOKPB
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Maps view"
@@ -5377,6 +5522,11 @@ msgstr "Micronesia 🇫🇲"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Microsoft o365 Integration"
 msgstr "Microsoft o365 연동"
+
+#. js-lingui-id: 1+j2It
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Microsoft Teams transcripts in Twenty"
+msgstr "Twenty의 Microsoft Teams 대화 내용"
 
 #. js-lingui-id: z1ceJ1
 #: src/sections/compare/compare-data.ts
@@ -5644,6 +5794,11 @@ msgstr "신규"
 msgid "New Array field type"
 msgstr "새로운 Array 필드 유형"
 
+#. js-lingui-id: xTO27+
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "New chat and Open chat in the command menu start a chat or find a past one from any page, and the chat opens next to the page you’re on."
+msgstr "명령 메뉴의 새 채팅과 채팅 열기를 사용하면 어느 페이지에서나 채팅을 시작하거나 이전 채팅을 찾을 수 있으며, 채팅은 현재 페이지 옆에 열립니다."
+
 #. js-lingui-id: gy5v+A
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "New emails and calendar events now appear on record pages without a manual refresh."
@@ -5840,6 +5995,11 @@ msgstr "노트"
 msgid "Notes and Tasks standard objects"
 msgstr "노트 및 작업 표준 오브젝트"
 
+#. js-lingui-id: guqxiL
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Notes, tasks, rich text fields and rich text widgets now use the same editor as emails and workflow forms. Existing content is converted automatically."
+msgstr "이제 노트, 작업, 서식 있는 텍스트 필드 및 서식 있는 텍스트 위젯은 이메일 및 워크플로 양식과 동일한 편집기를 사용합니다. 기존 콘텐츠는 자동으로 변환됩니다."
+
 #. js-lingui-id: iDNBZe
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Notifications"
@@ -5860,6 +6020,11 @@ msgstr "숫자"
 msgid "Number of dashboards"
 msgstr "대시보드 개수"
 
+#. js-lingui-id: 44KnZO
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Objects, folders, links and pages now have colored icons in the sidebar, headers and pickers."
+msgstr "이제 객체, 폴더, 링크 및 페이지에 사이드바, 헤더 및 선택기에서 색상 아이콘이 표시됩니다."
+
 #. js-lingui-id: pkrZnO
 #: src/case-studies/case-study-stories.ts
 msgid "Olivier recognizes that NetZero's current use of Twenty is still relatively simple: workflows and integrations are not yet as deep as he eventually wants, because he prioritized getting foundations right first."
@@ -5879,6 +6044,11 @@ msgstr "Oman 🇴🇲"
 #: src/case-studies/case-study-catalog.ts
 msgid "On a single CRM"
 msgstr "하나의 CRM 위에서"
+
+#. js-lingui-id: 3484qM
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "On an opportunity, the Emails and Calendar widgets have a Link action to add any of the company’s email threads and meetings, not only the ones with its point of contact."
+msgstr "영업 기회에서 이메일 및 캘린더 위젯은 연락처가 포함된 회사의 이메일 스레드와 회의뿐 아니라 모든 이메일 스레드와 회의를 추가할 수 있는 연결 작업을 제공합니다."
 
 #. js-lingui-id: vSdM7d
 #: src/sections/compare/compare-data.ts
@@ -5961,10 +6131,20 @@ msgstr "1회 필수 온보딩 요금"
 msgid "Only $5 for SSO. Practically a charity program."
 msgstr "SSO는 단돈 5달러. 사실상 자선 프로그램 수준입니다."
 
+#. js-lingui-id: 5BRQYd
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Open a chat from anywhere"
+msgstr "어디서나 채팅 열기"
+
 #. js-lingui-id: Av5T3E
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Open a deactivated object from Settings and change it, instead of deleting it and building it again."
 msgstr "비활성화된 객체를 삭제하고 다시 만들지 않고 설정에서 열어 변경하세요."
+
+#. js-lingui-id: pC+y+1
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Open a meeting from its recording"
+msgstr "녹음에서 회의 열기"
 
 #. js-lingui-id: VWC0s5
 #. placeholder {0}: caseStudy.title
@@ -6437,6 +6617,11 @@ msgstr "개인정보 처리방침"
 msgid "Privacy Policy | Twenty"
 msgstr "개인정보 처리방침 | Twenty"
 
+#. js-lingui-id: 8wTqgw
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Private calendar events are imported again by default. Turn on Exclude private events in calendar settings to leave them out; changing it resyncs your calendar."
+msgstr "기본적으로 비공개 캘린더 이벤트를 다시 가져옵니다. 제외하려면 캘린더 설정에서 비공개 이벤트 제외를 켜세요. 이를 변경하면 캘린더가 다시 동기화됩니다."
+
 #. js-lingui-id: 3fPjUY
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
@@ -6558,6 +6743,11 @@ msgstr "요금은 파트너와 서비스 범위에 따라 다릅니다. 각 파�
 msgid "Rating field"
 msgstr "평점 필드"
 
+#. js-lingui-id: V6xqAX
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Rating fields can now show their average, minimum and maximum in views and charts, and bar charts can be grouped by Created by."
+msgstr "이제 평점 필드는 보기와 차트에서 평균, 최솟값 및 최댓값을 표시할 수 있으며, 막대 차트는 생성자별로 그룹화할 수 있습니다."
+
 #. js-lingui-id: DnWJal
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Reach out"
@@ -6655,6 +6845,11 @@ msgstr "기록적인 분기 실적"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Records"
 msgstr "레코드"
+
+#. js-lingui-id: eCciTz
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Recovery codes for two-factor authentication"
+msgstr "이중 인증용 복구 코드"
 
 #. js-lingui-id: duvxlo
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7174,6 +7369,11 @@ msgstr "보안 검토 및 맞춤 계약"
 msgid "Security tailored to your IT"
 msgstr "IT 환경에 맞춘 보안"
 
+#. js-lingui-id: fi/gek
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See context and credits in AI chat"
+msgstr "AI 채팅에서 컨텍스트 및 크레딧 확인"
+
 #. js-lingui-id: nmVU/t
 #: src/sections/customers-hero/CustomersHero.tsx
 msgid ""
@@ -7219,6 +7419,11 @@ msgstr "모델 비용과 실행 위치 확인"
 msgid "See what shipped in {0}"
 msgstr "{0}에 어떤 것이 출시되었는지 확인하기"
 
+#. js-lingui-id: lPsNq3
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See which app added a field"
+msgstr "필드를 추가한 앱 확인"
+
 #. js-lingui-id: 02ePaq
 #. placeholder {0}: company.name
 #: src/sections/product-feature/ContactsVisual/ContactsVisual.tsx
@@ -7234,6 +7439,11 @@ msgstr "전체 선택"
 #: src/partner-application/partner-application-copy.ts
 msgid "Select every area you used in a real project — not what you offer, what you actually did."
 msgstr "실제 프로젝트에서 사용한 모든 영역을 선택해 주세요. 제공 가능한 영역이 아니라, 실제로 수행한 작업을 기준으로 선택해야 합니다."
+
+#. js-lingui-id: oOXqnr
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Select records with Cmd and Shift"
+msgstr "Cmd와 Shift로 레코드 선택"
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
@@ -7316,6 +7526,11 @@ msgstr "셀프 서비스, 파트너는 선택 사항"
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
 msgid "Send Email"
 msgstr "이메일 보내기"
+
+#. js-lingui-id: yHrgF3
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Send Email and Draft Email steps accept raw HTML. Type <0>/html</0> in the body to paste a template, with variables shown as chips."
+msgstr "이메일 보내기 및 이메일 초안 단계에서 원시 HTML을 사용할 수 있습니다. 본문에 <0>/html</0>을 입력하여 템플릿을 붙여넣으면 변수가 칩으로 표시됩니다."
 
 #. js-lingui-id: ig4Kg0
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7408,6 +7623,11 @@ msgstr "몇 분 안에 프로젝트를 공유해 주세요. 여기에 적합한 
 #: src/sections/compare/compare-data.ts
 msgid "Shared limit below Ultimate"
 msgstr "Ultimate 이하 티어에서는 공유 한도"
+
+#. js-lingui-id: yZrICd
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Shift-click selects a range of records in tables, boards and lists, and Cmd-click (Ctrl-click on Windows) adds or removes a single record."
+msgstr "Shift 키를 누른 채 클릭하면 테이블, 보드 및 목록에서 레코드 범위를 선택하고, Cmd 키를 누른 채 클릭하면(Windows에서는 Ctrl 키를 누른 채 클릭) 단일 레코드를 추가하거나 제거합니다."
 
 #. js-lingui-id: 3VFzsh
 #: src/sections/helped/helped.data.ts
@@ -8073,6 +8293,16 @@ msgstr "사업 개발 팀은 마침내 오랫동안 원하던 CRM을 갖게 되�
 msgid "The CEO had resisted bringing in a CRM for years. The business development team had no experience using one, and the licensing costs of well-known CRMs like Salesforce or HubSpot were hard to justify without any guarantee of adoption: CRMs are only as good as the maintenance of the data inside them."
 msgstr "CEO는 수년 동안 CRM 도입에 저항해 왔습니다. 사업 개발 팀은 CRM 사용 경험이 전혀 없었고, Salesforce나 HubSpot 같은 잘 알려진 CRM의 라이선스 비용은 도입이 실제로 이뤄질지 보장도 없는 상황에서 정당화하기 어려웠습니다. CRM의 가치는 그 안의 데이터가 얼마나 잘 관리되느냐에 달려 있기 때문입니다."
 
+#. js-lingui-id: MAi4hK
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The chat composer shows how much of the context window you’ve used. Open it to see your AI credit usage, when it resets, and a breakdown for the last message and the whole conversation."
+msgstr "채팅 작성기에 사용한 컨텍스트 창의 양이 표시됩니다. 이를 열면 AI 크레딧 사용량, 재설정 시점, 마지막 메시지 및 전체 대화의 세부 내역을 볼 수 있습니다."
+
+#. js-lingui-id: D21WDI
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The chat composer’s + menu attaches files and adds records or skills, the same way typing <0>@</0> or <1>/</1> does."
+msgstr "채팅 작성기의 + 메뉴에서는 <0>@</0> 또는 <1>/</1>를 입력하는 것과 같은 방식으로 파일을 첨부하고 레코드나 기술을 추가할 수 있습니다."
+
 #. js-lingui-id: 93BQde
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
@@ -8136,6 +8366,11 @@ msgstr "거대한 모놀리식 시스템"
 msgid "The In-house Burden"
 msgstr "사내 구축의 짐"
 
+#. js-lingui-id: N8bBZ8
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The interface is now available in Persian, laid out right to left."
+msgstr "이제 인터페이스를 오른쪽에서 왼쪽으로 배치된 페르시아어로 사용할 수 있습니다."
+
 #. js-lingui-id: 6U7fek
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The interface now mirrors for right-to-left languages, so Arabic and Hebrew workspaces read in their own direction."
@@ -8183,6 +8418,16 @@ msgstr "이제 탐색 메뉴는 실제 주소와 돌아가는 방법을 갖춘 �
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The new <0>Address Field</0> Type enables entry of a full address in one field, while structurally storing each address part - such as street name and number - in separate subfields."
 msgstr "새로운 <0>주소 필드</0> 타입을 사용하면 하나의 필드에 전체 주소를 입력하면서도, 도로명과 번지수 같은 각 요소를 개별 하위 필드에 구조적으로 저장할 수 있습니다."
+
+#. js-lingui-id: jPuON+
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The new Granola app saves your Granola summaries and speaker transcripts to call recordings, links them to the matching calendar event, and keeps them in sync as notes change. It needs a Granola Business or Enterprise plan."
+msgstr "새 Granola 앱은 Granola 요약 및 화자 대화 내용을 통화 녹음에 저장하고 일치하는 캘린더 이벤트에 연결하며, 노트가 변경되면 동기화 상태를 유지합니다. Granola Business 또는 Enterprise 요금제가 필요합니다."
+
+#. js-lingui-id: SngW9d
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The new Microsoft Teams app saves your Teams meeting transcripts to call recordings and can write an AI summary of each call."
+msgstr "새 Microsoft Teams 앱은 Teams 회의 대화 내용을 통화 녹음에 저장하고 각 통화의 AI 요약을 작성할 수 있습니다."
 
 #. js-lingui-id: tADBQB
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8279,6 +8524,11 @@ msgstr "Twenty와 그 오픈 소스 CRM 서비스를 사용하는 데 적용되�
 msgid "The timeline on every record page has been significantly improved. It now provides detailed updates for: Record creations Field updates Received emails Created calendar events"
 msgstr "각 레코드 페이지의 타임라인이 크게 개선되었습니다. 이제 다음과 같은 항목에 대해 자세한 업데이트를 제공합니다: 레코드 생성, 필드 업데이트, 수신 이메일, 생성된 캘린더 이벤트"
 
+#. js-lingui-id: pHA+ow
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The Update Record step can now fill custom fields on emails and calendar events, such as a category picked by a Classify step."
+msgstr "이제 레코드 업데이트 단계에서 분류 단계가 선택한 카테고리와 같이 이메일 및 캘린더 이벤트의 사용자 지정 필드를 채울 수 있습니다."
+
 #. js-lingui-id: u0uFxg
 #: src/sections/testimonials/TestimonialsCarousel.tsx
 msgid "They are the real sales"
@@ -8338,6 +8588,16 @@ msgstr "Twenty의 단순함을 유지하기 위해 \"Advanced Settings\"를 도�
 #: src/sections/product-feature/TasksVisual/TasksVisual.tsx
 msgid "TODO"
 msgstr "할 일"
+
+#. js-lingui-id: DKijYW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Toggle lists and toggle headings fold again, Tab indents blocks, and headings 4 to 6 return to the slash menu. Tables get row and column handles again to add, delete, merge and split cells."
+msgstr "토글 목록과 토글 제목을 다시 접을 수 있고, Tab 키로 블록을 들여쓰기할 수 있으며, 제목 4~6이 슬래시 메뉴로 돌아옵니다. 테이블에는 셀을 추가, 삭제, 병합 및 분할할 수 있는 행 및 열 핸들이 다시 제공됩니다."
+
+#. js-lingui-id: vNHNy7
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Toggles and table controls are back in notes"
+msgstr "노트에 토글 및 테이블 컨트롤 복원"
 
 #. js-lingui-id: DeTupk
 #: src/partner-application/data/partner-country-options.ts
@@ -8543,6 +8803,11 @@ msgstr "Twenty는 복잡한 비즈니스 니즈를 충족하고 비즈니스가 
 #: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Twenty gives you the kind of flexibility that actually changes what you can offer your clients. The dev experience is clean, the APIs are open, and when something needs to be customized, you can just do it. There's no fighting the platform."
 msgstr "Twenty는 고객에게 제공할 수 있는 가치를 진짜로 바꿀 수 있을 정도의 유연성을 제공합니다. 개발 경험은 깔끔하고, API는 개방되어 있으며, 커스터마이징이 필요하면 그냥 해 버리면 됩니다. 플랫폼과 싸울 일이 없습니다."
+
+#. js-lingui-id: lcDb/Z
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Twenty in Persian"
+msgstr "페르시아어 Twenty"
 
 #. js-lingui-id: x/I85y
 #: src/case-studies/case-study-stories.ts
@@ -9196,6 +9461,11 @@ msgstr "Twenty에서 어떤 것을 구축했는지 알려 주세요 *"
 msgid "Whatever came next had to be something they could own."
 msgstr "이후에 무엇을 하든, 그들이 스스로 소유할 수 있는 것이어야 했습니다."
 
+#. js-lingui-id: tQV2Gz
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "When a member loses their authenticator, an admin can issue a one-time recovery code from the member’s page in settings. The member signs in with it and their old authenticator is removed."
+msgstr "구성원이 인증기를 분실하면 관리자는 설정의 구성원 페이지에서 일회용 복구 코드를 발급할 수 있습니다. 구성원은 이 코드로 로그인하며 기존 인증기는 제거됩니다."
+
 #. js-lingui-id: cs6VpJ
 #: src/case-studies/case-study-stories.ts
 msgid "When a student registers via QR at a campus event, the system assigns a plan, generates an interview session, and sends a link. The AI conducts the interview, scores the candidate, and classifies the result. Faculty see where each student stands without manually reviewing every session. Building and iterating on these workflows was faster with AI in the loop."
@@ -9310,6 +9580,11 @@ msgstr "Google Calendar 연동을 통해, CRM에서 회사나 사람과 관련�
 msgid "With the <0>Datetime Field</0>, you can effectively track events, deadlines, and activities with enhanced accuracy, improving time management and scheduling. <1>Example Use Case</1>: Precisely track and set reminders for project milestones and deadlines."
 msgstr "<0>Datetime 필드</0>를 사용하면 이벤트, 마감일, 활동을 더 정확하게 추적할 수 있어 시간 관리와 일정 관리를 개선할 수 있습니다. <1>사용 예시</1>: 프로젝트 마일스톤과 마감일을 정밀하게 추적하고 알림을 설정합니다."
 
+#. js-lingui-id: mNuV02
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "With the call recorder app, add a Call recordings widget to person, company and opportunity pages to list the recent recorded meetings linked to that record."
+msgstr "통화 녹음기 앱을 사용하면 사람, 회사 및 영업 기회 페이지에 통화 녹음 위젯을 추가하여 해당 레코드에 연결된 최근 녹음 회의를 나열할 수 있습니다."
+
 #. js-lingui-id: OKVlnc
 #: src/case-studies/case-study-stories.ts
 msgid "With Twenty, when a new need appears, he can address it himself: no developer required, no support ticket."
@@ -9379,6 +9654,11 @@ msgstr "워크플로"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflows can pick records randomly, in round-robin order, or by choosing the least-loaded assignee."
 msgstr "워크플로에서 레코드를 무작위로, 라운드 로빈 순서로 또는 작업량이 가장 적은 담당자를 선택하여 지정할 수 있습니다."
+
+#. js-lingui-id: vCENh4
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Workflows can update emails and meetings"
+msgstr "워크플로에서 이메일 및 회의 업데이트 가능"
 
 #. js-lingui-id: OteDxj
 #: src/case-studies/case-study-stories.ts

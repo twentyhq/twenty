@@ -82,6 +82,7 @@ export const USER_QUERY_FRAGMENT = gql`
       installedApplications {
         id
         name
+        description
         universalIdentifier
         logoUrl
         createdAt
