@@ -92,7 +92,7 @@ const meta = {
       icon: 'IconBrandShopee',
       color: 'green',
       isAccessible: true,
-      isCustom: true,
+      applicationId: 'workspace-custom-application-id',
       position: 1,
       roleIds: [],
     },

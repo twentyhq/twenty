@@ -9,12 +9,12 @@ import { type AgentChatChannelSummary } from '@/ai/types/AgentChatChannelSummary
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
 import { getAgentChatChannelNavigationItemOrThrow } from '@/ai/utils/getAgentChatChannelNavigationItemOrThrow';
 import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
+import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
 import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { type AgentChatChannel } from '~/generated-metadata/graphql';
 
 type NavigationDrawerAiChatChannelNavigationProps = {
   channel: AgentChatChannel;

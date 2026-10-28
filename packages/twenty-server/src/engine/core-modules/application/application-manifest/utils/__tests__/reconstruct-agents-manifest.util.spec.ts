@@ -48,8 +48,6 @@ const FOREIGN_AGENT_UNIVERSAL_IDENTIFIER =
   '30000000-0000-4000-8000-000000000009';
 const UNASSIGNED_AGENT_UNIVERSAL_IDENTIFIER =
   '30000000-0000-4000-8000-00000000000a';
-const WORKSPACE_AGENT_UNIVERSAL_IDENTIFIER =
-  '30000000-0000-4000-8000-00000000000b';
 const WORKSPACE_ROLE_TARGET_UNIVERSAL_IDENTIFIER =
   '40000000-0000-4000-8000-000000000001';
 const SECOND_ROLE_TARGET_UNIVERSAL_IDENTIFIER =
@@ -176,10 +174,6 @@ const applicationAgents = [
   }),
   buildFlatAgent(DELETED_AGENT_UNIVERSAL_IDENTIFIER, { deletedAt: NOW }),
   buildFlatAgent(UNASSIGNED_AGENT_UNIVERSAL_IDENTIFIER),
-  buildFlatAgent(WORKSPACE_AGENT_UNIVERSAL_IDENTIFIER, {
-    isCustom: true,
-    isSystem: false,
-  }),
 ];
 const applicationRoles = [
   buildFlatRole({ universalIdentifier: SUPPORT_ROLE_UNIVERSAL_IDENTIFIER }),
@@ -334,7 +328,6 @@ describe('reconstructAgentsManifest', () => {
   });
 
   it.each([
-    [WORKSPACE_AGENT_UNIVERSAL_IDENTIFIER, 'agent created in the workspace'],
     [
       UNSUPPORTED_ROLE_AGENT_UNIVERSAL_IDENTIFIER,
       'agent on an unsupported role',

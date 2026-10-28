@@ -14,9 +14,11 @@ import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-
 export const fromUpdateSkillInputToFlatSkillToUpdateOrThrow = ({
   flatSkillMaps,
   updateSkillInput,
+  workspaceCustomApplicationId,
 }: {
   flatSkillMaps: FlatEntityMaps<FlatSkill>;
   updateSkillInput: UpdateSkillInput;
+  workspaceCustomApplicationId: string;
 }): FlatSkill => {
   const existingFlatSkill = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: updateSkillInput.id,
@@ -30,7 +32,7 @@ export const fromUpdateSkillInputToFlatSkillToUpdateOrThrow = ({
     );
   }
 
-  if (!existingFlatSkill.isCustom) {
+  if (existingFlatSkill.applicationId !== workspaceCustomApplicationId) {
     throw new SkillException(
       'Cannot update standard skill',
       SkillExceptionCode.SKILL_IS_STANDARD,

@@ -44,7 +44,6 @@ const GET_ROLES_QUERY = `
         modelId
         responseFormat
         roleId
-        isCustom
         modelConfiguration
         applicationId
         createdAt

@@ -1,3 +1,4 @@
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 import { type Role, type WorkspaceMember } from '~/generated-metadata/graphql';
 
 export type PartialWorkspaceMember = Omit<
@@ -14,6 +15,10 @@ export type PartialWorkspaceMember = Omit<
   | 'updatedAt'
 >;
 
-export type RoleWithPartialMembers = Omit<Role, 'workspaceMembers'> & {
+export type RoleWithPartialMembers = Omit<
+  Role,
+  'workspaceMembers' | 'agents'
+> & {
   workspaceMembers: PartialWorkspaceMember[];
+  agents: FlatAgent[];
 };
