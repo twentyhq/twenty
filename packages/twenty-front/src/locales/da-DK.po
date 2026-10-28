@@ -6931,6 +6931,12 @@ msgstr "Forbind med Google"
 msgid "Connect with Microsoft"
 msgstr "Forbind med Microsoft"
 
+#. js-lingui-id: vPwoq6
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
+#: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
+msgid "Connect with {appName}"
+msgstr ""
+
 #. js-lingui-id: oduBE8
 #: src/pages/onboarding/ImportContacts.tsx
 msgid "Connect your email and calendar to see your entire network instantly. Takes only 30 seconds."
