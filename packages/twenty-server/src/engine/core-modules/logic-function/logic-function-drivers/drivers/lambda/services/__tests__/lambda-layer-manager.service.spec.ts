@@ -141,6 +141,7 @@ describe('LambdaLayerManagerService', () => {
           applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         }),
       ).resolves.toBe(V1_LAYER_ARN);
+      expect(toolFunctions.runYarnInstallCreateLayer).toHaveBeenCalledTimes(1);
       expect(toolFunctions.runYarnInstallCreateLayer).toHaveBeenCalledWith(
         expect.objectContaining({
           packageJson: sanitizeApplicationPackageJson(APPLICATION_PACKAGE_JSON),
@@ -160,6 +161,7 @@ describe('LambdaLayerManagerService', () => {
           applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         }),
       ).resolves.toBe(NOLOCK_V1_LAYER_ARN);
+      expect(toolFunctions.runYarnInstallCreateLayer).toHaveBeenCalledTimes(1);
       expect(toolFunctions.runYarnInstallCreateLayer).toHaveBeenCalledWith(
         expect.objectContaining({ yarnLock: EMPTY_YARN_LOCK_CONTENT }),
       );
@@ -212,6 +214,7 @@ describe('LambdaLayerManagerService', () => {
       ).resolves.toBe(
         toWorkspaceCustomLayerArn(workspaceCustomDefaults.yarnLockChecksum),
       );
+      expect(toolFunctions.runYarnInstallCreateLayer).toHaveBeenCalledTimes(1);
       expect(toolFunctions.runYarnInstallCreateLayer).toHaveBeenCalledWith(
         expect.objectContaining({
           packageJson: sanitizeApplicationPackageJson(
@@ -332,7 +335,7 @@ describe('LambdaLayerManagerService', () => {
           applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         }),
       ).resolves.toBe(NOLOCK_V1_LAYER_ARN);
-      expect(toolFunctions.runYarnInstallCreateLayer).toHaveBeenCalled();
+      expect(toolFunctions.runYarnInstallCreateLayer).toHaveBeenCalledTimes(1);
     });
   });
 

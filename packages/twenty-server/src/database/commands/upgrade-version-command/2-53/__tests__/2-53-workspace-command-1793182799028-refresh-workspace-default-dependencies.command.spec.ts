@@ -77,6 +77,7 @@ describe('RefreshWorkspaceDefaultDependenciesCommand', () => {
       storedChecksums: await computeSnapshotChecksums(),
     });
 
+    expect(uploadDefaultPackageFilesAndSetFileIds).toHaveBeenCalledTimes(1);
     expect(uploadDefaultPackageFilesAndSetFileIds).toHaveBeenCalledWith({
       ...WORKSPACE_CUSTOM_APPLICATION,
       workspaceId: WORKSPACE_ID,
@@ -88,7 +89,7 @@ describe('RefreshWorkspaceDefaultDependenciesCommand', () => {
       storedChecksums: DEFAULT_DEPENDENCY_CHECKSUMS_IN_2_52,
     });
 
-    expect(uploadDefaultPackageFilesAndSetFileIds).toHaveBeenCalled();
+    expect(uploadDefaultPackageFilesAndSetFileIds).toHaveBeenCalledTimes(1);
   });
 
   it('leaves a Workspace app whose dependencies changed since', async () => {
