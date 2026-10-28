@@ -2,6 +2,9 @@ import { randomUUID } from 'node:crypto';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -12,14 +15,31 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 
 const SUBJECTS_BEYOND_ONE_BATCH = 1_001;
 
 describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => {
+  const recordId = randomUUID();
+  const otherRecordId = randomUUID();
   let personObjectMetadata: FlatObjectMetadata;
 
+  // Other suites wipe every person, so the record under test is created here
   beforeAll(async () => {
+    for (const personId of [recordId, otherRecordId]) {
+      const response = await makeGraphqlApiRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: 'id',
+          data: {
+            id: personId,
+            name: { firstName: 'Row', lastName: 'Access' },
+          },
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+    }
+
     const { flatObjectMetadataMaps } =
       await getAppProviderByClassName<WorkspaceCacheService>(
         'WorkspaceCacheService',
@@ -38,6 +58,18 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
       flatEntityId: personObjectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
     });
+  });
+
+  afterAll(async () => {
+    for (const personId of [recordId, otherRecordId]) {
+      await makeGraphqlApiRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: 'id',
+          recordId: personId,
+        }),
+      );
+    }
   });
 
   // Parameters are named per policy, as the row access builders do
@@ -93,12 +125,12 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
 
     expect(
       await findAdmittedSubjectIds({
-        recordId: PERSON_DATA_SEED_IDS.ID_1,
+        recordId,
         policiesBySubjectId: new Map([
           [openSubjectId, { kind: 'open' }],
           [deniedSubjectId, { kind: 'denied' }],
-          [admittedSubjectId, buildIdPolicy(PERSON_DATA_SEED_IDS.ID_1)],
-          [refusedSubjectId, buildIdPolicy(PERSON_DATA_SEED_IDS.ID_2)],
+          [admittedSubjectId, buildIdPolicy(recordId)],
+          [refusedSubjectId, buildIdPolicy(otherRecordId)],
         ]),
       }),
     ).toEqual([openSubjectId, admittedSubjectId].sort());
@@ -120,12 +152,9 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
 
     expect(
       await findAdmittedSubjectIds({
-        recordId: PERSON_DATA_SEED_IDS.ID_1,
+        recordId,
         policiesBySubjectId: new Map(
-          subjectIds.map((subjectId) => [
-            subjectId,
-            buildIdPolicy(PERSON_DATA_SEED_IDS.ID_1),
-          ]),
+          subjectIds.map((subjectId) => [subjectId, buildIdPolicy(recordId)]),
         ),
       }),
     ).toEqual([...subjectIds].sort());
