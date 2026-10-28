@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-27 20:14\n"
+"PO-Revision-Date: 2026-10-28 14:17\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -696,6 +696,11 @@ msgstr "Бизнес, который не укладывается в *шабл�
 msgid "A business that does not fit a template"
 msgstr "Бизнес, который не укладывается в шаблон"
 
+#. js-lingui-id: I0Cpfd
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A command menu in sections"
+msgstr "Меню команд по разделам"
+
 #. js-lingui-id: SR9TmK
 #: src/sections/product-hero/ProductHero.tsx
 msgid "A CRM for teams that *move fast*"
@@ -772,6 +777,16 @@ msgstr "Современный CRM с *интуитивно понятным и�
 msgid "A new breadcrumb navigation across the app, improved keyboard menu navigation, and a new focus state for table views."
 msgstr "Новая навигация \"хлебные крошки\" по всему приложению, улучшенная навигация по меню с клавиатуры и новое состояние фокуса для табличных представлений."
 
+#. js-lingui-id: tIDKH9
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A new Classify step uses AI to answer questions you set about a record, like which category an email belongs to, and passes each answer to the next steps."
+msgstr "Новый шаг «Классификация» использует ИИ для ответов на заданные вами вопросы о записи, например о том, к какой категории относится электронное письмо, и передаёт каждый ответ на следующие шаги."
+
+#. js-lingui-id: i2bJp4
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A new editor for notes and tasks"
+msgstr "Новый редактор для заметок и задач"
+
 #. js-lingui-id: aYUQpm
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new maintenance mode helps admins pause workspace changes during sensitive operations."
@@ -781,6 +796,11 @@ msgstr "Новый режим обслуживания помогает адми
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new onboarding experience"
 msgstr "Новый опыт онбординга"
+
+#. js-lingui-id: pj2AXy
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A page for every attachment"
+msgstr "Страница для каждого вложения"
 
 #. js-lingui-id: P5BDuh
 #: src/case-studies/case-study-stories.ts
@@ -820,6 +840,11 @@ msgstr "Полноценное промежуточное (staging) окруже
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A rebuilt setup flow guides new teams through workspace creation, contact import, and teammate invitations."
 msgstr "Переработанный процесс настройки помогает новым командам создать рабочее пространство, импортировать контакты и пригласить коллег."
+
+#. js-lingui-id: ZpC2fq
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A relation to a junction object can now skip it and show the records on the other side, like a many-to-many relation. Set it up in the relation field’s settings, in Advanced mode."
+msgstr "Связь с промежуточным объектом теперь может пропускать его и показывать записи на другой стороне, как связь «многие ко многим». Настройте это в параметрах поля связи в расширенном режиме."
 
 #. js-lingui-id: WjUlJr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -934,6 +959,11 @@ msgstr "Добавьте пакет кредитов к своему месяч�
 msgid "Add a Section"
 msgstr "Добавить секцию"
 
+#. js-lingui-id: HjFWMR
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Add context to a chat from the + menu"
+msgstr "Добавляйте контекст в чат через меню +"
+
 #. js-lingui-id: iNSn2+
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add files directly to records so documents, screenshots, and other assets stay attached to the right work."
@@ -998,6 +1028,11 @@ msgstr "Дополнения"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Added \"Group By\" in tables to better organize entries, like grouping companies by industry for clearer data visualization. This feature is available in the table Options menu."
 msgstr "Добавлен \"Group By\" в таблицах для более удобной организации записей, например группировки компаний по отрасли для более наглядной визуализации данных. Эта функция доступна в меню Options таблицы."
+
+#. js-lingui-id: 92+0S0
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Adding a menu item opens a searchable list right in the sidebar, and folders and links are edited in a small editor next to it."
+msgstr "При добавлении пункта меню прямо на боковой панели открывается список с поиском, а папки и ссылки редактируются в небольшом редакторе рядом с ним."
 
 #. js-lingui-id: 8i1KwT
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -1112,6 +1147,16 @@ msgstr "Агентные рабочие процессы"
 #: src/sections/compare/compare-data.ts
 msgid "Agents and Data Cloud bundled"
 msgstr "Пакет \"Агенты и Data Cloud\""
+
+#. js-lingui-id: 7uiZOn
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Agents get their own pages"
+msgstr "У агентов появились собственные страницы"
+
+#. js-lingui-id: R8ADJv
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Agents now have a list and a page each, like workflows. Create and edit agents there instead of in settings."
+msgstr "У агентов теперь есть список и отдельная страница, как у рабочих процессов. Создавайте и редактируйте агентов там, а не в настройках."
 
 #. js-lingui-id: vZKKhf
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -1261,6 +1306,11 @@ msgstr "всегда"
 #: src/sections/testimonials/testimonials.data.ts
 msgid "Amrendra Pratap Singh"
 msgstr "Amrendra Pratap Singh"
+
+#. js-lingui-id: J0tGZf
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "An email sent from a record is now linked to that record, even when the recipient isn’t its point of contact."
+msgstr "Электронное письмо, отправленное из записи, теперь связано с этой записью, даже если получатель не является её контактным лицом."
 
 #. js-lingui-id: t4V3jR
 #: src/sections/pricing-plans/plans-data.ts
@@ -1450,6 +1500,11 @@ msgstr "Прикрепляйте файлы к записям с помощью 
 msgid "Attachment Visualizer"
 msgstr "Визуализатор вложений"
 
+#. js-lingui-id: DDl94x
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Attachments open on their own page with an inline preview, and the attachments table shows what each file belongs to in a single Attached to column."
+msgstr "Вложения открываются на собственной странице со встроенным предпросмотром, а таблица вложений показывает, к чему относится каждый файл, в одном столбце «Прикреплено к»."
+
 #. js-lingui-id: fxL/Km
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Attachments without the chaos."
@@ -1489,6 +1544,11 @@ msgstr "Автоматизация"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Available on YouTube!"
 msgstr "Доступно на YouTube!"
+
+#. js-lingui-id: Lj+SZB
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Average, min and max for ratings"
+msgstr "Среднее, минимум и максимум для оценок"
 
 #. js-lingui-id: 4OP74a
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -1827,6 +1887,11 @@ msgstr "Ссылка на календарь / запись"
 msgid "Calendar View for Objects"
 msgstr "Календарное представление для объектов"
 
+#. js-lingui-id: XF6oYz
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Call recordings on record pages"
+msgstr "Записи звонков на страницах записей"
+
 #. js-lingui-id: RZgOeI
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Call recordings that have no video now come with an audio player, so click-to-seek and transcript highlighting work there too."
@@ -1995,6 +2060,11 @@ msgstr "Выберите поведение своего ИИ с помощью 
 msgid "Choose where records open"
 msgstr "Выберите, где будут открываться записи"
 
+#. js-lingui-id: WZRyy5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Choose whether to import private events"
+msgstr "Выберите, импортировать ли частные события"
+
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose which part of a name or address field a view should sort by directly from the sort chip."
@@ -2009,6 +2079,11 @@ msgstr "Город *"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Classic never dies. It just gets extended one more time."
 msgstr "Классика не умирает. Её просто расширяют ещё один раз."
+
+#. js-lingui-id: cJbhDP
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Classify records in workflows"
+msgstr "Классифицируйте записи в рабочих процессах"
 
 #. js-lingui-id: u8JHrO
 #: src/partners-marketplace/FilterBar.tsx
@@ -2025,6 +2100,11 @@ msgstr "Более понятные числа на дашбордах"
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Click Become a partner and complete the short application: who you are, what you cover, and one real Twenty project with proof. We review every application against real, shipped work — acceptance is selective."
 msgstr "Нажмите «Стать партнёром» и заполните короткую заявку: расскажите, кто вы, какие услуги оказываете, и приложите один реальный проект Twenty с подтверждением. Мы проверяем каждую заявку на основе реально выполненных проектов — отбор строгий."
+
+#. js-lingui-id: glfrZq
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Clicking a call in the Call recordings widget now opens its calendar event, with the summary, transcript and participants in one place."
+msgstr "При нажатии на звонок в виджете «Записи звонков» теперь открывается его событие календаря со сводкой, расшифровкой и участниками в одном месте."
 
 #. js-lingui-id: yz7wBu
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -2093,6 +2173,11 @@ msgstr "Сооснователь NetZero"
 msgid "Colombia 🇨🇴"
 msgstr "Колумбия 🇨🇴"
 
+#. js-lingui-id: WgI3ng
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Colored icons across the app"
+msgstr "Цветные значки во всём приложении"
+
 #. js-lingui-id: b5bnuN
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Column-to-field mapping (including relations)"
@@ -2103,6 +2188,11 @@ msgstr "Сопоставление столбцов и полей (включа�
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Coming soon!"
 msgstr "Скоро!"
+
+#. js-lingui-id: 5B0hTq
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Commands are grouped into sections such as Pinned, Selection, the current object, and Create record, instead of one long list."
+msgstr "Команды сгруппированы в разделы, такие как «Закреплённые», «Выделение», текущий объект и «Создать запись», вместо одного длинного списка."
 
 #. js-lingui-id: KGD9Kt
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -2315,6 +2405,11 @@ msgstr "Копировать"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Copy a call recording's transcript or video link directly from the record page."
 msgstr "Копируйте расшифровку записи звонка или ссылку на видео прямо со страницы записи."
+
+#. js-lingui-id: +Sa0Ex
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Copy emails, phones and links on hover"
+msgstr "Копируйте электронные адреса, номера телефонов и ссылки при наведении"
 
 #. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2718,6 +2813,11 @@ msgstr "Приложения для кастомизации"
 #: src/case-studies/case-study-catalog.ts
 msgid "Customizations"
 msgstr "Кастомизации"
+
+#. js-lingui-id: X/83bp
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Customize the sidebar in place"
+msgstr "Настраивайте боковую панель прямо на месте"
 
 #. js-lingui-id: dy0yuR
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3201,6 +3301,11 @@ msgstr "Редактировать действия"
 msgid "Edit deactivated objects"
 msgstr "Редактирование деактивированных объектов"
 
+#. js-lingui-id: J27hBl
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Edit field values in place"
+msgstr "Редактируйте значения полей прямо на месте"
+
 #. js-lingui-id: 0cnnX+
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Edit long-form text directly inside record page widgets with automatic saving."
@@ -3210,6 +3315,11 @@ msgstr "Редактируйте длинный текст прямо в вид�
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Editable text widgets"
 msgstr "Редактируемые текстовые виджеты"
+
+#. js-lingui-id: lofEfT
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Editing an email, phone, link or file now opens the input on that item’s row instead of below the list, and link labels can be edited from the cell. Full names take one input that splits into first and last name as you type."
+msgstr "При редактировании электронного адреса, номера телефона, ссылки или файла поле ввода теперь открывается в строке этого элемента, а не под списком, а подписи ссылок можно редактировать из ячейки. Полное имя вводится в одном поле, которое при вводе разделяется на имя и фамилию."
 
 #. js-lingui-id: 4CJ4xV
 #: src/case-studies/case-study-catalog.ts
@@ -3306,6 +3416,11 @@ msgstr "Письма и события, связанные с записями C
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Emails and meetings log themselves"
 msgstr "Письма и встречи регистрируются автоматически"
+
+#. js-lingui-id: s4kwSO
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Emails stay on the record you sent them from"
+msgstr "Электронные письма остаются в записи, из которой вы их отправили"
 
 #. js-lingui-id: gqv5ZL
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -3701,6 +3816,11 @@ msgstr "поля"
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Fields"
 msgstr "Поля"
+
+#. js-lingui-id: tJtUhq
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Fields, views, widgets and records that come from an installed app show the app’s logo on their icon."
+msgstr "Поля, представления, виджеты и записи из установленного приложения отображают логотип приложения на своём значке."
 
 #. js-lingui-id: z+q1Th
 #: src/partner-application/data/partner-country-options.ts
@@ -4145,6 +4265,11 @@ msgstr "Синхронизация почты и календаря Google и Mi
 msgid "Google Calendar Integration"
 msgstr "Интеграция Google Calendar"
 
+#. js-lingui-id: lW8GOS
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Granola meeting notes in Twenty"
+msgstr "Заметки встреч Granola в Twenty"
+
 #. js-lingui-id: 1W3PAd
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Granular Email Folder Sync"
@@ -4324,6 +4449,11 @@ msgstr "Почасовая ставка *"
 msgid "Hover a column header or a field label to read that field’s description, instead of opening settings to find it."
 msgstr "Наведите указатель на заголовок столбца или метку поля, чтобы прочитать описание этого поля, вместо того чтобы открывать настройки для его поиска."
 
+#. js-lingui-id: crYO+H
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Hover an email, phone or link in the side panel to copy it in one click, as you already could in tables."
+msgstr "Наведите указатель на электронный адрес, номер телефона или ссылку на боковой панели, чтобы скопировать их одним нажатием, как это уже можно было делать в таблицах."
+
 #. js-lingui-id: XnFo3G
 #: src/case-studies/case-study-stories.ts
 msgid "How AC&T Education Migration and Flycoder replaced a shuttered vendor CRM with self-hosted Twenty, with 90%+ lower cost and full ownership."
@@ -4402,6 +4532,11 @@ msgstr "Как Twenty собирает, использует и защищает
 #: src/case-studies/case-study-stories.ts
 msgid "How W3villa Technologies shipped W3Grads, an AI mock interview platform for institutions, on Twenty as the operational backbone."
 msgstr "Как W3villa Technologies запустила W3Grads — платформу ИИ-симуляции собеседований для учебных заведений — на Twenty как операционном «скелете»."
+
+#. js-lingui-id: slTOKD
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "HTML in workflow emails"
+msgstr "HTML в электронных письмах рабочих процессов"
 
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
@@ -5077,6 +5212,11 @@ msgstr "Как и для любого стандартного объекта, �
 msgid "Limited personal AI usage"
 msgstr "Ограниченное персональное использование ИИ"
 
+#. js-lingui-id: nlPPL5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Link emails and meetings to a deal"
+msgstr "Связывайте электронные письма и встречи со сделкой"
+
 #. js-lingui-id: kvxPie
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
@@ -5290,6 +5430,11 @@ msgstr "Workflows с ручным запуском теперь поддержи
 msgid "Manual work at core"
 msgstr "Ручной труд в основе"
 
+#. js-lingui-id: MzFWad
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Many-to-many relations"
+msgstr "Связи «многие ко многим»"
+
 #. js-lingui-id: VJOKPB
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Maps view"
@@ -5379,6 +5524,11 @@ msgstr "Микронезия 🇫🇲"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Microsoft o365 Integration"
 msgstr "Интеграция Microsoft o365"
+
+#. js-lingui-id: 1+j2It
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Microsoft Teams transcripts in Twenty"
+msgstr "Расшифровки Microsoft Teams в Twenty"
 
 #. js-lingui-id: z1ceJ1
 #: src/sections/compare/compare-data.ts
@@ -5646,6 +5796,11 @@ msgstr "Новый"
 msgid "New Array field type"
 msgstr "Новый тип поля Array"
 
+#. js-lingui-id: xTO27+
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "New chat and Open chat in the command menu start a chat or find a past one from any page, and the chat opens next to the page you’re on."
+msgstr "Команды «Новый чат» и «Открыть чат» в меню команд позволяют начать чат или найти предыдущий с любой страницы, а чат открывается рядом с текущей страницей."
+
 #. js-lingui-id: gy5v+A
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "New emails and calendar events now appear on record pages without a manual refresh."
@@ -5842,6 +5997,11 @@ msgstr "Заметки"
 msgid "Notes and Tasks standard objects"
 msgstr "Стандартные объекты Notes и Tasks"
 
+#. js-lingui-id: guqxiL
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Notes, tasks, rich text fields and rich text widgets now use the same editor as emails and workflow forms. Existing content is converted automatically."
+msgstr "Заметки, задачи, поля форматированного текста и виджеты форматированного текста теперь используют тот же редактор, что и электронные письма и формы рабочих процессов. Существующее содержимое преобразуется автоматически."
+
 #. js-lingui-id: iDNBZe
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Notifications"
@@ -5862,6 +6022,11 @@ msgstr "Число"
 msgid "Number of dashboards"
 msgstr "Количество дашбордов"
 
+#. js-lingui-id: 44KnZO
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Objects, folders, links and pages now have colored icons in the sidebar, headers and pickers."
+msgstr "Объекты, папки, ссылки и страницы теперь имеют цветные значки на боковой панели, в заголовках и средствах выбора."
+
 #. js-lingui-id: pkrZnO
 #: src/case-studies/case-study-stories.ts
 msgid "Olivier recognizes that NetZero's current use of Twenty is still relatively simple: workflows and integrations are not yet as deep as he eventually wants, because he prioritized getting foundations right first."
@@ -5881,6 +6046,11 @@ msgstr "Оман 🇴🇲"
 #: src/case-studies/case-study-catalog.ts
 msgid "On a single CRM"
 msgstr "На одном CRM"
+
+#. js-lingui-id: 3484qM
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "On an opportunity, the Emails and Calendar widgets have a Link action to add any of the company’s email threads and meetings, not only the ones with its point of contact."
+msgstr "Возможности, виджеты «Электронные письма» и «Календарь» имеют действие «Связать», позволяющее добавить любую переписку по электронной почте и встречи компании, а не только те, в которых участвует её контактное лицо."
 
 #. js-lingui-id: vSdM7d
 #: src/sections/compare/compare-data.ts
@@ -5963,10 +6133,20 @@ msgstr "Разовый обязательный онбординг‑сбор"
 msgid "Only $5 for SSO. Practically a charity program."
 msgstr "Всего $5 за SSO. Практически благотворительная программа."
 
+#. js-lingui-id: 5BRQYd
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Open a chat from anywhere"
+msgstr "Открывайте чат откуда угодно"
+
 #. js-lingui-id: Av5T3E
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Open a deactivated object from Settings and change it, instead of deleting it and building it again."
 msgstr "Откройте деактивированный объект в Настройках и измените его вместо того, чтобы удалять и создавать заново."
+
+#. js-lingui-id: pC+y+1
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Open a meeting from its recording"
+msgstr "Открывайте встречу из её записи"
 
 #. js-lingui-id: VWC0s5
 #. placeholder {0}: caseStudy.title
@@ -6439,6 +6619,11 @@ msgstr "Политика конфиденциальности"
 msgid "Privacy Policy | Twenty"
 msgstr "Privacy Policy | Twenty"
 
+#. js-lingui-id: 8wTqgw
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Private calendar events are imported again by default. Turn on Exclude private events in calendar settings to leave them out; changing it resyncs your calendar."
+msgstr "Частные события календаря снова импортируются по умолчанию. Включите «Исключить частные события» в настройках календаря, чтобы не импортировать их; при изменении этой настройки ваш календарь синхронизируется повторно."
+
 #. js-lingui-id: 3fPjUY
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
@@ -6560,6 +6745,11 @@ msgstr "Расценки зависят от партнёра и объёма р
 msgid "Rating field"
 msgstr "Поле Rating"
 
+#. js-lingui-id: V6xqAX
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Rating fields can now show their average, minimum and maximum in views and charts, and bar charts can be grouped by Created by."
+msgstr "Поля оценок теперь могут отображать среднее, минимальное и максимальное значения в представлениях и диаграммах, а столбчатые диаграммы можно группировать по полю «Создано»."
+
 #. js-lingui-id: DnWJal
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Reach out"
@@ -6657,6 +6847,11 @@ msgstr "Рекордный квартал"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Records"
 msgstr "Записи"
+
+#. js-lingui-id: eCciTz
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Recovery codes for two-factor authentication"
+msgstr "Коды восстановления для двухфакторной аутентификации"
 
 #. js-lingui-id: duvxlo
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7176,6 +7371,11 @@ msgstr "Проверки безопасности и пользовательс�
 msgid "Security tailored to your IT"
 msgstr "Безопасность, адаптированная к вашей ИТ-инфраструктуре"
 
+#. js-lingui-id: fi/gek
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See context and credits in AI chat"
+msgstr "Просматривайте контекст и кредиты в AI-чате"
+
 #. js-lingui-id: nmVU/t
 #: src/sections/customers-hero/CustomersHero.tsx
 msgid ""
@@ -7221,6 +7421,11 @@ msgstr "Узнайте стоимость модели и где она рабо
 msgid "See what shipped in {0}"
 msgstr "Посмотреть, что вышло в {0}"
 
+#. js-lingui-id: lPsNq3
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See which app added a field"
+msgstr "Узнайте, какое приложение добавило поле"
+
 #. js-lingui-id: 02ePaq
 #. placeholder {0}: company.name
 #: src/sections/product-feature/ContactsVisual/ContactsVisual.tsx
@@ -7236,6 +7441,11 @@ msgstr "Выбрать всё"
 #: src/partner-application/partner-application-copy.ts
 msgid "Select every area you used in a real project — not what you offer, what you actually did."
 msgstr "Выберите все области, которые вы использовали в реальном проекте — не то, что вы предлагаете, а то, что вы действительно делали."
+
+#. js-lingui-id: oOXqnr
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Select records with Cmd and Shift"
+msgstr "Выбирайте записи с помощью Cmd и Shift"
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
@@ -7318,6 +7528,11 @@ msgstr "Самостоятельный запуск, партнёры необя
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
 msgid "Send Email"
 msgstr "Отправить email"
+
+#. js-lingui-id: yHrgF3
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Send Email and Draft Email steps accept raw HTML. Type <0>/html</0> in the body to paste a template, with variables shown as chips."
+msgstr "Шаги «Отправить электронное письмо» и «Создать черновик письма» поддерживают необработанный HTML. Введите <0>/html</0> в тексте письма, чтобы вставить шаблон, при этом переменные будут отображаться в виде меток."
 
 #. js-lingui-id: ig4Kg0
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7410,6 +7625,11 @@ msgstr "Опишите свой проект за несколько минут.
 #: src/sections/compare/compare-data.ts
 msgid "Shared limit below Ultimate"
 msgstr "Общий лимит ниже Ultimate"
+
+#. js-lingui-id: yZrICd
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Shift-click selects a range of records in tables, boards and lists, and Cmd-click (Ctrl-click on Windows) adds or removes a single record."
+msgstr "Shift+щелчок выбирает диапазон записей в таблицах, досках и списках, а Cmd+щелчок (Ctrl+щелчок в Windows) добавляет или удаляет одну запись."
 
 #. js-lingui-id: 3VFzsh
 #: src/sections/helped/helped.data.ts
@@ -8075,6 +8295,16 @@ msgstr "Команда бизнес‑развития наконец‑то п�
 msgid "The CEO had resisted bringing in a CRM for years. The business development team had no experience using one, and the licensing costs of well-known CRMs like Salesforce or HubSpot were hard to justify without any guarantee of adoption: CRMs are only as good as the maintenance of the data inside them."
 msgstr "Генеральный директор годами сопротивлялся внедрению CRM. У команды бизнес‑развития не было опыта работы с такими системами, а лицензии на известные CRM вроде Salesforce или HubSpot было сложно оправдать без гарантии, что ими будут пользоваться: CRM хороша ровно настолько, насколько поддерживаются данные внутри неё."
 
+#. js-lingui-id: MAi4hK
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The chat composer shows how much of the context window you’ve used. Open it to see your AI credit usage, when it resets, and a breakdown for the last message and the whole conversation."
+msgstr "Редактор сообщения в чате показывает, какую часть контекстного окна вы использовали. Откройте его, чтобы увидеть использование AI-кредитов, время их сброса и разбивку по последнему сообщению и всему разговору."
+
+#. js-lingui-id: D21WDI
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The chat composer’s + menu attaches files and adds records or skills, the same way typing <0>@</0> or <1>/</1> does."
+msgstr "Меню + редактора сообщения в чате прикрепляет файлы и добавляет записи или навыки, как и при вводе <0>@</0> или <1>/</1>."
+
 #. js-lingui-id: 93BQde
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
@@ -8138,6 +8368,11 @@ msgstr "Гигантский монолит"
 msgid "The In-house Burden"
 msgstr "Бремя внутренних разработок"
 
+#. js-lingui-id: N8bBZ8
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The interface is now available in Persian, laid out right to left."
+msgstr "Интерфейс теперь доступен на персидском языке с направлением справа налево."
+
 #. js-lingui-id: 6U7fek
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The interface now mirrors for right-to-left languages, so Arabic and Hebrew workspaces read in their own direction."
@@ -8185,6 +8420,16 @@ msgstr "Меню навигации теперь представляет соб
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The new <0>Address Field</0> Type enables entry of a full address in one field, while structurally storing each address part - such as street name and number - in separate subfields."
 msgstr "Новый тип <0>поля Address</0> позволяет ввести полный адрес в одно поле, при этом структурно сохраняя каждую часть адреса — например, улицу и дом — в отдельных подполях."
+
+#. js-lingui-id: jPuON+
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The new Granola app saves your Granola summaries and speaker transcripts to call recordings, links them to the matching calendar event, and keeps them in sync as notes change. It needs a Granola Business or Enterprise plan."
+msgstr "Новое приложение Granola сохраняет сводки Granola и расшифровки выступающих в записи звонков, связывает их с соответствующим событием календаря и синхронизирует их при изменении заметок. Требуется тарифный план Granola Business или Enterprise."
+
+#. js-lingui-id: SngW9d
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The new Microsoft Teams app saves your Teams meeting transcripts to call recordings and can write an AI summary of each call."
+msgstr "Новое приложение Microsoft Teams сохраняет расшифровки ваших встреч Teams в записи звонков и может создавать AI-сводку каждого звонка."
 
 #. js-lingui-id: tADBQB
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8281,6 +8526,11 @@ msgstr "Условия, регулирующие использование Twen
 msgid "The timeline on every record page has been significantly improved. It now provides detailed updates for: Record creations Field updates Received emails Created calendar events"
 msgstr "Шкала времени на каждой странице записи была существенно улучшена. Теперь она предоставляет подробные обновления для: создания записей обновлений полей полученных писем созданных событий календаря"
 
+#. js-lingui-id: pHA+ow
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The Update Record step can now fill custom fields on emails and calendar events, such as a category picked by a Classify step."
+msgstr "Шаг «Обновить запись» теперь может заполнять пользовательские поля в электронных письмах и событиях календаря, например категорию, выбранную на шаге «Классифицировать»."
+
 #. js-lingui-id: u0uFxg
 #: src/sections/testimonials/TestimonialsCarousel.tsx
 msgid "They are the real sales"
@@ -8340,6 +8590,16 @@ msgstr "Чтобы сохранить простоту Twenty, мы вводим
 #: src/sections/product-feature/TasksVisual/TasksVisual.tsx
 msgid "TODO"
 msgstr "К СДЕЛАНО"
+
+#. js-lingui-id: DKijYW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Toggle lists and toggle headings fold again, Tab indents blocks, and headings 4 to 6 return to the slash menu. Tables get row and column handles again to add, delete, merge and split cells."
+msgstr "Раскрывающиеся списки и заголовки снова сворачиваются, Tab делает отступ для блоков, а заголовки с 4-го по 6-й снова доступны в меню со слешем. В таблицах снова появились маркеры строк и столбцов для добавления, удаления, объединения и разделения ячеек."
+
+#. js-lingui-id: vNHNy7
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Toggles and table controls are back in notes"
+msgstr "Раскрывающиеся элементы и элементы управления таблицами снова доступны в заметках"
 
 #. js-lingui-id: DeTupk
 #: src/partner-application/data/partner-country-options.ts
@@ -8545,6 +8805,11 @@ msgstr "Twenty даёт техническим командам строител
 #: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Twenty gives you the kind of flexibility that actually changes what you can offer your clients. The dev experience is clean, the APIs are open, and when something needs to be customized, you can just do it. There's no fighting the platform."
 msgstr "Twenty даёт вам такую гибкость, которая реально меняет то, что вы можете предложить клиентам. Опыт разработки чистый, API открыты, и когда что‑то нужно кастомизировать, вы просто делаете это. Никакой борьбы с платформой."
+
+#. js-lingui-id: lcDb/Z
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Twenty in Persian"
+msgstr "Twenty на персидском языке"
 
 #. js-lingui-id: x/I85y
 #: src/case-studies/case-study-stories.ts
@@ -9208,6 +9473,11 @@ msgstr "Что вы создали в Twenty *"
 msgid "Whatever came next had to be something they could own."
 msgstr "Всё, что будет дальше, должно было быть тем, чем они могли владеть сами."
 
+#. js-lingui-id: tQV2Gz
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "When a member loses their authenticator, an admin can issue a one-time recovery code from the member’s page in settings. The member signs in with it and their old authenticator is removed."
+msgstr "Если участник потерял аутентификатор, администратор может выдать одноразовый код восстановления на странице участника в настройках. Участник входит с его помощью, а его старый аутентификатор удаляется."
+
 #. js-lingui-id: cs6VpJ
 #: src/case-studies/case-study-stories.ts
 msgid "When a student registers via QR at a campus event, the system assigns a plan, generates an interview session, and sends a link. The AI conducts the interview, scores the candidate, and classifies the result. Faculty see where each student stands without manually reviewing every session. Building and iterating on these workflows was faster with AI in the loop."
@@ -9322,6 +9592,11 @@ msgstr "С интеграцией Google Calendar вы можете отслеж
 msgid "With the <0>Datetime Field</0>, you can effectively track events, deadlines, and activities with enhanced accuracy, improving time management and scheduling. <1>Example Use Case</1>: Precisely track and set reminders for project milestones and deadlines."
 msgstr "С помощью <0>поля Datetime</0> вы можете эффективно отслеживать события, дедлайны и активности с повышенной точностью, улучшая управление временем и планирование. <1>Пример использования</1>: точно отслеживайте и устанавливайте напоминания для ключевых этапов проектов и дедлайнов."
 
+#. js-lingui-id: mNuV02
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "With the call recorder app, add a Call recordings widget to person, company and opportunity pages to list the recent recorded meetings linked to that record."
+msgstr "С приложением для записи звонков добавьте виджет «Записи звонков» на страницы человека, компании и возможности, чтобы просматривать список последних записанных встреч, связанных с этой записью."
+
 #. js-lingui-id: OKVlnc
 #: src/case-studies/case-study-stories.ts
 msgid "With Twenty, when a new need appears, he can address it himself: no developer required, no support ticket."
@@ -9391,6 +9666,11 @@ msgstr "Рабочие процессы"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflows can pick records randomly, in round-robin order, or by choosing the least-loaded assignee."
 msgstr "Рабочие процессы могут выбирать записи случайным образом, по круговому принципу или назначать их наименее загруженному исполнителю."
+
+#. js-lingui-id: vCENh4
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Workflows can update emails and meetings"
+msgstr "Рабочие процессы могут обновлять электронные письма и встречи"
 
 #. js-lingui-id: OteDxj
 #: src/case-studies/case-study-stories.ts
