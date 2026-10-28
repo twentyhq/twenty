@@ -23,6 +23,9 @@ import { generateApplicationTokenPair } from 'test/integration/utils/generate-ap
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -234,6 +237,34 @@ describe('Inbox thread mutations for members and applications', () => {
     return threadId;
   };
 
+  const recordMemberMessageSentThroughApplication = async (
+    threadId: string,
+  ): Promise<void> => {
+    const conversationWriter =
+      getAppProviderByClassName<AgentConversationWriterService>(
+        'AgentConversationWriterService',
+      );
+    const turnId = randomUUID();
+
+    await conversationWriter.insertTurn({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      id: turnId,
+      threadId,
+      agentId: null,
+      status: AgentTurnStatus.COMPLETED,
+    });
+    await conversationWriter.insertMessage({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      threadId,
+      turnId,
+      role: AgentMessageRole.USER,
+      agentId: null,
+      senderUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      senderApplicationId: application.id,
+      parts: [{ type: 'text', text: 'Summarize the renewal call' }],
+    });
+  };
+
   beforeAll(async () => {
     await makeGraphqlApiRequest(
       createOneOperationFactory({
@@ -386,6 +417,28 @@ describe('Inbox thread mutations for members and applications', () => {
         { code: 'NOT_FOUND', subCode: AiExceptionCode.THREAD_NOT_FOUND },
       );
       expect(await readCompanyLinks(threadId)).toEqual([]);
+    });
+
+    it('does not count a message a member sent through the application as the application taking part', async () => {
+      const threadId = await createMemberThread();
+
+      await recordMemberMessageSentThroughApplication(threadId);
+
+      expectGraphqlError(
+        await attachRecord({ threadId, token: applicationToken }),
+        { code: 'NOT_FOUND', subCode: AiExceptionCode.THREAD_NOT_FOUND },
+      );
+      expectGraphqlError(
+        await shareThread({
+          threadId,
+          token: applicationToken,
+          grants: [
+            { everyone: true, accessLevel: RecordShareAccessLevel.READ },
+          ],
+        }),
+        { code: 'NOT_FOUND', subCode: AiExceptionCode.THREAD_NOT_FOUND },
+      );
+      expect(await readManualShares(threadId)).toEqual([]);
     });
 
     it('refuses an application whose role can only read the conversation', async () => {

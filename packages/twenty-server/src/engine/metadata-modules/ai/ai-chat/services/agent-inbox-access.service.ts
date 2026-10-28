@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull } from 'typeorm';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -114,6 +115,7 @@ export class AgentInboxAccessService {
     return this.messageRepository.existsBy(workspaceId, {
       threadId,
       senderApplicationId: application.id,
+      senderWorkspaceMemberId: IsNull(),
     });
   }
 
