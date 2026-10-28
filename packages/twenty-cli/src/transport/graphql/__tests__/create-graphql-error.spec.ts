@@ -3,7 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { createGraphqlError } from '@/transport/graphql/create-graphql-error';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
 
-const target = { apiUrl: 'https://app.twenty.com' } as ResolvedTarget;
+const target: ResolvedTarget = {
+  apiUrl: 'https://app.twenty.com',
+  bearerToken: 'test-token',
+  credentialKind: 'apiKey',
+  source: 'environment',
+};
 
 const createError = (errors: unknown[], status = 200) =>
   createGraphqlError({
@@ -26,7 +31,12 @@ describe('createGraphqlError', () => {
             fieldMetadata: [
               {
                 metadataName: 'fieldMetadata',
-                errors: [{ code: 'INVALID_NAME', message: 'Field name "123" is invalid' }],
+                errors: [
+                  {
+                    code: 'INVALID_NAME',
+                    message: 'Field name "123" is invalid',
+                  },
+                ],
                 flatEntityMinimalInformation: { nameSingular: 'invalidField' },
               },
             ],

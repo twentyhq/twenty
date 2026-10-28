@@ -246,8 +246,12 @@ describe('terminal progress', () => {
     );
 
     expect(stderr).toContain('Validation failed for 2 fields');
-    expect(stderr).toContain('• fieldMetadata invalidField: Field name "123" is invalid');
-    expect(stderr).toContain('• fieldMetadata: A field with this name already exists');
+    expect(stderr).toContain(
+      '• fieldMetadata invalidField: Field name "123" is invalid',
+    );
+    expect(stderr).toContain(
+      '• fieldMetadata: A field with this name already exists',
+    );
   });
 
   it('includes the validation details in the JSON error envelope', () => {
@@ -259,7 +263,10 @@ describe('terminal progress', () => {
         message: 'Validation failed for 1 field',
         details: {
           validationErrors: [
-            { metadataName: 'fieldMetadata', message: 'Field name "123" is invalid' },
+            {
+              metadataName: 'fieldMetadata',
+              message: 'Field name "123" is invalid',
+            },
           ],
         },
       }),
@@ -271,7 +278,10 @@ describe('terminal progress', () => {
         code: 'GRAPHQL_ERROR',
         details: {
           validationErrors: [
-            { metadataName: 'fieldMetadata', message: 'Field name "123" is invalid' },
+            {
+              metadataName: 'fieldMetadata',
+              message: 'Field name "123" is invalid',
+            },
           ],
         },
       },

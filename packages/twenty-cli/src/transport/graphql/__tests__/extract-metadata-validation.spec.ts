@@ -13,13 +13,23 @@ const metadataValidationError = {
         {
           type: 'create_field',
           metadataName: 'fieldMetadata',
-          errors: [{ code: 'INVALID_NAME', message: 'Field name "123" is invalid' }],
-          flatEntityMinimalInformation: { name: '123', nameSingular: 'invalidField' },
+          errors: [
+            { code: 'INVALID_NAME', message: 'Field name "123" is invalid' },
+          ],
+          flatEntityMinimalInformation: {
+            name: '123',
+            nameSingular: 'invalidField',
+          },
         },
         {
           type: 'create_field',
           metadataName: 'fieldMetadata',
-          errors: [{ code: 'DUPLICATE', message: 'A field with this name already exists' }],
+          errors: [
+            {
+              code: 'DUPLICATE',
+              message: 'A field with this name already exists',
+            },
+          ],
           flatEntityMinimalInformation: { name: 'status' },
         },
       ],
@@ -59,8 +69,46 @@ describe('extractMetadataValidation', () => {
       extractMetadataValidation([
         null,
         'nope',
-        { extensions: { errors: { fieldMetadata: 'not-an-array' } } },
-        { extensions: { errors: { fieldMetadata: [{ errors: [{ message: 42 }] }] } } },
+        {
+          extensions: {
+            code: 'METADATA_VALIDATION_FAILED',
+            errors: { fieldMetadata: 'not-an-array' },
+          },
+        },
+        {
+          extensions: {
+            code: 'METADATA_VALIDATION_FAILED',
+            errors: {
+              fieldMetadata: [
+                {
+                  errors: [{ message: 42 }],
+                  flatEntityMinimalInformation: { name: 'status' },
+                },
+              ],
+            },
+          },
+        },
+      ]),
+    ).toEqual({ errors: [] });
+  });
+
+  it('ignores a breakdown without the validation-failed code', () => {
+    expect(
+      extractMetadataValidation([
+        {
+          extensions: {
+            code: 'GRAPHQL_ERROR',
+            message: 'Something else',
+            errors: {
+              fieldMetadata: [
+                {
+                  errors: [{ code: 'INVALID_NAME', message: 'nope' }],
+                  flatEntityMinimalInformation: { name: 'status' },
+                },
+              ],
+            },
+          },
+        },
       ]),
     ).toEqual({ errors: [] });
   });
@@ -73,7 +121,12 @@ describe('extractMetadataValidation', () => {
     }));
 
     const { errors } = extractMetadataValidation([
-      { extensions: { errors: { fieldMetadata: failures, objectMetadata: failures } } },
+      {
+        extensions: {
+          code: 'METADATA_VALIDATION_FAILED',
+          errors: { fieldMetadata: failures, objectMetadata: failures },
+        },
+      },
     ]);
 
     expect(errors).toHaveLength(100);

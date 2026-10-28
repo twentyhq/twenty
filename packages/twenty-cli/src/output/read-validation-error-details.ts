@@ -1,11 +1,7 @@
 import { isArray, isString } from '@sniptt/guards';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-export type ValidationErrorDetail = {
-  metadataName: string;
-  entity?: string;
-  message: string;
-};
+import { type ValidationErrorDetail } from '@/output/types/validation-error-detail.type';
 
 export const readValidationErrorDetails = (
   details: Record<string, unknown> | undefined,
@@ -21,13 +17,3 @@ export const readValidationErrorDetails = (
       isString(detail.message),
   );
 };
-
-export const formatValidationErrorLines = (
-  details: ValidationErrorDetail[],
-): string =>
-  details
-    .map(
-      ({ metadataName, entity, message }) =>
-        `• ${metadataName}${isDefined(entity) ? ` ${entity}` : ''}: ${message}`,
-    )
-    .join('\n');

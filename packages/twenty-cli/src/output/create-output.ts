@@ -3,14 +3,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createProgressOutput } from '@/output/create-progress-output';
 import { JSON_SCHEMA_VERSION } from '@/output/constants/json-schema-version.constant';
+import { formatValidationErrorLines } from '@/output/format-validation-error-lines';
+import { readValidationErrorDetails } from '@/output/read-validation-error-details';
 import { formatFailureLine, formatWarningLine } from '@/output/style';
 import { type CliWarning } from '@/output/types/cli-warning.type';
 import { type OutputMode } from '@/output/types/output-mode.type';
 import { type Output } from '@/output/types/output.type';
-import {
-  formatValidationErrorLines,
-  readValidationErrorDetails,
-} from '@/output/validation-errors';
 import { writeLine } from '@/output/write-line';
 import { writeStreamEvent } from '@/output/write-stream-event';
 import { type PublicTarget } from '@/target/types/public-target.type';

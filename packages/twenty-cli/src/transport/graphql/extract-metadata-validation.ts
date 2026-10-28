@@ -1,9 +1,11 @@
-import { isArray, isString } from '@sniptt/guards';
+import { isArray, isNonEmptyString, isString } from '@sniptt/guards';
+import { type FailedMetadataValidation } from 'twenty-shared/metadata';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-import { type ValidationErrorDetail } from '@/output/validation-errors';
+import { type ValidationErrorDetail } from '@/output/types/validation-error-detail.type';
 
 const MAX_VALIDATION_ERRORS = 100;
+const METADATA_VALIDATION_FAILED_CODE = 'METADATA_VALIDATION_FAILED';
 
 const ENTITY_LABEL_KEYS = [
   'nameSingular',
@@ -14,15 +16,13 @@ const ENTITY_LABEL_KEYS = [
   'id',
 ] as const;
 
-const readEntityLabel = (entity: unknown): string | undefined => {
-  if (!isPlainObject(entity)) {
-    return undefined;
-  }
-
+const readEntityLabel = (
+  entity: FailedMetadataValidation['flatEntityMinimalInformation'],
+): string | undefined => {
   for (const key of ENTITY_LABEL_KEYS) {
     const value = entity[key];
 
-    if (isString(value) && value.length > 0) {
+    if (isNonEmptyString(value)) {
       return value;
     }
   }
@@ -30,22 +30,25 @@ const readEntityLabel = (entity: unknown): string | undefined => {
   return undefined;
 };
 
-const extractFromExtensions = (
-  extensions: Record<string, unknown>,
-): ValidationErrorDetail[] => {
-  if (!isPlainObject(extensions.errors)) {
-    return [];
-  }
+const isFailedMetadataValidation = (
+  value: unknown,
+): value is FailedMetadataValidation =>
+  isPlainObject(value) &&
+  isArray(value.errors) &&
+  isPlainObject(value.flatEntityMinimalInformation);
 
+const collectDetails = (
+  errorsByMetadata: Record<string, unknown>,
+): ValidationErrorDetail[] => {
   const details: ValidationErrorDetail[] = [];
 
-  for (const [metadataName, failures] of Object.entries(extensions.errors)) {
+  for (const [metadataName, failures] of Object.entries(errorsByMetadata)) {
     if (!isArray(failures)) {
       continue;
     }
 
     for (const failure of failures) {
-      if (!isPlainObject(failure) || !isArray(failure.errors)) {
+      if (!isFailedMetadataValidation(failure)) {
         continue;
       }
 
@@ -61,6 +64,10 @@ const extractFromExtensions = (
           ...(isDefined(entity) ? { entity } : {}),
           message: error.message,
         });
+
+        if (details.length >= MAX_VALIDATION_ERRORS) {
+          return details;
+        }
       }
     }
   }
@@ -68,9 +75,8 @@ const extractFromExtensions = (
   return details;
 };
 
-// Metadata validation errors travel in the GraphQL error extensions (a generic
-// summary plus a per-entity breakdown); the top-level message is generic. Pull
-// the breakdown out so commands can surface it instead of dropping it.
+// Metadata validation errors ride in the GraphQL error extensions; the top-level
+// message stays generic, so pull the per-entity breakdown out for commands to surface.
 export const extractMetadataValidation = (
   graphqlErrors: unknown[],
 ): { summary?: string; errors: ValidationErrorDetail[] } => {
@@ -80,12 +86,14 @@ export const extractMetadataValidation = (
   for (const graphqlError of graphqlErrors) {
     if (
       !isPlainObject(graphqlError) ||
-      !isPlainObject(graphqlError.extensions)
+      !isPlainObject(graphqlError.extensions) ||
+      graphqlError.extensions.code !== METADATA_VALIDATION_FAILED_CODE ||
+      !isPlainObject(graphqlError.extensions.errors)
     ) {
       continue;
     }
 
-    const extracted = extractFromExtensions(graphqlError.extensions);
+    const extracted = collectDetails(graphqlError.extensions.errors);
 
     if (extracted.length === 0) {
       continue;
@@ -96,6 +104,10 @@ export const extractMetadataValidation = (
     }
 
     errors.push(...extracted);
+
+    if (errors.length >= MAX_VALIDATION_ERRORS) {
+      break;
+    }
   }
 
   return {
