@@ -1,3 +1,4 @@
+import { useStore } from 'jotai';
 import uniqBy from 'lodash.uniqby';
 import { useCallback, useMemo } from 'react';
 import {
@@ -13,13 +14,20 @@ import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByL
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
+import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { type ObjectRecordOperation } from '@/object-record/types/ObjectRecordOperation';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
-// A card of recent conversations, never paged further.
 const CHAT_THREADS_FOR_RECORD_PAGE_SIZE = 20;
+
+const CHAT_THREAD_LINK_GQL_FIELDS = {
+  id: true,
+  threadId: true,
+} satisfies RecordGqlFields;
 
 const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
   id: true,
@@ -28,7 +36,9 @@ const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
     id: true,
     title: true,
     deletedAt: true,
+    createdAt: true,
     updatedAt: true,
+    channelId: true,
     lastActivityAt: true,
     lastMessageText: true,
     lastMessageSenderWorkspaceMemberId: true,
@@ -58,6 +68,7 @@ export const useChatThreadsForRecord = ({
   id,
   targetObjectNameSingular,
 }: TargetRecordIdentifier) => {
+  const store = useStore();
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
     objectNameSingular: CoreObjectNameSingular.AgentChatThread,
@@ -86,6 +97,9 @@ export const useChatThreadsForRecord = ({
     loading,
     error,
     refetch,
+    fetchMoreRecords,
+    hasNextPage,
+    queryIdentifier,
   } = useFindManyRecords<AgentChatThreadTargetRecord>({
     objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
     skip: !isRecordLinkable,
@@ -98,6 +112,39 @@ export const useChatThreadsForRecord = ({
     recordGqlFields: CHAT_THREADS_FOR_RECORD_GQL_FIELDS,
     limit: CHAT_THREADS_FOR_RECORD_PAGE_SIZE,
   });
+
+  const { fetchAllRecords: fetchAllLinks } =
+    useLazyFetchAllRecords<AgentChatThreadTargetRecord>({
+      objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+      filter,
+      recordGqlFields: CHAT_THREAD_LINK_GQL_FIELDS,
+      fetchPolicy: 'network-only',
+      maximumRequests: Number.POSITIVE_INFINITY,
+    });
+
+  const isFetchingMoreRecords = useAtomFamilyStateValue(
+    isFetchingMoreRecordsFamilyState,
+    queryIdentifier,
+  );
+
+  const fetchMoreThreads = useCallback(() => {
+    const isFetchingMoreRecords = store.get(
+      isFetchingMoreRecordsFamilyState.atomFamily(queryIdentifier),
+    );
+
+    if (!isRecordLinkable || !hasNextPage || loading || isFetchingMoreRecords) {
+      return;
+    }
+
+    return fetchMoreRecords();
+  }, [
+    fetchMoreRecords,
+    hasNextPage,
+    isRecordLinkable,
+    loading,
+    queryIdentifier,
+    store,
+  ]);
 
   const operationSignature = useMemo(
     () => ({
@@ -133,8 +180,17 @@ export const useChatThreadsForRecord = ({
     [links],
   );
 
-  const getLinkIdsToThread = (threadId: string) =>
-    links.filter((link) => link.threadId === threadId).map(({ id }) => id);
+  const getAllLinkIdsToThread = async (threadId: string) => {
+    if (!isRecordLinkable) {
+      return [];
+    }
+
+    const allLinks = await fetchAllLinks();
+
+    return allLinks
+      .filter((link) => link.threadId === threadId)
+      .map(({ id }) => id);
+  };
 
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: refetchLinks,
@@ -143,5 +199,15 @@ export const useChatThreadsForRecord = ({
     enabled: isRecordLinkable && isDefined(chatObjectMetadataItem),
   });
 
-  return { threads, getLinkIdsToThread, loading, error, refetch };
+  return {
+    threads,
+    getAllLinkIdsToThread,
+    loading,
+    error,
+    refetch,
+    fetchMoreThreads,
+    hasNextPage,
+    isFetchingMoreThreads: isFetchingMoreRecords,
+    queryIdentifier,
+  };
 };

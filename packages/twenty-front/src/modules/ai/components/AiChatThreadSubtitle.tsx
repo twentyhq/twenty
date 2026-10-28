@@ -32,9 +32,13 @@ const StyledPreview = styled.div`
 
 type AiChatThreadSubtitleProps = {
   thread: AgentChatThreadRecord;
+  size?: 'sm' | 'md';
 };
 
-export const AiChatThreadSubtitle = ({ thread }: AiChatThreadSubtitleProps) => {
+export const AiChatThreadSubtitle = ({
+  thread,
+  size = 'sm',
+}: AiChatThreadSubtitleProps) => {
   const isUnread = useIsAgentChatThreadShownAsUnread(thread);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
@@ -58,7 +62,7 @@ export const AiChatThreadSubtitle = ({ thread }: AiChatThreadSubtitleProps) => {
   return (
     <Text
       render={<StyledSubtitle />}
-      size="sm"
+      size={size}
       color={isUnread ? 'secondary' : 'tertiary'}
     >
       {isAwaitingAnswer && (

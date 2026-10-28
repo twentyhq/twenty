@@ -16,10 +16,12 @@ const StyledActivityTime = styled.div`
 
 type AiChatThreadActivityTimeProps = {
   thread: AgentChatThreadRecord;
+  variant?: 'default' | 'compact';
 };
 
 export const AiChatThreadActivityTime = ({
   thread,
+  variant = 'default',
 }: AiChatThreadActivityTimeProps) => {
   const { t } = useLingui();
   const isUnread = useIsAgentChatThreadShownAsUnread(thread);
@@ -58,8 +60,10 @@ export const AiChatThreadActivityTime = ({
   return (
     <Text
       render={<StyledActivityTime />}
-      size="sm"
-      color={isUnread ? 'primary' : 'tertiary'}
+      size={variant === 'compact' ? 'md' : 'sm'}
+      color={
+        isUnread ? 'primary' : variant === 'compact' ? 'secondary' : 'tertiary'
+      }
     >
       {getActivityTimeLabel()}
     </Text>

@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadList } from '@/ai/components/AiChatThreadList';
+import { ChatThreadsList } from '@/page-layout/widgets/chat-threads/components/ChatThreadsList';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
@@ -22,9 +22,10 @@ const StyledThreadsContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
   height: 100%;
+  min-width: 0;
   overflow: auto;
-  padding: ${themeCssVariables.spacing[2]};
 `;
 
 type ChatThreadsCardContentProps = {
@@ -33,6 +34,9 @@ type ChatThreadsCardContentProps = {
   onRetry: () => void;
   onDetachThread: (threadId: string) => void;
   threads: AgentChatThreadRecord[];
+  hasNextPage?: boolean;
+  isFetchingMoreThreads?: boolean;
+  onLoadMore?: () => void;
 };
 
 export const ChatThreadsCardContent = ({
@@ -41,6 +45,9 @@ export const ChatThreadsCardContent = ({
   onRetry,
   onDetachThread,
   threads,
+  hasNextPage = false,
+  isFetchingMoreThreads = false,
+  onLoadMore,
 }: ChatThreadsCardContentProps) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
@@ -54,7 +61,7 @@ export const ChatThreadsCardContent = ({
       CoreObjectNameSingular.AgentChatThread
       ? sidePanelRecord.objectRecordId
       : undefined;
-  const isThreadsEmpty = threads.length === 0;
+  const isThreadsEmpty = !isNonEmptyArray(threads);
 
   if (loading && isThreadsEmpty) {
     return <SkeletonLoader />;
@@ -81,7 +88,7 @@ export const ChatThreadsCardContent = ({
     );
   }
 
-  if (isThreadsEmpty) {
+  if (isThreadsEmpty && !hasNextPage) {
     return (
       <EmptyState.Root>
         <AnimatedPlaceholder type="emptyInbox" />
@@ -97,11 +104,9 @@ export const ChatThreadsCardContent = ({
 
   return (
     <StyledThreadsContainer>
-      <AiChatThreadList
+      <ChatThreadsList
         threads={threads}
-        selectedThreadIds={
-          isDefined(sidePanelThreadId) ? [sidePanelThreadId] : []
-        }
+        selectedThreadId={sidePanelThreadId}
         onThreadClick={({ id }) =>
           openRecordInSidePanel({
             recordId: id,
@@ -110,6 +115,15 @@ export const ChatThreadsCardContent = ({
         }
         onDetachThread={onDetachThread}
       />
+      {hasNextPage && (
+        <Button
+          variant="ghost"
+          onClick={onLoadMore}
+          disabled={loading || isFetchingMoreThreads}
+        >
+          {isFetchingMoreThreads ? t`Loading…` : t`Load more conversations`}
+        </Button>
+      )}
     </StyledThreadsContainer>
   );
 };
