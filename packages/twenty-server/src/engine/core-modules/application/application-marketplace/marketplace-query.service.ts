@@ -36,10 +36,10 @@ export class MarketplaceQueryService {
 
   async findManyMarketplaceApps({
     universalIdentifiers,
-    isVetted,
+    isOfficial,
   }: {
     universalIdentifiers?: string[];
-    isVetted?: boolean;
+    isOfficial?: boolean;
   } = {}): Promise<MarketplaceAppDTO[]> {
     const appsByUniversalIdentifier =
       (await this.coreEntityCacheService.get(
@@ -56,11 +56,11 @@ export class MarketplaceQueryService {
           .filter(isDefined)
       : Object.values(appsByUniversalIdentifier);
 
-    if (!isDefined(isVetted)) {
+    if (!isDefined(isOfficial)) {
       return apps;
     }
 
-    return apps.filter((app) => app.isVetted === isVetted);
+    return apps.filter((app) => app.isOfficial === isOfficial);
   }
 
   async findMarketplaceAppDetail(
@@ -113,7 +113,8 @@ export class MarketplaceQueryService {
       sourcePackage: registration.sourcePackage ?? undefined,
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
       isListed: registration.isListed,
-      isVetted: registration.isVetted,
+      isOfficial: registration.isOfficial,
+      isVetted: registration.isOfficial,
       description:
         registration.description ??
         registration.manifest?.application?.description ??

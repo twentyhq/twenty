@@ -130,7 +130,7 @@ describe('ApplicationInstallService', () => {
       universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       sourceType: ApplicationRegistrationSourceType.NPM,
       manifest: null,
-      isVetted: false,
+      isOfficial: false,
     });
   });
 
@@ -204,17 +204,17 @@ describe('ApplicationInstallService', () => {
   });
 
   it.each([
-    { isVetted: true, autoUpgrade: true },
-    { isVetted: false, autoUpgrade: false },
+    { isOfficial: true, autoUpgrade: true },
+    { isOfficial: false, autoUpgrade: false },
   ])(
-    'creates the application with auto upgrade $autoUpgrade when the registration vetting is $isVetted',
-    async ({ isVetted, autoUpgrade }) => {
+    'creates the application with auto upgrade $autoUpgrade when the registration official flag is $isOfficial',
+    async ({ isOfficial, autoUpgrade }) => {
       appRegistrationRepository.findOne.mockResolvedValue({
         id: APPLICATION_REGISTRATION_ID,
         universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         sourceType: ApplicationRegistrationSourceType.NPM,
         manifest: null,
-        isVetted,
+        isOfficial,
       });
       applicationLookupService.findByUniversalIdentifier.mockResolvedValue(
         null,

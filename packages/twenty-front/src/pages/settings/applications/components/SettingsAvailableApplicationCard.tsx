@@ -12,12 +12,12 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { type MarketplaceApp } from '~/generated-metadata/graphql';
+import { type MarketplaceAppFieldsFragment } from '~/generated-metadata/graphql';
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SettingsAvailableApplicationCardProps = {
-  application: MarketplaceApp;
+  application: MarketplaceAppFieldsFragment;
 };
 
 const StyledApplicationCardContent = styled(StyledSettingsCardContent)`

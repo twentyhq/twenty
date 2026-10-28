@@ -26,7 +26,7 @@ import { v4 } from 'uuid';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
-import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
+import { MARKETPLACE_OFFICIAL_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-official-applications.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import {
@@ -111,7 +111,7 @@ export type ApplicationRegistrationCatalogCard = {
   universalIdentifier: string;
   name: string;
   sourcePackage: string | null;
-  isVetted: boolean;
+  isOfficial: boolean;
   description: string | null;
   author: string | null;
   category: string | null;
@@ -592,14 +592,14 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationEntity> {
     const {
       id,
-      update: { isListed, isPreInstalled, isVetted, ...update },
+      update: { isListed, isPreInstalled, isOfficial, ...update },
     } = input;
 
     await this.findOneByIdGlobal(id);
     await this.applyUpdate({
       id,
       update,
-      instanceFlags: { isListed, isPreInstalled, isVetted },
+      instanceFlags: { isListed, isPreInstalled, isOfficial },
     });
 
     return this.findOneByIdGlobal(id);
@@ -615,7 +615,7 @@ export class ApplicationRegistrationService {
     update: UpdateApplicationRegistrationPayload;
     instanceFlags?: Pick<
       AdminUpdateApplicationRegistrationPayload,
-      'isListed' | 'isPreInstalled' | 'isVetted'
+      'isListed' | 'isPreInstalled' | 'isOfficial'
     >;
   }): Promise<void> {
     if (isDefined(update.oAuthRedirectUris)) {
@@ -637,8 +637,8 @@ export class ApplicationRegistrationService {
       updateData.isListed = instanceFlags.isListed;
     if (isDefined(instanceFlags.isPreInstalled))
       updateData.isPreInstalled = instanceFlags.isPreInstalled;
-    if (isDefined(instanceFlags.isVetted))
-      updateData.isVetted = instanceFlags.isVetted;
+    if (isDefined(instanceFlags.isOfficial))
+      updateData.isOfficial = instanceFlags.isOfficial;
 
     if (Object.keys(updateData).length === 0) {
       return;
@@ -676,7 +676,7 @@ export class ApplicationRegistrationService {
         | 'sourcePackage'
         | 'tarballFileId'
         | 'isListed'
-        | 'isVetted'
+        | 'isOfficial'
         | 'ownerWorkspaceId'
       >
     >;
@@ -935,7 +935,7 @@ export class ApplicationRegistrationService {
       return null;
     }
 
-    const officialSourcePackage = MARKETPLACE_VETTED_APPLICATIONS.find(
+    const officialSourcePackage = MARKETPLACE_OFFICIAL_APPLICATIONS.find(
       ({ universalIdentifier }) =>
         universalIdentifier === params.universalIdentifier,
     )?.sourcePackage;
@@ -972,7 +972,7 @@ export class ApplicationRegistrationService {
     }
 
     return this.createFromCatalog(params, {
-      isVetted: isDefined(officialSourcePackage),
+      isOfficial: isDefined(officialSourcePackage),
     });
   }
 
@@ -1025,7 +1025,7 @@ export class ApplicationRegistrationService {
 
   private async createFromCatalog(
     params: UpsertApplicationRegistrationFromCatalogParams,
-    { isVetted }: { isVetted: boolean },
+    { isOfficial }: { isOfficial: boolean },
   ): Promise<ApplicationRegistrationEntity> {
     const registration = await this.create({
       universalIdentifier: params.universalIdentifier,
@@ -1034,7 +1034,7 @@ export class ApplicationRegistrationService {
       sourcePackage: params.sourcePackage,
       latestAvailableVersion: params.latestAvailableVersion,
       isListed: true,
-      isVetted,
+      isOfficial,
       manifest: params.manifest,
       ...fromManifestApplicationToDisplayFields(params.manifest.application),
       oAuthClientId: v4(),
@@ -1121,7 +1121,7 @@ export class ApplicationRegistrationService {
         'sourceType',
         'sourcePackage',
         'latestAvailableVersion',
-        'isVetted',
+        'isOfficial',
         'logo',
         'logoFileId',
         'description',
@@ -1140,7 +1140,7 @@ export class ApplicationRegistrationService {
       universalIdentifier: registration.universalIdentifier,
       name: registration.name,
       sourcePackage: registration.sourcePackage,
-      isVetted: registration.isVetted,
+      isOfficial: registration.isOfficial,
       description: registration.description,
       author: getApplicationAuthorDisplayName(registration.author),
       category: registration.category,

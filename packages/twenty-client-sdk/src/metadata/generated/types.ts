@@ -1487,10 +1487,10 @@ export default {
             "isListed": [
                 4
             ],
-            "isPreInstalled": [
+            "isOfficial": [
                 4
             ],
-            "isVetted": [
+            "isPreInstalled": [
                 4
             ],
             "latestAvailableVersion": [
@@ -5922,6 +5922,9 @@ export default {
             "id": [
                 1
             ],
+            "isOfficial": [
+                4
+            ],
             "isVetted": [
                 4
             ],
@@ -5970,6 +5973,9 @@ export default {
                 10
             ],
             "isListed": [
+                4
+            ],
+            "isOfficial": [
                 4
             ],
             "isVetted": [
@@ -11450,7 +11456,7 @@ export default {
             "publicMarketplaceApps": [
                 332,
                 {
-                    "isVetted": [
+                    "isOfficial": [
                         4,
                         "Boolean!"
                     ]

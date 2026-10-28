@@ -55,7 +55,7 @@ const HeroActions = styled.div`
   margin-top: ${spacing(2)};
 `;
 
-const VettedBadge = styled.span`
+const OfficialBadge = styled.span`
   align-items: center;
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(4)};
@@ -185,7 +185,9 @@ export function AppDetail({ app }: AppDetailProps) {
                 label={i18n._(msg`Install`)}
                 variant="filled"
               />
-              <VettedBadge>{i18n._(msg`Vetted by Twenty`)}</VettedBadge>
+              {app.isOfficial && (
+                <OfficialBadge>{i18n._(msg`Official`)}</OfficialBadge>
+              )}
             </HeroActions>
           </HeroText>
         </HeroRow>

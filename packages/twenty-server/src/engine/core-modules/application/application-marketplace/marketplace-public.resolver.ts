@@ -23,10 +23,10 @@ export class MarketplacePublicResolver {
   @Query(() => [MarketplaceAppDTO], { name: 'publicMarketplaceApps' })
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async findManyPublicMarketplaceApps(
-    @Args('isVetted', { type: () => Boolean, defaultValue: true })
-    isVetted: boolean,
+    @Args('isOfficial', { type: () => Boolean, defaultValue: true })
+    isOfficial: boolean,
   ): Promise<MarketplaceAppDTO[]> {
-    return this.marketplaceQueryService.findManyMarketplaceApps({ isVetted });
+    return this.marketplaceQueryService.findManyMarketplaceApps({ isOfficial });
   }
 
   @Query(() => MarketplaceAppDetailDTO, { name: 'publicMarketplaceAppDetail' })

@@ -88,7 +88,9 @@ export function AppsMarketplaceClient({ apps }: AppsMarketplaceClientProps) {
         ? apps
         : apps.filter((app) => app.category === activeCategory);
 
-    return matching.toSorted((a, b) => Number(b.isVetted) - Number(a.isVetted));
+    return matching.toSorted(
+      (a, b) => Number(b.isOfficial) - Number(a.isOfficial),
+    );
   }, [apps, activeCategory]);
 
   return (

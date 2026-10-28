@@ -45,5 +45,9 @@ export class MarketplaceAppDTO {
 
   @IsBoolean()
   @Field(() => Boolean)
+  isOfficial: boolean;
+
+  @IsBoolean()
+  @Field(() => Boolean, { deprecationReason: 'Use isOfficial' })
   isVetted: boolean;
 }

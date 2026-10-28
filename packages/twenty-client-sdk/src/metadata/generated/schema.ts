@@ -571,8 +571,8 @@ export interface ApplicationRegistration {
     id: Scalars['UUID']
     isConfigured: Scalars['Boolean']
     isListed: Scalars['Boolean']
+    isOfficial: Scalars['Boolean']
     isPreInstalled: Scalars['Boolean']
-    isVetted: Scalars['Boolean']
     latestAvailableVersion?: Scalars['String']
     logoUrl?: Scalars['String']
     name: Scalars['String']
@@ -1953,6 +1953,8 @@ export interface MarketplaceApp {
     category: Scalars['String']
     description: Scalars['String']
     id: Scalars['String']
+    isOfficial: Scalars['Boolean']
+    /** @deprecated Use isOfficial */
     isVetted: Scalars['Boolean']
     logoUrl?: Scalars['String']
     name: Scalars['String']
@@ -1972,6 +1974,8 @@ export interface MarketplaceAppDetail {
     id: Scalars['String']
     installCount: Scalars['Int']
     isListed: Scalars['Boolean']
+    isOfficial: Scalars['Boolean']
+    /** @deprecated Use isOfficial */
     isVetted: Scalars['Boolean']
     issueReportUrl?: Scalars['String']
     latestAvailableVersion?: Scalars['String']
@@ -4802,8 +4806,8 @@ export interface ApplicationRegistrationGenqlSelection{
     id?: boolean | number
     isConfigured?: boolean | number
     isListed?: boolean | number
+    isOfficial?: boolean | number
     isPreInstalled?: boolean | number
-    isVetted?: boolean | number
     latestAvailableVersion?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
@@ -6449,6 +6453,8 @@ export interface MarketplaceAppGenqlSelection{
     category?: boolean | number
     description?: boolean | number
     id?: boolean | number
+    isOfficial?: boolean | number
+    /** @deprecated Use isOfficial */
     isVetted?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
@@ -6469,6 +6475,8 @@ export interface MarketplaceAppDetailGenqlSelection{
     id?: boolean | number
     installCount?: boolean | number
     isListed?: boolean | number
+    isOfficial?: boolean | number
+    /** @deprecated Use isOfficial */
     isVetted?: boolean | number
     issueReportUrl?: boolean | number
     latestAvailableVersion?: boolean | number
@@ -7608,7 +7616,7 @@ export interface QueryGenqlSelection{
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
     previewMessageCampaignSend?: (PreviewMessageCampaignSendOutputDTOGenqlSelection & { __args: {input: PreviewMessageCampaignSendInput} })
     publicMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
-    publicMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args: {isVetted: Scalars['Boolean']} })
+    publicMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args: {isOfficial: Scalars['Boolean']} })
     recordPermissions?: (RecordPermissionsResultGenqlSelection & { __args: {targets: RecordTargetInput[]} })
     recordSharing?: (RecordSharingDTOGenqlSelection & { __args: {target: RecordTargetInput} })
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })

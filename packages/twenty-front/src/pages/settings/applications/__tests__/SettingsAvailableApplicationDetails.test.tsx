@@ -115,7 +115,7 @@ const mockQueries = ({
           name,
           sourceType: ApplicationRegistrationSourceType.LOCAL,
           isListed: false,
-          isVetted: false,
+          isOfficial: false,
           description: null,
           aboutDescription: null,
           galleryImages: [],
@@ -146,15 +146,15 @@ const renderPage = (availableApplicationId: string) =>
     </I18nProvider>,
   );
 
-const NOT_VETTED_WARNING =
-  'This application is not vetted by Twenty. Use at your own risk.';
+const NOT_REVIEWED_WARNING =
+  'This application is not reviewed by Twenty. Use at your own risk.';
 
 describe('SettingsAvailableApplicationDetails', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('shows the readme of the standard application without the not vetted warning', () => {
+  it('shows the readme of the standard application without the not reviewed warning', () => {
     mockQueries({
       universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
       name: 'Standard',
@@ -162,7 +162,7 @@ describe('SettingsAvailableApplicationDetails', () => {
 
     renderPage(TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER);
 
-    expect(screen.queryByText(NOT_VETTED_WARNING)).not.toBeInTheDocument();
+    expect(screen.queryByText(NOT_REVIEWED_WARNING)).not.toBeInTheDocument();
     expect(
       screen.getByText('The base data model every Twenty workspace runs on.'),
     ).toBeInTheDocument();
@@ -171,7 +171,7 @@ describe('SettingsAvailableApplicationDetails', () => {
     );
   });
 
-  it('shows the readme of the workspace custom application without the not vetted warning', () => {
+  it('shows the readme of the workspace custom application without the not reviewed warning', () => {
     mockQueries({
       universalIdentifier: CUSTOM_APPLICATION_ID,
       name: 'Custom',
@@ -179,7 +179,7 @@ describe('SettingsAvailableApplicationDetails', () => {
 
     renderPage(CUSTOM_APPLICATION_ID);
 
-    expect(screen.queryByText(NOT_VETTED_WARNING)).not.toBeInTheDocument();
+    expect(screen.queryByText(NOT_REVIEWED_WARNING)).not.toBeInTheDocument();
     expect(
       screen.getByText("Host your workspace's customizations and overrides."),
     ).toBeInTheDocument();
@@ -188,7 +188,7 @@ describe('SettingsAvailableApplicationDetails', () => {
     );
   });
 
-  it('warns that a third-party application is not vetted', () => {
+  it('warns that a third-party application is not reviewed', () => {
     mockQueries({
       universalIdentifier: THIRD_PARTY_APPLICATION_ID,
       name: 'Third party',
@@ -196,7 +196,7 @@ describe('SettingsAvailableApplicationDetails', () => {
 
     renderPage(THIRD_PARTY_APPLICATION_ID);
 
-    expect(screen.getByText(NOT_VETTED_WARNING)).toBeInTheDocument();
+    expect(screen.getByText(NOT_REVIEWED_WARNING)).toBeInTheDocument();
     expect(
       screen.getByText('No description available for this application'),
     ).toBeInTheDocument();

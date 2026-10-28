@@ -8,7 +8,7 @@ type SerializableApplicationRegistration = Pick<
   | 'latestAvailableVersion'
   | 'sourceType'
   | 'isListed'
-  | 'isVetted'
+  | 'isOfficial'
   | 'ownerWorkspaceId'
 >;
 
@@ -22,6 +22,6 @@ export const serializeApplicationRegistrationForBroadcast = (
     applicationRegistration.latestAvailableVersion ?? null,
   sourceType: applicationRegistration.sourceType,
   isListed: applicationRegistration.isListed,
-  isVetted: applicationRegistration.isVetted,
+  isOfficial: applicationRegistration.isOfficial,
   ownerWorkspaceId: applicationRegistration.ownerWorkspaceId ?? null,
 });

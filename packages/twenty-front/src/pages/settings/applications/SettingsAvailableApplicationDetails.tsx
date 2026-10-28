@@ -143,9 +143,9 @@ export const SettingsAvailableApplicationDetails = () => {
   const builtInApplicationContent = getBuiltInApplicationContent();
 
   const isUnlisted = isDefined(detail) && !detail.isListed;
-  const isNotVetted =
+  const isNotOfficial =
     isDefined(detail) &&
-    !detail.isVetted &&
+    !detail.isOfficial &&
     !isDefined(builtInApplicationContent);
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
@@ -261,11 +261,11 @@ export const SettingsAvailableApplicationDetails = () => {
               icon={<IconEyeOff aria-hidden="true" />}
             >{t`Application not listed on the marketplace. It was shared via a direct link`}</InlineBanner>
           )}
-          {isNotVetted && (
+          {isNotOfficial && (
             <InlineBanner
               status="warning"
               icon={<IconAlertTriangle aria-hidden="true" />}
-            >{t`This application is not vetted by Twenty. Use at your own risk.`}</InlineBanner>
+            >{t`This application is not reviewed by Twenty. Use at your own risk.`}</InlineBanner>
           )}
           {renderContent()}
         </SettingsPageContainer>
@@ -278,7 +278,7 @@ export const SettingsAvailableApplicationDetails = () => {
         appObjects={detail?.objects ?? undefined}
         requestedCapabilities={detail?.requestedCapabilities}
         billsCredits={detail?.billsCredits}
-        isVetted={detail?.isVetted}
+        isOfficial={detail?.isOfficial}
         onAuthorize={install}
         isInstalling={isInstalling}
       />

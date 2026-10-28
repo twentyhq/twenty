@@ -7,7 +7,7 @@ type AdminSortableApplicationRegistration = Pick<
   | 'universalIdentifier'
   | 'name'
   | 'sourcePackage'
-  | 'isVetted'
+  | 'isOfficial'
   | 'isListed'
 >;
 
@@ -23,8 +23,8 @@ export const sortApplicationRegistrationsForAdmin = <
   installCountByRegistrationId: Map<string, number>;
 }): TRegistration[] => {
   return [...registrations].sort((left, right) => {
-    if (left.isVetted !== right.isVetted) {
-      return left.isVetted ? -1 : 1;
+    if (left.isOfficial !== right.isOfficial) {
+      return left.isOfficial ? -1 : 1;
     }
 
     const isLeftConfigured = isConfiguredByRegistrationId.get(left.id) ?? false;

@@ -15,7 +15,7 @@ import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/m
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
 
-import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
+import { MARKETPLACE_OFFICIAL_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-official-applications.constant';
 import { type ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { type ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { type ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
@@ -36,7 +36,7 @@ const MARKETPLACE_QUERY = `
       sourcePackage
       category
       logoUrl
-      isVetted
+      isOfficial
     }
   }
 `;
@@ -235,8 +235,8 @@ describe('Marketplace Catalog Sync (integration)', () => {
 
   describe('catalog sync', () => {
     it.each([true, false])(
-      'preserves the admin choice isVetted=%s',
-      async (isVetted) => {
+      'preserves the admin choice isOfficial=%s',
+      async (isOfficial) => {
         const applicationRegistrationService =
           getAppProviderByClassName<ApplicationRegistrationService>(
             'ApplicationRegistrationService',
@@ -245,16 +245,16 @@ describe('Marketplace Catalog Sync (integration)', () => {
           getAppProviderByClassName<ApplicationRegistrationLookupService>(
             'ApplicationRegistrationLookupService',
           );
-        const universalIdentifier = isVetted
+        const universalIdentifier = isOfficial
           ? crypto.randomUUID()
-          : MARKETPLACE_VETTED_APPLICATIONS[0].universalIdentifier;
+          : MARKETPLACE_OFFICIAL_APPLICATIONS[0].universalIdentifier;
         const catalogParams = {
           universalIdentifier,
-          name: 'Vetted catalog sync test',
+          name: 'Official catalog sync test',
           sourceType: ApplicationRegistrationSourceType.NPM,
-          sourcePackage: isVetted
-            ? '@test/vetted-catalog-sync'
-            : MARKETPLACE_VETTED_APPLICATIONS[0].sourcePackage,
+          sourcePackage: isOfficial
+            ? '@test/official-catalog-sync'
+            : MARKETPLACE_OFFICIAL_APPLICATIONS[0].sourcePackage,
           latestAvailableVersion: '1.0.0',
           manifest: buildBaseManifest({
             appId: universalIdentifier,
@@ -276,7 +276,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
               universalIdentifier,
             );
 
-          expect(registration).toMatchObject({ isVetted: !isVetted });
+          expect(registration).toMatchObject({ isOfficial: !isOfficial });
 
           const updateResponse = await makeAdminPanelApiRequest({
             query: gql`
@@ -285,19 +285,19 @@ describe('Marketplace Catalog Sync (integration)', () => {
               ) {
                 updateAdminApplicationRegistration(input: $input) {
                   id
-                  isVetted
+                  isOfficial
                 }
               }
             `,
             variables: {
-              input: { id: registration?.id, update: { isVetted } },
+              input: { id: registration?.id, update: { isOfficial } },
             },
           });
 
           expect(updateResponse.body.errors).toBeUndefined();
           expect(
             updateResponse.body.data.updateAdminApplicationRegistration,
-          ).toMatchObject({ isVetted });
+          ).toMatchObject({ isOfficial });
 
           await applicationRegistrationService.upsertFromCatalog(catalogParams);
 
@@ -306,7 +306,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
               query FindOneAdminApplicationRegistration($id: String!) {
                 findOneAdminApplicationRegistration(id: $id) {
                   id
-                  isVetted
+                  isOfficial
                 }
               }
             `,
@@ -316,7 +316,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
           expect(refreshedResponse.body.errors).toBeUndefined();
           expect(
             refreshedResponse.body.data.findOneAdminApplicationRegistration,
-          ).toMatchObject({ isVetted });
+          ).toMatchObject({ isOfficial });
         } finally {
           await ds.query(
             `DELETE FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
@@ -328,7 +328,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
   });
 
   describe('catalog sync source package pinning', () => {
-    const OFFICIAL_APPLICATION = MARKETPLACE_VETTED_APPLICATIONS[0];
+    const OFFICIAL_APPLICATION = MARKETPLACE_OFFICIAL_APPLICATIONS[0];
 
     it('does not let another package overwrite an existing registration', async () => {
       const universalIdentifier = crypto.randomUUID();

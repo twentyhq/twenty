@@ -92,7 +92,7 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
             appObjects={detail?.objects ?? undefined}
             requestedCapabilities={detail?.requestedCapabilities}
             billsCredits={detail?.billsCredits}
-            isVetted={detail?.isVetted}
+            isOfficial={detail?.isOfficial}
             onAuthorize={install}
             isInstalling={isInstalling}
           />

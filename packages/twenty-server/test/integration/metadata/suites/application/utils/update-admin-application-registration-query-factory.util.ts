@@ -20,7 +20,7 @@ export const updateAdminApplicationRegistrationQueryFactory = ({
         name
         isListed
         isPreInstalled
-        isVetted
+        isOfficial
       }
     }
   `,

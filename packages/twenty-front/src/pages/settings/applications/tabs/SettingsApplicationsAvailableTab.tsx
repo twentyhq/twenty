@@ -31,7 +31,7 @@ const StyledContentContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledNotVettedContainer = styled.div`
+const StyledNotOfficialContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
@@ -55,7 +55,7 @@ const StyledEmptyState = styled.div`
 export const SettingsApplicationsAvailableTab = () => {
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
-  const [showVettedOnly, setShowVettedOnly] = useState(true);
+  const [showOfficialOnly, setShowOfficialOnly] = useState(true);
 
   const {
     data: marketplaceApps,
@@ -71,12 +71,12 @@ export const SettingsApplicationsAvailableTab = () => {
     searchTerm,
   });
 
-  const vettedApplications = textFilteredApplications.filter(
-    (application) => application.isVetted,
+  const officialApplications = textFilteredApplications.filter(
+    (application) => application.isOfficial,
   );
 
-  const nonVettedApplications = textFilteredApplications.filter(
-    (application) => !application.isVetted,
+  const nonOfficialApplications = textFilteredApplications.filter(
+    (application) => !application.isOfficial,
   );
 
   if (isLoading) {
@@ -98,21 +98,21 @@ export const SettingsApplicationsAvailableTab = () => {
     );
   }
 
-  const showNonVettedHint =
-    showVettedOnly &&
-    vettedApplications.length === 0 &&
-    nonVettedApplications.length > 0;
+  const showNonOfficialHint =
+    showOfficialOnly &&
+    officialApplications.length === 0 &&
+    nonOfficialApplications.length > 0;
 
   const hasNoApplications = textFilteredApplications.length === 0;
 
-  const nonVettedCount = nonVettedApplications.length;
+  const nonOfficialCount = nonOfficialApplications.length;
 
   const getEmptyStateMessage = () => {
-    if (showNonVettedHint) {
-      return plural(nonVettedCount, {
-        one: 'No vetted application matches. # non-vetted application is available.',
+    if (showNonOfficialHint) {
+      return plural(nonOfficialCount, {
+        one: 'No official application matches. # non-official application is available.',
         other:
-          'No vetted application matches. # non-vetted applications are available.',
+          'No official application matches. # non-official applications are available.',
       });
     }
 
@@ -142,9 +142,11 @@ export const SettingsApplicationsAvailableTab = () => {
                 <Dropdown.Section>
                   <SettingsRow
                     startElement={<IconSparkles />}
-                    onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
-                    checked={showVettedOnly}
-                  >{t`Vetted only`}</SettingsRow>
+                    onCheckedChange={() =>
+                      setShowOfficialOnly(!showOfficialOnly)
+                    }
+                    checked={showOfficialOnly}
+                  >{t`Official only`}</SettingsRow>
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>
@@ -153,17 +155,17 @@ export const SettingsApplicationsAvailableTab = () => {
       </StyledSearchInputContainer>
 
       {hasNoApplications ||
-      (showVettedOnly && vettedApplications.length === 0) ? (
+      (showOfficialOnly && officialApplications.length === 0) ? (
         <SettingsEmptyPlaceholder padding="4">
           <StyledEmptyState role="status">
             {getEmptyStateMessage()}
-            {showNonVettedHint && (
+            {showNonOfficialHint && (
               <Button
                 variant="link"
                 color="accent"
                 size="sm"
                 type="button"
-                onClick={() => setShowVettedOnly(false)}
+                onClick={() => setShowOfficialOnly(false)}
               >
                 {t`Show all applications`}
               </Button>
@@ -172,9 +174,9 @@ export const SettingsApplicationsAvailableTab = () => {
         </SettingsEmptyPlaceholder>
       ) : (
         <StyledContentContainer>
-          {vettedApplications.length > 0 && (
+          {officialApplications.length > 0 && (
             <StyledCardsGrid>
-              {vettedApplications.map((application) => (
+              {officialApplications.map((application) => (
                 <SettingsAvailableApplicationCard
                   key={application.id}
                   application={application}
@@ -183,18 +185,18 @@ export const SettingsApplicationsAvailableTab = () => {
             </StyledCardsGrid>
           )}
 
-          {!showVettedOnly && nonVettedApplications.length > 0 && (
-            <StyledNotVettedContainer>
-              <InlineBanner status="warning">{t`Applications below are not vetted. Use at your own risk.`}</InlineBanner>
+          {!showOfficialOnly && nonOfficialApplications.length > 0 && (
+            <StyledNotOfficialContainer>
+              <InlineBanner status="warning">{t`Applications below are not reviewed by Twenty. Use at your own risk.`}</InlineBanner>
               <StyledCardsGrid>
-                {nonVettedApplications.map((application) => (
+                {nonOfficialApplications.map((application) => (
                   <SettingsAvailableApplicationCard
                     key={application.id}
                     application={application}
                   />
                 ))}
               </StyledCardsGrid>
-            </StyledNotVettedContainer>
+            </StyledNotOfficialContainer>
           )}
         </StyledContentContainer>
       )}

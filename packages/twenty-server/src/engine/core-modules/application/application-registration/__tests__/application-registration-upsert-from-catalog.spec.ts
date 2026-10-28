@@ -166,7 +166,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     },
   );
 
-  it('should leave the operator listing and vetting choices untouched on update', async () => {
+  it('should leave the operator listing and official choices untouched on update', async () => {
     const existingRegistration = buildExistingRegistration({
       sourceType: ApplicationRegistrationSourceType.NPM,
       isListed: false,

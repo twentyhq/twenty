@@ -15,7 +15,7 @@ export const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof Applicatio
     'tarballFileId',
     'latestAvailableVersion',
     'isListed',
-    'isVetted',
+    'isOfficial',
     'isPreInstalled',
     'logo',
     'logoFileId',

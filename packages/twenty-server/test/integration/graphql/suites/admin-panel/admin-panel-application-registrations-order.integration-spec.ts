@@ -37,7 +37,7 @@ const INSTALLED_AUTHOR = 'Admin panel order integration author';
 
 type RegistrationSeed = {
   suffix: string;
-  isVetted?: boolean;
+  isOfficial?: boolean;
   isListed?: boolean;
   sourcePackage?: string;
   hasUnfilledRequiredVariable?: boolean;
@@ -63,22 +63,22 @@ const SERVER_ROUTE_MANIFEST = {
 
 const REGISTRATION_SEEDS: RegistrationSeed[] = [
   {
-    suffix: 'vetted-not-configured',
-    isVetted: true,
+    suffix: 'official-not-configured',
+    isOfficial: true,
     hasUnfilledRequiredVariable: true,
   },
   {
-    suffix: 'vetted-server-route-unclaimed',
-    isVetted: true,
+    suffix: 'official-server-route-unclaimed',
+    isOfficial: true,
     exposesServerRoute: true,
   },
   {
-    suffix: 'vetted-configured-unlisted',
-    isVetted: true,
+    suffix: 'official-configured-unlisted',
+    isOfficial: true,
   },
   {
-    suffix: 'vetted-configured-listed',
-    isVetted: true,
+    suffix: 'official-configured-listed',
+    isOfficial: true,
     isListed: true,
     author: INSTALLED_AUTHOR,
     installedOnWorkspaceIds: [SEED_APPLE_WORKSPACE_ID],
@@ -156,7 +156,7 @@ describe('Admin panel application registrations ordering (integration)', () => {
         `INSERT INTO core."applicationRegistration"
           (id, "universalIdentifier", name, "oAuthClientId",
            "oAuthRedirectUris", "oAuthScopes", "sourceType", "sourcePackage",
-           "isVetted", "isListed", author, "workspaceId", manifest)
+           "isOfficial", "isListed", author, "workspaceId", manifest)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
         [
           id,
@@ -167,7 +167,7 @@ describe('Admin panel application registrations ordering (integration)', () => {
           [],
           'local',
           seed.sourcePackage ?? null,
-          seed.isVetted ?? false,
+          seed.isOfficial ?? false,
           seed.isListed ?? false,
           seed.author ?? null,
           seed.ownerWorkspaceId ?? null,
@@ -240,7 +240,7 @@ describe('Admin panel application registrations ordering (integration)', () => {
     );
   };
 
-  it('orders vetted, not configured, unlisted, Twenty packages, most installed, then by name', async () => {
+  it('orders official, not configured, unlisted, Twenty packages, most installed, then by name', async () => {
     const response = await makeAdminPanelApiRequest({
       query: FIND_ALL_REGISTRATIONS,
       variables: { limit: 25, offset: 0, searchTerm: NAME_PREFIX },
@@ -284,14 +284,14 @@ describe('Admin panel application registrations ordering (integration)', () => {
     const registrationsByName = await findRegistrationsByName();
 
     const installedRegistration =
-      registrationsByName[buildName('vetted-configured-listed')];
+      registrationsByName[buildName('official-configured-listed')];
 
     expect(installedRegistration.installCount).toBe(1);
     expect(installedRegistration.author).toBe(INSTALLED_AUTHOR);
     expect(installedRegistration.isConfigured).toBe(true);
 
     const notConfiguredRegistration =
-      registrationsByName[buildName('vetted-not-configured')];
+      registrationsByName[buildName('official-not-configured')];
 
     expect(notConfiguredRegistration.installCount).toBe(0);
     expect(notConfiguredRegistration.author).toBeNull();
@@ -302,7 +302,7 @@ describe('Admin panel application registrations ordering (integration)', () => {
     const registrationsByName = await findRegistrationsByName();
 
     const unclaimedRegistration =
-      registrationsByName[buildName('vetted-server-route-unclaimed')];
+      registrationsByName[buildName('official-server-route-unclaimed')];
 
     expect(unclaimedRegistration.installCount).toBe(0);
     expect(unclaimedRegistration.isConfigured).toBe(false);

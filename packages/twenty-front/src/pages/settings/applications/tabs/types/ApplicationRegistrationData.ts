@@ -8,7 +8,7 @@ export type ApplicationRegistrationData = {
   sourceType: ApplicationRegistrationSourceType;
   sourcePackage?: string | null;
   isListed: boolean;
-  isVetted: boolean;
+  isOfficial: boolean;
   oAuthClientId: string;
   oAuthScopes?: string[] | null;
   oAuthRedirectUris?: string[] | null;

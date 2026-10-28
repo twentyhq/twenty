@@ -19,7 +19,7 @@ const RENAMED = 'Instance flags integration test app renamed';
 const INITIAL_REDIRECT_URIS = ['https://example.com/oauth/callback'];
 const REPLACEMENT_REDIRECT_URIS = ['https://attacker.example/oauth/callback'];
 
-type InstanceFlag = 'isListed' | 'isPreInstalled' | 'isVetted';
+type InstanceFlag = 'isListed' | 'isPreInstalled' | 'isOfficial';
 
 const INSTANCE_FLAG_TEST_CASES: EachTestingContext<{ flag: InstanceFlag }>[] = [
   {
@@ -31,8 +31,8 @@ const INSTANCE_FLAG_TEST_CASES: EachTestingContext<{ flag: InstanceFlag }>[] = [
     context: { flag: 'isPreInstalled' },
   },
   {
-    title: 'when the payload carries isVetted',
-    context: { flag: 'isVetted' },
+    title: 'when the payload carries isOfficial',
+    context: { flag: 'isOfficial' },
   },
 ];
 
@@ -66,7 +66,7 @@ type RegistrationRow = {
   oAuthRedirectUris: string[];
   isListed: boolean;
   isPreInstalled: boolean;
-  isVetted: boolean;
+  isOfficial: boolean;
 };
 
 const INITIAL_ROW: RegistrationRow = {
@@ -74,7 +74,7 @@ const INITIAL_ROW: RegistrationRow = {
   oAuthRedirectUris: INITIAL_REDIRECT_URIS,
   isListed: false,
   isPreInstalled: false,
-  isVetted: false,
+  isOfficial: false,
 };
 
 describe('Application registration instance flags (integration)', () => {
@@ -84,7 +84,7 @@ describe('Application registration instance flags (integration)', () => {
     registrationId: string,
   ): Promise<RegistrationRow> => {
     const [row] = await globalThis.testDataSource.query(
-      `SELECT name, "oAuthRedirectUris", "isListed", "isPreInstalled", "isVetted"
+      `SELECT name, "oAuthRedirectUris", "isListed", "isPreInstalled", "isOfficial"
        FROM core."applicationRegistration" WHERE id = $1`,
       [registrationId],
     );
@@ -185,7 +185,7 @@ describe('Application registration instance flags (integration)', () => {
         name: RENAMED,
         isListed: false,
         isPreInstalled: false,
-        isVetted: false,
+        isOfficial: false,
       });
 
       expect(await readRegistrationRow(registrationId)).toEqual({
@@ -201,7 +201,7 @@ describe('Application registration instance flags (integration)', () => {
 
       const { errors } = await updateAdminApplicationRegistration({
         id: registrationId,
-        update: { isListed: true, isPreInstalled: true, isVetted: true },
+        update: { isListed: true, isPreInstalled: true, isOfficial: true },
         asNonServerAdmin: true,
         expectToFail: true,
       });
@@ -211,7 +211,7 @@ describe('Application registration instance flags (integration)', () => {
       expect(await readRegistrationRow(registrationId)).toMatchObject({
         isListed: false,
         isPreInstalled: false,
-        isVetted: false,
+        isOfficial: false,
       });
     });
 
@@ -220,7 +220,7 @@ describe('Application registration instance flags (integration)', () => {
 
       const { data } = await updateAdminApplicationRegistration({
         id: registrationId,
-        update: { isListed: true, isPreInstalled: true, isVetted: true },
+        update: { isListed: true, isPreInstalled: true, isOfficial: true },
         expectToFail: false,
       });
 
@@ -228,13 +228,13 @@ describe('Application registration instance flags (integration)', () => {
         id: registrationId,
         isListed: true,
         isPreInstalled: true,
-        isVetted: true,
+        isOfficial: true,
       });
 
       expect(await readRegistrationRow(registrationId)).toMatchObject({
         isListed: true,
         isPreInstalled: true,
-        isVetted: true,
+        isOfficial: true,
       });
     });
   });

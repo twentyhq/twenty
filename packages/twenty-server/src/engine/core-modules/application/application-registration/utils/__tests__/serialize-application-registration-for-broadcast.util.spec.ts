@@ -14,7 +14,7 @@ const buildApplicationRegistration = (
   latestAvailableVersion: '1.2.0',
   sourceType: ApplicationRegistrationSourceType.NPM,
   isListed: true,
-  isVetted: false,
+  isOfficial: false,
   ownerWorkspaceId: '6b6f4a95-4a9d-4a53-9a7e-1c7c2f3b5e11',
   ...overrides,
 });
@@ -32,7 +32,7 @@ describe('serializeApplicationRegistrationForBroadcast', () => {
       latestAvailableVersion: '1.2.0',
       sourceType: ApplicationRegistrationSourceType.NPM,
       isListed: true,
-      isVetted: false,
+      isOfficial: false,
       ownerWorkspaceId: '6b6f4a95-4a9d-4a53-9a7e-1c7c2f3b5e11',
     });
   });

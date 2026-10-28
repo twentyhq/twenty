@@ -326,7 +326,7 @@ export class ApplicationTarballService {
         additionalFields: {
           tarballFileId: savedFile.id,
           isListed: false,
-          isVetted: false,
+          isOfficial: false,
           ownerWorkspaceId,
         },
         publishedVersion: isDefined(packageJson?.version)
@@ -600,7 +600,7 @@ export class ApplicationTarballService {
       ...fromManifestApplicationToDisplayFields(manifest.application),
       latestAvailableVersion: null,
       isListed: false,
-      isVetted: false,
+      isOfficial: false,
       oAuthClientId: v4(),
       oAuthRedirectUris: [],
       oAuthScopes: [],

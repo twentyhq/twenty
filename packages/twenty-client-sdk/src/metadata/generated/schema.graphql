@@ -653,8 +653,8 @@ type ApplicationRegistration {
   id: UUID!
   isConfigured: Boolean!
   isListed: Boolean!
+  isOfficial: Boolean!
   isPreInstalled: Boolean!
-  isVetted: Boolean!
   latestAvailableVersion: String
   logoUrl: String
   name: String!
@@ -2869,7 +2869,8 @@ type MarketplaceApp {
   category: String!
   description: String!
   id: String!
-  isVetted: Boolean!
+  isOfficial: Boolean!
+  isVetted: Boolean! @deprecated(reason: "Use isOfficial")
   logoUrl: String
   name: String!
   sourcePackage: String
@@ -2887,7 +2888,8 @@ type MarketplaceAppDetail {
   id: String!
   installCount: Int!
   isListed: Boolean!
-  isVetted: Boolean!
+  isOfficial: Boolean!
+  isVetted: Boolean! @deprecated(reason: "Use isOfficial")
   issueReportUrl: String
   latestAvailableVersion: String
   logoUrl: String
@@ -4155,7 +4157,7 @@ type Query {
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   previewMessageCampaignSend(input: PreviewMessageCampaignSendInput!): PreviewMessageCampaignSendOutputDTO!
   publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
-  publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
+  publicMarketplaceApps(isOfficial: Boolean! = true): [MarketplaceApp!]!
   recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!
   recordSharing(target: RecordTargetInput!): RecordSharingDTO!
   skill(id: UUID!): Skill

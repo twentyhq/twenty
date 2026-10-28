@@ -54,15 +54,15 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
         <Card.Root fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconShield}
-            title={t`Vetted`}
-            description={t`Mark this app as reviewed and approved`}
-            checked={registration.isVetted}
+            title={t`Official`}
+            description={t`Mark this app as the official app of its integration`}
+            checked={registration.isOfficial}
             onChange={(checked) =>
               updateRegistration({
                 variables: {
                   input: {
                     id: registration.id,
-                    update: { isVetted: checked },
+                    update: { isOfficial: checked },
                   },
                 },
               })

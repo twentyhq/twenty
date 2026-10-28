@@ -62,7 +62,7 @@ exports[`Application registration instance flags (integration) updateApplication
 }
 `;
 
-exports[`Application registration instance flags (integration) updateApplicationRegistration should fail when the payload carries isVetted 1`] = `
+exports[`Application registration instance flags (integration) updateApplicationRegistration should fail when the payload carries isOfficial 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -71,7 +71,7 @@ exports[`Application registration instance flags (integration) updateApplication
     },
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Field "isVetted" is not defined by type "UpdateApplicationRegistrationPayload".",
+  "message": "Field "isOfficial" is not defined by type "UpdateApplicationRegistrationPayload".",
   "name": "GraphQLError",
 }
 `;
