@@ -7,6 +7,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 const GETTING_STARTED_PROGRESS_QUERY = gql`
@@ -35,11 +36,9 @@ const UPDATE_GETTING_STARTED_MUTATION = gql`
   }
 `;
 
-const COMPLETE_GETTING_STARTED_STEP_MUTATION = gql`
-  mutation CompleteGettingStartedStep(
-    $input: CompleteGettingStartedStepInput!
-  ) {
-    completeGettingStartedStep(input: $input) {
+const UPDATE_GETTING_STARTED_STEP_STATUS_MUTATION = gql`
+  mutation UpdateGettingStartedStepStatus($input: UpdateGettingStartedInput!) {
+    updateGettingStarted(input: $input) {
       completedSteps
     }
   }
@@ -57,39 +56,108 @@ const PREPARE_GETTING_STARTED_WORKFLOW_MUTATION = gql`
   }
 `;
 
-describe('gettingStarted (e2e)', () => {
-  afterAll(async () => {
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND ("userId" = $2 OR "userId" IS NULL) AND "key" LIKE 'GETTING_STARTED_%'`,
-      [SEED_APPLE_WORKSPACE_ID, USER_DATA_SEED_IDS.JANE],
-    );
+const deleteGettingStartedUserVars = () =>
+  globalThis.testDataSource.query(
+    `DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND ("userId" = $2 OR "userId" IS NULL) AND "key" LIKE 'GETTING_STARTED_%'`,
+    [SEED_APPLE_WORKSPACE_ID, USER_DATA_SEED_IDS.JANE],
+  );
+
+const findJaneUserVar = async (key: string) => {
+  const [keyValuePair] = await globalThis.testDataSource.query(
+    `SELECT "value" FROM core."keyValuePair" WHERE "workspaceId" = $1 AND "userId" = $2 AND "key" = $3`,
+    [SEED_APPLE_WORKSPACE_ID, USER_DATA_SEED_IDS.JANE, key],
+  );
+
+  return keyValuePair?.value;
+};
+
+const fetchStepKeys = async () => {
+  const response = await makeMetadataApiRequest({
+    query: GETTING_STARTED_PROGRESS_QUERY,
   });
 
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data.gettingStartedProgress.steps.map(
+    ({ key }: { key: string }) => key,
+  );
+};
+
+const updateStepStatus = (input: Record<string, unknown>) =>
+  makeMetadataApiRequest({
+    query: UPDATE_GETTING_STARTED_STEP_STATUS_MUTATION,
+    variables: { input: { stepStatus: input } },
+  });
+
+describe('gettingStarted (e2e)', () => {
+  beforeAll(deleteGettingStartedUserVars);
+  afterAll(deleteGettingStartedUserVars);
+
   describe('gettingStartedProgress', () => {
-    it('lists the default track and derives the mailbox step', async () => {
+    it('stores the steps chosen on the first read and keeps them once a mailbox is connected', async () => {
+      const activeMailboxes: { id: string }[] =
+        await globalThis.testDataSource.query(
+          `SELECT "id" FROM core."connectedAccount" WHERE "userWorkspaceId" = $1 AND "archivedAt" IS NULL`,
+          [USER_WORKSPACE_DATA_SEED_IDS.JANE],
+        );
+      const activeMailboxIds = activeMailboxes.map(({ id }) => id);
+
+      await globalThis.testDataSource.query(
+        `UPDATE core."connectedAccount" SET "archivedAt" = NOW() WHERE "id" = ANY($1)`,
+        [activeMailboxIds],
+      );
+
+      let firstReadStepKeys: string[];
+
+      try {
+        firstReadStepKeys = await fetchStepKeys();
+      } finally {
+        await globalThis.testDataSource.query(
+          `UPDATE core."connectedAccount" SET "archivedAt" = NULL WHERE "id" = ANY($1)`,
+          [activeMailboxIds],
+        );
+      }
+
+      expect(firstReadStepKeys).toContain('CONNECT_MAILBOX');
+      expect(await findJaneUserVar('GETTING_STARTED_STEPS')).toMatchObject({
+        track: 'DEFAULT',
+        steps: firstReadStepKeys,
+      });
+
       const response = await makeMetadataApiRequest({
         query: GETTING_STARTED_PROGRESS_QUERY,
       });
-
-      expect(response.body.errors).toBeUndefined();
-
       const { steps, completedSteps } =
         response.body.data.gettingStartedProgress;
 
-      expect(steps.map(({ key }: { key: string }) => key)).toEqual([
-        'CONNECT_MAILBOX',
-        'IMPORT_DATA',
-        'INSTALL_APP',
-        'INVITE_TEAM',
-        'HANDOVER_DEALS',
-        'FOLLOW_UP_DEALS',
-      ]);
+      expect(steps.map(({ key }: { key: string }) => key)).toEqual(
+        firstReadStepKeys,
+      );
       expect(steps).toContainEqual({
         key: 'HANDOVER_DEALS',
         kind: 'WORKFLOW',
         permissionFlag: 'WORKFLOWS',
       });
-      expect(completedSteps).toContain('CONNECT_MAILBOX');
+      expect(completedSteps).not.toContain('CONNECT_MAILBOX');
+    });
+
+    it('drops stored steps the catalog no longer has', async () => {
+      const storedSteps = await findJaneUserVar('GETTING_STARTED_STEPS');
+
+      await globalThis.testDataSource.query(
+        `UPDATE core."keyValuePair" SET "value" = $4 WHERE "workspaceId" = $1 AND "userId" = $2 AND "key" = $3`,
+        [
+          SEED_APPLE_WORKSPACE_ID,
+          USER_DATA_SEED_IDS.JANE,
+          'GETTING_STARTED_STEPS',
+          JSON.stringify({
+            ...storedSteps,
+            steps: ['REMOVED_STEP', ...storedSteps.steps],
+          }),
+        ],
+      );
+
+      expect(await fetchStepKeys()).toEqual(storedSteps.steps);
     });
   });
 
@@ -126,33 +194,56 @@ describe('gettingStarted (e2e)', () => {
     });
   });
 
-  describe('completeGettingStartedStep', () => {
-    it('completes a step the client can complete', async () => {
-      const response = await makeMetadataApiRequest({
-        query: COMPLETE_GETTING_STARTED_STEP_MUTATION,
-        variables: {
-          input: {
-            step: 'FOLLOW_UP_DEALS',
-            threadId: '20202020-0000-4000-8000-000000000001',
-          },
-        },
+  describe('updateGettingStarted step status', () => {
+    it('marks any step done, then back to todo', async () => {
+      const doneResponse = await updateStepStatus({
+        step: 'INVITE_TEAM',
+        status: 'DONE',
       });
 
-      expect(response.body.errors).toBeUndefined();
+      expect(doneResponse.body.errors).toBeUndefined();
       expect(
-        response.body.data.completeGettingStartedStep.completedSteps,
-      ).toContain('FOLLOW_UP_DEALS');
+        doneResponse.body.data.updateGettingStarted.completedSteps,
+      ).toContain('INVITE_TEAM');
+
+      const todoResponse = await updateStepStatus({
+        step: 'INVITE_TEAM',
+        status: 'TODO',
+      });
+
+      expect(todoResponse.body.errors).toBeUndefined();
+      expect(
+        todoResponse.body.data.updateGettingStarted.completedSteps,
+      ).not.toContain('INVITE_TEAM');
+      expect(
+        await findJaneUserVar('GETTING_STARTED_STEP_INVITE_TEAM'),
+      ).toBeUndefined();
     });
 
-    it('rejects a step only the server can complete', async () => {
-      const response = await makeMetadataApiRequest({
-        query: COMPLETE_GETTING_STARTED_STEP_MUTATION,
-        variables: { input: { step: 'INVITE_TEAM' } },
+    it('keeps the first completion when a step is done twice', async () => {
+      await updateStepStatus({
+        step: 'FOLLOW_UP_DEALS',
+        status: 'DONE',
+        threadId: '20202020-0000-4000-8000-000000000001',
       });
 
-      expect(response.body.errors?.[0]?.extensions?.code).toBe(
-        'BAD_USER_INPUT',
+      const firstCompletion = await findJaneUserVar(
+        'GETTING_STARTED_STEP_FOLLOW_UP_DEALS',
       );
+
+      const secondResponse = await updateStepStatus({
+        step: 'FOLLOW_UP_DEALS',
+        status: 'DONE',
+        threadId: '20202020-0000-4000-8000-000000000002',
+      });
+
+      expect(secondResponse.body.errors).toBeUndefined();
+      expect(firstCompletion).toMatchObject({
+        threadId: '20202020-0000-4000-8000-000000000001',
+      });
+      expect(
+        await findJaneUserVar('GETTING_STARTED_STEP_FOLLOW_UP_DEALS'),
+      ).toEqual(firstCompletion);
     });
   });
 

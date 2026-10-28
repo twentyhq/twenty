@@ -1467,11 +1467,6 @@ export type CompleteApplicationFileUploadsResult = {
   files: Array<File>;
 };
 
-export type CompleteGettingStartedStepInput = {
-  step: GettingStartedStep;
-  threadId?: InputMaybe<Scalars['UUID']['input']>;
-};
-
 export type ConnectedAccountPublicDto = {
   __typename?: 'ConnectedAccountPublicDTO';
   applicationId?: Maybe<Scalars['UUID']['output']>;
@@ -2708,6 +2703,17 @@ export enum GettingStartedStepKind {
   WORKFLOW = 'WORKFLOW'
 }
 
+export enum GettingStartedStepStatus {
+  DONE = 'DONE',
+  TODO = 'TODO'
+}
+
+export type GettingStartedStepStatusInput = {
+  status: GettingStartedStepStatus;
+  step: GettingStartedStep;
+  threadId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
 export type GettingStartedWorkflow = {
   __typename?: 'GettingStartedWorkflow';
   versionId: Scalars['String']['output'];
@@ -3387,7 +3393,6 @@ export type Mutation = {
   completeApplicationFileUploads: CompleteApplicationFileUploadsResult;
   completeBookCallOnboardingStep: OnboardingStepSuccess;
   completeFileUpload: FileWithSignedUrl;
-  completeGettingStartedStep: GettingStartedProgress;
   completeNewWorkspaceLogoUpload: FileWithSignedUrl;
   completeWorkspaceLogoUpload: FileWithSignedUrl;
   completeWorkspaceMemberProfilePictureUpload: FileWithSignedUrl;
@@ -3756,11 +3761,6 @@ export type MutationCompleteBookCallOnboardingStepArgs = {
 
 export type MutationCompleteFileUploadArgs = {
   fileId: Scalars['String']['input'];
-};
-
-
-export type MutationCompleteGettingStartedStepArgs = {
-  input: CompleteGettingStartedStepInput;
 };
 
 
@@ -7267,6 +7267,7 @@ export type UpdateGettingStartedInput = {
   isHidden?: InputMaybe<Scalars['Boolean']['input']>;
   selectedStep?: InputMaybe<GettingStartedStep>;
   snoozedUntil?: InputMaybe<Scalars['String']['input']>;
+  stepStatus?: InputMaybe<GettingStartedStepStatusInput>;
 };
 
 export type UpdateLabPublicFeatureFlagInput = {
@@ -9520,13 +9521,6 @@ export type GetAddressDetailsQuery = { __typename?: 'Query', getAddressDetails: 
 
 export type GettingStartedProgressFieldsFragment = { __typename?: 'GettingStartedProgress', creditsEarned: number, completedSteps: Array<GettingStartedStep>, selectedStep?: GettingStartedStep | null, snoozedUntil?: string | null, isHidden: boolean, steps: Array<{ __typename?: 'GettingStartedStepDefinition', key: GettingStartedStep, kind: GettingStartedStepKind, permissionFlag: PermissionFlagType }> };
 
-export type CompleteGettingStartedStepMutationVariables = Exact<{
-  input: CompleteGettingStartedStepInput;
-}>;
-
-
-export type CompleteGettingStartedStepMutation = { __typename?: 'Mutation', completeGettingStartedStep: { __typename?: 'GettingStartedProgress', creditsEarned: number, completedSteps: Array<GettingStartedStep>, selectedStep?: GettingStartedStep | null, snoozedUntil?: string | null, isHidden: boolean, steps: Array<{ __typename?: 'GettingStartedStepDefinition', key: GettingStartedStep, kind: GettingStartedStepKind, permissionFlag: PermissionFlagType }> } };
-
 export type PrepareGettingStartedWorkflowMutationVariables = Exact<{
   step: GettingStartedStep;
   activate: Scalars['Boolean']['input'];
@@ -11586,7 +11580,6 @@ export const FindOneFrontComponentDocument = {"kind":"Document","definitions":[{
 export const GetApplicationSdkClientChecksumsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetApplicationSdkClientChecksums"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"applicationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"applicationSdkClientChecksums"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"applicationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"applicationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"core"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}}]}}]}}]} as unknown as DocumentNode<GetApplicationSdkClientChecksumsQuery, GetApplicationSdkClientChecksumsQueryVariables>;
 export const GetAutoCompleteAddressDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAutoCompleteAddress"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"country"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"isFieldCity"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAutoCompleteAddress"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}},{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}},{"kind":"Argument","name":{"kind":"Name","value":"country"},"value":{"kind":"Variable","name":{"kind":"Name","value":"country"}}},{"kind":"Argument","name":{"kind":"Name","value":"isFieldCity"},"value":{"kind":"Variable","name":{"kind":"Name","value":"isFieldCity"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"placeId"}}]}}]}}]} as unknown as DocumentNode<GetAutoCompleteAddressQuery, GetAutoCompleteAddressQueryVariables>;
 export const GetAddressDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAddressDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"placeId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAddressDetails"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"placeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"placeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"postcode"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"location"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lat"}},{"kind":"Field","name":{"kind":"Name","value":"lng"}}]}}]}}]}}]} as unknown as DocumentNode<GetAddressDetailsQuery, GetAddressDetailsQueryVariables>;
-export const CompleteGettingStartedStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CompleteGettingStartedStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CompleteGettingStartedStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"completeGettingStartedStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GettingStartedProgressFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GettingStartedProgressFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GettingStartedProgress"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"creditsEarned"}},{"kind":"Field","name":{"kind":"Name","value":"steps"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"kind"}},{"kind":"Field","name":{"kind":"Name","value":"permissionFlag"}}]}},{"kind":"Field","name":{"kind":"Name","value":"completedSteps"}},{"kind":"Field","name":{"kind":"Name","value":"selectedStep"}},{"kind":"Field","name":{"kind":"Name","value":"snoozedUntil"}},{"kind":"Field","name":{"kind":"Name","value":"isHidden"}}]}}]} as unknown as DocumentNode<CompleteGettingStartedStepMutation, CompleteGettingStartedStepMutationVariables>;
 export const PrepareGettingStartedWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PrepareGettingStartedWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"step"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GettingStartedStep"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"activate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prepareGettingStartedWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"step"},"value":{"kind":"Variable","name":{"kind":"Name","value":"step"}}},{"kind":"Argument","name":{"kind":"Name","value":"activate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"activate"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflowId"}},{"kind":"Field","name":{"kind":"Name","value":"versionId"}}]}}]}}]} as unknown as DocumentNode<PrepareGettingStartedWorkflowMutation, PrepareGettingStartedWorkflowMutationVariables>;
 export const UpdateGettingStartedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateGettingStarted"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateGettingStartedInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateGettingStarted"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GettingStartedProgressFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GettingStartedProgressFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GettingStartedProgress"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"creditsEarned"}},{"kind":"Field","name":{"kind":"Name","value":"steps"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"kind"}},{"kind":"Field","name":{"kind":"Name","value":"permissionFlag"}}]}},{"kind":"Field","name":{"kind":"Name","value":"completedSteps"}},{"kind":"Field","name":{"kind":"Name","value":"selectedStep"}},{"kind":"Field","name":{"kind":"Name","value":"snoozedUntil"}},{"kind":"Field","name":{"kind":"Name","value":"isHidden"}}]}}]} as unknown as DocumentNode<UpdateGettingStartedMutation, UpdateGettingStartedMutationVariables>;
 export const GettingStartedProgressDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GettingStartedProgress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gettingStartedProgress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GettingStartedProgressFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GettingStartedProgressFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"GettingStartedProgress"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"creditsEarned"}},{"kind":"Field","name":{"kind":"Name","value":"steps"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"kind"}},{"kind":"Field","name":{"kind":"Name","value":"permissionFlag"}}]}},{"kind":"Field","name":{"kind":"Name","value":"completedSteps"}},{"kind":"Field","name":{"kind":"Name","value":"selectedStep"}},{"kind":"Field","name":{"kind":"Name","value":"snoozedUntil"}},{"kind":"Field","name":{"kind":"Name","value":"isHidden"}}]}}]} as unknown as DocumentNode<GettingStartedProgressQuery, GettingStartedProgressQueryVariables>;
