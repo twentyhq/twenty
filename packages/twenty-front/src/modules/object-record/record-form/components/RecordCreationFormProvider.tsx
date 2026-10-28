@@ -10,6 +10,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -35,6 +36,7 @@ export const RecordCreationFormProvider = ({
   const store = useStore();
   const { removePageFromSidePanelHistory } = useSidePanelHistory();
   const { navigateSidePanelMenu } = useSidePanelMenu();
+  const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
   const [pendingRecordCreations, setPendingRecordCreations] = useState<
     PendingRecordCreation[]
@@ -142,6 +144,8 @@ export const RecordCreationFormProvider = ({
 
       const requestId = v4();
 
+      closeAnyOpenDropdown();
+
       store.set(
         recordCreationFormRequestComponentState.atomFamily({
           instanceId: requestId,
@@ -172,7 +176,7 @@ export const RecordCreationFormProvider = ({
         });
       });
     },
-    [navigateSidePanelMenu, store],
+    [closeAnyOpenDropdown, navigateSidePanelMenu, store],
   );
 
   const cancelPendingRecordCreation = useCallback(
