@@ -1,7 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { computeApplicationPackageChecksums } from 'src/engine/core-modules/application/application-package/utils/compute-application-package-checksums.util';
-import { computeLegacyApplicationPackageChecksums } from 'src/engine/core-modules/application/application-package/utils/compute-legacy-application-package-checksums.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -28,32 +26,20 @@ const isMatchingDependencyChecksums = ({
 export const assertMatchingDependencyChecksumsOrThrow = ({
   applicationUniversalIdentifier,
   declaredChecksums,
-  packageJsonContent,
-  yarnLockContent,
+  storedFilesChecksums,
+  legacyStoredFilesChecksums,
 }: {
   applicationUniversalIdentifier: string;
   declaredChecksums: DependencyChecksums;
-  packageJsonContent: string;
-  yarnLockContent: string | null;
-}): { packageJsonChecksum: string; yarnLockChecksum: string | null } => {
-  const storedFilesChecksums = computeApplicationPackageChecksums({
-    packageJsonContent,
-    yarnLockContent,
-  });
-
-  const acceptedStoredFilesChecksums = [
-    storedFilesChecksums,
-    computeLegacyApplicationPackageChecksums({
-      packageJsonContent,
-      yarnLockContent,
-    }),
-  ];
-
-  const isMatching = acceptedStoredFilesChecksums.some((acceptedChecksums) =>
-    isMatchingDependencyChecksums({
-      declaredChecksums,
-      storedFilesChecksums: acceptedChecksums,
-    }),
+  storedFilesChecksums: DependencyChecksums;
+  legacyStoredFilesChecksums: DependencyChecksums;
+}): void => {
+  const isMatching = [storedFilesChecksums, legacyStoredFilesChecksums].some(
+    (acceptedChecksums) =>
+      isMatchingDependencyChecksums({
+        declaredChecksums,
+        storedFilesChecksums: acceptedChecksums,
+      }),
   );
 
   if (!isMatching) {
@@ -62,6 +48,4 @@ export const assertMatchingDependencyChecksumsOrThrow = ({
       ApplicationExceptionCode.INVALID_INPUT,
     );
   }
-
-  return storedFilesChecksums;
 };
