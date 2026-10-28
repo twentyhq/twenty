@@ -8,6 +8,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag.type';
 import { fromCreateRolePermissionFlagInputToFlatRolePermissionFlagToCreate } from 'src/engine/metadata-modules/flat-role-permission-flag/utils/from-create-role-permission-flag-input-to-flat-role-permission-flag-to-create.util';
+import { PERMISSION_FLAG_TYPE_BY_LEGACY_STANDARD_KEY } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-type-by-legacy-standard-key.constant';
 import { resolvePermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/utils/resolve-permission-flag-key.util';
 import { type UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/role-permission-flag/dtos/upsert-permission-flags.input';
 import {
@@ -81,10 +82,23 @@ export class RolePermissionFlagService {
       permissionFlagByKey.set(key, permissionFlag);
     }
 
-    const permissionFlagsByInputKey = input.permissionFlagKeys.map((flag) => ({
-      flag,
-      permissionFlag: permissionFlagByKey.get(flag),
-    }));
+    // Old clients still send the pre-2.53 keys, possibly next to the new ones; delete
+    // once upgrade:2-53:rename-app-permission-flag-keys leaves the cross-upgrade window
+    const permissionFlagTypeByLegacyKey = new Map<string, string>(
+      Object.entries(PERMISSION_FLAG_TYPE_BY_LEGACY_STANDARD_KEY),
+    );
+    const requestedPermissionFlagKeys = new Set(
+      input.permissionFlagKeys.map(
+        (flag) => permissionFlagTypeByLegacyKey.get(flag) ?? flag,
+      ),
+    );
+
+    const permissionFlagsByInputKey = [...requestedPermissionFlagKeys].map(
+      (flag) => ({
+        flag,
+        permissionFlag: permissionFlagByKey.get(flag),
+      }),
+    );
     const missingPermissionFlags = permissionFlagsByInputKey
       .filter(({ permissionFlag }) => !isDefined(permissionFlag))
       .map(({ flag }) => flag);

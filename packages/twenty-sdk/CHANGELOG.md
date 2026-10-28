@@ -26,19 +26,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
   The returned `{ id, path, size, createdAt, url }` is unchanged. `uploadFile` now requires a Twenty server that exposes the `createFileUpload` and `completeFileUpload` mutations.
 
-- **The `CONNECTED_ACCOUNTS` and `APPLICATIONS` permission flags are now keyed `USER_APPS` and `WORKSPACE_APPS`.** Twenty servers with this change report the new keys in `currentUserWorkspace.permissionFlags`, in a role permission flag's `flag` and in `twenty-client-sdk`'s `PermissionFlagType`, and `upsertPermissionFlags` takes the new keys. Universal identifiers are unchanged, so roles declared with `SystemPermissionFlag` keep working. Update code that compares key strings at runtime; to support servers from before and after the rename, accept both keys:
-
-  ```ts
-  const permissionFlags: string[] =
-    currentUser.currentUserWorkspace?.permissionFlags ?? [];
-  const canManageApps = ['WORKSPACE_APPS', 'APPLICATIONS'].some((key) =>
-    permissionFlags.includes(key),
-  );
-  ```
-
-  In `twenty-client-sdk`, `MetadataSchema.enumPermissionFlagType.USER_APPS` and `MetadataSchema.enumPermissionFlagType.WORKSPACE_APPS` replace `MetadataSchema.enumPermissionFlagType.CONNECTED_ACCOUNTS` and `MetadataSchema.enumPermissionFlagType.APPLICATIONS`, and the `MetadataSchema.PermissionFlagType` union changes the same way.
-
-- **Command menu expressions in apps must read `permissionFlags.USER_APPS` and `permissionFlags.WORKSPACE_APPS`.** Update `conditionalAvailabilityExpression` and `conditionalPinnedExpression` strings in `defineCommandMenuItem` that read `permissionFlags.CONNECTED_ACCOUNTS` or `permissionFlags.APPLICATIONS`. The server upgrade rewrites these expressions on standard and workspace-custom command menu items only, not on items an app defines.
+- **A role permission flag's `flag` is `USER_APPS` or `WORKSPACE_APPS` where it was `CONNECTED_ACCOUNTS` or `APPLICATIONS`.** Unlike `currentUserWorkspace.permissionFlags`, roles (`permissionFlags { flag }`) report only the new key on Twenty 2.53 servers, so code that matches it must accept both keys, as in the snippet under Deprecated.
 
 - **App permission flags can no longer use a standard key, including the former `CONNECTED_ACCOUNTS` and `APPLICATIONS`.** Twenty servers reject a `definePermissionFlag` whose `key` is a standard permission flag key or one of those two former keys. Pick a key specific to your app.
 
@@ -75,12 +63,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   const objectMetadata = useSelectedObjectMetadata();
   ```
 
-- **`SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` in `twenty-sdk/define`.** The new names of the User Apps and Workspace Apps permission flags, with the same universal identifiers as before.
+- **`USER_APPS` and `WORKSPACE_APPS` permission flag keys.** The new names of the User Apps and Workspace Apps permission flags, formerly `CONNECTED_ACCOUNTS` and `APPLICATIONS`, with the same universal identifiers: `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` in `twenty-sdk/define`, and new values of `MetadataSchema.PermissionFlagType` and `MetadataSchema.enumPermissionFlagType` in `twenty-client-sdk`.
 
 ### Deprecated
 
 - **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element `payloads` list instead. `enqueueJob` keeps working for now and will be removed in a future major version.
 - **`SystemPermissionFlag.CONNECTED_ACCOUNTS` and `SystemPermissionFlag.APPLICATIONS` in `twenty-sdk/define`.** Use `USER_APPS` and `WORKSPACE_APPS` instead. The old names are aliases with the same universal identifiers, left out of `Object.keys` and `Object.values`. They keep working for now and will be removed in a future major version.
+- **The `CONNECTED_ACCOUNTS` and `APPLICATIONS` permission flag keys at runtime.** Twenty 2.53 servers report both the new and the old key in `currentUserWorkspace.permissionFlags`, `twenty-client-sdk` keeps the old keys as deprecated values of `MetadataSchema.PermissionFlagType` and `MetadataSchema.enumPermissionFlagType`, and `upsertPermissionFlags` accepts either key. A later release stops reporting and accepting the old keys. Check the new key and fall back to the old one for servers before 2.53:
+
+  ```ts
+  const permissionFlags: string[] =
+    currentUser.currentUserWorkspace?.permissionFlags ?? [];
+  const canManageApps =
+    permissionFlags.includes('WORKSPACE_APPS') ||
+    permissionFlags.includes('APPLICATIONS');
+  ```
+
+- **`permissionFlags.CONNECTED_ACCOUNTS` and `permissionFlags.APPLICATIONS` in command menu expressions.** They keep evaluating on 2.53 servers until the old keys are removed. Switch `conditionalAvailabilityExpression` and `conditionalPinnedExpression` in `defineCommandMenuItem` to `permissionFlags.USER_APPS` and `permissionFlags.WORKSPACE_APPS`, or to `permissionFlags.WORKSPACE_APPS or permissionFlags.APPLICATIONS` while you support servers before 2.53. The server upgrade rewrites standard and workspace-custom command menu items, not items an app defines.
 
 ### Changed
 

@@ -1,7 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import {
-  PermissionFlagType,
+  type PermissionFlagType,
   PermissionsOnAllObjectRecords,
 } from 'twenty-shared/constants';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -22,13 +22,11 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TwoFactorAuthenticationMethodSummaryDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { PERMISSION_FLAG_TYPE_WITH_LEGACY_KEYS } from 'src/engine/core-modules/user-workspace/enums/permission-flag-type-with-legacy-keys.enum';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
+import { type LegacyStandardPermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/types/legacy-standard-permission-flag-key.type';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
-
-registerEnumType(PermissionFlagType, {
-  name: 'PermissionFlagType',
-});
 
 registerEnumType(PermissionsOnAllObjectRecords, {
   name: 'PermissionsOnAllObjectRecords',
@@ -91,8 +89,8 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
     TwoFactorAuthenticationMethodEntity[]
   >;
 
-  @Field(() => [PermissionFlagType], { nullable: true })
-  permissionFlags?: PermissionFlagType[];
+  @Field(() => [PERMISSION_FLAG_TYPE_WITH_LEGACY_KEYS], { nullable: true })
+  permissionFlags?: (PermissionFlagType | LegacyStandardPermissionFlagKey)[];
 
   @Field(() => [ObjectPermissionDTO], { nullable: true })
   objectPermissions?: ObjectPermissionDTO[];
