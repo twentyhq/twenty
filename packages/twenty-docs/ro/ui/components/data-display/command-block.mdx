@@ -1,0 +1,57 @@
+---
+title: Bloc de comandă
+description: Afișează linii de comandă cu o acțiune opțională.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CommandBlockReference from '/snippets/ui/generated/components/data-display/command-block.mdx';
+
+## Prezentare generală
+
+`CommandBlock` afișează fiecare comandă furnizată cu un indicator de prompt. Nu execută comenzi și nu oferă copiere automată. Furnizați `actions` cu orice nod React, precum un [Buton](/ro/ui/primitives/input/button), un link sau o stare. Textul comenzii utilizează semantica `pre` și `code`, păstrează întreruperile de linie și se încadrează în lățimea disponibilă. Marcatorii promptului sunt decorativi.
+
+<StoryEmbed storyId="ui-components-data-display-commandblock--display" title="Exemplu CommandBlock" height={130} />
+
+## Utilizare
+
+```tsx
+import { useState } from 'react';
+import { CommandBlock } from 'twenty-ui/components/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const InstallCommand = () => {
+  const [copyLabel, setCopyLabel] = useState('Copy command');
+
+  return (
+    <CommandBlock
+      commands={['yarn add twenty-ui']}
+      actions={
+        <Button
+          onClick={async () => {
+            try {
+              await navigator.clipboard.writeText('yarn add twenty-ui');
+              setCopyLabel('Copied');
+            } catch {
+              setCopyLabel('Select and copy the command');
+            }
+          }}
+        >
+          {copyLabel}
+        </Button>
+      }
+    />
+  );
+};
+```
+
+Atributele native, gestionarii de evenimente, clasele, stilurile și refurile vizează elementul `div` exterior. Utilizați `render` pentru a compune o altă rădăcină, de exemplu `render={<section aria-label="Installation commands" />}`. `CommandBlockProps` este exportat din `twenty-ui/components/data-display`.
+
+La migrare, înlocuiți `button` cu `actions`.
+
+## Proprietăți
+
+<CommandBlockReference />
+
+<PageBanner illustration="card-page-cli" />

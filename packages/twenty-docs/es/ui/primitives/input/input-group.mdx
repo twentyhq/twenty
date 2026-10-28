@@ -1,0 +1,119 @@
+---
+title: InputGroup
+description: Añade prefijos, sufijos y acciones alrededor de una entrada de texto.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InputGroupReference from '/snippets/ui/generated/input/input-group.mdx';
+
+## Resumen
+
+`InputGroup` proporciona a un [Input](/es/ui/primitives/input/input) un borde compartido y contenido opcional al inicio o al final. Establece `size` en el grupo para dimensionar el contenedor y proporcionar un valor predeterminado para su entrada. El tamaño explícito del elemento secundario tiene prioridad sobre ese valor predeterminado; el grupo sigue controlando la altura del diseño compartido.
+
+<StoryEmbed storyId="ui-input-inputgroup--display" title="Ejemplo de InputGroup" height={140} />
+
+## "Uso"
+
+```tsx
+import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WebsiteField = () => (
+  <Field.Root name="website">
+    <Field.Label>Website</Field.Label>
+    <InputGroup
+      startElement={
+        <Text render={<span />} aria-hidden>
+          https://
+        </Text>
+      }
+    >
+      <Input placeholder="example.com" />
+    </InputGroup>
+    <Field.Description>Enter the domain without https://.</Field.Description>
+  </Field.Root>
+);
+```
+
+`startElement` y `endElement` aceptan nodos de React. Los prefijos y los sufijos son contenido visual; el valor enviado de la entrada solo contiene lo que introduce el usuario.
+
+## Opciones visuales
+
+Compare los adornos de prefijo, sufijo y combinados en ambos tamaños de campo de entrada. El grupo comparte su tamaño con el campo de entrada.
+
+<StoryEmbed storyId="ui-input-inputgroup--catalog" title="Opciones visuales para el grupo de campos de entrada" height={300} />
+
+## Anatomía
+
+Coloque la entrada dentro de `InputGroup` y mantenga las etiquetas y los mensajes de los campos fuera del borde compartido.
+
+```text
+Field.Root
+├── Field.Label
+├── InputGroup
+│   └── Input
+└── Field.Description
+```
+
+| Parte o ranura                                | Requisito            | Propósito                                                                              |
+| --------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------- |
+| `InputGroup`                                  | Obligatorio          | Proporciona el borde compartido, el diseño y el tamaño.                                |
+| `Input` como `children`                       | Obligatorio          | Controla el valor de la entrada, los atributos nativos y el comportamiento de edición. |
+| `startElement`                                | Prop opcional        | Agrega un prefijo, un icono u otro contenido antes de la entrada.                      |
+| `endElement`                                  | Prop opcional        | Agrega un sufijo o una acción después de la entrada.                                   |
+| `Field.Root`, `Label`, `Description`, `Error` | Composición opcional | Asocia una etiqueta, texto de ayuda y comentarios de validación con la entrada.        |
+
+`startElement` y `endElement` son props de nodos de React, no componentes independientes. `InputGroup` no proporciona una etiqueta ni administra la validación. Asigne a la entrada un nombre accesible, ya sea mediante `Field.Label` o sus propios atributos de etiquetado.
+
+## Acción al final
+
+```tsx
+import { useState } from 'react';
+import { Button, Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+
+export const PasswordField = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Field.Root name="password">
+      <Field.Label>Password</Field.Label>
+      <InputGroup
+        endElement={
+          <Button
+            type="button"
+            aria-label={visible ? 'Hide password' : 'Show password'}
+            variant="ghost"
+            size="sm"
+            onClick={() => setVisible(!visible)}
+          >
+            {visible ? 'Hide' : 'Show'}
+          </Button>
+        }
+      >
+        <Input
+          type={visible ? 'text' : 'password'}
+          autoComplete="current-password"
+        />
+      </InputGroup>
+    </Field.Root>
+  );
+};
+```
+
+Coloca las etiquetas, la validación y la gestión de valores en el campo o la entrada. Asigna a los botones de adorno sus propios nombres accesibles y usa `type="button"` cuando no deban enviar el formulario. El grupo admite los tamaños `sm` y `md` y usa `md` de forma predeterminada.
+
+## Personalizar diseño
+
+Las props nativas, `className`, `style`, `render` y `ref` se aplican al div de diseño. Un elemento `render` personalizado recibe las props de diseño y los elementos secundarios. Mantén la referencia proporcionada en ese elemento de diseño.
+
+Coloca `value`, `defaultValue`, `onValueChange`, `name`, `required`, `readOnly`, `disabled` y la referencia del control nativo en `Input`. El grupo no administra el estado de la entrada ni reemplaza la asociación de etiquetas de Field.
+
+## "Props"
+
+La referencia se genera a partir de los tipos de componentes públicos. Los atributos nativos, incluidos los nombres accesibles y los controladores de eventos, también se aceptan en las partes que representan elementos.
+
+<InputGroupReference />
+
+<PageBanner illustration="page-cover-input" />

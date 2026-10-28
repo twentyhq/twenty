@@ -41,6 +41,7 @@ import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/pro
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-error-log-line.util';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
+import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import {
@@ -121,6 +122,31 @@ export class LogicFunctionExecutorService {
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
   ) {}
+
+  async executeOrThrow({
+    toException,
+    ...executeArgs
+  }: Parameters<LogicFunctionExecutorService['execute']>[0] & {
+    toException: (reason: string) => CustomException;
+  }): Promise<LogicFunctionExecuteResult['data']> {
+    const executionResult = await this.execute(executeArgs).catch(
+      (error: unknown) => {
+        if (error instanceof CustomException) {
+          throw error;
+        }
+
+        throw toException(
+          `could not be executed: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      },
+    );
+
+    if (isDefined(executionResult.error)) {
+      throw toException(`failed: ${executionResult.error.errorMessage}`);
+    }
+
+    return executionResult.data;
+  }
 
   async execute({
     logicFunctionId,
@@ -584,7 +610,7 @@ export class LogicFunctionExecutorService {
         : []),
     ];
 
-    await this.eventLogEmitterService.recordApplicationLogs(
+    void this.eventLogEmitterService.recordApplicationLogs(
       logLines.map((line) => ({
         ...line,
         workspaceId,
@@ -598,6 +624,15 @@ export class LogicFunctionExecutorService {
         executionId,
       })),
     );
+
+    void this.eventLogEmitterService.recordApplicationMetricEvents([
+      buildLogicFunctionRunMetricEvent({
+        result,
+        flatApplication,
+        flatLogicFunction,
+        workspaceId,
+      }),
+    ]);
 
     void this.publishLogicFunctionLogsToCli({
       result,

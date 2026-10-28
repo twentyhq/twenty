@@ -32,6 +32,7 @@ type SlackUserLinksResponse = {
 type SlackUserLinksState = {
   slackUserLinks: SlackUserLinkRecord[];
   isSlackUserLinksLoading: boolean;
+  hasLoadedSlackUserLinks: boolean;
   errorMessage: string | undefined;
   hasMoreSlackUserLinks: boolean;
   refetchSlackUserLinks: () => Promise<void>;
@@ -42,6 +43,7 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
     [],
   );
   const [isSlackUserLinksLoading, setIsSlackUserLinksLoading] = useState(true);
+  const [hasLoadedSlackUserLinks, setHasLoadedSlackUserLinks] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined,
   );
@@ -108,6 +110,7 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
     } finally {
       if (fetchId === fetchIdRef.current) {
         setIsSlackUserLinksLoading(false);
+        setHasLoadedSlackUserLinks(true);
       }
     }
   }, []);
@@ -119,6 +122,7 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
   return {
     slackUserLinks,
     isSlackUserLinksLoading,
+    hasLoadedSlackUserLinks,
     errorMessage,
     hasMoreSlackUserLinks,
     refetchSlackUserLinks: fetchSlackUserLinks,

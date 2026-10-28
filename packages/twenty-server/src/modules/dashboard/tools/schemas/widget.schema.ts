@@ -162,7 +162,8 @@ export const chartFilterSchema = z
   })
   .describe(
     'Filter restricting which records are included in this chart. All filtered fields must belong to the widget object.',
-  );
+  )
+  .meta({ id: 'chartFilter' });
 
 const displayDataLabelSchema = z.boolean().optional();
 const displayLegendSchema = z.boolean().optional();
@@ -590,13 +591,6 @@ const richTextConfigSchema = z.object({
   configurationType: z.literal(WidgetConfigurationType.STANDALONE_RICH_TEXT),
   body: z
     .object({
-      blocknote: z
-        .string()
-        .nullable()
-        .optional()
-        .describe(
-          'BlockNote JSON string (advanced). Stringified array of BlockNote blocks.',
-        ),
       markdown: z
         .string()
         .nullable()

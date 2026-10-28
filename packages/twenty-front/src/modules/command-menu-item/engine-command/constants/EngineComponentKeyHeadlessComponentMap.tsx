@@ -1,6 +1,6 @@
 import { HeadlessFrontComponentRendererEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessFrontComponentRendererEngineCommand';
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
-import { HeadlessOpenAiChatHistoryTabEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenAiChatHistoryTabEngineCommand';
+import { NewAiChatCommand } from '@/command-menu-item/engine-command/global/components/NewAiChatCommand';
 import { HeadlessOpenSidePanelPageEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenSidePanelPageEngineCommand';
 import { NavigationEngineCommand } from '@/command-menu-item/engine-command/components/NavigationEngineCommand';
 import { ComposeCampaignCommand } from '@/command-menu-item/engine-command/global/components/ComposeCampaignCommand';
@@ -27,7 +27,6 @@ import { HideDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/
 import { ImportRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/ImportRecordsNoSelectionRecordCommand';
 import { SeeDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/SeeDeletedRecordsNoSelectionRecordCommand';
 import { AddToFavoritesCommand } from '@/command-menu-item/engine-command/record/components/AddToFavoritesCommand';
-import { ExportNoteSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/ExportNoteSingleRecordCommand';
 import { NavigateToNextRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/NavigateToNextRecordSingleRecordCommand';
 import { NavigateToPreviousRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/NavigateToPreviousRecordSingleRecordCommand';
 import { RemoveFromFavoritesCommand } from '@/command-menu-item/engine-command/record/components/RemoveFromFavoritesCommand';
@@ -38,7 +37,6 @@ import { EditDashboardSingleRecordCommand } from '@/command-menu-item/engine-com
 import { SaveDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/SaveDashboardSingleRecordCommand';
 import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
 import { AgentChatThreadInboxCommand } from '@/command-menu-item/engine-command/record/components/AgentChatThreadInboxCommand';
-import { NewAiChatSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/agent-chat-thread/components/NewAiChatSingleRecordCommand';
 import { ShareRecordCommand } from '@/command-menu-item/engine-command/record/components/ShareRecordCommand';
 import { SeeVersionWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeVersionWorkflowRunSingleRecordCommand';
 import { SeeWorkflowWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeWorkflowWorkflowRunSingleRecordCommand';
@@ -62,7 +60,7 @@ import { TidyUpWorkflowSingleRecordCommand } from '@/command-menu-item/engine-co
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { msg } from '@lingui/core/macro';
 import { AppPath, SettingsPath, SidePanelPages } from 'twenty-shared/types';
-import { IconSearch, IconSparkles } from 'twenty-ui/icon';
+import { IconMessage, IconSearch, IconSparkles } from 'twenty-ui/icon';
 import {
   AgentChatInboxAction,
   EngineComponentKey,
@@ -124,7 +122,6 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.NAVIGATE_TO_PREVIOUS_RECORD]: (
     <NavigateToPreviousRecordSingleRecordCommand />
   ),
-  [EngineComponentKey.EXPORT_NOTE_TO_PDF]: <ExportNoteSingleRecordCommand />,
   [EngineComponentKey.EXPORT_RECORDS]: <ExportRecordsCommand />,
   [EngineComponentKey.UPDATE_MULTIPLE_RECORDS]: (
     <UpdateMultipleRecordsCommand />
@@ -232,7 +229,12 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     />
   ),
   [EngineComponentKey.VIEW_PREVIOUS_AI_CHATS]: (
-    <HeadlessOpenAiChatHistoryTabEngineCommand />
+    <HeadlessOpenSidePanelPageEngineCommand
+      page={SidePanelPages.SearchAiChats}
+      pageTitle={msg`Open chat`}
+      pageIcon={IconMessage}
+      shouldResetSearchState
+    />
   ),
   [EngineComponentKey.SEE_ACTIVE_VERSION_WORKFLOW]: (
     <SeeActiveVersionWorkflowSingleRecordCommand />
@@ -268,7 +270,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     <HeadlessFrontComponentRendererEngineCommand />
   ),
   [EngineComponentKey.REPLY_TO_EMAIL_THREAD]: <ReplyToEmailThreadCommand />,
-  [EngineComponentKey.NEW_AI_CHAT]: <NewAiChatSingleRecordCommand />,
+  [EngineComponentKey.NEW_AI_CHAT]: <NewAiChatCommand />,
   [EngineComponentKey.SHARE_RECORD]: <ShareRecordCommand />,
   [EngineComponentKey.MARK_AI_CHAT_AS_READ]: (
     <AgentChatThreadInboxCommand action={AgentChatInboxAction.READ} />

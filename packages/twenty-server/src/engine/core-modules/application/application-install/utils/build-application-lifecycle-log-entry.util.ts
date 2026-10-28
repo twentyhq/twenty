@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getApplicationErrorCode } from 'src/engine/core-modules/application/application-install/utils/get-application-error-code.util';
 import { type ApplicationLogEntry } from 'src/engine/core-modules/event-logs/producers/application-log/application-log-entry.interface';
+import { buildApplicationPlatformLogEntry } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-platform-log-entry';
 
 type ApplicationLifecycleLogSource = Extract<
   ApplicationLogSource,
@@ -63,16 +64,12 @@ export const buildApplicationLifecycleLogEntry = ({
 }): ApplicationLogEntry => {
   const hasFailed = isDefined(error);
 
-  return {
-    timestamp: new Date(),
+  return buildApplicationPlatformLogEntry({
     workspaceId,
     applicationId,
     applicationRegistrationId,
     applicationVersion: version,
     source,
-    logicFunctionId: '',
-    logicFunctionName: '',
-    executionId: '',
     level: hasFailed ? 'ERROR' : 'INFO',
     message: buildMessage({
       source,
@@ -82,5 +79,5 @@ export const buildApplicationLifecycleLogEntry = ({
     }),
     errorCode: hasFailed ? getApplicationErrorCode(error) : '',
     properties: isDefined(previousVersion) ? { previousVersion } : {},
-  };
+  });
 };

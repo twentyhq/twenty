@@ -1,0 +1,186 @@
+---
+title: Cobro de Créditos
+description: Declara por qué factura tu app y cobra créditos del espacio de trabajo desde una función lógica.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+<Warning>
+  Aún no está disponible. El cobro de créditos para apps se lanza oficialmente en octubre. Esta página se publica anticipadamente para los socios que quieran experimentar con ella.
+</Warning>
+
+Las apps que cuestan dinero de ejecutar —una grabadora de llamadas que paga a un proveedor de transcripción, una app de enriquecimiento que paga por coincidencia— cobran al espacio de trabajo en **créditos**. Todo aquello por lo que factura una app se declara en un bloque `billing` de la configuración de tu aplicación:
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, variables...
+  billing: {
+    description: '$20/month + $0.02 per minute recorded',
+    recurring: {
+      platformFee: {
+        period: 'MONTH',
+        amountMicroCredits: 20_000_000,
+        label: 'Platform fee',
+      },
+    },
+    operations: {
+      recordMeeting: {
+        operationType: 'CALL_RECORDING',
+        label: 'Meeting recording',
+      },
+    },
+  },
+});
+```
+
+* `recurring` — tarifas fijas y por miembro que la **plataforma** cobra por ti, una vez por período de facturación.
+* `operations` — aquello por lo que cobras a medida que lo usas, desde una función lógica.
+* `description` — una línea clara que se muestra a los compradores en tu ficha del marketplace.
+
+Los tres se aplican al mismo medidor de créditos y al mismo desglose de **Configuración > Uso**, por lo que un espacio de trabajo ve una sola factura.
+
+## Cargos recurrentes
+
+Un cargo recurrente es una tarifa de suscripción: un importe mensual fijo, un importe por miembro del espacio de trabajo o ambos. Tú declaras el importe y la plataforma lo cobra. Tu app nunca llama a `chargeCredits` para estos.
+
+```ts src/application-config.ts
+billing: {
+  recurring: {
+    platformFee: {
+      period: 'MONTH',
+      amountMicroCredits: 20_000_000,
+      label: 'Platform fee',
+    },
+    seat: {
+      period: 'MONTH',
+      amountMicroCredits: 5_000_000,
+      per: 'WORKSPACE_MEMBER',
+      label: 'Per member',
+    },
+  },
+},
+```
+
+| Campo                | Descripción                                                                                                                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `período`            | `MONTH` — el único período actualmente                                                                                                                                                |
+| `amountMicroCredits` | Importe en microcréditos (1 USD = 1.000.000), un número entero positivo de hasta 100.000.000 ($100). Para un cargo `WORKSPACE_MEMBER`, esta es la tarifa **por miembro**, no el total |
+| `per`                | Omítelo para una tarifa fija. `WORKSPACE_MEMBER` multiplica el importe por el número de miembros del espacio de trabajo cuando se cobra el período                                    |
+| `label`              | Lo que los administradores leen para esa línea en Uso                                                                                                                                 |
+
+Cómo se cobran:
+
+* Una vez por período de facturación del espacio de trabajo, en el límite de período propio del espacio de trabajo, no el primer día del mes.
+* No se prorratean. A una app instalada a mitad de período se le cobra el importe completo de ese período; al desinstalarla se detiene el siguiente período, pero no se reembolsa el actual.
+* Los cargos por miembro cuentan a todos los miembros del espacio de trabajo en el momento en que se cobra el cargo, por lo que un espacio de trabajo que crece a mitad de período paga el recuento mayor a partir del siguiente período.
+* Solo en suscripciones mensuales. A un espacio de trabajo con un plan anual no se le cobra una tarifa `MONTH`, en lugar de cobrarle una vez por todo el año.
+* Limitados. Se rechaza y no se aumenta una tarifa declarada superior a $100, o un cargo por miembro cuya tarifa multiplicada por el número de miembros superaría $1.000 durante el período. La propia plataforma cobra estos cargos, por lo que no registrará un débito que no pueda justificar.
+
+## Operaciones facturables
+
+Una operación es aquello por lo que cobra tu app mientras funciona. Cada entrada asigna un nombre de operación que eliges a la categoría de facturación que mide la plataforma, además de la etiqueta que se muestra a los administradores del espacio de trabajo en **Configuración > Uso**.
+
+```ts src/application-config.ts
+billing: {
+  operations: {
+    recordMeeting: {
+      operationType: 'CALL_RECORDING',
+      label: 'Meeting recording',
+    },
+    summarizeMeeting: {
+      operationType: 'AI_CHAT_TOKEN',
+      label: 'Meeting summary',
+    },
+  },
+},
+```
+
+`operationType` debe ser una de las categorías de facturación de la plataforma: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`. Determina cómo se mide el gasto y qué unidad de recuento se aplica (tokens, invocaciones, minutos); no es lo que leen los administradores. La `label` sí lo es.
+
+La compilación rechaza un `operationType` desconocido, una `label` vacía y un nombre usado tanto por un cargo recurrente como por una operación.
+
+## Cobro
+
+Cobra una operación declarada por nombre:
+
+```ts
+import { chargeCredits } from 'twenty-sdk/billing';
+
+await chargeCredits({
+  operation: 'recordMeeting',
+  creditsUsedMicro: 250_000,
+  quantity: 12,
+});
+```
+
+`creditsUsedMicro` es el importe en microcréditos (1 USD = 1.000.000). `quantity` es el número de unidades que cubre el cargo, en la unidad implícita por la categoría de la operación: minutos para `CALL_RECORDING`, invocaciones para `CODE_EXECUTION`, etcétera.
+
+Notas:
+
+* Declarar operaciones permite que Uso divida el gasto de tu app según aquello por lo que cobró. Una app que no declara nada se sigue informando como una sola sección bajo su nombre visible.
+* Se rechaza el cobro de una operación que tu manifiesto no declara. Añádela a `billing.operations` y sincroniza.
+* Varias operaciones pueden compartir un mismo `operationType`. Dos operaciones de enriquecimiento medidas ambas como `CODE_EXECUTION` siguen mostrándose como dos secciones con etiqueta.
+* Sin `operation`, nombra directamente la categoría de facturación con `operationType`, opcionalmente con un `resourceContext` de formato libre. Las dos formas son mutuamente excluyentes: `operation` incluye la etiqueta; `operationType`, no.
+* El cobro nunca hace que falle tu función. Se registra y se descarta un error de facturación, y la llamada no realiza ninguna operación fuera del tiempo de ejecución de la función lógica para que las ejecuciones locales y las pruebas no fallen.
+
+## Comprobar antes de gastar
+
+Un espacio de trabajo puede quedarse sin créditos. Cuando eso sucede, tu función se rechaza antes de que se inicie tu código, y el propio trabajo de la plataforma también se detiene: `runAgent` devuelve un error en lugar de ejecutarse, y los demás puntos de entrada de IA se rechazan directamente. `sendInboxMessage` no ejecuta ningún modelo ni añade ningún cargo de IA propio, aunque la función que lo llama se rechaza como cualquier otra; la respuesta de un miembro se cobra como cualquier turno de chat. Los hooks de desinstalación y desconexión son la excepción y siempre se ejecutan, por lo que una aplicación aún puede eliminarse correctamente. Una ejecución que logra pasar aún puede fallar más tarde, en una llamada de la plataforma que no escribió, si el espacio de trabajo se queda sin créditos durante la ejecución.
+
+Pregunta primero:
+
+```ts
+import { getCreditAvailability } from 'twenty-sdk/billing';
+
+const { hasAvailableCredits } = await getCreditAvailability();
+
+if (!hasAvailableCredits) {
+  return;
+}
+```
+
+Cuando los créditos no están disponibles, se incluye un `reason`: `no-credits`, `no-subscription` o `workspace-suspended`. `no-credits` también cubre un límite de **Todo el uso** que un administrador estableció en tu aplicación en **Configuración → Facturación → Límites**: el espacio de trabajo puede seguir teniendo créditos, pero tu aplicación no puede gastarlos.
+
+Notas:
+
+* Indica si tu aplicación puede gastar en este espacio de trabajo, no cuánto le queda. Tu aplicación no ve el saldo, el plan ni sus límites.
+* Falla de forma abierta. Si la comprobación agota el tiempo de espera o el servidor es inaccesible, informa que hay créditos disponibles, para que un problema de infraestructura no detenga tu app. Trátalo como una indicación que vale la pena respetar, no como una decisión de autorización.
+* Es una instantánea. Los créditos pueden agotarse entre la comprobación y el trabajo, incluso debido a tus propios cargos, ya que cada cargo que haces mueve el mismo contador que lee esto.
+* La restricción no se aplica de manera uniforme. No todas las rutas de correo electrónico saliente están restringidas por créditos, por lo que un `false` aquí te indica que tu aplicación no debe gastar en este momento, en lugar de predecir exactamente qué llamadas fallarán.
+
+## Indicar a las personas cuánto cuesta
+
+Declarar cargos indica a la plataforma cómo *medir* tu app; no le dice a un comprador cuánto pagará. Configura `billing.description` para ello: una línea breve y amigable que se muestra en la ficha de tu marketplace antes de que alguien instale.
+
+```ts src/application-config.ts
+billing: {
+  description: '$0.02 per minute recorded, billed to your Twenty credits',
+},
+```
+
+Es texto libre intencionadamente: los precios reales tienen niveles, mínimos y tarifas por unidad que un único número no puede expresar. Limítalo a una línea.
+
+Una aplicación que declara `operations` o `recurring` también solicita el consentimiento del administrador que realiza la instalación: la pantalla de instalación muestra "Facturar créditos a tu espacio de trabajo", y la página de la aplicación muestra "Factura créditos", con tu `description` al pasar el cursor.
+
+## Atribución
+
+El gasto se atribuye a quien activó la ejecución, por lo que aparece en **Uso por usuario**. Las ejecuciones sin nadie detrás (un webhook, un cron) no tienen una persona que las active; pasa `userWorkspaceId` si tu app sabe a quién pertenece el gasto. Debe pertenecer al espacio de trabajo en el que está instalada la app y se ignora cuando la ejecución sí tiene un usuario que la activa.
+
+```ts
+await chargeCredits({
+  operation: 'recordMeeting',
+  creditsUsedMicro: 250_000,
+  quantity: 12,
+  userWorkspaceId: ownerUserWorkspaceId,
+});
+```
+
+Dónde obtener uno: `context.userWorkspaceId` en una ejecución activada, o [`listConnections()`](/es/developers/extend/apps/logic/connections), que devuelve el `userWorkspaceId` del propietario de cada conexión.
+
+Los cargos recurrentes no tienen una persona que los active, por lo que se informan solo para la app, nunca para un miembro.
+
+<PageBanner illustration="card-page-charging-credits" />

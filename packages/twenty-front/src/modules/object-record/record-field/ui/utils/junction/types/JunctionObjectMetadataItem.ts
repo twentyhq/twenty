@@ -4,6 +4,8 @@ export type JunctionObjectMetadataItem = Pick<
   EnrichedObjectMetadataItem,
   | 'id'
   | 'fields'
+  | 'readableFields'
+  | 'updatableFields'
   | 'labelIdentifierFieldMetadataId'
   | 'imageIdentifierFieldMetadataId'
   | 'nameSingular'

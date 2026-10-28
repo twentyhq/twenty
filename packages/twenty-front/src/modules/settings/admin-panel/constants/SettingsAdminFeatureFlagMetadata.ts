@@ -8,10 +8,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   FeatureFlagKey,
   { label: MessageDescriptor; description: MessageDescriptor }
 > = {
-  [FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED]: {
-    label: msg`Async CSV export`,
-    description: msg`Generate CSV exports in the background with progress and automatic downloads.`,
-  },
   [FeatureFlagKey.IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED]: {
     label: msg`Configurable search fields`,
     description: msg`Choose which fields are used when searching for records.`,
@@ -47,5 +43,9 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
     label: msg`App preferences`,
     description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
+  },
+  [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
+    label: msg`MCP servers`,
+    description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
   },
 };

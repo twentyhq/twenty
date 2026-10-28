@@ -22,6 +22,9 @@ export type { CurrencyPickerProps } from './CurrencyPicker/types/CurrencyPickerP
 export type { CurrencyPickerRootProps } from './CurrencyPicker/types/CurrencyPickerRootProps';
 export type { CurrencyPickerState } from './CurrencyPicker/types/CurrencyPickerState';
 export type { CurrencyPickerTriggerProps } from './CurrencyPicker/types/CurrencyPickerTriggerProps';
+export { DatePicker } from './DatePicker/DatePicker';
+export type { DatePickerHeaderProps } from './DatePicker/types/DatePickerHeaderProps';
+export type { DatePickerProps } from './DatePicker/types/DatePickerProps';
 export { EmojiPicker } from './EmojiPicker/EmojiPicker';
 export type { EmojiPickerProps } from './EmojiPicker/types/EmojiPickerProps';
 export { FormFieldRow } from './FormFieldRow/FormFieldRow';

@@ -84,6 +84,14 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
         (connectionProvider) => connectionProvider.displayName,
       ),
   },
+  messagingProvider: {
+    entityKind: 'messaging provider',
+    getCandidates: (manifest) =>
+      toCandidates(
+        manifest.messagingProviders,
+        (messagingProvider) => messagingProvider.displayName,
+      ),
+  },
   timelineActivityType: {
     entityKind: 'timeline activity type',
     getCandidates: (manifest) =>
@@ -265,6 +273,10 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
   },
   webhook: {
     entityKind: 'webhook',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
+  mcpServer: {
+    entityKind: 'MCP server',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
   applicationVariable: {

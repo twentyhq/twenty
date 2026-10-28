@@ -3,13 +3,19 @@ title: Set Up a Sending Domain
 description: Verify your domain so you can send campaigns from your own address.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
 Campaigns come from an address on your domain, such as `news@yourcompany.com`. Before Twenty can send from it, Gmail, Outlook, and other providers need proof that you own the domain. You add that proof as DNS records where your domain is managed.
 
 You will create the address in Twenty, add the DNS records, then verify them.
 
+Only replying from a shared inbox, not sending campaigns? You can skip the unsubscribe records. See [Email Channels](/user-guide/calendar-emails/capabilities/email-channels).
+
 <Note>
   Twenty's records use their own host names, such as
-  `twenty-bounce.yourcompany.com` and `unsubscribe.yourcompany.com`. They do not
+  `twenty-bounce.yourcompany.com` and `links.yourcompany.com`. They do not
   change the records your day-to-day email relies on, so you can use your main
   domain. The only exception is DMARC, which applies to the whole domain.
   Twenty suggests it only when you do not already have one.
@@ -61,7 +67,7 @@ Twenty opens the channel. Scroll to **Sending domain**. It lists the DNS records
 | ------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Domain authentication** | Three `CNAME` records ending in `._domainkey`, plus an `MX` and a `TXT` record on `twenty-bounce` | Shows that Twenty can send for your domain (DKIM and SPF). The `twenty-bounce` records also send bounce reports back to Twenty.            |
 | **DMARC policy**          | One `TXT` record on `_dmarc`                                                                      | Tells providers what to do with mail that fails the checks. Twenty only lists it if you do not have a DMARC record.                       |
-| **Unsubscribe link**      | Two `CNAME` records, on `unsubscribe` and `_acme-challenge.unsubscribe`                           | Hosts the unsubscribe page on your domain, for example `unsubscribe.yourcompany.com`. You cannot send campaigns until this is verified.    |
+| **Unsubscribe link**      | Two `CNAME` records, on `links` and `_acme-challenge.links`                                       | Hosts the unsubscribe page and tracked links on your domain, for example `links.yourcompany.com`. You cannot send campaigns until this is verified. |
 
 Add every record Twenty shows. Gmail, Yahoo, and Outlook reject bulk email that is not authenticated.
 
@@ -155,7 +161,7 @@ The **DMARC policy** row always shows **Not set**. That is expected: Twenty sugg
 <Accordion title="Authentication is verified but the Unsubscribe link stays Pending">
   The two unsubscribe records are checked separately and can take longer because
   Twenty also creates a secure certificate for them. Check that both `CNAME`
-  records exist—on `unsubscribe` and `_acme-challenge.unsubscribe`—then wait up
+  records exist—on `links` and `_acme-challenge.links`—then wait up
   to an hour.
 </Accordion>
 
@@ -165,3 +171,5 @@ The **DMARC policy** row always shows **Not set**. That is expected: Twenty sugg
 </Accordion>
 
 Next, read the [best practices](/user-guide/email-campaigns/how-tos/email-campaign-best-practices), then [send your first campaign](/user-guide/email-campaigns/how-tos/send-your-first-campaign).
+
+<PageBanner illustration="card-page-sending-domain" />

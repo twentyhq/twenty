@@ -71,22 +71,14 @@ test('Create and update record', async ({ page }) => {
 
   const randomEmail = `testuser_${Math.random().toString(36).substring(2, 10)}@example.com`;
 
-  const firstNameInput = page.getByRole('textbox', {
-    name: 'First Name',
+  const nameInput = page.getByRole('textbox', {
+    name: 'Name',
     exact: true,
   });
-  await expect(firstNameInput).toBeVisible();
-  await firstNameInput.click();
-  await expect(firstNameInput).toBeFocused();
-  await page.keyboard.type('John');
-
-  const lastNameInput = page.getByRole('textbox', {
-    name: 'Last Name',
-    exact: true,
-  });
-  await lastNameInput.click();
-  await expect(lastNameInput).toBeFocused();
-  await page.keyboard.type('Doe');
+  await expect(nameInput).toBeVisible();
+  await nameInput.click();
+  await expect(nameInput).toBeFocused();
+  await page.keyboard.type('John Doe');
 
   const emailInput = page.getByRole('textbox', {
     name: 'Emails',
@@ -112,7 +104,9 @@ test('Create and update record', async ({ page }) => {
   await page.getByPlaceholder('Intro').press('Enter');
 
   await recordFieldList.getByText('Linkedin', { exact: true }).first().click();
-  const urlInput = recordFieldList.getByText('Linkedin', { exact: true }).nth(1);
+  const urlInput = recordFieldList
+    .getByText('Linkedin', { exact: true })
+    .nth(1);
   await expect(urlInput).toBeVisible();
   await urlInput.click({ force: true });
   await page.getByPlaceholder('URL').fill('linkedin.com/johndoe');
@@ -126,7 +120,9 @@ test('Create and update record', async ({ page }) => {
   await ratingContainer.locator('svg').nth(3).click({ force: true });
 
   await recordFieldList.getByText('Phones', { exact: true }).first().click();
-  const phoneInput = recordFieldList.getByText('Phones', { exact: true }).nth(1);
+  const phoneInput = recordFieldList
+    .getByText('Phones', { exact: true })
+    .nth(1);
   await expect(phoneInput).toBeVisible();
   await phoneInput.click({ force: true });
   await page.getByPlaceholder('Phone').fill('+336 1 122 3344');

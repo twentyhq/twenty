@@ -27,14 +27,18 @@ jest.mock(
   () => ({
     FormAdvancedTextFieldInput: ({
       defaultValue,
+      value,
       onChange,
     }: {
-      defaultValue: string;
+      defaultValue?: string;
+      value?: string;
       onChange: (value: string) => void;
     }) => (
       <textarea
         aria-label="Email body"
-        defaultValue={JSON.parse(defaultValue).content[0].content[0].text}
+        defaultValue={
+          JSON.parse(value ?? defaultValue ?? '').content[0].content[0].text
+        }
         onChange={(event) =>
           onChange(
             JSON.stringify({

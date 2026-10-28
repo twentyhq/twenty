@@ -3,31 +3,45 @@ title: Créditos
 description: Un saldo sencillo que impulsa tus flujos de trabajo, agentes de IA y chat de IA, y que define cuánto vale un crédito, hasta dónde llega y cómo administrarlo.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## ¿Qué son los créditos?
 
 Los créditos son un saldo único que impulsa todo lo que ejecutamos en tu nombre y que tiene un costo real: **automatizaciones de flujos de trabajo**, **agentes de IA** y el **chat de IA**. En lugar de lidiar con cuotas separadas para "ejecuciones de automatización" y "tokens de IA", tienes un único saldo sencillo que debes vigilar.
 
-**1 crédito = $1 de uso.** Un crédito es simplemente un dólar de trabajo, por lo que tu saldo es fácil de entender: no hay unidades abstractas que convertir.
+**1 crédito = $1 de uso.** Un crédito es simplemente un dólar de trabajo, por lo que tu saldo es fácil de entender — no hay unidades abstractas que convertir.
 
 ## ¿Hasta dónde llega un crédito?
 
 El costo escala con el trabajo. La automatización diaria y los mensajes de IA rápidos cuestan una fracción diminuta de un crédito; las tareas grandes de agentes de IA con múltiples pasos cuestan más. A grandes rasgos, así se ve:
 
-| Qué haces                                                                                                                            | Cuesta aproximadamente             | Qué significa                      |
-| ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------- | ---------------------------------- |
-| Ejecutar un paso estándar de flujo de trabajo (buscar, crear o actualizar registros) o disparar una función lógica de una aplicación | $0.0001                            | **10.000 ejecuciones por crédito** |
-| Llamar a una API externa o ejecutar un nodo de código                                                                                | Una pequeña fracción de un crédito | Miles por crédito                  |
-| Enviar un mensaje de chat de IA rápido o un paso de IA sencillo                                                                      | Una fracción de un centavo         | Cientos por crédito                |
-| Ejecutar una tarea grande de agente de IA (p. ej., "configurar 10 objetos del espacio de trabajo")                                   | Puede llegar a **~$1 o más**       | Unos pocos por crédito             |
-| Ejecutar una búsqueda web con IA                                                                                                     | Un costo fijo por búsqueda         | Cientos de búsquedas por crédito   |
+| Qué haces                                                                                          | Cuesta aproximadamente                     | Qué significa                        |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------ |
+| Ejecutar un paso estándar de flujo de trabajo (buscar, crear o actualizar registros)               | $0.0001                                    | **10.000 ejecuciones por crédito**   |
+| Activar la función lógica de la aplicación                                                         | $0.0001 + $0.0001 por segundo de ejecución | **Miles de ejecuciones por crédito** |
+| Llamar a una API externa o ejecutar un nodo de código                                              | Una pequeña fracción de un crédito         | Miles por crédito                    |
+| Enviar un mensaje de chat de IA rápido o un paso de IA sencillo                                    | Una fracción de un centavo                 | Cientos por crédito                  |
+| Ejecutar una tarea grande de agente de IA (p. ej., "configurar 10 objetos del espacio de trabajo") | Puede llegar a **~$1 o más**               | Unos pocos por crédito               |
+| Ejecutar una búsqueda web con IA                                                                   | Un costo fijo por búsqueda                 | Cientos de búsquedas por crédito     |
 
 <Note>
 Para la mayoría de los equipos, las automatizaciones estándar son prácticamente gratuitas: solo notarás una reducción apreciable en tu saldo cuando dependas de las funciones de IA o ejecutes nodos de código exigentes. Eso es intencional: los créditos incluidos están pensados para que puedas crear sin estar pendiente de un medidor.
 </Note>
 
 <Note>
-No todas las aplicaciones cobran por sus ejecuciones. Grabadora de llamadas y Último Contacto reaccionan a todos los eventos de correo electrónico y calendario importados en su espacio de trabajo, por lo que su función lógica es gratuita. Aun así se te cobrará por el trabajo medido que realizan, como los minutos de llamadas grabadas.
+No todas las aplicaciones cobran por sus ejecuciones. Call Recorder, Last Contact, Fathom y Granola reaccionan a cada correo electrónico, evento de calendario y grabación importados a tu espacio de trabajo, y Slack se ejecuta en cada evento de Slack al que se suscribe su bot, por lo que las ejecuciones de sus funciones lógicas son gratuitas. Aun así, se te cobra por el trabajo medido que realizan, como los minutos de llamadas grabadas o los créditos de IA detrás de las respuestas del asistente de Slack.
 </Note>
+
+## Cómo se miden las ejecuciones de funciones lógicas
+
+Los precios de las funciones lógicas reflejan AWS Lambda: un cargo fijo por invocación más un cargo por duración según el tiempo que realmente se ejecuta tu código, facturado por milisegundo.
+
+* **Por invocación**: $0.0001
+* **Por duración**: $0.0001 por segundo de ejecución ($0.0000001 por milisegundo)
+
+Una función típica que finaliza en menos de un segundo cuesta como máximo el doble del cargo fijo por invocación. Las funciones de larga duración pagan por el cómputo que utilizan: una función que se ejecuta durante un minuto completo añade $0.006, y una que alcanza el tiempo de espera de 15 minutos añade $0.09. Una función que agota el tiempo de espera se factura por todo el tiempo transcurrido, igual que en AWS.
+
+Para las aplicaciones con [rutas de servidor](/es/developers/extend/apps/operations/publishing#owner-workspace-costs-and-availability), el resolver se ejecuta con el saldo del espacio de trabajo del propietario de la aplicación. Una función de destino enviada a otro espacio de trabajo se factura por separado a ese espacio de trabajo.
 
 ## Cómo se mide el uso de IA
 
@@ -72,3 +86,5 @@ Si te quedas sin créditos —o quieres un colchón antes de una gran campaña d
 3. Seleccione la cantidad que necesita y acepte los cambios
 
 Los créditos adquiridos se agregan de inmediato a tu saldo disponible.
+
+<PageBanner illustration="card-page-charging-credits" />

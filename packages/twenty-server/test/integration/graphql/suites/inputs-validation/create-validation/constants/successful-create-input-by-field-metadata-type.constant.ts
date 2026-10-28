@@ -324,21 +324,21 @@ export const successfulCreateInputByFieldMetadataType: {
     {
       input: {
         phonesField: {
-          primaryPhoneNumber: '1234567890',
+          primaryPhoneNumber: '123456789',
           primaryPhoneCountryCode: 'FR',
           primaryPhoneCallingCode: '+33',
           additionalPhones: [
-            { number: '1234567890', callingCode: '+33', countryCode: 'FR' },
+            { number: '123456789', callingCode: '+33', countryCode: 'FR' },
           ],
         },
       },
       validateInput: (record: Record<string, any>) => {
         return (
-          record.phonesField.primaryPhoneNumber === '1234567890' &&
+          record.phonesField.primaryPhoneNumber === '123456789' &&
           record.phonesField.primaryPhoneCountryCode === 'FR' &&
           record.phonesField.primaryPhoneCallingCode === '+33' &&
           record.phonesField.additionalPhones.length === 1 &&
-          record.phonesField.additionalPhones[0].number === '1234567890' &&
+          record.phonesField.additionalPhones[0].number === '123456789' &&
           record.phonesField.additionalPhones[0].callingCode === '+33' &&
           record.phonesField.additionalPhones[0].countryCode === 'FR'
         );
@@ -347,19 +347,19 @@ export const successfulCreateInputByFieldMetadataType: {
     {
       input: {
         phonesField: {
-          primaryPhoneNumber: '1234567890',
+          primaryPhoneNumber: '123456789',
           primaryPhoneCountryCode: 'FR',
           primaryPhoneCallingCode: '+33',
           additionalPhones: [
             { number: '', callingCode: '+33', countryCode: 'FR' },
-            { number: '1234567890', callingCode: '+33', countryCode: 'FR' },
+            { number: '123456789', callingCode: '+33', countryCode: 'FR' },
           ],
         },
       },
       validateInput: (record: Record<string, any>) => {
         return (
           record.phonesField.additionalPhones.length === 1 &&
-          record.phonesField.additionalPhones[0].number === '1234567890'
+          record.phonesField.additionalPhones[0].number === '123456789'
         );
       },
     },
@@ -413,7 +413,26 @@ export const successfulCreateInputByFieldMetadataType: {
         return (
           record.richTextField.blocknote ===
             '[{"type":"paragraph","content":[{"type":"text","text":"test"}]}]' &&
-          record.richTextField.markdown === 'test'
+          record.richTextField.markdown === 'test' &&
+          JSON.parse(record.richTextField.tiptap).content[0].content[0].text ===
+            'test'
+        );
+      },
+    },
+    {
+      input: {
+        richTextField: {
+          blocknote: null,
+          markdown: null,
+          tiptap:
+            '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"test","marks":[{"type":"bold"}]}]}]}',
+        },
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          record.richTextField.blocknote === null &&
+          record.richTextField.markdown === '**test**' &&
+          JSON.parse(record.richTextField.tiptap).attrs.schemaVersion === 1
         );
       },
     },

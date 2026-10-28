@@ -1,0 +1,64 @@
+---
+title: Mosaico de icono tintado
+description: Un icono sobre un fondo teñido derivado de un color del tema.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TintedIconTileReference from '/snippets/ui/generated/components/data-display/tinted-icon-tile.mdx';
+
+## Resumen
+
+Pasa el contenido del icono mediante el slot de nodo `icon` en minúsculas. El mosaico obtiene el color de fondo y el color de primer plano heredado de la paleta del tema. El contenido del icono es decorativo. Mantén una etiqueta visible junto a él o asigna a la raíz `role="img"` y un nombre accesible para una imagen etiquetada independiente.
+
+<StoryEmbed storyId="ui-components-data-display-tintedicontile--display" title="Icono de empresa en un mosaico tintado" height={100} />
+
+## "Uso"
+
+```tsx
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+import { IconBuildingSkyscraper } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CompanyLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <TintedIconTile icon={<IconBuildingSkyscraper size={16} />} color="blue" />
+    <Text>Companies</Text>
+  </Text>
+);
+```
+
+## Geometría y composición nativa
+
+El mosaico usa de forma predeterminada 16px mediante el token de espaciado y utiliza el token pequeño de radio de borde. Establece las dimensiones y el trazo del icono en el propio nodo. `style` o `className` de la raíz controla el ancho, la altura, el borde, la forma y los colores del mosaico; los estilos explícitos anulan los valores predeterminados de la paleta. Las ilustraciones personalizadas deben heredar `currentColor` cuando utilizan el color de primer plano de la paleta.
+
+```tsx
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+
+export const CustomCompanyTile = () => (
+  <TintedIconTile
+    icon={
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M2 2h16v16H2z" />
+      </svg>
+    }
+    color="blue"
+    role="img"
+    aria-label="Companies"
+    render={<span />}
+    style={{ width: 32, height: 32 }}
+  />
+);
+```
+
+Los atributos nativos, los eventos, `className`, `style` y `ref` se aplican al div exterior. `render` reemplaza ese destino mediante la composición de Base UI y conserva el contenido decorativo del icono. Asigna un nombre al control circundante al componer un mosaico en una acción.
+
+Reemplaza `Icon={CompanyIcon}` por `icon={<CompanyIcon size={16} />}`. Mueve las opciones anteriores `size` y `stroke` al nodo de icono y utiliza estilos de raíz para dimensiones personalizadas del mosaico.
+
+## "Props"
+
+<TintedIconTileReference />
+
+<PageBanner illustration="page-cover-palette" />

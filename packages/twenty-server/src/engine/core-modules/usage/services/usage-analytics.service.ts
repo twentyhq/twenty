@@ -8,6 +8,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
+import { parseClickHouseDateTime } from 'src/database/clickhouse/utils/parse-clickhouse-date-time.util';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { type CreditUsedItemDTO } from 'src/engine/core-modules/usage/dtos/credit-used-item.dto';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -17,6 +18,7 @@ import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/us
 import { type UsageConsumptionTotals } from 'src/engine/core-modules/usage/types/usage-consumption-totals.type';
 import { type UsagePeriodAnchor } from 'src/engine/core-modules/usage/types/usage-period-anchor.type';
 import { type CreditsUsed } from 'src/engine/core-modules/usage/types/credits-used.type';
+import { buildInstallationFilterParams } from 'src/engine/core-modules/usage/utils/build-installation-filter-params.util';
 import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
 import { buildUsagePeriodClause } from 'src/engine/core-modules/usage/utils/build-usage-period-clause.util';
 import { buildUsageResourceTypeFilter } from 'src/engine/core-modules/usage/utils/build-usage-resource-type-filter.util';
@@ -135,10 +137,7 @@ export class UsageAnalyticsService {
        SETTINGS max_execution_time = 10, use_query_cache = true,
                 query_cache_ttl = 600, query_cache_min_query_duration = 0`,
       {
-        workspaceIds: [
-          ...new Set(installations.map(({ workspaceId }) => workspaceId)),
-        ],
-        applicationIds: installations.map(({ applicationId }) => applicationId),
+        ...buildInstallationFilterParams(installations),
         periodStart: formatDateTimeForClickHouse(periodStart),
         periodEnd: formatDateTimeForClickHouse(periodEnd),
       },
@@ -158,6 +157,60 @@ export class UsageAnalyticsService {
         creditsUsed: toDisplayCredits(Number(creditsUsedMicro)),
       };
     });
+  }
+
+  async getCreditsUsedTimeSeriesForInstallations({
+    installations,
+    periodStart,
+    periodEnd,
+    bucketSizeInSeconds,
+  }: {
+    installations: { applicationId: string; workspaceId: string }[];
+    periodStart: Date;
+    periodEnd: Date;
+    bucketSizeInSeconds: number;
+  }): Promise<
+    {
+      bucketStart: Date;
+      operationType: string;
+      creditsUsedMicro: number;
+    }[]
+  > {
+    if (!isNonEmptyArray(installations)) {
+      return [];
+    }
+
+    const rows = await this.clickHouseService.selectOrThrow<{
+      bucketStart: string;
+      operationType: string;
+      creditsUsedMicro: string | number;
+    }>(
+      `SELECT
+         toStartOfInterval(timestamp, toIntervalSecond({bucketSizeInSeconds:UInt32})) AS bucketStart,
+         operationType,
+         sum(creditsUsedMicro) AS creditsUsedMicro
+       FROM usageEvent
+       WHERE workspaceId IN {workspaceIds:Array(String)}
+         AND applicationId IN {applicationIds:Array(String)}
+         AND timestamp >= {periodStart:DateTime64(3, 'UTC')}
+         AND timestamp < {periodEnd:DateTime64(3, 'UTC')}
+       GROUP BY bucketStart, operationType
+       HAVING creditsUsedMicro != 0
+       ORDER BY bucketStart, operationType
+       SETTINGS max_execution_time = 10`,
+      {
+        ...buildInstallationFilterParams(installations),
+        periodStart: formatDateTimeForClickHouse(periodStart),
+        periodEnd: formatDateTimeForClickHouse(periodEnd),
+        bucketSizeInSeconds,
+      },
+    );
+
+    return rows.map(({ bucketStart, operationType, creditsUsedMicro }) => ({
+      bucketStart: parseClickHouseDateTime(bucketStart),
+      operationType,
+      creditsUsedMicro: Number(creditsUsedMicro),
+    }));
   }
 
   async getConsumptionRowsForAllScopes({

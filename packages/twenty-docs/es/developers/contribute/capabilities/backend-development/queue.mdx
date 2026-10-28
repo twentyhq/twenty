@@ -1,6 +1,11 @@
 ---
 title: Cola de Mensajes
+description: Ejecutar tareas en segundo plano a través de colas de mensajes.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
 
 Las colas facilitan la realización de operaciones asíncronas. Se pueden utilizar para realizar tareas en segundo plano, como enviar un correo de bienvenida al registrarse.
 Cada caso de uso tendrá su propia clase de cola extendida de `MessageQueueServiceBase`.
@@ -39,3 +44,5 @@ class CustomWorker {
   }
 }
 ```
+
+<PageBanner illustration="card-page-background-jobs" />

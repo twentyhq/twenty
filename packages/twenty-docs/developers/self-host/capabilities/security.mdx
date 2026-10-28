@@ -1,8 +1,13 @@
 ---
 title: Securing your instance
-icon: "shield-halved"
 description: Keep Twenty off the public internet and open only the few paths your integrations need.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Overview
 
 Your CRM holds your customers, your deals, your emails and your calendar. When a security fix ships in a Twenty release, the fix itself tells attackers where to look, and every instance that hasn't upgraded yet is a target.
 
@@ -28,14 +33,17 @@ Each path covers everything under it. Open the public and cloud AI zones only if
 
 ## Choose a setup
 
-<CardGroup cols={3}>
-  <Card title="Tailscale" icon="lock" href="#option-1-tailscale">
+<CardGroup cols={3} className="documentation-card-group">
+  <Card href="#option-1-tailscale" img="/images/user-guide/halftone/community-tailscale.svg">
+    <CardTitle>Tailscale</CardTitle>
     Fully private. Simplest setup, best for small teams.
   </Card>
-  <Card title="Cloudflare" icon="cloud" href="#option-2-cloudflare-tunnel-and-access">
+  <Card href="#option-2-cloudflare-tunnel-and-access" img="/images/user-guide/halftone/community-cloudflare.svg">
+    <CardTitle>Cloudflare</CardTitle>
     No open ports, login with your identity provider, public paths where needed.
   </Card>
-  <Card title="Reverse proxy" icon="server" href="#option-3-your-own-reverse-proxy">
+  <Card href="#option-3-your-own-reverse-proxy" img="/images/user-guide/halftone/community-reverse-proxy.svg">
+    <CardTitle>Reverse proxy</CardTitle>
     Caddy or Nginx with IP allowlists. No third-party service.
   </Card>
 </CardGroup>
@@ -323,3 +331,5 @@ None of the above replaces upgrading. It buys you time.
 - Watch releases on [GitHub](https://github.com/twentyhq/twenty): **Watch → Custom → Releases**.
 - When a release includes a security fix, upgrade as soon as its advisory says to: the same day for critical issues. Follow the [upgrade guide](/developers/self-host/capabilities/upgrade-guide).
 - Report vulnerabilities to [security@twenty.com](mailto:security@twenty.com), not in public issues.
+
+<PageBanner illustration="community-reverse-proxy" />

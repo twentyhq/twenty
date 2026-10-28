@@ -7,8 +7,10 @@ import {
 } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 
+import { AppChip } from '@/applications/components/AppChip';
 import { LOG_CONSOLE_LEVELS } from '@/log-console/constants/LogConsoleLevels';
 import { type LogConsoleFilterField } from '@/log-console/types/LogConsoleFilterField';
+import { APPLICATION_LOG_SOURCE_LABELS } from '@/settings/application-monitoring/constants/ApplicationLogSourceLabels';
 
 export const LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS: LogConsoleFilterField[] =
   [
@@ -28,6 +30,19 @@ export const LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS: LogConsoleFilterField[] 
                 },
               ]
             : [],
+        ),
+    },
+    {
+      id: 'source',
+      label: msg`Source`,
+      Icon: IconApps,
+      serverField: 'source',
+      getOptions: () =>
+        Object.entries(APPLICATION_LOG_SOURCE_LABELS).map(
+          ([applicationLogSource, sourceLabel]) => ({
+            label: t(sourceLabel),
+            values: [applicationLogSource],
+          }),
         ),
     },
     {
@@ -51,7 +66,9 @@ export const LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS: LogConsoleFilterField[] 
         applications.map((application) => ({
           label: application.name,
           values: [application.id],
-          startIcon: <IconApps />,
+          startIcon: (
+            <AppChip applicationId={application.id} size="md" chipOnly />
+          ),
         })),
     },
   ];

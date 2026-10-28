@@ -1,0 +1,129 @@
+---
+title: Textarea
+description: Introduzca varias líneas de texto con redimensionamiento automático opcional.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TextareaReference from '/snippets/ui/generated/input/textarea.mdx';
+
+## Resumen
+
+Use `Textarea` para notas, descripciones y otros valores de varias líneas. Se integra con [Field](/es/ui/primitives/input/field) para etiquetas y validación.
+
+<StoryEmbed storyId="ui-input-textarea--display" title="Ejemplo de Textarea" height={190} />
+
+## Uso
+
+### Estado no controlado
+
+Usa `defaultValue` para establecer las notas iniciales. El área de texto gestiona los cambios posteriores.
+
+```tsx
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const NotesField = () => (
+  <Field.Root name="notes">
+    <Field.Label>Notes</Field.Label>
+    <Textarea rows={4} defaultValue="Follow up next week." />
+    <Field.Description>Add context for your team.</Field.Description>
+  </Field.Root>
+);
+```
+
+Los atributos nativos de textarea, como `rows`, `maxLength`, `required` y `readOnly`, están disponibles. `size` acepta `sm` o `md` y usa `md` de forma predeterminada.
+
+## Opciones visuales
+
+Compare los dos tamaños en los estados predeterminado, enfocado, no válido y deshabilitado. El cambio de tamaño automático se muestra por separado a continuación.
+
+<StoryEmbed storyId="ui-input-textarea--catalog" title="Opciones visuales para el área de texto" height={440} />
+
+## Apariencia simple
+
+Usa `variant="plain"` para texto multilínea dentro de una superficie existente. Elimina el relleno, el borde, las esquinas redondeadas y todo el espaciado interno, a la vez que conserva el estilo compartido de texto, marcador de posición y estado deshabilitado. El contorno azul sigue el comportamiento nativo `:focus-visible` del navegador. En los controles de texto, esto puede incluir el enfoque mediante puntero y el enfoque automático, además del enfoque mediante teclado. El estado no válido usa un contorno de peligro sin cambiar el diseño.
+
+```tsx
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const InlineNotes = () => (
+  <Field.Root>
+    <Field.Label>Notes</Field.Label>
+    <Textarea variant="plain" autoResize rows={1} maxRows={6} />
+  </Field.Root>
+);
+```
+
+El elemento padre proporciona el espaciado. `rows`, `maxRows` y el dimensionamiento automático siguen controlando la altura del contenido. El límite de filas excluye el espaciado interno y los bordes en la apariencia simple. Cambiar `variant` mientras el dimensionamiento automático está habilitado mide el nuevo diseño.
+
+## Estado controlado
+
+Pasa `value` y actualízalo con `onValueChange` para gestionar las mismas notas en el estado de React. La función de devolución de llamada recibe el siguiente valor de cadena y los detalles del evento; `onChange` nativo también está disponible.
+
+```tsx
+import { useState } from 'react';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const NotesField = () => {
+  const [notes, setNotes] = useState('Follow up next week.');
+
+  return (
+    <Field.Root name="notes">
+      <Field.Label>Notes</Field.Label>
+      <Textarea rows={4} value={notes} onValueChange={setNotes} />
+      <Field.Description>Add context for your team.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+## Cambio de tamaño automático
+
+El cambio de tamaño automático funciona en cualquiera de los modos de estado. Este ejemplo también usa el valor controlado para un recuento de caracteres.
+
+```tsx
+import { useState } from 'react';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const DescriptionField = () => {
+  const [description, setDescription] = useState('');
+
+  return (
+    <Field.Root name="description">
+      <Field.Label>Description</Field.Label>
+      <Textarea
+        value={description}
+        onValueChange={setDescription}
+        autoResize
+        rows={2}
+        maxRows={6}
+        maxLength={500}
+      />
+      <Field.Description>
+        {description.length} of 500 characters
+      </Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+`autoResize` mide el valor confirmado después de las actualizaciones controladas y mide directamente las ediciones no controladas. Las ediciones controladas rechazadas no cambian la altura. También se actualiza después de los restablecimientos nativos del formulario y de cambios en `rows`, `size`, `variant`, `maxRows` y el ancho disponible. Usa `maxRows` para limitar el crecimiento y desplazar contenido más largo.
+
+El dimensionamiento automático controla `blockSize` en línea mientras está habilitado. Al desactivarlo, se restaura el `style.blockSize` actual o se borra el tamaño automático si no se proporciona ninguno. Con el dimensionamiento automático desactivado, `rows` y los estilos nativos controlan la altura. El cambio de tamaño manual está desactivado de forma predeterminada; establece `style={{ resize: 'vertical' }}` cuando quienes llaman deban cambiar el tamaño del control por sí mismos.
+
+## Control nativo y composición de renderizado
+
+Los atributos y controladores del área de texto nativa, `className`, `style` y `ref` se dirigen al área de texto. La ref recibe un `HTMLTextAreaElement`. `render` acepta un elemento de área de texto o una devolución de llamada que recibe props de área de texto nativa y el estado de Field. Reenvía las props y la ref proporcionadas al área de texto nativa para que las etiquetas, la validación, los eventos y la medición automática sigan funcionando. Agrega un elemento de diseño independiente cuando se necesite personalizar el contenedor.
+
+`onChange` recibe un evento de cambio de React para el área de texto nativa. `onValueChange(value, details)` conserva la firma de Base UI, incluidos `event`, `reason`, `cancel` y `allowPropagation` nativos. El evento nativo se dirige al área de texto. Cancelar los detalles conserva la política de validación de Base UI; no deshace el valor nativo. Quienes llaman de forma controlada eligen el valor confirmado.
+
+El comportamiento nativo de `name`, `form`, `required`, `readOnly`, `disabled`, envío y restablecimiento sigue disponible. Field proporciona la asociación de etiqueta, descripción, nombre y validación. Intro inserta un salto de línea en el área de texto.
+
+## "Props"
+
+La referencia se genera a partir de los tipos de componentes públicos. Los atributos nativos, incluidos los nombres accesibles y los controladores de eventos, también se aceptan en las partes que representan elementos.
+
+<TextareaReference />
+
+<PageBanner illustration="page-cover-input" />
