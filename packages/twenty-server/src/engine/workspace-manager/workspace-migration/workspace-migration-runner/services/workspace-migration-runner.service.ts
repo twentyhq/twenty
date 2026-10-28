@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type AllMetadataName } from 'twenty-shared/metadata';
-import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -48,7 +47,6 @@ export class WorkspaceMigrationRunnerService {
     private readonly metricsService: MetricsService,
     private readonly logger: LoggerService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
     private readonly inFlightDeferredWorkspaceMigrationActionsService: InFlightDeferredWorkspaceMigrationActionsService,
   ) {}
@@ -220,15 +218,7 @@ export class WorkspaceMigrationRunnerService {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
   }): Promise<void> => {
-    const featureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
-
-    if (
-      !featureFlagsMap[
-        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
-      ] ||
-      !isSchemaAffectingWorkspaceMigration(actions)
-    ) {
+    if (!isSchemaAffectingWorkspaceMigration(actions)) {
       return;
     }
 
@@ -240,7 +230,7 @@ export class WorkspaceMigrationRunnerService {
   private executeRun = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
-    shouldDeferActions: shouldDeferActionsByCaller = true,
+    shouldDeferActions = true,
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
@@ -364,14 +354,6 @@ export class WorkspaceMigrationRunnerService {
 
     const preallocatedIdByUniversalIdentifierByMetadataName =
       buildPreallocatedIdByUniversalIdentifierFromActions(actions);
-
-    const featureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
-
-    const shouldDeferActions =
-      featureFlagsMap[
-        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
-      ] && shouldDeferActionsByCaller;
 
     this.logger.perfTime('Runner', 'Transaction execution');
 
