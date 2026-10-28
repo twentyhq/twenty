@@ -2,10 +2,13 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { updateMcpServer } from 'test/integration/metadata/suites/utils/mcp-server-test.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import {
   type ConnectionProviderManifest,
   type McpServerManifest,
 } from 'twenty-shared/application';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 const TEST_APP_ID = uuidv4();
@@ -59,6 +62,7 @@ const syncMcpServers = ({
 
 const findMcpServers = async (): Promise<
   {
+    id: string;
     name: string;
     label: string;
     url: string;
@@ -67,7 +71,7 @@ const findMcpServers = async (): Promise<
   }[]
 > =>
   globalThis.testDataSource.query(
-    `SELECT ms.name, ms.label, ms.url, ms."isActive",
+    `SELECT ms.id, ms.name, ms.label, ms.url, ms."isActive",
             cp."universalIdentifier" AS "connectionProviderUniversalIdentifier"
        FROM core."mcpServer" ms
        JOIN core."application" app ON app.id = ms."applicationId"
@@ -98,6 +102,7 @@ describe('MCP server manifest sync', () => {
 
     expect(await findMcpServers()).toEqual([
       {
+        id: expect.any(String),
         name: 'github',
         label: 'GitHub',
         url: 'https://api.githubcopilot.com/mcp/',
@@ -166,5 +171,33 @@ describe('MCP server manifest sync', () => {
     await syncMcpServers({ mcpServers: [] });
 
     expect(await findMcpServers()).toEqual([]);
+  }, 60000);
+
+  it('keeps an MCP server the workspace deactivated on re-sync', async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_MCP_SERVERS_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+    await syncMcpServers({ mcpServers: [buildMcpServer()] });
+
+    const [mcpServer] = await findMcpServers();
+    const response = await updateMcpServer({
+      id: mcpServer.id,
+      update: { isActive: false },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    await syncMcpServers({
+      mcpServers: [buildMcpServer({ label: 'GitHub Enterprise' })],
+    });
+
+    expect(await findMcpServers()).toEqual([
+      expect.objectContaining({
+        label: 'GitHub Enterprise',
+        isActive: false,
+      }),
+    ]);
   }, 60000);
 });
