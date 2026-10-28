@@ -56,8 +56,8 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
         createLogicFunctionFromSourceInput.databaseEventTriggerSettings ?? null,
       httpRouteTriggerSettings:
         createLogicFunctionFromSourceInput.httpRouteTriggerSettings ?? null,
-      serverRouteTriggerSettings:
-        createLogicFunctionFromSourceInput.serverRouteTriggerSettings ?? null,
+      // Server routes come only from installed app manifests; createOneFromSource rejects them.
+      serverRouteTriggerSettings: null,
       toolTriggerSettings:
         createLogicFunctionFromSourceInput.toolTriggerSettings ?? null,
       workflowActionTriggerSettings:
