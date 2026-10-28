@@ -22,7 +22,7 @@ export const SettingsApplicationStoppedBanner = ({
     fetchPolicy: 'network-only',
   });
 
-  if (data?.isApplicationStopped !== true) {
+  if (!data?.isApplicationStopped) {
     return null;
   }
 
