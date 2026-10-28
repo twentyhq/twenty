@@ -1496,7 +1496,7 @@ msgstr "Asignado"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Assistant participant"
-msgstr ""
+msgstr "Participante asistente"
 
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -4164,6 +4164,12 @@ msgctxt "pageLayout.name"
 msgid "Default Workflow Version Layout"
 msgstr "Diseño predeterminado de la versión del flujo de trabajo"
 
+#. js-lingui-id: PzuWtK
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-workspace-member-page-layout.config.ts
+msgctxt "pageLayout.name"
+msgid "Default Workspace Member Layout"
+msgstr ""
+
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -5918,6 +5924,7 @@ msgstr "General"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "General"
 msgstr "General"
@@ -7136,6 +7143,7 @@ msgstr "Valor no válido para dirección."
 
 #. js-lingui-id: D9hzmE
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
 msgid "Invalid value for currency."
 msgstr "Valor no válido para moneda."
 
@@ -8118,6 +8126,11 @@ msgctxt "pageLayoutWidget.title"
 msgid "Members"
 msgstr "Miembros"
 
+#. js-lingui-id: UODtG8
+#: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
+msgid "Merge"
+msgstr ""
+
 #. js-lingui-id: uHk5U2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -8134,6 +8147,11 @@ msgstr "Combinar {objectLabelPlural}"
 #: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
 msgid "Merging blocklist entries is not allowed."
 msgstr "No se permite fusionar entradas de la lista de bloqueos."
+
+#. js-lingui-id: kGsb0J
+#: src/modules/dashboard/query-hooks/dashboard-merge-many.pre-query.hook.ts
+msgid "Merging dashboards is not allowed."
+msgstr "No está permitido fusionar paneles de control."
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -10918,6 +10936,7 @@ msgstr "Relaciones"
 
 #. js-lingui-id: /deTOT
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-opportunity-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "Relations"
 msgstr "Relaciones"
@@ -12488,6 +12507,7 @@ msgstr "Sistema"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "System"
 msgstr "Sistema"
@@ -13583,6 +13603,11 @@ msgstr "No hay un paso de incorporación anterior al que volver."
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Estos campos no se pueden actualizar antes de que el espacio de trabajo se active: {fieldsList}."
+
+#. js-lingui-id: 4RZeZG
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "These records hold data in fields your role cannot see. Ask someone with access to those fields to merge them."
+msgstr "Estos registros contienen datos en campos que tu rol no puede ver. Pide a alguien con acceso a esos campos que los fusione."
 
 #. js-lingui-id: YZk5x6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -16159,7 +16184,7 @@ msgstr "Si la actividad nueva devuelve el hilo a la bandeja de entrada"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether the assistant participates in this conversation"
-msgstr ""
+msgstr "Si el asistente participa en esta conversación"
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -16774,6 +16799,12 @@ msgstr "Miembro del espacio de trabajo no encontrado."
 msgctxt "fieldMetadata.description"
 msgid "Workspace member position"
 msgstr "Posición del miembro del espacio de trabajo"
+
+#. js-lingui-id: wFbHLs
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workspace-member-views.util.ts
+msgctxt "view.name"
+msgid "Workspace Member Record Page Fields"
+msgstr ""
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

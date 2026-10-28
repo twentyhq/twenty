@@ -116,7 +116,7 @@ Other app commands:
 | `app install`                 | Install an already registered app package in the workspace |
 | `app uninstall`               | Remove the app and everything it owns from the workspace   |
 
-Definitions missing from your source are deleted from the workspace by default. Pass `--no-delete` to keep them. Deleting objects or fields also deletes their data, so it requires confirmation. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery) for details.
+Definitions missing from your source are deleted from the workspace by default. Pass `--no-prune` to keep them. The workspace Custom application keeps them unless you pass `--prune`. Deleting objects or fields also deletes their data, so it requires confirmation. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery) for details.
 
 ## Executing functions
 
