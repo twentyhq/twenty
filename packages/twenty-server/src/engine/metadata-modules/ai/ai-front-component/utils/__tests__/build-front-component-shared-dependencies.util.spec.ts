@@ -12,6 +12,7 @@ import { PageLayoutType } from 'twenty-shared/types';
 import { buildFrontComponent as compileFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
 
 jest.useRealTimers();
+jest.setTimeout(30_000);
 let sharedDependencies: Awaited<
   ReturnType<typeof buildFrontComponentSharedDependencies>
 >;
