@@ -13,4 +13,10 @@ export const GETTING_STARTED_TRACKS: Record<
     GettingStartedStep.HANDOVER_DEALS,
     GettingStartedStep.FOLLOW_UP_DEALS,
   ],
+  [GettingStartedTrack.PERSONAL]: [
+    GettingStartedStep.CONNECT_MAILBOX,
+    GettingStartedStep.IMPORT_DATA,
+    GettingStartedStep.INSTALL_APP,
+    GettingStartedStep.FOLLOW_UP_DEALS,
+  ],
 };

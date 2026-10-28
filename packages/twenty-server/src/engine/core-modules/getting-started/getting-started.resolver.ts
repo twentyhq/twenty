@@ -52,6 +52,7 @@ export class GettingStartedResolver {
   ): Promise<GettingStartedProgressDTO> {
     return this.gettingStartedService.getProgress({
       userId: user.id,
+      userEmail: user.email,
       workspaceId: workspace.id,
       userWorkspaceId,
     });
@@ -66,6 +67,7 @@ export class GettingStartedResolver {
   ): Promise<GettingStartedProgressDTO> {
     return this.gettingStartedService.updateProgress({
       userId: user.id,
+      userEmail: user.email,
       workspaceId: workspace.id,
       userWorkspaceId,
       input,
@@ -81,6 +83,7 @@ export class GettingStartedResolver {
   ): Promise<GettingStartedProgressDTO> {
     return this.gettingStartedService.completeStepFromClient({
       userId: user.id,
+      userEmail: user.email,
       workspaceId: workspace.id,
       userWorkspaceId,
       input,

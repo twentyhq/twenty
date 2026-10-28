@@ -1,13 +1,15 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspacePersonEnrichment } from 'twenty-shared/workspace';
 
-export const matchWorkspacePersonEnrichmentToUserEmail = ({
+export const matchWorkspacePersonEnrichmentToUserEmail = <
+  TPersonEnrichment extends Pick<WorkspacePersonEnrichment, 'email'>,
+>({
   personEnrichment,
   userEmail,
 }: {
-  personEnrichment: WorkspacePersonEnrichment | null;
+  personEnrichment: TPersonEnrichment | null;
   userEmail: string;
-}): WorkspacePersonEnrichment | null =>
+}): TPersonEnrichment | null =>
   isDefined(personEnrichment) &&
   personEnrichment.email.toLowerCase() === userEmail.trim().toLowerCase()
     ? personEnrichment

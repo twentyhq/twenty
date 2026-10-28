@@ -6,6 +6,7 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { GettingStartedResolver } from 'src/engine/core-modules/getting-started/getting-started.resolver';
 import { GettingStartedService } from 'src/engine/core-modules/getting-started/services/getting-started.service';
+import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -13,6 +14,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 @Module({
   imports: [
     UserVarsModule,
+    KeyValuePairModule,
     BillingModule,
     FeatureFlagModule,
     TypeOrmModule.forFeature([ConnectedAccountEntity, ApplicationEntity]),
