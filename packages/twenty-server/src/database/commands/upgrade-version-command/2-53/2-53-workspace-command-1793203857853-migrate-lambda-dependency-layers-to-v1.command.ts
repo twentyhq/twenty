@@ -1,25 +1,35 @@
+import { UpdateFunctionConfigurationCommand } from '@aws-sdk/client-lambda';
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { migrateLambdaFunctionDepsLayer } from 'src/database/commands/upgrade-version-command/2-53/utils/migrate-lambda-function-deps-layer.util';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import {
+  BUILD_LOCK_MAX_RETRIES,
+  BUILD_LOCK_RETRY_MS,
+  BUILD_LOCK_TTL_MS,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
 import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
 import { getLambdaConnectionOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-connection-options.util';
+import { getLambdaExecutorBuildLockKey } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-executor-build-lock-key.util';
+import { getLambdaLayerNameFromArn } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-layer-name-from-arn.util';
+import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name.util';
 import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type LambdaDepsLayerServices = {
@@ -134,8 +144,6 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
   }
 
   private async migrateDependencyLayers(workspaceId: string): Promise<void> {
-    const { awsClient, layerManager } = this.getLambdaDepsLayerServices();
-
     const { flatApplicationMaps, flatLogicFunctionMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatApplicationMaps',
@@ -160,10 +168,7 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
       }
 
       try {
-        const isMigrated = await migrateLambdaFunctionDepsLayer({
-          awsClient,
-          layerManager,
-          cacheLockService: this.cacheLockService,
+        const isMigrated = await this.migrateLogicFunction({
           flatLogicFunction,
           flatApplication,
         });
@@ -181,6 +186,79 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
 
     this.logger.log(
       `Moved ${migratedCount} logic function(s) to their v1 dependency layer in workspace ${workspaceId}, ${failedCount} failed`,
+    );
+  }
+
+  private async migrateLogicFunction({
+    flatLogicFunction,
+    flatApplication,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    flatApplication: FlatApplication;
+  }): Promise<boolean> {
+    const { awsClient, layerManager } = this.getLambdaDepsLayerServices();
+
+    return this.cacheLockService.withLock(
+      async () => {
+        const lambdaExecutor = await awsClient.getFunction(
+          flatLogicFunction.id,
+        );
+
+        if (!isDefined(lambdaExecutor)) {
+          return false;
+        }
+
+        const layerArns = (lambdaExecutor.Configuration?.Layers ?? [])
+          .map((layer) => layer.Arn)
+          .filter(isDefined);
+        const sdkLayerName = getLambdaSdkLayerName({
+          workspaceId: flatApplication.workspaceId,
+          applicationUniversalIdentifier: flatApplication.universalIdentifier,
+        });
+        const sdkLayerArn = layerArns.find(
+          (layerArn) => getLambdaLayerNameFromArn(layerArn) === sdkLayerName,
+        );
+        const currentDepsLayerArn = layerArns.find(
+          (layerArn) => layerArn !== sdkLayerArn,
+        );
+
+        if (!isDefined(sdkLayerArn) || !isDefined(currentDepsLayerArn)) {
+          return false;
+        }
+
+        const currentDepsLayerName =
+          getLambdaLayerNameFromArn(currentDepsLayerArn);
+        const depsLayerNames =
+          await layerManager.getDepsLayerNames(flatApplication);
+
+        if (
+          isDefined(currentDepsLayerName) &&
+          depsLayerNames.includes(currentDepsLayerName)
+        ) {
+          return false;
+        }
+
+        const depsLayerArn =
+          await layerManager.ensureDepsLayer(flatApplication);
+        const lambdaClient = await awsClient.getLambdaClient();
+
+        await lambdaClient.send(
+          new UpdateFunctionConfigurationCommand({
+            FunctionName: flatLogicFunction.id,
+            Layers: [depsLayerArn, sdkLayerArn],
+          }),
+        );
+        await awsClient.waitFunctionUpdated(flatLogicFunction.id);
+        await awsClient.clearFunctionCache(flatLogicFunction.id);
+
+        return true;
+      },
+      getLambdaExecutorBuildLockKey(flatLogicFunction.id),
+      {
+        ttl: BUILD_LOCK_TTL_MS,
+        ms: BUILD_LOCK_RETRY_MS,
+        maxRetries: BUILD_LOCK_MAX_RETRIES,
+      },
     );
   }
 
