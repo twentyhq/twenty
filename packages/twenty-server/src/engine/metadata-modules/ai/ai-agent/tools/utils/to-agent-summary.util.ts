@@ -11,5 +11,4 @@ export const toAgentSummary = (agent: FlatAgentWithRoleId) => ({
   roleId: agent.roleId,
   triggers: agent.triggers,
   applicationId: agent.applicationId,
-  isCustom: agent.isCustom,
 });

@@ -14,10 +14,6 @@ import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/fla
 const convertFlatSkill = (
   flatSkill: FlatSkill,
 ): { manifest: SkillManifest } | { reason: string } => {
-  if (flatSkill.isCustom) {
-    return { reason: 'skill created in the workspace' };
-  }
-
   // A skill has no overrides, so apply would reactivate it
   if (!flatSkill.isActive) {
     return { reason: 'skill deactivated in this workspace' };
