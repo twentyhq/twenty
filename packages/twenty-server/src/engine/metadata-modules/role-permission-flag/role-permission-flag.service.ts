@@ -100,7 +100,7 @@ export class RolePermissionFlagService {
     await this.validateNoAmbiguousPermissionFlagKeyOrThrow({
       workspaceId,
       permissionFlags,
-      requestedKeys: permissionFlagsByInputKey,
+      permissionFlagKeyRequests: permissionFlagsByInputKey,
     });
 
     const requestedPermissionFlags = uniqBy(
@@ -206,14 +206,14 @@ export class RolePermissionFlagService {
   private async validateNoAmbiguousPermissionFlagKeyOrThrow({
     workspaceId,
     permissionFlags,
-    requestedKeys,
+    permissionFlagKeyRequests,
   }: {
     workspaceId: string;
     permissionFlags: FlatPermissionFlag[];
-    requestedKeys: { flag: string; key: string }[];
+    permissionFlagKeyRequests: { flag: string; key: string }[];
   }): Promise<void> {
     const collisions = uniqBy(
-      uniqBy(requestedKeys, 'flag').flatMap(({ flag, key }) => {
+      uniqBy(permissionFlagKeyRequests, 'flag').flatMap(({ flag, key }) => {
         const permissionFlagsWithKey = permissionFlags.filter(
           (permissionFlag) => {
             const resolvedKey = resolvePermissionFlagKey(permissionFlag);

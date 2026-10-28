@@ -200,10 +200,13 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
         conditionalAvailabilityExpression ?? conditionalPinnedExpression,
     );
 
-  const applyCommandMenuItemMigration = (
-    path: string,
-    args: CommandMenuItemMigrationArgs,
-  ) => {
+  const applyCommandMenuItemMigration = ({
+    path,
+    args,
+  }: {
+    path: string;
+    args: CommandMenuItemMigrationArgs;
+  }) => {
     writes.push(`${path} ${args.applicationUniversalIdentifier}`);
 
     const updatedCommandMenuItems = indexByUniversalIdentifier(
@@ -288,11 +291,11 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
       });
     validateBuildAndRunLegacyWorkspaceMigration = jest.fn(
       async (args: CommandMenuItemMigrationArgs) =>
-        applyCommandMenuItemMigration('legacy', args),
+        applyCommandMenuItemMigration({ path: 'legacy', args }),
     );
     validateBuildAndRunWorkspaceMigration = jest.fn(
       async (args: CommandMenuItemMigrationArgs) =>
-        applyCommandMenuItemMigration('side-effect', args),
+        applyCommandMenuItemMigration({ path: 'side-effect', args }),
     );
 
     const applicationService = {

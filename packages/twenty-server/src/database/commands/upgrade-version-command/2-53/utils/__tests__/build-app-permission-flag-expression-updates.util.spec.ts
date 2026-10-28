@@ -87,10 +87,13 @@ const buildPreviousStandardCommandMenuItems = () =>
     }),
   );
 
-const renameExpression = (
-  conditionalAvailabilityExpression: string,
-  direction: 'up' | 'down',
-) =>
+const renameExpression = ({
+  conditionalAvailabilityExpression,
+  direction,
+}: {
+  conditionalAvailabilityExpression: string;
+  direction: 'up' | 'down';
+}) =>
   buildUpdates(
     [
       buildCommandMenuItem({
@@ -140,20 +143,27 @@ describe('buildAppPermissionFlagExpressionUpdates', () => {
   });
 
   it('restores the previous expressions on down', () => {
-    expect(renameExpression('permissionFlags.USER_APPS', 'down')).toBe(
-      'permissionFlags.CONNECTED_ACCOUNTS',
-    );
-    expect(renameExpression('permissionFlags.WORKSPACE_APPS', 'down')).toBe(
-      'permissionFlags.APPLICATIONS',
-    );
+    expect(
+      renameExpression({
+        conditionalAvailabilityExpression: 'permissionFlags.USER_APPS',
+        direction: 'down',
+      }),
+    ).toBe('permissionFlags.CONNECTED_ACCOUNTS');
+    expect(
+      renameExpression({
+        conditionalAvailabilityExpression: 'permissionFlags.WORKSPACE_APPS',
+        direction: 'down',
+      }),
+    ).toBe('permissionFlags.APPLICATIONS');
   });
 
   it('renames every whole reference inside a compound expression', () => {
     expect(
-      renameExpression(
-        'not isInSidePanel and (permissionFlags.APPLICATIONS or permissionFlags.CONNECTED_ACCOUNTS)',
-        'up',
-      ),
+      renameExpression({
+        conditionalAvailabilityExpression:
+          'not isInSidePanel and (permissionFlags.APPLICATIONS or permissionFlags.CONNECTED_ACCOUNTS)',
+        direction: 'up',
+      }),
     ).toBe(
       'not isInSidePanel and (permissionFlags.WORKSPACE_APPS or permissionFlags.USER_APPS)',
     );
@@ -161,10 +171,11 @@ describe('buildAppPermissionFlagExpressionUpdates', () => {
 
   it('leaves references that only share a prefix with the old keys', () => {
     expect(
-      renameExpression(
-        'permissionFlags.APPLICATIONS_ADMIN and context.permissionFlags.CONNECTED_ACCOUNTS and permissionFlags.AI',
-        'up',
-      ),
+      renameExpression({
+        conditionalAvailabilityExpression:
+          'permissionFlags.APPLICATIONS_ADMIN and context.permissionFlags.CONNECTED_ACCOUNTS and permissionFlags.AI',
+        direction: 'up',
+      }),
     ).toBeUndefined();
   });
 

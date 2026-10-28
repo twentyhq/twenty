@@ -33,7 +33,7 @@ const StyledInformationBannerWrapper = styled.div`
 
 export const InformationBannerWrapper = () => {
   const subscriptionStatus = useSubscriptionStatus();
-  const isAccountSyncEnabled = useHasPermissionFlag(
+  const hasUserAppsPermission = useHasPermissionFlag(
     PermissionFlagType.USER_APPS,
   );
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
@@ -66,10 +66,10 @@ export const InformationBannerWrapper = () => {
     <StyledInformationBannerWrapper>
       <InformationBannerNonProductionInstance />
       <InformationBannerMaintenance />
-      {isAccountSyncEnabled && (
+      {hasUserAppsPermission && (
         <InformationBannerReconnectAccountInsufficientPermissions />
       )}
-      {isAccountSyncEnabled && (
+      {hasUserAppsPermission && (
         <InformationBannerReconnectAccountEmailAliases />
       )}
       {displayBillingSubscriptionPausedBanner && (

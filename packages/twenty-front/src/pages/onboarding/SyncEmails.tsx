@@ -40,7 +40,7 @@ export const SyncEmails = () => {
   const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
   const [hasAutoSkipFailed, setHasAutoSkipFailed] = useState(false);
   const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
-  const hasConnectedAccountsPermission = useHasPermissionFlag(
+  const hasUserAppsPermission = useHasPermissionFlag(
     PermissionFlagType.USER_APPS,
   );
 
@@ -58,10 +58,10 @@ export const SyncEmails = () => {
   );
 
   const isGoogleProviderEnabled =
-    hasConnectedAccountsPermission &&
+    hasUserAppsPermission &&
     (isGoogleMessagingEnabled || isGoogleCalendarEnabled);
   const isMicrosoftProviderEnabled =
-    hasConnectedAccountsPermission &&
+    hasUserAppsPermission &&
     (isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled);
   const hasProviderEnabled =
     isGoogleProviderEnabled || isMicrosoftProviderEnabled;

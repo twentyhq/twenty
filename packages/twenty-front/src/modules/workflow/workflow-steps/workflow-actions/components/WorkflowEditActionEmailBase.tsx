@@ -64,7 +64,7 @@ export const WorkflowEditActionEmailBase = ({
   actionOptions,
 }: WorkflowEditActionEmailBaseProps) => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
-  const hasConnectedAccountsPermission = useHasPermissionFlag(
+  const hasUserAppsPermission = useHasPermissionFlag(
     PermissionFlagType.USER_APPS,
   );
 
@@ -241,7 +241,7 @@ export const WorkflowEditActionEmailBase = ({
             VariablePicker={WorkflowVariablePicker}
             readonly={actionOptions.readonly}
             callToActionButton={
-              hasConnectedAccountsPermission
+              hasUserAppsPermission
                 ? {
                     onClick: () => {
                       closeSidePanelMenu();
@@ -259,12 +259,12 @@ export const WorkflowEditActionEmailBase = ({
                 status={'error'}
                 title={t`Missing email draft permission.`}
                 description={
-                  hasConnectedAccountsPermission
+                  hasUserAppsPermission
                     ? t`This account is connected, but we don't have permission to draft emails on your behalf yet. You'll be redirected to approve this access.`
                     : t`Ask a workspace admin for the User Apps permission to reconnect this account.`
                 }
                 action={
-                  hasConnectedAccountsPermission ? (
+                  hasUserAppsPermission ? (
                     <Callout.Action
                       type="button"
                       onClick={handleReauthorize}
