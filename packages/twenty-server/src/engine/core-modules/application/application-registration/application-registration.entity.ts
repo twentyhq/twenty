@@ -132,7 +132,7 @@ export class ApplicationRegistrationEntity {
     {
       previousName: 'isVetted',
       upgradeCommandName:
-        '2.53.0_RenameIsVettedToIsOfficialOnApplicationRegistrationFastInstanceCommand_1793198473488',
+        '2.53.0_RenameIsVettedToIsOfficialOnApplicationRegistrationSlowInstanceCommand_1793198473488',
     },
   ])
   isOfficial: boolean;
