@@ -270,13 +270,14 @@ export const AccountsSectionHeaderStaysWhileLoading: Story = {
 
 export const AccountsTabWithoutAccountsOffersConnectCards: Story = {
   ...accountsTabStory,
+  beforeEach: seedApplicationPreferencesStory,
   parameters: {
     msw: {
       handlers: [
         graphql.query('MyConnectedAccounts', () =>
           HttpResponse.json({ data: { myConnectedAccounts: [] } }),
         ),
-        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+        ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
       ],
     },
   },
@@ -284,11 +285,18 @@ export const AccountsTabWithoutAccountsOffersConnectCards: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('Connect with Google', undefined, {
+      await canvas.findByText('Connect with Gmail and Calendar', undefined, {
         timeout: 3000,
       }),
     ).toBeVisible();
-    expect(canvas.getByText('Connect with Microsoft')).toBeVisible();
+    expect(canvas.getByText('Connect with Outlook')).toBeVisible();
+    expect(
+      await canvas.findByText('Connect with Linear', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    expect(canvas.getByText('Connect with Fathom')).toBeVisible();
+    expect(canvas.queryByText('Connect with Granola')).not.toBeInTheDocument();
   },
 };
 
