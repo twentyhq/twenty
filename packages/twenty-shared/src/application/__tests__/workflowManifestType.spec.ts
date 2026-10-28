@@ -521,3 +521,18 @@ describe('workflow manifest database event trigger', () => {
     ]);
   });
 });
+
+describe('workflow manifest isSystem', () => {
+  it('accepts a workflow flagged as system', () => {
+    expect(
+      workflowManifestSchema.safeParse({ ...workflow, isSystem: true }).success,
+    ).toBe(true);
+  });
+
+  it('rejects an isSystem that is not a boolean', () => {
+    expect(
+      workflowManifestSchema.safeParse({ ...workflow, isSystem: 'true' })
+        .success,
+    ).toBe(false);
+  });
+});

@@ -12,6 +12,7 @@ export const workflowManifestSchema = z
   .strictObject({
     universalIdentifier: z.uuid(),
     name: z.string().min(1),
+    isSystem: z.boolean().optional(),
     version: z.strictObject({
       trigger: workflowTriggerManifestSchema,
       steps: z.array(workflowStepManifestSchema).min(1),
