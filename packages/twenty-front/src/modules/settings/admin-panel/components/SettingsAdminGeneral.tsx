@@ -16,6 +16,7 @@ import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvata
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -96,7 +97,7 @@ export const SettingsAdminGeneral = () => {
   const pinnedWorkspace =
     topWorkspaces.find((workspace) => workspace.id === currentWorkspace?.id) ??
     (isDefined(currentWorkspace) &&
-    debouncedWorkspaceSearchTerm.trim().length === 0
+    !isNonEmptyString(debouncedWorkspaceSearchTerm.trim())
       ? {
           id: currentWorkspace.id,
           name: currentWorkspace.displayName,
