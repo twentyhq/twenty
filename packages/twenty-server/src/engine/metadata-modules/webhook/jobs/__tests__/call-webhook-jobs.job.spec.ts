@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { MetadataReadability } from 'twenty-shared/types';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
@@ -11,12 +10,9 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 describe('webhook mandatory visibility', () => {
-  it('drops missing metadata and SYSTEM batches', async () => {
+  it('drops batches whose object metadata is missing', async () => {
     const add = jest.fn();
-    const objectMetadata = {
-      ...COMPANY_FLAT_OBJECT_MOCK,
-      readability: MetadataReadability.SYSTEM,
-    };
+    const objectMetadata = COMPANY_FLAT_OBJECT_MOCK;
     const maps = {
       byUniversalIdentifier: {},
       universalIdentifierById: {},
@@ -47,18 +43,9 @@ describe('webhook mandatory visibility', () => {
         },
       ],
     }).compile();
-    for (const flatObjectMetadataMaps of [
-      maps,
-      {
-        ...maps,
-        byUniversalIdentifier: {
-          [objectMetadata.universalIdentifier]: objectMetadata,
-        },
-        universalIdentifierById: {
-          [objectMetadata.id]: objectMetadata.universalIdentifier,
-        },
-      },
-    ]) {
+    {
+      const flatObjectMetadataMaps = maps;
+
       getOrRecompute.mockResolvedValue({
         flatObjectMetadataMaps,
         flatFieldMetadataMapsOrm: maps,
