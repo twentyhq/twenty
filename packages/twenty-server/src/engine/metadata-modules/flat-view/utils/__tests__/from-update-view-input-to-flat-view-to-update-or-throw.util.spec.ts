@@ -78,6 +78,9 @@ const existingViewGroup: FlatViewGroup = {
   position: 3,
 };
 
+const getExistingViewGroups = (groupingOverride: string | null) =>
+  isNull(groupingOverride) ? [] : [existingViewGroup];
+
 const buildExistingFlatView = ({
   groupingOverride,
   existingTranslations,
@@ -85,9 +88,7 @@ const buildExistingFlatView = ({
   groupingOverride: string | null;
   existingTranslations?: ViewOverrides['translations'];
 }): FlatView => {
-  const existingViewGroups = isNull(groupingOverride)
-    ? []
-    : [existingViewGroup];
+  const existingViewGroups = getExistingViewGroups(groupingOverride);
 
   return {
     id: VIEW_ID,
@@ -164,9 +165,7 @@ const updateView = ({
   updateViewInput: Omit<UpdateViewInput, 'id'>;
   existingTranslations?: ViewOverrides['translations'];
 }) => {
-  const existingViewGroups = isNull(groupingOverride)
-    ? []
-    : [existingViewGroup];
+  const existingViewGroups = getExistingViewGroups(groupingOverride);
   const existingView = buildExistingFlatView({
     groupingOverride,
     existingTranslations,
