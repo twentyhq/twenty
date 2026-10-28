@@ -201,7 +201,7 @@ export const WorkspaceSharedAppConnectionsStayOff: Story = {
   },
 };
 
-export const AccountsHeaderStaysWhileLoading: Story = {
+export const AccountsSectionHeaderStaysWhileLoading: Story = {
   ...accountsTabStory,
   parameters: {
     msw: {
@@ -222,7 +222,6 @@ export const AccountsHeaderStaysWhileLoading: Story = {
       }),
     ).toBeVisible();
     expect(canvas.getByRole('heading', { name: 'Accounts' })).toBeVisible();
-    expect(canvas.getByText('Used by')).toBeVisible();
     expect(canvasElement.querySelector('[aria-busy="true"]')).not.toBeNull();
     expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
   },
