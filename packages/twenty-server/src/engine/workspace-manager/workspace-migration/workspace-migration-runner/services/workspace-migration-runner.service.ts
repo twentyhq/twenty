@@ -186,13 +186,16 @@ export class WorkspaceMigrationRunnerService {
   }> => {
     const runStart = performance.now();
 
-    await this.throwIfSchemaAffectingDeferredActionsAreInProgress(args);
-
-    // Upgrades run inline: no worker may run and the deferred actions table may not exist yet.
+    // Upgrades run inline and skip the guard: the worker may not run yet and the
+    // deferred actions table may not exist or have its current shape.
     const isRunningActionsInProcess =
       await this.inProcessWorkspaceMigrationActionsService.isRunningActionsInProcess(
         args.workspaceId,
       );
+
+    if (!isRunningActionsInProcess) {
+      await this.throwIfSchemaAffectingDeferredActionsAreInProgress(args);
+    }
 
     try {
       const result = await this.executeRun({
