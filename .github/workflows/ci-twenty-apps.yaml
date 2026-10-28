@@ -47,6 +47,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
+      - name: Detect in-repo SDK links
+        id: local-sdk
+        run: |
+          if grep -q '"portal:' package.json; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install monorepo dependencies
+        if: steps.local-sdk.outputs.enabled == 'true'
+        uses: ./.github/actions/yarn-install
+
+      - name: Build in-repo SDKs
+        if: steps.local-sdk.outputs.enabled == 'true'
+        working-directory: ${{ github.workspace }}
+        run: npx nx build twenty-sdk
+
       - name: Enable Corepack
         run: corepack enable
 
