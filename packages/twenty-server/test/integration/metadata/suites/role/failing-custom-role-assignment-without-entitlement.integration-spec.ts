@@ -7,6 +7,7 @@ import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/del
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -93,6 +94,54 @@ describe('Custom role assignment without the custom roles entitlement', () => {
     });
 
     expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('should refuse creating a role that members or API keys can be assigned', async () => {
+    const { errors } = await createOneRole({
+      expectToFail: true,
+      input: { label: 'Unentitled custom role' },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('should refuse making an agent-only role assignable to members', async () => {
+    const { data } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'Agent role made assignable',
+        canBeAssignedToUsers: false,
+        canBeAssignedToAgents: true,
+        canBeAssignedToApiKeys: false,
+      },
+    });
+
+    const { errors } = await updateOneRole({
+      expectToFail: true,
+      input: {
+        idToUpdate: data.createOneRole.id,
+        updatePayload: { canBeAssignedToUsers: true },
+      },
+    });
+
+    await deleteOneRole({
+      expectToFail: false,
+      input: { idToDelete: data.createOneRole.id },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('should still update a custom role that members can already be assigned', async () => {
+    const { errors } = await updateOneRole({
+      expectToFail: false,
+      input: {
+        idToUpdate: customRoleId,
+        updatePayload: { description: 'Edited without the entitlement' },
+      },
+    });
+
+    expect(errors).toBeUndefined();
   });
 
   describe('when a new user joins with a custom role', () => {
@@ -192,6 +241,7 @@ describe('Custom role assignment without the custom roles entitlement', () => {
         label: 'Agent only role',
         canBeAssignedToUsers: false,
         canBeAssignedToAgents: true,
+        canBeAssignedToApiKeys: false,
       },
     });
 
