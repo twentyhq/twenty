@@ -3,6 +3,10 @@ title: Vizualizări
 description: Livrați vizualizări salvate preconfigurate — ordinea coloanelor, filtre, grupuri — pentru obiectele din aplicația dvs.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 O **vizualizare** este o configurație salvată pentru modul în care sunt afișate înregistrările unui obiect: ce câmpuri apar, ordinea lor, dacă sunt vizibile și ce filtre sau grupuri sunt aplicate. Utilizați `defineView()` pentru a livra vizualizări preconfigurate împreună cu aplicația.
 
 Fiecărui obiect i se atribuie automat vizualizarea principală de listă (tabelul „All ...” pe care îl deschide un element de navigare `OBJECT`) furnizată de server — inclusiv obiectele pe care le creează aplicația dvs., cu o coloană pentru fiecare câmp declarat de aplicația dvs. Vizualizările pe care le definiți cu `defineView()` sunt întotdeauna vizualizări **suplimentare** pe lângă cea implicită.
@@ -16,7 +20,7 @@ export default defineView({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
-  icon: 'IconList',
+  icon: 'IconTable',
   position: 0,
   fields: [
     {
@@ -48,6 +52,7 @@ export default defineView({
 | `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]`   | Ordinea implicită de sortare.                                                                                                                                                                                                   |
 | `isCompact`                                                                                                 | `boolean`                                                                            | Afișare compactă a rândurilor.                                                                                                                                                                                                  |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                    | Gruparea înregistrărilor (de ex. coloane kanban) după un câmp.                                                                                                                                                                  |
+| `groupLoadLimit`                                                                                            | `8` (implicit), `25`, `50`, `100`                                                    | Înregistrări încărcate per grup înainte de "Încărcați mai multe", în vizualizările de tabel grupat și listă. Panourile Kanban se paginează în funcție de propria dimensiune și o ignoră.                                        |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                              | Agregări și dimensionare pentru coloanele kanban.                                                                                                                                                                               |
 | `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                          | Vizualizări de tip calendar: layout, câmpul de dată care poziționează înregistrările și un câmp opțional pentru data de sfârșit.                                                                                                |
 
@@ -69,6 +74,16 @@ filters: [
   },
 ],
 ```
+
+Trei proprietăți opționale rafinează un filtru:
+
+| Proprietate                                                        | Descriere                                                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `subFieldName`                                                     | Vizează o parte a unui câmp compus, cum ar fi `amountMicros` într-un câmp `CURRENCY` sau `primaryLinkUrl` într-un câmp `LINKS`.                                                                                                                                 |
+| `relationTargetFieldMetadataUniversalIdentifier`                   | Într-un filtru pentru un câmp `RELATION`, câmpul obiectului asociat cu care este comparată valoarea, așa cum îl setează filtrul avansat atunci când selectați un câmp al înregistrării asociate. Omiteți-l pentru a filtra după înregistrarea asociată în sine. |
+| `viewFilterGroupUniversalIdentifier` + `positionInViewFilterGroup` | Plasați filtrul într-unul dintre `filterGroups` ale vizualizării (fiecare cu un `logicalOperator` de `AND`, `OR` sau `NOT` și un `parentViewFilterGroupUniversalIdentifier` opțional) și ordonați-l în cadrul acelui grup.                                      |
+
+`twenty app pull` scrie toate cele trei înapoi exact așa cum le-a stocat spațiul de lucru.
 
 ### Operanzi acceptați pentru fiecare tip de câmp
 
@@ -110,3 +125,5 @@ Câmpul `value` este întotdeauna o valoare serializabilă JSON, dar forma sa a�
 ## Cum apar vizualizările în interfața utilizatorului
 
 O vizualizare, de una singură, nu este accesibilă din bara laterală. Pentru a o face să apară acolo, asociați-o cu un [element de meniu de navigare](/ro/developers/extend/apps/layout/navigation-menu-items) de tip `VIEW` care indică către `universalIdentifier` al vizualizării. Acesta este tiparul canonic: fiecare obiect personalizat primește o vizualizare index implicită generată automat la creare, astfel încât trebuie doar să livrezi intrarea din bara laterală care o deschide.
+
+<PageBanner illustration="card-page-views" />

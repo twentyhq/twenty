@@ -1,0 +1,87 @@
+---
+title: Разделитель с меткой
+description: Разделяйте содержимое текстовой меткой, выровненной по центру или по краю.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import LabeledSeparatorReference from '/snippets/ui/generated/components/layout/labeled-separator.mdx';
+
+## Обзор
+
+`LabeledSeparator` объединяет [Separator](/ru/ui/primitives/layout/separator) и [Text](/ru/ui/primitives/typography/text) в именованный горизонтальный разделитель. Ваше приложение задает метку и окружающие отступы.
+
+<StoryEmbed storyId="ui-layout-labeledseparator--display" title="Разделитель с меткой между вариантами импорта" height={180} />
+
+## Использование
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportOptions = () => (
+  <Text
+    style={{
+      display: 'grid',
+      gap: 'var(--t-spacing-3)',
+      width: 320,
+      maxWidth: '100%',
+    }}
+  >
+    <Button fullWidth>Import a CSV file</Button>
+    <LabeledSeparator>Or</LabeledSeparator>
+    <Button fullWidth variant="outline">
+      Connect a data source
+    </Button>
+  </Text>
+);
+```
+
+## Расположение и тон метки
+
+`labelPosition` по умолчанию имеет значение `center`, при этом линия располагается с каждой стороны метки. Используйте `end`, чтобы разместить метку после начальной линии. Метка принимает строку, заданную и локализованную вашим приложением.
+
+`tone` по умолчанию имеет значение `neutral`. Используйте `danger` для красного маркера с меткой средней насыщенности и более толстой линией. Установите `hasStartMarker`, чтобы добавить небольшую декоративную заглушку в начало линии.
+
+Необязательная заглушка соответствует [общему дизайну линии календаря и чата](https://www.figma.com/design/xt8O9mFeLl46C5InWwoMrN/Twenty?node-id=118289-146574).
+
+<StoryEmbed storyId="ui-layout-labeledseparator--unread-marker" title="Маркер непрочитанных с меткой, выровненной по краю" height={100} />
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+
+export const UnreadMarker = () => (
+  <LabeledSeparator
+    labelPosition="end"
+    tone="danger"
+    hasStartMarker
+    style={{ width: 488, maxWidth: '100%' }}
+  >
+    New
+  </LabeledSeparator>
+);
+```
+
+## Интервалы и состояние приложения
+
+Компонент заполняет свой контейнер и не добавляет внешних отступов. Для отступов и выравнивания используйте интервалы родительского макета или нативные `style` и `className`. Сохраняйте в приложении смещения для соседних аватаров или позиций календаря.
+
+Компонент отображает заданную метку. Ваше приложение определяет, где должна находиться граница непрочитанных или маркер календаря и когда он видим.
+
+## Доступность и композиция
+
+Корневой элемент предоставляет один горизонтальный разделитель с именем из его метки. Сегменты линии и необязательный начальный маркер являются декоративными, поэтому вспомогательные технологии не объявляют дополнительные разделители. При необходимости нативные доступные атрибуты могут задать другое имя или описание.
+
+Нативные атрибуты, стили, имена классов и `ref` применяются к внешнему `div`. Используйте `render`, чтобы скомпоновать другой неинтерактивный элемент, передавая заданные props и ref. `LabeledSeparatorProps` экспортируется из `twenty-ui/components/layout`.
+
+## Миграция
+
+Замените фронтенд-компонент `LabeledDivider` на `LabeledSeparator`. Переименуйте `textPosition` в `labelPosition` и используйте `tone="danger"` для красного вида маркера непрочитанных. Удалите `noMargin`, поскольку внешние отступы по умолчанию равны нулю. При необходимости сохраните прежний интервал по умолчанию с помощью `style={{ marginBlock: 'var(--t-spacing-3)' }}`.
+
+## Свойства
+
+<LabeledSeparatorReference />
+
+<PageBanner illustration="layout" />

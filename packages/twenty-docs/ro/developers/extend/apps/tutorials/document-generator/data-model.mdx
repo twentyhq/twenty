@@ -3,6 +3,12 @@ title: 1. Model de date
 description: Modelul de documente și șabloane cu obiecte, câmpuri și o relație.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Prezentare generală
+
 Aplicația noastră are nevoie de două obiecte personalizate: **șabloane de documente** (ce să scrie) și
 **documente** (rezultatul generat). Să le definim.
 
@@ -10,15 +16,14 @@ Scaffold fiecare fișier de entitate cu CLI - generează un UUID valid și dosar
 pentru tine:
 
 ```bash filename="Terminal"
-yarn twenty dev:add object
+twenty app add object
 ```
 
 Mai jos arătăm fișierele terminate.
 
 <Note>
-Fiecare "\*_UNIVERSAL_IDENTIFIER" trăieşte în
-`src/constants/universal-identificfiers.ts` şi este importat unde este folosit. Fragmentele
-de mai jos omit acele importuri pentru încurcare - le păstrează-le în propriile fișiere.
+  Fiecare "\*_UNIVERSAL_IDENTIFIER" trăieşte în
+  `src/constants/universal-identificfiers.ts` şi este importat unde este folosit. Fragmentele de cod de mai jos omit acele importuri pentru concizie — păstrați-le în propriile fișiere.
 </Note>
 
 ## Obiectul şablonului
@@ -40,28 +45,54 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
-    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
-    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
-      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
-    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
+    {
+      universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT,
+      name: 'body',
+      label: 'Body',
+      icon: 'IconFileText',
+      description:
+        'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.',
+    },
+    {
+      universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      name: 'target',
+      label: 'Target',
+      icon: 'IconTarget',
       defaultValue: `'PERSON'`,
       options: [
-        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
-          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
-        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
-          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
-      ] },
+        {
+          id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON',
+          label: 'Person',
+          color: 'blue',
+          position: 0,
+        },
+        {
+          id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY',
+          label: 'Company',
+          color: 'green',
+          position: 1,
+        },
+      ],
+    },
   ],
 });
 ```
 
 <Warning>
-Opţiunea `SELECT` **valori** trebuie să fie `UPPER_CASE` (`PERSON", nu `persoană`), şi
-`valoarea implicită`este împachetată în ghilimele suplimentare: `` 'PERSON''.`label\` este ceea ce văd utilizatorii
-.
+  Valorile opțiunii `SELECT` trebuie să fie `UPPER_CASE` (`PERSON`, nu `person`), iar
+  `defaultValue` este încapsulat între ghilimele suplimentare: `` `'PERSON'` ``. `label`
+  este ceea ce văd utilizatorii.
 </Warning>
 
 ## Obiectul documentului
@@ -76,7 +107,12 @@ Fiecare document ar trebui să indice modelul de la care a venit. Relațiile sun
 **bidirecționale** — definiți ambele părți, fiecare în propriul fișier de câmp.
 
 ```ts filename="src/fields/document-template-relation.field.ts"
-import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+} from 'twenty-sdk/define';
 
 // The "many" side: each document belongs to one template.
 export default defineField({
@@ -103,15 +139,15 @@ Vezi [Relations](/ro/developers/extend/apps/data/relations) pentru întregul mod
 
 ## Vezi în Douăzeci
 
-Cu `yarn douăzeci de` rulează, deschide **Setări → Modelul de date**. Ambele obiecte
+Cu `twenty app dev` în execuție, deschideți **Setări → Model de date**. Ambele obiecte
 apar, etichetate cu aplicația ta.
 
 <Frame caption="Ambele obiecte personalizate, deținute de aplicația Document Generator.">
   <img src="/images/docs/developers/extends/apps/document-generator/01-data-model.png" alt="Setările modelului de date care afișează documente și șabloane de documente" />
 </Frame>
 
-Creați un șablon pentru a testa cu - denumiți *Propunere de vânzări*, setați **Ținta**
-*Person*, și lipiți un corp cu câțiva substituenți:
+Creați un șablon pentru testare — denumiți-l *Propunere de vânzare*, setați **Țintă** la
+*Persoană* și lipiți un corp cu câțiva substituenți:
 
 ```text
 Dear {{name.firstName}} {{name.lastName}},
@@ -129,6 +165,11 @@ The Team
 **După acest pas:** aveţi obiecte `documentTemplate` şi `document`, legate de
 o relaţie, şi un şablon din care să se genereze. Apoi, logica care o umple.
 
-<Card title="Următorul: generarea de documente →" icon="bolt" href="/ro/developers/extend/apps/tutorials/document-generator/generating-documents">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ro/developers/extend/apps/tutorials/document-generator/generating-documents" img="/images/user-guide/halftone/card-page-tutorial-documents.svg">
+  <CardTitle>Următorul: generarea documentelor →</CardTitle>
   Scrieți funcția logică care completează șablonul.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-data" />

@@ -1,13 +1,13 @@
 import { msg } from '@lingui/core/macro';
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import {
   type WorkflowManifestFieldReference,
   type WorkflowManifestReferences,
 } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { computeWorkflowWatchedFieldName } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-watched-field-name.util';
 import { buildWorkflowManifestReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util';
 import {
   ApplicationException,
@@ -23,7 +23,6 @@ import {
   type WorkflowWebhookTrigger,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
-import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 import { assertNever } from 'src/utils/assert';
 
@@ -126,18 +125,9 @@ const fromCronTriggerManifestOrThrow = (
 const toWatchedFieldNameOrThrow = (
   field: WorkflowManifestFieldReference,
 ): string => {
-  if (
-    field.type !== FieldMetadataType.RELATION &&
-    field.type !== FieldMetadataType.MORPH_RELATION
-  ) {
-    return field.name;
-  }
+  const watchedFieldName = computeWorkflowWatchedFieldName(field);
 
-  if (
-    !isDefined(field.universalSettings) ||
-    !('relationType' in field.universalSettings) ||
-    field.universalSettings.relationType !== RelationType.MANY_TO_ONE
-  ) {
+  if (!isDefined(watchedFieldName)) {
     throw new ApplicationException(
       `Workflow trigger: ${field.name} cannot be watched, only relations to a single record change on update`,
       ApplicationExceptionCode.INVALID_INPUT,
@@ -147,7 +137,7 @@ const toWatchedFieldNameOrThrow = (
     );
   }
 
-  return computeMorphOrRelationFieldJoinColumnName({ name: field.name });
+  return watchedFieldName;
 };
 
 const fromDatabaseEventTriggerManifestOrThrow = ({

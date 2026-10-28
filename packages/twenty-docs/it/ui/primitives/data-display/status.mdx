@@ -1,0 +1,91 @@
+---
+title: Stato
+description: Mostra uno stato denominato con un indicatore colorato e feedback di caricamento facoltativo.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import StatusReference from '/snippets/ui/generated/data-display/status.mdx';
+
+## Panoramica
+
+`Status` combina un punto colorato, un'etichetta di testo e un indicatore di caricamento facoltativo. Usalo per gli stati del workflow o dei record. Usa [Tag](/it/ui/primitives/data-display/tag) per una categoria senza l'indicatore di stato.
+
+<StoryEmbed storyId="ui-data-display-status--display" title="Esempio di stato" height={90} />
+
+## Utilizzo
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+export const RecordStatus = () => (
+  <Status color="red" weight="medium">
+    Urgent
+  </Status>
+);
+```
+
+`color` è obbligatorio e utilizza la palette del tema. L'etichetta comunica il significato indipendentemente dal colore. L'elemento predefinito è sempre un `span`, anche quando viene fornito un gestore di clic nativo; `weight="medium"` enfatizza il relativo testo.
+
+## Caricamento e annunci
+
+<StoryEmbed storyId="ui-data-display-status--loading" title="Stato durante il salvataggio" height={90} />
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+type SaveStatusProps = { isSaving: boolean };
+
+export const SaveStatus = ({ isSaving }: SaveStatusProps) => (
+  <div role="status">
+    <Status color={isSaving ? 'blue' : 'green'} loading={isSaving}>
+      {isSaving ? 'Saving' : 'Saved'}
+    </Status>
+  </div>
+);
+```
+
+`loading` mostra un caricatore decorativo dopo l'etichetta e imposta per impostazione predefinita `aria-busy` su `true`. Fornisci esplicitamente `aria-busy` quando il workflow circostante gestisce quello stato. Il componente non aggiunge una regione live né modifica automaticamente il proprio testo. Mantieni montato un contenitore `role="status"` quando gli aggiornamenti devono essere annunciati alla tecnologia assistiva e fornisci un'etichetta che descriva lo stato corrente.
+
+## Modifica uno stato
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+type ChangeStatusActionProps = {
+  isUpdating: boolean;
+  onChangeStatus: () => void;
+};
+
+export const ChangeStatusAction = ({
+  isUpdating,
+  onChangeStatus,
+}: ChangeStatusActionProps) => (
+  <Status
+    color="blue"
+    loading={isUpdating}
+    render={
+      <button
+        type="button"
+        disabled={isUpdating}
+        onClick={onChangeStatus}
+        aria-label="Change record status"
+      />
+    }
+  >
+    {isUpdating ? 'Updating' : 'In progress'}
+  </Status>
+);
+```
+
+Componi un proprietario interattivo tramite `render`. Inserisci il relativo gestore di clic, gli attributi nativi, ref e lo stato disabilitato su quel proprietario. Un pulsante reale fornisce l'attivazione tramite focus, puntatore, Invio e Barra spaziatrice. `Status.loading` mostra l'avanzamento; passa `disabled` al pulsante quando l'azione deve attendere. Per la navigazione, esegui il rendering di un link con la relativa destinazione, ad esempio `<a href="/records" />`. I proprietari nativi mantengono l'aspetto di Status. I nodi figli mantengono il testo, le traduzioni e i link intenzionali gestiti dal chiamante.
+
+## Props
+
+I tipi e i valori predefiniti vengono generati dai tipi di componenti pubblici. Sono accettati anche gli attributi nativi e i gestori di eventi.
+
+<StatusReference />
+
+<PageBanner illustration="page-cover-checkbox" />

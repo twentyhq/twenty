@@ -3,6 +3,8 @@ title: Planes de precios
 description: Obtén información sobre los planes de precios de Twenty y cómo cambiar entre ellos.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Resumen
 
 Twenty ofrece precios flexibles para adaptarse a equipos de todos los tamaños, tanto si prefieres alojamiento en la nube como autoalojamiento.
@@ -87,14 +89,18 @@ Las funciones premium solo están disponibles en los planes de Organización (Nu
 2. Haz clic en **Cambiar a facturación mensual**
 3. Ahorra con la facturación mensual
 
-## Obtener una clave Enterprise para Organization (Self-Hosted)
+## Obtenga una clave de Organization
 
-Para usar el plan Organization (Self-Hosted), necesita obtener una clave Enterprise:
+El plan Organization (autohospedado) se ejecuta en su propia infraestructura. Para comenzar, [instale Twenty con Docker Compose](/es/developers/self-host/capabilities/docker-compose) y, a continuación, siga los pasos que se indican a continuación para activar su licencia de Organization.
 
-1. Vaya a **Configuración → Panel de Administración → Enterprise**
+Si ya tiene una instancia autohospedada de Twenty, puede obtener su clave de Organization directamente desde su configuración:
 
-<img src="/images/user-guide/billing/organization-key.png" alt="Clave Enterprise" />
+1. Vaya a **Configuración → Panel de Administración → Organization**
 
-2. Haga clic en **Obtener clave Enterprise**
+<img src="/images/user-guide/billing/organization-key.png" alt="Clave de organización" />
+
+2. Haga clic en **Obtener clave de organización**
 3. Cuando sea redirigido a Stripe, introduzca sus datos de pago y confirme
-4. Cuando se muestre su clave Enterprise, péguela en la página de configuración de Enterprise y active la licencia de Organization
+4. Cuando se muestre su clave de Organization, péguela en la página de configuración de Organization y active la licencia de Organization
+
+<PageBanner illustration="card-page-pricing-plans" />

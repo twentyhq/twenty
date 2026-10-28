@@ -3,15 +3,19 @@ title: Conexiuni
 description: Permite aplicației tale să acționeze în numele unui utilizator în servicii ale terților prin OAuth.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Conexiunile sunt acreditări pe care un utilizator le deține pentru un serviciu extern (Linear, GitHub, Slack, ...). Aplicația ta declară **cum** sunt obținute acele acreditări — un **furnizor de conexiune** — și le folosește în timpul execuției pentru a efectua apeluri autentificate către API-ul terț.
 
-În prezent este acceptat doar OAuth 2.0. Tipurile viitoare de acreditări (jetoane de acces personale, chei API, autentificare de bază) se vor integra în aceeași interfață — aplicațiile care deja folosesc `defineConnectionProvider({ type: 'oauth', ... })` nu vor trebui să migreze.
+OAuth 2.0 este integrat. Serviciile cu propriul flux de conectare — o pagină de autentificare găzduită, un ID de cont transmis prin webhook — folosesc un furnizor `custom`, unde aplicația ta gestionează fluxul, iar Twenty păstrează utilizatorul, spațiul de lucru și conexiunea salvată. Tipurile viitoare de acreditări (jetoane de acces personale, chei API, autentificare de bază) se vor integra în aceeași interfață — aplicațiile care deja folosesc `defineConnectionProvider({ type: 'oauth', ... })` nu vor trebui să migreze.
 
 <AccordionGroup>
 
 <Accordion title="defineConnectionProvider" description="Declară cum sunt obținute conexiunile aplicației tale">
 
-Un furnizor de conexiune descrie handshake-ul OAuth de care are nevoie aplicația ta. Utilizatorul face clic pe "Adaugă conexiune" în setările aplicației tale, completează ecranul de consimțământ al furnizorului și este creată o înregistrare `ConnectedAccount` în spațiul său de lucru.
+Un furnizor de conexiune descrie handshake-ul OAuth de care are nevoie aplicația ta. Pentru un furnizor `WORKSPACE` (implicit), un membru face clic pe "Adaugă conexiune" în setările aplicației tale, completează ecranul de consimțământ al furnizorului și este creată o înregistrare `ConnectedAccount` în spațiul său de lucru. Consultă „Conexiuni de spațiu de lucru sau personale” pentru furnizorii `USER`.
 
 O configurație funcțională are nevoie de **două fișiere** — furnizorul de conexiune și o declarație `serverVariables` corespunzătoare în `defineApplication` care conține acreditările clientului OAuth.
 
@@ -23,7 +27,11 @@ export default defineConnectionProvider({
   name: 'linear',
   displayName: 'Linear',
   icon: 'IconBrandLinear',
+  // Optional: a logo bundled in your app's public/ folder, shown next to the
+  // provider in the app's General tab.
+  logo: 'public/linear-logomark.svg',
   type: 'oauth',
+  scope: 'WORKSPACE',
   oauth: {
     authorizationEndpoint: 'https://linear.app/oauth/authorize',
     tokenEndpoint: 'https://api.linear.app/oauth/token',
@@ -41,6 +49,10 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app that returns a stable id for the
+  // upstream account, run before the tokens are saved. See "Identify the
+  // connected account".
+  // identifyAccountLogicFunction: { universalIdentifier: '2f1e0d9c-...-...' },
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
   // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
@@ -78,17 +90,246 @@ export default defineApplication({
 Puncte cheie:
 
 * `name` este șirul identificator unic folosit în `listConnections({ providerName })` (kebab-case, trebuie să corespundă `^[a-z][a-z0-9-]*$`).
-* `displayName` apare în fila de setări a aplicației și în lista de instrumente AI.
+* `displayName` apare în fila General a aplicației și în lista de instrumente AI.
+* `scope` stabilește cine se conectează: `'WORKSPACE'` (implicit) pentru conexiuni partajate cu întregul spațiu de lucru, `'USER'` pentru conexiunile pe care fiecare membru le realizează pentru sine. Consultă mai jos „Conexiuni de spațiu de lucru sau personale”.
+* `logo` este o cale către un activ inclus în pachet în folderul `public/` al aplicației dvs., servit prin activele publice ale aplicației. Când este omis, fila General revine la un substituent generat din `displayName`.
 * `clientIdVariable` / `clientSecretVariable` sunt **nume**, nu valori — trebuie să se potrivească cheilor declarate în `defineApplication.serverVariables`. Valorile reale `client_id` și `client_secret` sunt introduse de administratorul serverului prin interfața de înregistrare a aplicației și nu sunt niciodată comise în repo-ul tău.
 * Folosește `serverVariables` (nu `applicationVariables`) — acreditările OAuth sunt la nivel de server și există o singură aplicație OAuth pentru fiecare server Twenty.
-* Până când ambele `serverVariables` sunt completate, fila de setări a aplicației afișează un indiciu "necesită administrator de server" și butonul "Adaugă conexiune" este dezactivat.
-* `type: 'oauth'` este singura valoare acceptată în prezent. Discriminatorul este compatibil cu versiuni viitoare: tipurile viitoare (`'pat'`, `'api-key'`, ...) vor adăuga blocuri noi de sub-configurație alături de `oauth`.
+* Până când ambele `serverVariables` sunt completate, fila General a aplicației afișează un indiciu „necesită administrator de server”, iar butonul „Adaugă conexiune” este dezactivat.
+* `type` este `'oauth'` (cu un bloc `oauth`) sau `'custom'` (cu un bloc `custom`, consultați "Fluxuri de conexiune personalizate"). Discriminatorul este compatibil cu versiuni viitoare: tipurile viitoare (`'pat'`, `'api-key'`, ...) vor adăuga blocuri noi de sub-configurație alături de acestea.
 
 URL-ul de callback OAuth pe care furnizorul tău trebuie să îl includă pe lista albă este:
 
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="Fluxuri de conectare personalizate" description="Conectați servicii care nu sunt furnizori OAuth">
+
+Unele servicii conectează conturi prin propriul flux, în loc de OAuth: Unipile, Plaid sau Merge trimit utilizatorul la o pagină găzduită, apoi raportează contul conectat la un URL pe care li l-ați furnizat, uneori de pe serverele lor, nu din browser. Declarați-le cu `type: 'custom'` și două funcții logice:
+
+```ts src/connection-providers/linkedin-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+export default defineConnectionProvider({
+  universalIdentifier: '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
+  name: 'linkedin',
+  displayName: 'LinkedIn',
+  type: 'custom',
+  scope: 'USER',
+  custom: {
+    authorizeLogicFunction: {
+      universalIdentifier: 'c4a1e2b3-6d5f-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    callbackLogicFunction: {
+      universalIdentifier: 'd5b2f3c4-7e6a-4b8c-9d0e-1f2a3b4c5d6e',
+    },
+  },
+  onConnectLogicFunction: {
+    universalIdentifier: 'e6c3a4d5-8f7b-4c9d-0e1f-2a3b4c5d6e7f',
+  },
+});
+```
+
+**Adăugarea conexiunii** și **Reconectarea** funcționează ca pentru OAuth. Twenty verifică dacă membrul se poate conecta, semnează o stare cu durată scurtă de viață pentru încercare și rulează `authorizeLogicFunction` cu un `callbackUrl` care o conține. Returnați unde să fie trimis utilizatorul:
+
+```ts src/logic-functions/handlers/linkedin-authorize-handler.ts
+import { type AuthorizeConnectionPayload } from 'twenty-sdk/logic-function';
+
+export const linkedinAuthorizeHandler = async ({
+  callbackUrl,
+}: AuthorizeConnectionPayload) => {
+  const response = await fetch(
+    `${process.env.UNIPILE_DSN}/api/v1/hosted/accounts/link`,
+    {
+      method: 'POST',
+      headers: {
+        'X-API-KEY': process.env.UNIPILE_API_KEY ?? '',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        type: 'create',
+        providers: ['LINKEDIN'],
+        api_url: process.env.UNIPILE_DSN,
+        expiresOn: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+        // The browser comes back here, and the account id is posted here.
+        success_redirect_url: callbackUrl,
+        failure_redirect_url: callbackUrl,
+        notify_url: callbackUrl,
+      }),
+    },
+  );
+
+  const { url } = await response.json();
+
+  return { authorizationUrl: url };
+};
+```
+
+Transmiteți `callbackUrl` serviciului fără modificări. Twenty o acceptă ca redirecționare din browser (`GET`) și ca notificare de la server (`POST`) și rulează `callbackLogicFunction` pentru fiecare solicitare cu metoda sa, parametrii de interogare (fără `state`), antetele, corpul analizat și `rawBody` (octeții exacți ai solicitării, `null` pentru `GET`). Returnează contul pe care îl dovedește cererea sau `null` atunci când nu conține niciunul — de obicei, când browserul revine, în timp ce ID-ul contului este transmis prin notificare:
+
+```ts src/logic-functions/handlers/linkedin-callback-handler.ts
+import { type ConnectionCallbackPayload } from 'twenty-sdk/logic-function';
+
+export const linkedinCallbackHandler = async ({
+  httpMethod,
+  body,
+}: ConnectionCallbackPayload) => {
+  if (httpMethod !== 'POST') {
+    return null;
+  }
+
+  const { account_id: accountId } = body as { account_id: string };
+
+  // Never trust the payload alone: confirm the account with the service.
+  const account = await fetchUnipileAccount(accountId);
+
+  return { externalAccountId: account.id, handle: account.name };
+};
+```
+
+Starea semnată din `callbackUrl` dovedește doar că solicitarea conține acel URL, nu că serviciul a trimis-o. Când serviciul își semnează notificările, verificați semnătura pentru `rawBody` înainte de a avea încredere în corp. Antetele sunt scrise cu litere mici, iar `cookie`, `authorization` și `proxy-authorization` nu sunt niciodată transmise:
+
+```ts src/logic-functions/handlers/hosted-callback-handler.ts
+import { createHmac, timingSafeEqual } from 'node:crypto';
+
+import { type ConnectionCallbackPayload } from 'twenty-sdk/logic-function';
+
+export const hostedCallbackHandler = async ({
+  httpMethod,
+  headers,
+  rawBody,
+}: ConnectionCallbackPayload) => {
+  if (httpMethod !== 'POST' || rawBody === null) {
+    return null;
+  }
+
+  const expected = createHmac('sha256', process.env.WEBHOOK_SECRET ?? '')
+    .update(rawBody)
+    .digest();
+  const received = Buffer.from(headers['x-signature'] ?? '', 'hex');
+
+  if (received.length !== expected.length || !timingSafeEqual(received, expected)) {
+    throw new Error('Invalid notification signature');
+  }
+
+  const { account_id: accountId } = JSON.parse(rawBody) as { account_id: string };
+
+  return { externalAccountId: accountId };
+};
+```
+
+Callback-ul returnează:
+
+| Câmp                | Descriere                                                                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `externalAccountId` | ID-ul serviciului pentru cont. Un callback ulterior pentru același ID și același membru actualizează acea conexiune în loc să adauge una a doua. |
+| `handle`            | Etichetă opțională afișată pentru conexiune. Implicit, este adresa de e-mail a membrului.                                                        |
+| `accessToken`       | Token opțional per cont, stocat criptat și returnat de `getConnection`. Omiteți-l când aplicația dvs. apelează serviciul cu propria cheie.       |
+
+Ambele funcții rulează în timp ce membrul așteaptă o redirecționare, astfel încât timpul lor de expirare este limitat la 10 secunde. O eroare sau un rezultat returnat nevalid anulează conexiunea: nu se salvează nimic și `onConnectLogicFunction` nu rulează. `onConnectLogicFunction` rulează când o conexiune este creată, reconectată sau restaurată, dar nu rulează din nou când serviciul raportează un cont deja conectat. Starea expiră după o oră, astfel încât o notificare sosită mai târziu este respinsă. Serviciile reîncearcă frecvent notificările: o repetare pentru un cont deja conectat actualizează acea conexiune, astfel încât returnarea din nou a aceluiași cont este sigură.
+
+Twenty nu reîmprospătează și nu revocă conexiunile personalizate. Eliberați ceea ce deține serviciul pentru cont în `onDisconnectLogicFunction`.
+
+`type` al unui furnizor, precum `scope` al acestuia, nu se poate modifica după ce este sincronizat: pentru a muta un serviciu între `oauth` și `custom`, declarați un furnizor nou cu un `universalIdentifier` nou.
+
+Furnizorii personalizați sunt disponibili în Twenty 2.52.0.
+
+</Accordion>
+
+<Accordion title="Identificați contul conectat" description="Împiedicați o reconectare să schimbe în mod silențios conturile sursă">
+
+Când un utilizator face clic pe **Reconnect**, nimic nu îl împiedică să autorizeze un alt cont sursă decât cel cu care a fost realizată conexiunea: spațiul de lucru Slack B în locul spațiului de lucru A, o altă organizație GitHub, un alt cont Google. Fără o modalitate de a le diferenția, Twenty ar suprascrie tokenurile lui A cu cele ale lui B, iar tot ce a construit aplicația dvs. pe baza acelei conexiuni ar începe în mod silențios să comunice cu B.
+
+Setați `identifyAccountLogicFunction` la o funcție logică din aceeași aplicație care returnează un ID stabil pentru contul asociat tokenului proaspăt emis:
+
+```ts src/connection-providers/slack-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+import { SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  identifyAccountLogicFunction: {
+    universalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+**Când se execută.** Sincron, în interiorul callbackului OAuth, imediat după ce codul de autorizare este schimbat pentru tokenuri și **înainte** ca orice element să fie salvat. Utilizatorul așteaptă redirecționarea, astfel că, atunci când aplicația este instalată sau sincronizată, Twenty limitează `timeoutSeconds` al funcției la 10, indiferent de ce declară manifestul; păstrați-l la o singură cerere către endpointul furnizorului „cine sunt eu”. Hookul on-connect, dacă există, rulează totuși ulterior, după ce conexiunea este salvată.
+
+**Încărcătură utilă.** Handlerul primește tokenul de acces provizoriu. Nu a fost încă persistat, deci `getConnection` nu îl poate returna; utilizați-l direct și nu îl înregistrați în jurnal.
+
+```ts
+type IdentifyAccountPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  accessToken: string;
+};
+```
+
+**Rezultat.** Returnați id-ul contului și, opțional, un handle de afișat:
+
+```ts
+type IdentifyAccountResult = {
+  externalAccountId: string | null; // non-empty, at most 512 characters; null opts out
+  handle?: string; // non-empty when present
+};
+```
+
+* `externalAccountId` trebuie să fie stabil pe durata de viață a contului din amonte (un id de echipă, un id de organizație, un id de utilizator), niciodată un nume pe care utilizatorul îl poate modifica. Twenty îl elimină de spațiile de la început și de la sfârșit și îl stochează în conexiune la prima conectare.
+* `handle`, atunci când este returnat, înlocuiește handle-ul pe care Twenty l-ar deduce altfel (e-mailul OIDC din `id_token` sau e-mailul utilizatorului care se conectează). Returnați ceva ce recunoaște un utilizator, cum ar fi numele spațiului de lucru Slack.
+* Returnați `{ externalAccountId: null }` atunci când furnizorul nu are un id stabil de oferit. Twenty se comportă apoi ca și cum nu ar fi fost declarată nicio funcție de identificare: nu este stocat niciun id, o reconectare șterge orice id stocat anterior, iar reconectările nu sunt verificate. Un simplu `null` sau lipsa unei valori returnate este tratată ca o eroare, astfel încât un handler care uită să returneze o valoare nu poate dezactiva verificarea în mod silențios.
+* Dacă funcția generează o excepție, expiră sau returnează orice altceva, conexiunea **nu** este salvată, iar utilizatorul revine pe pagina de setări cu o eroare. Generați o excepție doar atunci când chiar nu puteți identifica contul.
+
+**Refuzarea reconectării.** La o reconectare, Twenty compară `externalAccountId` returnat cu cel stocat în conexiune. Dacă diferă, callback-ul este refuzat înainte de a se scrie ceva: tokenurile, handle-ul și domeniul de aplicare existente rămân neschimbate, hook-ul on-connect nu se execută, iar utilizatorul vede ce cont a autorizat și cărui cont îi aparține conexiunea. Conexiunile create înainte ca aplicația dvs. să declare funcția nu au încă un id stocat; următoarea lor reconectare îl stochează.
+
+Twenty nu elimină duplicatele pe baza `externalAccountId`: conectarea aceluiași cont din amonte de două ori prin **Adăugare conexiune** creează două conexiuni. Id-ul este expus în `listConnections` și `getConnection`, astfel încât o aplicație care dorește o conexiune per cont din amonte poate detecta ea însăși duplicatele (de exemplu, în hookul său on-connect).
+
+**Scrierea funcției.** Majoritatea furnizorilor expun un singur endpoint care descrie tokenul curent. Pentru Slack, acesta este `auth.test`, care returnează spațiul de lucru (`team_id`, `team`) și utilizatorul din spatele tokenului:
+
+```ts src/logic-functions/slack-identify-account.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type {
+  IdentifyAccountPayload,
+  IdentifyAccountResult,
+} from 'twenty-sdk/logic-function';
+
+import { SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineLogicFunction({
+  universalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  name: 'slack-identify-account',
+  timeoutSeconds: 10,
+  handler: async ({
+    accessToken,
+  }: IdentifyAccountPayload): Promise<IdentifyAccountResult> => {
+    const response = await fetch('https://slack.com/api/auth.test', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const { ok, error, team_id, team } = await response.json();
+
+    if (!ok) {
+      throw new Error(`auth.test failed: ${error}`);
+    }
+
+    return { externalAccountId: team_id, handle: team };
+  },
+});
+```
+
+Alți furnizori urmează același model, indiferent dacă endpointul lor „cine sunt eu” este REST sau GraphQL. Generați o excepție atunci când furnizorul respinge tokenul și returnați id-ul ca șir: convertiți id-urile numerice, precum id-urile de utilizator GitHub, cu `String(id)`.
+
+Identificarea este disponibilă în Twenty 2.48.0. Dacă aplicația dvs. se bazează pe aceasta, declarați `"engines": { "twenty": ">=2.48.0" }` în `package.json` al acesteia.
 
 </Accordion>
 
@@ -126,9 +367,9 @@ De acolo folosește `getConnection(connectedAccountId)` pentru a citi tokenul de
 
 </Accordion>
 
-<Accordion title="Rulează o funcție logică la deconectare" description="Curăță resursele atunci când o conexiune este eliminată">
+<Accordion title="Rulează o funcție logică la deconectare" description="Curăță resursele atunci când o conexiune este deconectată sau eliminată.">
 
-Orice revendică o aplicație la momentul conectării trebuie eliberat atunci când conexiunea este eliminată. O integrare Slack care revendică un `team_id` la conectare, de exemplu, trebuie să elibereze acea revendicare astfel încât un alt spațiu de lucru să poată conecta aceeași echipă Slack. Setează `onDisconnectLogicFunction` pentru a face referire la o funcție logică din aceeași aplicație, iar aceasta rulează imediat după ce `ConnectedAccount` este șters.
+Orice revendică o aplicație la momentul conectării trebuie eliberat atunci când conexiunea este eliminată. O integrare Slack care revendică un `team_id` la conectare, de exemplu, trebuie să elibereze acea revendicare astfel încât un alt spațiu de lucru să poată conecta aceeași echipă Slack. Setează `onDisconnectLogicFunction` pentru a face referire la o funcție logică din aceeași aplicație, iar aceasta rulează când conexiunea este deconectată și din nou când este ștearsă.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -146,7 +387,7 @@ export default defineConnectionProvider({
 });
 ```
 
-La fel ca hook-ul on-connect, acesta rulează **asincron în spațiul de lucru care se deconectează** și nu blochează niciodată deconectarea. Handler-ul primește aceeași structură de payload:
+Spre deosebire de hook-ul la conectare, aceasta rulează **direct în spațiul de lucru în curs de deconectare**, fără reîncercări: o eroare este interceptată, iar deconectarea sau ștergerea se finalizează totuși. Handler-ul primește aceeași structură de payload:
 
 ```ts
 type OnDisconnectPayload = {
@@ -156,9 +397,9 @@ type OnDisconnectPayload = {
 };
 ```
 
-`ConnectedAccount` nu mai există atunci când rulează hook-ul, astfel încât `getConnection(connectedAccountId)` nu se mai rezolvă. Tot ceea ce îi este necesar procesului de curățare (un `team_id`, un ID extern de abonament) trebuie să fi fost scris în [key-value store](/ro/developers/extend/apps/logic/key-value-store) la momentul conectării, indexat după `connectedAccountId`.
+La deconectare, `ConnectedAccount` și tokenul său sunt încă prezente, astfel încât `getConnection(connectedAccountId)` se rezolvă, iar handlerul poate elibera orice a înregistrat de la distanță. În cazul unei ștergeri, datele de autentificare pot fi deja eliminate (un membru poate șterge o conexiune pe care a deconectat-o anterior), așa că fă gestionarul idempotent și păstrează starea de care are nevoie (un `team_id`, un ID extern de abonament) în [magazinul cheie-valoare](/ro/developers/extend/apps/logic/key-value-store), scrisă la conectare și având drept cheie `connectedAccountId`. Păstrează-l scurt: rulează în cadrul cererii, astfel încât `timeoutSeconds` reprezintă limita superioară a duratei acestei cereri.
 
-Hook-ul este declanșat atunci când o conexiune este eliminată în mod direct. Dezinstalarea aplicației elimină conexiunile acesteia printr-un mecanism în cascadă în baza de date, astfel încât hook-ul nu rulează în acest caz. Declară un `uninstallLogicFunction` pe `defineApplication` pentru acel flux: acesta rulează înainte ca metadatele aplicației să fie șterse, astfel încât poate apela în continuare `listConnections` și poate curăța tot ce a mai rămas.
+Hook-ul este declanșat atunci când o conexiune este deconectată sau eliminată de la sine. Dezinstalarea aplicației elimină conexiunile acesteia printr-un mecanism în cascadă în baza de date, astfel încât hook-ul nu rulează în acest caz. Declară un `uninstallLogicFunction` pe `defineApplication` pentru acel flux: acesta rulează înainte ca metadatele aplicației să fie șterse, astfel încât poate apela în continuare `listConnections` și poate curăța tot ce a mai rămas.
 
 </Accordion>
 
@@ -180,10 +421,10 @@ export const createLinearIssueHandler = async (input: {
   const connections = await listConnections({ providerName: 'linear' });
 
   // Workspace-shared credentials win when present; fall back to the first
-  // user-visibility one. For HTTP-route triggers you typically pick the
+  // personal one. For HTTP-route triggers you typically pick the
   // request user's connection via event.userWorkspaceId instead.
   const connection =
-    connections.find((c) => c.visibility === 'workspace') ?? connections[0];
+    connections.find((c) => c.scope === 'WORKSPACE') ?? connections[0];
 
   if (!connection) {
     return {
@@ -211,16 +452,21 @@ export const createLinearIssueHandler = async (input: {
 
 Fiecare conexiune are:
 
-| Câmp              | Descriere                                                                                                                                                                                                                                    |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`              | ID unic al înregistrării; pasează-l la `getConnection(id)` pentru a reobține acea înregistrare                                                                                                                                               |
-| `visibility`      | `'user'` (privată pentru un membru al spațiului de lucru) sau `'workspace'` (partajată cu toți membrii)                                                                                                                                      |
-| `scopes`          | Permisiunile OAuth acordate de furnizorul upstream (distincte de `visibility` — nu au legătură)                                                                                                                                              |
-| `userWorkspaceId` | ID-ul userWorkspace al deținătorului — util pentru a alege "conexiunea utilizatorului care face cererea" în declanșatoarele de rută HTTP                                                                                                     |
-| `accessToken`     | Token de acces OAuth proaspăt (reîmprospătat automat dacă a expirat)                                                                                                                                                                         |
-| `name`            | Numele afișat al conexiunii (derivat automat la callback-ul OAuth, poate fi redenumit de utilizator)                                                                                                                                         |
-| `handle`          | Emailul contului din amonte conectat, actualizat la fiecare reconectare; rezolvat din `id_token` OIDC a revenit la schimbul tokenului, revenind la e-mailul de conectare a douăzeci de utilizatori atunci când furnizorul nu returnează unul |
-| `authFailedAt`    | Setat când cea mai recentă reîmprospătare a eșuat; utilizatorul trebuie să se reconecteze                                                                                                                                                    |
+| Câmp                | Descriere                                                                                                                                                                                                                                                                        |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                | ID unic al înregistrării; pasează-l la `getConnection(id)` pentru a reobține acea înregistrare                                                                                                                                                                                   |
+| `scope`             | `'USER'` (aparține membrului care se conectează) sau `'WORKSPACE'` (partajată cu toți membrii)                                                                                                                                                                                   |
+| `visibility`        | Depreciat: `scope` cu litere mici (`'user'` sau `'workspace'`). Folosește în schimb `scope`                                                                                                                                                                                      |
+| `scopes`            | Permisiunile OAuth acordate de furnizorul din amonte (distincte de `scope` — nu au legătură)                                                                                                                                                                                     |
+| `userWorkspaceId`   | ID-ul userWorkspace al deținătorului — util pentru a alege "conexiunea utilizatorului care face cererea" în declanșatoarele de rută HTTP                                                                                                                                         |
+| `workspaceMemberId` | ID-ul membrului spațiului de lucru al proprietarului sau `null` dacă acesta a părăsit între timp spațiul de lucru                                                                                                                                                                |
+| `providerType`      | `'oauth'` sau `'custom'`, tipul furnizorului de conexiune. Verificați-l pentru a restrânge `accessToken`                                                                                                                                                                         |
+| `accessToken`       | Token de acces OAuth actual (reîmprospătat automat dacă a expirat), setat întotdeauna când `providerType` este `'oauth'`. Pentru `'custom'`, `null` cu excepția cazului în care callback-ul a returnat unul                                                                      |
+| `name`              | Numele afișat al conexiunii (derivat automat la callback-ul OAuth, poate fi redenumit de utilizator)                                                                                                                                                                             |
+| `identificator`     | Eticheta contului din amonte conectat, reîmprospătată la fiecare reconectare: `handle` returnat de funcția de identificare când există unul, altfel e-mailul din OIDC `id_token` returnat la schimbul de tokenuri, revenind la e-mailul utilizatorului Twenty care se conectează |
+| `externalAccountId` | Id stabil al contului din amonte returnat de funcția de identificare sau `null` atunci când furnizorul nu declară niciunul ori conexiunea este anterioară acesteia. Nu este unic: utilizați-l pentru a elimina dvs. duplicatele de conexiuni                                     |
+| `authFailedAt`      | Setat atunci când cea mai recentă reîmprospătare a eșuat sau când aplicația a raportat acreditarea ca fiind expirată prin `reportConnectionAuthFailure`; utilizatorul trebuie să se reconecteze                                                                                  |
+| `authFailedReason`  | Explicație ușor de înțeles pentru `authFailedAt`, atunci când raportorul a furnizat una; afișată pe pagina cu detaliile conexiunii din setări                                                                                                                                    |
 
 Puncte cheie:
 
@@ -230,26 +476,67 @@ Puncte cheie:
 
 </Accordion>
 
-<Accordion title="Vizibilitate per utilizator vs partajată la nivel de spațiu de lucru" description="Cum aleg utilizatorii între acreditări private și partajate">
+<Accordion title="reportConnectionAuthFailure" description="Indică platformei că o acreditare a expirat">
 
-Când un utilizator face clic pe "Adaugă conexiune", i se solicită să aleagă o vizibilitate:
+Platforma setează singură `authFailedAt` numai atunci când reîmprospătarea OAuth eșuează. Furnizorii ale căror tokenuri nu sunt reîmprospătate niciodată (de exemplu, un token de bot Slack) eșuează doar în momentul apelului, în gestionarele dvs., astfel încât rândul conexiunii din setări va continua să afișeze **Conectat**, în timp ce fiecare apel eșuează. Când codul dvs. întâlnește o respingere definitivă a autentificării, raportați-o:
 
-* **Doar pentru mine** — acreditarea este privată pentru utilizatorul care se conectează. Orice funcție logică apelată în numele lor (declanșator de rută HTTP cu `isAuthRequired: true`) o vede; declanșatoarele cron și evenimentele din bază de date nu.
-* **Partajată la nivel de spațiu de lucru** — orice membru al spațiului de lucru poate folosi acreditarea. Declanșatoarele cron / din bază de date o văd, de asemenea, deoarece nu au un utilizator al cererii.
+```ts
+import { reportConnectionAuthFailure } from 'twenty-sdk/logic-function';
 
-Folosește-o pe cea potrivită pentru fiecare handler:
+await reportConnectionAuthFailure({
+  connectionId: connection.id,
+  reason:
+    'Slack rejected the stored token (invalid_auth). Reconnect to restore the integration.',
+});
+```
+
+Aceasta setează `authFailedAt` și motivul opțional pentru conexiune. Rândul din setări devine **Este necesară reconectarea** cu un buton Reconectare, pagina cu detaliile conexiunii afișează motivul, iar `getConnection` începe să lanseze `AppConnectionAuthFailedError` pentru acel rând. Indicatorul și motivul se șterg automat când utilizatorul se reconectează. Un `reason` mai lung de 1000 de caractere este respins, așa că trunchiați datele utile ale furnizorului înainte de a le transmite.
+
+Raportați numai eșecurile pe care o reconectare le-ar remedia efectiv (o respingere de tip `invalid_auth` de la furnizor), niciodată erorile de rețea tranzitorii. O aplicație își poate raporta numai propriile conexiuni, iar un utilizator al cererii își poate raporta numai propriile acreditări personale.
+
+Mutația din spatele acestei funcții auxiliare este livrată odată cu Twenty 2.40.0, astfel că apelarea ei către un server mai vechi eșuează. Dacă aplicația dvs. o utilizează, declarați dependența în `package.json`: `"engines": { "twenty": ">=2.40.0" }`.
+
+</Accordion>
+
+<Accordion title="Conexiuni de spațiu de lucru sau personale" description="Alege cine se conectează cu domeniul de aplicare al furnizorului">
+
+Fiecare conexiune are unul dintre două domenii de aplicare:
+
+* **Partajată la nivel de spațiu de lucru** (`'WORKSPACE'`) — orice membru al spațiului de lucru poate folosi acreditarea. Declanșatoarele cron / din bază de date o văd, de asemenea, deoarece nu au un utilizator al cererii.
+* **Doar pentru mine** (`'USER'`) — acreditarea aparține membrului care se conectează. În rulările efectuate în numele unui membru (declanșator de rută HTTP cu `isAuthRequired: true`), `listConnections` returnează conexiunile partajate plus conexiunile proprii ale acelui membru, iar `findConnectionForRequest` alege conexiunea personală a membrului, recurgând la una partajată atunci când acesta nu are niciuna. În rulările fără un utilizator al cererii (de exemplu, declanșatoare cron), `listConnections` returnează fiecare conexiune, inclusiv conexiunile personale ale fiecărui membru.
+
+`scope` al furnizorului stabilește pe care îl primesc noile sale conexiuni:
+
+* `scope: 'WORKSPACE'` (implicit) — aplicația funcționează cu conexiuni partajate cu spațiul de lucru. **Adăugare conexiune** în setările spațiului de lucru ale aplicației creează o conexiune partajată în spațiul de lucru.
+* `scope: 'USER'` — fiecare membru își conectează propriul cont, creând conexiuni personale. Membrii le adaugă, le reconectează și le elimină din pagina aplicației, la **Setări > Utilizator > Preferințe aplicații**, ceea ce necesită permisiunea `CONNECTED_ACCOUNTS` (Aplicații utilizator). Setările spațiului de lucru ale aplicației nu au un buton **Adăugare conexiune** pentru un furnizor `USER`.
+
+<Note>
+  **Preferințe aplicații** nu este încă activată în fiecare spațiu de lucru: acolo unde nu este activată,
+  membrii nu au unde să adauge o conexiune `USER`, așa că nu vă bazați pe una pentru
+  o funcționalitate de care fiecare spațiu de lucru are nevoie acum.
+</Note>
+
+Un furnizor are exact un domeniu de aplicare. Dacă aplicația ta are nevoie atât de o acreditare partajată, cât și de câte una pentru fiecare membru pentru același serviciu (de exemplu, un token de bot și contul propriu al fiecărui membru), declară doi furnizori.
+
+O conexiune are întotdeauna scopul furnizorului său, iar scopul unui furnizor face parte din identitatea sa: o versiune ulterioară nu poate modifica `scope` al unui furnizor existent, iar actualizarea este refuzată dacă încearcă acest lucru. Pentru a muta un serviciu dintr-un scop în altul, declarați un furnizor nou cu un `universalIdentifier` nou și eliminați-l pe cel vechi. Actualizarea elimină apoi furnizorul vechi și fiecare conexiune realizată cu acesta prin fluxul obișnuit de deconectare (`onDisconnectLogicFunction`, revocarea tokenului, curățarea canalului), iar membrii se conectează din nou prin noul furnizor.
+
+Adăugarea sau reconectarea unei conexiuni **Doar pentru mine** necesită permisiunea `CONNECTED_ACCOUNTS`, iar adăugarea sau reconectarea uneia **partajate în spațiul de lucru** necesită permisiunea `APPLICATIONS`.
+
+Folosește conexiunea potrivită pentru fiecare handler:
 
 ```ts
 // HTTP-route trigger — prefer the request user's own connection.
 const conn =
   connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
-  connections.find((c) => c.visibility === 'workspace');
+  connections.find((c) => c.scope === 'WORKSPACE');
 
 // Cron trigger — no request user; only shared credentials are sensible.
-const conn = connections.find((c) => c.visibility === 'workspace');
+const conn = connections.find((c) => c.scope === 'WORKSPACE');
 ```
 
 Sunt permise mai multe conexiuni per (utilizator, furnizor), astfel încât același utilizator poate avea "Personal Linear" și "Work Linear" una lângă alta.
+
+Domeniul de aplicare al furnizorului este disponibil în Twenty 2.49.0. Dacă aplicația ta declară `scope`, declară `"engines": { "twenty": ">=2.49.0" }` în `package.json` al acesteia. În aceeași versiune, `scope` al unei conexiuni înlocuiește `visibility`, care rămâne disponibil ca alias depreciat cu litere mici. `listConnections` și `getConnection` din `twenty-sdk` 2.49.0 citesc `scope`, astfel încât aplicațiile construite cu acesta necesită un server 2.49.0.
 
 </Accordion>
 
@@ -261,8 +548,10 @@ Pentru fiecare furnizor de conexiune, administratorul serverului trebuie mai în
 2. Setează **Redirect URI** la `\<SERVER_URL>/auth/apps/callback`.
 3. Copiază **Client ID** și **Client Secret** generate.
 4. Deschide aplicația instalată în Twenty ca administrator de server → setează valorile pe `serverVariables` corespunzătoare.
-5. Membrii spațiului de lucru pot apoi să adauge conexiuni din secțiunea **Conexiuni** a fiecărei aplicații.
+5. Membrii spațiului de lucru pot apoi să adauge conexiuni la furnizori `WORKSPACE` din secțiunea **Conexiuni** a fiecărei aplicații.
 
 </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="card-page-connections" />

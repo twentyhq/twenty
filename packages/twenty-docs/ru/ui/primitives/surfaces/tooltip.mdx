@@ -1,0 +1,167 @@
+---
+title: Подсказка
+description: Показывает дополнительную информацию при наведении указателя или фокусировке на триггере.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TooltipReference from '/snippets/ui/generated/surfaces/tooltip.mdx';
+
+## Обзор
+
+Используйте `Tooltip` для краткого пояснения элемента управления или усечённого текста. Необходимая информация должна быть видимой, элементы управления должны иметь доступное имя; используйте [Popover](/ru/ui/primitives/surfaces/popover), если содержимое включает ссылки, кнопки или другие элементы управления.
+
+<StoryEmbed storyId="ui-surfaces-tooltip--display" title="Пример всплывающей подсказки" height={180} />
+
+## Использование
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ExportHelp = () => (
+  <Tooltip content="Download the visible records as a CSV file" side="top">
+    <Text render={<span />}>
+      <Button>Export records</Button>
+    </Text>
+  </Tooltip>
+);
+```
+
+Удобный компонент принимает один элемент-триггер в качестве `children`. Нативные элементы получают атрибуты триггера, обработчики событий и ref напрямую. Пользовательские компоненты-триггеры должны перенаправлять их все. Элемент-обёртка также работает с компонентом, который не перенаправляет все свойства триггера.
+
+При наведении всплывающая подсказка открывается через `delay` миллисекунд; по умолчанию используется `600`. При фокусе с клавиатуры она открывается немедленно. По умолчанию `closeDelay` равен `0`; наведение на всплывающее окно сохраняет его открытым, если не задан `disableHoverablePopup`. Escape закрывает её.
+
+## Управляемое состояние
+
+Используйте `open` и `onOpenChange` вместе, когда приложению принадлежит управление видимостью. Используйте `defaultOpen` только для задания начальной видимости неуправляемой всплывающей подсказки.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ControlledExportHelp = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Tooltip
+      content="Download the visible records as a CSV file"
+      open={open}
+      onOpenChange={setOpen}
+      delay={300}
+    >
+      <span>
+        <Button>Export records</Button>
+      </span>
+    </Tooltip>
+  );
+};
+```
+
+## Расширенное содержимое и композиция
+
+Сокращённый вариант принимает `description` и `startIcon` наряду с `content`. Пользовательское содержимое в виде узла отображается как задано, если описание или значок не запрашивают макет заголовка.
+
+```tsx
+import { IconInfoCircle } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ExportDetails = () => (
+  <Tooltip
+    content="Export visible records"
+    description="Only records matching your current filters are included."
+    startIcon={<IconInfoCircle />}
+    arrow
+  >
+    <Button>Export records</Button>
+  </Tooltip>
+);
+```
+
+Использование составного варианта открывает доступ ко всем установленным частям Base UI и необязательному макету `Tooltip.Body`. Явно соберите портал, позиционирование, всплывающее окно и необязательную стрелку. Popup отображает свои дочерние элементы в переданном виде; Body предоставляет тот же макет с заголовком, описанием и декоративной иконкой, что и сокращённый вариант.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ComposedExportDetails = () => (
+  <Tooltip.Provider delay={300} closeDelay={100} timeout={400}>
+    <Tooltip.Root>
+      <Tooltip.Trigger render={<Button>Export records</Button>} />
+      <Tooltip.Portal>
+        <Tooltip.Positioner side="inline-end" sideOffset={10} arrowPadding={8}>
+          <Tooltip.Popup>
+            <Tooltip.Arrow />
+            <Tooltip.Viewport>
+              <Tooltip.Body description="Only records matching your current filters are included.">
+                Export visible records
+              </Tooltip.Body>
+            </Tooltip.Viewport>
+          </Tooltip.Popup>
+        </Tooltip.Positioner>
+      </Tooltip.Portal>
+    </Tooltip.Root>
+  </Tooltip.Provider>
+);
+```
+
+| Часть        | Нативная цель свойств и ref                                                                                                                                           |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Root`       | Координация состояния и полезной нагрузки. Нет DOM-узла, нативных свойств или DOM ref. `actionsRef` предоставляет `close` и `unmount`.                                |
+| `Провайдер`  | Общие `delay`, `closeDelay` и `timeout`. Нет DOM-узла или DOM ref.                                                                                                    |
+| `Триггер`    | По умолчанию кнопка. Нативные свойства, обработчики, `render` и ref нацелены на элемент-триггер.                                                                      |
+| `Portal`     | Элемент div портала. По умолчанию используется контейнер темы, затем body документа.                                                                                  |
+| `Positioner` | Элемент div для позиционирования. Управляет якорем, физической/логической стороной, смещениями, обработкой коллизий, липким позиционированием и отступом для стрелки. |
+| `Popup`      | Элемент div всплывающего окна. Управляет содержимым, нативными свойствами, стилями, `render` и ref.                                                                   |
+| `Body`       | Необязательный div body внутри Popup или Viewport. Нативные props, стили, `render` и ref относятся к его корневому элементу.                                          |
+| `Arrow`      | Элемент div стрелки внутри Popup.                                                                                                                                     |
+| `Viewport`   | Необязательный div для переходов между полезными нагрузками триггеров.                                                                                                |
+
+`Tooltip.Body` принимает необязательные дочерние элементы заголовка, а также узлы `description` и `startIcon`. Для заголовков используется средняя насыщенность; для описаний — дополнительный цвет tooltip; переносы строк сохраняются, а длинный текст переносится. Для tooltip только с описанием не добавляйте дочерние элементы заголовка. Значок является декоративным и отображается только при наличии заголовка. Body не добавляет роль tooltip, стилизацию popup, изменение размера или позиционирование. Поддерживается произвольное содержимое Popup. При типизации обёртки импортируйте `TooltipBodyProps` из `twenty-ui/primitives/surfaces`.
+
+Каждая DOM-часть принимает нативные свойства, ref и композицию `render` с элементом или обратным вызовом. Нативные свойства верхнего уровня сокращённого варианта, `render` и ref нацелены на Popup. Используйте `triggerProps`, `positionerProps` и `portalProps` для настройки других целей; они переопределяют значения по умолчанию сокращённого варианта. Дочерние элементы предоставляют элемент отображения триггера по умолчанию. Обе формы сохраняют управляемое/неуправляемое состояние Root и сведения о событиях обратных вызовов Base UI, включая отмену, причину, исходное событие и активный триггер.
+
+`Tooltip.createHandle\<TPayload>()` подключает отсоединённые триггеры к любой из форм через `handle`. Дочерние элементы составного Root или `content` сокращённого варианта могут быть функцией, получающей типизированную активную полезную нагрузку. `Tooltip.Handle` и публичный тип `TooltipHandle` предоставляют контракт установленного дескриптора. Дескрипторы поддерживают императивные `open(triggerId)` и `close()`, пока их Root смонтирован.
+
+## Миграция
+
+Замените `content={<Tooltip.Content description={description} startIcon={icon}>title</Tooltip.Content>}` на `content={title} description={description} startIcon={icon}`. При составном использовании применяйте `Tooltip.Body` для общего макета заголовка и описания либо создайте собственное содержимое. `Tooltip.Content` и `TooltipContentProps` удалены.
+
+Существующие свойства позиционирования составного Popup переносятся в Positioner. Оберните его в Portal, перенесите `container` и `keepMounted` в Portal, оставьте `maxWidth` в Popup и замените `arrow` дочерним элементом Arrow. При необходимости явно сохраните прежние интервалы с помощью `sideOffset={10}`. Составной Positioner сохраняет значение Base UI `sideOffset={0}`. Обе формы по умолчанию ограничивают Popup до 300 пикселей.
+
+## Отключённые элементы управления
+
+Нативные отключённые кнопки не могут получать фокус с клавиатуры. Оберните такую кнопку в фокусируемый триггер, чтобы пользователи могли узнать, почему действие недоступно.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const UnavailableExport = () => (
+  <Tooltip content="Select at least one record to export">
+    <span tabIndex={0} aria-label="Export records unavailable">
+      <Button disabled>Export records</Button>
+    </span>
+  </Tooltip>
+);
+```
+
+Установка `disabled` для сокращённого варианта или Root отключает саму всплывающую подсказку. `disabled` триггера отключает взаимодействие со всплывающей подсказкой этого триггера. Отключайте нативный элемент управления через его собственные свойства или элемент отображения Trigger.
+
+## Размещение и переполняющий текст
+
+Для сокращённой формы по умолчанию используются `side="top"`, `align="center"` и `sideOffset={10}`. Как сокращённые, так и составные всплывающие подсказки имеют максимальную ширину 300 пикселей, ограниченную доступным пространством рядом с якорем. Передайте `maxWidth` в сокращённую подсказку или `Tooltip.Popup`, чтобы выбрать другое максимальное значение, включая более широкие предварительные просмотры. Встроенные стили всплывающих окон остаются доступными для настройки пользовательского размера. Размещение корректируется в соответствии с доступным пространством. Открытая всплывающая подсказка скрывается, когда её якорь прокручивается за пределы видимости, в том числе за пределы контейнера прокрутки. Используйте `arrow` для стрелки и `container`, чтобы переопределить назначение портала темы; см. [темизацию](/ru/ui/theming).
+
+Используйте [OverflowingTextWithTooltip](/ru/ui/primitives/typography/overflowing-text-with-tooltip), когда текстовая метка должна показывать полное значение только при усечении. Его существующие свойства `text`, `tooltipContent` и `tooltipPlace` остаются доступными.
+
+## Свойства
+
+Справочник генерируется из публичных типов компонентов. Также принимаются нативные атрибуты всплывающего окна и обработчики событий.
+
+<TooltipReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

@@ -1,0 +1,64 @@
+---
+title: مربع الأيقونة الملونة
+description: أيقونة على خلفية ملوّنة مشتقة من لون النسق.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TintedIconTileReference from '/snippets/ui/generated/components/data-display/tinted-icon-tile.mdx';
+
+## نظرة عامة
+
+مرّر محتوى الأيقونة عبر فتحة العقدة `icon` المكتوبة بأحرف صغيرة. تستمد البلاطة لون خلفيتها ولون المقدمة الموروث من لوحة ألوان النسق. محتوى الأيقونة زخرفي. أبقِ تسمية مرئية بجانبها، أو امنح الجذر `role="img"` واسمًا متاحًا لصورة مستقلة ذات تسمية.
+
+<StoryEmbed storyId="ui-components-data-display-tintedicontile--display" title="أيقونة الشركة على لوحة ملوّنة" height={100} />
+
+## استخدام
+
+```tsx
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+import { IconBuildingSkyscraper } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CompanyLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <TintedIconTile icon={<IconBuildingSkyscraper size={16} />} color="blue" />
+    <Text>Companies</Text>
+  </Text>
+);
+```
+
+## الهندسة والتركيب الأصلي
+
+تستخدم البلاطة افتراضيًا قيمة 16px عبر رمز التباعد، وتستخدم رمز نصف قطر الحد الصغير. اضبط أبعاد الأيقونة وسمك الخط على العقدة نفسها. يتحكم `style` أو `className` الخاص بالجذر في عرض البلاطة وارتفاعها وحدودها وشكلها وألوانها؛ وتتجاوز الأنماط الصريحة الإعدادات الافتراضية للوحة الألوان. يجب أن يرث العمل الفني المخصص `currentColor` عند استخدامه لون المقدمة من لوحة الألوان.
+
+```tsx
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+
+export const CustomCompanyTile = () => (
+  <TintedIconTile
+    icon={
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M2 2h16v16H2z" />
+      </svg>
+    }
+    color="blue"
+    role="img"
+    aria-label="Companies"
+    render={<span />}
+    style={{ width: 32, height: 32 }}
+  />
+);
+```
+
+تستهدف السمات والأحداث الأصلية و`className` و`style` و`ref` عنصر div الخارجي. يستبدل `render` ذلك الهدف عبر تركيب Base UI مع الحفاظ على محتوى الأيقونة الزخرفي. سمِّ عنصر التحكم المحيط عند تضمين بلاطة في إجراء.
+
+استبدل `Icon={CompanyIcon}` بـ `icon={<CompanyIcon size={16} />}`. انقل خياري `size` و`stroke` السابقين إلى عقدة الأيقونة، واستخدم أنماط الجذر لأبعاد البلاطة المخصصة.
+
+## الخصائص
+
+<TintedIconTileReference />
+
+<PageBanner illustration="page-cover-palette" />

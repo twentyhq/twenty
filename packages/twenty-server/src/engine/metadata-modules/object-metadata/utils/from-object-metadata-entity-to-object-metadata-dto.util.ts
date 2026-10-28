@@ -36,6 +36,7 @@ export const fromObjectMetadataEntityToObjectMetadataDto = (
   isRemote: entity.isRemote,
   isActive: resolveEffectiveEntityIsActive(entity),
   isSystem: entity.isSystem,
+  isAuditLogged: entity.isAuditLogged,
   isUIEditable: entity.isUIEditable,
   isUICreatable: entity.isUICreatable,
   isUIReadOnly: !entity.isUIEditable,

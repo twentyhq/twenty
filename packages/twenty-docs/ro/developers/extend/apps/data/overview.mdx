@@ -3,6 +3,11 @@ title: Prezentare generală
 description: Modelați datele pe care aplicația le adaugă într-un spațiu de lucru — obiecte, câmpuri și relații.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Ce acoperă nivelul de date
+
 Stratul de **date** al unei aplicații Twenty reprezintă datele pe care aplicația le *adaugă* într-un spațiu de lucru — noile tipuri de înregistrări pe care le declară, coloanele pe care le adaugă la obiectele existente și modul în care aceste înregistrări se conectează între ele.
 
 ```text
@@ -24,18 +29,22 @@ Stratul de **date** al unei aplicații Twenty reprezintă datele pe care aplica�
 
 ## În această secțiune
 
-<CardGroup cols={2}>
-  <Card title="Obiecte" icon="table" href="/ro/developers/extend/apps/data/objects">
-    `defineObject` — declarați noi tipuri de înregistrări cu propriile lor câmpuri.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ro/developers/extend/apps/data/objects" img="/images/user-guide/halftone/card-page-objects.svg">
+    <CardTitle>Obiectele</CardTitle>
+    `defineObject` - declara noi tipuri de înregistrări cu propriile lor câmpuri.
   </Card>
-  <Card title="Extinderea obiectelor" icon="wand" href="/ro/developers/extend/apps/data/extending-objects">
-    `defineField` — adăugați câmpuri la obiecte standard sau la obiectele altor aplicații.
+  <Card href="/ro/developers/extend/apps/data/extending-objects" img="/images/user-guide/halftone/card-page-extending-objects.svg">
+    <CardTitle>Extinderea obiectelor</CardTitle>
+    `defineField` - adaugă câmpuri la obiectele standard sau alte aplicații.
   </Card>
-  <Card title="Relații" icon="sitemap" href="/ro/developers/extend/apps/data/relations">
-    Conexiuni bidirecționale `MANY_TO_ONE` / `ONE_TO_MANY` între obiecte.
+  <Card href="/ro/developers/extend/apps/data/relations" img="/images/user-guide/halftone/card-page-relations.svg">
+    <CardTitle>Relaţiile</CardTitle>
+    Conexiuni bidirecţionale `MANY_TO_ONE` / `ONE_TO_MANY` între obiecte.
   </Card>
-  <Card title="Tipuri de activități ale cronologiei" icon="history" href="/ro/developers/extend/apps/data/timeline-activity-types">
-    Definiți evenimente de audit automate și evenimente explicite ale aplicației pentru cronologiile înregistrărilor.
+  <Card href="/ro/developers/extend/apps/data/timeline-activity-types" img="/images/user-guide/halftone/card-page-timeline.svg">
+    <CardTitle>Tipuri de activitate de cronologie</CardTitle>
+    Definiți evenimentele automate de audit și evenimentele aplicației explicite pentru cronologii înregistrate.
   </Card>
 </CardGroup>
 
@@ -47,9 +56,9 @@ Stratul de **date** al unei aplicații Twenty reprezintă datele pe care aplica�
 | **Câmp**                            | O coloană pe un obiect. Câmpurile independente pot extinde obiecte pe care nu le-ați creat (de ex. adăugați `loyaltyTier` la Company) | `defineField()`                         |
 | **Relație**                         | O legătură bidirecțională între două obiecte — ambele părți declarate ca câmpuri                                                      | `defineField()` cu `FieldType.RELATION` |
 | **Indice**                          | Un indice de bază de date pentru a accelera o interogare recurentă asupra unuia dintre obiectele tale                                 | `defineIndex()`                         |
-| **Tip de activitate a cronologiei** | Un eveniment automat de audit sau un eveniment explicit de domeniu afișat în cronologiile înregistrărilor.                            | `defineTimelineActivityType()`          |
+| **Tip de activitate a cronologiei** | Un eveniment automat de audit sau un eveniment explicit de domeniu afișat în cronologiile înregistrărilor                             | `defineTimelineActivityType()`          |
 
-SDK-ul detectează acestea prin analiza AST la momentul build-ului, astfel încât organizarea fișierelor ține de tine — convenția este `src/objects/`, `src/fields/`, `src/indexes/` și `src/timeline-activity-types/`. UUID-urile stabile `universalIdentifier` leagă totul în toate implementările.
+CLI-ul le detectează prin analiza AST la momentul build-ului, astfel încât organizarea fișierelor ține de tine — convenția este `src/objects/`, `src/fields/`, `src/indexes/` și `src/timeline-activity-types/`. UUID-urile stabile `universalIdentifier` leagă totul în toate implementările.
 
 ## Indici (opțional)
 
@@ -98,3 +107,5 @@ Ordonează array-ul `fields` în modul în care Postgres ar trebui să îl folos
 <Note>
 Căutați **Application Config** sau **Roles & Permissions**? Acestea descriu aplicația în sine, mai degrabă decât datele pe care le adaugă — se află la [Config](/ro/developers/extend/apps/config/overview). Căutați **Connections** (Linear, GitHub, Slack OAuth)? Acestea există pentru a fi apelate *din* funcții de logică și se află la [Logic](/ro/developers/extend/apps/logic/connections).
 </Note>
+
+<PageBanner illustration="section-apps-data" />

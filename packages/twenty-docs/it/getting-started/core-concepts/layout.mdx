@@ -3,7 +3,10 @@ title: Layout
 description: Come navigare, esplorare e visualizzare i record in Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Il layout principale
 
@@ -11,7 +14,9 @@ Il centro dello schermo è dove vivono i tuoi record — persone, aziende, oppor
 
 <img src="/images/user-guide/home/main-layout.png" style={{width:'100%'}} />
 
-## Barra di navigazione
+<span id="navigation-bar" />
+
+## Barra laterale
 
 La barra laterale sinistra ti offre:
 
@@ -23,6 +28,8 @@ La barra laterale sinistra ti offre:
 * **Flussi di lavoro** — crea automazioni
 
 Trascina gli elementi per riordinarli, crea cartelle per raggruppare oggetti correlati, nascondi ciò che non usi.
+
+Usa il pulsante di compressione nella parte superiore della barra laterale oppure scegli **Comprimi barra laterale** dal menu dei comandi (`Cmd+K` su Mac o `Ctrl+K` su Windows). Quando è compressa, usa **Espandi barra laterale** per visualizzarla di nuovo.
 
 <img src="/images/user-guide/home/navigation-bar.png" style={{width:'100%'}} />
 
@@ -40,7 +47,7 @@ Premi `Cmd+K` (Mac) o `Ctrl+K` (Windows), oppure fai clic sui tre puntini in alt
 
 ## Cerca
 
-Accessibile tramite il Menu Comandi, la parte superiore della barra di navigazione o premendo `/`. La ricerca funziona su tutti gli oggetti.
+Accessibile tramite il Menu Comandi, dalla parte superiore della barra laterale o premendo `/`. La ricerca funziona su tutti gli oggetti.
 
 <img src="/images/user-guide/home/search-bar.png" style={{width:'100%'}} />
 
@@ -66,8 +73,13 @@ Ogni vista salva i propri filtri, l'ordinamento e la visibilità dei campi. Cond
 
 Quando apri un record, la pagina dei dettagli è composta da **schede** e **widget** configurabili. Aggiungi, rimuovi, riordina e ridimensiona i widget in una griglia — campi, record correlati, email, timeline, attività, note, file, grafici, iframe e altro ancora. Ogni tipo di oggetto ha il proprio layout.
 
-<Card title="Guida completa al layout" icon="arrow-right" href="/it/user-guide/layout/overview">
-  Navigazione, viste, pagine dei record — guida di riferimento dettagliata e istruzioni pratiche.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/it/user-guide/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+  <CardTitle>Guida completa al layout</CardTitle>
+  Barra laterale, viste, pagine dei record — guida di riferimento dettagliata e istruzioni pratiche.
 </Card>
+</CardGroup>
 
 <VimeoEmbed videoId="1185511790" title="Layout" />
+
+<PageBanner illustration="getting-started-layout" />

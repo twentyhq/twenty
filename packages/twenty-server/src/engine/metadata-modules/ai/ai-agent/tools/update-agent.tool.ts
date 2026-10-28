@@ -10,7 +10,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { agentTriggersSchema } from 'src/engine/metadata-modules/ai/ai-agent/tools/schemas/agent-trigger.schema';
-import { findManageableAgentOrThrow } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/find-manageable-agent-or-throw.util';
+import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/tools/services/manageable-agent.service';
 import { toAgentSummary } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-summary.util';
 import { toAgentTriggers } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-triggers.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -49,6 +49,7 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
   constructor(
     private readonly agentService: AgentService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly manageableAgentService: ManageableAgentService,
   ) {
     super();
   }
@@ -57,9 +58,8 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
     input: { triggers, ...parameters },
     context,
   }: ToolExecuteArgs<typeof updateAgentInputSchema>): Promise<ToolOutput> {
-    await findManageableAgentOrThrow({
+    await this.manageableAgentService.findManageableAgentOrThrow({
       agentId: parameters.id,
-      agentService: this.agentService,
       context,
     });
 

@@ -3,6 +3,11 @@ title: Обзор
 description: Определяйте структуру данных, которые ваше приложение добавляет в рабочее пространство — объекты, поля и связи.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Что покрывает слой данных
+
 **Уровень данных** приложения Twenty — это данные, которые ваше приложение *добавляет* в рабочее пространство: новые типы записей, которые оно объявляет, столбцы, которые оно добавляет к существующим объектам, и то, как эти записи связываются друг с другом.
 
 ```text
@@ -24,17 +29,21 @@ description: Определяйте структуру данных, котор�
 
 ## В этом разделе
 
-<CardGroup cols={2}>
-  <Card title="Объекты" icon="table" href="/ru/developers/extend/apps/data/objects">
-    `defineObject` — объявляйте новые типы записей с их собственными полями.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ru/developers/extend/apps/data/objects" img="/images/user-guide/halftone/card-page-objects.svg">
+    <CardTitle>Объекты</CardTitle>
+    `defineObject` — объявляют новые типы записей своими собственными полями.
   </Card>
-  <Card title="Расширение объектов" icon="wand" href="/ru/developers/extend/apps/data/extending-objects">
-    `defineField` — добавляйте поля к стандартным объектам или объектам других приложений.
+  <Card href="/ru/developers/extend/apps/data/extending-objects" img="/images/user-guide/halftone/card-page-extending-objects.svg">
+    <CardTitle>Расширение объектов</CardTitle>
+    `defineField` — добавляйте поля к объектам стандартного или другого приложения.
   </Card>
-  <Card title="Связи" icon="sitemap" href="/ru/developers/extend/apps/data/relations">
+  <Card href="/ru/developers/extend/apps/data/relations" img="/images/user-guide/halftone/card-page-relations.svg">
+    <CardTitle>Связи</CardTitle>
     Двусторонние связи `MANY_TO_ONE` / `ONE_TO_MANY` между объектами.
   </Card>
-  <Card title="Типы действий на временной шкале" icon="history" href="/ru/developers/extend/apps/data/timeline-activity-types">
+  <Card href="/ru/developers/extend/apps/data/timeline-activity-types" img="/images/user-guide/halftone/card-page-timeline.svg">
+    <CardTitle>Типы действий на временной шкале</CardTitle>
     Определяйте автоматические события аудита и явные события приложения для временных шкал записей.
   </Card>
 </CardGroup>
@@ -49,7 +58,7 @@ description: Определяйте структуру данных, котор�
 | **Индекс**                          | Индекс базы данных для ускорения повторяющегося запроса к одному из ваших объектов                                                      | `defineIndex()`                        |
 | **Тип действия на временной шкале** | Автоматическое событие аудита или явное событие домена, отображаемое на временных шкалах записей                                        | `defineTimelineActivityType()`         |
 
-SDK обнаруживает их с помощью анализа AST во время сборки, поэтому организация файлов остается на ваше усмотрение — по соглашению используются `src/objects/`, `src/fields/`, `src/indexes/` и `src/timeline-activity-types/`. Стабильные UUID `universalIdentifier` связывают все воедино между развертываниями.
+CLI обнаруживает их с помощью анализа AST во время сборки, поэтому организация файлов остается на ваше усмотрение — по соглашению используются `src/objects/`, `src/fields/`, `src/indexes/` и `src/timeline-activity-types/`. Стабильные UUID `universalIdentifier` связывают все воедино между развертываниями.
 
 ## Индексы (необязательно)
 
@@ -98,3 +107,5 @@ defineIndex({
 <Note>
 Ищете **Application Config** или **Roles & Permissions**? Они описывают само приложение, а не данные, которые оно добавляет, — их можно найти в разделе [Config](/ru/developers/extend/apps/config/overview). Ищете **Connections** (Linear, GitHub, Slack OAuth)? Они существуют для вызова *из* логических функций и находятся в разделе [Logic](/ru/developers/extend/apps/logic/connections).
 </Note>
+
+<PageBanner illustration="section-apps-data" />

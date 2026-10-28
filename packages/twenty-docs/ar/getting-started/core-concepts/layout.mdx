@@ -3,7 +3,10 @@ title: التخطيط
 description: كيفية التنقل والتصفح وعرض السجلات في Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## التصميم الرئيسي
 
@@ -11,7 +14,9 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <img src="/images/user-guide/home/main-layout.png" style={{width:'100%'}} />
 
-## شريط التنقل
+<span id="navigation-bar" />
+
+## الشريط الجانبي
 
 يوفر لك الشريط الجانبي الأيسر:
 
@@ -23,6 +28,8 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 * **سير العمل** — إنشاء أتمتة
 
 اسحب العناصر لإعادة ترتيبها، وأنشئ مجلدات لتجميع الكائنات ذات الصلة، وأخفِ ما لا تستخدمه.
+
+استخدم زر الطي أعلى الشريط الجانبي، أو اختر **طي الشريط الجانبي** من قائمة الأوامر (`Cmd+K` على Mac أو `Ctrl+K` على Windows). عند طيه، استخدم **توسيع الشريط الجانبي** لإظهاره مرة أخرى.
 
 <img src="/images/user-guide/home/navigation-bar.png" style={{width:'100%'}} />
 
@@ -40,7 +47,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## بحث
 
-يمكن الوصول إليه عبر قائمة الأوامر، ومن أعلى شريط التنقل، أو بالضغط على `/`. يعمل البحث عبر جميع الكائنات.
+يمكن الوصول إليه عبر قائمة الأوامر، أو من أعلى الشريط الجانبي، أو بالضغط على `/`. يعمل البحث عبر جميع الكائنات.
 
 <img src="/images/user-guide/home/search-bar.png" style={{width:'100%'}} />
 
@@ -66,8 +73,13 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 عند فتح سجل، تتكوّن صفحة التفاصيل من **علامات تبويب** و**عناصر واجهة** قابلة للتهيئة. أضف عناصر الواجهة واحذفها وأعد ترتيبها وغيّر حجمها ضمن شبكة — الحقول، السجلات ذات الصلة، رسائل البريد الإلكتروني، الخط الزمني، المهام، الملاحظات، الملفات، الرسوم البيانية، iframes، وغير ذلك. لكل نوع كائن تصميمه الخاص.
 
-<Card title="دليل التصميم الكامل" icon="arrow-right" href="/ar/user-guide/layout/overview">
-  التنقل والعروض وصفحات السجلات — مرجع تفصيلي وأدلة كيفية التنفيذ.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ar/user-guide/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+  <CardTitle>دليل التخطيط الكامل</CardTitle>
+  الشريط الجانبي والعروض وصفحات السجلات — مرجع تفصيلي وأدلة كيفية التنفيذ.
 </Card>
+</CardGroup>
 
 <VimeoEmbed videoId="1185511790" title="التخطيط" />
+
+<PageBanner illustration="getting-started-layout" />
