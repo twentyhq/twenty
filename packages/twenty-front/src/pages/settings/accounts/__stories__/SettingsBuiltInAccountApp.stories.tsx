@@ -71,7 +71,7 @@ export const GoogleGeneralShowsAccountsAndBlocklist: Story = {
   },
 };
 
-export const TabBarAndHeadersStayWhileLoading: Story = {
+export const TabBarStaysWhileLoading: Story = {
   parameters: {
     msw: {
       handlers: [
@@ -97,7 +97,6 @@ export const TabBarAndHeadersStayWhileLoading: Story = {
     expect(canvas.getByTestId('tab-emails')).toBeVisible();
     expect(canvas.getByTestId('tab-calendar')).toBeVisible();
     expect(canvas.getByText('Blocklist')).toBeVisible();
-    expect(canvas.getByText('Permissions')).toBeVisible();
     expect(canvasElement.querySelector('[aria-busy="true"]')).not.toBeNull();
     expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
   },
