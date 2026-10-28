@@ -74,6 +74,13 @@ export type {
   CommandProps,
 } from './command';
 
+export { sendInboxMessage } from '@/sdk/inbox/send-inbox-message';
+export { inboxMention } from '@/sdk/inbox/mentions/inbox-mention';
+export { inboxReferenceRecord } from '@/sdk/inbox/mentions/inbox-reference-record';
+export { INBOX_ASSISTANT_MENTION } from '@/sdk/inbox/mentions/inbox-assistant-mention';
+export type { SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';
+export type { SendInboxMessageResult } from 'twenty-shared/application';
+
 export { AppPath, SidePanelPages } from 'twenty-shared/types';
 export type {
   EnqueueSnackbarParams,

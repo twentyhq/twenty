@@ -84,7 +84,10 @@ export type { AppMessageFolder } from '@/sdk/logic-function/messaging/types/app-
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
 export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
 
-export { sendInboxMessage } from '@/sdk/logic-function/inbox/send-inbox-message';
+export { sendInboxMessage } from '@/sdk/inbox/send-inbox-message';
+export { inboxMention } from '@/sdk/inbox/mentions/inbox-mention';
+export { inboxReferenceRecord } from '@/sdk/inbox/mentions/inbox-reference-record';
+export { INBOX_ASSISTANT_MENTION } from '@/sdk/inbox/mentions/inbox-assistant-mention';
 export type { SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';
 export type { SendInboxMessageResult } from 'twenty-shared/application';
 

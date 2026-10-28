@@ -299,6 +299,7 @@ export class ApplicationUpgradeService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
+    shouldDeferActions?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
@@ -310,6 +311,7 @@ export class ApplicationUpgradeService {
       workspaceId: params.workspaceId,
       skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
       updateProgress: params.updateProgress,
+      shouldDeferActions: params.shouldDeferActions,
     });
   }
 
@@ -319,6 +321,7 @@ export class ApplicationUpgradeService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
+    shouldDeferActions?: boolean;
   }): Promise<boolean> {
     const { appRegistration } = params;
 
@@ -342,6 +345,7 @@ export class ApplicationUpgradeService {
         workspaceId: params.workspaceId,
         skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
         updateProgress: params.updateProgress,
+        shouldDeferActions: params.shouldDeferActions,
       });
     } catch (error) {
       const appName =

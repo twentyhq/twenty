@@ -313,6 +313,41 @@ export class ConnectedAccountMetadataService {
     return connectedAccount;
   }
 
+  async findAllForWorkflowStepResolution({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<
+    (Pick<
+      ConnectedAccountEntity,
+      | 'id'
+      | 'handle'
+      | 'provider'
+      | 'connectionParameters'
+      | 'archivedAt'
+      | 'scopes'
+      | 'scope'
+    > & {
+      calendarChannels: Pick<CalendarChannelEntity, 'isSyncEnabled'>[];
+    })[]
+  > {
+    return this.repository.find({
+      where: { workspaceId },
+      relations: { calendarChannels: true },
+      select: {
+        id: true,
+        handle: true,
+        provider: true,
+        connectionParameters: true,
+        archivedAt: true,
+        scopes: true,
+        scope: true,
+        calendarChannels: { id: true, isSyncEnabled: true },
+      },
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
+  }
+
   async getUserConnectedAccountIds({
     userWorkspaceId,
     workspaceId,
