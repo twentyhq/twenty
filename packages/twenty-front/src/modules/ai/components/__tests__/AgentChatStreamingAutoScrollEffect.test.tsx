@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 
 import { AgentChatStreamingAutoScrollEffect } from '@/ai/components/AgentChatStreamingAutoScrollEffect';
 
@@ -25,13 +25,21 @@ jest.mock('@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement', () => ({
 let notifyResize = () => {};
 
 class MockResizeObserver {
+  isDisconnected = false;
+
   constructor(callback: () => void) {
-    notifyResize = callback;
+    notifyResize = () => {
+      if (!this.isDisconnected) {
+        callback();
+      }
+    };
   }
 
   observe = jest.fn();
   unobserve = jest.fn();
-  disconnect = jest.fn();
+  disconnect = () => {
+    this.isDisconnected = true;
+  };
 }
 
 const growMessageListTo = (scrollHeight: number) => {
@@ -67,5 +75,21 @@ describe('AgentChatStreamingAutoScrollEffect', () => {
     growMessageListTo(480);
 
     expect(scrollWrapperElement.scrollTop).toBe(0);
+  });
+
+  it('should stop following after a click in the chat until the reader is back at the bottom', () => {
+    mockIsScrolledToBottom.mockReturnValue(true);
+
+    render(<AgentChatStreamingAutoScrollEffect />);
+    fireEvent.pointerDown(messageListElement);
+    growMessageListTo(480);
+
+    expect(scrollWrapperElement.scrollTop).toBe(0);
+
+    scrollWrapperElement.scrollTop = 480;
+    fireEvent.scroll(scrollWrapperElement);
+    growMessageListTo(900);
+
+    expect(scrollWrapperElement.scrollTop).toBe(900);
   });
 });
