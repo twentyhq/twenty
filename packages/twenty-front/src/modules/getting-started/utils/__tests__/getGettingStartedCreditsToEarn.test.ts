@@ -1,45 +1,28 @@
-import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 import { getGettingStartedCreditsToEarn } from '@/getting-started/utils/getGettingStartedCreditsToEarn';
-import { GettingStartedStep } from '~/generated-metadata/graphql';
-
-const ONBOARDING_CONFIG: OnboardingConfig = {
-  importContactsCreditsReward: 1,
-  inviteTeamCreditsRewardPerUser: 0.5,
-  createProfileCreditsReward: 0.5,
-  upgradeCreditsReward: 2,
-  inviteTeamMaxInvites: 4,
-};
 
 describe('getGettingStartedCreditsToEarn', () => {
   it.each([
     {
-      description: 'counts the mailbox and every invite for the creator',
-      remainingSteps: [
-        GettingStartedStep.CONNECT_MAILBOX,
-        GettingStartedStep.INVITE_TEAM,
+      description: 'adds the mailbox reward and every remaining invite',
+      stepRewards: [
+        { creditsEach: 1, remainingCount: 1 },
+        { creditsEach: 0.5, remainingCount: 5 },
       ],
-      isWorkspaceCreator: true,
-      expectedCredits: 3,
+      expectedCredits: 3.5,
     },
     {
-      description: 'skips the mailbox reward for other members',
-      remainingSteps: [
-        GettingStartedStep.CONNECT_MAILBOX,
-        GettingStartedStep.INVITE_TEAM,
-      ],
-      isWorkspaceCreator: false,
-      expectedCredits: 2,
+      description: 'counts only the invites the workspace can still earn',
+      stepRewards: [{ creditsEach: 0.5, remainingCount: 3 }],
+      expectedCredits: 1.5,
     },
-  ])(
-    '$description',
-    ({ remainingSteps, isWorkspaceCreator, expectedCredits }) => {
-      expect(
-        getGettingStartedCreditsToEarn({
-          remainingSteps,
-          onboardingConfig: ONBOARDING_CONFIG,
-          isWorkspaceCreator,
-        }),
-      ).toBe(expectedCredits);
+    {
+      description: 'is zero when no step has a reward left',
+      stepRewards: [],
+      expectedCredits: 0,
     },
-  );
+  ])('$description', ({ stepRewards, expectedCredits }) => {
+    expect(getGettingStartedCreditsToEarn({ stepRewards })).toBe(
+      expectedCredits,
+    );
+  });
 });

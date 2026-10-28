@@ -12,7 +12,10 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { Heading, Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { type GettingStartedStep } from '~/generated-metadata/graphql';
+import {
+  type GettingStartedStep,
+  type GettingStartedStepReward,
+} from '~/generated-metadata/graphql';
 
 const StyledHeading = styled.div<{ isCompleted: boolean }>`
   align-items: flex-start;
@@ -55,12 +58,14 @@ const StyledBody = styled.div`
 
 type GettingStartedStepCardProps = {
   step: GettingStartedStep;
+  stepReward: GettingStartedStepReward | undefined;
   isCompleted: boolean;
   isJustCompleted: boolean;
 };
 
 export const GettingStartedStepCard = ({
   step,
+  stepReward,
   isCompleted,
   isJustCompleted,
 }: GettingStartedStepCardProps) => {
@@ -96,7 +101,7 @@ export const GettingStartedStepCard = ({
           </Heading>
           <StyledDescription>{t(content.description)}</StyledDescription>
         </StyledTitle>
-        <GettingStartedStepRewardChip step={step} isCompleted={isCompleted} />
+        <GettingStartedStepRewardChip stepReward={stepReward} />
       </StyledHeading>
       <StyledBody>
         {permissionFlagMap[content.permissionFlag] ? (

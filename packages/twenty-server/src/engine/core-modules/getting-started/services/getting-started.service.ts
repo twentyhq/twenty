@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
-import { EmailOperation } from 'twenty-shared/types';
+import { EmailOperation, FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
-import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { GETTING_STARTED_TEAM_STEPS } from 'src/engine/core-modules/getting-started/constants/getting-started-team-steps.constant';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { GETTING_STARTED_STEP_REWARDS } from 'src/engine/core-modules/getting-started/constants/getting-started-step-rewards.constant';
 import { type GettingStartedProgressDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-progress.dto';
+import { type GettingStartedStepRewardDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-step-reward.dto';
 import { type UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
 import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
 import {
@@ -20,13 +19,13 @@ import {
   GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX,
   type GettingStartedKeyValueTypeMap,
 } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
-import { ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES } from 'src/engine/core-modules/onboarding/constants/onboarding-reward-idempotency-key-prefixes';
+import { getGettingStartedSteps } from 'src/engine/core-modules/getting-started/utils/get-getting-started-steps.util';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { isWorkEmail } from 'src/utils/is-work-email';
 
 type GettingStartedScope = {
   userId: string;
@@ -39,8 +38,8 @@ type GettingStartedScope = {
 export class GettingStartedService {
   constructor(
     private readonly userVarsService: UserVarsService<GettingStartedKeyValueTypeMap>,
-    private readonly billingService: BillingService,
-    private readonly billingCreditGrantService: BillingCreditGrantService,
+    private readonly onboardingService: OnboardingService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
@@ -52,15 +51,15 @@ export class GettingStartedService {
     workspaceId,
     userWorkspaceId,
   }: GettingStartedScope): Promise<GettingStartedProgressDTO> {
-    const [userVars, creditsEarned] = await Promise.all([
+    const [userVars, creditsEarnedMicro] = await Promise.all([
       this.userVarsService.getAll({ userId, workspaceId }),
-      this.getCreditsEarned(workspaceId),
+      this.onboardingService.sumEarnedRewardsMicro({
+        workspaceId,
+        rewards: Object.values(GETTING_STARTED_STEP_REWARDS).filter(isDefined),
+      }),
     ]);
 
-    const steps = Object.values(GettingStartedStep).filter(
-      (step) =>
-        isWorkEmail(userEmail) || !GETTING_STARTED_TEAM_STEPS.includes(step),
-    );
+    const steps = getGettingStartedSteps({ userEmail });
 
     const isSavedAsCompleted = (step: GettingStartedStep) =>
       isDefined(
@@ -83,6 +82,12 @@ export class GettingStartedService {
       (step) => isSavedAsCompleted(step) || alreadyDoneSteps.includes(step),
     );
 
+    const stepRewards = await this.findStepRewards({
+      userId,
+      workspaceId,
+      openSteps: steps.filter((step) => !completedSteps.includes(step)),
+    });
+
     const savedSelectedStep = userVars.get(
       GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY,
     );
@@ -91,7 +96,8 @@ export class GettingStartedService {
     );
 
     return {
-      creditsEarned,
+      creditsEarned: toDisplayCredits(creditsEarnedMicro),
+      stepRewards,
       steps,
       completedSteps,
       selectedStep: steps.find((step) => step === savedSelectedStep) ?? null,
@@ -169,6 +175,78 @@ export class GettingStartedService {
     });
   }
 
+  async isInviteTeamStepOpen({
+    userId,
+    userEmail,
+    workspaceId,
+  }: {
+    userId: string;
+    userEmail: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const isGettingStartedEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_GETTING_STARTED_ENABLED,
+        workspaceId,
+      );
+
+    if (
+      !isGettingStartedEnabled ||
+      !getGettingStartedSteps({ userEmail }).includes(
+        GettingStartedStep.INVITE_TEAM,
+      )
+    ) {
+      return false;
+    }
+
+    const completion = await this.userVarsService.get({
+      userId,
+      workspaceId,
+      key: `${GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX}${GettingStartedStep.INVITE_TEAM}`,
+    });
+
+    return !isDefined(completion);
+  }
+
+  private async findStepRewards({
+    userId,
+    workspaceId,
+    openSteps,
+  }: {
+    userId: string;
+    workspaceId: string;
+    openSteps: GettingStartedStep[];
+  }): Promise<GettingStartedStepRewardDTO[]> {
+    const stepRewards = await Promise.all(
+      openSteps.map(async (step) => {
+        const reward = GETTING_STARTED_STEP_REWARDS[step];
+
+        if (!isDefined(reward)) {
+          return null;
+        }
+
+        const grantableReward =
+          await this.onboardingService.findGrantableReward({
+            reward,
+            userId,
+            workspaceId,
+          });
+
+        if (!isDefined(grantableReward)) {
+          return null;
+        }
+
+        return {
+          step,
+          creditsEach: toDisplayCredits(grantableReward.amountMicro),
+          remainingCount: grantableReward.remainingCount,
+        };
+      }),
+    );
+
+    return stepRewards.filter(isDefined);
+  }
+
   private async findAlreadyDoneSteps({
     workspaceId,
     userWorkspaceId,
@@ -224,25 +302,5 @@ export class GettingStartedService {
         universalIdentifier: In(GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS),
       },
     });
-  }
-
-  private async getCreditsEarned(workspaceId: string): Promise<number> {
-    if (!this.billingService.isBillingEnabled()) {
-      return 0;
-    }
-
-    const creditsEarnedMicro =
-      await this.billingCreditGrantService.sumGrantsMicroByIdempotencyKeyPrefixes(
-        {
-          workspaceId,
-          type: BillingCreditGrantType.ONBOARDING_REWARD,
-          idempotencyKeyPrefixes: [
-            `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.importContacts}:${workspaceId}`,
-            `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:`,
-          ],
-        },
-      );
-
-    return toDisplayCredits(creditsEarnedMicro);
   }
 }

@@ -66,7 +66,6 @@ export const GettingStartedInviteAction = () => {
     try {
       const { data: sendInvitationsData } = await sendInvitation({
         emails: validEmails,
-        isOnboardingInvitation: true,
       });
 
       if (!isDefined(sendInvitationsData)) {

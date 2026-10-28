@@ -45,6 +45,20 @@ const TRIALING_WORKSPACE = {
 const TRIAL_PROGRESS: GettingStartedProgressQuery['gettingStartedProgress'] = {
   __typename: 'GettingStartedProgress',
   creditsEarned: 0,
+  stepRewards: [
+    {
+      __typename: 'GettingStartedStepReward',
+      step: GettingStartedStep.CONNECT_MAILBOX,
+      creditsEach: 1,
+      remainingCount: 1,
+    },
+    {
+      __typename: 'GettingStartedStepReward',
+      step: GettingStartedStep.INVITE_TEAM,
+      creditsEach: 0.5,
+      remainingCount: 5,
+    },
+  ],
   steps: mockGettingStartedSteps,
   completedSteps: [],
   selectedStep: null,
@@ -119,6 +133,7 @@ export const Trial: Story = {
     });
 
     await waitFor(() => expect(inviteStepCard).toBeVisible());
+    await expect(within(inviteStepCard).getByText(/each$/)).toBeVisible();
   },
 };
 
@@ -132,6 +147,7 @@ export const AllDone: Story = {
           data: {
             gettingStartedProgress: {
               ...TRIAL_PROGRESS,
+              stepRewards: [],
               completedSteps: mockGettingStartedSteps,
               selectedStep: GettingStartedStep.CONNECT_MAILBOX,
               creditsEarned: 2,
@@ -186,6 +202,9 @@ export const LoadError: Story = {
 const createAnimationPreviewProgress =
   (): GettingStartedProgressQuery['gettingStartedProgress'] => ({
     ...TRIAL_PROGRESS,
+    stepRewards: TRIAL_PROGRESS.stepRewards.filter(
+      ({ step }) => step !== GettingStartedStep.CONNECT_MAILBOX,
+    ),
     completedSteps: [GettingStartedStep.CONNECT_MAILBOX],
   });
 
@@ -212,7 +231,8 @@ const GettingStartedAnimationPreview = () => {
   };
 
   const completeCurrentStep = () => {
-    const { steps, completedSteps, selectedStep } = animationPreviewProgress;
+    const { steps, completedSteps, selectedStep, stepRewards } =
+      animationPreviewProgress;
     const stepToComplete =
       isDefined(selectedStep) && !completedSteps.includes(selectedStep)
         ? selectedStep
@@ -224,6 +244,7 @@ const GettingStartedAnimationPreview = () => {
 
     writeProgress({
       ...animationPreviewProgress,
+      stepRewards: stepRewards.filter(({ step }) => step !== stepToComplete),
       completedSteps: [...completedSteps, stepToComplete],
     });
   };

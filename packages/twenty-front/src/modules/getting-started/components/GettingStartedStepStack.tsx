@@ -7,7 +7,10 @@ import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { type GettingStartedStep } from '~/generated-metadata/graphql';
+import {
+  type GettingStartedStep,
+  type GettingStartedStepReward,
+} from '~/generated-metadata/graphql';
 
 const StyledActiveStep = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -105,6 +108,7 @@ type GettingStartedStepStackProps = {
   steps: GettingStartedStep[];
   selectedStep: GettingStartedStep;
   completedSteps: GettingStartedStep[];
+  stepRewards: GettingStartedStepReward[];
   justCompletedStep: GettingStartedStep | null;
   isSaving: boolean;
   onSelectStep: (step: GettingStartedStep) => void;
@@ -114,6 +118,7 @@ export const GettingStartedStepStack = ({
   steps,
   selectedStep,
   completedSteps,
+  stepRewards,
   justCompletedStep,
   isSaving,
   onSelectStep,
@@ -158,8 +163,9 @@ export const GettingStartedStepStack = ({
               <Icon size={theme.icon.size.md} color={iconColor} />
               <StyledStackedStepTitle>{t(title)}</StyledStackedStepTitle>
               <GettingStartedStepRewardChip
-                step={step}
-                isCompleted={completedSteps.includes(step)}
+                stepReward={stepRewards.find(
+                  (stepReward) => stepReward.step === step,
+                )}
               />
             </StyledStackedStep>
           );
@@ -197,6 +203,9 @@ export const GettingStartedStepStack = ({
           >
             <GettingStartedStepCard
               step={selectedStep}
+              stepReward={stepRewards.find(
+                (stepReward) => stepReward.step === selectedStep,
+              )}
               isCompleted={completedSteps.includes(selectedStep)}
               isJustCompleted={justCompletedStep === selectedStep}
             />

@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type EntityManager, IsNull, LessThan, Like, MoreThan } from 'typeorm';
 
 import {
@@ -244,6 +244,11 @@ export class BillingCreditGrantService {
     type: BillingCreditGrantType;
     idempotencyKeyPrefixes: string[];
   }): Promise<number> {
+    // An empty where array drops the WHERE clause and would sum every workspace
+    if (!isNonEmptyArray(idempotencyKeyPrefixes)) {
+      return 0;
+    }
+
     const grants = await this.billingCreditGrantRepository.find(workspaceId, {
       where: idempotencyKeyPrefixes.map((idempotencyKeyPrefix) => ({
         type,

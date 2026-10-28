@@ -1,5 +1,3 @@
-import { currentUserState } from '@/auth/states/currentUserState';
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { GettingStartedAutoAdvanceEffect } from '@/getting-started/components/GettingStartedAutoAdvanceEffect';
 import { GettingStartedKeepPlanButton } from '@/getting-started/components/GettingStartedKeepPlanButton';
 import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
@@ -116,8 +114,6 @@ const StyledFooter = styled.div`
 export const GettingStartedPageContent = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const currentUser = useAtomStateValue(currentUserState);
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
   const { numberFormat } = useNumberFormat();
   const { progress, loading, error, refetch } = useGettingStartedProgress();
@@ -141,13 +137,8 @@ export const GettingStartedPageContent = () => {
   const isSelectedStepCompleted = completedSteps.includes(selectedStep);
   const creditsEarned = progress?.creditsEarned ?? 0;
 
-  const creditsToEarn = isDefined(onboardingConfig)
-    ? getGettingStartedCreditsToEarn({
-        remainingSteps,
-        onboardingConfig,
-        isWorkspaceCreator: currentUser?.isWorkspaceCreator === true,
-      })
-    : 0;
+  const stepRewards = progress?.stepRewards ?? [];
+  const creditsToEarn = getGettingStartedCreditsToEarn({ stepRewards });
   const goalCredits = isComplete ? creditsEarned : creditsToEarn;
   const formattedGoalCredits = formatOnboardingCredits(
     goalCredits,
@@ -258,6 +249,7 @@ export const GettingStartedPageContent = () => {
               steps={steps}
               selectedStep={selectedStep}
               completedSteps={completedSteps}
+              stepRewards={stepRewards}
               justCompletedStep={justCompletedStep}
               isSaving={isSaving}
               onSelectStep={selectStep}

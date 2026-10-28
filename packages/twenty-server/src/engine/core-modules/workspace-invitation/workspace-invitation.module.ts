@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { GettingStartedModule } from 'src/engine/core-modules/getting-started/getting-started.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
@@ -19,7 +18,6 @@ import { RoleAssignmentValidationModule } from 'src/engine/metadata-modules/role
     WorkspaceDomainsModule,
     TypeOrmModule.forFeature([AppTokenEntity, UserWorkspaceEntity]),
     RoleAssignmentValidationModule,
-    FeatureFlagModule,
     FileModule,
     GettingStartedModule,
     OnboardingModule,

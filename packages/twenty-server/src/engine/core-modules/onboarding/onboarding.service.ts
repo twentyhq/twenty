@@ -24,7 +24,10 @@ import {
   OnboardingException,
   OnboardingExceptionCode,
 } from 'src/engine/core-modules/onboarding/onboarding.exception';
+import { type GrantableOnboardingReward } from 'src/engine/core-modules/onboarding/types/grantable-onboarding-reward.type';
+import { type OnboardingStepReward } from 'src/engine/core-modules/onboarding/types/onboarding-step-reward.type';
 import { type ReversibleOnboardingStep } from 'src/engine/core-modules/onboarding/types/reversible-onboarding-step.type';
+import { buildOnboardingRewardIdempotencyKeyPrefix } from 'src/engine/core-modules/onboarding/utils/build-onboarding-reward-idempotency-key-prefix.util';
 import { getOnboardingEnrichmentCreditRewardMicro } from 'src/engine/core-modules/onboarding/utils/get-onboarding-enrichment-credit-reward-micro.util';
 import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -634,7 +637,10 @@ export class OnboardingService {
         ),
         type: BillingCreditGrantType.ONBOARDING_REWARD,
         reason: 'Onboarding reward: import contacts',
-        idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.importContacts}:${workspaceId}`,
+        idempotencyKey: buildOnboardingRewardIdempotencyKeyPrefix({
+          reward: 'importContacts',
+          workspaceId,
+        }),
       });
     } catch (error) {
       this.logger.error(
@@ -651,24 +657,13 @@ export class OnboardingService {
     workspaceId: string;
     userId: string;
   }) {
-    const idempotencyKeyPrefix = `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:`;
-
     try {
       await this.cacheLockService.withLock(
         async () => {
-          const rewardedTeammatesCount =
-            await this.billingCreditGrantService.countGrantsByIdempotencyKeyPrefix(
-              {
-                workspaceId,
-                type: BillingCreditGrantType.ONBOARDING_REWARD,
-                idempotencyKeyPrefix,
-              },
-            );
+          const remainingInviteTeamRewardCount =
+            await this.getRemainingInviteTeamRewardCount(workspaceId);
 
-          if (
-            rewardedTeammatesCount >=
-            this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_MAX_INVITES')
-          ) {
+          if (remainingInviteTeamRewardCount === 0) {
             return;
           }
 
@@ -679,7 +674,10 @@ export class OnboardingService {
             ),
             type: BillingCreditGrantType.ONBOARDING_REWARD,
             reason: 'Onboarding reward: invited teammate signed up',
-            idempotencyKey: `${idempotencyKeyPrefix}${userId}`,
+            idempotencyKey: `${buildOnboardingRewardIdempotencyKeyPrefix({
+              reward: 'inviteTeam',
+              workspaceId,
+            })}${userId}`,
           });
         },
         buildOnboardingInviteTeamRewardLockKey(workspaceId),
@@ -695,6 +693,133 @@ export class OnboardingService {
         workspace: { id: workspaceId },
       });
     }
+  }
+
+  async findGrantableReward({
+    reward,
+    userId,
+    workspaceId,
+  }: {
+    reward: OnboardingStepReward;
+    userId: string;
+    workspaceId: string;
+  }): Promise<GrantableOnboardingReward | null> {
+    if (!this.billingService.isBillingEnabled()) {
+      return null;
+    }
+
+    switch (reward) {
+      case 'importContacts':
+        return this.findGrantableImportContactsReward({ userId, workspaceId });
+      case 'inviteTeam':
+        return this.findGrantableInviteTeamReward(workspaceId);
+      default:
+        return assertUnreachable(reward);
+    }
+  }
+
+  async sumEarnedRewardsMicro({
+    workspaceId,
+    rewards,
+  }: {
+    workspaceId: string;
+    rewards: OnboardingStepReward[];
+  }): Promise<number> {
+    if (!this.billingService.isBillingEnabled()) {
+      return 0;
+    }
+
+    return this.billingCreditGrantService.sumGrantsMicroByIdempotencyKeyPrefixes(
+      {
+        workspaceId,
+        type: BillingCreditGrantType.ONBOARDING_REWARD,
+        idempotencyKeyPrefixes: rewards.map((reward) =>
+          buildOnboardingRewardIdempotencyKeyPrefix({ reward, workspaceId }),
+        ),
+      },
+    );
+  }
+
+  // Mirrors the claim in completeOnboardingConnectAccountStep and the checks in
+  // creditImportContactsRewardForWorkspaceCreator
+  private async findGrantableImportContactsReward({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<GrantableOnboardingReward | null> {
+    const userVars = await this.userVarsService.getAll({
+      userId,
+      workspaceId,
+    });
+
+    const isConnectAccountRewardClaimable =
+      userVars.get(OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING) ===
+        true ||
+      userVars.get(OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_SKIPPED) ===
+        true;
+
+    if (!isConnectAccountRewardClaimable) {
+      return null;
+    }
+
+    const [isWorkspaceCreator, existingGrant] = await Promise.all([
+      this.isWorkspaceCreator({ userId, workspaceId }),
+      this.billingCreditGrantService.findGrantByIdempotencyKey(
+        workspaceId,
+        buildOnboardingRewardIdempotencyKeyPrefix({
+          reward: 'importContacts',
+          workspaceId,
+        }),
+      ),
+    ]);
+
+    const amountMicro = this.twentyConfigService.get(
+      'ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD',
+    );
+
+    if (!isWorkspaceCreator || isDefined(existingGrant) || amountMicro <= 0) {
+      return null;
+    }
+
+    return { amountMicro, remainingCount: 1 };
+  }
+
+  private async findGrantableInviteTeamReward(
+    workspaceId: string,
+  ): Promise<GrantableOnboardingReward | null> {
+    const remainingCount =
+      await this.getRemainingInviteTeamRewardCount(workspaceId);
+    const amountMicro = this.twentyConfigService.get(
+      'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
+    );
+
+    if (remainingCount === 0 || amountMicro <= 0) {
+      return null;
+    }
+
+    return { amountMicro, remainingCount };
+  }
+
+  private async getRemainingInviteTeamRewardCount(
+    workspaceId: string,
+  ): Promise<number> {
+    const rewardedTeammatesCount =
+      await this.billingCreditGrantService.countGrantsByIdempotencyKeyPrefix({
+        workspaceId,
+        type: BillingCreditGrantType.ONBOARDING_REWARD,
+        idempotencyKeyPrefix: buildOnboardingRewardIdempotencyKeyPrefix({
+          reward: 'inviteTeam',
+          workspaceId,
+        }),
+      });
+
+    return Math.max(
+      0,
+      this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_MAX_INVITES') -
+        rewardedTeammatesCount,
+    );
   }
 
   async setOnboardingInviteTeamPending(

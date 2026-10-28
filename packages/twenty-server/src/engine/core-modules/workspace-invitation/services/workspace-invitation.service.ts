@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail, renderEmail } from 'twenty-emails';
@@ -316,8 +317,8 @@ export class WorkspaceInvitationService {
     const isOnboardingInviteReward =
       this.twentyConfigService.get('IS_BILLING_ENABLED') &&
       (isOnboardingInviteRewardOverride ??
-        (await this.onboardingService.isOnboardingInviteTeamPending({
-          userId: sender.userId,
+        (await this.canSenderEarnInviteTeamReward({
+          sender,
           workspaceId: workspace.id,
         })));
 
@@ -493,6 +494,34 @@ export class WorkspaceInvitationService {
     });
 
     return this.appTokenRepository.save(invitationToken);
+  }
+
+  private async canSenderEarnInviteTeamReward({
+    sender,
+    workspaceId,
+  }: {
+    sender: WorkspaceMemberWorkspaceEntity;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const isOnboardingInviteTeamPending =
+      await this.onboardingService.isOnboardingInviteTeamPending({
+        userId: sender.userId,
+        workspaceId,
+      });
+
+    if (isOnboardingInviteTeamPending) {
+      return true;
+    }
+
+    if (!isNonEmptyString(sender.userEmail)) {
+      return false;
+    }
+
+    return this.gettingStartedService.isInviteTeamStepOpen({
+      userId: sender.userId,
+      userEmail: sender.userEmail,
+      workspaceId,
+    });
   }
 
   private async throttleInvitationSending(
