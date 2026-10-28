@@ -3,10 +3,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type InboxLabelIdentifierField } from '@/sdk/inbox/mentions/types/inbox-label-identifier-field.type';
 
-const getFullNamePart = (
-  fullName: unknown,
-  partName: 'firstName' | 'lastName',
-): string => {
+const getFullNamePart = ({
+  fullName,
+  partName,
+}: {
+  fullName: unknown;
+  partName: 'firstName' | 'lastName';
+}): string => {
   const part = isObject(fullName) ? Reflect.get(fullName, partName) : undefined;
 
   return isString(part) ? part : '';
@@ -28,7 +31,7 @@ export const computeInboxRecordLabel = ({
   const labelValue = record[labelIdentifierField.name];
 
   if (labelIdentifierField.type === 'FULL_NAME') {
-    return `${getFullNamePart(labelValue, 'firstName')} ${getFullNamePart(labelValue, 'lastName')}`.trim();
+    return `${getFullNamePart({ fullName: labelValue, partName: 'firstName' })} ${getFullNamePart({ fullName: labelValue, partName: 'lastName' })}`.trim();
   }
 
   return isDefined(labelValue) ? String(labelValue) : '';

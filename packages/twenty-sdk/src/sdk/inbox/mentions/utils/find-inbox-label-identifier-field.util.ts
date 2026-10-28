@@ -9,7 +9,10 @@ export const findInboxLabelIdentifierField = async ({
   objectMetadata,
 }: {
   metadataClient: MetadataApiClient;
-  objectMetadata: InboxObjectMetadata;
+  objectMetadata: Pick<
+    InboxObjectMetadata,
+    'id' | 'labelIdentifierFieldMetadataId'
+  >;
 }): Promise<InboxLabelIdentifierField | undefined> => {
   if (!isDefined(objectMetadata.labelIdentifierFieldMetadataId)) {
     return undefined;

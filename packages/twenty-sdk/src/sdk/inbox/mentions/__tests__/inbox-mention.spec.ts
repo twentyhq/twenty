@@ -16,7 +16,12 @@ const importInboxMention = async () => {
   return module.inboxMention;
 };
 
-const workspaceMemberResponse = (workspaceMember: unknown) =>
+type WorkspaceMemberFixture = {
+  name: { firstName: string; lastName: string };
+  userEmail: string;
+};
+
+const workspaceMemberResponse = (workspaceMember: WorkspaceMemberFixture) =>
   new Response(JSON.stringify({ data: { workspaceMember } }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
