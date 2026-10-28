@@ -1,6 +1,7 @@
 import { useApolloClient } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { getMcpServerMentionSearchResults } from '@/ai/utils/getMcpServerMentionSearchResults';
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
@@ -24,7 +25,7 @@ export const useMcpServerMentionSearch = () => {
 
       const { data } = await apolloMetadataClient.query({
         query: FindActiveMcpServersForMentionDocument,
-        fetchPolicy: query === '' ? 'network-only' : 'cache-first',
+        fetchPolicy: isNonEmptyString(query) ? 'cache-first' : 'network-only',
       });
 
       return getMcpServerMentionSearchResults({

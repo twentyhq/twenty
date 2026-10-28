@@ -11,7 +11,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server.dto';
+import { McpServerMentionDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server-mention.dto';
 import { McpServerService } from 'src/engine/metadata-modules/mcp-server/mcp-server.service';
 
 @UseGuards(
@@ -29,15 +29,17 @@ import { McpServerService } from 'src/engine/metadata-modules/mcp-server/mcp-ser
   FeatureFlagGuard(FeatureFlagKey.IS_MCP_SERVERS_ENABLED),
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
-@MetadataResolver(() => McpServerDTO)
+@MetadataResolver(() => McpServerMentionDTO)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class McpServerMentionResolver {
   constructor(private readonly mcpServerService: McpServerService) {}
 
-  @Query(() => [McpServerDTO])
+  @Query(() => [McpServerMentionDTO])
   async activeMcpServers(
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<McpServerDTO[]> {
-    return await this.mcpServerService.findAllActive(workspace.id);
+  ): Promise<McpServerMentionDTO[]> {
+    return (await this.mcpServerService.findAllActive(workspace.id)).map(
+      ({ id, name, label }) => ({ id, name, label }),
+    );
   }
 }

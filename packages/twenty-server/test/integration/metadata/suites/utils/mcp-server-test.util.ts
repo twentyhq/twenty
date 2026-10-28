@@ -85,7 +85,9 @@ export const getMcpServer = (id: string) =>
 const GET_ACTIVE_MCP_SERVERS_QUERY = gql`
   query GetActiveMcpServers {
     activeMcpServers {
-      ${MCP_SERVER_FIELDS}
+      id
+      name
+      label
     }
   }
 `;

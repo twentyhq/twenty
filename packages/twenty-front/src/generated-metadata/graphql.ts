@@ -3129,6 +3129,13 @@ export type McpServer = {
   url: Scalars['String']['output'];
 };
 
+export type McpServerMention = {
+  __typename?: 'McpServerMention';
+  id: Scalars['UUID']['output'];
+  label: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
 export type MessageCampaignBodyConfiguration = {
   __typename?: 'MessageCampaignBodyConfiguration';
   configurationType: WidgetConfigurationType;
@@ -5694,7 +5701,7 @@ export type PublicWorkspaceDataSummary = {
 
 export type Query = {
   __typename?: 'Query';
-  activeMcpServers: Array<McpServer>;
+  activeMcpServers: Array<McpServerMention>;
   agentChatChannelRoles: Array<AgentChatChannelRole>;
   agentChatChannelSummaries: Array<AgentChatChannelSummary>;
   agentChatChannelThreadIds: AgentChatChannelThreadIds;
@@ -8913,7 +8920,7 @@ export type FindManySkillsForSuggestionQuery = { __typename?: 'Query', skills: A
 export type FindActiveMcpServersForMentionQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindActiveMcpServersForMentionQuery = { __typename?: 'Query', activeMcpServers: Array<{ __typename?: 'McpServer', id: string, name: string, label: string }> };
+export type FindActiveMcpServersForMentionQuery = { __typename?: 'Query', activeMcpServers: Array<{ __typename?: 'McpServerMention', id: string, name: string, label: string }> };
 
 export type FindOneAgentQueryVariables = Exact<{
   id: Scalars['UUID']['input'];
