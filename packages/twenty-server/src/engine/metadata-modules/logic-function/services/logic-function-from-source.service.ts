@@ -47,6 +47,21 @@ export class LogicFunctionFromSourceService {
     input: CreateLogicFunctionFromSourceInput;
     workspaceId: string;
   }): Promise<LogicFunctionDTO> {
+    // Logic functions created here always belong to the workspace Custom app.
+    // Server routes are public, unauthenticated webhook endpoints and are
+    // declared only through an installed application's manifest, so a Custom-app
+    // function must never register one (it would otherwise be reachable at, and
+    // could shadow, another application's /webhooks/server route).
+    if (isDefined(input.serverRouteTriggerSettings)) {
+      throw new LogicFunctionException(
+        'serverRouteTriggerSettings cannot be set on a logic function created from source',
+        LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        {
+          userFriendlyMessage: msg`Server routes can only be defined by an application.`,
+        },
+      );
+    }
+
     const { workspaceCustomFlatApplication: ownerFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },

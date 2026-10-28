@@ -213,31 +213,17 @@ export class ServerRouteTriggerService {
   }
 
   private createResolverQueryBuilder(): SelectQueryBuilder<LogicFunctionEntity> {
-    return (
-      this.logicFunctionRepository
-        .createQueryBuilder('logicFunction')
-        .innerJoinAndSelect('logicFunction.application', 'application')
-        .innerJoinAndSelect(
-          'application.applicationRegistration',
-          'applicationRegistration',
-        )
-        .where('logicFunction.serverRouteTriggerSettings IS NOT NULL')
-        .andWhere(
-          'logicFunction.workspaceId = applicationRegistration.ownerWorkspaceId',
-        )
-        // A workspace's Custom application holds user-authored logic functions,
-        // not installed-app webhook receivers, and their id and universalIdentifier
-        // are caller-chosen. Exclude it so a Custom-app function can never answer a
-        // public route and shadow an installed app's webhook across workspaces.
-        .andWhere(
-          `NOT EXISTS (
-           SELECT 1
-           FROM core."workspace" "customApplicationWorkspace"
-           WHERE "customApplicationWorkspace"."id" = application."workspaceId"
-             AND "customApplicationWorkspace"."workspaceCustomApplicationId" = application."id"
-         )`,
-        )
-    );
+    return this.logicFunctionRepository
+      .createQueryBuilder('logicFunction')
+      .innerJoinAndSelect('logicFunction.application', 'application')
+      .innerJoinAndSelect(
+        'application.applicationRegistration',
+        'applicationRegistration',
+      )
+      .where('logicFunction.serverRouteTriggerSettings IS NOT NULL')
+      .andWhere(
+        'logicFunction.workspaceId = applicationRegistration.ownerWorkspaceId',
+      );
   }
 
   private async findResolverOrThrow(
