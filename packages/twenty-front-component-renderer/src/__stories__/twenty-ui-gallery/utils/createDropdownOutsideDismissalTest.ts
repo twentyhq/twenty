@@ -1,7 +1,8 @@
-import { expect, userEvent } from 'storybook/test';
+import { expect, userEvent, waitFor } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectElementToReceivePointer } from '@/__stories__/shared/test-utils/matchers/expectElementToReceivePointer';
+import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { createDropdownTestContext } from '@/__stories__/twenty-ui-gallery/utils/createDropdownTestContext';
 
@@ -35,9 +36,13 @@ export const createDropdownOutsideDismissalTest =
     await userEvent.click(outsideAction);
     await expectMenuClosed();
     expect(outsideAction).toHaveFocus();
-    expect(
-      canvas.getByRole('status', { name: actionStatusName }),
-    ).toHaveTextContent(`${actionStatusName}: 1`);
+    await waitFor(
+      () =>
+        expect(
+          canvas.getByRole('status', { name: actionStatusName }),
+        ).toHaveTextContent(`${actionStatusName}: 1`),
+      { timeout: INTERACTION_TIMEOUT },
+    );
 
     await openMenu();
     await userEvent.click(trigger);
