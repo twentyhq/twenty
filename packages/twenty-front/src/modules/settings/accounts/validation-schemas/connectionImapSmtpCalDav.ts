@@ -11,9 +11,9 @@ import {
 const getConnectionParametersSchema = () =>
   z
     .object({
-      host: z.string().default(''),
+      host: z.string().trim().default(''),
       port: z.int().nullable().default(null),
-      username: z.string().optional(),
+      username: z.string().trim().optional(),
       password: z.string().default(''),
       connectionSecurity: z
         .enum(['NONE', 'STARTTLS', 'SSL_TLS'])
