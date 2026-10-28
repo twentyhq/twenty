@@ -69,7 +69,7 @@ const flatFieldMetadataMaps = [
 );
 
 describe('CallWebhookJobsJob', () => {
-  const add = jest.fn();
+  const add = jest.fn<void, [string, CallWebhookJobData[], unknown]>();
   const getOrRecompute = jest.fn();
   let job: CallWebhookJobsJob;
 
@@ -179,9 +179,7 @@ describe('CallWebhookJobsJob', () => {
 
     await handleCreatedInvoice();
 
-    const [[, webhookEvents]] = add.mock.calls as [
-      [string, CallWebhookJobData[]],
-    ];
+    const [[, webhookEvents]] = add.mock.calls;
 
     expect(webhookEvents.map(({ record }) => record)).toEqual([
       { id: 'record-1', name: 'Acme' },

@@ -10,6 +10,7 @@ import {
   RecordShareRowCause,
   RelationType,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -95,7 +96,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       },
       rolesPermissions: {
         [STANDARD_APPLICATION_ROLE_ID]: FULL_ACCESS_TO_TEST_OBJECT,
-        ...(applicationRole && {
+        ...(isDefined(applicationRole) && {
           'application-role-id': {
             'test-object-metadata': {
               ...FULL_ACCESS_TO_TEST_OBJECT['test-object-metadata'],

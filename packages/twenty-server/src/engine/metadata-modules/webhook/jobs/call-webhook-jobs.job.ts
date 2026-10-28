@@ -89,12 +89,19 @@ export class CallWebhookJobsJob {
       return;
     }
 
-    // Webhooks are configured in the workspace, so they act as its custom application
     const workspaceCustomApplicationRole = findFlatEntityByUniversalIdentifier({
       flatEntityMaps: flatRoleMaps,
       universalIdentifier:
         WORKSPACE_CUSTOM_APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
     });
+
+    if (!isDefined(workspaceCustomApplicationRole)) {
+      this.logger.warn(
+        `Workspace custom application role not found for workspace ${workspaceEventBatch.workspaceId}, dropping the webhook batch`,
+      );
+
+      return;
+    }
 
     const flatWorkspaceEventBatch = {
       ...workspaceEventBatch,
@@ -103,9 +110,9 @@ export class CallWebhookJobsJob {
 
     const readableEvents = await resolveEventsReadableByRole({
       intersectionOf: {
-        applicationRoleId: workspaceCustomApplicationRole?.id ?? null,
+        applicationRoleId: workspaceCustomApplicationRole.id,
       },
-      owningApplicationId: workspaceCustomApplicationRole?.applicationId,
+      owningApplicationId: workspaceCustomApplicationRole.applicationId,
       workspaceEventBatch: flatWorkspaceEventBatch,
       eventRecordAccessGate:
         this.recordAccessPolicyService.buildEventRecordAccessGate(
