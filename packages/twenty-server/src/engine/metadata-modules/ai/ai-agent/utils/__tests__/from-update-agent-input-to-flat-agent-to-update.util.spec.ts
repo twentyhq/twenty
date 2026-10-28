@@ -136,6 +136,21 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
     expect(flatAgentToUpdate.isActive).toBe(true);
   });
 
+  it('ignores a null isActive instead of storing it', () => {
+    const { flatAgentToUpdate } = updateAsWorkspace({
+      id: appAgent.id,
+      label: 'Market researcher',
+      isActive: null as unknown as boolean,
+    });
+
+    expect(flatAgentToUpdate.isActive).toBe(true);
+    expect(
+      flatAgentToUpdate.overrides?.[
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER
+      ],
+    ).toEqual({ label: 'Market researcher' });
+  });
+
   it('refuses to rename another application agent', () => {
     expect(() =>
       updateAsWorkspace({ id: appAgent.id, name: 'renamed' }),

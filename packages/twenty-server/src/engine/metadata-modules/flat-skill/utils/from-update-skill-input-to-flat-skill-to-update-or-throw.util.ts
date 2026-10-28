@@ -56,7 +56,12 @@ export const fromUpdateSkillInputToFlatSkillToUpdateOrThrow = ({
     );
   }
 
-  const { id: _id, name, ...updates } = updateSkillInput;
+  const { id: _id, name, isActive, ...otherUpdates } = updateSkillInput;
+  // GraphQL accepts an explicit null for any optional input, but isActive is never null
+  const updates = {
+    ...otherUpdates,
+    ...(isDefined(isActive) ? { isActive } : {}),
+  };
 
   if (shouldOverride && isDefined(name) && name !== existingFlatSkill.name) {
     throw new SkillException(

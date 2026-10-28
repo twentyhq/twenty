@@ -148,11 +148,16 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
     });
   }
 
-  const { name, ...updatedEditableAgentProperties } =
+  const { name, isActive, ...otherEditableAgentProperties } =
     extractAndSanitizeObjectStringFields(
       rawUpdateAgentInput,
       FLAT_AGENT_EDITABLE_PROPERTIES,
     );
+  // GraphQL accepts an explicit null for any optional input, but isActive is never null
+  const updatedEditableAgentProperties = {
+    ...otherEditableAgentProperties,
+    ...(isDefined(isActive) ? { isActive } : {}),
+  };
 
   const shouldOverride = isCallerOverridingEntity({
     callerApplicationUniversalIdentifier,

@@ -89,6 +89,20 @@ describe('fromUpdateSkillInputToFlatSkillToUpdateOrThrow', () => {
     });
   });
 
+  it('ignores a null isActive instead of storing it', () => {
+    const result = updateAsWorkspace({
+      id: appSkill.id,
+      label: 'Summarize briefly',
+      isActive: null as unknown as boolean,
+    });
+
+    expect(result.isActive).toBe(true);
+    expect(
+      result.overrides?.[WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER],
+    ).toEqual({ label: 'Summarize briefly' });
+    expect(fromFlatSkillToSkillDto(result).isActive).toBe(true);
+  });
+
   it('refuses to rename another application skill', () => {
     expect(() =>
       updateAsWorkspace({ id: appSkill.id, name: 'renamed' }),
