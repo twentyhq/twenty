@@ -68,6 +68,9 @@ export class ObjectMetadataDTO {
   isSystem: boolean;
 
   @Field()
+  isAuditLogged: boolean;
+
+  @Field()
   isUIEditable: boolean;
 
   @Field()
