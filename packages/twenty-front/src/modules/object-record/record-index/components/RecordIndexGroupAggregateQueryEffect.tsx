@@ -7,10 +7,13 @@ import { useSetRecordIndexAggregateDisplayLabel } from '@/object-record/record-i
 import { useSetRecordIndexAggregateDisplayValueForRecordGroupValue } from '@/object-record/record-index/hooks/useSetRecordIndexAggregateDisplayValueForRecordGroupValue';
 
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
+import { recordIndexRecordCountForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordCountForGroupValueComponentFamilyState';
 import { turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue } from '@/object-record/record-index/utils/turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -54,6 +57,13 @@ export const RecordIndexGroupAggregateQueryEffect = ({
     recordGroupDefinitionsComponentSelector,
   );
 
+  const recordIndexRecordCountForGroupValueCallbackState =
+    useAtomComponentFamilyStateCallbackState(
+      recordIndexRecordCountForGroupValueComponentFamilyState,
+    );
+
+  const store = useStore();
+
   useEffect(() => {
     if (
       !loading &&
@@ -69,6 +79,22 @@ export const RecordIndexGroupAggregateQueryEffect = ({
             recordAggregateGqlField,
           },
         );
+
+      for (const recordGroupDefinition of recordGroupDefinitions) {
+        const foundAggregateValueForGroup =
+          recordAggregateValueByGroupValueArray.find(
+            (recordAggregateValueByGroupValue) =>
+              recordAggregateValueByGroupValue.recordGroupValue ===
+              recordGroupDefinition.value,
+          );
+
+        store.set(
+          recordIndexRecordCountForGroupValueCallbackState({
+            groupValue: recordGroupDefinition.value ?? '',
+          }),
+          foundAggregateValueForGroup?.recordCount ?? 0,
+        );
+      }
 
       if (isDefined(recordIndexGroupAggregateFieldMetadataItem)) {
         setRecordIndexAggregateDisplayLabel(
@@ -114,6 +140,8 @@ export const RecordIndexGroupAggregateQueryEffect = ({
     recordIndexAggregateDisplayLabel,
     objectMetadataItem,
     recordGroupDefinitions,
+    recordIndexRecordCountForGroupValueCallbackState,
+    store,
   ]);
 
   return null;

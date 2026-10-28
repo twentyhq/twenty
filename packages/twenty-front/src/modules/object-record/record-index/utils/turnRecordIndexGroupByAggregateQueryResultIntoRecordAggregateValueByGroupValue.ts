@@ -1,3 +1,4 @@
+import { isNumber } from '@sniptt/guards';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordAggregateValueByRecordGroupValue } from '@/object-record/record-index/types/RecordAggregateValueByRecordGroupValue';
 import { type RecordIndexGroupByQueryResult } from '@/object-record/record-index/types/RecordIndexGroupByQueryResult';
@@ -32,9 +33,12 @@ export const turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueB
 
         const aggregateValue = groupByQueryResultItem[gqlAggregateFieldName];
 
+        const recordCount = groupByQueryResultItem.totalCount;
+
         recordAggregateValueByGroupValueArray.push({
           recordGroupValue: groupByValue,
           recordAggregateValue: aggregateValue,
+          recordCount: isNumber(recordCount) ? recordCount : null,
         });
       }
     }

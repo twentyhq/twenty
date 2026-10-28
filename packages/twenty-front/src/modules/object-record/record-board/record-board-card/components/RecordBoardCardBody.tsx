@@ -3,34 +3,30 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
+import { useRecordBoardCardAmountRecordField } from '@/object-record/record-board/record-board-card/hooks/useRecordBoardCardAmountRecordField';
+import { recordBoardCardEditModePositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardEditModePositionComponentState';
 import { recordBoardCardHoverPositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardHoverPositionComponentState';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
 import {
   FieldContext,
   type RecordUpdateHook,
   type RecordUpdateHookParams,
 } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { getFieldValueSourceDefinition } from '@/object-record/record-field/ui/utils/getFieldValueSourceDefinition';
+import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledFieldValue = styled.div`
-  display: contents;
-
-  &[data-amount='true'] {
-    font-variant-numeric: tabular-nums;
-    font-weight: ${themeCssVariables.font.weight.medium};
-  }
-`;
 
 export const RecordBoardCardBody = () => {
   const { recordId, isRecordReadOnly, isDragOverlay } = useContext(
@@ -67,6 +63,18 @@ export const RecordBoardCardBody = () => {
       recordField.fieldMetadataItemId !== labelIdentifierFieldMetadataItem?.id,
   );
 
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+
+  const coreRecordReferenceFields = useContext(
+    CoreRecordReferenceFieldsContext,
+  );
+
+  const amountRecordField = useRecordBoardCardAmountRecordField();
+
+  const recordBoardCardEditModePosition = useAtomComponentStateValue(
+    recordBoardCardEditModePositionComponentState,
+  );
+
   const setRecordBoardCardHoverPosition = useSetAtomComponentState(
     recordBoardCardHoverPositionComponentState,
   );
@@ -87,7 +95,26 @@ export const RecordBoardCardBody = () => {
 
         if (
           !isDefined(correspondingFieldDefinition) ||
-          !isDefined(fieldMetadataItem)
+          !isDefined(fieldMetadataItem) ||
+          recordField.fieldMetadataItemId ===
+            amountRecordField?.fieldMetadataItemId
+        ) {
+          return null;
+        }
+
+        const fieldValueSourceDefinition = getFieldValueSourceDefinition({
+          fieldDefinition: correspondingFieldDefinition,
+          coreRecordReferenceFields,
+        });
+
+        // Keep the field mounted while editing so clearing it doesn't unmount its input anchor.
+        if (
+          index !== recordBoardCardEditModePosition &&
+          isFieldValueEmpty({
+            fieldDefinition: fieldValueSourceDefinition,
+            fieldValue:
+              recordStore?.[fieldValueSourceDefinition.metadata.fieldName],
+          })
         ) {
           return null;
         }
@@ -125,17 +152,9 @@ export const RecordBoardCardBody = () => {
                   }),
                 }}
               >
-                <StyledFieldValue
-                  data-amount={
-                    fieldMetadataItem.type === FieldMetadataType.CURRENCY
-                      ? 'true'
-                      : undefined
-                  }
-                >
-                  <RecordInlineCell
-                    instanceIdPrefix={RECORD_BOARD_CARD_INPUT_ID_PREFIX}
-                  />
-                </StyledFieldValue>
+                <RecordInlineCell
+                  instanceIdPrefix={RECORD_BOARD_CARD_INPUT_ID_PREFIX}
+                />
               </RecordFieldComponentInstanceContext.Provider>
             </FieldContext.Provider>
           </StopPropagationContainer>

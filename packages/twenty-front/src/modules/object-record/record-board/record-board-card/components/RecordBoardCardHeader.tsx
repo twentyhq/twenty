@@ -8,11 +8,17 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { useRecordBoardCardAmountRecordField } from '@/object-record/record-board/record-board-card/hooks/useRecordBoardCardAmountRecordField';
 import { recordBoardCardIsExpandedComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardIsExpandedComponentState';
 import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
+import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
+import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { CurrencyDisplay } from '@/ui/field/display/components/CurrencyDisplay';
+import { FIELD_DISPLAY_LEADING_ICON_CLASS_NAME } from '@/ui/field/display/constants/FieldDisplayLeadingIconClassName';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -42,7 +48,23 @@ const StyledRecordChipContainer = styled.div`
   display: flex;
   flex: 1 1 auto;
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  min-width: 0;
   overflow: hidden;
+`;
+
+const StyledAmount = styled.div`
+  color: ${themeCssVariables.font.color.secondary};
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  font-weight: ${themeCssVariables.font.weight.medium};
+  max-width: 50%;
+  padding-left: ${themeCssVariables.spacing[2]};
+
+  .${FIELD_DISPLAY_LEADING_ICON_CLASS_NAME} {
+    display: inline-flex;
+    margin-right: ${themeCssVariables.spacing[0.5]};
+    vertical-align: text-bottom;
+  }
 `;
 
 export const RecordBoardCardHeader = () => {
@@ -76,6 +98,21 @@ export const RecordBoardCardHeader = () => {
 
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
+  const { fieldDefinitionByFieldMetadataItemId } =
+    useRecordIndexContextOrThrow();
+
+  const amountRecordField = useRecordBoardCardAmountRecordField();
+
+  const amountFieldDefinition = isDefined(amountRecordField)
+    ? fieldDefinitionByFieldMetadataItemId[
+        amountRecordField.fieldMetadataItemId
+      ]
+    : undefined;
+
+  const amountValue = isDefined(amountFieldDefinition)
+    ? recordStore?.[amountFieldDefinition.metadata.fieldName]
+    : undefined;
+
   const triggerEvent =
     openRecordIn === OpenRecordIn.SIDE_PANEL || isTouchDevice
       ? 'CLICK'
@@ -100,6 +137,18 @@ export const RecordBoardCardHeader = () => {
           )}
         </StopPropagationContainer>
       </StyledRecordChipContainer>
+
+      {isDefined(amountFieldDefinition) &&
+        isFieldCurrency(amountFieldDefinition) &&
+        isFieldCurrencyValue(amountValue) &&
+        isDefined(amountValue.amountMicros) && (
+          <StyledAmount>
+            <CurrencyDisplay
+              currencyValue={amountValue}
+              fieldDefinition={amountFieldDefinition}
+            />
+          </StyledAmount>
+        )}
 
       {isCompactModeActive && (
         <StyledCompactIconContainer className="compact-icon-container">

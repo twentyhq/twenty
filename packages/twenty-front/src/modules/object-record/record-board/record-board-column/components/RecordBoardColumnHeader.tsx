@@ -18,6 +18,8 @@ import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/r
 import { RecordGroupAggregateDropdown } from '@/object-record/record-group/components/RecordGroupAggregateDropdown';
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
+import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
+import { recordIndexRecordCountForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordCountForGroupValueComponentFamilyState';
 import { getRecordBoardColumnAccentStyle } from '@/object-record/record-board/utils/getRecordBoardColumnAccentStyle';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useIsRecordTableWidgetAggregateNonInteractive } from '@/object-record/record-table-widget/hooks/useIsRecordTableWidgetAggregateNonInteractive';
@@ -36,6 +38,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
+import { AggregateOperations } from '~/generated-metadata/graphql';
 
 const StyledHeader = styled.div<{ isReadOnly: boolean }>`
   align-items: center;
@@ -90,6 +93,12 @@ const StyledLeftContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
   overflow: hidden;
+`;
+
+const StyledRecordCount = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 `;
 
 const StyledRightContainer = styled.div`
@@ -202,6 +211,19 @@ export const RecordBoardColumnHeader = () => {
     recordIndexAggregateDisplayLabelComponentState,
   );
 
+  const recordIndexRecordCountForGroupValue = useAtomComponentFamilyStateValue(
+    recordIndexRecordCountForGroupValueComponentFamilyState,
+    { groupValue: columnDefinition?.value ?? '' },
+  );
+
+  const recordIndexGroupAggregateOperation = useAtomComponentStateValue(
+    recordIndexGroupAggregateOperationComponentState,
+  );
+
+  const shouldShowRecordCount =
+    isDefined(recordIndexRecordCountForGroupValue) &&
+    recordIndexGroupAggregateOperation !== AggregateOperations.COUNT;
+
   const { openDropdown } = useOpenDropdown();
 
   const dropdownId = `record-board-column-dropdown-${columnDefinition.id}`;
@@ -265,6 +287,13 @@ export const RecordBoardColumnHeader = () => {
                   </DropdownRoot>
                 )}
               </StyledDropdownContainer>
+              {shouldShowRecordCount && (
+                <StyledRecordCount>
+                  {recordIndexRecordCountForGroupValue}
+                </StyledRecordCount>
+              )}
+            </StyledLeftContainer>
+            <StyledRightContainer>
               <StyledAggregateDropdownContainer
                 isNonInteractive={isAggregateDropdownNonInteractive}
                 inert={isAggregateDropdownNonInteractive || undefined}
@@ -276,8 +305,6 @@ export const RecordBoardColumnHeader = () => {
                   aggregateLabel={recordIndexAggregateDisplayLabel}
                 />
               </StyledAggregateDropdownContainer>
-            </StyledLeftContainer>
-            <StyledRightContainer>
               {!isRecordBoardViewSettingsReadOnly && (
                 <StyledHeaderActions
                   data-dropdown-open={isDropdownOpen ? 'true' : undefined}

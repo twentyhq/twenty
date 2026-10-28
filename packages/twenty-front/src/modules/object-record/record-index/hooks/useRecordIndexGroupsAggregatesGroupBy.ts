@@ -75,7 +75,9 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
     () =>
       isDefined(recordAggregateGqlField)
         ? generateGroupByAggregateQuery({
-            aggregateOperationGqlFields: [recordAggregateGqlField],
+            aggregateOperationGqlFields: [
+              ...new Set(['totalCount', recordAggregateGqlField]),
+            ],
             objectMetadataItem,
           })
         : EMPTY_QUERY,
