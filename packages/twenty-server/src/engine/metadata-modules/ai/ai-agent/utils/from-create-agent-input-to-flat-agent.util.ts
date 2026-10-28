@@ -53,6 +53,8 @@ export const fromCreateAgentInputToFlatAgent = ({
     responseFormat: createAgentInput.responseFormat ?? { type: 'text' },
     workspaceId,
     isSystem,
+    isActive: true,
+    overrides: null,
     universalIdentifier: v4(),
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,

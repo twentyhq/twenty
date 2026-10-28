@@ -164,6 +164,7 @@ export class DashboardDuplicationService {
         rolePermissionConfig,
         objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
         flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
         flatApplicationMaps: workspaceContext.flatApplicationMaps,
       });
 

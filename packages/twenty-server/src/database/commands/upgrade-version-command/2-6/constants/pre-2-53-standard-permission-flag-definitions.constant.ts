@@ -1,4 +1,4 @@
-// Frozen 2.52 standard flag definitions, with the pre-2.53 keys
+// Released commands must not read live constants that a later key rename changes
 export const PRE_2_53_STANDARD_PERMISSION_FLAG_DEFINITIONS: readonly Readonly<{
   key: string;
   universalIdentifier: string;

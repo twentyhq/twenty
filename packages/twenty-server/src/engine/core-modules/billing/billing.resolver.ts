@@ -143,6 +143,7 @@ export class BillingResolver {
 
     return await this.billingPortalWorkspaceService.withTrialLimitLock({
       userId: user.id,
+      userEmail: user.email,
       workspaceId: workspace.id,
       createSubscription: async (isTrialLimitReached) => {
         const isPaymentMethodRequired =
@@ -221,6 +222,7 @@ export class BillingResolver {
 
     return await this.billingPortalWorkspaceService.withTrialLimitLock({
       userId: user.id,
+      userEmail: user.email,
       workspaceId: workspace.id,
       createSubscription: (isTrialLimitReached) =>
         this.billingPortalWorkspaceService.createSubscriptionPaymentIntent({
