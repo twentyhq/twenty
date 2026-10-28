@@ -1,3 +1,10 @@
+import { type ListItem, type Nodes, type RootContent } from 'mdast';
+import { fromMarkdown } from 'mdast-util-from-markdown';
+import { gfmFromMarkdown } from 'mdast-util-gfm';
+import { toString } from 'mdast-util-to-string';
+import { gfm } from 'micromark-extension-gfm';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+
 export type AppReadmeListItem = {
   title?: string;
   markdown: string;
@@ -20,120 +27,69 @@ export type AppReadme = {
   sections: AppReadmeSection[];
 };
 
-const FENCE_PATTERN = /^\s*(```|~~~)/;
-const HEADING_PATTERN = /^(#{1,6})\s+(.*)$/;
-const LIST_ITEM_PATTERN = /^([-*+]|\d+[.)])\s+(.*)$/;
-const LEADING_EMOJI_PATTERN =
-  /^(?:\p{Extended_Pictographic}|\u200D|\uFE0F|\s)+(?=\S)/u;
-const BOLD_LEAD_PATTERN = /^\*\*(.+?)\*\*\s*(?:[:—–-]\s*)?/;
+const LEADING_EMOJI_PATTERN = /^(?:\p{Extended_Pictographic}|‍|️|\s)+(?=\S)/u;
+const TITLE_SEPARATOR_PATTERN = /^\s*(?:[:—–-]\s*)?/;
 
-const splitRawBlocks = (markdown: string): string[][] => {
-  const blocks: string[][] = [];
-  let current: string[] = [];
-  let isInFence = false;
+const getStartOffset = (node: Nodes) => node.position?.start.offset ?? 0;
 
-  const flush = () => {
-    if (current.length > 0) {
-      blocks.push(current);
-      current = [];
-    }
-  };
+const getEndOffset = (node: Nodes) => node.position?.end.offset ?? 0;
 
-  for (const line of markdown.split(/\r?\n/)) {
-    if (FENCE_PATTERN.test(line)) {
-      isInFence = !isInFence;
-      current.push(line);
-      continue;
-    }
+const sliceSource = (source: string, first: Nodes, last: Nodes = first) =>
+  source.slice(getStartOffset(first), getEndOffset(last));
 
-    if (isInFence) {
-      current.push(line);
-      continue;
-    }
+// Continuation lines keep the list item's indentation in the source
+const dedent = (text: string, indent: number) =>
+  text.replace(new RegExp(`\\n {1,${Math.max(indent, 1)}}`, 'g'), '\n');
 
-    if (line.trim() === '') {
-      flush();
-      continue;
-    }
+const toListItem = (source: string, item: ListItem): AppReadmeListItem => {
+  const [firstChild] = item.children;
+  const lastChild = item.children[item.children.length - 1];
 
-    if (HEADING_PATTERN.test(line)) {
-      flush();
-      blocks.push([line]);
-      continue;
-    }
-
-    current.push(line);
+  if (!isDefined(firstChild) || !isDefined(lastChild)) {
+    return { markdown: '' };
   }
 
-  flush();
+  const indent = (firstChild.position?.start.column ?? 1) - 1;
+  const leadingNode =
+    firstChild.type === 'paragraph' ? firstChild.children[0] : undefined;
 
-  return blocks;
-};
-
-const capitalize = (text: string) =>
-  text.charAt(0).toUpperCase() + text.slice(1);
-
-const toListItem = (lines: string[]): AppReadmeListItem => {
-  const markdown = lines.join('\n').trim();
-  const boldLead = markdown.match(BOLD_LEAD_PATTERN);
-
-  if (boldLead === null) {
-    return { markdown };
-  }
-
-  return {
-    title: boldLead[1].replace(/:$/, ''),
-    markdown: capitalize(markdown.slice(boldLead[0].length).trim()),
-  };
-};
-
-const toListBlock = (lines: string[]): AppReadmeBlock => {
-  const itemLines: string[][] = [];
-
-  for (const line of lines) {
-    const itemMatch = line.match(LIST_ITEM_PATTERN);
-
-    if (itemMatch !== null) {
-      itemLines.push([itemMatch[2]]);
-    } else {
-      itemLines[itemLines.length - 1].push(line.replace(/^ {1,4}/, ''));
-    }
-  }
-
-  return {
-    kind: 'list',
-    ordered: /^\d/.test(lines[0]),
-    items: itemLines.map(toListItem),
-  };
-};
-
-const toBlock = (lines: string[]): AppReadmeBlock => {
-  if (lines.every((line) => line.startsWith('>'))) {
+  if (leadingNode?.type !== 'strong') {
     return {
-      kind: 'note',
-      markdown: lines.map((line) => line.replace(/^>\s?/, '')).join('\n'),
+      markdown: dedent(sliceSource(source, firstChild, lastChild), indent),
     };
   }
 
-  if (LIST_ITEM_PATTERN.test(lines[0])) {
-    return toListBlock(lines);
-  }
+  const body = source
+    .slice(getEndOffset(leadingNode), getEndOffset(lastChild))
+    .replace(TITLE_SEPARATOR_PATTERN, '');
 
-  return { kind: 'text', markdown: lines.join('\n') };
+  return {
+    title: toString(leadingNode).replace(/:$/, ''),
+    markdown: capitalize(dedent(body, indent).trim()),
+  };
 };
 
-// Loose lists and wrapped paragraphs arrive as several raw blocks
+const toBlock = (source: string, node: RootContent): AppReadmeBlock => {
+  switch (node.type) {
+    case 'blockquote':
+      return {
+        kind: 'note',
+        markdown: sliceSource(source, node).replace(/^>\s?/gm, ''),
+      };
+    case 'list':
+      return {
+        kind: 'list',
+        ordered: node.ordered === true,
+        items: node.children.map((item) => toListItem(source, item)),
+      };
+    default:
+      return { kind: 'text', markdown: sliceSource(source, node) };
+  }
+};
+
+// Consecutive paragraphs, tables and code read as one block of prose
 const appendBlock = (blocks: AppReadmeBlock[], block: AppReadmeBlock) => {
   const previous = blocks[blocks.length - 1];
-
-  if (
-    previous?.kind === 'list' &&
-    block.kind === 'list' &&
-    previous.ordered === block.ordered
-  ) {
-    previous.items.push(...block.items);
-    return;
-  }
 
   if (previous?.kind === 'text' && block.kind === 'text') {
     previous.markdown = `${previous.markdown}\n\n${block.markdown}`;
@@ -144,20 +100,23 @@ const appendBlock = (blocks: AppReadmeBlock[], block: AppReadmeBlock) => {
 };
 
 export const parseAppReadme = (markdown: string): AppReadme => {
+  const root = fromMarkdown(markdown, {
+    extensions: [gfm()],
+    mdastExtensions: [gfmFromMarkdown()],
+  });
   const readme: AppReadme = { intro: [], sections: [] };
 
-  for (const lines of splitRawBlocks(markdown)) {
-    const heading = lines[0].match(HEADING_PATTERN);
+  for (const node of root.children) {
     const currentSection = readme.sections[readme.sections.length - 1];
 
     // The page hero already shows the app name
-    if (heading !== null && heading[1].length === 1) {
+    if (node.type === 'heading' && node.depth === 1) {
       continue;
     }
 
-    if (heading !== null && heading[1].length === 2) {
+    if (node.type === 'heading' && node.depth === 2) {
       readme.sections.push({
-        title: heading[2].replace(LEADING_EMOJI_PATTERN, '').trim(),
+        title: toString(node).replace(LEADING_EMOJI_PATTERN, '').trim(),
         markdown: '',
         blocks: [],
         hasSubheadings: false,
@@ -165,14 +124,20 @@ export const parseAppReadme = (markdown: string): AppReadme => {
       continue;
     }
 
-    if (currentSection !== undefined) {
-      currentSection.markdown = [currentSection.markdown, lines.join('\n')]
+    if (isDefined(currentSection)) {
+      currentSection.markdown = [
+        currentSection.markdown,
+        sliceSource(markdown, node),
+      ]
         .filter((part) => part !== '')
         .join('\n\n');
-      currentSection.hasSubheadings ||= heading !== null;
+      currentSection.hasSubheadings ||= node.type === 'heading';
     }
 
-    appendBlock(currentSection?.blocks ?? readme.intro, toBlock(lines));
+    appendBlock(
+      currentSection?.blocks ?? readme.intro,
+      toBlock(markdown, node),
+    );
   }
 
   return readme;

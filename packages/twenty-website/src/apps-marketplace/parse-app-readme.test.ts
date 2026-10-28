@@ -64,6 +64,19 @@ describe('parseAppReadme', () => {
     ]);
   });
 
+  it('splits a list from the paragraph right above it', () => {
+    const readme = parseAppReadme('## Values\n\nSupported values:\n- a\n- b');
+
+    expect(readme.sections[0].blocks).toEqual([
+      { kind: 'text', markdown: 'Supported values:' },
+      {
+        kind: 'list',
+        ordered: false,
+        items: [{ markdown: 'a' }, { markdown: 'b' }],
+      },
+    ]);
+  });
+
   it('reads blockquotes as notes and keeps code fences whole', () => {
     const readme = parseAppReadme(
       '## Setup\n\n> Answers can be\n> inaccurate.\n\n```text\na\n\nb\n```',
