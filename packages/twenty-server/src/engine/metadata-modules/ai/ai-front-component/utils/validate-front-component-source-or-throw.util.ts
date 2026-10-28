@@ -31,10 +31,11 @@ export const validateFrontComponentSourceOrThrow = (source: string): void => {
         ));
 
     if (isDefaultExport) {
-      throw new FrontComponentBuildException(
-        'Export a named Component without a default export. Twenty adds the SDK registration.',
-        'INVALID_INPUT',
-      );
+      throw new FrontComponentBuildException({
+        message:
+          'Export a named Component without a default export. Twenty adds the SDK registration.',
+        code: 'INVALID_INPUT',
+      });
     }
 
     if (
@@ -61,17 +62,17 @@ export const validateFrontComponentSourceOrThrow = (source: string): void => {
       typescript.isStringLiteral(statement.moduleSpecifier) &&
       !FRONT_COMPONENT_ALLOWED_IMPORTS.includes(statement.moduleSpecifier.text)
     ) {
-      throw new FrontComponentBuildException(
-        `Unsupported import: ${statement.moduleSpecifier.text}. Use React and the supported twenty-ui imports.`,
-        'INVALID_INPUT',
-      );
+      throw new FrontComponentBuildException({
+        message: `Unsupported import: ${statement.moduleSpecifier.text}. Use React and the supported twenty-ui imports.`,
+        code: 'INVALID_INPUT',
+      });
     }
   }
 
   if (!hasComponent) {
-    throw new FrontComponentBuildException(
-      'Export a named Component function or const.',
-      'INVALID_INPUT',
-    );
+    throw new FrontComponentBuildException({
+      message: 'Export a named Component function or const.',
+      code: 'INVALID_INPUT',
+    });
   }
 };
