@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
+import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -121,6 +122,9 @@ export class AgentInboxThreadResolver {
 
     throw new AuthenticationError(
       'A workspace member or an application is required',
+      {
+        userFriendlyMessage: msg`Sign in as a workspace member or use an application token to change this conversation.`,
+      },
     );
   }
 }
