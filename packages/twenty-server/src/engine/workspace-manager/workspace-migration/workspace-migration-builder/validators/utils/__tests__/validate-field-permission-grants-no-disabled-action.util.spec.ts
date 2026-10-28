@@ -31,35 +31,55 @@ const amount = getFlatFieldMetadataMock({
   disabledFieldPermissionActions: ['canUpdateFieldValue'],
 });
 
-const workspaceRole = {
+const OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'stripe-default-role-universal-identifier';
+
+const owningApplicationDefaultRole = {
+  universalIdentifier: OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+};
+
+const owningApplicationOtherRole = {
+  universalIdentifier: 'stripe-other-role-universal-identifier',
+  applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+};
+
+const otherApplicationDefaultRole = {
+  universalIdentifier: OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   applicationUniversalIdentifier: 'workspace-custom-universal-identifier',
 };
 
 describe('validateFieldPermissionGrantsNoDisabledAction', () => {
-  it('should reject granting an action the field disables', () => {
+  it('should let the owning application grant a disabled action to its default role', () => {
     expect(
       validateFieldPermissionGrantsNoDisabledAction({
         flatFieldPermission: buildFieldPermission({
           canUpdateFieldValue: true,
         }),
         flatFieldMetadata: amount,
-        flatRole: workspaceRole,
-      }),
-    ).toEqual([expect.objectContaining({ value: 'canUpdateFieldValue' })]);
-  });
-
-  it('should let the owning application grant a disabled action to its own role', () => {
-    expect(
-      validateFieldPermissionGrantsNoDisabledAction({
-        flatFieldPermission: buildFieldPermission({
-          canUpdateFieldValue: true,
-        }),
-        flatFieldMetadata: amount,
-        flatRole: {
-          applicationUniversalIdentifier:
-            OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
-        },
+        flatRole: owningApplicationDefaultRole,
+        applicationDefaultRoleUniversalIdentifier:
+          OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
       }),
     ).toEqual([]);
+  });
+
+  it('should reject a disabled action granted to a role that is not the owning application default role', () => {
+    for (const flatRole of [
+      owningApplicationOtherRole,
+      otherApplicationDefaultRole,
+    ]) {
+      expect(
+        validateFieldPermissionGrantsNoDisabledAction({
+          flatFieldPermission: buildFieldPermission({
+            canUpdateFieldValue: true,
+          }),
+          flatFieldMetadata: amount,
+          flatRole,
+          applicationDefaultRoleUniversalIdentifier:
+            OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+        }),
+      ).toEqual([expect.objectContaining({ value: 'canUpdateFieldValue' })]);
+    }
   });
 });

@@ -24,7 +24,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
+import { formatValidationErrors } from 'src/engine/workspace-manager/workspace-migration/utils/format-validation-errors.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -299,6 +299,7 @@ export class ApplicationUpgradeService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
+    shouldDeferActions?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
@@ -310,6 +311,7 @@ export class ApplicationUpgradeService {
       workspaceId: params.workspaceId,
       skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
       updateProgress: params.updateProgress,
+      shouldDeferActions: params.shouldDeferActions,
     });
   }
 
@@ -319,6 +321,7 @@ export class ApplicationUpgradeService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
+    shouldDeferActions?: boolean;
   }): Promise<boolean> {
     const { appRegistration } = params;
 
@@ -342,6 +345,7 @@ export class ApplicationUpgradeService {
         workspaceId: params.workspaceId,
         skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
         updateProgress: params.updateProgress,
+        shouldDeferActions: params.shouldDeferActions,
       });
     } catch (error) {
       const appName =

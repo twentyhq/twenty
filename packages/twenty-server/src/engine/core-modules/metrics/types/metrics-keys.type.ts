@@ -67,6 +67,7 @@ export enum MetricsKeys {
   JobStalled = 'job/stalled',
   JobWaiting = 'job/waiting',
   JobLatencyMs = 'job/latency-ms',
+  JobDurationMs = 'job/duration-ms',
   AiChatTurnLatencyMs = 'ai-chat/turn-latency-ms',
   AiChatStepLatencyMs = 'ai-chat/step-latency-ms',
   AiChatTtftMs = 'ai-chat/ttft-ms',

@@ -163,6 +163,9 @@ export default {
             "id": [
                 524
             ],
+            "isActive": [
+                4
+            ],
             "isCustom": [
                 4
             ],
@@ -320,6 +323,9 @@ export default {
                 10
             ],
             "openThreadCount": [
+                10
+            ],
+            "unreadOpenThreadCount": [
                 10
             ],
             "__typename": [
@@ -13122,6 +13128,9 @@ export default {
             ],
             "id": [
                 524
+            ],
+            "isActive": [
+                4
             ],
             "label": [
                 1

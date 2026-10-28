@@ -451,6 +451,34 @@ try {
 }
 ```
 
+## Publicación en la bandeja de entrada
+
+`sendInboxMessage` y los asistentes de menciones de la [bandeja de entrada](/es/developers/extend/apps/logic/inbox) también se exportan desde `twenty-sdk/front-component`, por lo que un componente puede publicar un mensaje sin una función de lógica intermedia. El mensaje procede de tu aplicación y la llamada incluye el token del componente, por lo que el miembro que consulta la página necesita el permiso `AI`, como todos los destinatarios.
+
+Para mostrar la conversación después, navega hasta ella con el `threadId` que devuelve la llamada:
+
+```tsx
+import {
+  AppPath,
+  navigate,
+  sendInboxMessage,
+} from 'twenty-sdk/front-component';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: 'weekly-digest',
+  idempotencyKey: `weekly-digest-${weekNumber}`,
+  title: 'Your weekly digest',
+  text: 'Three deals moved to negotiation this week.',
+});
+
+await navigate(AppPath.AiChatInbox, { threadId });
+```
+
+* `workspaceMemberIds` acepta los IDs de miembros del espacio de trabajo, no el ID de usuario que devuelve `useUserId()`.
+* Una conversación se abre solo para sus participantes, así que navega hasta ella cuando el miembro que consulta la página sea uno de los destinatarios.
+* La bandeja de entrada es una ruta de página principal: `navigate` la abre allí y `openSidePanelPage` no puede abrirla en el panel lateral.
+
 ## Acceder al contexto de ejecución
 
 Dentro de tu componente, usa hooks del SDK para acceder al usuario actual, el registro y la instancia del componente:

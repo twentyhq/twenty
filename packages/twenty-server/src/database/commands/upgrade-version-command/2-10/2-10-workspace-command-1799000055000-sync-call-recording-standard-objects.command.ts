@@ -511,6 +511,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ProvisionedWorkspac
       const renameResult =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             isSystemBuild: true,
             applicationUniversalIdentifier,
             workspaceId,
@@ -532,6 +533,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ProvisionedWorkspac
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,

@@ -166,6 +166,7 @@ export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRu
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,

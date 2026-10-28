@@ -60,6 +60,7 @@ import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-e
 import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import {
   AiException,
@@ -173,15 +174,24 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       input.responseFormat,
     );
 
-    const agent = await this.agentRepository.findOne(workspace.id, {
+    const agentRow = await this.agentRepository.findOne(workspace.id, {
       where: {
         universalIdentifier: input.agentUniversalIdentifier,
       },
     });
 
-    if (!agent) {
+    if (!isDefined(agentRow)) {
       throw new NotFoundException(
         `Agent ${input.agentUniversalIdentifier} not found`,
+      );
+    }
+
+    const agent = resolveEffectiveAgent(agentRow);
+
+    if (!agent.isActive) {
+      throw new AiException(
+        `Agent ${input.agentUniversalIdentifier} is archived`,
+        AiExceptionCode.AGENT_IS_INACTIVE,
       );
     }
 

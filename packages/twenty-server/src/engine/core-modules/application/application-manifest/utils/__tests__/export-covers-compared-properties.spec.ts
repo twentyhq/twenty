@@ -846,22 +846,20 @@ const EXPORTED_KINDS: ExportedKind[] = [
       exportWorkflowManifestOrThrow(WORKFLOW_MANIFEST),
     ),
     renamedProperties: { versionDefinitionHash: 'version' },
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: ['visibility'],
     knownGaps: {
       isSystem: 'system workflows are reported as excluded',
-      visibility:
-        'private workflows are reported as excluded, exported workflows are visible to the workspace',
       lastPublishedVersionId:
-        'legacy workspace version pointer, always null for synced application workflows',
+        'legacy workspace version pointer, kept while the active version matches the definition',
       lastPublishedCoreWorkflowVersionId:
-        'the sync points it at the version it derives from the definition',
+        'the sync points it at the active version, or at the one it publishes from the definition',
     },
   },
   {
     metadataName: 'agent',
     emittedProperties: Object.keys(EXPORTED_AGENT_MANIFEST),
     renamedProperties: {},
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
     knownGaps: {
       modelConfiguration:
         'no manifest slot; an agent with one is reported as unsupported',
@@ -893,10 +891,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
       }),
     ),
     renamedProperties: {},
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
     knownGaps: {
-      isActive:
-        'no manifest slot and no overrides; a deactivated skill is reported as unsupported',
       isSystem:
         'always false for application skills; any other value is reported as unsupported',
     },

@@ -13,12 +13,15 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "responseFormat",
       "modelConfiguration",
       "triggers",
+      "isActive",
+      "overrides",
       "isSystem",
     ],
     "propertiesToStringify": [
       "responseFormat",
       "modelConfiguration",
       "triggers",
+      "overrides",
     ],
   },
   "agentChatChannel": {
@@ -402,9 +405,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "description",
       "content",
       "isActive",
+      "overrides",
       "isSystem",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "overrides",
+    ],
   },
   "timelineActivityType": {
     "propertiesToCompare": [

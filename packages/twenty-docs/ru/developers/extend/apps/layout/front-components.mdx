@@ -453,6 +453,34 @@ try {
 }
 ```
 
+## Отправка во входящие
+
+`sendInboxMessage` и вспомогательные функции упоминаний [входящих](/ru/developers/extend/apps/logic/inbox) также экспортируются из `twenty-sdk/front-component`, поэтому компонент может отправить сообщение без промежуточной логической функции. Сообщение отправлено из вашего приложения, а вызов содержит токен компонента, поэтому участнику, просматривающему страницу, как и каждому получателю, требуется разрешение `AI`.
+
+Чтобы затем показать беседу, перейдите к ней с помощью `threadId`, который возвращает вызов:
+
+```tsx
+import {
+  AppPath,
+  navigate,
+  sendInboxMessage,
+} from 'twenty-sdk/front-component';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: 'weekly-digest',
+  idempotencyKey: `weekly-digest-${weekNumber}`,
+  title: 'Your weekly digest',
+  text: 'Three deals moved to negotiation this week.',
+});
+
+await navigate(AppPath.AiChatInbox, { threadId });
+```
+
+* `workspaceMemberIds` принимает идентификаторы участников рабочего пространства, а не идентификатор пользователя, который возвращает `useUserId()`.
+* Беседа открывается только для её участников, поэтому переходите к ней, когда участник, просматривающий страницу, является одним из получателей.
+* Входящие — это маршрут главной страницы: `navigate` открывает их там, а `openSidePanelPage` не может открыть их на боковой панели.
+
 ## Доступ к контексту времени выполнения
 
 Внутри вашего компонента используйте хуки SDK для доступа к текущему пользователю, записи и экземпляру компонента:
