@@ -4,6 +4,7 @@ import {
   TEAMS_ASSISTANT_INITIAL_STATUS,
   TEAMS_ASSISTANT_STATUS_STEPS,
 } from 'src/features/chat/logic-functions/constants/teams-assistant-status-steps';
+import { TEAMS_ASSISTANT_STREAM_HANDOFF_STEP } from 'src/features/chat/logic-functions/constants/teams-assistant-stream-handoff-step';
 import { startTeamsAssistantStatus } from 'src/features/chat/logic-functions/utils/start-teams-assistant-status';
 
 const { sendActivityMock, startStreamMock, updateMock, finishMock } =
@@ -155,6 +156,26 @@ describe('startTeamsAssistantStatus', () => {
     expect(finishMock).toHaveBeenCalledExactlyOnceWith(
       'Acme has 3 open deals.',
     );
+  });
+
+  it('should close the stream before the Teams time limit and send a late answer as a plain message', async () => {
+    const status = await startTeamsAssistantStatus(PERSONAL);
+
+    await vi.advanceTimersByTimeAsync(
+      TEAMS_ASSISTANT_STREAM_HANDOFF_STEP.afterSeconds * 1000,
+    );
+
+    expect(updateMock).toHaveBeenCalledTimes(
+      TEAMS_ASSISTANT_STATUS_STEPS.length,
+    );
+    expect(finishMock).toHaveBeenCalledExactlyOnceWith(
+      TEAMS_ASSISTANT_STREAM_HANDOFF_STEP.text,
+    );
+
+    await status.finish('Acme has 3 open deals.');
+
+    expect(finishMock).toHaveBeenCalledTimes(1);
+    expect(sentMessageTexts()).toEqual(['Acme has 3 open deals.']);
   });
 
   it('should only reply at the end outside personal chats', async () => {

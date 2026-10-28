@@ -29,7 +29,7 @@ export const startTeamsAssistantStream = async ({
     },
   });
 
-  // Follow-up stream calls answer 202 with an empty object, which the JSON helper rejects.
+  // Follow-up stream calls answer 202 with no payload to parse.
   const sendStreamActivity = async (activity: TeamsActivity) => {
     await requestTeamsConnector({
       serviceUrl,
