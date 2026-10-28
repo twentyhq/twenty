@@ -60,6 +60,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     this.toolFunctions = new LambdaToolFunctionsService(
       options,
       this.awsClient,
+      options.cacheLockService,
     );
     this.layerManager = new LambdaLayerManagerService(
       options,

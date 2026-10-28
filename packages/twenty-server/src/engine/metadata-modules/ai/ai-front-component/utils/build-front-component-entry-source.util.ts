@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { PageLayoutType } from 'twenty-shared/types';
 import { z } from 'zod';
 
@@ -30,8 +29,7 @@ export const buildFrontComponentEntrySource = ({
   if (!parsedOptions.success) {
     throw new FrontComponentBuildException({
       message: parsedOptions.error.message,
-      code: 'INVALID_INPUT',
-      userFriendlyMessage: msg`Invalid front component settings.`,
+      code: 'INVALID_SETTINGS',
     });
   }
 
