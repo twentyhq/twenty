@@ -30,6 +30,11 @@ services:
       EMAIL_FROM_ADDRESS: notify@cwistudio.in
       EMAIL_FROM_NAME: Setu by CWI Studio
       EMAIL_SYSTEM_ADDRESS: notify@cwistudio.in
+      # Sign in with Google (operation-room/runbooks/google-login.md). Values from Doppler SETU_GOOGLE_CLIENT_*.
+      AUTH_GOOGLE_ENABLED: "true"
+      AUTH_GOOGLE_CLIENT_ID: ${SETU_GOOGLE_CLIENT_ID}
+      AUTH_GOOGLE_CLIENT_SECRET: ${SETU_GOOGLE_CLIENT_SECRET}
+      AUTH_GOOGLE_CALLBACK_URL: https://setu.cwistudio.in/auth/google/redirect
     depends_on:
       db: { condition: service_healthy }
     healthcheck:
