@@ -79,8 +79,6 @@ const collectDetails = ({
   return details;
 };
 
-// Metadata validation errors ride in the GraphQL error extensions; the top-level
-// message stays generic, so pull the per-entity breakdown out for commands to surface.
 export const extractMetadataValidation = (
   graphqlErrors: unknown[],
 ): { summary?: string; errors: ValidationErrorDetail[] } => {
