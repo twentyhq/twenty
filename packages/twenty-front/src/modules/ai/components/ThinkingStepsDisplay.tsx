@@ -76,7 +76,7 @@ const StyledSummaryButton = styled.button`
   }
 `;
 
-const StyledSummaryChevronContainer = styled.div`
+const StyledChevronContainer = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.light};
   display: flex;
@@ -87,7 +87,7 @@ const StyledSummaryChevronContainer = styled.div`
   transition: transform calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease-in-out;
 
-  [data-panel-open] > & {
+  [data-panel-open] & {
     transform: rotate(90deg);
   }
 `;
@@ -153,21 +153,6 @@ const StyledShimmeringRowLabel = styled(ShimmeringText)`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-`;
-
-const StyledRowChevronContainer = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.light};
-  display: flex;
-  flex-shrink: 0;
-  justify-content: center;
-  transform: rotate(0deg);
-  transition: transform calc(${themeCssVariables.animation.duration.fast} * 1s)
-    ease-in-out;
-
-  [data-panel-open] & {
-    transform: rotate(90deg);
-  }
 `;
 
 const StyledReasoningContainer = styled.div`
@@ -237,9 +222,9 @@ const ThinkingReasoningStepRow = ({
           <StyledRowLabel>{label}</StyledRowLabel>
         )}
         {isExpandable && (
-          <StyledRowChevronContainer>
+          <StyledChevronContainer>
             <IconChevronRight size={14} />
-          </StyledRowChevronContainer>
+          </StyledChevronContainer>
         )}
       </StyledRowLabelContainer>
     </>
@@ -337,9 +322,9 @@ export const ThinkingStepsDisplay = ({
             <ThinkingOrbitLoaderIcon />
           </StyledIconContainer>
         ) : (
-          <StyledSummaryChevronContainer>
+          <StyledChevronContainer>
             <IconChevronRight size={14} />
-          </StyledSummaryChevronContainer>
+          </StyledChevronContainer>
         )}
         {isWorking ? (
           <StyledShimmeringRowLabel>

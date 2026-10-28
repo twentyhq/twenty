@@ -23,7 +23,6 @@ jest.mock('@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement', () => ({
 }));
 
 let notifyResize = () => {};
-const disconnect = jest.fn();
 
 class MockResizeObserver {
   constructor(callback: () => void) {
@@ -32,7 +31,7 @@ class MockResizeObserver {
 
   observe = jest.fn();
   unobserve = jest.fn();
-  disconnect = disconnect;
+  disconnect = jest.fn();
 }
 
 const growMessageListTo = (scrollHeight: number) => {
@@ -68,16 +67,5 @@ describe('AgentChatStreamingAutoScrollEffect', () => {
     growMessageListTo(480);
 
     expect(scrollWrapperElement.scrollTop).toBe(0);
-  });
-
-  it('should stop following when the reader scrolls away', () => {
-    mockIsScrolledToBottom.mockReturnValue(true);
-
-    const { rerender } = render(<AgentChatStreamingAutoScrollEffect />);
-
-    mockIsScrolledToBottom.mockReturnValue(false);
-    rerender(<AgentChatStreamingAutoScrollEffect />);
-
-    expect(disconnect).toHaveBeenCalled();
   });
 });

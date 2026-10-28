@@ -3,7 +3,6 @@ const BACKLOG_SHARE_REVEALED_PER_FRAME = 0.06;
 const MINIMUM_CHARACTERS_REVEALED_PER_MS = 0.06;
 const MAXIMUM_ELAPSED_FRAME_COUNT = 2;
 
-// Eases toward the received text so network bursts spread over a few hundred ms, never splitting a word.
 export const getNextRevealedTextLength = ({
   text,
   revealedLength,

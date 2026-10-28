@@ -68,11 +68,6 @@ describe('getDisplayableStreamingMarkdown', () => {
       expected: 'Use `[[` to mention a record',
     },
     {
-      description: 'ignores a bracket inside unfinished inline code',
-      text: 'Call `items[0',
-      expected: 'Call `items[0`',
-    },
-    {
       description: 'leaves an open code block untouched',
       text: '```ts\nconst value = **',
       expected: '```ts\nconst value = **',

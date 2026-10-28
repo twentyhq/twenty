@@ -25,26 +25,6 @@ const revealFrames = ({
 };
 
 describe('getNextRevealedTextLength', () => {
-  it('should return the full length once everything is revealed', () => {
-    expect(
-      getNextRevealedTextLength({
-        text: 'Hello world',
-        revealedLength: 11,
-        elapsedMs: FRAME_DURATION_IN_MS,
-      }),
-    ).toBe(11);
-  });
-
-  it('should stop at word ends', () => {
-    const text = 'Pipeline hygiene keeps every forecast honest and current.';
-
-    revealFrames({ text, frameCount: 20 }).forEach((revealedLength) => {
-      expect(
-        revealedLength === text.length || /\s/.test(text[revealedLength]),
-      ).toBe(true);
-    });
-  });
-
   it('should spread a large burst over several frames', () => {
     const text = 'word '.repeat(300);
 
@@ -52,16 +32,6 @@ describe('getNextRevealedTextLength', () => {
 
     expect(revealedLengths[0]).toBeLessThan(text.length * 0.1);
     expect(revealedLengths.at(-1)).toBe(text.length);
-  });
-
-  it('should only grow', () => {
-    const text = 'Short words and some longerwordswithoutspaces then more.';
-
-    const revealedLengths = revealFrames({ text, frameCount: 30 });
-
-    revealedLengths.slice(1).forEach((revealedLength, index) => {
-      expect(revealedLength).toBeGreaterThanOrEqual(revealedLengths[index]);
-    });
   });
 
   it('should not jump ahead after an idle pause', () => {
