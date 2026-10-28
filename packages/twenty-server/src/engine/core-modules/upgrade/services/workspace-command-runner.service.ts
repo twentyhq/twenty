@@ -7,6 +7,7 @@ import { type RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
+import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
 
 type WorkspaceCommandEntry = Pick<
   RegisteredWorkspaceCommand,
@@ -27,6 +28,7 @@ export class WorkspaceCommandRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly upgradeStatusService: UpgradeStatusService,
+    private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
   ) {}
 
   async runWorkspaceCommands({
@@ -55,6 +57,8 @@ export class WorkspaceCommandRunnerService {
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
     try {
+      await this.runPendingDeferredActions({ workspaceId, options });
+
       for (const workspaceCommandEntry of workspaceCommands) {
         await this.runSingleWorkspaceCommandOrThrow({
           workspaceCommandEntry,
@@ -63,6 +67,8 @@ export class WorkspaceCommandRunnerService {
           options,
           iteratorContext,
         });
+
+        await this.runPendingDeferredActions({ workspaceId, options });
       }
 
       this.logger.log(
@@ -81,6 +87,24 @@ export class WorkspaceCommandRunnerService {
         await this.safeInvalidateWorkspace(workspaceId);
       }
     }
+  }
+
+  // The worker may not be running during an upgrade, and the next schema
+  // change is rejected while index builds or foreign key checks are queued.
+  private async runPendingDeferredActions({
+    workspaceId,
+    options,
+  }: {
+    workspaceId: string;
+    options: ParsedUpgradeCommandOptions;
+  }): Promise<void> {
+    if (options.dryRun) {
+      return;
+    }
+
+    await this.deferredWorkspaceMigrationActionRunnerService.runPendingActions(
+      workspaceId,
+    );
   }
 
   private async safeInvalidateWorkspace(workspaceId: string): Promise<void> {
