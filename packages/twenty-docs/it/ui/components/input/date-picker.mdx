@@ -1,0 +1,158 @@
+---
+title: Selettore data
+description: Condividi il motore di calendario esistente durante la navigazione tra i mesi indipendentemente dalla data selezionata.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DatePickerReference from '/snippets/ui/generated/components/input/date-picker.mdx';
+
+## Panoramica
+
+`DatePicker` condivide il motore di calendario `react-datepicker` utilizzato dagli input di data e data-ora di Twenty. Fornisce valori di sola data e un controllo indipendente sulla data selezionata e sul mese visualizzato.
+
+<StoryEmbed storyId="ui-components-datepicker--display" title="Esempio di DatePicker" height={330} />
+
+## Utilizzo
+
+```tsx
+import { useState } from 'react';
+import { DatePicker } from 'twenty-ui/components/input';
+
+export const ChooseDate = () => {
+  const [value, setValue] = useState<string | null>('2026-10-07');
+  const [viewedMonth, setViewedMonth] = useState('2026-10');
+
+  return (
+    <DatePicker
+      aria-label="Choose a date"
+      value={value}
+      onValueChange={setValue}
+      viewedMonth={viewedMonth}
+      onViewedMonthChange={setViewedMonth}
+      weekStart={1}
+      weekdayLabels={['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']}
+      locale="en-US"
+      previousMonthLabel="Previous month"
+      nextMonthLabel="Next month"
+      monthLabel="Month"
+      yearLabel="Year"
+    />
+  );
+};
+```
+
+## Selezione e navigazione
+
+La modifica del mese o dell'anno chiama `onViewedMonthChange` e lascia invariato `value`. La scelta di un giorno disponibile chiama `onValueChange` quando cambia la data selezionata.
+
+Usa `onValueSelect` per confermare una data o chiudere un selettore di prodotto. Riceve la data canonica `YYYY-MM-DD` anche quando l'utente sceglie il giorno già selezionato. Mantieni il comportamento di chiusura nell'adattatore dell'applicazione.
+
+Aggiorna ogni prop controllata nel relativo callback. Le modifiche alle prop non selezionano una data sostitutiva. L'intestazione predefinita fornisce selettori di mese e anno e pulsanti precedente e successivo; il relativo selettore dell'anno elenca fino a 100 anni prima e dopo l'anno visualizzato.
+
+## Valori di data e localizzazione
+
+Passa stringhe canoniche di sola data gregoriana: `YYYY-MM-DD` per `value` e i limiti dell'intervallo evidenziato e `YYYY-MM` per `viewedMonth`. Imposta `value={null}` per nessuna selezione. Questi valori non contengono né ora né fuso orario. Gli anni supportati vanno da 0001 a 9999.
+
+`locale` formatta l'intestazione mese/anno predefinita e i titoli completi dei giorni della settimana quando vengono forniti `weekdayLabels` personalizzati. Le etichette dei giorni e il calendario sottostante mantengono il comportamento locale esistente di `react-datepicker`.
+
+`weekStart` imposta la prima colonna, utilizzando 0 per domenica fino a 6 per sabato. Usa `weekdayLabels` per sette etichette brevi visibili in ordine con domenica per prima, indipendentemente da `weekStart`. Il motore del calendario fornisce i nomi dei giorni della settimana quando questa prop viene omessa.
+
+La presentazione del giorno corrente segue il comportamento dell'orologio del browser del motore del calendario. Gli adattatori di prodotto gestiscono la conversione del fuso orario, i fallback della data iniziale, le preferenze dei membri e i dati di pianificazione.
+
+## Comportamento esistente del calendario
+
+Il rendering dei giorni, il markup di accessibilità, la navigazione da tastiera delle date e la gestione delle date non disponibili utilizzano `react-datepicker`. I giorni visibili dei mesi adiacenti restano selezionabili quando disponibili.
+
+Imposta `isDateUnavailable` per impedire la selezione delle date in base alla policy della tua applicazione. Il callback riceve una stringa canonica `YYYY-MM-DD`. Imposta `disabled` per disabilitare la selezione della data e i controlli dell'intestazione predefinita.
+
+`isKeyboardNavigationDisabled` è impostato su `false` per impostazione predefinita. Gli adattatori di input di prodotto esistenti possono impostarlo per preservare il proprio comportamento da tastiera. I controlli dell'intestazione mantengono la loro interazione nativa da tastiera.
+
+## Intervalli evidenziati e viste di sola lettura
+
+Passa `highlightedRange={{ start: '2026-10-05', end: '2026-10-11' }}` per evidenziare un intervallo di date inclusivo. L'applicazione calcola l'intervallo; l'evidenziazione non seleziona più date né modifica `value`.
+
+Usa `readOnly` per visualizzare un intervallo calcolato o una data selezionata consentendo al contempo la navigazione tra mesi e anni. Usa `isGridHidden` per un navigatore di soli mesi che mantiene la stessa intestazione.
+
+## Intestazioni personalizzate
+
+Usa `renderHeader` per comporre un'intestazione di prodotto esistente con input per date, input per ore o controlli specifici dell'applicazione. Il relativo argomento `DatePickerHeaderProps` fornisce questi valori e azioni:
+
+| Proprietà                                        | Scopo                                                          |
+| ------------------------------------------------ | -------------------------------------------------------------- |
+| `viewedMonth`                                    | Mese `YYYY-MM` corrente.                                       |
+| `onPreviousMonth`, `onNextMonth`                 | Passa al mese adiacente.                                       |
+| `onMonthChange`                                  | Passa a un numero di mese da 1 a 12.                           |
+| `onYearChange`                                   | Passa all'anno fornito.                                        |
+| `isPreviousMonthDisabled`, `isNextMonthDisabled` | Indica se ogni azione per il mese adiacente non è disponibile. |
+
+Queste azioni dell'intestazione modificano il mese visualizzato e lasciano invariata la data selezionata.
+
+```tsx
+import { useState } from 'react';
+import { DatePicker } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const CalendarWithProductHeader = () => {
+  const [value, setValue] = useState<string | null>('2026-10-07');
+  const [viewedMonth, setViewedMonth] = useState('2026-10');
+
+  return (
+    <DatePicker
+      aria-label="Choose a date"
+      value={value}
+      onValueChange={setValue}
+      viewedMonth={viewedMonth}
+      onViewedMonthChange={setViewedMonth}
+      weekStart={1}
+      locale="en-US"
+      previousMonthLabel="Previous month"
+      nextMonthLabel="Next month"
+      monthLabel="Month"
+      yearLabel="Year"
+      renderHeader={({
+        viewedMonth: month,
+        onPreviousMonth,
+        onNextMonth,
+        isPreviousMonthDisabled,
+        isNextMonthDisabled,
+      }) => (
+        <Text
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: themeCssVariables.spacing[2],
+          }}
+        >
+          <Button size="sm" disabled={isPreviousMonthDisabled} onClick={onPreviousMonth}>
+            Previous month
+          </Button>
+          <Text>{month}</Text>
+          <Button size="sm" disabled={isNextMonthDisabled} onClick={onNextMonth}>
+            Next month
+          </Button>
+        </Text>
+      )}
+    />
+  );
+};
+```
+
+## Composizione e adattatori di prodotto
+
+Fornisci un nome di gruppo con `aria-label` o `aria-labelledby`. Gli attributi nativi, `className`, `style` e `ref` si applicano alla radice. Usa `render` per comporre una radice diversa preservando le prop e il ref forniti.
+
+Passa `loadingFallback` per preservare una schermata di caricamento del prodotto durante il caricamento del motore del calendario. Il fallback predefinito è un `Skeleton` alto 300 px.
+
+Per l'intestazione predefinita, `portalContainer` monta i popup dei selettori in un contenitore fornito dall'host. `onNavigationOpenChange` riceve `{ open, control }` per `month` o `year`, con `open: true` all'avvio dell'apertura e `open: false` dopo il completamento della chiusura. Gli host possono mantenere la gestione dei popup e dello stato attivo durante la chiusura. Le intestazioni personalizzate gestiscono la propria integrazione dei popup.
+
+Mantieni le intestazioni di prodotto, gli input di testo, la modifica dell'ora, la conversione del fuso orario, le azioni di cancellazione e il calcolo dei filtri relativi in `twenty-front`. Gli adattatori per data, data e ora e solo mese possono comporre questo motore di calendario condiviso con `highlightedRange`, `readOnly` e `isGridHidden` secondo necessità.
+
+## Props
+
+<DatePickerReference />
+
+<PageBanner illustration="calendar-emails" />

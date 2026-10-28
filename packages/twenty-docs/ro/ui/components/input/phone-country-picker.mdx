@@ -1,0 +1,124 @@
+---
+title: PhoneCountryPicker
+description: Un selector complet de țară pentru telefon și părți componibile care partajează datele despre țări și selecția.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import PhoneCountryPickerReference from '/snippets/ui/generated/components/input/phone-country-picker.mdx';
+
+## Prezentare generală
+
+`PhoneCountryPicker` combină un declanșator cu steagul țării, o fereastră pop-up, căutarea și opțiuni pentru codurile de apelare. Folosește componenta completă pentru selectarea obișnuită sau compune `Root`, `Trigger` și `Options` cu [Dropdown](/ro/ui/components/navigation/dropdown) atunci când ai nevoie de o fereastră pop-up personalizată. Ambele forme partajează aceleași țări pregătite și aceeași selecție.
+
+<StoryEmbed storyId="ui-input-phonecountrypicker--display" title="Selectarea țării pentru telefon" height={260} />
+
+## Utilizare
+
+Furnizează propriile date despre țări și un nume accesibil pentru declanșator. Folosește `value` cu `onValueChange` pentru selecția controlată sau `defaultValue` pentru selecția necontrolată. `null` reprezintă absența unei țări selectate.
+
+```tsx
+import { useState } from 'react';
+import {
+  PhoneCountryPicker,
+  type PhoneCountryOption,
+} from 'twenty-ui/components/input';
+
+const COUNTRIES: PhoneCountryOption[] = [
+  { value: 'FR', label: 'France', callingCode: '33', flag: '🇫🇷' },
+  { value: 'GB', label: 'United Kingdom', callingCode: '44', flag: '🇬🇧' },
+  { value: 'US', label: 'United States', callingCode: '1', flag: '🇺🇸' },
+];
+
+export const PhoneCountryExample = () => {
+  const [value, setValue] = useState<string | null>('FR');
+
+  return (
+    <PhoneCountryPicker
+      aria-label="Phone country"
+      countries={COUNTRIES}
+      value={value}
+      onValueChange={setValue}
+      contentProps={{ width: 280 }}
+      optionsProps={{
+        searchLabel: 'Search countries',
+        listLabel: 'Phone countries',
+        emptyLabel: 'No countries found',
+      }}
+    />
+  );
+};
+```
+
+Fiecare `PhoneCountryOption` are un `value` unic și stabil, un `label` localizat pentru țară, un `callingCode` format numai din cifre, fără semnul plus de la început, și un nod `flag` decorativ. Poate fi și `disabled`. Valorile sunt identificatori deținuți de apelant, precum codurile de țară ISO, și sunt returnate nemodificate. Etichetele, steagurile și codurile de apelare sunt date de prezentare și nu devin identificatorul selectat.
+
+Selectorul adaugă semnul plus și izolează codurile de apelare de la stânga la dreapta în rândurile opțiunilor și în indicațiile de instrumente pentru depășire, inclusiv în interfețele de la dreapta la stânga. Furnizează țările în ordinea în care dorești să fie afișate. Țara selectată apare prima cât timp corespunde interogării; celelalte potriviri își păstrează ordinea furnizată.
+
+## Compunere compusă
+
+Aceasta este o modificare incompatibilă a API-ului pentru apelanții compuși existenți. Adaugă `PhoneCountryPicker.Root` în jurul lui `Dropdown.Root`, mută `countries`, `value` și `onValueChange` din `Options` în `Root` și elimină `Trigger.country`. Ambele părți necesită acum `Root` și derivă din acesta țara selectată.
+
+`Root` gestionează țările și selecția controlată sau necontrolată. Plasează `Dropdown.Root` partajat în interiorul său și compune declanșatorul, conținutul și opțiunile. `Trigger` își derivă steagul selectat și descrierea accesibilă din `Root`; `Options` citește aceleași date și aceeași selecție. Nu furniza altă țară sau altă valoare selectată acelor părți.
+
+```tsx
+import {
+  PhoneCountryPicker,
+  type PhoneCountryOption,
+} from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+const COUNTRIES: PhoneCountryOption[] = [
+  { value: 'FR', label: 'France', callingCode: '33', flag: '🇫🇷' },
+  { value: 'GB', label: 'United Kingdom', callingCode: '44', flag: '🇬🇧' },
+];
+
+<PhoneCountryPicker.Root countries={COUNTRIES} defaultValue="FR">
+  <Dropdown.Root type="picker">
+    <PhoneCountryPicker.Trigger
+      aria-label="Phone country"
+      render={<Button variant="outline" />}
+    />
+    <Dropdown.Content width={320}>
+      <PhoneCountryPicker.Options
+        searchLabel="Search countries"
+        listLabel="Phone countries"
+        emptyLabel="No countries found"
+      />
+    </Dropdown.Content>
+  </Dropdown.Root>
+</PhoneCountryPicker.Root>;
+```
+
+Păstrează o singură rădăcină pentru fiecare selector. Dropdown-ul partajat gestionează deschiderea, poziționarea ferestrei pop-up, paginile, focalizarea și navigarea prin căutare. Folosește `dropdownProps` și `contentProps` pe selectorul complet sau configurează direct părțile Dropdown în utilizarea compusă.
+
+## Căutare și selectare
+
+Căutarea găsește subșiruri în etichetele furnizate ale țărilor, identificatorii stabili și codurile de apelare. Etichetele și identificatorii folosesc normalizarea partajată `normalizeSearchText`: text cu litere mici, descompunere Unicode NFD și gestionarea accentelor care ține cont de sistemul de scriere. De exemplu, `reunion` corespunde cu `Réunion`, iar `gb` corespunde cu un identificator `GB`. Distincțiile semnificative din sistemele de scriere sunt păstrate conform acelui ajutor. Spațiile albe din jurul interogării sunt eliminate; spațiile albe interne sunt păstrate. Pentru căutarea după codul de apelare, un semn plus la început este opțional, astfel încât `44`, `+44` și `" +44 "` corespund codului de apelare furnizat `44`. Căutarea nu analizează un număr de telefon complet și nu deduce o țară din acesta.
+
+`onValueChange(value, eventDetails)` primește identificatorul solicitat și detaliile partajate ale `Dropdown.SelectionGroup`: `reason`, `event` nativ, `trigger` al opțiunii selectate, `cancel()` și `isCanceled`. Apelează `cancel()` înainte de actualizarea stării controlate pentru a respinge solicitarea. O solicitare anulată păstrează selecția necontrolată și lasă fereastra pop-up deschisă. Setează `closeOnSelect={false}` pentru a o menține deschisă după o selecție acceptată. Modificările selecției nu schimbă nicio valoare a câmpului de introducere a numărului de telefon.
+
+Setează `disabled` pe selectorul complet sau pe `Root` pentru a-i dezactiva declanșatorul, căutarea și selecția. O țară dezactivată rămâne vizibilă și nu poate fi selectată. `Trigger.disabled` și `Options.disabled` pot dezactiva suplimentar acele părți individuale.
+
+## Ținte și etichete native
+
+Atributele native, gestionarele de evenimente, `className`, `style`, `ref`, `render` și `children` opțional ale selectorului complet vizează declanșatorul său. `children` înlocuiește steagul implicit sau pictograma globului și indicatorul chevron. `contentProps` vizează `Dropdown.Content`; `optionsProps` vizează div-ul rădăcină al opțiunilor și furnizează `searchLabel`, `listLabel` și `emptyLabel`. În utilizarea compusă, proprietățile native, referințele și compunerea de randare vizează butonul `Trigger` sau div-ul `Options` corespunzător. `Root` nu redă niciun nod DOM.
+
+Furnizează etichete localizate pentru țări și `aria-label` necesar pentru declanșator. Eticheta țării selectate descrie declanșatorul, în timp ce steagul și indicatorul chevron sunt decorative. O selecție goală afișează o pictogramă cu globul. Fereastra pop-up preia numele declanșatorului, cu excepția cazului în care un `Dropdown.Title` sau o etichetă explicită pentru conținut îi atribuie un nume. `searchLabel` are implicit valoarea `Search` și denumește atât câmpul de căutare, cât și substituentul acestuia. `listLabel` are implicit valoarea `Countries` și denumește independent caseta cu listă. `emptyLabel` are implicit valoarea `No results`.
+
+## Integrarea câmpului de introducere a numărului de telefon
+
+Selectorul este livrat fără un catalog de țări, un pachet de resurse pentru steaguri sau un mediu de execuție pentru câmpul de introducere a numărului de telefon. Adaptorul frontend gestionează analiza, validarea, formatarea numerelor de telefon, schițele de editare și persistența. Mapează țara selectată din biblioteca de telefonie la `Root.value` sau la `value` al selectorului complet și mapează înapoi modificările țării printr-un singur callback. Păstrează textul numărului de telefon în proprietarul său existent atunci când modifici sau ștergi o țară ori aplici o actualizare externă a țării selectate.
+
+Trimiterea nativă a formularului, resetarea, obligatoriu, doar pentru citire și integrarea cu Field pentru acest selector personalizat sunt amânate. Selectorul complet transmite atributele native ale declanșatorului conform contractului pentru buton Dropdown.
+
+## Rendererul componentei Front
+
+Exemplele din galerie pentru React și Preact includ selectorul complet și compunerea compusă. Poziționarea portalului, geometria, derularea, închiderea și focalizarea aparțin Dropdown-ului partajat și integrării cu renderer-ul. Selectorul nu introduce un mediu de execuție separat pentru renderer.
+
+## Proprietăți
+
+<PhoneCountryPickerReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

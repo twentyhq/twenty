@@ -1,0 +1,77 @@
+---
+title: Supervisión
+description: "Supervisa cómo se comporta tu aplicación en cada espacio de trabajo que la instala: errores, límites de tasa, créditos, instalaciones y rendimiento de las funciones."
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Una vez que tu aplicación está instalada en otros espacios de trabajo, necesitas saber cuándo deja de funcionar. Twenty registra lo que sucede con tu aplicación en la plataforma y lo muestra en dos lugares:
+
+* **La página de supervisión** del registro de tu aplicación, para ti como propietario de la aplicación, agregada en todas las instalaciones.
+* **Los registros del espacio de trabajo**, para los administradores de cada espacio de trabajo que instaló tu aplicación, limitados a su propio espacio de trabajo.
+
+```text
+   your app runs in workspace A, B, C …
+              │
+              ▼
+   platform events (function runs, installs, rate limits, route failures)
+              │
+      ┌───────┴────────────────────────┐
+      ▼                                ▼
+   Monitoring page (app owner)      Logs (each workspace admin)
+   all installs, aggregated         one workspace, row by row
+```
+
+## Abre la página de supervisión
+
+Ve a **Configuración → Desarrolladores → Aplicaciones**, abre tu aplicación y, a continuación, haz clic en **Ver supervisión** en la pestaña **General**. Necesitas el permiso **Claves de API y webhooks** en el espacio de trabajo propietario del registro de la aplicación.
+
+Elige un período en el encabezado: las últimas 2 horas, 24 horas, 7 días, 30 días o 90 días. Los datos se conservan durante **90 días**. Sin el derecho **Registros de auditoría**, solo son visibles las últimas 2 horas.
+
+## Qué muestra la página
+
+| Sección                                               | Qué te indica                                                                                                                                                      |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Salud**                                             | Cifras principales del período y un gráfico de errores a lo largo del tiempo.                                                                                      |
+| **Límites de tasa**                                   | Solicitudes a la API enviadas por tu aplicación que fueron rechazadas y trabajos de desencadenador que se omitieron porque se alcanzó el límite de puesta en cola. |
+| **Créditos utilizados**                               | Créditos que tu aplicación consumió a lo largo del tiempo. Solo se muestra en servidores con facturación habilitada.                                               |
+| **Principales errores y advertencias**                | Los problemas más frecuentes, agrupados por código de error y función, con el número de instalaciones afectadas.                                                   |
+| **Instalaciones, actualizaciones y desinstalaciones** | Ejecuciones del ciclo de vida a lo largo del tiempo y cuántas de ellas fallaron.                                                                                   |
+| **Versiones**                                         | Ejecuciones y fallos por versión de la aplicación, para detectar una versión problemática.                                                                         |
+| **Funciones**                                         | Ejecuciones, fallos y duración del percentil 95 para cada función lógica.                                                                                          |
+
+Los recuentos son exactos: se cuenta cada solicitud rechazada y cada trabajo omitido, incluso cuando los registros siguientes solo conservan una fila por minuto.
+
+## Qué se registra
+
+Cada evento siguiente se cuenta en la página de supervisión. Cada uno también escribe registros de la aplicación en el espacio de trabajo donde ocurrió, con una **fuente** que indica de dónde provino:
+
+| Fuente           | Se registra cuando                                                                                                                                                                                                                                                                                                         |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LOGIC_FUNCTION` | Una función lógica escribe una línea de registro o falla, desde cualquier desencadenador. Las ejecuciones que no registran nada y se completan correctamente se cuentan en la página de supervisión, pero no dejan ninguna fila de registro.                                                                               |
+| `INSTALL`        | Tu aplicación se instala, con el resultado de los hooks de instalación.                                                                                                                                                                                                                                                    |
+| `UPGRADE`        | Tu aplicación se actualiza a una nueva versión.                                                                                                                                                                                                                                                                            |
+| `UNINSTALL`      | Tu aplicación se desinstala.                                                                                                                                                                                                                                                                                               |
+| `API_RATE_LIMIT` | Una solicitud de tu aplicación a la API es rechazada por el límite de tasa.                                                                                                                                                                                                                                                |
+| `JOB_RATE_LIMIT` | Los trabajos de desencadenador de tus funciones lógicas se omiten porque se alcanzó el límite de puesta en cola de trabajos.                                                                                                                                                                                               |
+| `SERVER_ROUTE`   | Una solicitud a una de tus [rutas HTTP](/es/developers/extend/apps/tutorials/document-generator/http-routes) se rechaza o falla fuera de tu función; por ejemplo, debido a un método incorrecto, una autenticación fallida o un error de plataforma. Los errores generados por tu función se registran bajo `LOGIC_FUNCTION`. |
+
+Los fallos de límite de tasa y de rutas de servidor pueden repetirse muchas veces por segundo, por lo que los registros conservan **una fila por minuto** para cada instalación, función y código de error. La página de supervisión sigue contando cada ocurrencia.
+
+## Registros del espacio de trabajo
+
+Los administradores de un espacio de trabajo que instaló tu aplicación ven los mismos eventos, solo para su espacio de trabajo, en **Configuración → General → Registros**. Pueden filtrar por fuente; por ejemplo, para enumerar solo los fallos de `INSTALL` o los límites de tasa. Indica a tus usuarios que consulten ese lugar cuando informen de un problema: el código de error y el mensaje te indican dónde buscar.
+
+Para tu propio servidor de desarrollo, `twenty app logs` transmite los registros de funciones en directo en la terminal. Consulta [CLI](/es/developers/extend/apps/operations/cli#watching-function-logs).
+
+## Interpretación de las señales
+
+* **Los errores aumentan justo después de una versión**: compara las versiones en la tabla **Versiones** y, a continuación, corrige y publica una versión superior. Consulta [Publicación](/es/developers/extend/apps/operations/publishing).
+* **Las solicitudes a la API tienen límite de tasa**: tu aplicación llama a la API con demasiada frecuencia. Agrupa las lecturas y escrituras por lotes, y evita llamar a la API en bucles ajustados.
+* **Los trabajos tienen límite de tasa**: los desencadenadores de eventos de base de datos o cron se activan más rápido de lo que los trabajos pueden ponerse en cola. Restringe el desencadenador; por ejemplo, con `updatedFields` en un desencadenador `databaseEvent`, o realiza el trabajo en menos ejecuciones y de mayor tamaño. Consulta [Funciones de lógica](/es/developers/extend/apps/logic/logic-functions).
+* **Fallos de instalación o actualización**: revisa tus [hooks de instalación](/es/developers/extend/apps/config/install-hooks). El mensaje de error se registra junto con el fallo.
+* **Funciones lentas**: una duración elevada del percentil 95 indica una función que conviene perfilar o dividir.
+
+<PageBanner illustration="card-page-monitoring" />

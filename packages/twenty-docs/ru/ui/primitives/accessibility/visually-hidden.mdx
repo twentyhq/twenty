@@ -1,0 +1,47 @@
+---
+title: Визуально скрытый
+description: Сохраняйте вспомогательный текст доступным для вспомогательных технологий, не отображая его визуально.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import VisuallyHiddenReference from '/snippets/ui/generated/accessibility/visually-hidden.mdx';
+
+## Обзор
+
+`VisuallyHidden` отрисовывает визуально скрытый `span`. Его содержимое остаётся в дереве доступности и может предоставлять доступное имя. Он принимает нативные props `span`, ref `span` и композицию Base UI `render`. Импортируйте `VisuallyHiddenProps` из той же точки входа.
+
+<StoryEmbed storyId="ui-accessibility-visuallyhidden--display" title="Пример визуально скрытого элемента" height={100} />
+
+## Использование
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
+import { IconPlus } from 'twenty-ui/icon';
+
+type AddRecordActionProps = { onAdd: () => void };
+
+export const AddRecordAction = ({ onAdd }: AddRecordActionProps) => (
+  <Button onClick={onAdd}>
+    <IconPlus aria-hidden />
+    <VisuallyHidden>Add record</VisuallyHidden>
+  </Button>
+);
+```
+
+Используйте видимую метку, если позволяет пространство. Для элементов управления, которые уже принимают `aria-label`, этот атрибут является ещё одним способом задать доступное имя.
+
+## Скрытое содержимое
+
+Разместите пояснительный текст внутри обёртки. Не размещайте внутри неё фокусируемые элементы управления: обёртка остаётся визуально скрытой, когда её дочерние элементы получают фокус. Она не добавляет live region, не удаляет содержимое из вспомогательных технологий и не скрывает конфиденциальные данные.
+
+Используйте `id`, чтобы связать скрытые описания с `aria-describedby`. Нативные атрибуты, `className`, `style` и `ref` применяются к скрытому элементу span или элементу, заданному через `render`. См. [специальные возможности](/ru/ui/accessibility), чтобы узнать о шаблонах маркировки и объявлений.
+
+## Свойства
+
+<VisuallyHiddenReference />
+
+<PageBanner illustration="page-cover-accessibility" />

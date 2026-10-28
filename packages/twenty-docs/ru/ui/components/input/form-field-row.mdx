@@ -1,0 +1,64 @@
+---
+title: Строка поля формы
+description: Выравнивает метку поля, содержимое и конечные элементы управления в одной строке.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import FormFieldRowReference from '/snippets/ui/generated/components/input/form-field-row.mdx';
+
+## Обзор
+
+`FormFieldRow` размещает метку поля, необязательный декоративный значок, содержимое поля и конечные элементы управления. Используйте его для полей редактора или других выровненных групп полей. Ваше приложение управляет значениями полей, валидацией, разрешениями и сохранением данных.
+
+<StoryEmbed storyId="ui-input-formfieldrow--display" title="Строка поля формы" height={110} />
+
+## Использование
+
+```tsx
+import { useState } from 'react';
+import { FormFieldRow, LightButton } from 'twenty-ui/components/input';
+import { Input } from 'twenty-ui/primitives/input';
+
+export const SubjectField = () => {
+  const [subject, setSubject] = useState('Project update');
+
+  return (
+    <FormFieldRow
+      label="Subject"
+      hasDivider={false}
+      trailing={
+        <LightButton size="sm" onClick={() => setSubject('')}>
+          Clear
+        </LightButton>
+      }
+    >
+      <Input
+        variant="plain"
+        aria-label="Subject"
+        value={subject}
+        onValueChange={setSubject}
+      />
+    </FormFieldRow>
+  );
+};
+```
+
+## Макет и метки
+
+`labelWidth` по умолчанию равно 80 пикселям и принимает ширину CSS. Используйте одинаковое значение в соседних строках, чтобы выровнять их метки. Ширина столбца меток ограничена 40 % строки, а содержимое может переноситься в узких макетах. `startIcon` является декоративным; вызывающая сторона задаёт его размеры. Установите `hasDivider={false}` для последней строки, если окружающая поверхность предоставляет свою границу.
+
+Корневой элемент — это группа, имя которой задаётся `label`. Укажите `aria-label` или `aria-labelledby`, если видимая метка отсутствует, и назначьте отдельную метку каждому вложенному полю ввода. Строка не перемещает фокус и не отключает вложенные элементы управления. Эти элементы управления сохраняют собственное поведение клавиатуры и стилизацию фокуса.
+
+## События и настройка
+
+Нативные атрибуты, обработчики событий, `className`, `style`, `ref` и `render` применяются к корневому элементу группы. Передавайте предоставленные props и ref при замене корневого элемента через `render`. Обработчик `onClick` отображает курсор-указатель. Вызывающая сторона отвечает за поведение при щелчке для установки фокуса и при необходимости защищает события от вложенных элементов управления или порталов. `isHoverable` независимо включает нейтральный фон при наведении.
+
+`trailingProps` применяет нативные атрибуты, обработчики и ref к существующей завершающей обёртке. Его `className` объединяется с общим классом макета. Используйте его обработчик `onClick`, чтобы завершающее действие не запускало обработчик щелчка строки. Обёртка существует только тогда, когда `trailing` содержит отображаемое содержимое.
+
+## Свойства
+
+<FormFieldRowReference />
+
+<PageBanner illustration="page-cover-input" />

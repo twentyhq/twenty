@@ -1,0 +1,94 @@
+---
+title: Bune practici pentru campaniile de e-mailuri.
+description: Trimite e-mailuri pe care oamenii le așteaptă și menține-ți domeniul într-o stare bună.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Furnizorii de e-mailuri analizează cui trimiți și cum reacționează aceștia. Trimite e-mailuri utile persoanelor care le așteaptă și ai șanse mai mari să ajungi în inbox. Trimite către o listă cumpărată sau învechită și ai șanse mai mari să ajungi în spam. Prea multe raportări de spam pot suspenda trimiterea de pe domeniul tău.
+
+Iată ce gestionează Twenty, ce trebuie să facă echipa ta și cifrele care merită urmărite.
+
+## Ce gestionează Twenty pentru tine
+
+* **Verificări ale domeniului**: după ce [îți verifici domeniul de trimitere](/ro/user-guide/email-campaigns/how-tos/set-up-a-sending-domain), fiecare campanie este semnată cu DKIM și trece SPF pentru domeniul tău.
+* **Dezabonări**: fiecare campanie include un link de dezabonare și anteturile de dezabonare cu un singur clic solicitate de Gmail și Yahoo. Renunțările intră în vigoare imediat.
+* **Listă fără repetări**: persoanele pentru care e-mailurile nu pot fi livrate, raportează spam sau se dezabonează sunt omise în campaniile ulterioare.
+* **Fără duplicate**: fiecare persoană primește un singur e-mail, chiar dacă apare de două ori într-o listă.
+
+## Ce depinde de tine
+
+Twenty nu poate ști cum ai obținut adresa de e-mail a unei persoane sau care este adresa ta poștală. Echipa ta trebuie să se ocupe corect de acestea.
+
+### Ce trebuie să faci
+
+* **Trimite e-mailuri doar persoanelor care au fost de acord să primească mesaje de la tine.** Acestea s-au înscris, au cumpărat de la tine sau ți-au dat permisiunea. Păstrează o evidență a momentului și modului în care ai obținut acordul.
+* **Include adresa ta poștală.** Legea din SUA (CAN-SPAM) impune o adresă fizică în fiecare e-mail de marketing. Adaug-o în partea de jos a campaniei tale.
+* **Începe cu puțin pentru un domeniu nou.** Trimite mai întâi celor mai implicați contacte, apoi mărește volumul pe parcursul câtorva săptămâni. Consultă [Încălzirea unui domeniu nou](#warm-up-a-new-domain).
+* **Folosește un expeditor ușor de recunoscut.** Păstrează aceeași adresă **From** și același nume afișat de la o campanie la următoarea, astfel încât destinatarii să știe cine ești.
+* **Scrie un subiect care corespunde conținutului.** Subiectele înșelătoare sunt ilegale în multe țări și generează raportări de spam pretutindeni.
+* **Curăță-ți listele.** Nu mai trimite e-mailuri persoanelor care nu au răspuns, nu au cumpărat sau nu s-au conectat timp de șase până la douăsprezece luni.
+* **Trimite mai întâi un test.** Verifică aspectul, linkurile și expeditorul înainte de fiecare campanie.
+* **Folosește subiecte de dezabonare.** Permite-le oamenilor să renunțe la un tip de e-mail, precum un buletin informativ, fără să părăsească toate listele. Consultă [Gestionarea dezabonărilor și a subiectelor](/ro/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics).
+
+### Ce să nu faci
+
+* **Nu cumpăra, nu închiria și nu extrage liste.** Acestea conțin adesea capcane de spam: adrese folosite pentru a identifica expeditorii care nu au avut niciodată permisiunea. Câteva pot afecta domeniul tău.
+* **Nu trimite e-mailuri tuturor din CRM-ul tău.** Twenty poate crea persoane din e-mailurile și calendarele sincronizate. Un schimb de e-mailuri nu reprezintă permisiunea de a trimite mesaje de marketing.
+* **Nu trimite o campanie uriașă de pe un domeniu nou.** O creștere bruscă a volumului pare spam, chiar și atunci când lista ta este curată.
+* **Nu folosi o singură imagine mare drept e-mail.** E-mailurile cu preponderent imagini și puțin text au șanse mai mari să fie filtrate. Folosește text real pentru mesaj.
+* **Nu utiliza scurtătoare publice de linkuri**, precum bit.ly. Expeditorii de spam le folosesc pentru a ascunde linkuri, astfel că filtrele sunt suspicioase în privința lor.
+* **Nu adăuga din nou persoanele care s-au dezabonat sau au raportat spam.** Twenty le blochează dintr-un motiv.
+
+<Note>
+  Nu există o listă magică de cuvinte care face ca un e-mail să fie spam. Furnizorilor le pasă mult
+  mai mult de reputația domeniului tău și de felul în care oamenii reacționează la e-mailurile tale.
+</Note>
+
+## Cifre de urmărit
+
+După fiecare campanie, comparați **Respinse** și **Reclamații** cu **Trimise**.
+
+| Indicator                   | Obiectiv | De ce contează                                                                                                                                                      |
+| --------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Rata reclamațiilor de spam  | Sub 0,1% | Gmail le solicită expeditorilor în masă să rămână sub 0,1% și să nu ajungă niciodată la 0,3%. Peste această valoare, e-mailurile sunt respinse sau trimise în spam. |
+| Rata e-mailurilor nelivrate | Sub 2%   | O rată mare a e-mailurilor nelivrate înseamnă că lista este învechită. La 5% sau mai mult, furnizorul tău de e-mailuri începe să-ți verifice trimiterile.           |
+
+O rată a reclamațiilor de 0,1% înseamnă o raportare de spam la fiecare 1.000 de e-mailuri. Dacă observi mai multe, întrerupe-te și analizează-ți audiența înainte de următoarea campanie.
+
+<Warning>
+  Dacă prea multe persoane nu primesc e-mailurile sau le marchează drept spam, trimiterea de pe
+  domeniul tău poate fi suspendată.
+</Warning>
+
+## Încălzirea unui domeniu nou
+
+Furnizorii au încredere într-un domeniu care își crește volumul constant. Un domeniu nou care trimite brusc o campanie mare pare riscant. Dacă domeniul tău nu a trimis niciodată campanii:
+
+| Etapa                               | Ce să trimiți                                                                                                                      |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Prima săptămână                     | Între 50 și 100 de e-mailuri pe zi, către cele mai implicate contacte ale tale                                                     |
+| Săptămânile a doua și a treia       | Dubleză aproximativ volumul la fiecare câteva zile, atât timp cât numărul e-mailurilor nelivrate și al reclamațiilor rămâne scăzut |
+| Săptămânile a patra până la a șasea | Atinge volumul tău normal, apoi menține-l constant de la o trimitere la următoarea                                                 |
+
+Împarte o listă mare în liste mai mici și trimite în etape. Spațiul tău de lucru poate trimite până la 1.000 de e-mailuri de campanie pe zi.
+
+## Legi de cunoscut
+
+Acestea sunt îndrumări generale, nu consultanță juridică.
+
+* **Statele Unite (CAN-SPAM)**: include o adresă poștală, un link funcțional de dezabonare și un subiect onest. Renunțările trebuie respectate în termen de 10 zile lucrătoare. Twenty le gestionează imediat.
+* **Uniunea Europeană și Regatul Unit (GDPR, ePrivacy, PECR)**: e-mailurile de marketing necesită, de obicei, consimțământ prealabil. Trebuie să poți arăta când și cum l-ai obținut.
+* **Canada (CASL)**: ai nevoie de consimțământ explicit sau implicit înainte de trimitere și trebuie să poți demonstra acest lucru.
+
+## Lecturi suplimentare
+
+* [Instrucțiuni Gmail pentru expeditorii de e-mailuri](https://support.google.com/a/answer/81126)
+* [Bune practici Yahoo pentru expeditori](https://senders.yahooinc.com/best-practices/)
+* [Cerințele Microsoft pentru expeditorii cu volum mare](https://techcommunity.microsoft.com/blog/microsoftdefenderforoffice365blog/strengthening-email-ecosystem-outlook%E2%80%99s-new-requirements-for-high%E2%80%90volume-senders/4399730)
+* [Ghid de conformitate cu CAN-SPAM Act](https://www.ftc.gov/business-guidance/resources/can-spam-act-compliance-guide-business)
+* [Google Postmaster Tools](https://postmaster.google.com), pentru a urmări reputația domeniului tău în Gmail
+
+<PageBanner illustration="card-page-campaign-practices" />

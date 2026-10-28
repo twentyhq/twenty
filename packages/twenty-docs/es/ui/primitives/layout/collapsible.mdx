@@ -1,0 +1,75 @@
+---
+title: Collapsible
+description: Compón un activador accesible y un panel animado con expansión controlada o no controlada.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CollapsibleReference from '/snippets/ui/generated/layout/collapsible.mdx';
+
+## Resumen
+
+`Collapsible` expone los contratos Root, Trigger y Panel de Base UI. Root gestiona el estado de expansión, Trigger proporciona la activación mediante teclado y la relación con el panel, y Panel gestiona la animación y la duración del contenido.
+
+<StoryEmbed storyId="ui-layout-collapsible--display" title="Ejemplo de Collapsible" height={160} />
+
+## "Uso"
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportDetails = () => (
+  <Collapsible.Root defaultOpen style={{ width: 360, maxWidth: '100%' }}>
+    <Collapsible.Trigger render={<Button />}>
+      Import details
+    </Collapsible.Trigger>
+    <Collapsible.Panel>
+      <Text
+        style={{
+          paddingTop: 12,
+          color: 'var(--t-font-color-secondary)',
+          lineHeight: 1.5,
+        }}
+      >
+        Match each CSV column to a record field before importing.
+      </Text>
+    </Collapsible.Panel>
+  </Collapsible.Root>
+);
+```
+
+Usa `defaultOpen` para la expansión no controlada. Usa `open` y `onOpenChange` cuando la aplicación controla el estado. La devolución de llamada recibe el valor booleano solicitado y los detalles del evento de Base UI, incluidos `reason`, `event` y `cancel()`. Cancelar un cambio conserva el estado actual. Un panel controlado externamente puede omitir Trigger cuando su estado proviene de otro control o de una condición de la aplicación.
+
+Los Trigger heredan el estado `disabled` de Root y pueden anularlo con su propia prop `disabled`. El activador nativo admite Intro y Espacio, y proporciona `aria-expanded` y `aria-controls` automáticamente. Asigna a cada activador un nombre accesible significativo.
+
+## Anatomía
+
+```text
+Collapsible.Root
+├── Collapsible.Trigger
+└── Collapsible.Panel
+    └── Content
+```
+
+## Personalización nativa
+
+Root y Panel representan un `div`; Trigger representa un `button`. Cada parte acepta atributos nativos, controladores, `className`, `style`, refs y composición de Base UI mediante `render`. Las devoluciones de llamada de clase y estilo reciben el estado de la parte. Reenvía todas las props proporcionadas y la ref desde los componentes de renderizado personalizados. Establece `nativeButton={false}` cuando Trigger represente un elemento que no sea un botón.
+
+Los tipos públicos incluyen `CollapsibleRootProps`, `CollapsibleTriggerProps`, `CollapsiblePanelProps`, los tres tipos de estado de las partes, y `CollapsibleRootChangeEventDetails` y `CollapsibleRootChangeEventReason`.
+
+## Animación y ciclo de vida del contenido
+
+Panel usa de forma predeterminada `dimension="height"`. Usa `dimension="width"` para la expansión horizontal y restringe el ancho del contenido cuando sea necesario. `containAnimation` tiene como valor predeterminado `true`, recorta el desbordamiento y distribuye el contenido en una columna. Establécelo en `false` cuando el contenido necesite desbordarse durante la transición.
+
+La `duration` de Panel elige un ajuste preestablecido de tema (`instant`, `fast`, `normal` o `slow`) y el valor predeterminado es `normal`. Las preferencias de movimiento reducido desactivan las transiciones.
+
+Panel se desmonta después de cerrarse de forma predeterminada. Usa `keepMounted` para conservar el estado local del contenido mientras ocultas el panel cerrado. `hiddenUntilFound` permite que la búsqueda de páginas del navegador revele contenido cerrado y tiene prioridad sobre `keepMounted`.
+
+## "Props"
+
+<CollapsibleReference />
+
+<PageBanner illustration="layout" />

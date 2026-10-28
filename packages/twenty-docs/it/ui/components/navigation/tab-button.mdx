@@ -1,0 +1,107 @@
+---
+title: TabButton
+description: Presenta link di route e azioni accanto alle schede con uno stile coerente.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TabButtonReference from '/snippets/ui/generated/components/navigation/tab-button.mdx';
+
+## Panoramica
+
+Usa `TabButton` per i link di percorso e le azioni, ad esempio l'aggiunta di una scheda o l'apertura di un menu di overflow. Condivide l'aspetto di [Tabs](/it/ui/primitives/navigation/tabs) e usa [Button](/it/ui/primitives/input/button) per l'interazione.
+
+<StoryEmbed storyId="ui-components-tabbutton--display" title="Esempio di TabButton" height={120} />
+
+## Utilizzo
+
+```tsx
+import { TabButton } from 'twenty-ui/components/navigation';
+import { IconSettings } from 'twenty-ui/icon';
+
+export const GeneralAction = ({ onOpen }: { onOpen: () => void }) => (
+  <TabButton startIcon={<IconSettings />} onClick={onOpen}>
+    General
+  </TabButton>
+);
+```
+
+## Stato e semantica
+
+L'applicazione fornisce `active` dalla route corrente o dallo stato del menu. Questa proprietà evidenzia il controllo. Imposta `aria-current="page"` sul link del percorso corrente. I link di percorso e le azioni adiacenti mantengono la semantica di link o pulsante, senza ruolo di scheda, `aria-selected` o relazione con il pannello.
+
+Usa `Tabs.Root`, `Tabs.List`, `Tabs.Tab`, `Tabs.Panel` e l'opzionale `Tabs.Indicator` per passare da un pannello di contenuti correlati all'altro. Mantieni i controlli di route e azione al di fuori di `Tabs.List`.
+
+## Navigazione
+
+Imposta `href` per eseguire il rendering di un link nativo. La route corrente gestisce il proprio aspetto `active` e il valore `aria-current`.
+
+```tsx
+import { TabButton } from 'twenty-ui/components/navigation';
+import { IconCreditCard } from 'twenty-ui/icon';
+
+export const BillingLink = () => (
+  <TabButton
+    href="/billing"
+    active
+    aria-current="page"
+    startIcon={<IconCreditCard />}
+  >
+    Billing
+  </TabButton>
+);
+```
+
+Per il routing lato client, fornisci il link del router tramite `render`, imposta `nativeButton={false}` e `role="link"` e passa la destinazione risolta come `href`. Mantieni lo stato della route e le opzioni della cronologia nel link del router. I wrapper personalizzati devono inoltrare i props e il ref forniti al proprio anchor.
+
+```tsx
+import { TabButton } from 'twenty-ui/components/navigation';
+
+export const ComposedBillingLink = () => (
+  <TabButton
+    nativeButton={false}
+    role="link"
+    href="/billing"
+    render={<a />}
+    aria-current="page"
+    active
+  >
+    Billing
+  </TabButton>
+);
+```
+
+Un valore esplicito di `nativeButton` controlla il contratto di interazione anche quando `href` è presente. Abbinalo all'elemento effettivamente sottoposto a rendering. I link disabilitati mantengono il ruolo di link e bloccano l'attivazione.
+
+## Azioni
+
+Senza `href`, il controllo renderizza un pulsante nativo con `type="button"`. Attributi nativi, ref, stili, nomi delle classi e gestori di eventi vengono inoltrati. `render` accetta un elemento o una funzione che riceve i props e lo stato di Button. I ref puntano al pulsante o all'anchor effettivamente sottoposto a rendering, inclusi i ref forniti su un elemento composto.
+
+```tsx
+import { useState } from 'react';
+import { TabButton } from 'twenty-ui/components/navigation';
+import { IconPlus } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const AddTabAction = () => {
+  const [count, setCount] = useState(1);
+
+  return (
+    <>
+      <TabButton startIcon={<IconPlus />} onClick={() => setCount(count + 1)}>
+        New Tab
+      </TabButton>
+      <Text role="status">Tabs: {count}</Text>
+    </>
+  );
+};
+```
+
+Usa `startIcon`, `endIcon` e `badge` per i contenuti di supporto. Un avatar passato a uno slot di icona è decorativo quando il testo denomina la destinazione. `size` mantiene il contratto pubblico per le dimensioni di Button. Una dimensione esplicita ha la priorità su una dimensione di `ButtonGroup` circostante; altrimenti il componente usa per impostazione predefinita `sm`.
+
+## Props
+
+<TabButtonReference />
+
+<PageBanner illustration="layout" />

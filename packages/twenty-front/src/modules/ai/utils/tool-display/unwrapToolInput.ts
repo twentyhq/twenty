@@ -5,7 +5,7 @@ import { type ToolInput } from '@/ai/types/ToolInput';
 // Coercing would turn a missing name into the tool name "undefined".
 const ExecuteToolSchema = z.object({
   toolName: z.string().min(1),
-  arguments: z.unknown(),
+  arguments: z.unknown().optional(),
 });
 
 export const unwrapToolInput = ({

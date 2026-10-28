@@ -3,20 +3,24 @@ title: Traducciones
 description: "Lanza tu aplicación en varios idiomas: traduce las etiquetas del manifiesto y las cadenas de la interfaz de usuario mediante un único catálogo de configuraciones regionales (locales)."
 ---
 
-Las aplicaciones de Twenty están creadas en **inglés**: las cadenas de tu código fuente y del manifiesto son el texto original en inglés, `en` es la configuración regional de origen desde la que traduces y cualquier configuración regional que quede sin traducir volverá a esa configuración.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Las aplicaciones de Twenty están creadas en **inglés**: las cadenas de tu código fuente y del manifiesto son el texto de origen en inglés, `en` es la configuración regional de origen desde la que traduces y cualquier configuración regional que quede sin traducir vuelve a ella.
 
 Tu aplicación tiene dos tipos de texto traducible, y ambos pasan por el mismo catálogo `locales/`:
 
 * **Etiquetas del manifiesto**: nombres de objetos y campos, títulos de vistas, elementos de menú y otras cadenas declaradas en los metadatos de tu aplicación.
-* **Cadenas de componentes delanteros** — la interfaz de texto de tus componentes frontales de React.
+* **Cadenas de componentes de frontend** — el texto de la interfaz de usuario que renderizan tus componentes de frontend de React.
 
-Marcas las cadenas traducibles, extralas en catálogos por localidad,
-traduce esos catálogos, y la construcción sirve el idioma adecuado para el usuario
-actual — no hay cableado extra.
+Marcas las cadenas traducibles, las extraes en catálogos por configuración regional,
+traduces esos catálogos y la compilación sirve el idioma adecuado para el
+usuario actual, sin configuración adicional.
 
-## Marcando cadenas de componentes frontales
+## Marcado de cadenas de front-component.
 
-Importar los ayudantes de traducción de `twenty-sdk/front-component`:
+Importa los ayudantes de traducción desde `twenty-sdk/front-component`:
 
 ```tsx
 import { Trans, t, msg, useTranslate } from 'twenty-sdk/front-component';
@@ -42,31 +46,35 @@ const Card = ({ count, name }: { count: number; name: string }) => {
       <p>{t('Saved {count} cards', { count })}</p>
 
       {/* Resolve a lazily-declared descriptor */}
-      <ul>{STATUSES.map((s) => <li key={s.id}>{t(s.label)}</li>)}</ul>
+      <ul>
+        {STATUSES.map((s) => (
+          <li key={s.id}>{t(s.label)}</li>
+        ))}
+      </ul>
     </section>
   );
 };
 ```
 
-### Cuándo usar qué
+### Cuándo usar cada uno
 
 * **`Trans`** — texto estático en JSX. Usa las props `message` y `values` para la interpolación, como en `Trans message="Hi {name}" values={{ name }}`; la interpolación directamente en los children no se puede extraer de forma estática.
-* **`useTranslate().t`** — cadenas dinámicas dentro de un componente. Se vuelve a procesar cuando el usuario
-  cambia de idioma. Preferir esto dentro del render.
-* **`t(...)`** (importado directamente) — una traducción entera utilizable **en cualquier lugar**,
-  incluyendo controladores de eventos, ayudantes y ámbito del módulo — no solo dentro del render.
-* **`msg(...)`** — un descriptor perezoso para cadenas declaradas como datos (constantes, configuración
-  ). Resuelva más tarde con `t(descriptor)`.
+* **`useTranslate().t`** — cadenas dinámicas dentro de un componente. Se vuelve a renderizar cuando el
+  usuario cambia de idioma. Prefiere esto dentro de render.
+* **`t(...)`** (importado directamente) — traducción inmediata que se puede usar **en cualquier lugar**,
+  incluidos los controladores de eventos, los ayudantes y el ámbito del módulo; no solo dentro de render.
+* **`msg(...)`** — un descriptor diferido para cadenas declaradas como datos (constantes,
+  configuración). Resuélvelo más tarde con `t(descriptor)`.
 
 ### Contexto
 
-Pase `context` para desambiguar cadenas de origen idénticas que traduzcan
+Pasa `context` para desambiguar cadenas fuente idénticas que se traducen
 de forma diferente:
 
 ```tsx
 t({ message: 'Open', context: 'door' });
 t({ message: 'Open', context: 'window' });
-<Trans context="card-title">Untitled</Trans>
+<Trans context="card-title">Untitled</Trans>;
 ```
 
 Las cadenas contextuales aparecen en los catálogos de configuración regional como un grupo indexado por su
@@ -74,16 +82,16 @@ contexto: `"\<context>": { "\<message>": "\<translation>" }`. Las etiquetas del 
 contextuales por construcción: cada una lleva el metadato del rol que desempeña (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), por lo que
 la misma palabra puede traducirse de manera diferente como nombre de objeto y como nombre de vista.
 
-## Extrayendo y traduciendo
+## Extracción y traducción
 
-Ejecutar el comando de extracción desde el directorio de la aplicación:
+Ejecuta el comando de extracción desde el directorio de tu aplicación:
 
 ```bash
-twenty dev:translations-extract                  # collect strings into locales/en.json
-twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
+twenty app translations extract                  # collect strings into locales/en.json
+twenty app translations extract --locale fr-FR   # also scaffold a target locale
 ```
 
-La extracción recopila tanto las etiquetas de tu manifest como las cadenas de `t()`/`msg()`/`Trans` de tu código fuente de front-component en `locales/\<locale>.json`, indexadas por la cadena de origen. Rellena las traducciones:
+La extracción recopila tanto las etiquetas de tu manifest como las cadenas de `t()`/`msg()`/`Trans` de tu código fuente de front-component en `locales/\<locale>.json`, indexadas por la cadena de origen. Completa las traducciones:
 
 ```json
 // locales/fr-FR.json
@@ -102,22 +110,35 @@ La extracción recopila tanto las etiquetas de tu manifest como las cadenas de `
 
 Las cadenas sin contexto son entradas planas; las cadenas contextuales —incluida cada etiqueta de manifiesto— están anidadas bajo su clave de contexto.
 
-Los marcadores de posición como `{name}` se sustituyen en tiempo de ejecución — manténgalos en la traducción
-. Cualquier cadena que quede vacía regresa al texto original.
+Los marcadores de posición como `{name}` se sustituyen en tiempo de ejecución; consérvalos en la
+traducción. Cualquier cadena que se deje vacía recurre al texto de origen.
 
-## Cómo funciona
+## Cómo se ejecuta
 
-`twenty dev:build` compila los catálogos y sirve el idioma correcto para el
-usuario actual: las etiquetas del manifiesto se resuelven del lado del servidor y los catálogos de front-component se incluyen en cada paquete de componente. En tiempo de ejecución, un componente lee la configuración regional
-desde su contexto de ejecución (el idioma actual del host) y resuelve
-cada cadena contra su catálogo, volviendo a la fuente cuando falta una traducción
-. Cambiar el idioma en el host vuelve a renderizar en tiempo real las cadenas de `Trans` y `useTranslate().t`.
+`twenty app build` compila los catálogos y sirve el idioma adecuado para el usuario actual: las etiquetas del manifiesto se resuelven del lado del servidor y los catálogos de componentes de interfaz se incluyen en cada paquete de componentes. En tiempo de ejecución, un componente lee la
+configuración regional de su contexto de ejecución (el idioma actual del host) y resuelve
+cada cadena con su catálogo, recurriendo al texto de origen cuando falta una traducción. Cambiar el idioma en el host vuelve a renderizar en tiempo real las cadenas de `Trans` y `useTranslate().t`.
 
-Las etiquetas de manifiesto se compilan en cada sincronización — `twenty dev:build`, `twenty apply`
-y también en el modo de observación continuo `twenty dev` —, por lo que basta con editar un archivo de configuración regional y
-sincronizar para ver el nuevo texto. Los catálogos de componentes del front-end se incorporan en
-cada paquete de componentes durante la compilación, por lo que cambiar uno de ellos sigue implicando
-volver a ejecutar `twenty dev:build` (y volver a implementar).
+Las etiquetas del manifiesto se compilan en cada sincronización — tanto con `twenty app build`, `twenty app apply` como con la supervisión continua de `twenty app dev`—, por lo que editar un archivo de configuración regional y sincronizarlo es suficiente para ver el texto nuevo. Los catálogos de componentes de interfaz se incluyen en cada paquete de componentes durante la compilación, por lo que modificar uno de ellos sigue requiriendo volver a ejecutar `twenty app build` (y volver a implementar).
+
+## Obtención de traducciones
+
+`twenty app pull` escribe las traducciones publicadas de una aplicación de vuelta en
+`locales/`. Un catálogo publicado está indexado por ID de mensaje, por lo que la extracción recupera la
+forma legible solo para las cadenas cuyo origen puede ver: las etiquetas de los
+metadatos que extrajo y las cadenas `t()`/`msg()`/`Trans` de los componentes front-end
+presentes en el proyecto. Todo lo demás se conserva tal cual en
+`locales/compiled/\<locale>.json`, indexado por ID de mensaje. La compilación fusiona esos
+archivos en el catálogo (una entrada en `locales/\<locale>.json` tiene prioridad sobre una
+compilada con el mismo id), `twenty app translations extract` los deja intactos,
+y cada extracción los reescribe, por lo que se reducen a medida que se incorpora más código fuente de la aplicación
+en el árbol. No los edites manualmente; traduce en `locales/\<locale>.json`.
+
+Un proyecto sin una carpeta `locales/` no dice nada sobre las traducciones, por lo que una
+sincronización desde él deja intactas las que la aplicación ya haya publicado. Para eliminar
+intencionadamente las traducciones publicadas, conserva la carpeta y elimina los archivos de configuración regional
+que contiene: una carpeta `locales/` que no se compila en ninguna configuración regional es una declaración
+explícita, y la sincronización realiza la poda según corresponda.
 
 Los nodos de texto hijos de `Trans` pueden abarcar varias líneas; los espacios en blanco se colapsan de la misma manera en que JSX los colapsa, por lo que ambos se extraen a la clave `Welcome back`:
 
@@ -128,3 +149,5 @@ Los nodos de texto hijos de `Trans` pueden abarcar varias líneas; los espacios 
   back
 </Trans>
 ```
+
+<PageBanner illustration="card-page-translations" />

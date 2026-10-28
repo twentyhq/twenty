@@ -7,6 +7,7 @@ import { formatToolingDiagnostic } from '@/app/format-tooling-diagnostic';
 import { parseToolingResult } from '@/app/parse-tooling-result';
 import { formatPullReport } from '@/app/pull/format-pull-report';
 import { parsePullData } from '@/app/pull/parse-pull-data';
+import { PULL_MINIMUM_SDK_VERSION } from '@/app/pull/pull-minimum-sdk-version.constant';
 import { readAppIdentity } from '@/app/read-app-identity';
 import { resolveAppProject } from '@/app/project/resolve-app-project';
 import { runAppWorker } from '@/app/run-app-worker';
@@ -142,7 +143,7 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
       hint:
         result.error.hint ??
         (result.error.code === 'SDK_SOURCE_UNSUPPORTED'
-          ? 'Upgrade the app to a compatible twenty-sdk version (2.40.0 or later).'
+          ? `Upgrade the app to a compatible twenty-sdk version (${PULL_MINIMUM_SDK_VERSION} or later).`
           : undefined),
       details: { ...result.error.details, diagnostics },
     });

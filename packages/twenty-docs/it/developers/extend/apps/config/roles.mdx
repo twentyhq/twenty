@@ -3,6 +3,10 @@ title: Ruoli e permessi
 description: Dichiara quali oggetti e campi le funzioni di logica e i componenti front-end della tua app possono leggere e scrivere.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 Un **ruolo** è un insieme di permessi: quali oggetti un’app può leggere o scrivere, quali campi può vedere e quali funzionalità a livello di piattaforma può usare. Tutte le funzioni di logica e i componenti front-end di ogni app ereditano i permessi del ruolo contrassegnato con `defineApplicationRole()` (vedi [The default function role](#the-default-function-role) di seguito).
 
 ```ts src/roles/restricted-company-role.ts
@@ -21,6 +25,7 @@ export default defineRole({
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
+  canAccessAllAgentChatChannels: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
@@ -50,6 +55,10 @@ export default defineRole({
 ```
 
 ## Sicurezza a livello di riga
+
+Le autorizzazioni a livello di riga richiedono il **piano Organization o superiore** — consulta i
+[prezzi](https://twenty.com/pricing). Ciò che accade con un piano senza il diritto è trattato nelle
+note alla fine di questa sezione.
 
 Le autorizzazioni sugli oggetti e sui campi determinano *quali oggetti e campi* un ruolo può gestire. **I predicati di autorizzazione
 a livello di riga** vanno oltre e determinano *quali record* un ruolo può vedere e su cui può agire — per
@@ -160,7 +169,14 @@ Note:
 
 * Assegna a ogni predicato e gruppo un `universalIdentifier` stabile (qualsiasi uuid) — identifica l'entità attraverso gli aggiornamenti e i predicati fanno riferimento ai gruppi tramite esso.
 * I predicati possono fare riferimento a oggetti e campi di proprietà della tua app o degli oggetti standard di Twenty.
-* La sicurezza a livello di riga è applicata per gli spazi di lavoro sui piani che la includono; i predicati vengono comunque sincronizzati sugli altri piani, semplicemente non vengono applicati.
+* La sicurezza a livello di riga è applicata agli spazi di lavoro con il **piano Organization o superiore**. Con gli altri
+  piani, i predicati dichiarati in un manifesto dell'app vengono comunque sincronizzati, semplicemente non vengono applicati.
+* L'API Metadata si comporta qui in modo diverso rispetto al manifesto: senza il diritto,
+  `upsertRowLevelPermissionPredicates` viene rifiutato con
+  `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` anziché essere sincronizzato. Uno spazio di lavoro con un piano che non
+  include la sicurezza a livello di riga non può quindi creare predicati al di fuori di un manifesto dell'app, anche
+  se il campo `rowLevelPermissionPredicates` è presente nel tipo `Role` quando si esegue l'introspezione
+  dello schema.
 
 ## Ruolo funzione predefinito
 
@@ -196,11 +212,18 @@ Note:
 
 * È consentita esattamente **una** chiamata a `defineApplicationRole(...)` per app — la build del manifest avrà esito negativo se ne trova più di una.
 * Usa `defineRole()` (non `defineApplicationRole()`) per qualsiasi ruolo **aggiuntivo** fornito dalla tua app.
-* L’impostazione esplicita di `defaultRoleUniversalIdentifier` in `defineApplication()` è ancora supportata per retrocompatibilità, ma è deprecata a favore di `defineApplicationRole()`.
+* L’impostazione esplicita di `defaultRoleUniversalIdentifier` in `defineApplication()` è ancora supportata per retrocompatibilità, ma è deprecata a favore di `defineApplicationRole()`. L'identificatore deve corrispondere a un ruolo definito dall'app, altrimenti la build non riesce.
+
+### Ruoli agente
+
+Il ruolo dell'applicazione è ciò che un workspace esamina quando installa la tua app, quindi deve coprire tutto ciò che l'app stessa può fare. Qualsiasi ruolo assegnato a un agente tramite `roleUniversalIdentifier` in `defineAgent()` non deve concedere più del ruolo dell'applicazione: nessuna azione su oggetti, accesso ai campi, flag di autorizzazione o ambito a livello di riga che il ruolo dell'applicazione non possiede. In caso contrario, la compilazione non riesce e viene visualizzato un errore che elenca le concessioni in eccesso. I ruoli che la tua app fornisce per i membri del workspace o le chiavi API non sono soggetti a questa regola, poiché l'app non viene mai eseguita con essi.
 
 ## Migliori Pratiche
 
 * Parti dal ruolo generato dallo scaffold, poi restringilo progressivamente: il ruolo predefinito concede un ampio accesso in lettura, che raramente è ciò che vuoi in produzione.
 * Sostituisci `objectPermissions` e `fieldPermissions` con gli oggetti e i campi di cui le tue funzioni hanno realmente bisogno.
 * `permissionFlagUniversalIdentifiers` controllano l'accesso alle funzionalità a livello di piattaforma. Mantienili al minimo.
+* Un flag di autorizzazione dichiarato dalla tua app con `definePermissionFlag()` ha un `permissionType`: `'tool'` (il valore predefinito) per una funzionalità che può essere concessa a un agente o a un utente, `'settings'` per un flag che sblocca un'area delle impostazioni.
 * Vedi un esempio di lavoro: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
+
+<PageBanner illustration="card-page-roles" />
