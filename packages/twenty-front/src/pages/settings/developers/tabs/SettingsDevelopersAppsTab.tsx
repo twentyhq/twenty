@@ -29,7 +29,7 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import {
   APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsApplicationTableRow,
-} from '~/pages/settings/applications/components/SettingsApplicationTableRow';
+} from '@/settings/applications/components/SettingsApplicationTableRow';
 import { SettingsClaimApplicationSection } from '~/pages/settings/applications/components/SettingsClaimApplicationSection';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 

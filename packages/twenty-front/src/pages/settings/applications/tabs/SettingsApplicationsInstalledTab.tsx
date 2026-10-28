@@ -1,6 +1,6 @@
 import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
 import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
-import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
+import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
 
 export const SettingsApplicationsInstalledTab = () => {
   const installedApplications = useInstalledApplications();

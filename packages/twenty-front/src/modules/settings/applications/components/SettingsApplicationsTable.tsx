@@ -18,9 +18,9 @@ import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql'
 import {
   APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsApplicationTableRow,
-} from '~/pages/settings/applications/components/SettingsApplicationTableRow';
+} from '@/settings/applications/components/SettingsApplicationTableRow';
 import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
-import { hasApplicationUpdate } from '~/pages/settings/applications/utils/hasApplicationUpdate';
+import { hasApplicationUpdate } from '@/settings/applications/utils/hasApplicationUpdate';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 const StyledTableRowsContainer = styled.div`

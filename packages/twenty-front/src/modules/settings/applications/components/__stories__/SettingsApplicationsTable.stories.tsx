@@ -5,7 +5,7 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
 import { BUILT_IN_ACCOUNT_APPS } from '@/settings/app-preferences/constants/BuiltInAccountApps';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
-import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
+import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const STANDARD_APPLICATION: ApplicationWithoutRelation = {
@@ -41,7 +41,7 @@ const getRowLinks = (canvasElement: HTMLElement) =>
     .map((link) => link.getAttribute('href'));
 
 const meta: Meta<typeof SettingsApplicationsTable> = {
-  title: 'Pages/Settings/Applications/SettingsApplicationsTable',
+  title: 'Modules/Settings/Applications/SettingsApplicationsTable',
   component: SettingsApplicationsTable,
   decorators: [ComponentWithRouterDecorator],
   args: {
