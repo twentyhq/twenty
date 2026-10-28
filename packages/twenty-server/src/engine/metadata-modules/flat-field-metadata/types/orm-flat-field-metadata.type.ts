@@ -16,7 +16,6 @@ export const ORM_FLAT_FIELD_METADATA_KEYS = [
   'settings',
   'isNullable',
   'isUnique',
-  'writability',
   'relationTargetFieldMetadataId',
   'relationTargetObjectMetadataId',
   'morphId',

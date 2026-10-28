@@ -178,6 +178,7 @@ export class WorkspaceMigrationRunnerService {
   run = async (args: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
+    shouldDeferActions?: boolean;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
@@ -239,9 +240,11 @@ export class WorkspaceMigrationRunnerService {
   private executeRun = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
+    shouldDeferActions: shouldDeferActionsByCaller = true,
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
+    shouldDeferActions?: boolean;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
@@ -365,10 +368,10 @@ export class WorkspaceMigrationRunnerService {
     const featureFlagsMap =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    const shouldPersistDeferredActions =
+    const shouldDeferActions =
       featureFlagsMap[
         FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
-      ];
+      ] && shouldDeferActionsByCaller;
 
     this.logger.perfTime('Runner', 'Transaction execution');
 
@@ -406,7 +409,7 @@ export class WorkspaceMigrationRunnerService {
                 preallocatedIdByUniversalIdentifierByMetadataName,
                 getSearchFieldMetadatasByTsVectorFieldId:
                   searchFieldMetadatasByTsVectorFieldIdAccessor.get,
-                featureFlagsMap,
+                shouldDeferActions,
               },
             },
           );
@@ -440,7 +443,7 @@ export class WorkspaceMigrationRunnerService {
         allDeferredActions.push(...deferredActions);
       }
 
-      if (shouldPersistDeferredActions) {
+      if (shouldDeferActions) {
         await this.deferredWorkspaceMigrationActionRunnerService.persist({
           deferredActions: allDeferredActions,
           workspaceId,
@@ -592,7 +595,7 @@ export class WorkspaceMigrationRunnerService {
     await this.deferredWorkspaceMigrationActionRunnerService.dispatchAfterCommit(
       {
         deferredActions: allDeferredActions,
-        hasPersistedDeferredActions: shouldPersistDeferredActions,
+        hasPersistedDeferredActions: shouldDeferActions,
         workspaceId,
         applicationUniversalIdentifier,
         allFlatEntityMaps,
