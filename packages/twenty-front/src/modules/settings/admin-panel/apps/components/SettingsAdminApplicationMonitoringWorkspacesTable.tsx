@@ -14,6 +14,7 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -61,7 +62,7 @@ export const SettingsAdminApplicationMonitoringWorkspacesTable = ({
               <Avatar
                 src={getAbsoluteImageUrl(workspace.workspaceLogoUrl)}
                 name={getAdminApplicationMonitoringWorkspaceLabel(workspace)}
-                colorSeed={workspace.workspaceId}
+                colorSeed={getWorkspaceAvatarColorSeed(workspace.workspaceName)}
                 size="md"
               />
               <OverflowingTextWithTooltip

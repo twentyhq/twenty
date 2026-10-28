@@ -8,6 +8,7 @@
  */
 
 export { getMainColorNameFromPaletteColorName } from './color/utils/getMainColorNameFromPaletteColorName';
+export { getWorkspaceAvatarColorSeed } from './color/utils/getWorkspaceAvatarColorSeed';
 export { parseThemeColor } from './color/utils/parseThemeColor';
 export {
   stringToThemeColor,

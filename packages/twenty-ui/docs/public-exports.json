@@ -1264,6 +1264,7 @@
       "getOsControlSymbol": "utilities/device/getOsControlSymbol",
       "getSafeUrl": "utilities/utils/getSafeUrl",
       "getUserDevice": "utilities/device/getUserDevice",
+      "getWorkspaceAvatarColorSeed": "utilities/color/utils/getWorkspaceAvatarColorSeed",
       "isDefined": "utilities/utils/isDefined",
       "MOBILE_MEDIA_QUERY": "utilities/responsive/constants/MobileMediaQuery",
       "normalizeSearchText": "utilities/utils/normalizeSearchText",

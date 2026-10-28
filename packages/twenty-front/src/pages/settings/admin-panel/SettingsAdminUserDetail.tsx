@@ -28,6 +28,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { Section } from 'twenty-ui/components/layout';
 import {
   IconCalendar,
@@ -78,6 +79,7 @@ export const SettingsAdminUserDetail = () => {
     userLookupResult?.workspaces.map((workspace) => ({
       id: workspace.id,
       title: workspace.name,
+      colorSeed: getWorkspaceAvatarColorSeed(workspace.name),
       logo:
         getImageAbsoluteURI({
           imageUrl: isNonEmptyString(workspace.logo)

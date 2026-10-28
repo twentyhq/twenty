@@ -1,4 +1,5 @@
 import { Avatar } from 'twenty-ui/primitives/data-display';
+import { getWorkspaceAvatarColorSeed, isDefined } from 'twenty-ui/utilities';
 import { type Agenda } from '../../shared/types/Agenda';
 
 export const WorkspaceIcon = ({
@@ -10,6 +11,11 @@ export const WorkspaceIcon = ({
     <Avatar
       src={workspace?.logoUrl || './twenty.svg'}
       name={workspace?.name ?? 'Twenty'}
+      colorSeed={
+        isDefined(workspace)
+          ? getWorkspaceAvatarColorSeed(workspace.name)
+          : undefined
+      }
       size="lg"
       shape="square"
     />

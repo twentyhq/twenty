@@ -7,6 +7,7 @@ import {
 } from '@/settings/components/SettingsTableCard';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -114,6 +115,10 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
           startElement={
             <AvatarOrIcon
               shape="circle"
+              name={ownerWorkspace.displayName}
+              colorSeed={getWorkspaceAvatarColorSeed(
+                ownerWorkspace.displayName,
+              )}
               src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
             />
           }
@@ -127,6 +132,10 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
           startElement={
             <AvatarOrIcon
               shape="circle"
+              name={ownerWorkspace.displayName}
+              colorSeed={getWorkspaceAvatarColorSeed(
+                ownerWorkspace.displayName,
+              )}
               src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
             />
           }
