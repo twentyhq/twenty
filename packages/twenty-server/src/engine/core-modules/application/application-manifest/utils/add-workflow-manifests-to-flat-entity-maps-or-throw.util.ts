@@ -7,6 +7,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
+import { type WorkflowManifestConnectedAccountReference } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { findActiveFlatWorkflowVersionByWorkflowId } from 'src/engine/core-modules/application/application-manifest/utils/find-active-flat-workflow-version-by-workflow-id.util';
 import { prepareWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/prepare-workflow-manifest-references.util';
 import { validateWorkflowManifestRecordFields } from 'src/engine/core-modules/application/application-manifest/utils/validate-workflow-manifest-record-fields.util';
@@ -53,6 +54,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   existingAllFlatEntityMaps,
   idByUniversalIdentifierByMetadataName,
   isWorkspaceCustomApplication,
+  connectedAccounts,
   now,
 }: {
   workflows: WorkflowManifest[];
@@ -62,6 +64,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   existingAllFlatEntityMaps: AllFlatEntityMaps;
   idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
   isWorkspaceCustomApplication: boolean;
+  connectedAccounts: readonly WorkflowManifestConnectedAccountReference[];
   now: string;
 }): (UniversalFlatWorkflow & { id: string })[] => {
   const applicationUniversalIdentifier =
@@ -69,15 +72,18 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   const applicationWorkflows: (UniversalFlatWorkflow & { id: string })[] = [];
 
   if (workflows.length > 0) {
-    const references = prepareWorkflowManifestReferences({
-      toAllUniversalFlatEntityMaps,
-      existingAllFlatEntityMaps,
-      ownerApplicationId: ownerFlatApplication.id,
-      idByUniversalIdentifierByMetadataName,
-      // Its workflows run as workspace workflows, which may already call any app's actions
-      canReferenceOtherApplicationsWorkflowActions:
-        isWorkspaceCustomApplication,
-    });
+    const references = {
+      ...prepareWorkflowManifestReferences({
+        toAllUniversalFlatEntityMaps,
+        existingAllFlatEntityMaps,
+        ownerApplicationId: ownerFlatApplication.id,
+        idByUniversalIdentifierByMetadataName,
+        // Its workflows run as workspace workflows, which may already call any app's actions
+        canReferenceOtherApplicationsWorkflowActions:
+          isWorkspaceCustomApplication,
+      }),
+      connectedAccounts,
+    };
     const activeVersionByWorkflowId = isWorkspaceCustomApplication
       ? findActiveFlatWorkflowVersionByWorkflowId(
           fromAllFlatEntityMaps.flatWorkflowVersionMaps,

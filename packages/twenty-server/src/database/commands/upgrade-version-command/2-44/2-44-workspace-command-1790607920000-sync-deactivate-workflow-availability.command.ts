@@ -69,6 +69,7 @@ export class SyncDeactivateWorkflowAvailabilityCommand extends ProvisionedWorksp
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

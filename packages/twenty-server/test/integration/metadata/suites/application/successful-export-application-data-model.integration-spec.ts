@@ -96,6 +96,7 @@ import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/applica
 import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-object-manifest-to-universal-flat-object-metadata.util';
 import { buildSearchVectorFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-search-vector-flat-field-metadata-for-custom-object.util';
 import { buildSearchVectorGinIndexForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-search-vector-gin-index-for-custom-object.util';
+import { type ConnectedAccountScope } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 const TEST_APP_ID = '7e3d1c2b-0000-4a7b-8c9d-0e1f2a3b4c5d';
 const TEST_ROLE_ID = '7e3d1c2b-0001-4a7b-8c9d-0e1f2a3b4c5d';
@@ -1528,6 +1529,8 @@ const ESCALATION_WORKFLOW_ID = '7e3d1c2b-0110-4a7b-8c9d-0e1f2a3b4c5d';
 const NOTIFY_WORKFLOW_ID = '7e3d1c2b-0111-4a7b-8c9d-0e1f2a3b4c5d';
 const NIGHTLY_WORKFLOW_ID = '7e3d1c2b-0112-4a7b-8c9d-0e1f2a3b4c5d';
 const INTAKE_WORKFLOW_ID = '7e3d1c2b-0113-4a7b-8c9d-0e1f2a3b4c5d';
+const OUTREACH_WORKFLOW_ID = '7e3d1c2b-0114-4a7b-8c9d-0e1f2a3b4c5d';
+const SEEDED_CONNECTED_ACCOUNT_HANDLE = 'tim@apple.dev';
 const workflowNodeIdentifier = (suffix: number) =>
   `7e3d1c2b-${(200 + suffix).toString().padStart(4, '0')}-4a7b-8c9d-0e1f2a3b4c5d`;
 
@@ -1724,7 +1727,75 @@ const EXPORTED_WORKFLOWS: WorkflowManifest[] = [
       ],
     },
   },
+  {
+    universalIdentifier: OUTREACH_WORKFLOW_ID,
+    name: 'Reach out to the incident reporter',
+    version: {
+      trigger: {
+        universalIdentifier: workflowNodeIdentifier(40),
+        type: 'MANUAL',
+        nextStepIds: [workflowNodeIdentifier(41)],
+      },
+      steps: [
+        {
+          universalIdentifier: workflowNodeIdentifier(41),
+          name: 'Email the reporter',
+          type: 'SEND_EMAIL',
+          nextStepIds: [workflowNodeIdentifier(42)],
+          input: {
+            connectedAccountHandle: SEEDED_CONNECTED_ACCOUNT_HANDLE,
+            recipients: { to: 'reporter@example.com', cc: '', bcc: '' },
+            subject: 'We are on it',
+            files: [],
+          },
+        },
+        {
+          universalIdentifier: workflowNodeIdentifier(42),
+          name: 'Book a review',
+          type: 'CREATE_CALENDAR_EVENT',
+          nextStepIds: [],
+          input: {
+            connectedAccountId: '{{trigger.connectedAccountId}}',
+            title: 'Incident review',
+            startsAt: '2026-11-02T09:00:00.000Z',
+            endsAt: '2026-11-02T09:30:00.000Z',
+            isFullDay: false,
+            attendees: '',
+            sendInvitations: false,
+            addConferencing: false,
+          },
+        },
+      ],
+    },
+  },
 ];
+
+const withSendEmailConnectedAccountHandle = ({
+  workflow,
+  connectedAccountHandle,
+}: {
+  workflow: WorkflowManifest;
+  connectedAccountHandle: string;
+}): WorkflowManifest => ({
+  ...workflow,
+  version: {
+    ...workflow.version,
+    steps: workflow.version.steps.map((step) => {
+      if (step.type !== 'SEND_EMAIL') {
+        return step;
+      }
+
+      return { ...step, input: { ...step.input, connectedAccountHandle } };
+    }),
+  },
+});
+
+const setSeededConnectedAccountScope = (scope: ConnectedAccountScope) =>
+  globalThis.testDataSource.query(
+    `UPDATE core."connectedAccount" SET scope = $1
+      WHERE handle = $2 AND "workspaceId" = $3`,
+    [scope, SEEDED_CONNECTED_ACCOUNT_HANDLE, SEED_APPLE_WORKSPACE_ID],
+  );
 
 const workflowsManifest = buildBaseManifest({
   appId: WORKFLOW_TEST_APP_ID,
@@ -1753,7 +1824,19 @@ const workflowsManifest = buildBaseManifest({
 });
 
 describe('Application export - workflows', () => {
+  let seededConnectedAccountScope: ConnectedAccountScope;
+
   beforeAll(async () => {
+    const [seededConnectedAccount] = await globalThis.testDataSource.query(
+      `SELECT scope FROM core."connectedAccount"
+        WHERE handle = $1 AND "workspaceId" = $2`,
+      [SEEDED_CONNECTED_ACCOUNT_HANDLE, SEED_APPLE_WORKSPACE_ID],
+    );
+
+    seededConnectedAccountScope = seededConnectedAccount.scope;
+    // A handle only names an account shared with the workspace; the seed connects it for Tim alone
+    await setSeededConnectedAccountScope('WORKSPACE');
+
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: WORKFLOW_TEST_APP_ID,
     });
@@ -1774,6 +1857,7 @@ describe('Application export - workflows', () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: WORKFLOW_TEST_APP_ID,
     });
+    await setSeededConnectedAccountScope(seededConnectedAccountScope);
   });
 
   it('exports the synced workflows as they were declared', async () => {
@@ -1835,6 +1919,43 @@ describe('Application export - workflows', () => {
 
     expect(dryRun.errors).toBeUndefined();
     expect(dryRun.data.syncApplication.actions).toEqual([]);
+  }, 60000);
+
+  it('refuses a step whose connected account handle is not connected in the workspace', async () => {
+    const unknownHandle = 'nobody@apple.dev';
+    const { errors } = await syncApplication({
+      manifest: {
+        ...workflowsManifest,
+        workflows: EXPORTED_WORKFLOWS.map((workflow) =>
+          workflow.universalIdentifier === OUTREACH_WORKFLOW_ID
+            ? withSendEmailConnectedAccountHandle({
+                workflow,
+                connectedAccountHandle: unknownHandle,
+              })
+            : workflow,
+        ),
+      },
+      dryRun: true,
+      expectToFail: true,
+    });
+
+    expect(errors?.[0]?.message).toContain(unknownHandle);
+  }, 60000);
+
+  it('refuses a step whose connected account handle names an account private to a member', async () => {
+    await setSeededConnectedAccountScope('USER');
+
+    try {
+      const { errors } = await syncApplication({
+        manifest: workflowsManifest,
+        dryRun: true,
+        expectToFail: true,
+      });
+
+      expect(errors?.[0]?.message).toContain(SEEDED_CONNECTED_ACCOUNT_HANDLE);
+    } finally {
+      await setSeededConnectedAccountScope('WORKSPACE');
+    }
   }, 60000);
 });
 

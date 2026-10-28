@@ -59,6 +59,7 @@ export class EnableEditLayoutAcrossAppCommand extends ProvisionedWorkspaceComman
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: [],

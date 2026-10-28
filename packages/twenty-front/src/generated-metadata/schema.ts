@@ -34,6 +34,7 @@ export type Agent = {
   description?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
+  isActive: Scalars['Boolean']['output'];
   /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
   isCustom: Scalars['Boolean']['output'];
   isSystem: Scalars['Boolean']['output'];
@@ -123,6 +124,7 @@ export type AgentChatOpenThreadsSummary = {
   hasUnreadOpenThread: Scalars['Boolean']['output'];
   needsInputThreadCount: Scalars['Int']['output'];
   openThreadCount: Scalars['Int']['output'];
+  unreadOpenThreadCount: Scalars['Int']['output'];
 };
 
 export type AgentChatThread = {
@@ -2418,7 +2420,6 @@ export enum FeatureFlagKey {
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
-  IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED = 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
@@ -2432,6 +2433,7 @@ export type Field = {
   createdAt: Scalars['DateTime']['output'];
   defaultValue?: Maybe<Scalars['JSON']['output']>;
   description?: Maybe<Scalars['String']['output']>;
+  disabledFieldPermissionActions?: Maybe<Array<Scalars['String']['output']>>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   isActive?: Maybe<Scalars['Boolean']['output']>;
@@ -7200,6 +7202,7 @@ export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['UUID']['input'];
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   modelConfiguration?: InputMaybe<Scalars['JSON']['input']>;
   modelId?: InputMaybe<Scalars['String']['input']>;

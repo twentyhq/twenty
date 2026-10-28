@@ -49,6 +49,7 @@ export class CallRecordingService {
           rolePermissionConfig,
           objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
           flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
+          flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
           flatApplicationMaps: workspaceContext.flatApplicationMaps,
         });
       const callRecordingObjectMetadataId =

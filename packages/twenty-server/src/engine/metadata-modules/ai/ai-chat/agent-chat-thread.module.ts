@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
 import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { EndAgentChatChannelSnoozeJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-channel-snooze.job';
@@ -35,6 +37,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecordShareModule,
     RecordShareStorageModule,
     TypeORMModule,
+    TypeOrmModule.forFeature([UserWorkspaceEntity]),
     UserWorkspaceModule,
     WorkspaceCacheModule,
   ],
