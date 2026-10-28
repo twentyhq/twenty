@@ -180,7 +180,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       },
     });
 
-    if (!agentRow) {
+    if (!isDefined(agentRow)) {
       throw new NotFoundException(
         `Agent ${input.agentUniversalIdentifier} not found`,
       );

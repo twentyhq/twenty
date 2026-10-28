@@ -143,10 +143,10 @@ describe('Skill update should succeed', () => {
 
     const { data: updateData } = await updateSkill({
       expectToFail: false,
-      input: { id: standardSkill!.id, label: 'Workspace label' },
+      input: { id: standardSkill!.id, label: 'Zz workspace label' },
     });
 
-    expect(updateData.updateSkill.label).toBe('Workspace label');
+    expect(updateData.updateSkill.label).toBe('Zz workspace label');
 
     const [skillRow] = await global.testDataSource.query(
       `SELECT label, overrides FROM core."skill" WHERE id = $1`,
@@ -155,8 +155,20 @@ describe('Skill update should succeed', () => {
 
     expect(skillRow.label).toBe(standardSkill!.label);
     expect(Object.values(skillRow.overrides)).toEqual([
-      { label: 'Workspace label' },
+      { label: 'Zz workspace label' },
     ]);
+
+    const { data: listData } = await findSkills({
+      expectToFail: false,
+      input: undefined,
+      gqlFields: 'id label',
+    });
+    const listedLabels = listData.skills.map((skill) => skill.label);
+
+    expect(listedLabels).toContain('Zz workspace label');
+    expect(listedLabels).toEqual(
+      [...listedLabels].sort((left, right) => left.localeCompare(right)),
+    );
 
     const { data: revertData } = await updateSkill({
       expectToFail: false,
