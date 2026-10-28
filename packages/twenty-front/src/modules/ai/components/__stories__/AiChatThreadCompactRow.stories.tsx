@@ -117,4 +117,17 @@ export const Editing: Story = {
 
 export const Streaming: Story = {
   args: { isStreaming: true, isSelected: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const row = canvas.getByRole('group', { name: 'Cloud renewal prep' });
+    const streamingIndicator = row.querySelector('svg[data-twenty-icon]');
+
+    await expect(row).toHaveAttribute('data-active');
+    await expect(
+      canvas.getByText('Sarah: Legal is reviewing the new terms'),
+    ).toBeVisible();
+    await expect(streamingIndicator).toBeVisible();
+    await expect(canvas.getByText('3d')).toBeVisible();
+    await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
+  },
 };

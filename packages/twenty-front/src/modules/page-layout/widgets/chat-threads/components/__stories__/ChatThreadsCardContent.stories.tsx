@@ -176,6 +176,18 @@ export const Empty: Story = {
 
 export const Loading: Story = {
   args: { threads: [], loading: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const loadingIndicator = canvasElement.querySelector('[aria-busy="true"]');
+
+    await expect(loadingIndicator).toBeVisible();
+    await expect(
+      canvas.queryByText('No conversations'),
+    ).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByText("We couldn't load the conversations"),
+    ).not.toBeInTheDocument();
+  },
 };
 
 export const Error: Story = {
