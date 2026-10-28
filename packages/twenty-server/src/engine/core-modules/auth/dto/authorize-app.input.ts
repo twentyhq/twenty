@@ -20,7 +20,6 @@ export class AuthorizeAppInput {
   @MaxLength(2048)
   redirectUrl: string;
 
-  // Gemini sends 1000+ chars; 4096 keeps the client callback URL under the 8000-octet request-line limit
   @Field(() => String, { nullable: true })
   @IsString()
   @MaxLength(4096)
