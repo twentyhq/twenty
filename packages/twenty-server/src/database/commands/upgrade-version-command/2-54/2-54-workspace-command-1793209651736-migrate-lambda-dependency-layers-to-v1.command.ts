@@ -37,6 +37,11 @@ type LambdaDepsLayerServices = {
   layerManager: LambdaLayerManagerService;
 };
 
+type LogicFunctionMigrationOutcome =
+  | 'migrated'
+  | 'alreadyMigrated'
+  | 'notMigrated';
+
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
@@ -150,8 +155,11 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
         'flatLogicFunctionMaps',
       ]);
 
-    let migratedCount = 0;
-    let failedCount = 0;
+    const outcomeCounts: Record<LogicFunctionMigrationOutcome, number> = {
+      migrated: 0,
+      alreadyMigrated: 0,
+      notMigrated: 0,
+    };
 
     for (const flatLogicFunction of Object.values(
       flatLogicFunctionMaps.byUniversalIdentifier,
@@ -168,24 +176,22 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
       }
 
       try {
-        const isMigrated = await this.migrateLogicFunction({
+        const outcome = await this.migrateLogicFunction({
           flatLogicFunction,
           flatApplication,
         });
 
-        if (isMigrated) {
-          migratedCount++;
-        }
+        outcomeCounts[outcome]++;
       } catch (error) {
-        failedCount++;
+        outcomeCounts.notMigrated++;
         this.logger.error(
-          `Logic function ${flatLogicFunction.id} in workspace ${workspaceId} stays on its legacy dependency layer: ${getErrorMessage(error)}`,
+          `Logic function ${flatLogicFunction.id} in workspace ${workspaceId} was not migrated: ${getErrorMessage(error)}`,
         );
       }
     }
 
     this.logger.log(
-      `Moved ${migratedCount} logic function(s) to their v1 dependency layer in workspace ${workspaceId}, ${failedCount} failed`,
+      `Workspace ${workspaceId}: ${outcomeCounts.migrated} logic function(s) migrated to their v1 dependency layer, ${outcomeCounts.alreadyMigrated} already migrated, ${outcomeCounts.notMigrated} not migrated`,
     );
   }
 
@@ -195,17 +201,17 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
   }: {
     flatLogicFunction: FlatLogicFunction;
     flatApplication: FlatApplication;
-  }): Promise<boolean> {
+  }): Promise<LogicFunctionMigrationOutcome> {
     const { awsClient, layerManager } = this.getLambdaDepsLayerServices();
 
     return this.cacheLockService.withLock(
-      async () => {
+      async (): Promise<LogicFunctionMigrationOutcome> => {
         const lambdaExecutor = await awsClient.getFunction(
           flatLogicFunction.id,
         );
 
         if (!isDefined(lambdaExecutor)) {
-          return false;
+          return 'notMigrated';
         }
 
         const layerArns = (lambdaExecutor.Configuration?.Layers ?? [])
@@ -223,7 +229,7 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
         );
 
         if (!isDefined(sdkLayerArn) || !isDefined(currentDepsLayerArn)) {
-          return false;
+          return 'notMigrated';
         }
 
         const currentDepsLayerName =
@@ -235,7 +241,7 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
           isDefined(currentDepsLayerName) &&
           targetDepsLayerNames.includes(currentDepsLayerName)
         ) {
-          return false;
+          return 'alreadyMigrated';
         }
 
         const depsLayerArn =
@@ -251,7 +257,7 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
         await awsClient.waitFunctionUpdated(flatLogicFunction.id);
         await awsClient.clearFunctionCache(flatLogicFunction.id);
 
-        return true;
+        return 'migrated';
       },
       getLambdaExecutorBuildLockKey(flatLogicFunction.id),
       {
