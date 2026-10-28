@@ -117,3 +117,22 @@ export const KeepsExistingOrderWithoutBuiltInAccountApps: Story = {
     ]);
   },
 };
+
+export const HidesTheDescriptionOnMobile: Story = {
+  parameters: {
+    viewport: { defaultViewport: 'mobile1' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Acme Sync')).toBeVisible();
+    expect(canvas.getByText('Name')).toBeVisible();
+    expect(canvas.queryByText('Description')).not.toBeInTheDocument();
+
+    const acmeRow = canvas.getByRole('link', { name: /Acme Sync/ });
+
+    expect(acmeRow).toHaveTextContent('NPM');
+    expect(acmeRow).not.toHaveTextContent('Keeps Acme in sync');
+    expect(acmeRow.scrollWidth).toBeLessThanOrEqual(acmeRow.clientWidth);
+  },
+};

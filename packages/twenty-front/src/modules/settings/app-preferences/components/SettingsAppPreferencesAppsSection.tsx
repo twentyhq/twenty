@@ -6,6 +6,7 @@ import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/comp
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledToolbar = styled.div`
@@ -22,28 +23,43 @@ export const SettingsAppPreferencesAppsSection = () => {
     hasApplicationsLoadError,
     refetch,
   } = useApplicationsWithPreferences();
-  const { groups, loading: accountGroupsLoading } = useMyAccountGroups();
+  const {
+    groups,
+    loading: accountGroupsLoading,
+    error: accountGroupsError,
+    refetch: refetchAccountGroups,
+  } = useMyAccountGroups();
   const isLoadingApplications =
     loading && !hasLoadedApplicationsWithPreferences;
-  const statusById = accountGroupsLoading
-    ? {}
-    : getAppPreferencesAppStatusById({
-        groups,
-        builtInAccountApps: enabledBuiltInAccountApps,
-        applicationsWithPreferences,
-      });
+  const hasAccountGroupsLoadError = isDefined(accountGroupsError);
+  const statusById =
+    accountGroupsLoading || hasAccountGroupsLoadError
+      ? {}
+      : getAppPreferencesAppStatusById({
+          groups,
+          builtInAccountApps: enabledBuiltInAccountApps,
+          applicationsWithPreferences,
+        });
 
   return (
     <SettingsApplicationsTable
       title={t`Apps`}
       description={t`Choose your preferences for the apps installed on your workspace by the admin`}
       toolbar={
-        hasApplicationsLoadError ? (
+        hasApplicationsLoadError || hasAccountGroupsLoadError ? (
           <StyledToolbar>
-            <SettingsApplicationLoadErrorBanner
-              message={t`Your installed apps could not be loaded. Check your connection and try again.`}
-              onRetry={() => refetch().catch(() => undefined)}
-            />
+            {hasApplicationsLoadError && (
+              <SettingsApplicationLoadErrorBanner
+                message={t`Your installed apps could not be loaded. Check your connection and try again.`}
+                onRetry={() => refetch().catch(() => undefined)}
+              />
+            )}
+            {hasAccountGroupsLoadError && (
+              <SettingsApplicationLoadErrorBanner
+                message={t`Your connections could not be loaded. Check your connection and try again.`}
+                onRetry={() => refetchAccountGroups().catch(() => undefined)}
+              />
+            )}
           </StyledToolbar>
         ) : undefined
       }

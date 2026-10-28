@@ -36,6 +36,7 @@ import {
   APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
   CONNECTED_GRANOLA_GRAPHQL_HANDLERS,
   failNextApplicationPreferencesRequest,
+  failNextConnectedAccountsRequest,
   findApplicationsGatedQuery,
   seedApplicationPreferencesStory,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
@@ -737,6 +738,46 @@ export const AppPreferencesListLoadErrorOffersRetry: Story = {
     expect(
       canvas.queryByText(
         'Your installed apps could not be loaded. Check your connection and try again.',
+      ),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const ConnectionsLoadErrorHidesStatusesUntilRetry: Story = {
+  ...accountGroupsStory,
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    failNextConnectedAccountsRequest();
+  },
+  parameters: {
+    msw: { handlers: CONNECTED_GRANOLA_GRAPHQL_HANDLERS },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Your connections could not be loaded. Check your connection and try again.',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(canvas.getByText('Linear')).toBeVisible();
+    expect(canvas.queryByText('Not connected')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Missing configuration')).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
+
+    expect(
+      await getTableRow(canvasElement, 'Linear').findByText(
+        'Not connected',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(
+      canvas.queryByText(
+        'Your connections could not be loaded. Check your connection and try again.',
       ),
     ).not.toBeInTheDocument();
   },

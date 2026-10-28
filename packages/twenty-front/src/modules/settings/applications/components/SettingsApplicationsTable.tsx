@@ -5,8 +5,6 @@ import { splitApplicationsAroundBuiltInAccountApps } from '@/settings/applicatio
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
@@ -17,10 +15,8 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
-import {
-  APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS_BY_MIDDLE_COLUMN,
-  SettingsApplicationTableRow,
-} from '@/settings/applications/components/SettingsApplicationTableRow';
+import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
+import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
 import { type SettingsApplicationTableRowMiddleColumn } from '@/settings/applications/types/SettingsApplicationTableRowMiddleColumn';
 import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
 import { hasApplicationUpdate } from '@/settings/applications/utils/hasApplicationUpdate';
@@ -140,9 +136,6 @@ export const SettingsApplicationsTable = ({
           applicationId: builtInAccountAppId,
         });
 
-  const gridTemplateColumns =
-    APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS_BY_MIDDLE_COLUMN[middleColumn];
-
   const renderApplicationRow = (
     application: SettingsApplicationsTableApplication,
   ) => {
@@ -182,14 +175,7 @@ export const SettingsApplicationsTable = ({
             />
           </StyledSearchInputContainer>
           <Table>
-            <TableRow gridTemplateColumns={gridTemplateColumns}>
-              <TableHeader>{t`Name`}</TableHeader>
-              <TableHeader>
-                {middleColumn === 'status' ? t`Status` : t`Type`}
-              </TableHeader>
-              <TableHeader>{t`Description`}</TableHeader>
-              <TableHeader />
-            </TableRow>
+            <SettingsApplicationTableHeaderRow middleColumn={middleColumn} />
             <StyledTableRowsContainer>
               {filteredApplications.length === 0 &&
                 filteredBuiltInAccountApps.length === 0 && (

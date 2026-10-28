@@ -16,6 +16,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
+import { getApplicationTableRowGridTemplateColumns } from '@/settings/applications/utils/getApplicationTableRowGridTemplateColumns';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { type SettingsApplicationTableRowMiddleColumn } from '@/settings/applications/types/SettingsApplicationTableRowMiddleColumn';
 
 export type SettingsApplicationTableRowProps = {
@@ -28,17 +30,6 @@ export type SettingsApplicationTableRowProps = {
   middleColumn?: SettingsApplicationTableRowMiddleColumn;
   sourceType?: ApplicationRegistrationSourceType;
   status?: AppPreferencesAppStatus;
-};
-
-export const APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
-  '200px 80px minmax(0, 1fr) 36px';
-
-export const APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS_BY_MIDDLE_COLUMN: Record<
-  SettingsApplicationTableRowMiddleColumn,
-  string
-> = {
-  type: APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
-  status: '200px 180px minmax(0, 1fr) 36px',
 };
 
 const SOURCE_TYPE_LABELS: Record<
@@ -63,17 +54,17 @@ export const SettingsApplicationTableRow = ({
   sourceType,
   status,
 }: SettingsApplicationTableRowProps) => {
+  const isMobile = useIsMobile();
   const resolvedDescription = useResolvedApplicationDescription(application);
   const descriptionSummary =
     getApplicationDescriptionSummary(resolvedDescription);
 
   return (
     <TableRow
-      gridTemplateColumns={
-        APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS_BY_MIDDLE_COLUMN[
-          middleColumn
-        ]
-      }
+      gridTemplateColumns={getApplicationTableRowGridTemplateColumns({
+        middleColumn,
+        isMobile,
+      })}
       key={application.id}
       to={link}
     >
@@ -87,14 +78,16 @@ export const SettingsApplicationTableRow = ({
           getSourceTypeLabel(sourceType)
         )}
       </TableCell>
-      <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
-        <OverflowingTextWithTooltip text={descriptionSummary} />
-        {hasUpdate === true && (
-          <Tag color="blue" weight="medium" truncate={false}>
-            {t`Update`}
-          </Tag>
-        )}
-      </TableCell>
+      {!isMobile && (
+        <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
+          <OverflowingTextWithTooltip text={descriptionSummary} />
+          {hasUpdate === true && (
+            <Tag color="blue" weight="medium" truncate={false}>
+              {t`Update`}
+            </Tag>
+          )}
+        </TableCell>
+      )}
       <TableCell
         align="right"
         padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
