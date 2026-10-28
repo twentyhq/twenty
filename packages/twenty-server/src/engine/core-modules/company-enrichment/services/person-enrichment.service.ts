@@ -229,11 +229,7 @@ export class PersonEnrichmentService {
         userId: null,
         workspaceId,
         key: PERSON_ENRICHMENT_KEY,
-        value: {
-          email: enrichment.email,
-          jobTitle: enrichment.jobTitle,
-          jobTitleLevels: enrichment.jobTitleLevels,
-        },
+        value: enrichment,
         type: KeyValuePairType.CONFIG_VARIABLE,
       });
     } catch (error) {

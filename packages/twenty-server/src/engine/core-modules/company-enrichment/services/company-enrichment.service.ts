@@ -211,10 +211,7 @@ export class CompanyEnrichmentService {
         userId: null,
         workspaceId,
         key: COMPANY_ENRICHMENT_KEY,
-        value: {
-          employeeCount: enrichment.employeeCount,
-          industry: enrichment.industry,
-        },
+        value: enrichment,
         type: KeyValuePairType.CONFIG_VARIABLE,
       });
     } catch (error) {
