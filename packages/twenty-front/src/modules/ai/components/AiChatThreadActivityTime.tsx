@@ -6,6 +6,7 @@ import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThre
 import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
@@ -16,7 +17,7 @@ const StyledActivityTime = styled.div`
 
 type AiChatThreadActivityTimeProps = {
   thread: AgentChatThreadRecord;
-  variant?: 'default' | 'compact';
+  variant?: AiChatThreadListVariant;
 };
 
 export const AiChatThreadActivityTime = ({
@@ -57,13 +58,14 @@ export const AiChatThreadActivityTime = ({
     }
   };
 
+  const readActivityTimeColor =
+    variant === 'compact' ? 'secondary' : 'tertiary';
+
   return (
     <Text
       render={<StyledActivityTime />}
       size={variant === 'compact' ? 'md' : 'sm'}
-      color={
-        isUnread ? 'primary' : variant === 'compact' ? 'secondary' : 'tertiary'
-      }
+      color={isUnread ? 'primary' : readActivityTimeColor}
     >
       {getActivityTimeLabel()}
     </Text>
