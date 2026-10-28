@@ -25,6 +25,7 @@ const StyledTitle = styled.div`
   color: var(--t-font-color-primary);
   font-size: var(--t-font-size-xl);
   font-weight: var(--t-font-weight-semi-bold);
+  letter-spacing: -0.01em;
   line-height: var(--t-text-line-height-lg);
 `;
 

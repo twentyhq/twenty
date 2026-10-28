@@ -7,6 +7,7 @@ import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/int
 import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
@@ -24,6 +25,30 @@ import {
 import { useContext, useEffect } from 'react';
 import { type Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+const StyledDropdownOverlayContainer = styled(OverlayContainer)`
+  animation: dropdown-overlay-enter
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
+  border-radius: ${themeCssVariables.border.radius.lg};
+
+  @keyframes dropdown-overlay-enter {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+
+  @keyframes dropdown-overlay-fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation-name: dropdown-overlay-fade-in;
+  }
+`;
 
 const StyledDropdownInsideContainer = styled.div`
   display: flex;
@@ -154,7 +179,7 @@ export const DropdownInternalContainer = ({
           data-click-outside-id={excludedClickOutsideId}
           isAboveModal={isDropdownInModal}
         >
-          <OverlayContainer>
+          <StyledDropdownOverlayContainer>
             <StyledDropdownInsideContainer
               id={dropdownId}
               data-select-disable
@@ -162,7 +187,7 @@ export const DropdownInternalContainer = ({
             >
               {dropdownComponents}
             </StyledDropdownInsideContainer>
-          </OverlayContainer>
+          </StyledDropdownOverlayContainer>
         </StyledOverlayPortalLayer>
       </FloatingPortal>
     </>

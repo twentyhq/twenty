@@ -39,7 +39,8 @@ export const SidePanelGroup = ({ heading, children }: SidePanelGroupProps) => {
 };
 
 const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
-  font-size: 11px;
-  font-weight: var(--t-font-weight-semi-bold);
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  letter-spacing: 0.02em;
 `;

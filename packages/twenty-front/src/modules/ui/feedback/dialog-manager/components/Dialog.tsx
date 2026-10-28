@@ -1,11 +1,12 @@
 import { type DialogProps } from '@/ui/feedback/dialog-manager/types/DialogProps';
 import { styled } from '@linaria/react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Key } from 'ts-key-enum';
 
 import { DIALOG_CLICK_OUTSIDE_ID } from '@/ui/feedback/dialog-manager/constants/DialogClickOutsideId';
 import { DIALOG_FOCUS_ID } from '@/ui/feedback/dialog-manager/constants/DialogFocusId';
 import { DIALOG_LISTENER_ID } from '@/ui/feedback/dialog-manager/constants/DialogListenerId';
+import { EASE_OUT } from '@/ui/theme/constants/EaseOut';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -30,7 +31,9 @@ const StyledDialogOverlay = motion.create(StyledDialogOverlayBase);
 
 const StyledDialogContainerBase = styled.div`
   background: ${themeCssVariables.background.primary};
-  border-radius: ${themeCssVariables.border.radius.md};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.lg};
+  box-shadow: ${themeCssVariables.boxShadow.superHeavy};
   display: flex;
   flex-direction: column;
   max-width: 320px;
@@ -44,12 +47,13 @@ const StyledDialogTitle = styled.span`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  letter-spacing: -0.01em;
   margin-bottom: ${themeCssVariables.spacing[6]};
   text-align: center;
 `;
 
 const StyledDialogMessage = styled.span`
-  color: ${themeCssVariables.font.color.primary};
+  color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
   margin-bottom: ${themeCssVariables.spacing[6]};
@@ -71,14 +75,16 @@ export const Dialog = ({
   onClose,
   id,
 }: DialogProps) => {
+  const shouldReduceMotion = useReducedMotion();
+
   const dialogVariants = {
     open: { opacity: 1 },
     closed: { opacity: 0 },
   };
 
   const containerVariants = {
-    open: { y: 0 },
-    closed: { y: '50vh' },
+    open: { opacity: 1, scale: 1 },
+    closed: { opacity: 0, scale: shouldReduceMotion ? 1 : 0.96 },
   };
 
   const handleEnter = (event: KeyboardEvent) => {
@@ -132,7 +138,7 @@ export const Dialog = ({
     >
       <StyledDialogContainer
         variants={containerVariants}
-        transition={{ damping: 15, stiffness: 100 }}
+        transition={{ duration: 0.18, ease: EASE_OUT }}
         id={id}
         ref={dialogRef}
       >

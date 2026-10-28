@@ -4,6 +4,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 export const CARD_ACTION_CLASS_NAME = css`
   background: transparent;
   border: none;
+  border-radius: inherit;
   cursor: pointer;
   inset: 0;
   padding: 0;

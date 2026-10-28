@@ -51,17 +51,24 @@ const StyledSidePanelWrapper = styled.div<{
   }
 `;
 
+// The wrapper keeps the full stored width so width-dependent math is unchanged;
+// the gutter is carved out of the panel itself.
 const StyledSidePanel = styled.aside<{ isShrinkingFromFullWidth: boolean }>`
   background: ${themeCssVariables.background.primary};
-  border-left: 1px solid ${themeCssVariables.border.color.medium};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.lg};
+  box-shadow: ${themeCssVariables.boxShadow.light};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(100% - ${themeCssVariables.spacing[4]});
+  margin: ${themeCssVariables.spacing[2]} 0;
   overflow: hidden;
   position: relative;
   width: ${({ isShrinkingFromFullWidth }) =>
-    isShrinkingFromFullWidth ? '100%' : `var(${SIDE_PANEL_WIDTH_VAR})`};
+    `calc(${
+      isShrinkingFromFullWidth ? '100%' : `var(${SIDE_PANEL_WIDTH_VAR})`
+    } - ${themeCssVariables.spacing[2]})`};
 `;
 
 const StyledModalContainer = styled.div`

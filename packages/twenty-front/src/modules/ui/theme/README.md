@@ -26,6 +26,23 @@ by Twenty. Popover scale-in motion and the input focus ring live in `twenty-ui`
 and apply to every theme. Radii are redefined inside the squircle `@supports`
 block too, otherwise the Klaim values would shrink Chromium's squircle corners.
 
+## Design language
+
+Components follow a "refined premium" direction on top of Base UI, without a
+second component library:
+
+- Surfaces: content panels and cards use the primary background, a hairline
+  medium border and the light shadow; popovers use the strong shadow and modals
+  the super-heavy one.
+- Radii: `md` for controls and navigation items, `lg` for cards, panels and
+  popovers.
+- Motion: one ease-out curve, `EASE_OUT_CSS` in twenty-front and `easing(out)`
+  in twenty-ui SCSS, with the theme durations. Only color, shadow, opacity and
+  transform animate, and transforms are disabled under reduced motion.
+- Focus: `0 0 0 3px var(--t-accent-secondary)` on `:focus-visible`.
+- Type: Inter with the `cv05` and `cv11` alternates; tabular figures for
+  numbers in data views.
+
 Inter is already bundled locally. The reference's optional Sen heading font is
 not added, and no remote fonts or assets are requested. Muted text and status
 labels are slightly darker than the reference to improve readability. Neutral

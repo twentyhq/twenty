@@ -20,11 +20,10 @@ const StyledDropdownMenuSearchInputContainer = styled.div`
 
 const StyledInput = styled.input`
   background-color: transparent;
-  background-color: transparent;
   border: none;
+  caret-color: ${themeCssVariables.color.blue};
   color: ${themeCssVariables.font.color.primary};
   font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.sm};
   font-size: inherit;
   font-weight: inherit;
 

@@ -51,7 +51,8 @@ const StyledTitleContainer = styled.div`
   align-items: center;
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  letter-spacing: -0.01em;
   margin-right: ${themeCssVariables.spacing[1]};
   overflow: hidden;
   width: 100%;
@@ -61,7 +62,7 @@ const StyledTopBarIconStyledTitleContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing['1.5']};
   overflow: hidden;
   width: 100%;
 `;
@@ -78,6 +79,7 @@ const StyledPageActionContainer = styled.div`
 
 const StyledIconContainer = styled.div`
   align-items: center;
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
   flex-direction: row;
 `;

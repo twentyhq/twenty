@@ -1,4 +1,6 @@
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
+import { NAVIGATION_DRAWER_ITEM_HOVER_BACKGROUND } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerItemHoverBackground';
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
@@ -9,12 +11,15 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
+  color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.xs};
-  font-weight: var(--t-font-weight-semi-bold);
+  font-weight: ${themeCssVariables.font.weight.medium};
+  letter-spacing: 0.02em;
+  transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ${EASE_OUT_CSS};
 
   .section-title-container:hover & {
-    color: ${themeCssVariables.font.color.tertiary};
+    color: ${themeCssVariables.font.color.secondary};
   }
 `;
 
@@ -28,9 +33,11 @@ const StyledTitle = styled.div`
   padding-left: ${themeCssVariables.spacing[1]};
   padding-right: ${themeCssVariables.spacing['0.5']};
   padding-top: ${themeCssVariables.spacing[1]};
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
 
   &:hover {
-    background-color: ${themeCssVariables.background.transparent.light};
+    background-color: ${NAVIGATION_DRAWER_ITEM_HOVER_BACKGROUND};
     cursor: pointer;
   }
 `;
@@ -47,7 +54,7 @@ const StyledChevron = styled.div`
   display: flex;
   opacity: 0;
   transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
-    ease;
+    ${EASE_OUT_CSS};
   .section-title-container:hover & {
     opacity: 1;
   }

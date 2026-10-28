@@ -1,4 +1,6 @@
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
+import { NAVIGATION_DRAWER_ITEM_HOVER_BACKGROUND } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerItemHoverBackground';
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { styled } from '@linaria/react';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -28,18 +30,17 @@ export const StyledContainer = styled.div<{
       ? `calc(${themeCssVariables.spacing[1]} - 1px)`
       : `calc(${themeCssVariables.spacing[2]} - 1px)`};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
   width: ${({ isNavigationDrawerExpanded }) =>
     isNavigationDrawerExpanded
       ? 'fit-content'
       : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
 
-  &:hover {
+  &:hover,
+  [data-popup-open] > & {
     background-color: ${({ disabled }) =>
-      disabled
-        ? 'transparent'
-        : themeCssVariables.background.transparent.lighter};
-    border-color: ${({ disabled }) =>
-      disabled ? 'transparent' : themeCssVariables.border.color.medium};
+      disabled ? 'transparent' : NAVIGATION_DRAWER_ITEM_HOVER_BACKGROUND};
   }
 `;
 
@@ -50,7 +51,8 @@ export const StyledLabelWrapper = styled.div`
 `;
 
 export const StyledLabel = styled.div`
-  font-weight: ${themeCssVariables.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  letter-spacing: -0.01em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

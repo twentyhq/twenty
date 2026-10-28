@@ -4,11 +4,14 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { NAVIGATION_DRAWER_ITEM_HOVER_BACKGROUND } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerItemHoverBackground';
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 
 const StyledBackButton = styled.button`
   align-items: center;
   background: transparent;
   border: none;
+  border-radius: ${themeCssVariables.border.radius.md};
   color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
@@ -20,11 +23,12 @@ const StyledBackButton = styled.button`
   padding-right: ${themeCssVariables.spacing[0.5]};
   padding-top: ${themeCssVariables.spacing[1]};
   text-align: left;
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
   width: 100%;
 
   &:hover {
-    background: ${themeCssVariables.background.transparent.light};
-    border-radius: ${themeCssVariables.border.radius.sm};
+    background: ${NAVIGATION_DRAWER_ITEM_HOVER_BACKGROUND};
   }
 `;
 

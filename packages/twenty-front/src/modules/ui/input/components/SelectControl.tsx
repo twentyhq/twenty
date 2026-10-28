@@ -1,3 +1,4 @@
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
 import { styled } from '@linaria/react';
@@ -80,7 +81,11 @@ export const StyledControlContainer = styled.div<{
   padding: ${({ $variant }) =>
     $variant === 'transparent' ? '0' : `0 ${themeCssVariables.spacing[2]}`};
   text-align: left;
-  transition: border-color 120ms ease-out;
+  transition:
+    background-color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS},
+    border-color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS};
 
   @media (hover: hover) {
     &:hover {

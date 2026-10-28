@@ -7,6 +7,8 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
 import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
+import { NAVIGATION_DRAWER_ITEM_HOVER_BACKGROUND } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerItemHoverBackground';
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
 import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTooltip';
 import { useShortcutAccessibleKeyLabels } from '@/ui/navigation/hooks/useShortcutAccessibleKeyLabels';
@@ -49,14 +51,20 @@ type StyledItemProps = Pick<
 const StyledItem = styled.button<StyledItemProps>`
   align-items: center;
   background: ${({ active, variant }) =>
-    active || variant === 'placeholder'
-      ? themeCssVariables.background.transparent.light
-      : 'transparent'};
+    active
+      ? themeCssVariables.accent.tertiary
+      : variant === 'placeholder'
+        ? themeCssVariables.background.transparent.light
+        : 'transparent'};
   border: ${({ isSelectedInEditMode }) =>
     isSelectedInEditMode
       ? `1px solid ${themeCssVariables.color.blue}`
       : '1px solid transparent'};
   border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${({ active }) =>
+    active
+      ? `inset 0 0 0 1px ${themeCssVariables.border.color.transparentStrong}`
+      : 'none'};
   box-sizing: border-box;
   color: ${({ active, isSoon, variant }) => {
     if (variant === 'placeholder') {
@@ -98,6 +106,11 @@ const StyledItem = styled.button<StyledItemProps>`
   pointer-events: ${({ isSoon, variant }) =>
     isSoon || variant === 'placeholder' ? 'none' : 'auto'};
   text-decoration: none;
+  transition:
+    background-color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS},
+    color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS};
   user-select: none;
   width: ${({ isNavigationDrawerExpanded, hasRightOptions }) =>
     !isNavigationDrawerExpanded
@@ -105,11 +118,19 @@ const StyledItem = styled.button<StyledItemProps>`
       : `calc(100% - ${themeCssVariables.spacing['1.5']} + ${themeCssVariables.spacing[1]} + ${hasRightOptions ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]})`};
 
   &:hover {
-    background: ${themeCssVariables.background.transparent.light};
+    background: ${({ active }) =>
+      active
+        ? themeCssVariables.accent.tertiary
+        : NAVIGATION_DRAWER_ITEM_HOVER_BACKGROUND};
     color: ${({ variant }) =>
       variant === 'tertiary'
         ? themeCssVariables.font.color.tertiary
         : themeCssVariables.font.color.primary};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
   }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -184,7 +205,8 @@ const StyledRightOptionsVisbility = styled.div`
   overflow: hidden;
   padding-left: ${themeCssVariables.spacing[2]};
   position: absolute;
-  transition: opacity 150ms;
+  transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ${EASE_OUT_CSS};
   white-space: nowrap;
   width: 1px;
 

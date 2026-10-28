@@ -1,3 +1,4 @@
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { styled } from '@linaria/react';
 import { type ComponentProps, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,7 +25,8 @@ const StyledHeader = styled.li`
   height: ${themeCssVariables.spacing[6]};
 
   padding: ${themeCssVariables.spacing[1]};
-  transition: background-color 120ms ease-out;
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
 
   &:hover {
     background: ${({ onClick }) =>

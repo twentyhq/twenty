@@ -1,4 +1,6 @@
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
+import { NAVIGATION_DRAWER_ITEM_HOVER_BACKGROUND } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerItemHoverBackground';
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -22,11 +24,8 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-// Expanded, the row matches the page card header so their borders read as one line.
 const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
   align-items: ${({ isExpanded }) => (isExpanded ? 'center' : 'flex-start')};
-  border-bottom: ${({ isExpanded }) =>
-    isExpanded ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
   box-sizing: border-box;
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
@@ -42,12 +41,16 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
 const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   align-items: center;
   background: ${({ isActive }) =>
-    isActive ? themeCssVariables.background.transparent.light : 'transparent'};
+    isActive ? themeCssVariables.accent.tertiary : 'transparent'};
   border: none;
   border-radius: ${({ isExpanded }) =>
     isExpanded
       ? themeCssVariables.border.radius.smRound
       : themeCssVariables.border.radius.mdRound};
+  box-shadow: ${({ isActive }) =>
+    isActive
+      ? `inset 0 0 0 1px ${themeCssVariables.border.color.transparentStrong}`
+      : 'none'};
   color: ${({ isActive }) =>
     isActive
       ? themeCssVariables.font.color.primary
@@ -73,8 +76,10 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   padding: ${({ isExpanded }) =>
     isExpanded ? `0 ${themeCssVariables.spacing['1.5']}` : '0'};
   transition:
-    background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
-    color calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
+    background-color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS},
+    color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS},
     gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
   width: ${({ isExpanded }) =>
     isExpanded ? 'auto' : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
@@ -87,8 +92,8 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   &:hover:not([aria-disabled='true']) {
     background: ${({ isActive }) =>
       isActive
-        ? themeCssVariables.background.transparent.light
-        : themeCssVariables.background.transparent.lighter};
+        ? themeCssVariables.accent.tertiary
+        : NAVIGATION_DRAWER_ITEM_HOVER_BACKGROUND};
     color: ${themeCssVariables.font.color.primary};
   }
 

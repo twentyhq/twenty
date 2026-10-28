@@ -1,3 +1,4 @@
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { mergeProps } from '@base-ui/react/merge-props';
 import { type TextInputComponentProps } from '@/ui/input/types/TextInputComponentProps';
 import { type TextInputSize } from '@/ui/input/types/TextInputSize';
@@ -151,6 +152,11 @@ const StyledInput = styled.input<
         ? `calc(${themeCssVariables.spacing[3]} + 16px)`
         : themeCssVariables.spacing[2]};
   text-overflow: ellipsis;
+  transition:
+    border-color calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS},
+    box-shadow calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS};
   width: ${({ width }) =>
     isDefined(width)
       ? `calc(${width}px + ${themeCssVariables.spacing[0.5]})`
@@ -175,6 +181,14 @@ const StyledInput = styled.input<
       error
         ? themeCssVariables.border.color.danger
         : themeCssVariables.color.blue};
+    box-shadow: ${({ autoGrow, error }) =>
+      autoGrow
+        ? 'none'
+        : `0 0 0 3px ${
+            error
+              ? themeCssVariables.background.transparent.danger
+              : themeCssVariables.accent.secondary
+          }`};
   }
 
   &[type='number']::-webkit-outer-spin-button,

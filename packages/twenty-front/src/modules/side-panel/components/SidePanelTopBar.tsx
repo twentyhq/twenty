@@ -30,7 +30,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
-  background-color: ${themeCssVariables.background.secondary};
+  background-color: ${themeCssVariables.background.primary};
   border: none;
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: 0;
@@ -65,7 +65,7 @@ const StyledInput = styled.input`
 
   &::placeholder {
     color: ${themeCssVariables.font.color.light};
-    font-weight: ${themeCssVariables.font.weight.medium};
+    font-weight: ${themeCssVariables.font.weight.regular};
   }
 `;
 

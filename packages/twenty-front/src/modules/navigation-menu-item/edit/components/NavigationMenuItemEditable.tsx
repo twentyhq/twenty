@@ -12,7 +12,7 @@ import { useCallback, useRef, useState, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { NAVIGATION_DRAWER_ITEM_HOVER_BACKGROUND } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerItemHoverBackground';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -31,8 +31,8 @@ const StyledRow = styled.div`
   min-width: 0;
   position: relative;
 
-  &:hover .navigation-drawer-item {
-    background: ${themeCssVariables.background.transparent.light};
+  &:hover .navigation-drawer-item:not([aria-current]) {
+    background: ${NAVIGATION_DRAWER_ITEM_HOVER_BACKGROUND};
   }
 
   &:hover > [data-navigation-actions],

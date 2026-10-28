@@ -1,3 +1,4 @@
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { styled } from '@linaria/react';
 
@@ -27,6 +28,8 @@ export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProp
   padding-left: ${themeCssVariables.spacing[1]};
 
   padding-right: ${themeCssVariables.spacing[2]};
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
   user-select: none;
 
   &:hover {

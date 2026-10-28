@@ -1,6 +1,7 @@
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { EASE_OUT_CSS } from '@/ui/theme/constants/EaseOutCss';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -19,7 +20,7 @@ const StyledMenuItemContainer = styled.div<{
 }>`
   align-items: center;
   background: ${({ focused }) =>
-    focused ? themeCssVariables.background.transparent.light : 'transparent'};
+    focused ? themeCssVariables.background.transparent.medium : 'transparent'};
   border-radius: calc(
     ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
   );
@@ -28,14 +29,22 @@ const StyledMenuItemContainer = styled.div<{
   gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   padding-inline: ${themeCssVariables.spacing[1]};
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ${EASE_OUT_CSS};
   width: 100%;
 
-  &:hover {
-    background: ${themeCssVariables.background.transparent.light};
+  &:hover,
+  &:has(:focus-visible) {
+    background: ${({ focused }) =>
+      focused
+        ? themeCssVariables.background.transparent.medium
+        : themeCssVariables.background.transparent.light};
   }
 
   .hoverable-buttons {
     display: flex;
+    transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
+      ${EASE_OUT_CSS};
   }
 
   @media (hover: hover) and (pointer: fine) {

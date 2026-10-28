@@ -19,7 +19,6 @@ const StyledContainer = styled.div`
 
 const StyledHeaderRow = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
   display: flex;
   height: ${APP_HEADER_HEIGHT}px;
