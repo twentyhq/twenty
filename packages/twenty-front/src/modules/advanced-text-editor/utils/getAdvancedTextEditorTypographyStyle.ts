@@ -63,7 +63,7 @@ const NOTE_SPACING: AdvancedTextEditorSpacing = {
   quoteIndent: '1em',
   codeBlockPadding: '24px',
   dividerSpacing: '12.5px',
-  taskCheckboxMargin: '0 0 0 4px',
+  taskCheckboxMargin: `0 0 0 ${themeCssVariables.spacing[1]}`,
   taskCheckboxWidth: '12px',
   taskCheckboxHeight: '24px',
   taskCheckboxVerticalAlign: 'top',
