@@ -15,7 +15,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -29,7 +29,6 @@ import { Section } from 'twenty-ui/components/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { Separator } from 'twenty-ui/primitives/layout';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import {
   AdminPanelRecentUsersDocument,
@@ -48,6 +47,10 @@ const StyledSearchInputContainer = styled.div`
 
 const StyledWorkspaceTableBody = styled(TableBody)`
   padding: ${themeCssVariables.spacing[1]} 0;
+
+  & + & {
+    border-top: 1px solid ${themeCssVariables.border.color.light};
+  }
 `;
 
 const RECENT_USERS_GRID_TEMPLATE_COLUMNS = '1fr 2fr 1fr 36px';
@@ -252,50 +255,45 @@ export const SettingsAdminGeneral = () => {
                 <TableHeader align="right">{t`Users`}</TableHeader>
                 <TableHeader />
               </TableRow>
-              {workspaceGroups.map((workspaces, workspaceGroupIndex) => (
-                <Fragment key={workspaces[0].id}>
-                  {workspaceGroupIndex > 0 && <Separator />}
-                  <StyledWorkspaceTableBody>
-                    {workspaces.map((workspace) => (
-                      <TableRow
-                        key={workspace.id}
-                        gridTemplateColumns={
-                          TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS
-                        }
-                        to={getSettingsPath(
-                          SettingsPath.AdminPanelWorkspaceDetail,
-                          { workspaceId: workspace.id },
-                        )}
+              {workspaceGroups.map((workspaces) => (
+                <StyledWorkspaceTableBody key={workspaces[0].id}>
+                  {workspaces.map((workspace) => (
+                    <TableRow
+                      key={workspace.id}
+                      gridTemplateColumns={TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS}
+                      to={getSettingsPath(
+                        SettingsPath.AdminPanelWorkspaceDetail,
+                        { workspaceId: workspace.id },
+                      )}
+                    >
+                      <TableCell
+                        color={themeCssVariables.font.color.primary}
+                        gap={themeCssVariables.spacing[2]}
+                        overflow="hidden"
                       >
-                        <TableCell
-                          color={themeCssVariables.font.color.primary}
-                          gap={themeCssVariables.spacing[2]}
-                          overflow="hidden"
-                        >
-                          <Avatar
-                            src={getAbsoluteImageUrl(workspace.logoUrl)}
-                            name={workspace.name || ''}
-                            colorSeed={workspace.id}
-                            size="md"
-                          />
-                          <OverflowingTextWithTooltip
-                            text={workspace.name || '\u2014'}
-                          />
-                        </TableCell>
-                        <TableCell align="right">
-                          {formatNumber(workspace.totalUsers)}
-                        </TableCell>
-                        <TableCell align="center">
-                          <IconChevronRight
-                            size={theme.icon.size.md}
-                            stroke={theme.icon.stroke.sm}
-                            color={theme.font.color.tertiary}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </StyledWorkspaceTableBody>
-                </Fragment>
+                        <Avatar
+                          src={getAbsoluteImageUrl(workspace.logoUrl)}
+                          name={workspace.name || ''}
+                          colorSeed={workspace.id}
+                          size="md"
+                        />
+                        <OverflowingTextWithTooltip
+                          text={workspace.name || '\u2014'}
+                        />
+                      </TableCell>
+                      <TableCell align="right">
+                        {formatNumber(workspace.totalUsers)}
+                      </TableCell>
+                      <TableCell align="center">
+                        <IconChevronRight
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                          color={theme.font.color.tertiary}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </StyledWorkspaceTableBody>
               ))}
             </Table>
           )}
