@@ -622,7 +622,7 @@ const asApplication = new RestApiClient({ runAs: 'application' });
 
 </Note>
 
-تستخدم مساعدات SDK التي تصل إلى موارد تطبيقك الخاصة دائمًا صلاحيات الوصول الخاصة بها وتتجاهل `runAs`: [مخزن المفتاح-القيمة](/ar/developers/extend/apps/logic/key-value-store)، و[الاتصالات](/ar/developers/extend/apps/logic/connections)، و[قنوات المراسلة](/ar/developers/extend/apps/logic/messaging-channels)، و`runAgent`، و`getPublicAssetUrl`، و[تحصيل الأرصدة](/ar/developers/extend/apps/logic/credits). تستخدم `sendInboxMessage` أيضًا صلاحيات الوصول الخاصة بتطبيقك وتتجاهل `runAs`، رغم أنها تكتب في دردشات الأعضاء الذين تسميهم.
+تستخدم مساعدات SDK التي تصل إلى موارد تطبيقك الخاصة دائمًا صلاحيات الوصول الخاصة بها وتتجاهل `runAs`: [مخزن المفتاح-القيمة](/ar/developers/extend/apps/logic/key-value-store)، و[الاتصالات](/ar/developers/extend/apps/logic/connections)، و[قنوات المراسلة](/ar/developers/extend/apps/logic/messaging-channels)، و`runAgent`، و`getPublicAssetUrl`، و[تحصيل الأرصدة](/ar/developers/extend/apps/logic/credits).
 
 #### إتاحة دالة كأداة ذكاء اصطناعي أو كإجراء ضمن سير العمل
 
@@ -1115,7 +1115,7 @@ const { objects } = await metadataClient.query({
         nameSingular: true,
         namePlural: true,
         labelSingular: true,
-        isCustom: true,
+        applicationId: true,
       },
     },
     __args: {

@@ -17,6 +17,7 @@ type Agent {
   description: String
   icon: String
   id: UUID!
+  isActive: Boolean!
   isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystem: Boolean!
   label: String!
@@ -98,6 +99,7 @@ type AgentChatOpenThreadsSummary {
   hasUnreadOpenThread: Boolean!
   needsInputThreadCount: Int!
   openThreadCount: Int!
+  unreadOpenThreadCount: Int!
 }
 
 type AgentChatThread {
@@ -2286,7 +2288,6 @@ enum FeatureFlagKey {
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
-  IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_CAMPAIGN_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
@@ -2299,6 +2300,7 @@ type Field {
   createdAt: DateTime!
   defaultValue: JSON
   description: String
+  disabledFieldPermissionActions: [String!]
   icon: String
   id: UUID!
   isActive: Boolean
@@ -4919,6 +4921,7 @@ input UpdateAgentInput {
   description: String
   icon: String
   id: UUID!
+  isActive: Boolean
   label: String
   modelConfiguration: JSON
   modelId: String

@@ -630,7 +630,7 @@ msgstr "{cardCount, plural, other {#개 작업을 승인하시겠습니까?}}"
 #. js-lingui-id: AnO6CC
 #: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr ""
+msgstr "{channelStatusLabel} · {assignmentLabel}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -2100,7 +2100,7 @@ msgstr "CC 추가"
 #. js-lingui-id: PKjhUq
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "Add channel"
-msgstr ""
+msgstr "채널 추가"
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -3221,7 +3221,7 @@ msgid "All tasks addressed. Maintain the momentum."
 msgstr "모든 작업이 처리되었습니다. 이 기세를 유지하세요."
 
 #. js-lingui-id: 45Gm/K
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
 msgid "All the applications currently installed on this workspace"
 msgstr "이 작업공간에 현재 설치된 모든 앱"
 
@@ -3689,7 +3689,6 @@ msgstr "아포스트로피와 마침표"
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
@@ -4955,7 +4954,7 @@ msgid "Build many-to-many relations"
 msgstr "다대다 관계 만들기"
 
 #. js-lingui-id: +7fBMP
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Built-in"
 msgstr "기본 제공"
 
@@ -6915,27 +6914,24 @@ msgstr "이 작업공간에 연결"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "IMAP/SMTP로 연결"
-
-#. js-lingui-id: Zgi9Fd
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
-msgid "Connect with Google"
-msgstr "Google과 연결"
-
-#. js-lingui-id: IOfqM8
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
-msgid "Connect with Microsoft"
-msgstr "Microsoft와 연결"
 
 #. js-lingui-id: vPwoq6
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
 msgid "Connect with {appName}"
-msgstr ""
+msgstr "{appName}과 연결하기"
+
+#. js-lingui-id: Zgi9Fd
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+msgid "Connect with Google"
+msgstr "Google과 연결"
+
+#. js-lingui-id: IOfqM8
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+msgid "Connect with Microsoft"
+msgstr "Microsoft와 연결"
 
 #. js-lingui-id: oduBE8
 #: src/pages/onboarding/ImportContacts.tsx
@@ -8909,11 +8905,6 @@ msgstr "기본 보기"
 msgid "Defaults to the step name"
 msgstr "기본값은 단계 이름입니다"
 
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
-msgstr "연기된 워크스페이스 마이그레이션 작업"
-
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
@@ -9341,7 +9332,7 @@ msgstr "삭제된 {objectLabel}"
 #. js-lingui-id: 6T/COx
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
-msgstr ""
+msgstr "총 {totalCount}개의 연결 중 {successfulCount}개를 삭제했습니다. 삭제하지 못한 연결: {failedLabels}."
 
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
@@ -9410,6 +9401,7 @@ msgstr "AI에 원하는 작업을 설명하세요..."
 
 #. js-lingui-id: Nu4oKW
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
@@ -9420,7 +9412,6 @@ msgstr "AI에 원하는 작업을 설명하세요..."
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -9631,7 +9622,7 @@ msgstr "연결 해제됨"
 #. js-lingui-id: +etBOJ
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
-msgstr ""
+msgstr "총 {totalCount}개의 연결 중 {successfulCount}개를 연결 해제했습니다. 연결 해제하지 못한 연결: {failedLabels}."
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -12211,11 +12202,6 @@ msgstr "이 기기에서 로그아웃하지 못했습니다."
 msgid "Failed to merge records"
 msgstr "레코드 병합 실패"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "레코드 병합에 실패했습니다. 다시 시도해 주세요."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"
@@ -12813,7 +12799,7 @@ msgstr "레코드 ID로 필터링"
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 msgid "Filter channel chats"
-msgstr ""
+msgstr "채널 채팅 필터"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -14847,7 +14833,7 @@ msgid "Installed"
 msgstr "설치됨"
 
 #. js-lingui-id: OMxM9j
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
 msgid "Installed apps"
 msgstr "설치된 앱"
 
@@ -16456,8 +16442,8 @@ msgstr "로드 중…"
 
 #. js-lingui-id: d5zxa4
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Local"
 msgstr "로컬"
 
@@ -17172,6 +17158,16 @@ msgstr "레코드 병합"
 msgid "Merge review tabs"
 msgstr "병합 검토 탭"
 
+#. js-lingui-id: 1uAvIV
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merged {objectLabel}"
+msgstr ""
+
+#. js-lingui-id: v4CzQ/
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merging {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
@@ -17768,6 +17764,7 @@ msgstr "해당 없음"
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -17798,7 +17795,6 @@ msgstr "해당 없음"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -17807,7 +17803,6 @@ msgstr "해당 없음"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
-#: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
@@ -18317,11 +18312,6 @@ msgstr "{objectLabelSingular}을(를) 찾을 수 없습니다"
 msgid "No access"
 msgstr "액세스 없음"
 
-#. js-lingui-id: ETfwRt
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
-msgid "No accounts yet"
-msgstr "아직 계정이 없습니다"
-
 #. js-lingui-id: IeiB4r
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "No actions to review"
@@ -18410,7 +18400,7 @@ msgid "No application found. If you just published it to npm with the \"twenty-a
 msgstr "애플리케이션을 찾을 수 없습니다. 방금 \"twenty-app\" 키워드로 npm에 게시했다면 카탈로그를 동기화한 후 다시 시도하세요."
 
 #. js-lingui-id: JgiGgF
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "No application matches your search"
 msgstr "검색 조건에 맞는 애플리케이션이 없습니다"
@@ -19367,6 +19357,11 @@ msgstr "기본 보기에서 사용 불가"
 msgid "Not configured"
 msgstr "구성되지 않음"
 
+#. js-lingui-id: S33tz3
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Not connected"
+msgstr ""
+
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
@@ -19512,8 +19507,8 @@ msgid "now"
 msgstr "현재"
 
 #. js-lingui-id: hzMYNj
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "NPM"
 msgstr "NPM"
 
@@ -19596,9 +19591,9 @@ msgid "Numbered list"
 msgstr ""
 
 #. js-lingui-id: b/j06W
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "OAuth"
@@ -23339,11 +23334,6 @@ msgstr "코드를 실행하여 파일과 데이터를 분석합니다"
 msgid "Run Function"
 msgstr "기능 실행"
 
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr "데이터 모델 변경 사항을 저장한 후 시간이 오래 걸리는 부분을 백그라운드에서 실행합니다."
-
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "Run this agent on its own when records change or on a schedule. It runs with its role's permissions."
@@ -23704,7 +23694,7 @@ msgid "Search agents"
 msgstr "에이전트 검색"
 
 #. js-lingui-id: fGTI3o
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 msgid "Search an application"
@@ -25905,8 +25895,8 @@ msgstr "통계"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -26490,7 +26480,7 @@ msgstr "객체 레이블과 API 이름 동기화"
 #. js-lingui-id: 4XvJjz
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
-msgstr ""
+msgstr "다음 항목의 동기화가 중지되고 자격 증명이 삭제됩니다. 이메일과 이벤트는 유지되며 다시 연결한 후에도 사용할 수 있습니다."
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -26614,9 +26604,9 @@ msgstr "저희 팀과 상담해 보세요"
 
 #. js-lingui-id: bcrHWv
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Tarball"
 msgstr "타르볼"
 
@@ -27493,7 +27483,7 @@ msgstr "{accountHandle} 및 동기화된 모든 이메일과 이벤트를 영구
 #. js-lingui-id: vrBe2V
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
-msgstr ""
+msgstr "이 작업을 수행하면 다음 항목과 해당 항목의 동기화된 모든 이메일 및 이벤트가 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -28432,6 +28422,7 @@ msgstr "이 워크스페이스의 이중 인증이 재설정되었습니다. 설
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
@@ -28440,8 +28431,6 @@ msgstr "이 워크스페이스의 이중 인증이 재설정되었습니다. 설
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-#: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -29058,8 +29047,8 @@ msgstr "업데이트"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Update"
 msgstr "업데이트"
 
@@ -29273,7 +29262,7 @@ msgstr "SSO를 구성하려면 Organization으로 업그레이드하세요."
 #. js-lingui-id: LNDff6
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Upgrade to Organization to create custom roles"
-msgstr ""
+msgstr "사용자 지정 역할을 만들려면 Organization으로 업그레이드하세요"
 
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -30312,6 +30301,7 @@ msgid "Watch members demo"
 msgstr "멤버 데모 보기"
 
 #. js-lingui-id: Rxoy7e
+#: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "현재 이 앱에 문제가 발생하여, 수정 작업 중에는 동작이 저하될 수 있습니다."
@@ -31388,6 +31378,7 @@ msgid "Your card was saved, but the payment still needs attention."
 msgstr "카드는 저장되었지만, 결제에 여전히 조치가 필요합니다."
 
 #. js-lingui-id: OD3Fzl
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Your connections could not be loaded. Check your connection and try again."
 msgstr "연결을 로드할 수 없습니다. 연결을 확인하고 다시 시도하세요."

@@ -61,6 +61,7 @@ export class AgentHistorySchemaService {
     // Same from/to path as standard application sync; custom-object side effects must not expand this schema
     const result =
       await this.migrations.validateBuildAndRunWorkspaceMigrationFromTo({
+        shouldDeferActions: false,
         workspaceId,
         dryRun,
         buildOptions: {

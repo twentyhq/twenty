@@ -623,7 +623,7 @@ Controlla `context.workspaceMemberId` quando una funzione si comporta diversamen
 
 </Note>
 
-Gli helper dell'SDK che accedono alle risorse della tua applicazione usano sempre il relativo accesso e ignorano `runAs`: l'[archivio chiave-valore](/it/developers/extend/apps/logic/key-value-store), le [connessioni](/it/developers/extend/apps/logic/connections), i [canali di messaggistica](/it/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` e l'[addebito dei crediti](/it/developers/extend/apps/logic/credits). `sendInboxMessage` utilizza anche l'accesso della tua applicazione e ignora `runAs`, sebbene scriva nelle chat dei membri che indichi.
+Gli helper dell'SDK che accedono alle risorse della tua applicazione usano sempre il relativo accesso e ignorano `runAs`: l'[archivio chiave-valore](/it/developers/extend/apps/logic/key-value-store), le [connessioni](/it/developers/extend/apps/logic/connections), i [canali di messaggistica](/it/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` e l'[addebito dei crediti](/it/developers/extend/apps/logic/credits).
 
 #### Esporre una funzione come strumento di IA o come azione del flusso di lavoro
 
@@ -1113,7 +1113,7 @@ const { objects } = await metadataClient.query({
         nameSingular: true,
         namePlural: true,
         labelSingular: true,
-        isCustom: true,
+        applicationId: true,
       },
     },
     __args: {

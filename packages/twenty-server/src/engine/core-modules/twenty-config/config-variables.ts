@@ -1030,6 +1030,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
+      'Email domains whose users keep the free trial on every workspace, however many trialing workspaces they are already in (twenty.com, acme.com). Exact domain match, subdomains not included',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  BILLING_TRIAL_LIMIT_EXEMPT_EMAIL_DOMAINS: string[] = [];
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
       'Amount of credits for the free trial without credit card (in microCredits)',
     type: ConfigVariableType.NUMBER,
   })

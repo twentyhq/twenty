@@ -51,10 +51,11 @@ export class AddChatAssistantParticipationCommand extends ProvisionedWorkspaceCo
       flatObjectMetadataMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.agentChatThread.universalIdentifier
       ];
-    const existingField = findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
-      flatEntityMaps: flatFieldMetadataMaps,
-      universalIdentifier: ASSISTANT_PARTICIPANT_FIELD_UNIVERSAL_IDENTIFIER,
-    });
+    const existingField =
+      findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
+        flatEntityMaps: flatFieldMetadataMaps,
+        universalIdentifier: ASSISTANT_PARTICIPANT_FIELD_UNIVERSAL_IDENTIFIER,
+      });
 
     if (!isDefined(threadObject) || isDefined(existingField)) {
       return;
@@ -135,6 +136,7 @@ export class AddChatAssistantParticipationCommand extends ProvisionedWorkspaceCo
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

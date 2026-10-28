@@ -10,6 +10,7 @@ import {
 
 const EMPTY_AGENT_CHAT_OPEN_THREADS_SUMMARY = {
   openThreadCount: 0,
+  unreadOpenThreadCount: 0,
   needsInputThreadCount: 0,
   hasUnreadOpenThread: false,
   hasUnreadMentionThread: false,

@@ -93,6 +93,7 @@ export class MarkPlatformOwnedStandardObjectsSystemCommand extends ProvisionedWo
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:

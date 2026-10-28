@@ -398,6 +398,11 @@ msgstr "このラベルを持つ役割はすでに存在します。"
 msgid "A secret variable cannot have a default value."
 msgstr "シークレット変数にはデフォルト値を設定できません。"
 
+#. js-lingui-id: 0/nqSW
+#: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
+msgid "A skill installed by an application cannot be renamed."
+msgstr ""
+
 #. js-lingui-id: HijTmf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
 msgid "A skill with this name already exists"
@@ -771,6 +776,11 @@ msgstr "管理パネル"
 msgid "Admin role not found."
 msgstr "管理者ロールが見つかりません。"
 
+#. js-lingui-id: eHJEyS
+#: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
+msgid "Agent \"{label}\" is archived."
+msgstr ""
+
 #. js-lingui-id: xPBilO
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -1019,6 +1029,11 @@ msgstr "金額"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "An agent cannot have more than {maxTriggers} triggers"
 msgstr "エージェントに設定できるトリガーは最大 {maxTriggers} 件です"
+
+#. js-lingui-id: gxdZLa
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
+msgid "An agent installed by an application cannot be renamed."
+msgstr ""
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1496,7 +1511,7 @@ msgstr "担当者"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Assistant participant"
-msgstr ""
+msgstr "アシスタント参加者"
 
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2586,11 +2601,11 @@ msgstr "標準エージェントを更新できません"
 msgid "Cannot update standard permission flag definition"
 msgstr "標準の権限フラグ定義は更新できません"
 
-#. js-lingui-id: I2EmgT
+#. js-lingui-id: qmUVWp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
-msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
-msgstr "標準スキルのプロパティは更新できません（有効化/無効化のみ可能）"
+msgid "Cannot update standard skill properties (only overrides and activation/deactivation allowed)"
+msgstr ""
 
 #. js-lingui-id: YIzGJ8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -3007,6 +3022,16 @@ msgstr "ファイルアップロードを完了"
 msgctxt "fieldMetadata.label"
 msgid "Completed"
 msgstr "完了"
+
+#. js-lingui-id: XveQi3
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
+msgid "Component build exceeded the 10 second time limit."
+msgstr ""
+
+#. js-lingui-id: fmCVqA
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
+msgid "Component build exceeds the 5 MB output limit."
+msgstr ""
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4164,6 +4189,12 @@ msgctxt "pageLayout.name"
 msgid "Default Workflow Version Layout"
 msgstr "デフォルトワークフロー版レイアウト"
 
+#. js-lingui-id: PzuWtK
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-workspace-member-page-layout.config.ts
+msgctxt "pageLayout.name"
+msgid "Default Workspace Member Layout"
+msgstr ""
+
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -5090,6 +5121,11 @@ msgstr "失敗"
 msgid "Failed to add people to the list."
 msgstr "リストへのユーザー追加に失敗しました。"
 
+#. js-lingui-id: nVOUB8
+#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+msgid "Failed to build front component."
+msgstr ""
+
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to build function dependencies."
@@ -5918,6 +5954,7 @@ msgstr "一般"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "General"
 msgstr "一般"
@@ -6732,6 +6769,16 @@ msgstr "無効なフィルター: このリレーションフィールドでフ�
 msgid "Invalid front component input."
 msgstr "フロントコンポーネントの入力が無効です。"
 
+#. js-lingui-id: 5V3pAK
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
+msgid "Invalid front component settings."
+msgstr ""
+
+#. js-lingui-id: r0izKL
+#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+msgid "Invalid front component source."
+msgstr ""
+
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid group by parameter."
@@ -6927,12 +6974,6 @@ msgstr "権限フラグキーが無効です。"
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
 msgid "Invalid permission flag permission type."
 msgstr "権限フラグの権限タイプが無効です。"
-
-#. js-lingui-id: mMHHVP
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-msgid "Invalid permission setting"
-msgstr "無効な権限設定です。"
 
 #. js-lingui-id: Pt2vVA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -7135,6 +7176,7 @@ msgid "Invalid value for address."
 msgstr "住所の値が無効です。"
 
 #. js-lingui-id: D9hzmE
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
 msgid "Invalid value for currency."
 msgstr "通貨の値が無効です。"
@@ -8118,6 +8160,11 @@ msgctxt "pageLayoutWidget.title"
 msgid "Members"
 msgstr "メンバー"
 
+#. js-lingui-id: UODtG8
+#: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
+msgid "Merge"
+msgstr ""
+
 #. js-lingui-id: uHk5U2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -8134,6 +8181,11 @@ msgstr "{objectLabelPlural}をマージする"
 #: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
 msgid "Merging blocklist entries is not allowed."
 msgstr "ブロックリストエントリの統合は許可されていません。"
+
+#. js-lingui-id: kGsb0J
+#: src/modules/dashboard/query-hooks/dashboard-merge-many.pre-query.hook.ts
+msgid "Merging dashboards is not allowed."
+msgstr "ダッシュボードのマージは許可されていません。"
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -10039,6 +10091,16 @@ msgctxt "commandMenuItem.label"
 msgid "Permanently destroy {objectLabel}"
 msgstr "{objectLabel}を完全に削除"
 
+#. js-lingui-id: cmLTur
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
+msgid "Permission flag {permissionFlagName} is not available in this workspace"
+msgstr ""
+
+#. js-lingui-id: h8HQA4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
+msgid "Permission flag {permissionFlagUniversalIdentifier} not found in this workspace"
+msgstr ""
+
 #. js-lingui-id: 3zRddX
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
 msgid "Permission flag already exists."
@@ -10115,8 +10177,6 @@ msgid "Permission flag key cannot be changed."
 msgstr "権限フラグキーは変更できません。"
 
 #. js-lingui-id: 2mZr45
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "Permission flag not found"
@@ -10918,6 +10978,7 @@ msgstr "関連"
 
 #. js-lingui-id: /deTOT
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-opportunity-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "Relations"
 msgstr "関連"
@@ -12237,6 +12298,11 @@ msgstr "標準チャネルは削除できません。"
 msgid "Standard objects cannot be deleted"
 msgstr "標準オブジェクトは削除できません"
 
+#. js-lingui-id: gBQ8oE
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
+msgid "Standard permission flag {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) not found in this workspace. Run the workspace upgrade to create it."
+msgstr ""
+
 #. js-lingui-id: Xn/1qY
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
 msgid "Standard permission flags cannot be modified."
@@ -12488,6 +12554,7 @@ msgstr "システム"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "System"
 msgstr "システム"
@@ -13502,6 +13569,11 @@ msgstr "ワークフローの選択フィールドは、同じタイプのフィ
 msgid "The workflow select field must reference an existing field."
 msgstr "ワークフローの選択フィールドは、既存のフィールドを参照する必要があります。"
 
+#. js-lingui-id: go3zRL
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
+msgid "The workflow uses connected account {handle}, which is not connected and shared in this workspace."
+msgstr ""
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13584,6 +13656,11 @@ msgstr "前のオンボーディング手順に戻ることはできません。
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "ワークスペースが有効化される前は、次のフィールドを更新できません: {fieldsList}."
 
+#. js-lingui-id: 4RZeZG
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "These records hold data in fields your role cannot see. Ask someone with access to those fields to merge them."
+msgstr "これらのレコードには、あなたのロールでは表示できないフィールドのデータが含まれています。これらのフィールドにアクセスできる人に、マージを依頼してください。"
+
 #. js-lingui-id: YZk5x6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "These two relation fields do not point to the same object"
@@ -13609,6 +13686,11 @@ msgstr "このアドレスは配信抑制リストから削除できません。
 #: src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util.ts
 msgid "This agent has no output fields. Add at least one output field to its response format."
 msgstr "このエージェントには出力フィールドがありません。レスポンス形式に少なくとも1つの出力フィールドを追加してください。"
+
+#. js-lingui-id: Z/oZRf
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This agent is archived."
+msgstr ""
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -16159,7 +16241,7 @@ msgstr "新しいアクティビティによってスレッドが受信トレイ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether the assistant participates in this conversation"
-msgstr ""
+msgstr "アシスタントがこの会話に参加するかどうか"
 
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -16775,6 +16857,12 @@ msgctxt "fieldMetadata.description"
 msgid "Workspace member position"
 msgstr "ワークスペースメンバーの役職"
 
+#. js-lingui-id: wFbHLs
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workspace-member-views.util.ts
+msgctxt "view.name"
+msgid "Workspace Member Record Page Fields"
+msgstr ""
+
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -16864,11 +16952,6 @@ msgstr "ワークスペーススキーマが見つかりません。"
 #: src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service.ts
 msgid "Workspace setup"
 msgstr "ワークスペースのセットアップ"
-
-#. js-lingui-id: 5TbIzO
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util.ts
-msgid "Workspace workflows cannot be adopted by an application."
-msgstr "ワークスペースワークフローをアプリケーションに採用することはできません。"
 
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
