@@ -1,11 +1,16 @@
+import { randomUUID } from 'node:crypto';
+
 import gql from 'graphql-tag';
 import { findWorkspaceCustomApplicationId } from 'test/integration/metadata/suites/application-default-role/utils/find-application-default-role.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 describe('The workspace custom application acts with its own default role', () => {
+  const companyId = randomUUID();
   let customApplicationToken: string;
 
   beforeAll(async () => {
@@ -15,6 +20,24 @@ describe('The workspace custom application acts with its own default role', () =
     });
 
     customApplicationToken = applicationAccessToken.token;
+
+    await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        data: { id: companyId, name: 'Read by the custom application' },
+      }),
+    );
+  });
+
+  afterAll(async () => {
+    await makeGraphqlApiRequest(
+      destroyOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        recordId: companyId,
+      }),
+    );
   });
 
   it('reads records with its own application token, as a workspace logic function does', async () => {
