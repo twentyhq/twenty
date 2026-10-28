@@ -55,20 +55,20 @@ module.exports = {
     '!./src/**/__mocks__/*.ts',
   ],
   overwrite: true,
+  config: {
+    skipTypename: false,
+    useTypeImports: true,
+    defaultScalarType: 'any',
+    scalars: {
+      DateTime: 'string',
+      UUID: 'string',
+    },
+    namingConvention: { enumValues: 'keep' },
+    enumType: 'native',
+  },
   generates: {
     './src/generated-metadata/schema.ts': {
       plugins: ['typescript'],
-      config: {
-        skipTypename: false,
-        useTypeImports: true,
-        defaultScalarType: 'any',
-        scalars: {
-          DateTime: 'string',
-          UUID: 'string',
-        },
-        namingConvention: { enumValues: 'keep' },
-        enumType: 'native',
-      },
     },
     './src/generated-metadata/graphql.ts': {
       plugins: [
@@ -77,15 +77,6 @@ module.exports = {
         'typed-document-node',
       ],
       config: {
-        skipTypename: false,
-        useTypeImports: true,
-        defaultScalarType: 'any',
-        scalars: {
-          DateTime: 'string',
-          UUID: 'string',
-        },
-        namingConvention: { enumValues: 'keep' },
-        enumType: 'native',
         importSchemaTypesFrom: './src/generated-metadata/schema',
         nonOptionalTypename: true,
         skipTypeNameForRoot: true,

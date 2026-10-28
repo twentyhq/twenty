@@ -45799,6 +45799,7 @@ __metadata:
     "@fontsource/inter": "npm:^5.2.8"
     "@graphiql/plugin-explorer": "npm:^5.1.2"
     "@graphiql/react": "npm:^0.37.6"
+    "@graphql-codegen/add": "npm:^7.1.1"
     "@graphql-codegen/cli": "npm:^7.4.6"
     "@graphql-codegen/typed-document-node": "npm:^7.2.0"
     "@graphql-codegen/typescript": "npm:^6.1.2"
