@@ -3125,6 +3125,13 @@ export type McpServer = {
   url: Scalars['String']['output'];
 };
 
+export type McpServerMention = {
+  __typename?: 'McpServerMention';
+  id: Scalars['UUID']['output'];
+  label: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
 export type MessageCampaignBodyConfiguration = {
   __typename?: 'MessageCampaignBodyConfiguration';
   configurationType: WidgetConfigurationType;
@@ -5690,6 +5697,7 @@ export type PublicWorkspaceDataSummary = {
 
 export type Query = {
   __typename?: 'Query';
+  activeMcpServers: Array<McpServerMention>;
   agentChatChannelRoles: Array<AgentChatChannelRole>;
   agentChatChannelSummaries: Array<AgentChatChannelSummary>;
   agentChatChannelThreadIds: AgentChatChannelThreadIds;
