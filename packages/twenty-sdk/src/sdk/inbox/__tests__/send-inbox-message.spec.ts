@@ -22,6 +22,20 @@ const graphqlResponse = (body: unknown) =>
     headers: { 'Content-Type': 'application/json' },
   });
 
+const successResponse = () =>
+  graphqlResponse({ data: { sendInboxMessage: { threadId: THREAD_ID } } });
+
+const MESSAGE_INPUT = {
+  workspaceMemberIds: ['20202020-0000-4000-8000-000000000001'],
+  threadKey: 'thread',
+  idempotencyKey: 'key',
+  title: 'Title',
+  text: 'Text',
+};
+
+const getSentAuthorizationHeader = (requestInit: RequestInit | undefined) =>
+  new Headers(requestInit?.headers).get('authorization');
+
 describe('sendInboxMessage', () => {
   let fetchSpy: MockInstance<typeof fetch>;
 
@@ -35,13 +49,12 @@ describe('sendInboxMessage', () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
     fetchSpy.mockRestore();
   });
 
   it('calls the sendInboxMessage mutation on the metadata API and returns the thread', async () => {
-    fetchSpy.mockResolvedValue(
-      graphqlResponse({ data: { sendInboxMessage: { threadId: THREAD_ID } } }),
-    );
+    fetchSpy.mockResolvedValue(successResponse());
 
     const sendInboxMessage = await importSendInboxMessage();
 
@@ -75,27 +88,65 @@ describe('sendInboxMessage', () => {
     expect(Object.values(sentBody.variables)).toEqual([input]);
   });
 
-  it('sends the application access token as a bearer credential', async () => {
+  it('sends the application token in a logic function, even when a member triggered the run', async () => {
     vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'member-token');
-    fetchSpy.mockResolvedValue(
-      graphqlResponse({ data: { sendInboxMessage: { threadId: THREAD_ID } } }),
-    );
+    fetchSpy.mockResolvedValue(successResponse());
 
     const sendInboxMessage = await importSendInboxMessage();
 
-    await sendInboxMessage({
-      workspaceMemberIds: ['20202020-0000-4000-8000-000000000001'],
-      threadKey: 'thread',
-      idempotencyKey: 'key',
-      title: 'Title',
-      text: 'Text',
-    });
+    await sendInboxMessage(MESSAGE_INPUT);
 
     const [, requestInit] = fetchSpy.mock.calls[0];
 
-    expect(new Headers(requestInit?.headers).get('authorization')).toBe(
-      'Bearer app-token',
+    expect(getSentAuthorizationHeader(requestInit)).toBe('Bearer app-token');
+  });
+
+  it('sends the front component token when there is no application token', async () => {
+    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', undefined);
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'component-token');
+    fetchSpy.mockResolvedValue(successResponse());
+
+    const sendInboxMessage = await importSendInboxMessage();
+
+    await sendInboxMessage(MESSAGE_INPUT);
+
+    const [, requestInit] = fetchSpy.mock.calls[0];
+
+    expect(getSentAuthorizationHeader(requestInit)).toBe(
+      'Bearer component-token',
     );
+  });
+
+  it('refreshes an expired front component token once and retries', async () => {
+    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', undefined);
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'expired-token');
+    const requestAccessTokenRefresh = vi
+      .fn()
+      .mockResolvedValue('refreshed-token');
+
+    vi.stubGlobal('frontComponentHostCommunicationApi', {
+      requestAccessTokenRefresh,
+    });
+    fetchSpy
+      .mockResolvedValueOnce(
+        new Response('Unauthorized', {
+          status: 401,
+          statusText: 'Unauthorized',
+        }),
+      )
+      .mockResolvedValueOnce(successResponse());
+
+    const sendInboxMessage = await importSendInboxMessage();
+
+    const result = await sendInboxMessage(MESSAGE_INPUT);
+
+    expect(result).toEqual({ threadId: THREAD_ID });
+    expect(requestAccessTokenRefresh).toHaveBeenCalledTimes(1);
+    expect(
+      fetchSpy.mock.calls.map(([, requestInit]) =>
+        getSentAuthorizationHeader(requestInit),
+      ),
+    ).toEqual(['Bearer expired-token', 'Bearer refreshed-token']);
   });
 
   it('surfaces GraphQL errors as a rejection', async () => {
@@ -105,14 +156,8 @@ describe('sendInboxMessage', () => {
 
     const sendInboxMessage = await importSendInboxMessage();
 
-    await expect(
-      sendInboxMessage({
-        workspaceMemberIds: ['20202020-0000-4000-8000-000000000001'],
-        threadKey: 'thread',
-        idempotencyKey: 'key',
-        title: 'Title',
-        text: 'Text',
-      }),
-    ).rejects.toThrow(/Chat thread not found/);
+    await expect(sendInboxMessage(MESSAGE_INPUT)).rejects.toThrow(
+      /Chat thread not found/,
+    );
   });
 });

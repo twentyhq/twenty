@@ -187,7 +187,6 @@ export type {
   IdentifiedAccount,
   IdentifyAccountResult,
 } from './identifyAccountType';
-export type { InboxMessageSender } from './inboxMessageSenderType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
 export type {
