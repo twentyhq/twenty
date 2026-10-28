@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 
 import { color, fontFamily, fontSize, semanticColor, spacing } from '@/tokens';
 
-import { RichText } from './RichText';
+import { RichText } from '@/ui';
 
 const About = styled.div`
   color: ${semanticColor.inkMuted};

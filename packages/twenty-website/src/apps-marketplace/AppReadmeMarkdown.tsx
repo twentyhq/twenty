@@ -1,6 +1,4 @@
 import { styled } from '@linaria/react';
-import Markdown, { type Components } from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 
 import {
   color,
@@ -12,13 +10,20 @@ import {
   spacing,
   typeRampDeclarations,
 } from '@/tokens';
-import { ExternalLink } from '@/ui';
+import { RichText } from '@/ui';
 
 const Prose = styled.div`
-  ${typeRampDeclarations('bodySm')}
   color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('sans')};
   overflow-wrap: anywhere;
+
+  &[data-size='sm'] {
+    ${typeRampDeclarations('bodySm')}
+  }
+
+  &[data-size='xs'] {
+    ${typeRampDeclarations('bodyXs')}
+  }
 
   &[data-tone='ink'] {
     color: ${semanticColor.ink};
@@ -96,32 +101,20 @@ const Prose = styled.div`
   }
 `;
 
-// Section titles are already rendered as page headings
-const COMPONENTS: Components = {
-  h1: ({ children }) => <h3>{children}</h3>,
-  h2: ({ children }) => <h3>{children}</h3>,
-  a: ({ href, children }) =>
-    href?.startsWith('http') === true ? (
-      <ExternalLink href={href}>{children}</ExternalLink>
-    ) : (
-      <a href={href}>{children}</a>
-    ),
-};
-
 type AppReadmeMarkdownProps = {
   markdown: string;
+  size?: 'sm' | 'xs';
   tone?: 'muted' | 'ink';
 };
 
 export function AppReadmeMarkdown({
   markdown,
+  size = 'sm',
   tone = 'muted',
 }: AppReadmeMarkdownProps) {
   return (
-    <Prose data-tone={tone}>
-      <Markdown components={COMPONENTS} remarkPlugins={[remarkGfm]}>
-        {markdown}
-      </Markdown>
+    <Prose data-size={size} data-tone={tone}>
+      <RichText markdown={markdown} />
     </Prose>
   );
 }

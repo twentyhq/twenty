@@ -1,32 +1,14 @@
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 
-import {
-  color,
-  DURATION,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  mediaUp,
-  radius,
-  REDUCED_MOTION,
-  semanticColor,
-  SHADOW,
-  spacing,
-} from '@/tokens';
-import { CornerMarkers } from '@/ui';
+import { mediaUp, spacing } from '@/tokens';
+import { ExplainerCard } from '@/ui';
 
 import { AppReadmeMarkdown } from './AppReadmeMarkdown';
 import {
   type AppReadmeBlock,
   type AppReadmeListItem,
 } from './parse-app-readme';
-
-const Note = styled.div`
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  padding: ${spacing(5)} ${spacing(6)};
-  position: relative;
-`;
 
 const CardStack = styled.div`
   display: flex;
@@ -52,67 +34,7 @@ const CardGrid = styled.div`
   }
 `;
 
-const Card = styled.div`
-  align-items: flex-start;
-  background-color: ${color('white')};
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  column-gap: ${spacing(4)};
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  padding: ${spacing(5)} ${spacing(6)};
-  transition: box-shadow ${DURATION.xs} ease;
-
-  &:hover {
-    box-shadow: ${SHADOW.card};
-  }
-
-  ${REDUCED_MOTION} {
-    transition: none;
-  }
-`;
-
-const Marker = styled.span`
-  background-color: ${color('blue')};
-  border-radius: 1px;
-  height: 7px;
-  margin-top: ${spacing(2)};
-  width: 14px;
-`;
-
-const StepCard = styled.div`
-  background-color: ${color('white')};
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  padding: ${spacing(5)} ${spacing(6)};
-
-  & > * + * {
-    margin-top: ${spacing(2)};
-  }
-`;
-
-const StepNumber = styled.span`
-  color: ${color('blue')};
-  display: block;
-  font-family: ${fontFamily('mono')};
-  font-size: ${fontSize(3)};
-  font-weight: ${FONT_WEIGHT.medium};
-  letter-spacing: 0.08em;
-  line-height: ${fontSize(4)};
-`;
-
-const CardTitle = styled.h3`
-  color: ${semanticColor.ink};
-  font-family: ${fontFamily('sans')};
-  font-size: ${fontSize(4.5)};
-  font-weight: ${FONT_WEIGHT.medium};
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-
-  & + * {
-    margin-top: ${spacing(1)};
-  }
-`;
+type ListLayout = 'stack' | 'grid';
 
 const getItemKey = (item: AppReadmeListItem) =>
   `${item.title ?? ''}${item.markdown}`;
@@ -122,51 +44,46 @@ const getBlockKey = (block: AppReadmeBlock) =>
     ? `list-${block.items.map(getItemKey).join()}`
     : `${block.kind}-${block.markdown}`;
 
-const CardBody = ({ item }: { item: AppReadmeListItem }) => (
-  <div>
-    {item.title !== undefined && <CardTitle>{item.title}</CardTitle>}
-    {item.markdown !== '' && (
-      <AppReadmeMarkdown
-        markdown={item.markdown}
-        tone={item.title === undefined ? 'ink' : 'muted'}
-      />
-    )}
-  </div>
-);
+const ListItemBody = ({ item }: { item: AppReadmeListItem }) => {
+  if (item.markdown === '') {
+    return null;
+  }
+
+  return (
+    <AppReadmeMarkdown
+      markdown={item.markdown}
+      tone={isDefined(item.title) ? 'muted' : 'ink'}
+    />
+  );
+};
 
 const ListCards = ({
   block,
   layout,
 }: {
   block: Extract<AppReadmeBlock, { kind: 'list' }>;
-  layout: 'stack' | 'grid';
+  layout: ListLayout;
 }) => {
   const Container = layout === 'grid' ? CardGrid : CardStack;
 
   return (
     <Container data-ordered={block.ordered ? '' : undefined}>
-      {block.items.map((item, index) =>
-        block.ordered ? (
-          <StepCard key={getItemKey(item)}>
-            <StepNumber aria-hidden>
-              {String(index + 1).padStart(2, '0')}
-            </StepNumber>
-            <CardBody item={item} />
-          </StepCard>
-        ) : (
-          <Card key={getItemKey(item)}>
-            <Marker aria-hidden />
-            <CardBody item={item} />
-          </Card>
-        ),
-      )}
+      {block.items.map((item, index) => (
+        <ExplainerCard
+          key={getItemKey(item)}
+          step={block.ordered ? index + 1 : undefined}
+          title={item.title}
+        >
+          <ListItemBody item={item} />
+        </ExplainerCard>
+      ))}
     </Container>
   );
 };
 
 type AppReadmeBlocksProps = {
   blocks: AppReadmeBlock[];
-  listLayout: 'stack' | 'grid';
+  listLayout: ListLayout;
 };
 
 export function AppReadmeBlocks({ blocks, listLayout }: AppReadmeBlocksProps) {
@@ -178,10 +95,7 @@ export function AppReadmeBlocks({ blocks, listLayout }: AppReadmeBlocksProps) {
         return <ListCards key={key} block={block} layout={listLayout} />;
       case 'note':
         return (
-          <Note key={key}>
-            <CornerMarkers />
-            <AppReadmeMarkdown markdown={block.markdown} tone="ink" />
-          </Note>
+          <AppReadmeMarkdown key={key} markdown={block.markdown} size="xs" />
         );
       case 'text':
         return <AppReadmeMarkdown key={key} markdown={block.markdown} />;

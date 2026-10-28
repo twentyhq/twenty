@@ -10,7 +10,7 @@ import { isSafeHttpUrl } from './is-safe-http-url';
 import { type PartnerCaseStudy } from './marketplace-partner';
 import { caseStudyModalStyles as modal } from './case-study-modal.styles';
 import { CaseStudyVisual } from './CaseStudyVisual';
-import { RichText } from './RichText';
+import { RichText } from '@/ui';
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
