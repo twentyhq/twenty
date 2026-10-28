@@ -7,7 +7,7 @@ import {
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { IconApps, IconLock, useIcons } from 'twenty-ui/icon';
+import { IconApps, IconLock, IconSparkles, useIcons } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme } from 'twenty-ui/theme';
 
@@ -210,6 +210,11 @@ export const useChatReferenceTarget = (
           leftComponent: <SkillIcon size={iconSize} stroke={iconStroke} />,
         };
       }
+      case 'mcpServer':
+        return {
+          path: undefined,
+          leftComponent: <IconSparkles size={iconSize} stroke={iconStroke} />,
+        };
       default:
         return assertUnreachable(reference);
     }

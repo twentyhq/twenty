@@ -53,6 +53,7 @@ import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/typ
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
+import { collectReferencedMcpServerIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-referenced-mcp-server-ids.util';
 import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-referenced-skill-ids.util';
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { createTurnAuthorizer } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-authorizer.util';
@@ -73,6 +74,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { McpServerService } from 'src/engine/metadata-modules/mcp-server/mcp-server.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
@@ -108,6 +110,7 @@ export class ChatExecutionService {
 
   constructor(
     private readonly skillService: SkillService,
+    private readonly mcpServerService: McpServerService,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly codeInterpreterService: CodeInterpreterService,
@@ -315,6 +318,11 @@ export class ChatExecutionService {
               collectReferencedSkillIds(messages),
               workspace.id,
             ),
+            referencedMcpServers:
+              await this.mcpServerService.findActiveFlatMcpServersByIds(
+                collectReferencedMcpServerIds(messages),
+                workspace.id,
+              ),
             preloadedTools: toolset.directToolNames,
             uploadedFilesContext: {
               uploadedFiles: collectUploadedFileReferences(messages),

@@ -412,6 +412,21 @@ describe('ChatReferenceChip', () => {
     expect(screen.getByText(reference.displayName)).toBeVisible();
   });
 
+  it('should render an MCP server reference as a chip without a link', () => {
+    renderWithReferences(
+      <ChatReferenceChip
+        reference={asMatch({
+          kind: 'mcpServer',
+          mcpServerId: '99999999-9999-4999-8999-999999999999',
+          displayName: 'GitHub',
+        })}
+      />,
+    );
+
+    expect(screen.getByText('GitHub')).toBeVisible();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+  });
+
   it('should render a static chip when navigation is disabled', async () => {
     const reference = findCase('role').reference;
 

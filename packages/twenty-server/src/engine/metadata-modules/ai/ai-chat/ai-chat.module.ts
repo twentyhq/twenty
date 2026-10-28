@@ -21,6 +21,7 @@ import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { McpServerModule } from 'src/engine/metadata-modules/mcp-server/mcp-server.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -62,6 +63,7 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
     FileModule,
     PermissionsModule,
     SkillModule,
+    McpServerModule,
     WorkspaceCacheModule,
     WorkspaceDomainsModule,
     UserWorkspaceModule,

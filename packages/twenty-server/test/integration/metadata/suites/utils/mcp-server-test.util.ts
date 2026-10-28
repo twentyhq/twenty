@@ -81,3 +81,14 @@ export const getMcpServer = (id: string) =>
     query: GET_MCP_SERVER_QUERY,
     variables: { id },
   });
+
+const GET_ACTIVE_MCP_SERVERS_QUERY = gql`
+  query GetActiveMcpServers {
+    activeMcpServers {
+      ${MCP_SERVER_FIELDS}
+    }
+  }
+`;
+
+export const getActiveMcpServers = (token?: string) =>
+  makeMetadataApiRequest({ query: GET_ACTIVE_MCP_SERVERS_QUERY }, token);

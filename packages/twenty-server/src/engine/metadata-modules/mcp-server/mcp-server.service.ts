@@ -42,6 +42,30 @@ export class McpServerService {
       .map(fromFlatMcpServerToMcpServerDto);
   }
 
+  async findAllActive(workspaceId: string): Promise<McpServerDTO[]> {
+    return (await this.findAll(workspaceId)).filter(
+      (mcpServer) => mcpServer.isActive,
+    );
+  }
+
+  async findActiveFlatMcpServersByIds(
+    ids: string[],
+    workspaceId: string,
+  ): Promise<FlatMcpServer[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const flatMcpServerMaps = await this.getFlatMcpServerMaps(workspaceId);
+
+    return Object.values(flatMcpServerMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(
+        (flatMcpServer) =>
+          ids.includes(flatMcpServer.id) && flatMcpServer.isActive,
+      );
+  }
+
   async findById(
     id: string,
     workspaceId: string,

@@ -7,6 +7,7 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import {
   createMcpServer,
   deleteMcpServer,
+  getActiveMcpServers,
   getMcpServer,
   updateMcpServer,
 } from 'test/integration/metadata/suites/utils/mcp-server-test.util';
@@ -243,6 +244,33 @@ describe('mcpServersResolver (e2e)', () => {
       const getResponse = await getMcpServer(created.id);
 
       expect(getResponse.body.data.mcpServer).toBeNull();
+    });
+  });
+
+  describe('activeMcpServers', () => {
+    it('lists only active servers to a member who can use the AI chat', async () => {
+      const activeResponse = await createAndTrack();
+      const inactiveResponse = await createAndTrack({
+        name: 'inactive_docs',
+        isActive: false,
+      });
+
+      const response = await getActiveMcpServers(
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      const activeMcpServerIds = response.body.data.activeMcpServers.map(
+        ({ id }: { id: string }) => id,
+      );
+
+      expect(activeMcpServerIds).toContain(
+        activeResponse.body.data.createMcpServer.id,
+      );
+      expect(activeMcpServerIds).not.toContain(
+        inactiveResponse.body.data.createMcpServer.id,
+      );
     });
   });
 });

@@ -6,6 +6,10 @@ import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/u
 import { type UserContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
 import {
+  buildReferencedMcpServersSection,
+  type ReferencedMcpServer,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/build-referenced-mcp-servers-section.util';
+import {
   buildReferencedSkillsSection,
   type ReferencedSkill,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-referenced-skills-section.util';
@@ -26,6 +30,7 @@ type BuildSystemPromptArgs = {
   toolCatalog: ToolIndexEntry[];
   skillCatalog: FlatSkill[];
   referencedSkills?: ReferencedSkill[];
+  referencedMcpServers?: ReferencedMcpServer[];
   preloadedTools: string[];
   uploadedFilesContext?: {
     uploadedFiles: UploadedFileReference[];
@@ -43,6 +48,7 @@ export const buildSystemPromptSections = ({
   toolCatalog,
   skillCatalog,
   referencedSkills = [],
+  referencedMcpServers = [],
   preloadedTools,
   uploadedFilesContext,
   workspaceInstructions,
@@ -58,6 +64,8 @@ export const buildSystemPromptSections = ({
   const skillCatalogSection = buildSkillCatalogSection(skillCatalog);
   const referencedSkillsSection =
     buildReferencedSkillsSection(referencedSkills);
+  const referencedMcpServersSection =
+    buildReferencedMcpServersSection(referencedMcpServers);
 
   const sections: (SystemPromptSection | false)[] = [
     ...(isWorkspaceSetupThread
@@ -101,6 +109,10 @@ export const buildSystemPromptSections = ({
     isNonEmptyString(referencedSkillsSection) && {
       title: 'Referenced Skills',
       content: referencedSkillsSection,
+    },
+    isNonEmptyString(referencedMcpServersSection) && {
+      title: 'Referenced MCP Servers',
+      content: referencedMcpServersSection,
     },
     isDefined(uploadedFilesContext) &&
       isNonEmptyArray(uploadedFilesContext.uploadedFiles) && {

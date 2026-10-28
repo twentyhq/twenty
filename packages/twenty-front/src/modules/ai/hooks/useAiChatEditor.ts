@@ -9,6 +9,7 @@ import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { useMcpServerMentionSearch } from '@/ai/hooks/useMcpServerMentionSearch';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
@@ -38,6 +39,7 @@ export const useAiChatEditor = () => {
   const [agentChatDraftsByThreadId, setAgentChatDraftsByThreadId] =
     useAtomState(agentChatDraftsByThreadIdState);
   const { searchMentionRecords } = useMentionSearch();
+  const { searchMcpServers } = useMcpServerMentionSearch();
   const { searchWorkspaceMembers } = useWorkspaceMemberMentionSearch();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -133,7 +135,14 @@ export const useAiChatEditor = () => {
       searchMentionRecords: typeof searchMentionRecords;
       searchWorkspaceMembers: typeof searchWorkspaceMembers;
     };
-    mentionStorage.searchMentionRecords = searchMentionRecords;
+    mentionStorage.searchMentionRecords = async (query) => {
+      const [mcpServerResults, recordResults] = await Promise.all([
+        searchMcpServers(query).catch(() => []),
+        searchMentionRecords(query),
+      ]);
+
+      return [...mcpServerResults, ...recordResults];
+    };
     mentionStorage.searchWorkspaceMembers = isAiChatInboxEnabled
       ? (query) => [
           ...(aiModels.length > 0

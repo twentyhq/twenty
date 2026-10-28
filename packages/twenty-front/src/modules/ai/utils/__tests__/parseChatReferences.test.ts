@@ -197,6 +197,17 @@ describe('parseChatReferences', () => {
         displayName: 'Workflow building',
       },
     },
+    {
+      name: 'an MCP server',
+      text: 'Ask [[mcpServer:99999999-9999-4999-8999-999999999999:GitHub]]',
+      reference: {
+        kind: 'mcpServer',
+        fullMatch: '[[mcpServer:99999999-9999-4999-8999-999999999999:GitHub]]',
+        index: 4,
+        mcpServerId: '99999999-9999-4999-8999-999999999999',
+        displayName: 'GitHub',
+      },
+    },
   ])('should find $name', ({ text, reference }) => {
     expect(parseChatReferences(text)).toEqual([reference]);
   });

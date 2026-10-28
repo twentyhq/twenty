@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { McpServerMentionResolver } from 'src/engine/metadata-modules/mcp-server/mcp-server-mention.resolver';
 import { McpServerResolver } from 'src/engine/metadata-modules/mcp-server/mcp-server.resolver';
 import { McpServerService } from 'src/engine/metadata-modules/mcp-server/mcp-server.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -16,7 +17,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     PermissionsModule,
     FeatureFlagModule,
   ],
-  providers: [McpServerService, McpServerResolver],
+  providers: [McpServerService, McpServerResolver, McpServerMentionResolver],
   exports: [McpServerService],
 })
 export class McpServerModule {}

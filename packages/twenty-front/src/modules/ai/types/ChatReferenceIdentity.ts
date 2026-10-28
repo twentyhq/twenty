@@ -6,4 +6,5 @@ export type ChatReferenceIdentity =
   | { kind: 'view'; viewId: string }
   | { kind: 'role'; roleId: string }
   | { kind: 'app'; applicationId: string }
-  | { kind: 'skill'; skillId: string };
+  | { kind: 'skill'; skillId: string }
+  | { kind: 'mcpServer'; mcpServerId: string };

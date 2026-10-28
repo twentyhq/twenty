@@ -40,6 +40,8 @@ const getChatReferenceIdentity = ({
       return { kind, applicationId: firstSegment };
     case 'skill':
       return { kind, skillId: firstSegment };
+    case 'mcpServer':
+      return { kind, mcpServerId: firstSegment };
     default:
       return assertUnreachable(kind);
   }

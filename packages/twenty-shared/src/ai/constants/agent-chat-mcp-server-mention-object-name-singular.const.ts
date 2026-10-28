@@ -1,0 +1,1 @@
+export const AGENT_CHAT_MCP_SERVER_MENTION_OBJECT_NAME_SINGULAR = 'mcpServer';

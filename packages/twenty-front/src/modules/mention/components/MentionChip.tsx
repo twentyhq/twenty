@@ -1,6 +1,9 @@
 import { type NodeViewProps } from '@tiptap/core';
 import { NodeViewWrapper } from '@tiptap/react';
-import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared/ai';
+import {
+  AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+  AGENT_CHAT_MCP_SERVER_MENTION_OBJECT_NAME_SINGULAR,
+} from 'twenty-shared/ai';
 import { Chip } from 'twenty-ui/primitives/data-display';
 
 import { MentionRecordChip } from '@/mention/components/MentionRecordChip';
@@ -14,7 +17,8 @@ export const MentionChip = ({ node }: MentionChipProps) => {
   const imageUrl = (node.attrs.imageUrl as string) ?? '';
 
   if (
-    objectNameSingular === AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR
+    objectNameSingular === AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR ||
+    objectNameSingular === AGENT_CHAT_MCP_SERVER_MENTION_OBJECT_NAME_SINGULAR
   ) {
     return (
       <NodeViewWrapper as="span" style={{ display: 'inline' }}>
