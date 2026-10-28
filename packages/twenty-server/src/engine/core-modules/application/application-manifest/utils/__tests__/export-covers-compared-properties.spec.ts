@@ -845,15 +845,13 @@ const EXPORTED_KINDS: ExportedKind[] = [
       exportWorkflowManifestOrThrow(WORKFLOW_MANIFEST),
     ),
     renamedProperties: { versionDefinitionHash: 'version' },
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: ['visibility'],
     knownGaps: {
       isSystem: 'system workflows are reported as excluded',
-      visibility:
-        'private workflows are reported as excluded, exported workflows are visible to the workspace',
       lastPublishedVersionId:
-        'legacy workspace version pointer, always null for synced application workflows',
+        'legacy workspace version pointer, kept while the active version matches the definition',
       lastPublishedCoreWorkflowVersionId:
-        'the sync points it at the version it derives from the definition',
+        'the sync points it at the active version, or at the one it publishes from the definition',
     },
   },
   {

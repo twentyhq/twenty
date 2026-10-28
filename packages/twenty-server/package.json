@@ -98,6 +98,7 @@
     "dompurify": "^3.4.17",
     "dotenv": "16.4.5",
     "email-reply-parser": "^2.3.5",
+    "esbuild": "^0.28.1",
     "express": "5.3.0",
     "express-session": "^1.18.2",
     "file-type": "^21.3.2",
@@ -168,6 +169,7 @@
     "tsdav": "^2.2.1",
     "type-fest": "4.10.1",
     "typeorm": "patch:typeorm@0.3.31#./patches/typeorm+0.3.31.patch",
+    "typescript": "^5.9.3",
     "unzipper": "^0.12.3",
     "uuid": "^11.1.1",
     "zod": "^4.6.6"
