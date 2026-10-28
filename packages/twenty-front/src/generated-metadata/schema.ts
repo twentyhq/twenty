@@ -123,6 +123,7 @@ export type AgentChatOpenThreadsSummary = {
   hasUnreadOpenThread: Scalars['Boolean']['output'];
   needsInputThreadCount: Scalars['Int']['output'];
   openThreadCount: Scalars['Int']['output'];
+  unreadOpenThreadCount: Scalars['Int']['output'];
 };
 
 export type AgentChatThread = {
