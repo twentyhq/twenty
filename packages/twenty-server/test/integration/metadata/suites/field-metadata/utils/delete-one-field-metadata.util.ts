@@ -6,6 +6,7 @@ import {
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+import { waitForDeferredWorkspaceMigrationActions } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions.util';
 
 export const deleteOneFieldMetadata = async ({
   input,
@@ -16,6 +17,8 @@ export const deleteOneFieldMetadata = async ({
     input,
     gqlFields,
   });
+
+  await waitForDeferredWorkspaceMigrationActions();
 
   const response = await makeMetadataApiRequest(graphqlOperation);
 
