@@ -222,6 +222,72 @@ describe('terminal progress', () => {
     expect(process.exitCode).toBe(error.exitCode);
   });
 
+  it('lists metadata validation errors under the failure line in human mode', () => {
+    const output = createOutput({ mode: 'human', command: 'app apply' });
+
+    output.fail(
+      new CliError({
+        code: 'GRAPHQL_ERROR',
+        message: 'Validation failed for 2 fields',
+        details: {
+          validationErrors: [
+            {
+              metadataName: 'fieldMetadata',
+              entityLabel: 'invalidField',
+              message: 'Field name "123" is invalid',
+            },
+            {
+              metadataName: 'fieldMetadata',
+              message: 'A field with this name already exists',
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(stderr).toContain('Validation failed for 2 fields');
+    expect(stderr).toContain(
+      '• fieldMetadata invalidField: Field name "123" is invalid',
+    );
+    expect(stderr).toContain(
+      '• fieldMetadata: A field with this name already exists',
+    );
+  });
+
+  it('includes the validation details in the JSON error envelope', () => {
+    const output = createOutput({ mode: 'json', command: 'app apply' });
+
+    output.fail(
+      new CliError({
+        code: 'GRAPHQL_ERROR',
+        message: 'Validation failed for 1 field',
+        details: {
+          validationErrors: [
+            {
+              metadataName: 'fieldMetadata',
+              message: 'Field name "123" is invalid',
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(JSON.parse(stdout)).toMatchObject({
+      ok: false,
+      error: {
+        code: 'GRAPHQL_ERROR',
+        details: {
+          validationErrors: [
+            {
+              metadataName: 'fieldMetadata',
+              message: 'Field name "123" is invalid',
+            },
+          ],
+        },
+      },
+    });
+  });
+
   it('keeps JSON diagnostics plain and emits one result envelope', () => {
     const output = createOutput({ mode: 'json', command: 'data export' });
 

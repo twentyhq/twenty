@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { agentChatAccessibleChannelsSelector } from '@/ai/states/selectors/agentChatAccessibleChannelsSelector';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
-import { type AgentChatChannel } from '~/generated-metadata/graphql';
+import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
 
 export const agentChatFavoriteChannelsSelector = createAtomSelector<
   AgentChatChannel[]

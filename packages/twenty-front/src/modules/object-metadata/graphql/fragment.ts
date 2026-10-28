@@ -46,7 +46,8 @@ export const OBJECT_METADATA_FRAGMENT = gql`
       indexWhereClause
       indexType
       isUnique
-      isCustom
+      applicationId
+      isSystemSideEffect
       indexFieldMetadataList {
         id
         fieldMetadataId

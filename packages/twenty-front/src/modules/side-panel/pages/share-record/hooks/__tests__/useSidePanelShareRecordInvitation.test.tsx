@@ -22,12 +22,14 @@ const RESTRICTED_SHARING: RecordSharingFieldsFragment = {
     canUpdate: true,
     canDelete: true,
     canSoftDelete: true,
+    __typename: 'RecordPermissionsDTO',
   },
   generalAccessLevel: RecordShareAccessLevel.NONE,
   defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
   hasManagedGeneralAccess: false,
   roles: [],
   shares: [],
+  __typename: 'RecordSharingDTO',
 };
 
 const setShare = jest.fn();

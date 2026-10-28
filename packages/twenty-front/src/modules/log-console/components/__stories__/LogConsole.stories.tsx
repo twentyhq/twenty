@@ -34,7 +34,6 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   BillingEntitlementKey,
   EventLogFilterOperand,
-  type EventLogRecord,
   type EventLogsLiveSubscription,
   type EventLogsQuery,
   type EventLogsQueryVariables,
@@ -94,7 +93,9 @@ const fakeSseClient = {
   },
 };
 
-const emitEventLogsLive = (records: EventLogRecord[]) =>
+const emitEventLogsLive = (
+  records: EventLogsLiveSubscription['eventLogsLive'],
+) =>
   eventLogsLiveSubscriptions.forEach((_variables, sink) =>
     sink.next({ data: { eventLogsLive: records } }),
   );
@@ -196,7 +197,7 @@ const meta: Meta<PageDecoratorArgs> = {
               (variables.input.filters?.fieldFilters ?? []).every(
                 ({ field, operand, values }) =>
                   values.includes(
-                    record[field as keyof EventLogRecord] ??
+                    record[field as keyof typeof record] ??
                       record.properties?.[field],
                   ) ===
                   (operand === EventLogFilterOperand.IS),

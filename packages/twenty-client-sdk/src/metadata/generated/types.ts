@@ -202,6 +202,9 @@ export default {
         },
         "Boolean": {},
         "AgentChatChannel": {
+            "applicationId": [
+                524
+            ],
             "color": [
                 1
             ],
@@ -5413,6 +5416,9 @@ export default {
             ]
         },
         "Index": {
+            "applicationId": [
+                524
+            ],
             "createdAt": [
                 209
             ],
@@ -5429,6 +5435,9 @@ export default {
                 1
             ],
             "isCustom": [
+                4
+            ],
+            "isSystemSideEffect": [
                 4
             ],
             "isUnique": [

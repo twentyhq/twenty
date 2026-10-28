@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { ApplicationVariableLabelRow } from 'src/front-components/components/ApplicationVariableLabelRow';
