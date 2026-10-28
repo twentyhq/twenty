@@ -20,10 +20,10 @@ export class AuthorizeAppInput {
   @MaxLength(2048)
   redirectUrl: string;
 
-  // RFC 6749 sets no max length on this opaque value; the /authorize URL is the practical bound
+  // Gemini sends 1000+ chars; 4096 keeps the client callback URL under the 8000-octet request-line limit
   @Field(() => String, { nullable: true })
   @IsString()
-  @MaxLength(8192)
+  @MaxLength(4096)
   @IsOptional()
   state?: string;
 
