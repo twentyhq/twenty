@@ -72,6 +72,12 @@ msgstr "{0} phải là một trường quan hệ một-nhiều hoặc nhiều-m�
 msgid "{0} must be a one-to-many relation field."
 msgstr "{0} phải là một trường quan hệ một-nhiều."
 
+#. js-lingui-id: Z9bcKa
+#. placeholder {0}: flatFieldPermission.fieldMetadataUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "{action} is disabled on field {0}"
+msgstr ""
+
 #. js-lingui-id: LP7rtP
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -4358,6 +4364,16 @@ msgstr "Tải lên trực tiếp không được hỗ trợ cho loại tệp nà
 msgctxt "fieldMetadata.label"
 msgid "Direction"
 msgstr "Hướng"
+
+#. js-lingui-id: jJ0ehq
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must be a list"
+msgstr ""
+
+#. js-lingui-id: 7ZwQ9I
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must not repeat"
+msgstr ""
 
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -14162,6 +14178,11 @@ msgstr "Khóa Tổ chức này đã được sử dụng trên một phiên bả
 msgid "This permission is already set for the role"
 msgstr "Quyền này đã được thiết lập cho vai trò"
 
+#. js-lingui-id: AwqjFF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "This permission is disabled on the field and cannot be granted"
+msgstr ""
+
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
 msgid "This permission is disabled on the object and cannot be granted"
@@ -15033,6 +15054,11 @@ msgstr "Mã định danh chung được dành riêng cho siêu dữ liệu do h�
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Unknown"
 msgstr "Không rõ"
+
+#. js-lingui-id: aHCw//
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Unknown disabled field permission action"
+msgstr ""
 
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts

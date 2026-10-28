@@ -72,6 +72,12 @@ msgstr "{0} måste vara ett one-to-many- eller many-to-one-relationsfält."
 msgid "{0} must be a one-to-many relation field."
 msgstr "{0} måste vara ett one-to-many-relationsfält."
 
+#. js-lingui-id: Z9bcKa
+#. placeholder {0}: flatFieldPermission.fieldMetadataUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "{action} is disabled on field {0}"
+msgstr ""
+
 #. js-lingui-id: LP7rtP
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -4358,6 +4364,16 @@ msgstr "Direktuppladdning stöds inte för denna filtyp."
 msgctxt "fieldMetadata.label"
 msgid "Direction"
 msgstr "Riktning"
+
+#. js-lingui-id: jJ0ehq
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must be a list"
+msgstr ""
+
+#. js-lingui-id: 7ZwQ9I
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must not repeat"
+msgstr ""
 
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -14168,6 +14184,11 @@ msgstr "Denna Organization-nyckel används redan på en annan serverinstans. Fri
 msgid "This permission is already set for the role"
 msgstr "Den här behörigheten är redan angiven för rollen"
 
+#. js-lingui-id: AwqjFF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "This permission is disabled on the field and cannot be granted"
+msgstr ""
+
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
 msgid "This permission is disabled on the object and cannot be granted"
@@ -15039,6 +15060,11 @@ msgstr "Universell identifierare är reserverad för systemhanterad metadata"
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Unknown"
 msgstr "Okänd"
+
+#. js-lingui-id: aHCw//
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Unknown disabled field permission action"
+msgstr ""
 
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts

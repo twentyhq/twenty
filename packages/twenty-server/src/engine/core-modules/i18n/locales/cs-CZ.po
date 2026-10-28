@@ -72,6 +72,12 @@ msgstr "{0} musí být relační pole typu one-to-many nebo many-to-one."
 msgid "{0} must be a one-to-many relation field."
 msgstr "{0} musí být relační pole typu one-to-many."
 
+#. js-lingui-id: Z9bcKa
+#. placeholder {0}: flatFieldPermission.fieldMetadataUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "{action} is disabled on field {0}"
+msgstr ""
+
 #. js-lingui-id: LP7rtP
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -4358,6 +4364,16 @@ msgstr "Přímé nahrání není pro tento typ souboru podporováno."
 msgctxt "fieldMetadata.label"
 msgid "Direction"
 msgstr "Směr"
+
+#. js-lingui-id: jJ0ehq
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must be a list"
+msgstr ""
+
+#. js-lingui-id: 7ZwQ9I
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must not repeat"
+msgstr ""
 
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -14162,6 +14178,11 @@ msgstr "Tento klíč organizace se již používá na jiné serverové instanci.
 msgid "This permission is already set for the role"
 msgstr "Toto oprávnění je již pro roli nastaveno"
 
+#. js-lingui-id: AwqjFF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "This permission is disabled on the field and cannot be granted"
+msgstr ""
+
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
 msgid "This permission is disabled on the object and cannot be granted"
@@ -15033,6 +15054,11 @@ msgstr "Univerzální identifikátor je vyhrazen pro systémem spravovaná metad
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Unknown"
 msgstr "Neznámý"
+
+#. js-lingui-id: aHCw//
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Unknown disabled field permission action"
+msgstr ""
 
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
