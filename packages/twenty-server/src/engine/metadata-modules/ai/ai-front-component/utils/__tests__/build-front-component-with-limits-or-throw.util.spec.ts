@@ -49,7 +49,14 @@ describe('component build limits', () => {
     );
     const result = expect(
       buildFrontComponentWithLimitsOrThrow({}),
-    ).rejects.toThrow('10 second time limit');
+    ).rejects.toMatchObject({
+      message: 'Component build exceeded the 10 second time limit.',
+      code: 'BUILD_FAILED',
+      userFriendlyMessage: {
+        id: expect.any(String),
+        message: 'Component build exceeded the 10 second time limit.',
+      },
+    });
 
     await jest.advanceTimersByTimeAsync(10000);
     await result;
@@ -84,9 +91,16 @@ describe('component build limits', () => {
       ],
     });
 
-    await expect(buildFrontComponentWithLimitsOrThrow({})).rejects.toThrow(
-      '5 MB output limit',
-    );
+    await expect(
+      buildFrontComponentWithLimitsOrThrow({}),
+    ).rejects.toMatchObject({
+      message: 'Component build exceeds the 5 MB output limit.',
+      code: 'INVALID_INPUT',
+      userFriendlyMessage: {
+        id: expect.any(String),
+        message: 'Component build exceeds the 5 MB output limit.',
+      },
+    });
     expect(dispose).toHaveBeenCalledTimes(1);
   });
 
