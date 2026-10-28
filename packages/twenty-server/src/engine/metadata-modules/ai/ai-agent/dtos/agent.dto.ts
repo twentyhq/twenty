@@ -53,10 +53,6 @@ export class AgentDTO {
 
   @IsBoolean()
   @Field()
-  isCustom: boolean;
-
-  @IsBoolean()
-  @Field()
   isSystem: boolean;
 
   @HideField()

@@ -13,9 +13,7 @@ const CRON_TRIGGER_UID = '44444444-4444-4444-8444-444444444444';
 const DATABASE_EVENT_TRIGGER_UID = '55555555-5555-4555-8555-555555555555';
 const NOW = '2026-09-14T10:00:00.000Z';
 
-const AGENT_MANIFEST: Required<
-  Omit<AgentManifest, 'modelConfiguration' | 'isSystem'>
-> = {
+const AGENT_MANIFEST: Required<AgentManifest> = {
   universalIdentifier: AGENT_UID,
   name: 'lead-scorer',
   label: 'Lead Scorer',
@@ -32,6 +30,11 @@ const AGENT_MANIFEST: Required<
       additionalProperties: false,
     },
   },
+  modelConfiguration: {
+    webSearch: { enabled: true },
+    twitterSearch: { enabled: false, configuration: { maxResults: 5 } },
+  },
+  isSystem: true,
   roleUniversalIdentifier: ROLE_UID,
   triggers: [
     {
@@ -106,7 +109,7 @@ describe('fromFlatAgentToAgentManifest', () => {
     ).toBeUndefined();
   });
 
-  it('should omit what the forward conversion defaults: icon, description, the workspace default model, triggers and the role', () => {
+  it('should omit what the forward conversion defaults: icon, description, the workspace default model, model configuration, isSystem, triggers and the role', () => {
     expect(
       fromFlatAgentToAgentManifest({
         flatAgent: forward(MINIMAL_AGENT_MANIFEST),

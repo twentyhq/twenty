@@ -12,10 +12,8 @@ import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-d
 import { NavigationDrawerSectionSeeMoreItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionSeeMoreItem';
 import { useNavigationSectionVisibleItems } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSectionVisibleItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import {
-  type AgentChatChannel,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type FavoriteItem =
   | { type: 'channel'; channel: AgentChatChannel }

@@ -7,6 +7,8 @@ import { AddWorkspaceNavigationMenuSectionCommand } from 'src/database/commands/
 import { AddPinnedNavigationMenuCommandsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793183524020-add-pinned-navigation-menu-commands.command';
 import { AddFavoritesNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793183524022-add-favorites-navigation-menu-section.command';
 import { MoveApplicationAndSystemAccessToDisabledActionsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793176233512-move-application-and-system-access-to-disabled-actions.command';
+import { UngateMergeFromDuplicateCriteriaCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793180997766-ungate-merge-from-duplicate-criteria.command';
+import { GateMergeCommandOnRecordPermissionsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793183175063-gate-merge-command-on-record-permissions.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -25,6 +27,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddPinnedNavigationMenuCommandsCommand,
     AddFavoritesNavigationMenuSectionCommand,
     MoveApplicationAndSystemAccessToDisabledActionsCommand,
+    UngateMergeFromDuplicateCriteriaCommand,
+    GateMergeCommandOnRecordPermissionsCommand,
   ],
 })
 export class V2_53_UpgradeVersionCommandModule {}

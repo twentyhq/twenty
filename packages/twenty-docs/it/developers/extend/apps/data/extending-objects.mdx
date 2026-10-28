@@ -48,8 +48,6 @@ export default defineField({
 
 * Il percorso del file dipende da te. La convenzione è `src/fields/\<name>.field.ts`, ma la CLI rileva i campi ovunque in `src/`.
 
-* La `writability` può anche essere impostata per singolo campo: `MetadataWritability.APPLICATION` limita le scritture alle sole funzioni di logica della tua app, mentre `MetadataWritability.SYSTEM` è riservata ai dati gestiti dalla piattaforma. La writability di un campo può essere solo più restrittiva rispetto al livello del relativo oggetto e le letture non sono influenzate. Consulta [Objects](/it/developers/extend/apps/data/objects) per i dettagli completi sulla semantica.
-
 * È possibile impostare `isSearchable: true` su `defineField()` con gli stessi vincoli dei campi inline (oggetto di destinazione ricercabile, tipo di campo compatibile con il testo), in modo che i record dell'oggetto di destinazione siano individuabili tramite i valori del campo nella ricerca full-text.
 
 * È possibile impostare `isAuditLogged: false` su `defineField()` per escludere le modifiche del campo dalla cronologia del record di destinazione, il che è particolarmente importante per i campi che l'app riscrive secondo una pianificazione.
