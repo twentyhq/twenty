@@ -3,9 +3,13 @@ title: Status
 description: Show a named state with a colored indicator and optional loading feedback.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import StatusReference from '/snippets/ui/generated/data-display/status.mdx';
+
+## Overview
 
 `Status` combines a colored dot, a text label, and an optional loader. Use it for workflow or record states. Use [Tag](/ui/primitives/data-display/tag) for a category without the status indicator.
 
@@ -91,3 +95,5 @@ Compose an interactive owner through `render`. Put its click handler, native att
 Types and defaults are generated from the public component types. Native attributes and event handlers are also accepted.
 
 <StatusReference />
+
+<PageBanner illustration="page-cover-checkbox" />

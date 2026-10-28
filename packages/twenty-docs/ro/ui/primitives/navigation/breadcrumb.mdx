@@ -1,0 +1,150 @@
+---
+title: Firimituri de navigare
+description: Afișează poziția unei pagini cu o cale de linkuri către paginile părinte.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import BreadcrumbReference from '/snippets/ui/generated/navigation/breadcrumb.mdx';
+
+## Prezentare generală
+
+`Breadcrumb` redă o cale de navigare ordonată. Include separatoare decorative, stiluri de focalizare pentru linkuri și trunchierea etichetei elementului final. Elementele păstrează comportamentul nativ al ancorelor și acceptă rutare personalizată prin `render`. Firul de navigare folosește în mod consecvent o grosime medie a fontului, inclusiv în anteturile cu o grosime diferită.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--display" title="Exemplu Breadcrumb" height={100} />
+
+## Utilizare
+
+Transmite elementele în ordinea de la strămoș la cel curent. Reperul de navigare are implicit numele accesibil `Breadcrumb`; folosește `aria-label` pentru a-l localiza sau pentru a diferenția mai multe căi. Elementul final folosește implicit `aria-current="page"`, indiferent dacă are o destinație sau afișează text simplu.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const CompanyBreadcrumb = () => (
+  <Breadcrumb
+    aria-label="Breadcrumb"
+    links={[
+      { children: 'Home', href: '/' },
+      { children: 'Companies', href: '/companies' },
+      { children: 'Acme' },
+    ]}
+  />
+);
+```
+
+Elementele cu `href` folosesc ancore native. Elementele fără destinație folosesc implicit text. Separatorii `/` sunt decorativi, ascunși tehnologiilor de asistență și nu fac parte din numele accesibile ale linkurilor. Linkurile urmează comportamentul normal al browserului pentru Tab și Enter, inclusiv clicurile cu taste modificatoare și deschiderea într-o filă nouă.
+
+## Proprietăți native ale elementului
+
+Fiecare element acceptă atribute native ale ancorei, gestionari de evenimente, `className`, `style` și `ref`. De exemplu, transmiteți `target` și `rel` pentru o filă nouă, `download` pentru un fișier sau `referrerPolicy` pentru a controla cererea. Referința elementului ajunge la elementul DOM redat.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const ReferenceBreadcrumb = () => (
+  <Breadcrumb
+    aria-label="Reference location"
+    links={[
+      {
+        children: 'Documentation',
+        href: 'https://docs.twenty.com',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        referrerPolicy: 'no-referrer',
+      },
+      { children: 'Companies' },
+    ]}
+  />
+);
+```
+
+## Pagina curentă
+
+O valoare explicită `aria-current` pe un element are prioritate față de poziția sa. Utilizați `aria-current="page"` pe un alt element și `aria-current={false}` pe elementul final atunci când pagina curentă se află mai devreme în traseu. Alte valori native pentru elementul curent, precum `step`, sunt de asemenea păstrate. Asigurați-vă că numai elementul intenționat este curent.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const CompanyContextBreadcrumb = () => (
+  <Breadcrumb
+    links={[
+      { children: 'Home', href: '/' },
+      {
+        children: 'Companies',
+        href: '/companies',
+        'aria-current': 'page',
+      },
+      { children: 'Acme', 'aria-current': false },
+    ]}
+  />
+);
+```
+
+## Linkuri de router
+
+Folosește proprietatea `render` a unui element pentru a furniza componenta de link a routerului, alături de `href`. Transmiteți direct către componenta respectivă destinații, stări și opțiuni de istoric specifice routerului. `render` acceptă fie un element, fie o funcție care primește proprietățile furnizate, inclusiv atributele native ale ancorei și referința sa.
+
+Linkul redat trebuie să transmită mai departe props și ref furnizate către elementul său ancoră. Păstrați comportamentul nativ al linkurilor atunci când gestionați navigarea, inclusiv clicurile cu taste modificatoare și filele noi. Consultă [componente personalizate](/ro/ui/primitives/overview#custom-components) pentru cerințele de compunere.
+
+Aplicația alege destinațiile și decide când să afișeze o acțiune mobilă de întoarcere. `Breadcrumb` nu deduce rute și nu restrânge strămoșii într-un meniu.
+
+## Etichete lungi
+
+Elementul final se micșorează și este trunchiat cu puncte de suspensie atunci când containerul are spațiu limitat. Elementele strămoș își păstrează lățimea. Etichetele de tip șir simplu devin automat tooltipul nativ al browserului. Folosește `title` pentru a înlocui acel text sau pentru a oferi un tooltip pentru conținut bogat. Setați `title=""` pentru a suprima indicația automată.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--truncation" title="Breadcrumb cu o etichetă lungă pentru pagina curentă" height={100} />
+
+## Conținut bogat
+
+`children` unui element poate include text și conținut vizual de suport. Păstrează eticheta lizibilă și evită imbricarea controalelor interactive într-un link.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--rich-content" title="Breadcrumb cu conținut de suport" height={100} />
+
+## Direcția textului
+
+Calea urmează direcția textului din jur. Setează `dir="rtl"` pe `Breadcrumb` sau pe un strămoș pentru conținut de la dreapta la stânga. Când alte controale necesită un comportament corespunzător al tastaturii sau al indicatorului, în funcție de direcție, setați și [DirectionProvider](/ro/ui/primitives/layout/direction-provider) la aceeași direcție.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--rtl" title="Breadcrumb în conținut de la dreapta la stânga" height={100} />
+
+## Personalizarea rădăcinii
+
+Atributele native de navigare, inclusiv numele accesibile, `className`, `style` și gestionarii de evenimente, ajung la reperul rădăcină. Referința rădăcinii ajunge la elementul său `nav`. Funcția `render` a rădăcinii acceptă, de asemenea, un element sau o funcție; păstrați reperul de navigare și transmiteți mai departe proprietățile furnizate și referința sa.
+
+```tsx
+import { useRef } from 'react';
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const HeaderBreadcrumb = () => {
+  const navigationRef = useRef<HTMLElement>(null);
+  const companiesRef = useRef<HTMLAnchorElement>(null);
+
+  return (
+    <Breadcrumb
+      aria-label="Company location"
+      ref={navigationRef}
+      render={<nav data-location="header" />}
+      links={[
+        {
+          children: 'Companies',
+          href: '/companies',
+          ref: companiesRef,
+          render: (props) => (
+            <a {...props} data-route={props.href}>
+              {props.children}
+            </a>
+          ),
+        },
+        { children: 'Acme' },
+      ]}
+    />
+  );
+};
+```
+
+## Proprietăți
+
+<BreadcrumbReference />
+
+<PageBanner illustration="card-page-navigation" />

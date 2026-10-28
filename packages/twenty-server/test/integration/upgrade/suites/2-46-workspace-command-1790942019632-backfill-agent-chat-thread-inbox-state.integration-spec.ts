@@ -5,6 +5,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type AddAgentChatThreadParticipantObjectCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019631-add-agent-chat-thread-participant-object.command';
 import { type BackfillAgentChatThreadInboxStateCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019632-backfill-agent-chat-thread-inbox-state.command';
+import { type AddAgentChatThreadSubscriptionsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791322315043-add-agent-chat-thread-subscriptions.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -44,6 +45,7 @@ type StoredParticipant = {
 describe('2-46 workspace commands - agent chat thread inbox state (integration)', () => {
   let objectCommand: AddAgentChatThreadParticipantObjectCommand;
   let backfillCommand: BackfillAgentChatThreadInboxStateCommand;
+  let subscriptionsCommand: AddAgentChatThreadSubscriptionsCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
 
   const sharedThreadId = randomUUID();
@@ -62,7 +64,8 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
   const runCommand = (
     command:
       | AddAgentChatThreadParticipantObjectCommand
-      | BackfillAgentChatThreadInboxStateCommand,
+      | BackfillAgentChatThreadInboxStateCommand
+      | AddAgentChatThreadSubscriptionsCommand,
     direction: 'up' | 'down',
   ) =>
     workspaceOrmManager.executeInWorkspaceContext(
@@ -165,6 +168,10 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
       getAppProviderByClassName<BackfillAgentChatThreadInboxStateCommand>(
         'BackfillAgentChatThreadInboxStateCommand',
       );
+    subscriptionsCommand =
+      getAppProviderByClassName<AddAgentChatThreadSubscriptionsCommand>(
+        'AddAgentChatThreadSubscriptionsCommand',
+      );
     workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
       'WorkspaceOrmManager',
     );
@@ -258,6 +265,8 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
   afterAll(async () => {
     await runCommand(objectCommand, 'up');
     await runCommand(backfillCommand, 'up');
+    // The object's down dropped the subscription fields the suites that follow use
+    await runCommand(subscriptionsCommand, 'up');
     await global.testDataSource.query(
       `DELETE FROM ${SCHEMA}."recordShare" share
        USING ${SCHEMA}."agentChatThreadParticipant" participant

@@ -1,0 +1,84 @@
+---
+title: Límites de uso
+description: Limita lo que tu espacio de trabajo, miembros, claves de API y aplicaciones pueden gastar.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Establece límites para la IA, los flujos de trabajo, las funciones lógicas y el correo electrónico en **Configuración → Facturación → Límites**. Los [créditos](/es/user-guide/billing/capabilities/credits) definen cuánto puede gastar tu espacio de trabajo en total; un límite define cuánto de eso puede gastar un ámbito determinado y con qué frecuencia se restablece.
+
+Para ver y cambiar los límites, se requiere el permiso de configuración de **Espacio de trabajo**.
+
+## Lo que puedes limitar
+
+| "Uso"                   | Operaciones                                       | Medido en                       | Ámbitos                                               |
+| ----------------------- | ------------------------------------------------- | ------------------------------- | ----------------------------------------------------- |
+| **IA**                  | Chats, agentes, búsqueda web                      | Créditos u operaciones          | Espacio de trabajo, miembro, clave de API, aplicación |
+| **Flujos de trabajo**   | Ejecución de flujo de trabajo                     | Créditos o ejecuciones          | Espacio de trabajo, aplicación                        |
+| **Funciones de lógica** | Ejecución de código                               | Créditos o ejecuciones          | Espacio de trabajo, aplicación, función lógica        |
+| **Correo electrónico**  | Envío de correo electrónico                       | Créditos o correos electrónicos | Espacio de trabajo, miembro                           |
+| **Todo el uso**         | Todo lo anterior, más los cargos de la aplicación | Créditos                        | Aplicación                                            |
+
+<Note>
+**Todas las operaciones** limita todo lo que consume el uso, independientemente de la operación de la que provenga. Está disponible siempre que el uso pueda medirse en créditos.
+</Note>
+
+**Todo el uso** establece un único límite para todo lo que consume una aplicación: sus funciones lógicas, workflows, agentes, llamadas a IA y los créditos que cobra directamente. Es la forma de limitar el coste total de una aplicación. No se ofrece para todo el espacio de trabajo, cuyo total ya está limitado por sus créditos.
+
+## Medidores y períodos
+
+Un límite cuenta **créditos**, la misma unidad que su saldo, u **operaciones**, un recuento bruto de mensajes, búsquedas, ejecuciones o correos electrónicos. Establezca un límite de créditos para controlar el costo y de operaciones para controlar el volumen.
+
+| Período                      | Restablecimientos                                                |
+| ---------------------------- | ---------------------------------------------------------------- |
+| **Día**, **semana**, **mes** | Al inicio del siguiente período calendario                       |
+| **Período de facturación**   | Con su suscripción, al mismo tiempo que se renuevan sus créditos |
+
+El **período de facturación** solo está disponible cuando el espacio de trabajo tiene una suscripción que seguir.
+
+## Requisitos del plan
+
+| Qué limita                                                                        | Plan                               |
+| --------------------------------------------------------------------------------- | ---------------------------------- |
+| Todo el **espacio de trabajo**                                                    | Cualquier plan                     |
+| Un **miembro**, una **clave de API**, una **aplicación** o una **función lógica** | Organización (Cloud o Self-Hosted) |
+
+Sin el [plan Organización](/es/user-guide/billing/capabilities/pricing-plans), esos ámbitos no se pueden seleccionar, y un límite ya guardado para uno de ellos aparece como **Desactivado** y no se aplica. Se aplica de nuevo en cuanto el espacio de trabajo está en un plan que lo cubre, sin tener que volver a crear nada.
+
+## Crear un límite
+
+1. Ir a **Ajustes → Facturación → Límites**
+2. Haga clic en **Nuevo límite**
+3. En **Ámbito**, seleccione el uso y a quién se aplica
+4. En **Límite**, introduzca la cantidad, elija créditos u operaciones y seleccione el período
+5. Haz clic en **Guardar**
+
+El límite se aplica de inmediato y cuenta el uso ya registrado en el período actual.
+
+### Editar o eliminar un límite
+
+Haga clic en una fila de límite para cambiar su cantidad, período o ámbito. **Eliminar límite** se encuentra en la zona de peligro de la página de edición. Eliminar un límite nunca aumenta su gasto: su asignación de créditos y los demás límites siguen aplicándose.
+
+## Cuando se alcanza un límite
+
+El trabajo se rechaza en lugar de ponerse en cola, y solo en ese ámbito. El resto del espacio de trabajo sigue funcionando.
+
+El gasto se reanuda automáticamente cuando se restablece el período. Para desbloquear antes, aumente el límite o elimínelo.
+
+<Note>
+Un límite se comprueba antes de que comience una operación y se descuenta cuando se completa, por lo que una operación ya en curso puede hacer que un contador supere ligeramente su límite. El trabajo por lotes, como el envío de una campaña, puede superar el límite por un lote.
+</Note>
+
+## Supervisión
+
+La tabla **Límites** muestra lo que ha utilizado cada límite en el período actual. El consumo total, incluido el desglose por flujo de trabajo y acción de IA, permanece en **Ajustes → Facturación**.
+
+## Relacionado
+
+* [Créditos](/es/user-guide/billing/capabilities/credits)
+* [Planes de precios](/es/user-guide/billing/capabilities/pricing-plans)
+* [Preguntas frecuentes sobre facturación](/es/user-guide/billing/how-tos/billing-faq)
+
+<PageBanner illustration="card-page-usage-limits" />

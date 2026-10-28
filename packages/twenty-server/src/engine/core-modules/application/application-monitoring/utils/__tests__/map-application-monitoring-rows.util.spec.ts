@@ -1,4 +1,5 @@
 import { mapApplicationMonitoringRows } from 'src/engine/core-modules/application/application-monitoring/utils/map-application-monitoring-rows.util';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 const PERIOD = {
   periodStart: new Date('2026-10-12T08:00:00.000Z'),
@@ -112,7 +113,7 @@ describe('mapApplicationMonitoringRows', () => {
     });
   });
 
-  it('totals the credits used across buckets', () => {
+  it('totals the credits used across buckets and operation types', () => {
     expect(
       mapApplicationMonitoringRows({
         period: PERIOD,
@@ -121,14 +122,17 @@ describe('mapApplicationMonitoringRows', () => {
         creditUsage: [
           {
             bucketStart: new Date('2026-10-17T00:00:00.000Z'),
+            operationType: UsageOperationType.CODE_EXECUTION,
             creditsUsedMicro: 10_000,
           },
           {
             bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+            operationType: UsageOperationType.CODE_EXECUTION,
             creditsUsedMicro: 10_000,
           },
           {
-            bucketStart: new Date('2026-10-19T00:00:00.000Z'),
+            bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+            operationType: 'sendSms',
             creditsUsedMicro: 120_000,
           },
         ],
@@ -138,14 +142,17 @@ describe('mapApplicationMonitoringRows', () => {
       creditUsage: [
         {
           bucketStart: new Date('2026-10-17T00:00:00.000Z'),
+          operationType: UsageOperationType.CODE_EXECUTION,
           creditsUsed: 0.01,
         },
         {
           bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+          operationType: UsageOperationType.CODE_EXECUTION,
           creditsUsed: 0.01,
         },
         {
-          bucketStart: new Date('2026-10-19T00:00:00.000Z'),
+          bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+          operationType: 'sendSms',
           creditsUsed: 0.12,
         },
       ],

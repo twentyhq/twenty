@@ -1,0 +1,230 @@
+---
+title: علامات التبويب
+description: بدّل بين اللوحات ذات الصلة باستخدام تنقّل علامات التبويب المتاح.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
+
+## نظرة عامة
+
+يربط `Tabs` كل علامة تبويب بلوحة محتوى مرتبطة باستخدام `value` مشترك. أبقِ القيم فريدة ضمن جذر واحد. استخدم [TabButton](/ar/ui/components/navigation/tab-button) لروابط المسارات والإجراءات المجاورة.
+
+<StoryEmbed storyId="ui-navigation-tabs--display" title="مثال على علامات التبويب" height={160} />
+
+## استخدام
+
+استخدم `defaultValue` لتعيين التحديد الأولي. يدير الجذر التغييرات اللاحقة.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => (
+  <Tabs.Root defaultValue="overview">
+    <Tabs.List aria-label="Record details">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="activity">Activity</Tabs.Tab>
+      <Tabs.Tab value="settings">Settings</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="overview">Record overview</Tabs.Panel>
+    <Tabs.Panel value="activity">Recent activity</Tabs.Panel>
+    <Tabs.Panel value="settings">Record settings</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+يقبل `Tabs.Tab` القيم `startIcon` و`endIcon` و`badge` و`size` بحجم `compact` أو `sm` أو `md` (القيمة الافتراضية هي `sm`). تحتفظ الخصائص المتبقية بعقد Base UI المثبت. لا تقتصر القيم على السلاسل النصية أو الأرقام. يجب أن تستخدم القيم المرجعية الهوية نفسها في علامة التبويب واللوحة والجذر الخاصة بها. تحدد قيمة جذر مقدارها `null` عدم اختيار أي لوحة.
+
+### علامات تبويب مضغوطة
+
+استخدم `size="compact"` في كل علامة تبويب لعناصر تحكم إدخال/إخراج قصيرة داخل بطاقة. تتميّز علامات التبويب المضغوطة بارتفاع صف أدنى يبلغ 24px، ونص صغير، وحشو للمحتوى بمقدار 4px على كل جانب. يحتفظ الحجمان الحاليان `sm` و`md` بارتفاعهما الأدنى البالغ 40px. تستخدم علامات التبويب المضغوطة المؤشر نفسه وحلقة التركيز والتفعيل عبر لوحة المفاتيح كما في الأحجام الأخرى.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ToolCallTabs = () => (
+  <Tabs.Root defaultValue="output">
+    <Tabs.List aria-label="Tool call details">
+      <Tabs.Tab value="output" size="compact">Output</Tabs.Tab>
+      <Tabs.Tab value="input" size="compact">Input</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="output">Tool output</Tabs.Panel>
+    <Tabs.Panel value="input">Tool input</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+<StoryEmbed storyId="ui-navigation-tabs--compact" title="علامات تبويب الإدخال والإخراج المدمجة" height={110} />
+
+## البنية
+
+ضع علامات التبويب ومؤشرًا اختياريًا داخل `Tabs.List`. ضع لوحاتها بجانب القائمة، وكلها ضمن `Tabs.Root` نفسه.
+
+```text
+Tabs.Root
+├── Tabs.List
+│   ├── Tabs.Tab
+│   ├── Tabs.Tab
+│   └── Tabs.Indicator
+├── Tabs.Panel
+└── Tabs.Panel
+```
+
+| الجزء           | المتطلبة           | الغرض                                                        |
+| --------------- | ------------------ | ------------------------------------------------------------ |
+| `Root`          | مطلوب              | يدير القيمة المحددة والاتجاه.                                |
+| `قائمة`         | مطلوب              | يجمع علامات التبويب ويوفر التنقل بالتركيز عبر لوحة المفاتيح. |
+| `علامة التبويب` | واحد لكل لوحة      | يفعّل اللوحة ذات `value` المطابق.                            |
+| `Panel`         | واحد لكل عرض محتوى | يعرض محتواه عندما تكون `value` الخاصة به نشطة.               |
+| `Indicator`     | اختياري            | يعرض موضع علامة التبويب النشطة بتنسيق متوافق مع النسق.       |
+
+امنح القائمة اسمًا متاحًا، وطابق `value` لكل علامة تبويب مع `value` لوحتها. يوفر Base UI معرّفات علامات التبويب واللوحات، وعلاقات `aria-controls` و`aria-labelledby`.
+
+عند توفير `id` مخصص على `Tabs.Panel`، عيّن `aria-controls` على `Tabs.Tab` المطابقة إلى المعرّف نفسه. يتطلب تنفيذ Base UI 1.8.0 المثبت هذه العلاقة الصريحة. تُسجَّل معرّفات علامات التبويب المخصصة بشكل صحيح من أجل `aria-labelledby` الخاص باللوحة.
+
+أضف `Tabs.Indicator` واحدًا عندما تريد الخط السفلي النشط. لا يُدرج `List` مؤشرًا.
+
+## الحالة المتحكم بها وتفاصيل الحدث
+
+مرر `value` وحدّثه باستخدام `onValueChange` لإدارة التحديد. تتلقى دالة رد النداء القيمة التالية وتفاصيل حدث Base UI، بما في ذلك `event` الأصلي و`reason` و`activationDirection` و`cancel()`.
+
+```tsx
+import { useState } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => {
+  const [tab, setTab] = useState('overview');
+
+  return (
+    <Tabs.Root value={tab} onValueChange={setTab}>
+      <Tabs.List aria-label="Record details">
+        <Tabs.Tab value="overview">Overview</Tabs.Tab>
+        <Tabs.Tab value="activity" badge={3}>
+          Activity
+        </Tabs.Tab>
+        <Tabs.Indicator />
+      </Tabs.List>
+      <Tabs.Panel value="overview">Company and contact details.</Tabs.Panel>
+      <Tabs.Panel value="activity">Recent calls and emails.</Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+يكون `reason` لتفعيل المستخدم هو `none`. في الجذور غير المتحكم بها، يمكن أن يكون `reason` للاختيار الاحتياطي التلقائي هو `initial` أو `disabled` أو `missing`. قد يحدد الاختيار الاحتياطي التلقائي `null` عندما لا تبقى أي علامة تبويب مفعّلة. لا يمكن إلغاء هذه التغييرات التلقائية. تحافظ الجذور المتحكم بها على التحديد تحت إدارة التطبيق.
+
+ألغِ تغيير المستخدم قبل تحديث الحالة المتحكم بها، أو استخدم دالة رد النداء نفسها مع جذر غير متحكم به:
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ProtectedTabs = () => (
+  <Tabs.Root
+    defaultValue="overview"
+    onValueChange={(value, details) => {
+      if (value === 'restricted') {
+        details.cancel();
+      }
+    }}
+  >
+    <Tabs.List aria-label="Account sections">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="restricted">Restricted</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="overview">Account details.</Tabs.Panel>
+    <Tabs.Panel value="restricted">Restricted content.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+## التفعيل بلوحة المفاتيح والاتجاه والوجهة
+
+يستخدم `Tabs.List` التفعيل اليدوي افتراضيًا (`activateOnFocus={false}`). تنقل مفاتيح الأسهم التركيز؛ ويؤدي Enter أو Space إلى تفعيل علامة التبويب التي عليها التركيز. عيّن `activateOnFocus` لتحديد علامة تبويب عندما يصل إليها تركيز لوحة المفاتيح. تعمل كلتا السياستين مع الحالة المتحكم بها وغير المتحكم بها.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const SettingsTabs = () => (
+  <Tabs.Root defaultValue="profile" orientation="vertical">
+    <Tabs.List aria-label="Settings" activateOnFocus loopFocus={false}>
+      <Tabs.Tab value="profile">Profile</Tabs.Tab>
+      <Tabs.Tab value="billing" disabled>
+        Billing
+      </Tabs.Tab>
+      <Tabs.Tab value="notifications">Notifications</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="profile">Profile settings.</Tabs.Panel>
+    <Tabs.Panel value="billing">Billing settings.</Tabs.Panel>
+    <Tabs.Panel value="notifications">Notification settings.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+تستخدم القوائم الأفقية Left وRight؛ وتستخدم القوائم العمودية Up وDown. يركز Home وEnd على أول وآخر علامات التبويب المفعّلة. يتم تخطي علامات التبويب المعطلة. القيمة الافتراضية لـ `loopFocus` هي `true`؛ عيّنها إلى `false` للتوقف عند أي من الحدين.
+
+استخدم [DirectionProvider](/ar/ui/primitives/layout/direction-provider) لاتجاه لوحة المفاتيح من اليمين إلى اليسار و`dir="rtl"` على الجذر للتخطيط. عيّن `orientation="vertical"` على `Root` للحصول على قائمة ومؤشر عموديين.
+
+## مدة بقاء اللوحة
+
+استخدم `keepMounted` عندما يجب أن يحتفظ محتوى اللوحة بحالته أثناء عدم نشاطه. تبقى اللوحات المثبتة غير النشطة مخفية ولا تشغل مساحة في التخطيط.
+
+## تخطيط اللوحة
+
+تملأ `Panel` المساحة المتبقية بعد القائمة، ويمكن أن تنكمش إلى ما دون محتواها على كلا المحورين، لذا تبقى ضمن جذر ذي ارتفاع ثابت. لتمرير محتواها، عيّن `overflow: auto` على اللوحة، أو على عنصر فرعي يملؤها، مثل عنصر فرعي `flex: 1` من لوحة flex عمودية.
+
+## الخصائص الأصلية وتركيب العرض والمراجع
+
+تحافظ الأجزاء الخمسة جميعها على الخصائص الأصلية ومعالجات الأحداث والمراجع وتركيب `render` في Base UI. يمكن أن تكون `className` و`style` الخاصتان بها دالتين تعتمدان على حالة الجزء. العناصر الافتراضية هي `div` لـ Root وList وPanel، و`button` لـ Tab، و`span` لـ Indicator. تشير المراجع إلى العناصر الفعلية المعروضة.
+
+```tsx
+import { useRef } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ComposedTabs = () => {
+  const panelRef = useRef<HTMLElement>(null);
+
+  return (
+    <Tabs.Root defaultValue="overview" render={<section />}>
+      <Tabs.List aria-label="Account details">
+        <Tabs.Tab value="overview" nativeButton render={<button />}>
+          Overview
+        </Tabs.Tab>
+        <Tabs.Indicator render={<span data-testid="active-indicator" />} />
+      </Tabs.List>
+      <Tabs.Panel
+        value="overview"
+        render={<article />}
+        ref={(element) => {
+          panelRef.current = element;
+        }}
+      >
+        Account details.
+      </Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+أبقِ `nativeButton` متسقًا مع العنصر المركب لعلامة تبويب. استخدم `nativeButton={false}` لعنصر تفاعلي مخصص ليس زرًا أصليًا ويُمرر الخصائص والمرجع المقدمين. ينتمي رابط المسار إلى `TabButton`، حيث يدير المسار التنقل و`aria-current`.
+
+## التأكيد البصري.
+
+استخدم `highlighted` في `Tabs.Tab` لإبراز محتواه بشكل مستقل عن التحديد، مثلما يحدث عند فتح إعداداته. يبقى التحديد تحت إدارة `Tabs.Root`.
+
+## الإزاحة
+
+يتضمن المرجع المُنشأ الخصائص العامة لكل جزء. تتوفر أنواع حالة الأجزاء العامة وأنواع تفاصيل/سبب تغيير Root من `twenty-ui/primitives/navigation`.
+
+<TabsReference />
+
+## الترحيل
+
+أضف `Tabs.Indicator` صريحًا إلى القوائم التي يجب أن تحتفظ بالخط السفلي النشط. أزل المؤشرات المكررة من التركيبات التي كانت تعتمد سابقًا على أن يُدرج `List` مؤشرًا. أبقِ روابط المسارات وعناصر التحكم في الإنشاء وعناصر التحكم في التجاوز خارج `Tabs.List`، إذ تحدد عناصره التابعة اللوحات المرتبطة.
+
+<PageBanner illustration="layout" />

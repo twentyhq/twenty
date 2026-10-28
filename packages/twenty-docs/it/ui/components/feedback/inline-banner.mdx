@@ -1,0 +1,77 @@
+---
+title: InlineBanner
+description: Feedback in linea con contenuto del nodo, icone e azioni.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InlineBannerReference from '/snippets/ui/generated/components/feedback/inline-banner.mdx';
+
+## Panoramica
+
+`InlineBanner` combina [Banner](/it/ui/primitives/feedback/banner) con una disposizione in linea arrotondata e un'icona informativa decorativa. Condivide i contratti indipendenti di Banner per `status`, `variant`, `color`, `icon` e `action`. Il suo aspetto predefinito è `soft` e il suo stato predefinito è `info`.
+
+<StoryEmbed storyId="ui-feedback-inlinebanner--display" title="Banner inline con un'azione" height={130} />
+
+## Utilizzo
+
+```tsx
+import { InlineBanner } from 'twenty-ui/components/feedback';
+
+export const ModelsBanner = ({ onConfigure }: { onConfigure: () => void }) => (
+  <InlineBanner
+    status="error"
+    action={
+      <InlineBanner.Action onClick={onConfigure}>
+        Configure models
+      </InlineBanner.Action>
+    }
+  >
+    No AI models are enabled.
+  </InlineBanner>
+);
+```
+
+La disposizione `standard` occupa la larghezza disponibile. Le stringhe figlie semplici vengono troncate; il focus da tastiera, il passaggio del puntatore o il tocco rivelano la stringa completa in un tooltip. I nodi figlio ricchi vengono renderizzati direttamente, pertanto i link e i controlli incorporati mantengono la propria semantica. Definisci una tipografia esplicita quando il contenuto ricco deve essere troncato.
+
+Usa `layout="compact"` per il contenuto con ritorno a capo, una spaziatura più ravvicinata e una larghezza massima del contenuto di 512px. Aggiungi `fullWidth` per rimuovere tale limite e riempire la larghezza disponibile dell'elemento padre, inclusi spaziatura interna e bordi. Il valore predefinito è `false` e non modifica il layout standard, che riempie già il proprio elemento padre. Non ha alcun margine inferiore. Il layout è indipendente dall'aspetto `solid` o `soft`. `embedded` rimuove il margine inferiore del layout standard.
+
+```tsx
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { IconInfoCircle } from 'twenty-ui/icon';
+
+export const ConnectionBanner = () => (
+  <InlineBanner
+    layout="compact"
+    status="warning"
+    color="blue"
+    icon={<IconInfoCircle aria-hidden="true" />}
+    action={
+      <InlineBanner.Action href="/settings/accounts">
+        Connection settings
+      </InlineBanner.Action>
+    }
+  >
+    Connect your account to sync contacts.
+  </InlineBanner>
+);
+```
+
+<StoryEmbed storyId="ui-feedback-inlinebanner--compact-link" title="Banner compatto con un collegamento di destinazione" height={120} />
+
+`InlineBanner.Action` fornisce un piccolo pulsante con contorno che eredita il colore visualizzato del banner, incluse le sostituzioni esplicite della tavolozza e gli aspetti solidi. Supporta interazioni Button, link, refs e rendering personalizzato. Lo slot `action` accetta anche controlli arbitrari.
+
+La destinazione radice è un `div`. Le props native, `className`, `style` e `ref` hanno come destinazione tale radice; `render` di Base UI può comporre un altro elemento e riceve lo stato risolto di Banner. `action` accetta qualsiasi ReactNode, inclusi più controlli con le rispettive API complete di Button o link. `icon={null}` rimuove l'icona predefinita.
+
+Il chiamante decide se il banner viene renderizzato e se le modifiche devono essere annunciate. Quando necessario, fornisci `role="status"` e `aria-live="polite"`, oppure un contenitore appropriato per una regione live. Status non assegna la semantica di regione live. Assegna un nome ai controlli di azione e contrassegna le icone personalizzate decorative con `aria-hidden`.
+
+## Migrazione
+
+Sostituisci `message` con `children`, `LeftIcon={Icon}` con `icon={<Icon />}` e la configurazione `button` con un nodo `action`. Usa `InlineBanner.Action` per mantenere lo stile dell'azione allineato al banner. Sostituisci `variant="compact"` con `layout="compact"`; standard è ora il layout predefinito. Usa `status="error"` per indicare un errore o `color="red"` per una sostituzione della tavolozza.
+
+## Props
+
+<InlineBannerReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

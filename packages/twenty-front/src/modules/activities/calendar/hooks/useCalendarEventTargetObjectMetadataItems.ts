@@ -2,6 +2,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { getSearchableObjectMetadataItems } from '@/object-record/record-field/ui/utils/junction/getSearchableObjectMetadataItems';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCalendarEventTargetObjectMetadataItems = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -9,8 +10,12 @@ export const useCalendarEventTargetObjectMetadataItems = () => {
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
   });
 
-  return getSearchableObjectMetadataItems(
-    junctionConfig?.targetFields ?? [],
+  if (!isDefined(junctionConfig)) {
+    return [];
+  }
+
+  return getSearchableObjectMetadataItems({
+    junctionConfig,
     objectMetadataItems,
-  );
+  });
 };

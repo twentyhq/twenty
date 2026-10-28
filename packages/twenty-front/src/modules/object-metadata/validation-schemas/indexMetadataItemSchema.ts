@@ -15,5 +15,5 @@ export const indexMetadataItemSchema = z.object({
   indexWhereClause: z.string().nullable(),
   isUnique: z.boolean(),
   isCustom: z.boolean().nullable().optional(),
-  objectMetadata: z.any(),
+  objectMetadata: z.any().optional(),
 }) satisfies z.ZodType<IndexMetadataItem>;

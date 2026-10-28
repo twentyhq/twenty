@@ -65,7 +65,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       options,
       this.awsClient,
       this.toolFunctions,
-      options.logicFunctionResourceService,
+      options.applicationDependencyFilesService,
       options.sdkClientArchiveService,
       options.cacheLockService,
       options.workspaceCacheService,

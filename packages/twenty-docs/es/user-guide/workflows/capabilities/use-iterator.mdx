@@ -3,7 +3,7 @@ title: Usar Iterador
 description: Recorre arrays de registros para realizar acciones en cada elemento.
 ---
 
-El iterador te permite recorrer un array de registros y realizar acciones en cada uno. Es esencial para los flujos de trabajo que necesitan procesar varios registros devueltos por Search Records o recibidos mediante webhooks.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Cuándo usar el iterador
 
@@ -108,12 +108,12 @@ En el selector de variables, puedes profundizar en un campo específico del elem
 ```
 1. Webhook Trigger (receives items array)
 2. Filter (items.length > 0)
-3. Iterator (trigger.body.items)
+3. Iterator (trigger.items)
    └── Create Record
        - Object: Order Items
        - Name: {{iterator.currentItem.name}}
        - Quantity: {{iterator.currentItem.qty}}
-       - Related Order: {{trigger.body.orderId}}
+       - Related Order: {{trigger.orderId}}
 ```
 
 ### Procesamiento condicional dentro del bucle
@@ -181,3 +181,5 @@ Filter: {{searchRecords.length}} > 0
 * [Acciones de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-actions)
 * [Cómo usar ramas](/es/user-guide/workflows/capabilities/use-branches-in-workflows)
 * [Preguntas frecuentes sobre flujos de trabajo](/es/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+
+<PageBanner illustration="card-page-sync-recovery" />

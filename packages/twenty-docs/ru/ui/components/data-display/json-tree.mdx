@@ -1,0 +1,45 @@
+---
+title: Дерево JSON
+description: Просматривайте значения JSON с разворачиваемыми узлами и пользовательскими метками.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import JsonTreeReference from '/snippets/ui/generated/components/data-display/json-tree.mdx';
+
+## Обзор
+
+`JsonTree` отображает либо JSON `value`, либо массив именованных `entries`. Передавайте все метки пустых значений и разворачивания/сворачивания, чтобы ваше приложение управляло текстом.
+
+<StoryEmbed storyId="ui-jsonvisualizer-jsontree--display" title="Раскрываемые сведения о записи" height={320} />
+
+## Использование
+
+```tsx
+import { JsonTree } from 'twenty-ui/components/data-display';
+
+export const RecordDetails = () => (
+  <JsonTree
+    value={{ name: 'Acme', active: true, contacts: [] }}
+    emptyStringLabel="Empty text"
+    emptyArrayLabel="No items"
+    emptyObjectLabel="No properties"
+    arrowButtonCollapsedLabel="Expand node"
+    arrowButtonExpandedLabel="Collapse node"
+  />
+);
+```
+
+Каждая запись имеет `id`, `label` и JSON `value`. Используйте записи, когда отображаемые метки отличаются от сохраненных ключей. По умолчанию разворачиваются уровни вложенности 0 и 1. Переопределите `shouldExpandNodeInitially={({ depth }) => depth === 0}`, чтобы разворачивать только корневой узел; последующим разворачиванием управляет каждый узел.
+
+`getNodeHighlighting(keyPath)` возвращает `blue`, `red`, `partial-blue` или `undefined`. `onNodeValueClick` получает отображаемый текст: значения конечных узлов в виде строк и соответствующую метку пустого значения для пустых строк, массивов и объектов. Дерево отображает данные и не редактирует их.
+
+Когда предоставлен `onNodeValueClick`, значения являются нативными кнопками, названными по их отображаемому тексту. Клавиша Tab перемещает фокус на значение; Enter, Space или щелчок указателем активирует его. Без обратного вызова значения остаются неинтерактивным текстом. Кнопки значений не отправляют содержащие их формы.
+
+## Свойства
+
+<JsonTreeReference />
+
+<PageBanner illustration="page-cover-hierarchy" />
