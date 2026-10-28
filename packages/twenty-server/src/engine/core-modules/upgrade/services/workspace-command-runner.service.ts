@@ -7,7 +7,6 @@ import { type RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
-import { InProcessWorkspaceMigrationActionsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-process-workspace-migration-actions.service';
 
 type WorkspaceCommandEntry = Pick<
   RegisteredWorkspaceCommand,
@@ -28,7 +27,6 @@ export class WorkspaceCommandRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly upgradeStatusService: UpgradeStatusService,
-    private readonly inProcessWorkspaceMigrationActionsService: InProcessWorkspaceMigrationActionsService,
   ) {}
 
   async runWorkspaceCommands({
@@ -58,19 +56,13 @@ export class WorkspaceCommandRunnerService {
 
     try {
       for (const workspaceCommandEntry of workspaceCommands) {
-        await this.inProcessWorkspaceMigrationActionsService.runWithActionsInProcess(
-          {
-            workspaceId,
-            callback: () =>
-              this.runSingleWorkspaceCommandOrThrow({
-                workspaceCommandEntry,
-                workspaceId,
-                executedByVersion,
-                options,
-                iteratorContext,
-              }),
-          },
-        );
+        await this.runSingleWorkspaceCommandOrThrow({
+          workspaceCommandEntry,
+          workspaceId,
+          executedByVersion,
+          options,
+          iteratorContext,
+        });
       }
 
       this.logger.log(

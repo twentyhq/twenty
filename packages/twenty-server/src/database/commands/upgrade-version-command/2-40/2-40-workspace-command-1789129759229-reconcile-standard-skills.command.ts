@@ -81,7 +81,9 @@ export class ReconcileStandardSkillsCommand extends ProvisionedWorkspaceCommandR
       existingSkills
         .filter(
           (existingSkill) =>
-            !universalIdentifiersToDelete.has(existingSkill.universalIdentifier),
+            !universalIdentifiersToDelete.has(
+              existingSkill.universalIdentifier,
+            ),
         )
         .map((existingSkill) => existingSkill.name),
     );
@@ -170,6 +172,7 @@ export class ReconcileStandardSkillsCommand extends ProvisionedWorkspaceCommandR
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             skill: {
               flatEntityToCreate: skillsToCreate,

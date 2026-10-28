@@ -131,6 +131,7 @@ export class MigrateAiAgentTextToJsonResponseFormatCommand extends ProvisionedWo
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             agent: {
               flatEntityToCreate: [],
@@ -162,7 +163,8 @@ export class MigrateAiAgentTextToJsonResponseFormatCommand extends ProvisionedWo
     agentIds: string[],
   ): Promise<void> {
     const workflowVersionRepository =
-      this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
+      this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
 

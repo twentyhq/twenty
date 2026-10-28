@@ -175,12 +175,14 @@ export class ApplicationManifestMigrationService {
     ownerFlatApplication,
     dryRun = false,
     inferDeletionFromMissingEntities = true,
+    shouldDeferActions,
   }: {
     manifest: Manifest;
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
     dryRun?: boolean;
     inferDeletionFromMissingEntities?: boolean;
+    shouldDeferActions?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -290,6 +292,7 @@ export class ApplicationManifestMigrationService {
           ownerFlatApplication.universalIdentifier,
         idByUniversalIdentifierByMetadataName,
         dryRun: isDryRun,
+        shouldDeferActions,
       });
 
     const validateBuildRunStart = performance.now();

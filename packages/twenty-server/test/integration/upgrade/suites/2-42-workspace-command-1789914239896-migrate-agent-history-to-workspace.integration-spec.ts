@@ -20,7 +20,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { restoreLegacyChatMembershipColumns } from 'test/integration/utils/restore-legacy-chat-membership-columns.util';
-import { runWithWorkspaceMigrationActionsInProcess } from 'test/integration/upgrade/utils/run-with-workspace-migration-actions-in-process.util';
+import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions-or-throw.util';
 import { type DataSource } from 'typeorm';
 
 import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
@@ -342,21 +342,18 @@ describe('versioned agent history upgrade (integration)', () => {
        WHERE message.id = seededMessage.id`,
       [JSON.stringify(seededAgentMessageSenders)],
     );
-    await runWithWorkspaceMigrationActionsInProcess({
-      workspaceId: WORKSPACE_ID,
-      callback: () =>
-        workspaceOrmManager.executeInWorkspaceContext(
-          () =>
-            provisionAgentChatThreadTargetCommand.runOnWorkspace({
-              workspaceId: WORKSPACE_ID,
-              dataSource,
-              index: 0,
-              total: 1,
-              options: {},
-            }),
-          buildSystemAuthContext(WORKSPACE_ID),
-        ),
-    });
+    await waitForDeferredWorkspaceMigrationActionsOrThrow();
+    await workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        provisionAgentChatThreadTargetCommand.runOnWorkspace({
+          workspaceId: WORKSPACE_ID,
+          dataSource,
+          index: 0,
+          total: 1,
+          options: {},
+        }),
+      buildSystemAuthContext(WORKSPACE_ID),
+    );
     await dataSource.query(
       `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
       [threadId],

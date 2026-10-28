@@ -25,7 +25,6 @@ import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/se
 import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
-import { InProcessWorkspaceMigrationActionsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-process-workspace-migration-actions.service';
 import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UpgradeAwareEntityMetadataAdapter } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-entity-metadata.adapter';
@@ -252,16 +251,6 @@ export const createUpgradeSequenceRunnerIntegrationTestModule = async ({
       {
         provide: CoreEntityCacheService,
         useValue: { get: jest.fn().mockResolvedValue(null) },
-      },
-      {
-        provide: InProcessWorkspaceMigrationActionsService,
-        useValue: {
-          runWithActionsInProcess: ({
-            callback,
-          }: {
-            callback: () => Promise<unknown>;
-          }) => callback(),
-        },
       },
       UpgradeStatusService,
       InstanceCommandRunnerService,
