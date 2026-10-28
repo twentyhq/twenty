@@ -65,7 +65,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
   const applicationRegistrationId = registration.id;
 
   const isUnclaimed = !isDefined(registration.ownerWorkspaceId);
-  const hasApplicationsPermission = useHasPermissionFlag(
+  const hasWorkspaceAppsPermission = useHasPermissionFlag(
     PermissionFlagType.WORKSPACE_APPS,
   );
 
@@ -241,7 +241,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
                   variant="outline"
                 >{t`Claim ownership`}</Button>
               )
-            : hasApplicationsPermission && (
+            : hasWorkspaceAppsPermission && (
                 <Button
                   startIcon={<IconShare />}
                   onClick={() => openDialog(TRANSFER_OWNERSHIP_MODAL_ID)}

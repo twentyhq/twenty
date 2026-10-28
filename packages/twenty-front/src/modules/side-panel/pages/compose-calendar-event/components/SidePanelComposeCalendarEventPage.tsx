@@ -34,7 +34,7 @@ export const SidePanelComposeCalendarEventPage = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const navigateSettings = useNavigateSettings();
   const { triggerApisOAuth } = useTriggerApisOAuth();
-  const hasConnectedAccountsPermission = useHasPermissionFlag(
+  const hasUserAppsPermission = useHasPermissionFlag(
     PermissionFlagType.USER_APPS,
   );
   const { enqueueToast } = useToast();
@@ -93,12 +93,8 @@ export const SidePanelComposeCalendarEventPage = () => {
       <CalendarEventComposerFields
         composerState={composerState}
         contextRecord={composeCalendarEventInitialValues.contextRecord}
-        onAddAccount={
-          hasConnectedAccountsPermission ? handleAddAccount : undefined
-        }
-        onReauthorize={
-          hasConnectedAccountsPermission ? handleReauthorize : undefined
-        }
+        onAddAccount={hasUserAppsPermission ? handleAddAccount : undefined}
+        onReauthorize={hasUserAppsPermission ? handleReauthorize : undefined}
       />
       <SidePanelFooter
         actions={[

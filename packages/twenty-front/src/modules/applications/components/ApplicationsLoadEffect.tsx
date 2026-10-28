@@ -23,7 +23,7 @@ export const ApplicationsLoadEffect = () => {
   const store = useStore();
   const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
-  const hasApplicationsPermission = useHasPermissionFlag(
+  const hasWorkspaceAppsPermission = useHasPermissionFlag(
     PermissionFlagType.WORKSPACE_APPS,
   );
 
@@ -46,7 +46,7 @@ export const ApplicationsLoadEffect = () => {
 
     store.set(applicationsLoadSequenceState.atom, loadSequence);
 
-    if (!hasApplicationsPermission || isOnAuthOrOnboardingPage) {
+    if (!hasWorkspaceAppsPermission || isOnAuthOrOnboardingPage) {
       return;
     }
 
@@ -105,7 +105,7 @@ export const ApplicationsLoadEffect = () => {
   }, [
     client,
     store,
-    hasApplicationsPermission,
+    hasWorkspaceAppsPermission,
     isOnAuthOrOnboardingPage,
     replaceDraft,
     applyChanges,

@@ -56,7 +56,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { accounts: myAccounts, loading } = useMyConnectedAccounts();
   const { triggerApisOAuth } = useTriggerApisOAuth();
-  const hasConnectedAccountsPermission = useHasPermissionFlag(
+  const hasUserAppsPermission = useHasPermissionFlag(
     PermissionFlagType.USER_APPS,
   );
 
@@ -117,7 +117,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
           }
           readonly={actionOptions.readonly}
           callToActionButton={
-            hasConnectedAccountsPermission
+            hasUserAppsPermission
               ? {
                   onClick: () => {
                     closeSidePanelMenu();
@@ -134,12 +134,12 @@ export const WorkflowEditActionCreateCalendarEvent = ({
             status={'error'}
             title={t`Missing calendar permission.`}
             description={
-              hasConnectedAccountsPermission
+              hasUserAppsPermission
                 ? t`This account is connected, but we don't have permission to create calendar events on your behalf yet. You'll be redirected to approve this access.`
                 : t`Ask a workspace admin for the User Apps permission to reconnect this account.`
             }
             action={
-              hasConnectedAccountsPermission ? (
+              hasUserAppsPermission ? (
                 <Callout.Action
                   type="button"
                   onClick={handleReauthorize}
