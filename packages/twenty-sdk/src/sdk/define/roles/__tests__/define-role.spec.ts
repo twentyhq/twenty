@@ -47,6 +47,23 @@ describe('defineRole', () => {
     expect(result.config?.permissionFlagUniversalIdentifiers).toHaveLength(2);
   });
 
+  it('should return error when a permission flag is listed twice', () => {
+    const config = {
+      ...validConfig,
+      permissionFlagUniversalIdentifiers: [
+        SystemPermissionFlag.UPLOAD_FILE,
+        SystemPermissionFlag.UPLOAD_FILE,
+      ],
+    };
+
+    const result = defineRole(config);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      `Duplicate permission flag universalIdentifier "${SystemPermissionFlag.UPLOAD_FILE}"`,
+    );
+  });
+
   it('should return error when universalIdentifier is missing', () => {
     const config = {
       label: 'App User',
