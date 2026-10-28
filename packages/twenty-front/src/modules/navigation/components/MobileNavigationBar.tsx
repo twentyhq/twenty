@@ -8,6 +8,7 @@ import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingC
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLocation } from 'react-router-dom';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 
@@ -63,11 +64,10 @@ const StyledNavigationBar = styled.nav`
   }
 `;
 
-const StyledDivider = styled.span`
+const StyledSeparatorContainer = styled.div`
   align-self: center;
-  background: ${themeCssVariables.border.color.medium};
+  display: flex;
   height: ${themeCssVariables.spacing[5]};
-  width: 1px;
 `;
 
 export const MobileNavigationBar = () => {
@@ -103,7 +103,11 @@ export const MobileNavigationBar = () => {
               isHidden={isHidden}
             />
           ))}
-          {tabItems.length > 1 && <StyledDivider aria-hidden />}
+          {tabItems.length > 1 && (
+            <StyledSeparatorContainer>
+              <Separator orientation="vertical" />
+            </StyledSeparatorContainer>
+          )}
           {actionItems.map((item) => (
             <MobileNavigationBarItem
               key={item.name}

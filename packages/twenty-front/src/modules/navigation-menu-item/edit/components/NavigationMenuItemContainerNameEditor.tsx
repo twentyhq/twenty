@@ -1,22 +1,15 @@
-import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type KeyboardEvent, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { DropdownMenuIconAndNameContainer } from '@/ui/layout/dropdown/components/DropdownMenuIconAndNameContainer';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
-
-const StyledRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-`;
 
 type NavigationMenuItemContainerNameEditorProps = {
   item: NavigationMenuItem;
@@ -50,7 +43,7 @@ export const NavigationMenuItemContainerNameEditor = ({
 
   return (
     <DropdownMenuItemsContainer>
-      <StyledRow>
+      <DropdownMenuIconAndNameContainer>
         {hasIconPicker && (
           <IconPicker
             size="sm"
@@ -78,7 +71,7 @@ export const NavigationMenuItemContainerNameEditor = ({
           }}
           onKeyDown={handleKeyDown}
         />
-      </StyledRow>
+      </DropdownMenuIconAndNameContainer>
     </DropdownMenuItemsContainer>
   );
 };
