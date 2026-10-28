@@ -11,10 +11,7 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import {
-  GettingStartedStep,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { GettingStartedStep } from '~/generated-metadata/graphql';
 
 export const GETTING_STARTED_STEP_CONTENT: Record<
   GettingStartedStep,
@@ -24,7 +21,6 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
     description: MessageDescriptor;
     Icon: IconComponent;
     iconColor: string;
-    permissionFlag: PermissionFlagType;
   }
 > = {
   [GettingStartedStep.CONNECT_MAILBOX]: {
@@ -33,7 +29,6 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
     description: msg`Companies and people fill in from your emails and meetings.`,
     Icon: IconAt,
     iconColor: themeCssVariables.tag.text.blue,
-    permissionFlag: PermissionFlagType.CONNECTED_ACCOUNTS,
   },
   [GettingStartedStep.IMPORT_DATA]: {
     title: msg`Import your data`,
@@ -41,7 +36,6 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
     description: msg`Bring your contacts into Twenty from a spreadsheet.`,
     Icon: IconFileImport,
     iconColor: themeCssVariables.tag.text.gray,
-    permissionFlag: PermissionFlagType.IMPORT_CSV,
   },
   [GettingStartedStep.INSTALL_APP]: {
     title: msg`Install an app`,
@@ -49,7 +43,6 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
     description: msg`Add tools to your workspace.`,
     Icon: IconApps,
     iconColor: themeCssVariables.tag.text.turquoise,
-    permissionFlag: PermissionFlagType.APPLICATIONS,
   },
   [GettingStartedStep.INVITE_TEAM]: {
     title: msg`Invite your team`,
@@ -57,7 +50,6 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
     description: msg`Bring your team into Twenty.`,
     Icon: IconUsers,
     iconColor: themeCssVariables.tag.text.orange,
-    permissionFlag: PermissionFlagType.WORKSPACE_MEMBERS,
   },
   [GettingStartedStep.HANDOVER_DEALS]: {
     title: msg`Hand over won deals`,
@@ -65,7 +57,6 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
     description: msg`Start the handover when a deal is won.`,
     Icon: IconSettingsAutomation,
     iconColor: themeCssVariables.tag.text.gray,
-    permissionFlag: PermissionFlagType.WORKFLOWS,
   },
   [GettingStartedStep.FOLLOW_UP_DEALS]: {
     title: msg`Follow up on closing deals`,
@@ -73,6 +64,5 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
     description: msg`An agent drafts a follow-up for every deal about to close.`,
     Icon: IconSparkles,
     iconColor: themeCssVariables.tag.text.purple,
-    permissionFlag: PermissionFlagType.AI,
   },
 };

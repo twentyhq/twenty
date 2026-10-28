@@ -2,7 +2,6 @@ import { buildHandoverWorkflow } from 'src/engine/core-modules/getting-started/u
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 
 const handoverWorkflow = buildHandoverWorkflow({
-  connectedAccountId: 'account-id',
   companyIdFieldId: 'company-id-field',
   memberIdFieldId: 'member-id-field',
   opportunityStageFieldId: 'opportunity-stage-field',

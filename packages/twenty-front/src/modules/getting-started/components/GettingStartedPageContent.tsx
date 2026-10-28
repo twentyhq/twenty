@@ -13,12 +13,10 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
-import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
 import { IconCheck, IconListCheck } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
@@ -114,14 +112,13 @@ const StyledFooter = styled.div`
 export const GettingStartedPageContent = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
   const { numberFormat } = useNumberFormat();
   const { progress, loading, error, refetch } = useGettingStartedProgress();
   const { updateGettingStarted, isSaving } = useUpdateGettingStarted();
   const { formattedTrialEnd, daysLeft, isCountdownVisible, canKeepPlan } =
     useGettingStartedTrial();
   const { justCompletedStep, clearJustCompletedStep } =
-    useGettingStartedJustCompletedStep({ progress, permissionFlagMap });
+    useGettingStartedJustCompletedStep({ progress });
 
   const steps = progress?.steps ?? [];
   const completedSteps = progress?.completedSteps ?? [];
@@ -132,7 +129,6 @@ export const GettingStartedPageContent = () => {
       steps,
       completedSteps,
       selectedStep: justCompletedStep ?? progress?.selectedStep,
-      permissionFlagMap,
     });
   const isSelectedStepCompleted = completedSteps.includes(selectedStep);
   const creditsEarned = progress?.creditsEarned ?? 0;
@@ -245,15 +241,17 @@ export const GettingStartedPageContent = () => {
                 />
               )}
             </StyledGoal>
-            <GettingStartedStepStack
-              steps={steps}
-              selectedStep={selectedStep}
-              completedSteps={completedSteps}
-              stepRewards={stepRewards}
-              justCompletedStep={justCompletedStep}
-              isSaving={isSaving}
-              onSelectStep={selectStep}
-            />
+            {isNonEmptyArray(steps) && (
+              <GettingStartedStepStack
+                steps={steps}
+                selectedStep={selectedStep}
+                completedSteps={completedSteps}
+                stepRewards={stepRewards}
+                justCompletedStep={justCompletedStep}
+                isSaving={isSaving}
+                onSelectStep={selectStep}
+              />
+            )}
             {!isComplete && (
               <StyledFooter>
                 <Button

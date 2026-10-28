@@ -5,15 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type GettingStartedProgressQuery,
   type GettingStartedStep,
-  type PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
 export const useGettingStartedJustCompletedStep = ({
   progress,
-  permissionFlagMap,
 }: {
   progress: GettingStartedProgressQuery['gettingStartedProgress'] | undefined;
-  permissionFlagMap: Record<PermissionFlagType, boolean>;
 }) => {
   const [seenProgress, setSeenProgress] = useState(progress);
   const [justCompletedStep, setJustCompletedStep] =
@@ -26,7 +23,6 @@ export const useGettingStartedJustCompletedStep = ({
           steps: seenProgress.steps,
           completedSteps: seenProgress.completedSteps,
           selectedStep: seenProgress.selectedStep,
-          permissionFlagMap,
         });
 
       if (

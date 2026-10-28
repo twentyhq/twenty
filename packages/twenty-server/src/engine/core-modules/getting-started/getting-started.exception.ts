@@ -14,7 +14,7 @@ const getGettingStartedExceptionUserFriendlyMessage = (
 ) => {
   switch (code) {
     case GettingStartedExceptionCode.MAILBOX_NOT_CONNECTED:
-      return msg`Connect a mailbox before preparing this workflow.`;
+      return msg`Connect a mailbox before turning on this workflow.`;
     case GettingStartedExceptionCode.MAILBOX_NOT_USABLE:
       return msg`This workflow uses a mailbox you cannot use. Edit the draft and choose one of your own mailboxes.`;
     default:

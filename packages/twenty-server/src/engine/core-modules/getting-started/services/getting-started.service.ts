@@ -24,8 +24,10 @@ import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 type GettingStartedScope = {
   userId: string;
@@ -41,6 +43,7 @@ export class GettingStartedService {
     private readonly onboardingService: OnboardingService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
+    private readonly permissionsService: PermissionsService,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
@@ -51,15 +54,29 @@ export class GettingStartedService {
     workspaceId,
     userWorkspaceId,
   }: GettingStartedScope): Promise<GettingStartedProgressDTO> {
-    const [userVars, creditsEarnedMicro] = await Promise.all([
+    const [
+      userVars,
+      creditsEarnedMicro,
+      { permissionFlags },
+      ownSendingMailbox,
+    ] = await Promise.all([
       this.userVarsService.getAll({ userId, workspaceId }),
       this.onboardingService.sumEarnedRewardsMicro({
         workspaceId,
         rewards: Object.values(GETTING_STARTED_STEP_REWARDS).filter(isDefined),
       }),
+      this.permissionsService.getUserWorkspacePermissions({
+        userWorkspaceId,
+        workspaceId,
+      }),
+      this.findOwnSendingMailbox({ workspaceId, userWorkspaceId }),
     ]);
 
-    const steps = getGettingStartedSteps({ userEmail });
+    const steps = getGettingStartedSteps({
+      userEmail,
+      permissionFlags,
+      hasSendingMailbox: isDefined(ownSendingMailbox),
+    });
 
     const isSavedAsCompleted = (step: GettingStartedStep) =>
       isDefined(
@@ -190,12 +207,8 @@ export class GettingStartedService {
         workspaceId,
       );
 
-    if (
-      !isGettingStartedEnabled ||
-      !getGettingStartedSteps({ userEmail }).includes(
-        GettingStartedStep.INVITE_TEAM,
-      )
-    ) {
+    // Senders already hold the members permission the invite step needs
+    if (!isGettingStartedEnabled || !isWorkEmail(userEmail)) {
       return false;
     }
 
@@ -258,7 +271,7 @@ export class GettingStartedService {
   }): Promise<GettingStartedStep[]> {
     const [hasConnectedMailbox, hasInstalledFeaturedApp] = await Promise.all([
       steps.includes(GettingStartedStep.CONNECT_MAILBOX)
-        ? this.hasConnectedMailbox({ workspaceId, userWorkspaceId })
+        ? this.hasOwnDraftingMailbox({ workspaceId, userWorkspaceId })
         : false,
       steps.includes(GettingStartedStep.INSTALL_APP)
         ? this.hasInstalledFeaturedApp(workspaceId)
@@ -277,7 +290,25 @@ export class GettingStartedService {
     });
   }
 
-  private async hasConnectedMailbox({
+  async findOwnSendingMailbox({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }) {
+    const mailboxes =
+      await this.connectedAccountMetadataService.findMailboxesUsableByCaller({
+        workspaceId,
+        userWorkspaceId,
+        operation: EmailOperation.SEND,
+      });
+
+    // A usable USER-scope mailbox is always the caller's own
+    return mailboxes.find((mailbox) => mailbox.scope === 'USER');
+  }
+
+  private async hasOwnDraftingMailbox({
     workspaceId,
     userWorkspaceId,
   }: {

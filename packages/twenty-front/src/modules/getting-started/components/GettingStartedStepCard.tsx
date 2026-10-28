@@ -2,14 +2,12 @@ import { GettingStartedStepRewardChip } from '@/getting-started/components/Getti
 import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
 import { GETTING_STARTED_STEP_ACTIONS } from '@/getting-started/constants/GettingStartedStepActions';
 import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedStepContent';
-import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { AnimatedCheckmark } from '@/ui/navigation/step-bar/components/internal/AnimatedCheckmark/AnimatedCheckmark';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconCheck } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { Heading, Text } from 'twenty-ui/primitives/typography';
+import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import {
@@ -71,7 +69,6 @@ export const GettingStartedStepCard = ({
 }: GettingStartedStepCardProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
 
   const content = GETTING_STARTED_STEP_CONTENT[step];
   const StepAction = GETTING_STARTED_STEP_ACTIONS[step];
@@ -104,14 +101,7 @@ export const GettingStartedStepCard = ({
         <GettingStartedStepRewardChip stepReward={stepReward} />
       </StyledHeading>
       <StyledBody>
-        {permissionFlagMap[content.permissionFlag] ? (
-          <StepAction />
-        ) : (
-          <Text
-            size="sm"
-            color="tertiary"
-          >{t`Ask your workspace admin for permission to complete this step.`}</Text>
-        )}
+        <StepAction />
       </StyledBody>
     </Card.Root>
   );

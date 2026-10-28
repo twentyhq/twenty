@@ -8,6 +8,7 @@ import { GettingStartedService } from 'src/engine/core-modules/getting-started/s
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
@@ -16,6 +17,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ConnectedAccountMetadataModule,
     FeatureFlagModule,
     OnboardingModule,
+    PermissionsModule,
     TypeOrmModule.forFeature([ApplicationEntity]),
   ],
   providers: [

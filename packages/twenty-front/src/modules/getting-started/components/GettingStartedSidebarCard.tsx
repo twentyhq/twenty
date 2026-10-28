@@ -2,11 +2,10 @@ import { GettingStartedKeepPlanButton } from '@/getting-started/components/Getti
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
 import { getGettingStartedRemainingSteps } from '@/getting-started/utils/getGettingStartedRemainingSteps';
-import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -21,6 +20,8 @@ import {
 import { ProgressBar } from 'twenty-ui/primitives/feedback';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+
+import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -115,8 +116,8 @@ const StyledTrialDay = styled.span`
 export const GettingStartedSidebarCard = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { progress } = useGettingStartedProgress();
-  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const isTrialing = useSubscriptionStatus() === SubscriptionStatus.Trialing;
+  const { progress } = useGettingStartedProgress({ isEnabled: isTrialing });
   const { isCountdownVisible, daysLeft, trialDays, canKeepPlan } =
     useGettingStartedTrial();
   const isNavigationDrawerContentExpanded =
@@ -124,6 +125,7 @@ export const GettingStartedSidebarCard = () => {
   const isGettingStartedPageOpen = isDefined(useMatch(AppPath.GettingStarted));
 
   if (
+    !isTrialing ||
     !isNavigationDrawerContentExpanded ||
     !isDefined(progress) ||
     progress.isHidden
@@ -134,7 +136,6 @@ export const GettingStartedSidebarCard = () => {
   const remainingSteps = getGettingStartedRemainingSteps({
     steps: progress.steps,
     completedSteps: progress.completedSteps,
-    permissionFlagMap,
   });
 
   if (remainingSteps.length === 0) {

@@ -6,15 +6,14 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/work
 
 const CONNECTED_ACCOUNT_ID = '20202020-0000-4000-8000-000000000001';
 
-const { steps } = buildHandoverWorkflow({
-  connectedAccountId: CONNECTED_ACCOUNT_ID,
+const { steps: draftSteps } = buildHandoverWorkflow({
   companyIdFieldId: 'company-id-field',
   memberIdFieldId: 'member-id-field',
   opportunityStageFieldId: 'opportunity-stage-field',
 });
 
 const withEmailSender = (connectedAccountId: string): WorkflowAction[] =>
-  steps.map((step) =>
+  draftSteps.map((step) =>
     step.type === WorkflowActionType.SEND_EMAIL
       ? {
           ...step,
@@ -30,13 +29,13 @@ describe('getWorkflowStepConnectedAccountIds', () => {
   it.each([
     {
       description: 'returns the account the handover email sends from',
-      steps,
+      steps: withEmailSender(CONNECTED_ACCOUNT_ID),
       expectedIds: [CONNECTED_ACCOUNT_ID],
     },
     {
       description:
-        'keeps an empty sender, which falls back to a default account',
-      steps: withEmailSender(''),
+        'keeps the empty sender of the draft, which falls back to a default account',
+      steps: draftSteps,
       expectedIds: [''],
     },
     {

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { EmailOperation } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type GettingStartedWorkflowDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-workflow.dto';
@@ -19,14 +20,17 @@ import {
 import { buildHandoverWorkflow } from 'src/engine/core-modules/getting-started/utils/build-handover-workflow.util';
 import { getWorkflowStepConnectedAccountIds } from 'src/engine/core-modules/getting-started/utils/get-workflow-step-connected-account-ids.util';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
+import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
+import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
 export class GettingStartedWorkflowWorkspaceService {
@@ -37,6 +41,7 @@ export class GettingStartedWorkflowWorkspaceService {
     private readonly coreWorkflowMutationWorkspaceService: CoreWorkflowMutationWorkspaceService,
     private readonly coreWorkflowLifecycleWorkspaceService: CoreWorkflowLifecycleWorkspaceService,
     private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
+    private readonly coreWorkflowVersionMutationWorkspaceService: CoreWorkflowVersionMutationWorkspaceService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly gettingStartedService: GettingStartedService,
@@ -70,7 +75,7 @@ export class GettingStartedWorkflowWorkspaceService {
 
         const workflow = isDefined(savedCoreWorkflow)
           ? savedWorkflow
-          : await this.createWorkflowDraftOrThrow({
+          : await this.createWorkflowDraft({
               workspaceId,
               userWorkspaceId,
             });
@@ -83,7 +88,7 @@ export class GettingStartedWorkflowWorkspaceService {
           savedCoreWorkflow?.statuses.includes(WorkflowStatus.ACTIVE) ?? false;
 
         if (!isWorkflowActive) {
-          await this.assertConnectedAccountsAreUsableByCallerOrThrow({
+          await this.fillEmptySendersAndAssertAccountsOrThrow({
             workspaceId,
             userWorkspaceId,
             coreWorkflowVersionId: workflow.versionId,
@@ -111,9 +116,9 @@ export class GettingStartedWorkflowWorkspaceService {
     );
   }
 
-  // The draft is shared by the workspace, so whoever turns it on must be allowed
-  // to use every connected account it acts from
-  private async assertConnectedAccountsAreUsableByCallerOrThrow({
+  // The shared draft has no sender, so whoever turns it on sends from their own
+  // mailbox, and must be allowed to use every account the draft acts from
+  private async fillEmptySendersAndAssertAccountsOrThrow({
     workspaceId,
     userWorkspaceId,
     coreWorkflowVersionId,
@@ -134,13 +139,25 @@ export class GettingStartedWorkflowWorkspaceService {
       }),
     ]);
 
+    const steps = coreWorkflowVersion?.steps ?? [];
+    const filledEmailSteps = await this.fillEmptyEmailSendersOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      steps,
+    });
+
     const usableConnectedAccountIds = usableConnectedAccounts.map(
       (connectedAccount) => connectedAccount.id,
     );
 
     const hasConnectedAccountNotUsableByCaller =
       getWorkflowStepConnectedAccountIds({
-        steps: coreWorkflowVersion?.steps ?? [],
+        steps: steps.map(
+          (step) =>
+            filledEmailSteps.find(
+              (filledEmailStep) => filledEmailStep.id === step.id,
+            ) ?? step,
+        ),
       }).some(
         (connectedAccountId) =>
           !usableConnectedAccountIds.includes(connectedAccountId),
@@ -152,25 +169,53 @@ export class GettingStartedWorkflowWorkspaceService {
         GettingStartedExceptionCode.MAILBOX_NOT_USABLE,
       );
     }
+
+    if (
+      isNonEmptyArray(filledEmailSteps) &&
+      coreWorkflowVersion?.status !== WorkflowVersionStatus.DRAFT
+    ) {
+      throw new GettingStartedException(
+        `Workflow version ${coreWorkflowVersionId} has an email step without a sender and is not a draft`,
+        GettingStartedExceptionCode.MAILBOX_NOT_USABLE,
+      );
+    }
+
+    // Each update rewrites the version's steps, so they run one at a time
+    for (const filledEmailStep of filledEmailSteps) {
+      await this.coreWorkflowVersionMutationWorkspaceService.updateStep({
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowVersionId,
+        step: filledEmailStep,
+      });
+    }
   }
 
-  private async createWorkflowDraftOrThrow({
+  private async fillEmptyEmailSendersOrThrow({
     workspaceId,
     userWorkspaceId,
+    steps,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-  }): Promise<GettingStartedWorkflowDTO> {
-    const mailboxes =
-      await this.connectedAccountMetadataService.findMailboxesUsableByCaller({
-        workspaceId,
-        userWorkspaceId,
-        operation: EmailOperation.SEND,
-      });
-
-    const mailbox = mailboxes.find(
-      (usableMailbox) => usableMailbox.scope === 'USER',
+    steps: WorkflowAction[];
+  }): Promise<WorkflowAction[]> {
+    const emailStepsWithoutSender = steps.flatMap((step) =>
+      (step.type === WorkflowActionType.SEND_EMAIL ||
+        step.type === WorkflowActionType.DRAFT_EMAIL) &&
+      !isNonEmptyString(step.settings.input.connectedAccountId)
+        ? [step]
+        : [],
     );
+
+    if (!isNonEmptyArray(emailStepsWithoutSender)) {
+      return [];
+    }
+
+    const mailbox = await this.gettingStartedService.findOwnSendingMailbox({
+      workspaceId,
+      userWorkspaceId,
+    });
 
     if (!isDefined(mailbox)) {
       throw new GettingStartedException(
@@ -179,6 +224,22 @@ export class GettingStartedWorkflowWorkspaceService {
       );
     }
 
+    return emailStepsWithoutSender.map((emailStep) => ({
+      ...emailStep,
+      settings: {
+        ...emailStep.settings,
+        input: { ...emailStep.settings.input, connectedAccountId: mailbox.id },
+      },
+    }));
+  }
+
+  private async createWorkflowDraft({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<GettingStartedWorkflowDTO> {
     const { flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -188,7 +249,6 @@ export class GettingStartedWorkflowWorkspaceService {
       );
 
     const handoverWorkflow = buildHandoverWorkflow({
-      connectedAccountId: mailbox.id,
       companyIdFieldId: findFlatEntityByUniversalIdentifierOrThrow({
         flatEntityMaps: flatFieldMetadataMaps,
         universalIdentifier:

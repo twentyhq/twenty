@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 const GETTING_STARTED_PROGRESS_QUERY = gql`
@@ -93,6 +94,36 @@ describe('gettingStarted (e2e)', () => {
       expect(
         await findJaneUserVar('GETTING_STARTED_STEP_CONNECT_MAILBOX'),
       ).toEqual({ completedAt: expect.any(String) });
+    });
+
+    it('leaves out the handover step without a mailbox that can send', async () => {
+      const activeMailboxes: { id: string }[] =
+        await globalThis.testDataSource.query(
+          `SELECT "id" FROM core."connectedAccount" WHERE "userWorkspaceId" = $1 AND "archivedAt" IS NULL`,
+          [USER_WORKSPACE_DATA_SEED_IDS.JANE],
+        );
+      const activeMailboxIds = activeMailboxes.map(({ id }) => id);
+
+      await globalThis.testDataSource.query(
+        `UPDATE core."connectedAccount" SET "archivedAt" = NOW() WHERE "id" = ANY($1)`,
+        [activeMailboxIds],
+      );
+
+      try {
+        const response = await makeMetadataApiRequest({
+          query: GETTING_STARTED_PROGRESS_QUERY,
+        });
+
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.gettingStartedProgress.steps).not.toContain(
+          'HANDOVER_DEALS',
+        );
+      } finally {
+        await globalThis.testDataSource.query(
+          `UPDATE core."connectedAccount" SET "archivedAt" = NULL WHERE "id" = ANY($1)`,
+          [activeMailboxIds],
+        );
+      }
     });
   });
 
@@ -237,6 +268,17 @@ describe('gettingStarted (e2e)', () => {
       });
 
       expect(version.status).toBe('ACTIVE');
+
+      const emailStep = version.steps?.find(
+        (step) => step.type === 'SEND_EMAIL',
+      );
+      const [sender]: { userWorkspaceId: string }[] =
+        await globalThis.testDataSource.query(
+          `SELECT "userWorkspaceId" FROM core."connectedAccount" WHERE "id" = $1`,
+          [emailStep?.settings.input.connectedAccountId],
+        );
+
+      expect(sender?.userWorkspaceId).toBe(USER_WORKSPACE_DATA_SEED_IDS.JANE);
 
       const progressResponse = await makeMetadataApiRequest({
         query: GETTING_STARTED_PROGRESS_QUERY,

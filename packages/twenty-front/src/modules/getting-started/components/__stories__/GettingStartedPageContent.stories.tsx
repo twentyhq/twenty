@@ -21,6 +21,8 @@ import {
   type UpdateGettingStartedMutationVariables,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockGettingStartedSteps } from '~/testing/mock-data/gettingStartedSteps';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
@@ -71,6 +73,8 @@ const meta: Meta<typeof GettingStartedPageContent> = {
   component: GettingStartedPageContent,
   decorators: [
     ToastDecorator,
+    ObjectMetadataItemsDecorator,
+    ComponentWithRouterDecorator,
     (Story, { parameters }) => {
       const { apolloMocks }: { apolloMocks?: MockedResponse[] } = parameters;
 
@@ -120,7 +124,9 @@ export const Trial: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByText('days left in your trial')).toBeVisible();
+    await expect(
+      await canvas.findByText('days left in your trial'),
+    ).toBeVisible();
     await userEvent.click(
       within(
         await canvas.findByRole('navigation', {

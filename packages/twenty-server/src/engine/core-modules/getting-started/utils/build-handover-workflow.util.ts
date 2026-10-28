@@ -11,12 +11,10 @@ import {
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export const buildHandoverWorkflow = ({
-  connectedAccountId,
   companyIdFieldId,
   memberIdFieldId,
   opportunityStageFieldId,
 }: {
-  connectedAccountId: string;
   companyIdFieldId: string;
   memberIdFieldId: string;
   opportunityStageFieldId: string;
@@ -116,7 +114,7 @@ export const buildHandoverWorkflow = ({
       settings: {
         ...stepSettings,
         input: {
-          connectedAccountId,
+          connectedAccountId: '',
           recipients: { to: `{{${ownerStepId}.first.userEmail}}` },
           subject: 'Deal won: {{trigger.properties.after.name}}',
           body: JSON.stringify({

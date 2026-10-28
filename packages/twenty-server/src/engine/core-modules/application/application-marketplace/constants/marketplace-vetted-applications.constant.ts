@@ -36,4 +36,9 @@ export const MARKETPLACE_VETTED_APPLICATIONS: {
     sourcePackage: '@twentyhq/teams',
     position: 6,
   },
+  {
+    universalIdentifier: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.FATHOM,
+    sourcePackage: '@twentyhq/fathom',
+    position: 7,
+  },
 ];

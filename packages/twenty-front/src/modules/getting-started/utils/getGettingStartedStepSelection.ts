@@ -1,32 +1,20 @@
-import { getGettingStartedRemainingSteps } from '@/getting-started/utils/getGettingStartedRemainingSteps';
-import {
-  type GettingStartedStep,
-  type PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { type GettingStartedStep } from '~/generated-metadata/graphql';
 
 export const getGettingStartedStepSelection = ({
   steps,
   completedSteps,
   selectedStep,
-  permissionFlagMap,
 }: {
   steps: GettingStartedStep[];
   completedSteps: GettingStartedStep[];
   selectedStep: GettingStartedStep | null | undefined;
-  permissionFlagMap: Record<PermissionFlagType, boolean>;
 }): {
   selectedStep: GettingStartedStep;
   nextStep: GettingStartedStep;
   stepAfterSkip: GettingStartedStep;
 } => {
   const currentStep =
-    getGettingStartedRemainingSteps({
-      steps,
-      completedSteps,
-      permissionFlagMap,
-    })[0] ??
-    steps.find((step) => !completedSteps.includes(step)) ??
-    steps[0];
+    steps.find((step) => !completedSteps.includes(step)) ?? steps[0];
   const displayedStep = selectedStep ?? currentStep;
   const displayedStepIndex = steps.indexOf(displayedStep);
   const nextStep =

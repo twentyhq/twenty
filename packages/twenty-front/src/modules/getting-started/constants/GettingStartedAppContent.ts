@@ -5,10 +5,10 @@ import {
   TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/application';
 import {
-  IconClock,
+  IconBlockquote,
   type IconComponent,
-  IconMicrophone,
-  IconSparkles,
+  IconMessage,
+  IconVideo,
 } from 'twenty-ui/icon';
 
 export const GETTING_STARTED_APP_CONTENT: Record<
@@ -19,19 +19,19 @@ export const GETTING_STARTED_APP_CONTENT: Record<
     Icon: IconComponent;
   }
 > = {
-  [TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.CALL_RECORDER]: {
-    label: msg`Call recorder`,
-    description: msg`Record calls and keep meeting notes in Twenty.`,
-    Icon: IconMicrophone,
+  [TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.SLACK]: {
+    label: msg`Slack`,
+    description: msg`Ask Twenty from Slack and post to Slack from your workflows.`,
+    Icon: IconMessage,
   },
-  [TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.PEOPLE_DATA_LABS]: {
-    label: msg`Enrichment`,
-    description: msg`Enrich people and companies with People Data Labs.`,
-    Icon: IconSparkles,
+  [TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.TEAMS]: {
+    label: msg`Microsoft Teams`,
+    description: msg`Bring your Teams meeting transcripts into Twenty.`,
+    Icon: IconBlockquote,
   },
-  [TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.LAST_CONTACT]: {
-    label: msg`Last contact`,
-    description: msg`See when you last spoke with each contact.`,
-    Icon: IconClock,
+  [TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.FATHOM]: {
+    label: msg`Fathom`,
+    description: msg`Bring your Fathom recordings, summaries and action items into Twenty.`,
+    Icon: IconVideo,
   },
 };
