@@ -2192,6 +2192,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(admittedRecords.map((record) => String(record.id)));
   }
 
+  // TODO(@charlesBochet): temporary, per-subject policy evaluation will be replaced
   async findSubjectIdsAdmittedByRowAccessPolicies({
     recordId,
     policiesBySubjectId,

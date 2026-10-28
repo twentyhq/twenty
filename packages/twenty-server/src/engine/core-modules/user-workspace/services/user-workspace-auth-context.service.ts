@@ -3,12 +3,8 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { isNonEmptyString } from '@sniptt/guards';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
-import {
-  assertIsDefinedOrThrow,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import {
@@ -28,28 +24,6 @@ export class UserWorkspaceAuthContextService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
-
-  async findActiveUserWorkspaces({
-    workspaceId,
-    userWorkspaceIds,
-  }: {
-    workspaceId: string;
-    userWorkspaceIds: string[];
-  }): Promise<UserWorkspaceEntity[]> {
-    if (!isNonEmptyString(workspaceId) || !isNonEmptyArray(userWorkspaceIds)) {
-      return [];
-    }
-
-    const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: { id: In(userWorkspaceIds), workspaceId },
-      relations: { user: true },
-    });
-
-    return userWorkspaces.filter(
-      ({ user }) =>
-        isDefined(user) && !user.disabled && !isDefined(user.deletedAt),
-    );
-  }
 
   async resolveWorkspaceMember({
     workspaceId,

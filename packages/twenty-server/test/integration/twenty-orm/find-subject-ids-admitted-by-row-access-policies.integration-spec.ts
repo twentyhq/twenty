@@ -72,7 +72,6 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
     }
   });
 
-  // Parameters are named per policy, as the row access builders do
   const buildIdPolicy = (personId: string): RowAccessPolicy => {
     const parameterName = `personId_${randomUUID().replace(/-/g, '')}`;
 
