@@ -57,9 +57,13 @@ export interface AgentChatChannelRole {
 }
 
 export interface AgentChatChannelSummary {
+    assignedToMeCount: Scalars['Int']
     channelId: Scalars['UUID']
+    doneCount: Scalars['Int']
+    hasUnreadAssignedToMe: Scalars['Boolean']
     hasUnreadOpen: Scalars['Boolean']
     openCount: Scalars['Int']
+    snoozedCount: Scalars['Int']
     __typename: 'AgentChatChannelSummary'
 }
 
@@ -4241,9 +4245,13 @@ export interface AgentChatChannelRoleGenqlSelection{
 }
 
 export interface AgentChatChannelSummaryGenqlSelection{
+    assignedToMeCount?: boolean | number
     channelId?: boolean | number
+    doneCount?: boolean | number
+    hasUnreadAssignedToMe?: boolean | number
     hasUnreadOpen?: boolean | number
     openCount?: boolean | number
+    snoozedCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

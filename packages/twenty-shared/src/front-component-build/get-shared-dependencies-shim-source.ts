@@ -1,6 +1,6 @@
-import { type SharedDependenciesExportNames } from '@/app/bundles/front-component-build/shared-dependencies-build/types/shared-dependencies-export-names.type';
-import { toSharedDependenciesNamespaceIdentifier } from '@/app/bundles/front-component-build/shared-dependencies-build/utils/to-shared-dependencies-namespace-identifier';
-import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
+import { type SharedDependenciesExportNames } from '@/front-component-build/shared-dependencies-export-names.type';
+import { toSharedDependenciesNamespaceIdentifier } from '@/front-component-build/to-shared-dependencies-namespace-identifier';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from '@/application/constants/FrontComponentSharedDependenciesImportSpecifier';
 
 export const getSharedDependenciesShimSource = ({
   specifier,
