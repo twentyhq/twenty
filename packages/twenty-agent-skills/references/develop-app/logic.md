@@ -113,6 +113,8 @@ To let members reply to an app's message channels, declare `defineMessagingProvi
 
 ## MCP Servers
 
+Beta: MCP servers are not live yet. Workspaces cannot use their tools until the feature ships, so do not build a feature that depends on them.
+
 To let the workspace's AI call a remote MCP server (Streamable HTTP) without syncing its data into Twenty, declare `defineMcpServer` with a snake_case `name` (lowercase letters, digits and underscores, starting with a letter, at most 32 characters; it prefixes the server's tool names), a `label` and an HTTP(S) `url`:
 
 - To authenticate, set `connectionProvider: { universalIdentifier }` to a connection provider of the same app; calls send that connection's access token as a Bearer token. Omit it for a public server.

@@ -104,7 +104,11 @@ Schema notes:
 - `additionalProperties: false` (optional) forbids any property not declared in `properties`.
 
 </Accordion>
-<Accordion title="defineMcpServer" description="Expose an external MCP server to the workspace's AI">
+<Accordion title="defineMcpServer" description="Expose an external MCP server to the workspace's AI (beta)">
+
+<Warning>
+  MCP servers are in beta and not live yet: you can declare them, but workspaces cannot use their tools until the feature ships.
+</Warning>
 
 Use `defineMcpServer()` to ship a remote MCP server (Streamable HTTP) with your app, so the workspace's AI can use its tools without syncing that data into Twenty:
 
