@@ -64,7 +64,13 @@ const getTableRow = (canvasElement: HTMLElement, text: string) => {
   return within(row);
 };
 
-const getStatusCell = (canvasElement: HTMLElement, text: string) =>
+const getStatusCell = ({
+  canvasElement,
+  text,
+}: {
+  canvasElement: HTMLElement;
+  text: string;
+}) =>
   within(canvasElement).getByText(text).closest('[data-table-row]')
     ?.children[1];
 
@@ -372,8 +378,12 @@ export const AppsFlagOnlyBrokenAccounts: Story = {
         'Sync failed',
       ),
     ).toBeVisible();
-    expect(getStatusCell(canvasElement, 'Outlook')).toBeEmptyDOMElement();
-    expect(getStatusCell(canvasElement, 'Linear')).toBeEmptyDOMElement();
+    expect(
+      getStatusCell({ canvasElement, text: 'Outlook' }),
+    ).toBeEmptyDOMElement();
+    expect(
+      getStatusCell({ canvasElement, text: 'Linear' }),
+    ).toBeEmptyDOMElement();
   },
 };
 
@@ -454,7 +464,9 @@ export const InstalledAppsFlagReconnectAndMissingConfiguration: Story = {
     expect(
       await getTableRow(canvasElement, 'Linear').findByText('Reconnect needed'),
     ).toBeVisible();
-    expect(getStatusCell(canvasElement, 'Granola')).toBeEmptyDOMElement();
+    expect(
+      getStatusCell({ canvasElement, text: 'Granola' }),
+    ).toBeEmptyDOMElement();
   },
 };
 
