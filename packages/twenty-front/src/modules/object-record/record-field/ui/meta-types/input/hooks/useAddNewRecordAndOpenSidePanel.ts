@@ -95,29 +95,36 @@ export const useAddNewRecordAndOpenSidePanel = ({
         ),
       };
 
-      if (relationFieldMetadataItemRelationType === RelationType.MANY_TO_ONE) {
-        if (
-          isRecordCreationFormEnabled &&
-          relationFieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
-        ) {
-          initialDraftRecord[relationFieldMetadataItem.name] = {
-            targetObjectMetadataId: objectMetadataItem.id,
-            id: recordId,
-          };
-        } else {
-          const gqlField =
-            relationFieldMetadataItem.type === FieldMetadataType.RELATION
-              ? relationFieldMetadataItem.name
-              : computeMorphRelationGqlFieldName({
-                  fieldName: relationFieldMetadataItem.name,
-                  relationType: relationFieldMetadataItemRelationType,
-                  targetObjectMetadataNameSingular:
-                    objectMetadataItem.nameSingular,
-                  targetObjectMetadataNamePlural: objectMetadataItem.namePlural,
-                });
+      const shouldPrefillMorphSelection =
+        isRecordCreationFormEnabled &&
+        relationFieldMetadataItem.type === FieldMetadataType.MORPH_RELATION;
 
-          initialDraftRecord[`${gqlField}Id`] = recordId;
-        }
+      if (
+        relationFieldMetadataItemRelationType === RelationType.MANY_TO_ONE &&
+        shouldPrefillMorphSelection
+      ) {
+        initialDraftRecord[relationFieldMetadataItem.name] = {
+          targetObjectMetadataId: objectMetadataItem.id,
+          id: recordId,
+        };
+      }
+
+      if (
+        relationFieldMetadataItemRelationType === RelationType.MANY_TO_ONE &&
+        !shouldPrefillMorphSelection
+      ) {
+        const gqlField =
+          relationFieldMetadataItem.type === FieldMetadataType.RELATION
+            ? relationFieldMetadataItem.name
+            : computeMorphRelationGqlFieldName({
+                fieldName: relationFieldMetadataItem.name,
+                relationType: relationFieldMetadataItemRelationType,
+                targetObjectMetadataNameSingular:
+                  objectMetadataItem.nameSingular,
+                targetObjectMetadataNamePlural: objectMetadataItem.namePlural,
+              });
+
+        initialDraftRecord[`${gqlField}Id`] = recordId;
       }
 
       let recordAwaitingAttachment:

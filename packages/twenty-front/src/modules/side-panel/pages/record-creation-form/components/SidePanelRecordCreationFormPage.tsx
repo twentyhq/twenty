@@ -452,33 +452,31 @@ const SidePanelRecordCreationForm = ({
       )}
       <SidePanelFooter
         actions={[
-          ...(isOptionsDropdownShown
-            ? [
-                <SidePanelOptionsDropdown
-                  key="options"
-                  dropdownId={optionsDropdownId}
-                >
-                  {canCreateAnother && (
-                    <Dropdown.ActionItem
-                      startIcon={<IconPlus />}
-                      shortcut={['Alt', 'Enter']}
-                      disabled={isSubmitting}
-                      onClick={handleCreateAnotherClick}
-                    >{t`Create another`}</Dropdown.ActionItem>
-                  )}
-                  {hasLayoutsPermission && (
-                    <Dropdown.ActionItem
-                      startIcon={<IconEdit />}
-                      onClick={() =>
-                        openRecordCreationFormSettingsInSidePanel(
-                          objectMetadataItem,
-                        )
-                      }
-                    >{t`Edit form`}</Dropdown.ActionItem>
-                  )}
-                </SidePanelOptionsDropdown>,
-              ]
-            : []),
+          isOptionsDropdownShown && (
+            <SidePanelOptionsDropdown
+              key="options"
+              dropdownId={optionsDropdownId}
+            >
+              {canCreateAnother && (
+                <Dropdown.ActionItem
+                  startIcon={<IconPlus />}
+                  shortcut={['Alt', 'Enter']}
+                  disabled={isSubmitting}
+                  onClick={handleCreateAnotherClick}
+                >{t`Create another`}</Dropdown.ActionItem>
+              )}
+              {hasLayoutsPermission && (
+                <Dropdown.ActionItem
+                  startIcon={<IconEdit />}
+                  onClick={() =>
+                    openRecordCreationFormSettingsInSidePanel(
+                      objectMetadataItem,
+                    )
+                  }
+                >{t`Edit form`}</Dropdown.ActionItem>
+              )}
+            </SidePanelOptionsDropdown>
+          ),
           <Button
             key="create-record"
             startIcon={<IconPlus />}
