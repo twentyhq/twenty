@@ -12,8 +12,8 @@ module.exports = {
   ],
   overwrite: true,
   generates: {
-    './src/generated-admin/graphql.ts': {
-      plugins: ['typescript', 'typescript-operations', 'typed-document-node'],
+    './src/generated-admin/schema.ts': {
+      plugins: ['typescript'],
       config: {
         skipTypename: false,
         defaultScalarType: 'any',
@@ -22,6 +22,27 @@ module.exports = {
           UUID: 'string',
         },
         namingConvention: { enumValues: 'keep' },
+        enumType: 'native',
+      },
+    },
+    './src/generated-admin/graphql.ts': {
+      plugins: [
+        { add: { content: "export * from './schema';" } },
+        'typescript-operations',
+        'typed-document-node',
+      ],
+      config: {
+        skipTypename: false,
+        defaultScalarType: 'any',
+        scalars: {
+          DateTime: 'string',
+          UUID: 'string',
+        },
+        namingConvention: { enumValues: 'keep' },
+        enumType: 'native',
+        importSchemaTypesFrom: './src/generated-admin/schema',
+        nonOptionalTypename: true,
+        skipTypeNameForRoot: true,
       },
     },
   },

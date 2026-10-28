@@ -19,8 +19,8 @@ module.exports = {
   ],
   overwrite: true,
   generates: {
-    './src/generated/graphql.ts': {
-      plugins: ['typescript', 'typescript-operations', 'typed-document-node'],
+    './src/generated/schema.ts': {
+      plugins: ['typescript'],
       config: {
         skipTypename: false,
         defaultScalarType: 'any',
@@ -28,6 +28,26 @@ module.exports = {
           DateTime: 'string',
         },
         namingConvention: { enumValues: 'keep' },
+        enumType: 'native',
+      },
+    },
+    './src/generated/graphql.ts': {
+      plugins: [
+        { add: { content: "export * from './schema';" } },
+        'typescript-operations',
+        'typed-document-node',
+      ],
+      config: {
+        skipTypename: false,
+        defaultScalarType: 'any',
+        scalars: {
+          DateTime: 'string',
+        },
+        namingConvention: { enumValues: 'keep' },
+        enumType: 'native',
+        importSchemaTypesFrom: './src/generated/schema',
+        nonOptionalTypename: true,
+        skipTypeNameForRoot: true,
       },
     },
   },

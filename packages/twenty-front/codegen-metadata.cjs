@@ -56,8 +56,8 @@ module.exports = {
   ],
   overwrite: true,
   generates: {
-    './src/generated-metadata/graphql.ts': {
-      plugins: ['typescript', 'typescript-operations', 'typed-document-node'],
+    './src/generated-metadata/schema.ts': {
+      plugins: ['typescript'],
       config: {
         skipTypename: false,
         useTypeImports: true,
@@ -67,6 +67,28 @@ module.exports = {
           UUID: 'string',
         },
         namingConvention: { enumValues: 'keep' },
+        enumType: 'native',
+      },
+    },
+    './src/generated-metadata/graphql.ts': {
+      plugins: [
+        { add: { content: "export * from './schema';" } },
+        'typescript-operations',
+        'typed-document-node',
+      ],
+      config: {
+        skipTypename: false,
+        useTypeImports: true,
+        defaultScalarType: 'any',
+        scalars: {
+          DateTime: 'string',
+          UUID: 'string',
+        },
+        namingConvention: { enumValues: 'keep' },
+        enumType: 'native',
+        importSchemaTypesFrom: './src/generated-metadata/schema',
+        nonOptionalTypename: true,
+        skipTypeNameForRoot: true,
       },
     },
   },
