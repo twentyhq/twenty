@@ -264,7 +264,7 @@ import { BackfillApplicationAutoUpgradeSlowInstanceCommand } from 'src/database/
 import { AddMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438837-add-messaging-provider';
 import { AddMcpServerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793150000000-add-mcp-server';
 import { AgentAndSkillOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793203146887-agent-and-skill-overridable-entity';
-import { RenameIsVettedToIsOfficialOnApplicationRegistrationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-slow-1793206040686-rename-is-vetted-to-is-official-on-application-registration';
+import { RenameIsVettedToIsOfficialOnApplicationRegistrationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-slow-1793208476704-rename-is-vetted-to-is-official-on-application-registration';
 import { DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793139794914-drop-is-custom-from-agent-skill-view-index-and-agent-chat-channel';
 
 export const INSTANCE_COMMANDS = [
@@ -531,7 +531,7 @@ export const INSTANCE_COMMANDS = [
   AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand,
   BackfillApplicationAutoUpgradeSlowInstanceCommand,
   AgentAndSkillOverridableEntityFastInstanceCommand,
-  RenameIsVettedToIsOfficialOnApplicationRegistrationSlowInstanceCommand,
   DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand,
   AddFieldMetadataDisabledFieldPermissionActionsFastInstanceCommand,
+  RenameIsVettedToIsOfficialOnApplicationRegistrationSlowInstanceCommand,
 ];
