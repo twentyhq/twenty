@@ -162,9 +162,11 @@ export class RecordSharePrincipalService {
         })
         .findOne({ where: { id: principal.principalId } });
       const roleSubject = buildRoleRowAccessPolicySubject({
-        roleId,
+        roleIds: isDefined(roleId) ? [roleId] : [],
+        objectsPermissions: isDefined(roleId)
+          ? rolesPermissions[roleId]
+          : undefined,
         owningApplicationId: undefined,
-        rolesPermissions,
         roleIdsWithAllRecordsAccess,
         flatRowLevelPermissionPredicateMaps,
         flatRowLevelPermissionPredicateGroupMaps,

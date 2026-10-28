@@ -16,7 +16,8 @@ import { RunAgentTriggerJob } from 'src/engine/metadata-modules/ai/ai-agent-trig
 import { AgentTriggerThrottlerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-throttler.service';
 import { type RunAgentTriggerJobData } from 'src/engine/metadata-modules/ai/ai-agent-trigger/types/run-agent-trigger-job-data.type';
 import { findAgentDatabaseEventTriggersMatchingEvent } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/find-agent-database-event-triggers-matching-event.util';
-import { resolveEventsReadableByAgent } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/resolve-events-readable-by-agent.util';
+import { isDatabaseEventCausedByAgent } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/is-database-event-caused-by-agent.util';
+import { resolveEventsReadableByRole } from 'src/engine/metadata-modules/permissions/utils/resolve-events-readable-by-role.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
@@ -43,6 +44,7 @@ export class CallAgentDatabaseEventTriggersJob {
 
     const {
       flatAgentMaps,
+      flatApplicationMaps,
       flatRoleTargetByAgentIdMaps,
       rolesPermissions,
       roleIdsWithAllRecordsAccess,
@@ -52,6 +54,7 @@ export class CallAgentDatabaseEventTriggersJob {
       flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatAgentMaps',
+      'flatApplicationMaps',
       'flatRoleTargetByAgentIdMaps',
       'rolesPermissions',
       'roleIdsWithAllRecordsAccess',
@@ -78,10 +81,9 @@ export class CallAgentDatabaseEventTriggersJob {
     for (const { flatAgent, trigger } of matchingAgentTriggers) {
       const agentRoleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
 
-      const admittedEvents = await resolveEventsReadableByAgent({
-        agentId: flatAgent.id,
-        agentRoleId,
-        agentApplicationId: flatAgent.applicationId,
+      const readableEvents = await resolveEventsReadableByRole({
+        intersectionOf: { agentRoleId: agentRoleId ?? null },
+        owningApplicationId: flatAgent.applicationId,
         workspaceEventBatch,
         eventRecordAccessGate,
         rolesPermissions,
@@ -90,7 +92,16 @@ export class CallAgentDatabaseEventTriggersJob {
         flatRowLevelPermissionPredicateGroupMaps,
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
+        flatApplicationMaps,
       });
+      const admittedEvents = readableEvents.filter(
+        (event) =>
+          !isDatabaseEventCausedByAgent({
+            event,
+            eventName,
+            agentId: flatAgent.id,
+          }),
+      );
 
       if (!isDefined(agentRoleId) || admittedEvents.length === 0) {
         continue;

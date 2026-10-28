@@ -1,9 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  EVERYONE_PRINCIPAL_ID,
-  QUERY_MAX_RECORDS_FROM_RELATION,
-} from 'twenty-shared/constants';
+import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
   Nullable,
@@ -33,7 +30,8 @@ import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metada
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
-import { omitRestrictedFieldsFromEvent } from 'src/engine/metadata-modules/permissions/utils/omit-restricted-fields-from-event.util';
+import { omitHiddenFieldsFromEvents } from 'src/engine/metadata-modules/permissions/utils/omit-hidden-fields-from-events.util';
+import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import {
@@ -46,11 +44,9 @@ import {
   RolePermissionConfig,
   RoleIdsBySource,
 } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
 import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
-import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
 import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
 import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -227,38 +223,20 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
-    for (const event of workspaceEventBatch.events) {
-      const { action } = parseEventNameOrThrow(workspaceEventBatch.name);
+    const { action } = parseEventNameOrThrow(workspaceEventBatch.name);
 
-      const eventWithObjectName: ObjectRecordSubscriptionEvent = {
-        action,
-        objectNameSingular,
-        ...event,
-      };
-
-      const filteredEvent = omitRestrictedFieldsFromEvent({
-        event: eventWithObjectName,
+    const readableEvents =
+      omitHiddenFieldsFromEvents<ObjectRecordSubscriptionEvent>({
+        events: workspaceEventBatch.events
+          .filter((event) => admittedRecordIds.has(event.recordId))
+          .map((event) => ({ action, objectNameSingular, ...event })),
         objectMetadata: workspaceEventBatch.objectMetadata,
         objectsPermissions,
         flatObjectMetadataMaps: permissionsContext.flatObjectMetadataMaps,
         flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
       });
 
-      const filteredProperties = filteredEvent.properties as {
-        updatedFields?: string[];
-      };
-
-      if (
-        isDefined(filteredProperties.updatedFields) &&
-        filteredProperties.updatedFields.length === 0
-      ) {
-        continue;
-      }
-
-      if (!admittedRecordIds.has(filteredEvent.recordId)) {
-        continue;
-      }
-
+    for (const filteredEvent of readableEvents) {
       const matchedQueryIds = this.getMatchingObjectRecordQueryIds({
         queries: streamData.queries,
         event: filteredEvent,
@@ -513,43 +491,29 @@ export class ObjectRecordEventPublisher {
     permissionsContext: StreamPermissionsContext;
     flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
   }): RowAccessPolicySubject {
-    return {
-      isSystemContext: false,
+    const roleSubject = buildRoleRowAccessPolicySubject({
+      roleIds,
       objectsPermissions,
-      principalIds: [
-        EVERYONE_PRINCIPAL_ID,
-        subscriberAuthContext.workspaceMemberId,
-        ...roleIds,
-      ].filter(isDefined),
-      canAccessAllRecords: canRolesAccessAllRecords({
-        roleIds,
-        roleIdsWithAllRecordsAccess:
-          permissionsContext.roleIdsWithAllRecordsAccess,
-      }),
-      isOwningApplication: (objectMetadata) =>
-        isDefined(objectMetadata.applicationId) &&
-        subscriberAuthContext.applicationId === objectMetadata.applicationId,
-      resolveRowLevelPermissionRecordFilter: (objectMetadata) => {
-        const recordFilter = buildRowLevelPermissionRecordFilter({
-          flatRowLevelPermissionPredicateMaps:
-            permissionsContext.flatRowLevelPermissionPredicateMaps,
-          flatRowLevelPermissionPredicateGroupMaps:
-            permissionsContext.flatRowLevelPermissionPredicateGroupMaps,
-          flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
-          flatObjectMetadataMaps: permissionsContext.flatObjectMetadataMaps,
-          objectMetadata,
-          roleIds,
-          workspaceMember: isDefined(subscriberAuthContext.workspaceMemberId)
-            ? flatWorkspaceMemberMaps.byId[
-                subscriberAuthContext.workspaceMemberId
-              ]
-            : undefined,
-        });
+      owningApplicationId: subscriberAuthContext.applicationId ?? undefined,
+      roleIdsWithAllRecordsAccess:
+        permissionsContext.roleIdsWithAllRecordsAccess,
+      flatRowLevelPermissionPredicateMaps:
+        permissionsContext.flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps:
+        permissionsContext.flatRowLevelPermissionPredicateGroupMaps,
+      flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
+      flatObjectMetadataMaps: permissionsContext.flatObjectMetadataMaps,
+      workspaceMember: isDefined(subscriberAuthContext.workspaceMemberId)
+        ? flatWorkspaceMemberMaps.byId[subscriberAuthContext.workspaceMemberId]
+        : undefined,
+    });
 
-        return isDefined(recordFilter) && Object.keys(recordFilter).length > 0
-          ? recordFilter
-          : null;
-      },
+    return {
+      ...roleSubject,
+      principalIds: [
+        ...(roleSubject.principalIds ?? []),
+        subscriberAuthContext.workspaceMemberId,
+      ].filter(isDefined),
     };
   }
 

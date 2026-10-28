@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
-import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -15,9 +15,9 @@ import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/types/row-acc
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 
 export const buildRoleRowAccessPolicySubject = ({
-  roleId,
+  roleIds,
+  objectsPermissions,
   owningApplicationId,
-  rolesPermissions,
   roleIdsWithAllRecordsAccess,
   flatRowLevelPermissionPredicateMaps,
   flatRowLevelPermissionPredicateGroupMaps,
@@ -25,49 +25,43 @@ export const buildRoleRowAccessPolicySubject = ({
   flatObjectMetadataMaps,
   workspaceMember,
 }: {
-  roleId: string | undefined;
+  roleIds: string[];
+  objectsPermissions: ObjectsPermissions | undefined;
   owningApplicationId: string | undefined;
-  rolesPermissions: ObjectsPermissionsByRoleId;
   roleIdsWithAllRecordsAccess: string[];
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   workspaceMember?: UserWorkspaceAuthContext['workspaceMember'];
-}): RowAccessPolicySubject => {
-  const roleIds = isDefined(roleId) ? [roleId] : [];
+}): RowAccessPolicySubject => ({
+  isSystemContext: false,
+  objectsPermissions,
+  principalIds: [EVERYONE_PRINCIPAL_ID, ...roleIds],
+  canAccessAllRecords: canRolesAccessAllRecords({
+    roleIds,
+    roleIdsWithAllRecordsAccess,
+  }),
+  isOwningApplication: (objectMetadata) =>
+    isDefined(owningApplicationId) &&
+    objectMetadata.applicationId === owningApplicationId,
+  resolveRowLevelPermissionRecordFilter: (objectMetadata) => {
+    if (roleIds.length === 0) {
+      return null;
+    }
 
-  return {
-    isSystemContext: false,
-    objectsPermissions: isDefined(roleId)
-      ? rolesPermissions[roleId]
-      : undefined,
-    principalIds: [EVERYONE_PRINCIPAL_ID, ...roleIds],
-    canAccessAllRecords: canRolesAccessAllRecords({
+    const recordFilter = buildRowLevelPermissionRecordFilter({
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      objectMetadata,
       roleIds,
-      roleIdsWithAllRecordsAccess,
-    }),
-    isOwningApplication: (objectMetadata) =>
-      isDefined(owningApplicationId) &&
-      objectMetadata.applicationId === owningApplicationId,
-    resolveRowLevelPermissionRecordFilter: (objectMetadata) => {
-      if (roleIds.length === 0) {
-        return null;
-      }
+      workspaceMember,
+    });
 
-      const recordFilter = buildRowLevelPermissionRecordFilter({
-        flatRowLevelPermissionPredicateMaps,
-        flatRowLevelPermissionPredicateGroupMaps,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-        objectMetadata,
-        roleIds,
-        workspaceMember,
-      });
-
-      return isDefined(recordFilter) && Object.keys(recordFilter).length > 0
-        ? recordFilter
-        : null;
-    },
-  };
-};
+    return isDefined(recordFilter) && Object.keys(recordFilter).length > 0
+      ? recordFilter
+      : null;
+  },
+});
