@@ -23,6 +23,8 @@ import {
   FATHOM_ACCOUNT_ID,
   FATHOM_APPLICATION_ID,
   GOOGLE_ACCOUNT_ID,
+  GOOGLE_MESSAGE_CHANNEL_ID,
+  MESSAGE_CHANNELS,
   MICROSOFT_ACCOUNT_ID,
   deleteConnectedAccount,
   disconnectConnectedAccount,
@@ -30,11 +32,11 @@ import {
   withoutDeletedAccounts,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 import {
+  APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS,
   APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
   failNextApplicationPreferencesRequest,
   seedApplicationPreferencesStory,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
-import { unconfigureLinearClientCredentials } from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
 import { withinTableRowOrThrow } from '~/testing/utils/withinTableRowOrThrow';
 
 const meta: Meta<PageDecoratorArgs> = {
@@ -65,6 +67,16 @@ const getTableRow = (canvasElement: HTMLElement, text: string) => {
 
   return within(row);
 };
+
+const getStatusCell = ({
+  canvasElement,
+  text,
+}: {
+  canvasElement: HTMLElement;
+  text: string;
+}) =>
+  within(canvasElement).getByText(text).closest('[data-table-row]')
+    ?.children[1];
 
 const getTab = ({
   canvasElement,
@@ -201,6 +213,35 @@ export const WorkspaceSharedAppConnectionsStayOff: Story = {
   },
 };
 
+export const AppsSectionHeaderStaysWhileLoading: Story = {
+  ...accountGroupsStory,
+  beforeEach: seedApplicationPreferencesStory,
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyApplicationPreferences', async () => {
+          await delay('infinite');
+        }),
+        ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Choose your preferences for the apps installed on your workspace by the admin',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(canvas.getByRole('heading', { name: 'Apps' })).toBeVisible();
+    expect(canvasElement.querySelector('[aria-busy="true"]')).not.toBeNull();
+    expect(canvas.queryByText('Outlook')).not.toBeInTheDocument();
+  },
+};
+
 export const AccountsSectionHeaderStaysWhileLoading: Story = {
   ...accountsTabStory,
   parameters: {
@@ -266,7 +307,6 @@ export const AppPreferencesListEnabledApps: Story = {
       await canvas.findByRole('link', { name: 'Gmail and Calendar' }),
     ).toBeVisible();
     expect(canvas.queryByText('IMAP')).not.toBeInTheDocument();
-    expect(canvas.queryByText('Missing account')).not.toBeInTheDocument();
 
     await userEvent.click(canvas.getByRole('link', { name: 'Outlook' }));
 
@@ -469,43 +509,55 @@ export const AppOnlyAccountOffersDisconnectAndDelete: Story = {
   },
 };
 
-export const AppsWithoutAccountShowMissingAccount: Story = {
+export const AppsFlagOnlyBrokenAccounts: Story = {
   ...accountGroupsStory,
+  beforeEach: seedApplicationPreferencesStory,
   parameters: {
     msw: {
       handlers: [
         graphql.query('MyConnectedAccounts', () =>
           HttpResponse.json({
             data: {
-              myConnectedAccounts: CONNECTED_ACCOUNTS.filter(
-                (account) =>
-                  account.id !== GOOGLE_ACCOUNT_ID &&
-                  account.id !== MICROSOFT_ACCOUNT_ID,
+              myConnectedAccounts: CONNECTED_ACCOUNTS.map((account) =>
+                account.id === MICROSOFT_ACCOUNT_ID
+                  ? { ...account, archivedAt: '2026-09-03T00:00:00.000Z' }
+                  : account,
               ),
             },
           }),
         ),
-        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+        graphql.query('MyMessageChannels', () =>
+          HttpResponse.json({
+            data: {
+              myMessageChannels: MESSAGE_CHANNELS.map((channel) =>
+                channel.id === GOOGLE_MESSAGE_CHANNEL_ID ||
+                channel.connectedAccountId === MICROSOFT_ACCOUNT_ID
+                  ? { ...channel, syncStatus: 'FAILED_UNKNOWN' }
+                  : channel,
+              ),
+            },
+          }),
+        ),
+        ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
       ],
     },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText(
-      'Choose your preferences for the apps installed on your workspace by the admin',
-      undefined,
-      { timeout: 3000 },
-    );
+    await canvas.findByText('Linear', undefined, { timeout: 3000 });
 
     expect(
-      await getTableRow(canvasElement, 'Outlook').findByText('Missing account'),
+      await getTableRow(canvasElement, 'Gmail and Calendar').findByText(
+        'Sync failed',
+      ),
     ).toBeVisible();
     expect(
-      getTableRow(canvasElement, 'Gmail and Calendar').queryByText(
-        'Missing account',
-      ),
-    ).not.toBeInTheDocument();
+      getStatusCell({ canvasElement, text: 'Outlook' }),
+    ).toBeEmptyDOMElement();
+    expect(
+      getStatusCell({ canvasElement, text: 'Linear' }),
+    ).toBeEmptyDOMElement();
   },
 };
 
@@ -557,10 +609,6 @@ export const AppPreferencesListInstalledApps: Story = {
       fathomRow.compareDocumentPosition(granolaRow) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
-    expect(
-      within(fathomRow).queryByText('Missing account'),
-    ).not.toBeInTheDocument();
-
     await userEvent.click(fathomRow);
 
     expect(
@@ -571,53 +619,28 @@ export const AppPreferencesListInstalledApps: Story = {
   },
 };
 
-export const AppPreferencesListFlagsMissingConfiguration: Story = {
+export const InstalledAppsFlagReconnectAndMissingConfiguration: Story = {
   ...accountGroupsStory,
   beforeEach: seedApplicationPreferencesStory,
   parameters: {
-    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
-  },
-  play: async ({ canvasElement }) => {
-    await within(canvasElement).findByText('Fathom', undefined, {
-      timeout: 3000,
-    });
-
-    expect(
-      getTableRow(canvasElement, 'Fathom').getByText('Missing configuration'),
-    ).toBeVisible();
-    expect(
-      getTableRow(canvasElement, 'Granola').queryByText(
-        'Missing configuration',
-      ),
-    ).not.toBeInTheDocument();
-    expect(
-      getTableRow(canvasElement, 'Linear').queryByText('Missing configuration'),
-    ).not.toBeInTheDocument();
-    expect(
-      await getTableRow(canvasElement, 'Linear').findByText('Missing account'),
-    ).toBeVisible();
-  },
-};
-
-export const AppsWhoseProviderIsNotSetUpShowNoMissingAccount: Story = {
-  ...accountsTabStory,
-  beforeEach: async () => {
-    await seedApplicationPreferencesStory();
-    unconfigureLinearClientCredentials();
-  },
-  parameters: {
-    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
+    msw: { handlers: APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('tim@apple.dev', undefined, { timeout: 3000 });
-    await userEvent.click(getTab({ canvasElement, tabId: 'apps' }));
-    await canvas.findByText('Linear', undefined, { timeout: 3000 });
+    await canvas.findByText('Fathom', undefined, { timeout: 3000 });
 
     expect(
-      getTableRow(canvasElement, 'Linear').queryByText('Missing account'),
-    ).not.toBeInTheDocument();
+      await getTableRow(canvasElement, 'Fathom').findByText(
+        'Missing configuration',
+      ),
+    ).toBeVisible();
+    expect(
+      await getTableRow(canvasElement, 'Linear').findByText('Reconnect needed'),
+    ).toBeVisible();
+    expect(
+      getStatusCell({ canvasElement, text: 'Granola' }),
+    ).toBeEmptyDOMElement();
   },
 };
 

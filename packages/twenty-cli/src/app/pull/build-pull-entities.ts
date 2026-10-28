@@ -45,6 +45,8 @@ export const PULL_ENTITY_KINDS = [
   'navigationMenuItem',
   'pageLayoutWidget',
   'workflow',
+  'skill',
+  'agent',
 ] as const;
 
 export type PullEntityKind = (typeof PULL_ENTITY_KINDS)[number];
@@ -385,6 +387,40 @@ export const buildPullEntities = (
       fileBaseName: toFileBaseName({
         segments: [workflowManifest.name],
         universalIdentifier: workflowManifest.universalIdentifier,
+      }),
+      parentName: null,
+    });
+  }
+
+  for (const skillManifest of manifest.skills ?? []) {
+    entities.push({
+      kind: 'skill',
+      universalIdentifier: skillManifest.universalIdentifier,
+      definer: 'defineSkill',
+      config: skillManifest,
+      enumBindings: [],
+      defaultFolder: 'src/skills',
+      fileSuffix: '.skill.ts',
+      fileBaseName: toFileBaseName({
+        segments: [skillManifest.name],
+        universalIdentifier: skillManifest.universalIdentifier,
+      }),
+      parentName: null,
+    });
+  }
+
+  for (const agentManifest of manifest.agents ?? []) {
+    entities.push({
+      kind: 'agent',
+      universalIdentifier: agentManifest.universalIdentifier,
+      definer: 'defineAgent',
+      config: agentManifest,
+      enumBindings: [],
+      defaultFolder: 'src/agents',
+      fileSuffix: '.agent.ts',
+      fileBaseName: toFileBaseName({
+        segments: [agentManifest.name],
+        universalIdentifier: agentManifest.universalIdentifier,
       }),
       parentName: null,
     });
