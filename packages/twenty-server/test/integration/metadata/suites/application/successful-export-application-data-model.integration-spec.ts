@@ -32,9 +32,11 @@ import { destroyOneView } from 'test/integration/metadata/suites/view/utils/dest
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
+  type AgentManifest,
   type FieldManifest,
   getFieldUniversalIdentifier,
   getIndexFieldUniversalIdentifier,
+  getRoleTargetUniversalIdentifier,
   getSystemFormFieldPageLayoutWidgetUniversalIdentifier,
   getSystemPageLayoutTabUniversalIdentifier,
   getSystemPageLayoutWidgetUniversalIdentifier,
@@ -50,6 +52,7 @@ import {
   type ObjectManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
+  type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
   SYSTEM_VIEW_KEYS,
@@ -1985,5 +1988,154 @@ describe('Application export - workflows built in the workflow builder', () => {
           workflow.universalIdentifier === workflowUniversalIdentifier,
       ),
     ).toEqual(buildManifest('http://localhost:1/after'));
+  }, 60000);
+});
+
+const AI_TEST_APP_ID = '7e3d1c2b-0300-4a7b-8c9d-0e1f2a3b4c5d';
+const AI_TEST_ROLE_ID = '7e3d1c2b-0301-4a7b-8c9d-0e1f2a3b4c5d';
+const TRIAGE_AGENT_ID = '7e3d1c2b-0302-4a7b-8c9d-0e1f2a3b4c5d';
+const DIGEST_AGENT_ID = '7e3d1c2b-0303-4a7b-8c9d-0e1f2a3b4c5d';
+const DIGEST_CRON_TRIGGER_ID = '7e3d1c2b-0304-4a7b-8c9d-0e1f2a3b4c5d';
+const DIGEST_EVENT_TRIGGER_ID = '7e3d1c2b-0305-4a7b-8c9d-0e1f2a3b4c5d';
+const TRIAGE_SKILL_ID = '7e3d1c2b-0306-4a7b-8c9d-0e1f2a3b4c5d';
+
+const EXPORTED_AGENTS: AgentManifest[] = [
+  {
+    universalIdentifier: TRIAGE_AGENT_ID,
+    name: 'export-triage-agent',
+    label: 'Triage Agent',
+    prompt: 'Triage the incoming request.',
+    responseFormat: { type: 'text' },
+    roleUniversalIdentifier: AI_TEST_ROLE_ID,
+  },
+  {
+    universalIdentifier: DIGEST_AGENT_ID,
+    name: 'export-digest-agent',
+    label: 'Digest Agent',
+    icon: 'IconRobot',
+    description: 'Summarizes the week',
+    prompt: 'Summarize what changed this week.',
+    responseFormat: {
+      type: 'json',
+      schema: {
+        type: 'object',
+        properties: { summary: { type: 'string', description: 'Summary' } },
+        required: ['summary'],
+        additionalProperties: false,
+      },
+    },
+    triggers: [
+      {
+        universalIdentifier: DIGEST_CRON_TRIGGER_ID,
+        type: 'CRON',
+        settings: { pattern: '0 9 * * 1' },
+        isActive: false,
+        instructions: 'Send the weekly digest',
+      },
+      {
+        universalIdentifier: DIGEST_EVENT_TRIGGER_ID,
+        type: 'DATABASE_EVENT',
+        settings: { eventName: 'company.updated', updatedFields: ['name'] },
+      },
+    ],
+  },
+];
+
+const EXPORTED_SKILLS: SkillManifest[] = [
+  {
+    universalIdentifier: TRIAGE_SKILL_ID,
+    name: 'export-triage-skill',
+    label: 'Triage',
+    icon: 'IconBrain',
+    description: 'How to triage requests',
+    content: 'Classify the request, then route it.',
+  },
+];
+
+const aiManifest = buildBaseManifest({
+  appId: AI_TEST_APP_ID,
+  roleId: AI_TEST_ROLE_ID,
+  overrides: {
+    roles: [
+      {
+        universalIdentifier: AI_TEST_ROLE_ID,
+        label: 'Test Role',
+        description: 'A test role',
+        canBeAssignedToAgents: true,
+      },
+    ],
+    agents: EXPORTED_AGENTS,
+    skills: EXPORTED_SKILLS,
+  },
+});
+
+describe('Application export - agents and skills', () => {
+  beforeAll(async () => {
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: AI_TEST_APP_ID,
+    });
+    await setupApplicationForSync({
+      applicationUniversalIdentifier: AI_TEST_APP_ID,
+      name: 'Export Agents Test Application',
+      description: 'App for testing the agent and skill export',
+      sourcePath: 'export-agents',
+    });
+
+    await syncApplication({ manifest: aiManifest, expectToFail: false });
+  }, 60000);
+
+  afterAll(async () => {
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: AI_TEST_APP_ID,
+    });
+  });
+
+  it('exports the synced agents and skills as they were declared', async () => {
+    const { data, errors } = await exportApplication({
+      universalIdentifier: AI_TEST_APP_ID,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+
+    const { manifest: exportedManifest, coverage } = data.exportApplication;
+    const statusOf = (universalIdentifier: string) =>
+      coverage.find(
+        (entry) => entry.universalIdentifier === universalIdentifier,
+      )?.status;
+
+    expect(exportedManifest.agents).toEqual(EXPORTED_AGENTS);
+    expect(exportedManifest.skills).toEqual(EXPORTED_SKILLS);
+
+    for (const universalIdentifier of [
+      TRIAGE_AGENT_ID,
+      DIGEST_AGENT_ID,
+      TRIAGE_SKILL_ID,
+      getRoleTargetUniversalIdentifier({
+        applicationUniversalIdentifier: AI_TEST_APP_ID,
+        agentUniversalIdentifier: TRIAGE_AGENT_ID,
+      }),
+    ]) {
+      expect(statusOf(universalIdentifier)).toBe(
+        ApplicationExportCoverageStatus.EXPORTED,
+      );
+    }
+  }, 60000);
+
+  it('round-trips the exported agents and skills through an additive dry-run sync without any action', async () => {
+    const { data } = await exportApplication({
+      universalIdentifier: AI_TEST_APP_ID,
+      expectToFail: false,
+    });
+
+    const dryRun = await syncApplication({
+      manifest: data.exportApplication.manifest,
+      dryRun: true,
+      inferDeletionFromMissingEntities: false,
+      expectToFail: false,
+    });
+
+    expect(dryRun.errors).toBeUndefined();
+    expect(dryRun.data.syncApplication.actions).toEqual([]);
   }, 60000);
 });

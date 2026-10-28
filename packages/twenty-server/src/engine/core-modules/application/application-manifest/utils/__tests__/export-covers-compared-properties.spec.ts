@@ -1,4 +1,5 @@
 import {
+  type AgentManifest,
   type FieldPermissionManifest,
   type NavigationMenuItemManifest,
   type ObjectPermissionManifest,
@@ -16,6 +17,7 @@ import {
   type ViewFilterManifest,
   type ViewGroupManifest,
   type ViewManifest,
+  type SkillManifest,
   type ViewSortManifest,
   type WorkflowManifest,
 } from 'twenty-shared/application';
@@ -38,6 +40,10 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { fromFlatAgentToAgentManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-agent-to-agent-manifest.util';
+import { fromFlatSkillToSkillManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-skill-to-skill-manifest.util';
+import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
+import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { fromFieldPermissionManifestToUniversalFlatFieldPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-field-permission-manifest-to-universal-flat-field-permission.util';
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
 import { fromFlatFieldPermissionToFieldPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-permission-to-field-permission-manifest.util';
@@ -391,6 +397,43 @@ const exportWorkflowManifestOrThrow = (manifest: WorkflowManifest) => {
   }
 
   return conversion.manifest;
+};
+
+const AGENT_MANIFEST: AgentManifest = {
+  universalIdentifier: APP_UID,
+  name: 'lead-scorer',
+  label: 'Lead Scorer',
+  icon: 'IconRobot',
+  description: 'Scores new leads',
+  prompt: 'Score the lead.',
+  modelId: 'gpt-4o',
+  responseFormat: { type: 'text' },
+  roleUniversalIdentifier: OBJECT_UID,
+  triggers: [
+    {
+      universalIdentifier: FIELD_UID,
+      type: 'CRON',
+      settings: { pattern: '0 9 * * 1' },
+    },
+  ],
+};
+
+const EXPORTED_AGENT_MANIFEST = fromFlatAgentToAgentManifest({
+  flatAgent: fromAgentManifestToUniversalFlatAgent({
+    agentManifest: AGENT_MANIFEST,
+    applicationUniversalIdentifier: APP_UID,
+    now: NOW,
+  }),
+  roleUniversalIdentifier: AGENT_MANIFEST.roleUniversalIdentifier,
+});
+
+const SKILL_MANIFEST: SkillManifest = {
+  universalIdentifier: APP_UID,
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  icon: 'IconBrain',
+  description: 'Guides an outreach',
+  content: 'Research the company first.',
 };
 
 type ExportedKind = {
@@ -809,6 +852,50 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'legacy workspace version pointer, kept while the active version matches the definition',
       lastPublishedCoreWorkflowVersionId:
         'the sync points it at the active version, or at the one it publishes from the definition',
+    },
+  },
+  {
+    metadataName: 'agent',
+    emittedProperties: Object.keys(EXPORTED_AGENT_MANIFEST),
+    renamedProperties: {},
+    workspaceLocalProperties: [],
+    knownGaps: {
+      modelConfiguration:
+        'no manifest slot; an agent with one is reported as unsupported',
+      isSystem:
+        'always true for application agents; any other value is reported as unsupported',
+    },
+  },
+  {
+    metadataName: 'roleTarget',
+    emittedProperties: Object.keys(EXPORTED_AGENT_MANIFEST),
+    renamedProperties: { agentUniversalIdentifier: 'universalIdentifier' },
+    workspaceLocalProperties: [],
+    knownGaps: {
+      userWorkspaceId:
+        'member role assignments are reported as excluded, only agent roles are exported',
+      apiKeyId:
+        'API key role assignments are reported as excluded, only agent roles are exported',
+    },
+  },
+  {
+    metadataName: 'skill',
+    emittedProperties: Object.keys(
+      fromFlatSkillToSkillManifest({
+        flatSkill: fromSkillManifestToUniversalFlatSkill({
+          skillManifest: SKILL_MANIFEST,
+          applicationUniversalIdentifier: APP_UID,
+          now: NOW,
+        }),
+      }),
+    ),
+    renamedProperties: {},
+    workspaceLocalProperties: [],
+    knownGaps: {
+      isActive:
+        'no manifest slot and no overrides; a deactivated skill is reported as unsupported',
+      isSystem:
+        'always false for application skills; any other value is reported as unsupported',
     },
   },
 ];

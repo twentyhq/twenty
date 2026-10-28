@@ -23,7 +23,6 @@ type IsChannelTabVisibleArgs = {
   isLoading: boolean;
 };
 
-// A tab only offers to connect when no account exists; setup and reconnection live in the account row menu.
 // Accounts load before their channels, so a missing channel only hides the tab once loading is done.
 const isChannelTabVisible = ({
   isSupported,
@@ -44,7 +43,7 @@ const isChannelTabVisible = ({
     return false;
   }
 
-  return isLoading || !hasAccounts;
+  return isLoading && hasAccounts;
 };
 
 export const getBuiltInAccountAppChannelTabsVisibility = ({
