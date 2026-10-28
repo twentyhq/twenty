@@ -19,6 +19,7 @@ import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavig
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
+  FeatureFlagKey,
   GetAgentChatOpenThreadsSummaryDocument,
   type GetAgentChatOpenThreadsSummaryQuery,
   type NavigationMenuItem,
@@ -41,8 +42,8 @@ let mockIsAiChatInboxEnabled = true;
 let mockIsCustomizableSidebarEnabled = true;
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: (featureFlagKey: string) =>
-    featureFlagKey === 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED'
+  useIsFeatureEnabled: (featureFlagKey: FeatureFlagKey | null) =>
+    featureFlagKey === FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED
       ? mockIsCustomizableSidebarEnabled
       : mockIsAiChatInboxEnabled,
 }));

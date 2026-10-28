@@ -10,10 +10,8 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
-import {
-  NAVIGATION_MENU_ITEM_COMMAND_KEYS,
-  type NavigationMenuItemCommandKey,
-} from 'twenty-shared/types';
+import { NAVIGATION_MENU_ITEM_COMMAND_KEYS } from 'twenty-shared/constants';
+import { type NavigationMenuItemCommandKey } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';

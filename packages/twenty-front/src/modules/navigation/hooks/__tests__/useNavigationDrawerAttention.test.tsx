@@ -8,6 +8,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useNavigationDrawerAttention } from '@/navigation/hooks/useNavigationDrawerAttention';
 import {
+  FeatureFlagKey,
   GetAgentChatOpenThreadsSummaryDocument,
   type GetAgentChatOpenThreadsSummaryQuery,
   type NavigationMenuItem,
@@ -18,8 +19,8 @@ import { mockedUserData } from '~/testing/mock-data/users';
 let mockIsCustomizableSidebarEnabled = true;
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: (featureFlagKey: string) =>
-    featureFlagKey === 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED'
+  useIsFeatureEnabled: (featureFlagKey: FeatureFlagKey | null) =>
+    featureFlagKey === FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED
       ? mockIsCustomizableSidebarEnabled
       : true,
 }));

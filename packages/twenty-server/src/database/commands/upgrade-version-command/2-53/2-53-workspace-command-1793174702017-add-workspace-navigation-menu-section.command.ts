@@ -14,7 +14,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const CONTAINER_TYPES: string[] = [
+const TAB_AND_SECTION_TYPES: NavigationMenuItemType[] = [
   NavigationMenuItemType.TAB,
   NavigationMenuItemType.SECTION,
   NavigationMenuItemType.AI_CHAT_TRIAGE,
@@ -139,7 +139,7 @@ export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspa
         (navigationMenuItem) =>
           !isDefined(navigationMenuItem.userWorkspaceId) &&
           !isDefined(navigationMenuItem.folderId) &&
-          !CONTAINER_TYPES.includes(navigationMenuItem.type) &&
+          !TAB_AND_SECTION_TYPES.includes(navigationMenuItem.type) &&
           movableApplicationIds.has(navigationMenuItem.applicationId),
       )
       .map((navigationMenuItem) => ({

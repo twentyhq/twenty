@@ -96,7 +96,7 @@ export const NavigationMenuItemSectionMenuContent = ({
       id: 'home',
       label: t`Home`,
       Icon: IconHome,
-      isDisabled: parentId === null,
+      isDisabled: !isDefined(parentId),
       onClick: () => run(() => moveToFolder(section.id, null)),
     },
     ...tabs.map((tab) => ({

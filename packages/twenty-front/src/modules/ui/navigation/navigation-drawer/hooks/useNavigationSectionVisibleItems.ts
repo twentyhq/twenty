@@ -1,5 +1,4 @@
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isNavigationSectionShowingAllItemsFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionShowingAllItemsFamilyState';
@@ -20,26 +19,26 @@ export const useNavigationSectionVisibleItems = <TItem>({
     navigationSectionId,
   );
 
-  const exceedsVisibleItemLimit =
+  const isOverVisibleItemLimit =
     isDefined(visibleItemLimit) && items.length > visibleItemLimit;
 
   const visibleItems =
-    exceedsVisibleItemLimit && !isNavigationSectionShowingAllItems
+    isOverVisibleItemLimit && !isNavigationSectionShowingAllItems
       ? items.slice(0, visibleItemLimit)
       : items;
 
-  const toggleShowingAllItems = useCallback(() => {
+  const toggleShowingAllItems = () => {
     store.set(
       isNavigationSectionShowingAllItemsFamilyState.atomFamily(
         navigationSectionId,
       ),
       !isNavigationSectionShowingAllItems,
     );
-  }, [store, navigationSectionId, isNavigationSectionShowingAllItems]);
+  };
 
   return {
     visibleItems,
-    exceedsVisibleItemLimit,
+    isOverVisibleItemLimit,
     isShowingAllItems: isNavigationSectionShowingAllItems,
     toggleShowingAllItems,
   };

@@ -53,7 +53,7 @@ export const NavigationMenuItemAgentsSection = ({
     .sort((agentA, agentB) => agentA.label.localeCompare(agentB.label));
   const {
     visibleItems: visibleAgents,
-    exceedsVisibleItemLimit,
+    isOverVisibleItemLimit,
     isShowingAllItems,
     toggleShowingAllItems,
   } = useNavigationSectionVisibleItems({
@@ -115,7 +115,7 @@ export const NavigationMenuItemAgentsSection = ({
           />
         );
       })}
-      {exceedsVisibleItemLimit && (
+      {isOverVisibleItemLimit && (
         <NavigationDrawerSectionSeeMoreItem
           isShowingAllItems={isShowingAllItems}
           onClick={toggleShowingAllItems}

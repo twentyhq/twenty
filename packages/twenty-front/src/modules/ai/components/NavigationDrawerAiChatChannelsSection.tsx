@@ -59,7 +59,7 @@ export const NavigationDrawerAiChatChannelsSection = ({
   );
   const {
     visibleItems: visibleChannels,
-    exceedsVisibleItemLimit,
+    isOverVisibleItemLimit,
     isShowingAllItems,
     toggleShowingAllItems,
   } = useNavigationSectionVisibleItems({
@@ -128,7 +128,7 @@ export const NavigationDrawerAiChatChannelsSection = ({
           canManage={canManageChannels}
         />
       ))}
-      {exceedsVisibleItemLimit && (
+      {isOverVisibleItemLimit && (
         <NavigationDrawerSectionSeeMoreItem
           isShowingAllItems={isShowingAllItems}
           onClick={toggleShowingAllItems}

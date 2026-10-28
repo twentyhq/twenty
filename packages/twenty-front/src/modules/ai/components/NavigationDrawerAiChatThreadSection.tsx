@@ -31,7 +31,7 @@ export const NavigationDrawerAiChatThreadSection = ({
 }: NavigationDrawerAiChatThreadSectionProps) => {
   const {
     visibleItems,
-    exceedsVisibleItemLimit,
+    isOverVisibleItemLimit,
     isShowingAllItems,
     toggleShowingAllItems,
   } = useNavigationSectionVisibleItems({
@@ -55,8 +55,8 @@ export const NavigationDrawerAiChatThreadSection = ({
           onClick={onThreadClick}
         />
       ))}
-      {(!exceedsVisibleItemLimit || isShowingAllItems) && fetchMoreTrigger}
-      {exceedsVisibleItemLimit && (
+      {(!isOverVisibleItemLimit || isShowingAllItems) && fetchMoreTrigger}
+      {isOverVisibleItemLimit && (
         <NavigationDrawerSectionSeeMoreItem
           isShowingAllItems={isShowingAllItems}
           onClick={toggleShowingAllItems}

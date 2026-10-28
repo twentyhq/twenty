@@ -1,6 +1,6 @@
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
+import { computeDndReorderPosition } from '@/navigation-menu-item/common/utils/computeDndReorderPosition';
 
 export const getNavigationMenuItemPositionNextTo = ({
   sortedSiblings,
@@ -22,19 +22,9 @@ export const getNavigationMenuItemPositionNextTo = ({
     return null;
   }
 
-  const otherSiblings = sortedSiblings.filter(
-    (sibling) => sibling.id !== navigationMenuItemId,
-  );
-  const targetIndexAmongOthers = otherSiblings.findIndex(
-    (sibling) => sibling.id === targetNavigationMenuItemId,
-  );
-  const insertIndex =
-    sourceIndex < targetIndex
-      ? targetIndexAmongOthers + 1
-      : targetIndexAmongOthers;
-
-  return getPositionBetween(
-    otherSiblings[insertIndex - 1]?.position,
-    otherSiblings[insertIndex]?.position,
-  );
+  return computeDndReorderPosition({
+    sortedList: sortedSiblings,
+    draggableId: navigationMenuItemId,
+    destinationIndex: sourceIndex < targetIndex ? targetIndex + 1 : targetIndex,
+  });
 };

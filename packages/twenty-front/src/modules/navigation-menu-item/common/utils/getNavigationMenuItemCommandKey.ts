@@ -1,4 +1,4 @@
-import { NAVIGATION_MENU_ITEM_COMMAND_KEYS } from 'twenty-shared/types';
+import { NAVIGATION_MENU_ITEM_COMMAND_KEYS } from 'twenty-shared/constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const getNavigationMenuItemCommandKey = (

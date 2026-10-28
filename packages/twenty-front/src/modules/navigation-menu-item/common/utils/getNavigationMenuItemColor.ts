@@ -7,6 +7,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { DEFAULT_THEME_COLOR_FALLBACK, type ThemeColor } from 'twenty-ui/theme';
+import { parseThemeColor } from 'twenty-ui/utilities';
 
 export const getNavigationMenuItemColor = (
   navigationMenuItem: {
@@ -20,19 +21,19 @@ export const getNavigationMenuItemColor = (
 ): ThemeColor => {
   if (navigationMenuItem.type === NavigationMenuItemType.FOLDER) {
     return isNonEmptyString(navigationMenuItem.color)
-      ? (navigationMenuItem.color as ThemeColor)
+      ? parseThemeColor(navigationMenuItem.color)
       : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER;
   }
 
   if (navigationMenuItem.type === NavigationMenuItemType.LINK) {
     return isNonEmptyString(navigationMenuItem.color)
-      ? (navigationMenuItem.color as ThemeColor)
+      ? parseThemeColor(navigationMenuItem.color)
       : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK;
   }
 
   if (navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT) {
     return isNonEmptyString(navigationMenuItem.color)
-      ? (navigationMenuItem.color as ThemeColor)
+      ? parseThemeColor(navigationMenuItem.color)
       : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_PAGE_LAYOUT;
   }
 

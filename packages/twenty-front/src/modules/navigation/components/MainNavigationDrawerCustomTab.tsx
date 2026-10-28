@@ -13,7 +13,7 @@ import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { NavigationMenuTabCustomizeMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabCustomizeMenuContent';
 import { NavigationMenuTabMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabMenuContent';
-import { NavigationMenuItemContainerMenuOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemContainerMenuOpenEffect';
+import { NavigationMenuItemDropdownOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemDropdownOpenEffect';
 import { MainNavigationDrawerModeButton } from '@/navigation/components/MainNavigationDrawerModeButton';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { type NavigationDrawerAttention } from '@/navigation/types/NavigationDrawerAttention';
@@ -117,7 +117,7 @@ export const MainNavigationDrawerCustomTab = ({
       {hasLayoutsPermission && (
         <DropdownRoot dropdownId={dropdownId} type="menu">
           {navigationMenuItemIdToRename === tab.id && (
-            <NavigationMenuItemContainerMenuOpenEffect
+            <NavigationMenuItemDropdownOpenEffect
               dropdownId={dropdownId}
               onOpen={() => {
                 setNavigationMenuItemIdToRename(null);

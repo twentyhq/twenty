@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type KeyboardEvent, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -71,7 +72,7 @@ export const NavigationMenuItemContainerNameEditor = ({
           fullWidth
           onChange={(value) => {
             setName(value);
-            if (value.trim() !== '') {
+            if (isNonEmptyString(value.trim())) {
               void updateItem(item.id, { name: value.trim() });
             }
           }}

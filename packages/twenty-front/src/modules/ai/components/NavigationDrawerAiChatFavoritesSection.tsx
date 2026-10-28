@@ -56,7 +56,7 @@ export const NavigationDrawerAiChatFavoritesSection = ({
   );
   const {
     visibleItems,
-    exceedsVisibleItemLimit,
+    isOverVisibleItemLimit,
     isShowingAllItems,
     toggleShowingAllItems,
   } = useNavigationSectionVisibleItems<FavoriteItem>({
@@ -99,7 +99,7 @@ export const NavigationDrawerAiChatFavoritesSection = ({
           />
         ),
       )}
-      {exceedsVisibleItemLimit && (
+      {isOverVisibleItemLimit && (
         <NavigationDrawerSectionSeeMoreItem
           isShowingAllItems={isShowingAllItems}
           onClick={toggleShowingAllItems}

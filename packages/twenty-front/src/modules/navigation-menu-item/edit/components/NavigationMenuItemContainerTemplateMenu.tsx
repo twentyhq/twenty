@@ -8,7 +8,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
-export type NavigationMenuItemContainerTemplateMenuGroup = {
+type NavigationMenuItemContainerTemplateMenuGroup = {
   id: string;
   label?: string;
   options: NavigationMenuItemOption[];

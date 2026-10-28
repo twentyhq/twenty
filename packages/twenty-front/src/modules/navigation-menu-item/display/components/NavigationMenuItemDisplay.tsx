@@ -1,4 +1,5 @@
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
+import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { NavigationMenuItemCommandDisplay } from '@/navigation-menu-item/display/command/components/NavigationMenuItemCommandDisplay';
 import { NavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolder';
@@ -22,16 +23,11 @@ export const NavigationMenuItemDisplay = ({
   readOnly,
   orphanIndex,
 }: NavigationMenuItemDisplayProps) => {
+  if (isNavigationMenuItemTabOrSection(item)) {
+    return null;
+  }
+
   switch (item.type) {
-    case NavigationMenuItemType.TAB:
-    case NavigationMenuItemType.SECTION:
-    case NavigationMenuItemType.AI_CHAT_TRIAGE:
-    case NavigationMenuItemType.AI_CHAT_FAVORITES:
-    case NavigationMenuItemType.AI_CHAT_RECENTS:
-    case NavigationMenuItemType.AI_AGENTS:
-    case NavigationMenuItemType.FAVORITES:
-    case NavigationMenuItemType.COMMANDS:
-      return null;
     case NavigationMenuItemType.COMMAND:
       return (
         <NavigationMenuItemEditable item={item}>

@@ -100,7 +100,7 @@ export const WorkspaceSectionContainer = ({
 
   const {
     visibleItems,
-    exceedsVisibleItemLimit,
+    isOverVisibleItemLimit,
     isShowingAllItems,
     toggleShowingAllItems,
   } = useNavigationSectionVisibleItems({
@@ -147,7 +147,7 @@ export const WorkspaceSectionContainer = ({
     };
   };
 
-  const list = isLayoutCustomizationModeEnabled ? (
+  const workspaceSectionList = isLayoutCustomizationModeEnabled ? (
     <Suspense
       fallback={
         <WorkspaceSectionListEditModeFallback
@@ -173,7 +173,7 @@ export const WorkspaceSectionContainer = ({
       folderChildrenById={filteredFolderChildrenById}
       onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
       footer={
-        exceedsVisibleItemLimit && (
+        isOverVisibleItemLimit && (
           <NavigationDrawerSectionSeeMoreItem
             isShowingAllItems={isShowingAllItems}
             onClick={toggleShowingAllItems}
@@ -186,7 +186,9 @@ export const WorkspaceSectionContainer = ({
   return (
     <NavigationMenuItemContainerContext.Provider value={{ containerId }}>
       {isTitleHidden ? (
-        <NavigationDrawerSection>{list}</NavigationDrawerSection>
+        <NavigationDrawerSection>
+          {workspaceSectionList}
+        </NavigationDrawerSection>
       ) : (
         <NavigationMenuItemSection
           title={sectionTitle}
@@ -200,7 +202,7 @@ export const WorkspaceSectionContainer = ({
             </StyledWorkspaceSectionContentGapOffset>
           )}
         >
-          {list}
+          {workspaceSectionList}
         </NavigationMenuItemSection>
       )}
     </NavigationMenuItemContainerContext.Provider>

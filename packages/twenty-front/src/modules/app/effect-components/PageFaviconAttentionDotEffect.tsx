@@ -1,0 +1,34 @@
+import { useEffect } from 'react';
+
+import { type FaviconWithAttentionDot } from '@/app/types/FaviconWithAttentionDot';
+import { drawFaviconWithAttentionDot } from '@/app/utils/drawFaviconWithAttentionDot';
+
+type PageFaviconAttentionDotEffectProps = {
+  faviconUrl: string;
+  dotColor: string;
+  onFaviconDrawn: (faviconWithAttentionDot: FaviconWithAttentionDot) => void;
+};
+
+export const PageFaviconAttentionDotEffect = ({
+  faviconUrl,
+  dotColor,
+  onFaviconDrawn,
+}: PageFaviconAttentionDotEffectProps) => {
+  useEffect(() => {
+    let isCancelled = false;
+
+    drawFaviconWithAttentionDot({ faviconUrl, dotColor })
+      .then((dataUrl) => {
+        if (!isCancelled) {
+          onFaviconDrawn({ faviconUrl, dotColor, dataUrl });
+        }
+      })
+      .catch(() => undefined);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [dotColor, faviconUrl, onFaviconDrawn]);
+
+  return null;
+};

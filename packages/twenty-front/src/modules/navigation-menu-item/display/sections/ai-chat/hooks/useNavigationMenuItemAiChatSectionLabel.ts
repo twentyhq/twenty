@@ -5,24 +5,17 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 export const useNavigationMenuItemAiChatSectionLabel = () => {
   const { t } = useLingui();
 
+  const labelBySectionType: Partial<Record<NavigationMenuItemType, string>> = {
+    [NavigationMenuItemType.AI_CHAT_TRIAGE]: t`Inbox`,
+    [NavigationMenuItemType.AI_CHAT_FAVORITES]: t`Favorite chats`,
+    [NavigationMenuItemType.AI_CHAT_CHANNELS]: t`Channels`,
+    [NavigationMenuItemType.AI_AGENTS]: t`Agents`,
+    [NavigationMenuItemType.FAVORITES]: t`Favorites`,
+  };
+
   const getDefaultAiChatSectionLabel = (
     type: NavigationMenuItem['type'],
-  ): string => {
-    switch (type) {
-      case NavigationMenuItemType.AI_CHAT_TRIAGE:
-        return t`Inbox`;
-      case NavigationMenuItemType.AI_CHAT_FAVORITES:
-        return t`Favorite chats`;
-      case NavigationMenuItemType.AI_CHAT_CHANNELS:
-        return t`Channels`;
-      case NavigationMenuItemType.AI_AGENTS:
-        return t`Agents`;
-      case NavigationMenuItemType.FAVORITES:
-        return t`Favorites`;
-      default:
-        return t`Recent chats`;
-    }
-  };
+  ): string => labelBySectionType[type] ?? t`Recent chats`;
 
   return { getDefaultAiChatSectionLabel };
 };

@@ -15,6 +15,7 @@ import { AI_CHAT_RECENTS_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatRece
 import { useAiChatSidebarThreads } from '@/ai/hooks/useAiChatSidebarThreads';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useNavigationMenuItemAiChatSectionLabel } from '@/navigation-menu-item/display/sections/ai-chat/hooks/useNavigationMenuItemAiChatSectionLabel';
+import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
 import { NavigationMenuItemSectionMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemSectionMenu';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
@@ -61,7 +62,7 @@ export const NavigationMenuItemAiChatSection = ({
   ) : undefined;
   const emptyEditableSection = isEditable ? (
     <CollapsibleNavigationDrawerSection
-      sectionId={`navigation-menu-section-${section.id}`}
+      sectionId={getNavigationMenuSectionNavigationSectionId(section)}
       label={label}
       rightIcon={sectionMenu}
       alwaysShowRightIcon={isEditable}

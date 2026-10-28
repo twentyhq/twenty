@@ -180,7 +180,6 @@ export { MetadataWritability } from './MetadataWritability';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NavigateOptions } from './NavigateOptions';
 export type { NavigationMenuItemCommandKey } from './NavigationMenuItemCommandKey';
-export { NAVIGATION_MENU_ITEM_COMMAND_KEYS } from './NavigationMenuItemCommandKey';
 export { NavigationMenuItemType } from './NavigationMenuItemType';
 export type { NonNullableRequired } from './NonNullableRequired';
 export type { Nullable } from './Nullable';

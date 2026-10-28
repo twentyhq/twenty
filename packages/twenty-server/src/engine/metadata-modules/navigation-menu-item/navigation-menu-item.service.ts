@@ -249,7 +249,7 @@ export class NavigationMenuItemService {
       return rank === -1 ? parentTypesInCreationOrder.length : rank;
     };
 
-    const foldersFirst = [...inputs].sort(
+    const parentsFirst = [...inputs].sort(
       (a, b) => getCreationRank(a.type) - getCreationRank(b.type),
     );
 
@@ -258,7 +258,7 @@ export class NavigationMenuItemService {
       FlatNavigationMenuItem
     >();
 
-    const flatNavigationMenuItemsToCreate = foldersFirst.map((input) => {
+    const flatNavigationMenuItemsToCreate = parentsFirst.map((input) => {
       const normalizedInput: CreateNavigationMenuItemInput = {
         ...input,
         userWorkspaceId:

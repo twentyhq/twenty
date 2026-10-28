@@ -2,34 +2,26 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-type NavigationMenuItemTarget = Pick<
-  NavigationMenuItem,
-  | 'type'
+type NavigationMenuItemTargetIdField =
   | 'targetObjectMetadataId'
   | 'targetRecordId'
   | 'viewId'
-  | 'pageLayoutId'
->;
+  | 'pageLayoutId';
 
-const getNavigationMenuItemTargetId = (item: NavigationMenuItemTarget) => {
-  switch (item.type) {
-    case NavigationMenuItemType.OBJECT:
-      return item.targetObjectMetadataId;
-    case NavigationMenuItemType.VIEW:
-      return item.viewId;
-    case NavigationMenuItemType.RECORD:
-      return item.targetRecordId;
-    case NavigationMenuItemType.PAGE_LAYOUT:
-      return item.pageLayoutId;
-    default:
-      return null;
-  }
+const TARGET_ID_FIELD_BY_NAVIGATION_MENU_ITEM_TYPE: Partial<
+  Record<NavigationMenuItemType, NavigationMenuItemTargetIdField>
+> = {
+  [NavigationMenuItemType.OBJECT]: 'targetObjectMetadataId',
+  [NavigationMenuItemType.VIEW]: 'viewId',
+  [NavigationMenuItemType.RECORD]: 'targetRecordId',
+  [NavigationMenuItemType.PAGE_LAYOUT]: 'pageLayoutId',
 };
 
 export const getNavigationMenuItemTargetKey = (
-  item: NavigationMenuItemTarget,
+  item: Pick<NavigationMenuItem, 'type' | NavigationMenuItemTargetIdField>,
 ): string | null => {
-  const targetId = getNavigationMenuItemTargetId(item);
+  const targetIdField = TARGET_ID_FIELD_BY_NAVIGATION_MENU_ITEM_TYPE[item.type];
+  const targetId = isDefined(targetIdField) ? item[targetIdField] : null;
 
   return isDefined(targetId) ? `${item.type}:${targetId}` : null;
 };

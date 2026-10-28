@@ -22,7 +22,7 @@ import { useDefaultWorkspaceSectionId } from '@/navigation-menu-item/display/hoo
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-export type NavigationMenuItemMoveDestination = {
+type NavigationMenuItemMoveDestination = {
   id: string | null;
   label: string;
   Icon: IconComponent;
@@ -31,7 +31,7 @@ export type NavigationMenuItemMoveDestination = {
   contextualText?: string;
 };
 
-export type NavigationMenuItemMoveDestinationGroup = {
+type NavigationMenuItemMoveDestinationGroup = {
   id: string;
   label?: string;
   destinations: NavigationMenuItemMoveDestination[];

@@ -96,7 +96,9 @@ export const useNavigationMenuItemDndKit = (
       source: { id?: unknown; data?: unknown } | null,
       resolved: SortableTargetDestination,
     ): string | null => {
-      const sourceItemId = source?.id != null ? String(source.id) : undefined;
+      const sourceItemId = isDefined(source?.id)
+        ? String(source.id)
+        : undefined;
 
       if (
         isDefined(sourceItemId) &&

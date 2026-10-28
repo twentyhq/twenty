@@ -6,7 +6,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { NavigationMenuItemSectionMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuItemSectionMenuContent';
-import { NavigationMenuItemContainerMenuOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemContainerMenuOpenEffect';
+import { NavigationMenuItemDropdownOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemDropdownOpenEffect';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -31,7 +31,7 @@ export const NavigationMenuItemSectionMenu = ({
   return (
     <DropdownRoot dropdownId={dropdownId} type="menu">
       {navigationMenuItemIdToRename === section.id && (
-        <NavigationMenuItemContainerMenuOpenEffect
+        <NavigationMenuItemDropdownOpenEffect
           dropdownId={dropdownId}
           onOpen={() => setNavigationMenuItemIdToRename(null)}
         />

@@ -7,21 +7,21 @@ import { AI_CHAT_RECENTS_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatRece
 import { AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatTriageNavigationSectionId';
 import { FAVORITES_NAVIGATION_SECTION_ID } from '@/navigation-menu-item/display/sections/favorites/constants/FavoritesNavigationSectionId';
 
+const NAVIGATION_SECTION_ID_BY_SECTION_TYPE: Partial<
+  Record<NavigationMenuItemType, string>
+> = {
+  [NavigationMenuItemType.AI_CHAT_TRIAGE]: AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID,
+  [NavigationMenuItemType.AI_CHAT_FAVORITES]:
+    AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID,
+  [NavigationMenuItemType.AI_CHAT_CHANNELS]:
+    AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID,
+  [NavigationMenuItemType.AI_CHAT_RECENTS]:
+    AI_CHAT_RECENTS_NAVIGATION_SECTION_ID,
+  [NavigationMenuItemType.FAVORITES]: FAVORITES_NAVIGATION_SECTION_ID,
+};
+
 export const getNavigationMenuSectionNavigationSectionId = (
   section: Pick<NavigationMenuItem, 'id' | 'type'>,
-) => {
-  switch (section.type) {
-    case NavigationMenuItemType.AI_CHAT_TRIAGE:
-      return AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID;
-    case NavigationMenuItemType.AI_CHAT_FAVORITES:
-      return AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID;
-    case NavigationMenuItemType.AI_CHAT_CHANNELS:
-      return AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID;
-    case NavigationMenuItemType.AI_CHAT_RECENTS:
-      return AI_CHAT_RECENTS_NAVIGATION_SECTION_ID;
-    case NavigationMenuItemType.FAVORITES:
-      return FAVORITES_NAVIGATION_SECTION_ID;
-    default:
-      return `navigation-menu-section-${section.id}`;
-  }
-};
+) =>
+  NAVIGATION_SECTION_ID_BY_SECTION_TYPE[section.type] ??
+  `navigation-menu-section-${section.id}`;

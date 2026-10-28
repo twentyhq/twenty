@@ -1,9 +1,4 @@
-export const NAVIGATION_MENU_ITEM_COMMAND_KEYS = [
-  'NEW_CHAT',
-  'SEARCH',
-  'SETTINGS',
-  'ALL_COMMANDS',
-] as const;
+import { type NAVIGATION_MENU_ITEM_COMMAND_KEYS } from '@/constants/NavigationMenuItemCommandKeys';
 
 export type NavigationMenuItemCommandKey =
   (typeof NAVIGATION_MENU_ITEM_COMMAND_KEYS)[number];

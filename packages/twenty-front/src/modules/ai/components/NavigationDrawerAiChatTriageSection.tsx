@@ -62,7 +62,7 @@ export const NavigationDrawerAiChatTriageSection = ({
   } = useAgentChatOpenThreadsSummary();
   const {
     visibleItems: visibleFilterStatuses,
-    exceedsVisibleItemLimit,
+    isOverVisibleItemLimit,
     isShowingAllItems,
     toggleShowingAllItems,
   } = useNavigationSectionVisibleItems({
@@ -78,21 +78,21 @@ export const NavigationDrawerAiChatTriageSection = ({
       OPEN_SUB_FILTER_STATUSES.some(
         (filterStatus) => filterStatus === agentChatThreadFilterStatus,
       ));
-  const openSubFilterStatusCount = {
+  const countByOpenSubFilterStatus = {
     [AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT]: needsInputThreadCount,
     [AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS]: unreadMentionThreadCount,
     [AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED]: unreadAssignedThreadCount,
   };
   const shownOpenSubFilterStatuses = OPEN_SUB_FILTER_STATUSES.filter(
     (filterStatus) =>
-      isOpenExpanded || openSubFilterStatusCount[filterStatus] > 0,
+      isOpenExpanded || countByOpenSubFilterStatus[filterStatus] > 0,
   );
   const selectedOpenSubItemIndex = isTriageShown
     ? shownOpenSubFilterStatuses.findIndex(
         (filterStatus) => filterStatus === agentChatThreadFilterStatus,
       )
     : -1;
-  const isOpenSubFilterStatusUnread = {
+  const unreadByOpenSubFilterStatus = {
     [AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT]: false,
     [AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS]: hasUnreadMentionThread,
     [AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED]: hasUnreadAssignedThread,
@@ -117,12 +117,12 @@ export const NavigationDrawerAiChatTriageSection = ({
               <NavigationDrawerAiChatTriageItem
                 key={openSubFilterStatus}
                 filterStatus={openSubFilterStatus}
-                count={openSubFilterStatusCount[openSubFilterStatus]}
+                count={countByOpenSubFilterStatus[openSubFilterStatus]}
                 isCountUrgent={
                   openSubFilterStatus ===
                   AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT
                 }
-                isUnread={isOpenSubFilterStatusUnread[openSubFilterStatus]}
+                isUnread={unreadByOpenSubFilterStatus[openSubFilterStatus]}
                 subItemState={getNavigationSubItemLeftAdornment({
                   index,
                   arrayLength: shownOpenSubFilterStatuses.length,
@@ -138,7 +138,7 @@ export const NavigationDrawerAiChatTriageSection = ({
           />
         ),
       )}
-      {exceedsVisibleItemLimit && (
+      {isOverVisibleItemLimit && (
         <NavigationDrawerSectionSeeMoreItem
           isShowingAllItems={isShowingAllItems}
           onClick={toggleShowingAllItems}

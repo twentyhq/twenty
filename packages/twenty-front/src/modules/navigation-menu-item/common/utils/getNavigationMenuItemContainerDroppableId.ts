@@ -1,8 +1,10 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 
 export const getNavigationMenuItemContainerDroppableId = (
   containerId: string | null,
 ): string =>
-  containerId === null
-    ? NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
-    : `${NavigationMenuItemDroppableIds.WORKSPACE_CONTAINER_PREFIX}${containerId}`;
+  isDefined(containerId)
+    ? `${NavigationMenuItemDroppableIds.WORKSPACE_CONTAINER_PREFIX}${containerId}`
+    : NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS;

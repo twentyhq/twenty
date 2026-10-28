@@ -23,7 +23,7 @@ import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-i
 import { NavigationMenuItemActions } from '@/navigation-menu-item/edit/components/NavigationMenuItemActions';
 import { NavigationMenuItemRowActions } from '@/navigation-menu-item/edit/components/NavigationMenuItemRowActions';
 import { NavigationMenuItemTypeTooltip } from '@/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip';
-import { NavigationMenuItemLinkEditorOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemLinkEditorOpenEffect';
+import { NavigationMenuItemDropdownOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemDropdownOpenEffect';
 import { NavigationMenuItemLinkEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemLinkEditor';
 import { NavigationMenuItemInlineEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor';
 
@@ -186,7 +186,7 @@ export const NavigationMenuItemEditable = ({
         }}
       >
         {shouldOpenLinkEditor && (
-          <NavigationMenuItemLinkEditorOpenEffect
+          <NavigationMenuItemDropdownOpenEffect
             dropdownId={dropdownId}
             onOpen={openEditMode}
           />

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { NAVIGATION_MENU_ITEM_COMMAND_KEYS } from 'twenty-shared/types';
+import { NAVIGATION_MENU_ITEM_COMMAND_KEYS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
