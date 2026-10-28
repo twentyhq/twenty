@@ -6,6 +6,8 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
+import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
 import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -105,47 +107,75 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
         continue;
       }
 
-      const dependencyChecksums = await this.applicationDependencyFilesService
-        .getDependencyContents({
-          workspaceId,
-          applicationUniversalIdentifier: flatApplication.universalIdentifier,
-        })
-        .then(({ storedFilesChecksums }) => storedFilesChecksums)
+      await this.cacheLockService
+        .withLock(
+          () =>
+            this.backfillApplicationDependencyChecksums({
+              workspaceId,
+              applicationId: flatApplication.id,
+              isDryRun,
+            }),
+          buildApplicationLifecycleLockKey({
+            workspaceId,
+            universalIdentifier: flatApplication.universalIdentifier,
+          }),
+          APPLICATION_LIFECYCLE_LOCK_OPTIONS,
+        )
         .catch((error: unknown) => {
           this.logger.warn(
             `Skipping dependency checksum backfill of application ${flatApplication.id} in workspace ${workspaceId}: ${getErrorMessage(error)}`,
           );
-
-          return undefined;
         });
-
-      if (!isDefined(dependencyChecksums)) {
-        continue;
-      }
-
-      const isUpToDate =
-        dependencyChecksums.packageJsonChecksum ===
-          flatApplication.packageJsonChecksum &&
-        dependencyChecksums.yarnLockChecksum ===
-          flatApplication.yarnLockChecksum;
-
-      if (isUpToDate) {
-        continue;
-      }
-
-      if (isDryRun) {
-        this.logger.log(
-          `[DRY RUN] Would backfill dependency checksums of application ${flatApplication.id} in workspace ${workspaceId}`,
-        );
-
-        continue;
-      }
-
-      await this.applicationService.update(flatApplication.id, {
-        ...dependencyChecksums,
-        workspaceId,
-      });
     }
+  }
+
+  private async backfillApplicationDependencyChecksums({
+    workspaceId,
+    applicationId,
+    isDryRun,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    isDryRun: boolean;
+  }): Promise<void> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+    const flatApplication = flatApplicationMaps.byId[applicationId];
+
+    if (!isDefined(flatApplication) || isDefined(flatApplication.deletedAt)) {
+      return;
+    }
+
+    const { storedFilesChecksums } =
+      await this.applicationDependencyFilesService.getDependencyContents({
+        workspaceId,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      });
+
+    const isUpToDate =
+      storedFilesChecksums.packageJsonChecksum ===
+        flatApplication.packageJsonChecksum &&
+      storedFilesChecksums.yarnLockChecksum ===
+        flatApplication.yarnLockChecksum;
+
+    if (isUpToDate) {
+      return;
+    }
+
+    if (isDryRun) {
+      this.logger.log(
+        `[DRY RUN] Would backfill dependency checksums of application ${flatApplication.id} in workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    await this.applicationService.update(flatApplication.id, {
+      ...storedFilesChecksums,
+      workspaceId,
+    });
   }
 
   private async migrateDependencyLayers(workspaceId: string): Promise<void> {
