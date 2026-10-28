@@ -20,9 +20,10 @@ export class AuthorizeAppInput {
   @MaxLength(2048)
   redirectUrl: string;
 
+  // RFC 6749 sets no max length on this opaque value; the /authorize URL is the practical bound
   @Field(() => String, { nullable: true })
   @IsString()
-  @MaxLength(1024)
+  @MaxLength(8192)
   @IsOptional()
   state?: string;
 

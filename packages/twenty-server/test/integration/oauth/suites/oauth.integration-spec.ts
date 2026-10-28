@@ -327,6 +327,50 @@ describe('OAuth (integration)', () => {
 
       createdEntityIds.tokens.push(issuedToken.id);
     });
+
+    it('should round-trip a state longer than 1024 characters', async () => {
+      const state = crypto.randomBytes(3000).toString('base64url');
+
+      const response = await makeMetadataApiRequest({
+        query: authorizeAppMutation,
+        variables: {
+          clientId: testRegistration.oAuthClientId,
+          redirectUrl: testRegistration.oAuthRedirectUris[0],
+          state,
+        },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const callbackUrl = new URL(response.body.data.authorizeApp.redirectUrl);
+      const code = callbackUrl.searchParams.get('code');
+
+      expect(callbackUrl.searchParams.get('state')).toBe(state);
+
+      assertIsDefinedOrThrow(code);
+
+      const [issuedToken] = await ds.query(
+        `SELECT id FROM core."appToken" WHERE value = $1`,
+        [crypto.createHash('sha256').update(code).digest('hex')],
+      );
+
+      createdEntityIds.tokens.push(issuedToken.id);
+    });
+
+    it('should reject a state longer than 8192 characters', async () => {
+      const response = await makeMetadataApiRequest({
+        query: authorizeAppMutation,
+        variables: {
+          clientId: testRegistration.oAuthClientId,
+          redirectUrl: testRegistration.oAuthRedirectUris[0],
+          state: 'a'.repeat(8193),
+        },
+      });
+
+      expect(response.body.errors?.[0]?.message).toContain(
+        'state must be shorter than or equal to 8192 characters',
+      );
+    });
   });
 
   describe('Token endpoint validation', () => {
