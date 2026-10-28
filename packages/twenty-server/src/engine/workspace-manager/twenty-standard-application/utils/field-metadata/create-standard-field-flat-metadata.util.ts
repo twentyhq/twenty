@@ -44,6 +44,11 @@ export type CreateStandardFieldArgs<
   };
 };
 
+const isPartialSystemFieldName = (
+  name: string,
+): name is keyof typeof PARTIAL_SYSTEM_FLAT_FIELD_METADATAS =>
+  name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS;
+
 export const createStandardFieldFlatMetadata = <
   O extends AllStandardObjectName,
   T extends FieldMetadataType,
@@ -75,6 +80,9 @@ export const createStandardFieldFlatMetadata = <
   const name = fieldName.toString();
   const searchFields: ReadonlyArray<{ name: string }> =
     SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName];
+  const partialSystemFlatFieldMetadata = isPartialSystemFieldName(name)
+    ? PARTIAL_SYSTEM_FLAT_FIELD_METADATAS[name]
+    : undefined;
 
   return {
     id: fieldIds[fieldName].id,
@@ -89,18 +97,16 @@ export const createStandardFieldFlatMetadata = <
     icon,
     isActive: true,
     isSystem,
-    isSystemSideEffect: name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
+    isSystemSideEffect: isPartialSystemFieldName(name),
     isNullable,
     isUnique,
     isSearchable: searchFields.some((searchField) => searchField.name === name),
     isAuditLogged: isAuditLoggableFieldType(type),
     isUIEditable,
     writability:
-      name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
-        ? PARTIAL_SYSTEM_FLAT_FIELD_METADATAS[
-            name as keyof typeof PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
-          ].writability
-        : MetadataWritability.OPEN,
+      partialSystemFlatFieldMetadata?.writability ?? MetadataWritability.OPEN,
+    disabledFieldPermissionActions:
+      partialSystemFlatFieldMetadata?.disabledFieldPermissionActions ?? null,
     isLabelSyncedWithName: false,
     overrides: null,
     defaultValue: defaultValue ?? null,

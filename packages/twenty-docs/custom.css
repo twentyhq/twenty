@@ -1526,7 +1526,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-connections.svg');
 }
 
-#content-area:has([data-page-banner='card-page-messaging-channels']) {
+#content-area:has([data-page-banner='card-page-messaging-channels'], [data-page-banner='card-page-inbox']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-messaging-channels.svg');
 }
 

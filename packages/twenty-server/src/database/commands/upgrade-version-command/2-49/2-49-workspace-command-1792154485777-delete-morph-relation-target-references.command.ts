@@ -87,6 +87,7 @@ export class DeleteMorphRelationTargetReferencesCommand extends ProvisionedWorks
       });
 
       const args = {
+        shouldDeferActions: false,
         workspaceId,
         isSystemBuild: true,
         applicationUniversalIdentifier,

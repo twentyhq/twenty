@@ -87,6 +87,7 @@ const buildFlatAgentMaps = (triggers: AgentTrigger[]) =>
       workspaceId: WORKSPACE_ID,
       applicationId: APPLICATION_ID,
       triggers,
+      isActive: true,
       deletedAt: null,
     },
   ]);

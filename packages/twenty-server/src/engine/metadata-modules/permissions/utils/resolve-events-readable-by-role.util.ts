@@ -11,6 +11,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
+import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-disabled-actions.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 export const resolveEventsReadableByRole = async <
@@ -38,20 +39,27 @@ export const resolveEventsReadableByRole = async <
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 }): Promise<TEvent[]> => {
-  const objectsPermissions = isDefined(roleId)
+  const rolePermissions = isDefined(roleId)
     ? rolesPermissions[roleId]
     : undefined;
 
-  if (!isDefined(roleId) || !isDefined(objectsPermissions)) {
+  if (!isDefined(roleId) || !isDefined(rolePermissions)) {
     return [];
   }
+
+  const objectsPermissions = restrictObjectsPermissionsToDisabledActions({
+    objectsPermissions: rolePermissions,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    actingApplicationId: owningApplicationId,
+  });
 
   const admittedRecordIds =
     await eventRecordAccessGate.resolveAdmittedRecordIds(
       buildRoleRowAccessPolicySubject({
         roleId,
         owningApplicationId,
-        rolesPermissions,
+        rolesPermissions: { [roleId]: objectsPermissions },
         roleIdsWithAllRecordsAccess,
         flatRowLevelPermissionPredicateMaps,
         flatRowLevelPermissionPredicateGroupMaps,
