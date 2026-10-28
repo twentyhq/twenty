@@ -13,7 +13,6 @@ import { type FrontComponentSharedDependencies } from 'src/engine/metadata-modul
 import { FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-shared-dependencies-banner-prefix.constant';
 import { FRONT_COMPONENT_ALLOWED_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-allowed-imports.constant';
 import { FRONT_COMPONENT_WRAPPER_NAME } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-wrapper-name.constant';
-import { frontComponentQuerySchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-query.schema';
 import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
 import { buildFrontComponentWithLimitsOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util';
@@ -36,10 +35,7 @@ export const buildFrontComponent = async ({
   sharedDependenciesChecksum: string;
 }> => {
   validateFrontComponentSourceOrThrow(input.source);
-  const source = buildFrontComponentEntrySource({
-    ...input,
-    query: frontComponentQuerySchema.parse(input.query),
-  });
+  const source = buildFrontComponentEntrySource(input);
   const sourceFile = join(__dirname, 'component.front-component.tsx');
   const result = await buildFrontComponentWithLimitsOrThrow({
     ...getCommonFrontComponentBuildOptions(),
