@@ -12,6 +12,7 @@ import '@fontsource/inter/700.css';
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 import 'twenty-ui/theme-dark.css';
+import '@/ui/theme/klaim-theme.css';
 import './index.css';
 
 const renderApp = () => {

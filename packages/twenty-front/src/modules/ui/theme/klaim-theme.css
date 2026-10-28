@@ -1,0 +1,118 @@
+/* Keep branding on the root so portals and embedded apps inherit it without
+   introducing a scoped ThemeProvider, which would disable interface scaling. */
+.light {
+  --t-background-noisy: #fff;
+  --t-background-primary: #fff;
+  --t-background-secondary: #f9f9fc;
+  --t-background-tertiary: #f2f2f8;
+  --t-background-quaternary: #e9e9f0;
+  --t-background-inverted-primary: #182842;
+  --t-background-inverted-secondary: #2a3e5d;
+  --t-background-primary-inverted: #182842;
+  --t-background-primary-inverted-hover: #2a3e5d;
+  --t-background-danger: #fcedea;
+  --t-background-transparent-primary: rgb(255 255 255 / 94%);
+  --t-background-transparent-secondary: rgb(255 255 255 / 70%);
+  --t-background-transparent-strong: rgb(24 40 66 / 16%);
+  --t-background-transparent-medium: rgb(128 238 224 / 24%);
+  --t-background-transparent-light: #e8f8f3;
+  --t-background-transparent-lighter: rgb(46 45 77 / 2%);
+  --t-background-transparent-danger: #fcedea;
+  --t-background-transparent-blue: #e6faf5;
+  --t-background-transparent-success: #e7f6ef;
+  --t-background-transparent-orange: #fff5e4;
+  --t-background-overlay-primary: rgb(24 40 66 / 72%);
+  --t-background-overlay-secondary: rgb(24 40 66 / 36%);
+  --t-background-overlay-tertiary: rgb(24 40 66 / 7%);
+  --t-background-radial-gradient: linear-gradient(135deg, #245e55, #182842);
+  --t-background-radial-gradient-hover: linear-gradient(
+    135deg,
+    #30786b,
+    #2a3e5d
+  );
+
+  --t-font-color-primary: #2e2d4d;
+  --t-font-color-secondary: #69697d;
+  --t-font-color-tertiary: #6f6f83;
+  --t-font-color-light: #9292a1;
+  --t-font-color-extra-light: #b8b8c3;
+  --t-font-color-inverted: #fff;
+  --t-font-color-on-accent: #182842;
+  --t-font-color-danger: #b54c43;
+
+  --t-border-color-strong: #dedee8;
+  --t-border-color-medium: #e9e9f0;
+  --t-border-color-light: #f0f0f5;
+  --t-border-color-inverted: #182842;
+  --t-border-color-secondary-inverted: #2a3e5d;
+  --t-border-color-danger: #e8bdb7;
+  --t-border-color-blue: #54bfb2;
+  --t-border-color-transparent-strong: rgb(46 45 77 / 7%);
+  --t-border-radius-sm: 5px;
+  --t-border-radius-md: 8px;
+  --t-border-radius-lg: 10px;
+  --t-border-radius-xl: 12px;
+
+  --t-box-shadow-color: rgb(34 34 68 / 2%);
+  --t-box-shadow-light: 0 3px 9px rgb(34 34 68 / 3%);
+  --t-box-shadow-sidebar: 1px 0 0 #e9e9f0;
+  --t-box-shadow-strong:
+    0 8px 24px rgb(24 40 66 / 12%), 0 2px 6px rgb(24 40 66 / 6%);
+
+  --t-accent-primary: #80eee0;
+  --t-accent-secondary: #bcefe4;
+  --t-accent-tertiary: #e8f8f3;
+  --t-accent-quaternary: #f4fbf8;
+  --t-accent-accent3570: #54bfb2;
+  --t-accent-accent4060: #54bfb2;
+  --t-accent-accent1: var(--t-color-blue1);
+  --t-accent-accent2: var(--t-color-blue2);
+  --t-accent-accent3: var(--t-color-blue3);
+  --t-accent-accent4: var(--t-color-blue4);
+  --t-accent-accent5: var(--t-color-blue5);
+  --t-accent-accent6: var(--t-color-blue6);
+  --t-accent-accent7: var(--t-color-blue7);
+  --t-accent-accent8: var(--t-color-blue8);
+  --t-accent-accent9: var(--t-color-blue9);
+  --t-accent-accent10: var(--t-color-blue10);
+  --t-accent-accent11: var(--t-color-blue11);
+  --t-accent-accent12: var(--t-color-blue12);
+  --t-color-blue: #30786b;
+  --t-color-blue1: #fbfefd;
+  --t-color-blue2: #f4fbf8;
+  --t-color-blue3: #e8f8f3;
+  --t-color-blue4: #d4f5ed;
+  --t-color-blue5: #bcefe4;
+  --t-color-blue6: #a2e8da;
+  --t-color-blue7: #80d8c8;
+  --t-color-blue8: #54bfb2;
+  --t-color-blue9: #30786b;
+  --t-color-blue10: #245e55;
+  --t-color-blue11: #245e55;
+  --t-color-blue12: #182842;
+  --t-buttons-secondary-text-color: #245e55;
+
+  --t-tag-text-gray: #69697d;
+  --t-tag-background-gray: #f0f1f6;
+  --t-tag-text-blue: #245e55;
+  --t-tag-background-blue: #e6faf5;
+  --t-tag-text-green: #30705a;
+  --t-tag-background-green: #e7f6ef;
+  --t-tag-text-red: #a3473d;
+  --t-tag-background-red: #fcedea;
+  --t-tag-text-amber: #94631f;
+  --t-tag-background-amber: #fff5e4;
+  --t-tag-text-purple: #6963a5;
+  --t-tag-background-purple: #f0edf9;
+
+  --t-snack-bar-success-color: #30705a;
+  --t-snack-bar-success-background-color: #e7f6ef;
+  --t-snack-bar-error-color: #a3473d;
+  --t-snack-bar-error-background-color: #fcedea;
+  --t-snack-bar-warning-color: #94631f;
+  --t-snack-bar-warning-background-color: #fff5e4;
+  --t-snack-bar-info-color: #245e55;
+  --t-snack-bar-info-background-color: #e6faf5;
+  --t-snack-bar-default-color: #2e2d4d;
+  --t-snack-bar-default-background-color: #f2f2f8;
+}

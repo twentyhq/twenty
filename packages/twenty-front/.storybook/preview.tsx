@@ -32,6 +32,8 @@ import '../src/modules/app/utils/setupMonacoEnvironment';
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 import 'twenty-ui/theme-dark.css';
+// oxlint-disable-next-line no-restricted-imports
+import '../src/modules/ui/theme/klaim-theme.css';
 import { GRAY_SCALE_LIGHT, ThemeProvider } from 'twenty-ui/theme';
 import { waitForStorybookFontsLoaded } from 'twenty-ui/testing';
 // oxlint-disable-next-line no-restricted-imports
