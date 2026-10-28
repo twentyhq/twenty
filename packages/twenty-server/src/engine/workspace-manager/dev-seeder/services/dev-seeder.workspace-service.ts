@@ -99,14 +99,17 @@ export class DevSeederWorkspaceService {
     options?: { light?: boolean },
   ): Promise<void> {
     await runWithDeferredWorkspaceMigrationActionsMode('IN_PROCESS', () =>
-      this.seedDevWorkspace(workspaceId, options),
+      this.seedDevWorkspace({ workspaceId, options }),
     );
   }
 
-  private async seedDevWorkspace(
-    workspaceId: SeededWorkspacesIds,
-    options?: { light?: boolean },
-  ): Promise<void> {
+  private async seedDevWorkspace({
+    workspaceId,
+    options,
+  }: {
+    workspaceId: SeededWorkspacesIds;
+    options?: { light?: boolean };
+  }): Promise<void> {
     const light = options?.light ?? false;
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';

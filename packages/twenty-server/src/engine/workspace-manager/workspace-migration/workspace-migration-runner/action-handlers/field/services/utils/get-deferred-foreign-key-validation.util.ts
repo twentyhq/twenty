@@ -17,7 +17,7 @@ export const getDeferredForeignKeyValidation = ({
       payload: DeferredWorkspaceMigrationActionPayload<'validate_foreignKey'>;
     }
   | undefined => {
-  if (shouldDeferActions !== true) {
+  if (!shouldDeferActions) {
     return undefined;
   }
 

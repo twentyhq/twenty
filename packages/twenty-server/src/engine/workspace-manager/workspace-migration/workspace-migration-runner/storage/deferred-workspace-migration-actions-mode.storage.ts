@@ -5,8 +5,7 @@ import { type DeferredWorkspaceMigrationActionsMode } from 'src/engine/workspace
 const deferredWorkspaceMigrationActionsModeStorage =
   new AsyncLocalStorage<DeferredWorkspaceMigrationActionsMode>();
 
-// Callers that run several migrations back to back or without a worker
-// (workspace creation, seeding, upgrade commands) run the slow parts inline.
+// IN_PROCESS is for callers that chain migrations or run without a worker.
 export const runWithDeferredWorkspaceMigrationActionsMode = <TResult>(
   mode: DeferredWorkspaceMigrationActionsMode,
   fn: () => Promise<TResult>,
