@@ -43,6 +43,7 @@ import { type MessageQueue } from 'src/engine/core-modules/message-queue/message
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { buildQueueJobIdWithSuffix } from 'src/engine/core-modules/message-queue/utils/build-queue-job-id-with-suffix.util';
+import { buildJobLogContext } from 'src/engine/core-modules/message-queue/utils/build-job-log-context.util';
 import { computeJobQueueWaitMs } from 'src/engine/core-modules/message-queue/utils/compute-job-queue-wait-ms.util';
 import { isQueueJobIdAlreadyWaiting } from 'src/engine/core-modules/message-queue/utils/is-queue-job-id-already-waiting.util';
 import { JOB_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/job-latency-ms-bucket-boundaries.constant';
@@ -292,28 +293,39 @@ export class BullMQDriver
 
           // TODO: Correctly support for job.id
           const timeStart = performance.now();
-          const workspaceId = job.data?.workspaceId;
-          const workspaceSuffix = workspaceId
-            ? ` [workspace=${workspaceId}]`
-            : '';
-
-          this.logger.log(
-            `Processing job ${job.id} with name ${job.name} on queue ${queueName}${workspaceSuffix}`,
-          );
-          await handler({
-            data: job.data,
-            id: job.id ?? '',
-            name: job.name,
-            retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
-            updateData: (data) => job.updateData(data),
-            updateProgress: (progress) => job.updateProgress(progress),
-            abortSignal,
+          const logContext = buildJobLogContext({
+            jobData: job.data,
+            queueWaitMs,
           });
-          const timeEnd = performance.now();
-          const executionTime = timeEnd - timeStart;
 
           this.logger.log(
-            `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix}`,
+            `Processing job ${job.id} with name ${job.name} on queue ${queueName}${logContext}`,
+          );
+
+          try {
+            await handler({
+              data: job.data,
+              id: job.id ?? '',
+              name: job.name,
+              retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
+              updateData: (data) => job.updateData(data),
+              updateProgress: (progress) => job.updateProgress(progress),
+              abortSignal,
+            });
+          } finally {
+            this.metricsService.recordHistogram({
+              key: MetricsKeys.JobDurationMs,
+              value: performance.now() - timeStart,
+              unit: 'ms',
+              attributes: { queue: queueName, job_name: job.name },
+              bucketBoundaries: JOB_LATENCY_MS_BUCKET_BOUNDARIES,
+            });
+          }
+
+          const executionTime = performance.now() - timeStart;
+
+          this.logger.log(
+            `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${logContext}`,
           );
         }),
       workerOptions,

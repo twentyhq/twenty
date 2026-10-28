@@ -77,6 +77,7 @@ export class RemoveMessageCampaignNavigationMenuItemCommand extends ProvisionedW
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:
