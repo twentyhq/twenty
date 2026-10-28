@@ -38,6 +38,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.CHAT_THREAD_NOT_IN_CHANNEL:
       case AiExceptionCode.CHAT_THREAD_CANNOT_LEAVE_CHANNEL:
       case AiExceptionCode.INVALID_CHAT_CHANNEL_NAME:
+      case AiExceptionCode.INVALID_CHAT_CHANNEL_UNIVERSAL_IDENTIFIER:
       case AiExceptionCode.INVALID_CHAT_CHANNEL_ROLE:
       case AiExceptionCode.INVALID_CHAT_CHANNEL_DESTINATION:
       case AiExceptionCode.INVALID_CHAT_CHANNEL_THREAD_CURSOR:
@@ -51,6 +52,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:
       case AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY:
       case AiExceptionCode.CHAT_CHANNEL_BUSY:
+      case AiExceptionCode.CHAT_CHANNEL_UNIVERSAL_IDENTIFIER_TAKEN:
         throw new ConflictError(error);
       case AiExceptionCode.AGENT_IS_STANDARD:
       case AiExceptionCode.AGENT_IS_INACTIVE:

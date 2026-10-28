@@ -6,6 +6,8 @@ import {
 
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { type FlatAgentChatChannelRole } from 'src/engine/metadata-modules/flat-agent-chat-channel-role/types/flat-agent-chat-channel-role.type';
+import { type FlatAgentChatChannel } from 'src/engine/metadata-modules/flat-agent-chat-channel/types/flat-agent-chat-channel.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -129,6 +131,30 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   agentChatChannelId: null,
   agentChatChannelUniversalIdentifier: null,
   position: 0,
+};
+
+const AGENT_CHAT_CHANNEL: FlatAgentChatChannel = {
+  ...SYNCABLE,
+  id: 'agent-chat-channel-id',
+  universalIdentifier: 'agent-chat-channel-universal-identifier',
+  name: 'App channel',
+  icon: null,
+  color: null,
+  position: 1,
+  channelRoleIds: [],
+  channelRoleUniversalIdentifiers: [],
+  navigationMenuItemIds: [],
+  navigationMenuItemUniversalIdentifiers: [],
+};
+
+const AGENT_CHAT_CHANNEL_ROLE: FlatAgentChatChannelRole = {
+  ...SYNCABLE,
+  id: 'agent-chat-channel-role-id',
+  universalIdentifier: 'agent-chat-channel-role-universal-identifier',
+  channelId: AGENT_CHAT_CHANNEL.id,
+  channelUniversalIdentifier: AGENT_CHAT_CHANNEL.universalIdentifier,
+  roleId: 'role-id',
+  roleUniversalIdentifier: 'role-universal-identifier',
 };
 
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
@@ -274,6 +300,26 @@ const withNavigationMenuItem =
     }),
   });
 
+const withAgentChatChannel =
+  (flatAgentChatChannel: FlatAgentChatChannel) =>
+  (allFlatEntityMaps: AllFlatEntityMaps) => ({
+    ...allFlatEntityMaps,
+    flatAgentChatChannelMaps: addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: flatAgentChatChannel,
+      flatEntityMaps: allFlatEntityMaps.flatAgentChatChannelMaps,
+    }),
+  });
+
+const withAgentChatChannelRole =
+  (flatAgentChatChannelRole: FlatAgentChatChannelRole) =>
+  (allFlatEntityMaps: AllFlatEntityMaps) => ({
+    ...allFlatEntityMaps,
+    flatAgentChatChannelRoleMaps: addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: flatAgentChatChannelRole,
+      flatEntityMaps: allFlatEntityMaps.flatAgentChatChannelRoleMaps,
+    }),
+  });
+
 describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
   it('does not delete a member role assignment the manifest cannot express', () => {
     const result = inferDeletionOf(
@@ -405,6 +451,17 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
         NAVIGATION_MENU_ITEM.universalIdentifier
       ],
     ).toBeDefined();
+  });
+
+  it('preserves channels and role access created at runtime when syncing a manifest', () => {
+    const result = inferDeletionOf((maps) =>
+      withAgentChatChannelRole(AGENT_CHAT_CHANNEL_ROLE)(
+        withAgentChatChannel(AGENT_CHAT_CHANNEL)(maps),
+      ),
+    );
+
+    expect(result.agentChatChannel?.flatEntityToDelete).toBeUndefined();
+    expect(result.agentChatChannelRole?.flatEntityToDelete).toBeUndefined();
   });
 
   it('does not update an unpinned layout when its manifest is unchanged', () => {

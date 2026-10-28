@@ -12,9 +12,12 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AgentChatChannelDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel.dto';
 import { AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-role.dto';
@@ -36,6 +39,7 @@ import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
 const AGENT_CHAT_CHANNEL_ACCESS_POLICY: AccessPolicy = {
@@ -63,7 +67,7 @@ const AGENT_CHAT_CHANNEL_SETTINGS_ACCESS_POLICY: AccessPolicy = {
     },
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: true },
   },
   requiredPermissionFlags: [
     PermissionFlagType.AI,
@@ -75,7 +79,7 @@ const AGENT_CHAT_CHANNEL_SETTINGS_ACCESS_POLICY: AccessPolicy = {
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   AiGraphqlApiExceptionInterceptor,
 )
-@UseFilters(AuthGraphqlApiExceptionFilter)
+@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 @MetadataResolver(() => AgentChatChannelDTO)
 export class AgentChatChannelResolver {
   constructor(
@@ -167,23 +171,38 @@ export class AgentChatChannelResolver {
     @Args('input', { type: () => CreateAgentChatChannelInput })
     input: CreateAgentChatChannelInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<AgentChatChannelDTO> {
     return this.channelService.createChannel({
       name: input.name,
       icon: input.icon ?? null,
       color: input.color ?? null,
       roleIds: input.roleIds,
+      universalIdentifier: input.universalIdentifier,
+      callingApplication,
       workspaceId,
     });
   }
 
   @Mutation(() => AgentChatChannelDTO)
-  @UseGuards(AccessPolicyGuard(AGENT_CHAT_CHANNEL_SETTINGS_ACCESS_POLICY))
+  @UseGuards(
+    AccessPolicyGuard(AGENT_CHAT_CHANNEL_SETTINGS_ACCESS_POLICY),
+    ApplicationTargetGuard,
+  )
   async updateAgentChatChannel(
-    @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
+    @ApplicationTargetArg(
+      'channelId',
+      {
+        kind: 'applicationOwnedEntity',
+        metadataName: 'agentChatChannel',
+        requireApplicationRegistrationOwnership: false,
+      },
+      { type: () => UUIDScalarType },
+    )
+    channelId: string,
     @Args('input', { type: () => UpdateAgentChatChannelInput })
     input: UpdateAgentChatChannelInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatChannelDTO> {
     return this.channelService.updateChannel({
       channelId,
@@ -194,27 +213,36 @@ export class AgentChatChannelResolver {
         position: input.position ?? undefined,
         roleIds: input.roleIds ?? undefined,
       },
-      workspaceId,
+      authContext: getAgentInboxCallerAuthContextOrThrow(),
     });
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(AccessPolicyGuard(AGENT_CHAT_CHANNEL_SETTINGS_ACCESS_POLICY))
+  @UseGuards(
+    AccessPolicyGuard(AGENT_CHAT_CHANNEL_SETTINGS_ACCESS_POLICY),
+    ApplicationTargetGuard,
+  )
   async deleteAgentChatChannel(
-    @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
+    @ApplicationTargetArg(
+      'channelId',
+      {
+        kind: 'applicationOwnedEntity',
+        metadataName: 'agentChatChannel',
+        requireApplicationRegistrationOwnership: false,
+      },
+      { type: () => UUIDScalarType },
+    )
+    channelId: string,
     @Args('destinationChannelId', {
       type: () => UUIDScalarType,
       nullable: true,
     })
     destinationChannelId: string | null,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     await this.channelService.deleteChannel({
       channelId,
       destinationChannelId: destinationChannelId ?? null,
-      workspaceMemberId,
-      workspaceId,
+      authContext: getAgentInboxCallerAuthContextOrThrow(),
     });
 
     return true;

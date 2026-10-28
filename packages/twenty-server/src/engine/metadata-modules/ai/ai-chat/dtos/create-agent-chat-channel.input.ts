@@ -15,4 +15,7 @@ export class CreateAgentChatChannelInput {
 
   @Field(() => [UUIDScalarType], { defaultValue: [] })
   roleIds: string[];
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  universalIdentifier?: string | null;
 }

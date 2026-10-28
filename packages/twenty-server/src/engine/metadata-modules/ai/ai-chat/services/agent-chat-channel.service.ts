@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Any } from 'typeorm';
 
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
@@ -32,6 +32,7 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { STANDARD_AGENT_CHAT_CHANNEL } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-agent-chat-channel.constant';
 
 type ChannelChanges = {
   name?: string;
@@ -78,49 +79,36 @@ export class AgentChatChannelService {
       .filter(({ isAccessible }) => canManageChannels || isAccessible);
   }
 
-  async createChannel({
-    workspaceId,
-    name,
-    icon,
-    color,
-    roleIds,
-  }: {
-    workspaceId: string;
-    name: string;
-    icon: string | null;
-    color: string | null;
-    roleIds: string[];
-  }): Promise<FlatAgentChatChannelWithRoleIds> {
-    if (!(await this.sharingService.hasChannels(workspaceId))) {
+  async createChannel(
+    args: Parameters<AgentChatChannelMetadataService['createChannel']>[0],
+  ): Promise<FlatAgentChatChannelWithRoleIds> {
+    if (!(await this.sharingService.hasChannels(args.workspaceId))) {
       throwAgentChatChannelsUnavailable();
     }
 
-    return this.channelMetadataService.createChannel({
-      workspaceId,
-      name,
-      icon,
-      color,
-      roleIds,
-    });
+    return this.channelMetadataService.createChannel(args);
   }
 
   async updateChannel({
-    workspaceId,
+    authContext,
     channelId,
     changes: { roleIds, ...changes },
   }: {
-    workspaceId: string;
+    authContext: AgentInboxCallerAuthContext;
     channelId: string;
     changes: ChannelChanges;
   }): Promise<FlatAgentChatChannelWithRoleIds> {
-    const channel = await this.channelMetadataService.updateChannel({
-      workspaceId,
-      channelId,
-      changes,
-      roleIds,
-    });
+    const workspaceId = authContext.workspace.id;
+    const { channel, haveChannelRolesChanged } =
+      await this.channelMetadataService.updateChannel({
+        workspaceId,
+        callingApplication: authContext.application,
+        channelId,
+        changes,
+        roleIds,
+      });
 
-    if (isDefined(roleIds)) {
+    if (haveChannelRolesChanged) {
       await this.channelGrantService
         .rewriteChannelGrants({ workspaceId, channelId })
         .catch(async (error: unknown) => {
@@ -139,16 +127,15 @@ export class AgentChatChannelService {
   // A channel's chats would read through nothing once it is gone, so they
   // move to another channel first
   async deleteChannel({
-    workspaceId,
-    workspaceMemberId,
+    authContext,
     channelId,
     destinationChannelId,
   }: {
-    workspaceId: string;
-    workspaceMemberId: string;
+    authContext: AgentInboxCallerAuthContext;
     channelId: string;
     destinationChannelId: string | null;
   }): Promise<void> {
+    const workspaceId = authContext.workspace.id;
     const channel = await this.channelMetadataService.findChannelOrThrow({
       workspaceId,
       channelId,
@@ -170,9 +157,8 @@ export class AgentChatChannelService {
     }
 
     if (isDefined(destinationChannelId)) {
-      await this.channelAccessService.assertChannelAccess({
-        workspaceId,
-        workspaceMemberId,
+      await this.channelAccessService.assertCallerChannelAccessOrThrow({
+        authContext,
         channelId: destinationChannelId,
       });
     }
@@ -222,6 +208,42 @@ export class AgentChatChannelService {
         canAccessAllAgentChatChannels,
       }))
       .sort((left, right) => left.label.localeCompare(right.label));
+  }
+
+  async moveChannelThreadsToGeneral({
+    workspaceId,
+    channelIds,
+  }: {
+    workspaceId: string;
+    channelIds: string[];
+  }): Promise<void> {
+    if (!isNonEmptyArray(channelIds)) {
+      return;
+    }
+
+    const generalChannel =
+      await this.channelMetadataService.findChannelByUniversalIdentifier({
+        workspaceId,
+        universalIdentifier:
+          STANDARD_AGENT_CHAT_CHANNEL.general.universalIdentifier,
+      });
+
+    if (!isDefined(generalChannel)) {
+      return;
+    }
+
+    for (const channelId of channelIds) {
+      const movedThreads = await this.moveChannelThreads({
+        workspaceId,
+        channelId,
+        destinationChannelId: generalChannel.id,
+      });
+
+      await this.threadRecordEventService.emitThreadsUpdated({
+        workspaceId,
+        threads: movedThreads,
+      });
+    }
   }
 
   // Moved chats keep their channel status

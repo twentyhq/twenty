@@ -94,9 +94,10 @@ describe('Chat channel access and triage through the authenticated API', () => {
       variables: { input: { name: 'General' } },
     });
 
-    expect(duplicateResponse.body.errors[0].extensions.code).toBe(
-      'METADATA_VALIDATION_FAILED',
-    );
+    expect(duplicateResponse.body.errors[0].extensions).toMatchObject({
+      code: 'BAD_USER_INPUT',
+      subCode: AiExceptionCode.INVALID_CHAT_CHANNEL_NAME,
+    });
   });
 
   it('leaves setting channels up to who manages AI settings', async () => {

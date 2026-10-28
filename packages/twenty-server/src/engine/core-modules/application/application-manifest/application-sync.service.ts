@@ -35,6 +35,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
+import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -57,6 +58,7 @@ export class ApplicationSyncService {
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly applicationUninstallService: ApplicationUninstallService,
+    private readonly agentChatChannelService: AgentChatChannelService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -432,6 +434,20 @@ export class ApplicationSyncService {
       );
 
     await progressReporter.reportStepCompleted('COMPUTE_METADATA_TO_DELETE');
+
+    await this.agentChatChannelService.moveChannelThreadsToGeneral({
+      workspaceId,
+      channelIds: Object.keys(
+        allFlatEntityOperationRecordByMetadataName.agentChatChannel
+          ?.flatEntityToDelete ?? {},
+      )
+        .map(
+          (universalIdentifier) =>
+            fromAllFlatEntityMaps.flatAgentChatChannelMaps
+              .byUniversalIdentifier[universalIdentifier]?.id,
+        )
+        .filter(isDefined),
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromRecord(
