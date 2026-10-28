@@ -1,17 +1,17 @@
 export const buildLocalChildProcessNodeFlags = ({
   readableDirectories,
   writableDirectory,
-  allowNetwork,
+  shouldAllowNetwork,
 }: {
   readableDirectories: string[];
   writableDirectory: string;
-  allowNetwork: boolean;
+  shouldAllowNetwork: boolean;
 }): string[] => [
   '--permission',
   // Published apps ship prebuilt native addons (e.g. sharp); addons are not covered by the permission model.
   '--allow-addons',
   '--disable-warning=SecurityWarning',
-  ...(allowNetwork
+  ...(shouldAllowNetwork
     ? ['--allow-net', '--disable-warning=ExperimentalWarning']
     : []),
   ...readableDirectories.map(

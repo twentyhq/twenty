@@ -178,7 +178,8 @@ export class LocalChildProcessRunnerService {
       ],
       writableDirectory: temporaryDirectory,
       // Node 25+ denies network access under --permission unless --allow-net is passed.
-      allowNetwork: process.allowedNodeEnvironmentFlags.has('--allow-net'),
+      shouldAllowNetwork:
+        process.allowedNodeEnvironmentFlags.has('--allow-net'),
     });
 
     const childEnv = buildLocalChildProcessEnv({

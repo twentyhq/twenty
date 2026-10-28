@@ -6,7 +6,7 @@ describe('buildLocalChildProcessNodeFlags', () => {
       buildLocalChildProcessNodeFlags({
         readableDirectories: ['/execution', '/layers/deps', '/layers/sdk'],
         writableDirectory: '/execution/tmp',
-        allowNetwork: false,
+        shouldAllowNetwork: false,
       }),
     ).toEqual([
       '--permission',
@@ -24,7 +24,7 @@ describe('buildLocalChildProcessNodeFlags', () => {
       buildLocalChildProcessNodeFlags({
         readableDirectories: ['/execution'],
         writableDirectory: '/execution/tmp',
-        allowNetwork: true,
+        shouldAllowNetwork: true,
       }),
     ).toContain('--allow-net');
   });
