@@ -41,29 +41,25 @@ const getSentAuthorizationHeader = (requestInit: RequestInit | undefined) =>
   new Headers(requestInit?.headers).get('authorization');
 
 describe('createInboxMetadataClient', () => {
-  const initialEnvironment = process.env;
   let fetchSpy: MockInstance<typeof fetch>;
 
   beforeEach(() => {
     vi.resetModules();
-    process.env = {
-      ...initialEnvironment,
-      TWENTY_API_URL: 'https://api.test',
-    };
-    delete process.env.TWENTY_APP_ACCESS_TOKEN;
-    delete process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN;
+    vi.stubEnv('TWENTY_API_URL', 'https://api.test');
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', undefined);
+    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', undefined);
     fetchSpy = vi.spyOn(globalThis, 'fetch');
   });
 
   afterEach(() => {
-    process.env = initialEnvironment;
-    fetchSpy.mockRestore();
+    vi.unstubAllEnvs();
     vi.unstubAllGlobals();
+    fetchSpy.mockRestore();
   });
 
   it('sends the application token as the bearer for APPLICATION', async () => {
-    process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
-    process.env.TWENTY_APP_ACCESS_TOKEN = 'member-token';
+    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', 'application-token');
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'member-token');
     fetchSpy.mockResolvedValue(successResponse());
 
     const createInboxMetadataClient = await importCreateInboxMetadataClient();
@@ -81,8 +77,8 @@ describe('createInboxMetadataClient', () => {
   });
 
   it('sends the member token as the bearer for CURRENT_MEMBER', async () => {
-    process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
-    process.env.TWENTY_APP_ACCESS_TOKEN = 'member-token';
+    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', 'application-token');
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'member-token');
     fetchSpy.mockResolvedValue(successResponse());
 
     const createInboxMetadataClient = await importCreateInboxMetadataClient();
@@ -97,8 +93,8 @@ describe('createInboxMetadataClient', () => {
   });
 
   it('refuses CURRENT_MEMBER before any request when nobody is behind the run', async () => {
-    process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
-    process.env.TWENTY_APP_ACCESS_TOKEN = 'application-token';
+    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', 'application-token');
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'application-token');
 
     const createInboxMetadataClient = await importCreateInboxMetadataClient();
 
@@ -109,7 +105,7 @@ describe('createInboxMetadataClient', () => {
   });
 
   it('refreshes the token through the front component host after a 401 and retries once', async () => {
-    process.env.TWENTY_APP_ACCESS_TOKEN = 'expired-token';
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'expired-token');
     const requestAccessTokenRefresh = vi
       .fn()
       .mockResolvedValue('refreshed-token');

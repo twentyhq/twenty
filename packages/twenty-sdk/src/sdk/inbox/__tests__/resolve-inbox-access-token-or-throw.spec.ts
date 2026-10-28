@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { resolveInboxAccessTokenOrThrow } from '@/sdk/inbox/resolve-inbox-access-token-or-throw';
 
@@ -6,22 +6,19 @@ const NOBODY_BEHIND_THE_RUN_ERROR =
   /Cron schedules, install hooks and unauthenticated webhooks/;
 
 describe('resolveInboxAccessTokenOrThrow', () => {
-  const initialEnvironment = process.env;
-
   beforeEach(() => {
-    process.env = { ...initialEnvironment };
-    delete process.env.TWENTY_APP_ACCESS_TOKEN;
-    delete process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN;
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', undefined);
+    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', undefined);
   });
 
   afterEach(() => {
-    process.env = initialEnvironment;
+    vi.unstubAllEnvs();
   });
 
   describe('APPLICATION', () => {
     it('prefers the application token in a logic function', () => {
-      process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
-      process.env.TWENTY_APP_ACCESS_TOKEN = 'member-token';
+      vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', 'application-token');
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'member-token');
 
       expect(resolveInboxAccessTokenOrThrow('APPLICATION')).toBe(
         'application-token',
@@ -29,7 +26,7 @@ describe('resolveInboxAccessTokenOrThrow', () => {
     });
 
     it('falls back to the user-bound token of a front component', () => {
-      process.env.TWENTY_APP_ACCESS_TOKEN = 'component-token';
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'component-token');
 
       expect(resolveInboxAccessTokenOrThrow('APPLICATION')).toBe(
         'component-token',
@@ -45,8 +42,8 @@ describe('resolveInboxAccessTokenOrThrow', () => {
 
   describe('CURRENT_MEMBER', () => {
     it('uses the token of the member who triggered the run', () => {
-      process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
-      process.env.TWENTY_APP_ACCESS_TOKEN = 'member-token';
+      vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', 'application-token');
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'member-token');
 
       expect(resolveInboxAccessTokenOrThrow('CURRENT_MEMBER')).toBe(
         'member-token',
@@ -54,7 +51,7 @@ describe('resolveInboxAccessTokenOrThrow', () => {
     });
 
     it('uses the user-bound token of a front component', () => {
-      process.env.TWENTY_APP_ACCESS_TOKEN = 'component-token';
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'component-token');
 
       expect(resolveInboxAccessTokenOrThrow('CURRENT_MEMBER')).toBe(
         'component-token',
@@ -62,7 +59,7 @@ describe('resolveInboxAccessTokenOrThrow', () => {
     });
 
     it('refuses a run without a member token', () => {
-      process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
+      vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', 'application-token');
 
       expect(() => resolveInboxAccessTokenOrThrow('CURRENT_MEMBER')).toThrow(
         NOBODY_BEHIND_THE_RUN_ERROR,
@@ -70,8 +67,8 @@ describe('resolveInboxAccessTokenOrThrow', () => {
     });
 
     it('refuses a run nobody triggered, where both tokens are the application token', () => {
-      process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
-      process.env.TWENTY_APP_ACCESS_TOKEN = 'application-token';
+      vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', 'application-token');
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'application-token');
 
       expect(() => resolveInboxAccessTokenOrThrow('CURRENT_MEMBER')).toThrow(
         NOBODY_BEHIND_THE_RUN_ERROR,

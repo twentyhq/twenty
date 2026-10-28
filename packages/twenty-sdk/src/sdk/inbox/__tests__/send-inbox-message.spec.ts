@@ -27,15 +27,14 @@ describe('sendInboxMessage', () => {
 
   beforeEach(() => {
     vi.resetModules();
-    process.env.TWENTY_API_URL = 'https://api.test';
-    process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'app-token';
+    vi.stubEnv('TWENTY_API_URL', 'https://api.test');
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', undefined);
+    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', 'app-token');
     fetchSpy = vi.spyOn(globalThis, 'fetch');
   });
 
   afterEach(() => {
-    delete process.env.TWENTY_API_URL;
-    delete process.env.TWENTY_APP_ACCESS_TOKEN;
-    delete process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN;
+    vi.unstubAllEnvs();
     fetchSpy.mockRestore();
   });
 
@@ -70,14 +69,14 @@ describe('sendInboxMessage', () => {
 
     expect(url).toBe('https://api.test/metadata');
 
-    const sentBody = JSON.parse(requestInit?.body as string);
+    const sentBody = JSON.parse(String(requestInit?.body));
 
     expect(sentBody.query).toContain('sendInboxMessage(input:$v1){threadId}');
     expect(Object.values(sentBody.variables)).toEqual([input]);
   });
 
   it('sends the application access token as a bearer credential', async () => {
-    process.env.TWENTY_APP_ACCESS_TOKEN = 'member-token';
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'member-token');
     fetchSpy.mockResolvedValue(
       graphqlResponse({ data: { sendInboxMessage: { threadId: THREAD_ID } } }),
     );
