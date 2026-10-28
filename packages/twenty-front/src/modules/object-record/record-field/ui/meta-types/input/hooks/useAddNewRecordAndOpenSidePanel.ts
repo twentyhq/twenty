@@ -86,7 +86,9 @@ export const useAddNewRecordAndOpenSidePanel = ({
       };
     }
 
-    return { [`${relationFieldMetadataItem.name}Id`]: recordId };
+    return {
+      [doNotTranslate(`${relationFieldMetadataItem.name}Id`)]: recordId,
+    };
   };
 
   const createAndAttachRecord = async (recordInput: Partial<ObjectRecord>) => {
