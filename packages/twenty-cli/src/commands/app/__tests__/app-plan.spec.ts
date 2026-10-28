@@ -163,7 +163,7 @@ describe('app plan', () => {
   it.each([
     { flags: [], inferDeletion: undefined },
     { flags: ['--prune'], inferDeletion: true },
-    { flags: ['--no-delete'], inferDeletion: false },
+    { flags: ['--no-prune'], inferDeletion: false },
   ])(
     'requests only a dry run with $flags',
     async ({ flags, inferDeletion }) => {
@@ -230,7 +230,7 @@ describe('app plan', () => {
       '  # objectMetadata "company" will be destroyed',
       '  # view "Old view" will be destroyed',
       'Plan: 1 to add, 1 to change, 2 to destroy.',
-      '--no-delete',
+      '--no-prune',
       'Warning: 1 destructive change(s) will permanently delete data.',
       '  - objectMetadata "company": drops the table and all its rows',
       'Nothing was registered',
@@ -241,13 +241,36 @@ describe('app plan', () => {
     expect(stdout).not.toContain('project output');
   });
 
-  it('does not offer --no-delete when deletions were requested with --prune', async () => {
+  it('does not offer --no-prune when deletions were requested with --prune', async () => {
     const { stdout, exitCode } = await run('--prune');
 
     expect(exitCode).toBe(0);
     expect(stdout).toContain('Plan: 1 to add, 1 to change, 2 to destroy.');
-    expect(stdout).not.toContain('--no-delete');
+    expect(stdout).not.toContain('--no-prune');
   });
+
+  it.each([
+    { flags: ['--no-delete'], inferDeletion: false },
+    { flags: ['--no-delete', '--prune'], inferDeletion: true },
+  ])(
+    'accepts the deprecated --no-delete with a warning for $flags',
+    async ({ flags, inferDeletion }) => {
+      const { envelope, exitCode } = await runJson(...flags);
+
+      expect(exitCode).toBe(0);
+      expect(envelope.data.inferDeletionFromMissingEntities).toBe(
+        inferDeletion,
+      );
+      expect(envelope.warnings).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ code: 'DEPRECATED_OPTION' }),
+        ]),
+      );
+      expect(readGraphqlRequest(server.requests[0]).arguments).toMatchObject({
+        inferDeletionFromMissingEntities: inferDeletion,
+      });
+    },
+  );
 
   it('reports an empty plan as a success', async () => {
     state.response = planResponse([]);
@@ -509,7 +532,7 @@ describe('app plan', () => {
         needsProject: true,
         needsTarget: true,
         requiredPermissions: ['APPLICATIONS'],
-        flags: expect.arrayContaining(['--no-delete', '--prune']),
+        flags: expect.arrayContaining(['--prune', '--no-prune']),
       }),
     );
     expect(server.requests).toHaveLength(0);

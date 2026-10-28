@@ -10,9 +10,7 @@ export const runAppPlanCommand: CommandRun<TargetCommandContext> = async (
   context,
 ) => {
   const startedAt = performance.now();
-  const inferDeletionFromMissingEntities = readInferDeletionOption(
-    context.options,
-  );
+  const inferDeletionFromMissingEntities = readInferDeletionOption(context);
   const {
     project,
     sdk,

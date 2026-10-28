@@ -542,7 +542,7 @@ describe('app apply', () => {
   it.each([
     { flags: [], inferDeletion: undefined },
     { flags: ['--prune'], inferDeletion: true },
-    { flags: ['--no-delete'], inferDeletion: false },
+    { flags: ['--no-prune'], inferDeletion: false },
   ])(
     'previews, installs, uploads without credentials, then syncs with $flags',
     async ({ flags, inferDeletion }) => {
@@ -629,12 +629,21 @@ describe('app apply', () => {
     },
   );
 
-  it('refuses --prune with --no-delete before building or calling the server', async () => {
-    const { envelope, exitCode } = await runJson('--prune', '--no-delete');
+  it('treats the deprecated --no-delete as --no-prune and warns about it', async () => {
+    const { exitCode, stderr } = await run('--no-delete');
 
-    expect(exitCode).toBe(2);
-    expect(envelope.error).toMatchObject({ code: 'USAGE' });
-    expect(server.requests).toHaveLength(0);
+    expect(exitCode).toBe(0);
+    expect(stderr).toContain('--no-delete is deprecated, use --no-prune');
+    expect(
+      server.requests
+        .filter((request) =>
+          ['preview', 'sync'].includes(getOperation(request)),
+        )
+        .map((request) => readGraphqlRequest(request).arguments),
+    ).toEqual([
+      expect.objectContaining({ inferDeletionFromMissingEntities: false }),
+      expect.objectContaining({ inferDeletionFromMissingEntities: false }),
+    ]);
   });
 
   it('accepts the lowercase identifier the server returns for an uppercase manifest identifier', async () => {

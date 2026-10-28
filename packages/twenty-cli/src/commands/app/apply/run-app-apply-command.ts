@@ -26,9 +26,7 @@ export const runAppApplyCommand: CommandRun<TargetCommandContext> = async (
   context,
 ) => {
   const startedAt = performance.now();
-  const inferDeletionFromMissingEntities = readInferDeletionOption(
-    context.options,
-  );
+  const inferDeletionFromMissingEntities = readInferDeletionOption(context);
   let applyResult: AppApplyResult | undefined;
   const appProject = await resolveAppProject({
     explicitPath: readStringOption(context.options, 'path'),

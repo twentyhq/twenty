@@ -1,25 +1,24 @@
-import { readBooleanOption } from '@/catalog/read-command-values';
-import { EXIT_CODE } from '@/output/constants/exit-code.constant';
-import { CliError } from '@/output/cli-error';
+import { isBoolean } from '@sniptt/guards';
+
+import { type CommandContext } from '@/catalog/types/command-context.type';
 
 // Undefined leaves the default to the server, which depends on the application.
-export const readInferDeletionOption = (
-  options: Record<string, unknown>,
-): boolean | undefined => {
-  const isPruneRequested = readBooleanOption(options, 'prune');
-  const isDeletionRefused = options.delete === false;
+export const readInferDeletionOption = ({
+  options,
+  output,
+}: Pick<CommandContext, 'options' | 'output'>): boolean | undefined => {
+  const isDeprecatedNoDeletePassed = options.delete === false;
 
-  if (isPruneRequested && isDeletionRefused) {
-    throw new CliError({
-      code: 'USAGE',
-      exitCode: EXIT_CODE.USAGE,
-      message: '--prune and --no-delete cannot be used together.',
+  if (isDeprecatedNoDeletePassed) {
+    output.warn({
+      code: 'DEPRECATED_OPTION',
+      message: '--no-delete is deprecated, use --no-prune instead.',
     });
   }
 
-  if (isPruneRequested) {
-    return true;
+  if (isBoolean(options.prune)) {
+    return options.prune;
   }
 
-  return isDeletionRefused ? false : undefined;
+  return isDeprecatedNoDeletePassed ? false : undefined;
 };

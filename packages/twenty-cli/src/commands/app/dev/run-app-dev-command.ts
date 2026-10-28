@@ -27,9 +27,7 @@ import { toCliError } from '@/output/to-cli-error';
 export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
   context,
 ) => {
-  const inferDeletionFromMissingEntities = readInferDeletionOption(
-    context.options,
-  );
+  const inferDeletionFromMissingEntities = readInferDeletionOption(context);
   const project = await resolveAppProject({
     explicitPath: readStringOption(context.options, 'path'),
     workingDirectory: process.cwd(),
