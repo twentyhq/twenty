@@ -51,6 +51,10 @@ export const SubjectField = () => {
 
 La raíz es un grupo denominado por `label`. Proporcione `aria-label` o `aria-labelledby` cuando se omita la etiqueta visible y etiquete cada entrada anidada por separado. La fila no mueve el foco ni deshabilita los controles anidados. Esos controles conservan su propio comportamiento de teclado y estilo de foco.
 
+`contentPaddingInline` usa de forma predeterminada el token de tema `--t-spacing-2`, que equivale a 8 píxeles en el tema estándar, y acepta un valor CSS de relleno. Los valores numéricos usan píxeles. Establece `contentPaddingInline={0}` para alinear las fichas de destinatarios y un campo de entrada con la sangría de la fila cuando no hay una etiqueta visible.
+
+<StoryEmbed storyId="ui-input-formfieldrow--without-label" title="Fila de destinatarios sin una etiqueta visible" height={110} />
+
 ## Eventos y personalización
 
 Los atributos nativos, los controladores de eventos, `className`, `style`, `ref` y `render` se aplican a la raíz del grupo. Reenvíe las props proporcionadas y ref al reemplazar la raíz mediante `render`. Un controlador `onClick` muestra un cursor de puntero. Quien realiza la llamada controla el comportamiento de hacer clic para enfocar y, cuando es necesario, protege los eventos de los controles anidados o portales. `isHoverable` habilita de forma independiente un fondo neutro al pasar el cursor.

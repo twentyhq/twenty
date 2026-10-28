@@ -34,6 +34,8 @@ export const fromFlatAgentToAgentManifest = ({
     | 'prompt'
     | 'modelId'
     | 'responseFormat'
+    | 'modelConfiguration'
+    | 'isSystem'
     | 'triggers'
   >;
   roleUniversalIdentifier?: string;
@@ -52,6 +54,10 @@ export const fromFlatAgentToAgentManifest = ({
   ...(isDefined(flatAgent.responseFormat)
     ? { responseFormat: flatAgent.responseFormat }
     : {}),
+  ...(isDefined(flatAgent.modelConfiguration)
+    ? { modelConfiguration: flatAgent.modelConfiguration }
+    : {}),
+  ...(flatAgent.isSystem ? { isSystem: true } : {}),
   ...(isDefined(roleUniversalIdentifier) ? { roleUniversalIdentifier } : {}),
   ...(isNonEmptyArray(flatAgent.triggers)
     ? {
