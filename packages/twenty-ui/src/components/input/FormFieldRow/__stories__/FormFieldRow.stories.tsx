@@ -273,6 +273,11 @@ export const WithoutLabel: Story = {
       </>
     ),
   },
+};
+
+export const WithoutLabelKeyboardFocus: Story = {
+  ...WithoutLabel,
+  tags: ['!autodocs'],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const group = canvas.getByRole('group', { name: 'Recipients' });
