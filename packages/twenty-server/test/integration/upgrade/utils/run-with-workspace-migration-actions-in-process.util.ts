@@ -1,5 +1,5 @@
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { waitForDeferredWorkspaceMigrationActions } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions.util';
+import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions-or-throw.util';
 
 import { type InProcessWorkspaceMigrationActionsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-process-workspace-migration-actions.service';
 
@@ -11,7 +11,7 @@ export const runWithWorkspaceMigrationActionsInProcess = async <TResult>({
   workspaceId: string;
   callback: () => Promise<TResult>;
 }): Promise<TResult> => {
-  await waitForDeferredWorkspaceMigrationActions();
+  await waitForDeferredWorkspaceMigrationActionsOrThrow();
 
   return getAppProviderByClassName<InProcessWorkspaceMigrationActionsService>(
     'InProcessWorkspaceMigrationActionsService',

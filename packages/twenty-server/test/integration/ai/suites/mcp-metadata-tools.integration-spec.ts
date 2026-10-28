@@ -4,7 +4,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { waitForDeferredWorkspaceMigrationActions } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions.util';
+import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions-or-throw.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -64,7 +64,7 @@ const callMetadataTool = async ({
   toolArguments: Record<string, unknown>;
   token?: string;
 }) => {
-  await waitForDeferredWorkspaceMigrationActions();
+  await waitForDeferredWorkspaceMigrationActionsOrThrow();
 
   return callMcpTool({
     toolName: 'execute_tool',

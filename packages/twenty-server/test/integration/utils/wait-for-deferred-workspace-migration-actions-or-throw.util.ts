@@ -15,7 +15,7 @@ type InFlightDeferredAction = {
 };
 
 // The next schema change is rejected while index builds or FK validations are queued.
-export const waitForDeferredWorkspaceMigrationActions =
+export const waitForDeferredWorkspaceMigrationActionsOrThrow =
   async (): Promise<void> => {
     for (let attempt = 1; ; attempt++) {
       const inFlightActions: InFlightDeferredAction[] =
