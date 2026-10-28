@@ -1,6 +1,7 @@
-import { type WorkflowAction, WorkflowActionType } from 'twenty-shared/workflow';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { isAgentBackingWorkflowStep } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/is-agent-backing-workflow-step.util';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const agentId = '20202020-0000-4000-8000-000000000001';
 
