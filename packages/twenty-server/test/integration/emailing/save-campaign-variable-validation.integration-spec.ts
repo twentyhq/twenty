@@ -2,9 +2,13 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type MessageCampaignDraftService } from 'src/modules/emailing/services/message-campaign-draft.service';
+import { SaveCampaignToolInputZodSchema } from 'src/modules/emailing/tools/save-campaign-tool.schema';
 
-const saveDraftWithVariable = (variable: string) =>
+const MESSAGE_CAMPAIGN_TABLE = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."messageCampaign"`;
+
+const saveDraftWithVariables = (...variables: string[]) =>
   getAppProviderByClassName<MessageCampaignDraftService>(
     'MessageCampaignDraftService',
   ).saveDraft({
@@ -18,7 +22,10 @@ const saveDraftWithVariable = (variable: string) =>
           type: 'paragraph',
           content: [
             { type: 'text', text: 'Hi ' },
-            { type: 'variableTag', attrs: { variable } },
+            ...variables.map((variable) => ({
+              type: 'variableTag' as const,
+              attrs: { variable },
+            })),
           ],
         },
       ],
@@ -26,15 +33,31 @@ const saveDraftWithVariable = (variable: string) =>
   });
 
 describe('Saving a campaign draft with variables', () => {
+  it('should accept every variable the save_campaign tool advertises', async () => {
+    const advertisedVariables =
+      SaveCampaignToolInputZodSchema.shape.body.description?.match(
+        /\{\{.*?\}\}/g,
+      ) ?? [];
+
+    expect(advertisedVariables).toContain('{{name.firstName}}');
+
+    const { campaignId } = await saveDraftWithVariables(...advertisedVariables);
+
+    await testDataSource.query(
+      `DELETE FROM ${MESSAGE_CAMPAIGN_TABLE} WHERE "id" = $1`,
+      [campaignId],
+    );
+  });
+
   it('should reject a fallback written without the default filter', async () => {
     await expect(
-      saveDraftWithVariable('{{jobTitle | "there"}}'),
+      saveDraftWithVariables('{{jobTitle | "there"}}'),
     ).rejects.toThrow('Malformed campaign variable: {{jobTitle | "there"}}');
   });
 
   it('should reject an unknown variable even when it has a fallback', async () => {
     await expect(
-      saveDraftWithVariable('{{notAPersonField | default: "there"}}'),
+      saveDraftWithVariables('{{notAPersonField | default: "there"}}'),
     ).rejects.toThrow('Unknown campaign variables: notAPersonField');
   });
 });
