@@ -1,3 +1,17 @@
+import {
+  activateCoreWorkflowVersion,
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deactivateCoreWorkflowVersion,
+  deleteCoreWorkflows,
+  runCoreWorkflowVersion,
+  updateCoreWorkflowVersionStep,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
+import {
+  destroyWorkflowRun,
+  getWorkflowRun,
+} from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
@@ -16,6 +30,7 @@ import { createOneViewFilter } from 'test/integration/metadata/suites/view-filte
 import { destroyOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/destroy-one-view-filter.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   type AgentManifest,
@@ -33,6 +48,7 @@ import {
   getSystemViewUniversalIdentifier,
   getWorkflowCommandMenuItemUniversalIdentifier,
   getWorkflowVersionUniversalIdentifier,
+  type Manifest,
   type NavigationMenuItemManifest,
   type ObjectManifest,
   type PageLayoutManifest,
@@ -71,11 +87,16 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { version as getUuidVersion, v4 } from 'uuid';
 
+import { type ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
+import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
+import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-object-manifest-to-universal-flat-object-metadata.util';
 import { buildSearchVectorFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-search-vector-flat-field-metadata-for-custom-object.util';
 import { buildSearchVectorGinIndexForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-search-vector-gin-index-for-custom-object.util';
+import { type ConnectedAccountScope } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 const TEST_APP_ID = '7e3d1c2b-0000-4a7b-8c9d-0e1f2a3b4c5d';
 const TEST_ROLE_ID = '7e3d1c2b-0001-4a7b-8c9d-0e1f2a3b4c5d';
@@ -1199,6 +1220,82 @@ describe('Application export - data model', () => {
     }
   }, 60000);
 
+  it('only deletes workspace Custom application entities missing from the manifest when deletion is explicitly requested', async () => {
+    const { data: applicationsData } = await findManyApplications({
+      expectToFail: false,
+    });
+    const customApplication = applicationsData.findManyApplications.find(
+      ({ name }) => name === WORKSPACE_CUSTOM_APPLICATION_NAME,
+    );
+
+    jestExpectToBeDefined(customApplication);
+
+    const personObject = (
+      await findManyObjectMetadata({
+        expectToFail: false,
+        input: { filter: {}, paging: { first: 1000 } },
+        gqlFields: 'id nameSingular',
+      })
+    ).objects.find(({ nameSingular }) => nameSingular === 'person');
+
+    jestExpectToBeDefined(personObject);
+
+    const { data: createdViewData } = await createOneView({
+      expectToFail: false,
+      input: {
+        name: 'Pruned Custom Application People',
+        objectMetadataId: personObject.id,
+        type: ViewType.TABLE,
+        icon: 'IconUser',
+      },
+    });
+
+    try {
+      const { data } = await exportApplication({
+        universalIdentifier: customApplication.universalIdentifier,
+        expectToFail: false,
+      });
+      const { manifest } = data.exportApplication;
+      const prunedView = manifest.views.find(
+        ({ name }) => name === 'Pruned Custom Application People',
+      );
+
+      jestExpectToBeDefined(prunedView);
+
+      const manifestWithoutView = {
+        ...manifest,
+        views: manifest.views.filter((view) => view !== prunedView),
+      };
+      const planWith = async (inferDeletionFromMissingEntities?: boolean) => {
+        const dryRun = await syncApplication({
+          manifest: manifestWithoutView,
+          dryRun: true,
+          inferDeletionFromMissingEntities,
+          expectToFail: false,
+        });
+
+        expect(dryRun.errors).toBeUndefined();
+
+        return dryRun.data.syncApplication.actions;
+      };
+
+      expect(await planWith(undefined)).toEqual([]);
+      expect(await planWith(false)).toEqual([]);
+      expect(await planWith(true)).toContainEqual(
+        expect.objectContaining({
+          type: 'delete',
+          metadataName: 'view',
+          universalIdentifier: prunedView.universalIdentifier,
+        }),
+      );
+    } finally {
+      await destroyOneView({
+        expectToFail: false,
+        viewId: createdViewData.createView.id,
+      });
+    }
+  }, 60000);
+
   it('should round-trip a role with object, field and flag permissions created through the metadata API in the workspace Custom application without any action', async () => {
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
@@ -1432,6 +1529,8 @@ const ESCALATION_WORKFLOW_ID = '7e3d1c2b-0110-4a7b-8c9d-0e1f2a3b4c5d';
 const NOTIFY_WORKFLOW_ID = '7e3d1c2b-0111-4a7b-8c9d-0e1f2a3b4c5d';
 const NIGHTLY_WORKFLOW_ID = '7e3d1c2b-0112-4a7b-8c9d-0e1f2a3b4c5d';
 const INTAKE_WORKFLOW_ID = '7e3d1c2b-0113-4a7b-8c9d-0e1f2a3b4c5d';
+const OUTREACH_WORKFLOW_ID = '7e3d1c2b-0114-4a7b-8c9d-0e1f2a3b4c5d';
+const SEEDED_CONNECTED_ACCOUNT_HANDLE = 'tim@apple.dev';
 const workflowNodeIdentifier = (suffix: number) =>
   `7e3d1c2b-${(200 + suffix).toString().padStart(4, '0')}-4a7b-8c9d-0e1f2a3b4c5d`;
 
@@ -1628,7 +1727,75 @@ const EXPORTED_WORKFLOWS: WorkflowManifest[] = [
       ],
     },
   },
+  {
+    universalIdentifier: OUTREACH_WORKFLOW_ID,
+    name: 'Reach out to the incident reporter',
+    version: {
+      trigger: {
+        universalIdentifier: workflowNodeIdentifier(40),
+        type: 'MANUAL',
+        nextStepIds: [workflowNodeIdentifier(41)],
+      },
+      steps: [
+        {
+          universalIdentifier: workflowNodeIdentifier(41),
+          name: 'Email the reporter',
+          type: 'SEND_EMAIL',
+          nextStepIds: [workflowNodeIdentifier(42)],
+          input: {
+            connectedAccountHandle: SEEDED_CONNECTED_ACCOUNT_HANDLE,
+            recipients: { to: 'reporter@example.com', cc: '', bcc: '' },
+            subject: 'We are on it',
+            files: [],
+          },
+        },
+        {
+          universalIdentifier: workflowNodeIdentifier(42),
+          name: 'Book a review',
+          type: 'CREATE_CALENDAR_EVENT',
+          nextStepIds: [],
+          input: {
+            connectedAccountId: '{{trigger.connectedAccountId}}',
+            title: 'Incident review',
+            startsAt: '2026-11-02T09:00:00.000Z',
+            endsAt: '2026-11-02T09:30:00.000Z',
+            isFullDay: false,
+            attendees: '',
+            sendInvitations: false,
+            addConferencing: false,
+          },
+        },
+      ],
+    },
+  },
 ];
+
+const withSendEmailConnectedAccountHandle = ({
+  workflow,
+  connectedAccountHandle,
+}: {
+  workflow: WorkflowManifest;
+  connectedAccountHandle: string;
+}): WorkflowManifest => ({
+  ...workflow,
+  version: {
+    ...workflow.version,
+    steps: workflow.version.steps.map((step) => {
+      if (step.type !== 'SEND_EMAIL') {
+        return step;
+      }
+
+      return { ...step, input: { ...step.input, connectedAccountHandle } };
+    }),
+  },
+});
+
+const setSeededConnectedAccountScope = (scope: ConnectedAccountScope) =>
+  globalThis.testDataSource.query(
+    `UPDATE core."connectedAccount" SET scope = $1
+      WHERE handle = $2 AND "workspaceId" = $3`,
+    [scope, SEEDED_CONNECTED_ACCOUNT_HANDLE, SEED_APPLE_WORKSPACE_ID],
+  );
 
 const workflowsManifest = buildBaseManifest({
   appId: WORKFLOW_TEST_APP_ID,
@@ -1657,7 +1824,19 @@ const workflowsManifest = buildBaseManifest({
 });
 
 describe('Application export - workflows', () => {
+  let seededConnectedAccountScope: ConnectedAccountScope;
+
   beforeAll(async () => {
+    const [seededConnectedAccount] = await globalThis.testDataSource.query(
+      `SELECT scope FROM core."connectedAccount"
+        WHERE handle = $1 AND "workspaceId" = $2`,
+      [SEEDED_CONNECTED_ACCOUNT_HANDLE, SEED_APPLE_WORKSPACE_ID],
+    );
+
+    seededConnectedAccountScope = seededConnectedAccount.scope;
+    // A handle only names an account shared with the workspace; the seed connects it for Tim alone
+    await setSeededConnectedAccountScope('WORKSPACE');
+
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: WORKFLOW_TEST_APP_ID,
     });
@@ -1678,6 +1857,7 @@ describe('Application export - workflows', () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: WORKFLOW_TEST_APP_ID,
     });
+    await setSeededConnectedAccountScope(seededConnectedAccountScope);
   });
 
   it('exports the synced workflows as they were declared', async () => {
@@ -1739,6 +1919,300 @@ describe('Application export - workflows', () => {
 
     expect(dryRun.errors).toBeUndefined();
     expect(dryRun.data.syncApplication.actions).toEqual([]);
+  }, 60000);
+
+  it('refuses a step whose connected account handle is not connected in the workspace', async () => {
+    const unknownHandle = 'nobody@apple.dev';
+    const { errors } = await syncApplication({
+      manifest: {
+        ...workflowsManifest,
+        workflows: EXPORTED_WORKFLOWS.map((workflow) =>
+          workflow.universalIdentifier === OUTREACH_WORKFLOW_ID
+            ? withSendEmailConnectedAccountHandle({
+                workflow,
+                connectedAccountHandle: unknownHandle,
+              })
+            : workflow,
+        ),
+      },
+      dryRun: true,
+      expectToFail: true,
+    });
+
+    expect(errors?.[0]?.message).toContain(unknownHandle);
+  }, 60000);
+
+  it('refuses a step whose connected account handle names an account private to a member', async () => {
+    await setSeededConnectedAccountScope('USER');
+
+    try {
+      const { errors } = await syncApplication({
+        manifest: workflowsManifest,
+        dryRun: true,
+        expectToFail: true,
+      });
+
+      expect(errors?.[0]?.message).toContain(SEEDED_CONNECTED_ACCOUNT_HANDLE);
+    } finally {
+      await setSeededConnectedAccountScope('WORKSPACE');
+    }
+  }, 60000);
+});
+
+const findWorkspaceCustomFlatApplication = async () =>
+  (
+    await getAppProviderByClassName<ApplicationService>(
+      'ApplicationService',
+    ).findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    })
+  ).workspaceCustomFlatApplication;
+
+// The seeded workspace lacks the dependency files a full sync of its custom application needs
+const applyWorkspaceCustomApplicationManifest = async (manifest: Manifest) =>
+  (
+    await getAppProviderByClassName<ApplicationManifestMigrationService>(
+      'ApplicationManifestMigrationService',
+    ).syncMetadataFromManifest({
+      manifest,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      ownerFlatApplication: await findWorkspaceCustomFlatApplication(),
+      inferDeletionFromMissingEntities: false,
+    })
+  ).workspaceMigration.actions;
+
+describe('Application export - workflows built in the workflow builder', () => {
+  const workflowName = 'Notify sales from the builder';
+  let coreWorkflowId: string;
+  let builderVersionId: string;
+  let workflowUniversalIdentifier: string;
+  let workflowRunId: string | undefined;
+
+  const buildManifest = (url: string): WorkflowManifest => ({
+    universalIdentifier: workflowUniversalIdentifier,
+    name: workflowName,
+    version: {
+      trigger: {
+        universalIdentifier: workflowNodeIdentifier(40),
+        type: 'MANUAL',
+        nextStepIds: [workflowNodeIdentifier(41)],
+        settings: { availability: { type: 'GLOBAL' }, isPinned: true },
+      },
+      steps: [
+        {
+          universalIdentifier: workflowNodeIdentifier(41),
+          name: 'Notify sales',
+          type: 'HTTP_REQUEST',
+          nextStepIds: [],
+          input: { method: 'POST', url },
+        },
+      ],
+    },
+  });
+
+  const findWorkflowVersions = async () => {
+    const versions: {
+      id: string;
+      status: string;
+      steps: { settings: { input: { url: string } } }[];
+    }[] = await global.testDataSource.query(
+      `SELECT id, status, steps FROM core."workflowVersion" WHERE "coreWorkflowId" = $1`,
+      [coreWorkflowId],
+    );
+
+    return versions;
+  };
+
+  const exportWorkspaceCustomApplication = async () => {
+    const { universalIdentifier } = await findWorkspaceCustomFlatApplication();
+    const { data, errors } = await exportApplication({
+      universalIdentifier,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+
+    return data.exportApplication;
+  };
+
+  beforeAll(async () => {
+    const customFlatApplication = await findWorkspaceCustomFlatApplication();
+    const createdWorkflow = await createCoreWorkflow({ name: workflowName });
+
+    coreWorkflowId = createdWorkflow.coreWorkflowId;
+    builderVersionId = createdWorkflow.coreWorkflowVersionId;
+
+    const [{ universalIdentifier }] = await global.testDataSource.query(
+      `SELECT "universalIdentifier" FROM core.workflow WHERE id = $1`,
+      [coreWorkflowId],
+    );
+
+    workflowUniversalIdentifier = universalIdentifier;
+
+    // The builder stores whatever trigger and steps it is sent, so it is sent exactly what a manifest produces
+    const { triggers, steps } =
+      fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
+        manifest: buildManifest('http://localhost:1/before'),
+        applicationUniversalIdentifier:
+          customFlatApplication.universalIdentifier,
+        now: new Date().toISOString(),
+        logicFunctionIdByUniversalIdentifier: new Map(),
+      }).flatUniversalWorkflowVersion!;
+    const [trigger] = triggers!;
+    const [step] = steps!;
+
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId: builderVersionId,
+      trigger: { ...trigger, nextStepIds: [] },
+    });
+    await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId: builderVersionId,
+      stepType: 'HTTP_REQUEST',
+      id: step.id,
+    });
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId: builderVersionId,
+      trigger,
+    });
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId: builderVersionId,
+      step,
+    });
+    await activateCoreWorkflowVersion({
+      coreWorkflowVersionId: builderVersionId,
+    });
+  }, 60000);
+
+  afterAll(async () => {
+    if (isDefined(workflowRunId)) {
+      await destroyWorkflowRun(workflowRunId);
+    }
+    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
+  });
+
+  it('exports the active version and round-trips it without any action', async () => {
+    const { manifest, coverage } = await exportWorkspaceCustomApplication();
+
+    expect(
+      coverage.find(
+        (entry) => entry.universalIdentifier === workflowUniversalIdentifier,
+      )?.status,
+    ).toBe(ApplicationExportCoverageStatus.EXPORTED);
+    expect(
+      manifest.workflows?.find(
+        (workflow) =>
+          workflow.universalIdentifier === workflowUniversalIdentifier,
+      ),
+    ).toEqual(buildManifest('http://localhost:1/before'));
+
+    const dryRun = await syncApplication({
+      manifest,
+      dryRun: true,
+      inferDeletionFromMissingEntities: false,
+      expectToFail: false,
+    });
+
+    expect(dryRun.errors).toBeUndefined();
+    expect(dryRun.data.syncApplication.actions).toEqual([]);
+  }, 60000);
+
+  it('publishes a changed definition like the builder and keeps the run history', async () => {
+    workflowRunId = await runCoreWorkflowVersion({
+      coreWorkflowVersionId: builderVersionId,
+    });
+
+    const { manifest } = await exportWorkspaceCustomApplication();
+    const changedManifest: Manifest = {
+      ...manifest,
+      workflows: [buildManifest('http://localhost:1/after')],
+    };
+
+    await applyWorkspaceCustomApplicationManifest(changedManifest);
+
+    const versions = await findWorkflowVersions();
+    const activeVersions = versions.filter(({ status }) => status === 'ACTIVE');
+
+    expect(activeVersions).toHaveLength(1);
+    expect(activeVersions[0].id).not.toBe(builderVersionId);
+    expect(activeVersions[0].steps[0].settings.input.url).toBe(
+      'http://localhost:1/after',
+    );
+    expect(versions.find(({ id }) => id === builderVersionId)).toMatchObject({
+      status: 'ARCHIVED',
+      steps: [
+        expect.objectContaining({
+          settings: expect.objectContaining({
+            input: expect.objectContaining({
+              url: 'http://localhost:1/before',
+            }),
+          }),
+        }),
+      ],
+    });
+    expect((await getWorkflowRun(workflowRunId))?.coreWorkflowVersionId).toBe(
+      builderVersionId,
+    );
+
+    const [workflow] = await global.testDataSource.query(
+      `SELECT "lastPublishedCoreWorkflowVersionId", "createdByUserWorkspaceId" FROM core.workflow WHERE id = $1`,
+      [coreWorkflowId],
+    );
+
+    expect(workflow.lastPublishedCoreWorkflowVersionId).toBe(
+      activeVersions[0].id,
+    );
+    expect(workflow.createdByUserWorkspaceId).not.toBeNull();
+
+    const commandMenuItems = await global.testDataSource.query(
+      `SELECT "coreWorkflowVersionId" FROM core."commandMenuItem" WHERE "coreWorkflowVersionId" = ANY($1)`,
+      [versions.map(({ id }) => id)],
+    );
+
+    expect(commandMenuItems).toEqual([
+      { coreWorkflowVersionId: activeVersions[0].id },
+    ]);
+
+    expect(
+      await applyWorkspaceCustomApplicationManifest(changedManifest),
+    ).toEqual([]);
+    expect(await findWorkflowVersions()).toHaveLength(versions.length);
+
+    const { manifest: exportedAfterPublish } =
+      await exportWorkspaceCustomApplication();
+
+    expect(
+      exportedAfterPublish.workflows?.find(
+        (workflow) =>
+          workflow.universalIdentifier === workflowUniversalIdentifier,
+      ),
+    ).toEqual(buildManifest('http://localhost:1/after'));
+  }, 60000);
+
+  it('shows the published command again after a deactivation and reactivation', async () => {
+    const [activeVersion] = (await findWorkflowVersions()).filter(
+      ({ status }) => status === 'ACTIVE',
+    );
+
+    await deactivateCoreWorkflowVersion({
+      coreWorkflowVersionId: activeVersion.id,
+    });
+    await activateCoreWorkflowVersion({
+      coreWorkflowVersionId: activeVersion.id,
+    });
+
+    const commandMenuItems: {
+      isActive: boolean;
+      overrides: Record<string, { isActive?: boolean }> | null;
+    }[] = await global.testDataSource.query(
+      `SELECT "isActive", overrides FROM core."commandMenuItem" WHERE "coreWorkflowVersionId" = $1`,
+      [activeVersion.id],
+    );
+
+    expect(commandMenuItems).toHaveLength(1);
+    expect(commandMenuItems[0].isActive).toBe(true);
+    expect(
+      Object.values(commandMenuItems[0].overrides ?? {}),
+    ).not.toContainEqual(expect.objectContaining({ isActive: false }));
   }, 60000);
 });
 

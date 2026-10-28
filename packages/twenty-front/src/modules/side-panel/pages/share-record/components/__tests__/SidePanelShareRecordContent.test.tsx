@@ -41,15 +41,26 @@ const sharing: RecordSharingFieldsFragment = {
     canUpdate: true,
     canDelete: true,
     canSoftDelete: true,
+    __typename: 'RecordPermissionsDTO',
   },
   generalAccessLevel: RecordShareAccessLevel.NONE,
   defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
   hasManagedGeneralAccess: false,
-  roles: [{ id: 'sales-role', label: 'Sales', canRead: true, canUpdate: true }],
+  roles: [
+    {
+      id: 'sales-role',
+      label: 'Sales',
+      canRead: true,
+      canUpdate: true,
+      __typename: 'RecordSharingRoleDTO',
+    },
+  ],
   shares: [],
+  __typename: 'RecordSharingDTO',
 };
 
 const buildShare = (share: Partial<Share>): Share => ({
+  __typename: 'RecordSharingGrantDTO' as const,
   id: 'grant',
   principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
   principalId: 'alice-member',
@@ -168,6 +179,7 @@ describe('Share record side panel', () => {
             rowCause: RecordShareRowCause.OWNER,
           }),
           buildShare({
+            __typename: 'RecordSharingGrantDTO' as const,
             id: 'app',
             principalType: RecordSharePrincipalType.ROLE,
             principalId: 'sales-role',
@@ -238,6 +250,7 @@ describe('Share record side panel', () => {
             label: 'Member',
             canRead: false,
             canUpdate: false,
+            __typename: 'RecordSharingRoleDTO',
           },
         ],
         shares: [buildShare({ principalRoleId: 'member-role' })],

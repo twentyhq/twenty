@@ -624,7 +624,7 @@ Comprueba `context.workspaceMemberId` cuando una función se comporta de forma d
 
 </Note>
 
-Las utilidades del SDK que acceden a los recursos propios de tu aplicación siempre usan su acceso e ignoran `runAs`: el [almacén de clave-valor](/es/developers/extend/apps/logic/key-value-store), las [conexiones](/es/developers/extend/apps/logic/connections), los [canales de mensajería](/es/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` y el [cargo de créditos](/es/developers/extend/apps/logic/credits). `sendInboxMessage` también usa el acceso de tu aplicación e ignora `runAs`, aunque escribe en los chats de los miembros que indiques.
+Las utilidades del SDK que acceden a los recursos propios de tu aplicación siempre usan su acceso e ignoran `runAs`: el [almacén de clave-valor](/es/developers/extend/apps/logic/key-value-store), las [conexiones](/es/developers/extend/apps/logic/connections), los [canales de mensajería](/es/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` y el [cargo de créditos](/es/developers/extend/apps/logic/credits).
 
 #### Exponer una función como herramienta de IA o acción de flujo de trabajo
 
@@ -1116,7 +1116,7 @@ const { objects } = await metadataClient.query({
         nameSingular: true,
         namePlural: true,
         labelSingular: true,
-        isCustom: true,
+        applicationId: true,
       },
     },
     __args: {

@@ -84,6 +84,11 @@ const classifyFlatEntity = ({
         : { status: ApplicationExportCoverageStatus.UNSUPPORTED };
     case 'searchFieldMetadata':
       return { status: ApplicationExportCoverageStatus.ENGINE_DERIVED };
+    case 'workflowVersion':
+      return {
+        status: ApplicationExportCoverageStatus.EXCLUDED,
+        reason: 'workflow version, exported through its workflow',
+      };
     case 'roleTarget':
       return ('userWorkspaceId' in flatEntity &&
         isDefined(flatEntity.userWorkspaceId)) ||

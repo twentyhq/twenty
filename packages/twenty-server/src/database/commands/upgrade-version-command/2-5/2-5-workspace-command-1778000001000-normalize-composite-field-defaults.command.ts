@@ -173,6 +173,7 @@ export class NormalizeCompositeFieldDefaultsCommand extends ProvisionedWorkspace
       const validateAndBuildResult =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             allFlatEntityOperationByMetadataName: {
               fieldMetadata: {
                 flatEntityToCreate: [],

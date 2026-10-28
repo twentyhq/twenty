@@ -38,6 +38,7 @@ const MONITORING: ApplicationMonitoringData = {
     ['2026-10-18', 30, 860, 8],
     ['2026-10-19', 18, 45, 0],
   ].map(([day, errorCount, rateLimitedRequestCount, rateLimitedJobCount]) => ({
+    __typename: 'ApplicationMonitoringActivityBucket' as const,
     bucketStart: `${day}T00:00:00.000Z`,
     errorCount: Number(errorCount),
     rateLimitedRequestCount: Number(rateLimitedRequestCount),
@@ -50,6 +51,7 @@ const MONITORING: ApplicationMonitoringData = {
       upgradeCount: 5,
       uninstallCount: 0,
       failedCount: 1,
+      __typename: 'ApplicationMonitoringLifecycleBucket',
     },
     {
       bucketStart: '2026-10-17T00:00:00.000Z',
@@ -57,6 +59,7 @@ const MONITORING: ApplicationMonitoringData = {
       upgradeCount: 8,
       uninstallCount: 1,
       failedCount: 0,
+      __typename: 'ApplicationMonitoringLifecycleBucket',
     },
     {
       bucketStart: '2026-10-18T00:00:00.000Z',
@@ -64,6 +67,7 @@ const MONITORING: ApplicationMonitoringData = {
       upgradeCount: 4,
       uninstallCount: 0,
       failedCount: 2,
+      __typename: 'ApplicationMonitoringLifecycleBucket',
     },
   ],
   creditUsage: (
@@ -77,6 +81,7 @@ const MONITORING: ApplicationMonitoringData = {
       ['2026-10-18', UsageOperationType.AI_WORKFLOW_TOKEN, 40],
     ] as const
   ).map(([day, operationType, creditsUsed]) => ({
+    __typename: 'ApplicationMonitoringCreditBucket' as const,
     bucketStart: `${day}T00:00:00.000Z`,
     operationType,
     creditsUsed,
@@ -91,6 +96,7 @@ const MONITORING: ApplicationMonitoringData = {
       eventCount: 96,
       affectedInstallCount: 5,
       lastSeenAt: '2026-10-19T07:41:12.204Z',
+      __typename: 'ApplicationMonitoringIssue',
     },
     {
       level: 'WARN',
@@ -101,6 +107,7 @@ const MONITORING: ApplicationMonitoringData = {
       eventCount: 61,
       affectedInstallCount: 4,
       lastSeenAt: '2026-10-19T06:55:00.120Z',
+      __typename: 'ApplicationMonitoringIssue',
     },
     {
       level: 'ERROR',
@@ -111,6 +118,7 @@ const MONITORING: ApplicationMonitoringData = {
       eventCount: 2,
       affectedInstallCount: 2,
       lastSeenAt: '2026-10-18T22:47:03.112Z',
+      __typename: 'ApplicationMonitoringIssue',
     },
   ],
   versions: [
@@ -119,12 +127,14 @@ const MONITORING: ApplicationMonitoringData = {
       runCount: 6600,
       failedRunCount: 96,
       activeInstallCount: 20,
+      __typename: 'ApplicationMonitoringVersion',
     },
     {
       version: '1.2.2',
       runCount: 1330,
       failedRunCount: 43,
       activeInstallCount: 4,
+      __typename: 'ApplicationMonitoringVersion',
     },
   ],
   functions: [
@@ -133,12 +143,14 @@ const MONITORING: ApplicationMonitoringData = {
       runCount: 4210,
       failedRunCount: 96,
       p95DurationMs: 1400,
+      __typename: 'ApplicationMonitoringFunction',
     },
     {
       logicFunctionName: 'sendMessage',
       runCount: 2980,
       failedRunCount: 43,
       p95DurationMs: 600,
+      __typename: 'ApplicationMonitoringFunction',
     },
   ],
 };

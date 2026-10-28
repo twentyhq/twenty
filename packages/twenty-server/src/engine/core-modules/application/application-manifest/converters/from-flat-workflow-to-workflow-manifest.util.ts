@@ -1,5 +1,4 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import isEqual from 'lodash.isequal';
 import {
   type WorkflowManifest,
   type WorkflowStepManifest,
@@ -11,11 +10,9 @@ import { fromWorkflowActionToWorkflowStepManifest } from 'src/engine/core-module
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { fromWorkflowTriggerToWorkflowTriggerManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-to-workflow-trigger-manifest.util';
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { isSameWorkflowVersionDefinition } from 'src/engine/core-modules/application/application-manifest/utils/is-same-workflow-version-definition.util';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
-
-const toJsonValue = (value: unknown): unknown =>
-  JSON.parse(JSON.stringify(value ?? null));
 
 const isReproducedBySyncOrThrow = ({
   manifest,
@@ -38,15 +35,12 @@ const isReproducedBySyncOrThrow = ({
     ...references,
   }).flatUniversalWorkflowVersion;
 
-  return isEqual(
-    toJsonValue({
-      triggers: reproducedVersion?.triggers,
-      steps: reproducedVersion?.steps,
-    }),
-    toJsonValue({
-      triggers: flatWorkflowVersion.triggers,
-      steps: flatWorkflowVersion.steps,
-    }),
+  return isSameWorkflowVersionDefinition(
+    {
+      triggers: reproducedVersion?.triggers ?? null,
+      steps: reproducedVersion?.steps ?? null,
+    },
+    flatWorkflowVersion,
   );
 };
 
@@ -54,10 +48,12 @@ export const fromFlatWorkflowToWorkflowManifest = ({
   flatWorkflow,
   flatWorkflowVersion,
   references,
+  unreproducibleReason = WORKFLOW_CHANGED_IN_BUILDER_REASON,
 }: {
   flatWorkflow: FlatWorkflow;
   flatWorkflowVersion: FlatWorkflowVersion;
   references: WorkflowManifestReferences;
+  unreproducibleReason?: string;
 }): { manifest: WorkflowManifest } | { reason: string } => {
   const { triggers, steps } = flatWorkflowVersion;
   const [trigger] = triggers ?? [];
@@ -114,7 +110,7 @@ export const fromFlatWorkflowToWorkflowManifest = ({
         references,
       })
     ) {
-      return { reason: WORKFLOW_CHANGED_IN_BUILDER_REASON };
+      return { reason: unreproducibleReason };
     }
   } catch (error) {
     return {
