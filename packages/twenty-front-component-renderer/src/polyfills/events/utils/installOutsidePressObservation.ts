@@ -126,7 +126,7 @@ export const installOutsidePressObservation = ({
     if (
       !isDefined(registrationKey) ||
       !isDefined(listener) ||
-      registrationKeysByListener.get(listener)?.delete(registrationKey) !== true
+      !registrationKeysByListener.get(listener)?.delete(registrationKey)
     ) {
       return;
     }

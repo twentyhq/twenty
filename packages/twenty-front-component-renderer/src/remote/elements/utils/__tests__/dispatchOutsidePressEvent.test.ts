@@ -17,13 +17,13 @@ describe('dispatchOutsidePressEvent', () => {
     const popupListener = jest.fn();
     popup.addEventListener('pointerdown', popupListener);
     const receivedPhases: string[] = [];
-    let receivedEvent: Event | undefined;
+    const receivedEvents: Event[] = [];
 
     documentTarget.addEventListener(
       'pointerdown',
       (event) => {
         receivedPhases.push('document-capture');
-        receivedEvent = event;
+        receivedEvents.push(event);
         expect(isHostOriginatedEvent(event)).toBe(true);
         event.target?.addEventListener('pointerdown', () => {
           receivedPhases.push('body-target');
@@ -45,6 +45,7 @@ describe('dispatchOutsidePressEvent', () => {
         pointerType: 'mouse',
       },
     });
+    const [receivedEvent] = receivedEvents;
 
     expect(receivedPhases).toEqual([
       'document-capture',
@@ -69,12 +70,13 @@ describe('dispatchOutsidePressEvent', () => {
       globalScope: toGlobalScopeRecord(polyfillWindow),
     });
     const documentTarget = polyfillWindow.document as unknown as Document;
-    let receivedEvent: Event | undefined;
-    let windowEventDuringDispatch: unknown;
+    const receivedPresses: { event: Event; windowEvent: unknown }[] = [];
 
     documentTarget.addEventListener('mousedown', (event) => {
-      receivedEvent = event;
-      windowEventDuringDispatch = Reflect.get(polyfillWindow, 'event');
+      receivedPresses.push({
+        event,
+        windowEvent: Reflect.get(polyfillWindow, 'event'),
+      });
     });
 
     dispatchOutsidePressEvent({
@@ -88,8 +90,10 @@ describe('dispatchOutsidePressEvent', () => {
       },
     });
 
-    expect(receivedEvent).toBeDefined();
-    expect(windowEventDuringDispatch).toBe(receivedEvent);
+    const [receivedPress] = receivedPresses;
+
+    expect(receivedPresses).toHaveLength(1);
+    expect(receivedPress?.windowEvent).toBe(receivedPress?.event);
     expect(Reflect.get(polyfillWindow, 'event')).toBeUndefined();
   });
 });

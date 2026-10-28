@@ -34,14 +34,15 @@ describe('dispatchOwnedPressEvent', () => {
       backdrop,
       backdropRemoteElementId,
     } = createOwnedPressFixture();
-    let receivedEvent: Event | undefined;
-    let windowEventDuringDispatch: unknown;
+    const receivedPresses: { event: Event; windowEvent: unknown }[] = [];
 
     documentTarget.addEventListener(
       'pointerdown',
       (event) => {
-        receivedEvent = event;
-        windowEventDuringDispatch = Reflect.get(polyfillWindow, 'event');
+        receivedPresses.push({
+          event,
+          windowEvent: Reflect.get(polyfillWindow, 'event'),
+        });
       },
       true,
     );
@@ -57,9 +58,12 @@ describe('dispatchOwnedPressEvent', () => {
       },
     });
 
-    expect(receivedEvent?.target).toBe(backdrop);
-    expect(receivedEvent).toMatchObject({ bubbles: true, clientX: 12 });
-    expect(windowEventDuringDispatch).toBe(receivedEvent);
+    const [receivedPress] = receivedPresses;
+
+    expect(receivedPresses).toHaveLength(1);
+    expect(receivedPress?.event.target).toBe(backdrop);
+    expect(receivedPress?.event).toMatchObject({ bubbles: true, clientX: 12 });
+    expect(receivedPress?.windowEvent).toBe(receivedPress?.event);
     expect(Reflect.get(polyfillWindow, 'event')).toBeUndefined();
   });
 
