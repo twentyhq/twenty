@@ -13,7 +13,9 @@ const CRON_TRIGGER_UID = '44444444-4444-4444-8444-444444444444';
 const DATABASE_EVENT_TRIGGER_UID = '55555555-5555-4555-8555-555555555555';
 const NOW = '2026-09-14T10:00:00.000Z';
 
-const AGENT_MANIFEST: Required<AgentManifest> = {
+const AGENT_MANIFEST: Required<
+  Omit<AgentManifest, 'modelConfiguration' | 'isSystem'>
+> = {
   universalIdentifier: AGENT_UID,
   name: 'lead-scorer',
   label: 'Lead Scorer',

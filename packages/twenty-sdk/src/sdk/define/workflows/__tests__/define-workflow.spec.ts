@@ -61,6 +61,15 @@ describe('defineWorkflow', () => {
     });
   });
 
+  it('accepts a workflow flagged as system', () => {
+    const systemWorkflow = { ...workflow, isSystem: true };
+
+    expect(defineWorkflow(systemWorkflow)).toMatchObject({
+      success: true,
+      config: systemWorkflow,
+    });
+  });
+
   it('accepts an email step naming its account by handle', () => {
     const definition = withSendEmailStep({
       connectedAccountHandle: 'sales@example.com',
@@ -95,6 +104,11 @@ describe('defineWorkflow', () => {
         },
       },
       error: expect.stringMatching(/^version\.trigger\.type: .*MANUAL/),
+    },
+    {
+      problem: 'an isSystem that is not a boolean',
+      definition: { ...workflow, isSystem: 'true' },
+      error: 'isSystem: Invalid input: expected boolean, received string',
     },
     {
       problem: 'a cycle',
