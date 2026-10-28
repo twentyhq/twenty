@@ -41,7 +41,7 @@ import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/cons
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { FAIR_TICKET_OFFSET } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
-import { FairPriorityTagger } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority-tagger';
+import { FairTicketAllocator } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
@@ -78,7 +78,7 @@ export class BullMQDriver
     Record<MessageQueue, MessageQueueWorkerOptions>
   > = {};
   private workersDrain: Promise<void> | undefined;
-  private readonly fairPriorityTagger: FairPriorityTagger;
+  private readonly fairTicketAllocator: FairTicketAllocator;
 
   constructor(
     private options: BullMQDriverOptions,
@@ -86,7 +86,7 @@ export class BullMQDriver
     private twentyConfigService: TwentyConfigService,
     private eventEmitter: EventEmitter2,
   ) {
-    this.fairPriorityTagger = new FairPriorityTagger({
+    this.fairTicketAllocator = new FairTicketAllocator({
       getClient: (queueName) => this.queueMap[queueName].client,
       keyPrefix: options.prefix ?? 'bull',
     });
@@ -412,7 +412,7 @@ export class BullMQDriver
       return staticPriorities;
     }
 
-    const reservationByGroupKeys = new Map<
+    const requestByGroupKeys = new Map<
       string,
       { groupKeys: string[]; jobIndexes: number[] }
     >();
@@ -422,21 +422,21 @@ export class BullMQDriver
         ? [...new Set(options.groupKeys)]
         : getDefaultGroupKeys(jobData);
       const signature = groupKeys.join('\u0000');
-      const reservation = reservationByGroupKeys.get(signature) ?? {
+      const request = requestByGroupKeys.get(signature) ?? {
         groupKeys,
         jobIndexes: [],
       };
 
-      reservation.jobIndexes.push(jobIndex);
-      reservationByGroupKeys.set(signature, reservation);
+      request.jobIndexes.push(jobIndex);
+      requestByGroupKeys.set(signature, request);
     });
 
-    const reservations = [...reservationByGroupKeys.values()];
-    const tickets = await this.fairPriorityTagger.reserve({
+    const requests = [...requestByGroupKeys.values()];
+    const tickets = await this.fairTicketAllocator.allocateTickets({
       queueName,
-      reservations: reservations.map(({ groupKeys, jobIndexes }) => ({
+      requests: requests.map(({ groupKeys, jobIndexes }) => ({
         groupKeys,
-        batchSize: jobIndexes.length,
+        jobCount: jobIndexes.length,
       })),
     });
 
@@ -452,8 +452,8 @@ export class BullMQDriver
 
     const priorities = [...staticPriorities];
 
-    reservations.forEach(({ jobIndexes }, reservationIndex) => {
-      const { tag, weight } = tickets[reservationIndex];
+    requests.forEach(({ jobIndexes }, requestIndex) => {
+      const { tag, weight } = tickets[requestIndex];
 
       jobIndexes.forEach((jobIndex, position) => {
         const ticket = Math.floor(tag + position / weight);

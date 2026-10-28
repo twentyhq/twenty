@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { type Redis } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 
-import { FairPriorityTagger } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority-tagger';
+import { FairTicketAllocator } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 const QUEUE = MessageQueue.logicFunctionQueue;
@@ -12,7 +12,7 @@ const QUEUE_KEY_PREFIX = `${KEY_PREFIX}:${QUEUE}:`;
 const VIRTUAL_TIME_KEY = `${QUEUE_KEY_PREFIX}fair:vtime`;
 const WEIGHTS_KEY = `${QUEUE_KEY_PREFIX}fair:weights`;
 
-const createTagger = async () => {
+const createAllocator = async () => {
   const redis: Redis = new RedisMock();
 
   await redis.flushall();
@@ -43,7 +43,7 @@ const createTagger = async () => {
 
   return {
     redis,
-    tagger: new FairPriorityTagger({
+    allocator: new FairTicketAllocator({
       getClient: async () => client as never,
       keyPrefix: KEY_PREFIX,
     }),
@@ -52,30 +52,30 @@ const createTagger = async () => {
   };
 };
 
-const createBrokenTagger = () =>
-  new FairPriorityTagger({
+const createBrokenAllocator = () =>
+  new FairTicketAllocator({
     getClient: async () => {
       throw new Error('Redis connection lost');
     },
     keyPrefix: KEY_PREFIX,
   });
 
-describe('FairPriorityTagger', () => {
+describe('FairTicketAllocator', () => {
   beforeAll(() => {
     jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
   });
 
-  describe('reserve', () => {
-    it('tags a reservation at its latest clock and charges each key for its own batch only', async () => {
-      const { tagger, readClock } = await createTagger();
+  describe('allocateTickets', () => {
+    it('tags a request at its latest clock and charges each key for its own batch only', async () => {
+      const { allocator, readClock } = await createAllocator();
 
       expect(
-        await tagger.reserve({
+        await allocator.allocateTickets({
           queueName: QUEUE,
-          reservations: [
-            { groupKeys: ['workspace:X', 'application:H'], batchSize: 100 },
-            { groupKeys: ['workspace:W', 'application:H'], batchSize: 1 },
-            { groupKeys: ['workspace:W', 'application:Q'], batchSize: 1 },
+          requests: [
+            { groupKeys: ['workspace:X', 'application:H'], jobCount: 100 },
+            { groupKeys: ['workspace:W', 'application:H'], jobCount: 1 },
+            { groupKeys: ['workspace:W', 'application:Q'], jobCount: 1 },
           ],
         }),
       ).toEqual([
@@ -87,33 +87,33 @@ describe('FairPriorityTagger', () => {
       expect(await readClock('workspace:W')).toBe(2);
     });
 
-    it('tags a reservation at the virtual time when it is ahead of its clocks', async () => {
-      const { redis, tagger, readClock } = await createTagger();
+    it('tags a request at the virtual time when it is ahead of its clocks', async () => {
+      const { redis, allocator, readClock } = await createAllocator();
 
       await redis.set(VIRTUAL_TIME_KEY, 5);
 
       expect(
-        await tagger.reserve({
+        await allocator.allocateTickets({
           queueName: QUEUE,
-          reservations: [{ groupKeys: ['workspace:B'], batchSize: 2 }],
+          requests: [{ groupKeys: ['workspace:B'], jobCount: 2 }],
         }),
       ).toEqual([{ tag: 5, weight: 1 }]);
       expect(await readClock('workspace:B')).toBe(7);
     });
 
-    it('weighs a reservation by the product of its key weights and ignores a malformed weight', async () => {
-      const { redis, tagger } = await createTagger();
+    it('weighs a request by the product of its key weights and ignores a malformed weight', async () => {
+      const { redis, allocator } = await createAllocator();
 
       await redis.hset(WEIGHTS_KEY, 'application:P', '2');
       await redis.hset(WEIGHTS_KEY, 'workspace:W', 'not-a-number');
       await redis.hset(WEIGHTS_KEY, 'application:N', '-1');
 
       expect(
-        await tagger.reserve({
+        await allocator.allocateTickets({
           queueName: QUEUE,
-          reservations: [
-            { groupKeys: ['workspace:W', 'application:P'], batchSize: 2 },
-            { groupKeys: ['workspace:W', 'application:N'], batchSize: 1 },
+          requests: [
+            { groupKeys: ['workspace:W', 'application:P'], jobCount: 2 },
+            { groupKeys: ['workspace:W', 'application:N'], jobCount: 1 },
           ],
         }),
       ).toEqual([
@@ -124,9 +124,9 @@ describe('FairPriorityTagger', () => {
 
     it('returns nothing when Redis is unavailable', async () => {
       expect(
-        await createBrokenTagger().reserve({
+        await createBrokenAllocator().allocateTickets({
           queueName: QUEUE,
-          reservations: [{ groupKeys: ['workspace:A'], batchSize: 1 }],
+          requests: [{ groupKeys: ['workspace:A'], jobCount: 1 }],
         }),
       ).toBeUndefined();
     });

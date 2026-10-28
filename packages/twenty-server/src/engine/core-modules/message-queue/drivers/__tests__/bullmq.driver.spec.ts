@@ -17,7 +17,7 @@ const mockSetGlobalConcurrency = jest.fn();
 const mockRemoveGlobalConcurrency = jest.fn();
 const mockGetJobCountByTypes = jest.fn();
 const mockTwentyConfigService = { get: jest.fn().mockReturnValue(false) };
-const mockReserve = jest.fn();
+const mockAllocateTickets = jest.fn();
 
 jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
@@ -38,11 +38,11 @@ jest.mock('bullmq', () => ({
 jest.mock('uuid', () => ({ v4: () => 'generated-uuid-000000000000000000000' }));
 
 jest.mock(
-  'src/engine/core-modules/message-queue/drivers/fairness/fair-priority-tagger',
+  'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator',
   () => ({
-    FairPriorityTagger: jest
+    FairTicketAllocator: jest
       .fn()
-      .mockImplementation(() => ({ reserve: mockReserve })),
+      .mockImplementation(() => ({ allocateTickets: mockAllocateTickets })),
   }),
 );
 
@@ -537,15 +537,15 @@ describe('BullMQDriver fair tickets', () => {
   });
 
   it('ranks a job by the ticket of its workspace', async () => {
-    mockReserve.mockResolvedValue([{ tag: 7, weight: 1 }]);
+    mockAllocateTickets.mockResolvedValue([{ tag: 7, weight: 1 }]);
 
     await driver.add(MessageQueue.workspaceQueue, 'job', {
       workspaceId: 'ws-1',
     });
 
-    expect(mockReserve).toHaveBeenCalledWith({
+    expect(mockAllocateTickets).toHaveBeenCalledWith({
       queueName: MessageQueue.workspaceQueue,
-      reservations: [{ groupKeys: ['workspace:ws-1'], batchSize: 1 }],
+      requests: [{ groupKeys: ['workspace:ws-1'], jobCount: 1 }],
     });
     expect(mockAdd).toHaveBeenCalledWith(
       'job',
@@ -554,8 +554,8 @@ describe('BullMQDriver fair tickets', () => {
     );
   });
 
-  it('reserves one ticket per group of a bulk and spaces its jobs by the weight', async () => {
-    mockReserve.mockResolvedValue([
+  it('allocates one ticket per group of a bulk and spaces its jobs by the weight', async () => {
+    mockAllocateTickets.mockResolvedValue([
       { tag: 10, weight: 0.5 },
       { tag: 0, weight: 1 },
     ]);
@@ -566,11 +566,11 @@ describe('BullMQDriver fair tickets', () => {
       { data: { workspaceId: 'ws-1' } },
     ]);
 
-    expect(mockReserve).toHaveBeenCalledWith({
+    expect(mockAllocateTickets).toHaveBeenCalledWith({
       queueName: MessageQueue.workspaceQueue,
-      reservations: [
-        { groupKeys: ['workspace:ws-1'], batchSize: 2 },
-        { groupKeys: ['workspace:ws-2'], batchSize: 1 },
+      requests: [
+        { groupKeys: ['workspace:ws-1'], jobCount: 2 },
+        { groupKeys: ['workspace:ws-2'], jobCount: 1 },
       ],
     });
     expect(
@@ -585,7 +585,7 @@ describe('BullMQDriver fair tickets', () => {
   });
 
   it('keeps the static priority and counts a fallback when no ticket comes back', async () => {
-    mockReserve.mockResolvedValue(undefined);
+    mockAllocateTickets.mockResolvedValue(undefined);
 
     await driver.add(
       MessageQueue.workspaceQueue,
@@ -612,7 +612,7 @@ describe('BullMQDriver fair tickets', () => {
       { delay: 1_000, priority: 4 },
     );
 
-    expect(mockReserve).not.toHaveBeenCalled();
+    expect(mockAllocateTickets).not.toHaveBeenCalled();
     expect(mockAdd).toHaveBeenCalledWith(
       'job',
       { workspaceId: 'ws-1' },

@@ -27,7 +27,7 @@ local ticketCount = 0
 local position = 4 + distinctKeyCount
 
 for _ = 1, tonumber(ARGV[3 + distinctKeyCount]) do
-  local batchSize = tonumber(ARGV[position])
+  local jobCount = tonumber(ARGV[position])
   local keyCount = tonumber(ARGV[position + 1])
   local tag = virtualTime
   local weight = 1
@@ -45,7 +45,7 @@ for _ = 1, tonumber(ARGV[3 + distinctKeyCount]) do
   for k = 1, keyCount do
     local index = tonumber(ARGV[position + 1 + k])
 
-    clocks[index] = clocks[index] + batchSize / weight
+    clocks[index] = clocks[index] + jobCount / weight
   end
 
   tickets[ticketCount + 1] = tostring(tag)

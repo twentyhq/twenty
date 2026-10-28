@@ -8,11 +8,11 @@ import { FAIR_CLOCK_TTL_MS } from 'src/engine/core-modules/message-queue/drivers
 import { FAIR_TAG_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-tag-script.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
-export type FairReservation = { groupKeys: string[]; batchSize: number };
+export type FairTicketRequest = { groupKeys: string[]; jobCount: number };
 
 export type FairTicket = { tag: number; weight: number };
 
-type FairPriorityTaggerOptions = {
+type FairTicketAllocatorOptions = {
   getClient: (queueName: MessageQueue) => Promise<RedisClient>;
   keyPrefix: string;
 };
@@ -21,21 +21,21 @@ const FAIR_TAG_SCRIPT_SHA = createHash('sha1')
   .update(FAIR_TAG_SCRIPT)
   .digest('hex');
 
-export class FairPriorityTagger {
-  private readonly logger = new Logger(FairPriorityTagger.name);
+export class FairTicketAllocator {
+  private readonly logger = new Logger(FairTicketAllocator.name);
 
-  constructor(private readonly options: FairPriorityTaggerOptions) {}
+  constructor(private readonly options: FairTicketAllocatorOptions) {}
 
-  async reserve({
+  async allocateTickets({
     queueName,
-    reservations,
+    requests,
   }: {
     queueName: MessageQueue;
-    reservations: FairReservation[];
+    requests: FairTicketRequest[];
   }): Promise<FairTicket[] | undefined> {
     const fairKeyPrefix = `${this.options.keyPrefix}:${queueName}:fair:`;
     const distinctGroupKeys = [
-      ...new Set(reservations.flatMap(({ groupKeys }) => groupKeys)),
+      ...new Set(requests.flatMap(({ groupKeys }) => groupKeys)),
     ];
     const keys = [
       `${fairKeyPrefix}vtime`,
@@ -48,9 +48,9 @@ export class FairPriorityTagger {
       FAIR_CLOCK_TTL_MS,
       distinctGroupKeys.length,
       ...distinctGroupKeys,
-      reservations.length,
-      ...reservations.flatMap(({ groupKeys, batchSize }) => [
-        batchSize,
+      requests.length,
+      ...requests.flatMap(({ groupKeys, jobCount }) => [
+        jobCount,
         groupKeys.length,
         ...groupKeys.map((groupKey) => distinctGroupKeys.indexOf(groupKey) + 1),
       ]),
@@ -74,12 +74,12 @@ export class FairPriorityTagger {
           ]),
         );
       const values = String(rawTickets).split(' ').map(Number);
-      const tickets = reservations.map((_, index) => ({
+      const tickets = requests.map((_, index) => ({
         tag: values[2 * index],
         weight: values[2 * index + 1],
       }));
       const hasValidTickets =
-        values.length === 2 * reservations.length &&
+        values.length === 2 * requests.length &&
         tickets.every(({ tag, weight }) => Number.isFinite(tag) && weight > 0);
 
       if (!hasValidTickets) {
@@ -89,7 +89,7 @@ export class FairPriorityTagger {
       return tickets;
     } catch (error) {
       this.logger.warn(
-        `Failed to reserve the fair tickets on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to allocate the fair tickets on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
       );
 
       return undefined;
