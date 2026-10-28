@@ -7143,6 +7143,7 @@ msgstr "잘못된 주소 값입니다."
 
 #. js-lingui-id: D9hzmE
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
 msgid "Invalid value for currency."
 msgstr "잘못된 통화 값입니다."
 
