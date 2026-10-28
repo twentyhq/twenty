@@ -257,6 +257,7 @@ export class PurgeSoftDeletedViewsCommand extends ProvisionedWorkspaceCommandRun
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,

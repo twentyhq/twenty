@@ -6935,12 +6935,6 @@ msgstr "مفتاح علم الإذن غير صالح."
 msgid "Invalid permission flag permission type."
 msgstr "نوع علامة الإذن غير صالح."
 
-#. js-lingui-id: mMHHVP
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-msgid "Invalid permission setting"
-msgstr "إعداد إذن غير صالح"
-
 #. js-lingui-id: Pt2vVA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
@@ -10057,6 +10051,16 @@ msgctxt "commandMenuItem.label"
 msgid "Permanently destroy {objectLabel}"
 msgstr "إتلاف {objectLabel} نهائيًا"
 
+#. js-lingui-id: cmLTur
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
+msgid "Permission flag {permissionFlagName} is not available in this workspace"
+msgstr ""
+
+#. js-lingui-id: h8HQA4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
+msgid "Permission flag {permissionFlagUniversalIdentifier} not found in this workspace"
+msgstr ""
+
 #. js-lingui-id: 3zRddX
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
 msgid "Permission flag already exists."
@@ -10133,8 +10137,6 @@ msgid "Permission flag key cannot be changed."
 msgstr "لا يمكن تغيير مفتاح علم الإذن."
 
 #. js-lingui-id: 2mZr45
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "Permission flag not found"
@@ -12255,6 +12257,11 @@ msgstr "لا يمكن حذف القنوات القياسية."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "Standard objects cannot be deleted"
 msgstr "لا يمكن حذف الكائنات القياسية"
+
+#. js-lingui-id: gBQ8oE
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
+msgid "Standard permission flag {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) not found in this workspace. Run the workspace upgrade to create it."
+msgstr ""
 
 #. js-lingui-id: Xn/1qY
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -16895,11 +16902,6 @@ msgstr "مخطط مساحة العمل غير موجود."
 #: src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service.ts
 msgid "Workspace setup"
 msgstr "إعداد مساحة العمل"
-
-#. js-lingui-id: 5TbIzO
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util.ts
-msgid "Workspace workflows cannot be adopted by an application."
-msgstr "لا يمكن لتطبيق اعتماد مهام سير عمل مساحة العمل."
 
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts

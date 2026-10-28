@@ -1,6 +1,9 @@
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { WORKFLOW_CONNECTED_ACCOUNT_STEP_CAPABILITY } from 'src/engine/core-modules/application/application-manifest/constants/workflow-connected-account-step-capability.constant';
+import { type WorkflowConnectedAccountStepType } from 'src/engine/core-modules/application/application-manifest/types/workflow-connected-account-step-type.type';
+import { findWorkflowStepConnectedAccount } from 'src/engine/core-modules/application/application-manifest/utils/find-workflow-step-connected-account.util';
 import { computeWorkflowWatchedFieldName } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-watched-field-name.util';
 
 const UNRESOLVED_REFERENCE = '';
@@ -36,6 +39,14 @@ export const buildWorkflowManifestInverseReferenceResolvers = (
   );
   const agentUniversalIdentifierById = invertIdentifierMap(
     references.agentIdByUniversalIdentifier,
+  );
+
+  const connectedAccounts = references.connectedAccounts ?? [];
+  const connectedAccountById = new Map(
+    connectedAccounts.map((connectedAccount) => [
+      connectedAccount.id,
+      connectedAccount,
+    ]),
   );
 
   for (const [
@@ -157,6 +168,52 @@ export const buildWorkflowManifestInverseReferenceResolvers = (
       reason: 'workflow step on an agent of another application',
     });
 
+  // Values that are not a shared account of the workspace (variables, member ids, private accounts) are kept as they are
+  const connectedAccountReference = ({
+    stepType,
+    connectedAccountId,
+  }: {
+    stepType: WorkflowConnectedAccountStepType;
+    connectedAccountId: unknown;
+  }): { connectedAccountId: unknown } | { connectedAccountHandle: string } => {
+    const connectedAccount =
+      typeof connectedAccountId === 'string'
+        ? connectedAccountById.get(connectedAccountId)
+        : undefined;
+
+    if (
+      !isDefined(connectedAccount) ||
+      connectedAccount.scope !== 'WORKSPACE'
+    ) {
+      return { connectedAccountId };
+    }
+
+    const { handle } = connectedAccount;
+    const resolvedConnectedAccount = findWorkflowStepConnectedAccount({
+      stepType,
+      handle,
+      connectedAccounts,
+    });
+
+    if (resolvedConnectedAccount?.id === connectedAccount.id) {
+      return { connectedAccountHandle: handle };
+    }
+
+    if (isDefined(connectedAccount.archivedAt)) {
+      markUnsupported(`workflow step on archived connected account ${handle}`);
+    } else if (isDefined(resolvedConnectedAccount)) {
+      markUnsupported(
+        `workflow step on connected account ${handle}, whose handle names an older account of the workspace`,
+      );
+    } else {
+      markUnsupported(
+        `workflow step on connected account ${handle}, which cannot ${WORKFLOW_CONNECTED_ACCOUNT_STEP_CAPABILITY[stepType]}`,
+      );
+    }
+
+    return { connectedAccountHandle: UNRESOLVED_REFERENCE };
+  };
+
   const fieldReference = (
     reference: unknown,
   ): Record<string, unknown> | undefined => {
@@ -183,6 +240,7 @@ export const buildWorkflowManifestInverseReferenceResolvers = (
     watchedFieldUniversalIdentifier,
     logicFunctionUniversalIdentifier,
     agentUniversalIdentifier,
+    connectedAccountReference,
     markUnsupported,
     getUnsupportedReason: (): string | undefined => unsupportedReasons[0],
   };
