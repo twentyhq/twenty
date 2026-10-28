@@ -268,7 +268,7 @@ export const AccountsSectionHeaderStaysWhileLoading: Story = {
   },
 };
 
-export const AccountsTabWithoutAccountsSaysNoAccountsYet: Story = {
+export const AccountsTabWithoutAccountsOffersConnectCards: Story = {
   ...accountsTabStory,
   parameters: {
     msw: {
@@ -284,9 +284,11 @@ export const AccountsTabWithoutAccountsSaysNoAccountsYet: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('No accounts yet', undefined, { timeout: 3000 }),
+      await canvas.findByText('Connect with Google', undefined, {
+        timeout: 3000,
+      }),
     ).toBeVisible();
-    expect(canvas.queryByText('Connect with Google')).not.toBeInTheDocument();
+    expect(canvas.getByText('Connect with Microsoft')).toBeVisible();
   },
 };
 

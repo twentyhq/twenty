@@ -1,14 +1,7 @@
+import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { SettingsAppPreferencesListEmptyStateCard } from '@/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-`;
 
 type SettingsAccountGroupsEmptyStateProps = {
   builtInAccountApp?: BuiltInAccountApp;
@@ -17,8 +10,6 @@ type SettingsAccountGroupsEmptyStateProps = {
 export const SettingsAccountGroupsEmptyState = ({
   builtInAccountApp,
 }: SettingsAccountGroupsEmptyStateProps) => {
-  const { t } = useLingui();
-
   if (isDefined(builtInAccountApp)) {
     return (
       <SettingsAppPreferencesListEmptyStateCard
@@ -27,5 +18,5 @@ export const SettingsAccountGroupsEmptyState = ({
     );
   }
 
-  return <StyledEmptyState>{t`No accounts yet`}</StyledEmptyState>;
+  return <SettingsAccountsListEmptyStateCard />;
 };
