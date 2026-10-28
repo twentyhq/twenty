@@ -95,7 +95,7 @@ export class WorkspaceCommandRunnerService {
     options,
   }: {
     workspaceId: string;
-    options: ParsedUpgradeCommandOptions;
+    options: Pick<ParsedUpgradeCommandOptions, 'dryRun'>;
   }): Promise<void> {
     if (options.dryRun) {
       return;
