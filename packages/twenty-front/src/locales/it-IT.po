@@ -29266,6 +29266,11 @@ msgstr "Passa a Organization"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "Passa a Organization per configurare SSO."
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr ""
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
