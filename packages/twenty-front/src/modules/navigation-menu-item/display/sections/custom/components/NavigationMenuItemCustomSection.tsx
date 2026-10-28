@@ -1,8 +1,3 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { LightIconButton } from 'twenty-ui/components/input';
-import { IconPlus } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -11,17 +6,8 @@ import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/displa
 import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionContainer';
 import { useWorkspaceSectionItemClickHandlers } from '@/navigation-menu-item/display/sections/workspace/hooks/useWorkspaceSectionItemClickHandlers';
 import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
-import { NavigationMenuItemAddDropdown } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdown';
 import { NavigationMenuItemSectionMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemSectionMenu';
-import { getNavigationMenuSectionAddItemInstanceId } from '@/navigation-menu-item/edit/utils/getNavigationMenuSectionAddItemInstanceId';
-import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-
-const StyledRightIconsContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing['0.5']};
-`;
 
 type NavigationMenuItemCustomSectionProps = {
   section: NavigationMenuItem;
@@ -30,7 +16,6 @@ type NavigationMenuItemCustomSectionProps = {
 export const NavigationMenuItemCustomSection = ({
   section,
 }: NavigationMenuItemCustomSectionProps) => {
-  const { t } = useLingui();
   const isMobile = useIsMobile();
   const items = useNavigationMenuItemSectionItems(section.id);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
@@ -43,27 +28,6 @@ export const NavigationMenuItemCustomSection = ({
   } = useWorkspaceSectionItemClickHandlers();
   const navigationSectionId =
     getNavigationMenuSectionNavigationSectionId(section);
-  const { openNavigationSection } = useNavigationSection(navigationSectionId);
-
-  const topLevelItemCount = items.filter(
-    (item) => item.folderId === section.id,
-  ).length;
-
-  const editModeActions = (
-    <StyledRightIconsContainer>
-      <NavigationMenuItemAddDropdown
-        instanceId={getNavigationMenuSectionAddItemInstanceId(section.id)}
-        folderId={section.id}
-        position={topLevelItemCount}
-        onOpen={openNavigationSection}
-      >
-        <LightIconButton emphasis="subtle" size="sm" aria-label={t`Add`}>
-          <IconPlus />
-        </LightIconButton>
-      </NavigationMenuItemAddDropdown>
-      <NavigationMenuItemSectionMenu section={section} />
-    </StyledRightIconsContainer>
-  );
 
   return (
     <WorkspaceSectionContainer
@@ -74,9 +38,9 @@ export const NavigationMenuItemCustomSection = ({
       isHiddenWhenEmpty
       visibleItemLimit={section.visibleItemLimit}
       rightIcon={
-        !isMobile && isLayoutCustomizationModeEnabled
-          ? editModeActions
-          : undefined
+        !isMobile && isLayoutCustomizationModeEnabled ? (
+          <NavigationMenuItemSectionMenu section={section} />
+        ) : undefined
       }
       selectedNavigationMenuItemId={selectedNavigationMenuItemId}
       onNavigationMenuItemClick={onNavigationMenuItemClick}

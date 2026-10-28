@@ -1,12 +1,13 @@
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import {
   IconEye,
   IconFolderSymlink,
   IconHome,
+  IconPlus,
   IconTrash,
   useIcons,
 } from 'twenty-ui/icon';
@@ -25,12 +26,14 @@ import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types
 type NavigationMenuItemSectionMenuContentProps = {
   section: NavigationMenuItem;
   defaultName?: string;
+  onAddItem?: () => void;
   onClose: () => void;
 };
 
 export const NavigationMenuItemSectionMenuContent = ({
   section,
   defaultName,
+  onAddItem,
   onClose,
 }: NavigationMenuItemSectionMenuContentProps) => {
   const { t } = useLingui();
@@ -60,6 +63,32 @@ export const NavigationMenuItemSectionMenuContent = ({
     isDefined(limit)
       ? plural(limit, { one: '# item', other: '# items' })
       : t`All items`;
+
+  const contentOptions: NavigationMenuItemOption[] = [
+    ...(isDefined(onAddItem)
+      ? [
+          {
+            id: 'add-item',
+            label: t`Add item`,
+            Icon: IconPlus,
+            hasSubMenu: true,
+            onClick: onAddItem,
+          },
+        ]
+      : []),
+    ...(isVisibleItemLimitEditable
+      ? [
+          {
+            id: 'visible-item-limit',
+            label: t`Show`,
+            Icon: IconEye,
+            contextualText: getVisibleItemLimitLabel(visibleItemLimit),
+            hasSubMenu: true,
+            onClick: () => goToPage('visible-item-limit'),
+          },
+        ]
+      : []),
+  ];
 
   const actions: NavigationMenuItemOption[] = [
     ...reorderOptions,
@@ -107,19 +136,15 @@ export const NavigationMenuItemSectionMenuContent = ({
           onSubmit={onClose}
         />
         <Dropdown.Separator />
-        {isVisibleItemLimitEditable && (
+        {isNonEmptyArray(contentOptions) && (
           <>
             <Dropdown.Section>
-              <NavigationMenuItemSelectableItem
-                item={{
-                  id: 'visible-item-limit',
-                  label: t`Show`,
-                  Icon: IconEye,
-                  contextualText: getVisibleItemLimitLabel(visibleItemLimit),
-                  hasSubMenu: true,
-                  onClick: () => goToPage('visible-item-limit'),
-                }}
-              />
+              {contentOptions.map((option) => (
+                <NavigationMenuItemSelectableItem
+                  key={option.id}
+                  item={option}
+                />
+              ))}
             </Dropdown.Section>
             <Dropdown.Separator />
           </>

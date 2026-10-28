@@ -11,6 +11,7 @@ import {
 } from 'twenty-ui/icon';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
+import { navigationMenuSectionIdAddingItemState } from '@/navigation-menu-item/common/states/navigationMenuSectionIdAddingItemState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuSections } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuSections';
 import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
@@ -18,8 +19,7 @@ import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/co
 import { NavigationMenuTabCustomizeMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabCustomizeMenuContent';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { getNavigationMenuAddSectionDropdownId } from '@/navigation-menu-item/edit/utils/getNavigationMenuAddSectionDropdownId';
-import { getNavigationMenuItemAddDropdownId } from '@/navigation-menu-item/edit/utils/getNavigationMenuItemAddDropdownId';
-import { getNavigationMenuSectionAddItemInstanceId } from '@/navigation-menu-item/edit/utils/getNavigationMenuSectionAddItemInstanceId';
+import { getNavigationMenuSectionMenuDropdownId } from '@/navigation-menu-item/edit/utils/getNavigationMenuSectionMenuDropdownId';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 
@@ -73,12 +73,21 @@ export const MainNavigationDrawerContextMenuContent = ({
             id: 'add-item',
             label: t`Add item to ${targetSectionName}`,
             Icon: IconPlus,
-            onClick: () =>
-              customizeSidebarWithPicker(
-                getNavigationMenuItemAddDropdownId(
-                  getNavigationMenuSectionAddItemInstanceId(targetSection.id),
+            onClick: () => {
+              store.set(
+                navigationMenuSectionIdAddingItemState.atom,
+                targetSection.id,
+              );
+              store.set(
+                isNavigationSectionOpenFamilyState.atomFamily(
+                  getNavigationMenuSectionNavigationSectionId(targetSection),
                 ),
-              ),
+                true,
+              );
+              customizeSidebarWithPicker(
+                getNavigationMenuSectionMenuDropdownId(targetSection.id),
+              );
+            },
           },
         ]
       : []),

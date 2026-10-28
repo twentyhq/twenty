@@ -47,4 +47,25 @@ describe('NavigationMenuItemSectionMenu', () => {
       ).not.toBeInTheDocument(),
     );
   });
+
+  it('opens the add item picker from the section actions', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <NavigationMenuItemSectionMenu
+        section={buildOptimisticNavigationMenuItem({
+          id: 'projects-section',
+          type: NavigationMenuItemType.SECTION,
+          position: 0,
+        })}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Section actions' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Add item' }));
+
+    expect(await screen.findByText('Link')).toBeVisible();
+    expect(screen.queryByText('Remove section')).not.toBeInTheDocument();
+  });
 });
