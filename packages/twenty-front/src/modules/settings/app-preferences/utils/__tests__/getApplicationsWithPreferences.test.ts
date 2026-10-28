@@ -33,6 +33,7 @@ const buildSettingsMenuItem = ({
   position?: number;
   scope?: SettingsMenuItemScope;
 }) => ({
+  __typename: 'SettingsMenuItem' as const,
   id: `${universalIdentifier}-id`,
   universalIdentifier,
   applicationId,
@@ -56,6 +57,7 @@ const buildVariable = ({
   isRequired?: boolean;
   isSecret?: boolean;
 }) => ({
+  __typename: 'UserApplicationVariableValue' as const,
   key,
   value,
   isDeprecated,
@@ -72,6 +74,7 @@ const buildUserConnectionProvider = ({
 }: {
   applicationId: string;
 }) => ({
+  __typename: 'ApplicationConnectionProvider' as const,
   id: `${applicationId}-connection-provider-id`,
   applicationId,
   type: 'oauth',
@@ -79,7 +82,11 @@ const buildUserConnectionProvider = ({
   displayName: 'Linear',
   scope: ConnectionProviderScope.USER,
   logoUrl: null,
-  oauth: { scopes: ['read'], isClientCredentialsConfigured: true },
+  oauth: {
+    __typename: 'ApplicationConnectionProviderOAuthConfig' as const,
+    scopes: ['read'],
+    isClientCredentialsConfigured: true,
+  },
 });
 
 const CURRENT_WORKSPACE = {
@@ -105,12 +112,14 @@ describe('getApplicationsWithPreferences', () => {
           settingsMenuItems: [],
           variables: [buildVariable({ key: 'RECORD_MY_MEETINGS' })],
           connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
         {
           applicationId: NOTETAKER_APPLICATION_ID,
           settingsMenuItems: [],
           variables: [buildVariable({ key: 'LANGUAGE', value: 'en' })],
           connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
@@ -143,6 +152,7 @@ describe('getApplicationsWithPreferences', () => {
           ],
           variables: [],
           connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
@@ -171,6 +181,7 @@ describe('getApplicationsWithPreferences', () => {
             }),
           ],
           connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
@@ -210,6 +221,7 @@ describe('getApplicationsWithPreferences', () => {
             }),
           ],
           connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
@@ -235,6 +247,7 @@ describe('getApplicationsWithPreferences', () => {
             }),
           ],
           connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
@@ -253,6 +266,7 @@ describe('getApplicationsWithPreferences', () => {
           settingsMenuItems: [],
           variables: [buildVariable({ key: 'OLD_FLAG', isDeprecated: true })],
           connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
@@ -265,6 +279,7 @@ describe('getApplicationsWithPreferences', () => {
     const [result] = getApplicationsWithPreferences({
       applicationPreferences: [
         {
+          __typename: 'ApplicationPreferences' as const,
           applicationId: RECORDER_APPLICATION_ID,
           settingsMenuItems: [],
           variables: [],
@@ -292,6 +307,7 @@ describe('getApplicationsWithPreferences', () => {
           settingsMenuItems: [],
           variables: [buildVariable({ key: 'LANGUAGE', value: 'en' })],
           connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
