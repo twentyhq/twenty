@@ -1,4 +1,4 @@
-import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
+import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
 
 describe('getApplicationDescriptionSummary', () => {
   it('returns an empty string for missing or blank descriptions', () => {

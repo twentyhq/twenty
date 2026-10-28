@@ -1446,6 +1446,25 @@ export const STANDARD_OBJECTS = {
       },
     },
     views: {
+      workspaceMemberRecordPageFields: buildStandardObjectRecordPageFieldsView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember,
+        fields: STANDARD_OBJECT_FIELDS.workspaceMember,
+        viewFieldNames: [
+          'userEmail',
+          'jobTitle',
+          'createdAt',
+          'updatedAt',
+          'assignedTasks',
+          'accountOwnerForCompanies',
+          'ownedOpportunities',
+        ],
+        viewFieldGroupNames: {
+          general: 'General',
+          system: 'System',
+          relations: 'Relations',
+        },
+      }),
       allWorkspaceMembers: buildStandardObjectIndexView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember,

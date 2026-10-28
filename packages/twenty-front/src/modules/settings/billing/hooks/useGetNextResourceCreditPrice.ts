@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { usePlans } from '@/settings/billing/hooks/usePlans';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -42,10 +43,7 @@ export const useGetNextResourceCreditPrice =
 
     const resourceCreditPrices = currentPlan.resourceCreditProducts
       .flatMap((product) => product.prices ?? [])
-      .filter(
-        (price): price is BillingPriceLicensed =>
-          price !== null && price !== undefined,
-      );
+      .filter(isDefined);
 
     const pricesForInterval = resourceCreditPrices
       .filter((price) => price.recurringInterval === interval)

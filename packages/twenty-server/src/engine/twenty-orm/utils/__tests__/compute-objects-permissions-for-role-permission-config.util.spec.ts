@@ -84,6 +84,29 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
       },
       canDestroy: false,
     },
+    {
+      actor: "a user holding the owning application's default role",
+      intersectionOf: { userWorkspaceRoleId: 'owning-application-role-id' },
+      canDestroy: false,
+    },
+    {
+      actor: "an API key holding the owning application's default role",
+      intersectionOf: { apiKeyRoleId: 'owning-application-role-id' },
+      canDestroy: false,
+    },
+    {
+      actor: "an agent holding the owning application's default role",
+      intersectionOf: { agentRoleId: 'owning-application-role-id' },
+      canDestroy: false,
+    },
+    {
+      actor: 'the owning application with a user holding its default role',
+      intersectionOf: {
+        userWorkspaceRoleId: 'owning-application-role-id',
+        applicationRoleId: 'owning-application-role-id',
+      },
+      canDestroy: false,
+    },
   ])(
     'disabled action allowed for $actor: $canDestroy',
     ({ intersectionOf, canDestroy }) => {
