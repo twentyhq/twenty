@@ -394,14 +394,14 @@ msgstr "{0} MB"
 #. placeholder {0}: formatNumber(objectCount)
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "{0} objects"
-msgstr ""
+msgstr "{0} 個物件"
 
 #. js-lingui-id: Z70Dyr
 #. placeholder {0}: formatNumber(objectCount)
 #. placeholder {1}: formatNumber(recordCount)
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "{0} objects, {1} records"
-msgstr ""
+msgstr "{0} 個物件，{1} 筆記錄"
 
 #. js-lingui-id: FGOUAP
 #. placeholder {0}: formatNumber(displayedRecords.length)
@@ -7043,7 +7043,7 @@ msgstr "內容"
 #. js-lingui-id: SVyf2o
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Contents"
-msgstr ""
+msgstr "內容"
 
 #. js-lingui-id: M73whl
 #: src/modules/settings/admin-panel/components/SettingsAdminChatMessage.tsx
