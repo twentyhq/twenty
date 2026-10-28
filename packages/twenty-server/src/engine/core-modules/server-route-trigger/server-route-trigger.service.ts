@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Request } from 'express';
 import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectQueryBuilder } from 'typeorm';
+import { Repository, type SelectQueryBuilder } from 'typeorm';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
@@ -35,6 +36,7 @@ import { ServerRouteAuthorizationHeaderService } from 'src/engine/core-modules/s
 import { buildServerRouteFailureLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-failure-log-entry.util';
 import { isAppFacingServerRouteError } from 'src/engine/core-modules/server-route-trigger/utils/is-app-facing-server-route-error.util';
 import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-name.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -63,6 +65,8 @@ export class ServerRouteTriggerService {
   constructor(
     @InjectWorkspaceScopedRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -226,6 +230,29 @@ export class ServerRouteTriggerService {
       );
   }
 
+  // The route identifier (primary key or universalIdentifier) is caller-chosen
+  // on createOneLogicFunction, and the Custom app is per-workspace, so a
+  // function there must never answer a public route: it would otherwise shadow
+  // an installed app's webhook across workspaces. Installed apps live in their
+  // own application rows and are unaffected.
+  private async isOwnedByWorkspaceCustomApplication(
+    resolver: LogicFunctionEntity,
+  ): Promise<boolean> {
+    const applicationId = resolver.application?.id;
+
+    if (!isDefined(applicationId)) {
+      return false;
+    }
+
+    const workspace = await this.workspaceRepository.findOne({
+      select: { id: true, workspaceCustomApplicationId: true },
+      where: { id: resolver.workspaceId },
+      withDeleted: true,
+    });
+
+    return workspace?.workspaceCustomApplicationId === applicationId;
+  }
+
   private async findResolverOrThrow(
     identifier: string,
   ): Promise<ResolvedServerRouteResolver> {
@@ -233,19 +260,29 @@ export class ServerRouteTriggerService {
       .andWhere('logicFunction.id = :id', { id: identifier })
       .getOne();
 
-    if (isDefined(resolverById)) {
+    if (
+      isDefined(resolverById) &&
+      !(await this.isOwnedByWorkspaceCustomApplication(resolverById))
+    ) {
       return {
         resolver: resolverById,
         isResolvedThroughLegacyIdentifier: false,
       };
     }
 
-    const legacyCandidates = await this.createResolverQueryBuilder()
+    const legacyCandidateRows = await this.createResolverQueryBuilder()
       .andWhere('logicFunction.universalIdentifier = :universalIdentifier', {
         universalIdentifier: identifier,
       })
-      .limit(2)
       .getMany();
+
+    const legacyCandidates: LogicFunctionEntity[] = [];
+
+    for (const candidate of legacyCandidateRows) {
+      if (!(await this.isOwnedByWorkspaceCustomApplication(candidate))) {
+        legacyCandidates.push(candidate);
+      }
+    }
 
     if (legacyCandidates.length > 1) {
       this.logger.error(

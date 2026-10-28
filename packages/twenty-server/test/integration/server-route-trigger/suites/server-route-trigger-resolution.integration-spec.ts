@@ -13,6 +13,10 @@ import {
   removeForeignServerRouteClaimant,
   seedForeignServerRouteClaimant,
 } from 'test/integration/server-route-trigger/utils/seed-foreign-server-route-claimant.util';
+import {
+  removeWorkspaceCustomAppRouteClaimant,
+  seedWorkspaceCustomAppRouteClaimant,
+} from 'test/integration/server-route-trigger/utils/seed-workspace-custom-app-route-claimant.util';
 import { expectOneNotInternalServerErrorHttpResponseSnapshot } from 'test/integration/utils/expect-one-not-internal-server-error-http-response-snapshot.util';
 import { type LogicFunctionManifest } from 'twenty-shared/application';
 import { LOGIC_FUNCTION_HTTP_RESPONSE_MARKER } from 'twenty-shared/types';
@@ -30,6 +34,11 @@ const SQUATTER_APP_UNIVERSAL_IDENTIFIER =
   '0f1a2b3c-4d5e-4f6a-8b7c-8d9e0f1a2b3c';
 
 const UNKNOWN_IDENTIFIER = '11111111-1111-4111-8111-111111111111';
+
+const CUSTOM_APP_ONLY_IDENTIFIER = '22222222-2222-4222-8222-222222222222';
+
+const CUSTOM_APP_SHADOW_RESOLVER_UNIVERSAL_IDENTIFIER =
+  '33333333-3333-4333-8333-333333333333';
 
 const OWNER_RESPONSE = { answeredBy: 'owner' };
 
@@ -245,6 +254,49 @@ describe('ServerRouteTrigger resolver resolution (integration)', () => {
         expect(response.body).toEqual(OWNER_RESPONSE);
       } finally {
         await removeOwnerAppInstall();
+      }
+    }, 60000);
+  });
+
+  describe('workspace custom application', () => {
+    it('never answers a public server route from a Custom app logic function', async () => {
+      await seedWorkspaceCustomAppRouteClaimant({
+        id: CUSTOM_APP_ONLY_IDENTIFIER,
+        universalIdentifier: CUSTOM_APP_ONLY_IDENTIFIER,
+      });
+
+      try {
+        const response = await callServerRoute({
+          identifier: CUSTOM_APP_ONLY_IDENTIFIER,
+          expectToFail: true,
+        });
+
+        expect(response.status).toBe(404);
+        expect(response.body).not.toEqual(OWNER_RESPONSE);
+      } finally {
+        await removeWorkspaceCustomAppRouteClaimant({
+          id: CUSTOM_APP_ONLY_IDENTIFIER,
+        });
+      }
+    }, 60000);
+
+    it('cannot shadow an installed app route by claiming its identifier as a Custom app function id', async () => {
+      await seedWorkspaceCustomAppRouteClaimant({
+        id: OWNER_RESOLVER_UNIVERSAL_IDENTIFIER,
+        universalIdentifier: CUSTOM_APP_SHADOW_RESOLVER_UNIVERSAL_IDENTIFIER,
+      });
+
+      try {
+        const response = await callServerRoute({
+          identifier: OWNER_RESOLVER_UNIVERSAL_IDENTIFIER,
+        });
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(OWNER_RESPONSE);
+      } finally {
+        await removeWorkspaceCustomAppRouteClaimant({
+          id: OWNER_RESOLVER_UNIVERSAL_IDENTIFIER,
+        });
       }
     }, 60000);
   });

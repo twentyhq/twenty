@@ -9,12 +9,13 @@ import { ServerRouteReachabilityService } from 'src/engine/core-modules/server-r
 import { ServerRouteTriggerController } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.controller';
 import { ServerRouteTriggerGaugeService } from 'src/engine/core-modules/server-route-trigger/server-route-trigger-gauge.service';
 import { ServerRouteTriggerService } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([LogicFunctionEntity]),
+    TypeOrmModule.forFeature([LogicFunctionEntity, WorkspaceEntity]),
     EventLogEmitterModule,
     MetricsModule,
     JwtModule,
