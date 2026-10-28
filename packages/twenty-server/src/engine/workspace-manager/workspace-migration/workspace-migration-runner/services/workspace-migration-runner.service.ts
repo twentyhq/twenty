@@ -186,8 +186,7 @@ export class WorkspaceMigrationRunnerService {
   }> => {
     const runStart = performance.now();
 
-    // Upgrades run inline and skip the guard: the worker may not run yet and the
-    // deferred actions table may not exist or have its current shape.
+    // Upgrades run inline and skip the guard: no worker yet, table may be missing or outdated.
     const isRunningActionsInProcess =
       await this.inProcessWorkspaceMigrationActionsService.isRunningActionsInProcess(
         args.workspaceId,
