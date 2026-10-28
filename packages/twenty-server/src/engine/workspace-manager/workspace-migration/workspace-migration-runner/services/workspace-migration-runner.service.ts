@@ -26,6 +26,7 @@ import {
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { InFlightDeferredWorkspaceMigrationActionsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-flight-deferred-workspace-migration-actions.service';
+import { InProcessWorkspaceMigrationActionsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-process-workspace-migration-actions.service';
 import { SCHEMA_AFFECTING_WORKSPACE_MIGRATION_METADATA_NAMES } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/schema-affecting-workspace-migration-metadata-names.constant';
 import { isSchemaAffectingWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-schema-affecting-workspace-migration.util';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
@@ -49,6 +50,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
     private readonly inFlightDeferredWorkspaceMigrationActionsService: InFlightDeferredWorkspaceMigrationActionsService,
+    private readonly inProcessWorkspaceMigrationActionsService: InProcessWorkspaceMigrationActionsService,
   ) {}
 
   async invalidateCache({
@@ -184,10 +186,22 @@ export class WorkspaceMigrationRunnerService {
   }> => {
     const runStart = performance.now();
 
-    await this.throwIfSchemaAffectingDeferredActionsAreInProgress(args);
+    // Upgrades run inline: no worker may run and the deferred actions table may not exist yet.
+    const isRunningActionsInProcess =
+      await this.inProcessWorkspaceMigrationActionsService.isRunningActionsInProcess(
+        args.workspaceId,
+      );
+
+    if (!isRunningActionsInProcess) {
+      await this.throwIfSchemaAffectingDeferredActionsAreInProgress(args);
+    }
 
     try {
-      const result = await this.executeRun(args);
+      const result = await this.executeRun({
+        ...args,
+        shouldDeferActions:
+          !isRunningActionsInProcess && (args.shouldDeferActions ?? true),
+      });
 
       this.metricsService.recordHistogram({
         key: MetricsKeys.WorkspaceMigrationRunDurationMs,

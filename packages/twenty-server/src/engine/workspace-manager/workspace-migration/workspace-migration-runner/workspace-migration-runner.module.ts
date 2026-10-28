@@ -19,6 +19,7 @@ import { DeferredWorkspaceMigrationActionRecoveryService } from 'src/engine/work
 import { DeferredWorkspaceMigrationActionGaugeService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-gauge.service';
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
 import { InFlightDeferredWorkspaceMigrationActionsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-flight-deferred-workspace-migration-actions.service';
+import { InProcessWorkspaceMigrationActionsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-process-workspace-migration-actions.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 @Module({
@@ -39,6 +40,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     DeferredWorkspaceMigrationActionRunnerService,
     DeferredWorkspaceMigrationActionRecoveryService,
     InFlightDeferredWorkspaceMigrationActionsService,
+    InProcessWorkspaceMigrationActionsService,
     provideWorkspaceScopedRepository(DeferredWorkspaceMigrationActionEntity),
     DeferredWorkspaceMigrationActionGaugeService,
     FlatCacheInvalidateCommand,
@@ -50,6 +52,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     DeferredWorkspaceMigrationActionRunnerService,
     DeferredWorkspaceMigrationActionRecoveryService,
     DeferredWorkspaceMigrationActionRecoveryCronCommand,
+    InProcessWorkspaceMigrationActionsService,
   ],
 })
 export class WorkspaceMigrationRunnerModule {}
