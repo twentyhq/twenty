@@ -65,6 +65,9 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   await waitFor(() => expect(grace).toHaveFocus(), {
     timeout: INTERACTION_TIMEOUT,
   });
+  await waitFor(() => expect(ada).toHaveAttribute('tabindex', '-1'), {
+    timeout: INTERACTION_TIMEOUT,
+  });
   await userEvent.tab({ shift: true });
   await waitFor(() => expect(search).toHaveFocus(), {
     timeout: INTERACTION_TIMEOUT,
