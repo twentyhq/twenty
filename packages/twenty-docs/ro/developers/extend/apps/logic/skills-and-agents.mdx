@@ -69,6 +69,8 @@ Puncte cheie:
 * `modelId` (opțional) suprascrie modelul AI implicit utilizat de agent.
 * `responseFormat` (opțional) stabilește formatul implicit al ieșirii agentului. Valoarea implicită este `{ type: 'text' }` pentru text liber. Folosește `{ type: 'json', schema }` pentru a impune ieșire JSON structurată. Un apel `runAgent()` sau un pas AI dintr-un flux de lucru poate solicita un format diferit, care are prioritate.
 * `roleUniversalIdentifier` (opțional) leagă agentul de un rol definit de aplicația ta. Acel rol nu trebuie să acorde mai multe permisiuni decât rolul aplicației, altfel compilarea eșuează; consultați [Roluri de agent](/ro/developers/extend/apps/config/roles#agent-roles).
+* `modelConfiguration` (opțional) activează instrumentele native ale modelului, așa cum face pagina de setări a agentului: `{ webSearch: { enabled: true }, twitterSearch: { enabled: true } }`. Fiecare instrument funcționează numai pe modelele care îl acceptă. Omiteți-l pentru a le menține dezactivate.
+* `isSystem` (opțional, are implicit valoarea `false`) ascunde agentul din listele de agenți, la fel ca agenții pe care Twenty îi creează pentru pașii de IA din fluxurile de lucru. Schimbă doar ceea ce este afișat: agenții unei aplicații pot fi modificați numai prin intermediul aplicației, indiferent de valoarea acestei opțiuni.
 
 În mod implicit, un agent returnează text liber. Pentru a obține o ieșire structurată, setează `responseFormat` la `{ type: 'json' }` și furnizează `schema`:
 
