@@ -84,14 +84,20 @@ describe('Inbox thread mutations for members and applications', () => {
   let memberRoleId: string;
   let guestRoleId: string;
 
-  const linkRecord = (
-    mutation: typeof ATTACH_RECORD,
-    {
-      threadId,
-      recordId = companyId,
-      token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    }: { threadId: string; recordId?: string; token?: string },
-  ): Promise<GraphqlResponse> =>
+  type LinkRecordArgs = {
+    threadId: string;
+    recordId?: string;
+    token?: string;
+  };
+
+  const linkRecord = ({
+    mutation,
+    threadId,
+    recordId = companyId,
+    token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  }: LinkRecordArgs & {
+    mutation: typeof ATTACH_RECORD;
+  }): Promise<GraphqlResponse> =>
     makeMetadataApiRequest(
       {
         query: mutation,
@@ -102,11 +108,11 @@ describe('Inbox thread mutations for members and applications', () => {
       token,
     );
 
-  const attachRecord = (args: Parameters<typeof linkRecord>[1]) =>
-    linkRecord(ATTACH_RECORD, args);
+  const attachRecord = (args: LinkRecordArgs) =>
+    linkRecord({ ...args, mutation: ATTACH_RECORD });
 
-  const detachRecord = (args: Parameters<typeof linkRecord>[1]) =>
-    linkRecord(DETACH_RECORD, args);
+  const detachRecord = (args: LinkRecordArgs) =>
+    linkRecord({ ...args, mutation: DETACH_RECORD });
 
   const shareThread = ({
     threadId,
@@ -122,10 +128,13 @@ describe('Inbox thread mutations for members and applications', () => {
       token,
     );
 
-  const readThread = (
-    threadId: string,
-    token: string,
-  ): Promise<GraphqlResponse> =>
+  const readThread = ({
+    threadId,
+    token,
+  }: {
+    threadId: string;
+    token: string;
+  }): Promise<GraphqlResponse> =>
     makeMetadataApiRequest(
       { query: CHAT_THREAD, variables: { id: threadId } },
       token,
@@ -312,11 +321,16 @@ describe('Inbox thread mutations for members and applications', () => {
       ]);
     });
 
-    it('reports a record the caller cannot read as not found', async () => {
+    it('reports a record the caller cannot read as not found, on attach and on detach', async () => {
       const threadId = await createMemberThread();
+      const unreadableRecordId = randomUUID();
 
       expectGraphqlError(
-        await attachRecord({ threadId, recordId: randomUUID() }),
+        await attachRecord({ threadId, recordId: unreadableRecordId }),
+        { code: 'NOT_FOUND', subCode: AiExceptionCode.RECORD_NOT_FOUND },
+      );
+      expectGraphqlError(
+        await detachRecord({ threadId, recordId: unreadableRecordId }),
         { code: 'NOT_FOUND', subCode: AiExceptionCode.RECORD_NOT_FOUND },
       );
     });
@@ -374,6 +388,26 @@ describe('Inbox thread mutations for members and applications', () => {
       expect(await readCompanyLinks(threadId)).toEqual([]);
     });
 
+    it('refuses an application whose role can only read the conversation', async () => {
+      const threadId = await createMemberThread();
+
+      await shareThread({
+        threadId,
+        grants: [
+          {
+            roleId: applicationRoleId,
+            accessLevel: RecordShareAccessLevel.READ,
+          },
+        ],
+      });
+
+      expectGraphqlError(
+        await attachRecord({ threadId, token: applicationToken }),
+        { code: 'NOT_FOUND', subCode: AiExceptionCode.THREAD_NOT_FOUND },
+      );
+      expect(await readCompanyLinks(threadId)).toEqual([]);
+    });
+
     it('lets an application whose role was granted the conversation attach records, but not share it', async () => {
       const threadId = await createMemberThread();
 
@@ -422,7 +456,7 @@ describe('Inbox thread mutations for members and applications', () => {
       const updatedAtBeforeShare = await readThreadUpdatedAt(threadId);
 
       expectGraphqlError(
-        await readThread(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+        await readThread({ threadId, token: APPLE_JONY_MEMBER_ACCESS_TOKEN }),
         { code: 'NOT_FOUND' },
       );
 
@@ -441,7 +475,8 @@ describe('Inbox thread mutations for members and applications', () => {
       ).toEqual({ data: { shareInboxThread: true } });
 
       expect(
-        (await readThread(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN)).body,
+        (await readThread({ threadId, token: APPLE_JONY_MEMBER_ACCESS_TOKEN }))
+          .body,
       ).toEqual({ data: { chatThread: { id: threadId } } });
       expect(await readParticipantMemberIds(threadId)).toEqual([
         WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
@@ -522,7 +557,7 @@ describe('Inbox thread mutations for members and applications', () => {
       ).toEqual({ data: { shareInboxThread: true } });
       expect(await readManualShares(threadId)).toEqual([]);
       expectGraphqlError(
-        await readThread(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+        await readThread({ threadId, token: APPLE_JONY_MEMBER_ACCESS_TOKEN }),
         { code: 'NOT_FOUND' },
       );
     });
@@ -636,7 +671,8 @@ describe('Inbox thread mutations for members and applications', () => {
         ).body,
       ).toEqual({ data: { shareInboxThread: true } });
       expect(
-        (await readThread(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN)).body,
+        (await readThread({ threadId, token: APPLE_JONY_MEMBER_ACCESS_TOKEN }))
+          .body,
       ).toEqual({ data: { chatThread: { id: threadId } } });
       expect(await readParticipantMemberIds(threadId)).toEqual([
         WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
