@@ -4,6 +4,7 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminServerAdmins } from '@/settings/admin-panel/components/SettingsAdminServerAdmins';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
+import { getAdminPanelTopWorkspaceGroups } from '@/settings/admin-panel/utils/getAdminPanelTopWorkspaceGroups';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -16,14 +17,9 @@ import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvata
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import {
-  getSettingsPath,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -85,22 +81,11 @@ export const SettingsAdminGeneral = () => {
   );
 
   const recentUsers = recentUsersData?.adminPanelRecentUsers ?? [];
-  const topWorkspaces = topWorkspacesData?.adminPanelTopWorkspaces ?? [];
-  const pinnedWorkspace =
-    topWorkspaces.find((workspace) => workspace.id === currentWorkspace?.id) ??
-    (isDefined(currentWorkspace) &&
-    !isNonEmptyString(debouncedWorkspaceSearchTerm.trim())
-      ? {
-          id: currentWorkspace.id,
-          name: currentWorkspace.displayName,
-          logoUrl: currentWorkspace.logo,
-          totalUsers: currentWorkspace.workspaceMembersCount ?? 0,
-        }
-      : undefined);
-  const workspaceGroups = [
-    isDefined(pinnedWorkspace) ? [pinnedWorkspace] : [],
-    topWorkspaces.filter((workspace) => workspace.id !== pinnedWorkspace?.id),
-  ].filter(isNonEmptyArray);
+  const workspaceGroups = getAdminPanelTopWorkspaceGroups({
+    topWorkspaces: topWorkspacesData?.adminPanelTopWorkspaces ?? [],
+    currentWorkspace,
+    searchTerm: debouncedWorkspaceSearchTerm,
+  });
 
   return (
     <>
