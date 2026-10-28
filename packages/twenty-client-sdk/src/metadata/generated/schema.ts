@@ -93,6 +93,7 @@ export interface AgentChatOpenThreadsSummary {
     hasUnreadOpenThread: Scalars['Boolean']
     needsInputThreadCount: Scalars['Int']
     openThreadCount: Scalars['Int']
+    unreadOpenThreadCount: Scalars['Int']
     __typename: 'AgentChatOpenThreadsSummary'
 }
 
@@ -4288,6 +4289,7 @@ export interface AgentChatOpenThreadsSummaryGenqlSelection{
     hasUnreadOpenThread?: boolean | number
     needsInputThreadCount?: boolean | number
     openThreadCount?: boolean | number
+    unreadOpenThreadCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
