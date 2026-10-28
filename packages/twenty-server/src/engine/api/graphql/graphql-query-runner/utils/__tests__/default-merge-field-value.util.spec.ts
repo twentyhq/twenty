@@ -18,6 +18,20 @@ describe('defaultMergeFieldValue', () => {
     expect(result).toBe('priority value');
   });
 
+  it('should keep a date held only by a non-priority record', () => {
+    const date = new Date('2026-01-15T10:00:00.000Z');
+
+    const result = defaultMergeFieldValue(
+      [
+        { recordId: '1', value: null },
+        { recordId: '2', value: date },
+      ],
+      '1',
+    );
+
+    expect(result).toBe(date);
+  });
+
   it('should fall back to first record with value when priority record not found', () => {
     const recordsWithValues = [
       {

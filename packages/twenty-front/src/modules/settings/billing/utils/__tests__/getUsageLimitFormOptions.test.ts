@@ -7,19 +7,24 @@ import {
 } from '~/generated-metadata/graphql';
 
 const DEFINITIONS = {
+  __typename: 'UsageQuotaDefinitions' as const,
   definitions: [
     {
+      __typename: 'UsageQuotaDefinition' as const,
       resourceType: UsageResourceType.AI,
       allowedOperations: [
         {
+          __typename: 'UsageLimitOperationDefinition' as const,
           operationType: UsageOperationType.ALL,
           allowedUnits: [UsageUnit.CREDIT],
         },
         {
+          __typename: 'UsageLimitOperationDefinition' as const,
           operationType: UsageOperationType.AI_CHAT_TOKEN,
           allowedUnits: [UsageUnit.CREDIT, UsageUnit.TOKEN],
         },
         {
+          __typename: 'UsageLimitOperationDefinition' as const,
           operationType: UsageOperationType.WEB_SEARCH,
           allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
         },
@@ -28,9 +33,11 @@ const DEFINITIONS = {
       operatorOnlyScopes: [],
     },
     {
+      __typename: 'UsageQuotaDefinition' as const,
       resourceType: UsageResourceType.LOGIC_FUNCTION,
       allowedOperations: [
         {
+          __typename: 'UsageLimitOperationDefinition' as const,
           operationType: UsageOperationType.CODE_EXECUTION,
           allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
         },
@@ -39,9 +46,11 @@ const DEFINITIONS = {
       operatorOnlyScopes: [],
     },
     {
+      __typename: 'UsageQuotaDefinition' as const,
       resourceType: UsageResourceType.EMAIL,
       allowedOperations: [
         {
+          __typename: 'UsageLimitOperationDefinition' as const,
           operationType: UsageOperationType.EMAIL_SEND,
           allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
         },
@@ -49,6 +58,7 @@ const DEFINITIONS = {
       allowedSpenderTypes: ['workspace', 'userWorkspace'],
       operatorOnlyScopes: [
         {
+          __typename: 'UsageQuotaOperatorOnlyScope' as const,
           operationType: UsageOperationType.EMAIL_SEND,
           spenderType: 'workspace',
           unit: UsageUnit.INVOCATION,

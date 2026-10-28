@@ -31,6 +31,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
+import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
@@ -212,17 +213,23 @@ export class ViewController {
       hasObjectMetadataLabelPlaceholder(view.name),
     );
 
-    if (!hasTemplates && views.every((view) => view.isCustom)) {
-      return views;
-    }
-
-    const { flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps, flatApplicationMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatApplicationMaps'],
         },
       );
+
+    const twentyStandardApplicationId =
+      getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
+
+    if (
+      !hasTemplates &&
+      views.every((view) => view.applicationId !== twentyStandardApplicationId)
+    ) {
+      return views;
+    }
 
     const getI18nContext =
       await this.applicationTranslationCatalogService.getI18nContextByApplicationId(

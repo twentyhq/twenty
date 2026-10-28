@@ -1,14 +1,10 @@
-import { FRONT_COMPONENT_BUILD_TIMEOUT_MS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-build-timeout-ms.constant';
 import { createHash } from 'crypto';
-import { transform } from 'esbuild';
-import { runInNewContext } from 'vm';
 import {
   createJsxRuntimeRemoteWrapperPlugin,
   cssInjectionPlugin,
   getCommonFrontComponentBuildOptions,
   getSharedDependenciesEntrySource,
-  toSharedDependenciesNamespaceIdentifier,
-  type SharedDependenciesExportNames,
+  enumerateSharedDependenciesExportNames,
 } from 'twenty-shared/front-component-build';
 
 import { FRONT_COMPONENT_UI_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-ui-imports.constant';
@@ -27,60 +23,33 @@ export const buildFrontComponentSharedDependencies = async ({
     'react/jsx-runtime',
     ...FRONT_COMPONENT_UI_IMPORTS,
   ];
-  const buildVendor = (
-    exportNamesBySpecifier: Map<string, SharedDependenciesExportNames>,
-  ) =>
-    buildFrontComponentWithLimitsOrThrow({
-      ...getCommonFrontComponentBuildOptions(),
-      stdin: {
-        contents: getSharedDependenciesEntrySource(exportNamesBySpecifier),
-        resolveDir: resolveDirectory,
-        sourcefile: 'front-component-shared-dependencies.js',
-        loader: 'js',
-      },
-      write: false,
-      platform: 'browser',
-      plugins: [createJsxRuntimeRemoteWrapperPlugin(), cssInjectionPlugin],
-    });
-  const probe = await buildVendor(
-    new Map(
-      dependencies.map((specifier) => [
-        specifier,
-        { namedExports: [], hasDefaultExport: false },
-      ]),
+  const exportNamesBySpecifier = new Map(
+    await Promise.all(
+      dependencies.map(
+        async (specifier) =>
+          [
+            specifier,
+            await enumerateSharedDependenciesExportNames({
+              appPath: resolveDirectory,
+              specifier,
+              build: buildFrontComponentWithLimitsOrThrow,
+            }),
+          ] as const,
+      ),
     ),
   );
-  const { code } = await transform(probe.outputFiles[0].text, {
-    format: 'cjs',
+  const result = await buildFrontComponentWithLimitsOrThrow({
+    ...getCommonFrontComponentBuildOptions(),
+    stdin: {
+      contents: getSharedDependenciesEntrySource(exportNamesBySpecifier),
+      resolveDir: resolveDirectory,
+      sourcefile: 'front-component-shared-dependencies.js',
+      loader: 'js',
+    },
+    write: false,
+    platform: 'browser',
+    plugins: [createJsxRuntimeRemoteWrapperPlugin(), cssInjectionPlugin],
   });
-  const module: { exports: Record<string, Record<string, unknown>> } = {
-    exports: {},
-  };
-
-  runInNewContext(
-    code,
-    { module, exports: module.exports },
-    { timeout: FRONT_COMPONENT_BUILD_TIMEOUT_MS },
-  );
-
-  const exportNamesBySpecifier = new Map(
-    dependencies.map((specifier) => {
-      const namespace =
-        module.exports[toSharedDependenciesNamespaceIdentifier(specifier)];
-
-      return [
-        specifier,
-        {
-          namedExports: Object.keys(namespace)
-            .filter((name) => name !== 'default')
-            .sort(),
-          hasDefaultExport: 'default' in namespace,
-        },
-      ] as const;
-    }),
-  );
-
-  const result = await buildVendor(exportNamesBySpecifier);
   const source = result.outputFiles[0].text;
 
   return {

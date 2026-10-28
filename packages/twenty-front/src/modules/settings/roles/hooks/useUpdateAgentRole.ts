@@ -2,10 +2,8 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useMutation } from '@apollo/client/react';
-import {
-  type Agent,
-  AssignRoleToAgentDocument,
-} from '~/generated-metadata/graphql';
+import { AssignRoleToAgentDocument } from '~/generated-metadata/graphql';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 
 export const useUpdateAgentRole = (roleId: string) => {
   const settingsDraftRole = useAtomFamilyStateValue(
@@ -19,7 +17,7 @@ export const useUpdateAgentRole = (roleId: string) => {
 
   const [assignRoleToAgentMutation] = useMutation(AssignRoleToAgentDocument);
 
-  const updateAgentRoleDraftState = ({ agent }: { agent: Agent }) => {
+  const updateAgentRoleDraftState = ({ agent }: { agent: FlatAgent }) => {
     setSettingsDraftRole({
       ...settingsDraftRole,
       agents: [...settingsDraftRole.agents, agent],

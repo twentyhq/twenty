@@ -45,6 +45,7 @@ const PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
   isSubscribed: true,
   lastMentionedAt: null,
   updatedAt: LAST_ACTIVITY_AT,
+  __typename: 'AgentChatThreadParticipant',
 };
 
 const renderChatView = () =>

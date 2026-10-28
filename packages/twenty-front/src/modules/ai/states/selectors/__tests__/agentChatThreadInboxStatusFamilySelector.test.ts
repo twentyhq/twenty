@@ -28,6 +28,7 @@ const buildStore = () => {
 
 const UNREAD_PARTICIPANT = {
   [THREAD_ID]: {
+    __typename: 'AgentChatThreadParticipant' as const,
     id: 'participant',
     threadId: THREAD_ID,
     lastReadAt: null,

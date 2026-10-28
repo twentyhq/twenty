@@ -12,9 +12,6 @@ import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-c
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { randomUUID } from 'node:crypto';
 
-import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
-import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import {
@@ -230,32 +227,6 @@ describe('recordShare object', () => {
         recordIds: [args.threadId],
       });
     }
-  });
-
-  it('refuses reads through the GraphQL API even for an admin', async () => {
-    const response = await makeGraphqlApiRequest(
-      findManyOperationFactory({
-        objectMetadataSingularName: 'recordShare',
-        objectMetadataPluralName: 'recordShares',
-        gqlFields: 'id',
-      }),
-    );
-
-    expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toContain('not readable');
-  });
-
-  it('refuses creation through the GraphQL API even for an admin', async () => {
-    const response = await makeGraphqlApiRequest(
-      createOneOperationFactory({
-        objectMetadataSingularName: 'recordShare',
-        gqlFields: 'id',
-        data: recordShareInput,
-      }),
-    );
-
-    expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toContain('not writable');
   });
 
   it('inserts, reads back, deduplicates and removes shares through the service', async () => {

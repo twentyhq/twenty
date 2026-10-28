@@ -1,17 +1,9 @@
-import {
-  FeatureFlagKey,
-  FieldMetadataType,
-  RelationType,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
 import { getDeferredForeignKeyValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/get-deferred-foreign-key-validation.util';
-
-const FEATURE_FLAGS_ON = {
-  [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: true,
-};
 
 const buildField = (
   overrides: Partial<FlatFieldMetadata> = {},
@@ -42,7 +34,7 @@ describe('getDeferredForeignKeyValidation', () => {
     expect(
       getDeferredForeignKeyValidation({
         flatAction: buildAction(flatEntity),
-        featureFlagsMap: FEATURE_FLAGS_ON,
+        shouldDeferActions: true,
       }),
     ).toEqual({
       name: 'validate_foreignKey',
@@ -61,16 +53,16 @@ describe('getDeferredForeignKeyValidation', () => {
     expect(
       getDeferredForeignKeyValidation({
         flatAction: buildAction(oneToManySide, manyToOneSide),
-        featureFlagsMap: FEATURE_FLAGS_ON,
+        shouldDeferActions: true,
       })?.payload.fieldMetadataId,
     ).toBe(manyToOneSide.id);
   });
 
-  it('should defer nothing when the flag is off', () => {
+  it('should defer nothing when actions run in process', () => {
     expect(
       getDeferredForeignKeyValidation({
         flatAction: buildAction(buildField()),
-        featureFlagsMap: {},
+        shouldDeferActions: false,
       }),
     ).toBeUndefined();
   });
@@ -86,7 +78,7 @@ describe('getDeferredForeignKeyValidation', () => {
             settings: null,
           }),
         ),
-        featureFlagsMap: FEATURE_FLAGS_ON,
+        shouldDeferActions: true,
       }),
     ).toBeUndefined();
   });
