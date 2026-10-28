@@ -50,7 +50,7 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
     Object.values(nonApplicationRoleIdsBySource).filter(isDefined),
   );
 
-  // TODO: members hold Admin, the Standard app's default role (#28667); simplify once they no longer do
+  // TODO(@charlesBochet): members hold Admin, the Standard app's default role (#28667); simplify once they no longer do
   const getActingApplicationId = (roleId: string) =>
     roleId === applicationRoleId && !nonApplicationRoleIds.has(roleId)
       ? applicationIdByDefaultRoleId[roleId]
