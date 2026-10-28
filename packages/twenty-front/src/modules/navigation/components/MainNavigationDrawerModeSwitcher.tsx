@@ -120,8 +120,7 @@ const StyledModeLabelBase = styled.span`
 
 const StyledModeLabel = motion.create(StyledModeLabelBase);
 
-const StyledUnreadBadgeContainer = styled.span`
-  display: flex;
+const StyledUnreadBadge = styled.span`
   pointer-events: none;
   position: absolute;
   right: calc(-1 * ${themeCssVariables.spacing['1.5']});
@@ -209,17 +208,17 @@ export const MainNavigationDrawerModeSwitcher = () => {
               <StyledModeIcon>
                 <Icon size={theme.icon.size.md} />
                 {isUnread && (
-                  <StyledUnreadBadgeContainer aria-hidden="true">
-                    <Badge
-                      size="xs"
-                      color="primary"
-                      shape={unreadOpenThreadCount < 10 ? 'circle' : 'pill'}
-                    >
-                      {unreadOpenThreadCount > MAX_DISPLAYED_UNREAD_COUNT
-                        ? `${MAX_DISPLAYED_UNREAD_COUNT}+`
-                        : unreadOpenThreadCount}
-                    </Badge>
-                  </StyledUnreadBadgeContainer>
+                  <Badge
+                    render={<StyledUnreadBadge />}
+                    aria-hidden="true"
+                    size="xs"
+                    color="primary"
+                    shape={unreadOpenThreadCount < 10 ? 'circle' : 'pill'}
+                  >
+                    {unreadOpenThreadCount > MAX_DISPLAYED_UNREAD_COUNT
+                      ? `${MAX_DISPLAYED_UNREAD_COUNT}+`
+                      : unreadOpenThreadCount}
+                  </Badge>
                 )}
               </StyledModeIcon>
               <StyledModeLabel
