@@ -8905,11 +8905,6 @@ msgstr "Varsayılan Görünüm"
 msgid "Defaults to the step name"
 msgstr "Varsayılan olarak adım adını kullanır"
 
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
-msgstr "Ertelenen çalışma alanı taşıma işlemleri"
-
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
@@ -23338,11 +23333,6 @@ msgstr "Dosyaları ve verileri analiz etmek için kod çalıştırın"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "İşlevi Çalıştır"
-
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr "Veri modeli değişikliklerinin yavaş kısımlarını kaydedildikten sonra arka planda çalıştırın."
 
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
