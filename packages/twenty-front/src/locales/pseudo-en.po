@@ -852,9 +852,9 @@ msgstr ""
 msgid "{label}, {statusLabel}"
 msgstr ""
 
-#. js-lingui-id: hr3CkB
+#. js-lingui-id: g4xrfh
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
-msgid "{label}, unread"
+msgid "{label}, {unreadOpenThreadCount} unread"
 msgstr ""
 
 #. js-lingui-id: 1DrH/j
