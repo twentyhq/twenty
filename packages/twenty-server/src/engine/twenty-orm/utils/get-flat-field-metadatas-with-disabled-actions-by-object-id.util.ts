@@ -10,14 +10,17 @@ const fieldsWithDisabledActionsByObjectIdCache = new WeakMap<
   Map<string, OrmFlatFieldMetadata[]>
 >();
 
-// Like saved field permissions, a relation's restriction also applies to its inverse field
+// A disabled read also hides the inverse relation field; updates stay on the side that holds the join column
 const getInverseRelationFlatFieldMetadatas = (
   flatFieldMetadata: OrmFlatFieldMetadata,
 ): OrmFlatFieldMetadata[] => {
   if (
     flatFieldMetadata.type !== FieldMetadataType.RELATION ||
     !isDefined(flatFieldMetadata.relationTargetFieldMetadataId) ||
-    !isDefined(flatFieldMetadata.relationTargetObjectMetadataId)
+    !isDefined(flatFieldMetadata.relationTargetObjectMetadataId) ||
+    !flatFieldMetadata.disabledFieldPermissionActions?.includes(
+      'canReadFieldValue',
+    )
   ) {
     return [];
   }
@@ -27,6 +30,7 @@ const getInverseRelationFlatFieldMetadatas = (
       ...flatFieldMetadata,
       id: flatFieldMetadata.relationTargetFieldMetadataId,
       objectMetadataId: flatFieldMetadata.relationTargetObjectMetadataId,
+      disabledFieldPermissionActions: ['canReadFieldValue'],
     },
   ];
 };
