@@ -1,7 +1,6 @@
 import { themeCssVariables } from 'twenty-ui/theme';
 
-// Mirrors the settings inputs twenty-front renders for application variables.
-// Kept local until twenty-ui's Input and Select are verified in the front component sandbox.
+// TODO @charlesBochet: Replace with twenty-ui Input and Select once verified in the front component sandbox.
 export const getSettingsControlStyles = () => `
   background-color: ${themeCssVariables.background.transparent.light};
   border: 1px solid ${themeCssVariables.border.color.medium};
