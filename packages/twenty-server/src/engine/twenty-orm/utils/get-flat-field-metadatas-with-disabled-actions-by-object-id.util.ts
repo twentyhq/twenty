@@ -18,10 +18,13 @@ const fieldsWithDisabledActionsByObjectIdCache = new WeakMap<
   Map<string, FlatFieldMetadataWithDisabledActions[]>
 >();
 
-const getMorphTargetIds = (
-  flatFieldMetadata: OrmFlatFieldMetadata,
-  morphTargetIdsByMorphId: Map<string, string[]>,
-): string[] => {
+const getMorphTargetIds = ({
+  flatFieldMetadata,
+  morphTargetIdsByMorphId,
+}: {
+  flatFieldMetadata: OrmFlatFieldMetadata;
+  morphTargetIdsByMorphId: Map<string, string[]>;
+}): string[] => {
   if (
     !isMorphRelationHead(flatFieldMetadata) ||
     !isDefined(flatFieldMetadata.morphId)
@@ -76,7 +79,7 @@ export const getFlatFieldMetadatasWithDisabledActionsByObjectId = (
 
     const restrictedFieldIds = [
       flatFieldMetadata.id,
-      ...getMorphTargetIds(flatFieldMetadata, morphTargetIdsByMorphId),
+      ...getMorphTargetIds({ flatFieldMetadata, morphTargetIdsByMorphId }),
     ];
 
     fieldsByObjectId.set(flatFieldMetadata.objectMetadataId, [

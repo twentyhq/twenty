@@ -2,7 +2,7 @@ import {
   type ObjectsPermissions,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -49,8 +49,8 @@ export const restrictObjectsPermissionsToDisabledActions = ({
     );
 
     if (
-      disabledObjectPermissionActions.length === 0 &&
-      fieldsWithDisabledActions.length === 0
+      !isNonEmptyArray(disabledObjectPermissionActions) &&
+      !isNonEmptyArray(fieldsWithDisabledActions)
     ) {
       continue;
     }
