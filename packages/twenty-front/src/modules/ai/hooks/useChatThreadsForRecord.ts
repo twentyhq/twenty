@@ -1,5 +1,4 @@
 import { useStore } from 'jotai';
-import uniqBy from 'lodash.uniqby';
 import { useCallback, useMemo } from 'react';
 import {
   CoreObjectNameSingular,
@@ -10,14 +9,11 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
-import { fetchAllChatThreadLinkIds } from '@/ai/utils/fetchAllChatThreadLinkIds';
-import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
+import { getChatThreadsForRecordPage } from '@/ai/utils/getChatThreadsForRecordPage';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { type ObjectRecordOperation } from '@/object-record/types/ObjectRecordOperation';
@@ -72,7 +68,6 @@ export const useChatThreadsForRecord = ({
   targetObjectNameSingular,
 }: TargetRecordIdentifier) => {
   const store = useStore();
-  const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
     objectNameSingular: CoreObjectNameSingular.AgentChatThread,
@@ -117,13 +112,21 @@ export const useChatThreadsForRecord = ({
     limit: CHAT_THREADS_FOR_RECORD_PAGE_SIZE,
   });
 
-  const { findManyRecordsQuery: findThreadLinksQuery } =
-    useFindManyRecordsQuery({
+  const { fetchAllRecords: fetchAllThreadLinks } =
+    useLazyFetchAllRecords<AgentChatThreadTargetRecord>({
       objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
       recordGqlFields: CHAT_THREAD_LINK_GQL_FIELDS,
+      fetchPolicy: 'network-only',
+      shouldThrowOnIncompleteResult: true,
     });
-  const { canReadObjectRecords } = useObjectPermissionsForObject(
-    junctionConfig?.junctionObjectMetadata.id ?? '',
+
+  const { threads, refetchLimit } = useMemo(
+    () =>
+      getChatThreadsForRecordPage({
+        links,
+        pageSize: CHAT_THREADS_FOR_RECORD_PAGE_SIZE,
+      }),
+    [links],
   );
 
   const isFetchingMoreRecords = useAtomFamilyStateValue(
@@ -167,10 +170,10 @@ export const useChatThreadsForRecord = ({
   const refetchThreads = useCallback(
     () =>
       refetch({
-        limit: Math.max(links.length, CHAT_THREADS_FOR_RECORD_PAGE_SIZE),
+        limit: refetchLimit,
         lastCursor: undefined,
       }),
-    [links.length, refetch],
+    [refetchLimit, refetch],
   );
 
   const refetchLinks = useCallback(() => {
@@ -184,36 +187,21 @@ export const useChatThreadsForRecord = ({
     enabled: isRecordLinkable,
   });
 
-  // Custom legs allow duplicate links; sorted since an update doesn't reorder the fetched page.
-  const threads = useMemo(
-    () =>
-      sortChatThreadsByLastActivityDesc(
-        uniqBy(links.map(({ thread }) => thread).filter(isDefined), 'id'),
-      ),
-    [links],
-  );
-
   const getAllLinkIdsToThread = async (threadId: string) => {
-    if (
-      !isRecordLinkable ||
-      !canReadObjectRecords ||
-      !isDefined(junctionConfig) ||
-      !isDefined(filter)
-    ) {
+    if (!isRecordLinkable || !isDefined(junctionConfig) || !isDefined(filter)) {
       return [];
     }
 
-    return fetchAllChatThreadLinkIds({
-      apolloCoreClient,
-      query: findThreadLinksQuery,
+    const threadLinks = await fetchAllThreadLinks({
       filter: {
         and: [
           filter,
           { [junctionConfig.sourceJoinColumnName]: { eq: threadId } },
         ],
       },
-      objectNamePlural: junctionConfig.junctionObjectMetadata.namePlural,
     });
+
+    return threadLinks.map(({ id }) => id);
   };
 
   useListenToObjectRecordOperationBrowserEvent({

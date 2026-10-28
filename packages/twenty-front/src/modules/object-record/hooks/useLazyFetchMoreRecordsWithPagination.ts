@@ -3,26 +3,21 @@ import {
   type ErrorLike,
   type ObservableQuery,
   type OperationVariables,
-  type WatchQueryFetchPolicy,
 } from '@apollo/client';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useCallback } from 'react';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { type RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
+import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecords';
+import { type LazyRecordQueryOptions } from '@/object-record/types/LazyRecordQueryOptions';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
-import {
-  type RecordGqlFields,
-  type RecordGqlOperationVariables,
-} from 'twenty-shared/types';
 
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
@@ -34,20 +29,12 @@ import {
   isNonEmptyArray,
 } from 'twenty-shared/utils';
 
-export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
-  RecordGqlOperationVariables & {
-    onCompleted?: OnFindManyRecordsCompleted<T>;
-    skip?: boolean;
-    recordGqlFields?: RecordGqlFields;
-    fetchPolicy?: WatchQueryFetchPolicy;
-  };
-
 type UseFindManyRecordsStateParams<
   T,
   TData = RecordGqlOperationFindManyResult,
 > = Omit<
   UseFindManyRecordsParams<T>,
-  'skip' | 'recordGqlFields' | 'fetchPolicy' | 'onCompleted'
+  'skip' | 'recordGqlFields' | 'fetchPolicy' | 'onCompleted' | 'onError'
 > & {
   data: RecordGqlOperationFindManyResult | undefined;
   error: ErrorLike | undefined;
@@ -79,13 +66,6 @@ export const useLazyFetchMoreRecordsWithPagination = <
   shouldToastOnError = true,
 }: UseFindManyRecordsStateParams<T>) => {
   const store = useStore();
-  const queryIdentifier = getQueryIdentifier({
-    objectNameSingular,
-    filter,
-    limit,
-    orderBy,
-  });
-
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
   });
@@ -93,13 +73,31 @@ export const useLazyFetchMoreRecordsWithPagination = <
   // TODO: put this into a util inspired from https://github.com/apollographql/apollo-client/blob/master/src/utilities/policies/pagination.ts
   // This function is equivalent to merge function + read function in field policy
   const fetchMoreRecordsLazy = useCallback(
-    async (limit = DEFAULT_SEARCH_REQUEST_LIMIT) => {
+    async (
+      options:
+        | number
+        | (LazyRecordQueryOptions & {
+            limit?: number;
+          }) = DEFAULT_SEARCH_REQUEST_LIMIT,
+    ) => {
+      const queryOptions: LazyRecordQueryOptions & { limit?: number } =
+        isNumber(options) ? { limit: options } : options;
+      const {
+        limit: pageLimit = DEFAULT_SEARCH_REQUEST_LIMIT,
+        filter: queryFilter = filter,
+      } = queryOptions;
+      const requestQueryIdentifier = getQueryIdentifier({
+        objectNameSingular,
+        filter: queryFilter,
+        limit,
+        orderBy,
+      });
       const hasNextPageLocal = store.get(
-        hasNextPageFamilyState.atomFamily(queryIdentifier),
+        hasNextPageFamilyState.atomFamily(requestQueryIdentifier),
       );
 
       const lastCursorLocal = store.get(
-        cursorFamilyState.atomFamily(queryIdentifier),
+        cursorFamilyState.atomFamily(requestQueryIdentifier),
       );
 
       // Remote objects does not support hasNextPage. We cannot rely on it to fetch more records.
@@ -110,8 +108,8 @@ export const useLazyFetchMoreRecordsWithPagination = <
         try {
           const { data: fetchMoreDataResult } = await fetchMore({
             variables: {
-              limit,
-              filter,
+              limit: pageLimit,
+              filter: queryFilter,
               orderBy,
               lastCursor: isNonEmptyString(lastCursorLocal)
                 ? lastCursorLocal
@@ -138,11 +136,11 @@ export const useLazyFetchMoreRecordsWithPagination = <
 
               if (isDefined(pageInfo)) {
                 store.set(
-                  cursorFamilyState.atomFamily(queryIdentifier),
+                  cursorFamilyState.atomFamily(requestQueryIdentifier),
                   pageInfo.endCursor ?? '',
                 );
                 store.set(
-                  hasNextPageFamilyState.atomFamily(queryIdentifier),
+                  hasNextPageFamilyState.atomFamily(requestQueryIdentifier),
                   pageInfo.hasNextPage ?? false,
                 );
               }
@@ -186,7 +184,8 @@ export const useLazyFetchMoreRecordsWithPagination = <
       }
     },
     [
-      queryIdentifier,
+      objectNameSingular,
+      limit,
       objectMetadataItem,
       error,
       fetchMore,
