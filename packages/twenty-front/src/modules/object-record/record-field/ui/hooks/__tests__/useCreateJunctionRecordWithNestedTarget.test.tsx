@@ -184,10 +184,13 @@ it('atomically saves and links each submitted target, including Create another',
     title: 'New task',
     status: 'TODO',
   });
-  const submitDraft = (
-    draftRecord: Partial<ObjectRecord>,
+  const submitDraft = ({
+    draftRecord,
     shouldKeepOpen = false,
-  ) =>
+  }: {
+    draftRecord: Partial<ObjectRecord>;
+    shouldKeepOpen?: boolean;
+  }) =>
     result.current.settleRecordCreationDraft({
       requestId: formPage.pageId,
       draftRecord: computeRecordFormCreateRecordInput({
@@ -202,7 +205,10 @@ it('atomically saves and links each submitted target, including Create another',
 
   await act(async () => {
     expect(
-      await submitDraft({ title: 'First task', status: 'DONE' }, true),
+      await submitDraft({
+        draftRecord: { title: 'First task', status: 'DONE' },
+        shouldKeepOpen: true,
+      }),
     ).toEqual({ error: rejection });
   });
   expect(
@@ -210,7 +216,10 @@ it('atomically saves and links each submitted target, including Create another',
   ).toEqual([]);
 
   await act(async () => {
-    await submitDraft({ title: 'First task', status: 'DONE' }, true);
+    await submitDraft({
+      draftRecord: { title: 'First task', status: 'DONE' },
+      shouldKeepOpen: true,
+    });
   });
   expect(mockCreateJunctionRecord).toHaveBeenLastCalledWith({
     id: expect.any(String),
@@ -225,12 +234,12 @@ it('atomically saves and links each submitted target, including Create another',
   });
 
   await act(async () => {
-    await submitDraft({ title: 'Second task' });
+    await submitDraft({ draftRecord: { title: 'Second task' } });
   });
 
-  const junctionRecords = store.get(
+  const junctionRecords: ObjectRecord[] = store.get(
     recordStoreFamilyState.atomFamily('rocket-id'),
-  )?.taskTargets as ObjectRecord[];
+  )?.taskTargets;
   expect(junctionRecords).toMatchObject([
     { task: { title: 'First task', status: 'DONE' } },
     { task: { title: 'Second task', status: 'TODO' } },

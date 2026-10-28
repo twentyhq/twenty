@@ -118,9 +118,8 @@ export const useCreateJunctionRecordWithNestedTarget = ({
             [targetFieldInfo.fieldName]: { create: targetRecordInput },
           });
 
-          const createdTargetRecord = createdJunctionRecord[
-            targetFieldInfo.fieldName
-          ] as ObjectRecord | undefined;
+          const createdTargetRecord: ObjectRecord | undefined =
+            createdJunctionRecord[targetFieldInfo.fieldName];
           const targetRecord = {
             ...targetRecordInput,
             ...(createdTargetRecord ?? {}),

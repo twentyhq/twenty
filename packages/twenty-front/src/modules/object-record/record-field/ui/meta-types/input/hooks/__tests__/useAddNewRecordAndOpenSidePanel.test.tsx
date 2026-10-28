@@ -122,10 +122,13 @@ const setup = (
       }),
     )?.initialDraftRecord;
   };
-  const submit = async (
-    draftRecord: Partial<ObjectRecord> | null,
+  const submit = async ({
+    draftRecord,
     shouldKeepOpen = false,
-  ) => {
+  }: {
+    draftRecord: Partial<ObjectRecord> | null;
+    shouldKeepOpen?: boolean;
+  }) => {
     const [page] = store.get(sidePanelNavigationStackState.atom);
     let result: { error?: unknown } = {};
     await act(async () => {
@@ -161,7 +164,7 @@ it('waits for form submission and creates nothing when cancelled', async () => {
   expect(mockUpdateOneRecord).not.toHaveBeenCalled();
   expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
 
-  await submit(null);
+  await submit({ draftRecord: null });
   await expect(creation).resolves.toBeUndefined();
   expect(mockCreateOneRecord).not.toHaveBeenCalled();
   expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
@@ -171,12 +174,17 @@ it('creates distinct linked records on each submission and respects edited defau
   const { start, submit } = setup();
   const creation = start();
 
-  await submit({ name: { firstName: 'Alex', lastName: 'Morgan' } }, true);
+  await submit({
+    draftRecord: { name: { firstName: 'Alex', lastName: 'Morgan' } },
+    shouldKeepOpen: true,
+  });
   expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
   await submit({
-    name: { firstName: 'Robin', lastName: 'Smith' },
-    position: 99,
-    companyId: 'another-company',
+    draftRecord: {
+      name: { firstName: 'Robin', lastName: 'Smith' },
+      position: 99,
+      companyId: 'another-company',
+    },
   });
   const [firstInput, secondInput] = mockCreateOneRecord.mock.calls.map(
     ([input]) => input,
@@ -205,7 +213,9 @@ it.each([false, true])(
     const attachmentError = new Error('Could not link company');
     mockUpdateOneRecord.mockRejectedValueOnce(attachmentError);
 
-    await expect(submit({ name: 'Original' })).resolves.toEqual({
+    await expect(
+      submit({ draftRecord: { name: 'Original' } }),
+    ).resolves.toEqual({
       error: attachmentError,
     });
     expect(mockCreateOneRecord).toHaveBeenCalledTimes(1);
@@ -220,7 +230,9 @@ it.each([false, true])(
       });
     }
     await expect(
-      submit({ name: isDraftEdited ? 'Corrected' : 'Original' }),
+      submit({
+        draftRecord: { name: isDraftEdited ? 'Corrected' : 'Original' },
+      }),
     ).resolves.toEqual({});
     const targetId = mockCreateOneRecord.mock.calls[0][0].id;
     expect(mockCreateOneRecord).toHaveBeenCalledTimes(1);
@@ -266,7 +278,7 @@ it('prefills the logical morph selection and creates with its normalized join co
       id: 'parent-record',
     },
   });
-  await submit({});
+  await submit({ draftRecord: {} });
   await creation;
 
   expect(mockCreateOneRecord).toHaveBeenCalledWith({
@@ -283,7 +295,7 @@ it.each(MORPH_CHANGES)(
     const { start, submit } = setup('rocket-owned-pets');
     const creation = start('Rex');
 
-    await submit({ polymorphicOwner: selection });
+    await submit({ draftRecord: { polymorphicOwner: selection } });
     await creation;
 
     expect(mockCreateOneRecord).toHaveBeenCalledWith({
@@ -305,13 +317,18 @@ it.each(MORPH_CHANGES)(
 
     await expect(
       submit({
-        polymorphicOwner: {
-          targetObjectMetadataId: getMockObjectMetadataItemOrThrow('rocket').id,
-          id: 'original-owner',
+        draftRecord: {
+          polymorphicOwner: {
+            targetObjectMetadataId:
+              getMockObjectMetadataItemOrThrow('rocket').id,
+            id: 'original-owner',
+          },
         },
       }),
     ).resolves.toEqual({ error: attachmentError });
-    await expect(submit({ polymorphicOwner: selection })).resolves.toEqual({});
+    await expect(
+      submit({ draftRecord: { polymorphicOwner: selection } }),
+    ).resolves.toEqual({});
     const targetId = mockCreateOneRecord.mock.calls[0][0].id;
 
     expect(mockCreateOneRecord).toHaveBeenCalledTimes(1);
