@@ -3,31 +3,45 @@ title: Credite
 description: Un singur sold simplu care alimentează fluxurile dvs. de lucru, agenții AI și chatul AI — cât valorează un credit, cât de departe ajunge și cum să îl gestionați.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Ce sunt creditele?
 
 Creditele reprezintă un singur sold care alimentează tot ceea ce rulăm în numele dvs. și are un cost real: **automatizări ale fluxurilor de lucru**, **agenți AI** și **chatul AI**. În loc să jonglați cu cote separate pentru „rulări de automatizare” și „jetoane AI”, aveți un singur sold simplu de urmărit.
 
-**1 credit = $1 de utilizare.** Un credit este doar un dolar de lucru, astfel încât soldul dvs. este ușor de înțeles — fără unități abstracte de convertit.
+**1 credit = $1 de utilizare.** Un credit reprezintă doar un dolar de muncă, astfel încât soldul tău este ușor de înțeles — fără unități abstracte de convertit.
 
 ## Cât de departe ajunge un credit?
 
 Costul variază în funcție de volumul de lucru. Automatizările de zi cu zi și mesajele AI rapide costă o fracțiune foarte mică dintr-un credit; sarcinile mari, cu mai mulți pași, executate de agenți AI costă mai mult. Iată o aproximare:
 
-| Ce faceți                                                                                                                                  | Cost aproximativ                     | Ce înseamnă asta                |
-| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------ | ------------------------------- |
-| Rulează un pas standard de flux de lucru (căutare, crează sau actualizează înregistrări) sau declanșează o funcție logică a unei aplicații | $0.0001                              | **10.000 de rulări per credit** |
-| Apelați un API extern sau rulați un nod de cod                                                                                             | O mică fracțiune dintr-un credit     | Mii per credit                  |
-| Trimiteți un mesaj AI rapid sau un pas AI simplu                                                                                           | O fracțiune de cent                  | Sute per credit                 |
-| Rulați o sarcină mare pentru un agent AI (de ex. „configurează 10 obiecte din spațiul de lucru”)                                           | Poate ajunge la **~$1 sau mai mult** | Câteva per credit               |
-| Rulați o căutare web AI                                                                                                                    | Un cost fix pe căutare               | Sute de căutări per credit      |
+| Ce faceți                                                                                        | Cost aproximativ                         | Ce înseamnă asta                |
+| ------------------------------------------------------------------------------------------------ | ---------------------------------------- | ------------------------------- |
+| Rulați un pas standard de flux de lucru (căutare, creare sau actualizare de înregistrări)        | $0.0001                                  | **10.000 de rulări per credit** |
+| Declanșați funcția logică a aplicației                                                           | $0.0001 + $0.0001 pe secundă de execuție | **Mii de rulări per credit**    |
+| Apelați un API extern sau rulați un nod de cod                                                   | O mică fracțiune dintr-un credit         | Mii per credit                  |
+| Trimiteți un mesaj AI rapid sau un pas AI simplu                                                 | O fracțiune de cent                      | Sute per credit                 |
+| Rulați o sarcină mare pentru un agent AI (de ex. „configurează 10 obiecte din spațiul de lucru”) | Poate ajunge la **~$1 sau mai mult**     | Câteva per credit               |
+| Rulați o căutare web AI                                                                          | Un cost fix pe căutare                   | Sute de căutări per credit      |
 
 <Note>
 Pentru majoritatea echipelor, automatizările standard sunt practic gratuite — soldul va începe să scadă vizibil doar atunci când vă bazați pe funcțiile AI sau rulați noduri de cod intensive. Asta este intenția: creditele incluse sunt gândite astfel încât să puteți construi fără să urmăriți constant un contor.
 </Note>
 
 <Note>
-Nu toate aplicațiile percep taxe pentru rulările lor. Apelează Înregistrator și Last Contact reacționează la fiecare e-mail și eveniment calendar importat în spațiul de lucru, astfel încât funcția lor logică rulează gratuit. Totuși, vi se percep în continuare taxe pentru activitatea măsurată pe care o realizează, cum ar fi minutele de convorbiri înregistrate.
+Nu toate aplicațiile percep taxe pentru rulările lor. Call Recorder, Last Contact, Fathom și Granola reacționează la fiecare e-mail, eveniment din calendar și înregistrare importată în spațiul dvs. de lucru, iar Slack rulează pentru fiecare eveniment Slack la care botul său se abonează, astfel încât execuțiile funcțiilor lor logice sunt gratuite. Vi se percep totuși taxe pentru activitatea tarifată în funcție de utilizare pe care o realizează, cum ar fi minutele de apel înregistrate sau creditele AI din spatele răspunsurilor asistentului Slack.
 </Note>
+
+## Cum sunt tarifate rulările funcțiilor logice
+
+Tarიფarea funcțiilor logice reflectă AWS Lambda: o taxă fixă per invocare plus o taxă de durată pentru timpul în care codul tău rulează efectiv, facturată pe milisecundă.
+
+* **Per invocare**: $0.0001
+* **Pentru durată**: $0.0001 pe secundă de execuție ($0.0000001 pe milisecundă)
+
+O funcție obișnuită care se termină în mai puțin de o secundă costă cel mult dublul taxei fixe per invocare. Funcțiile cu execuție îndelungată plătesc pentru resursele de calcul pe care le folosesc: o funcție care rulează timp de un minut întreg adaugă $0.006, iar una care atinge limita de timp de 15 minute adaugă $0.09. O funcție al cărei timp expiră este facturată pentru întreaga durată scursă, la fel ca în AWS.
+
+Pentru aplicațiile cu [rute de server](/ro/developers/extend/apps/operations/publishing#owner-workspace-costs-and-availability), resolverul rulează folosind soldul spațiului de lucru al proprietarului aplicației. O funcție țintă trimisă către un alt spațiu de lucru este facturată separat acelui spațiu de lucru.
 
 ## Cum este contorizată utilizarea AI
 
@@ -72,3 +86,5 @@ Dacă rămâneți fără credite — sau doriți un buffer înainte de o campani
 3. Selectați suma de care aveți nevoie și acceptați modificările
 
 Creditele achiziționate sunt adăugate imediat la soldul disponibil.
+
+<PageBanner illustration="card-page-charging-credits" />

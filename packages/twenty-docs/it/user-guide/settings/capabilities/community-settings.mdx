@@ -3,6 +3,8 @@ title: Impostazioni della Community
 description: Abilita le funzionalità di accesso anticipato in Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Informazioni sulle impostazioni della Community
 
 La sezione Community consente di abilitare le funzionalità di accesso anticipato prima che siano generalmente disponibili, oltre a cercare partner di Twenty.
@@ -13,7 +15,7 @@ Le funzionalità di accesso anticipato sono funzionalità ancora in fase di test
 
 **Attualmente in accesso anticipato:**
 
-* **Relazioni di giunzione** — Relazioni molti-a-molti
+* **Nuovo formato dell'API REST dei metadati**: `/rest/metadata/objects` e `/rest/metadata/fields` restituiscono direttamente oggetti e campi, senza il wrapper legacy `data.objects` / `data.fields`. Gli spazi di lavoro creati da maggio 2026 lo utilizzano già. Il formato legacy verrà ritirato il 15 novembre 2026; attiva questa opzione per testare le tue integrazioni prima di allora.
 
 ### Come abilitare le funzionalità di accesso anticipato
 
@@ -34,3 +36,5 @@ Il tuo feedback aiuta a migliorare Twenty:
 * Segnala problemi con le funzionalità di accesso anticipato
 * Condividi come stai utilizzando le nuove funzionalità
 * Suggerisci miglioramenti tramite il [Discord della community](https://discord.gg/cx5n4Jzs57)
+
+<PageBanner illustration="page-cover-switch" />

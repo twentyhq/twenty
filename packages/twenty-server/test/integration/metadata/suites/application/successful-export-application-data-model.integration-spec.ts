@@ -18,9 +18,11 @@ import { createOneView } from 'test/integration/metadata/suites/view/utils/creat
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
+  type AgentManifest,
   type FieldManifest,
   getFieldUniversalIdentifier,
   getIndexFieldUniversalIdentifier,
+  getRoleTargetUniversalIdentifier,
   getSystemFormFieldPageLayoutWidgetUniversalIdentifier,
   getSystemPageLayoutTabUniversalIdentifier,
   getSystemPageLayoutWidgetUniversalIdentifier,
@@ -29,16 +31,20 @@ import {
   getSystemRelationFieldUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
+  getWorkflowCommandMenuItemUniversalIdentifier,
+  getWorkflowVersionUniversalIdentifier,
   type NavigationMenuItemManifest,
   type ObjectManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
+  type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
   SYSTEM_VIEW_KEYS,
   type TranslationsManifest,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   type ViewManifest,
+  type WorkflowManifest,
 } from 'twenty-shared/application';
 import {
   PermissionFlagType,
@@ -55,6 +61,7 @@ import {
   RelationType,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
+  StepLogicalOperator,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   ViewSortDirection,
@@ -1414,5 +1421,472 @@ describe('Application export - data model', () => {
         input: { idToDelete: createdRoleId },
       });
     }
+  }, 60000);
+});
+
+const WORKFLOW_TEST_APP_ID = '7e3d1c2b-0100-4a7b-8c9d-0e1f2a3b4c5d';
+const WORKFLOW_TEST_ROLE_ID = '7e3d1c2b-0101-4a7b-8c9d-0e1f2a3b4c5d';
+const INCIDENT_OBJECT_ID = '7e3d1c2b-0102-4a7b-8c9d-0e1f2a3b4c5d';
+const INCIDENT_SEVERITY_FIELD_ID = '7e3d1c2b-0103-4a7b-8c9d-0e1f2a3b4c5d';
+const ESCALATION_WORKFLOW_ID = '7e3d1c2b-0110-4a7b-8c9d-0e1f2a3b4c5d';
+const NOTIFY_WORKFLOW_ID = '7e3d1c2b-0111-4a7b-8c9d-0e1f2a3b4c5d';
+const NIGHTLY_WORKFLOW_ID = '7e3d1c2b-0112-4a7b-8c9d-0e1f2a3b4c5d';
+const INTAKE_WORKFLOW_ID = '7e3d1c2b-0113-4a7b-8c9d-0e1f2a3b4c5d';
+const workflowNodeIdentifier = (suffix: number) =>
+  `7e3d1c2b-${(200 + suffix).toString().padStart(4, '0')}-4a7b-8c9d-0e1f2a3b4c5d`;
+
+const SEVERITY_STEP_FILTERS = {
+  stepFilterGroups: [{ id: 'group', logicalOperator: StepLogicalOperator.AND }],
+  stepFilters: [
+    {
+      id: 'severity',
+      type: 'TEXT',
+      stepOutputKey: '{{trigger.properties.after.severity}}',
+      operand: ViewFilterOperand.IS,
+      value: 'high',
+      stepFilterGroupId: 'group',
+      fieldMetadataUniversalIdentifier: INCIDENT_SEVERITY_FIELD_ID,
+    },
+  ],
+};
+
+const EXPORTED_WORKFLOWS: WorkflowManifest[] = [
+  {
+    universalIdentifier: ESCALATION_WORKFLOW_ID,
+    name: 'Escalate severe incidents',
+    version: {
+      trigger: {
+        universalIdentifier: workflowNodeIdentifier(0),
+        type: 'DATABASE_EVENT',
+        nextStepIds: [workflowNodeIdentifier(1)],
+        settings: {
+          objectUniversalIdentifier: INCIDENT_OBJECT_ID,
+          action: 'updated',
+          fieldUniversalIdentifiers: [INCIDENT_SEVERITY_FIELD_ID],
+          filter: SEVERITY_STEP_FILTERS,
+        },
+      },
+      steps: [
+        {
+          universalIdentifier: workflowNodeIdentifier(1),
+          name: 'Find severe incidents',
+          type: 'FIND_RECORDS',
+          nextStepIds: [workflowNodeIdentifier(2)],
+          input: {
+            objectUniversalIdentifier: INCIDENT_OBJECT_ID,
+            limit: 5,
+            filter: {
+              recordFilters: [
+                {
+                  fieldMetadataUniversalIdentifier: INCIDENT_SEVERITY_FIELD_ID,
+                  operand: ViewFilterOperand.IS,
+                  value: 'high',
+                },
+              ],
+            },
+            orderBy: {
+              recordSorts: [
+                {
+                  fieldMetadataUniversalIdentifier: INCIDENT_SEVERITY_FIELD_ID,
+                  direction: 'DESC',
+                },
+              ],
+            },
+          },
+        },
+        {
+          universalIdentifier: workflowNodeIdentifier(2),
+          name: 'Is severe',
+          type: 'IF_ELSE',
+          nextStepIds: [],
+          input: {
+            ...SEVERITY_STEP_FILTERS,
+            branches: [
+              {
+                id: 'severe',
+                nextStepIds: [workflowNodeIdentifier(3)],
+                filterGroupId: 'group',
+              },
+              { id: 'otherwise', nextStepIds: [workflowNodeIdentifier(4)] },
+            ],
+          },
+        },
+        {
+          universalIdentifier: workflowNodeIdentifier(3),
+          name: 'Open a company follow-up',
+          type: 'CREATE_RECORD',
+          nextStepIds: [],
+          input: {
+            objectUniversalIdentifier:
+              STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+            objectRecord: { name: 'Escalation' },
+          },
+        },
+        {
+          universalIdentifier: workflowNodeIdentifier(4),
+          name: 'Nothing to do',
+          type: 'EMPTY',
+          nextStepIds: [],
+          input: {},
+        },
+      ],
+    },
+  },
+  {
+    universalIdentifier: NOTIFY_WORKFLOW_ID,
+    name: 'Notify on-call',
+    version: {
+      trigger: {
+        universalIdentifier: workflowNodeIdentifier(10),
+        type: 'MANUAL',
+        nextStepIds: [workflowNodeIdentifier(11)],
+        settings: {
+          availability: {
+            type: 'SINGLE_RECORD',
+            objectUniversalIdentifier: INCIDENT_OBJECT_ID,
+          },
+          icon: 'IconBell',
+          isPinned: true,
+        },
+      },
+      steps: [
+        {
+          universalIdentifier: workflowNodeIdentifier(11),
+          name: 'Call the pager',
+          type: 'HTTP_REQUEST',
+          nextStepIds: [],
+          position: { x: 120, y: 240 },
+          errorHandlingOptions: {
+            retryOnFailure: { value: 2 },
+            continueOnFailure: { value: true },
+          },
+          input: {
+            method: 'POST',
+            url: 'https://example.com/pager',
+            body: { incident: '{{trigger.record.id}}' },
+          },
+        },
+      ],
+    },
+  },
+  {
+    universalIdentifier: NIGHTLY_WORKFLOW_ID,
+    name: 'Nightly digest',
+    version: {
+      trigger: {
+        universalIdentifier: workflowNodeIdentifier(20),
+        type: 'CRON',
+        nextStepIds: [workflowNodeIdentifier(21)],
+        settings: { type: 'DAYS', schedule: { day: 1, hour: 3, minute: 15 } },
+      },
+      steps: [
+        {
+          universalIdentifier: workflowNodeIdentifier(21),
+          name: 'Wait',
+          type: 'DELAY',
+          nextStepIds: [],
+          input: { delayType: 'DURATION', duration: { minutes: 5 } },
+        },
+      ],
+    },
+  },
+  {
+    universalIdentifier: INTAKE_WORKFLOW_ID,
+    name: 'Incident intake',
+    version: {
+      trigger: {
+        universalIdentifier: workflowNodeIdentifier(30),
+        type: 'WEBHOOK',
+        nextStepIds: [workflowNodeIdentifier(31)],
+        settings: {
+          httpMethod: 'POST',
+          expectedBody: { severity: 'high' },
+        },
+      },
+      steps: [
+        {
+          universalIdentifier: workflowNodeIdentifier(31),
+          name: 'Review',
+          type: 'FORM',
+          nextStepIds: [],
+          input: [
+            {
+              id: 'summary',
+              name: 'summary',
+              label: 'Summary',
+              type: FieldMetadataType.TEXT,
+            },
+            {
+              id: 'incident',
+              name: 'incident',
+              label: 'Incident',
+              type: 'RECORD',
+              settings: { objectUniversalIdentifier: INCIDENT_OBJECT_ID },
+            },
+          ],
+        },
+      ],
+    },
+  },
+];
+
+const workflowsManifest = buildBaseManifest({
+  appId: WORKFLOW_TEST_APP_ID,
+  roleId: WORKFLOW_TEST_ROLE_ID,
+  overrides: {
+    objects: [
+      buildDefaultObjectManifest({
+        universalIdentifier: INCIDENT_OBJECT_ID,
+        nameSingular: 'exportIncident',
+        namePlural: 'exportIncidents',
+        labelSingular: 'Incident',
+        labelPlural: 'Incidents',
+        applicationUniversalIdentifier: WORKFLOW_TEST_APP_ID,
+        additionalFields: [
+          {
+            universalIdentifier: INCIDENT_SEVERITY_FIELD_ID,
+            name: 'severity',
+            label: 'Severity',
+            type: FieldMetadataType.TEXT,
+          },
+        ],
+      }),
+    ],
+    workflows: EXPORTED_WORKFLOWS,
+  },
+});
+
+describe('Application export - workflows', () => {
+  beforeAll(async () => {
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: WORKFLOW_TEST_APP_ID,
+    });
+    await setupApplicationForSync({
+      applicationUniversalIdentifier: WORKFLOW_TEST_APP_ID,
+      name: 'Export Workflows Test Application',
+      description: 'App for testing the workflow export',
+      sourcePath: 'export-workflows',
+    });
+
+    await syncApplication({
+      manifest: workflowsManifest,
+      expectToFail: false,
+    });
+  }, 60000);
+
+  afterAll(async () => {
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: WORKFLOW_TEST_APP_ID,
+    });
+  });
+
+  it('exports the synced workflows as they were declared', async () => {
+    const { data, errors } = await exportApplication({
+      universalIdentifier: WORKFLOW_TEST_APP_ID,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+
+    const { manifest: exportedManifest, coverage } = data.exportApplication;
+    const statusOf = (universalIdentifier: string) =>
+      coverage.find(
+        (entry) => entry.universalIdentifier === universalIdentifier,
+      )?.status;
+
+    expect(exportedManifest.workflows).toEqual(
+      [...EXPORTED_WORKFLOWS].sort((left, right) =>
+        left.universalIdentifier.localeCompare(right.universalIdentifier),
+      ),
+    );
+
+    for (const { universalIdentifier } of EXPORTED_WORKFLOWS) {
+      expect(statusOf(universalIdentifier)).toBe(
+        ApplicationExportCoverageStatus.EXPORTED,
+      );
+      expect(
+        statusOf(
+          getWorkflowVersionUniversalIdentifier({
+            applicationUniversalIdentifier: WORKFLOW_TEST_APP_ID,
+            workflowUniversalIdentifier: universalIdentifier,
+          }),
+        ),
+      ).toBe(ApplicationExportCoverageStatus.ENGINE_DERIVED);
+    }
+
+    expect(
+      statusOf(
+        getWorkflowCommandMenuItemUniversalIdentifier({
+          applicationUniversalIdentifier: WORKFLOW_TEST_APP_ID,
+          workflowUniversalIdentifier: NOTIFY_WORKFLOW_ID,
+        }),
+      ),
+    ).toBe(ApplicationExportCoverageStatus.ENGINE_DERIVED);
+  }, 60000);
+
+  it('round-trips the exported workflows through an additive dry-run sync without any action', async () => {
+    const { data } = await exportApplication({
+      universalIdentifier: WORKFLOW_TEST_APP_ID,
+      expectToFail: false,
+    });
+
+    const dryRun = await syncApplication({
+      manifest: data.exportApplication.manifest,
+      dryRun: true,
+      inferDeletionFromMissingEntities: false,
+      expectToFail: false,
+    });
+
+    expect(dryRun.errors).toBeUndefined();
+    expect(dryRun.data.syncApplication.actions).toEqual([]);
+  }, 60000);
+});
+
+const AI_TEST_APP_ID = '7e3d1c2b-0300-4a7b-8c9d-0e1f2a3b4c5d';
+const AI_TEST_ROLE_ID = '7e3d1c2b-0301-4a7b-8c9d-0e1f2a3b4c5d';
+const TRIAGE_AGENT_ID = '7e3d1c2b-0302-4a7b-8c9d-0e1f2a3b4c5d';
+const DIGEST_AGENT_ID = '7e3d1c2b-0303-4a7b-8c9d-0e1f2a3b4c5d';
+const DIGEST_CRON_TRIGGER_ID = '7e3d1c2b-0304-4a7b-8c9d-0e1f2a3b4c5d';
+const DIGEST_EVENT_TRIGGER_ID = '7e3d1c2b-0305-4a7b-8c9d-0e1f2a3b4c5d';
+const TRIAGE_SKILL_ID = '7e3d1c2b-0306-4a7b-8c9d-0e1f2a3b4c5d';
+
+const EXPORTED_AGENTS: AgentManifest[] = [
+  {
+    universalIdentifier: TRIAGE_AGENT_ID,
+    name: 'export-triage-agent',
+    label: 'Triage Agent',
+    prompt: 'Triage the incoming request.',
+    responseFormat: { type: 'text' },
+    roleUniversalIdentifier: AI_TEST_ROLE_ID,
+  },
+  {
+    universalIdentifier: DIGEST_AGENT_ID,
+    name: 'export-digest-agent',
+    label: 'Digest Agent',
+    icon: 'IconRobot',
+    description: 'Summarizes the week',
+    prompt: 'Summarize what changed this week.',
+    responseFormat: {
+      type: 'json',
+      schema: {
+        type: 'object',
+        properties: { summary: { type: 'string', description: 'Summary' } },
+        required: ['summary'],
+        additionalProperties: false,
+      },
+    },
+    triggers: [
+      {
+        universalIdentifier: DIGEST_CRON_TRIGGER_ID,
+        type: 'CRON',
+        settings: { pattern: '0 9 * * 1' },
+        isActive: false,
+        instructions: 'Send the weekly digest',
+      },
+      {
+        universalIdentifier: DIGEST_EVENT_TRIGGER_ID,
+        type: 'DATABASE_EVENT',
+        settings: { eventName: 'company.updated', updatedFields: ['name'] },
+      },
+    ],
+  },
+];
+
+const EXPORTED_SKILLS: SkillManifest[] = [
+  {
+    universalIdentifier: TRIAGE_SKILL_ID,
+    name: 'export-triage-skill',
+    label: 'Triage',
+    icon: 'IconBrain',
+    description: 'How to triage requests',
+    content: 'Classify the request, then route it.',
+  },
+];
+
+const aiManifest = buildBaseManifest({
+  appId: AI_TEST_APP_ID,
+  roleId: AI_TEST_ROLE_ID,
+  overrides: {
+    roles: [
+      {
+        universalIdentifier: AI_TEST_ROLE_ID,
+        label: 'Test Role',
+        description: 'A test role',
+        canBeAssignedToAgents: true,
+      },
+    ],
+    agents: EXPORTED_AGENTS,
+    skills: EXPORTED_SKILLS,
+  },
+});
+
+describe('Application export - agents and skills', () => {
+  beforeAll(async () => {
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: AI_TEST_APP_ID,
+    });
+    await setupApplicationForSync({
+      applicationUniversalIdentifier: AI_TEST_APP_ID,
+      name: 'Export Agents Test Application',
+      description: 'App for testing the agent and skill export',
+      sourcePath: 'export-agents',
+    });
+
+    await syncApplication({ manifest: aiManifest, expectToFail: false });
+  }, 60000);
+
+  afterAll(async () => {
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: AI_TEST_APP_ID,
+    });
+  });
+
+  it('exports the synced agents and skills as they were declared', async () => {
+    const { data, errors } = await exportApplication({
+      universalIdentifier: AI_TEST_APP_ID,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+
+    const { manifest: exportedManifest, coverage } = data.exportApplication;
+    const statusOf = (universalIdentifier: string) =>
+      coverage.find(
+        (entry) => entry.universalIdentifier === universalIdentifier,
+      )?.status;
+
+    expect(exportedManifest.agents).toEqual(EXPORTED_AGENTS);
+    expect(exportedManifest.skills).toEqual(EXPORTED_SKILLS);
+
+    for (const universalIdentifier of [
+      TRIAGE_AGENT_ID,
+      DIGEST_AGENT_ID,
+      TRIAGE_SKILL_ID,
+      getRoleTargetUniversalIdentifier({
+        applicationUniversalIdentifier: AI_TEST_APP_ID,
+        agentUniversalIdentifier: TRIAGE_AGENT_ID,
+      }),
+    ]) {
+      expect(statusOf(universalIdentifier)).toBe(
+        ApplicationExportCoverageStatus.EXPORTED,
+      );
+    }
+  }, 60000);
+
+  it('round-trips the exported agents and skills through an additive dry-run sync without any action', async () => {
+    const { data } = await exportApplication({
+      universalIdentifier: AI_TEST_APP_ID,
+      expectToFail: false,
+    });
+
+    const dryRun = await syncApplication({
+      manifest: data.exportApplication.manifest,
+      dryRun: true,
+      inferDeletionFromMissingEntities: false,
+      expectToFail: false,
+    });
+
+    expect(dryRun.errors).toBeUndefined();
+    expect(dryRun.data.syncApplication.actions).toEqual([]);
   }, 60000);
 });

@@ -1,0 +1,64 @@
+---
+title: Riga del campo modulo
+description: Allinea un'etichetta di campo, il contenuto e i controlli finali in una riga condivisa.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import FormFieldRowReference from '/snippets/ui/generated/components/input/form-field-row.mdx';
+
+## Panoramica
+
+`FormFieldRow` dispone un'etichetta di campo, un'icona decorativa facoltativa, il contenuto del campo e i controlli finali. Usalo per i campi del compositore o altri gruppi di campi allineati. L'applicazione gestisce i valori dei campi, la convalida, le autorizzazioni e la persistenza.
+
+<StoryEmbed storyId="ui-input-formfieldrow--display" title="Riga del campo del modulo" height={110} />
+
+## Utilizzo
+
+```tsx
+import { useState } from 'react';
+import { FormFieldRow, LightButton } from 'twenty-ui/components/input';
+import { Input } from 'twenty-ui/primitives/input';
+
+export const SubjectField = () => {
+  const [subject, setSubject] = useState('Project update');
+
+  return (
+    <FormFieldRow
+      label="Subject"
+      hasDivider={false}
+      trailing={
+        <LightButton size="sm" onClick={() => setSubject('')}>
+          Clear
+        </LightButton>
+      }
+    >
+      <Input
+        variant="plain"
+        aria-label="Subject"
+        value={subject}
+        onValueChange={setSubject}
+      />
+    </FormFieldRow>
+  );
+};
+```
+
+## Layout ed etichette
+
+`labelWidth` è impostato per impostazione predefinita su 80 pixel e accetta una larghezza CSS. Utilizza lo stesso valore nelle righe affiancate per allinearne le etichette. La colonna dell'etichetta è limitata al 40% della riga e il contenuto può andare a capo nei layout stretti. `startIcon` è decorativo; il chiamante ne fornisce le dimensioni. Imposta `hasDivider={false}` su una riga finale quando la superficie circostante fornisce il relativo bordo.
+
+La radice è un gruppo denominato da `label`. Fornisci `aria-label` o `aria-labelledby` quando l'etichetta visibile è omessa ed etichetta separatamente ogni input annidato. La riga non sposta lo stato attivo né disabilita i controlli annidati. Tali controlli mantengono il proprio comportamento da tastiera e lo stile dello stato attivo.
+
+## Eventi e personalizzazione
+
+Gli attributi nativi, i gestori di eventi, `className`, `style`, `ref` e `render` si applicano alla radice del gruppo. Inoltra le props e il ref forniti quando sostituisci la radice tramite `render`. Un gestore `onClick` mostra un cursore a forma di puntatore. Il chiamante gestisce il comportamento di messa a fuoco al clic e, se necessario, protegge gli eventi dai controlli annidati o dai portali. `isHoverable` abilita in modo indipendente uno sfondo neutro al passaggio del mouse.
+
+`trailingProps` applica attributi nativi, gestori e ref al wrapper finale esistente. Il relativo `className` viene unito alla classe di layout condivisa. Utilizza il relativo gestore `onClick` per impedire che un'azione finale attivi un gestore di clic della riga. Il wrapper esiste solo quando `trailing` contiene contenuto renderizzabile.
+
+## Props
+
+<FormFieldRowReference />
+
+<PageBanner illustration="page-cover-input" />

@@ -3,6 +3,8 @@ title: خطط التسعير
 description: تعرّف على خطط تسعير Twenty وكيفية التبديل بينها.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## نظرة عامة
 
 توفر Twenty تسعيرًا مرنًا ليناسب الفرق بمختلف أحجامها، سواء كنت تفضّل الاستضافة السحابية أو الاستضافة الذاتية.
@@ -87,14 +89,18 @@ description: تعرّف على خطط تسعير Twenty وكيفية التبد�
 2. انقر على **التحويل إلى دفع شهري**
 3. وفّر مع الفوترة الشهرية
 
-## احصل على مفتاح Enterprise لخطة Organization (Self-Hosted)
+## الحصول على مفتاح Organization
 
-لاستخدام خطة Organization (Self-Hosted)، تحتاج إلى الحصول على مفتاح Enterprise:
+تعمل خطة المؤسسة (ذاتية الاستضافة) على بنيتك التحتية الخاصة. للبدء، [ثبّت Twenty باستخدام Docker Compose](/ar/developers/self-host/capabilities/docker-compose)، ثم اتبع الخطوات أدناه لتفعيل ترخيص المؤسسة الخاص بك.
 
-1. اذهب إلى **الإعدادات → لوحة الإدارة → Enterprise**
+إذا كان لديك بالفعل مثيل Twenty ذاتي الاستضافة، فيمكنك الحصول على مفتاح المؤسسة مباشرةً من إعداداته:
 
-<img src="/images/user-guide/billing/organization-key.png" alt="مفتاح Enterprise" />
+1. انتقل إلى **الإعدادات → لوحة الإدارة → المؤسسة**
 
-2. انقر **احصل على مفتاح Enterprise**
+<img src="/images/user-guide/billing/organization-key.png" alt="مفتاح المؤسسة" />
+
+2. انقر فوق **الحصول على مفتاح المؤسسة**
 3. عند إعادة توجيهك إلى Stripe، أدخل تفاصيل الدفع الخاصة بك وأكّد
-4. عند عرض مفتاح Enterprise الخاص بك، الصقه في صفحة إعدادات Enterprise وقم بتفعيل ترخيص Organization
+4. عند عرض مفتاح Organization الخاص بك، الصقه في صفحة إعدادات Organization وقم بتفعيل ترخيص Organization
+
+<PageBanner illustration="card-page-pricing-plans" />

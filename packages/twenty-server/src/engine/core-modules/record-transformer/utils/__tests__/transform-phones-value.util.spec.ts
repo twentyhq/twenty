@@ -1,3 +1,7 @@
+import {
+  RecordTransformerException,
+  RecordTransformerExceptionCode,
+} from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
 
 describe('transformPhonesValue', () => {
@@ -97,5 +101,71 @@ describe('transformPhonesValue', () => {
         { countryCode: 'GB', callingCode: '+44', number: '2071838750' },
       ]),
     );
+  });
+
+  describe('phone number length and content validation', () => {
+    const transformBulgarianNumber = (primaryPhoneNumber: string) =>
+      transformPhonesValue({
+        input: { primaryPhoneNumber, primaryPhoneCallingCode: '+359' },
+      });
+
+    it.each(['12', '888'])(
+      'should reject %s because it is too short to be a phone number',
+      (number) => {
+        expect(() => transformBulgarianNumber(number)).toThrow(
+          expect.objectContaining({
+            code: RecordTransformerExceptionCode.INVALID_PHONE_NUMBER,
+          }),
+        );
+      },
+    );
+
+    it('should reject a number with more than 15 digits', () => {
+      expect(() => transformBulgarianNumber('08812345678901234')).toThrow(
+        RecordTransformerException,
+      );
+    });
+
+    it.each(['088-ABC', '0881234567-ABC', '088 123 4567 abc'])(
+      'should reject %s instead of silently dropping the letters',
+      (number) => {
+        expect(() => transformBulgarianNumber(number)).toThrow(
+          expect.objectContaining({
+            code: RecordTransformerExceptionCode.INVALID_PHONE_NUMBER,
+          }),
+        );
+      },
+    );
+
+    it('should still reject a value without any digit', () => {
+      expect(() => transformBulgarianNumber('abc')).toThrow(
+        RecordTransformerException,
+      );
+    });
+
+    it.each(['+359 88 123 4567', '0881234567', '088 123 4567', '881234567'])(
+      'should accept the valid Bulgarian number %s',
+      (number) => {
+        const result = transformBulgarianNumber(number);
+
+        expect(result).toEqual({
+          additionalPhones: null,
+          primaryPhoneNumber: '881234567',
+          primaryPhoneCallingCode: '+359',
+          primaryPhoneCountryCode: 'BG',
+        });
+      },
+    );
+
+    it('should reject an invalid number in additionalPhones', () => {
+      expect(() =>
+        transformPhonesValue({
+          input: {
+            primaryPhoneNumber: '+14155552671',
+            additionalPhones: [{ number: '12', callingCode: '+359' }],
+          },
+        }),
+      ).toThrow(RecordTransformerException);
+    });
   });
 });

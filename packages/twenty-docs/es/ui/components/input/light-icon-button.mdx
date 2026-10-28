@@ -1,0 +1,84 @@
+---
+title: LightIconButton
+description: Presenta acciones de icono ligeras con énfasis estándar o sutil.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import LightIconButtonReference from '/snippets/ui/generated/components/input/light-icon-button.mdx';
+
+## Resumen
+
+`LightIconButton` compone [IconButton](/es/ui/components/input/icon-button) con una superficie fantasma y un tamaño pequeño. Proporciona un nombre accesible y contenido de icono decorativo.
+
+<StoryEmbed storyId="ui-input-button-lighticonbutton--display" title="Botón de Ícono Claro" height={100} />
+
+## "Uso"
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchAction = () => (
+  <LightIconButton aria-label="Search">
+    <IconSearch />
+  </LightIconButton>
+);
+```
+
+El énfasis estándar usa texto neutro secundario; el énfasis sutil usa texto terciario. La apariencia explícita del elemento secundario tiene prioridad sobre los valores de ButtonGroup, seguida de los valores predeterminados del componente. Los colores semánticos conservan su propio tratamiento de contraste. Los controles pequeños son de 24 px con un icono de 14 px; los controles medianos son de 32 px con un icono de 16 px. Los controles compactos usan `size="xs"` y son de 20 px.
+
+## Opciones visuales
+
+Compare el énfasis en tamaños pequeño y mediano, incluidos los estados seleccionado, de carga y deshabilitado.
+
+<StoryEmbed storyId="ui-input-button-lighticonbutton--catalog" title="Énfasis, tamaños y estados del botón con icono claro" height={410} />
+
+## Estado e interacción
+
+El botón gestiona la activación mediante teclado, el comportamiento deshabilitado y de carga, las refs, los atributos nativos y la composición de renderizado. El valor predeterminado nativo es `type="button"`. Usa `aria-pressed` para los conmutadores y `aria-expanded` para los elementos desplegables. La aplicación gestiona estos estados y puede establecer `color="accent"` para resaltar una acción seleccionada. El foco del teclado usa el anillo de foco compartido.
+
+El texto de la información sobre herramientas es opcional y no sustituye un nombre accesible de `aria-label` o `aria-labelledby`. Establece `href` para un enlace. Para el enrutamiento controlado por la aplicación, proporciona `render`, `nativeButton={false}` y `role="link"`.
+
+## Actualización de controles existentes
+
+Importa `LightIconButton` desde `twenty-ui/components`. Reemplaza `Icon={IconPlus}` por elementos secundarios `<IconPlus />`, `small`/`medium` por `sm`/`md`, `accent="tertiary"` por `emphasis="subtle"` y `testId` por `data-testid`. Reemplaza las marcas sintéticas `active` y `focus` por estado semántico y foco real del teclado.
+
+Reemplaza `LightIconButtonGroup` por [ButtonGroup](/es/ui/primitives/input/button-group) usando `attached={false}` y elementos secundarios explícitos. Establece `disabled` en las acciones no disponibles, incluidas las acciones sin un controlador de clic. Los contenedores y los activadores de información sobre herramientas pueden permanecer alrededor de cada elemento secundario.
+
+## Acciones de fila
+
+Utiliza un [ListItem](/es/ui/primitives/navigation/list-item) pasivo con una ranura `actions` para controles independientes. Pasa un `LightIconButton` directamente o usa `ButtonGroup` para varios botones. Cada botón tiene su propio nombre accesible, controlador de clic y estado deshabilitado. Envuelve los activadores de menús desplegables directamente alrededor del botón.
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconEyeOff, IconTrash } from 'twenty-ui/icon';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const RecordActions = () => (
+  <ListItem
+    actions={
+      <ButtonGroup attached={false}>
+        <LightIconButton aria-label="Hide record">
+          <IconEyeOff />
+        </LightIconButton>
+        <LightIconButton aria-label="Delete record" disabled>
+          <IconTrash />
+        </LightIconButton>
+      </ButtonGroup>
+    }
+  >
+    Record
+  </ListItem>
+);
+```
+
+Un botón sin un controlador `onClick` puede permanecer habilitado cuando un menú desplegable circundante gestiona su interacción. Establece explícitamente `disabled` para los botones no disponibles. Mantén los controles independientes junto a un [ListItemButton](/es/ui/components/navigation/list-item-button) accionable para que cada uno conserve su propio foco y activación.
+
+## "Props"
+
+<LightIconButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />
