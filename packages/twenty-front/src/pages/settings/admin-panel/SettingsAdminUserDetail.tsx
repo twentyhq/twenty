@@ -176,14 +176,12 @@ export const SettingsAdminUserDetail = () => {
           },
         ]}
         secondaryBar={
-          tabs.length > 0 ? (
-            <SettingsTabBar
-              aria-label={t`User workspaces`}
-              tabs={tabs}
-              behaveAsLinks={false}
-              componentInstanceId={SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID}
-            />
-          ) : undefined
+          <SettingsTabBar
+            aria-label={t`User workspaces`}
+            tabs={tabs}
+            behaveAsLinks={false}
+            componentInstanceId={SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID}
+          />
         }
       >
         <SettingsPageContainer>

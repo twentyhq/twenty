@@ -13,6 +13,10 @@ const StyledSecondaryBar = styled.div`
   position: relative;
   width: 100%;
 
+  &:empty {
+    display: none;
+  }
+
   &::after {
     background-color: ${themeCssVariables.border.color.light};
     bottom: 0;

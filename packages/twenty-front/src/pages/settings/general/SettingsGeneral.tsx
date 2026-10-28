@@ -103,13 +103,11 @@ export const SettingsGeneral = () => {
     <SettingsPageLayout
       title={t`General`}
       secondaryBar={
-        hasSecurityPermission ? (
-          <SettingsTabBar
-            aria-label={t`General settings`}
-            tabs={tabs}
-            componentInstanceId={SETTINGS_GENERAL_TABS_INSTANCE_ID}
-          />
-        ) : undefined
+        <SettingsTabBar
+          aria-label={t`General settings`}
+          tabs={tabs}
+          componentInstanceId={SETTINGS_GENERAL_TABS_INSTANCE_ID}
+        />
       }
       links={[{ children: t`Workspace` }, { children: t`General` }]}
     >

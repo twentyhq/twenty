@@ -103,13 +103,11 @@ export const SettingsAccountDetail = () => {
         { children: builtInAccount.handle },
       ]}
       secondaryBar={
-        tabs.length > 0 ? (
-          <SettingsTabBar
-            aria-label={t`Account settings`}
-            tabs={tabs}
-            componentInstanceId={tabListComponentInstanceId}
-          />
-        ) : undefined
+        <SettingsTabBar
+          aria-label={t`Account settings`}
+          tabs={tabs}
+          componentInstanceId={tabListComponentInstanceId}
+        />
       }
     >
       <SettingsPageContainer>{renderContent()}</SettingsPageContainer>

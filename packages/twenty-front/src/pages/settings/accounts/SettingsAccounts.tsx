@@ -23,18 +23,20 @@ export const SettingsAccounts = () => {
   );
   const pageTitle = isAppPreferencesEnabled ? t`Apps preferences` : t`Account`;
 
-  const tabs = [
-    {
-      id: SETTINGS_APP_PREFERENCES_TAB_IDS.APPS,
-      title: t`Apps`,
-      Icon: IconApps,
-    },
-    {
-      id: SETTINGS_APP_PREFERENCES_TAB_IDS.ACCOUNTS,
-      title: t`Accounts`,
-      Icon: IconAt,
-    },
-  ];
+  const tabs = isAppPreferencesEnabled
+    ? [
+        {
+          id: SETTINGS_APP_PREFERENCES_TAB_IDS.APPS,
+          title: t`Apps`,
+          Icon: IconApps,
+        },
+        {
+          id: SETTINGS_APP_PREFERENCES_TAB_IDS.ACCOUNTS,
+          title: t`Accounts`,
+          Icon: IconAt,
+        },
+      ]
+    : [];
 
   const activeTabId = useSettingsActiveTabId(
     SETTINGS_APP_PREFERENCES_TAB_LIST_COMPONENT_ID,
@@ -52,13 +54,11 @@ export const SettingsAccounts = () => {
         { children: pageTitle },
       ]}
       secondaryBar={
-        isAppPreferencesEnabled ? (
-          <SettingsTabBar
-            aria-label={pageTitle}
-            tabs={tabs}
-            componentInstanceId={SETTINGS_APP_PREFERENCES_TAB_LIST_COMPONENT_ID}
-          />
-        ) : undefined
+        <SettingsTabBar
+          aria-label={pageTitle}
+          tabs={tabs}
+          componentInstanceId={SETTINGS_APP_PREFERENCES_TAB_LIST_COMPONENT_ID}
+        />
       }
     >
       <SettingsAccountsMessageChannelsSSEEffect />

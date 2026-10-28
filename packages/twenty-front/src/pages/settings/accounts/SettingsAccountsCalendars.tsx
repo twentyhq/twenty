@@ -74,15 +74,13 @@ export const SettingsAccountsCalendars = () => {
         { children: t`Calendars` },
       ]}
       secondaryBar={
-        tabs.length > 1 ? (
-          <SettingsTabBar
-            aria-label={t`Calendar accounts`}
-            tabs={tabs}
-            componentInstanceId={
-              SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID
-            }
-          />
-        ) : undefined
+        <SettingsTabBar
+          aria-label={t`Calendar accounts`}
+          tabs={tabs}
+          componentInstanceId={
+            SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID
+          }
+        />
       }
     >
       <SettingsPageContainer>{renderContent()}</SettingsPageContainer>

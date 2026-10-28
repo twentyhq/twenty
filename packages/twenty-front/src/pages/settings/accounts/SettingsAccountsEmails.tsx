@@ -81,15 +81,13 @@ export const SettingsAccountsEmails = () => {
         { children: t`Emails` },
       ]}
       secondaryBar={
-        tabs.length > 1 ? (
-          <SettingsTabBar
-            aria-label={t`Email accounts`}
-            tabs={tabs}
-            componentInstanceId={
-              SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID
-            }
-          />
-        ) : undefined
+        <SettingsTabBar
+          aria-label={t`Email accounts`}
+          tabs={tabs}
+          componentInstanceId={
+            SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID
+          }
+        />
       }
     >
       <SettingsPageContainer>{renderContent()}</SettingsPageContainer>

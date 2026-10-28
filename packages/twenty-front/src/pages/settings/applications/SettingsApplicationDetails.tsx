@@ -423,7 +423,7 @@ export const SettingsApplicationDetails = () => {
           ) : undefined
         }
         secondaryBar={
-          isNotFound || isUnavailable || tabs.length <= 1 ? undefined : (
+          isNotFound || isUnavailable ? undefined : (
             <SettingsTabBar
               aria-label={t`Application details`}
               tabs={tabs}
