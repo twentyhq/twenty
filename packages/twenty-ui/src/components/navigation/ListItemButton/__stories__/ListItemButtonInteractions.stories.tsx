@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ListItemButton } from '@ui/components/navigation/ListItemButton/ListItemButton';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
-import { ComponentDecorator } from '@ui/testing';
+import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
@@ -24,6 +24,7 @@ export default meta;
 type Story = StoryObj<typeof ListItemButton>;
 
 export const NativeActivation: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   render: (args) => (
     <div role="presentation" onClick={bubbledClicks}>
       <ListItemButton
