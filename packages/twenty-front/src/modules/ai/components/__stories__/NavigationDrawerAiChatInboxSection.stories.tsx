@@ -1,6 +1,7 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { type ComponentProps } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, userEvent, within } from 'storybook/test';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -30,6 +31,10 @@ import {
   mockCurrentWorkspace,
   mockedUserData,
 } from '~/testing/mock-data/users';
+
+type StoryProps = NonNullable<
+  ComponentProps<typeof NavigationDrawerAiChatInboxSection>
+>;
 
 const StyledNavigation = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -130,10 +135,10 @@ const meta = {
       );
     };
   },
-} satisfies Meta<typeof NavigationDrawerAiChatInboxSection>;
+} satisfies Meta<StoryProps>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<StoryProps>;
 
 export const FlatFilters: Story = {
   play: async ({ canvasElement }) => {
