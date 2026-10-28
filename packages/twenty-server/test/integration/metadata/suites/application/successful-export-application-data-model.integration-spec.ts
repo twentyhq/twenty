@@ -1670,6 +1670,26 @@ const EXPORTED_WORKFLOWS: WorkflowManifest[] = [
   },
 ];
 
+const withSendEmailConnectedAccountHandle = ({
+  workflow,
+  connectedAccountHandle,
+}: {
+  workflow: WorkflowManifest;
+  connectedAccountHandle: string;
+}): WorkflowManifest => ({
+  ...workflow,
+  version: {
+    ...workflow.version,
+    steps: workflow.version.steps.map((step) => {
+      if (step.type !== 'SEND_EMAIL') {
+        return step;
+      }
+
+      return { ...step, input: { ...step.input, connectedAccountHandle } };
+    }),
+  },
+});
+
 const workflowsManifest = buildBaseManifest({
   appId: WORKFLOW_TEST_APP_ID,
   roleId: WORKFLOW_TEST_ROLE_ID,
@@ -1788,23 +1808,10 @@ describe('Application export - workflows', () => {
         ...workflowsManifest,
         workflows: EXPORTED_WORKFLOWS.map((workflow) =>
           workflow.universalIdentifier === OUTREACH_WORKFLOW_ID
-            ? {
-                ...workflow,
-                version: {
-                  ...workflow.version,
-                  steps: workflow.version.steps.map((step) =>
-                    step.type === 'SEND_EMAIL'
-                      ? {
-                          ...step,
-                          input: {
-                            ...step.input,
-                            connectedAccountHandle: unknownHandle,
-                          },
-                        }
-                      : step,
-                  ),
-                },
-              }
+            ? withSendEmailConnectedAccountHandle({
+                workflow,
+                connectedAccountHandle: unknownHandle,
+              })
             : workflow,
         ),
       },

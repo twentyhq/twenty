@@ -66,7 +66,7 @@ const connectedAccountReferenceShape = {
 };
 
 const refineConnectedAccountReference = (
-  input: { connectedAccountId?: string; connectedAccountHandle?: string },
+  input: z.infer<z.ZodObject<typeof connectedAccountReferenceShape>>,
   context: z.RefinementCtx,
 ) => {
   if (
