@@ -592,7 +592,7 @@ export class UserService {
         workspace,
       );
 
-    await this.emailVerificationService.deleteExistingTokenOrThrowDuringCooldown(
+    await this.emailVerificationService.deleteExistingTokensAfterCooldownOrThrow(
       { userId: user.id },
     );
 

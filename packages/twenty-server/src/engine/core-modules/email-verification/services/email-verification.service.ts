@@ -147,7 +147,7 @@ export class EmailVerificationService {
       );
     }
 
-    await this.deleteExistingTokenOrThrowDuringCooldown({ userId: user.id });
+    await this.deleteExistingTokensAfterCooldownOrThrow({ userId: user.id });
 
     await this.sendVerificationEmail({
       userId: user.id,
@@ -160,7 +160,7 @@ export class EmailVerificationService {
     return { success: true };
   }
 
-  async deleteExistingTokenOrThrowDuringCooldown({
+  async deleteExistingTokensAfterCooldownOrThrow({
     userId,
   }: {
     userId: string;
@@ -190,6 +190,9 @@ export class EmailVerificationService {
       );
     }
 
-    await this.appTokenRepository.delete(existingToken.id);
+    await this.appTokenRepository.delete({
+      userId,
+      type: AppTokenType.EmailVerificationToken,
+    });
   }
 }
