@@ -458,6 +458,34 @@ try {
 }
 ```
 
+## Posting to the inbox
+
+`sendInboxMessage` and the [inbox](/developers/extend/apps/logic/inbox) mention helpers are exported from `twenty-sdk/front-component` too, so a component can post a message without a logic function in between. The message is from your app, and the call carries the component's token, so the member looking at the page needs the `AI` permission, like every recipient.
+
+To show the conversation afterwards, navigate to it with the `threadId` the call returns:
+
+```tsx
+import {
+  AppPath,
+  navigate,
+  sendInboxMessage,
+} from 'twenty-sdk/front-component';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: 'weekly-digest',
+  idempotencyKey: `weekly-digest-${weekNumber}`,
+  title: 'Your weekly digest',
+  text: 'Three deals moved to negotiation this week.',
+});
+
+await navigate(AppPath.AiChatInbox, { threadId });
+```
+
+- `workspaceMemberIds` takes workspace member ids, not the user id `useUserId()` returns.
+- A conversation opens only for its participants, so navigate to it when the member looking at the page is one of the recipients.
+- The inbox is a main-page route: `navigate` opens it there, and `openSidePanelPage` cannot open it in the side panel.
+
 ## Accessing runtime context
 
 Inside your component, use SDK hooks to access the current user, record, and component instance:
