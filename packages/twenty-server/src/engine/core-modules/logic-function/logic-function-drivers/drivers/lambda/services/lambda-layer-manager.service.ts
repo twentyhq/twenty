@@ -30,12 +30,10 @@ import {
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { type LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
-import { findOutdatedLambdaDepsLayerArns } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/find-outdated-lambda-deps-layer-arns.util';
 import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name.util';
 import { getLambdaLayerNameFromArn } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-layer-name-from-arn.util';
 import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name.util';
 import { getLambdaWorkspaceCustomDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-workspace-custom-deps-layer-name.util';
-import { getLegacyLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-legacy-lambda-deps-layer-name.util';
 import { reprefixLambdaZipEntries } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/reprefix-lambda-zip-entries.util';
 import { sanitizeApplicationPackageJson } from 'src/engine/core-modules/logic-function/logic-function-resource/utils/sanitize-application-package-json.util';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
@@ -79,29 +77,15 @@ export class LambdaLayerManagerService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
-  async ensureDepsLayer(
-    context: LayerAppContext,
-    { fallbackLayerArn }: { fallbackLayerArn?: string } = {},
-  ): Promise<string> {
+  async ensureDepsLayer(context: LayerAppContext): Promise<string> {
+    const existingArn = await this.findExistingDepsLayerArn(context);
+
+    if (isDefined(existingArn)) {
+      return existingArn;
+    }
+
     const workspaceCustomDepsLayerName =
       await this.getWorkspaceCustomDepsLayerName(context.flatApplication);
-    const depsLayerName = this.getDepsLayerName(context);
-
-    for (const layerName of [workspaceCustomDepsLayerName, depsLayerName]) {
-      if (!isDefined(layerName)) {
-        continue;
-      }
-
-      const existingArn = await this.awsClient.getExistingLayerArn(layerName);
-
-      if (isDefined(existingArn)) {
-        return existingArn;
-      }
-    }
-
-    if (isDefined(fallbackLayerArn)) {
-      return fallbackLayerArn;
-    }
 
     if (isDefined(workspaceCustomDepsLayerName)) {
       const defaultDependencies =
@@ -118,23 +102,33 @@ export class LambdaLayerManagerService {
     }
 
     return this.buildDepsLayer({
-      layerName: depsLayerName,
+      layerName: this.getDepsLayerName(context),
       dependencies: await this.getVerifiedDependencies(context),
     });
   }
 
-  async resolveDepsLayerArn({
-    lambdaExecutor,
-    ...context
-  }: LayerAppContext & {
-    lambdaExecutor: GetFunctionCommandOutput | undefined;
-  }): Promise<string> {
-    return this.ensureDepsLayer(context, {
-      fallbackLayerArn: this.findLegacyDepsLayerArn({
-        lambdaExecutor,
-        flatApplication: context.flatApplication,
-      }),
-    });
+  async findExistingDepsLayerArn(
+    context: LayerAppContext,
+  ): Promise<string | undefined> {
+    for (const layerName of await this.getDepsLayerNames(context)) {
+      const existingArn = await this.awsClient.getExistingLayerArn(layerName);
+
+      if (isDefined(existingArn)) {
+        return existingArn;
+      }
+    }
+
+    return undefined;
+  }
+
+  async getDepsLayerNames(context: LayerAppContext): Promise<string[]> {
+    const workspaceCustomDepsLayerName =
+      await this.getWorkspaceCustomDepsLayerName(context.flatApplication);
+
+    return [
+      workspaceCustomDepsLayerName,
+      this.getDepsLayerName(context),
+    ].filter(isDefined);
   }
 
   async ensureSdkLayer(context: LayerAppContext): Promise<string> {
@@ -248,13 +242,13 @@ export class LambdaLayerManagerService {
     await this.deleteAllLayerVersions(layerName);
   }
 
-  async hasExpectedLayers({
+  hasExpectedSdkLayer({
     lambdaExecutor,
     flatApplication,
     applicationUniversalIdentifier,
   }: LayerAppContext & {
     lambdaExecutor: GetFunctionCommandOutput;
-  }): Promise<boolean> {
+  }): boolean {
     const layers = lambdaExecutor.Configuration?.Layers;
 
     if (!isDefined(layers) || layers.length !== 2) {
@@ -271,74 +265,31 @@ export class LambdaLayerManagerService {
       lambdaExecutor.Tags?.[LAMBDA_SDK_CLIENT_CHECKSUM_TAG] ===
         flatApplication.sdkClientCoreChecksum;
 
-    if (
-      !isOnCurrentSdkClient ||
-      !layers.some((layer) => layer.Arn?.includes(sdkLayerName))
-    ) {
+    return (
+      isOnCurrentSdkClient &&
+      layers.some((layer) => layer.Arn?.includes(sdkLayerName))
+    );
+  }
+
+  async hasExpectedLayers({
+    lambdaExecutor,
+    ...context
+  }: LayerAppContext & {
+    lambdaExecutor: GetFunctionCommandOutput;
+  }): Promise<boolean> {
+    if (!this.hasExpectedSdkLayer({ lambdaExecutor, ...context })) {
       return false;
     }
 
-    const isOnLegacyDepsLayer = isDefined(
-      this.findLegacyDepsLayerArn({ lambdaExecutor, flatApplication }),
-    );
+    const depsLayerNames = await this.getDepsLayerNames(context);
 
-    if (isOnLegacyDepsLayer) {
-      return true;
-    }
-
-    const depsLayerNames = await this.getV1DepsLayerNames({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
-
-    return layers.some((layer) => {
+    return (lambdaExecutor.Configuration?.Layers ?? []).some((layer) => {
       const layerName = isDefined(layer.Arn)
         ? getLambdaLayerNameFromArn(layer.Arn)
         : undefined;
 
       return isDefined(layerName) && depsLayerNames.includes(layerName);
     });
-  }
-
-  async findOutdatedDepsLayerArns({
-    lambdaExecutor,
-    flatApplication,
-    applicationUniversalIdentifier,
-  }: LayerAppContext & {
-    lambdaExecutor: GetFunctionCommandOutput;
-  }): Promise<string[]> {
-    return findOutdatedLambdaDepsLayerArns({
-      layerArns: (lambdaExecutor.Configuration?.Layers ?? [])
-        .map((layer) => layer.Arn)
-        .filter(isDefined),
-      depsLayerNames: await this.getV1DepsLayerNames({
-        flatApplication,
-        applicationUniversalIdentifier,
-      }),
-      sdkLayerName: getLambdaSdkLayerName({
-        workspaceId: flatApplication.workspaceId,
-        applicationUniversalIdentifier,
-      }),
-    });
-  }
-
-  private findLegacyDepsLayerArn({
-    lambdaExecutor,
-    flatApplication,
-  }: {
-    lambdaExecutor: GetFunctionCommandOutput | undefined;
-    flatApplication: FlatApplication;
-  }): string | undefined {
-    const legacyDepsLayerName = getLegacyLambdaDepsLayerName({
-      flatApplication,
-      namespace: this.options.resourceNamespace,
-    });
-
-    return lambdaExecutor?.Configuration?.Layers?.find(
-      (layer) =>
-        isDefined(layer.Arn) &&
-        getLambdaLayerNameFromArn(layer.Arn) === legacyDepsLayerName,
-    )?.Arn;
   }
 
   private getDepsLayerName({
@@ -350,18 +301,6 @@ export class LambdaLayerManagerService {
       applicationUniversalIdentifier,
       namespace: this.options.resourceNamespace,
     });
-  }
-
-  private async getV1DepsLayerNames(
-    context: LayerAppContext,
-  ): Promise<string[]> {
-    const workspaceCustomDepsLayerName =
-      await this.getWorkspaceCustomDepsLayerName(context.flatApplication);
-
-    return [
-      workspaceCustomDepsLayerName,
-      this.getDepsLayerName(context),
-    ].filter(isDefined);
   }
 
   private async getWorkspaceCustomDepsLayerName(

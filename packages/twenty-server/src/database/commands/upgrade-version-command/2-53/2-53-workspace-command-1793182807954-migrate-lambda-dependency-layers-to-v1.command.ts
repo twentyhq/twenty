@@ -1,17 +1,31 @@
-import { Inject } from '@nestjs/common';
-
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { migrateLambdaFunctionDepsLayer } from 'src/database/commands/upgrade-version-command/2-53/utils/migrate-lambda-function-deps-layer.util';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
-import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
+import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
+import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
+import { getLambdaConnectionOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-connection-options.util';
+import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+type LambdaDepsLayerServices = {
+  awsClient: LambdaAwsClientService;
+  layerManager: LambdaLayerManagerService;
+};
 
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
@@ -23,13 +37,19 @@ const getErrorMessage = (error: unknown): string =>
     'Recompute application dependency checksums from the stored files and move logic functions to their v1 dependency layer',
 })
 export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspaceCommandRunner {
+  private lambdaDepsLayerServices: LambdaDepsLayerServices | undefined;
+
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
     private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
-    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
-    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
+    private readonly sdkClientArchiveService: SdkClientArchiveService,
+    private readonly cacheLockService: CacheLockService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly twentyConfigService: TwentyConfigService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleApplications)
+    private readonly cacheStorageService: CacheStorageService,
   ) {
     super(workspaceIteratorService);
   }
@@ -42,7 +62,11 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
 
     await this.backfillDependencyChecksums({ workspaceId, isDryRun });
 
-    if (isDryRun) {
+    if (
+      isDryRun ||
+      this.twentyConfigService.get('LOGIC_FUNCTION_TYPE') !==
+        LogicFunctionDriverType.LAMBDA
+    ) {
       return;
     }
 
@@ -110,11 +134,7 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
   }
 
   private async migrateDependencyLayers(workspaceId: string): Promise<void> {
-    const driver = this.logicFunctionDriverFactory.getCurrentDriver();
-
-    if (!isDefined(driver.migrateDepsLayer)) {
-      return;
-    }
+    const { awsClient, layerManager } = this.getLambdaDepsLayerServices();
 
     const { flatApplicationMaps, flatLogicFunctionMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -140,7 +160,10 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
       }
 
       try {
-        const isMigrated = await driver.migrateDepsLayer({
+        const isMigrated = await migrateLambdaFunctionDepsLayer({
+          awsClient,
+          layerManager,
+          cacheLockService: this.cacheLockService,
           flatLogicFunction,
           flatApplication,
           applicationUniversalIdentifier: flatApplication.universalIdentifier,
@@ -160,5 +183,33 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
     this.logger.log(
       `Moved ${migratedCount} logic function(s) to their v1 dependency layer in workspace ${workspaceId}, ${failedCount} failed`,
     );
+  }
+
+  private getLambdaDepsLayerServices(): LambdaDepsLayerServices {
+    if (isDefined(this.lambdaDepsLayerServices)) {
+      return this.lambdaDepsLayerServices;
+    }
+
+    const options = {
+      ...getLambdaConnectionOptions(this.twentyConfigService),
+      cacheStorageService: this.cacheStorageService,
+    };
+    const awsClient = new LambdaAwsClientService(options);
+
+    this.lambdaDepsLayerServices = {
+      awsClient,
+      layerManager: new LambdaLayerManagerService(
+        options,
+        awsClient,
+        new LambdaToolFunctionsService(options, awsClient),
+        this.applicationDependencyFilesService,
+        this.sdkClientArchiveService,
+        this.cacheLockService,
+        this.workspaceCacheService,
+        this.coreEntityCacheService,
+      ),
+    };
+
+    return this.lambdaDepsLayerServices;
   }
 }

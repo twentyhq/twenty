@@ -35,10 +35,12 @@ import {
   PREBUILT_INSTALL_LOCK_RETRY_MS,
   PREBUILT_INSTALL_LOCK_TTL_MS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { type LambdaLegacyDepsLayerBridgeService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/legacy-deps-layer/lambda-legacy-deps-layer-bridge.service';
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { type LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
 import { buildLambdaResourceTags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-lambda-resource-tags.util';
+import { getLambdaExecutorBuildLockKey } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-executor-build-lock-key.util';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -56,15 +58,6 @@ type ExecutorBuildContext = {
   applicationUniversalIdentifier: string;
 };
 
-const EXECUTOR_BUILD_LOCK_OPTIONS = {
-  ttl: BUILD_LOCK_TTL_MS,
-  ms: BUILD_LOCK_RETRY_MS,
-  maxRetries: BUILD_LOCK_MAX_RETRIES,
-};
-
-const getExecutorBuildLockKey = (logicFunctionId: string) =>
-  `lambda-build:${logicFunctionId}`;
-
 export class LambdaExecutorManagerService {
   private readonly logger = new Logger(LambdaExecutorManagerService.name);
 
@@ -75,6 +68,7 @@ export class LambdaExecutorManagerService {
     >,
     private readonly awsClient: LambdaAwsClientService,
     private readonly layerManager: LambdaLayerManagerService,
+    private readonly legacyDepsLayerBridge: LambdaLegacyDepsLayerBridgeService,
     private readonly cacheLockService: CacheLockService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -115,7 +109,7 @@ export class LambdaExecutorManagerService {
       return;
     }
 
-    const lockKey = getExecutorBuildLockKey(context.flatLogicFunction.id);
+    const lockKey = getLambdaExecutorBuildLockKey(context.flatLogicFunction.id);
 
     try {
       await this.cacheLockService.withLock(
@@ -139,7 +133,11 @@ export class LambdaExecutorManagerService {
           );
         },
         lockKey,
-        EXECUTOR_BUILD_LOCK_OPTIONS,
+        {
+          ttl: BUILD_LOCK_TTL_MS,
+          ms: BUILD_LOCK_RETRY_MS,
+          maxRetries: BUILD_LOCK_MAX_RETRIES,
+        },
       );
     } catch (error) {
       const isLockAcquisitionTimeout =
@@ -164,60 +162,6 @@ export class LambdaExecutorManagerService {
         `Lock acquisition timed out for ${lockKey} but executor is up to date, proceeding`,
       );
     }
-  }
-
-  async migrateDepsLayer(context: ExecutorBuildContext): Promise<boolean> {
-    const {
-      flatLogicFunction,
-      flatApplication,
-      applicationUniversalIdentifier,
-    } = context;
-
-    return this.cacheLockService.withLock(
-      async () => {
-        const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
-
-        if (!isDefined(lambdaExecutor)) {
-          return false;
-        }
-
-        const outdatedDepsLayerArns =
-          await this.layerManager.findOutdatedDepsLayerArns({
-            lambdaExecutor,
-            flatApplication,
-            applicationUniversalIdentifier,
-          });
-
-        if (outdatedDepsLayerArns.length === 0) {
-          return false;
-        }
-
-        const depsLayerArn = await this.layerManager.ensureDepsLayer({
-          flatApplication,
-          applicationUniversalIdentifier,
-        });
-        const keptLayerArns = (lambdaExecutor.Configuration?.Layers ?? [])
-          .map((layer) => layer.Arn)
-          .filter(isDefined)
-          .filter((layerArn) => !outdatedDepsLayerArns.includes(layerArn))
-          .filter((layerArn) => layerArn !== depsLayerArn);
-
-        const lambdaClient = await this.awsClient.getLambdaClient();
-
-        await lambdaClient.send(
-          new UpdateFunctionConfigurationCommand({
-            FunctionName: flatLogicFunction.id,
-            Layers: [depsLayerArn, ...keptLayerArns],
-          }),
-        );
-        await this.awsClient.waitFunctionUpdated(flatLogicFunction.id);
-        await this.clearLambdaExecutorCache(flatLogicFunction);
-
-        return true;
-      },
-      getExecutorBuildLockKey(flatLogicFunction.id),
-      EXECUTOR_BUILD_LOCK_OPTIONS,
-    );
   }
 
   private async refreshBuildContext(
@@ -357,7 +301,8 @@ export class LambdaExecutorManagerService {
       isDefined(lambdaExecutor) &&
       isActive &&
       !flatApplication.isSdkLayerStale &&
-      (await this.layerManager.hasExpectedLayers({
+      // TODO: use layerManager.hasExpectedLayers once the 2-53 upgrade folder is removed
+      (await this.legacyDepsLayerBridge.hasExpectedLayers({
         lambdaExecutor,
         flatApplication,
         applicationUniversalIdentifier,
@@ -377,7 +322,8 @@ export class LambdaExecutorManagerService {
     let depsLayerArn: string;
 
     try {
-      depsLayerArn = await this.layerManager.resolveDepsLayerArn({
+      // TODO: use layerManager.ensureDepsLayer once the 2-53 upgrade folder is removed
+      depsLayerArn = await this.legacyDepsLayerBridge.resolveDepsLayerArn({
         lambdaExecutor,
         flatApplication,
         applicationUniversalIdentifier,

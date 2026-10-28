@@ -11,7 +11,6 @@ import {
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
   type LogicFunctionInstallPrebuiltBundleParams,
-  type LogicFunctionMigrateDepsLayerParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
@@ -22,6 +21,7 @@ import {
   type LambdaDriverOptions,
   LambdaExecutionPhase,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { LambdaLegacyDepsLayerBridgeService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/legacy-deps-layer/lambda-legacy-deps-layer-bridge.service';
 import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { LambdaExecutorManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-executor-manager.service';
 import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
@@ -76,6 +76,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       options,
       this.awsClient,
       this.layerManager,
+      new LambdaLegacyDepsLayerBridgeService(options, this.layerManager),
       options.cacheLockService,
       options.logicFunctionResourceService,
       options.workspaceCacheService,
@@ -123,12 +124,6 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null> {
     return this.executorManager.getInstalledBundleChecksum(flatLogicFunction);
-  }
-
-  async migrateDepsLayer(
-    params: LogicFunctionMigrateDepsLayerParams,
-  ): Promise<boolean> {
-    return this.executorManager.migrateDepsLayer(params);
   }
 
   async execute({

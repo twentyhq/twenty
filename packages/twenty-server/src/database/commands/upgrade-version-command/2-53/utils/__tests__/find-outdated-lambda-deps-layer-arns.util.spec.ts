@@ -1,4 +1,4 @@
-import { findOutdatedLambdaDepsLayerArns } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/find-outdated-lambda-deps-layer-arns.util';
+import { findOutdatedLambdaDepsLayerArns } from 'src/database/commands/upgrade-version-command/2-53/utils/find-outdated-lambda-deps-layer-arns.util';
 
 const toLayerArn = (layerName: string) =>
   `arn:aws:lambda:eu-central-1:000000000000:layer:${layerName}:3`;
