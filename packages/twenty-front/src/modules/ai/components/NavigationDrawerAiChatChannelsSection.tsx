@@ -15,9 +15,7 @@ import { agentChatAccessibleChannelsSelector } from '@/ai/states/selectors/agent
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSectionSeeMoreItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionSeeMoreItem';
-import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useNavigationSectionVisibleItems } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSectionVisibleItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -52,8 +50,6 @@ export const NavigationDrawerAiChatChannelsSection = ({
     PermissionFlagType.AI_SETTINGS,
   );
   const { openAgentChatChannel } = useOpenAgentChatChannel();
-  const isNavigationDrawerContentExpanded =
-    useIsNavigationDrawerContentExpanded();
   const [newChannelName, setNewChannelName] = useState<string | null>(null);
 
   // Listed only for who manages channels, so they keep a way to set them up
@@ -137,7 +133,7 @@ export const NavigationDrawerAiChatChannelsSection = ({
           onClick={toggleShowingAllItems}
         />
       )}
-      {isDefined(newChannelName) ? (
+      {isDefined(newChannelName) && (
         <NavigationDrawerInput
           Icon={IconHash}
           value={newChannelName}
@@ -147,17 +143,6 @@ export const NavigationDrawerAiChatChannelsSection = ({
           onClickOutside={(_event, name) => void commitCreate(name)}
           placeholder={t`Channel name`}
         />
-      ) : (
-        canManageChannels &&
-        isNavigationDrawerContentExpanded && (
-          <NavigationDrawerItem
-            label={t`Add channel`}
-            Icon={IconPlus}
-            variant="tertiary"
-            onClick={startCreate}
-            triggerEvent="CLICK"
-          />
-        )
       )}
     </CollapsibleNavigationDrawerSection>
   );
