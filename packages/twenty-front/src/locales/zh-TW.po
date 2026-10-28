@@ -30299,6 +30299,7 @@ msgid "Watch members demo"
 msgstr "觀看成員示範"
 
 #. js-lingui-id: Rxoy7e
+#: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "我們目前遇到此應用程式的問題，在我們修復期間，功能或效能可能受影響。"
