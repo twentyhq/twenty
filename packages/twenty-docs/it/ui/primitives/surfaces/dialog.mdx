@@ -1,0 +1,199 @@
+---
+title: Dialog
+description: Presenta un'attività mirata sopra la pagina corrente.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DialogReference from '/snippets/ui/generated/surfaces/dialog.mdx';
+
+## Panoramica
+
+Usa `Dialog` per moduli, dettagli e altre attività che si aprono sopra la pagina. Gestisce il focus, la chiusura tramite tastiera, i clic esterni e lo scorrimento. Usa [AlertDialog](/it/ui/primitives/surfaces/alert-dialog) quando l'utente deve rispondere esplicitamente a una decisione.
+
+Questa API è destinata a Twenty UI autonomo e all'applicazione host Twenty. I componenti front devono utilizzare [`openCommandConfirmationModal`](/it/developers/extend/apps/layout/front-components#host-communication-api) dell'SDK invece di eseguire direttamente il rendering di `Dialog` o `AlertDialog`. Anche le finestre di dialogo e i popover nativi del browser sono vietati nel renderer dei componenti front.
+
+<StoryEmbed storyId="ui-surfaces-dialog--display" title="Esempio di dialogo" height={440} />
+
+## Utilizzo
+
+### Stato non controllato
+
+`Root` gestisce la visibilità per impostazione predefinita. Imposta `defaultOpen` per il relativo stato iniziale. Trigger, controlli di chiusura, Escape e clic esterni aggiornano tale stato.
+
+```tsx
+import { Button, Field, Input } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+
+export const AccountDialog = () => (
+  <Dialog.Root defaultOpen={false}>
+    <Dialog.Trigger render={<Button>Edit account</Button>} />
+    <Dialog.Portal>
+      <Dialog.Backdrop />
+      <Dialog.Viewport>
+        <Dialog.Popup>
+          <Dialog.Header>
+            <Dialog.Title>Edit account</Dialog.Title>
+            <Dialog.Description>Update the account details.</Dialog.Description>
+          </Dialog.Header>
+          <Dialog.Body>
+            <Field.Root name="company">
+              <Field.Label>Company name</Field.Label>
+              <Input defaultValue="Acme" />
+            </Field.Root>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Dialog.Close render={<Button variant="outline">Close</Button>} />
+            <Dialog.Close render={<Button>Save</Button>} />
+          </Dialog.Footer>
+        </Dialog.Popup>
+      </Dialog.Viewport>
+    </Dialog.Portal>
+  </Dialog.Root>
+);
+```
+
+## Anatomia
+
+```text
+Dialog.Root
+├── Dialog.Trigger
+└── Dialog.Portal
+    ├── Dialog.Backdrop
+    └── Dialog.Viewport
+        └── Dialog.Popup
+            ├── Dialog.Header
+            │   ├── Dialog.Title
+            │   └── Dialog.Description
+            ├── Dialog.Body
+            └── Dialog.Footer
+                └── Dialog.Close
+```
+
+| Parte                      | Target nativo e ref                                                                                                                                  |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Root`                     | Coordina la visibilità e il comportamento modale. Non esegue il rendering di alcun nodo DOM e non accetta attributi nativi né ref DOM.               |
+| `Trigger`                  | Un pulsante per impostazione predefinita. Apre la finestra di dialogo e fornisce una destinazione per il ripristino dello stato attivo.              |
+| `Portal`                   | Il div del portale. Gestisce il contenitore di destinazione e se il contenuto chiuso rimane montato.                                                 |
+| `Backdrop`                 | Il div dello sfondo sotto il popup. Facoltativo; ometterlo quando non è necessario alcuno sfondo visibile.                                           |
+| `Viewport`                 | Il div di posizionamento attorno al popup.                                                                                                           |
+| `Popup`                    | Il div della finestra di dialogo. Gestisce il contenuto, le dimensioni, le destinazioni dello stato attivo e la semantica della finestra di dialogo. |
+| `Titolo`                   | Un `h2` per impostazione predefinita. Fornisce il nome accessibile. Fornisci `aria-label` in `Popup` quando lo ometti.                               |
+| `Description`              | Un paragrafo per impostazione predefinita. Associa il testo di supporto alla finestra di dialogo.                                                    |
+| `Header`, `Body`, `Footer` | Div facoltativi che dispongono titoli, contenuto e azioni.                                                                                           |
+| `Chiudi`                   | Un pulsante per impostazione predefinita. Fornisce un'azione di chiusura visibile, anche per i lettori di schermo touch.                             |
+
+Assembla esplicitamente `Portal`, `Backdrop`, `Viewport` e `Popup`. Ogni parte DOM accetta i propri attributi nativi, gestori, `className`, `style`, ref e composizione `render`. Una ref punta all'elemento di cui quella parte esegue il rendering. `Popup` non crea un portale, uno sfondo o una viewport.
+
+## Stato controllato
+
+Passa `open` e `onOpenChange` quando l'applicazione gestisce la visibilità. Il callback riceve lo stato richiesto e i dettagli dell'evento Base UI, inclusi `reason`, `event`, `trigger` e `cancel()`. Aggiorna lo stato per accettare una modifica oppure chiama `eventDetails.cancel()` per rifiutarla. `onOpenChangeComplete` viene eseguito al termine dell'animazione di apertura o chiusura.
+
+```tsx
+import { useState } from 'react';
+import { Button, Field, Input } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+
+export const AccountDialog = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger render={<Button>Edit account</Button>} />
+      <Dialog.Portal>
+        <Dialog.Backdrop />
+        <Dialog.Viewport>
+          <Dialog.Popup>
+            <Dialog.Header>
+              <Dialog.Title>Edit account</Dialog.Title>
+              <Dialog.Description>
+                Update the account details.
+              </Dialog.Description>
+            </Dialog.Header>
+            <Dialog.Body>
+              <Field.Root name="company">
+                <Field.Label>Company name</Field.Label>
+                <Input defaultValue="Acme" />
+              </Field.Root>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Dialog.Close render={<Button variant="outline">Close</Button>} />
+              <Dialog.Close render={<Button>Save</Button>} />
+            </Dialog.Footer>
+          </Dialog.Popup>
+        </Dialog.Viewport>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+};
+```
+
+Per un modulo asincrono, mantieni aperta la finestra di dialogo durante l'invio. Chiudila dopo l'operazione riuscita e mostra gli errori all'interno della finestra di dialogo.
+
+## Composizione
+
+`Trigger` e `Close` accettano `render` per comporsi con `Button`, come mostrato sopra. I wrapper personalizzati devono [inoltrare le props e i ref forniti](/it/ui/primitives/overview#custom-components). Le parti DOM mantengono i nomi delle classi, gli stili e i contratti callback `render` di Base UI che tengono conto dello stato. `Header`, `Body` e `Footer` mantengono il proprio layout con stile e la composizione div nativa.
+
+Annida un altro `Dialog.Root` all'interno di un popup per aprire una seconda finestra di dialogo. La chiusura della finestra di dialogo annidata restituisce il focus al relativo trigger nel componente padre.
+
+Per aprire una finestra di dialogo da trigger esterni a `Root`, crea una volta un handle con `Dialog.createHandle\<TPayload>()` e passalo a `handle` sia in `Root` sia in ogni `Trigger`. I valori di `payload` del trigger sono disponibili nella funzione di rendering di `Root`. `Dialog.Handle` e il tipo pubblico `DialogHandle` espongono il contratto dell'handle installato:
+
+| Membro                     | Scopo                                                    |
+| -------------------------- | -------------------------------------------------------- |
+| `open(triggerId)`          | Apre con un trigger corrispondente come trigger attivo.  |
+| `open(null)`               | Apre senza associare un trigger.                         |
+| `openWithPayload(payload)` | Apre con un payload tipizzato e senza trigger associato. |
+| `close()`                  | Richiede la chiusura.                                    |
+| `isOpen`                   | Indica se la finestra di dialogo associata è aperta.     |
+
+Le azioni imperative hanno effetto solo mentre il Root associato è montato. `actionsRef` di Root espone anche `close()` e `unmount()` per un controllo esplicito della transizione. Per controllare un'animazione di chiusura esterna, chiama `eventDetails.preventUnmountOnClose()` in `onOpenChange`, quindi chiama l'azione `unmount()` al termine dell'animazione.
+
+`Title` usa `Heading` e per impostazione predefinita è un `h2` con testo grande, colore del testo primario, allineamento centrato e spacing-4 sotto di esso. Usa `level` per modificare il livello dell'intestazione indipendentemente da `size`, oppure `color` per modificarne il colore del testo. `className`, `style`, i ref e `render` nativi vengono inoltrati all'intestazione. Mantieni un elemento di intestazione quando usi `render`. `Description` è centrata come `Title`; AlertDialog mantiene entrambi allineati a sinistra.
+
+`Popup` non ha alcuna spaziatura interna. `Header`, `Body` e `Footer` forniscono il rientro, quindi il contenuto posizionato direttamente in `Popup` aderisce ai suoi bordi.
+
+## Focus, scorrimento e chiusura
+
+`Root.modal` controlla il confine di interazione:
+
+| Valore               | Focus                                          | Scorrimento della pagina e interazione esterna                             |
+| -------------------- | ---------------------------------------------- | -------------------------------------------------------------------------- |
+| `true` (predefinito) | Bloccato all'interno della finestra di dialogo | Lo scorrimento della pagina e l'interazione esterna sono bloccati.         |
+| `"trap-focus"`       | Intrappolato nella finestra di dialogo         | Lo scorrimento della pagina e l'interazione esterna rimangono disponibili. |
+| `falso`              | Può uscire dalla finestra di dialogo           | Lo scorrimento della pagina e l'interazione esterna rimangono disponibili. |
+
+Ometti `Backdrop` quando non è necessario alcuno sfondo visibile. Per una finestra di dialogo non modale la cui viewport deve lasciare passare gli eventi del puntatore alla pagina, utilizza `\<Dialog.Viewport data-backdrop-hidden="true">`; Popup rimane interattivo. La sola omissione dello sfondo visivo non modifica `Root.modal`.
+
+Imposta `Popup.initialFocus` o `Popup.finalFocus` su un ref o un callback per scegliere le destinazioni del focus; `false` disabilita quello spostamento automatico del focus. I callback dello stato attivo ricevono il tipo di interazione e mantengono il comportamento di restituzione booleano, elemento, null e undefined di Base UI. La chiusura normalmente ripristina lo stato attivo sul trigger o sull'elemento precedentemente attivo.
+
+`Root.disablePointerDismissal` impedisce ai clic esterni di richiedere la chiusura. Per impedire la chiusura con Escape, annulla la modifica `escape-key` in `onOpenChange`. Fornisci sempre un modo visibile per chiudere una finestra di dialogo modale.
+
+## Dimensioni e portali
+
+`Popup.size` accetta `sm`, `compact`, `md`, `lg`, `xl` e `fullscreen` e per impostazione predefinita è `md`. Il contenuto lungo scorre all'interno del popup. La larghezza è limitata alla viewport.
+
+Imposta `Portal.container` per scegliere una destinazione:
+
+| Valore                  | Risoluzione                                                                                                                                           |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Omettere o `undefined`  | Utilizza il contenitore del tema con ambito più vicino. In assenza di uno, Base UI utilizza il portale padre o il body del documento.                 |
+| Elemento o `ShadowRoot` | Utilizza quella destinazione esplicita invece dell'ambito del tema.                                                                                   |
+| Rif.                    | Base UI risolve il relativo elemento corrente. Una ref il cui valore corrente è null utilizza come fallback il portale padre o il body del documento. |
+| `null`                  | Attende senza montare. Fornisci una destinazione in un rendering successivo per montare.                                                              |
+
+`Portal.keepMounted` conserva il contenuto e lo stato del modulo quando è chiuso. `Viewport` e `Popup` trasferiscono la direzione del testo fornita in un contenitore esterno; le relative props `dir` esplicite hanno la precedenza. Senza un provider di direzione o `dir` esplicito, ereditano dalla destinazione. Vedi [tematizzazione](/it/ui/theming) e [DirectionProvider](/it/ui/primitives/layout/direction-provider).
+
+Personalizza `Backdrop` e `Viewport` tramite le rispettive props. I relativi attributi nativi, gestori, ref e `render` si applicano a tali elementi indipendentemente da Popup. `forceRender` di Backdrop mantiene visibile lo sfondo di una finestra di dialogo nidificata quando necessario. Lo stato di apertura e transizione di Base UI rimane disponibile per gli stili che tengono conto dello stato e i callback di rendering.
+
+## Migrazione
+
+Racchiudi il contenuto `Dialog.Popup` esistente in `Dialog.Portal` e `Dialog.Viewport`, quindi aggiungi un elemento fratello `Dialog.Backdrop` all'interno di Portal. Sposta `container` e `keepMounted` da Popup a Portal. Sposta le precedenti props `backdrop` su Backdrop; sostituisci `backdrop={false}` omettendo Backdrop. Sposta `viewportProps` su Viewport, mantenendo `data-backdrop-hidden="true"` quando la viewport deve lasciare passare gli eventi del puntatore esterni. Mantieni `size`, `initialFocus`, `finalFocus`, gli attributi popup nativi e le ref popup su Popup. Le props dell'assemblaggio Popup combinato sono rimosse.
+
+Root, Trigger, Close, Title, Description, Header, Body, Footer e gli handle esistenti mantengono i propri ruoli. Le props delle parti pubbliche, lo stato, le azioni e i tipi dei dettagli degli eventi vengono esportati da `twenty-ui/primitives/surfaces`.
+
+## Props
+
+<DialogReference />
+
+<PageBanner illustration="layout" />

@@ -1,0 +1,105 @@
+---
+title: صف التفاصيل
+description: حاذِ تسميات التفاصيل مع القيم الملتفة والإجراءات الاختيارية.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DetailsRowReference from '/snippets/ui/generated/components/data-display/details-row.mdx';
+
+## نظرة عامة
+
+يقترن `DetailsRow` بتسمية وقيمة في قائمة وصف. أضف أيقونة زخرفية، أو عناصر قيم متعددة، أو إجراءً يوفره تطبيقك.
+
+<StoryEmbed storyId="ui-data-display-detailsrow--display" title="مثال على صف التفاصيل" height={220} />
+
+## استخدام
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+import { IconNotes, IconTag, IconUser } from 'twenty-ui/icon';
+import { Chip, Tag } from 'twenty-ui/primitives/data-display';
+import { Card } from 'twenty-ui/primitives/surfaces';
+
+export const CollectionDetails = () => (
+  <Card.Root>
+    <Card.Content>
+      <dl style={{ display: 'grid', gap: 8, margin: 0 }}>
+        <DetailsRow label="Owner" startIcon={<IconUser size={16} />}>
+          <Chip>Jordan Lee</Chip>
+        </DetailsRow>
+        <DetailsRow label="Categories" startIcon={<IconTag size={16} />}>
+          <Tag color="blue">Research</Tag>
+          <Tag color="purple">Design</Tag>
+        </DetailsRow>
+        <DetailsRow label="Description" startIcon={<IconNotes size={16} />}>
+          A shared collection of customer research and design decisions.
+        </DetailsRow>
+      </dl>
+    </Card.Content>
+  </Card.Root>
+);
+```
+
+ضع كل صف مباشرةً داخل `dl`. مرر التسمية عبر `label` وقيمتها عبر `children`. يتولى التطبيق مسؤولية التسميات، والتعريب، والقيم المنسقة، والعناصر النائبة للقيم المفقودة.
+
+## المحاذاة والالتفاف
+
+تلتف التسميات والقيم بدلاً من اقتطاعها. تلتف عناصر القيم المتعددة، مثل الشرائح أو العلامات، إلى أسطر إضافية. تحاذي الصفوف محتواها عند الأعلى مع ازدياد حجم ذلك المحتوى.
+
+يكون العمود الخاص بالتسمية مضبوطًا افتراضيًا على `7rem`، ويُحدَّد بحد أقصى يبلغ 40% من عرض الصف لإتاحة مساحة للقيمة في الحاويات الضيقة. عيّن `labelWidth` نفسه في الصفوف الشقيقة لضبط محاذاتها. تستخدم الأرقام وحدات البكسل؛ كما تُدعم أيضًا أطوال CSS مثل `'8rem'`.
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+
+export const PublicationDetails = () => (
+  <dl style={{ display: 'grid', gap: 8, margin: 0, maxWidth: 360 }}>
+    <DetailsRow label="Primary contributor" labelWidth={128}>
+      Jordan Lee
+    </DetailsRow>
+    <DetailsRow label="Review notes" labelWidth={128}>
+      Include findings from the customer interviews before publication.
+    </DetailsRow>
+  </dl>
+);
+```
+
+## الإجراءات
+
+استخدم `action` لعنصر تحكم بجانب القيمة. لا يضيف الصف سلوك التحرير أو النقر أو لوحة المفاتيح. وفّر عنصر تحكم باسم يمكن الوصول إليه، واربط معالجه بسلوك التطبيق.
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconCopy } from 'twenty-ui/icon';
+
+export const ContactDetails = ({ onCopy }: { onCopy: () => void }) => (
+  <dl style={{ margin: 0 }}>
+    <DetailsRow
+      label="Email"
+      action={
+        <LightIconButton aria-label="Copy email address" onClick={onCopy}>
+          <IconCopy size={16} />
+        </LightIconButton>
+      }
+    >
+      jordan@example.com
+    </DetailsRow>
+  </dl>
+);
+```
+
+## التركيب وإمكانية الوصول
+
+يعرض كل صف تجميع `div` مع تسمية `dt` و`dd` يحتوي على القيمة والإجراء الاختياري. يوفّر المستدعي عنصر `dl` المُضمِّن. وفّر نصًا ذا معنى في التسمية. تُخفى `startIcon` الاختيارية عن التقنية المساعدة، ويتحكم المستدعي في أبعادها.
+
+تستهدف السمات الأصلية و`className` و`style` و`ref` عنصر `div` الخارجي. عند استخدام `render` مع غلاف مخصص، أبقِ عنصر `div` هذا مباشرةً داخل `dl` ومرّر جميع الخصائص الموفَّرة والمرجع. أبقِ الإجراءات داخل موضعها لكي يظل المصطلح والتعريف ابنين مباشرين للصف.
+
+استخدم [MetricRow](/ar/ui/components/data-display/metric-row) لمقياس مع تقدم اختياري. يوفّر `DetailsRow` تخطيط التسمية والقيمة والإجراء فقط.
+
+## الإزاحة
+
+<DetailsRowReference />
+
+<PageBanner illustration="page-cover-input" />

@@ -1,12 +1,15 @@
 ---
 title: Docker Compose
+description: تشغيل عشرون في الإنتاج مع مكوّن Docker.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
 
 <Warning>
 حاويات Docker مخصصة للاستضافة في بيئة الإنتاج أو للاستضافة الذاتية. للمساهمة، يُرجى الاطلاع على [الإعداد المحلي](/ar/developers/contribute/capabilities/local-setup).
 </Warning>
-
-## نظرة عامة
 
 يوفر هذا الدليل تعليمات خطوة بخطوة لتثبيت وتكوين تطبيق "Twenty" باستخدام Docker Compose. الهدف هو جعل العملية مباشرة ومنع المشاكل الشائعة التي يمكن أن تؤدي إلى تعطيل إعدادك.
 
@@ -27,14 +30,22 @@ title: Docker Compose
 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-لتثبيت إصدار محدد أو فرع:
+لتثبيت إصدار محدد:
 
 ```bash
-VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+VERSION=v2.38.1 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-* استبدل x.y.z برقم الإصدار المطلوب.
-* استبدل branch-name بالاسم الفرعي المطلوب تثبيته.
+* يجب أن يكون `VERSION` وسم إصدار كاملًا منشورًا على [Docker Hub](https://hub.docker.com/r/twentycrm/twenty/tags)، مثل `v2.38.1`. لا تُقبل الأسماء المستعارة مثل `v2` أو `latest`.
+* يتم جلب `docker-compose.yml` المطابق من وسم git `twenty/<version>`، لذا لا يمكن تثبيت الإصدارات الأقدم من هذه الوسوم (v2.9.0 والإصدارات الأقدم) باستخدام البرنامج النصي.
+
+لجلب ملفات الإعدادات من فرع بدلًا من ذلك، على سبيل المثال لاختبار التغييرات غير المنشورة:
+
+```bash
+BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* استبدل branch-name بالفرع الذي سيتم جلب `docker-compose.yml` و`.env.example` منه. تظل الصورة افتراضيًا تستخدم أحدث إصدار ما لم يتم أيضًا تعيين `VERSION`.
 
 ## الخيار 2: خطوات يدوية
 
@@ -72,11 +83,19 @@ VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.
 
 4. **تعيين كلمة مرور PostgreSQL**
 
-   قم بتحديث قيمة `PG_DATABASE_PASSWORD` في ملف .env باستخدام كلمة مرور قوية بدون أحرف خاصة.
+   قم بتحديث قيمة `PG_DATABASE_PASSWORD` في ملف .env باستخدام كلمة مرور قوية بدون أحرف خاصة. تُدرج كلمة المرور دون ترميز في عنوان URL لاتصال Postgres، لذا فإن أحرفًا مثل `@` و`/` و`#` أو `%` تُعطّل سلسلة الاتصال. أنشئ واحدًا باستخدام:
+
+   ```bash
+   openssl rand -hex 32
+   ```
 
    ```ini
    PG_DATABASE_PASSWORD=my_strong_password
    ```
+
+<Note>
+تصل المتغيرات التي يمرّرها `docker-compose.yml` دون قيمة افتراضية `:-`، مثل `SERVER_URL` ومتغيرات `STORAGE_S3_*`، إلى الخادم كسلسلة فارغة عندما تكون فارغة أو مفقودة في `.env`، ويتعامل الخادم مع السلسلة الفارغة باعتبارها قيمة مُعدّة بدلًا من اعتبارها غير معيّنة. أبقِ `SERVER_URL` معيّنًا، وعند استخدام `STORAGE_TYPE=S_3`، عيّن كل متغير `STORAGE_S3_*` مطلوب: إذ إن `STORAGE_S3_NAME` الفارغ يُعطّل كل عملية رفع. تعود المتغيرات ذات القيمة الافتراضية في `docker-compose.yml`، مثل أجزاء `PG_DATABASE_*` و`REDIS_URL`، إلى تلك القيمة الافتراضية عندما تكون فارغة أو مفقودة.
+</Note>
 
 ### الخطوة 2: الحصول على ملف Docker Compose
 
@@ -125,6 +144,8 @@ SSL (HTTPS) مطلوب لعمل ميزات معينة في المتصفح بشك
 على سبيل المثال، قد يطلب API للحافظة السياق الآمن - بعض الميزات مثل أزرار النسخ في جميع أنحاء التطبيق قد لا تعمل بدون تمكين HTTPS.
 
 نوصي بشدة بإعداد Twenty خلف وكيل عكسي مع إنهاء SSL للأمان والوظيفية المثلى.
+
+<Tip>قبل إتاحة Twenty على الإنترنت، اقرأ [تأمين مثيلك](/ar/developers/self-host/capabilities/security). يمكن لمعظم الفرق إبقاء التطبيق خاصًا وفتح بضعة مسارات فقط.</Tip>
 
 #### تكوين `SERVER_URL`
 
@@ -259,3 +280,5 @@ docker compose up -d
 <Tip>
   تُفضّل عدم تشغيل وصيانة Twenty بنفسك؟ [اعثر على شريك استضافة Twenty معتمد](https://twenty.com/partners/list?categories=HOSTING\&ref=docs-docker-compose) لنشر واستضافة وإدارة مثيلك من البداية إلى النهاية. *(أو تواصل مع فريقنا: [contact@twenty.com](mailto:contact@twenty.com).)*
 </Tip>
+
+<PageBanner illustration="dev-self-host" />

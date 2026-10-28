@@ -17,6 +17,7 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "validationRule",
   "viewSort",
   "index",
+  "mcpServer",
   "rowLevelPermissionPredicateGroup",
   "settingsMenuItem",
   "viewGroup",

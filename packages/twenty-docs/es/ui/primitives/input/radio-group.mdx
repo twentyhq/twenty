@@ -1,0 +1,142 @@
+---
+title: RadioGroup
+description: Gestiona una única selección entre un conjunto de opciones de radio.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import RadioGroupReference from '/snippets/ui/generated/input/radio-group.mdx';
+
+## Resumen
+
+`RadioGroup` coordina el valor, la navegación con el teclado y el envío de formularios de sus elementos secundarios [Radio](/es/ui/primitives/input/radio).
+
+<StoryEmbed storyId="ui-input-radiogroup--display" title="Ejemplo de RadioGroup" height={110} />
+
+## "Uso"
+
+### Estado no controlado
+
+Usa `defaultValue` para establecer la frecuencia de facturación inicial. El grupo controla los cambios posteriores.
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingFrequency = () => (
+  <RadioGroup
+    name="billingFrequency"
+    defaultValue="monthly"
+    aria-label="Billing frequency"
+  >
+    <Radio value="monthly">Monthly</Radio>
+    <Radio value="yearly">Yearly</Radio>
+  </RadioGroup>
+);
+```
+
+El `name` del grupo identifica el valor seleccionado al enviar el formulario. Proporciona al grupo un nombre accesible, además de etiquetar cada radio.
+
+### Diseño horizontal
+
+Los grupos usan una columna vertical de forma predeterminada. Establece `orientation="horizontal"` para una fila. La prop controla el diseño visual mediante `data-orientation`; no establece `aria-orientation` ni cambia la navegación con teclado. Las teclas de flecha horizontales y verticales conservan el comportamiento existente de Base UI, incluida la navegación de derecha a izquierda mediante [DirectionProvider](/es/ui/primitives/layout/direction-provider).
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const HorizontalBillingFrequency = () => (
+  <RadioGroup
+    orientation="horizontal"
+    name="billingFrequency"
+    defaultValue="monthly"
+    aria-label="Billing frequency"
+  >
+    <Radio value="monthly">Monthly</Radio>
+    <Radio value="yearly">Yearly</Radio>
+  </RadioGroup>
+);
+```
+
+<StoryEmbed storyId="ui-input-radiogroup--horizontal" title="RadioGroup horizontal" height={80} />
+
+El espacio predeterminado se mantiene igual en cualquier dirección.
+
+## Anatomía
+
+Coloca cada `Radio` o `Radio.Root` dentro del grupo y asócialo con una etiqueta. Usa `Radio.Indicator` para crear un indicador personalizado. `RadioGroup` y `Radio` son exportaciones independientes.
+
+```text
+fieldset
+├── legend
+└── RadioGroup
+    ├── label
+    │   └── Radio
+    └── label
+        └── Radio
+```
+
+| Parte                | Requisito                    | Propósito                                                                             |
+| -------------------- | ---------------------------- | ------------------------------------------------------------------------------------- |
+| `RadioGroup`         | Obligatorio                  | Gestiona la selección, la navegación con el teclado y la integración con formularios. |
+| `Radio`              | Uno por opción               | Proporciona una opción con un `value` distinto.                                       |
+| `label`              | Recomendado para cada opción | Proporciona un nombre visible en el que se puede hacer clic para su botón de opción.  |
+| `fieldset`, `legend` | Agrupación opcional          | Agrupa controles relacionados bajo un encabezado visible.                             |
+
+Proporcione al grupo su propio nombre accesible mediante `aria-label` o `aria-labelledby`. En los ejemplos siguientes, `aria-labelledby` conecta el grupo con la leyenda. Cada botón de opción también necesita su propio nombre. Coloque las propiedades de selección en `RadioGroup` y los valores de opción en `Radio`.
+
+## Estado controlado
+
+Pasa `value` y actualízalo con `onValueChange` para controlar la misma frecuencia de facturación en el estado de React. La selección pertenece al grupo, no a los controles de radio individuales.
+
+```tsx
+import { useId, useState } from 'react';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingFrequency = () => {
+  const labelId = useId();
+  const [billingFrequency, setBillingFrequency] = useState('monthly');
+
+  return (
+    <fieldset>
+      <legend id={labelId}>Billing frequency</legend>
+      <RadioGroup
+        name="billingFrequency"
+        value={billingFrequency}
+        onValueChange={setBillingFrequency}
+        aria-labelledby={labelId}
+      >
+        <label>
+          <Radio value="monthly" />
+          Monthly
+        </label>
+        <label>
+          <Radio value="yearly" />
+          Yearly
+        </label>
+      </RadioGroup>
+    </fieldset>
+  );
+};
+```
+
+`onValueChange` recibe el siguiente valor y los detalles del evento. El tipo de valor genérico se infiere de las props. Usa `disabled` en el grupo para deshabilitar todas las opciones, o en un radio individual para deshabilitar una opción. Las teclas de flecha permiten navegar y seleccionar opciones habilitadas; Tab sale del grupo. La versión instalada de Base UI admite teclas de flecha tanto horizontales como verticales. RadioGroup añade la prop `orientation` solo visual sin cambiar ese contrato de teclado.
+
+## Integración nativa y detalles de eventos
+
+`RadioGroup` representa un div de forma predeterminada. Las props nativas y `ref` se dirigen a ese elemento; `render` compone otro elemento y cambia el destino real de ref. `inputRef` se dirige a la entrada oculta representativa de un radio secundario, usando la opción habilitada seleccionada o una alternativa habilitada. Los tipos públicos incluyen los genéricos `RadioGroupProps`, `RadioGroupState`, `RadioGroupChangeEventReason` y `RadioGroupChangeEventDetails`.
+
+La callback recibe los detalles del evento original, incluidos el `event` nativo, `reason`, `cancel()` y `allowPropagation()`. Cancela un cambio propuesto antes de actualizar el estado controlado cuando se deba rechazar la elección.
+
+Mantén `name`, `form`, `required`, `disabled` y `readOnly` en el grupo para el contrato de formularios existente de Base UI. El valor seleccionado se envía con `name`; los grupos deshabilitados se excluyen y los grupos de solo lectura conservan su selección. `form` admite un grupo fuera de su formulario propietario. La versión instalada no restaura automáticamente el estado del grupo al restablecer un formulario nativo. Restablece el estado controlado desde el controlador `onReset` del formulario cuando tu flujo de trabajo lo requiera.
+
+En componentes front aislados, coloca el grupo dentro de su formulario propietario. El renderizador reenvía la validación de `required` y bloquea las referencias explícitas a `form`, que de otro modo se resolverían en todo el documento host.
+
+[SegmentedControl](/es/ui/components/input/segmented-control) es un ajuste preestablecido práctico ensamblado a partir de estas primitivas para una elección exclusiva breve. Usa semántica de radio y requiere un nombre de grupo accesible. Las pestañas y la navegación entre paneles de pestañas son controles independientes.
+
+## "Props"
+
+La referencia se genera a partir de los tipos de componentes públicos. Los atributos nativos, incluidos los nombres accesibles y los controladores de eventos, también se aceptan en las partes que renderizan elementos.
+
+<RadioGroupReference />
+
+<PageBanner illustration="page-cover-switch" />

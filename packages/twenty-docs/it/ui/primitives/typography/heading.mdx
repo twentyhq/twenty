@@ -1,0 +1,43 @@
+---
+title: Intestazione
+description: Visualizza intestazioni semantiche con dimensioni visive indipendenti.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import HeadingReference from '/snippets/ui/generated/typography/heading.mdx';
+
+## Panoramica
+
+`Heading` esegue il rendering di un `h2` per impostazione predefinita. Usa `children` per il relativo contenuto, `level` per la struttura del documento e `size` per l'aspetto.
+
+<StoryEmbed storyId="ui-typography-heading--display" title="Esempio di intestazione" height={90} />
+
+## Utilizzo
+
+Scegli i livelli nell'ordine del documento. Una dimensione visiva più piccola non modifica il livello annunciato dalla tecnologia assistiva.
+
+```tsx
+import { Heading } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceTitle = () => <Heading>Workspace settings</Heading>;
+```
+
+Le dimensioni `xs`, `sm`, `md`, `lg`, `xl` e `xxl` utilizzano i token dei caratteri corrispondenti. Le dimensioni maggiori utilizzano rispettivamente `1.54rem` e `1.85rem`. Tutte le dimensioni mantengono un peso semigrassetto e un'interlinea di `1.1`. `Section.Header` e `Dialog.Title` accettano gli stessi valori di dimensione. Le intestazioni non hanno margini esterni; la disposizione circostante gestisce la spaziatura.
+
+## Colore e composizione
+
+<StoryEmbed storyId="ui-typography-heading--catalog" title="Dimensioni e colori dei titoli" height={480} />
+
+Usa `color="secondary"` per le intestazioni meno prominenti. È disponibile anche `tertiary`, ma il relativo contrasto dipende dalla dimensione del carattere, dal tema e dallo sfondo. Verifica la leggibilità quando lo usi.
+
+Gli attributi nativi, gli stili, i nomi di classe e i ref vengono passati all'intestazione. Usa `render` per comporre con un elemento o componente personalizzato; tale elemento è responsabile di preservare la semantica dell'intestazione.
+
+Per un'intestazione con testo di supporto o azioni, utilizza [Section](/it/ui/components/layout/section).
+
+## Props
+
+<HeadingReference />
+
+<PageBanner illustration="section-document-generator" />

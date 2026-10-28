@@ -1364,7 +1364,7 @@ __metadata:
     use-debounce: "npm:^10.0.0"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.1.12"
-    zod: "npm:^4.1.11"
+    zod: "npm:^4.6.6"
   languageName: unknown
   linkType: soft
 
@@ -4021,9 +4021,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^4.1.11":
-  version: 4.5.2
-  resolution: "zod@npm:4.5.2"
-  checksum: 10c0/e54a27401dc7993f96232b5a4e889017bb6a00d8d23a2258f40704076243ed9659d09ea3ae074538fb548e960c4d6380301f879fca6bd31547b7b69745abf0f5
+"zod@npm:^4.1.11, zod@npm:^4.6.6":
+  version: 4.6.7
+  resolution: "zod@npm:4.6.7"
+  checksum: 10c0/4ce2eb14034317b7254e347ca37b5ad591cf8333147030cf05b9b5d31692d45073f7f2747aa50cf8c6b29012194d2b22978cecc89969cf34a0d18e89d0ee7d7b
   languageName: node
   linkType: hard

@@ -3,12 +3,18 @@ title: Configurația aplicației
 description: Declarați identitatea aplicației, rolul implicit, variabilele și metadatele din marketplace cu `defineApplication`.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Fiecare aplicație trebuie să aibă exact un apel `defineApplication`. Acesta declară:
 
 * **Identitate** — identificator universal, nume de afișare, descriere.
 * **Permisiuni** — sub ce rol rulează funcțiile logice și componentele front-end ale acesteia.
+* **Capabilități media** *(opțional)*: acces la microfon sau cameră solicitat de componentele front-end, aprobat separat de permisiunile de rol.
 * **Variabile** *(opțional)* — perechi cheie–valoare expuse codului dvs. ca variabile de mediu.
 * **Hook-uri de pre-instalare / post-instalare / dezinstalare** *(opțional)* — vedeți [Funcții logice](/ro/developers/extend/apps/logic/logic-functions).
+* **Facturare** *(opțional)* — `billing.recurring` pentru taxele de abonament pe care platforma le percepe automat, `billing.operations` pentru operațiunile pentru care aplicația dvs. percepe credite și `billing.description` pentru marketplace; consultați [Perceperea creditelor](/ro/developers/extend/apps/logic/credits).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -20,9 +26,17 @@ export default defineApplication({
   applicationVariables: {
     DEFAULT_RECIPIENT_NAME: {
       universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      label: 'Default recipient name',
       description: 'Default recipient name for postcards',
       value: 'Jane Doe',
       isSecret: false,
+    },
+    API_KEY: {
+      universalIdentifier: '6b1f5a02-7c4d-4a19-9e63-2f0c8a5d1b47',
+      label: 'API key',
+      description: 'Key used to reach the postcard provider',
+      isSecret: true,
+      isRequired: true,
     },
   },
 });
@@ -30,14 +44,40 @@ export default defineApplication({
 
 Notițe:
 
-* Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți. Generați-le o singură dată și mențineți-le stabile între sincronizări.
-* `applicationVariables` devin variabile de mediu pentru funcțiile și componentele front-end. În funcțiile de logică (server-side), acestea sunt disponibile ca `process.env.VARIABLE_NAME`. În componentele front-end, folosește `getApplicationVariable('VARIABLE_NAME')` din `twenty-sdk/front-component`. Variabilele marcate cu `isSecret: true` sunt injectate doar în funcțiile de logică. Componentele front-end primesc doar variabile non-secrete.
+* Câmpurile `universalIdentifier` sunt UUID-uri pe care le generați o singură dată și pe care le dețineți. Mențineți-le stabile între sincronizări. Propriul `universalIdentifier` al aplicației trebuie să fie un UUID valid: serverul respinge un manifest al cărui identificator nu este un UUID valid. Este unic în întreaga instanță și este asociat spațiului de lucru care deține înregistrarea sa, astfel încât numai acel spațiu de lucru poate sincroniza aplicația — consultați [Proprietatea înregistrării](/ro/developers/extend/apps/operations/publishing#registration-ownership).
+* `applicationVariables` acceptă un `label` opțional — un nume ușor de înțeles pentru utilizator, afișat în pagina de setări a aplicației în locul cheii brute a variabilei.
+* `applicationVariables` devin variabile de mediu pentru funcțiile și componentele front-end. În funcțiile de logică (server-side), acestea sunt disponibile ca `process.env.VARIABLE_NAME`. În componentele front-end, folosește `getApplicationVariable('VARIABLE_NAME')` din `twenty-sdk/front-component`. Variabilele marcate cu `isSecret: true` sunt injectate doar în funcțiile de logică. Componentele front-end primesc doar variabile non-secrete. O variabilă cu `scope: 'USER'` păstrează valoarea membrului pentru care rulează codul: consultați [Variabilele spațiului de lucru și ale utilizatorului](#workspace-and-user-variables).
+* Aplicația ta poate, de asemenea, să citească și să actualizeze propriile valori ale variabilelor în timpul rulării, astfel salvează o componentă personalizată de setări ceea ce a introdus utilizatorul: consultă [Citirea și actualizarea variabilelor în timpul rulării](/ro/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime). O aplicație accesează doar propriile variabile, în propriul spațiu de lucru.
 * Rolul implicit este detectat automat din fișierul de rol marcat cu [`defineApplicationRole()`](/ro/developers/extend/apps/config/roles) — nu este necesar să faci referire la el în `defineApplication()`.
-* Funcțiile de pre-instalare, post-instalare și dezinstalare sunt detectate automat în timpul construirii manifestului — nu este nevoie să faceți referire la ele în `defineApplication()`.
+* Funcțiile de pre-instalare, post-instalare și dezinstalare, precum și verificarea stării de sănătate, sunt detectate automat în timpul construirii manifestului — nu este nevoie să faceți referire la ele în `defineApplication()`.
 * Transmiterea explicită a `defaultRoleUniversalIdentifier` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`.
 * `serverVariables` sunt configurări și secrete la nivel de instanță (de ex. chei API). Spre deosebire de `applicationVariables`, ele nu declară nicio valoare în manifest — operatorul spațiului de lucru le completează din setările aplicației și sunt injectate în funcțiile de logică doar după ce au fost setate.
+* O aplicație își poate raporta propria stare de configurare cu [`defineHealthCheck()`](/ro/developers/extend/apps/logic/logic-functions#health-check), pentru aspecte pe care numai aplicația le poate cunoaște — o cheie prezentă, dar revocată, un cont terț cu planul greșit. `isRequired` acoperă ceea ce Twenty poate vedea singur; verificarea stării de sănătate acoperă restul.
+* Ambele tipuri de variabile acceptă `isRequired: true`. O variabilă obligatorie pe care spațiul de lucru nu a completat-o încă lasă aplicația neconfigurată: pagina sa de setări afișează un banner care indică variabilele lipsă, cu un buton care duce la fila în care acestea sunt configurate. Marcați ca obligatoriu doar ceea ce aplicația chiar nu poate rula fără — o variabilă opțională cu o valoare implicită rezonabilă ar trebui să rămână opțională.
 * Ambele tipuri de variabile acceptă `isDeprecated: true`. Folosește-l pentru a retrage o variabilă în loc să o ștergi: păstrarea cheii declarate conservă valoarea stocată (ștergerea ei distruge valoarea introdusă de operator), iar variabila este în continuare injectată, astfel încât codul tău poate reveni la ea — `process.env.NEW_API_KEY ?? process.env.API_KEY`. O variabilă învechită dispare din setările aplicației odată ce nu mai are nicio valoare și nu este niciodată luată în calcul la verificarea configurației aplicației, astfel încât `isDeprecated` are prioritate față de `isRequired`.
-* Pentru a afișa o interfață de configurare personalizată în fila **Settings** a aplicației (în locul secțiunii implicite de configurare a variabilelor), declară un front component cu [`defineSettingsFrontComponent()`](/ro/developers/extend/apps/layout/front-components#custom-settings-component) într-un fișier separat. Este permis doar unul per aplicație. Secțiunile gestionate de sistem (auto-upgrade, App URL, connections) rămân întotdeauna vizibile.
+* Twenty setează aceste nume pentru fiecare rulare a funcției logice, deci sunt rezervate: `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` și `APPLICATION_ID`. Un manifest care declară una dintre acestea ca variabilă de aplicație sau de server este respins atunci când aplicația este sincronizată sau publicată.
+* Pentru a adăuga propriile intrări în meniul de setări al aplicației (în locul paginii generate **Variables**), declară o componentă front și direcționează un [`defineSettingsMenuItem()`](/ro/developers/extend/apps/layout/front-components#settings-menu-items) către aceasta, într-un fișier separat. Declară oricâte ai nevoie și ordonează-le cu `position`; `scope` plasează un element în setările spațiului de lucru sau în setările proprii ale fiecărui membru. Elementul **General** gestionat de sistem (actualizare automată, URL-ul aplicației, conexiuni) este întotdeauna primul, iar URL-ul aplicației se afișează numai când aplicația are funcții declanșate prin HTTP.
+
+## Capabilități media solicitate
+
+Setați `requestedCapabilities` când o componentă front-end utilizează `navigator.mediaDevices.getUserMedia()`. Matricea opțională acceptă `'microphone'`, `'camera'` sau ambele. Omiteți-o sau utilizați o matrice goală când aplicația nu are nevoie de captură media.
+
+```ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'Media recorder',
+  description: 'Record audio and video in your workspace',
+  requestedCapabilities: ['microphone', 'camera'],
+});
+```
+
+Capabilitățile declarate apar în timpul instalării. Aprobarea necesită un membru al spațiului de lucru care poate gestiona aplicații și se aplică întregului spațiu de lucru. Aceste acordări sunt separate de permisiunile de rol ale aplicației și nu înlocuiesc permisiunile browserului sau ale sistemului de operare.
+
+O aplicație instalată fără acordarea necesară întrerupe captura și afișează un dialog de aprobare la prima utilizare, inclusiv aplicațiile mai vechi fără declarații de capabilități. Refuzul menține captura blocată înainte de solicitarea permisiunilor browserului. Actualizările pachetului nu acordă automat acces suplimentar. Aplicațiile de dezvoltare sincronizate local primesc capabilitățile declarate în manifestul lor.
+
+Consultați [Captură media](/ro/developers/extend/apps/layout/front-components#media-capture) pentru comportamentul capturii și indicatorii de înregistrare.
 
 ## Tipuri de variabile
 
@@ -92,6 +132,67 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 
 Același lucru se aplică și componentelor de interfață care citesc valori prin `getApplicationVariable('VARIABLE_NAME')` — valoarea returnată este un string; parseaz-o după cum este necesar.
 
+## Variabilele spațiului de lucru și ale utilizatorului
+
+Fiecare variabilă a aplicației are un `scope`:
+
+* **`WORKSPACE`** (implicit): o valoare pentru întregul spațiu de lucru, setată de un membru care poate gestiona aplicații.
+* **`USER`**: fiecare membru își păstrează propria valoare.
+
+```ts src/application-config.ts
+import { defineApplication, FieldType } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, role...
+  applicationVariables: {
+    RECORD_MY_MEETINGS: {
+      universalIdentifier: '0b6f3c1e-8a2d-4f57-9c1b-7e4d2a9f6c30',
+      label: 'Record my meetings',
+      type: FieldType.BOOLEAN,
+      value: true,
+      scope: 'USER',
+    },
+  },
+});
+```
+
+`value` al unei variabile de utilizator este valoarea sa implicită: un membru care nu și-a setat propria valoare o citește, iar o versiune nouă a aplicației dvs. o poate modifica. O variabilă secretă nu poate avea o valoare implicită. Fără una, un membru care nu și-a setat propria valoare citește un șir gol, astfel încât aplicația dvs. decide ce înseamnă o valoare nesetată.
+
+Un administrator al spațiului de lucru nu poate seta o valoare pentru o variabilă de utilizator: valorile acesteia aparțin fiecărui membru.
+
+Domeniul de aplicare al unei variabile este setat când aceasta este creată și nu poate fi modificat. Pentru a o modifica, declarați variabila cu un nou `universalIdentifier`: sincronizarea șterge variabila veche, împreună cu valorile membrilor săi, și o creează pe cea nouă.
+
+Variabilele de utilizator pot fi `isSecret`, `isRequired` sau ambele. De exemplu, o cheie API personală poate declara `scope: 'USER', isSecret: true, isRequired: true`. Valorile sunt criptate în repaus.
+
+Pentru variabilele de utilizator, `isRequired` descrie o cerință per membru. Un membru care nu are nicio valoare pentru aceasta, proprie sau implicită, vede aplicația dvs. marcată **Configurație lipsă** în preferințele Aplicații, cu un banner care menționează variabilele. Nu afectează avertismentul privind configurarea spațiului de lucru și nimic nu impune acest lucru la rulare: codul tău decide în continuare ce înseamnă o valoare nesetată.
+
+O variabilă de utilizator este injectată cu valoarea membrului pentru care rulează codul dvs. sau cu valoarea sa implicită până când acesta își setează propria valoare:
+
+* Într-o funcție logică, `process.env` păstrează valorile membrului care a declanșat rularea, același membru ca cel pentru care acționează `TWENTY_APP_ACCESS_TOKEN`. O rulare fără nicio persoană în spatele ei, cum ar fi o sarcină cron sau un hook de instalare, nu primește deloc variabile de utilizator.
+* Într-o componentă front-end, `getApplicationVariable` returnează valorile membrului care o vizualizează. Variabilele secrete ale utilizatorului sunt omise, la fel ca variabilele secrete ale spațiului de lucru.
+
+Membrul care a declanșat o rulare nu este întotdeauna membrul despre care este vorba: un eveniment de bază de date rulează ca persoana care a editat înregistrarea. Când o rulare este despre altcineva sau despre fiecare membru, citiți valorile cu `myUserApplicationVariables` prin `MetadataApiClient`. Listează fiecare membru împreună cu valorile variabilelor de utilizator ale aplicației dvs. și funcționează în fiecare rulare de funcție logică, inclusiv în sarcini cron și webhook-uri. Fiecare intrare conține `userWorkspaceId`, `workspaceMemberId` și `variables` ale membrului: declarația fiecărei variabile de utilizator (`label`, `description`, `type`, `options`, `isSecret`, `isRequired`, `isDeprecated`) și valoarea membrului sau valoarea implicită până când acesta își setează propria valoare. Interogați-o ca aplicație pentru a obține valori reale: cu un token care are o persoană în spatele lui, returnează doar intrarea acelei persoane, cu secretele mascate.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+// In a logic function, for example a cron job
+const client = new MetadataApiClient({ runAs: 'application' });
+
+const { myUserApplicationVariables } = await client.query({
+  myUserApplicationVariables: {
+    workspaceMemberId: true,
+    variables: { key: true, value: true },
+  },
+});
+```
+
+Valorile sunt șiruri, în același format ca `process.env` (consultați [Tipuri de variabile](#variable-types)).
+
+`updateMyUserApplicationVariable` salvează propria valoare a unui membru. Preia `applicationUniversalIdentifier` al aplicației tale și scrie valoarea persoanei din spatele tokenului: sesiunea proprie a membrului sau tokenul aplicației tale atunci când un membru se află în spatele acestuia, cum ar fi într-o componentă frontend sau într-o funcție logică executată pentru un membru. Tokenul aplicației dvs. poate indica doar propria aplicație, iar un token fără nicio persoană asociată, cum ar fi într-o sarcină cron sau într-un hook de instalare, este refuzat. O valoare goală elimină valoarea proprie a membrului, astfel încât acesta citește din nou valoarea implicită sau un șir gol pentru o variabilă fără valoare implicită.
+
+Nu necesită permisiunea `APPLICATIONS`, dar necesită `CONNECTED_ACCOUNTS`: în rolul membrului și, atunci când tokenul aplicației tale efectuează apelul, și în rolul implicit al aplicației tale, dacă aceasta declară unul. Dacă aplicația ta salvează variabile de utilizator, adaugă `SystemPermissionFlag.CONNECTED_ACCOUNTS` la `permissionFlagUniversalIdentifiers` în [rol](/ro/developers/extend/apps/config/roles).
+
 ## Rol implicit pentru funcții
 
 Rolul declarat cu [`defineApplicationRole()`](/ro/developers/extend/apps/config/roles) controlează la ce pot avea acces funcțiile logice și componentele de interfață ale aplicației:
@@ -106,18 +207,21 @@ Când generați o aplicație nouă, CLI creează un fișier de rol de pornire la
 
 Dacă intenționați să [publicați aplicația](/ro/developers/extend/apps/operations/publishing), aceste câmpuri opționale controlează modul în care apare în marketplace:
 
-| Câmp               | Descriere                                                                                                                      |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `author`           | Numele autorului sau al companiei                                                                                              |
-| `category`         | Categoria aplicației pentru filtrarea în marketplace                                                                           |
-| `logo`             | Calea către logo-ul aplicației tale inclus în `public/` (de ex., `public/logo.png`)                                            |
-| `galleryImages`    | Array de căi către imaginile din galerie incluse în `public/` (de ex., `public/screenshot-1.png`)                              |
-| `aboutDescription` | Descriere markdown mai lungă pentru fila "About". Dacă este omis, marketplace-ul folosește `README.md` al pachetului de pe npm |
-| `websiteUrl`       | Link către site-ul dvs.                                                                                                        |
-| `termsUrl`         | Link către termenii de serviciu                                                                                                |
-| `emailSupport`     | Adresă de e-mail pentru suport                                                                                                 |
-| `issueReportUrl`   | Link către sistemul de urmărire a problemelor                                                                                  |
+| Câmp                  | Descriere                                                                                                                                                                                                                 |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `author`              | Numele autorului sau al companiei                                                                                                                                                                                         |
+| `category`            | Categoria aplicației pentru filtrarea în marketplace                                                                                                                                                                      |
+| `logo`                | Calea către logo-ul aplicației tale inclus în `public/` (de ex., `public/logo.png`)                                                                                                                                       |
+| `galleryImages`       | Array de căi către imaginile din galerie incluse în `public/` (de ex., `public/screenshot-1.png`)                                                                                                                         |
+| `aboutDescription`    | Descriere markdown mai lungă pentru fila "About". Dacă este omis, marketplace-ul folosește `README.md` al pachetului de pe npm. Imaginile nu se redau, iar HTML-ul brut apare ca text simplu                              |
+| `billing.description` | Cât costă aplicația, într-un rând scurt și prietenos pentru listarea dvs. în marketplace (de exemplu, `$0.02 per minute recorded`). Setați-l dacă aplicația dvs. [percepe credite](/ro/developers/extend/apps/logic/credits) |
+| `websiteUrl`          | Link către site-ul dvs.                                                                                                                                                                                                   |
+| `termsUrl`            | Link către termenii de serviciu                                                                                                                                                                                           |
+| `emailSupport`        | Adresă de e-mail pentru suport                                                                                                                                                                                            |
+| `issueReportUrl`      | Link către sistemul de urmărire a problemelor                                                                                                                                                                             |
 
 <Note>
 `logoUrl` și `screenshots` sunt aliasuri învechite pentru `logo` și `galleryImages`. URL-urile absolute externe (`http://` sau `https://`) nu sunt acceptate pentru aceste câmpuri: ele sunt eliminate cu un avertisment în timpul build-ului. În schimb, include imaginile în folderul `public/` al aplicației tale.
 </Note>
+
+<PageBanner illustration="card-page-application-config" />

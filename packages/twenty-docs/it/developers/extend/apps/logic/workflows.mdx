@@ -1,0 +1,119 @@
+---
+title: Flussi di lavoro
+description: Distribuisci workflow preconfigurati con la tua app.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Definisci un workflow
+
+Le app possono includere workflow. Ogni chiamata a `defineWorkflow()` descrive un workflow: un trigger e i passaggi che esegue. Al momento dell'installazione, Twenty lo crea come workflow attivo nello spazio di lavoro, pronto per essere eseguito.
+
+Questo workflow viene eseguito quando viene creata un'azienda. Chiama una delle funzioni logiche dell'app, quindi scrive il risultato nell'azienda:
+
+```ts src/workflows/score-new-companies.ts
+import {
+  defineWorkflow,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const COMPANY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier;
+const SCORE_COMPANY_FUNCTION = '0f6c0b3e-8a4f-4f0e-9d0a-3c1e5b7a2d41';
+
+const SCORE_NEW_COMPANIES = {
+  workflow: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e81',
+  trigger: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e82',
+  score: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e83',
+  save: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e84',
+};
+
+export default defineWorkflow({
+  universalIdentifier: SCORE_NEW_COMPANIES.workflow,
+  name: 'Score new companies',
+  version: {
+    trigger: {
+      universalIdentifier: SCORE_NEW_COMPANIES.trigger,
+      type: 'DATABASE_EVENT',
+      settings: {
+        objectUniversalIdentifier: COMPANY,
+        action: 'created',
+      },
+      nextStepIds: [SCORE_NEW_COMPANIES.score],
+    },
+    steps: [
+      {
+        universalIdentifier: SCORE_NEW_COMPANIES.score,
+        name: 'Score the company',
+        type: 'LOGIC_FUNCTION',
+        logicFunctionUniversalIdentifier: SCORE_COMPANY_FUNCTION,
+        input: { companyName: '{{trigger.properties.after.name}}' },
+        nextStepIds: [SCORE_NEW_COMPANIES.save],
+      },
+      {
+        universalIdentifier: SCORE_NEW_COMPANIES.save,
+        name: 'Save the score',
+        type: 'UPDATE_RECORD',
+        input: {
+          objectUniversalIdentifier: COMPANY,
+          objectRecordId: '{{trigger.recordId}}',
+          objectRecord: { leadScore: `{{${SCORE_NEW_COMPANIES.score}.score}}` },
+          fieldsToUpdate: ['leadScore'],
+        },
+        nextStepIds: [],
+      },
+    ],
+  },
+});
+```
+
+Punti chiave:
+
+* Il workflow, il relativo trigger e ogni passaggio necessitano del proprio `universalIdentifier`. Mantienili stabili tra le release: è così che Twenty trova una corrispondenza con il workflow installato all'installazione successiva.
+* `nextStepIds` collega il grafo. Il trigger punta ai primi passaggi e ogni passaggio punta ai passaggi eseguiti dopo di esso.
+* Un passaggio legge l'output precedente con `{{trigger.\<path>}}` o `{{\<step universalIdentifier>.\<path>}}`.
+* La build convalida l'intera definizione: tipi di trigger o passaggio non supportati, collegamenti tra passaggi non validi e riferimenti a passaggi sconosciuti causano l'errore.
+
+## Riferimento ad altre entità
+
+I passaggi e i trigger puntano ai metadati tramite identificatore universale, mai tramite nome o id:
+
+* **Oggetti e campi**: quelli dell'app oppure quelli standard tramite `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`. L'esempio precedente presuppone che l'app definisca anche un campo numerico `leadScore` su Company con [`defineField()`](/it/developers/extend/apps/data/extending-objects): un passaggio relativo a un record che scrive un campo assente dallo spazio di lavoro causa l'errore di installazione.
+* **Funzioni logiche**: quelle dell'app, esposte come [azione del workflow](/it/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) con `workflowActionTriggerSettings`. L'applicazione Custom dello spazio di lavoro può anche fare riferimento alle azioni dei workflow delle altre app installate nello spazio di lavoro, come possono fare i workflow creati nell'app.
+* **Agenti**: quelli dell'app, da [`defineAgent()`](/it/developers/extend/apps/logic/skills-and-agents).
+
+Un riferimento che Twenty non riesce a risolvere causa l'errore di installazione.
+
+## Trigger
+
+| Tipo             | Viene eseguito quando                           | Impostazioni                                                                                                                                                                                    |
+| ---------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MANUAL`         | Un utente lo avvia                              | `availability` (facoltativo): `GLOBAL`, oppure `SINGLE_RECORD` / `BULK_RECORDS` con un `objectUniversalIdentifier`. Aggiunge una voce al menu dei comandi, con `icon` e `isPinned` facoltativi. |
+| `CRON`           | In base a una pianificazione                    | `type`: `DAYS`, `HOURS` o `MINUTES` con una `schedule`, oppure `CUSTOM` con un `pattern` cron.                                                                                                  |
+| `DATABASE_EVENT` | Un record cambia                                | `objectUniversalIdentifier`, `action` (`created`, `updated`, `deleted`, `upserted`), `fieldUniversalIdentifiers` facoltativi da monitorare (solo aggiornamenti e upsert) e `filter`.            |
+| `WEBHOOK`        | Una richiesta HTTP raggiunge l'URL del workflow | `httpMethod` (`GET` o `POST`) ed `expectedBody` per `POST`.                                                                                                                                     |
+
+Un workflow manuale senza `availability` non ottiene alcuna voce nel menu dei comandi.
+
+Un workflow webhook resta in ascolto su `https://\<your-twenty-domain>/webhooks/workflows/\<workspaceId>/\<workflowId>`, dove `workflowId` è l'id del workflow installato. Il corpo della richiesta è disponibile come `{{trigger.\<path>}}`.
+
+## Passaggi
+
+I workflow dell'applicazione supportano questi tipi di passaggio: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT` e `EMPTY`.
+
+I relativi input corrispondono ai passaggi del [generatore di workflow](/it/user-guide/workflows/capabilities/workflow-actions), con identificatori universali al posto dei nomi:
+
+* I passaggi relativi ai record usano `objectUniversalIdentifier` anziché un nome di oggetto.
+* I filtri e gli ordinamenti puntano ai campi con `fieldMetadataUniversalIdentifier`.
+* Gli operandi di filtro accettano valori `ViewFilterOperand`, esportati da `twenty-sdk/define`. Gli operatori del gruppo di filtri accettano valori stringa come `'AND'` o `'OR'`.
+* I campi del modulo di tipo `RECORD` denominano il proprio oggetto con `settings.objectUniversalIdentifier`. I campi di tipo `SELECT` e `MULTI_SELECT` offrono le opzioni di un campo esistente dello stesso tipo, denominato con `settings.selectedFieldUniversalIdentifier`.
+* Per eseguire il tuo codice, usa un passaggio `LOGIC_FUNCTION`. Il passaggio Code del builder non è disponibile.
+* I passaggi email e calendario vengono eseguiti solo se il ruolo della tua app dispone del flag di autorizzazione corrispondente: `SystemPermissionFlag.SEND_EMAIL_TOOL` per `SEND_EMAIL` e `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` per `CREATE_CALENDAR_EVENT`. Il workspace lo concede installando l'app e il passaggio può quindi usare qualsiasi account connesso nel workspace, come un workflow creato nell'app.
+* Gli ID degli account connessi sono locali a ogni spazio di lavoro, quindi non codificarne uno in modo fisso. Passa l'account come variabile. I passaggi Email accettano anche un ID membro dell'area di lavoro, ad esempio `{{trigger.properties.after.assigneeId}}`, che viene risolto nel primo account di quel membro in grado di inviare.
+
+## Dopo l'installazione
+
+* Il workflow è attivo non appena l'app viene installata e le relative esecuzioni vengono visualizzate insieme alle altre esecuzioni di workflow dello spazio di lavoro.
+* L'installazione di una nuova versione dell'app aggiorna il workflow sul posto.
+* Gli utenti non possono modificare un workflow installato. Per personalizzarne uno, lo duplicano: la copia può essere modificata da loro.
+
+<PageBanner illustration="card-page-workflows" />

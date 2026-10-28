@@ -1,0 +1,107 @@
+---
+title: Buton filă
+description: Afișează linkuri și acțiuni de rută alături de file, cu stilizare consecventă.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TabButtonReference from '/snippets/ui/generated/components/navigation/tab-button.mdx';
+
+## Prezentare generală
+
+Folosește `TabButton` pentru linkuri de rută și acțiuni precum adăugarea unei file sau deschiderea unui meniu de opțiuni suplimentare. Are aspectul [Tabs](/ro/ui/primitives/navigation/tabs) și folosește [Button](/ro/ui/primitives/input/button) pentru interacțiune.
+
+<StoryEmbed storyId="ui-components-tabbutton--display" title="Exemplu TabButton" height={120} />
+
+## Utilizare
+
+```tsx
+import { TabButton } from 'twenty-ui/components/navigation';
+import { IconSettings } from 'twenty-ui/icon';
+
+export const GeneralAction = ({ onOpen }: { onOpen: () => void }) => (
+  <TabButton startIcon={<IconSettings />} onClick={onOpen}>
+    General
+  </TabButton>
+);
+```
+
+## Stare și semantică
+
+Aplicația ta furnizează `active` din starea curentă a rutei sau a meniului. Această proprietate evidențiază controlul. Setează `aria-current="page"` pe linkul rutei curente. Linkurile de rută și acțiunile adiacente își păstrează semantica de link sau de buton, fără rol de filă, `aria-selected` sau relație cu panoul.
+
+Utilizați `Tabs.Root`, `Tabs.List`, `Tabs.Tab`, `Tabs.Panel` și opționalul `Tabs.Indicator` pentru a comuta între panouri de conținut asociate. Păstrați comenzile de rută și de acțiune în afara `Tabs.List`.
+
+## Navigare
+
+Setați `href` pentru a reda un link nativ. Ruta curentă deține aspectul său `active` și valoarea `aria-current`.
+
+```tsx
+import { TabButton } from 'twenty-ui/components/navigation';
+import { IconCreditCard } from 'twenty-ui/icon';
+
+export const BillingLink = () => (
+  <TabButton
+    href="/billing"
+    active
+    aria-current="page"
+    startIcon={<IconCreditCard />}
+  >
+    Billing
+  </TabButton>
+);
+```
+
+Pentru rutarea pe partea clientului, furnizați linkul routerului prin `render`, setați `nativeButton={false}` și `role="link"` și transmiteți destinația rezolvată ca `href`. Păstrează opțiunile de stare și istoric ale rutei pe linkul routerului. Învelișurile personalizate trebuie să redirecționeze proprietățile furnizate și referința către ancora lor.
+
+```tsx
+import { TabButton } from 'twenty-ui/components/navigation';
+
+export const ComposedBillingLink = () => (
+  <TabButton
+    nativeButton={false}
+    role="link"
+    href="/billing"
+    render={<a />}
+    aria-current="page"
+    active
+  >
+    Billing
+  </TabButton>
+);
+```
+
+Un `nativeButton` explicit controlează contractul de interacțiune chiar și atunci când este prezent `href`. Potriviți-l cu elementul redat efectiv. Linkurile dezactivate își păstrează rolul de link și blochează activarea.
+
+## Acțiuni
+
+Fără `href`, controlul redă un buton nativ cu `type="button"`. Atributele native, referințele, stilurile, numele claselor și gestionarii de evenimente sunt transmise mai departe. `render` acceptă un element sau o funcție care primește proprietățile și starea Button. Referințele indică butonul sau ancora redată efectiv, inclusiv referințele furnizate pe un element compus.
+
+```tsx
+import { useState } from 'react';
+import { TabButton } from 'twenty-ui/components/navigation';
+import { IconPlus } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const AddTabAction = () => {
+  const [count, setCount] = useState(1);
+
+  return (
+    <>
+      <TabButton startIcon={<IconPlus />} onClick={() => setCount(count + 1)}>
+        New Tab
+      </TabButton>
+      <Text role="status">Tabs: {count}</Text>
+    </>
+  );
+};
+```
+
+Folosește `startIcon`, `endIcon` și `badge` pentru conținut auxiliar. Un avatar transmis într-un slot de pictogramă este decorativ atunci când textul denumește destinația. `size` păstrează contractul public pentru dimensiunea Button. O dimensiune explicită are prioritate față de dimensiunea unui `ButtonGroup` înconjurător; în caz contrar, componenta folosește implicit `sm`.
+
+## Proprietăți
+
+<TabButtonReference />
+
+<PageBanner illustration="layout" />

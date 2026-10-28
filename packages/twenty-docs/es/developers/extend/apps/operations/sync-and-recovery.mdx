@@ -3,32 +3,34 @@ title: Sincronización y recuperación
 description: Qué comando usar y cuándo, cómo leer la salida de sincronización y una escalera de recuperación para cuando los metadatos locales se desvían, antes de llegar a un restablecimiento completo.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
 El desarrollo de aplicaciones locales gira en torno a la **sincronización**: la CLI recompila tu manifiesto y el servidor aplica solo la diferencia entre este y los metadatos que ya se encuentran en tu espacio de trabajo. Esta página explica qué comando usar, cómo leer qué cambió una sincronización y qué hacer, en orden, cuando el estado local parece inconsistente.
 
 ## Qué comando usar y cuándo
 
 <Note>
-Para la iteración local del día a día casi siempre quieres `yarn twenty dev`. La implementación y la publicación son para enviar versiones, **no** para el ciclo local.
+  Para la iteración local del día a día casi siempre quieres `twenty app dev`.
+  La implementación y la publicación son para enviar versiones, **no** para el ciclo local.
 </Note>
 
-| Quieres…                                            | Comando                             | Notas                                                                                                                                     |
-| --------------------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Iterar localmente con sincronización en tiempo real | `yarn twenty dev`                   | Supervisa tus archivos y sincroniza en cada cambio.                                                                                       |
-| Sincronizar una vez y salir (CI, scripts, hooks)    | `yarn twenty apply`                 | Una compilación + sincronización, luego sale. Añade `--force` para omitir la confirmación de cambio destructivo.                          |
-| Previsualizar cambios **sin aplicarlos**            | `yarn twenty plan`                  | Calcula e imprime el diff; no escribe nada.                                                                                               |
-| Eliminar la aplicación del espacio de trabajo       | `yarn twenty app:uninstall`         | Agrega `--yes` para omitir la confirmación.                                                                                               |
-| Enviar un tarball a un servidor                     | `yarn twenty app:publish --private` | Requiere una versión de `package.json` **estrictamente superior**; consulta [Publicación](/es/developers/extend/apps/operations/publishing). |
-| Publicar en el marketplace (npm)                    | `yarn twenty app:publish`           | —                                                                                                                                         |
-| Instalar / actualizar una versión implementada      | `yarn twenty app:install`           | Instala la versión actualmente implementada.                                                                                              |
-| Borrar el servidor local y empezar desde cero       | `yarn twenty docker:reset`          | Elimina **todos** los datos locales: último recurso.                                                                                      |
-
-<Note>
-`yarn twenty dev --once` y `yarn twenty dev --once --dry-run` siguen funcionando como alias obsoletos de `yarn twenty apply` y `yarn twenty plan`.
-</Note>
+| Quieres…                                              | Comando                        | Notas                                                                                                                                                       |
+| ----------------------------------------------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Iterar localmente con sincronización en tiempo real   | `twenty app dev`               | Supervisa tus archivos y sincroniza en cada cambio.                                                                                                         |
+| Sincronizar una vez y salir (CI, scripts, hooks)      | `twenty app apply`             | Una compilación + sincronización, luego sale. Añade `--yes` para omitir la confirmación de cambio destructivo.                                              |
+| Previsualizar cambios **sin aplicarlos**              | `twenty app plan`              | Calcula e imprime el diff; no escribe nada.                                                                                                                 |
+| Sincroniza sin eliminar nada                          | `twenty app apply --no-delete` | Solo crea y actualiza: las entidades que existen en el espacio de trabajo, pero no en tu fuente, se dejan sin modificar. También lo aceptan `plan` y `dev`. |
+| Regenerar la fuente local desde el espacio de trabajo | `twenty app pull`              | **Experimental.** Escribe la aplicación instalada de nuevo en los archivos de definición. Consulta más abajo.                                               |
+| Eliminar la aplicación del espacio de trabajo         | `twenty app uninstall`         | Agrega `--yes` para omitir la confirmación.                                                                                                                 |
+| Enviar un tarball a un servidor                       | `twenty app publish --private` | Requiere una versión de `package.json` **estrictamente superior**; consulta [Publicación](/es/developers/extend/apps/operations/publishing).                   |
+| Publicar en el marketplace (npm)                      | `twenty app publish`           | —                                                                                                                                                           |
+| Instalar / actualizar una versión implementada        | `twenty app install`           | Instala la versión actualmente implementada.                                                                                                                |
 
 ### La sincronización local no necesita un aumento de versión
 
-La regla de `version` estrictamente creciente (`VERSION_ALREADY_EXISTS` al implementar, `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION` al instalar) se aplica a **`app:publish` / `app:install`**: la ruta de publicación. `yarn twenty dev` sincroniza tu manifiesto en su lugar y nunca requiere un cambio de versión, por lo que no necesitas tocar `package.json` para iterar. Si te encuentras aumentando la versión para probar un cambio local, estás usando la ruta de publicación cuando lo que quieres es el ciclo de desarrollo.
+La regla de `version` estrictamente creciente (`VERSION_ALREADY_EXISTS` al implementar, `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION` al instalar) se aplica a **`twenty app publish` / `twenty app install`** — la ruta de publicación. `twenty app dev` sincroniza tu manifiesto en su lugar y nunca requiere un cambio de versión, por lo que no necesitas tocar `package.json` para iterar. Si te encuentras aumentando la versión para probar un cambio local, estás usando la ruta de publicación cuando lo que quieres es el ciclo de desarrollo.
 
 ## Leer la salida de la sincronización
 
@@ -50,7 +52,9 @@ Plan: 2 to add, 1 to change, 1 to destroy.
 
 Este es tu primer diagnóstico: te indica exactamente qué objetos, campos y diseños cambiaron, para que puedas confirmar que una sincronización hizo lo que esperabas antes de revisar la interfaz de usuario.
 
-Los cambios destructivos (`to destroy`) se enumeran con lo que eliminan (p. ej., `objectMetadata "auditNote" — drops the table and all its rows`) y requieren confirmación interactiva, o `--force` en scripts.
+Los cambios destructivos (`to destroy`) se enumeran con lo que eliminan (p. ej., `objectMetadata "auditNote" — drops the table and all its rows`) y requieren confirmación interactiva, o `--yes` en scripts.
+
+Una sincronización elimina todas las entidades que posee tu aplicación y que tu fuente ya no declara. Cuando un plan contiene eliminaciones, lo indica y señala `--no-delete`, lo que hace que la sincronización sea aditiva: se aplican las creaciones y actualizaciones, no se elimina nada que falte en tu fuente, y el componente de configuración y los enlaces del hook de desinstalación de la aplicación permanecen tal como están cuando tu fuente no los declara. Úsalo cuando tu fuente sea intencionadamente parcial, por ejemplo, mientras adoptas una aplicación creada en la interfaz de usuario.
 
 Cuando una sincronización falla en una sola entidad, el error nombra la entidad implicada y su `universalIdentifier`, por ejemplo:
 
@@ -62,10 +66,10 @@ Usa ese identificador para encontrar la entidad en tu manifiesto (y, si es neces
 
 ## Previsualizar cambios (plan)
 
-`yarn twenty plan` compila tu manifiesto, le pide al servidor el plan de migración y lo imprime, **sin aplicar nada**. Es la forma segura de responder "¿qué cambiaría esta sincronización?" antes de comprometerte a ella.
+`twenty app plan` compila tu manifiesto, le pide al servidor el plan de migración y lo imprime — **sin aplicar nada**. Es la forma segura de responder "¿qué cambiaría esta sincronización?" antes de comprometerte a ella.
 
 ```bash filename="Terminal"
-yarn twenty plan
+twenty app plan
 ```
 
 ```text filename="Terminal"
@@ -87,25 +91,88 @@ Un plan:
 * Es útil antes de un cambio arriesgado, al revisar un cambio generado por IA o en un script que deba fallar si está a punto de producirse un cambio inesperado.
 
 <Note>
-Un plan solo previsualiza cambios de **metadatos** y requiere que la aplicación se haya sincronizado al menos una vez (para que el espacio de trabajo la conozca). Si la ejecutas con una aplicación que nunca se sincronizó, el servidor indicará que la aplicación no está instalada; ejecuta `yarn twenty dev` una vez primero.
+  Un plan solo muestra una vista previa de los cambios de **metadatos**. También funciona para una aplicación que nunca
+  se sincronizó: el servidor evalúa el manifiesto frente a una aplicación vacía,
+  por lo que el plan enumera todo lo que crearía tu código fuente.
 </Note>
+
+## Extraer una aplicación instalada al código fuente
+
+<Warning>
+  `twenty app pull` es **experimental**. Actualmente solo cubre parte de una aplicación,
+  la estructura de su salida puede cambiar entre versiones y sobrescribe los
+  archivos que definen las entidades que extrae. Restaura las traducciones publicadas
+  en `locales/`, y conserva las entradas cuyas cadenas de origen aún no están en tu árbol
+  en `locales/compiled/` para que una subida no las pierda. Confirma tu trabajo
+  antes de ejecutarlo y revisa el diff.
+</Warning>
+
+`twenty app pull` es lo contrario de `apply`: lee una aplicación del espacio de trabajo y la vuelve a escribir como archivos de definición.
+
+```bash
+twenty app pull --universal-identifier <universalIdentifier>
+```
+
+Pull necesita un proyecto existente — primero crea uno con `twenty app init` y, después, extrae en él. Sin `--universal-identifier`, pull se dirige a la aplicación que declara tu archivo local `defineApplication()`. Si `--universal-identifier` nombra una aplicación diferente de la que declara tu proyecto, pull se niega a hacerlo en lugar de dejar dos aplicaciones en un árbol: extrae esa en su propio directorio. Si el proyecto tiene un archivo de aplicación cuyo identificador no se puede leer, normalmente porque las dependencias no están instaladas, pull también se niega y te pide que ejecutes primero `yarn install`. Añade `--verbose` para ampliar las secciones de cobertura del informe, que entonces nombran hasta 20 identificadores por tipo de metadatos en lugar de solo los totales.
+
+**Qué escribe:**
+
+* la configuración de la aplicación;
+* objetos, con sus campos en línea;
+* campos que tu aplicación añadió a objetos que no posee;
+* índices creados;
+* las banderas de permisos que declara tu aplicación, como archivos `definePermissionFlag()`;
+* los roles, con sus permisos de objeto, permisos de campo, predicados de permisos a nivel de fila y grupos, y banderas de permisos en línea. El rol predeterminado de tu aplicación se escribe con `defineApplicationRole()`. Un permiso de objeto o de campo cuyo identificador es el que genera la compilación se escribe sin él. Cuando el rol predeterminado no es uno de los roles propios de tu aplicación, como en el caso de la aplicación Custom del espacio de trabajo, la configuración de la aplicación conserva `defaultRoleUniversalIdentifier` en su lugar;
+* vistas, con sus campos, grupos de campos, filtros, grupos de filtros, ordenaciones y grupos en línea;
+* campos de vista que tu aplicación añadió a vistas que no le pertenecen, como archivos independientes de `defineViewField()`;
+* diseños de página, con sus pestañas y widgets integrados;
+* pestañas que tu aplicación agregó a diseños de página que no le pertenecen, como archivos `definePageLayoutTab()` independientes;
+* elementos del menú de navegación, como archivos `defineNavigationMenuItem()`, carpetas incluidas;
+* widgets que tu aplicación añadió a pestañas que no le pertenecen, como archivos independientes de `definePageLayoutWidget()`;
+* flujos de trabajo, como archivos `defineWorkflow()`, cuando su versión almacenada es la que escribió la última sincronización;
+* habilidades, como archivos `defineSkill()`;
+* agentes, como archivos `defineAgent()`, con sus desencadenadores y el rol al que los vincula tu aplicación;
+* traducciones publicadas, como `locales/\<locale>.json` para que la extracción de cadenas pueda leerlas de nuevo a partir de los metadatos y el origen extraídos, y `locales/compiled/\<locale>.json` para el resto.
+
+Cada entidad va al archivo que ya la define, por lo que una segunda extracción vuelve a escribir solo lo que cambió en el servidor. Un archivo también se vuelve a escribir cuando usa una función de definición distinta de la que escribiría pull; por ejemplo, un rol que se convirtió en el rol predeterminado o dejó de serlo. Las entidades nuevas se colocan junto a los archivos existentes de su tipo, y un nombre generado que coincidiría con un archivo no relacionado se califica en lugar de sobrescribirlo.
+
+**Qué no escribe:**
+
+* **Aún no se exportan** — elementos del menú de comandos y del menú de configuración, funciones lógicas y componentes frontend, proveedores de conexión, variables de aplicación, recursos públicos, tipos de actividad de cronología y la fuente almacenada de tus funciones.
+* **Derivado por el motor** — campos del sistema, relaciones predeterminadas, vistas predeterminadas e índices subyacentes, y los diseños de página predeterminados de cada objeto. El servidor los reconstruye al aplicar. Un objeto aún puede apuntar su identificador de etiqueta a uno de ellos, como hacen los objetos de unión creados en la interfaz de usuario; se escribe la referencia y la compilación la resuelve sin añadir un campo.
+* **Colocados en una vista predeterminada o ajena** — los filtros, grupos de filtros, ordenaciones, agrupaciones y grupos de campos que se agregan a una vista predeterminada del motor, o a una vista propiedad de otra aplicación, aún no tienen un formulario de origen y se notifican. Los campos de vista agregados allí se escriben como archivos independientes, ya que se conoce el identificador de la vista.
+* **Colocados en un diseño de página predeterminado o ajeno** — las pestañas y los widgets añadidos a un diseño de página predeterminado del motor, o a uno que pertenece a otra aplicación, se escriben como archivos independientes de `definePageLayoutTab()` y `definePageLayoutWidget()`, ya que se conoce el identificador al que se adjuntan.
+* **Widgets que la exportación aún no puede incluir** — en cualquier diseño, incluido el suyo, se informa de un widget del tipo obsoleto `VIEW`, un widget que muestra uno de los componentes de frontend o elementos del menú de comandos de su propia aplicación, o un widget sin posición para el modo de diseño de su pestaña, y el diseño o la pestaña se escribe sin él.
+* **Flujos de trabajo que la exportación aún no puede incluir** — se informan y se dejan en su lugar los flujos de trabajo modificados en el creador de flujos de trabajo desde la última sincronización, los creados en el espacio de trabajo, los flujos de trabajo del sistema o privados, los que tienen un paso de Code o de mensaje de chat, que los flujos de trabajo de aplicaciones no admiten, los que tienen un paso de correo electrónico o calendario, que la exportación aún no incluye, y los que llaman a la acción de flujo de trabajo de otra aplicación. La aplicación personalizada del espacio de trabajo es la excepción para ese último caso: sus flujos de trabajo pueden llamar a las acciones de cualquier aplicación, por lo que se descargan.
+* **Agentes y habilidades que la exportación aún no puede incluir** — se informan y se dejan en su lugar los agentes y las habilidades creados en el espacio de trabajo en lugar de por tu aplicación, una habilidad desactivada y un agente con una configuración de modelo o vinculado a un rol que la extracción no escribe.
+* **Estado de tiempo de ejecución del espacio de trabajo** — asignaciones de roles de miembros y claves de API, webhooks, navegación por usuario y elementos de navegación fijados a un registro, todo excluido por diseño.
+* **Propiedad de otra aplicación** — se informa de ello, pero nunca se extrae.
+
+El informe al final de una extracción enumera todo ello, agrupado por tipo y motivo. Todo lo que indica como no escrito sigue estando en tu espacio de trabajo, así que vuelve a subir un árbol extraído con `twenty app apply --no-delete` hasta que se cubran los tipos faltantes. Una ejecución de depuración de `twenty app apply` los eliminaría, y `twenty app plan` enumera exactamente cuáles.
+
+**Estado local del espacio de trabajo.** Una entidad desactivada en el espacio de trabajo se escribe como una definición activa, y las anulaciones que el espacio de trabajo realizó en una entidad, como una etiqueta renombrada, no se escriben. El informe enumera esas filas bajo "Escritas sin su estado local del espacio de trabajo". Aplicar el árbol de nuevo al mismo espacio de trabajo deja ese estado intacto; otro espacio de trabajo recibe la entidad activa y sin las anulaciones.
+
+**El archivo base.** Pull registra lo que extrajo en `.twenty/pull-base.json`, que está ignorado por git y es específico de cada checkout. Ese archivo es con lo que una extracción posterior compara para dejar intactos los archivos cuya entidad no cambió y para eliminar el archivo de una entidad que ya no está en el espacio de trabajo. Un checkout sin él simplemente escribe todo y no elimina nada.
 
 ## Escalera de recuperación
 
 Cuando los metadatos locales parezcan incorrectos, ve escalando en este orden y detente en cuanto te hayas desbloqueado. Cada paso es más disruptivo que el anterior.
 
-1. **Volver a sincronizar.** Ejecuta `yarn twenty apply` de nuevo. Las sincronizaciones son idempotentes: volver a ejecutar un manifiesto limpio es seguro y suele resolver un problema transitorio.
-2. **Previsualizar el plan.** Ejecuta `yarn twenty plan` para ver exactamente qué pretende cambiar la siguiente sincronización, sin aplicarlo.
+1. **Volver a sincronizar.** Ejecuta `twenty app apply` de nuevo. Las sincronizaciones son idempotentes: volver a ejecutar un manifiesto limpio es seguro y suele resolver un problema transitorio.
+2. **Previsualizar el plan.** Ejecuta `twenty app plan` para ver exactamente qué pretende cambiar la siguiente sincronización, sin aplicarlo.
 3. Lee el error identificado. Un conflicto suele señalar un identificador duplicado o reutilizado.
-4. **Desinstalar y volver a instalar.** `yarn twenty app:uninstall`, luego vuelve a sincronizar (`yarn twenty dev`). Esto reconstruye los metadatos de la aplicación desde cero manteniendo intacto el resto de tu espacio de trabajo.
-5. **Restablecimiento completo (último recurso).** `yarn twenty docker:reset`, luego vuelve a sembrar los datos y a sincronizar.
+4. **Desinstalar y volver a instalar.** `twenty app uninstall`, luego vuelve a sincronizar (`twenty app dev`). Esto reconstruye los metadatos de la aplicación desde cero manteniendo intacto el resto de tu espacio de trabajo.
+5. **Restablecimiento completo (último recurso).** Restablece tu base de datos de desarrollo de Docker o del repositorio y, después, vuelve a sembrar los datos y a sincronizar.
 
 <Warning>
-`yarn twenty docker:reset` elimina **todos** los datos de tu instancia local: todos los espacios de trabajo, registros y aplicaciones. Úsalo solo cuando los pasos anteriores hayan fallado.
+  restablecer tu base de datos de desarrollo de Docker o del repositorio elimina **todos** los datos
+  de tu instancia local — todos los espacios de trabajo, registros y aplicaciones. Úsalo solo cuando los pasos anteriores hayan fallado.
 </Warning>
 
 <Note>
-¿Te has encontrado con un error de metadatos? Por favor, [abre una incidencia](https://github.com/twentyhq/twenty/issues/new/choose) e incluye el mensaje de migración con error (con su tipo de metadatos y `universalIdentifier`), la salida de `Metadata changes` de la sincronización y los comandos que ejecutaste.
+  ¿Te has encontrado con un error de metadatos? Por favor, [abre una incidencia](https://github.com/twentyhq/twenty/issues/new/choose) e incluye el
+  mensaje de migración con error (con su tipo de metadatos y `universalIdentifier`),
+  la salida de `Metadata changes` de la sincronización y los comandos que ejecutaste.
 </Note>
 
 ## Evita sincronizaciones concurrentes en un mismo espacio de trabajo
@@ -119,7 +186,11 @@ El servidor serializa las sincronizaciones por espacio de trabajo para evitar es
 Cuando algo sale mal, el diff de metadatos y los errores con nombre te permiten situar el fallo:
 
 * **Error de compilación del manifiesto**: la CLI falla antes de sincronizar (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); corrige el código fuente de tu aplicación.
+* **Error de propiedad del registro** — se rechaza la sincronización porque el `universalIdentifier` de la aplicación pertenece a otro espacio de trabajo, o no pertenece a ningún espacio de trabajo; consulta [Propiedad del registro](/es/developers/extend/apps/operations/publishing#registration-ownership).
 * **Error de sincronización / migración**: la compilación tiene éxito, pero aplicar el diff falla, nombrando la entidad y el `universalIdentifier`; corrige los metadatos en conflicto.
 * **Error de tamaño de dependencias** — la sincronización o la instalación fallan porque las `dependencies` de producción de la aplicación son demasiado grandes para instalarse como una capa de tiempo de ejecución (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); mueve a `devDependencies` los paquetes que tus funciones de lógica no importan en tiempo de ejecución (bibliotecas de UI, herramientas de desarrollo).
+* **Migración diferida en curso** — se rechaza la sincronización porque todavía se está ejecutando una migración en segundo plano del modelo de datos de una sincronización anterior (`DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS`); espera a que finalice y luego vuelve a sincronizar.
 * **Error de tiempo de ejecución del código de la aplicación**: la sincronización se completa correctamente, pero tus funciones lógicas o componentes se comportan de forma incorrecta en tiempo de ejecución; revisa los [registros de funciones](/es/developers/extend/apps/operations/cli).
 * **Estado de instancia local**: nada de lo anterior aplica y el espacio de trabajo sigue viéndose mal; desciende por la escalera de recuperación.
+
+<PageBanner illustration="card-page-sync-recovery" />

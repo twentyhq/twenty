@@ -1,0 +1,335 @@
+---
+title: Securizarea instanței dvs.
+description: Țineți Twenty în afara internetului public și deschideți doar puținele căi de care au nevoie integrările dvs.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Prezentare generală
+
+CRM-ul dvs. conține clienții, oportunitățile, e-mailurile și calendarul dvs. Atunci când o remediere de securitate este lansată într-o versiune Twenty, remedierea în sine le indică atacatorilor unde să caute, iar fiecare instanță care nu a fost încă actualizată este o țintă.
+
+Actualizarea rapidă este adevărata soluție, dar majoritatea instanțelor auto-găzduite rulează cu câteva versiuni în urmă. Cea mai bună protecție până când actualizați este simplă: **asigurați-vă că nimeni de pe internet nu vă poate accesa instanța.**
+
+Această pagină arată cum să faceți acest lucru cu Tailscale, Cloudflare sau propriul proxy invers.
+
+## Privat în mod implicit
+
+Împărțiți instanța în trei zone:
+
+| Zonă                      | Căi                                                                   | Cine o poate accesa                                                                                                                             |
+| ------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Privat**                | Orice altceva: aplicația, `/graphql`, `/rest`, `/metadata`, fișierele | Doar echipa dvs.                                                                                                                                |
+| **Public**                | `/webhooks`, `/s`, `/emailing`                                        | Oricine. Acestea sunt apelate de servicii care nu se pot alătura rețelei dvs.                                                                   |
+| **Conectori AI în cloud** | `/mcp`, `/oauth`, `/.well-known`                                      | Intervalele de IP-uri Anthropic și OpenAI. Oricare dintre utilizatorii lor poate accesa aceste căi, dar numai echipa dvs. se poate autentifica. |
+
+Fiecare cale acoperă tot ce se află sub ea. Deschideți zonele publice și AI în cloud numai dacă utilizați funcționalitățile din spatele acestora; consultați [Căi publice](#public-paths). În caz contrar, păstrați întreaga instanță privată. Asistenții AI care rulează pe calculatoarele echipei dvs., precum Claude Code, nu necesită deschiderea niciunui acces; consultați [Clienți AI](#ai-clients-mcp).
+
+<Note>
+**La ce renunțați:** instrumentele de automatizare găzduite care apelează API-ul Twenty din propriul cloud (Zapier, Make, n8n Cloud) nu pot accesa o instanță privată. Rulați-le în schimb în rețeaua dvs. (n8n auto-găzduit funcționează bine) sau utilizați [fluxurile de lucru Twenty](/ro/user-guide/workflows/overview). Nu faceți publice `/graphql` sau `/rest` pentru a ocoli acest lucru: aplicația însăși rulează pe acele endpointuri, deci expunerea lor expune totul.
+</Note>
+
+## Alegeți o configurare
+
+<CardGroup cols={3} className="documentation-card-group">
+  <Card href="#option-1-tailscale" img="/images/user-guide/halftone/community-tailscale.svg">
+    <CardTitle>Eșecuri</CardTitle>
+    Complet privat. Cea mai simplă configurare, ideală pentru echipe mici.
+  </Card>
+  <Card href="#option-2-cloudflare-tunnel-and-access" img="/images/user-guide/halftone/community-cloudflare.svg">
+    <CardTitle>Cloudflare</CardTitle>
+    Fără porturi deschise, autentifică-te cu furnizorul tău de identitate, căi publice unde este necesar.
+  </Card>
+  <Card href="#option-3-your-own-reverse-proxy" img="/images/user-guide/halftone/community-reverse-proxy.svg">
+    <CardTitle>Reverse proxy</CardTitle>
+    Caddy sau Nginx cu permise IP. Fără servicii terțe.
+  </Card>
+</CardGroup>
+
+|                                            | Tailscale                                 | Cloudflare                                                  | Proxy invers                              |
+| ------------------------------------------ | ----------------------------------------- | ----------------------------------------------------------- | ----------------------------------------- |
+| Cum accesează echipa dvs.                  | Aplicația Tailscale pe fiecare dispozitiv | Autentificare în browser prin furnizorul dvs. de identitate | Din rețeaua de la birou sau printr-un VPN |
+| Porturi de intrare deschise pe server      | Niciunul                                  | Niciunul                                                    | 443                                       |
+| Webhook-uri publice                        | Nu                                        | Da                                                          | Da                                        |
+| Clienți AI locali (Claude Code, Codex)     | Da                                        | Da                                                          | Da                                        |
+| Conectori AI în cloud (Claude.ai, ChatGPT) | Nu                                        | Da                                                          | Da                                        |
+
+## Opțiunea 1: Tailscale
+
+[Tailscale](https://tailscale.com) plasează serverul și dispozitivele echipei tale într-o rețea privată. Twenty primește o adresă HTTPS care funcționează numai pentru persoanele din acea rețea.
+
+<Steps>
+  <Step title="Leagă Twenty la localhost">
+    În `docker-compose.yml`, modifică maparea portului pentru `server`, astfel încât containerul să fie accesibil numai de pe serverul însuși:
+
+    ```yaml
+    services:
+      server:
+        ports:
+          - "127.0.0.1:3000:3000"
+    ```
+  </Step>
+  <Step title="Adaugă serverul la tailnet-ul tău">
+    [Instalează Tailscale](https://tailscale.com/download/linux) pe server, apoi:
+
+    ```bash
+    sudo tailscale up --hostname=twenty
+    ```
+  </Step>
+  <Step title="Servește Twenty prin HTTPS">
+    ```bash
+    sudo tailscale serve --bg 3000
+    ```
+
+    Twenty este acum la `https://twenty.\<your-tailnet>.ts.net`, cu un certificat gestionat de Tailscale. Dacă ți se solicită prin comandă, activează certificatele HTTPS pentru tailnet-ul tău în consola de administrare.
+  </Step>
+  <Step title="Actualizează SERVER_URL">
+    ```ini
+    SERVER_URL=https://twenty.your-tailnet.ts.net
+    ```
+
+    Apoi repornește cu `docker compose up -d`.
+  </Step>
+</Steps>
+
+Folosește [controalele de acces Tailscale](https://tailscale.com/kb/1018/acls) pentru a limita accesul la server la persoanele care au nevoie de el, nu la întregul tău tailnet.
+
+Conectarea conturilor Google sau Microsoft funcționează în continuare: redirecționarea OAuth are loc în browserul colegului tău, care se află în tailnet. E-mailurile de invitație conțin linkuri către adresa tailnet, așa că noii colegi trebuie să se alăture tailnet-ului înainte de a accepta.
+
+<Warning>
+Tailscale Funnel publică un port întreg pe internet, nu căi individuale. Nu îl poți folosi pentru a face publică ruta `/webhooks` păstrând aplicația privată. Dacă ai nevoie de căi publice sau conectori AI, folosește opțiunea 2 sau 3.
+</Warning>
+
+## Opțiunea 2: Cloudflare Tunnel și Access
+
+Un [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) conectează serverul tău la Cloudflare printr-o conexiune de ieșire, astfel încât niciun port să nu fie deschis pe server. [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/) le solicită apoi membrilor echipei tale să se conecteze cu furnizorul tău de identitate înainte ca orice solicitare să ajungă la Twenty.
+
+<Steps>
+  <Step title="Protejează numele de gazdă cu Access">
+    Fă acest lucru înainte de a crea tunelul, astfel încât numele de gazdă să nu fie niciodată accesibil fără autentificare. Creează aplicații Access auto-găzduite. Access aplică cea mai specifică rută, astfel încât regulile de cale de mai jos au prioritate față de regula numelui de gazdă.
+
+    | Cale pe `crm.example.com`        | Acțiunea politicii | Include                                                                                                               |
+    | -------------------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------- |
+    | `/` (întregul nume de gazdă)     | Permite            | Echipa ta, de exemplu e-mailurile care se termină cu `@example.com`                                                   |
+    | `/webhooks`, `/s`, `/emailing`   | Ocolește           | Toată lumea                                                                                                           |
+    | `/mcp`, `/oauth`, `/.well-known` | Ocolește           | Intervalele IP ale conectorilor Cloud AI de la [clienți AI](#ai-clients-mcp), plus IP-urile biroului sau VPN-ului tău |
+
+    Creează o aplicație pentru fiecare cale. Adaugă regulile de ocolire numai pentru funcționalitățile pe care le folosești.
+
+    Clienții AI locali precum Claude Code nu pot finaliza o autentificare în browser, așa că se bazează pe IP-urile biroului sau VPN-ului din ultima regulă. Dacă echipa ta lucrează de oriunde, adaugă în schimb o politică Permite pentru echipa ta la acea aplicație, activează autentificarea WARP în Access și cere-le să ruleze clientul Cloudflare WARP.
+  </Step>
+  <Step title="Creează un tunel">
+    În tabloul de bord Cloudflare Zero Trust, creează un tunel, alege **Docker** ca mediu și copiază tokenul. Adaugă un nume de gazdă public, `crm.example.com`, care indică spre `http://server:3000`.
+  </Step>
+  <Step title="Rulează cloudflared alături de Twenty">
+    Adaugă acest serviciu în `docker-compose.yml` și elimină secțiunea `ports` din `server`. cloudflared accesează Twenty prin rețeaua Docker, astfel încât serverul nu trebuie să publice niciun port.
+
+    ```yaml
+    services:
+      cloudflared:
+        image: cloudflare/cloudflared:latest
+        command: tunnel --no-autoupdate run
+        environment:
+          TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+        depends_on:
+          - server
+        restart: always
+    ```
+
+    Adaugă `CLOUDFLARE_TUNNEL_TOKEN` în `.env`.
+  </Step>
+  <Step title="Actualizează SERVER_URL">
+    ```ini
+    SERVER_URL=https://crm.example.com
+    ```
+
+    Apoi repornește cu `docker compose up -d`.
+  </Step>
+</Steps>
+
+Dacă folosești WAF-ul sau protecția împotriva boților de la Cloudflare, omite provocările pe căile MCP și OAuth. Claude și ChatGPT nu pot rezolva o pagină de provocare.
+
+## Opțiunea 3: propriul proxy invers
+
+Dacă rulezi deja un proxy invers, adaugă pe lista de permisiuni adresele IP ale biroului sau VPN-ului tău pentru aplicație și deschide numai căile publice. Leagă mai întâi Twenty la localhost, ca în [opțiunea 1](#option-1-tailscale), astfel încât nimic să nu ocolească proxy-ul.
+
+<Tabs>
+  <Tab title="Caddy">
+    ```caddyfile
+    crm.example.com {
+      # Keep only the public paths you use
+      @public path /webhooks/* /s/* /emailing/*
+      handle @public {
+        reverse_proxy localhost:3000
+      }
+
+      @ai_clients {
+        path /mcp /mcp/* /oauth/* /.well-known/*
+        remote_ip 160.79.104.0/21 {$CHATGPT_CONNECTOR_IPS}
+      }
+      handle @ai_clients {
+        reverse_proxy localhost:3000
+      }
+
+      @team remote_ip 203.0.113.0/24
+      handle @team {
+        reverse_proxy localhost:3000
+      }
+
+      handle {
+        respond 403
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Nginx">
+    ```nginx
+    server {
+      listen 443 ssl;
+      server_name crm.example.com;
+      ssl_certificate /etc/ssl/crm.example.com/fullchain.pem;
+      ssl_certificate_key /etc/ssl/crm.example.com/privkey.pem;
+
+      proxy_set_header Host $host;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_http_version 1.1;
+      proxy_set_header Connection "";
+      proxy_buffering off;
+
+      # Keep only the public paths you use
+      location ^~ /webhooks/ { proxy_pass http://127.0.0.1:3000; }
+      location ^~ /s/ { proxy_pass http://127.0.0.1:3000; }
+      location ^~ /emailing/ { proxy_pass http://127.0.0.1:3000; }
+
+      location ~ ^/(mcp|oauth|\.well-known)(/|$) {
+        allow 203.0.113.0/24;
+        allow 160.79.104.0/21;
+        # one allow line per ChatGPT connector range
+        deny all;
+        proxy_pass http://127.0.0.1:3000;
+      }
+
+      location / {
+        allow 203.0.113.0/24;
+        deny all;
+        proxy_pass http://127.0.0.1:3000;
+      }
+    }
+    ```
+
+    Antetele `Host` și `X-Forwarded-Proto` sunt obligatorii: Twenty își construiește URL-urile de descoperire OAuth și MCP din ele, iar fără ele anunță `http://127.0.0.1:3000`. IP-urile echipei tale apar și în locația MCP, astfel încât clienții AI locali continuă să funcționeze. Caddy setează singur aceste antete.
+  </Tab>
+</Tabs>
+
+Înlocuiește `203.0.113.0/24` cu adresele biroului sau VPN-ului tău. `CHATGPT_CONNECTOR_IPS` conține intervalele OpenAI, vezi [clienți AI](#ai-clients-mcp); lasă-l gol dacă nu folosești ChatGPT. Dacă proxy-ul tău se află în spatele unui echilibrator de încărcare, potrivește după IP-ul clientului pe care îl redirecționează (`client_ip` cu `trusted_proxies` în Caddy, `set_real_ip_from` în Nginx), nu după adresa echilibratorului de încărcare.
+
+## Căi publice
+
+Acestea sunt căile apelate de serviciile din afara rețelei tale. Deschide numai cele de care ai nevoie.
+
+| Cale                                      | Apelat de                                | Necesar când                                                                              |
+| ----------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `/webhooks/workflows`                     | Orice serviciu extern                    | Folosești fluxuri de lucru cu un declanșator **Webhook**                                  |
+| `/s`, `/webhooks/server`                  | Orice serviciu extern                    | Folosești aplicații sau funcții logice care expun rute HTTP                               |
+| `/webhooks/google`, `/webhooks/microsoft` | Google și Microsoft                      | Ai activat sincronizarea push pentru căsuțele poștale și calendare (vezi mai jos)         |
+| `/webhooks/messaging`                     | Amazon SES, Resend                       | Trimiți e-mailuri prin SES sau Resend și dorești evenimente de livrare                    |
+| `/emailing`                               | Persoanele care primesc e-mailurile tale | Trimiți campanii de e-mail (linkuri de dezabonare, urmărirea deschiderilor și clicurilor) |
+| `/mcp`, `/oauth`, `/.well-known`          | Claude, ChatGPT                          | Adaugi Twenty ca un conector, vezi [clienți AI](#ai-clients-mcp)                          |
+
+În mod implicit, Twenty interoghează căsuțele poștale și calendarele, astfel încât Google și Microsoft nu apelează niciodată instanța ta. O fac numai dacă setezi `IS_CONNECTED_ACCOUNT_WEBHOOK_SUBSCRIPTION_ENABLED=true`.
+
+Cum este protejată fiecare cale publică:
+
+* **Webhook-urile fluxurilor de lucru** verifică numai că spațiul de lucru și fluxul de lucru există. Oricine cunoaște URL-ul poate declanșa fluxul de lucru, așa că tratează URL-ul ca pe un secret și validează sarcina utilă în fluxul de lucru înainte de a acționa asupra ei.
+* **Rutele aplicațiilor și funcțiilor logice** sunt publice, cu excepția cazului în care ruta necesită autentificare (`isAuthRequired`). Pentru rutele publice, verifică apelantul în propriul cod, de exemplu cu semnătura serviciului expeditor.
+* **Webhook-urile Google, Microsoft, SES și Resend** sunt verificate de Twenty, folosind semnătura sau tokenul furnizorului.
+* **Linkurile de e-mail** pot înregistra numai o deschidere, un clic sau o dezabonare pentru destinatarul căruia i-au fost trimise.
+
+## Clienți AI (MCP)
+
+Asistenții AI reprezintă unul dintre principalele moduri în care echipa ta va folosi Twenty, prin [serverul său MCP](/ro/user-guide/ai/capabilities/mcp). Ce trebuie să deschizi depinde de locul în care rulează asistentul, nu de asistentul utilizat.
+
+### Clienți locali: nimic de deschis
+
+Claude Code, Codex CLI, Cursor și alte instrumente care rulează pe computerul tău se conectează la Twenty de pe acel computer. Dacă se află în tailnet-ul sau VPN-ul tău, acestea accesează `/mcp` în același mod în care browserul tău accesează aplicația. Aceasta este cea mai sigură configurare, așa că prefer-o atunci când poți.
+
+Claude Desktop este excepția: conectorii adăugați în **Setări → Conectori** rulează în cloud-ul Anthropic, chiar și în aplicația desktop. Pentru a păstra conexiunea locală, adaugă în schimb Twenty ca server MCP local în `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://twenty.your-tailnet.ts.net/mcp"
+      ]
+    }
+  }
+}
+```
+
+### Conectori cloud: deschide cu grijă
+
+Claude (web, mobil și conectorii din aplicația desktop) și ChatGPT apelează serverul tău din infrastructura Anthropic și OpenAI, nu de pe dispozitivul tău. Nu pot accesa o instanță privată, deci trebuie să deschizi `/mcp`, `/oauth` și `/.well-known` pentru intervalele lor IP.
+
+<Warning>
+O listă de permisiuni IP verifică din ce rețea provine o solicitare, nu cine a trimis-o. Oricine are un cont Claude sau ChatGPT poate adăuga URL-ul tău ca conector și trimite solicitări către aceste căi.
+</Warning>
+
+Autentificarea este cea care îi ține departe. Pentru a obține un token, un utilizator trebuie să se conecteze pe pagina `/authorize` a Twenty, care rămâne în zona privată. O persoană din afara rețelei tale poate începe fluxul de conectare, dar nu îl poate finaliza, iar `/mcp` respinge fiecare solicitare fără un token valid.
+
+Ceea ce rămâne expus este codul care rulează înainte de autentificare: descoperirea OAuth, înregistrarea clientului (`/oauth/register`) și endpointul de token. Lista de permisiuni restrânge acest lucru: scanerele de pe întregul internet nu pot accesa direct aceste căi, iar solicitările trebuie să provină prin infrastructura Claude sau ChatGPT. Nu face acel cod sigur de unul singur, așa că actualizările rămân importante.
+
+Dacă folosești conectori cloud:
+
+* Deschide numai `/mcp`, `/oauth` și `/.well-known`. Nu deschide niciodată `/authorize` sau restul aplicației.
+* Permite numai furnizorii pe care îi folosești:
+  * **Anthropic:** `160.79.104.0/21`, din [pagina cu adresele IP Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
+  * **OpenAI:** lista din [chatgpt-connectors.json](https://openai.com/chatgpt-connectors.json). OpenAI o descrie ca fiind depusă cu bună-credință și se modifică în timp, așa că actualizeaz-o periodic:
+
+    ```bash
+    curl -s https://openai.com/chatgpt-connectors.json | jq -r '.prefixes[].ipv4Prefix | select(.)'
+    ```
+* Actualizează rapid când notele de lansare menționează remedieri MCP sau OAuth.
+
+## Verifică configurarea
+
+Testează de pe ambele părți ale rețelei tale după orice modificare:
+
+| Test                                        | De la                 | Așteptat                                                   |
+| ------------------------------------------- | --------------------- | ---------------------------------------------------------- |
+| Aplicația, `/graphql` și `/authorize`       | În afara rețelei tale | Blocat sau pagina ta de autentificare Access               |
+| Portul `3000` pe IP-ul public al serverului | În afara rețelei tale | Fără conexiune                                             |
+| Aplicația și un client AI local             | În rețeaua ta         | Ambele funcționează                                        |
+| O solicitare MCP fără token (mai jos)       | În rețeaua ta         | `401`, cu un URL de descoperire la adresa ta HTTPS publică |
+| Un conector cloud                           | Claude sau ChatGPT    | Te poți conecta, autentifica și apela un instrument        |
+| Fiecare cale publică pe care ai deschis-o   | Serviciul real        | Evenimentul său de test este transmis                      |
+
+```bash
+curl -si -X POST https://crm.example.com/mcp | grep -i www-authenticate
+```
+
+Antetul ar trebui să indice către `https://crm.example.com/.well-known/...`. Dacă afișează `http://` sau `127.0.0.1`, proxy-ul tău nu redirecționează antetele `Host` și `X-Forwarded-Proto`.
+
+## Listă de verificare de bază
+
+<Check>Postgres și Redis nu sunt publicate. Fișierul implicit `docker-compose.yml` nu le publică; păstrează această configurare dacă îl editezi.</Check>
+<Check>Nimic nu ocolește proxy-ul sau tunelul tău. Cu un proxy pe gazdă, portul Twenty este legat la `127.0.0.1`. Cu cloudflared în Docker, serviciul `server` nu publică niciun port. Docker își scrie propriile reguli de firewall, astfel încât porturile pe care le publică ocolesc `ufw` și firewall-urile similare ale gazdei.</Check>
+<Check>Secretele sunt lungi și aleatorii și știi cum să le [rotești](/ro/developers/self-host/capabilities/key-rotation).</Check>
+<Check>Membrii spațiului de lucru folosesc SSO sau autentificare cu doi factori.</Check>
+<Check>Baza de date este salvată conform unei planificări și ai testat o restaurare.</Check>
+<Check>`TAG` este fixat la o versiune și faci actualizări în mod intenționat.</Check>
+
+## Rămâi la zi
+
+Niciunul dintre cele de mai sus nu înlocuiește actualizarea. Îți oferă timp.
+
+* Urmărește lansările pe [GitHub](https://github.com/twentyhq/twenty): **Urmărește → Personalizat → Lansări**.
+* Când o lansare include o remediere de securitate, actualizează imediat ce recomandarea aferentă indică acest lucru: în aceeași zi pentru problemele critice. Urmează [ghidul de actualizare](/ro/developers/self-host/capabilities/upgrade-guide).
+* Raportează vulnerabilitățile la [security@twenty.com](mailto:security@twenty.com), nu în probleme publice.
+
+<PageBanner illustration="community-reverse-proxy" />

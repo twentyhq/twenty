@@ -1,0 +1,186 @@
+---
+title: Addebito dei Crediti
+description: Dichiara per cosa viene fatturata la tua app e addebita crediti del workspace da una funzione di logica.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+<Warning>
+  Non è ancora attivo. L'addebito dei crediti per le app verrà lanciato ufficialmente a ottobre. Questa pagina viene pubblicata in anticipo per i partner che vogliono sperimentarla.
+</Warning>
+
+Le app il cui funzionamento ha un costo — un registratore di chiamate che paga un fornitore di trascrizioni, un'app di arricchimento che paga per corrispondenza — addebitano al workspace **crediti**. Tutto ciò per cui un'app fattura viene dichiarato in un unico blocco `billing` nella configurazione dell'applicazione:
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, variables...
+  billing: {
+    description: '$20/month + $0.02 per minute recorded',
+    recurring: {
+      platformFee: {
+        period: 'MONTH',
+        amountMicroCredits: 20_000_000,
+        label: 'Platform fee',
+      },
+    },
+    operations: {
+      recordMeeting: {
+        operationType: 'CALL_RECORDING',
+        label: 'Meeting recording',
+      },
+    },
+  },
+});
+```
+
+* `recurring` — tariffe fisse e per membro che la **piattaforma** applica per te, una volta per periodo di fatturazione.
+* `operations` — ciò per cui addebiti durante l'utilizzo, da una funzione di logica.
+* `description` — una riga descrittiva visualizzata agli acquirenti nella scheda della tua app sul marketplace.
+
+Tutti e tre confluiscono nello stesso contatore di crediti e nella stessa ripartizione in **Impostazioni > Utilizzo**, quindi un workspace vede un'unica fattura.
+
+## Addebiti ricorrenti
+
+Un addebito ricorrente è una tariffa di abbonamento: un importo mensile fisso, un importo per membro del workspace o entrambi. Dichiari l'importo e la piattaforma lo addebita. La tua app non chiama mai `chargeCredits` per questi.
+
+```ts src/application-config.ts
+billing: {
+  recurring: {
+    platformFee: {
+      period: 'MONTH',
+      amountMicroCredits: 20_000_000,
+      label: 'Platform fee',
+    },
+    seat: {
+      period: 'MONTH',
+      amountMicroCredits: 5_000_000,
+      per: 'WORKSPACE_MEMBER',
+      label: 'Per member',
+    },
+  },
+},
+```
+
+| Campo                | Descrizione                                                                                                                                                                              |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `periodo`            | `MONTH` — l'unico periodo disponibile oggi                                                                                                                                               |
+| `amountMicroCredits` | Importo in micro-crediti (1 USD = 1.000.000), un numero intero positivo fino a 100.000.000 ($100). Per un addebito `WORKSPACE_MEMBER`, questa è la tariffa **per membro**, non il totale |
+| `per`                | Ometti per una tariffa fissa. `WORKSPACE_MEMBER` moltiplica l'importo per il numero di membri nel workspace quando viene addebitato il periodo                                           |
+| `label`              | Ciò che gli amministratori leggono per quella riga in Utilizzo                                                                                                                           |
+
+Modalità di applicazione:
+
+* Una volta per periodo di fatturazione del workspace, alla scadenza del periodo del workspace stesso, non il primo giorno del mese.
+* Non proporzionati. A un'app installata a metà periodo viene addebitato l'intero importo per quel periodo; la disinstallazione interrompe il periodo successivo, ma non rimborsa quello corrente.
+* Gli addebiti per membro conteggiano tutti i membri del workspace nel momento in cui viene applicato l'addebito, quindi un workspace che cresce a metà periodo paga il conteggio più alto a partire dal periodo successivo.
+* Solo per gli abbonamenti mensili. A un workspace con piano annuale non viene addebitata una tariffa `MONTH`, anziché essere addebitato una volta per l'intero anno.
+* Limitati. Una tariffa dichiarata superiore a $100, o un addebito per membro la cui tariffa moltiplicata per il numero di membri supererebbe $1.000 per il periodo, viene rifiutata e non viene aumentata. La piattaforma applica questi addebiti autonomamente, quindi non registrerà un addebito che non può giustificare.
+
+## Operazioni fatturabili
+
+Un'operazione è ciò per cui la tua app addebita mentre funziona. Ogni voce associa un nome di operazione scelto da te alla categoria di fatturazione misurata dalla piattaforma, oltre all'etichetta mostrata agli amministratori del workspace in **Impostazioni > Utilizzo**.
+
+```ts src/application-config.ts
+billing: {
+  operations: {
+    recordMeeting: {
+      operationType: 'CALL_RECORDING',
+      label: 'Meeting recording',
+    },
+    summarizeMeeting: {
+      operationType: 'AI_CHAT_TOKEN',
+      label: 'Meeting summary',
+    },
+  },
+},
+```
+
+`operationType` deve essere una delle categorie di fatturazione della piattaforma: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`. Determina il modo in cui la spesa viene misurata e quale unità di conteggio si applica (token, invocazioni, minuti), ma non è ciò che leggono gli amministratori. Lo è `label`.
+
+La build rifiuta un `operationType` sconosciuto, un `label` vuoto e un nome utilizzato sia da un addebito ricorrente sia da un'operazione.
+
+## Addebito
+
+Addebita un'operazione dichiarata in base al nome:
+
+```ts
+import { chargeCredits } from 'twenty-sdk/billing';
+
+await chargeCredits({
+  operation: 'recordMeeting',
+  creditsUsedMicro: 250_000,
+  quantity: 12,
+});
+```
+
+`creditsUsedMicro` è l'importo in micro-crediti (1 USD = 1,000,000). `quantity` indica quante unità copre l'addebito, nell'unità implicata dalla categoria dell'operazione — minuti per `CALL_RECORDING`, invocazioni per `CODE_EXECUTION` e così via.
+
+Note:
+
+* La dichiarazione delle operazioni consente a Utilizzo di suddividere la spesa della tua app in base a ciò per cui ha addebitato. Un'app che non dichiara nulla viene comunque riportata come un'unica sezione sotto il suo nome visualizzato.
+* L'addebito di un'operazione non dichiarata dal tuo manifest viene rifiutato. Aggiungila a `billing.operations` e sincronizza.
+* Più operazioni possono condividere uno stesso `operationType`. Due operazioni di arricchimento, entrambe misurate come `CODE_EXECUTION`, vengono comunque visualizzate come due sezioni etichettate.
+* Senza `operation`, indica direttamente la categoria di fatturazione con `operationType`, facoltativamente con un `resourceContext` in formato libero. Le due forme si escludono a vicenda: `operation` contiene l'etichetta, `operationType` no.
+* L'addebito non fa mai fallire la tua funzione. Un errore di fatturazione viene registrato e ignorato, e la chiamata non esegue alcuna operazione al di fuori del runtime della funzione di logica, affinché le esecuzioni locali e i test non si arrestino in modo anomalo.
+
+## Verificare prima di spendere
+
+Un workspace può esaurire i crediti. Quando ciò accade, la tua funzione viene rifiutata prima che il codice inizi e anche il lavoro della piattaforma si interrompe: `runAgent` restituisce un errore invece di essere eseguito e gli altri punti di ingresso dell'IA rifiutano del tutto. `sendInboxMessage` non esegue alcun modello e non aggiunge alcun addebito AI proprio, sebbene la funzione che la chiama venga rifiutata come qualsiasi altra; la risposta di un membro viene addebitata come qualsiasi turno di chat. Gli hook di disinstallazione e disconnessione costituiscono l'eccezione e vengono sempre eseguiti, quindi un'app può comunque essere rimossa correttamente. Un'esecuzione che riesce a passare può comunque fallire più tardi, durante una chiamata della piattaforma che non ha scritto, se lo spazio di lavoro esaurisce le risorse durante l'esecuzione.
+
+Chiedi prima:
+
+```ts
+import { getCreditAvailability } from 'twenty-sdk/billing';
+
+const { hasAvailableCredits } = await getCreditAvailability();
+
+if (!hasAvailableCredits) {
+  return;
+}
+```
+
+Quando i crediti non sono disponibili, viene fornito un `reason`: `no-credits`, `no-subscription` o `workspace-suspended`. `no-credits` copre anche un limite di **Tutto l'utilizzo** impostato da un amministratore per la tua app in **Impostazioni → Fatturazione → Limiti**: lo spazio di lavoro potrebbe ancora avere crediti, ma la tua app potrebbe non poterli spendere.
+
+Note:
+
+* Indica se la tua app può spendere in questo spazio di lavoro, non quanto le rimane. La tua app non vede il saldo, il piano o i relativi limiti.
+* In caso di errore, consente l'operazione. Se il controllo va in timeout o il server non è raggiungibile, segnala che i crediti sono disponibili, così un problema dell'infrastruttura non interrompe la tua app. Consideralo un suggerimento che vale la pena rispettare, non una decisione di autorizzazione.
+* È un'istantanea. I crediti possono esaurirsi tra il controllo e l'operazione — anche a causa dei tuoi addebiti, poiché ogni addebito che effettui fa avanzare lo stesso contatore letto qui.
+* Il controllo non viene applicato in modo uniforme. Non tutti i percorsi delle email in uscita sono vincolati dai crediti, quindi un valore `false` qui indica che la tua app non dovrebbe spendere in questo momento, anziché prevedere esattamente quali chiamate avranno esito negativo.
+
+## Informare le persone sui costi
+
+Dichiarare gli addebiti indica alla piattaforma come *misurare* la tua app; non indica a un acquirente quanto pagherà. Imposta `billing.description` per questo: una breve riga amichevole mostrata nella scheda della tua app nel marketplace, prima che qualcuno la installi.
+
+```ts src/application-config.ts
+billing: {
+  description: '$0.02 per minute recorded, billed to your Twenty credits',
+},
+```
+
+È testo libero per scelta: i prezzi reali includono livelli, minimi e tariffe per unità che un singolo numero non può esprimere. Limitati a una riga.
+
+Un'app che dichiara `operations` o `recurring` chiede anche il consenso dell'amministratore che effettua l'installazione: la schermata di installazione elenca "Addebita crediti al tuo spazio di lavoro", mentre la pagina dell'app mostra "Addebita crediti", con la tua `description` al passaggio del mouse.
+
+## Attribuzione
+
+La spesa viene attribuita a chi ha attivato l'esecuzione, quindi viene mostrata in **Utilizzo per utente**. Le esecuzioni senza nessuno che le ha avviate (un webhook, un cron) non hanno una persona attivante: passa `userWorkspaceId` se la tua app sa a chi appartiene la spesa. Deve appartenere al workspace in cui è installata l'app e viene ignorato quando l'esecuzione ha un utente attivante.
+
+```ts
+await chargeCredits({
+  operation: 'recordMeeting',
+  creditsUsedMicro: 250_000,
+  quantity: 12,
+  userWorkspaceId: ownerUserWorkspaceId,
+});
+```
+
+Dove ottenerne uno: `context.userWorkspaceId` in un'esecuzione attivata oppure [`listConnections()`](/it/developers/extend/apps/logic/connections), che restituisce il `userWorkspaceId` del proprietario di ogni connessione.
+
+Gli addebiti ricorrenti non hanno una persona attivante, quindi vengono riportati solo per l'app, mai per un membro.
+
+<PageBanner illustration="card-page-charging-credits" />

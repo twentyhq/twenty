@@ -20,6 +20,7 @@ import {
 } from '@/tokens';
 import { Button } from '@/ui';
 
+import { PlanTableInfoTooltip } from './PlanTableInfoTooltip';
 import { PLAN_TABLE_DATA } from './plan-table-data';
 import {
   type PlanTableBodyRowDataType,
@@ -30,7 +31,9 @@ import {
 } from './plan-table-types';
 import { resolveVisibleRows } from './plan-table-visible-rows';
 
-const CheckMark = INFORMATIVE_MARKS.check;
+const CrossMark = INFORMATIVE_MARKS.cross;
+const InfinityMark = INFORMATIVE_MARKS.infinity;
+const TickMark = INFORMATIVE_MARKS.tick;
 
 const TableScope = styled.div`
   align-items: center;
@@ -57,6 +60,11 @@ const HeadCell = styled.div`
   &[data-tier] {
     border-left: 1px solid ${semanticColor.line};
   }
+
+  &[data-highlighted] {
+    background-color: ${color('white-5')};
+    box-shadow: inset 0 2px 0 ${color('blue')};
+  }
 `;
 
 const FeatureLabel = styled.div`
@@ -67,6 +75,7 @@ const FeatureLabel = styled.div`
   line-height: ${spacing(8)};
   min-height: ${spacing(16)};
   padding: ${spacing(4)};
+  position: relative;
 `;
 
 const TierCell = styled.div`
@@ -80,17 +89,43 @@ const TierCell = styled.div`
   line-height: ${spacing(5.5)};
   min-height: ${spacing(16)};
   padding: ${spacing(4)};
+
+  &[data-highlighted] {
+    background-color: ${color('white-5')};
+  }
 `;
 
 const TierText = styled.span`
   color: ${semanticColor.ink};
 `;
 
-const YesRow = styled.div`
-  align-items: center;
-  column-gap: ${spacing(4)};
+const MetricLine = styled.span`
+  align-items: baseline;
+  column-gap: ${spacing(1)};
   display: flex;
-  width: 100%;
+  flex-wrap: wrap;
+`;
+
+const MetricValue = styled.span`
+  color: ${semanticColor.ink};
+  font-size: ${fontSize(4)};
+  font-weight: ${FONT_WEIGHT.medium};
+`;
+
+const MetricUnit = styled.span`
+  color: ${semanticColor.inkMuted};
+`;
+
+const CellDetail = styled.span`
+  color: ${semanticColor.inkMuted};
+  font-size: ${fontSize(3.5)};
+  line-height: ${spacing(5)};
+`;
+
+const CellMark = styled.span`
+  align-items: center;
+  column-gap: ${spacing(2.5)};
+  display: flex;
 `;
 
 const CategoryBand = styled.div`
@@ -115,12 +150,15 @@ const CollapsibleWrapper = styled.div`
   opacity: 0;
   transition:
     grid-template-rows 0.4s ${EASING.standard},
-    opacity 0.4s ${EASING.standard};
+    opacity 0.4s ${EASING.standard},
+    visibility 0.4s ${EASING.standard};
+  visibility: hidden;
   width: 100%;
 
   &[data-expanded] {
     grid-template-rows: 1fr;
     opacity: 1;
+    visibility: visible;
   }
 `;
 
@@ -151,19 +189,64 @@ function resolveCell(
 function CellValue({ cell }: { cell: PlanTableCellType }) {
   const { i18n } = useLingui();
 
-  if (cell.kind === 'dash') {
-    return <TierText>{i18n._(msg`No`)}</TierText>;
+  if (cell.kind === 'text') {
+    return (
+      <>
+        {cell.suffix === undefined ? (
+          <TierText>{i18n._(cell.text)}</TierText>
+        ) : (
+          <MetricLine>
+            <TierText>{i18n._(cell.text)}</TierText>
+            <MetricUnit>{i18n._(cell.suffix)}</MetricUnit>
+          </MetricLine>
+        )}
+        {cell.detail !== undefined ? (
+          <CellDetail>{i18n._(cell.detail)}</CellDetail>
+        ) : null}
+      </>
+    );
   }
 
-  if (cell.kind === 'text') {
-    return <TierText>{i18n._(cell.text)}</TierText>;
+  if (cell.kind === 'metric') {
+    return (
+      <>
+        <MetricLine>
+          {cell.prefix !== undefined ? (
+            <MetricUnit>{i18n._(cell.prefix)}</MetricUnit>
+          ) : null}
+          <MetricValue>{i18n._(cell.value)}</MetricValue>
+          <MetricUnit>{i18n._(cell.unit)}</MetricUnit>
+        </MetricLine>
+        {cell.detail !== undefined ? (
+          <CellDetail>{i18n._(cell.detail)}</CellDetail>
+        ) : null}
+      </>
+    );
+  }
+
+  if (cell.kind === 'dash') {
+    return (
+      <CellMark>
+        <CrossMark color={semanticColor.inkSubtle} sizePx={18} />
+        <TierText>{i18n._(msg`No`)}</TierText>
+      </CellMark>
+    );
+  }
+
+  if (cell.kind === 'unlimited') {
+    return (
+      <CellMark>
+        <InfinityMark color={color('blue')} sizePx={18} />
+        <TierText>{i18n._(msg`Unlimited`)}</TierText>
+      </CellMark>
+    );
   }
 
   return (
-    <YesRow>
-      <CheckMark color={color('blue')} sizePx={16} />
+    <CellMark>
+      <TickMark color={color('blue')} sizePx={18} />
       <TierText>{i18n._(cell.label ?? msg`Yes`)}</TierText>
-    </YesRow>
+    </CellMark>
   );
 }
 
@@ -178,9 +261,17 @@ function FeatureRow({
 
   return (
     <GridRow>
-      <FeatureLabel>{i18n._(row.featureLabel)}</FeatureLabel>
+      <FeatureLabel>
+        {i18n._(row.featureLabel)}
+        {row.tooltip !== undefined ? (
+          <PlanTableInfoTooltip text={row.tooltip} />
+        ) : null}
+      </FeatureLabel>
       {tierColumns.map((column) => (
-        <TierCell key={column.id}>
+        <TierCell
+          data-highlighted={column.highlighted ? '' : undefined}
+          key={column.id}
+        >
           <CellValue cell={resolveCell(row, column.id)} />
         </TierCell>
       ))}
@@ -248,7 +339,11 @@ export function PlanTableContent() {
       <GridRow>
         <HeadCell>{i18n._(PLAN_TABLE_DATA.featureColumnLabel)}</HeadCell>
         {PLAN_TABLE_DATA.tierColumns.map((column) => (
-          <HeadCell data-tier key={column.id}>
+          <HeadCell
+            data-highlighted={column.highlighted ? '' : undefined}
+            data-tier
+            key={column.id}
+          >
             {i18n._(column.label[hosting])}
           </HeadCell>
         ))}

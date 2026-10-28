@@ -3,7 +3,7 @@ title: Configurar un disparador de webhook
 description: Recibe datos de servicios externos para activar flujos de trabajo.
 ---
 
-Los disparadores de webhook permiten que servicios externos inicien tus flujos de trabajo enviando datos a una URL única. Úsalos para conectar formularios, aplicaciones de terceros e integraciones personalizadas.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Cuándo usar webhooks
 
@@ -61,12 +61,12 @@ Ahora agrega acciones que utilicen los datos del webhook:
 2. Selecciona el objeto **Personas**
 3. Asigna los campos:
 
-| Campo              | Valor                                           |
-| ------------------ | ----------------------------------------------- |
-| Nombre             | `{{trigger.body.firstName}}`                    |
-| Apellidos          | `{{trigger.body.lastName}}`                     |
-| Correo electrónico | `{{trigger.body.email}}`                        |
-| Empresa            | Buscar o crear según `{{trigger.body.company}}` |
+| Campo              | Valor                                      |
+| ------------------ | ------------------------------------------ |
+| Nombre             | `{{trigger.firstName}}`                    |
+| Apellidos          | `{{trigger.lastName}}`                     |
+| Correo electrónico | `{{trigger.email}}`                        |
+| Empresa            | Buscar o crear según `{{trigger.company}}` |
 
 ### Paso 5: Probar el webhook
 
@@ -107,7 +107,7 @@ Si tu webhook envía datos anidados:
 }
 ```
 
-Haz referencia con: `{{trigger.body.contact.email}}`
+Haz referencia con: `{{trigger.contact.email}}`
 
 ### Arrays
 
@@ -168,3 +168,5 @@ Para más detalles sobre cómo manejar arrays, consulta [Cómo manejar arrays en
 
 * [Disparadores de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-triggers)
 * [Acciones de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-actions)
+
+<PageBanner illustration="card-page-webhooks" />

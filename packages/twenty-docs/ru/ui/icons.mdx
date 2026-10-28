@@ -1,0 +1,90 @@
+---
+title: Иконки
+description: Именованные иконки, динамический поиск, обёртки иллюстраций и поддерживаемые ими свойства.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import IconReference from '/snippets/ui/generated/icon/icon.mdx';
+import IconsProviderReference from '/snippets/ui/generated/icon/icons-provider.mdx';
+import IllustrationIconWrapperReference from '/snippets/ui/generated/icon/illustration-icon-wrapper.mdx';
+import ThinkingOrbitLoaderIconReference from '/snippets/ui/generated/icon/thinking-orbit-loader-icon.mdx';
+import IconCatalog from '/snippets/ui/generated/icon/catalog.mdx';
+
+## Обзор
+
+Импортируйте именованные иконки из `twenty-ui/icon`. Используйте окружающий элемент управления или видимый текст, чтобы передать смысл. Декоративные иконки должны быть скрыты от вспомогательных технологий.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const CompleteButton = () => (
+  <Button startIcon={<IconCheck />}>Complete task</Button>
+);
+```
+
+Слоты иконок кнопок уже задают размер иконки и скрывают её от вспомогательных технологий, поэтому здесь для иконки не нужны дополнительные свойства.
+
+## Поддерживаемые свойства
+
+Иконки Tabler принимают `size` (число или длина CSS), `stroke` (ширина обводки), `color`, а также нативные атрибуты SVG и refs. Пользовательские иконки бренда и иллюстраций принимают только свойства, перечисленные в сгенерированном каталоге ниже. Их размеры по умолчанию различаются; передавайте `size` для единообразного результата. Цвета бренда могут быть зафиксированы в графике, поэтому переопределение цвета доступно только там, где оно указано.
+
+Для пользовательских иконок, не принимающих атрибуты доступности, нужна обёртка с подходящей меткой или `aria-hidden`. `className` и `style` также доступны только там, где они указаны. По возможности импортируйте конкретную иконку, чтобы избежать загрузки динамического каталога.
+
+Экспортированные значки сохраняют заданную ширину в flex-макетах, в том числе внутри кнопок. Разрешите соседнему тексту обрезаться или родительскому элементу переносить содержимое или прокручиваться при ограниченном пространстве. Если значок поддерживает `className` или `style`, вы можете явно переопределить `flex-shrink` для макета, которому это необходимо. Контейнеры иллюстраций также сохраняют свою ширину.
+
+## Динамические имена иконок
+
+Используйте `IconsProvider` и `Icon`, когда имена выбираются во время выполнения. Провайдер асинхронно загружает полную карту иконок; сборки без разделения кода, например фронтенд-компоненты, включают всю карту. До завершения загрузки и для неизвестных имён `Icon` отображает `Icon123`. Динамическая карта отличается от каталога именованных экспортов; не предполагается, что каждый экспорт бренда или иллюстрации можно разрешить по имени.
+
+```tsx
+import { Icon, IconsProvider } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const DynamicAction = ({ iconName }: { iconName: string }) => (
+  <IconsProvider>
+    <Button startIcon={<Icon name={iconName} />}>Open record</Button>
+  </IconsProvider>
+);
+```
+
+`useIcons()` предоставляет `getIcon(name, customDefaultIcon)` и `getIcons()` внутри того же провайдера. `getIcons()` изначально возвращает пустую карту. `getIcon` использует именованный резервный вариант, если он существует, затем `Icon123`. Провайдер принимает один дочерний элемент; для нескольких дочерних элементов используйте фрагмент.
+
+### Свойства Icon
+
+<IconReference />
+
+### Свойства IconsProvider
+
+<IconsProviderReference />
+
+## Обёртка иллюстрации
+
+`IllustrationIconWrapper` предоставляет стили контейнера иллюстрации и перенаправляет нативные атрибуты div, дочерние элементы, стили и refs. Каждый экспорт `IllustrationIcon*` уже рендерится внутри неё, поэтому используйте обёртку только для оформления собственного содержимого иллюстрации.
+
+```tsx
+import { IconCalendarEvent, IllustrationIconWrapper } from 'twenty-ui/icon';
+
+export const CalendarIllustration = () => (
+  <IllustrationIconWrapper role="img" aria-label="Calendar event">
+    <IconCalendarEvent size={32} />
+  </IllustrationIconWrapper>
+);
+```
+
+<IllustrationIconWrapperReference />
+
+## Анимированная иконка загрузчика
+
+`ThinkingOrbitLoaderIcon` непрерывно анимируется, пока смонтирована. Она декоративна и всегда скрыта от вспомогательных технологий. Показывайте текст загрузки отдельно и монтируйте или удаляйте иконку в соответствии с состоянием приложения.
+
+<ThinkingOrbitLoaderIconReference />
+
+## Каталог именованных иконок
+
+Этот каталог создаётся на основе публичных экспортов `twenty-ui/icon` и группирует иконки по принимаемым ими свойствам.
+
+<IconCatalog />
+
+<PageBanner illustration="section-ui-components" />

@@ -1,0 +1,95 @@
+---
+title: SearchInput
+description: نص بحث متحكَّم فيه مع إجراءات اختيارية، مثل نافذة منبثقة للتصفية.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SearchInputReference from '/snippets/ui/generated/components/input/search-input.mdx';
+
+## نظرة عامة
+
+يوفر `SearchInput` أيقونة بحث وإدخال نصي. يتلقى `onValueChange` السلسلة الجديدة؛ بينما يتلقى `onChange` حدث التغيير الأصلي في React. تنتمي التصفية والجلب وإزالة الارتداد إلى تطبيقك.
+
+<StoryEmbed storyId="ui-input-searchinput--display" title="مثال على SearchInput" height={110} />
+
+## استخدام
+
+```tsx
+import { useState } from 'react';
+import { SearchInput } from 'twenty-ui/components/input';
+
+export const RecordSearch = () => {
+  const [value, setValue] = useState('');
+
+  return (
+    <SearchInput
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search..."
+    />
+  );
+};
+```
+
+استخدم `aria-label` أو `aria-labelledby` لاسم يمكن الوصول إليه.
+
+تنطبق خصائص الإدخال الأصلية و`className` و`style` و`ref` على الإدخال نفسه. تتولى `InputGroup` المشتركة ملحق البحث ومعالجة التركيز. لا يقبل الغلاف الذي ينسّق الحقل وإجراءاته أي خصائص؛ ضع `SearchInput` في الحاوية الخاصة بك لتحديد حجمه أو موضعه. استخدم `size="sm"` لحقل بحث مضغوط.
+
+## الإجراءات
+
+يعرض `actions` عناصر التحكم بعد حقل البحث. أنشئ نافذة منبثقة للتصفية باستخدام [قائمة منسدلة](/ar/ui/components/navigation/dropdown) يكون مشغّلها `IconButton`، ومنح ذلك الزر اسمًا متاحًا.
+
+```tsx
+import { useState } from 'react';
+import { IconButton, SearchInput } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconFilter } from 'twenty-ui/icon';
+
+export const FilteredPeopleSearch = () => {
+  const [search, setSearch] = useState('');
+  const [includeInactive, setIncludeInactive] = useState(false);
+
+  return (
+    <SearchInput
+      aria-label="Search people"
+      placeholder="Name or email"
+      value={search}
+      onValueChange={setSearch}
+      actions={
+        <Dropdown.Root type="panel">
+          <Dropdown.Trigger
+            render={
+              <IconButton aria-label="Filter people">
+                <IconFilter />
+              </IconButton>
+            }
+          />
+          <Dropdown.Content align="end">
+            <Dropdown.Section>
+              <SettingsRow
+                checked={includeInactive}
+                onCheckedChange={setIncludeInactive}
+              >
+                Include inactive people
+              </SettingsRow>
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Root>
+      }
+    />
+  );
+};
+```
+
+يعطّل `disabled` إدخال النص فقط؛ عطّل عناصر التحكم الخاصة بالإجراءات بشكل منفصل. عند استخدام `size="sm"`، مرّر `size="sm"` إلى عناصر التحكم الخاصة بالإجراءات أيضًا.
+
+<StoryEmbed storyId="ui-input-searchinput--with-filter" title="SearchInput مع نافذة منبثقة للتصفية" height={320} />
+
+## الإزاحة
+
+<SearchInputReference />
+
+<PageBanner illustration="page-cover-search" />
