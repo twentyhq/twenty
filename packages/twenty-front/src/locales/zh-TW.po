@@ -19367,11 +19367,6 @@ msgstr "默認視圖中不可用"
 msgid "Not configured"
 msgstr "未設定"
 
-#. js-lingui-id: S33tz3
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
-msgid "Not connected"
-msgstr ""
-
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
