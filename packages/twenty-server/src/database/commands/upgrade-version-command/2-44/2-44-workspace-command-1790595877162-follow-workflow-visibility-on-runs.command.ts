@@ -95,6 +95,7 @@ export class FollowWorkflowVisibilityOnRunsCommand extends ProvisionedWorkspaceC
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:
@@ -140,6 +141,7 @@ export class FollowWorkflowVisibilityOnRunsCommand extends ProvisionedWorkspaceC
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:
@@ -159,9 +161,7 @@ export class FollowWorkflowVisibilityOnRunsCommand extends ProvisionedWorkspaceC
     }
   }
 
-  private async grantWorkflowRunVisibility(
-    workspaceId: string,
-  ): Promise<void> {
+  private async grantWorkflowRunVisibility(workspaceId: string): Promise<void> {
     const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
     const parameters = [
       workspaceId,
