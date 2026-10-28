@@ -413,9 +413,13 @@ export class MessageCampaignService {
       );
     }
 
-    if (!isNonEmptyString(campaign.fromAddress?.primaryEmail)) {
+    if (
+      !isNonEmptyString(campaign.fromAddress?.primaryEmail) ||
+      !isNonEmptyString(campaign.subject) ||
+      !isNonEmptyString(campaign.bodyTemplate)
+    ) {
       throw new EmailingDomainException(
-        `Campaign ${campaignId} has no from address`,
+        `Campaign ${campaignId} needs a from address, a subject and a body before a test send`,
         EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
       );
     }
@@ -424,8 +428,8 @@ export class MessageCampaignService {
       workspaceId,
       spenders: { userWorkspaceId },
       toAddress,
-      subject: campaign.subject ?? '',
-      html: campaign.bodyTemplate ?? '',
+      subject: campaign.subject,
+      html: campaign.bodyTemplate,
       fromAddress: campaign.fromAddress.primaryEmail,
       unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
     });
@@ -511,7 +515,10 @@ export class MessageCampaignService {
   }: {
     workspaceId: string;
     spenders: UsageSpenders;
-    result: EmailingDomainSendEmailResult;
+    result: Pick<
+      EmailingDomainSendEmailResult,
+      'messageId' | 'deliveredRecipients'
+    >;
   }): Promise<void> {
     await this.emailBillingService
       .billSentEmails({
