@@ -46,8 +46,7 @@ export const executeFrontComponentBuilderRequest = async ({
   } catch (error) {
     if (
       !(
-        (error instanceof FrontComponentBuildException &&
-          error.code === 'INVALID_INPUT') ||
+        error instanceof FrontComponentBuildException ||
         (error instanceof Error &&
           /^Build failed with \d+ error/.test(error.message))
       )
@@ -56,17 +55,20 @@ export const executeFrontComponentBuilderRequest = async ({
     }
     return {
       success: false as const,
-      error: error instanceof Error ? error.message : String(error),
+      error: error.message,
+      ...(error instanceof FrontComponentBuildException
+        ? { code: error.code, userFriendlyMessage: error.userFriendlyMessage }
+        : {}),
     };
   }
 };
 
 const checkResponseSizeOrThrow = <TResult>(result: TResult): TResult => {
   if (Buffer.byteLength(JSON.stringify(result)) > 6 * 1024 * 1024) {
-    throw new FrontComponentBuildException(
-      'Component build exceeds the builder response limit.',
-      'INVALID_INPUT',
-    );
+    throw new FrontComponentBuildException({
+      message: 'Component build exceeds the builder response limit.',
+      code: 'INVALID_INPUT',
+    });
   }
   return result;
 };
