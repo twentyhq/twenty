@@ -68,6 +68,12 @@ export const fromFlatFieldMetadataToFieldManifest = ({
     defaultValue: buildDefaultValue(flatFieldMetadata),
     isUIEditable: flatFieldMetadata.isUIEditable,
     writability: flatFieldMetadata.writability,
+    ...(isDefined(flatFieldMetadata.disabledFieldPermissionActions)
+      ? {
+          disabledFieldPermissionActions:
+            flatFieldMetadata.disabledFieldPermissionActions,
+        }
+      : {}),
     isNullable: flatFieldMetadata.isNullable,
     isUnique: flatFieldMetadata.isUnique ?? false,
     isSearchable: flatFieldMetadata.isSearchable,

@@ -7,6 +7,7 @@ import {
   type CreateStandardFieldArgs,
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import { PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-field-permission-actions.constant';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
@@ -38,6 +39,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   campaignId: {
@@ -59,6 +62,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   personId: {
@@ -80,6 +85,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   recipientEmail: {
@@ -104,6 +111,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   state: {
@@ -126,6 +135,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   skipReason: {
@@ -147,6 +158,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   failureReason: {
@@ -171,6 +184,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   claimToken: {
@@ -192,6 +207,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   claimExpiresAt: {
@@ -216,6 +233,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   providerMessageId: {
@@ -243,6 +262,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   sentAt: {
@@ -264,6 +285,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   deliveredAt: {
@@ -288,6 +311,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   bouncedAt: {
@@ -309,6 +334,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   complainedAt: {
@@ -333,6 +360,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   rejectedAt: {
@@ -354,6 +383,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   renderingFailedAt: {
@@ -381,6 +412,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   createdAt: {
@@ -403,6 +436,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   updatedAt: {
@@ -425,6 +460,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   deletedAt: {
@@ -446,6 +483,8 @@ export const buildCampaignDeliveryStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
 });

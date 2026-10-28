@@ -325,6 +325,9 @@ export default {
             "openThreadCount": [
                 10
             ],
+            "unreadOpenThreadCount": [
+                10
+            ],
             "__typename": [
                 1
             ]
@@ -4829,6 +4832,9 @@ export default {
                 311
             ],
             "description": [
+                1
+            ],
+            "disabledFieldPermissionActions": [
                 1
             ],
             "icon": [

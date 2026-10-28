@@ -99,6 +99,7 @@ type AgentChatOpenThreadsSummary {
   hasUnreadOpenThread: Boolean!
   needsInputThreadCount: Int!
   openThreadCount: Int!
+  unreadOpenThreadCount: Int!
 }
 
 type AgentChatThread {
@@ -2300,6 +2301,7 @@ type Field {
   createdAt: DateTime!
   defaultValue: JSON
   description: String
+  disabledFieldPermissionActions: [String!]
   icon: String
   id: UUID!
   isActive: Boolean
