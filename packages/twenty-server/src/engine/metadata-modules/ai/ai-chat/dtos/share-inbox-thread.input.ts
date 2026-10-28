@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { RecordShareGrantInputDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/record-share-grant.input';
+import { RecordShareGrantInput } from 'src/engine/core-modules/record-share/dtos/record-share-grant.input';
 
 @InputType('ShareInboxThreadInput')
 export class ShareInboxThreadInputDTO {
@@ -20,7 +20,7 @@ export class ShareInboxThreadInputDTO {
   @IsArray()
   @ArrayNotEmpty()
   @ValidateNested({ each: true })
-  @Type(() => RecordShareGrantInputDTO)
-  @Field(() => [RecordShareGrantInputDTO])
-  grants: RecordShareGrantInputDTO[];
+  @Type(() => RecordShareGrantInput)
+  @Field(() => [RecordShareGrantInput])
+  grants: RecordShareGrantInput[];
 }

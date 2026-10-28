@@ -4,9 +4,10 @@ import { IsBoolean, IsEnum, IsOptional, IsUUID } from 'class-validator';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 
-@InputType('RecordShareGrantInput')
-export class RecordShareGrantInputDTO {
+@InputType()
+export class RecordShareGrantInput implements ShareWithInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
