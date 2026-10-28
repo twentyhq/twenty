@@ -77,21 +77,25 @@ export class LambdaLayerManagerService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
-  async ensureDepsLayer(context: LayerAppContext): Promise<string> {
-    const existingArn = await this.findExistingDepsLayerArn(context);
+  async ensureDepsLayer({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: LayerAppContext): Promise<string> {
+    const existingArn = await this.findExistingDepsLayerArn({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
 
     if (isDefined(existingArn)) {
       return existingArn;
     }
 
     const workspaceCustomDepsLayerName =
-      await this.getWorkspaceCustomDepsLayerName(context.flatApplication);
+      await this.getWorkspaceCustomDepsLayerName(flatApplication);
 
     if (isDefined(workspaceCustomDepsLayerName)) {
       const defaultDependencies =
-        await this.findWorkspaceCustomDefaultDependencies(
-          context.flatApplication,
-        );
+        await this.findWorkspaceCustomDefaultDependencies(flatApplication);
 
       if (isDefined(defaultDependencies)) {
         return this.buildDepsLayer({
@@ -102,8 +106,14 @@ export class LambdaLayerManagerService {
     }
 
     return this.buildDepsLayer({
-      layerName: this.getDepsLayerName(context),
-      dependencies: await this.getVerifiedDependencies(context),
+      layerName: this.getDepsLayerName({
+        flatApplication,
+        applicationUniversalIdentifier,
+      }),
+      dependencies: await this.getVerifiedDependencies({
+        flatApplication,
+        applicationUniversalIdentifier,
+      }),
     });
   }
 
@@ -121,13 +131,19 @@ export class LambdaLayerManagerService {
     return undefined;
   }
 
-  async getDepsLayerNames(context: LayerAppContext): Promise<string[]> {
+  async getDepsLayerNames({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: LayerAppContext): Promise<string[]> {
     const workspaceCustomDepsLayerName =
-      await this.getWorkspaceCustomDepsLayerName(context.flatApplication);
+      await this.getWorkspaceCustomDepsLayerName(flatApplication);
 
     return [
       workspaceCustomDepsLayerName,
-      this.getDepsLayerName(context),
+      this.getDepsLayerName({
+        flatApplication,
+        applicationUniversalIdentifier,
+      }),
     ].filter(isDefined);
   }
 
