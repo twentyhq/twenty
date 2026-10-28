@@ -12,6 +12,24 @@ import { invokeFrontComponentBuilderLocally } from 'src/engine/metadata-modules/
 
 import { createLinguiPlugin } from '../../../../../../../scripts/utils/create-lingui-plugin';
 
+const charMap: Record<string, string> = {
+  '<': '\\u003C',
+  '>': '\\u003E',
+  '/': '\\u002F',
+  '\\': '\\\\',
+  '\b': '\\b',
+  '\f': '\\f',
+  '\n': '\\n',
+  '\r': '\\r',
+  '\t': '\\t',
+  '\0': '\\0',
+  '\u2028': '\\u2028',
+  '\u2029': '\\u2029',
+};
+
+const escapeUnsafeChars = (str: string): string =>
+  str.replace(/[<>\/\\\b\f\n\r\t\0\u2028\u2029]/g, (char) => charMap[char]);
+
 jest.useRealTimers();
 
 const PACKAGE_JSON = '{"name":"local-build-fixture","private":true}\n';
@@ -183,7 +201,7 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
     const assets = join(directory, 'timeout');
     const workingDirectoryFile = join(directory, 'timeout-directory');
     const heartbeatFile = join(directory, 'descendant-heartbeat');
-    const descendantSource = `setInterval(() => require('node:fs').appendFileSync(${JSON.stringify(heartbeatFile)}, 'x'), 20);`;
+    const descendantSource = `setInterval(() => require('node:fs').appendFileSync(${escapeUnsafeChars(JSON.stringify(heartbeatFile))}, 'x'), 20);`;
 
     await mkdir(assets);
     await writeFile(
