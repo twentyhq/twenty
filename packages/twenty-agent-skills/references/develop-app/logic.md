@@ -90,7 +90,7 @@ When adding AI behavior:
 - Only one call the member answers (`ask_question`, `request_form`, `propose_tool_call`) can wait at a time; another fails with `THREAD_AWAITING_ANSWER` until they answer. Plain messages and app tool calls are still accepted.
 - A conversation its owner deleted is gone for every member and is not recreated.
 - The app's default role needs `SystemPermissionFlag.AI`, and every member needs the AI permission.
-- The message is always from the app. In a logic function the call uses the app's access and ignores `runAs`; in a front component it carries the component's token, so the member looking at the page needs the AI permission too, and an expired token is refreshed once before the call is retried.
+- The message is always from the app. The call runs like the default clients: as the member who triggered the run or looks at the page, who then needs the AI permission too, or as the app when nobody triggered the run. In a front component an expired token is refreshed once before the call is retried.
 - Write mentions with `formatInboxMention({ workspaceMemberId, label })` and record chips with `formatInboxRecordReference({ objectNameSingular, recordId, label })`, never by hand. The inbox shows the label as written, so both throw on an empty label or one with brackets or line breaks. A mention only renders: list every recipient in `workspaceMemberIds`.
 - `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
 

@@ -50,10 +50,12 @@ Key points:
 
 ### Who sends the message
 
-A message is always written by your app, whatever triggered the call:
+A message is always written by your app, whatever triggered the call. The call itself runs like the default [API clients](/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses):
 
-- In a logic function, `sendInboxMessage` uses your application's own access and ignores `runAs`.
-- In a front component, it uses the token Twenty gives the component on behalf of the member looking at the page. The message is still from your app, and that member needs the `AI` permission as well. When the token has expired, the call refreshes it once through Twenty and retries.
+- In a logic function, it acts as the person who triggered the run, or as your application when nobody did, such as on a cron schedule.
+- In a front component, it acts as the member looking at the page. When the token has expired, the call refreshes it once through Twenty and retries.
+
+The person behind the call needs the `AI` permission as well, like every recipient.
 
 To post from a front component, import the same helpers from `twenty-sdk/front-component`. [Posting to the inbox](/developers/extend/apps/layout/front-components#posting-to-the-inbox) shows how to open the conversation afterwards.
 

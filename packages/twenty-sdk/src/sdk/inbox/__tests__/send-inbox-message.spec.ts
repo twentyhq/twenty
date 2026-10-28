@@ -88,7 +88,7 @@ describe('sendInboxMessage', () => {
     expect(Object.values(sentBody.variables)).toEqual([input]);
   });
 
-  it('sends the application token in a logic function, even when a member triggered the run', async () => {
+  it('sends the access token of the person behind the run, like the default clients', async () => {
     vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'member-token');
     fetchSpy.mockResolvedValue(successResponse());
 
@@ -98,23 +98,7 @@ describe('sendInboxMessage', () => {
 
     const [, requestInit] = fetchSpy.mock.calls[0];
 
-    expect(getSentAuthorizationHeader(requestInit)).toBe('Bearer app-token');
-  });
-
-  it('sends the front component token when there is no application token', async () => {
-    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', undefined);
-    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'component-token');
-    fetchSpy.mockResolvedValue(successResponse());
-
-    const sendInboxMessage = await importSendInboxMessage();
-
-    await sendInboxMessage(MESSAGE_INPUT);
-
-    const [, requestInit] = fetchSpy.mock.calls[0];
-
-    expect(getSentAuthorizationHeader(requestInit)).toBe(
-      'Bearer component-token',
-    );
+    expect(getSentAuthorizationHeader(requestInit)).toBe('Bearer member-token');
   });
 
   it('refreshes an expired front component token once and retries', async () => {
