@@ -1735,6 +1735,7 @@ msgid "Account Owner"
 msgstr "Հաշվի սեփականատեր"
 
 #. js-lingui-id: T3FM0r
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Account settings"
 msgstr "Հաշվի կարգավորումներ"
@@ -3753,7 +3754,7 @@ msgid "Applicability"
 msgstr "Կիրառելիություն"
 
 #. js-lingui-id: IrC12v
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+#: src/modules/settings/app-preferences/utils/getInstalledApplicationDisplayName.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -9338,6 +9339,11 @@ msgstr "Ջնջված"
 msgid "Deleted {objectLabel}"
 msgstr "Ջնջվել է {objectLabel}"
 
+#. js-lingui-id: 6T/COx
+#: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
+msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
+msgstr ""
+
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "Deleted member"
@@ -9622,6 +9628,11 @@ msgstr "Անջատել հաշիվը"
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
 msgid "Disconnected"
 msgstr "Անջատված"
+
+#. js-lingui-id: +etBOJ
+#: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
+msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
+msgstr ""
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -26488,9 +26499,13 @@ msgstr "Համաժամեցնել պիտակը և API անունը"
 msgid "Synchronize Objects Labels and API Names"
 msgstr "Համաժամեցնել օբյեկտների պիտակները և API անունները"
 
+#. js-lingui-id: 4XvJjz
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
+msgstr ""
+
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and this account's credentials will be removed. Your emails and events will be retained and available after you reconnect."
 msgstr "Համաժամեցումը կդադարի, և այս հաշվի մուտքային տվյալները կհեռացվեն։ Ձեր էլ. նամակներն ու իրադարձությունները կպահպանվեն և հասանելի կլինեն վերամիանալուց հետո։"
 
@@ -27484,9 +27499,13 @@ msgstr "Այս էջը հասանելի չէ։"
 
 #. js-lingui-id: PIZjqy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes {accountHandle} and all of its synced emails and events. This action cannot be undone."
 msgstr "Սա ընդմիշտ ջնջում է {accountHandle}-ը և դրա բոլոր համաժամեցված էլ. նամակներն ու իրադարձությունները։ Այս գործողությունը հնարավոր չէ հետարկել։"
+
+#. js-lingui-id: vrBe2V
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
+msgstr ""
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
