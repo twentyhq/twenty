@@ -176,11 +176,14 @@ describe('Campaign lifecycle tools through MCP (integration)', () => {
   it('should not let a member without the workspace settings permission send', async () => {
     const output = await executeToolThroughMcp({
       toolName: 'send_campaign',
-      toolArguments: { campaignId, expectedRecipientCount: 1 },
+      toolArguments: { campaignId, expectedRecipientCount: 2 },
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
-    expect(output.success).toBe(false);
+    expect(output).toMatchObject({
+      success: false,
+      message: 'Tool "send_campaign" not found',
+    });
     expect(await readCampaignStatus()).toBe('DRAFT');
   });
 });
