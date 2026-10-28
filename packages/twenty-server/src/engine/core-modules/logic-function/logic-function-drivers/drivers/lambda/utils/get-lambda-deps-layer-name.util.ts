@@ -7,17 +7,15 @@ export const DEPS_LAYER_NAME_PREFIX = 'depsv1';
 
 export const getLambdaDepsLayerName = ({
   flatApplication,
-  applicationUniversalIdentifier,
   namespace,
 }: {
   flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
   namespace?: string;
 }): string =>
   buildLambdaResourceName({
     resourceNamePrefix: DEPS_LAYER_NAME_PREFIX,
     namespace,
     checksum: isDefined(flatApplication.yarnLockChecksum)
-      ? `${applicationUniversalIdentifier}-${flatApplication.yarnLockChecksum}`
-      : `${applicationUniversalIdentifier}-nolock-${flatApplication.packageJsonChecksum}`,
+      ? `${flatApplication.universalIdentifier}-${flatApplication.yarnLockChecksum}`
+      : `${flatApplication.universalIdentifier}-nolock-${flatApplication.packageJsonChecksum}`,
   });

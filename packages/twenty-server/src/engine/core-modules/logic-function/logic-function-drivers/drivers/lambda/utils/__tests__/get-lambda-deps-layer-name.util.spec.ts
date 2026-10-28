@@ -7,6 +7,7 @@ const buildFlatApplication = (
   overrides: Partial<FlatApplication> = {},
 ): FlatApplication =>
   ({
+    universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
     packageJsonChecksum: 'def456',
     yarnLockChecksum: 'abc123',
     ...overrides,
@@ -17,7 +18,6 @@ describe('getLambdaDepsLayerName', () => {
     expect(
       getLambdaDepsLayerName({
         flatApplication: buildFlatApplication(),
-        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         namespace: 'ns123',
       }),
     ).toBe(`depsv1-ns123-${APPLICATION_UNIVERSAL_IDENTIFIER}-abc123`);
@@ -30,7 +30,6 @@ describe('getLambdaDepsLayerName', () => {
           flatApplication: buildFlatApplication({
             yarnLockChecksum: yarnLockChecksum as unknown as string,
           }),
-          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
           namespace: 'ns123',
         }),
       ).toBe(`depsv1-ns123-${APPLICATION_UNIVERSAL_IDENTIFIER}-nolock-def456`);
@@ -41,7 +40,6 @@ describe('getLambdaDepsLayerName', () => {
     expect(
       getLambdaDepsLayerName({
         flatApplication: buildFlatApplication(),
-        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         namespace: '',
       }),
     ).toBe(`depsv1-${APPLICATION_UNIVERSAL_IDENTIFIER}-abc123`);

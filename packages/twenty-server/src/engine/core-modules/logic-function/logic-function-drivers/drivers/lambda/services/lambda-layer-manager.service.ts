@@ -44,11 +44,6 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
-type LayerAppContext = {
-  flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
-};
-
 type DepsLayerDependencies = {
   packageJson: string;
   yarnLock: string;
@@ -77,14 +72,8 @@ export class LambdaLayerManagerService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
-  async ensureDepsLayer({
-    flatApplication,
-    applicationUniversalIdentifier,
-  }: LayerAppContext): Promise<string> {
-    const existingArn = await this.findExistingDepsLayerArn({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
+  async ensureDepsLayer(flatApplication: FlatApplication): Promise<string> {
+    const existingArn = await this.findExistingDepsLayerArn(flatApplication);
 
     if (isDefined(existingArn)) {
       return existingArn;
@@ -106,21 +95,15 @@ export class LambdaLayerManagerService {
     }
 
     return this.buildDepsLayer({
-      layerName: this.getDepsLayerName({
-        flatApplication,
-        applicationUniversalIdentifier,
-      }),
-      dependencies: await this.getVerifiedDependencies({
-        flatApplication,
-        applicationUniversalIdentifier,
-      }),
+      layerName: this.getDepsLayerName(flatApplication),
+      dependencies: await this.getVerifiedDependencies(flatApplication),
     });
   }
 
   async findExistingDepsLayerArn(
-    context: LayerAppContext,
+    flatApplication: FlatApplication,
   ): Promise<string | undefined> {
-    for (const layerName of await this.getDepsLayerNames(context)) {
+    for (const layerName of await this.getDepsLayerNames(flatApplication)) {
       const existingArn = await this.awsClient.getExistingLayerArn(layerName);
 
       if (isDefined(existingArn)) {
@@ -131,27 +114,20 @@ export class LambdaLayerManagerService {
     return undefined;
   }
 
-  async getDepsLayerNames({
-    flatApplication,
-    applicationUniversalIdentifier,
-  }: LayerAppContext): Promise<string[]> {
+  async getDepsLayerNames(flatApplication: FlatApplication): Promise<string[]> {
     const workspaceCustomDepsLayerName =
       await this.getWorkspaceCustomDepsLayerName(flatApplication);
 
     return [
       workspaceCustomDepsLayerName,
-      this.getDepsLayerName({
-        flatApplication,
-        applicationUniversalIdentifier,
-      }),
+      this.getDepsLayerName(flatApplication),
     ].filter(isDefined);
   }
 
-  async ensureSdkLayer(context: LayerAppContext): Promise<string> {
-    const { flatApplication, applicationUniversalIdentifier } = context;
+  async ensureSdkLayer(flatApplication: FlatApplication): Promise<string> {
     const layerName = getLambdaSdkLayerName({
       workspaceId: flatApplication.workspaceId,
-      applicationUniversalIdentifier,
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
     });
 
     const existingArn = await this.findFreshSdkLayerArn({
@@ -179,7 +155,6 @@ export class LambdaLayerManagerService {
 
         return this.rebuildSdkLayer({
           flatApplication: refreshedFlatApplication,
-          applicationUniversalIdentifier,
           layerName,
         });
       },
@@ -216,16 +191,18 @@ export class LambdaLayerManagerService {
 
   private async rebuildSdkLayer({
     flatApplication,
-    applicationUniversalIdentifier,
     layerName,
-  }: LayerAppContext & { layerName: string }): Promise<string> {
+  }: {
+    flatApplication: FlatApplication;
+    layerName: string;
+  }): Promise<string> {
     await this.deleteAllLayerVersions(layerName);
 
     const sdkArchiveBuffer =
       await this.sdkClientArchiveService.downloadArchiveBuffer({
         workspaceId: flatApplication.workspaceId,
         applicationId: flatApplication.id,
-        applicationUniversalIdentifier,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
       });
 
     const zipBuffer = await reprefixLambdaZipEntries({
@@ -261,9 +238,9 @@ export class LambdaLayerManagerService {
   hasExpectedSdkLayer({
     lambdaExecutor,
     flatApplication,
-    applicationUniversalIdentifier,
-  }: LayerAppContext & {
+  }: {
     lambdaExecutor: GetFunctionCommandOutput;
+    flatApplication: FlatApplication;
   }): boolean {
     const layers = lambdaExecutor.Configuration?.Layers;
 
@@ -273,7 +250,7 @@ export class LambdaLayerManagerService {
 
     const sdkLayerName = getLambdaSdkLayerName({
       workspaceId: flatApplication.workspaceId,
-      applicationUniversalIdentifier,
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
     });
 
     const isOnCurrentSdkClient =
@@ -289,15 +266,16 @@ export class LambdaLayerManagerService {
 
   async hasExpectedLayers({
     lambdaExecutor,
-    ...context
-  }: LayerAppContext & {
+    flatApplication,
+  }: {
     lambdaExecutor: GetFunctionCommandOutput;
+    flatApplication: FlatApplication;
   }): Promise<boolean> {
-    if (!this.hasExpectedSdkLayer({ lambdaExecutor, ...context })) {
+    if (!this.hasExpectedSdkLayer({ lambdaExecutor, flatApplication })) {
       return false;
     }
 
-    const depsLayerNames = await this.getDepsLayerNames(context);
+    const depsLayerNames = await this.getDepsLayerNames(flatApplication);
 
     return (lambdaExecutor.Configuration?.Layers ?? []).some((layer) => {
       const layerName = isDefined(layer.Arn)
@@ -308,13 +286,9 @@ export class LambdaLayerManagerService {
     });
   }
 
-  private getDepsLayerName({
-    flatApplication,
-    applicationUniversalIdentifier,
-  }: LayerAppContext): string {
+  private getDepsLayerName(flatApplication: FlatApplication): string {
     return getLambdaDepsLayerName({
       flatApplication,
-      applicationUniversalIdentifier,
       namespace: this.options.resourceNamespace,
     });
   }
@@ -456,15 +430,14 @@ export class LambdaLayerManagerService {
     }
   }
 
-  private async getVerifiedDependencies({
-    flatApplication,
-    applicationUniversalIdentifier,
-  }: LayerAppContext): Promise<DepsLayerDependencies> {
+  private async getVerifiedDependencies(
+    flatApplication: FlatApplication,
+  ): Promise<DepsLayerDependencies> {
     const { packageJsonContent, yarnLockContent } =
       await this.applicationDependencyFilesService.getVerifiedDependencyContentsOrThrow(
         {
           workspaceId: flatApplication.workspaceId,
-          applicationUniversalIdentifier,
+          applicationUniversalIdentifier: flatApplication.universalIdentifier,
           declaredChecksums: flatApplication,
         },
       );
@@ -474,7 +447,7 @@ export class LambdaLayerManagerService {
       !isDefined(yarnLockContent)
     ) {
       throw new ApplicationException(
-        `Application ${applicationUniversalIdentifier} declares a yarn.lock that is not stored`,
+        `Application ${flatApplication.universalIdentifier} declares a yarn.lock that is not stored`,
         ApplicationExceptionCode.INVALID_INPUT,
       );
     }

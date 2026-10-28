@@ -166,7 +166,6 @@ export class MigrateLambdaDependencyLayersToV1Command extends ProvisionedWorkspa
           cacheLockService: this.cacheLockService,
           flatLogicFunction,
           flatApplication,
-          applicationUniversalIdentifier: flatApplication.universalIdentifier,
         });
 
         if (isMigrated) {

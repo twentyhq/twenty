@@ -21,14 +21,12 @@ export const migrateLambdaFunctionDepsLayer = async ({
   cacheLockService,
   flatLogicFunction,
   flatApplication,
-  applicationUniversalIdentifier,
 }: {
   awsClient: LambdaAwsClientService;
   layerManager: LambdaLayerManagerService;
   cacheLockService: CacheLockService;
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
 }): Promise<boolean> =>
   cacheLockService.withLock(
     async () => {
@@ -44,13 +42,10 @@ export const migrateLambdaFunctionDepsLayer = async ({
 
       const outdatedDepsLayerArns = findOutdatedLambdaDepsLayerArns({
         layerArns,
-        depsLayerNames: await layerManager.getDepsLayerNames({
-          flatApplication,
-          applicationUniversalIdentifier,
-        }),
+        depsLayerNames: await layerManager.getDepsLayerNames(flatApplication),
         sdkLayerName: getLambdaSdkLayerName({
           workspaceId: flatApplication.workspaceId,
-          applicationUniversalIdentifier,
+          applicationUniversalIdentifier: flatApplication.universalIdentifier,
         }),
       });
 
@@ -58,10 +53,7 @@ export const migrateLambdaFunctionDepsLayer = async ({
         return false;
       }
 
-      const depsLayerArn = await layerManager.ensureDepsLayer({
-        flatApplication,
-        applicationUniversalIdentifier,
-      });
+      const depsLayerArn = await layerManager.ensureDepsLayer(flatApplication);
       const keptLayerArns = layerArns.filter(
         (layerArn) =>
           !outdatedDepsLayerArns.includes(layerArn) && layerArn !== depsLayerArn,

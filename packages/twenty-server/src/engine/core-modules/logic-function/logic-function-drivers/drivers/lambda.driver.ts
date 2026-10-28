@@ -129,7 +129,6 @@ export class LambdaDriver implements LogicFunctionDriver {
   async execute({
     flatLogicFunction,
     flatApplication,
-    applicationUniversalIdentifier,
     payload,
     context,
     env,
@@ -158,7 +157,6 @@ export class LambdaDriver implements LogicFunctionDriver {
       await this.executorManager.buildExecutor({
         flatLogicFunction,
         flatApplication,
-        applicationUniversalIdentifier,
       });
       buildExecutorMs = Date.now() - buildStart;
 
@@ -185,7 +183,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         executorPayload.code =
           await this.logicFunctionResourceService.getBuiltCode({
             workspaceId: flatLogicFunction.workspaceId,
-            applicationUniversalIdentifier,
+            applicationUniversalIdentifier: flatApplication.universalIdentifier,
             builtHandlerPath: flatLogicFunction.builtHandlerPath,
           });
         getBuiltCodeMs = Date.now() - fetchStart;

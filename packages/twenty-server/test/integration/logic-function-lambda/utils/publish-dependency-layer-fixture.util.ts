@@ -47,7 +47,6 @@ export const publishDependencyLayerFixture = async ({
     await lambdaClient.publishLayerVersion({
       LayerName: getLambdaDepsLayerName({
         flatApplication,
-        applicationUniversalIdentifier: flatApplication.universalIdentifier,
         namespace: resourceNamespace,
       }),
       Content: { ZipFile: await fs.readFile(zipPath) },

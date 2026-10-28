@@ -9,11 +9,6 @@ import { getLambdaLayerNameFromArn } from 'src/engine/core-modules/logic-functio
 
 const LEGACY_DEPS_LAYER_NAME_PREFIX = 'deps';
 
-type LegacyDepsLayerBridgeContext = {
-  flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
-};
-
 export class LambdaLegacyDepsLayerBridgeService {
   constructor(
     private readonly options: Pick<LambdaDriverOptions, 'resourceNamespace'>,
@@ -22,41 +17,40 @@ export class LambdaLegacyDepsLayerBridgeService {
 
   async hasExpectedLayers({
     lambdaExecutor,
-    ...context
-  }: LegacyDepsLayerBridgeContext & {
+    flatApplication,
+  }: {
     lambdaExecutor: GetFunctionCommandOutput;
+    flatApplication: FlatApplication;
   }): Promise<boolean> {
     const isOnLegacyDepsLayer =
-      this.layerManager.hasExpectedSdkLayer({ lambdaExecutor, ...context }) &&
+      this.layerManager.hasExpectedSdkLayer({
+        lambdaExecutor,
+        flatApplication,
+      }) &&
       isDefined(
-        this.findLegacyDepsLayerArn({
-          lambdaExecutor,
-          flatApplication: context.flatApplication,
-        }),
+        this.findLegacyDepsLayerArn({ lambdaExecutor, flatApplication }),
       );
 
     return (
       isOnLegacyDepsLayer ||
       (await this.layerManager.hasExpectedLayers({
         lambdaExecutor,
-        ...context,
+        flatApplication,
       }))
     );
   }
 
   async resolveDepsLayerArn({
     lambdaExecutor,
-    ...context
-  }: LegacyDepsLayerBridgeContext & {
+    flatApplication,
+  }: {
     lambdaExecutor: GetFunctionCommandOutput | undefined;
+    flatApplication: FlatApplication;
   }): Promise<string> {
     return (
-      (await this.layerManager.findExistingDepsLayerArn(context)) ??
-      this.findLegacyDepsLayerArn({
-        lambdaExecutor,
-        flatApplication: context.flatApplication,
-      }) ??
-      (await this.layerManager.ensureDepsLayer(context))
+      (await this.layerManager.findExistingDepsLayerArn(flatApplication)) ??
+      this.findLegacyDepsLayerArn({ lambdaExecutor, flatApplication }) ??
+      (await this.layerManager.ensureDepsLayer(flatApplication))
     );
   }
 

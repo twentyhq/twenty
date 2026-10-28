@@ -55,7 +55,6 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 type ExecutorBuildContext = {
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
 };
 
 export class LambdaExecutorManagerService {
@@ -183,7 +182,7 @@ export class LambdaExecutorManagerService {
   }
 
   async installPrebuiltBundle(context: ExecutorBuildContext): Promise<void> {
-    const { flatLogicFunction, applicationUniversalIdentifier } = context;
+    const { flatLogicFunction, flatApplication } = context;
 
     if (!isNonEmptyString(flatLogicFunction.checksum)) {
       throw new LogicFunctionException(
@@ -208,7 +207,7 @@ export class LambdaExecutorManagerService {
         const compiledCode =
           await this.logicFunctionResourceService.getBuiltCode({
             workspaceId: flatLogicFunction.workspaceId,
-            applicationUniversalIdentifier,
+            applicationUniversalIdentifier: flatApplication.universalIdentifier,
             builtHandlerPath: flatLogicFunction.builtHandlerPath,
           });
 
@@ -290,7 +289,7 @@ export class LambdaExecutorManagerService {
     canSkip: boolean;
     lambdaExecutor: GetFunctionCommandOutput | undefined;
   }> {
-    const { flatApplication, applicationUniversalIdentifier } = context;
+    const { flatApplication } = context;
     const lambdaExecutor = await this.getLambdaExecutor(
       context.flatLogicFunction,
     );
@@ -305,7 +304,6 @@ export class LambdaExecutorManagerService {
       (await this.legacyDepsLayerBridge.hasExpectedLayers({
         lambdaExecutor,
         flatApplication,
-        applicationUniversalIdentifier,
       }));
 
     return { canSkip, lambdaExecutor };
@@ -314,7 +312,6 @@ export class LambdaExecutorManagerService {
   private async ensureExecutor({
     flatLogicFunction,
     flatApplication,
-    applicationUniversalIdentifier,
     lambdaExecutor,
   }: ExecutorBuildContext & {
     lambdaExecutor: GetFunctionCommandOutput | undefined;
@@ -326,7 +323,6 @@ export class LambdaExecutorManagerService {
       depsLayerArn = await this.legacyDepsLayerBridge.resolveDepsLayerArn({
         lambdaExecutor,
         flatApplication,
-        applicationUniversalIdentifier,
       });
     } catch (error) {
       if (
@@ -351,10 +347,7 @@ export class LambdaExecutorManagerService {
     let sdkLayerArn: string;
 
     try {
-      sdkLayerArn = await this.layerManager.ensureSdkLayer({
-        flatApplication,
-        applicationUniversalIdentifier,
-      });
+      sdkLayerArn = await this.layerManager.ensureSdkLayer(flatApplication);
     } catch (error) {
       if (
         error instanceof LogicFunctionException &&
