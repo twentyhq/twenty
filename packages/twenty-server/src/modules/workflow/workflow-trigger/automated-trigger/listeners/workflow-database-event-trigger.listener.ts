@@ -26,7 +26,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -428,7 +427,7 @@ export class WorkflowDatabaseEventTriggerListener {
               workflowId:
                 eventListener.legacyWorkflowId ?? eventListener.workflowId,
               ...buildCoreDispatchIds(eventListener),
-              payload: omitInheritedReadabilityChildRecords(eventPayload),
+              payload: eventPayload,
             },
             { retryLimit: 3 },
           );
