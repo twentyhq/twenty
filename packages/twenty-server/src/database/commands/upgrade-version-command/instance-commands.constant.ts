@@ -257,10 +257,15 @@ import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/up
 import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-slow-1792686689823-backfill-role-agent-chat-channel-access';
 import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792686749823-add-agent-chat-channel-navigation-menu-item';
 import { AddParticipantHandleFieldToMessageChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1792907887530-add-participant-handle-field-to-message-channel';
-import { AddTabAndSectionNavigationMenuItemTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793025684648-add-tab-and-section-navigation-menu-item-types';
-import { AddVisibleItemLimitToNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793029099068-add-visible-item-limit-to-navigation-menu-item';
-import { AddCommandNavigationMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793030782730-add-command-navigation-menu-items';
-import { AddFavoritesNavigationMenuItemTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793050419673-add-favorites-navigation-menu-item-type';
+import { AddCustomConfigToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438836-add-custom-config-to-connection-provider';
+import { AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793111477950-add-object-metadata-disabled-object-permission-actions';
+import { BackfillApplicationAutoUpgradeSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-slow-1793170402367-backfill-application-auto-upgrade';
+import { AddMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438837-add-messaging-provider';
+import { AddMcpServerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793150000000-add-mcp-server';
+import { AddTabAndSectionNavigationMenuItemTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793174702015-add-tab-and-section-navigation-menu-item-types';
+import { AddVisibleItemLimitToNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793174702018-add-visible-item-limit-to-navigation-menu-item';
+import { AddCommandNavigationMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793174702019-add-command-navigation-menu-items';
+import { AddFavoritesNavigationMenuItemTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793174702021-add-favorites-navigation-menu-item-type';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -520,6 +525,11 @@ export const INSTANCE_COMMANDS = [
   BackfillRoleAgentChatChannelAccessSlowInstanceCommand,
   AddAgentChatChannelNavigationMenuItemFastInstanceCommand,
   AddParticipantHandleFieldToMessageChannelFastInstanceCommand,
+  AddCustomConfigToConnectionProviderFastInstanceCommand,
+  AddMessagingProviderFastInstanceCommand,
+  AddMcpServerFastInstanceCommand,
+  AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand,
+  BackfillApplicationAutoUpgradeSlowInstanceCommand,
   AddTabAndSectionNavigationMenuItemTypesFastInstanceCommand,
   AddVisibleItemLimitToNavigationMenuItemFastInstanceCommand,
   AddCommandNavigationMenuItemsFastInstanceCommand,

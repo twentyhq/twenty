@@ -1,8 +1,18 @@
 import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
+import { type ApplicationDefaultRoleMaps } from 'src/engine/twenty-orm/types/application-default-role-maps.type';
 
 const OBJECT_ID = 'object-1';
+
+const EMPTY_FLAT_OBJECT_METADATA_MAPS: FlatEntityMaps<FlatObjectMetadata> =
+  createEmptyFlatEntityMaps();
+const EMPTY_APPLICATION_DEFAULT_ROLE_MAPS: ApplicationDefaultRoleMaps = {
+  byId: {},
+};
 
 const agentRolePermissions = {
   [OBJECT_ID]: {
@@ -38,6 +48,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
+        flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
         rolePermissionConfig: {
           intersectionOf: { agentRoleId: 'agent-role-id' },
         },
@@ -49,6 +61,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
+        flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
         rolePermissionConfig: {
           intersectionOf: {
             userWorkspaceRoleId: 'default-role-id',
@@ -63,6 +77,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
+        flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
         rolePermissionConfig: {
           intersectionOf: {
             agentRoleId: 'agent-role-id',
@@ -77,6 +93,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
+        flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
         rolePermissionConfig: {
           intersectionOf: {
             userWorkspaceRoleId: 'default-role-id',
@@ -91,6 +109,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
+        flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
         rolePermissionConfig: {
           intersectionOf: {
             agentRoleId: 'agent-role-id',
@@ -105,6 +125,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
+        flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
         rolePermissionConfig: { shouldBypassPermissionChecks: true },
       }),
     ).toEqual({});
@@ -114,6 +136,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
+        flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
         rolePermissionConfig: {
           intersectionOf: { apiKeyRoleId: 'missing-role-id' },
         },
@@ -125,6 +149,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
+        flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
         rolePermissionConfig: {
           intersectionOf: {
             agentRoleId: null,
@@ -139,6 +165,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
+        flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
         rolePermissionConfig: { intersectionOf: {} },
       }),
     ).toEqual({});

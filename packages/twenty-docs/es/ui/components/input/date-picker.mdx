@@ -1,0 +1,158 @@
+---
+title: Selector de fecha
+description: Comparte el motor de calendario existente mientras navegas por los meses independientemente de la fecha seleccionada.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DatePickerReference from '/snippets/ui/generated/components/input/date-picker.mdx';
+
+## Resumen
+
+`DatePicker` comparte el motor de calendario de `react-datepicker` que utilizan las entradas de fecha y fecha y hora de Twenty. Proporciona valores de solo fecha y control independiente sobre la fecha seleccionada y el mes visualizado.
+
+<StoryEmbed storyId="ui-components-datepicker--display" title="Ejemplo de DatePicker" height={330} />
+
+## Uso
+
+```tsx
+import { useState } from 'react';
+import { DatePicker } from 'twenty-ui/components/input';
+
+export const ChooseDate = () => {
+  const [value, setValue] = useState<string | null>('2026-10-07');
+  const [viewedMonth, setViewedMonth] = useState('2026-10');
+
+  return (
+    <DatePicker
+      aria-label="Choose a date"
+      value={value}
+      onValueChange={setValue}
+      viewedMonth={viewedMonth}
+      onViewedMonthChange={setViewedMonth}
+      weekStart={1}
+      weekdayLabels={['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']}
+      locale="en-US"
+      previousMonthLabel="Previous month"
+      nextMonthLabel="Next month"
+      monthLabel="Month"
+      yearLabel="Year"
+    />
+  );
+};
+```
+
+## Selección y navegación
+
+Cambiar el mes o el año llama a `onViewedMonthChange` y deja `value` sin cambios. Elegir un día disponible llama a `onValueChange` cuando cambia la fecha seleccionada.
+
+Usa `onValueSelect` para confirmar una fecha o cerrar un selector de producto. Recibe la fecha canónica `YYYY-MM-DD` incluso cuando el usuario elige el día ya seleccionado. Mantén el comportamiento de cierre en el adaptador de la aplicación.
+
+Actualiza cada prop controlada en su callback correspondiente. Los cambios de prop no seleccionan una fecha de reemplazo. El encabezado predeterminado proporciona selectores de mes y año, y botones anterior y siguiente; su selector de año muestra hasta 100 años antes y después del año visualizado.
+
+## Valores de fecha y localización
+
+Pasa cadenas canónicas de fecha gregoriana sin hora: `YYYY-MM-DD` para `value` y los límites del intervalo resaltado, y `YYYY-MM` para `viewedMonth`. Establece `value={null}` para no tener ninguna selección. Estos valores no contienen hora ni zona horaria. Los años compatibles van de 0001 a 9999.
+
+`locale` da formato al encabezado predeterminado de mes/año y a los títulos completos de los días de la semana cuando se proporcionan `weekdayLabels` personalizados. Las etiquetas de los días y el calendario subyacente conservan el comportamiento de configuración regional existente de `react-datepicker`.
+
+`weekStart` establece la primera columna, usando 0 para el domingo y 6 para el sábado. Usa `weekdayLabels` para siete etiquetas cortas visibles en orden de domingo primero, independientemente de `weekStart`. El motor del calendario proporciona los nombres de los días de la semana cuando se omite esta prop.
+
+La presentación del día actual sigue el comportamiento del reloj del navegador del motor del calendario. Los adaptadores de producto se encargan de la conversión de zona horaria, los valores alternativos de fecha inicial, las preferencias de los miembros y los datos de programación.
+
+## Comportamiento existente del calendario
+
+El renderizado de días, el marcado de accesibilidad, la navegación de fechas con teclado y el manejo de fechas no disponibles usan `react-datepicker`. Los días visibles de los meses vecinos siguen siendo seleccionables cuando están disponibles.
+
+Establece `isDateUnavailable` para impedir la selección de fechas según la política de tu aplicación. El callback recibe una cadena canónica `YYYY-MM-DD`. Establece `disabled` para deshabilitar la selección de fechas y los controles predeterminados del encabezado.
+
+`isKeyboardNavigationDisabled` tiene como valor predeterminado `false`. Los adaptadores de entrada de producto existentes pueden establecerlo para conservar su comportamiento de teclado. Los controles del encabezado conservan su interacción nativa con el teclado.
+
+## Intervalos resaltados y vistas de solo lectura
+
+Pasa `highlightedRange={{ start: '2026-10-05', end: '2026-10-11' }}` para resaltar un intervalo de fechas inclusivo. La aplicación calcula el intervalo; el resaltado no selecciona varias fechas ni cambia `value`.
+
+Usa `readOnly` para mostrar un intervalo calculado o una fecha seleccionada mientras permites navegar por meses y años. Usa `isGridHidden` para un navegador solo de meses que conserva el mismo encabezado.
+
+## Encabezados personalizados
+
+Usa `renderHeader` para componer un encabezado de producto existente con entradas de fecha, entradas de hora o controles específicos de la aplicación. Su argumento `DatePickerHeaderProps` proporciona estos valores y acciones:
+
+| Propiedad                                        | Propósito                                                  |
+| ------------------------------------------------ | ---------------------------------------------------------- |
+| `viewedMonth`                                    | Mes actual `YYYY-MM`.                                      |
+| `onPreviousMonth`, `onNextMonth`                 | Navega al mes adyacente.                                   |
+| `onMonthChange`                                  | Navega a un número de mes del 1 al 12.                     |
+| `onYearChange`                                   | Navega al año proporcionado.                               |
+| `isPreviousMonthDisabled`, `isNextMonthDisabled` | Indica si cada acción de mes adyacente no está disponible. |
+
+Estas acciones del encabezado cambian el mes visualizado y dejan la fecha seleccionada sin cambios.
+
+```tsx
+import { useState } from 'react';
+import { DatePicker } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const CalendarWithProductHeader = () => {
+  const [value, setValue] = useState<string | null>('2026-10-07');
+  const [viewedMonth, setViewedMonth] = useState('2026-10');
+
+  return (
+    <DatePicker
+      aria-label="Choose a date"
+      value={value}
+      onValueChange={setValue}
+      viewedMonth={viewedMonth}
+      onViewedMonthChange={setViewedMonth}
+      weekStart={1}
+      locale="en-US"
+      previousMonthLabel="Previous month"
+      nextMonthLabel="Next month"
+      monthLabel="Month"
+      yearLabel="Year"
+      renderHeader={({
+        viewedMonth: month,
+        onPreviousMonth,
+        onNextMonth,
+        isPreviousMonthDisabled,
+        isNextMonthDisabled,
+      }) => (
+        <Text
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: themeCssVariables.spacing[2],
+          }}
+        >
+          <Button size="sm" disabled={isPreviousMonthDisabled} onClick={onPreviousMonth}>
+            Previous month
+          </Button>
+          <Text>{month}</Text>
+          <Button size="sm" disabled={isNextMonthDisabled} onClick={onNextMonth}>
+            Next month
+          </Button>
+        </Text>
+      )}
+    />
+  );
+};
+```
+
+## Composición y adaptadores de producto
+
+Proporciona un nombre de grupo con `aria-label` o `aria-labelledby`. Los atributos nativos, `className`, `style` y `ref` se aplican a la raíz. Usa `render` para componer una raíz diferente y conservar las props proporcionadas y la ref.
+
+Pasa `loadingFallback` para conservar una superficie de carga del producto mientras se carga el motor del calendario. El valor alternativo predeterminado es un `Skeleton` de 300 px de alto.
+
+Para el encabezado predeterminado, `portalContainer` monta las ventanas emergentes del selector en un contenedor proporcionado por el host. `onNavigationOpenChange` recibe `{ open, control }` para `month` o `year`, con `open: true` cuando comienza la apertura y `open: false` después de que se complete el cierre. Los hosts pueden conservar el manejo de sus ventanas emergentes y del foco durante el descarte. Los encabezados personalizados se encargan de su integración con ventanas emergentes.
+
+Mantén los encabezados de producto, las entradas de texto, la edición de hora, la conversión de zona horaria, las acciones de borrado y el cálculo de filtros relativos en `twenty-front`. Los adaptadores de fecha, fecha y hora, y solo mes pueden componer este motor de calendario compartido con `highlightedRange`, `readOnly` e `isGridHidden` según sea necesario.
+
+## "Props"
+
+<DatePickerReference />
+
+<PageBanner illustration="calendar-emails" />

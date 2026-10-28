@@ -1,0 +1,63 @@
+---
+title: Modo oscuro
+description: Carga ambas paletas de Twenty UI y cambia el esquema de color activo.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Carga ambas hojas de estilo del tema cuando tu aplicación pueda cambiar de esquema. `ThemeProvider` selecciona una paleta aplicando la clase `light` o `dark`.
+
+```tsx
+import { useState } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { ThemeProvider } from 'twenty-ui/theme';
+
+import 'twenty-ui/style.css';
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
+
+export const App = () => {
+  const [isDark, setIsDark] = useState(false);
+
+  return (
+    <ThemeProvider colorScheme={isDark ? 'dark' : 'light'}>
+      <label>
+        <Switch checked={isDark} onCheckedChange={setIsDark} />
+        Dark mode
+      </label>
+    </ThemeProvider>
+  );
+};
+```
+
+El proveedor acepta un esquema explícito. Tu aplicación se encarga de la persistencia de preferencias y de cualquier gestión de preferencias del sistema. Si renderizas en el servidor, usa el mismo esquema inicial en el servidor y en el cliente para evitar una discrepancia inicial de paleta.
+
+## Combinar paletas
+
+Establece `applyToRoot={false}` en un proveedor anidado para asignar una paleta diferente a un subárbol. Ambas hojas de estilo deben estar cargadas:
+
+```tsx
+import { ThemeProvider } from 'twenty-ui/theme';
+
+export const Preview = () => (
+  <ThemeProvider colorScheme="light">
+    <p>The application uses the light palette.</p>
+    <ThemeProvider colorScheme="dark" applyToRoot={false}>
+      <section
+        style={{
+          background: 'var(--t-background-primary)',
+          color: 'var(--t-font-color-primary)',
+        }}
+      >
+        This preview uses the dark palette.
+      </section>
+    </ThemeProvider>
+  </ThemeProvider>
+);
+```
+
+Usa `useThemeColorScheme()` de `twenty-ui/theme` para leer el esquema activo del proveedor. En un componente front de Twenty, usa `useColorScheme()` de `twenty-sdk/front-component` para leer el esquema del espacio de trabajo proporcionado por el host.
+
+<PageBanner illustration="page-cover-palette" />

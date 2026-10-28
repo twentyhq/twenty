@@ -1,18 +1,26 @@
 ---
 title: Fatturazione
+sidebarTitle: Panoramica
 description: Comprendi i prezzi di Twenty e gestisci il tuo abbonamento.
 ---
 
-Twenty offre piani tariffari flessibili per soddisfare le esigenze del tuo team. Gestisci il tuo abbonamento, tieni traccia dei crediti dei flussi di lavoro e accedi alle fatture direttamente da **Impostazioni → Fatturazione**.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Cosa c'è in questa sezione
 
-<CardGroup cols={2}>
-  <Card title="Piani tariffari" icon="tags" href="/it/user-guide/billing/capabilities/pricing-plans">
-    Scopri i piani tariffari di Twenty e cosa includono.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/it/user-guide/billing/capabilities/pricing-plans" img="/images/user-guide/halftone/card-page-pricing-plans.svg">
+    <CardTitle>Piani Prezzi</CardTitle>
+    Scopri i piani tariffari di Twenty's e ciò che è incluso.
   </Card>
-  <Card title="FAQ" icon="help-circle" href="/it/user-guide/billing/how-tos/billing-faq">
-    Domande frequenti su prezzi e fatturazione.
+  <Card href="/it/user-guide/billing/capabilities/usage-limits" img="/images/user-guide/halftone/card-page-usage-limits.svg">
+    <CardTitle>Limiti di utilizzo</CardTitle>
+    Cap ciò che il tuo workspace, membri, chiavi API e applicazioni possono spendere.
+  </Card>
+  <Card href="/it/user-guide/billing/how-tos/billing-faq" img="/images/user-guide/halftone/card-page-billing-faq.svg">
+    <CardTitle>FAQ</CardTitle>
+    Domande frequenti sui prezzi e sulla fatturazione.
   </Card>
 </CardGroup>
 
@@ -37,3 +45,5 @@ Sì! Ospita Twenty in self-hosting e ottieni tutte le funzionalità Pro senza co
 Vai su **Impostazioni → Fatturazione** e fai clic su **Passa a Organizzazione** o **Passa ad Annuale**.
 
 Per altre domande, consulta le [FAQ sulla fatturazione](/it/user-guide/billing/how-tos/billing-faq).
+
+<PageBanner illustration="billing" />

@@ -3,6 +3,8 @@ title: Planuri tarifare
 description: Aflați despre planurile tarifare ale Twenty și cum să comutați între ele.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Prezentare generală
 
 Twenty oferă prețuri flexibile care se potrivesc echipelor de orice dimensiune, fie că preferați găzduirea în cloud sau autogăzduirea.
@@ -87,14 +89,18 @@ Funcționalitățile premium sunt disponibile doar în planurile Organization (C
 2. Faceți clic pe **Treceți la lunar**
 3. Economisiți cu facturarea lunară
 
-## Obțineți o cheie Enterprise pentru Organization (Self-Hosted)
+## Obțineți o cheie Organization
 
-Pentru a utiliza planul Organization (Self-Hosted), trebuie să obțineți o cheie Enterprise:
+Planul Organization (găzduit autonom) rulează pe propria infrastructură. Pentru a începe, [instalați Twenty cu Docker Compose](/ro/developers/self-host/capabilities/docker-compose), apoi urmați pașii de mai jos pentru a activa licența Organization.
 
-1. Mergeți la **Setări → Panou Admin → Enterprise**
+Dacă aveți deja o instanță Twenty găzduită autonom, puteți obține cheia Organization direct din setările acesteia:
 
-<img src="/images/user-guide/billing/organization-key.png" alt="Cheie Enterprise" />
+1. Mergeți la **Setări → Panou Admin → Organization**
 
-2. Faceți clic pe **Obțineți cheia Enterprise**
+<img src="/images/user-guide/billing/organization-key.png" alt="Cheie de organizație" />
+
+2. Faceți clic pe **Obțineți cheia organizației**
 3. Când sunteți redirecționați către Stripe, introduceți detaliile de plată și confirmați
-4. Când este afișată cheia Enterprise, lipiți-o în pagina de setări Enterprise și activați licența organizației
+4. Când este afișată cheia Organization, lipiți-o în pagina de setări Organization și activați licența Organization
+
+<PageBanner illustration="card-page-pricing-plans" />

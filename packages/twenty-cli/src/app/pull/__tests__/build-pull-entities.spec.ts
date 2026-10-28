@@ -6,6 +6,7 @@ import {
   ROLE_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
   VIEW_FIELD_ENUM_BINDINGS,
+  WORKFLOW_ENUM_BINDINGS,
 } from '@/app/pull/write-define-file';
 import {
   getFieldPermissionUniversalIdentifier,
@@ -19,6 +20,7 @@ import {
   type StandaloneViewFieldManifest,
   SYSTEM_VIEW_KEYS,
   type ViewManifest,
+  type WorkflowManifest,
 } from 'twenty-shared/application';
 import {
   STANDARD_OBJECT_FIELDS,
@@ -57,6 +59,11 @@ const SUPPORT_ROLE_UID = '30303030-3030-4303-8303-303030303030';
 const AUDITOR_ROLE_UID = '40404040-4040-4404-8404-404040404040';
 const EXPORT_PETS_FLAG_UID = '50505050-5050-4505-8505-505050505050';
 const LEGACY_OBJECT_PERMISSION_UID = '60606060-6060-4606-8606-606060606060';
+const WORKFLOW_UID = '70707070-7070-4707-8707-707070707070';
+const WORKFLOW_TRIGGER_UID = '80808080-8080-4808-8808-808080808080';
+const WORKFLOW_STEP_UID = '90909090-9090-4909-8909-909090909090';
+const AGENT_UID = 'a0a0a0a0-a0a0-4a0a-8a0a-a0a0a0a0a0a0';
+const SKILL_UID = 'b0b0b0b0-b0b0-4b0b-8b0b-b0b0b0b0b0b0';
 
 const APPLICATION_WITH_SUPPORT_DEFAULT_ROLE = {
   universalIdentifier: APP_UID,
@@ -198,6 +205,28 @@ const buildNavigationMenuItemManifest = (
   targetObjectUniversalIdentifier: PET_UID,
   ...overrides,
 });
+
+const WORKFLOW_MANIFEST: WorkflowManifest = {
+  universalIdentifier: WORKFLOW_UID,
+  name: 'Welcome new pets',
+  version: {
+    trigger: {
+      universalIdentifier: WORKFLOW_TRIGGER_UID,
+      type: 'DATABASE_EVENT',
+      nextStepIds: [WORKFLOW_STEP_UID],
+      settings: { objectUniversalIdentifier: PET_UID, action: 'created' },
+    },
+    steps: [
+      {
+        universalIdentifier: WORKFLOW_STEP_UID,
+        name: 'Done',
+        type: 'EMPTY',
+        nextStepIds: [],
+        input: {},
+      },
+    ],
+  },
+};
 
 describe('buildPullEntities', () => {
   it('should strip the checksums the build recomputes from the application config', () => {
@@ -923,6 +952,77 @@ describe('buildPullEntities', () => {
     expect(widget?.parentName).toBe('pet');
     expect(widget?.config).not.toHaveProperty('configuration.__typename');
     expect(JSON.stringify(widget?.config)).not.toContain('__typename');
+  });
+
+  it('should write a workflow verbatim into src/workflows with the workflow enum bindings, named after the workflow', () => {
+    const { entities, skipped } = buildPullEntities(
+      buildManifest({ workflows: [WORKFLOW_MANIFEST] }),
+    );
+    const workflow = entities.find((entity) => entity.kind === 'workflow');
+
+    expect(skipped).toEqual([]);
+    expect(workflow).toMatchObject({
+      universalIdentifier: WORKFLOW_UID,
+      definer: 'defineWorkflow',
+      config: WORKFLOW_MANIFEST,
+      enumBindings: WORKFLOW_ENUM_BINDINGS,
+      parentName: null,
+    });
+    expect(
+      `${workflow?.defaultFolder}/${workflow?.fileBaseName}${workflow?.fileSuffix}`,
+    ).toBe('src/workflows/welcome-new-pets.workflow.ts');
+  });
+
+  it('should name a workflow whose name has no kebab-case form after its identifier prefix', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({ workflows: [{ ...WORKFLOW_MANIFEST, name: '!!!' }] }),
+    );
+
+    expect(
+      entities.find((entity) => entity.kind === 'workflow')?.fileBaseName,
+    ).toBe('70707070');
+  });
+
+  it('should write agents into src/agents and skills into src/skills verbatim, named after their name', () => {
+    const agent = {
+      universalIdentifier: AGENT_UID,
+      name: 'pet-groomer',
+      label: 'Pet Groomer',
+      prompt: 'Plan the grooming.',
+      responseFormat: { type: 'text' as const },
+    };
+    const skill = {
+      universalIdentifier: SKILL_UID,
+      name: 'grooming-tips',
+      label: 'Grooming Tips',
+      content: 'Brush first.',
+    };
+    const { entities, skipped } = buildPullEntities(
+      buildManifest({ agents: [agent], skills: [skill] }),
+    );
+    const pathOf = (kind: string) => {
+      const entity = entities.find((candidate) => candidate.kind === kind);
+
+      return `${entity?.defaultFolder}/${entity?.fileBaseName}${entity?.fileSuffix}`;
+    };
+
+    expect(skipped).toEqual([]);
+    expect(entities.find((entity) => entity.kind === 'agent')).toMatchObject({
+      universalIdentifier: AGENT_UID,
+      definer: 'defineAgent',
+      config: agent,
+      enumBindings: [],
+      parentName: null,
+    });
+    expect(entities.find((entity) => entity.kind === 'skill')).toMatchObject({
+      universalIdentifier: SKILL_UID,
+      definer: 'defineSkill',
+      config: skill,
+      enumBindings: [],
+      parentName: null,
+    });
+    expect(pathOf('agent')).toBe('src/agents/pet-groomer.agent.ts');
+    expect(pathOf('skill')).toBe('src/skills/grooming-tips.skill.ts');
   });
 
   it('should build a manifest that has no views, view fields, page layouts and page layout tabs properties without producing their entities', () => {

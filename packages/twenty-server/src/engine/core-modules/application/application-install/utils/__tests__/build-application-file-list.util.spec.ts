@@ -29,6 +29,12 @@ describe('buildApplicationFileList', () => {
         isRequired: true,
       },
       {
+        relativePath: 'dependencies/yarn.lock',
+        resourcePath: 'yarn.lock',
+        fileFolder: FileFolder.Dependencies,
+        isRequired: false,
+      },
+      {
         relativePath: 'manifest.json',
         fileFolder: FileFolder.Source,
         isRequired: true,
@@ -59,6 +65,17 @@ describe('buildApplicationFileList', () => {
         isRequired: true,
       },
     ]);
+  });
+
+  it('stores the packaged yarn.lock as the application yarn.lock', () => {
+    expect(
+      buildApplicationFileList({ application: {} } as Manifest),
+    ).toContainEqual({
+      relativePath: 'dependencies/yarn.lock',
+      resourcePath: 'yarn.lock',
+      fileFolder: FileFolder.Dependencies,
+      isRequired: false,
+    });
   });
 
   it('includes the shared dependencies bundle when the application declares one', () => {

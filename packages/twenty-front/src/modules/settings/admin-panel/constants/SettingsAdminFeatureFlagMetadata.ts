@@ -48,4 +48,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Customizable sidebar`,
     description: msg`Organize the sidebar into tabs and sections, pin commands at the top, and customize it from a right-click or the paint roller button.`,
   },
+  [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
+    label: msg`MCP servers`,
+    description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
+  },
 };

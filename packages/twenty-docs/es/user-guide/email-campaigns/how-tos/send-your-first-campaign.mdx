@@ -1,0 +1,193 @@
+---
+title: Envía tu primera campaña
+description: Crea tu lista, escribe el correo electrónico, pruébalo y, a continuación, envíalo o prográmalo.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Empieza con una lista de personas que esperan recibir noticias tuyas. Escribe el correo electrónico, envíate una prueba y, a continuación, envíalo ahora o prográmalo para más tarde.
+
+<Tip>
+  La IA puede ayudarte con esto: puede crear la lista y redactar el correo electrónico.
+  Consulta Crea una campaña con
+  IA.
+</Tip>
+
+## Antes de empezar
+
+Antes de empezar, asegúrate de tener lo siguiente:
+
+* **Un dominio de envío verificado.** Consulta [Configura un dominio de envío](/es/user-guide/email-campaigns/how-tos/set-up-a-sending-domain).
+* El permiso de **configuración del espacio de trabajo** para probar, programar y enviar campañas.
+* **Créditos de correo electrónico** si usas Twenty Cloud. Cada correo electrónico enviado utiliza créditos. Consulta [Créditos](/es/user-guide/billing/capabilities/credits).
+
+## Parte 1: Crea una lista
+
+Crea una lista de las personas que deben recibir este correo electrónico.
+
+1. Pulsa `Cmd+K` (`Ctrl+K` en Windows) y busca **Ir a Listas**.
+2. Haz clic en **Nueva lista** y asigna un nombre a la lista, por ejemplo, `Newsletter subscribers`.
+3. Abre la lista y usa el campo **Miembros** para añadir personas.
+
+<img src="/images/user-guide/email-campaigns/list-members.png" style={{ width: '100%' }} />
+
+También puedes añadir una persona desde su registro con el campo **Listas**.
+
+<Note>
+  Twenty envía a la dirección de correo electrónico principal de cada persona. Omite a las personas sin
+  dirección y a las personas que cancelaron la suscripción, tuvieron un rebote o marcaron como spam.
+</Note>
+
+## Parte 2: Crea la campaña
+
+1. Pulsa `Cmd+K` y elige **Redactar campaña**, o abre **Campañas** y haz clic en **Nueva campaña**.
+2. Asigna un nombre a la campaña. Solo tu equipo ve este nombre.
+3. Abre la pestaña **Correo electrónico** y completa el sobre:
+   * **De**: la dirección que las personas ven como remitente. Muestra tus canales de correo electrónico.
+   * **Para**: la lista de la parte 1. También puedes crear una lista nueva aquí.
+   * **Tema de cancelación de suscripción**: opcional. Elige un tema para que las personas puedan dejar de recibir este tipo de correo electrónico sin salir de todas las listas. Este campo aparece después de crear un tema. Consulta [Gestiona las cancelaciones de suscripción y los temas](/es/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics).
+   * **Asunto**: la línea de asunto que las personas ven en su bandeja de entrada.
+
+<img src="/images/user-guide/email-campaigns/campaign-composer.png" style={{ width: '100%' }} />
+
+## Parte 3: Escribe el correo electrónico
+
+Escribe tu correo electrónico en el editor situado debajo del asunto. Twenty guarda el borrador mientras avanzas.
+
+* Escribe `/` para ver los comandos o usa la barra lateral izquierda para añadir **Texto**, **Imagen**, **Bloques** y **Variables**.
+* Los **Bloques** incluyen **Sección**, **2 columnas**, **3 columnas**, **Botón**, **Divisor**, **Imagen** y **HTML**, para pegar tu propio HTML.
+
+### Personaliza con variables
+
+Las variables se reemplazan por los datos de cada persona cuando se envía la campaña. Inserta una desde **Variables** o escríbela entre llaves dobles:
+
+| Variable             | Reemplazado por   |
+| -------------------- | ----------------- |
+| `{{name.firstName}}` | Nombre            |
+| `{{name.lastName}}`  | Apellidos         |
+| `{{fullName}}`       | Nombre completo   |
+| `{{jobTitle}}`       | Título del puesto |
+
+También puedes usar campos de texto, número, fecha y selección de Personas, incluidos los campos personalizados. Las variables funcionan en el asunto, el cuerpo y las direcciones de los enlaces.
+
+Por ejemplo, `Hi {{name.firstName}},` se convierte en `Hi Ana,` para Ana.
+
+<img src="/images/user-guide/email-campaigns/campaign-variables.png" style={{ width: '100%' }} />
+
+<Warning>
+  Si una persona no tiene un valor para una variable, Twenty la deja vacía.
+  `Hi {{name.firstName}},` se convierte en `Hi ,` cuando una persona no tiene nombre.
+  Revisa tu lista o escribe un saludo que siga funcionando.
+</Warning>
+
+Twenty no añade la dirección postal de tu empresa. Añádela al final del correo electrónico; la legislación de EE. UU. la exige en los correos electrónicos de marketing.
+
+## Parte 4: Envía una prueba
+
+1. Haz clic en **Prueba** en la parte superior de la campaña, o pulsa `Cmd+K` y elige **Enviar correo electrónico de prueba**.
+2. En **Destinatario**, escribe tu propia dirección.
+3. Haz clic en **Enviar correo electrónico de prueba**.
+
+<img src="/images/user-guide/email-campaigns/campaign-send-test.png" style={{ width: '100%' }} />
+
+Revisa el diseño, los enlaces y el remitente en tu bandeja de entrada, tanto en el ordenador como en el teléfono.
+
+<Note>
+  Las variables están vacías en los correos electrónicos de prueba porque una prueba no se envía a una persona
+  específica. Tu espacio de trabajo puede enviar tres correos electrónicos de prueba al día.
+</Note>
+
+## Parte 5: Envía o programa
+
+1. Haz clic en **Enviar** en la parte superior de la campaña, o pulsa `Cmd+K` y elige **Enviar campaña**.
+2. Revisa el resumen. **Destinatarios** muestra cuántas personas recibirán el correo electrónico y por qué se omite a otras, por ejemplo, porque no tienen dirección de correo electrónico o se han dado de baja.
+3. En **Entrega**, elige:
+   * **Enviar ahora**: empieza de inmediato y no se puede deshacer.
+   * **Enviar más tarde**: elige una fecha y hora en **Enviar a las**.
+4. Haz clic en **Enviar campaña** o **Programar campaña**.
+
+<img src="/images/user-guide/email-campaigns/campaign-send-panel.png" style={{ width: '50%' }} />
+
+Para cambiar una campaña programada, haz clic de nuevo en **Enviar**, elige una nueva hora en **Enviar a las** y haz clic en **Reprogramar campaña**. Twenty vuelve a contar los destinatarios cuando envía la campaña, por lo que el número puede cambiar.
+
+<img src="/images/user-guide/email-campaigns/campaign-schedule-panel.png" style={{ width: '50%' }} />
+
+Tu espacio de trabajo puede enviar hasta 1000 correos electrónicos de campaña al día. ¿Necesitas más? Contáctanos por chat para solicitar un límite mayor.
+
+<Note>
+  Twenty vuelve a comprobar una campaña programada cuando llega el momento de enviarla. Si nadie
+  puede recibirla o el dominio de envío ya no está verificado, vuelve a
+  **Borrador** en lugar de enviarse.
+</Note>
+
+## Después de enviar
+
+El **Estado** de la campaña te indica en qué punto se encuentra:
+
+<img src="/images/user-guide/email-campaigns/campaigns-list.png" style={{ width: '100%' }} />
+
+| Estado                  | Significado                                                                                                          |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **Borrador**            | Aún no se ha enviado. Puedes editarla.                                                                               |
+| **Programado**          | Esperando su hora de envío.                                                                                          |
+| **Enviando**            | Los correos electrónicos se están enviando.                                                                          |
+| **Enviado**             | Todos los correos electrónicos se enviaron al proveedor de entrega.                                                  |
+| **Enviado con errores** | No se pudieron enviar algunos correos electrónicos, por ejemplo, porque el espacio de trabajo se quedó sin créditos. |
+| **Cancelado**           | Se detuvo antes de terminar.                                                                                         |
+
+La pestaña **Inicio** muestra los recuentos de enviados, entregados, rebotados, quejas, fallidos y omitidos. La lista de **Destinatarios** muestra a quién se envió la campaña.
+
+<img src="/images/user-guide/email-campaigns/campaign-sent-results.png" style={{ width: '100%' }} />
+
+Para enviar una campaña similar más adelante, haz clic en **Duplicar**. Twenty copia el correo electrónico, la lista y la configuración en un nuevo borrador.
+
+### Cancelar una campaña
+
+Haz clic en **Cancelar** en la parte superior de la campaña, o pulsa `Cmd+K` y elige **Cancelar campaña**:
+
+* **Programado**: aún no se ha enviado nada. Confirma con **Cancelar programación de campaña**. La campaña vuelve a los borradores y puedes editarla o programarla de nuevo.
+* **Enviando**: se detienen los correos electrónicos que aún están esperando. No puedes recuperar los correos electrónicos ya enviados.
+
+## Solución de Problemas
+
+<Accordion title="El campo De no tiene direcciones">
+  **De** muestra tus canales de correo electrónico. Primero crea un canal de correo electrónico y luego verifica
+  su dominio. Consulta Configurar un dominio de
+  envío.
+</Accordion>
+
+<Accordion title="El envío falla con Ningún dominio de envío verificado coincide con esta dirección del remitente">
+  La dirección **De** pertenece a un dominio que aún no está verificado. Completa los pasos
+  de Configurar un dominio de
+  envío o
+  elige otra dirección.
+</Accordion>
+
+<Accordion title="Enviar campaña está desactivado">
+  La campaña necesita una dirección **De**, una lista, un asunto y un cuerpo, y al
+  menos una persona que pueda recibirla. Revisa el resumen de **Destinatarios** para ver
+  las personas que se omiten. Con **Enviar más tarde**, la hora de envío también debe estar en el
+  futuro.
+</Accordion>
+
+<Accordion title="El envío falla con Esta campaña no se puede enviar">
+  Comprueba que la campaña tenga una dirección **De**, una lista y un asunto. Luego
+  comprueba las variables: una variable que no coincide con un campo de Personas bloquea
+  el envío. Inserta variables desde **Variables** en lugar de escribirlas, y usa
+  `{{name.firstName}}`, no `{{firstName}}`.
+</Accordion>
+
+<Accordion title="Una campaña programada volvió a Borrador">
+  Cuando llegó el momento de enviarla, la campaña no se pudo enviar, por ejemplo, porque
+  nadie de la lista podía recibirla o el dominio ya no estaba verificado. Corrige
+  la causa y vuelve a programarla.
+</Accordion>
+
+<Accordion title="No encuentro Campañas">
+  Es posible que las campañas por correo electrónico aún no estén activadas para tu espacio de trabajo. Contáctanos por
+  chat para activarlas.
+</Accordion>
+
+<PageBanner illustration="card-page-first-campaign" />

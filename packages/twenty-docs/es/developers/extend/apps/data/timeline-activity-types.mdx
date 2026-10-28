@@ -3,20 +3,17 @@ title: Tipos de actividad del cronograma
 description: Definir eventos de auditoría automática y eventos de aplicación explícitos que renderizan en cronogramas de registro.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
 Un tipo de actividad de línea de tiempo define el vocabulario estable para un evento que se muestra en la línea de tiempo de un registro. Los objetos estándar y los objetos de aplicación utilizan el mismo contrato: un tipo tiene una etiqueta y un icono, puede opcionalmente declarar cuando se emita, y puede renderizar opcionalmente a través de uno de los [componentes frontales] de tu aplicación (/developers/extend/apps/layout/front-components).
 
 <Note>
-  Los tipos de actividad de la línea de tiempo están en fase beta y pronto estarán disponibles en Veinte 2.34. La
-  API puede evolucionar mientras aprendemos de los casos de uso de los desarrolladores.
+  Los tipos de actividad de la cronología están en fase beta; la API puede evolucionar mientras aprendemos de los casos de uso de los desarrolladores de aplicaciones.
 </Note>
 
-Crea uno con el andamiante:
-
-```bash filename="Terminal"
-yarn twenty dev:add timelineActivityType
-```
-
-O definirlo directamente:
+Define un tipo de actividad de la cronología con `defineTimelineActivityType` de `twenty-sdk/define`:
 
 ```ts filename="src/timeline-activity-types/post-card-created.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -39,7 +36,7 @@ export default defineTimelineActivityType({
 
 Añade `emit` cuando Veenty debería crear este tipo automáticamente. `emit.on` soporta `created`, `updated`, `deleted`, `restored`, `linked`, y `unlinked`, mientras que `emit.objectUniversalIdentifier` identifica el objeto fuente. Sólo un tipo efectivo puede manejar la misma clave de emisión—`on`, objeto y opcional a través de la relación—en un espacio de trabajo.
 
-Sin `emit.throughh`, el evento está escrito en la línea de tiempo del registro fuente. Para aficionarlo a registros relacionados, establezca `emit.throughh. elationFieldUniversalIdentifier` a una relación directa de muchos-a-uno o a una [relación de unión uno-a-muchos](/es/developers/extend/apps/data/relations#junction-relations) en el objeto fuente. Las relaciones morfológicas se dirigen a cada miembro de su grupo morfológico, por lo que una sola declaración puede centrarse en varios tipos de objetos.
+Sin `emit.through`, el evento está escrito en la línea de tiempo del registro fuente. Para aficionarlo a registros relacionados, establezca `emit.through.relationFieldUniversalIdentifier` a una relación directa de muchos-a-uno o a una [relación de unión uno-a-muchos](/es/developers/extend/apps/data/relations#junction-relations) en el objeto fuente. Las relaciones morfológicas se dirigen a cada miembro de su grupo morfológico, por lo que una sola declaración puede centrarse en varios tipos de objetos.
 
 Para una relación directa, crear o restaurar el registro fuente produce `linked`, eliminándolo produce `unlinked`, y reapuntando la relación produce `unlinked` en el objetivo anterior más `linked` en el nuevo objetivo. Otras actualizaciones de código fuente no producen eventos de enlace. Este es el contrato utilizado por los archivos adjuntos, cuyo objetivo es una relación directa con la morfa.
 
@@ -72,6 +69,8 @@ export default defineTimelineActivityType({
 ```
 
 Por defecto se emite un evento `actualizado` a través de cada actualización de fuente. Establece `emit.through.triggerFieldUniversalIdentifiers` cuando solo los cambios a los campos de origen seleccionados deben aparecer en las líneas de tiempo de destino.
+
+Un evento `linked` recibe una marca de tiempo en el momento en que se registra. Cuando el registro de origen tiene su propio momento en el tiempo, configure `emit.through.happensAtFieldUniversalIdentifier` en un campo `DATE_TIME` o `DATE` del objeto de origen: la línea de tiempo ancla el evento al valor de ese campo y lo sigue cuando el valor cambia. Los eventos estándar de correo electrónico y calendario de Twenty usan esto para anclarse a `receivedAt` y `startsAt`.
 
 Omita `emit` para un evento de dominio explícito que tu función lógica se crea. Esto evita producir tanto una fila de auditoría automática como una fila explícita para la misma operación.
 
@@ -166,18 +165,21 @@ mutation ResetTimelineActivityType($id: UUID!) {
 
 ## Campos de configuración
 
-| Campo                                             | Obligatorio | Descripción                                                                        |
-| ------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------- |
-| `universalIdentifier`                             | Sí          | UUID estable para el tipo entre instalaciones y actualizaciones                    |
-| `name`                                            | Sí          | Nombre programático local de la aplicación; debe ser único dentro de la aplicación |
-| `label`                                           | Sí          | Texto de acción de cara al usuario usado por el renderizador nativo                |
-| `icon`                                            | No          | Veinte nombre de icono mostrado al lado del evento                                 |
-| `emit`                                            | No          | Declaración de emisión automática; omisión de tipos sólo explícitos                |
-| `emit.on`                                         | Con emisión | Acción de auditoría que hace que este tipo se escriba                              |
-| `emit.objectUniversalIdentifier`                  | Con emisión | Objeto cuyos registros emiten este tipo                                            |
-| `emit.through.relationFieldUniversalIdentifier`   | No          | Relación directa o de unión usada para reavivar las líneas de tiempo relacionadas  |
-| `emit.through.triggerFieldUniversalIdentifiers`   | No          | Campos de origen que pueden desencadenar un evento 'actualizado'                   |
-| `frontComponentUniversalIdentifier`               | No          | Componente frontal propiedad de la aplicación montado cuando la fila es expandida  |
-| `replacesTimelineActivityTypeUniversalIdentifier` | No          | Tipo de emisión existente reemplazado; requiere `emit`                             |
+| Campo                                             | Obligatorio | Descripción                                                                                                                               |
+| ------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                             | Sí          | UUID estable para el tipo entre instalaciones y actualizaciones                                                                           |
+| `name`                                            | Sí          | Nombre programático local de la aplicación; debe ser único dentro de la aplicación                                                        |
+| `label`                                           | Sí          | Texto de acción de cara al usuario usado por el renderizador nativo                                                                       |
+| `icon`                                            | No          | Veinte nombre de icono mostrado al lado del evento                                                                                        |
+| `emit`                                            | No          | Declaración de emisión automática; omisión de tipos sólo explícitos                                                                       |
+| `emit.on`                                         | Con emit    | Acción de auditoría que hace que este tipo se escriba                                                                                     |
+| `emit.objectUniversalIdentifier`                  | Con emisión | Objeto cuyos registros emiten este tipo                                                                                                   |
+| `emit.through.relationFieldUniversalIdentifier`   | No          | Relación directa o de unión usada para reavivar las líneas de tiempo relacionadas                                                         |
+| `emit.through.triggerFieldUniversalIdentifiers`   | No          | Campos de origen que pueden desencadenar un evento 'actualizado'                                                                          |
+| `emit.through.happensAtFieldUniversalIdentifier`  | No          | Campo de fecha de origen utilizado como la marca de tiempo `happensAt` del evento para eventos `linked`, en lugar de la hora de escritura |
+| `frontComponentUniversalIdentifier`               | No          | Componente frontal propiedad de la aplicación montado cuando la fila es expandida                                                         |
+| `replacesTimelineActivityTypeUniversalIdentifier` | No          | Tipo de emisión existente reemplazado; requiere `emit`                                                                                    |
 
 Veinte instantáneas capturan identidad semántica y presentaciones duraderas cuando se crea un evento. Las filas históricas mantienen su acción original y su objeto significado. Mientras el tipo está instalado, su actual etiqueta traducida, icono y componente frontal renderizan en vivo; después de desinstalar, la instantánea mantiene el registro legible. La resolución utiliza el identificador universal, así que la presentación también sobrevive a reinstalar la aplicación.
+
+<PageBanner illustration="card-page-timeline" />

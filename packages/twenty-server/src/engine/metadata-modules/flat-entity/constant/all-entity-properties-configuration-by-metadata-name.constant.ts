@@ -278,6 +278,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    disabledObjectPermissionActions: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     readabilityParentFieldUniversalIdentifiers: {
       toCompare: true,
       toStringify: true,
@@ -1856,6 +1861,43 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
+  mcpServer: {
+    name: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    url: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    connectionProviderId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'connectionProviderUniversalIdentifier',
+    },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
   applicationVariable: {
     key: {
       toCompare: true,
@@ -1942,6 +1984,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
     },
+    customConfig: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     identifyAccountLogicFunctionUniversalIdentifier: {
       toCompare: true,
       toStringify: false,
@@ -1953,6 +2000,34 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     onDisconnectLogicFunctionUniversalIdentifier: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  messagingProvider: {
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    displayName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    connectionProviderUniversalIdentifier: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    sendMessageLogicFunctionUniversalIdentifier: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,

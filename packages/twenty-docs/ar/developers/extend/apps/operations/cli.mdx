@@ -1,130 +1,174 @@
 ---
 title: CLI
-description: أوامر yarn twenty لتنفيذ الدوال، وبثّ السجلات، وإدارة تثبيتات التطبيقات، والتبديل بين الريموتات.
+description: سجّل الدخول إلى مساحة عمل، واستكشف بياناتها وأنشئ تطبيقات من طرفيتك باستخدام واجهة سطر الأوامر Twenty.
 ---
 
-تُعد واجهة سطر الأوامر `yarn twenty` وسيلتك للتعامل مع كل ما يتعلق بالتطبيق. القائمة الكاملة للأوامر:
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-| أمر                                             | ماذا يفعل                                                                            | موثَّق في                                                                                           |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
-| `dev`                                           | يراقب ملفات المصدر ويزامن التغييرات مباشرة                                           | [البدء السريع](/ar/developers/extend/apps/getting-started/quick-start)                                 |
-| `الخطة`                                         | معاينة تغييرات البيانات الوصفية بدون تطبيقها                                         | [المزامنة والاستعادة](/ar/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
-| `تطبيق`                                         | تطبيق تغييرات البيانات الوصفية بعد عرض الخطة                                         | [المزامنة والاستعادة](/ar/developers/extend/apps/operations/sync-and-recovery)                         |
-| `dev:build`                                     | ترجمة التطبيق وإنشاء عميل واجهة برمجة التطبيقات (استخدم `--tarball` لحزم ملف `.tgz`) | [النشر](/ar/developers/extend/apps/operations/publishing)                                              |
-| `dev:typecheck`                                 | تشغيل فحص الأنواع في TypeScript                                                      | [الاختبار](/ar/developers/extend/apps/operations/testing)                                              |
-| `dev:add`                                       | إنشاء هيكل كيان جديد                                                                 | [إنشاء الهياكل](/ar/developers/extend/apps/getting-started/scaffolding)                                |
-| `dev:generate-client`                           | إعادة إنشاء عميل واجهة برمجة التطبيقات مضبوط الأنواع                                 | هذه الصفحة                                                                                          |
-| `dev:function:exec` / `dev:function:logs`       | تنفيذ الدوال وبث سجلاتها                                                             | هذه الصفحة                                                                                          |
-| `dev:translations-extract`                      | استخراج السلاسل القابلة للترجمة إلى كتالوجات `locales/`                              | [الترجمات](/ar/developers/extend/apps/operations/translations)                                           |
-| `dev:catalog-sync`                              | تشغيل مزامنة كتالوج السوق                                                            | [النشر](/ar/developers/extend/apps/operations/publishing#how-marketplace-discovery-works)              |
-| `app:publish` / `app:install` / `app:uninstall` | دورة حياة الإصدارات                                                                  | [النشر](/ar/developers/extend/apps/operations/publishing) وهذه الصفحة                                  |
-| `docker:*`                                      | إدارة حاوية خادم Twenty المحلي                                                       | [الخادم المحلي](/ar/developers/extend/apps/getting-started/local-server)                               |
-| `remote:*`                                      | إدارة اتصالات الخادم                                                                 | هذه الصفحة                                                                                          |
+## تشغيل واجهة سطر الأوامر
 
-كل أمر يقبل الوسيط `-r, --remote \<name>` لاستهداف خادم بعيد معيَّن بدلاً من الخادم الافتراضي.
+تتصل واجهة سطر الأوامر `twenty` بمساحات عمل Twenty من طرفيتك. استخدمها لفحص البيانات الوصفية، وقراءة السجلات، وإرسال طلبات API، وإنشاء التطبيقات ومزامنتها وتصحيح أخطائها. تتطلب **Node.js 24.5 أو إصدارًا أحدث**.
 
-## تنفيذ الدوال (`yarn twenty dev:function:exec`)
-
-تشغيل دالة منطقية يدويًا دون تشغيلها عبر HTTP أو cron أو حدث قاعدة بيانات:
+شغّل أي أمر عبر `npx`، من دون تثبيت أي شيء:
 
 ```bash filename="Terminal"
-# Execute by function name
-yarn twenty dev:function:exec -n create-new-post-card
-
-# Execute by universalIdentifier
-yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
-
-# Pass a JSON payload
-yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
-
-# Execute the install and uninstall hooks
-yarn twenty dev:function:exec --postInstall
-yarn twenty dev:function:exec --preInstall
-yarn twenty dev:function:exec --uninstall
+npx twenty@latest --version
 ```
 
-## عرض سجلات الدوال (`yarn twenty dev:function:logs`)
-
-بثّ سجلات التنفيذ لدوال تطبيقك المنطقية:
+أو ثبّتها مرة واحدة على مستوى النظام واستدعِ `twenty` مباشرةً:
 
 ```bash filename="Terminal"
-# Stream all function logs
-yarn twenty dev:function:logs
-
-# Filter by function name
-yarn twenty dev:function:logs -n create-new-post-card
-
-# Filter by universalIdentifier
-yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+npm install -g twenty
+twenty --version
 ```
 
-<Note>
-يختلف هذا عن `yarn twenty docker:logs`، الذي يعرض سجلات حاوية Docker. يعرض `yarn twenty dev:function:logs` سجلات تنفيذ دوال تطبيقك من خادم Twenty.
-</Note>
+تستخدم الأمثلة أدناه `twenty`. أضف `npx twenty@latest` كبادئة لها إذا لم تثبّتها على مستوى النظام. شغّل `twenty commands` للاطلاع على قائمة الأوامر الكاملة، و`twenty \<command> --help` للاطلاع على خيارات أمر واحد.
 
-## توليد العميل محدد الأنواع (`yarn twenty dev:generate-client`)
+| أمر                | ماذا يفعل                                                           |
+| ------------------ | ------------------------------------------------------------------- |
+| `المصادقة`         | تسجيل الدخول والتحقق من بيانات الاعتماد وإزالتها                    |
+| `remote`           | إدراج اتصالات مساحة العمل المحفوظة وتحديدها وإعادة تسميتها وإزالتها |
+| `البيانات الوصفية` | فحص الكائنات والحقول                                                |
+| `data`             | إدراج السجلات وقراءتها                                              |
+| `api`              | إرسال طلبات REST أو GraphQL الأولية                                 |
+| `افتح`             | فتح مساحة العمل في متصفحك                                           |
+| `app`              | إنشاء التطبيقات وبناؤها ومزامنتها وتصحيحها وإلغاء تثبيتها           |
+| `doctor`           | تشخيص CLI وSDK التطبيق واتصال مساحة العمل                           |
 
-أعد توليد عميل واجهة برمجة التطبيقات محدد الأنواع (`twenty-client-sdk`) من مخطط الجهة البعيدة النشطة، دون بناء تطبيق أو مزامنته. استخدمه للحصول على عميل محدد الأنواع في أي مشروع — مثل خدمة خلفية موجودة في مستودع منفصل — يتواصل مع مثيل Twenty الخاص بك:
+يقبل كل أمر يتصل بمساحة عمل `--remote \<name>` لاستهداف اتصال محفوظ غير الاتصال الافتراضي، و`--json` للحصول على مخرجات منظَّمة.
+
+## الاتصال بمساحة عمل
+
+سجّل الدخول باستخدام متصفحك. يجعل `--use` هذا الاتصال هو الاتصال الافتراضي:
 
 ```bash filename="Terminal"
-# In your project (no Twenty app definition required)
-yarn add twenty-sdk twenty-client-sdk
-
-# Connect to the Twenty instance to generate the client from
-yarn twenty remote:add
-
-# Generate the typed client into node_modules/twenty-client-sdk
-yarn twenty dev:generate-client
+twenty auth login --url https://acme.twenty.com --use
+twenty auth status
 ```
 
-ثم استورد العميل في شيفرتك:
+استخدم عنوان مساحة عملك، أو عنوان الخادم لإعداد محلي: `http://localhost:2020` لخادم [Docker المحلي](/ar/developers/extend/apps/getting-started/local-server)، و`http://localhost:3000` لنسخة مصدرية مستخرجة. يمكنك نسخ الأمر الدقيق من **الإعدادات > المطورون > CLI**. يتطلب تسجيل الدخول عبر المتصفح Twenty 2.42 أو إصدارًا أحدث.
 
-```typescript
-import { CoreApiClient } from 'twenty-client-sdk/core';
-```
-
-أعد تشغيل الأمر كلما تغيّر نموذج البيانات لديك لتحديث الأنواع المُولَّدة.
-
-<Note>
-يتم إنشاء العميل البرمجي داخل `node_modules`، لذا لا يُدرج مع شيفرتك في الالتزامات (commits). شغّل `yarn twenty dev:generate-client` بعد كل عملية تثبيت (على سبيل المثال في سكربت `postinstall` أو في CI).
-</Note>
-
-## إلغاء تثبيت تطبيق (`yarn twenty app:uninstall`)
-
-أزل تطبيقك من مساحة العمل النشطة:
+احتفظ بعدة اتصالات عبر تسميتها:
 
 ```bash filename="Terminal"
-yarn twenty app:uninstall
-
-# Skip the confirmation prompt
-yarn twenty app:uninstall --yes
+twenty auth login --url http://localhost:2020 --name local
+twenty remote list
+twenty remote use local
 ```
 
-## إدارة الريموتات
-
-**الريموت** هو خادم Twenty يتصل به تطبيقك. أثناء الإعداد، تُنشئ أداة إنشاء الهيكل واحدًا لك تلقائيًا. يمكنك إضافة ريموتات أخرى أو التبديل بينها في أي وقت.
+في CI أو البرامج النصية، مرّر مفتاح API عبر أنبوب بدلًا من تسجيل الدخول باستخدام المتصفح:
 
 ```bash filename="Terminal"
-# Add a new remote (opens a browser for OAuth login)
-yarn twenty remote:add
-
-# Connect to a local Twenty server (auto-detects port 2020 or 3000)
-yarn twenty remote:add --local
-
-# Add a remote non-interactively (useful for CI)
-yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
-
-# List all configured remotes
-yarn twenty remote:list
-
-# Set the active remote
-yarn twenty remote:use <name>
-
-# Check that the active remote's authentication is still valid
-yarn twenty remote:status
-
-# Remove a remote
-yarn twenty remote:remove <name>
+printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acme.twenty.com --name ci
 ```
 
-تُخزَّن بيانات اعتمادك في `~/.twenty/config.json`.
+يمكنك أيضًا تعيين `TWENTY_API_URL` و`TWENTY_API_KEY` لتشغيل واحد دون حفظ أي شيء. توجد الاتصالات المحفوظة في `~/.twenty/config.json`.
+
+## استكشاف بياناتك
+
+```bash filename="Terminal"
+# Objects and fields
+twenty metadata object list
+twenty metadata field list companies
+
+# Records
+twenty data list companies --limit 5
+twenty data list companies --filter 'employees[gte]:5000' --order-by 'employees[DescNullsLast]'
+twenty data get people <id>
+
+# Raw API requests
+twenty api rest '/rest/companies?limit=5'
+twenty api graphql --query '{ companies(first: 2) { edges { node { name } } } }'
+
+# Open the workspace, or a page inside it
+twenty open
+twenty open settings/developers
+```
+
+أسماء الكائنات هي أسماء API دقيقة، بصيغة المفرد أو الجمع (`company` أو `companies`). تعمل عمليات الكتابة الأولية عبر API دون خطوة تأكيد، وتظل أذوناتك في مساحة العمل سارية.
+
+## بناء تطبيق
+
+```bash filename="Terminal"
+npx twenty@latest app init my-app
+cd my-app
+yarn install
+npx twenty@latest app apply --create
+npx twenty@latest app dev
+```
+
+* يكتب `app init` مشروعًا جديدًا من القالب. لا يثبّت التبعيات ولا يتصل بمساحة عمل.
+* يبني `app apply --create` التطبيق ويسجّله في مساحة العمل ويثبّته ويزامن بياناته الوصفية.
+* يراقب `app dev` مصدرك ويزامن كل عملية بناء ناجحة.
+
+أوامر التطبيقات الأخرى:
+
+| أمر                           | ماذا يفعل                                                         |
+| ----------------------------- | ----------------------------------------------------------------- |
+| `app add`                     | إنشاء هيكل لكائن أو حقل أو دالة منطقية أو كيان آخر                |
+| `app build` / `app typecheck` | بناء التطبيق محليًا أو التحقق من أنواعه                           |
+| `app plan`                    | معاينة تغييرات البيانات الوصفية التي سيجريها التطبيق              |
+| `app apply`                   | بناء التطبيق ورفعه ومزامنته                                       |
+| `app generate-client`         | إعادة إنشاء عميل API مضبوط الأنواع دون مزامنة                     |
+| `app pull`                    | كتابة البيانات الوصفية للتطبيق المثبّت مرة أخرى إلى المصدر المحلي |
+| `app translations extract`    | استخراج السلاسل القابلة للترجمة إلى كتالوجات `locales/`           |
+| `app publish`                 | نشر التطبيق على npm أو في سجل Twenty خاص                          |
+| `app install`                 | تثبيت حزمة تطبيق مسجّلة بالفعل في مساحة العمل                     |
+| `app uninstall`               | إزالة التطبيق وكل ما يملكه من مساحة العمل                         |
+
+تُحذف التعريفات المفقودة من مصدرك من مساحة العمل افتراضيًا. مرّر `--no-delete` للاحتفاظ بها. يؤدي حذف الكائنات أو الحقول إلى حذف بياناتها أيضًا، لذا يتطلب تأكيدًا. راجع [المزامنة والاستعادة](/ar/developers/extend/apps/operations/sync-and-recovery) للتفاصيل.
+
+## تنفيذ الدوال
+
+شغّل دالة منطقية منشورة دون تشغيلها عبر مسار أو cron أو حدث قاعدة بيانات. زامن تغييراتك المحلية باستخدام `app apply` أو `app dev` أولًا.
+
+```bash filename="Terminal"
+twenty app exec --name create-new-post-card
+twenty app exec --name create-new-post-card --payload '{"name": "Hello"}'
+
+# Install and uninstall hooks
+twenty app exec --post-install
+twenty app exec --pre-install
+twenty app exec --uninstall-hook
+```
+
+يتطلب تنفيذ الدوال تسجيل الدخول عبر المتصفح. لا يمكن لمفاتيح API تنفيذها.
+
+## مراقبة سجلات الدوال
+
+بث مخرجات الدوال المنطقية لتطبيقك عند انتهاء عمليات التنفيذ:
+
+```bash filename="Terminal"
+twenty app logs
+twenty app logs --name create-new-post-card
+```
+
+يعرض عمليات التنفيذ الجديدة فقط، وليس السابقة.
+
+## إلغاء تثبيت تطبيق
+
+```bash filename="Terminal"
+twenty app uninstall
+twenty app uninstall --yes
+```
+
+يشغّل هذا خطاف إلغاء تثبيت التطبيق ويحذف كل ما يملكه، بما في ذلك كائناته وحقوله وبياناتها. يبقى التطبيق مسجّلًا، لذا يمكن لـ `twenty app apply` تثبيته مجددًا.
+
+## تشخيص المشكلات
+
+```bash filename="Terminal"
+twenty doctor
+twenty doctor --offline
+```
+
+يتحقق `doctor` من إصدار Node لديك، ومن ملف `twenty` الثنائي الموجود في `PATH` لديك، واتصالاتك المحفوظة وSDK التطبيق، ثم يبلّغك بما يجب إصلاحه.
+
+## البرامج النصية والاختبارات
+
+ناتج البناء يخص واجهة سطر الأوامر. لا تقرأ `.twenty/output/manifest.json` ولا تستورد رمز البناء الداخلي؛ اقرأ `data.manifest` من `twenty app build --json`.
+
+## المرجع الكامل
+
+يغطي [مرجع الأوامر](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md) كل علامة وأذن وتنسيق مخرجات ورمز خروج.
+
+<PageBanner illustration="card-page-cli" />

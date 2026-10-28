@@ -3,7 +3,13 @@ title: جلب عمليات إرسال Typeform إلى Twenty
 description: التعامل مع حمولة webhook الخاصة بـ Typeform لإنشاء عملاء محتملين من عمليات إرسال النماذج.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## قبل أن تبدأ
+
 لإعداد webhook القياسي، راجع [إعداد مشغّل Webhook](/ar/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger). يتناول هذا المقال المعالجة المحددة المطلوبة لبنية الحمولة المخصصة الخاصة بـ Typeform.
+
+## الخطوات
 
 ### الخطوة 1: إنشاء سير عمل Webhook
 
@@ -128,3 +134,5 @@ export const main = async (params: {
 
 * [إعداد مشغّل Webhook](/ar/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
 * [التعامل مع المصفوفات في إجراءات Code](/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+
+<PageBanner illustration="card-page-webhooks" />

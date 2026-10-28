@@ -34,6 +34,12 @@ const OTHER_IDENTIFIER = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
 const INDEX_IDENTIFIER = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
 const STANDALONE_FIELD_IDENTIFIER = 'abababab-abab-4aba-8aba-abababababab';
 const STANDALONE_FIELD_PATH = 'src/fields/rating.ts';
+const WORKFLOW_IDENTIFIER = 'acacacac-acac-4aca-8aca-acacacacacac';
+const WORKFLOW_TRIGGER_IDENTIFIER = 'adadadad-adad-4ada-8ada-adadadadadad';
+const WORKFLOW_STEP_IDENTIFIER = 'aeaeaeae-aeae-4aea-8aea-aeaeaeaeaeae';
+const AGENT_IDENTIFIER = 'afafafaf-afaf-4afa-8afa-afafafafafaf';
+const AGENT_TRIGGER_IDENTIFIER = 'bcbcbcbc-bcbc-4bcb-8bcb-bcbcbcbcbcbc';
+const SKILL_IDENTIFIER = 'bdbdbdbd-bdbd-4bdb-8bdb-bdbdbdbdbdbd';
 const TARGET: AppPullTarget = {
   apiUrl: 'https://example.test',
   workspaceId: WORKSPACE_IDENTIFIER,
@@ -69,7 +75,7 @@ const createExport = ({
       displayName: 'Pets',
       description: '',
       defaultRoleUniversalIdentifier: OTHER_IDENTIFIER,
-      packageJsonChecksum: null,
+      packageJsonChecksum: 'package-json-checksum',
       yarnLockChecksum: null,
     },
     objects: includeObject
@@ -704,6 +710,227 @@ export default defineField({
       expect.objectContaining({ relativePath: applicationPath }),
     );
     expect(await read(applicationPath)).toContain('Changed remotely');
+  });
+
+  it('writes workflows, keeps them while unchanged or unsupported and removes confirmed remote deletions', async () => {
+    const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';
+    const workflow = {
+      universalIdentifier: WORKFLOW_IDENTIFIER,
+      name: 'Greet new pets',
+      version: {
+        trigger: {
+          universalIdentifier: WORKFLOW_TRIGGER_IDENTIFIER,
+          type: 'DATABASE_EVENT',
+          nextStepIds: [WORKFLOW_STEP_IDENTIFIER],
+          settings: {
+            action: 'created',
+            filter: {
+              stepFilterGroups: [{ id: 'group', logicalOperator: 'AND' }],
+              stepFilters: [
+                {
+                  id: 'filter',
+                  operand: 'IS_NOT_EMPTY',
+                  stepFilterGroupId: 'group',
+                  stepOutputKey: '{{trigger.properties.after.name}}',
+                  type: 'TEXT',
+                  value: '',
+                },
+              ],
+            },
+            objectUniversalIdentifier: OBJECT_IDENTIFIER,
+          },
+        },
+        steps: [
+          {
+            universalIdentifier: WORKFLOW_STEP_IDENTIFIER,
+            name: 'Greet',
+            type: 'HTTP_REQUEST',
+            nextStepIds: [],
+            input: { method: 'GET', url: 'https://example.test/greet' },
+          },
+        ],
+      },
+    };
+    const withWorkflow = (value: typeof workflow) => {
+      const exported = createExport();
+
+      return {
+        ...exported,
+        manifest: { ...exported.manifest, workflows: [value] },
+      };
+    };
+
+    const created = requireSuccess(await pull(withWorkflow(workflow)));
+    expect(created.writes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          relativePath: workflowPath,
+          kind: 'workflow',
+        }),
+      ]),
+    );
+    expect(await read(workflowPath)).toContain(
+      'operand: ViewFilterOperand.IS_NOT_EMPTY,',
+    );
+
+    const localEdit = (await read(workflowPath)).replace(
+      "name: 'Greet',",
+      "name: 'Greet',\n",
+    );
+    await writeFile(join(appPath, workflowPath), localEdit);
+    expect(requireSuccess(await pull(withWorkflow(workflow))).writes).toEqual(
+      [],
+    );
+    expect(await read(workflowPath)).toBe(localEdit);
+
+    const renamed = { ...workflow, name: 'Welcome new pets' };
+    const changed = requireSuccess(await pull(withWorkflow(renamed)));
+    expect(changed.writes).toEqual([
+      expect.objectContaining({
+        relativePath: workflowPath,
+        isRegeneration: true,
+      }),
+    ]);
+    expect(await read(workflowPath)).toContain("name: 'Welcome new pets',");
+
+    const unsupported = createExport({
+      coverage: [
+        {
+          metadataName: 'workflow',
+          universalIdentifier: WORKFLOW_IDENTIFIER,
+          status: 'UNSUPPORTED',
+          reason: 'workflow changed in the workflow builder',
+        },
+      ],
+    });
+    const kept = requireSuccess(await pull(unsupported));
+    expect(kept.deletions).toEqual([]);
+    expect(await read(workflowPath)).toContain("name: 'Welcome new pets',");
+
+    const removed = requireSuccess(await pull(createExport()));
+    expect(removed.deletions).toEqual([
+      { universalIdentifier: WORKFLOW_IDENTIFIER, relativePath: workflowPath },
+    ]);
+    await expect(read(workflowPath)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('writes agents and skills, keeps them while unchanged or unsupported and removes confirmed remote deletions', async () => {
+    const agentPath = 'src/agents/pet-groomer.agent.ts';
+    const skillPath = 'src/skills/grooming-tips.skill.ts';
+    const agent = {
+      universalIdentifier: AGENT_IDENTIFIER,
+      name: 'pet-groomer',
+      label: 'Pet Groomer',
+      prompt: 'Plan the grooming of new pets.',
+      responseFormat: { type: 'text' },
+      roleUniversalIdentifier: OTHER_IDENTIFIER,
+      triggers: [
+        {
+          universalIdentifier: AGENT_TRIGGER_IDENTIFIER,
+          type: 'DATABASE_EVENT',
+          settings: { eventName: 'pet.created' },
+        },
+      ],
+    };
+    const skill = {
+      universalIdentifier: SKILL_IDENTIFIER,
+      name: 'grooming-tips',
+      label: 'Grooming Tips',
+      content: 'Brush first.\nThen bathe.',
+    };
+    const withAgentAndSkill = ({
+      agentManifest = agent,
+      coverage = [],
+    }: {
+      agentManifest?: typeof agent;
+      coverage?: AppExportCoverageEntry[];
+    } = {}) => {
+      const exported = createExport({ coverage });
+
+      return {
+        ...exported,
+        manifest: {
+          ...exported.manifest,
+          agents: [agentManifest],
+          skills: [skill],
+        },
+      };
+    };
+
+    const created = requireSuccess(await pull(withAgentAndSkill()));
+    expect(created.writes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ relativePath: agentPath, kind: 'agent' }),
+        expect.objectContaining({ relativePath: skillPath, kind: 'skill' }),
+      ]),
+    );
+    expect(await read(agentPath)).toContain(
+      "import { defineAgent } from 'twenty-sdk/define';",
+    );
+    expect(await read(agentPath)).toContain("eventName: 'pet.created',");
+    expect(await read(skillPath)).toContain(
+      "content: 'Brush first.\\nThen bathe.',",
+    );
+
+    const localEdit = (await read(agentPath)).replace(
+      "label: 'Pet Groomer',",
+      "label: 'Pet Groomer',\n",
+    );
+    await writeFile(join(appPath, agentPath), localEdit);
+    expect(requireSuccess(await pull(withAgentAndSkill())).writes).toEqual([]);
+    expect(await read(agentPath)).toBe(localEdit);
+
+    const changed = requireSuccess(
+      await pull(
+        withAgentAndSkill({
+          agentManifest: { ...agent, prompt: 'Groom every pet weekly.' },
+        }),
+      ),
+    );
+    expect(changed.writes).toEqual([
+      expect.objectContaining({
+        relativePath: agentPath,
+        isRegeneration: true,
+      }),
+    ]);
+    expect(await read(agentPath)).toContain(
+      "prompt: 'Groom every pet weekly.',",
+    );
+
+    const unsupported = createExport({
+      coverage: [
+        {
+          metadataName: 'agent',
+          universalIdentifier: AGENT_IDENTIFIER,
+          status: 'UNSUPPORTED',
+          reason:
+            'agent with values a definition cannot express: modelConfiguration',
+        },
+        {
+          metadataName: 'skill',
+          universalIdentifier: SKILL_IDENTIFIER,
+          status: 'UNSUPPORTED',
+          reason: 'skill deactivated in this workspace',
+        },
+      ],
+    });
+    const kept = requireSuccess(await pull(unsupported));
+    expect(kept.deletions).toEqual([]);
+    expect(await read(agentPath)).toContain(
+      "prompt: 'Groom every pet weekly.',",
+    );
+    expect(await read(skillPath)).toContain("name: 'grooming-tips',");
+
+    const removed = requireSuccess(await pull(createExport()));
+    expect(removed.deletions).toEqual(
+      expect.arrayContaining([
+        { universalIdentifier: AGENT_IDENTIFIER, relativePath: agentPath },
+        { universalIdentifier: SKILL_IDENTIFIER, relativePath: skillPath },
+      ]),
+    );
+    expect(removed.deletions).toHaveLength(2);
+    await expect(read(agentPath)).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(read(skillPath)).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
   it('retains a covered whole-file base until its remote deletion is confirmed', async () => {

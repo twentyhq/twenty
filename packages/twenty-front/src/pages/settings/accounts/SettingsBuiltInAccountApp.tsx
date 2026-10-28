@@ -1,6 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
-import { SettingsAppPreferencesListEmptyStateCard } from '@/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
 import { SettingsAppPreferencesSelectedMessageChannelDetails } from '~/pages/settings/accounts/SettingsAppPreferencesSelectedMessageChannelDetails';
@@ -10,6 +9,7 @@ import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/u
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
 import { getBuiltInAccountAppChannelTabsVisibility } from '@/settings/app-preferences/utils/getBuiltInAccountAppChannelTabsVisibility';
+import { SettingsAccountsMessageChannelsSSEEffect } from '@/settings/accounts/components/SettingsAccountsMessageChannelsSSEEffect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -109,16 +109,10 @@ export const SettingsBuiltInAccountApp = () => {
 
   const renderContent = () => {
     if (activeTabId === 'emails') {
-      if (loading && emailAccounts.length === 0) {
-        return <SettingsSectionSkeletonLoader />;
-      }
-
       const selectedAccount = getSelectedAccount(emailAccounts);
 
       if (!isDefined(selectedAccount)) {
-        return (
-          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
-        );
+        return <SettingsSectionSkeletonLoader />;
       }
 
       const { messageChannel } =
@@ -137,16 +131,10 @@ export const SettingsBuiltInAccountApp = () => {
     }
 
     if (activeTabId === 'calendar') {
-      if (loading && calendarAccounts.length === 0) {
-        return <SettingsSectionSkeletonLoader />;
-      }
-
       const selectedAccount = getSelectedAccount(calendarAccounts);
 
       if (!isDefined(selectedAccount)) {
-        return (
-          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
-        );
+        return <SettingsSectionSkeletonLoader />;
       }
 
       const { calendarChannel } =
@@ -182,19 +170,22 @@ export const SettingsBuiltInAccountApp = () => {
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
         {
-          children: t`App preferences`,
+          children: t`Apps preferences`,
           href: getSettingsPath(SettingsPath.Accounts),
         },
         { children: appName },
       ]}
       secondaryBar={
-        <SettingsTabBar
-          aria-label={t`${appName} preferences`}
-          tabs={tabs}
-          componentInstanceId={tabListComponentInstanceId}
-        />
+        tabs.length > 1 ? (
+          <SettingsTabBar
+            aria-label={t`${appName} preferences`}
+            tabs={tabs}
+            componentInstanceId={tabListComponentInstanceId}
+          />
+        ) : undefined
       }
     >
+      <SettingsAccountsMessageChannelsSSEEffect />
       <SettingsPageContainer>{renderContent()}</SettingsPageContainer>
     </SettingsPageLayout>
   );

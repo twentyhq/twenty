@@ -9,6 +9,7 @@ import {
   ROLE_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
   VIEW_FIELD_ENUM_BINDINGS,
+  WORKFLOW_ENUM_BINDINGS,
   type EnumBinding,
 } from '@/app/pull/write-define-file';
 import {
@@ -43,6 +44,9 @@ export const PULL_ENTITY_KINDS = [
   'pageLayoutTab',
   'navigationMenuItem',
   'pageLayoutWidget',
+  'workflow',
+  'skill',
+  'agent',
 ] as const;
 
 export type PullEntityKind = (typeof PULL_ENTITY_KINDS)[number];
@@ -368,6 +372,57 @@ export const buildPullEntities = (
       parentName: isDefined(objectUniversalIdentifier)
         ? getObjectNameForPullFile({ objectUniversalIdentifier, manifest })
         : null,
+    });
+  }
+
+  for (const workflowManifest of manifest.workflows ?? []) {
+    entities.push({
+      kind: 'workflow',
+      universalIdentifier: workflowManifest.universalIdentifier,
+      definer: 'defineWorkflow',
+      config: workflowManifest,
+      enumBindings: WORKFLOW_ENUM_BINDINGS,
+      defaultFolder: 'src/workflows',
+      fileSuffix: '.workflow.ts',
+      fileBaseName: toFileBaseName({
+        segments: [workflowManifest.name],
+        universalIdentifier: workflowManifest.universalIdentifier,
+      }),
+      parentName: null,
+    });
+  }
+
+  for (const skillManifest of manifest.skills ?? []) {
+    entities.push({
+      kind: 'skill',
+      universalIdentifier: skillManifest.universalIdentifier,
+      definer: 'defineSkill',
+      config: skillManifest,
+      enumBindings: [],
+      defaultFolder: 'src/skills',
+      fileSuffix: '.skill.ts',
+      fileBaseName: toFileBaseName({
+        segments: [skillManifest.name],
+        universalIdentifier: skillManifest.universalIdentifier,
+      }),
+      parentName: null,
+    });
+  }
+
+  for (const agentManifest of manifest.agents ?? []) {
+    entities.push({
+      kind: 'agent',
+      universalIdentifier: agentManifest.universalIdentifier,
+      definer: 'defineAgent',
+      config: agentManifest,
+      enumBindings: [],
+      defaultFolder: 'src/agents',
+      fileSuffix: '.agent.ts',
+      fileBaseName: toFileBaseName({
+        segments: [agentManifest.name],
+        universalIdentifier: agentManifest.universalIdentifier,
+      }),
+      parentName: null,
     });
   }
 
