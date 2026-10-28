@@ -76,7 +76,7 @@ msgstr "{0} должен быть полем связи «один-ко-мног
 #. placeholder {0}: flatFieldPermission.fieldMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
 msgid "{action} is disabled on field {0}"
-msgstr ""
+msgstr "{action} отключено для поля {0}"
 
 #. js-lingui-id: LP7rtP
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
@@ -407,7 +407,7 @@ msgstr "Секретная переменная не может иметь зн�
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
 msgid "A skill installed by an application cannot be renamed."
-msgstr ""
+msgstr "Навык, установленный приложением, нельзя переименовать."
 
 #. js-lingui-id: HijTmf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
@@ -785,7 +785,7 @@ msgstr "Роль администратора не найдена."
 #. js-lingui-id: eHJEyS
 #: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
 msgid "Agent \"{label}\" is archived."
-msgstr ""
+msgstr "Агент \"{label}\" архивирован."
 
 #. js-lingui-id: xPBilO
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1039,7 +1039,7 @@ msgstr "У агента не может быть более {maxTriggers} три
 #. js-lingui-id: gxdZLa
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "An agent installed by an application cannot be renamed."
-msgstr ""
+msgstr "Агента, установленного приложением, нельзя переименовать."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -2611,7 +2611,7 @@ msgstr "Нельзя изменить стандартное определен�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 msgid "Cannot update standard skill properties (only overrides and activation/deactivation allowed)"
-msgstr ""
+msgstr "Нельзя изменять свойства стандартного навыка (разрешены только переопределения и активация/деактивация)"
 
 #. js-lingui-id: YIzGJ8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -3032,12 +3032,12 @@ msgstr "Завершено"
 #. js-lingui-id: XveQi3
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
 msgid "Component build exceeded the 10 second time limit."
-msgstr ""
+msgstr "Сборка компонента превысила ограничение по времени в 10 секунд."
 
 #. js-lingui-id: fmCVqA
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
 msgid "Component build exceeds the 5 MB output limit."
-msgstr ""
+msgstr "Сборка компонента превышает ограничение на размер вывода в 5 МБ."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4199,7 +4199,7 @@ msgstr "Макет версии рабочего процесса по умол�
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-workspace-member-page-layout.config.ts
 msgctxt "pageLayout.name"
 msgid "Default Workspace Member Layout"
-msgstr ""
+msgstr "Макет участника рабочего пространства по умолчанию"
 
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -4368,12 +4368,12 @@ msgstr "Направление"
 #. js-lingui-id: jJ0ehq
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
 msgid "Disabled field permission actions must be a list"
-msgstr ""
+msgstr "Отключенные действия разрешений поля должны быть списком"
 
 #. js-lingui-id: 7ZwQ9I
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
 msgid "Disabled field permission actions must not repeat"
-msgstr ""
+msgstr "Отключенные действия разрешений поля не должны повторяться"
 
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -5140,7 +5140,7 @@ msgstr "Не удалось добавить людей в список."
 #. js-lingui-id: nVOUB8
 #: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
 msgid "Failed to build front component."
-msgstr ""
+msgstr "Не удалось собрать компонент фронтенда."
 
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -6788,12 +6788,12 @@ msgstr "Недопустимые входные данные компонент�
 #. js-lingui-id: 5V3pAK
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
 msgid "Invalid front component settings."
-msgstr ""
+msgstr "Недопустимые настройки компонента фронтенда."
 
 #. js-lingui-id: r0izKL
 #: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
 msgid "Invalid front component source."
-msgstr ""
+msgstr "Недопустимый исходный код компонента фронтенда."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -8179,7 +8179,7 @@ msgstr "Участники"
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 msgid "Merge"
-msgstr ""
+msgstr "Объединить"
 
 #. js-lingui-id: uHk5U2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10110,12 +10110,12 @@ msgstr "Навсегда уничтожить {objectLabel}"
 #. js-lingui-id: cmLTur
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Permission flag {permissionFlagName} is not available in this workspace"
-msgstr ""
+msgstr "Флаг разрешения {permissionFlagName} недоступен в этом рабочем пространстве"
 
 #. js-lingui-id: h8HQA4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Permission flag {permissionFlagUniversalIdentifier} not found in this workspace"
-msgstr ""
+msgstr "Флаг разрешения {permissionFlagUniversalIdentifier} не найден в этом рабочем пространстве"
 
 #. js-lingui-id: 3zRddX
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -12317,7 +12317,7 @@ msgstr "Стандартные объекты нельзя удалить"
 #. js-lingui-id: gBQ8oE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Standard permission flag {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) not found in this workspace. Run the workspace upgrade to create it."
-msgstr ""
+msgstr "Стандартный флаг разрешения {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) не найден в этом рабочем пространстве. Выполните обновление рабочего пространства, чтобы создать его."
 
 #. js-lingui-id: Xn/1qY
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -13588,7 +13588,7 @@ msgstr "Поле выбора рабочего процесса должно с�
 #. js-lingui-id: go3zRL
 #: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow uses connected account {handle}, which is not connected and shared in this workspace."
-msgstr ""
+msgstr "В рабочем процессе используется подключенная учетная запись {handle}, которая не подключена и не предоставлена в общий доступ в этом рабочем пространстве."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -13706,7 +13706,7 @@ msgstr "У этого агента нет полей вывода. Добавь�
 #. js-lingui-id: Z/oZRf
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This agent is archived."
-msgstr ""
+msgstr "Этот агент архивирован."
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -14181,7 +14181,7 @@ msgstr "Это разрешение уже установлено для рол�
 #. js-lingui-id: AwqjFF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
 msgid "This permission is disabled on the field and cannot be granted"
-msgstr ""
+msgstr "Это разрешение отключено для поля и не может быть предоставлено"
 
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -15058,7 +15058,7 @@ msgstr "Неизвестно"
 #. js-lingui-id: aHCw//
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
 msgid "Unknown disabled field permission action"
-msgstr ""
+msgstr "Неизвестное действие разрешения отключенного поля"
 
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -16887,7 +16887,7 @@ msgstr "Позиция участника рабочего пространст�
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workspace-member-views.util.ts
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
-msgstr ""
+msgstr "Поля страницы записи участника рабочего пространства"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

@@ -860,7 +860,7 @@ msgstr "{label}, {statusLabel}"
 #. js-lingui-id: g4xrfh
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "{label}, {unreadOpenThreadCount} unread"
-msgstr ""
+msgstr "{label}, {unreadOpenThreadCount} non lus"
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -17161,12 +17161,12 @@ msgstr "Onglets de révision de fusion"
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merged {objectLabel}"
-msgstr ""
+msgstr "{objectLabel} fusionné"
 
 #. js-lingui-id: v4CzQ/
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merging {objectLabel}"
-msgstr ""
+msgstr "Fusion de {objectLabel}"
 
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
@@ -19360,7 +19360,7 @@ msgstr "Non configuré"
 #. js-lingui-id: S33tz3
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 msgid "Not connected"
-msgstr ""
+msgstr "Non connecté"
 
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts

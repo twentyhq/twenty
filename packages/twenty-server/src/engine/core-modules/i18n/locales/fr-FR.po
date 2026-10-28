@@ -76,7 +76,7 @@ msgstr "{0} doit être un champ de relation un-à-plusieurs."
 #. placeholder {0}: flatFieldPermission.fieldMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
 msgid "{action} is disabled on field {0}"
-msgstr ""
+msgstr "{action} est désactivée pour le champ {0}"
 
 #. js-lingui-id: LP7rtP
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
@@ -407,7 +407,7 @@ msgstr "Une variable secrète ne peut pas avoir de valeur par défaut."
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
 msgid "A skill installed by an application cannot be renamed."
-msgstr ""
+msgstr "Une compétence installée par une application ne peut pas être renommée."
 
 #. js-lingui-id: HijTmf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
@@ -785,7 +785,7 @@ msgstr "Rôle administrateur introuvable."
 #. js-lingui-id: eHJEyS
 #: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
 msgid "Agent \"{label}\" is archived."
-msgstr ""
+msgstr "L'agent \"{label}\" est archivé."
 
 #. js-lingui-id: xPBilO
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1039,7 +1039,7 @@ msgstr "Un agent ne peut pas avoir plus de {maxTriggers} déclencheurs"
 #. js-lingui-id: gxdZLa
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "An agent installed by an application cannot be renamed."
-msgstr ""
+msgstr "Un agent installé par une application ne peut pas être renommé."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -2611,7 +2611,7 @@ msgstr "Impossible de mettre à jour la définition d'indicateur d'autorisation 
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 msgid "Cannot update standard skill properties (only overrides and activation/deactivation allowed)"
-msgstr ""
+msgstr "Impossible de modifier les propriétés d'une compétence standard (seules les surcharges et l'activation/la désactivation sont autorisées)"
 
 #. js-lingui-id: YIzGJ8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -3032,12 +3032,12 @@ msgstr "Terminé"
 #. js-lingui-id: XveQi3
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
 msgid "Component build exceeded the 10 second time limit."
-msgstr ""
+msgstr "La compilation du composant a dépassé la limite de temps de 10 secondes."
 
 #. js-lingui-id: fmCVqA
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
 msgid "Component build exceeds the 5 MB output limit."
-msgstr ""
+msgstr "La compilation du composant dépasse la limite de sortie de 5 Mo."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4199,7 +4199,7 @@ msgstr "Disposition de version de flux de travail par défaut"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-workspace-member-page-layout.config.ts
 msgctxt "pageLayout.name"
 msgid "Default Workspace Member Layout"
-msgstr ""
+msgstr "Disposition par défaut des membres de l’espace de travail"
 
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -4368,12 +4368,12 @@ msgstr "Direction"
 #. js-lingui-id: jJ0ehq
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
 msgid "Disabled field permission actions must be a list"
-msgstr ""
+msgstr "Les actions d’autorisation de champ désactivées doivent être une liste"
 
 #. js-lingui-id: 7ZwQ9I
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
 msgid "Disabled field permission actions must not repeat"
-msgstr ""
+msgstr "Les actions d’autorisation de champ désactivées ne doivent pas se répéter"
 
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -5140,7 +5140,7 @@ msgstr "Échec de l'ajout de personnes à la liste."
 #. js-lingui-id: nVOUB8
 #: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
 msgid "Failed to build front component."
-msgstr ""
+msgstr "Échec de la compilation du composant frontal."
 
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -6788,12 +6788,12 @@ msgstr "Entrée de composant frontal invalide."
 #. js-lingui-id: 5V3pAK
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
 msgid "Invalid front component settings."
-msgstr ""
+msgstr "Paramètres du composant frontal invalides."
 
 #. js-lingui-id: r0izKL
 #: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
 msgid "Invalid front component source."
-msgstr ""
+msgstr "Source de composant frontal invalide."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -8179,7 +8179,7 @@ msgstr "Membres"
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 msgid "Merge"
-msgstr ""
+msgstr "Fusionner"
 
 #. js-lingui-id: uHk5U2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10110,12 +10110,12 @@ msgstr "Détruire définitivement {objectLabel}"
 #. js-lingui-id: cmLTur
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Permission flag {permissionFlagName} is not available in this workspace"
-msgstr ""
+msgstr "L’indicateur d’autorisation {permissionFlagName} n’est pas disponible dans cet espace de travail."
 
 #. js-lingui-id: h8HQA4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Permission flag {permissionFlagUniversalIdentifier} not found in this workspace"
-msgstr ""
+msgstr "Indicateur d’autorisation {permissionFlagUniversalIdentifier} introuvable dans cet espace de travail"
 
 #. js-lingui-id: 3zRddX
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -12317,7 +12317,7 @@ msgstr "Les objets standards ne peuvent pas être supprimés"
 #. js-lingui-id: gBQ8oE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Standard permission flag {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) not found in this workspace. Run the workspace upgrade to create it."
-msgstr ""
+msgstr "Indicateur d'autorisation standard {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) introuvable dans cet espace de travail. Exécutez la mise à niveau de l'espace de travail pour le créer."
 
 #. js-lingui-id: Xn/1qY
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -13588,7 +13588,7 @@ msgstr "Le champ de sélection du workflow doit référencer un champ existant."
 #. js-lingui-id: go3zRL
 #: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow uses connected account {handle}, which is not connected and shared in this workspace."
-msgstr ""
+msgstr "Le workflow utilise le compte connecté {handle}, qui n'est ni connecté ni partagé dans cet espace de travail."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -13706,7 +13706,7 @@ msgstr "Cet agent n'a aucun champ de sortie. Ajoutez au moins un champ de sortie
 #. js-lingui-id: Z/oZRf
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This agent is archived."
-msgstr ""
+msgstr "Cet agent est archivé."
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -14181,7 +14181,7 @@ msgstr "Cette autorisation est déjà définie pour le rôle"
 #. js-lingui-id: AwqjFF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
 msgid "This permission is disabled on the field and cannot be granted"
-msgstr ""
+msgstr "Cette autorisation est désactivée pour le champ et ne peut pas être accordée"
 
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -15058,7 +15058,7 @@ msgstr "Inconnu"
 #. js-lingui-id: aHCw//
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
 msgid "Unknown disabled field permission action"
-msgstr ""
+msgstr "Action d'autorisation de champ désactivé inconnue"
 
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -16887,7 +16887,7 @@ msgstr "Position du membre de l'espace de travail"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workspace-member-views.util.ts
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
-msgstr ""
+msgstr "Champs de la page d'enregistrement des membres de l'espace de travail"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

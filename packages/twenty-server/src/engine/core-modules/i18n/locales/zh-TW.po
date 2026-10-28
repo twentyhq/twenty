@@ -76,7 +76,7 @@ msgstr "{0} 必須是一對多的關聯欄位。"
 #. placeholder {0}: flatFieldPermission.fieldMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
 msgid "{action} is disabled on field {0}"
-msgstr ""
+msgstr "欄位 {0} 已停用 {action}"
 
 #. js-lingui-id: LP7rtP
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
@@ -407,7 +407,7 @@ msgstr "機密變數不能有預設值。"
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
 msgid "A skill installed by an application cannot be renamed."
-msgstr ""
+msgstr "由應用程式安裝的技能無法重新命名。"
 
 #. js-lingui-id: HijTmf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
@@ -785,7 +785,7 @@ msgstr "找不到管理員角色。"
 #. js-lingui-id: eHJEyS
 #: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
 msgid "Agent \"{label}\" is archived."
-msgstr ""
+msgstr "代理 \"{label}\" 已封存。"
 
 #. js-lingui-id: xPBilO
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1039,7 +1039,7 @@ msgstr "一個代理不得有超過 {maxTriggers} 個觸發器"
 #. js-lingui-id: gxdZLa
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "An agent installed by an application cannot be renamed."
-msgstr ""
+msgstr "由應用程式安裝的代理無法重新命名。"
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -2611,7 +2611,7 @@ msgstr "無法更新標準權限旗標定義"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 msgid "Cannot update standard skill properties (only overrides and activation/deactivation allowed)"
-msgstr ""
+msgstr "無法更新標準技能屬性（僅允許覆寫以及啟用/停用）"
 
 #. js-lingui-id: YIzGJ8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -3032,12 +3032,12 @@ msgstr "完成"
 #. js-lingui-id: XveQi3
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
 msgid "Component build exceeded the 10 second time limit."
-msgstr ""
+msgstr "元件建置超過 10 秒的時間限制。"
 
 #. js-lingui-id: fmCVqA
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
 msgid "Component build exceeds the 5 MB output limit."
-msgstr ""
+msgstr "元件建置超過 5 MB 的輸出限制。"
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4199,7 +4199,7 @@ msgstr "預設工作流程版本版面配置"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-workspace-member-page-layout.config.ts
 msgctxt "pageLayout.name"
 msgid "Default Workspace Member Layout"
-msgstr ""
+msgstr "預設工作區成員版面配置"
 
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -4368,12 +4368,12 @@ msgstr "方向"
 #. js-lingui-id: jJ0ehq
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
 msgid "Disabled field permission actions must be a list"
-msgstr ""
+msgstr "已停用的欄位權限動作必須為清單"
 
 #. js-lingui-id: 7ZwQ9I
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
 msgid "Disabled field permission actions must not repeat"
-msgstr ""
+msgstr "已停用的欄位權限動作不得重複"
 
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -5140,7 +5140,7 @@ msgstr "無法將人員新增至清單。"
 #. js-lingui-id: nVOUB8
 #: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
 msgid "Failed to build front component."
-msgstr ""
+msgstr "建置前端元件失敗。"
 
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -6788,12 +6788,12 @@ msgstr "無效的前端元件輸入。"
 #. js-lingui-id: 5V3pAK
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
 msgid "Invalid front component settings."
-msgstr ""
+msgstr "無效的前端元件設定。"
 
 #. js-lingui-id: r0izKL
 #: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
 msgid "Invalid front component source."
-msgstr ""
+msgstr "無效的前端元件來源。"
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -8179,7 +8179,7 @@ msgstr "成員"
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 msgid "Merge"
-msgstr ""
+msgstr "合併"
 
 #. js-lingui-id: uHk5U2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10110,12 +10110,12 @@ msgstr "永久銷毀 {objectLabel}"
 #. js-lingui-id: cmLTur
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Permission flag {permissionFlagName} is not available in this workspace"
-msgstr ""
+msgstr "此工作區中無法使用權限旗標 {permissionFlagName}"
 
 #. js-lingui-id: h8HQA4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Permission flag {permissionFlagUniversalIdentifier} not found in this workspace"
-msgstr ""
+msgstr "在此工作區中找不到權限旗標 {permissionFlagUniversalIdentifier}"
 
 #. js-lingui-id: 3zRddX
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -12317,7 +12317,7 @@ msgstr "標準對象無法刪除"
 #. js-lingui-id: gBQ8oE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Standard permission flag {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) not found in this workspace. Run the workspace upgrade to create it."
-msgstr ""
+msgstr "在此工作區中找不到標準權限旗標 {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier})。請執行工作區升級以建立它。"
 
 #. js-lingui-id: Xn/1qY
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -13588,7 +13588,7 @@ msgstr "工作流程選取欄位必須參照現有欄位。"
 #. js-lingui-id: go3zRL
 #: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow uses connected account {handle}, which is not connected and shared in this workspace."
-msgstr ""
+msgstr "工作流程使用已連結的帳戶 {handle}，但該帳戶未在此工作區中連結及共用。"
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -13706,7 +13706,7 @@ msgstr "此代理程式沒有輸出欄位。請在其回應格式中至少新增
 #. js-lingui-id: Z/oZRf
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This agent is archived."
-msgstr ""
+msgstr "此代理已封存。"
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -14181,7 +14181,7 @@ msgstr "此權限已為該角色設定"
 #. js-lingui-id: AwqjFF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
 msgid "This permission is disabled on the field and cannot be granted"
-msgstr ""
+msgstr "此權限已在欄位上停用，因此無法授予"
 
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -15058,7 +15058,7 @@ msgstr "未知"
 #. js-lingui-id: aHCw//
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
 msgid "Unknown disabled field permission action"
-msgstr ""
+msgstr "未知的已停用欄位權限動作"
 
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -16887,7 +16887,7 @@ msgstr "工作區成員職位"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workspace-member-views.util.ts
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
-msgstr ""
+msgstr "工作區成員記錄頁面欄位"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
