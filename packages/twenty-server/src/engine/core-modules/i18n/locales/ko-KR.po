@@ -3781,6 +3781,7 @@ msgstr "커스텀 객체에 레이블 식별자 필드가 없습니다."
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "사용자 지정 역할은 Organization 요금제에 포함되어 있습니다."
 
@@ -5409,11 +5410,6 @@ msgstr "필드 유형 TS_VECTOR은 시스템 필드여야 합니다."
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "필드 유형 TS_VECTOR의 이름은 \"searchVector\"이어야 합니다."
-
-#. js-lingui-id: VkSxbb
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
-msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr "필드 유형 TS_VECTOR은 SYSTEM 쓰기 가능 상태여야 합니다."
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

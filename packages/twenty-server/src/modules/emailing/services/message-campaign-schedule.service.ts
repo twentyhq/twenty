@@ -4,6 +4,7 @@ import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
 import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import {
@@ -16,6 +17,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { SEND_SCHEDULED_CAMPAIGN_JOB } from 'src/modules/emailing/constants/send-scheduled-campaign-job.constant';
+import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { type SendCampaignResult } from 'src/modules/emailing/types/send-campaign-result.type';
@@ -29,18 +31,68 @@ export class MessageCampaignScheduleService {
     private readonly campaignMessageQueueService: MessageQueueService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly messageCampaignService: MessageCampaignService,
+    private readonly billingService: BillingService,
+    private readonly emailBillingService: EmailBillingService,
   ) {}
+
+  async sendNowOrScheduleOrThrow({
+    workspaceId,
+    userWorkspaceId,
+    campaignId,
+    scheduledAt,
+    expectedRecipientCount,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    campaignId: string;
+    scheduledAt?: Date;
+    expectedRecipientCount?: number;
+  }): Promise<SendCampaignResult> {
+    const isPayingCustomer =
+      await this.billingService.isPayingCustomer(workspaceId);
+
+    if (!isPayingCustomer) {
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} cannot be sent: workspace ${workspaceId} is not on a paid plan`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_REQUIRES_PAID_PLAN,
+      );
+    }
+
+    await this.emailBillingService.validateEmailSendOrThrow({
+      workspaceId,
+      spenders: { userWorkspaceId },
+    });
+
+    if (isDefined(scheduledAt)) {
+      return this.schedule({
+        workspaceId,
+        userWorkspaceId,
+        campaignId,
+        scheduledAt,
+        expectedRecipientCount,
+      });
+    }
+
+    return this.messageCampaignService.send({
+      workspaceId,
+      userWorkspaceId,
+      campaignId,
+      expectedRecipientCount,
+    });
+  }
 
   async schedule({
     workspaceId,
     userWorkspaceId,
     campaignId,
     scheduledAt,
+    expectedRecipientCount,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     campaignId: string;
     scheduledAt: Date;
+    expectedRecipientCount?: number;
   }): Promise<SendCampaignResult> {
     const {
       roleId,
@@ -53,6 +105,7 @@ export class MessageCampaignScheduleService {
       userWorkspaceId,
       campaignId,
       requestedScheduledAt: scheduledAt,
+      expectedRecipientCount,
     });
 
     const scheduled =

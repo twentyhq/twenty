@@ -213,6 +213,7 @@ Note:
 * È consentita esattamente **una** chiamata a `defineApplicationRole(...)` per app — la build del manifest avrà esito negativo se ne trova più di una.
 * Usa `defineRole()` (non `defineApplicationRole()`) per qualsiasi ruolo **aggiuntivo** fornito dalla tua app.
 * L’impostazione esplicita di `defaultRoleUniversalIdentifier` in `defineApplication()` è ancora supportata per retrocompatibilità, ma è deprecata a favore di `defineApplicationRole()`. L'identificatore deve corrispondere a un ruolo definito dall'app, altrimenti la build non riesce.
+* Un ruolo a cui possono essere assegnati membri dello spazio di lavoro o chiavi API (`canBeAssignedToUsers` o `canBeAssignedToApiKeys`, entrambi `true` se omessi) è un ruolo personalizzato e richiede il **piano Organization o superiore**: con altri piani l'installazione viene rifiutata. Mantieni entrambi su `false` per i ruoli che vengono eseguiti solo dalla tua app e dai relativi agenti.
 
 ### Ruoli agente
 

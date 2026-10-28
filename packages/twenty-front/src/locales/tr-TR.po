@@ -1566,11 +1566,6 @@ msgstr "Çalışma alanınızı aktif tutmak için bir ödeme yöntemi gereklidi
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "Aboneliğiniz için bir ödeme başarısız oldu. Yeniden denerken premium özellikleriniz etkin kalır."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "Bir kayıt, rolü bu nesneye erişemeyen kişiler de dahil olmak üzere herkesle paylaşılabilir. Bu kişiler yalnızca o kaydı görüntülemek veya düzenlemek için alır."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1677,11 +1672,6 @@ msgstr "Uygulamanız hakkında"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Bu çalışma alanı için kabul edilmiş ve imzalanmış DPA'lar, şablon sürümleri ve tarihleriyle birlikte."
-
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "Erişim, ilgili kayıtlardan da devralınır."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3569,11 +3559,6 @@ msgstr "Herhangi bir cihaz"
 msgid "Any field"
 msgstr "Herhangi bir alan"
 
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "Çalışma alanındaki herkes"
-
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Anyone with an approved email domain can find and join."
@@ -5295,11 +5280,6 @@ msgstr "Kampanya {sendTime} için zamanlandı"
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Kampanyanın zamanlaması kaldırıldı ve taslaklarınıza geri döndü"
 
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "Yalnızca görüntüleyebilir: rolü {objectLabelPlural} öğelerini düzenleyemez"
-
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
@@ -6950,6 +6930,12 @@ msgstr "Google ile Bağlan"
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Microsoft ile Bağlan"
+
+#. js-lingui-id: vPwoq6
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
+#: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
+msgid "Connect with {appName}"
+msgstr ""
 
 #. js-lingui-id: oduBE8
 #: src/pages/onboarding/ImportContacts.tsx
@@ -19926,11 +19912,6 @@ msgstr "sadece {firstDay} ve {secondDay} günleri"
 msgid "only on {remainingDays} and {0}"
 msgstr "sadece {remainingDays} ve {0} günlerinde"
 
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "Yalnızca bu kayıtlara zaten erişebilen kişiler"
-
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Only run when one of these fields changes"
@@ -22125,7 +22106,6 @@ msgstr "Kayıt seçimi"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "Kayıt paylaşımı"
 
@@ -23182,11 +23162,6 @@ msgstr "rol"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Role"
 msgstr "Rol"
-
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "Rol ve alan izinleri geçerliliğini korur."
 
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
@@ -25069,11 +25044,6 @@ msgstr "Paylaşılan gelen kutusu e-postaları"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Shared record"
 msgstr "Paylaşılan kayıt"
-
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "Paylaşım, rollerin ve satır filtrelerinin ötesine asla geçmez. Hassas nesneler için kullanın."
 
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -29300,6 +29270,11 @@ msgstr "Organization planına yükselt"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "SSO'yu yapılandırmak için Kuruluş planına yükseltin."
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr ""
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
@@ -30689,11 +30664,6 @@ msgstr "Bu modelin zincirleme düşünmeyi destekleyip desteklemediği"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "Bu adımın alıcıyla hangi sohbete yazacağı"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "Bir {objectLabel} kaydının kimlerle paylaşılabileceği. Roller, kişilerin varsayılan olarak neyi göreceğine yine de karar verir."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30766,11 +30736,6 @@ msgstr "Arama kodu olmadan"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "kredi kartsız"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "Göremez: rolü {objectLabelPlural} erişimine sahip değil"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)
