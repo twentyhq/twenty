@@ -12,9 +12,9 @@ import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.53.0', 1793204065461)
+@RegisteredWorkspaceCommand('2.54.0', 1793204065461)
 @Command({
-  name: 'upgrade:2-53:add-merge-with-record-command-menu-item',
+  name: 'upgrade:2-54:add-merge-with-record-command-menu-item',
   description:
     'Add the record page Merge with command to workspaces that predate it',
 })

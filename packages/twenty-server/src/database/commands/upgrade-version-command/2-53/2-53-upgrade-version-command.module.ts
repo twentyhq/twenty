@@ -7,7 +7,6 @@ import { UngateMergeFromDuplicateCriteriaCommand } from 'src/database/commands/u
 import { GateMergeCommandOnRecordPermissionsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793183175063-gate-merge-command-on-record-permissions.command';
 import { SyncWorkspaceMemberRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793192231470-sync-workspace-member-record-page.command';
 import { BackfillStandardPermissionFlagsCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793198086907-backfill-standard-permission-flags.command';
-import { AddMergeWithRecordCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-workspace-command-1793204065461-add-merge-with-record-command-menu-item.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -26,7 +25,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     GateMergeCommandOnRecordPermissionsCommand,
     SyncWorkspaceMemberRecordPageCommand,
     BackfillStandardPermissionFlagsCommand,
-    AddMergeWithRecordCommandMenuItemCommand,
   ],
 })
 export class V2_53_UpgradeVersionCommandModule {}
