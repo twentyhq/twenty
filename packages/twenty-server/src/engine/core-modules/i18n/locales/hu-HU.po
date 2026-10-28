@@ -13554,6 +13554,11 @@ msgstr "A munkafolyamat kiválasztási mezőjének azonos típusú mezőre kell 
 msgid "The workflow select field must reference an existing field."
 msgstr "A munkafolyamat kiválasztási mezőjének létező mezőre kell hivatkoznia."
 
+#. js-lingui-id: go3zRL
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
+msgid "The workflow uses connected account {handle}, which is not connected and shared in this workspace."
+msgstr ""
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
