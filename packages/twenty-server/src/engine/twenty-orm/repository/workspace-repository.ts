@@ -1706,8 +1706,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
-    // Inserts never build a row access policy, so disabled actions are
-    // checked here for every write
+    // Inserts skip the row access policy, so disabled actions are checked here
     if (this.isOperationDisabled(operationType)) {
       throw new PermissionsException(
         `${PermissionsExceptionMessage.PERMISSION_DENIED}: records of "${this.options.flatObjectMetadata.nameSingular}" are not writable through the API`,
