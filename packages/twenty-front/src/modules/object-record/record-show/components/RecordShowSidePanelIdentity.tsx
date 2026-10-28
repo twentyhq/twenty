@@ -1,24 +1,32 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordIdentifierBarCreatedAt } from '@/object-record/record-show/components/RecordIdentifierBarCreatedAt';
+import { RecordShowSidePanelQuickActions } from '@/object-record/record-show/components/RecordShowSidePanelQuickActions';
 import { useRecordIdentifierTitle } from '@/object-record/record-show/hooks/useRecordIdentifierTitle';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getAvatarButtonRender } from '@/ui/field/display/utils/getAvatarButtonRender';
 import { styled } from '@linaria/react';
 import { useRef, type ChangeEvent } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledContainer = styled.div`
-  align-items: center;
   background: ${themeCssVariables.background.primary};
   display: flex;
+  flex-direction: column;
   flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[4]};
+  gap: ${themeCssVariables.spacing[5]};
   padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[4]}
     ${themeCssVariables.spacing[4]};
+`;
+
+const StyledIdentityRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledAvatarTile = styled.div`
@@ -52,6 +60,11 @@ const StyledTitle = styled.div`
   min-width: 0;
 `;
 
+const OBJECTS_WITHOUT_QUICK_ACTIONS: string[] = [
+  CoreObjectNameSingular.Note,
+  CoreObjectNameSingular.Task,
+];
+
 const StyledFileInput = styled.input`
   display: none;
 `;
@@ -83,32 +96,40 @@ export const RecordShowSidePanelIdentity = ({
 
   return (
     <StyledContainer>
-      <StyledAvatarTile>
-        <Avatar
-          src={getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? '')}
-          render={getAvatarButtonRender({
-            name: avatarName,
-            onClick: isDefined(onUploadPicture)
-              ? () => inputFileRef.current?.click()
-              : undefined,
-          })}
-          name={avatarName}
-          colorSeed={objectRecordId}
-          shape={recordIdentifier?.avatarShape ?? 'circle'}
-          size="xl"
+      <StyledIdentityRow>
+        <StyledAvatarTile>
+          <Avatar
+            src={getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? '')}
+            render={getAvatarButtonRender({
+              name: avatarName,
+              onClick: isDefined(onUploadPicture)
+                ? () => inputFileRef.current?.click()
+                : undefined,
+            })}
+            name={avatarName}
+            colorSeed={objectRecordId}
+            shape={recordIdentifier?.avatarShape ?? 'circle'}
+            size="xl"
+          />
+        </StyledAvatarTile>
+        <StyledTextContainer>
+          <StyledTitle>
+            <FieldContext.Provider value={titleFieldContextValue}>
+              <RecordTitleCell
+                sizeVariant="md"
+                containerType={RecordTitleCellContainerType.PageHeader}
+              />
+            </FieldContext.Provider>
+          </StyledTitle>
+          <RecordIdentifierBarCreatedAt objectRecordId={objectRecordId} />
+        </StyledTextContainer>
+      </StyledIdentityRow>
+      {!OBJECTS_WITHOUT_QUICK_ACTIONS.includes(objectNameSingular) && (
+        <RecordShowSidePanelQuickActions
+          objectNameSingular={objectNameSingular}
+          objectRecordId={objectRecordId}
         />
-      </StyledAvatarTile>
-      <StyledTextContainer>
-        <StyledTitle>
-          <FieldContext.Provider value={titleFieldContextValue}>
-            <RecordTitleCell
-              sizeVariant="md"
-              containerType={RecordTitleCellContainerType.ShowPage}
-            />
-          </FieldContext.Provider>
-        </StyledTitle>
-        <RecordIdentifierBarCreatedAt objectRecordId={objectRecordId} />
-      </StyledTextContainer>
+      )}
       <StyledFileInput
         ref={inputFileRef}
         onChange={handleFileChange}
