@@ -1,14 +1,8 @@
-import { AppChip } from '@/applications/components/AppChip';
-import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsApplicationConnectCards } from '@/settings/app-preferences/components/SettingsApplicationConnectCards';
 import { useAddBuiltInAccount } from '@/settings/app-preferences/hooks/useAddBuiltInAccount';
-import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
 import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
-import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
-import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,27 +23,12 @@ export const SettingsAccountGroupsEmptyState = ({
 }: SettingsAccountGroupsEmptyStateProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
-  const { applicationsWithPreferences } = useApplicationsWithPreferences();
   const { addBuiltInAccount } = useAddBuiltInAccount();
-  const { triggerAppOAuth } = useTriggerAppOAuth();
 
   const builtInAccountApps = isDefined(builtInAccountApp)
     ? [builtInAccountApp]
     : enabledBuiltInAccountApps;
-  const applicationConnectionProviders = isDefined(builtInAccountApp)
-    ? []
-    : applicationsWithPreferences.flatMap(
-        ({ application, connectionProviders }) =>
-          connectionProviders
-            .filter(canStartConnectionProviderAuthorization)
-            .map((connectionProvider) => ({
-              application,
-              connectionProvider,
-              hasSiblingProviders: connectionProviders.length > 1,
-            })),
-      );
 
   return (
     <StyledCardsContainer>
@@ -65,33 +44,7 @@ export const SettingsAccountGroupsEmptyState = ({
           />
         );
       })}
-      {applicationConnectionProviders.map(
-        ({ application, connectionProvider, hasSiblingProviders }) => {
-          const applicationName = getApplicationDisplayName({
-            application,
-            currentWorkspace,
-          });
-          const appName = hasSiblingProviders
-            ? `${applicationName} (${connectionProvider.displayName})`
-            : applicationName;
-
-          return (
-            <SettingsCard
-              key={connectionProvider.id}
-              Icon={
-                <AppChip applicationId={application.id} size="md" chipOnly />
-              }
-              title={t`Connect with ${appName}`}
-              onClick={() =>
-                triggerAppOAuth({
-                  applicationId: application.id,
-                  providerName: connectionProvider.name,
-                })
-              }
-            />
-          );
-        },
-      )}
+      {!isDefined(builtInAccountApp) && <SettingsApplicationConnectCards />}
     </StyledCardsContainer>
   );
 };

@@ -244,7 +244,7 @@ export const DisabledAppGoesBackToAccounts: Story = {
   },
 };
 
-export const OutlookWithoutAccountOffersMicrosoftOnly: Story = {
+export const OutlookWithoutAccountOffersOutlookOnly: Story = {
   args: {
     routeParams: { ':builtInAccountAppId': 'outlook' },
   },

@@ -37,6 +37,12 @@ import {
   failNextApplicationPreferencesRequest,
   seedApplicationPreferencesStory,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
+import {
+  LINEAR_APPLICATION_ID,
+  LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+  MOCKED_TRANSIENT_TOKEN,
+} from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
+import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
 import { withinTableRowOrThrow } from '~/testing/utils/withinTableRowOrThrow';
 
 const meta: Meta<PageDecoratorArgs> = {
@@ -290,13 +296,27 @@ export const AccountsTabWithoutAccountsOffersConnectCards: Story = {
       }),
     ).toBeVisible();
     expect(canvas.getByText('Connect with Outlook')).toBeVisible();
-    expect(
-      await canvas.findByText('Connect with Linear', undefined, {
+    const linearCard = await canvas.findByText(
+      'Connect with Linear',
+      undefined,
+      {
         timeout: 3000,
-      }),
-    ).toBeVisible();
+      },
+    );
     expect(canvas.getByText('Connect with Fathom')).toBeVisible();
     expect(canvas.queryByText('Connect with Granola')).not.toBeInTheDocument();
+
+    const redirectUrl = await clickAndCaptureOAuthRedirect(linearCard);
+
+    expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe(
+      `${REACT_APP_SERVER_BASE_URL}/auth/apps/authorize`,
+    );
+    expect(Object.fromEntries(redirectUrl.searchParams)).toEqual({
+      applicationId: LINEAR_APPLICATION_ID,
+      providerName: 'linear',
+      transientToken: MOCKED_TRANSIENT_TOKEN,
+      redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+    });
   },
 };
 
