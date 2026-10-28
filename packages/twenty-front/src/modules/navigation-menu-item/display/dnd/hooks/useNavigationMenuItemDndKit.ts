@@ -11,6 +11,7 @@ import type { SortableTargetDestination } from '@/navigation-menu-item/common/ty
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
+import { isNavigationMenuItemAlreadyInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAlreadyInSection';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { useHandleNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/display/dnd/hooks/useHandleNavigationMenuItemDragAndDrop';
 import { resolveDropTarget } from '@/navigation-menu-item/display/dnd/utils/navigationMenuItemDndKitResolveDropTarget';
@@ -95,6 +96,24 @@ export const useNavigationMenuItemDndKit = (
       source: { id?: unknown; data?: unknown } | null,
       resolved: SortableTargetDestination,
     ): string | null => {
+      const sourceItemId = source?.id != null ? String(source.id) : undefined;
+
+      if (
+        isDefined(sourceItemId) &&
+        isNavigationMenuItemAlreadyInSection({
+          items,
+          itemId: sourceItemId,
+          containerId: extractFolderIdFromDroppableId(
+            resolved.destination.droppableId,
+            sectionType,
+          ),
+        })
+      ) {
+        return resolved.isTargetFolder
+          ? resolved.effectiveDropTargetId
+          : resolved.dropTargetId;
+      }
+
       if (!isSourceFolderDrag(source)) {
         return null;
       }
@@ -118,7 +137,7 @@ export const useNavigationMenuItemDndKit = (
 
       return null;
     },
-    [sectionType, isSourceFolderDrag, getNavItemById],
+    [items, sectionType, isSourceFolderDrag, getNavItemById],
   );
 
   const applyWorkspaceReorder = useCallback(

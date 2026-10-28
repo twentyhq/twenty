@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import {
   type NavigationMenuItem,
@@ -15,6 +16,7 @@ import { NavigationMenuTabMenuContent } from '@/navigation-menu-item/edit/compon
 import { NavigationMenuItemContainerMenuOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemContainerMenuOpenEffect';
 import { MainNavigationDrawerModeButton } from '@/navigation/components/MainNavigationDrawerModeButton';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
+import { type NavigationDrawerAttention } from '@/navigation/types/NavigationDrawerAttention';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -29,7 +31,7 @@ type MainNavigationDrawerCustomTabProps = {
   isActive: boolean;
   isExpanded: boolean;
   isTooltipDisabled: boolean;
-  isUnread?: boolean;
+  attention?: NavigationDrawerAttention | null;
 };
 
 export const MainNavigationDrawerCustomTab = ({
@@ -37,7 +39,7 @@ export const MainNavigationDrawerCustomTab = ({
   isActive,
   isExpanded,
   isTooltipDisabled,
-  isUnread = false,
+  attention,
 }: MainNavigationDrawerCustomTabProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -73,12 +75,14 @@ export const MainNavigationDrawerCustomTab = ({
       <MainNavigationDrawerModeButton
         Icon={getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT)}
         label={label}
-        ariaLabel={isUnread ? t`${label}, unread` : label}
+        ariaLabel={
+          isDefined(attention) ? t`${label}, needs your attention` : label
+        }
         tooltip={label}
         isTooltipDisabled={isTooltipDisabled}
         isActive={isActive}
         isExpanded={isExpanded}
-        isUnread={isUnread}
+        attention={attention}
         isSelectedInEditMode={
           isLayoutCustomizationModeEnabled &&
           isActive &&

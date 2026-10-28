@@ -1,7 +1,10 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
@@ -17,9 +20,15 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
+const StyledCount = styled.span`
+  display: flex;
+  padding-right: ${themeCssVariables.spacing['1.5']};
+`;
+
 type NavigationDrawerAiChatTriageItemProps = {
   filterStatus: AgentChatThreadFilterStatus;
   count?: number;
+  isCountUrgent?: boolean;
   isUnread?: boolean;
   subItemState?: NavigationDrawerSubItemState;
 };
@@ -27,6 +36,7 @@ type NavigationDrawerAiChatTriageItemProps = {
 export const NavigationDrawerAiChatTriageItem = ({
   filterStatus,
   count,
+  isCountUrgent = false,
   isUnread,
   subItemState,
 }: NavigationDrawerAiChatTriageItemProps) => {
@@ -45,11 +55,11 @@ export const NavigationDrawerAiChatTriageItem = ({
     setAgentChatChannelView(null);
     navigate(AppPath.AiChatInbox, { threadId: null });
   };
+  const hasCount = isDefined(count) && count > 0;
 
   return (
     <NavigationDrawerItem
       label={t(AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[filterStatus])}
-      secondaryLabel={isDefined(count) && count > 0 ? `${count}` : undefined}
       isUnread={isUnread}
       Icon={AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[filterStatus]}
       active={
@@ -61,6 +71,14 @@ export const NavigationDrawerAiChatTriageItem = ({
       subItemState={subItemState}
       onClick={handleClick}
       triggerEvent="CLICK"
+      rightOptions={
+        hasCount ? (
+          <StyledCount>
+            <Badge color={isCountUrgent ? 'danger' : 'tertiary'}>{count}</Badge>
+          </StyledCount>
+        ) : undefined
+      }
+      alwaysShowRightOptions={hasCount}
     />
   );
 };

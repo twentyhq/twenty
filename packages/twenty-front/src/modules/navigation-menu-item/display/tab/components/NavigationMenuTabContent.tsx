@@ -43,12 +43,13 @@ export const NavigationMenuTabContent = ({
         parentId={tabId}
         placement="above-items"
       />
-      {(items.length > 0 || (isLayoutCustomizationModeEnabled && isEmpty)) && (
+      {items.length > 0 && (
         <WorkspaceSectionContainer
           sectionTitle=""
           items={items}
           containerId={tabId}
           isTitleHidden
+          addMenuItemButton={false}
           selectedNavigationMenuItemId={selectedNavigationMenuItemId}
           onNavigationMenuItemClick={onNavigationMenuItemClick}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}

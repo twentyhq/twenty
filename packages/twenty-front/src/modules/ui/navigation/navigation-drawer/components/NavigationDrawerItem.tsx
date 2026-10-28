@@ -156,6 +156,11 @@ const StyledSpacer = styled.span`
   flex-grow: 1;
 `;
 
+const StyledShortcutContainer = styled.span`
+  display: flex;
+  padding-right: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledIcon = styled.div`
   align-items: center;
   display: flex;
@@ -400,11 +405,13 @@ export const NavigationDrawerItem = ({
 
             {isDefined(keyboardKeys) && (
               <NavigationDrawerAnimatedCollapseWrapper>
-                <Shortcut
-                  shortcut={keyboardKeys}
-                  sequenceJoinLabel={t`then`}
-                  accessibleKeyLabels={accessibleKeyLabels}
-                />
+                <StyledShortcutContainer>
+                  <Shortcut
+                    shortcut={keyboardKeys}
+                    sequenceJoinLabel={t`then`}
+                    accessibleKeyLabels={accessibleKeyLabels}
+                  />
+                </StyledShortcutContainer>
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
 

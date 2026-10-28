@@ -10,7 +10,7 @@ const SEARCH_DEBOUNCE_DELAY = 300;
 
 export type NavigationMenuItemSearchRecord = {
   recordId: string;
-  isAlreadyInSidebar: boolean;
+  isAlreadyInSection: boolean;
   objectNameSingular: string;
   label: string;
   imageUrl?: string | null;
@@ -18,14 +18,14 @@ export type NavigationMenuItemSearchRecord = {
 
 type UseNavigationMenuItemSearchRecordsParams = {
   searchInput: string;
-  currentItems: NavigationMenuItem[];
+  sectionItems: NavigationMenuItem[];
   selectedObjectNameSingular?: string | null;
   skip?: boolean;
 };
 
 export const useNavigationMenuItemSearchRecords = ({
   searchInput,
-  currentItems,
+  sectionItems,
   selectedObjectNameSingular = null,
   skip = false,
 }: UseNavigationMenuItemSearchRecordsParams) => {
@@ -56,8 +56,8 @@ export const useNavigationMenuItemSearchRecords = ({
     SEARCH_DEBOUNCE_DELAY,
   );
 
-  const recordIdsAlreadyAdded = new Set(
-    currentItems.flatMap((item) =>
+  const recordIdsInSection = new Set(
+    sectionItems.flatMap((item) =>
       isDefined(item.targetRecordId) ? [item.targetRecordId] : [],
     ),
   );
@@ -65,7 +65,7 @@ export const useNavigationMenuItemSearchRecords = ({
   const navigationMenuItemSearchRecords = searchRecords.map(
     (record): NavigationMenuItemSearchRecord => ({
       recordId: record.recordId,
-      isAlreadyInSidebar: recordIdsAlreadyAdded.has(record.recordId),
+      isAlreadyInSection: recordIdsInSection.has(record.recordId),
       objectNameSingular: record.objectNameSingular,
       label: record.label,
       imageUrl: record.imageUrl,

@@ -20,6 +20,7 @@ import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerT
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   GetAgentChatOpenThreadsSummaryDocument,
+  type GetAgentChatOpenThreadsSummaryQuery,
   type NavigationMenuItem,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
@@ -83,7 +84,12 @@ const triageSection: NavigationMenuItem = {
   updatedAt: '',
 };
 
-const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
+type OpenThreadsSummary =
+  GetAgentChatOpenThreadsSummaryQuery['agentChatOpenThreadsSummary'];
+
+const buildOpenThreadsSummaryMock = (
+  openThreadsSummary: Partial<OpenThreadsSummary>,
+) => ({
   request: { query: GetAgentChatOpenThreadsSummaryDocument },
   delay: 0,
   result: {
@@ -92,9 +98,12 @@ const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
         __typename: 'AgentChatOpenThreadsSummary' as const,
         openThreadCount: 1,
         needsInputThreadCount: 0,
-        hasUnreadOpenThread,
+        hasUnreadOpenThread: false,
         hasUnreadMentionThread: false,
         hasUnreadAssignedThread: false,
+        unreadMentionThreadCount: 0,
+        unreadAssignedThreadCount: 0,
+        ...openThreadsSummary,
       },
     },
   },
@@ -102,12 +111,12 @@ const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
 
 const renderModeSwitcher = ({
   isLayoutCustomizationModeEnabled = false,
-  hasUnreadOpenThread = false,
+  openThreadsSummary = {},
   navigationMenuItems = [],
   permissionFlags = [PermissionFlagType.AI],
 }: {
   isLayoutCustomizationModeEnabled?: boolean;
-  hasUnreadOpenThread?: boolean;
+  openThreadsSummary?: Partial<OpenThreadsSummary>;
   navigationMenuItems?: NavigationMenuItem[];
   permissionFlags?: PermissionFlagType[];
 } = {}) => {
@@ -131,7 +140,7 @@ const renderModeSwitcher = ({
     <I18nProvider i18n={i18n}>
       <JotaiProvider store={store}>
         <MockedProvider
-          mocks={[buildOpenThreadsSummaryMock(hasUnreadOpenThread)]}
+          mocks={[buildOpenThreadsSummaryMock(openThreadsSummary)]}
         >
           <MainNavigationDrawerModeSwitcher />
         </MockedProvider>
@@ -389,19 +398,28 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     );
   });
 
-  it('marks the inbox while one of its open chats is unread', async () => {
-    renderModeSwitcher({ hasUnreadOpenThread: true });
+  it.each([
+    ['mentions the member', { hasUnreadMentionThread: true }],
+    ['is assigned to the member', { hasUnreadAssignedThread: true }],
+    ['waits on the member', { needsInputThreadCount: 1 }],
+  ] as const)(
+    'flags the inbox while a chat %s',
+    async (_reason, openThreadsSummary) => {
+      renderModeSwitcher({ openThreadsSummary });
 
-    expect(
-      await screen.findByRole('button', { name: 'AI, unread' }),
-    ).toBeInTheDocument();
-  });
+      expect(
+        await screen.findByRole('button', {
+          name: 'AI, needs your attention',
+        }),
+      ).toBeInTheDocument();
+    },
+  );
 
   it.each([
     ['Inbox', inboxTab.id],
     ['Home', null],
   ] as const)(
-    'marks %s while the triage it holds has an unread open chat',
+    'flags %s while the triage it holds needs the member',
     async (label, triageParentId) => {
       jest
         .mocked(useWorkspaceNavigationMenuTabs)
@@ -409,39 +427,70 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       jest.mocked(useActiveNavigationMenuTab).mockReturnValue(developersTab);
 
       renderModeSwitcher({
-        hasUnreadOpenThread: true,
+        openThreadsSummary: { hasUnreadMentionThread: true },
         navigationMenuItems: [{ ...triageSection, folderId: triageParentId }],
       });
 
       expect(
-        await screen.findByRole('button', { name: `${label}, unread` }),
+        await screen.findByRole('button', {
+          name: `${label}, needs your attention`,
+        }),
       ).toBeInTheDocument();
     },
   );
 
-  it('does not mark the inbox when its open chats are read', async () => {
-    renderModeSwitcher();
+  it('does not flag the inbox for unread chats that do not need the member', async () => {
+    renderModeSwitcher({ openThreadsSummary: { hasUnreadOpenThread: true } });
     await waitForOpenThreadsSummary();
 
     expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
   });
 
-  it('does not mark unread chats while the inbox feature flag is off', async () => {
+  it('does not flag the inbox while the inbox feature flag is off', async () => {
     mockIsAiChatInboxEnabled = false;
-    renderModeSwitcher({ hasUnreadOpenThread: true });
+    renderModeSwitcher({
+      openThreadsSummary: { hasUnreadMentionThread: true },
+    });
     await waitForOpenThreadsSummary();
 
     expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
   });
 
-  it('does not mark the inbox while it is open', async () => {
+  it('leaves the flag to the inbox while it is open', async () => {
     jest
       .mocked(useActiveNavigationDrawerMode)
       .mockReturnValue(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
-    renderModeSwitcher({ hasUnreadOpenThread: true });
+    renderModeSwitcher({ openThreadsSummary: { needsInputThreadCount: 1 } });
     await waitForOpenThreadsSummary();
 
     expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
+  });
+
+  it('leaves the flag to the triage of the tab you are on', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuTabs)
+      .mockReturnValue([inboxTab, developersTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(inboxTab);
+
+    renderModeSwitcher({
+      openThreadsSummary: { needsInputThreadCount: 1 },
+      navigationMenuItems: [triageSection],
+    });
+    await waitForOpenThreadsSummary();
+
+    expect(screen.getByRole('button', { name: 'Inbox' })).toBeInTheDocument();
+  });
+
+  it('keeps flagging the inbox while it is open in the collapsed drawer', async () => {
+    jest
+      .mocked(useActiveNavigationDrawerMode)
+      .mockReturnValue(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
+    jest.mocked(useIsNavigationDrawerContentExpanded).mockReturnValue(false);
+    renderModeSwitcher({ openThreadsSummary: { needsInputThreadCount: 1 } });
+
+    expect(
+      await screen.findByRole('button', { name: 'AI, needs your attention' }),
+    ).toBeInTheDocument();
   });
 
   it('renders nothing when no mode is available', () => {

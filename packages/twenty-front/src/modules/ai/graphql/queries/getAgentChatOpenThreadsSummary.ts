@@ -8,6 +8,8 @@ export const GET_AGENT_CHAT_OPEN_THREADS_SUMMARY = gql`
       hasUnreadOpenThread
       hasUnreadMentionThread
       hasUnreadAssignedThread
+      unreadMentionThreadCount
+      unreadAssignedThreadCount
     }
   }
 `;

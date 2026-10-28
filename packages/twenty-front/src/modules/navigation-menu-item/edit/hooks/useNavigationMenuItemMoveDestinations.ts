@@ -12,9 +12,9 @@ import {
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
-import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
+import { isNavigationMenuItemAlreadyInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAlreadyInSection';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSection';
 import { isNavigationMenuItemTab } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTab';
@@ -28,6 +28,7 @@ export type NavigationMenuItemMoveDestination = {
   Icon: IconComponent;
   iconColor?: string;
   isDisabled: boolean;
+  contextualText?: string;
 };
 
 export type NavigationMenuItemMoveDestinationGroup = {
@@ -65,6 +66,22 @@ export const useNavigationMenuItemMoveDestinations = ({
     ...getNavigationMenuItemDescendantIds(items, item.id),
   ]);
 
+  const isAlreadyInDestinationSection = (containerId: string | null) =>
+    isNavigationMenuItemAlreadyInSection({
+      items,
+      itemId: item.id,
+      containerId,
+    });
+
+  const getSectionAvailability = (containerId: string | null) => {
+    const isAlreadyInSection = isAlreadyInDestinationSection(containerId);
+
+    return {
+      isDisabled: containerId === currentParentId || isAlreadyInSection,
+      contextualText: isAlreadyInSection ? t`Already there` : undefined,
+    };
+  };
+
   const getFolderDestination = (
     folder: NavigationMenuItem,
   ): NavigationMenuItemMoveDestination => ({
@@ -72,7 +89,8 @@ export const useNavigationMenuItemMoveDestinations = ({
     label: folder.name ?? t`Folder`,
     Icon: getIcon(folder.icon ?? FOLDER_ICON_DEFAULT),
     iconColor: folder.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
-    isDisabled: folder.id === currentParentId,
+    isDisabled:
+      folder.id === currentParentId || isAlreadyInDestinationSection(folder.id),
   });
 
   const getRootDestination = (
@@ -81,7 +99,7 @@ export const useNavigationMenuItemMoveDestinations = ({
     id: containerId,
     label: t`Root level`,
     Icon: IconHierarchy2,
-    isDisabled: containerId === currentParentId,
+    ...getSectionAvailability(containerId),
   });
 
   const canMoveIntoSection = !isNavigationMenuItemSection(item);
@@ -134,14 +152,13 @@ export const useNavigationMenuItemMoveDestinations = ({
       : [];
 
     return [
-      getRootDestination(containerId),
       ...getFolders(containerId),
       ...sections.flatMap((sectionItem) => [
         {
           id: sectionItem.id,
           label: sectionItem.name ?? t`Section`,
           Icon: IconLayoutList,
-          isDisabled: sectionItem.id === currentParentId,
+          ...getSectionAvailability(sectionItem.id),
         },
         ...getFolders(sectionItem.id),
       ]),
@@ -152,7 +169,10 @@ export const useNavigationMenuItemMoveDestinations = ({
     return [
       {
         id: 'workspace',
-        destinations: getContainerDestinations(defaultWorkspaceSectionId),
+        destinations: [
+          getRootDestination(defaultWorkspaceSectionId),
+          ...getContainerDestinations(defaultWorkspaceSectionId),
+        ],
       },
     ];
   }
@@ -168,14 +188,7 @@ export const useNavigationMenuItemMoveDestinations = ({
     ...tabs.map((tab) => ({
       id: tab.id,
       label: tab.name ?? t`Tab`,
-      destinations: getContainerDestinations(tab.id).map((destination) =>
-        destination.id === tab.id
-          ? {
-              ...destination,
-              Icon: getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT),
-            }
-          : destination,
-      ),
+      destinations: getContainerDestinations(tab.id),
     })),
-  ];
+  ].filter((group) => group.destinations.length > 0);
 };

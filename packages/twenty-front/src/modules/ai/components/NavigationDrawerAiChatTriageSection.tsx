@@ -11,9 +11,17 @@ import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFil
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
+import { NavigationDrawerSectionSeeMoreItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionSeeMoreItem';
+import { useNavigationSectionVisibleItems } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSectionVisibleItems';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
+
+const TRIAGE_FILTER_STATUSES = [
+  AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+  AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
+  AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+];
 
 // Needs input, Mentions and Assigned narrow Open, so they hang under it
 const OPEN_SUB_FILTER_STATUSES = [
@@ -26,12 +34,14 @@ type NavigationDrawerAiChatTriageSectionProps = {
   label?: string;
   rightIcon?: ReactNode;
   alwaysShowRightIcon?: boolean;
+  visibleItemLimit?: number | null;
 };
 
 export const NavigationDrawerAiChatTriageSection = ({
   label,
   rightIcon,
   alwaysShowRightIcon,
+  visibleItemLimit,
 }: NavigationDrawerAiChatTriageSectionProps = {}) => {
   const { t } = useLingui();
   const location = useLocation();
@@ -47,25 +57,46 @@ export const NavigationDrawerAiChatTriageSection = ({
     needsInputThreadCount,
     hasUnreadMentionThread,
     hasUnreadAssignedThread,
+    unreadMentionThreadCount,
+    unreadAssignedThreadCount,
   } = useAgentChatOpenThreadsSummary();
+  const {
+    visibleItems: visibleFilterStatuses,
+    exceedsVisibleItemLimit,
+    isShowingAllItems,
+    toggleShowingAllItems,
+  } = useNavigationSectionVisibleItems({
+    navigationSectionId: AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID,
+    items: TRIAGE_FILTER_STATUSES,
+    visibleItemLimit,
+  });
 
   const isTriageShown = isAiChatInboxPath(location.pathname) && !isChannelShown;
-  const selectedOpenSubItemIndex = isTriageShown
-    ? OPEN_SUB_FILTER_STATUSES.findIndex(
-        (filterStatus) => filterStatus === agentChatThreadFilterStatus,
-      )
-    : -1;
   const isOpenExpanded =
     isTriageShown &&
     (agentChatThreadFilterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE ||
-      selectedOpenSubItemIndex >= 0);
-
-  const getOpenSubItemState = (index: number) =>
-    getNavigationSubItemLeftAdornment({
-      index,
-      arrayLength: OPEN_SUB_FILTER_STATUSES.length,
-      selectedIndex: selectedOpenSubItemIndex,
-    });
+      OPEN_SUB_FILTER_STATUSES.some(
+        (filterStatus) => filterStatus === agentChatThreadFilterStatus,
+      ));
+  const openSubFilterStatusCount = {
+    [AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT]: needsInputThreadCount,
+    [AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS]: unreadMentionThreadCount,
+    [AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED]: unreadAssignedThreadCount,
+  };
+  const shownOpenSubFilterStatuses = OPEN_SUB_FILTER_STATUSES.filter(
+    (filterStatus) =>
+      isOpenExpanded || openSubFilterStatusCount[filterStatus] > 0,
+  );
+  const selectedOpenSubItemIndex = isTriageShown
+    ? shownOpenSubFilterStatuses.findIndex(
+        (filterStatus) => filterStatus === agentChatThreadFilterStatus,
+      )
+    : -1;
+  const isOpenSubFilterStatusUnread = {
+    [AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT]: false,
+    [AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS]: hasUnreadMentionThread,
+    [AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED]: hasUnreadAssignedThread,
+  };
 
   return (
     <CollapsibleNavigationDrawerSection
@@ -74,38 +105,45 @@ export const NavigationDrawerAiChatTriageSection = ({
       rightIcon={rightIcon}
       alwaysShowRightIcon={alwaysShowRightIcon}
     >
-      <NavigationDrawerItemGroup>
-        <NavigationDrawerAiChatTriageItem
-          filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE}
-          count={openThreadCount}
-          isUnread={hasUnreadOpenThread}
+      {visibleFilterStatuses.map((filterStatus) =>
+        filterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE ? (
+          <NavigationDrawerItemGroup key={filterStatus}>
+            <NavigationDrawerAiChatTriageItem
+              filterStatus={filterStatus}
+              count={openThreadCount}
+              isUnread={hasUnreadOpenThread}
+            />
+            {shownOpenSubFilterStatuses.map((openSubFilterStatus, index) => (
+              <NavigationDrawerAiChatTriageItem
+                key={openSubFilterStatus}
+                filterStatus={openSubFilterStatus}
+                count={openSubFilterStatusCount[openSubFilterStatus]}
+                isCountUrgent={
+                  openSubFilterStatus ===
+                  AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT
+                }
+                isUnread={isOpenSubFilterStatusUnread[openSubFilterStatus]}
+                subItemState={getNavigationSubItemLeftAdornment({
+                  index,
+                  arrayLength: shownOpenSubFilterStatuses.length,
+                  selectedIndex: selectedOpenSubItemIndex,
+                })}
+              />
+            ))}
+          </NavigationDrawerItemGroup>
+        ) : (
+          <NavigationDrawerAiChatTriageItem
+            key={filterStatus}
+            filterStatus={filterStatus}
+          />
+        ),
+      )}
+      {exceedsVisibleItemLimit && (
+        <NavigationDrawerSectionSeeMoreItem
+          isShowingAllItems={isShowingAllItems}
+          onClick={toggleShowingAllItems}
         />
-        {isOpenExpanded && (
-          <>
-            <NavigationDrawerAiChatTriageItem
-              filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT}
-              count={needsInputThreadCount}
-              subItemState={getOpenSubItemState(0)}
-            />
-            <NavigationDrawerAiChatTriageItem
-              filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS}
-              isUnread={hasUnreadMentionThread}
-              subItemState={getOpenSubItemState(1)}
-            />
-            <NavigationDrawerAiChatTriageItem
-              filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED}
-              isUnread={hasUnreadAssignedThread}
-              subItemState={getOpenSubItemState(2)}
-            />
-          </>
-        )}
-      </NavigationDrawerItemGroup>
-      <NavigationDrawerAiChatTriageItem
-        filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED}
-      />
-      <NavigationDrawerAiChatTriageItem
-        filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.DONE}
-      />
+      )}
     </CollapsibleNavigationDrawerSection>
   );
 };

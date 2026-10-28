@@ -1,10 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
 import { isNavigationMenuItemAgentsSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAgentsSection';
@@ -17,6 +15,7 @@ import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNa
 import { MainNavigationDrawerCustomTab } from '@/navigation/components/MainNavigationDrawerCustomTab';
 import { MainNavigationDrawerModeButton } from '@/navigation/components/MainNavigationDrawerModeButton';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
+import { useNavigationDrawerAttention } from '@/navigation/hooks/useNavigationDrawerAttention';
 import {
   type NavigationDrawerMode,
   useNavigationDrawerModes,
@@ -69,7 +68,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const { switchNavigationDrawerMode, switchToNavigationMenuTab } =
     useSwitchNavigationDrawerMode();
-  const { hasUnreadOpenThread } = useAgentChatOpenThreadsSummary();
+  const { inboxAttention, getTabAttention } = useNavigationDrawerAttention();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -94,16 +93,6 @@ export const MainNavigationDrawerModeSwitcher = () => {
 
   const shouldShowTooltips = !isExpanded && !isMobile;
   const hasAiChatSections = aiChatSections.length > 0;
-  const hasUnreadInbox = isAiChatInboxEnabled && hasUnreadOpenThread;
-  const triageSectionParentIds = new Set(
-    aiChatSections
-      .filter(
-        (section) => section.type === NavigationMenuItemType.AI_CHAT_TRIAGE,
-      )
-      .map((section) => section.folderId ?? null),
-  );
-  const isTriageUnread = (parentId: string | null) =>
-    hasUnreadInbox && triageSectionParentIds.has(parentId);
   const hasOnlyAiSections = (tabId: string) => {
     const children = workspaceNavigationMenuItems.filter(
       (item) => item.folderId === tabId,
@@ -122,18 +111,27 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const isHomeActive =
     !isDefined(activeNavigationMenuTab) &&
     activeNavigationDrawerMode === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU;
+  const isTabContentHidden = (isActive: boolean) => !isActive || !isExpanded;
 
   const renderMode = ({ Icon, label, mode }: NavigationDrawerMode) => {
     const isHome = mode === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU;
     const isActive = isHome
       ? isHomeActive
       : mode === activeNavigationDrawerMode;
-    // Inside the inbox, its Open item already shows what is unread
-    const isUnread =
-      !isActive &&
-      (isHome
-        ? isTriageUnread(null)
-        : mode === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY && hasUnreadInbox);
+    const getModeAttention = () => {
+      if (!isTabContentHidden(isActive)) {
+        return null;
+      }
+
+      if (isHome) {
+        return getTabAttention(null);
+      }
+
+      return mode === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
+        ? inboxAttention
+        : null;
+    };
+    const attention = getModeAttention();
     const isDisabled = !isHome && isLayoutCustomizationModeEnabled;
 
     return (
@@ -141,13 +139,15 @@ export const MainNavigationDrawerModeSwitcher = () => {
         key={mode}
         Icon={Icon}
         label={label}
-        ariaLabel={isUnread ? t`${label}, unread` : label}
+        ariaLabel={
+          isDefined(attention) ? t`${label}, needs your attention` : label
+        }
         tooltip={isDisabled ? getDisabledModeTooltip(mode) : label}
         isTooltipDisabled={!shouldShowTooltips && !isDisabled}
         isActive={isActive}
         isExpanded={isExpanded}
         isDisabled={isDisabled}
-        isUnread={isUnread}
+        attention={attention}
         onClick={() =>
           isHome
             ? switchToNavigationMenuTab(null)
@@ -194,7 +194,9 @@ export const MainNavigationDrawerModeSwitcher = () => {
               isActive={isActive}
               isExpanded={isExpanded}
               isTooltipDisabled={!shouldShowTooltips}
-              isUnread={!isActive && isTriageUnread(tab.id)}
+              attention={
+                isTabContentHidden(isActive) ? getTabAttention(tab.id) : null
+              }
             />
           );
         })}

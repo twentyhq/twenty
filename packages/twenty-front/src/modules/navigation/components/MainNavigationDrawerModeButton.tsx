@@ -1,13 +1,14 @@
+import { type NavigationDrawerAttention } from '@/navigation/types/NavigationDrawerAttention';
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { type MouseEvent, type Ref } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { type IconComponent } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 
 const StyledMode = styled.button<{
   isActive: boolean;
@@ -29,7 +30,6 @@ const StyledMode = styled.button<{
   corner-shape: round;
   cursor: pointer;
   display: flex;
-  // Only the labelled mode may shrink: long translations otherwise push Settings off the drawer.
   flex-shrink: ${({ isActive, isExpanded }) =>
     isActive && isExpanded ? 1 : 0};
   font-family: inherit;
@@ -87,6 +87,21 @@ const StyledModeIcon = styled.span`
   width: ${themeCssVariables.spacing[4]};
 `;
 
+const StyledAttentionDot = styled.span`
+  background: ${themeCssVariables.color.red};
+  border-radius: ${themeCssVariables.border.radius.rounded};
+  corner-shape: round;
+  height: 6px;
+  position: absolute;
+  right: -2px;
+  top: -2px;
+  width: 6px;
+
+  &[data-attention='unread'] {
+    background: ${themeCssVariables.font.color.tertiary};
+  }
+`;
+
 const StyledModeLabelBase = styled.span`
   display: block;
   min-width: 0;
@@ -106,7 +121,7 @@ type MainNavigationDrawerModeButtonProps = {
   isActive: boolean;
   isExpanded: boolean;
   isDisabled?: boolean;
-  isUnread?: boolean;
+  attention?: NavigationDrawerAttention | null;
   isSelectedInEditMode?: boolean;
   buttonRef?: Ref<HTMLButtonElement>;
   onClick: () => void;
@@ -122,7 +137,7 @@ export const MainNavigationDrawerModeButton = ({
   isActive,
   isExpanded,
   isDisabled = false,
-  isUnread = false,
+  attention,
   isSelectedInEditMode = false,
   buttonRef,
   onClick,
@@ -159,7 +174,9 @@ export const MainNavigationDrawerModeButton = ({
       >
         <StyledModeIcon>
           <Icon size={theme.icon.size.md} />
-          {isUnread && <StyledNavigationDrawerUnreadDot />}
+          {isDefined(attention) && (
+            <StyledAttentionDot data-attention={attention} />
+          )}
         </StyledModeIcon>
         <StyledModeLabel
           initial={false}

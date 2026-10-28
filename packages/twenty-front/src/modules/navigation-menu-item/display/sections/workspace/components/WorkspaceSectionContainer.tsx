@@ -39,6 +39,7 @@ type WorkspaceSectionContainerProps = {
   containerId?: string | null;
   navigationSectionId?: string;
   isTitleHidden?: boolean;
+  isHiddenWhenEmpty?: boolean;
   rightIcon?: React.ReactNode;
   visibleItemLimit?: number | null;
   addMenuItemButton?: React.ReactNode;
@@ -56,6 +57,7 @@ export const WorkspaceSectionContainer = ({
   containerId = null,
   navigationSectionId = doNotTranslate('Workspace'),
   isTitleHidden = false,
+  isHiddenWhenEmpty = false,
   rightIcon,
   visibleItemLimit,
   addMenuItemButton,
@@ -106,6 +108,14 @@ export const WorkspaceSectionContainer = ({
     items: filteredItems,
     visibleItemLimit,
   });
+
+  if (
+    isHiddenWhenEmpty &&
+    !isLayoutCustomizationModeEnabled &&
+    filteredItems.length === 0
+  ) {
+    return null;
+  }
 
   const workspaceOrphanItemsForSection = isLayoutCustomizationModeEnabled
     ? flatItems

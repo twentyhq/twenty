@@ -73,6 +73,7 @@ export const NavigationMenuTabMenuContent = ({
         item={tab}
         placeholder={t`Tab name`}
         hasIconPicker
+        onSubmit={onClose}
       />
       <Dropdown.Separator />
       <Dropdown.Section>

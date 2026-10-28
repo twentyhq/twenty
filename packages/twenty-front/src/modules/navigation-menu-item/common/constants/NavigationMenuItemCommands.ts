@@ -4,7 +4,6 @@ import { type NavigationMenuItemCommandKey } from 'twenty-shared/types';
 import {
   type IconComponent,
   IconCommand,
-  IconLego,
   IconMessageCirclePlus,
   IconSearch,
   IconSettings,
@@ -21,7 +20,6 @@ export const NAVIGATION_MENU_ITEM_COMMANDS: Record<
 > = {
   NEW_CHAT: { label: msg`New chat`, Icon: IconMessageCirclePlus },
   SEARCH: { label: msg`Search`, Icon: IconSearch, shortcut: ['/'] },
-  NEW_AGENT: { label: msg`New agent`, Icon: IconLego },
   SETTINGS: { label: msg`Settings`, Icon: IconSettings },
   ALL_COMMANDS: {
     label: msg`All commands`,

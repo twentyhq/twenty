@@ -48,14 +48,18 @@ const READ_SUMMARY: OpenThreadsSummary = {
   hasUnreadOpenThread: false,
   hasUnreadMentionThread: false,
   hasUnreadAssignedThread: false,
+  unreadMentionThreadCount: 0,
+  unreadAssignedThreadCount: 0,
 };
 
 const renderTriage = ({
   path = '/inbox',
   summary = READ_SUMMARY,
+  visibleItemLimit,
 }: {
   path?: string;
   summary?: OpenThreadsSummary;
+  visibleItemLimit?: number;
 } = {}) =>
   render(
     <JotaiProvider store={jotaiStore}>
@@ -70,7 +74,9 @@ const renderTriage = ({
           ]}
         >
           <MemoryRouter initialEntries={[path]}>
-            <NavigationDrawerAiChatTriageSection />
+            <NavigationDrawerAiChatTriageSection
+              visibleItemLimit={visibleItemLimit}
+            />
           </MemoryRouter>
         </MockedProvider>
       </I18nProvider>
@@ -99,7 +105,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     renderTriage({ summary: { ...READ_SUMMARY, hasUnreadOpenThread: true } });
 
     expect(
-      await screen.findByRole('button', { name: /^Open\s*, unread · 2$/ }),
+      await screen.findByRole('button', { name: /^Open\s*, unread\s*2$/ }),
     ).toBeVisible();
     expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Done' })).toBeVisible();
@@ -109,8 +115,23 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     renderTriage();
 
     expect(
-      await screen.findByRole('button', { name: 'Open · 2' }),
+      await screen.findByRole('button', { name: /^Open\s*2$/ }),
     ).toBeVisible();
+  });
+
+  it('shows only Open until See more reveals the other statuses', async () => {
+    renderTriage({ visibleItemLimit: 1 });
+
+    expect(
+      await screen.findByRole('button', { name: /^Open\s*2$/ }),
+    ).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Snoozed' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Done' })).toBeNull();
+
+    await userEvent.click(screen.getByRole('button', { name: 'See more' }));
+
+    expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Done' })).toBeVisible();
   });
 
   it('marks the status the inbox shows as current', () => {
@@ -175,22 +196,54 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     });
   });
 
-  it('counts the open chats waiting on an answer under Needs input', async () => {
+  it('counts the open chats waiting on an answer in Needs input', async () => {
     renderTriage({ summary: { ...READ_SUMMARY, needsInputThreadCount: 1 } });
 
     expect(
-      await screen.findByRole('button', { name: 'Needs input · 1' }),
+      await screen.findByRole('button', { name: /^Needs input\s*1$/ }),
     ).toBeVisible();
   });
 
-  it('flags Mentions when a chat the member was mentioned in is unread', async () => {
+  it('keeps Needs input and its count in view outside the inbox', async () => {
     renderTriage({
-      summary: { ...READ_SUMMARY, hasUnreadMentionThread: true },
+      path: '/objects/companies',
+      summary: { ...READ_SUMMARY, needsInputThreadCount: 3 },
     });
 
     expect(
-      await screen.findByRole('button', { name: /^Mentions\s*, unread$/ }),
+      await screen.findByRole('button', { name: /^Needs input\s*3$/ }),
     ).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
+  });
+
+  it('flags and counts Mentions when chats the member was mentioned in are unread', async () => {
+    renderTriage({
+      summary: {
+        ...READ_SUMMARY,
+        hasUnreadMentionThread: true,
+        unreadMentionThreadCount: 2,
+      },
+    });
+
+    expect(
+      await screen.findByRole('button', { name: /^Mentions\s*, unread\s*2$/ }),
+    ).toBeVisible();
+  });
+
+  it('keeps the statuses narrowing Open with unread chats in view outside the inbox', async () => {
+    renderTriage({
+      path: '/objects/companies',
+      summary: {
+        ...READ_SUMMARY,
+        hasUnreadAssignedThread: true,
+        unreadAssignedThreadCount: 1,
+      },
+    });
+
+    expect(
+      await screen.findByRole('button', { name: /^Assigned\s*, unread\s*1$/ }),
+    ).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
   });
 
   it('opens the inbox on the chats the member was mentioned in', async () => {
@@ -203,13 +256,17 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     );
   });
 
-  it('flags Assigned when a chat assigned to the member is unread', async () => {
+  it('flags and counts Assigned when chats assigned to the member are unread', async () => {
     renderTriage({
-      summary: { ...READ_SUMMARY, hasUnreadAssignedThread: true },
+      summary: {
+        ...READ_SUMMARY,
+        hasUnreadAssignedThread: true,
+        unreadAssignedThreadCount: 3,
+      },
     });
 
     expect(
-      await screen.findByRole('button', { name: /^Assigned\s*, unread$/ }),
+      await screen.findByRole('button', { name: /^Assigned\s*, unread\s*3$/ }),
     ).toBeVisible();
   });
 });

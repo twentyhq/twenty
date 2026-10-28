@@ -77,6 +77,7 @@ export const NavigationMenuItemAiChatSection = ({
           label={label}
           rightIcon={sectionMenu}
           alwaysShowRightIcon={isEditable}
+          visibleItemLimit={section.visibleItemLimit}
         />
       ) : (
         emptyEditableSection

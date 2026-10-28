@@ -39,6 +39,29 @@ describe('WorkspaceSectionContainer', () => {
     ).toBeInTheDocument();
   });
 
+  it('hides a section whose items are all hidden', () => {
+    render(
+      <WorkspaceSectionContainer
+        sectionTitle="Projects"
+        items={[
+          buildOptimisticNavigationMenuItem({
+            id: 'empty-folder',
+            type: NavigationMenuItemType.FOLDER,
+            name: 'Empty folder',
+            folderId: 'projects-section',
+            position: 0,
+          }),
+        ]}
+        containerId="projects-section"
+        navigationSectionId="projects-section"
+        isHiddenWhenEmpty
+      />,
+      { wrapper: Wrapper },
+    );
+
+    expect(screen.queryByText('Projects')).not.toBeInTheDocument();
+  });
+
   it('lists items up to its limit and reveals the rest with See more', async () => {
     const user = userEvent.setup();
     const links = Array.from({ length: 7 }, (_, index) =>

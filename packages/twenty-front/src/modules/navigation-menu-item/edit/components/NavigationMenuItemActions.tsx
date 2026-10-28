@@ -139,6 +139,7 @@ export const NavigationMenuItemActions = ({
                       />
                     ),
                     isDisabled: destination.isDisabled,
+                    contextualText: destination.contextualText,
                     onClick: () =>
                       run(() => moveToFolder(item.id, destination.id)),
                   }}

@@ -9,12 +9,14 @@ import { AddPinnedNavigationMenuCommandsCommand } from 'src/database/commands/up
 import { AddFavoritesNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-workspace-command-1793050455542-add-favorites-navigation-menu-section.command';
 import { SeedWorkspaceFrontendDependenciesCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-workspace-command-1792766943126-seed-workspace-frontend-dependencies.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
     ApplicationModule,
+    FeatureFlagModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,

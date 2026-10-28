@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
+import { Key } from 'ts-key-enum';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -8,6 +9,7 @@ import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 
 const StyledRow = styled.div`
   align-items: center;
@@ -20,6 +22,7 @@ type NavigationMenuItemContainerNameEditorProps = {
   placeholder: string;
   defaultName?: string;
   hasIconPicker?: boolean;
+  onSubmit: () => void;
 };
 
 export const NavigationMenuItemContainerNameEditor = ({
@@ -27,9 +30,22 @@ export const NavigationMenuItemContainerNameEditor = ({
   placeholder,
   defaultName,
   hasIconPicker = false,
+  onSubmit,
 }: NavigationMenuItemContainerNameEditorProps) => {
   const { updateItem } = useNavigationMenuItemEditController('workspace');
   const [name, setName] = useState(item.name ?? defaultName ?? '');
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (
+      event.key !== Key.Enter ||
+      isKeyboardEventComposing(event.nativeEvent)
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    onSubmit();
+  };
 
   return (
     <DropdownMenuItemsContainer>
@@ -59,6 +75,7 @@ export const NavigationMenuItemContainerNameEditor = ({
               void updateItem(item.id, { name: value.trim() });
             }
           }}
+          onKeyDown={handleKeyDown}
         />
       </StyledRow>
     </DropdownMenuItemsContainer>

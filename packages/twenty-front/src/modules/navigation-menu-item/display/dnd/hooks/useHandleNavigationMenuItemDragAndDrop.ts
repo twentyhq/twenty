@@ -15,6 +15,7 @@ import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { computeDndReorderPosition } from '@/navigation-menu-item/common/utils/computeDndReorderPosition';
 import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
+import { isNavigationMenuItemAlreadyInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAlreadyInSection';
 import { isNavigationMenuItemCommandsContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemCommandsContainer';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
@@ -146,6 +147,16 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       source.droppableId,
       section,
     );
+
+    if (
+      isNavigationMenuItemAlreadyInSection({
+        items: allItems,
+        itemId: draggableId,
+        containerId: destinationFolderId,
+      })
+    ) {
+      return;
+    }
 
     const destinationParent = allItems.find(
       (item) => item.id === destinationFolderId,

@@ -46,7 +46,6 @@ export const NavigationMenuItemSectionMenuContent = ({
   const parentId = section.folderId ?? null;
 
   const isVisibleItemLimitEditable =
-    section.type !== NavigationMenuItemType.AI_CHAT_TRIAGE &&
     section.type !== NavigationMenuItemType.FAVORITES;
   const visibleItemLimit = section.visibleItemLimit ?? null;
 
@@ -116,6 +115,7 @@ export const NavigationMenuItemSectionMenuContent = ({
           item={section}
           placeholder={defaultName ?? t`Section name`}
           defaultName={defaultName}
+          onSubmit={onClose}
         />
         <Dropdown.Separator />
         {isVisibleItemLimitEditable && (

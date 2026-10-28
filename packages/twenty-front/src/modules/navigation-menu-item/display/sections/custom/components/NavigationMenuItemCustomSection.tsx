@@ -45,10 +45,6 @@ export const NavigationMenuItemCustomSection = ({
     getNavigationMenuSectionNavigationSectionId(section);
   const { openNavigationSection } = useNavigationSection(navigationSectionId);
 
-  if (!isLayoutCustomizationModeEnabled && items.length === 0) {
-    return null;
-  }
-
   const topLevelItemCount = items.filter(
     (item) => item.folderId === section.id,
   ).length;
@@ -75,6 +71,7 @@ export const NavigationMenuItemCustomSection = ({
       items={items}
       containerId={section.id}
       navigationSectionId={navigationSectionId}
+      isHiddenWhenEmpty
       visibleItemLimit={section.visibleItemLimit}
       rightIcon={
         !isMobile && isLayoutCustomizationModeEnabled
