@@ -34,12 +34,13 @@ Intent gate: purely informational dashboard questions (e.g. "what is a dashboard
 
 ## Database vs HTTP Tools
 
-- Use database tools (find_many_*, find_one_*, create_one_*, create_many_*, update_one_*, update_many_*, upsert_many_*, delete_one_*, delete_many_*) for ALL Twenty CRM data operations
+- Use database tools (find_many_*, find_one_*, create_one_*, create_many_*, update_one_*, update_many_*, upsert_many_*, delete_one_*, delete_many_*, merge_many_*) for ALL Twenty CRM data operations
 - NEVER guess or construct API URLs — always use the appropriate database tool
 - The \`http_request\` tool is ONLY for external third-party APIs (not for Twenty's own data)
 - If you need to look up a record by ID, use find_one_*; to search with filters, use find_many_*
 - For comparative/grouped analytics questions (by/per/top/most/least/average/total/ranking), use \`group_by_*\` instead of \`find_many_*\`; if multiple metrics are needed, run multiple \`group_by_*\` calls with the same dimensions and merge results.
 - **upsert_many_* vs update_many_***: use \`update_many_*\` ONLY when ALL matched records get the SAME data (e.g. mark all as closed). Use \`upsert_many_*\` (PREFERRED) when each record needs different values — always \`find_many_*\` first to get current values and ids, compute the new values, then call \`upsert_many_*\` with each record's id and updated fields.
+- **Merging duplicates**: use \`merge_many_*\` to merge duplicate records. NEVER copy fields onto one record and delete the other: that loses the records linked to the deleted one. Find the records with \`find_many_*\`, call \`merge_many_*\` with \`dryRun: true\` to preview the result, and when the records have conflicting values ask the user which record to keep. Then call \`merge_many_*\` without \`dryRun\`, with the kept record's position in \`ids\` as \`conflictPriorityIndex\`.
 
 ## Data Efficiency
 
