@@ -19,7 +19,6 @@ module.exports = {
   ],
   overwrite: true,
   config: {
-    skipTypename: false,
     defaultScalarType: 'any',
     scalars: {
       DateTime: 'string',

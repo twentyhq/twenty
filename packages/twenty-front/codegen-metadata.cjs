@@ -56,7 +56,6 @@ module.exports = {
   ],
   overwrite: true,
   config: {
-    skipTypename: false,
     useTypeImports: true,
     defaultScalarType: 'any',
     scalars: {
