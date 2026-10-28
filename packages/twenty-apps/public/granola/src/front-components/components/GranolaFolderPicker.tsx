@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Info } from 'twenty-ui/feedback';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 
 import { GRANOLA_FOLDER_SELECTION_LIMIT } from 'src/constants/granola-api.constant';
 import { GranolaFolderEmptyState } from 'src/front-components/components/GranolaFolderEmptyState';
@@ -190,32 +190,45 @@ export const GranolaFolderPicker = ({
         onChange={handlePolicyChange}
       />
       {showsFolderListError && (
-        <Info
-          accent="danger"
-          text={t('Could not load your Granola folders.')}
-          buttonTitle={t('Retry')}
-          onClick={() => loadFolderList({ isSelectionStale: isLocked })}
-        />
+        <InlineBanner
+          layout="compact"
+          status="error"
+          action={
+            <InlineBanner.Action
+              onClick={() => loadFolderList({ isSelectionStale: isLocked })}
+            >
+              {t('Retry')}
+            </InlineBanner.Action>
+          }
+        >
+          {t('Could not load your Granola folders.')}
+        </InlineBanner>
       )}
       {!isLocked && selection.hasInaccessibleSelection && (
-        <Info
-          accent="danger"
-          text={t(
+        <InlineBanner layout="compact" status="error">
+          {t(
             'The folders you picked are no longer available. Pick folders again, or switch to Everything.',
           )}
-        />
+        </InlineBanner>
       )}
       {!isLocked &&
         selection.isSelectionPending &&
         !selection.hasInaccessibleSelection && (
-          <Info
-            accent="blue"
-            text={t(
+          <InlineBanner
+            layout="compact"
+            status="info"
+            action={
+              <InlineBanner.Action
+                onClick={() => save(selection.selectedFolderIds)}
+              >
+                {t('Retry now')}
+              </InlineBanner.Action>
+            }
+          >
+            {t(
               'This selection is not applied in Granola yet. It is retried at the next daily catch-up.',
             )}
-            buttonTitle={t('Retry now')}
-            onClick={() => save(selection.selectedFolderIds)}
-          />
+          </InlineBanner>
         )}
     </>
   );
