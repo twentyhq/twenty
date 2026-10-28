@@ -15,6 +15,10 @@ import {
   COMPANY_ENRICHMENT_ATTEMPT_KEY,
   type CompanyEnrichmentAttemptKeyValueTypeMap,
 } from 'src/engine/core-modules/company-enrichment/types/company-enrichment-attempt-key-value.type';
+import {
+  COMPANY_ENRICHMENT_KEY,
+  type CompanyEnrichmentKeyValueTypeMap,
+} from 'src/engine/core-modules/company-enrichment/types/company-enrichment-key-value.type';
 import { type PeopleDataLabsCompanyData } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-company-data.type';
 import { type PeopleDataLabsEnrichResult } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-enrich-result.type';
 import { toWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/to-workspace-company-enrichment.util';
@@ -36,7 +40,9 @@ export class CompanyEnrichmentService {
     private readonly peopleDataLabsClientService: PeopleDataLabsClientService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly enrichmentThrottleService: EnrichmentThrottleService,
-    private readonly keyValuePairService: KeyValuePairService<CompanyEnrichmentAttemptKeyValueTypeMap>,
+    private readonly keyValuePairService: KeyValuePairService<
+      CompanyEnrichmentAttemptKeyValueTypeMap & CompanyEnrichmentKeyValueTypeMap
+    >,
   ) {}
 
   async enrichCompanyForWorkspaceCreator({
@@ -95,6 +101,14 @@ export class CompanyEnrichmentService {
     // 'skipped' means the feature is disabled (no API key); don't persist the domain in that case.
     if (result.outcome !== 'skipped') {
       await this.recordEnrichmentAttempt({ workspaceId, domain, result });
+    }
+
+    if (enrichmentResult.outcome === 'matched') {
+      await this.storeEnrichment({
+        workspaceId,
+        domain,
+        enrichment: enrichmentResult.enrichment,
+      });
     }
 
     return enrichmentResult;
@@ -177,6 +191,35 @@ export class CompanyEnrichmentService {
     } catch (error) {
       this.logger.warn(
         `Failed to record company enrichment attempt for workspace ${workspaceId} (${domain}): ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
+  }
+
+  private async storeEnrichment({
+    workspaceId,
+    domain,
+    enrichment,
+  }: {
+    workspaceId: string;
+    domain: string;
+    enrichment: WorkspaceCompanyEnrichment;
+  }): Promise<void> {
+    try {
+      await this.keyValuePairService.set({
+        userId: null,
+        workspaceId,
+        key: COMPANY_ENRICHMENT_KEY,
+        value: {
+          employeeCount: enrichment.employeeCount,
+          industry: enrichment.industry,
+        },
+        type: KeyValuePairType.CONFIG_VARIABLE,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to store company enrichment for workspace ${workspaceId} (${domain}): ${
           error instanceof Error ? error.message : String(error)
         }`,
       );
