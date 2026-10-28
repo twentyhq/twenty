@@ -10,7 +10,10 @@ export const isPermissionFlagGrantedToFlatRole = ({
   permissionFlag,
   flatRolePermissionFlagMaps,
 }: {
-  flatRole: FlatRole;
+  flatRole: Pick<
+    FlatRole,
+    'canUpdateAllSettings' | 'canAccessAllTools' | 'rolePermissionFlagIds'
+  >;
   permissionFlag: PermissionFlagType;
   flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
 }): boolean =>

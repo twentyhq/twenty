@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -23,17 +25,22 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
         'WorkspaceCacheService',
       ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatObjectMetadataMaps']);
 
+    const personObjectMetadataId = getObjectMetadataIdByName({
+      flatObjectMetadataMaps,
+      objectName: 'person',
+    });
+
+    if (!isDefined(personObjectMetadataId)) {
+      throw new Error('The person object is not seeded');
+    }
+
     personObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: getObjectMetadataIdByName({
-        flatObjectMetadataMaps,
-        objectName: 'person',
-      }) as string,
+      flatEntityId: personObjectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
     });
   });
 
-  // Each policy names its parameters uniquely, as the row access builders do,
-  // so one query can hold many of them
+  // Parameters are named per policy, as the row access builders do
   const buildIdPolicy = (personId: string): RowAccessPolicy => {
     const parameterName = `personId_${randomUUID().replace(/-/g, '')}`;
 
@@ -52,7 +59,7 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
     };
   };
 
-  // The app runs in another realm, so its Set is compared as a sorted list
+  // The app's Set comes from another realm, so it is compared as a list
   const findAdmittedSubjectIds = async ({
     recordId,
     policiesBySubjectId,

@@ -1,4 +1,3 @@
-import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import { resolveCurrentWorkspaceMemberUserWorkspaceId } from 'src/engine/core-modules/user/utils/resolve-current-workspace-member-user-workspace-id.util';
 
@@ -9,12 +8,9 @@ const FORMER_MEMBER_ID = 'former-member-id';
 
 const buildMaps = (
   members: Pick<FlatWorkspaceMember, 'id' | 'userId' | 'deletedAt'>[],
-): FlatWorkspaceMemberMaps => ({
-  byId: Object.fromEntries(
-    members.map((member) => [member.id, member as FlatWorkspaceMember]),
-  ),
+) => ({
+  byId: Object.fromEntries(members.map((member) => [member.id, member])),
   idByUserId: { [USER_ID]: CURRENT_MEMBER_ID },
-  idByUserWorkspaceId: { [USER_WORKSPACE_ID]: CURRENT_MEMBER_ID },
   userWorkspaceIdByUserId: { [USER_ID]: USER_WORKSPACE_ID },
 });
 
@@ -63,7 +59,7 @@ describe('resolveCurrentWorkspaceMemberUserWorkspaceId', () => {
               id: 'stale-member-id',
               userId: USER_ID,
               deletedAt: null,
-            } as FlatWorkspaceMember,
+            },
           },
         },
       }),

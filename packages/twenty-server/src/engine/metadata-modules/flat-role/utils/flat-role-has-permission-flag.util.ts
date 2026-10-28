@@ -12,7 +12,7 @@ export const flatRoleHasPermissionFlag = ({
   permissionFlag,
   flatRolePermissionFlagMaps,
 }: {
-  flatRole: FlatRole;
+  flatRole: Pick<FlatRole, 'rolePermissionFlagIds'>;
   permissionFlag: PermissionFlagType;
   flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
 }): boolean => {

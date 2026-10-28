@@ -713,7 +713,6 @@ export class AgentChatSharingService {
     );
   }
 
-  // Also refuses a sender who cannot read the chat
   private async canManageThreadSharing({
     workspaceId,
     threadId,
