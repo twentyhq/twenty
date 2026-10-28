@@ -44,6 +44,20 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
   const applicationIdByDefaultRoleId =
     buildApplicationIdByDefaultRoleId(flatApplicationMaps);
 
+  const { applicationRoleId, ...nonApplicationRoleIdsBySource } =
+    intersectionOf;
+  const nonApplicationRoleIds = new Set(
+    Object.values(nonApplicationRoleIdsBySource).filter(isDefined),
+  );
+
+  // Only an application acting through its own role keeps its objects' disabled
+  // actions, as the row access policy does: a member, API key or agent holding
+  // that role (Admin is the Standard application's default role) stays restricted
+  const getActingApplicationId = (roleId: string) =>
+    roleId === applicationRoleId && !nonApplicationRoleIds.has(roleId)
+      ? applicationIdByDefaultRoleId[roleId]
+      : undefined;
+
   const permissionsPerRole = roleIds.map((roleId) => {
     const rolePermissions = rolesPermissions[roleId];
 
@@ -51,7 +65,7 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
       ? restrictObjectsPermissionsToDisabledActions({
           objectsPermissions: rolePermissions,
           flatObjectMetadataMaps,
-          actingApplicationId: applicationIdByDefaultRoleId[roleId],
+          actingApplicationId: getActingApplicationId(roleId),
         })
       : undefined;
   });
