@@ -62,6 +62,7 @@ import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } f
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { runWithDeferredWorkspaceMigrationActionsMode } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/storage/deferred-workspace-migration-actions-mode.storage';
 
 @Injectable()
 export class DevSeederWorkspaceService {
@@ -94,6 +95,15 @@ export class DevSeederWorkspaceService {
   ) {}
 
   public async seedDev(
+    workspaceId: SeededWorkspacesIds,
+    options?: { light?: boolean },
+  ): Promise<void> {
+    await runWithDeferredWorkspaceMigrationActionsMode('IN_PROCESS', () =>
+      this.seedDevWorkspace(workspaceId, options),
+    );
+  }
+
+  private async seedDevWorkspace(
     workspaceId: SeededWorkspacesIds,
     options?: { light?: boolean },
   ): Promise<void> {

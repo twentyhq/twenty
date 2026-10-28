@@ -31,6 +31,7 @@ import { SCHEMA_AFFECTING_WORKSPACE_MIGRATION_METADATA_NAMES } from 'src/engine/
 import { isSchemaAffectingWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-schema-affecting-workspace-migration.util';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
+import { getDeferredWorkspaceMigrationActionsMode } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/storage/deferred-workspace-migration-actions-mode.storage';
 import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
 import { getMetadataNamesToLoadForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-metadata-names-to-load-for-workspace-migration.util';
@@ -365,10 +366,10 @@ export class WorkspaceMigrationRunnerService {
     const featureFlagsMap =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    const shouldPersistDeferredActions =
+    const shouldDeferActions =
       featureFlagsMap[
         FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
-      ];
+      ] && getDeferredWorkspaceMigrationActionsMode() === 'DEFERRED';
 
     this.logger.perfTime('Runner', 'Transaction execution');
 
@@ -406,7 +407,7 @@ export class WorkspaceMigrationRunnerService {
                 preallocatedIdByUniversalIdentifierByMetadataName,
                 getSearchFieldMetadatasByTsVectorFieldId:
                   searchFieldMetadatasByTsVectorFieldIdAccessor.get,
-                featureFlagsMap,
+                shouldDeferActions,
               },
             },
           );
@@ -440,7 +441,7 @@ export class WorkspaceMigrationRunnerService {
         allDeferredActions.push(...deferredActions);
       }
 
-      if (shouldPersistDeferredActions) {
+      if (shouldDeferActions) {
         await this.deferredWorkspaceMigrationActionRunnerService.persist({
           deferredActions: allDeferredActions,
           workspaceId,
@@ -592,7 +593,7 @@ export class WorkspaceMigrationRunnerService {
     await this.deferredWorkspaceMigrationActionRunnerService.dispatchAfterCommit(
       {
         deferredActions: allDeferredActions,
-        hasPersistedDeferredActions: shouldPersistDeferredActions,
+        hasPersistedDeferredActions: shouldDeferActions,
         workspaceId,
         applicationUniversalIdentifier,
         allFlatEntityMaps,
