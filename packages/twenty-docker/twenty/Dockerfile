@@ -156,11 +156,6 @@ LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
 #  - the Node dev headers: only node-gyp needs them and native addons are
 #    compiled in the build stages; their vendored openssl/opensslv.h is what
 #    scanners fingerprint whenever OpenSSL patches ahead of Node releases.
-# The pinned node:26.12.1-alpine base carries the October 2026 security fixes.
-# It also carries the http.Agent keep-alive fix (nodejs/node#64004) whose
-# absence in 24.17.0 flooded prod with false "Premature close" fetch failures.
-# Keep the base current when Node ships 26.x security releases; the scanner
-# flags the statically-linked node binary itself.
 RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx \
       /usr/local/include/node && \
     find /app/node_modules -type d -name example -prune -exec rm -rf {} +
