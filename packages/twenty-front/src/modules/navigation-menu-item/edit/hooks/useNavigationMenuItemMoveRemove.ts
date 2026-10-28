@@ -1,18 +1,14 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { isDefined } from 'twenty-shared/utils';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { NAVIGATION_MENU_CONTAINER_ITEMS_SECTION_POSITION } from '@/navigation-menu-item/common/constants/NavigationMenuContainerItemsSectionPosition';
 import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
+import { getNavigationMenuItemSortedSiblings } from '@/navigation-menu-item/common/utils/getNavigationMenuItemSortedSiblings';
 import { getNavigationMenuItemPositionNextTo } from '@/navigation-menu-item/common/utils/getNavigationMenuItemPositionNextTo';
 import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
-import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
-
-const CONTAINER_ITEMS_SIBLING_ID = 'container-items';
 
 export const useNavigationMenuItemMoveRemove = (
   section: NavigationMenuItemSection,
@@ -22,40 +18,18 @@ export const useNavigationMenuItemMoveRemove = (
   const items = useNavigationMenuItemEditSectionItems(section);
   const visibleItemIds = new Set(items.map((item) => item.id));
 
-  const getSortedSiblings = (
-    navigationMenuItemId: string,
-  ): Pick<NavigationMenuItem, 'id' | 'position'>[] | null => {
-    const currentItem = currentItems.find(
+  const getSortedSiblings = (navigationMenuItemId: string) => {
+    const navigationMenuItem = currentItems.find(
       (item) => item.id === navigationMenuItemId,
     );
-    if (!isDefined(currentItem)) {
-      return null;
-    }
-    const folderId = currentItem.folderId ?? null;
-    const isTabOrSection = isNavigationMenuItemContainer(currentItem);
-    const isSection = isNavigationMenuItemAnySection(currentItem);
-    const isSameKind = (item: NavigationMenuItem) =>
-      isSection
-        ? isNavigationMenuItemAnySection(item)
-        : item.type === currentItem.type;
-    const siblings: Pick<NavigationMenuItem, 'id' | 'position'>[] =
-      currentItems.filter(
-        (item) =>
-          (item.folderId ?? null) === folderId &&
-          (isTabOrSection ? isSameKind(item) : visibleItemIds.has(item.id)),
-      );
 
-    return (
-      isSection
-        ? [
-            ...siblings,
-            {
-              id: CONTAINER_ITEMS_SIBLING_ID,
-              position: NAVIGATION_MENU_CONTAINER_ITEMS_SECTION_POSITION,
-            },
-          ]
-        : siblings
-    ).sort((a, b) => a.position - b.position);
+    return isDefined(navigationMenuItem)
+      ? getNavigationMenuItemSortedSiblings({
+          items: currentItems,
+          navigationMenuItem,
+          visibleItemIds,
+        })
+      : null;
   };
 
   const moveUp = async (navigationMenuItemId: string) => {
