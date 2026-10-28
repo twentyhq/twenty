@@ -46,7 +46,8 @@ export class DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceC
        SET "isCustom" = ("view"."applicationId" <> "standardApplication"."id")
        FROM "core"."application" "standardApplication"
        WHERE "standardApplication"."workspaceId" = "view"."workspaceId"
-         AND "standardApplication"."universalIdentifier" = '${TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER}'`,
+         AND "standardApplication"."universalIdentifier" = $1`,
+      [TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER],
     );
 
     await queryRunner.query(

@@ -2803,8 +2803,6 @@ export type IndexField = {
 export type IndexFilter = {
   and?: InputMaybe<Array<IndexFilter>>;
   id?: InputMaybe<UuidFilterComparison>;
-  /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
-  isCustom?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<IndexFilter>>;
 };
 
