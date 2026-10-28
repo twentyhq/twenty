@@ -114,4 +114,11 @@ Their inputs match the steps of the [workflow builder](/user-guide/workflows/cap
 - Installing a new version of the app updates the workflow in place.
 - Users can't edit an installed workflow. To customize one, they duplicate it: the copy is theirs to edit.
 
+## Workflows of the workspace Custom application
+
+The workspace Custom application owns the workflows built in the workflow builder, and code is as authoritative for them as the builder:
+- `twenty app pull` writes each one from its active version, the one the builder last published. A workflow whose active version uses settings a `defineWorkflow()` file can't express, such as a Code step or a trigger the builder renamed, is reported and left in place.
+- `twenty app apply` publishes like the builder. A workflow whose definition matches its active version is left alone. Otherwise the active version is archived and the definition becomes a new active version, so past runs keep the version they ran.
+- Users keep editing these workflows in the builder, and the next pull brings their changes back.
+
 <PageBanner illustration="card-page-workflows" />

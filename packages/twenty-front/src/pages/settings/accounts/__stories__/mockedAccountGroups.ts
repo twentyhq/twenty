@@ -328,6 +328,7 @@ export const seedAccountGroupsStory = async () => {
         id: GRANOLA_APPLICATION_ID,
         universalIdentifier: GRANOLA_APPLICATION_ID,
         name: 'Granola',
+        description: 'Takes notes during your calls.',
         logoUrl: null,
         createdAt: '2024-01-01T00:00:00.000Z',
       },
