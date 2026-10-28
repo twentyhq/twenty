@@ -20,6 +20,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { restoreLegacyChatMembershipColumns } from 'test/integration/utils/restore-legacy-chat-membership-columns.util';
+import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions-or-throw.util';
 import { type DataSource } from 'typeorm';
 
 import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
@@ -341,6 +342,7 @@ describe('versioned agent history upgrade (integration)', () => {
        WHERE message.id = seededMessage.id`,
       [JSON.stringify(seededAgentMessageSenders)],
     );
+    await waitForDeferredWorkspaceMigrationActionsOrThrow();
     await workspaceOrmManager.executeInWorkspaceContext(
       () =>
         provisionAgentChatThreadTargetCommand.runOnWorkspace({

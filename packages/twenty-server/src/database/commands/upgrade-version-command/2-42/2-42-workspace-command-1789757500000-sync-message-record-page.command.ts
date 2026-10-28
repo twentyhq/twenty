@@ -252,6 +252,7 @@ export class SyncMessageRecordPageCommand extends ProvisionedWorkspaceCommandRun
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           dryRun: isDryRun,
           workspaceId,
