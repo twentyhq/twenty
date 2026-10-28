@@ -1,5 +1,6 @@
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { runWithWorkspaceMigrationActionsInProcess } from 'test/integration/upgrade/utils/run-with-workspace-migration-actions-in-process.util';
 
 import { type DropAgentTurnEvaluationObjectCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791216273979-drop-agent-turn-evaluation-object.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -78,7 +79,10 @@ describe('2-46 workspace command - drop agent turn evaluation object (integratio
     expect(await findEvaluationObject()).toBeDefined();
     expect(await countEvaluationTables()).toBe(1);
 
-    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+    await runWithWorkspaceMigrationActionsInProcess({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      callback: () => command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS),
+    });
 
     expect(await findEvaluationObject()).toBeUndefined();
     expect(await countEvaluationTables()).toBe(0);
@@ -92,7 +96,10 @@ describe('2-46 workspace command - drop agent turn evaluation object (integratio
 
   it('changes nothing when it runs again', async () => {
     await expect(
-      command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS),
+      runWithWorkspaceMigrationActionsInProcess({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        callback: () => command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS),
+      }),
     ).resolves.toBeUndefined();
     expect(await findEvaluationObject()).toBeUndefined();
   });

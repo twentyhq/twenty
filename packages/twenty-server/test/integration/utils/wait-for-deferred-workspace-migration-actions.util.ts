@@ -1,7 +1,10 @@
+import { setTimeout as sleep } from 'node:timers/promises';
+
 import { isDefined } from 'twenty-shared/utils';
 
+// Avoids global timers and Date: some suites enable jest fake timers in their setup.
 const POLL_INTERVAL_MS = 25;
-const TIMEOUT_MS = 30_000;
+const MAX_ATTEMPTS = 1_200;
 
 type InFlightDeferredAction = {
   id: string;
@@ -14,9 +17,7 @@ type InFlightDeferredAction = {
 // The next schema change is rejected while index builds or FK validations are queued.
 export const waitForDeferredWorkspaceMigrationActions =
   async (): Promise<void> => {
-    const deadline = Date.now() + TIMEOUT_MS;
-
-    for (;;) {
+    for (let attempt = 1; ; attempt++) {
       const inFlightActions: InFlightDeferredAction[] =
         await global.testDataSource.query(
           `SELECT id, name, status, attempts, "lastError"
@@ -39,14 +40,14 @@ export const waitForDeferredWorkspaceMigrationActions =
         );
       }
 
-      if (Date.now() > deadline) {
+      if (attempt >= MAX_ATTEMPTS) {
         throw new Error(
-          `${inFlightActions.length} deferred workspace migration action(s) still in flight after ${TIMEOUT_MS}ms: ${inFlightActions
+          `${inFlightActions.length} deferred workspace migration action(s) still in flight after ${MAX_ATTEMPTS * POLL_INTERVAL_MS}ms: ${inFlightActions
             .map((action) => `${action.name} (${action.status})`)
             .join(', ')}`,
         );
       }
 
-      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+      await sleep(POLL_INTERVAL_MS);
     }
   };
