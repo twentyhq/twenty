@@ -241,6 +241,7 @@ export class NavigationMenuItemService {
       NavigationMenuItemType.TAB,
       NavigationMenuItemType.SECTION,
       NavigationMenuItemType.FOLDER,
+      NavigationMenuItemType.PINNED_COMMANDS,
     ];
 
     const getCreationRank = (type: NavigationMenuItemType) => {
