@@ -61,7 +61,7 @@ type BullMQDouble = {
   takeNext: () => Promise<StoredJob | undefined>;
   release: (job: StoredJob) => Promise<void>;
   refreshPriorities: () => Promise<void>;
-  reset: (redis: Redis, client: RedisClientDouble) => void;
+  reset: (store: { redis: Redis; client: RedisClientDouble }) => void;
 };
 
 const QUEUE = MessageQueue.logicFunctionQueue;
@@ -199,7 +199,7 @@ const mockBullMQ: BullMQDouble = {
       }
     }
   },
-  reset: (redis, client) => {
+  reset: ({ redis, client }) => {
     mockBullMQ.now = Date.now();
     mockBullMQ.jobs = [];
     mockBullMQ.schedulers = [];
@@ -318,7 +318,7 @@ export const createFairnessHarness = async ({
   const redis: Redis = new RedisMock();
 
   await redis.flushall();
-  mockBullMQ.reset(redis, createRedisClientDouble(redis));
+  mockBullMQ.reset({ redis, client: createRedisClientDouble(redis) });
 
   let isFairnessEnabled = initialFairnessEnabled;
   const metricsService = {
