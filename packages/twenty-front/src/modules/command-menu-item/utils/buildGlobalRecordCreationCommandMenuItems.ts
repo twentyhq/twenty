@@ -15,7 +15,6 @@ type BuildGlobalRecordCreationCommandMenuItemsParams = {
     | 'isUICreatable'
     | 'isUIEditable'
     | 'isRemote'
-    | 'writability'
   >[];
   objectPermissionsByObjectMetadataId: Record<
     string,
