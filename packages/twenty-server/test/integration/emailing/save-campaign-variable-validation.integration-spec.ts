@@ -1,3 +1,4 @@
+import { executeToolThroughMcp } from 'test/integration/ai/utils/execute-tool-through-mcp.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -8,6 +9,22 @@ import { SaveCampaignToolInputZodSchema } from 'src/modules/emailing/tools/save-
 
 const MESSAGE_CAMPAIGN_TABLE = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."messageCampaign"`;
 
+const buildBodyWithVariables = (variables: string[]) => ({
+  type: 'doc' as const,
+  content: [
+    {
+      type: 'paragraph' as const,
+      content: [
+        { type: 'text' as const, text: 'Hi ' },
+        ...variables.map((variable) => ({
+          type: 'variableTag' as const,
+          attrs: { variable },
+        })),
+      ],
+    },
+  ],
+});
+
 const saveDraftWithVariables = (...variables: string[]) =>
   getAppProviderByClassName<MessageCampaignDraftService>(
     'MessageCampaignDraftService',
@@ -15,21 +32,7 @@ const saveDraftWithVariables = (...variables: string[]) =>
     workspaceId: SEED_APPLE_WORKSPACE_ID,
     userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
     subject: 'Hello',
-    body: {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [
-            { type: 'text', text: 'Hi ' },
-            ...variables.map((variable) => ({
-              type: 'variableTag' as const,
-              attrs: { variable },
-            })),
-          ],
-        },
-      ],
-    },
+    body: buildBodyWithVariables(variables),
   });
 
 describe('Saving a campaign draft with variables', () => {
@@ -41,11 +44,21 @@ describe('Saving a campaign draft with variables', () => {
 
     expect(advertisedVariables).toContain('{{name.firstName}}');
 
-    const { campaignId } = await saveDraftWithVariables(...advertisedVariables);
+    const output = await executeToolThroughMcp<{ campaignId: string }>({
+      toolName: 'save_campaign',
+      toolArguments: {
+        subject: 'Hello',
+        body: buildBodyWithVariables(advertisedVariables),
+      },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    expect(output.error).toBeUndefined();
+    expect(output.success).toBe(true);
 
     await testDataSource.query(
       `DELETE FROM ${MESSAGE_CAMPAIGN_TABLE} WHERE "id" = $1`,
-      [campaignId],
+      [output.result?.campaignId],
     );
   });
 
