@@ -1,2 +1,2 @@
-export const ADD_COMMAND_NAVIGATION_MENU_ITEMS_UPGRADE_COMMAND_NAME =
-  '2.53.0_AddCommandNavigationMenuItemsFastInstanceCommand_1793183524019';
+export const ADD_SIDEBAR_NAVIGATION_MENU_ITEM_TYPES_UPGRADE_COMMAND_NAME =
+  '2.53.0_AddSidebarNavigationMenuItemTypesFastInstanceCommand_1793183524015';

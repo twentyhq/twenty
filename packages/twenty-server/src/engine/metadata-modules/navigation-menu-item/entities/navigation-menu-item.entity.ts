@@ -13,7 +13,7 @@ import {
 import { type NavigationMenuItemCommandKey } from 'twenty-shared/types';
 
 import { ADD_AGENT_CHAT_CHANNEL_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/add-agent-chat-channel-navigation-menu-item-upgrade-command-name.constant';
-import { ADD_COMMAND_NAVIGATION_MENU_ITEMS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-53/add-command-navigation-menu-items-upgrade-command-name.constant';
+import { ADD_SIDEBAR_NAVIGATION_MENU_ITEM_TYPES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-53/add-sidebar-navigation-menu-item-types-upgrade-command-name.constant';
 import { ADD_VISIBLE_ITEM_LIMIT_TO_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-53/add-visible-item-limit-to-navigation-menu-item-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -143,7 +143,8 @@ export class NavigationMenuItemEntity
   visibleItemLimit: number | null;
 
   @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_COMMAND_NAVIGATION_MENU_ITEMS_UPGRADE_COMMAND_NAME,
+    upgradeCommandName:
+      ADD_SIDEBAR_NAVIGATION_MENU_ITEM_TYPES_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'text' })
   commandKey: NavigationMenuItemCommandKey | null;
