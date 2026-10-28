@@ -1,0 +1,75 @@
+---
+title: EmojiPicker
+description: ابحث عن رمز تعبيري وحدده باستخدام بيانات Emojibase المستضافة لدى المستدعي.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import EmojiPickerReference from '/snippets/ui/generated/components/input/emoji-picker.mdx';
+
+## نظرة عامة
+
+يوفر `EmojiPicker` البحث عن الرموز التعبيرية، واستعراض الفئات، والاختيار باستخدام لوحة المفاتيح. يوفر تطبيقك تسمياته وموقع بيانات الرموز التعبيرية ومعالج الاختيار.
+
+<StoryEmbed storyId="ui-input-emojipicker--display" title="ابحث عن رموز تعبيرية واختر تفاعلًا" height={400} />
+
+## استخدام
+
+```tsx
+import { useState } from 'react';
+import { EmojiPicker } from 'twenty-ui/components/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-ui/utilities';
+
+export const EmojiPickerExample = () => {
+  const [emoji, setEmoji] = useState<string | undefined>();
+
+  return (
+    <Text
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: themeCssVariables.spacing[2],
+        width: 296,
+      }}
+    >
+      <EmojiPicker
+        emojibaseUrl="/emojibase"
+        searchLabel="Search emojis"
+        loadingLabel="Loading emojis"
+        emptyLabel="No emoji found"
+        onEmojiSelect={setEmoji}
+      />
+      <Text role="status">
+        {isDefined(emoji) ? `Selected emoji: ${emoji}` : 'Choose an emoji'}
+      </Text>
+    </Text>
+  );
+};
+```
+
+تستخدم المعاينة كتالوج تجهيزات صغير. يتوقع مثال الاستخدام أن يقدّم تطبيقك بيانات Emojibase على المسار `/emojibase`.
+
+## البيانات والتسميات
+
+`emojibaseUrl` مطلوب. يحمّل المنتقي كلاً من `${emojibaseUrl}/${locale}/data.json` و`${emojibaseUrl}/${locale}/messages.json`. استضف تلك الملفات من حزمة بيانات Emojibase لكل لغة مدعومة. اللغة الافتراضية هي `en`؛ ولا يؤدي توفير تسميات واجهة مترجمة إلى تغيير لغة كتالوج الرموز التعبيرية.
+
+وفّر `searchLabel` و`loadingLabel` و`emptyLabel` مترجمة محلياً. يُسمّي `searchLabel` حقل البحث ويوفّر نصه النائب ما لم يتجاوزه `searchPlaceholder`. تأتي أسماء الرموز التعبيرية وفئاتها ووسوم البحث من لغة Emojibase المحددة.
+
+## الاختيار والتركيب
+
+يتلقى `onEmojiSelect` سلسلة Unicode للرمز التعبيري المحدد. يحتفظ المنتقي ببحثه وبرمزه التعبيري النشط داخلياً. يتولى تطبيقك إدارة أي قيمة محددة، وأعداد التفاعلات، ومعرفات الرسائل، والأذونات، والاستمرارية، وظهور النافذة المنبثقة. ركّبه داخل [Dropdown](/ar/ui/components/navigation/dropdown) عندما يحتاج إلى نافذة منبثقة.
+
+يستخدم المنتقي ثمانية أعمدة وارتفاعاً قدره 280px. اضبط عرض حاويته ليلائم الشبكة. تستهدف سمات div الأصلية والمعالجات والأنماط وأسماء الفئات والمراجع حاويته الخارجية.
+
+## إمكانية الوصول
+
+يحتوي إدخال البحث على الاسم المتاح الموفّر. انقل التركيز إليه باستخدام Tab، أو اضبط `autoFocus` عند فتح نافذة منبثقة. تتنقل مفاتيح الأسهم ضمن شبكة الرموز التعبيرية، ويحدد Enter الرمز التعبيري النشط. لكل رمز تعبيري اسم متاح من الكتالوج المحدد. تكون القيمة الافتراضية لـ `autoFocus` هي `false`.
+
+## الإزاحة
+
+<EmojiPickerReference />
+
+<PageBanner illustration="page-cover-emoji" />

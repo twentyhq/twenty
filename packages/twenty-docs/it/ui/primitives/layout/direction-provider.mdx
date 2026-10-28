@@ -1,0 +1,63 @@
+---
+title: DirectionProvider
+description: Coordina le interazioni direzionali della tastiera e del puntatore con la direzione del documento.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import DirectionProviderReference from '/snippets/ui/generated/layout/direction-provider.mdx';
+
+## Panoramica
+
+`DirectionProvider` fornisce la direzione `ltr` o `rtl` ai controlli dell'interfaccia utente di Twenty. Non esegue il rendering di un elemento DOM né imposta un attributo HTML `dir`. Imposta sia la direzione del provider sia la direzione del documento corrispondente.
+
+<StoryEmbed storyId="ui-layout-directionprovider--display" title="Esempio di DirectionProvider" height={160} />
+
+## Utilizzo
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/components/input';
+import { DirectionProvider } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type DirectionalChoicesProps = { direction: 'ltr' | 'rtl' };
+
+export const DirectionalChoices = ({ direction }: DirectionalChoicesProps) => (
+  <DirectionProvider direction={direction}>
+    <Text dir={direction}>
+      <SegmentedControl
+        aria-label="Billing period"
+        defaultValue="annual"
+        options={[
+          { label: 'Annual', value: 'annual' },
+          { label: 'Monthly', value: 'monthly' },
+        ]}
+      />
+    </Text>
+  </DirectionProvider>
+);
+```
+
+L'applicazione host fornisce etichette tradotte e sceglie la direzione. Il contesto della direzione influenza le interazioni direzionali; l'attributo HTML gestisce il testo e il layout. Ad esempio, [SegmentedControl](/it/ui/components/input/segmented-control) inverte la navigazione orizzontale con i tasti freccia e [ResizeHandle](/it/ui/primitives/layout/resize-handle) inverte il ridimensionamento orizzontale.
+
+## Ambito e stato
+
+Inserisci un provider attorno ai controlli che condividono una direzione. I provider annidati possono sovrascrivere la direzione per un sottoalbero; abbina ogni sovrascrittura a un attributo `dir` corrispondente. `direction` è gestita dall'applicazione e il valore predefinito è `ltr`, in linea con Base UI. I figli sono facoltativi. Importa `DirectionProviderProps` dallo stesso punto di ingresso. Il provider non ha una destinazione DOM, proprietà native né ref. Il provider non traduce i contenuti né sceglie automaticamente la direzione in base alle impostazioni locali.
+
+## Portali e layout
+
+I portali di Dropdown, Popover, Tooltip, Select, Dialog e Toast mantengono la direzione del provider anche quando il loro contenitore si trova all'esterno dell'elemento con `dir`. Senza un provider, ereditano la direzione del loro contenitore. Mantieni coerenti la direzione del provider e la direzione HTML dell'attivatore. Un `ThemeProvider` con ambito definito continua a gestire il contenitore del portale predefinito.
+
+I sottomenu si aprono verso `inline-end`. ArrowRight apre un sottomenu in LTR; ArrowLeft lo apre in RTL. Il tasto opposto torna al genitore. Il posizionamento esplicito del popup `left` e `right` indica comunque lati fisici. La gestione delle collisioni può spostare un popup quando lo spazio è limitato.
+
+Il testo, il rientro, gli angoli dei pulsanti collegati e le icone direzionali di apertura seguono la direzione di lettura. Le icone fornite mantengono il proprio orientamento. `AvatarGroup.overlap` indica comunque un bordo fisico; l'avatar esterno non si estende oltre quel bordo in nessuna delle due direzioni.
+
+<StoryEmbed storyId="ui-layout-directionprovider--reading-directions" title="Layout da sinistra a destra e da destra a sinistra" height={1260} />
+
+## Props
+
+<DirectionProviderReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

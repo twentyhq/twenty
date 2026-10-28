@@ -3,6 +3,10 @@ title: Funzioni logiche
 description: Definisci funzioni TypeScript lato server con trigger HTTP, cron e trigger di eventi del database.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 Le funzioni logiche sono funzioni TypeScript lato server che vengono eseguite sulla piattaforma Twenty. Possono essere attivate da richieste HTTP, pianificazioni cron o eventi del database — e possono anche essere esposte come strumenti per agenti di IA.
 
 <AccordionGroup>
@@ -50,6 +54,7 @@ export default defineLogicFunction({
 ```
 
 Tipi di trigger disponibili:
+
 * **httpRoute**: Espone la tua funzione su un percorso e metodo HTTP. Nel codice dell'app, anteponi al percorso della route `/s/` quando utilizzi `RestApiClient`; l'URL distribuito utilizza la base `TWENTY_FUNCTIONS_URL` iniettata (o `\<server-url>/s` quando non è impostata).
 
 <Note>
@@ -64,18 +69,26 @@ Per richiamare, da un componente front-end (headless), una funzione logica attiv
 Puoi anche eseguire manualmente una funzione utilizzando la CLI:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
+twenty app exec --name create-new-post-card --payload '{"key": "value"}'
 ```
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+twenty app exec --universal-identifier e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 Puoi osservare i log con:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:logs
+twenty app logs
 ```
+
+</Note>
+
+<Note>
+  Nel cloud, ogni esecuzione consuma crediti dello spazio di lavoro: un costo fisso per
+  invocazione più un costo per millisecondo per il tempo di esecuzione della funzione, quindi
+  mantenere `timeoutSeconds` limitato e il codice veloce riduce i costi. Vedi
+  [Crediti](/it/user-guide/billing/capabilities/credits) per le tariffe.
 </Note>
 
 #### Payload del trigger di route
@@ -96,17 +109,16 @@ const handler = async (event: RoutePayload) => {
 
 Il tipo `RoutePayload` ha la seguente struttura:
 
-  | Proprietà                    | Tipo                                                    | Descrizione                                                                                                                                                                                                                   | Esempio                                                                    |
-  | ---------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | Intestazioni HTTP (solo quelle elencate in `forwardedRequestHeaders`)                                                                                                                                                         | vedi la sezione sotto                                                      |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametri della query string (valori multipli uniti da virgole)                                                                                                                                                               | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | Parametri di percorso estratti dal pattern della route                                                                                                                                                                        | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                                        | Corpo della richiesta analizzato (JSON)                                                                                                                                                                                       | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `rawBody`                    | `string \| undefined`                                   | Corpo della richiesta UTF-8 originale, prima dell'analisi JSON. Utile per verificare le firme dei webhook in stile HMAC (ad es. `X-Hub-Signature-256` di GitHub, Stripe). `undefined` quando il runtime non lo ha conservato. |                                                                            |
-  | `isBase64Encoded`            | `boolean`                                               | Indica se il corpo è codificato in base64                                                                                                                                                                                     |                                                                            |
-  | `requestContext.http.method` | `string`                                                | Metodo HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                   |                                                                            |
-  | `requestContext.http.path`   | `string`                                                | Percorso della richiesta non elaborato                                                                                                                                                                                        |                                                                            |
-
+| Proprietà                    | Tipo                                                    | Descrizione                                                                                                                                                                                                                   | Esempio                                                                    |
+| ---------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `headers`                    | `Record\<string, string \| undefined>` | Intestazioni HTTP (solo quelle elencate in `forwardedRequestHeaders`)                                                                                                                                                         | vedi la sezione sotto                                                      |
+| `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametri della query string (valori multipli uniti da virgole)                                                                                                                                                               | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+| `pathParameters`             | `Record\<string, string \| undefined>` | Parametri di percorso estratti dal pattern della route                                                                                                                                                                        | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+| `body`                       | `object \| null`                                        | Corpo della richiesta analizzato (JSON)                                                                                                                                                                                       | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+| `rawBody`                    | `string \| undefined`                                   | Corpo della richiesta UTF-8 originale, prima dell'analisi JSON. Utile per verificare le firme dei webhook in stile HMAC (ad es. `X-Hub-Signature-256` di GitHub, Stripe). `undefined` quando il runtime non lo ha conservato. |                                                                            |
+| `isBase64Encoded`            | `boolean`                                               | Indica se il corpo è codificato in base64                                                                                                                                                                                     |                                                                            |
+| `requestContext.http.method` | `string`                                                | Metodo HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                   |                                                                            |
+| `requestContext.http.path`   | `string`                                                | Percorso della richiesta non elaborato                                                                                                                                                                                        |                                                                            |
 
 #### forwardedRequestHeaders
 
@@ -140,7 +152,8 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-I nomi delle intestazioni vengono normalizzati in minuscolo. Accedile usando chiavi in minuscolo (ad es., `event.headers['content-type']`).
+  I nomi delle intestazioni vengono normalizzati in minuscolo. Accedile usando chiavi in minuscolo
+  (ad es., `event.headers['content-type']`).
 </Note>
 
 #### Risposta HTTP personalizzata
@@ -167,12 +180,13 @@ Per motivi di sicurezza, le intestazioni di risposta sono limitate a un elenco c
 * `retry-after`
 
 <Note>
-Il codice di stato deve essere un codice di stato HTTP valido (compreso tra 100 e 599). I nomi delle intestazioni di risposta vengono confrontati senza distinzione tra maiuscole e minuscole.
+  Il codice di stato deve essere un codice di stato HTTP valido (compreso tra 100 e 599).
+  I nomi delle intestazioni di risposta vengono confrontati senza distinzione tra maiuscole e minuscole.
 </Note>
 
 #### Risposte di errore della piattaforma
 
-Oltre alle risposte specifiche del tuo handler, la piattaforma risponde direttamente alle chiamate di route in alcune situazioni: `404` quando la route o la funzione non esiste, `403` quando l'applicazione è arrestata, `429` quando viene raggiunto il rate limit di esecuzione e `422` quando le `dependencies` dell'applicazione in produzione sono troppo grandi per essere installate — vedi [limiti di dimensione delle dipendenze](/it/developers/extend/apps/getting-started/project-structure#dependencies).
+Oltre alle risposte specifiche del tuo handler, la piattaforma risponde direttamente alle chiamate di route in alcune situazioni: `404` quando la route o la funzione non esiste, `403` quando l'applicazione è arrestata, `402` quando il workspace ha esaurito il proprio credito o non ha un abbonamento attivo, `409` quando viene raggiunto un limite di archiviazione, `429` quando viene raggiunto un rate limit di esecuzione o un limite di utilizzo e `422` quando le `dependencies` dell'applicazione in produzione sono troppo grandi per essere installate — vedi [limiti di dimensione delle dipendenze](/it/developers/extend/apps/getting-started/project-structure#dependencies).
 
 #### Trigger route del server
 
@@ -186,6 +200,7 @@ Il trigger ha due parti:
    * una `Response` da `twenty-sdk/logic-function` — la piattaforma restituisce tale risposta HTTP **sincronicamente** e **non** mette in coda alcuna destinazione (usa questo per challenge handshake come Slack `url_verification`).
 
    Il resolver è l'unico punto di autorizzazione: l'URL contiene solo l'identificatore del resolver. **Questo è il punto preferenziale per verificare le firme delle richieste**: il resolver viene eseguito prima di qualsiasi effetto collaterale, ha accesso al `rawBody` originale e agli header inoltrati, e può rifiutare senza toccare la destinazione.
+
 2. Una funzione logica di **destinazione** — una normale funzione logica per-workspace — viene quindi eseguita nel workspace risolto con il payload restituito dal resolver (o il payload originale della richiesta se il resolver non lo ha trasformato). Il suo valore di ritorno **non** viene osservato dal chiamante HTTP quando il resolver ha scelto il percorso di messa in coda.
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
@@ -208,7 +223,9 @@ const handler = async (event: RoutePayload) => {
   const signature = event.headers['x-hub-signature-256'] ?? '';
   const expected =
     'sha256=' +
-    createHmac('sha256', secret).update(event.rawBody ?? '').digest('hex');
+    createHmac('sha256', secret)
+      .update(event.rawBody ?? '')
+      .digest('hex');
 
   const a = Buffer.from(signature);
   const b = Buffer.from(expected);
@@ -276,10 +293,29 @@ export default defineLogicFunction({
 L'endpoint è raggiungibile all'indirizzo:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
 ```
 
-L'identificatore è il `universalIdentifier` del resolver dal tuo manifest. Registra quell'URL presso il provider.
+L'identificatore è l'`id` del resolver: la chiave primaria che il server assegna quando l'app viene sincronizzata per la prima volta nel workspace proprietario, non l'`universalIdentifier` del tuo manifest. Recuperalo dall'API `/metadata` del workspace proprietario, quindi registra quell'URL con il provider:
+
+```graphql
+query {
+  findManyLogicFunctions {
+    id
+    name
+    universalIdentifier
+  }
+}
+```
+
+<Note>
+  Un URL contenente il `universalIdentifier` del resolver continua per ora a essere risolto,
+  e la risposta include un header `Deprecation`. Un `universalIdentifier` è
+  univoco per spazio di lavoro, non a livello globale: se un'altra registrazione di proprietà di un
+  diverso spazio di lavoro dichiara lo stesso identificatore, la piattaforma restituisce `404` per quell'
+  URL anziché scegliere tra le due. Sposta gli URL registrati presso i tuoi
+  provider nella forma `id`.
+</Note>
 
 **Risposta a una verifica GET.** Alcuni provider verificano un endpoint prima di inviarvi dati, inviando un `GET` contenente una verifica allo stesso URL a cui in seguito invieranno eventi tramite `POST` — WhatsApp Cloud API di Meta è uno di questi. Una route del server risponde solo a `POST`, a meno che non venga specificato diversamente, quindi dichiara entrambi i metodi:
 
@@ -304,7 +340,16 @@ const handler = async (event: RoutePayload) => {
 `httpMethods` sostituisce l'impostazione predefinita anziché aggiungersi a essa, quindi `['GET']` da solo fa sì che la route rifiuti `POST`. Sono supportati solo `GET` e `POST`. Lascialo non impostato a meno che il provider non richieda il secondo verbo: una route che dichiara `GET` avrà il proprio resolver eseguito da qualsiasi chiamante non autenticato, inclusi i crawler e gli strumenti di anteprima dei link che inviano `GET` senza richiesta. A tutto ciò per cui la piattaforma non dispone di un metodo viene restituito `405` senza che il resolver venga mai eseguito.
 
 <Note>
-**L'applicazione deve essere rivendicata e installata nel workspace del proprietario.** Poiché il resolver viene eseguito nel **workspace del proprietario** (il workspace che possiede la registrazione dell'applicazione), un server route trigger funziona solo quando l'applicazione è stata *rivendicata*, cioè ha un workspace del proprietario, **e** quell'applicazione è **installata nel workspace del proprietario**. Finché entrambe non sono vere, il resolver non ha dove essere eseguito, quindi la route non può essere gestita. Un'applicazione che espone una funzione logica `serverRouteTriggerSettings` quindi non può essere elencata nel marketplace finché non è stata rivendicata e installata nel workspace del proprietario.
+  **L'applicazione deve essere rivendicata e installata nel suo spazio di lavoro proprietario.**
+  Segui Rivendicare la tua
+  app per
+  assegnare un proprietario, quindi installa l'app in quello spazio di lavoro. Finché entrambe le condizioni non sono soddisfatte,
+  il resolver non ha dove essere eseguito e la route del server restituisce `404`
+  (`LOGIC_FUNCTION_NOT_FOUND`), anche se l'app è installata altrove.
+  La ricerca nel Marketplace nasconde le app con route del server finché questa configurazione e tutte
+  le variabili del server richieste non sono complete. Vedi costi e
+  disponibilità dello spazio di lavoro proprietario
+  per i dettagli di fatturazione e operativi.
 </Note>
 
 **Contratto del resolver.** Il tipo `LogicFunctionConfig` dell'SDK impone questo a tempo di compilazione: non appena imposti `serverRouteTriggerSettings`, il tuo handler è vincolato a restituire una `Response`, oppure `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (o una `Promise` di uno dei due). Nel percorso di dispatch, il `workspaceId` deve essere un workspace in cui la funzione di destinazione è installata, altrimenti la richiesta viene rifiutata con `404`. Un risultato che non corrisponde a nessuna delle due forme — incluso uno i cui identificatori non sono UUID — viene rifiutato con `502`.
@@ -316,8 +361,18 @@ const handler = async (event: RoutePayload) => {
 | `payload`                                | `object` (opzionale) | Se impostato, sostituisce il body della richiesta inviato alla destinazione. |
 
 <Warning>
-**La verifica della firma è una tua responsabilità — eseguila nel resolver.** La piattaforma non verifica le firme delle richieste. Il resolver è il punto consigliato in cui farlo: viene eseguito per primo, con accesso a `event.rawBody` e agli header che hai elencato in `forwardedRequestHeaders`, e un errore lanciato (o qualsiasi `workspaceId` non corrispondente) interrompe l’inoltro prima che la destinazione venga invocata. Se invece spingi la verifica verso la destinazione, la destinazione deve fare attenzione a non perdere `rawBody` e gli header — cioè il resolver non deve restituire un `payload`. Verifica sempre **prima** di qualsiasi effetto collaterale e usa un confronto a tempo costante.
+  **La verifica della firma è una tua responsabilità — eseguila nel resolver.**
+  La piattaforma non verifica le firme delle richieste. Il resolver è il
+  punto consigliato in cui farlo: viene eseguito per primo, con accesso a `event.rawBody` e
+  agli header che hai elencato in `forwardedRequestHeaders`, e un errore generato (o
+  qualsiasi `workspaceId` non corrispondente) interrompe l'inoltro prima che la destinazione venga
+  invocata. Se invece sposti la verifica verso la destinazione, la destinazione
+  deve fare attenzione a non perdere `rawBody` e gli header — cioè il resolver non deve
+  restituire un `payload`. Verifica sempre **prima** di qualsiasi effetto collaterale e usa un
+  confronto a tempo costante.
 </Warning>
+
+**Token bearer.** Alcuni provider, come Microsoft Bot Framework, firmano ogni richiesta con un JWT nell'intestazione `Authorization` anziché con un'intestazione di firma. Una route del server può elencare `authorization` in `forwardedRequestHeaders` per riceverla e il resolver la verifica come qualsiasi altra firma. La piattaforma rimuove l'intestazione se contiene un token emesso da Twenty, quindi una route del server non riceve mai una sessione Twenty. `cookie` e `proxy-authorization` non vengono mai inoltrati e le route HTTP non possono inoltrare nessuna di queste tre intestazioni.
 
 Per le firme delle richieste, la maggior parte dei provider firma con HMAC-SHA256; le parti che differiscono sono il nome dell'header, la codifica del digest e la stringa del payload firmato. Alcuni esempi:
 
@@ -334,15 +389,19 @@ L'esempio di resolver sopra mostra già il flusso HMAC-SHA256 di GitHub — adat
 <Note>
 Quando il resolver restituisce un oggetto di dispatch, la route risponde con `202 { queued: true }` e la funzione di destinazione viene eseguita nella coda dei worker — il chiamante non osserva mai la latenza, il risultato o gli errori della funzione di destinazione (che vengono registrati nei log di esecuzione). Questo impedisce che le nuove consegne da parte del mittente amplifichino i rallentamenti nell'elaborazione, che è esattamente ciò che si desidera per l'acquisizione dei webhook.
 
+Il resolver viene eseguito nel workspace del proprietario e utilizza i relativi crediti, pertanto la route restituisce `402` quando tale workspace ha esaurito il proprio credito o non ha un abbonamento attivo, e `429` quando viene raggiunto un limite di utilizzo. I mittenti che ritentano in caso di `5xx` non ritenteranno in questi casi, ed è ciò che vuoi: il rifiuto non si risolverà al tentativo successivo.
+
 Quando il chiamante deve leggere il corpo della risposta sulla stessa richiesta (challenge handshake, acknowledgement interattivi), restituisci invece una `Response` dal **resolver**. La piattaforma lo riecheggia in modo sincrono e salta la coda; i suoi header passano attraverso la stessa allow-list delle risposte delle route HTTP. Mantieni il resolver veloce — alcuni provider (ad es. Slack) vanno in timeout in pochi secondi. Poiché il resolver è raggiungibile come endpoint pubblico, proteggilo con rate limiting al tuo edge.
+
 </Note>
 
 #### Payload del trigger di evento del database
 
-Quando un trigger di evento del database invoca la tua funzione logica, questa riceve un `DatabaseEventPayload` per ogni record modificato. Il payload combina i metadati sull’area di lavoro e sull’oggetto di origine con l’evento a livello di record.
+Quando un trigger di evento del database richiama la funzione logica, questa riceve un `DatabaseEventPayload` per ogni record modificato (oppure un `DatabaseEventBatchPayload` che copre più record quando `batchMode` è abilitato). Il payload combina i metadati sull’area di lavoro e sull’oggetto di origine con l’evento a livello di record.
 
 ```ts
 import type {
+  DatabaseEventBatchPayload,
   DatabaseEventPayload,
   ObjectRecordCreateEvent,
   ObjectRecordDestroyEvent,
@@ -376,16 +435,23 @@ Per le eliminazioni logiche, `.deleted` segue la struttura in stile aggiornament
 Per le eliminazioni permanenti, usa `.destroyed`.
 
 <Note>
-`databaseEventTriggerSettings.updatedFields` filtra quali eventi di aggiornamento attivano la funzione.
-`event.properties.updatedFields` indica quali campi sono effettivamente cambiati nell'evento corrente.
+  `databaseEventTriggerSettings.updatedFields` filtra quali eventi di aggiornamento
+  attivano la funzione. `event.properties.updatedFields` indica quali campi
+  sono effettivamente cambiati nell'evento corrente.
 </Note>
+
+`databaseEventTriggerSettings` accetta:
+
+| Proprietà       | Descrizione                                                                                                                                                                                    |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `eventName`     | Evento da ascoltare, ad esempio `person.updated`. Supporta `*` per il nome dell'oggetto, l'operazione o entrambi.                                                                              |
+| `updatedFields` | Elenco facoltativo di nomi di campo. Negli eventi `.updated`, solo le modifiche che interessano uno di essi attivano la funzione.                                                              |
+| `batchMode`     | Booleano facoltativo. Quando è `true`, l'handler viene chiamato una volta per ogni batch di record anziché una volta per record. Il server decide quanti record contiene un batch, fino a 200. |
 
 Esempio di evento "created":
 
 ```ts
-type PersonCreatedEvent = DatabaseEventPayload<
-  ObjectRecordCreateEvent<Person>
->;
+type PersonCreatedEvent = DatabaseEventPayload<ObjectRecordCreateEvent<Person>>;
 
 const handler = async (event: PersonCreatedEvent) => {
   const person = event.properties.after;
@@ -400,9 +466,7 @@ const handler = async (event: PersonCreatedEvent) => {
 Esempio di evento "updated":
 
 ```ts
-type PersonUpdatedEvent = DatabaseEventPayload<
-  ObjectRecordUpdateEvent<Person>
->;
+type PersonUpdatedEvent = DatabaseEventPayload<ObjectRecordUpdateEvent<Person>>;
 
 const handler = async (event: PersonUpdatedEvent) => {
   const { before, after, diff, updatedFields } = event.properties;
@@ -446,6 +510,47 @@ const handler = async (event: PersonDestroyedEvent) => {
 };
 ```
 
+#### Raggruppamento degli eventi del database
+
+Una scrittura in blocco genera molti eventi contemporaneamente: l'importazione di una casella di posta, ad esempio, può aggiornare migliaia di record in una singola operazione e una chiamata per record sovraccarica la coda. Imposta `batchMode` per riceverli insieme:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    batchMode: true,
+  },
+});
+```
+
+L'handler riceve quindi un `DatabaseEventBatchPayload`, che contiene gli stessi metadati di `DatabaseEventPayload` ma sostituisce i campi a livello di record con un array `events`:
+
+```ts
+type PeopleUpdatedBatch = DatabaseEventBatchPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (batch: PeopleUpdatedBatch) => {
+  const updatedEmails = batch.events.map(
+    (event) => event.properties.after.emails?.primaryEmail,
+  );
+
+  return { workspaceId: batch.workspaceId, updatedEmails };
+};
+```
+
+<Note>
+  La dimensione del batch non è qualcosa su cui un handler può fare affidamento. Il server decide quanti
+  eventi contiene una chiamata, con un massimo di 200, e un batch contiene da un singolo
+  evento fino a tale limite, a seconda di quanti ne ha prodotto la scrittura di origine.
+  Scrivi l'handler in modo che esegua il ciclo su `events`, indipendentemente dalla sua lunghezza.
+</Note>
+
+Gli eventi vengono raggruppati in base all'utente che li ha causati prima di essere inseriti in batch, quindi ogni chiamata riguarda un singolo attore e `context.workspaceMemberId` mantiene il proprio significato. Il filtro `updatedFields` viene applicato prima del raggruppamento in batch, quindi un batch contiene solo i record richiesti.
+
+Senza `batchMode`, l'handler continua a ricevere un `DatabaseEventPayload` per record.
+
 #### Contesto di esecuzione
 
 Ogni gestore riceve un secondo argomento che descrive l'esecuzione stessa, indipendentemente da cosa l'abbia attivata. Mentre il primo argomento cambia struttura in base all'attivatore, questo no:
@@ -476,7 +581,8 @@ const handler = async (
 `userWorkspaceId` e `workspaceMemberId` sono `null` quando nessuno ha attivato l'esecuzione: le pianificazioni cron, gli hook di installazione e i webhook non autenticati non hanno una persona alle spalle. Sono inoltre `null` quando la persona non ha un record del membro dello spazio di lavoro o quando il suo è stato eliminato.
 
 <Note>
-**Il contesto indica chi ha attivato l'esecuzione.** Ciò che l'esecuzione può *fare* è una dichiarazione separata, riportata di seguito.
+  **Il contesto indica chi ha attivato l'esecuzione.** Ciò che l'esecuzione può *fare* è una
+  dichiarazione separata, riportata di seguito.
 </Note>
 
 #### Quale accesso utilizza una chiamata
@@ -485,7 +591,7 @@ Ogni client — `CoreApiClient`, `MetadataApiClient` e `RestApiClient` — agisc
 
 Quando nessuno ha attivato l'esecuzione, non c'è nessuna persona per conto della quale agire, quindi lo stesso client usa come fallback l'accesso della tua applicazione: le pianificazioni cron, gli hook di installazione e i webhook non autenticati non richiedono una gestione speciale.
 
-Alcune chiamate necessitano legittimamente dell'accesso della tua applicazione anche quando una persona *è* alle spalle dell'esecuzione — per leggere i record di configurazione della tua app o per eseguire un'attività che quella persona non potrebbe svolgere autonomamente. Crea un secondo client per questi casi:
+Alcune chiamate necessitano legittimamente dell'accesso dell'applicazione stessa anche quando una persona *è* dietro l'esecuzione — per leggere i record di configurazione della tua app o per svolgere operazioni che quella persona non potrebbe eseguire autonomamente. Crea un secondo client per questi casi:
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -514,9 +620,10 @@ const asApplication = new RestApiClient({ runAs: 'application' });
 **Un'esecuzione che nessuno ha attivato agisce come la tua applicazione.** Le pianificazioni cron, gli hook di installazione e i webhook non autenticati non hanno una persona alle spalle, quindi il client predefinito usa come fallback l'accesso della tua applicazione e continua a funzionare. `runAs: 'application'` è necessario solo quando vuoi tale accesso in un'esecuzione che una persona *ha* attivato.
 
 Controlla `context.workspaceMemberId` quando una funzione si comporta diversamente a seconda che ci sia qualcuno alle sue spalle, ad esempio per attribuire un record.
+
 </Note>
 
-Gli helper dell'SDK che raggiungono le risorse della tua applicazione utilizzano sempre il suo accesso e ignorano `runAs`: l'[archivio chiave-valore](/it/developers/extend/apps/logic/key-value-store), le [connessioni](/it/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` e l'addebito dei crediti.
+Gli helper dell'SDK che accedono alle risorse della tua applicazione usano sempre il relativo accesso e ignorano `runAs`: l'[archivio chiave-valore](/it/developers/extend/apps/logic/key-value-store), le [connessioni](/it/developers/extend/apps/logic/connections), i [canali di messaggistica](/it/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` e l'[addebito dei crediti](/it/developers/extend/apps/logic/credits). `sendInboxMessage` utilizza anche l'accesso della tua applicazione e ignora `runAs`, sebbene scriva nelle chat dei membri che indichi.
 
 #### Esporre una funzione come strumento di IA o come azione del flusso di lavoro
 
@@ -528,7 +635,14 @@ Le funzioni logiche possono essere esposte su due superfici, ciascuna con il pro
 Una funzione può optare per uno, l'altro o entrambi. Si affiancano a `cronTriggerSettings`, `databaseEventTriggerSettings` e `httpRouteTriggerSettings` — stesso schema, stessa struttura.
 
 <Note>
-**Relazione con l’azione Code del workflow.** L’azione **Code** incorporata nel generatore di workflow è essa stessa una funzione logica — Twenty ne crea una per ogni passaggio Code e ne espone l’editor inline. `workflowActionTriggerSettings` è il modo in cui trasformi quel codice inline una tantum in un’azione **riutilizzabile**: definisci la funzione una volta nella tua app e diventa selezionabile in qualsiasi workflow, invece di essere copiata e incollata in ogni passaggio Code. Consulta l’[azione Code](/it/user-guide/workflows/capabilities/workflow-actions#code) nella guida utente per la vista dell’utente finale.
+  **Relazione con l'azione Code del workflow.** L'azione **Code** incorporata nel
+  generatore di workflow è essa stessa una funzione logica — Twenty ne crea una per ogni passaggio Code
+  e ne espone l'editor inline. `workflowActionTriggerSettings` è il modo in cui
+  trasformi quel codice inline una tantum in un'azione **riutilizzabile**: definisci la funzione
+  una volta nella tua app e diventa selezionabile in qualsiasi workflow, invece di essere
+  copiata e incollata in ogni passaggio Code. Consulta l'azione
+  Code nella guida
+  utente per la vista dell'utente finale.
 </Note>
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
@@ -616,6 +730,63 @@ export default defineLogicFunction({
 });
 ```
 
+##### Rendering di una chiamata dello strumento con un componente front
+
+Per impostazione predefinita, una chiamata dello strumento viene visualizzata nella chat AI come riga del passaggio: il nome dello strumento e un indicatore di caricamento finché non restituisce un risultato. Imposta `toolTriggerSettings.frontComponentUniversalIdentifier` su uno dei tuoi [componenti front](/it/developers/extend/apps/layout/front-components) e la chat eseguirà invece il rendering di quel componente in linea, per ogni chiamata a questo strumento.
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  },
+});
+```
+
+Il componente legge la chiamata di cui esegue il rendering con `useToolCall()`:
+
+```tsx src/front-components/invoice-preview.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useToolCall } from 'twenty-sdk/front-component';
+
+const InvoicePreview = () => {
+  const toolCall = useToolCall();
+
+  if (toolCall === null) {
+    return null;
+  }
+
+  if (toolCall.status !== 'output-available') {
+    return <p>Generating the invoice...</p>;
+  }
+
+  const { invoiceUrl } = toolCall.output ?? {};
+
+  return typeof invoiceUrl === 'string' ? (
+    <a href={invoiceUrl}>Open the invoice</a>
+  ) : (
+    <p>The invoice could not be generated.</p>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'invoice-preview',
+  component: InvoicePreview,
+});
+```
+
+Il componente viene montato non appena l'agente ha terminato lo streaming dei suoi argomenti, quindi gestisce l'intera chiamata, non solo il risultato. `toolCall.status` passa attraverso `input-available`, gli stati di approvazione quando lo strumento ne richiede una, e quindi `output-available`, `output-denied` o `output-error`; `input` è ciò che l'agente ha proposto, `output` ciò che il tuo gestore ha restituito. Esegui il rendering di ogni stato che ti interessa, poiché la riga del passaggio non è più presente per gestirli.
+
+Sia `input` sia `output` sono tipizzati come `Record\<string, unknown>`, quindi restringi ogni campo prima di utilizzarlo anziché eseguire un cast. Ciò è particolarmente importante per tutto ciò che passi al DOM: un valore che inserisci in un `href` senza verificare che sia una stringa è un link controllato dall'output dello strumento.
+
+<Note>
+  Se l'identificatore non corrisponde a nessun componente front-end nell'app, la chat torna
+  alla riga del passaggio predefinita. I componenti front-end nella chat IA vengono eseguiti con lo stesso
+  [ruolo dichiarato dalla tua app](/it/developers/extend/apps/config/roles), pertanto un widget
+  può solo leggere e scrivere ciò che l'app stessa è autorizzata a fare.
+</Note>
+
 ##### Un esempio completo di azione di workflow
 
 `workflowActionTriggerSettings` accetta quattro campi:
@@ -631,7 +802,10 @@ Mettendo tutto insieme: una funzione esposta come azione di workflow, con un out
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import {
+  jsonSchemaToInputSchema,
+  type InputJsonSchema,
+} from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const inputSchema: InputJsonSchema = {
@@ -688,7 +862,9 @@ export default defineLogicFunction({
 Una volta che l’app è installata, **Enrich Company** appare nel selettore di azioni del generatore di workflow. Il generatore visualizza `companyName` e `domain` come campi di input (ognuno in grado di prelevare valori dai passaggi precedenti), e i passaggi a valle possono fare riferimento ai risultati `taskId` ed `enriched` del passaggio.
 
 <Note>
-**Scrivi una buona `description`.** Gli agenti IA fanno affidamento sul campo `description` della funzione per decidere quando usare lo strumento. Sii specifico su cosa fa lo strumento e quando dovrebbe essere invocato.
+  **Scrivi una buona `description`.** Gli agenti IA fanno affidamento sul campo `description`
+  della funzione per decidere quando usare lo strumento. Sii specifico su cosa fa lo strumento e
+  quando dovrebbe essere invocato.
 </Note>
 
 </Accordion>
@@ -706,13 +882,78 @@ const handler = async (params: { parentMessageId?: string }) => {
   }
 };
 ```
+
 </Note>
 
 <Note>
-**Hook di installazione** — i gestori di pre-installazione, post-installazione e disinstallazione — condividono questo runtime, ma sono dichiarati con le proprie funzioni di definizione e non accettano impostazioni dei trigger. Consulta [Hook di installazione](/it/developers/extend/apps/config/install-hooks) per `definePreInstallLogicFunction`, `definePostInstallLogicFunction` e `defineUninstallLogicFunction`.
+  **Hook di installazione** — i gestori di pre-installazione, post-installazione e disinstallazione — condividono
+  questo runtime, ma sono dichiarati con le proprie funzioni di definizione e non accettano
+  impostazioni dei trigger. Consulta Hook di
+  installazione per
+  `definePreInstallLogicFunction`, `definePostInstallLogicFunction` e
+  `defineUninstallLogicFunction`.
 </Note>
 
-## Crea un'attività della cronologia di eventi.
+## Controllo di integrità.
+
+Dichiara un controllo di integrità con `defineHealthCheck` per segnalare se la tua app è effettivamente in grado di funzionare. Riguarda ciò che solo l'app può sapere: una chiave presente ma revocata, un account con il piano sbagliato, un webhook che non è mai stato registrato. Ciò che Twenty può rilevare autonomamente — una variabile obbligatoria che nessuno ha compilato — è gestito da [`isRequired`](/it/developers/extend/apps/config/application) e non richiede codice.
+
+Viene eseguito lato server, quindi legge le variabili segrete come qualsiasi altra funzione logica. Il gestore non accetta argomenti.
+
+```ts src/logic-functions/health-check.ts
+import { defineHealthCheck } from 'twenty-sdk/define';
+
+export default defineHealthCheck({
+  universalIdentifier: 'f3b6a4d2-9c81-4e0a-b5c7-2d1e8f4a6b03',
+  name: 'health-check',
+  handler: async () => {
+    const response = await fetch('https://api.stripe.com/v1/account', {
+      headers: { Authorization: `Bearer ${process.env.API_KEY}` },
+    });
+
+    if (response.status === 401) {
+      return {
+        status: 'ERROR',
+        title: 'Your Stripe key was revoked',
+        description: 'Generate a new one from the Stripe dashboard.',
+        action: { label: 'Add a key', location: '/settings/billing' },
+      };
+    }
+
+    return { status: 'OK' };
+  },
+});
+```
+
+Il risultato è un'unione discriminata, non un booleano:
+
+| Campo         | Obbligatorio                   | Descrizione                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `stato`       | Sì                             | `OK` quando non c'è nulla da segnalare, altrimenti `SUCCESS`, `INFO`, `WARNING`, `ERROR` o `NEUTRAL`                                                                                                                                                                                                                                                                                                   |
+| `titolo`      | Per ogni stato diverso da `OK` | La prima riga del banner nella pagina delle impostazioni dell'app                                                                                                                                                                                                                                                                                                                                      |
+| `description` | No                             | Una seconda riga sotto il titolo, che indica cosa fare al riguardo                                                                                                                                                                                                                                                                                                                                     |
+| `azione`      | No                             | `{ label, location }` per il pulsante del banner. `location` indica dove reindirizza il pulsante: un percorso all'interno di Twenty, ad esempio `/settings/billing`, facoltativamente con un hash per selezionare una scheda, oppure solo un hash, ad esempio `#variables`, per passare a una scheda della tua pagina delle impostazioni; omettilo per arrivare alla scheda di configurazione dell'app |
+
+`OK` non mostra alcun banner; ogni altro stato visualizza il titolo in un banner colorato in base allo stato, quindi scegli quello che corrisponde al grado di azione richiesto alla persona. Gli stati sono gli `ApplicationHealthStatus` di Twenty, quindi la stringa semplice e il membro enum sono intercambiabili:
+
+```ts
+import { ApplicationHealthStatus } from 'twenty-sdk/define';
+
+return {
+  status: ApplicationHealthStatus.WARNING,
+  title: 'Quota almost reached',
+};
+```
+
+Twenty esegue il controllo all'apertura della pagina delle impostazioni dell'app e ne mostra il risultato in un banner. Non viene memorizzato nulla, quindi ciò che segnali corrisponde sempre a quanto appena restituito dal controllo.
+
+Un controllo che genera un'eccezione, va in timeout o restituisce una struttura che Twenty non riesce a leggere viene trattato come **sconosciuto**, mai come errore, e non viene mostrato alcun banner. Un'interruzione di servizio di terze parti non dovrebbe colorare di rosso ogni app installata — altrimenti le persone imparerebbero a ignorare il segnale.
+
+La posizione deve rimanere all'interno di Twenty, quindi inizia con `/` o `#`: una posizione esterna, relativa al protocollo o relativa perde il proprio pulsante anziché diventare un reindirizzamento altrove. Il pulsante viene inoltre rimosso quando l'app non segnala alcuna posizione e non dispone di una scheda di configurazione a cui ricorrere, quindi un controllo su un'app senza variabili e senza voci del menu delle impostazioni mostra il relativo titolo senza un pulsante non funzionante.
+
+È consentito un solo controllo di integrità per app; dichiararne più di uno fa fallire la build.
+
+## Crea un'attività della cronologia di eventi
 
 Usa `createTimelineActivity()` per pubblicare un evento di dominio esplicito da una funzione logica. Definisci prima l'evento come [tipo di attività della cronologia](/it/developers/extend/apps/data/timeline-activity-types), quindi fai riferimento al tipo e agli oggetti tramite i relativi identificatori universali stabili:
 
@@ -763,7 +1004,7 @@ Il pacchetto `twenty-client-sdk` fornisce due client GraphQL tipizzati per inter
 <AccordionGroup>
 <Accordion title="CoreApiClient" description="Esegui query e modifica i dati dello spazio di lavoro (record, oggetti)">
 
-`CoreApiClient` è il client principale per interrogare e modificare i dati dello spazio di lavoro. Viene **generato dallo schema del tuo spazio di lavoro** durante `yarn twenty dev` o `yarn twenty dev:build`, quindi è completamente tipizzato per corrispondere ai tuoi oggetti e campi.
+`CoreApiClient` è il client principale per interrogare e modificare i dati dello spazio di lavoro. Viene **generato dallo schema del tuo spazio di lavoro** con `twenty app generate-client`, o dopo una sincronizzazione con `twenty app apply` o `twenty app dev`, quindi è completamente tipizzato per corrispondere ai tuoi oggetti e campi.
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -798,12 +1039,32 @@ const { createCompany } = await client.mutation({
     name: true,
   },
 });
+
+// Only on an object whose readability is PRIVATE: choose who can read the created record
+const { createContract } = await client.mutation({
+  createContract: {
+    __args: {
+      data: {
+        name: 'Acme Corp renewal',
+      },
+      shareWith: [
+        {
+          roleId: '7f0c1b6e-2d4a-4c8e-9b3f-5a6d7e8f9a0b',
+          accessLevel: 'READ_WRITE',
+        },
+      ],
+    },
+    id: true,
+  },
+});
 ```
+
+`shareWith` ha effetto solo su un oggetto la cui leggibilità è `PRIVATE`; per impostazione predefinita ogni oggetto è `OPEN` e, su un oggetto `OPEN`, l'argomento viene ignorato. Su un oggetto `PRIVATE`, elenca chi ottiene l'accesso al record creato: ogni voce si riferisce esattamente a uno tra `workspaceMemberId`, `roleId` o `everyone: true`, con un `accessLevel` pari a `READ`, `READ_WRITE` o `FULL`. Un membro dello spazio di lavoro che crea un record riceve sempre un'autorizzazione proprietario `FULL`, quindi l'argomento è facoltativo per lui; anche una funzione logica che agisce come relativa applicazione o una chiave API riceve un'autorizzazione `FULL` per il proprio ruolo e tali chiamanti, come un chiamante di sistema, devono passare `shareWith`, altrimenti la creazione viene rifiutata. Ogni voce deve indicare un membro o un ruolo dello spazio di lavoro. Una funzione logica o una chiave API condivide tramite il proprio ruolo, quindi ogni titolare di tale ruolo ottiene lo stesso accesso ai record che crea; assegna a una chiave i cui record devono rimanere privati un ruolo proprio.
 
 Il client utilizza una sintassi a selection-set: passa `true` per includere un campo, usa `__args` per gli argomenti e annida oggetti per le relazioni. Ottieni completamento automatico e controllo dei tipi completi basati sullo schema del tuo spazio di lavoro.
 
 <Note>
-**CoreApiClient viene generato in fase di dev/build.** Se lo usi senza eseguire prima `yarn twenty dev` o `yarn twenty dev:build`, genera un errore. La generazione avviene automaticamente — la CLI esegue l'introspezione dello schema GraphQL del tuo spazio di lavoro e genera un client tipizzato usando `@genql/cli`.
+  Esegui `twenty app generate-client` per aggiornare il client dallo schema GraphQL del tuo spazio di lavoro. `twenty app apply` e `twenty app dev` lo rigenerano anche dopo la sincronizzazione. `twenty app build` esegue la build solo localmente e non genera il client.
 </Note>
 
 #### Utilizzo di CoreSchema per le annotazioni di tipo
@@ -834,6 +1095,10 @@ setCompany(result.company);
 
 `MetadataApiClient` è fornito pronto all'uso con l'SDK (nessuna generazione richiesta). Interroga l'endpoint `/metadata` per la configurazione dello spazio di lavoro, le applicazioni e i caricamenti di file. Accetta la stessa opzione `runAs` di `CoreApiClient` — vedi [Quale accesso utilizza una chiamata](#whose-access-a-call-uses).
 
+È anche il modo in cui un'app legge e aggiorna le proprie [variabili dell'applicazione](/it/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime), in una funzione logica come in un componente front. Un token dell'applicazione raggiunge solo la propria applicazione, nel proprio spazio di lavoro.
+
+Una [variabile utente](/it/developers/extend/apps/config/application#workspace-and-user-variables) si trova in `process.env` con il valore del membro che ha attivato l'esecuzione o con il relativo valore predefinito finché non imposta il proprio. Un'esecuzione non attivata da nessuno non riceve variabili utente. Per leggere il valore delle variabili utente della tua app per ogni membro, ad esempio in un processo cron, esegui una query su `myUserApplicationVariables` con `runAs: 'application'`.
+
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
@@ -861,7 +1126,7 @@ const { objects } = await metadataClient.query({
 
 #### Caricamento dei file
 
-`MetadataApiClient` include un metodo `uploadFile` per allegare file ai campi di tipo file:
+`MetadataApiClient` include un metodo `uploadFile` per allegare file ai campi di tipo file. Il file viene inviato direttamente all'archiviazione file di Twenty: l'API fornisce una destinazione di caricamento, il client invia lì i byte, quindi l'API conferma il caricamento.
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -869,14 +1134,11 @@ import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
 
-const fileBuffer = fs.readFileSync('./invoice.pdf');
-
-const uploadedFile = await metadataClient.uploadFile(
-  fileBuffer,                                         // file contents as a Buffer
-  'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
-);
+const uploadedFile = await metadataClient.uploadFile({
+  fileBuffer: fs.readFileSync('./invoice.pdf'),
+  filename: 'invoice.pdf',
+  fieldMetadataUniversalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+});
 
 console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
@@ -886,11 +1148,12 @@ console.log(uploadedFile);
 | ---------------------------------- | -------- | ---------------------------------------------------------------------- |
 | `fileBuffer`                       | `Buffer` | Il contenuto grezzo del file                                           |
 | `filename`                         | `string` | Il nome del file (utilizzato per l'archiviazione e la visualizzazione) |
-| `contentType`                      | `string` | Tipo MIME (predefinito su `application/octet-stream` se omesso)        |
 | `fieldMetadataUniversalIdentifier` | `string` | L'`universalIdentifier` del campo di tipo file nel tuo oggetto         |
 
 Punti chiave:
+
 * Usa l'`universalIdentifier` del campo (non il suo ID specifico dello spazio di lavoro), quindi il tuo codice di upload funziona in qualsiasi spazio di lavoro in cui la tua app è installata.
+* Il tipo MIME viene rilevato dal contenuto del file una volta caricato, quindi non c'è nulla da dichiarare.
 * L'`url` restituito è un URL firmato che puoi usare per accedere al file caricato.
 
 </Accordion>
@@ -899,9 +1162,12 @@ Punti chiave:
 <Note>
   Quando il tuo codice viene eseguito su Twenty (funzioni logiche o componenti front-end), la piattaforma inietta le credenziali come variabili d'ambiente:
 
-  * `TWENTY_API_URL` — URL di base dell'API di Twenty
-  * `TWENTY_APP_ACCESS_TOKEN` — Chiave a breve durata per l'accesso predefinito: il ruolo di una persona intersecato con quello della tua applicazione quando qualcuno è alle spalle dell'esecuzione, il ruolo della tua applicazione quando non c'è nessuno. La persona è chiunque abbia attivato l'esecuzione in una funzione logica, oppure chiunque stia visualizzando la pagina in un componente front-end.
-  * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Chiave a breve durata con ambito esclusivamente al ruolo della tua applicazione. Solo funzioni logiche, sempre inserita lì, ed è ciò che utilizza `runAs: 'application'`.
+* `TWENTY_API_URL` — URL di base dell'API di Twenty
+* `TWENTY_APP_ACCESS_TOKEN` — Chiave a breve durata per l'accesso predefinito: il ruolo di una persona intersecato con quello della tua applicazione quando qualcuno è alle spalle dell'esecuzione, il ruolo della tua applicazione quando non c'è nessuno. La persona è chiunque abbia attivato l'esecuzione in una funzione logica, oppure chiunque stia visualizzando la pagina in un componente front-end.
+* `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Chiave a breve durata con ambito esclusivamente al ruolo della tua applicazione. Solo funzioni logiche, sempre inserita lì, ed è ciò che utilizza `runAs: 'application'`.
 
-  **Non** devi passare questi elementi ai client — vengono letti automaticamente da `process.env` e [Quale accesso utilizza una chiamata](#whose-access-a-call-uses) spiega come scegliere tra di essi. Le autorizzazioni della tua applicazione sono determinate dal ruolo dichiarato con `defineApplicationRole()` (o referenziato tramite `defaultRoleUniversalIdentifier` in `application-config.ts`); un'esecuzione che agisce come una persona non può mai superare né tale ruolo né il proprio.
+**Non** devi passare questi elementi ai client — vengono letti automaticamente da `process.env` e [Quale accesso utilizza una chiamata](#whose-access-a-call-uses) spiega come scegliere tra di essi. Le autorizzazioni della tua applicazione sono determinate dal ruolo dichiarato con `defineApplicationRole()` (o referenziato tramite `defaultRoleUniversalIdentifier` in `application-config.ts`); un'esecuzione che agisce come una persona non può mai superare né tale ruolo né il proprio.
+
 </Note>
+
+<PageBanner illustration="card-page-logic-functions" />

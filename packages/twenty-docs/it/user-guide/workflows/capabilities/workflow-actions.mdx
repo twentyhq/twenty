@@ -3,6 +3,7 @@ title: Azioni del workflow
 description: Scopri le azioni disponibili nei workflow di Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Informazioni sulle azioni
@@ -23,7 +24,7 @@ Le azioni definiscono cosa accade dopo l'attivazione di un trigger. Puoi concate
 
 Aggiunge un nuovo record a un oggetto selezionato.
 
-**Configurazione:**
+**Configurazione:**:
 
 * Seleziona l'oggetto di destinazione
 * Compila i campi richiesti e opzionali
@@ -37,7 +38,7 @@ Modifica un record esistente in un oggetto selezionato.
 
 <img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
 
-**Configurazione:**
+**Configurazione:**:
 
 * Seleziona l'oggetto di destinazione
 * Scegli il record specifico da aggiornare.
@@ -103,6 +104,34 @@ Crea un nuovo record o aggiorna uno esistente in base ai criteri di corrisponden
 3. Se non trovato → crea un nuovo record
 
 **Output**: I dati del record creato o aggiornato sono disponibili per l'uso nei passaggi successivi.
+
+### Seleziona record
+
+Seleziona un singolo record da un elenco di candidati, utilizzando una strategia di distribuzione. Utile per assegnare un lead in entrata a un rappresentante commerciale o per distribuire i record tra un insieme di assegnatari.
+
+**Configurazione:**:
+
+* Seleziona i record candidati nel campo **Scegli da**
+
+<Note>
+**Scegli da** accetta solo un insieme statico di record selezionati manualmente; non puoi passare una variabile come l'output di un passaggio `Search Records`.
+</Note>
+
+* Scegli una strategia:
+
+| Strategia                        | Descrizione                                                                                                                                                                        |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Casuale**                      | Seleziona un candidato casualmente                                                                                                                                                 |
+| **Round robin**                  | Scorre i candidati in ordine, ricordando la propria posizione tra un'esecuzione e l'altra                                                                                          |
+| **Bilanciato in base al carico** | Seleziona il candidato attualmente collegato al minor numero di record in un campo scelto (ad esempio, il rappresentante commerciale con il minor numero di opportunità collegate) |
+
+* Per **Bilanciato in base al carico**, seleziona l'oggetto e il campo utilizzati per contare il carico esistente per candidato
+
+<Note>
+Bilanciato in base al carico conta tutti i record collegati in quel campo, indipendentemente dallo stato, ad esempio tutte le opportunità collegate a un rappresentante commerciale, non solo quelle aperte.
+</Note>
+
+**Output**: Il record selezionato è disponibile per l'uso nei passaggi successivi.
 
 ## Azioni del flusso
 
@@ -173,7 +202,7 @@ La data programmata non può essere nel passato. Se viene utilizzato un campo da
 **Limiti e crediti**:
 
 * **Nessun limite massimo di durata** — puoi impostare ritardi di minuti, giorni, settimane o oltre
-* **1 credito consumato** quando il nodo Ritardo viene eseguito, indipendentemente dalla durata
+* **0.0001 credito ($0.0001) consumato** quando viene eseguito il nodo Ritardo, come un passaggio standard del workflow, indipendentemente dalla durata.
 * **Nessun credito consumato** durante l'attesa — un ritardo di 5 minuti costa come un ritardo di 5 giorni
 
 ## Azioni di comunicazione
@@ -208,12 +237,36 @@ Al momento è possibile un solo destinatario.
 Al momento non è possibile aggiungere firme HTML.
 </Note>
 
+### Bozza di email
+
+Crea una bozza di email invece di inviarla. Stessa configurazione di Invia email, ma il messaggio viene salvato nella cartella Bozze della casella di posta collegata per la revisione e l'invio manuali, anziché essere inviato automaticamente.
+
+**Configurazione**: Stessi campi di [Invia email](#send-email) — account del mittente, destinatario, oggetto e corpo.
+
+**Caso d'uso**: email generate dall'AI o dal workflow che vuoi far revisionare a una persona prima dell'invio.
+
+### Crea evento calendario
+
+Crea un evento in un calendario collegato.
+
+**Configurazione**:
+
+* Seleziona l'account del calendario collegato
+* Imposta il titolo, la descrizione e la posizione dell'evento
+* Imposta data/ora di inizio e fine oppure contrassegna l'evento come per l'intera giornata
+* Facoltativamente, imposta un fuso orario
+* Aggiungi partecipanti
+* Scegli se inviare inviti del calendario ai partecipanti
+* Scegli se aggiungere un link per conferenza all'evento
+
+**Output**: I dati dell'evento creato sono disponibili per l'uso nei passaggi successivi.
+
 ### Modulo
 
-Visualizza un modulo durante l'esecuzione del flusso di lavoro per raccogliere l'input dell'utente. Le risposte possono quindi essere utilizzate nei passaggi successivi per creare record, inviare email o eseguire qualsiasi altra azione basata sull'input.
+Apre un modulo per la persona che avvia il flusso di lavoro, per raccogliere input sul momento. Le risposte possono quindi essere utilizzate nei passaggi successivi per creare record, inviare email o eseguire qualsiasi altra azione basata sull'input.
 
 <Warning>
-**I moduli sono progettati solo per i trigger manuali**. Per i flussi di lavoro con altri trigger (Record Creato, Aggiornato, ecc.), i moduli sono accessibili solo tramite l'interfaccia di esecuzione del flusso di lavoro, il che non è l'esperienza utente prevista. Un centro di notifica sarà rilasciato nel 2026 per supportare adeguatamente i moduli nei flussi di lavoro automatizzati.
+**I moduli sono progettati solo per i trigger manuali**. Un modulo viene compilato subito dalla persona che esegue il flusso di lavoro e non arriva nella posta in arrivo di nessuno. Per i flussi di lavoro con altri trigger (Record Creato, Aggiornato, ecc.), i moduli sono accessibili solo tramite l'interfaccia di esecuzione del flusso di lavoro. Per chiedere a qualcuno una risposta o un'approvazione nella sua posta in arrivo, usa invece il passaggio Send to Inbox.
 </Warning>
 
 **Configurazione**:
@@ -223,6 +276,7 @@ Visualizza un modulo durante l'esecuzione del flusso di lavoro per raccogliere l
   * un'etichetta
   * un valore predefinito sotto `Placeholder` (opzionale)
 * Modifica il titolo del modulo
+* Aggiungi istruzioni visualizzate sopra i campi (facoltativo). Possono includere variabili dei passaggi precedenti, ad esempio il nome del record a cui si riferisce il modulo.
 
 **Output**: Le risposte ai moduli sono disponibili per l'uso in passaggi successivi.
 
@@ -294,20 +348,22 @@ Invia una richiesta a un API esterno come parte del tuo workflow.
 
 <img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
 
-**Configurazione**:
+**Configurazione:**:
 
 * Inserisci l'URL del punto finale dell'API. È possibile utilizzare parametri dai passaggi precedenti.
 * Seleziona metodo HTTP (GET, POST, PUT, PATCH, DELETE)
 * Aggiungi intestazioni e valori richiesti
 * Fornisci una risposta di esempio per l'anteprima della struttura
 
+**Limiti**: la richiesta non riesce se richiede più di 30 secondi o se il corpo della richiesta o della risposta supera 10 MB.
+
 ## Azioni AI
 
-### Agente AI - In arrivo
+### Agente AI
 
 Esegue un agente AI all'interno del tuo flusso di lavoro per svolgere attività intelligenti.
 
-**Configurazione**:
+**Configurazione:**:
 
 * **Agente**: Seleziona un agente AI esistente o usa l'agente predefinito
 * **Prompt**: Scrivi l'istruzione per l'agente AI
@@ -330,3 +386,24 @@ Le azioni dell'agente AI consumano crediti del flusso di lavoro in base al model
 <Note>
 Gli agenti AI rispettano le autorizzazioni basate sui ruoli. Puoi assegnare ruoli specifici agli agenti in **Impostazioni → Membri → Ruoli** per controllare a quali dati possono accedere. Vedi [Autorizzazioni](/it/user-guide/permissions-access/capabilities/permissions) per i dettagli.
 </Note>
+
+### Classifica
+
+Chiede a un modello AI di rispondere a una o più domande strutturate sui dati dei passaggi precedenti, ad esempio assegnando un punteggio a un lead o categorizzando un messaggio in entrata. A differenza di AI Agent, Classifica restituisce sempre un valore nella forma definita, quindi è adatto per guidare i rami in modo deterministico.
+
+<Note>
+**Prerequisito**: Classifica viene eseguito sul modello di valutazione di Twenty (Jev), che un amministratore deve abilitare e configurare con una chiave API TypeSafe AI. Senza di essa, l'esecuzione di questo passaggio non riesce.
+</Note>
+
+**Configurazione:**:
+
+* **Input**: I dati da classificare (ad esempio, un record o testo da un passaggio precedente)
+* **Domande**: Aggiungi una o più domande, ciascuna con:
+  * Un **nome** — utilizzato per leggere la risposta a valle (ad esempio, `{{stepId.answers.<name>}}`)
+  * Un **tipo**: `boolean`, `choice` o `score`
+  * **Istruzioni** per il modello
+  * **Criteri** — le possibili scelte o i livelli di punteggio dal più basso al più alto (non necessario per `boolean`)
+
+**Output**: La risposta a ciascuna domanda, indicizzata in base al relativo nome, oltre al modello utilizzato.
+
+<PageBanner illustration="workflows" />

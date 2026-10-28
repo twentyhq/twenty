@@ -1,0 +1,63 @@
+---
+title: موفر الاتجاه
+description: نسّق تفاعلات لوحة المفاتيح والمؤشر الاتجاهية مع اتجاه المستند.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import DirectionProviderReference from '/snippets/ui/generated/layout/direction-provider.mdx';
+
+## نظرة عامة
+
+يوفر `DirectionProvider` الاتجاه `ltr` أو `rtl` لعناصر التحكم في Twenty UI. لا يعرض عنصر DOM ولا يضبط سمة HTML `dir`. اضبط كلاً من اتجاه الموفّر واتجاه المستند المطابق.
+
+<StoryEmbed storyId="ui-layout-directionprovider--display" title="مثال على DirectionProvider" height={160} />
+
+## استخدام
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/components/input';
+import { DirectionProvider } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type DirectionalChoicesProps = { direction: 'ltr' | 'rtl' };
+
+export const DirectionalChoices = ({ direction }: DirectionalChoicesProps) => (
+  <DirectionProvider direction={direction}>
+    <Text dir={direction}>
+      <SegmentedControl
+        aria-label="Billing period"
+        defaultValue="annual"
+        options={[
+          { label: 'Annual', value: 'annual' },
+          { label: 'Monthly', value: 'monthly' },
+        ]}
+      />
+    </Text>
+  </DirectionProvider>
+);
+```
+
+يوفر التطبيق المضيف التسميات المترجمة ويختار الاتجاه. يؤثر سياق الاتجاه في التفاعلات الاتجاهية؛ بينما تتولى سمة HTML معالجة النص والتخطيط. على سبيل المثال، يعكس [SegmentedControl](/ar/ui/components/input/segmented-control) التنقل الأفقي باستخدام مفاتيح الأسهم، ويعكس [ResizeHandle](/ar/ui/primitives/layout/resize-handle) تغيير الحجم الأفقي.
+
+## النطاق والحالة
+
+ضع موفّرًا واحدًا حول عناصر التحكم التي تشترك في اتجاه واحد. يمكن للموفّرات المتداخلة تجاوز الاتجاه لشجرة فرعية؛ أقرن كل تجاوز بسمة `dir` مطابقة. تملك التطبيق `direction` وقيمته الافتراضية هي `ltr`، بما يتوافق مع Base UI. العناصر الفرعية اختيارية. استورد `DirectionProviderProps` من نقطة الإدخال نفسها. ليس للموفّر هدف DOM أو خصائص أصلية أو ref. لا يترجم الموفّر المحتوى ولا يختار الاتجاه من الإعدادات المحلية تلقائيًا.
+
+## البوابات والتخطيط
+
+تنقل بوابات Dropdown وPopover وTooltip وSelect وDialog وToast اتجاه الموفر حتى عندما تكون حاويتها خارج العنصر الذي يحتوي على `dir`. من دون موفّر، ترث اتجاه حاويتها. حافظ على اتساق اتجاه الموفّر واتجاه HTML للمشغّل. يظل `ThemeProvider` ذو النطاق المحدد مسؤولًا عن حاوية البوابة الافتراضية.
+
+تفتح القوائم الفرعية باتجاه `inline-end`. يفتح ArrowRight قائمة فرعية في LTR؛ ويفتح ArrowLeft قائمة فرعية في RTL. يعيد المفتاح المقابل إلى العنصر الأصل. لا يزال تحديد موضع النافذة المنبثقة الصريح باستخدام `left` و`right` يشير إلى الجانبين الماديين. يمكن لمعالجة التصادم نقل نافذة منبثقة عندما تكون المساحة محدودة.
+
+يتبع النص والمسافة البادئة وزوايا الأزرار المرفقة وأيقونات الإفصاح الاتجاهية اتجاه القراءة. تحتفظ الأيقونات الموفّرة باتجاهها. لا تزال `AvatarGroup.overlap` تسمّي حافة مادية؛ ولا تمتد الصورة الرمزية الخارجية إلى ما بعد تلك الحافة في أي من الاتجاهين.
+
+<StoryEmbed storyId="ui-layout-directionprovider--reading-directions" title="تخطيطات من اليسار إلى اليمين ومن اليمين إلى اليسار" height={1260} />
+
+## الإزاحة
+
+<DirectionProviderReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

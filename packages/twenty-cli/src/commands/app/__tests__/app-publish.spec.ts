@@ -84,7 +84,7 @@ if (process.env.PUBLISH_TEST_HANG === args[0]) {
   const destination = args[args.indexOf('--pack-destination') + 1];
   const filename = 'test-billing-1.2.3.tgz';
   fs.writeFileSync(path.join(destination, filename), 'packed bytes');
-  const files = ['package.json', 'manifest.json', 'src/main.mjs'].filter(file => file !== process.env.PUBLISH_TEST_OMIT);
+  const files = ['package.json', 'manifest.json', 'src/main.mjs', 'dependencies/yarn.lock'].filter(file => file !== process.env.PUBLISH_TEST_OMIT);
   console.log(JSON.stringify([{ name: '@test/billing', version: '1.2.3', filename, files: files.map(path => ({ path })) }]));
 } else {
   console.log('npm output must not corrupt the CLI JSON');
