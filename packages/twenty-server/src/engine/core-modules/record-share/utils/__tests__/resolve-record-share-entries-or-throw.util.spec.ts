@@ -8,21 +8,18 @@ import {
 
 import { RecordShareExceptionCode } from 'src/engine/core-modules/record-share/record-share.exception';
 import { resolveRecordShareEntriesOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-record-share-entries-or-throw.util';
-import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 
 const WORKSPACE_MEMBER_ID = '20202020-0000-4000-8000-000000000001';
 const ROLE_ID = '20202020-0000-4000-8000-000000000002';
 const UNKNOWN_ID = '20202020-0000-4000-8000-000000000009';
 
 const flatWorkspaceMemberMaps = {
-  byId: { [WORKSPACE_MEMBER_ID]: { id: WORKSPACE_MEMBER_ID } },
-  idByUserId: {},
-} as unknown as FlatWorkspaceMemberMaps;
+  byId: { [WORKSPACE_MEMBER_ID]: { deletedAt: null } },
+};
 
 const flatRoleMaps = {
   universalIdentifierById: { [ROLE_ID]: 'role-universal-identifier' },
-} as unknown as FlatRoleMaps;
+};
 
 const resolve = (
   shareWith: Parameters<
