@@ -23,6 +23,12 @@ type RecordReference = {
   recordId: string;
 };
 
+type ThreadRecordLinkArgs = RecordReference & {
+  workspaceId: string;
+  threadId: string;
+  authContext: WorkspaceAuthContext;
+};
+
 @Injectable()
 export class AgentChatThreadTargetService {
   constructor(
@@ -30,18 +36,14 @@ export class AgentChatThreadTargetService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // chat turns run in a queue worker, so the sender's context is passed to write the link as them
+  // chat turns run in a queue worker, so the sender's context is passed to check the record as them
   async attachThreadToRecord({
     workspaceId,
     threadId,
     objectNameSingular,
     recordId,
     authContext,
-  }: RecordReference & {
-    workspaceId: string;
-    threadId: string;
-    authContext: WorkspaceAuthContext;
-  }): Promise<void> {
+  }: ThreadRecordLinkArgs): Promise<void> {
     const joinColumnName = await this.resolveJoinColumnNameOrThrow({
       workspaceId,
       objectNameSingular,
@@ -55,10 +57,7 @@ export class AgentChatThreadTargetService {
       });
 
       const link = { threadId, [joinColumnName]: recordId };
-      const repository =
-        this.workspaceOrmManager.getRepositoryWithContextPermissions(
-          AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
-        );
+      const repository = this.getThreadTargetRepository();
 
       // only standard legs have a unique index, so custom-object links are deduplicated by lookup
       if (await repository.existsBy(link)) {
@@ -67,6 +66,33 @@ export class AgentChatThreadTargetService {
 
       await repository.insert(link, { onConflictDoNothing: true });
     }, authContext);
+  }
+
+  async detachThreadFromRecord({
+    workspaceId,
+    threadId,
+    objectNameSingular,
+    recordId,
+    authContext,
+  }: ThreadRecordLinkArgs): Promise<void> {
+    const joinColumnName = await this.resolveJoinColumnNameOrThrow({
+      workspaceId,
+      objectNameSingular,
+    });
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.getThreadTargetRepository().softDelete({
+        threadId,
+        [joinColumnName]: recordId,
+      });
+    }, authContext);
+  }
+
+  private getThreadTargetRepository() {
+    return this.workspaceOrmManager.getRepository(
+      AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
+      { shouldBypassPermissionChecks: true },
+    );
   }
 
   private async assertRecordIsReadableOrThrow({

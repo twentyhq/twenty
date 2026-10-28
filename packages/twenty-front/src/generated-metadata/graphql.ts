@@ -2767,6 +2767,12 @@ export type Impersonate = {
   workspace: WorkspaceUrlsAndId;
 };
 
+export type InboxThreadRecordInput = {
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID']['input'];
+};
+
 export type Index = {
   __typename?: 'Index';
   createdAt: Scalars['DateTime']['output'];
@@ -3382,6 +3388,7 @@ export type Mutation = {
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
+  attachRecordToInboxThread: Scalars['Boolean']['output'];
   authorizeApp: AuthorizeApp;
   cancelMessageCampaign: CancelMessageCampaignOutputDto;
   cancelSwitchBillingInterval: BillingUpdate;
@@ -3498,6 +3505,7 @@ export type Mutation = {
   destroyViewFilterGroup: Scalars['Boolean']['output'];
   destroyViewGroup: ViewGroup;
   destroyViewSort: Scalars['Boolean']['output'];
+  detachRecordFromInboxThread: Scalars['Boolean']['output'];
   disconnectConnectedAccount: ConnectedAccountPublicDto;
   duplicateDashboard: DuplicatedDashboard;
   duplicateMessageList: DuplicatedMessageList;
@@ -3570,6 +3578,7 @@ export type Mutation = {
   setRecordGeneralAccess: RecordSharingDto;
   setRecordShare: RecordSharingDto;
   setResourceCreditSubscriptionPrice: BillingUpdate;
+  shareInboxThread: Scalars['Boolean']['output'];
   signIn: AvailableWorkspacesAndAccessTokens;
   signOut: Scalars['Boolean']['output'];
   signUp: AvailableWorkspacesAndAccessTokens;
@@ -3711,6 +3720,11 @@ export type MutationAssignRoleToAgentArgs = {
 export type MutationAssignRoleToApiKeyArgs = {
   apiKeyId: Scalars['UUID']['input'];
   roleId: Scalars['UUID']['input'];
+};
+
+
+export type MutationAttachRecordToInboxThreadArgs = {
+  input: InboxThreadRecordInput;
 };
 
 
@@ -4288,6 +4302,11 @@ export type MutationDestroyViewSortArgs = {
 };
 
 
+export type MutationDetachRecordFromInboxThreadArgs = {
+  input: InboxThreadRecordInput;
+};
+
+
 export type MutationDisconnectConnectedAccountArgs = {
   id: Scalars['UUID']['input'];
 };
@@ -4629,6 +4648,11 @@ export type MutationSetRecordShareArgs = {
 
 export type MutationSetResourceCreditSubscriptionPriceArgs = {
   priceId: Scalars['String']['input'];
+};
+
+
+export type MutationShareInboxThreadArgs = {
+  input: ShareInboxThreadInput;
 };
 
 
@@ -6427,6 +6451,13 @@ export enum RecordShareAccessLevel {
   READ_WRITE = 'READ_WRITE'
 }
 
+export type RecordShareGrantInput = {
+  accessLevel: RecordShareAccessLevel;
+  everyone?: InputMaybe<Scalars['Boolean']['input']>;
+  roleId?: InputMaybe<Scalars['UUID']['input']>;
+  workspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
 export type RecordSharePrincipalInput = {
   roleId?: InputMaybe<Scalars['UUID']['input']>;
   workspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
@@ -6883,6 +6914,11 @@ export type SetupSso = {
   name: Scalars['String']['output'];
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
+};
+
+export type ShareInboxThreadInput = {
+  grants: Array<RecordShareGrantInput>;
+  threadId: Scalars['UUID']['input'];
 };
 
 export type SignUp = {

@@ -41,6 +41,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.INVALID_CHAT_CHANNEL_ROLE:
       case AiExceptionCode.INVALID_CHAT_CHANNEL_DESTINATION:
       case AiExceptionCode.INVALID_CHAT_CHANNEL_THREAD_CURSOR:
+      case AiExceptionCode.CHAT_THREAD_GRANTEE_CANNOT_USE_CHATS:
         throw new UserInputError(error);
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
       case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:

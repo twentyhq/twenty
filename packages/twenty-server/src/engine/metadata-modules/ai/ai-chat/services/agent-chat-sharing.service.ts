@@ -83,6 +83,10 @@ export class AgentChatSharingService {
     ).id;
   }
 
+  async getThreadObjectMetadataId(workspaceId: string): Promise<string> {
+    return (await this.getThreadObjectMetadata(workspaceId)).id;
+  }
+
   getReadableThread(args: AgentChatThreadAccessArgs) {
     return this.getThreadWithAccess({ ...args, operationType: 'select' });
   }

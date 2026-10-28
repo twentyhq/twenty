@@ -2607,6 +2607,12 @@ type Impersonate {
   workspace: WorkspaceUrlsAndId!
 }
 
+input InboxThreadRecordInput {
+  objectNameSingular: String!
+  recordId: UUID!
+  threadId: UUID!
+}
+
 type Index {
   createdAt: DateTime!
   id: UUID!
@@ -3200,6 +3206,7 @@ type Mutation {
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
+  attachRecordToInboxThread(input: InboxThreadRecordInput!): Boolean!
   authorizeApp(clientId: String!, codeChallenge: String, issuer: String, redirectUrl: String!, scope: String, state: String): AuthorizeApp!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   cancelSwitchBillingInterval: BillingUpdate!
@@ -3316,6 +3323,7 @@ type Mutation {
   destroyViewFilterGroup(id: String!): Boolean!
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
   destroyViewSort(input: DestroyViewSortInput!): Boolean!
+  detachRecordFromInboxThread(input: InboxThreadRecordInput!): Boolean!
   disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   duplicateDashboard(id: UUID!): DuplicatedDashboard!
   duplicateMessageList(id: UUID!): DuplicatedMessageList!
@@ -3386,6 +3394,7 @@ type Mutation {
   setRecordGeneralAccess(accessLevel: RecordShareAccessLevel!, target: RecordTargetInput!): RecordSharingDTO!
   setRecordShare(accessLevel: RecordShareAccessLevel!, principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
+  shareInboxThread(input: ShareInboxThreadInput!): Boolean!
   signIn(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signOut(refreshToken: String): Boolean!
   signUp(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
@@ -4209,6 +4218,13 @@ enum RecordShareAccessLevel {
   READ_WRITE
 }
 
+input RecordShareGrantInput {
+  accessLevel: RecordShareAccessLevel!
+  everyone: Boolean
+  roleId: UUID
+  workspaceMemberId: UUID
+}
+
 input RecordSharePrincipalInput {
   roleId: UUID
   workspaceMemberId: UUID
@@ -4642,6 +4658,11 @@ type SetupSso {
   name: String!
   status: SSOIdentityProviderStatus!
   type: IdentityProviderType!
+}
+
+input ShareInboxThreadInput {
+  grants: [RecordShareGrantInput!]!
+  threadId: UUID!
 }
 
 type SignUp {

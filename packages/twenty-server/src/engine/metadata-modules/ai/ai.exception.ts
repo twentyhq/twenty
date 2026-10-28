@@ -46,6 +46,7 @@ export enum AiExceptionCode {
   INVALID_EVALUATION_REQUEST = 'INVALID_EVALUATION_REQUEST',
   TOOL_CALL_RESOLUTION_FORBIDDEN = 'TOOL_CALL_RESOLUTION_FORBIDDEN',
   THREAD_AWAITING_ANSWER = 'THREAD_AWAITING_ANSWER',
+  CHAT_THREAD_GRANTEE_CANNOT_USE_CHATS = 'CHAT_THREAD_GRANTEE_CANNOT_USE_CHATS',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -132,6 +133,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`You are not allowed to answer this request.`;
     case AiExceptionCode.THREAD_AWAITING_ANSWER:
       return msg`This conversation is waiting on an earlier request. Send your message once it is answered or done.`;
+    case AiExceptionCode.CHAT_THREAD_GRANTEE_CANNOT_USE_CHATS:
+      return msg`This member can't use chats, so this chat can't be shared with them.`;
     default:
       assertUnreachable(code);
   }
