@@ -48,8 +48,6 @@ import {
 } from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
 import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-role-filter.util';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
-import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
-import { getFlatFieldMetadatasWithDisabledActionsByObjectId } from 'src/engine/twenty-orm/utils/get-flat-field-metadatas-with-disabled-actions-by-object-id.util';
 import { isObjectOperationDisabled } from 'src/engine/twenty-orm/utils/is-object-operation-disabled.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -1716,16 +1714,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    const fieldWithDisabledUpdate =
-      this.findUpdatedFieldWithDisabledUpdate(updatedColumns);
-
-    if (isDefined(fieldWithDisabledUpdate)) {
-      throw new PermissionsException(
-        `${PermissionsExceptionMessage.PERMISSION_DENIED}: field "${fieldWithDisabledUpdate.name}" on "${this.options.flatObjectMetadata.nameSingular}" is not writable through the API`,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
-
     validateOperationIsPermittedOrThrow({
       entityName: this.options.tableShape.nameSingular,
       operationType,
@@ -2251,45 +2239,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         operationType,
       }) &&
       !subject.isOwningApplication(this.options.flatObjectMetadata)
-    );
-  }
-
-  // Role permissions exempt any role of the owning application, Admin included; writes only exempt that application itself
-  private findUpdatedFieldWithDisabledUpdate(updatedColumns: string[]) {
-    if (this.options.authContext?.type === 'system') {
-      return undefined;
-    }
-
-    const { flatFieldMetadataMaps } = this.options.internalContext;
-    const fieldsWithDisabledUpdate = (
-      getFlatFieldMetadatasWithDisabledActionsByObjectId(
-        flatFieldMetadataMaps,
-      ).get(this.options.flatObjectMetadata.id) ?? []
-    ).filter(
-      (flatFieldMetadata) =>
-        flatFieldMetadata.disabledFieldPermissionActions?.includes(
-          'canUpdateFieldValue',
-        ) &&
-        !isOwningApplicationAuthContext({
-          authContext: this.options.authContext,
-          owningApplicationId: flatFieldMetadata.applicationId,
-        }),
-    );
-
-    if (fieldsWithDisabledUpdate.length === 0) {
-      return undefined;
-    }
-
-    const columnNameToFieldMetadataIdMap = getColumnNameToFieldMetadataIdMap(
-      this.options.flatObjectMetadata,
-      flatFieldMetadataMaps,
-    );
-
-    return fieldsWithDisabledUpdate.find((flatFieldMetadata) =>
-      updatedColumns.some(
-        (column) =>
-          columnNameToFieldMetadataIdMap[column] === flatFieldMetadata.id,
-      ),
     );
   }
 

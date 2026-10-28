@@ -187,6 +187,16 @@ const buildApplicationPreferences = () => [
   buildLinearApplicationPreferences(),
 ];
 
+export const stopApplicationForNextRequest = () => {
+  getWorker().use(
+    graphql.query(
+      'IsApplicationStopped',
+      () => HttpResponse.json({ data: { isApplicationStopped: true } }),
+      { once: true },
+    ),
+  );
+};
+
 export const failNextApplicationPreferencesRequest = () => {
   getWorker().use(
     graphql.query(
@@ -258,6 +268,14 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
         errors: [{ message: 'Forbidden', extensions: { code: 'FORBIDDEN' } }],
       });
     }),
+  ),
+  graphql.query('FindMarketplaceAppDetail', () =>
+    HttpResponse.json({
+      errors: [{ message: 'Not listed', extensions: { code: 'NOT_FOUND' } }],
+    }),
+  ),
+  graphql.query('IsApplicationStopped', () =>
+    HttpResponse.json({ data: { isApplicationStopped: false } }),
   ),
   ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
 ];

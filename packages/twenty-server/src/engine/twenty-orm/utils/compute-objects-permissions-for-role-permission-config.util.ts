@@ -47,6 +47,18 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
   const applicationIdByDefaultRoleId =
     buildApplicationIdByDefaultRoleId(flatApplicationMaps);
 
+  const { applicationRoleId, ...nonApplicationRoleIdsBySource } =
+    intersectionOf;
+  const nonApplicationRoleIds = new Set(
+    Object.values(nonApplicationRoleIdsBySource).filter(isDefined),
+  );
+
+  // TODO(@charlesBochet): members hold Admin, the Standard app's default role (#28667); simplify once they no longer do
+  const getActingApplicationId = (roleId: string) =>
+    roleId === applicationRoleId && !nonApplicationRoleIds.has(roleId)
+      ? applicationIdByDefaultRoleId[roleId]
+      : undefined;
+
   const permissionsPerRole = roleIds.map((roleId) => {
     const rolePermissions = rolesPermissions[roleId];
 
@@ -55,7 +67,7 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
           objectsPermissions: rolePermissions,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
-          actingApplicationId: applicationIdByDefaultRoleId[roleId],
+          actingApplicationId: getActingApplicationId(roleId),
         })
       : undefined;
   });
