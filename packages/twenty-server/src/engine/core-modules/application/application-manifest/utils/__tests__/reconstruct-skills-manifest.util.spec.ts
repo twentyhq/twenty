@@ -15,8 +15,6 @@ const DEACTIVATED_SKILL_UNIVERSAL_IDENTIFIER =
   '20000000-0000-4000-8000-000000000002';
 const SYSTEM_SKILL_UNIVERSAL_IDENTIFIER =
   '20000000-0000-4000-8000-000000000003';
-const WORKSPACE_SKILL_UNIVERSAL_IDENTIFIER =
-  '20000000-0000-4000-8000-000000000004';
 
 const buildSkillManifest = (universalIdentifier: string): SkillManifest => ({
   universalIdentifier,
@@ -49,9 +47,6 @@ const { skills, coverage } = reconstructSkillsManifest({
           isActive: false,
         }),
         buildFlatSkill(SYSTEM_SKILL_UNIVERSAL_IDENTIFIER, { isSystem: true }),
-        buildFlatSkill(WORKSPACE_SKILL_UNIVERSAL_IDENTIFIER, {
-          isCustom: true,
-        }),
       ],
       flatEntityMaps: createEmptyAllFlatEntityMaps().flatSkillMaps,
     }),
@@ -71,7 +66,6 @@ describe('reconstructSkillsManifest', () => {
   });
 
   it.each([
-    [WORKSPACE_SKILL_UNIVERSAL_IDENTIFIER, 'skill created in the workspace'],
     [
       DEACTIVATED_SKILL_UNIVERSAL_IDENTIFIER,
       'skill deactivated in this workspace',
