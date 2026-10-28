@@ -8,6 +8,7 @@ import { createPostSyncFailure } from '@/app/deployment/create-post-sync-failure
 import { formatApplySummary } from '@/app/deployment/format-apply-summary';
 import { generateAppClient } from '@/app/generate-app-client';
 import { getAppPlanSummary } from '@/app/deployment/get-app-plan-summary';
+import { readInferDeletionOption } from '@/app/deployment/read-infer-deletion-option';
 import { getClientGenerationSkipReason } from '@/app/get-client-generation-skip-reason';
 import { collectSourceFingerprints } from '@/app/pull/collect-source-fingerprints';
 import { type PullBaseRecording, recordPullBase } from '@/app/record-pull-base';
@@ -25,7 +26,7 @@ export const runAppApplyCommand: CommandRun<TargetCommandContext> = async (
   context,
 ) => {
   const startedAt = performance.now();
-  const inferDeletionFromMissingEntities = context.options.delete !== false;
+  const inferDeletionFromMissingEntities = readInferDeletionOption(context);
   let applyResult: AppApplyResult | undefined;
   const appProject = await resolveAppProject({
     explicitPath: readStringOption(context.options, 'path'),
@@ -140,7 +141,8 @@ export const runAppApplyCommand: CommandRun<TargetCommandContext> = async (
       sdk: { version: sdk.version },
       application: build.application,
       contentHash: build.contentHash,
-      inferDeletionFromMissingEntities,
+      inferDeletionFromMissingEntities:
+        inferDeletionFromMissingEntities ?? null,
       registrationCreated: applyResult.isRegistrationCreated,
       completedPhases: applyResult.completedPhases,
       actions: applyResult.appliedActions ?? null,

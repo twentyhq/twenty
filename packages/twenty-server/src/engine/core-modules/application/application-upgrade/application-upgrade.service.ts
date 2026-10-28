@@ -24,6 +24,8 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -351,8 +353,11 @@ export class ApplicationUpgradeService {
         throw error;
       }
 
+      // The message is all the CLI, the front and the job's failedReason show
       throw new ApplicationException(
-        `Upgrade failed for ${appName}`,
+        error instanceof WorkspaceMigrationBuilderException
+          ? `Upgrade failed for ${appName}. ${formatValidationErrors(error)}`
+          : `Upgrade failed for ${appName}`,
         ApplicationExceptionCode.UPGRADE_FAILED,
       );
     }

@@ -165,7 +165,7 @@ export class ApplicationManifestExportService {
         allFlatEntityMaps,
         exportedObjectUniversalIdentifiers,
         resolvableFieldUniversalIdentifiers,
-        canReferenceOtherApplicationsWorkflowActions:
+        isWorkspaceCustomApplication:
           flatApplication.id === workspaceCustomFlatApplication.id,
         connectedAccounts,
       });

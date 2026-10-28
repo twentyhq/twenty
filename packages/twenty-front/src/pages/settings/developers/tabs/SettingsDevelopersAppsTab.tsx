@@ -5,8 +5,6 @@ import { TWENTY_CLI_LOGIN_COMMAND } from '@/settings/developers/constants/Twenty
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { Table } from '@/ui/layout/table/components/Table';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -26,10 +24,8 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import {
-  APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
-  SettingsApplicationTableRow,
-} from '~/pages/settings/applications/components/SettingsApplicationTableRow';
+import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
+import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
 import { SettingsClaimApplicationSection } from '~/pages/settings/applications/components/SettingsClaimApplicationSection';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
@@ -132,14 +128,7 @@ export const SettingsDevelopersAppsTab = () => {
             />
           </StyledSearchInputContainer>
           <Table>
-            <TableRow
-              gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-            >
-              <TableHeader>{t`Name`}</TableHeader>
-              <TableHeader>{t`Type`}</TableHeader>
-              <TableHeader>{''}</TableHeader>
-              <TableHeader />
-            </TableRow>
+            <SettingsApplicationTableHeaderRow middleColumn="type" />
             <StyledTableRowsContainer>
               {registrations.map((registration) => {
                 return (

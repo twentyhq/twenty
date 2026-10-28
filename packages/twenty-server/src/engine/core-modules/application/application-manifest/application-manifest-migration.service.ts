@@ -251,8 +251,7 @@ export class ApplicationManifestMigrationService {
       toAllUniversalFlatEntityMaps,
       existingAllFlatEntityMaps,
       idByUniversalIdentifierByMetadataName,
-      // Its workflows run as workspace workflows, which may already call any app's actions
-      canReferenceOtherApplicationsWorkflowActions:
+      isWorkspaceCustomApplication:
         ownerFlatApplication.id === workspaceCustomFlatApplication?.id,
       connectedAccounts,
       now,

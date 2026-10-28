@@ -5,7 +5,7 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
 import { BUILT_IN_ACCOUNT_APPS } from '@/settings/app-preferences/constants/BuiltInAccountApps';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
-import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
+import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const STANDARD_APPLICATION: ApplicationWithoutRelation = {
@@ -41,12 +41,15 @@ const getRowLinks = (canvasElement: HTMLElement) =>
     .map((link) => link.getAttribute('href'));
 
 const meta: Meta<typeof SettingsApplicationsTable> = {
-  title: 'Pages/Settings/Applications/SettingsApplicationsTable',
+  title: 'Modules/Settings/Applications/SettingsApplicationsTable',
   component: SettingsApplicationsTable,
   decorators: [ComponentWithRouterDecorator],
   args: {
+    title: 'Installed apps',
+    description: 'All the applications currently installed on this workspace',
     applications: [OAUTH_APPLICATION, NPM_APPLICATION, STANDARD_APPLICATION],
     builtInAccountApps: BUILT_IN_ACCOUNT_APPS,
+    variant: 'workspace',
   },
 };
 
@@ -112,5 +115,24 @@ export const KeepsExistingOrderWithoutBuiltInAccountApps: Story = {
       '/settings/applications/standard-application-id',
       '/settings/applications/oauth-application-id',
     ]);
+  },
+};
+
+export const HidesTheDescriptionOnMobile: Story = {
+  parameters: {
+    viewport: { defaultViewport: 'mobile1' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Acme Sync')).toBeVisible();
+    expect(canvas.getByText('Name')).toBeVisible();
+    expect(canvas.queryByText('Description')).not.toBeInTheDocument();
+
+    const acmeRow = canvas.getByRole('link', { name: /Acme Sync/ });
+
+    expect(acmeRow).toHaveTextContent('NPM');
+    expect(acmeRow).not.toHaveTextContent('Keeps Acme in sync');
+    expect(acmeRow.scrollWidth).toBeLessThanOrEqual(acmeRow.clientWidth);
   },
 };

@@ -8,8 +8,11 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+  CONNECTED_ACCOUNTS,
   FATHOM_APPLICATION_ID,
   GRANOLA_APPLICATION_ID,
+  MY_USER_WORKSPACE_ID,
+  buildConnectedAccount,
   myApplicationPreferencesRequested,
   seedAccountGroupsStory,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
@@ -97,6 +100,23 @@ const FATHOM_CONNECTION_PROVIDER = {
     isClientCredentialsConfigured: true,
   },
 };
+
+const GRANOLA_CONNECTION_PROVIDER = {
+  ...FATHOM_CONNECTION_PROVIDER,
+  id: '20202020-1a2b-4c3d-8e4f-000000000073',
+  applicationId: GRANOLA_APPLICATION_ID,
+  name: 'granola',
+  displayName: 'Granola',
+};
+
+const GRANOLA_PERSONAL_ACCOUNT = buildConnectedAccount({
+  id: '20202020-1a2b-4c3d-8e4f-000000000019',
+  handle: 'tim@granola.so',
+  provider: 'app',
+  userWorkspaceId: MY_USER_WORKSPACE_ID,
+  applicationId: GRANOLA_APPLICATION_ID,
+  connectionProviderId: GRANOLA_CONNECTION_PROVIDER.id,
+});
 
 const SAVED_PERSONAL_API_KEY = 'sk-1abcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -278,6 +298,41 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
     HttpResponse.json({ data: { isApplicationStopped: false } }),
   ),
   ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+];
+
+const withGranolaConnectionProvider = (
+  applicationPreferences: ReturnType<
+    typeof buildApplicationPreferences
+  >[number],
+) => {
+  if (applicationPreferences.applicationId !== GRANOLA_APPLICATION_ID) {
+    return applicationPreferences;
+  }
+
+  return {
+    ...applicationPreferences,
+    connectionProviders: [GRANOLA_CONNECTION_PROVIDER],
+  };
+};
+
+export const CONNECTED_GRANOLA_GRAPHQL_HANDLERS = [
+  graphql.query('MyApplicationPreferences', () =>
+    HttpResponse.json({
+      data: {
+        myApplicationPreferences: buildApplicationPreferences().map(
+          withGranolaConnectionProvider,
+        ),
+      },
+    }),
+  ),
+  graphql.query('MyConnectedAccounts', () =>
+    HttpResponse.json({
+      data: {
+        myConnectedAccounts: [...CONNECTED_ACCOUNTS, GRANOLA_PERSONAL_ACCOUNT],
+      },
+    }),
+  ),
+  ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
 ];
 
 export const APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS = [
