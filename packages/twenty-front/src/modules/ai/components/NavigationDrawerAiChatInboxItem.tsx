@@ -13,7 +13,6 @@ import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFil
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -30,7 +29,6 @@ type NavigationDrawerAiChatInboxItemProps = {
   count?: number;
   isCountUrgent?: boolean;
   isUnread?: boolean;
-  subItemState?: NavigationDrawerSubItemState;
 };
 
 export const NavigationDrawerAiChatInboxItem = ({
@@ -38,7 +36,6 @@ export const NavigationDrawerAiChatInboxItem = ({
   count,
   isCountUrgent = false,
   isUnread,
-  subItemState,
 }: NavigationDrawerAiChatInboxItemProps) => {
   const { t } = useLingui();
   const location = useLocation();
@@ -67,8 +64,6 @@ export const NavigationDrawerAiChatInboxItem = ({
         !isChannelShown &&
         agentChatThreadFilterStatus === filterStatus
       }
-      indentationLevel={isDefined(subItemState) ? 2 : undefined}
-      subItemState={subItemState}
       onClick={handleClick}
       triggerEvent="CLICK"
       rightOptions={
