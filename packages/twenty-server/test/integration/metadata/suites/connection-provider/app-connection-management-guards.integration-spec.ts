@@ -315,7 +315,7 @@ describe('app connection management guards (e2e)', () => {
         expectToFail: false,
         input: {
           roleId: applicationsOnlyRoleId,
-          permissionFlagKeys: [PermissionFlagType.APPLICATIONS],
+          permissionFlagKeys: [PermissionFlagType.WORKSPACE_APPS],
         },
       });
 

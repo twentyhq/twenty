@@ -33,7 +33,7 @@ export const APP_DEV_COMMAND_DEFINITION: TargetCommandDefinition = {
   writes: true,
   needsProject: true,
   needsTarget: true,
-  requiredPermissions: ['APPLICATIONS', 'UPLOAD_FILE'],
+  requiredPermissions: ['WORKSPACE_APPS', 'UPLOAD_FILE'],
   load: async () =>
     (await import('@/commands/app/dev/run-app-dev-command')).runAppDevCommand,
 };

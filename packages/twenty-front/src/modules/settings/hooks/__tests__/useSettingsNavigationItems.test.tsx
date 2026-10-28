@@ -119,7 +119,7 @@ describe('useSettingsNavigationItems', () => {
       PermissionFlagType.API_KEYS_AND_WEBHOOKS,
       PermissionFlagType.ROLES,
       PermissionFlagType.SECURITY,
-      PermissionFlagType.CONNECTED_ACCOUNTS,
+      PermissionFlagType.USER_APPS,
     ]);
 
     const { result } = renderHook(() => useSettingsNavigationItems(), {
@@ -141,7 +141,7 @@ describe('useSettingsNavigationItems', () => {
       PermissionFlagType.API_KEYS_AND_WEBHOOKS,
       PermissionFlagType.ROLES,
       PermissionFlagType.SECURITY,
-      PermissionFlagType.CONNECTED_ACCOUNTS,
+      PermissionFlagType.USER_APPS,
     ]);
 
     const { result } = renderHook(() => useSettingsNavigationItems(), {
@@ -169,7 +169,7 @@ describe('useSettingsNavigationItems', () => {
       PermissionFlagType.API_KEYS_AND_WEBHOOKS,
       PermissionFlagType.ROLES,
       PermissionFlagType.SECURITY,
-      PermissionFlagType.CONNECTED_ACCOUNTS,
+      PermissionFlagType.USER_APPS,
     ]);
 
     const { result } = renderHook(() => useSettingsNavigationItems(), {
@@ -207,7 +207,7 @@ describe('useSettingsNavigationItems', () => {
   });
 
   it('should show Accounts with Emails and Calendars when app preferences are off', () => {
-    setPermissionFlags([PermissionFlagType.CONNECTED_ACCOUNTS]);
+    setPermissionFlags([PermissionFlagType.USER_APPS]);
 
     const accountsItem = getAccountsItem();
 
@@ -220,7 +220,7 @@ describe('useSettingsNavigationItems', () => {
   });
 
   it('should show Apps preferences without sub-items when app preferences are on', () => {
-    setPermissionFlags([PermissionFlagType.CONNECTED_ACCOUNTS]);
+    setPermissionFlags([PermissionFlagType.USER_APPS]);
     jotaiStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
       featureFlags: [

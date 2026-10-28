@@ -75,6 +75,7 @@ export const buildPullEntities = (
     string,
     ScannedSourceFile
   > = new Map(),
+  roleEnumBindings: EnumBinding[] = ROLE_ENUM_BINDINGS,
 ): { entities: PullEntity[]; skipped: SkippedPullEntity[] } => {
   const applicationUniversalIdentifier =
     manifest.application.universalIdentifier;
@@ -228,7 +229,7 @@ export const buildPullEntities = (
         roleManifest,
         applicationUniversalIdentifier,
       }),
-      enumBindings: ROLE_ENUM_BINDINGS,
+      enumBindings: roleEnumBindings,
       defaultFolder: 'src/roles',
       fileSuffix: '.role.ts',
       fileBaseName: toFileBaseName({

@@ -93,7 +93,7 @@ export class TimelineActivityTypeResolver {
   }
 
   @Mutation(() => TimelineActivityTypeDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS))
   async updateTimelineActivityType(
     @Args('input') input: UpdateTimelineActivityTypeInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -105,7 +105,7 @@ export class TimelineActivityTypeResolver {
   }
 
   @Mutation(() => TimelineActivityTypeDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS))
   async resetTimelineActivityType(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

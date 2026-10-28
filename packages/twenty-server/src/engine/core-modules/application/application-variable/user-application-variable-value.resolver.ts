@@ -59,7 +59,7 @@ export class UserApplicationVariableValueResolver {
       oauthClient: false,
       application: { withUser: true, withoutUser: false },
     }),
-    SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS),
+    SettingsPermissionGuard(PermissionFlagType.USER_APPS),
     ApplicationTargetGuard,
   )
   async updateMyUserApplicationVariable(

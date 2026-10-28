@@ -40,7 +40,7 @@ export const APP_EXEC_COMMAND_DEFINITION: TargetCommandDefinition = {
   writes: true,
   needsProject: true,
   needsTarget: true,
-  requiredPermissions: ['APPLICATIONS', 'WORKFLOWS'],
+  requiredPermissions: ['WORKSPACE_APPS', 'WORKFLOWS'],
   load: async () =>
     (await import('@/commands/app/exec/run-app-exec-command'))
       .runAppExecCommand,

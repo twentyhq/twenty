@@ -47,6 +47,47 @@ describe('defineRole', () => {
     expect(result.config?.permissionFlagUniversalIdentifiers).toHaveLength(2);
   });
 
+  it('should return error when a permission flag is listed twice', () => {
+    const config = {
+      ...validConfig,
+      permissionFlagUniversalIdentifiers: [
+        SystemPermissionFlag.UPLOAD_FILE,
+        SystemPermissionFlag.UPLOAD_FILE,
+      ],
+    };
+
+    const result = defineRole(config);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      `Duplicate permission flag universalIdentifier "${SystemPermissionFlag.UPLOAD_FILE}". Deprecated SystemPermissionFlag names share a universalIdentifier with their replacements, so list each flag once`,
+    );
+  });
+
+  it.each([
+    ['CONNECTED_ACCOUNTS', 'USER_APPS'],
+    ['APPLICATIONS', 'WORKSPACE_APPS'],
+  ] as const)(
+    'should return error when deprecated %s is listed with %s',
+    (deprecatedName, replacementName) => {
+      const config = {
+        ...validConfig,
+        permissionFlagUniversalIdentifiers: [
+          SystemPermissionFlag[replacementName],
+          SystemPermissionFlag[deprecatedName],
+        ],
+      };
+
+      const result = defineRole(config);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0]).toContain(
+        `Duplicate permission flag universalIdentifier "${SystemPermissionFlag[replacementName]}"`,
+      );
+    },
+  );
+
   it('should return error when universalIdentifier is missing', () => {
     const config = {
       label: 'App User',

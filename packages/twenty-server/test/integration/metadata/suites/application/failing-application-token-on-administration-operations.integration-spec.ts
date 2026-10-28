@@ -35,7 +35,7 @@ type TokenTestContext = {
 };
 
 const ADMINISTRATION_PERMISSION_FLAGS = [
-  SystemPermissionFlag.APPLICATIONS,
+  SystemPermissionFlag.WORKSPACE_APPS,
   SystemPermissionFlag.MARKETPLACE_APPS,
   SystemPermissionFlag.UPLOAD_FILE,
   SystemPermissionFlag.API_KEYS_AND_WEBHOOKS,

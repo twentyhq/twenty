@@ -7,6 +7,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag.type';
 import { fromCreateRolePermissionFlagInputToFlatRolePermissionFlagToCreate } from 'src/engine/metadata-modules/flat-role-permission-flag/utils/from-create-role-permission-flag-input-to-flat-role-permission-flag-to-create.util';
+import { resolvePermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/utils/resolve-permission-flag-key.util';
 import { type UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/role-permission-flag/dtos/upsert-permission-flags.input';
 import {
   PermissionsException,
@@ -62,7 +63,10 @@ export class RolePermissionFlagService {
     const permissionFlagByKey = new Map(
       Object.values(flatPermissionFlagMaps.byUniversalIdentifier)
         .filter(isDefined)
-        .map((permissionFlag) => [permissionFlag.key, permissionFlag]),
+        .map((permissionFlag) => [
+          resolvePermissionFlagKey(permissionFlag),
+          permissionFlag,
+        ]),
     );
     const permissionFlagsByInputKey = input.permissionFlagKeys.map((flag) => ({
       flag,

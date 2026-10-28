@@ -11,6 +11,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { generateMessageId } from 'twenty-shared/i18n';
 
 import { collectSourceFingerprints } from '@/app/pull/collect-source-fingerprints';
@@ -1003,6 +1004,36 @@ export default defineField({
     );
     expect(second.writes).toEqual([]);
     expect(await read('src/application.config.ts')).toBe(localApplication);
+  });
+
+  it('writes renamed permission flags with the names the app SDK exports', async () => {
+    const exported = createExport();
+    const data = requireSuccess(
+      await pull({
+        ...exported,
+        manifest: {
+          ...exported.manifest,
+          roles: [
+            {
+              universalIdentifier: OTHER_IDENTIFIER,
+              label: 'Reader',
+              permissionFlagUniversalIdentifiers: [
+                SystemPermissionFlag.USER_APPS,
+                SystemPermissionFlag.WORKSPACE_APPS,
+              ],
+            },
+          ],
+        },
+      }),
+    );
+    const roleWrite = data.writes.find(
+      (write) => write.universalIdentifier === OTHER_IDENTIFIER,
+    );
+
+    expect(roleWrite).toBeDefined();
+    const role = await read(roleWrite?.relativePath ?? '');
+    expect(role).toContain('SystemPermissionFlag.USER_APPS');
+    expect(role).toContain('SystemPermissionFlag.WORKSPACE_APPS');
   });
 
   it('deletes a remotely removed base entity and preserves a local-only definition', async () => {

@@ -34,7 +34,7 @@ const StyledInformationBannerWrapper = styled.div`
 export const InformationBannerWrapper = () => {
   const subscriptionStatus = useSubscriptionStatus();
   const isAccountSyncEnabled = useHasPermissionFlag(
-    PermissionFlagType.CONNECTED_ACCOUNTS,
+    PermissionFlagType.USER_APPS,
   );
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,

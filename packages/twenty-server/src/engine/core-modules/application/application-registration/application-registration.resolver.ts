@@ -547,7 +547,7 @@ export class ApplicationRegistrationResolver {
       oauthClient: true,
       application: true,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
   )
   @Query(() => ClaimableApplicationRegistrationDTO, { nullable: true })
   async findClaimableApplicationRegistration(
@@ -576,7 +576,7 @@ export class ApplicationRegistrationResolver {
       application: false,
     }),
     AdminPanelGuard,
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
   )
   @Mutation(() => ApplicationRegistrationEntity)
   async claimApplicationRegistrationOwnership(
@@ -602,7 +602,7 @@ export class ApplicationRegistrationResolver {
       oauthClient: true,
       application: true,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   @Query(() => String)
@@ -637,7 +637,7 @@ export class ApplicationRegistrationResolver {
       oauthClient: false,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   @Mutation(() => ApplicationRegistrationEntity)

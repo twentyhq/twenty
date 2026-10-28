@@ -10,7 +10,7 @@ export const SystemPermissionFlag = {
   WORKFLOWS: '6189e7bd-4051-5752-b6b1-5f31358fbaf1',
   IMPERSONATE: 'dd2274d1-bbd5-551d-bcf2-3147539cef11',
   SSO_BYPASS: '2e9cfdc0-4669-58ab-b241-b6c3c14d96df',
-  APPLICATIONS: '9faa55f7-2606-566b-9e1d-aefbedbd0136',
+  WORKSPACE_APPS: '9faa55f7-2606-566b-9e1d-aefbedbd0136',
   MARKETPLACE_APPS: '3a37e2f5-d3e4-56d6-b541-adf0237468ff',
   LAYOUTS: '458d1ee5-ba12-5f4e-9d17-6f8c11fcd7fd',
   BILLING: '24b66701-ed97-51e4-aa63-794e1b31414c',
@@ -25,6 +25,6 @@ export const SystemPermissionFlag = {
   CODE_INTERPRETER_TOOL: '11f31c3a-7042-54b7-a2dd-ae31dd9e9fa2',
   IMPORT_CSV: 'c4912536-a4db-5af9-85ac-be2919c24c5e',
   EXPORT_CSV: '88efced9-ca6d-5316-a695-f1b9158e7370',
-  CONNECTED_ACCOUNTS: 'e5f63b2d-5369-5df6-8f32-a8bd9e79e653',
+  USER_APPS: 'e5f63b2d-5369-5df6-8f32-a8bd9e79e653',
   PROFILE_INFORMATION: '7c13f23f-78d8-5e7d-8963-a7c8772fb4e8',
 } as const satisfies Record<PermissionFlagType, string>;

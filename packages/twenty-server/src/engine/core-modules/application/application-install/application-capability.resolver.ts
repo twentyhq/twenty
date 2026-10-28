@@ -31,7 +31,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
     oauthClient: false,
     application: false,
   }),
-  SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
 )
 export class ApplicationCapabilityResolver {
   constructor(private readonly applicationService: ApplicationService) {}

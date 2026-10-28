@@ -1,4 +1,7 @@
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 
 import { type FlatPermissionFlagMaps } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag-maps.type';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
@@ -19,7 +22,9 @@ const buildFlatRolePermissionFlag = (
     ...overrides,
   }) as FlatRolePermissionFlag;
 
-const buildFlatPermissionFlag = (): FlatPermissionFlag => ({
+const buildFlatPermissionFlag = (
+  overrides: Partial<FlatPermissionFlag> = {},
+): FlatPermissionFlag => ({
   id: 'permission-flag-id',
   workspaceId: 'workspace-id',
   applicationId: 'application-id',
@@ -34,11 +39,14 @@ const buildFlatPermissionFlag = (): FlatPermissionFlag => ({
   rolePermissionFlagUniversalIdentifiers: [],
   createdAt: '2026-05-13T00:00:00.000Z',
   updatedAt: '2026-05-13T00:00:00.000Z',
+  ...overrides,
 });
 
-const buildFlatPermissionFlagMaps = (): FlatPermissionFlagMaps => ({
+const buildFlatPermissionFlagMaps = (
+  flatPermissionFlag: FlatPermissionFlag = buildFlatPermissionFlag(),
+): FlatPermissionFlagMaps => ({
   byUniversalIdentifier: {
-    'permission-flag-universal-id': buildFlatPermissionFlag(),
+    'permission-flag-universal-id': flatPermissionFlag,
   },
   universalIdentifierById: {
     'permission-flag-id': 'permission-flag-universal-id',
@@ -58,6 +66,20 @@ describe('fromFlatRolePermissionFlagToRolePermissionFlagDto', () => {
       roleId: 'role-id',
       flag: PermissionFlagType.WORKSPACE,
     });
+  });
+
+  it('exposes the current key of a standard flag still stored under its previous key', () => {
+    expect(
+      fromFlatRolePermissionFlagToRolePermissionFlagDto(
+        buildFlatRolePermissionFlag(),
+        buildFlatPermissionFlagMaps(
+          buildFlatPermissionFlag({
+            universalIdentifier: SystemPermissionFlag.USER_APPS,
+            key: 'CONNECTED_ACCOUNTS',
+          }),
+        ),
+      ).flag,
+    ).toBe(PermissionFlagType.USER_APPS);
   });
 
   it('throws a permissions exception when the permission flag is missing', () => {

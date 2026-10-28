@@ -32,7 +32,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
     oauthClient: true,
     application: true,
   }),
-  SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
 )
 @MetadataResolver(() => ApplicationVariableEntityDTO)
 @UseFilters(

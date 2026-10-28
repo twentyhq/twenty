@@ -24,7 +24,7 @@ export const APP_PULL_COMMAND_DEFINITION: TargetCommandDefinition = {
   writes: true,
   needsProject: true,
   needsTarget: true,
-  requiredPermissions: ['APPLICATIONS'],
+  requiredPermissions: ['WORKSPACE_APPS'],
   load: async () =>
     (await import('@/commands/app/pull/run-app-pull-command'))
       .runAppPullCommand,

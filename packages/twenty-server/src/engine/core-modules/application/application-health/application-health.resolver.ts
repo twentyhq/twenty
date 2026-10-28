@@ -29,7 +29,7 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
     oauthClient: true,
     application: true,
   }),
-  SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
 )
 @MetadataResolver(() => ApplicationDTO)
 @UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)

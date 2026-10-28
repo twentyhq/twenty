@@ -146,7 +146,7 @@ describe('ApplicationCapabilityResolver', () => {
       expect.objectContaining({
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: USER_REQUEST.userWorkspaceId,
-        setting: PermissionFlagType.APPLICATIONS,
+        setting: PermissionFlagType.WORKSPACE_APPS,
       }),
     );
     expect(

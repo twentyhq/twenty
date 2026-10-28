@@ -33,6 +33,26 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
     }
   }
 
+  const permissionFlagUniversalIdentifiers = new Set<string>();
+
+  if (config.permissionFlagUniversalIdentifiers) {
+    for (const permissionFlagUniversalIdentifier of config.permissionFlagUniversalIdentifiers) {
+      if (
+        permissionFlagUniversalIdentifiers.has(
+          permissionFlagUniversalIdentifier,
+        )
+      ) {
+        errors.push(
+          `Duplicate permission flag universalIdentifier "${permissionFlagUniversalIdentifier}". Deprecated SystemPermissionFlag names share a universalIdentifier with their replacements, so list each flag once`,
+        );
+      } else {
+        permissionFlagUniversalIdentifiers.add(
+          permissionFlagUniversalIdentifier,
+        );
+      }
+    }
+  }
+
   const predicateGroupUniversalIdentifiers = new Set<string>();
 
   if (config.rowLevelPermissionPredicateGroups) {

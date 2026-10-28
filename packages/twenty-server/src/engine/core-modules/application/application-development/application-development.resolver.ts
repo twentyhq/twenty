@@ -54,7 +54,7 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
     oauthClient: true,
     application: false,
   }),
-  SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
 )
 export class ApplicationDevelopmentResolver {
   constructor(

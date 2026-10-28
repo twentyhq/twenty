@@ -1,12 +1,13 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { DataSource, QueryRunner } from 'typeorm';
 
+import { PRE_2_53_STANDARD_PERMISSION_FLAG_DEFINITIONS } from 'src/database/commands/upgrade-version-command/2-6/constants/pre-2-53-standard-permission-flag-definitions.constant';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
-import { STANDARD_PERMISSION_FLAG_DEFINITIONS } from 'src/engine/metadata-modules/permission-flag/constants/standard-permission-flag-definitions.constant';
 
-const PERMISSION_FLAG_TYPES = Object.values(PermissionFlagType) as string[];
+const PERMISSION_FLAG_TYPES = PRE_2_53_STANDARD_PERMISSION_FLAG_DEFINITIONS.map(
+  ({ key }) => key,
+);
 
 @RegisteredInstanceCommand('2.6.0', 1778235340023, { type: 'slow' })
 export class BackfillRolePermissionFlagPermissionFlagIdSlowInstanceCommand implements SlowInstanceCommand {
@@ -25,7 +26,7 @@ export class BackfillRolePermissionFlagPermissionFlagIdSlowInstanceCommand imple
       );
     }
 
-    for (const definition of STANDARD_PERMISSION_FLAG_DEFINITIONS) {
+    for (const definition of PRE_2_53_STANDARD_PERMISSION_FLAG_DEFINITIONS) {
       await dataSource.query(
         `INSERT INTO "core"."permissionFlag" (
           "id",

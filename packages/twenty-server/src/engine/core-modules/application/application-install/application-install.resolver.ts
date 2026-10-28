@@ -76,7 +76,7 @@ export class ApplicationInstallResolver {
   ) {}
 
   @Query(() => [ApplicationDTO])
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS))
   @AllowSuspendedWorkspace()
   async findManyApplications(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -85,7 +85,7 @@ export class ApplicationInstallResolver {
   }
 
   @Query(() => ApplicationDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS))
   async findOneApplication(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthApplication({ allowUndefined: true })
@@ -126,7 +126,7 @@ export class ApplicationInstallResolver {
       oauthClient: true,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async installMarketplaceApp(
@@ -161,7 +161,7 @@ export class ApplicationInstallResolver {
       oauthClient: true,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async installApplication(
@@ -199,7 +199,7 @@ export class ApplicationInstallResolver {
       oauthClient: true,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async triggerInstallApplication(
@@ -230,7 +230,7 @@ export class ApplicationInstallResolver {
       oauthClient: true,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async triggerUninstallApplication(
@@ -263,7 +263,7 @@ export class ApplicationInstallResolver {
       oauthClient: true,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async triggerInstallApplicationJob(
@@ -296,7 +296,7 @@ export class ApplicationInstallResolver {
       oauthClient: true,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async triggerUninstallApplicationJob(
@@ -316,7 +316,7 @@ export class ApplicationInstallResolver {
 
   @Query(() => JobStatusDTO, { nullable: true })
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async findInstallApplicationJobStatus(
@@ -338,7 +338,7 @@ export class ApplicationInstallResolver {
 
   @Query(() => JobStatusDTO, { nullable: true })
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async findUninstallApplicationJobStatus(
@@ -387,7 +387,7 @@ export class ApplicationInstallResolver {
       oauthClient: true,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async updateApplication(
@@ -426,7 +426,7 @@ export class ApplicationInstallResolver {
       oauthClient: true,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async uninstallApplication(

@@ -7,6 +7,6 @@ export const CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND: Partial<
   object: PermissionFlagType.DATA_MODEL,
   field: PermissionFlagType.DATA_MODEL,
   role: PermissionFlagType.ROLES,
-  app: PermissionFlagType.APPLICATIONS,
+  app: PermissionFlagType.WORKSPACE_APPS,
   skill: PermissionFlagType.AI_SETTINGS,
 };

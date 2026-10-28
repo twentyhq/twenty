@@ -1855,7 +1855,7 @@ describe('app apply', () => {
           writes: true,
           needsProject: true,
           needsTarget: true,
-          requiredPermissions: ['APPLICATIONS', 'UPLOAD_FILE'],
+          requiredPermissions: ['WORKSPACE_APPS', 'UPLOAD_FILE'],
         }),
       ]),
     );

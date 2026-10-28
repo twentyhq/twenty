@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { buildPullBaseEntities } from '@/app/pull/build-pull-base-entities';
 import { buildPullEntities } from '@/app/pull/build-pull-entities';
+import { type EnumBinding } from '@/app/pull/write-define-file';
 import { type ScannedSourceFile } from '@/app/source/scan-project-source-files';
 
 export const preparePullEntities = ({
@@ -10,11 +11,13 @@ export const preparePullEntities = ({
   baseManifest,
   scannedFiles,
   unreconciledUniversalIdentifiers,
+  roleEnumBindings,
 }: {
   manifest: Manifest;
   baseManifest: Manifest | null;
   scannedFiles: ScannedSourceFile[];
   unreconciledUniversalIdentifiers?: ReadonlySet<string>;
+  roleEnumBindings?: EnumBinding[];
 }) => {
   const sourceFileByUniversalIdentifier = new Map<string, ScannedSourceFile>();
 
@@ -30,11 +33,15 @@ export const preparePullEntities = ({
   const { entities, skipped } = buildPullEntities(
     manifest,
     sourceFileByUniversalIdentifier,
+    roleEnumBindings,
   );
   const baseEntities = buildPullBaseEntities({
     entities: isDefined(baseManifest)
-      ? buildPullEntities(baseManifest, sourceFileByUniversalIdentifier)
-          .entities
+      ? buildPullEntities(
+          baseManifest,
+          sourceFileByUniversalIdentifier,
+          roleEnumBindings,
+        ).entities
       : [],
     unreconciledUniversalIdentifiers,
   });

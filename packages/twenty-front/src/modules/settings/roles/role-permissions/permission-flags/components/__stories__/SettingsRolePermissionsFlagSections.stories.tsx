@@ -42,7 +42,7 @@ const permissionFlags = [
   {
     id: 'standard-settings',
     applicationId: 'standard-app',
-    key: PermissionFlagType.APPLICATIONS,
+    key: PermissionFlagType.WORKSPACE_APPS,
     label: 'Duplicate standard permission',
     description: null,
     icon: null,

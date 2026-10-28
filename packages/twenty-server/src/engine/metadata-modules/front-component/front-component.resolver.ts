@@ -237,7 +237,7 @@ export class FrontComponentResolver {
       oauthClient: true,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
   )
   async createFrontComponent(
     @Args('input') input: CreateFrontComponentInput,
@@ -264,7 +264,7 @@ export class FrontComponentResolver {
       oauthClient: true,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
   )
   async updateFrontComponent(
     @Args('input') input: UpdateFrontComponentInput,
@@ -292,7 +292,7 @@ export class FrontComponentResolver {
       oauthClient: true,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
   )
   async deleteFrontComponent(
     @Args('id', { type: () => UUIDScalarType }) id: string,

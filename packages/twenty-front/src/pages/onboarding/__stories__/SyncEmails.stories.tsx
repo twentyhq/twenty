@@ -30,7 +30,7 @@ let finishLoadingPermissions: (() => void) | undefined;
 
 const buildHandlers = ({
   isWorkspaceCreator = true,
-  permissionFlags = [PermissionFlagType.CONNECTED_ACCOUNTS],
+  permissionFlags = [PermissionFlagType.USER_APPS],
   shouldFailAutoSkip = false,
   shouldWaitForPermissions = false,
 }: {

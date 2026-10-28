@@ -40,7 +40,7 @@ export const FrontComponentMediaPermissionModal = ({
   modalInstanceId,
   request,
 }: FrontComponentMediaPermissionModalProps) => {
-  const canManageApps = useHasPermissionFlag(PermissionFlagType.APPLICATIONS);
+  const canManageApps = useHasPermissionFlag(PermissionFlagType.WORKSPACE_APPS);
   const [grantCapabilities, { loading }] = useMutation(
     GrantApplicationCapabilitiesDocument,
   );

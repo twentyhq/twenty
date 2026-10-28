@@ -23,7 +23,7 @@ export const APP_PLAN_COMMAND_DEFINITION: TargetCommandDefinition = {
   writes: false,
   needsProject: true,
   needsTarget: true,
-  requiredPermissions: ['APPLICATIONS'],
+  requiredPermissions: ['WORKSPACE_APPS'],
   load: async () =>
     (await import('@/commands/app/plan/run-app-plan-command'))
       .runAppPlanCommand,

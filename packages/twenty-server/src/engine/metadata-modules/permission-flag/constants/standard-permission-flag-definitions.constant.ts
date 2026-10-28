@@ -69,7 +69,7 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
     description: 'Enable bypass options',
     icon: 'IconShield',
   },
-  [PermissionFlagType.APPLICATIONS]: {
+  [PermissionFlagType.WORKSPACE_APPS]: {
     label: 'Workspace Apps',
     description: 'Install and manage workspace apps',
     icon: 'IconApps',
@@ -144,7 +144,7 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
     description: 'Allow exporting data to CSV files',
     icon: 'IconFileExport',
   },
-  [PermissionFlagType.CONNECTED_ACCOUNTS]: {
+  [PermissionFlagType.USER_APPS]: {
     label: 'User Apps',
     description: 'Manage own app preferences and accounts',
     icon: 'IconApps',

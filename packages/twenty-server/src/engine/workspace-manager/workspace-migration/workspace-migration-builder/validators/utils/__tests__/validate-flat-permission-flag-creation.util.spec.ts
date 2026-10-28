@@ -1,9 +1,15 @@
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
+
 import { PermissionFlagExceptionCode } from 'src/engine/metadata-modules/permission-flag/permission-flag.exception';
 import { validateFlatPermissionFlagCreation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util';
 
 import {
   buildCreationArgs,
   buildFlatPermissionFlag,
+  buildStandardAppFlatPermissionFlag,
 } from './flat-permission-flag-validation.test-util';
 
 describe('validateFlatPermissionFlagCreation', () => {
@@ -81,6 +87,37 @@ describe('validateFlatPermissionFlagCreation', () => {
       PermissionFlagExceptionCode.PERMISSION_FLAG_ALREADY_EXISTS,
     );
     expect(result.errors[0].message).toContain('CAN_DO_THING');
+  });
+
+  it('should report an error when an app flag uses a standard permission flag key', () => {
+    const result = validateFlatPermissionFlagCreation(
+      buildCreationArgs({
+        flatEntityToValidate: buildFlatPermissionFlag({
+          universalIdentifier: 'new-flag',
+          key: PermissionFlagType.USER_APPS,
+        }),
+      }),
+    );
+
+    expect(result.errors).toHaveLength(1);
+    expect(result.errors[0].code).toBe(
+      PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_KEY,
+    );
+    expect(result.errors[0].message).toContain(PermissionFlagType.USER_APPS);
+  });
+
+  it('should accept a standard permission flag key on a standard app flag', () => {
+    const result = validateFlatPermissionFlagCreation(
+      buildCreationArgs({
+        flatEntityToValidate: buildStandardAppFlatPermissionFlag({
+          universalIdentifier: SystemPermissionFlag.USER_APPS,
+          key: PermissionFlagType.USER_APPS,
+        }),
+        isCallerStandardApp: true,
+      }),
+    );
+
+    expect(result.errors).toEqual([]);
   });
 
   it('should report an error for an unsupported permission type', () => {

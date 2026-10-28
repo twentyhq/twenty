@@ -48,7 +48,7 @@ const getRecoveryHint = ({
   }
 
   if (outcome === 'not-started') {
-    return 'Check the target workspace, registration and APPLICATIONS permission before retrying.';
+    return 'Check the target workspace, registration and WORKSPACE_APPS permission before retrying.';
   }
 
   return 'Run twenty app install again to retry or resume waiting for the current installation. Stopping the CLI does not cancel the server job.';

@@ -10,7 +10,7 @@ export const TOOL_PERMISSION_FLAGS: readonly PermissionFlagType[] = [
   PermissionFlagType.HTTP_REQUEST_TOOL,
   PermissionFlagType.IMPORT_CSV,
   PermissionFlagType.EXPORT_CSV,
-  PermissionFlagType.CONNECTED_ACCOUNTS,
+  PermissionFlagType.USER_APPS,
   PermissionFlagType.PROFILE_INFORMATION,
   PermissionFlagType.CODE_INTERPRETER_TOOL,
 ];

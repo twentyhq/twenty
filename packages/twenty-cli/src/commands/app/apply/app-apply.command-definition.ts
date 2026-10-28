@@ -34,7 +34,7 @@ export const APP_APPLY_COMMAND_DEFINITION: TargetCommandDefinition = {
   writes: true,
   needsProject: true,
   needsTarget: true,
-  requiredPermissions: ['APPLICATIONS', 'UPLOAD_FILE'],
+  requiredPermissions: ['WORKSPACE_APPS', 'UPLOAD_FILE'],
   load: async () =>
     (await import('@/commands/app/apply/run-app-apply-command'))
       .runAppApplyCommand,

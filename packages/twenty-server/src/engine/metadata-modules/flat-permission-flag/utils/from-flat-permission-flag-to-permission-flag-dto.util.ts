@@ -1,12 +1,13 @@
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { type PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
+import { resolvePermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/utils/resolve-permission-flag-key.util';
 
 export const fromFlatPermissionFlagToPermissionFlagDto = (
   flatDefinition: FlatPermissionFlag,
 ): PermissionFlagDTO => ({
   id: flatDefinition.id,
   universalIdentifier: flatDefinition.universalIdentifier,
-  key: flatDefinition.key,
+  key: resolvePermissionFlagKey(flatDefinition),
   label: flatDefinition.label,
   description: flatDefinition.description,
   icon: flatDefinition.icon,

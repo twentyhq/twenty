@@ -29,7 +29,7 @@ export const APP_UNINSTALL_COMMAND_DEFINITION: TargetCommandDefinition = {
   writes: true,
   needsProject: true,
   needsTarget: true,
-  requiredPermissions: ['APPLICATIONS'],
+  requiredPermissions: ['WORKSPACE_APPS'],
   load: async () =>
     (await import('@/commands/app/uninstall/run-app-uninstall-command'))
       .runAppUninstallCommand,

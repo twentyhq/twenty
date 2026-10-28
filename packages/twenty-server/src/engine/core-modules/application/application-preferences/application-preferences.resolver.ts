@@ -25,7 +25,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
     oauthClient: false,
     application: false,
   }),
-  SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS),
+  SettingsPermissionGuard(PermissionFlagType.USER_APPS),
 )
 @MetadataResolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)

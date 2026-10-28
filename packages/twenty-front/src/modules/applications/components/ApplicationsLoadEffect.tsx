@@ -24,7 +24,7 @@ export const ApplicationsLoadEffect = () => {
   const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const hasApplicationsPermission = useHasPermissionFlag(
-    PermissionFlagType.APPLICATIONS,
+    PermissionFlagType.WORKSPACE_APPS,
   );
 
   const isOnAuthOrOnboardingPage = useIsOnAuthOrOnboardingPage();

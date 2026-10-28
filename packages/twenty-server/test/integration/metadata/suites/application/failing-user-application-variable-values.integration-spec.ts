@@ -46,7 +46,7 @@ describe('User application variable values should fail', () => {
       name: 'User Variable Application Without Connected Accounts',
       variableKey: 'RECORD_MY_CALLS',
       variableScope: 'USER',
-      permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+      permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE_APPS],
     });
 
     const [

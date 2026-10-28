@@ -95,7 +95,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: isAppPreferencesEnabled ? t`Apps preferences` : t`Accounts`,
           path: SettingsPath.Accounts,
           Icon: isAppPreferencesEnabled ? IconApps : IconAt,
-          isHidden: !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
+          isHidden: !permissionFlagMap[PermissionFlagType.USER_APPS],
           subItems: isAppPreferencesEnabled
             ? undefined
             : [
@@ -103,16 +103,14 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
                   label: t`Emails`,
                   path: SettingsPath.AccountsEmails,
                   Icon: IconMail,
-                  isHidden:
-                    !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
+                  isHidden: !permissionFlagMap[PermissionFlagType.USER_APPS],
                   indentationLevel: 2,
                 },
                 {
                   label: t`Calendars`,
                   path: SettingsPath.AccountsCalendars,
                   Icon: IconCalendarEvent,
-                  isHidden:
-                    !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
+                  isHidden: !permissionFlagMap[PermissionFlagType.USER_APPS],
                   indentationLevel: 2,
                 },
               ],
@@ -172,7 +170,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Apps`,
           path: SettingsPath.Applications,
           Icon: IconApps,
-          isHidden: !permissionFlagMap[PermissionFlagType.APPLICATIONS],
+          isHidden: !permissionFlagMap[PermissionFlagType.WORKSPACE_APPS],
         },
         {
           label: t`AI`,

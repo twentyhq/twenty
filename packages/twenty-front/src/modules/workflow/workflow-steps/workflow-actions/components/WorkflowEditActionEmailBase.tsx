@@ -65,7 +65,7 @@ export const WorkflowEditActionEmailBase = ({
 }: WorkflowEditActionEmailBaseProps) => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const hasConnectedAccountsPermission = useHasPermissionFlag(
-    PermissionFlagType.CONNECTED_ACCOUNTS,
+    PermissionFlagType.USER_APPS,
   );
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(

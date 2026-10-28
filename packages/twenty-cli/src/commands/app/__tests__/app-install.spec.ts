@@ -520,7 +520,7 @@ describe('app install', () => {
           name: 'app install',
           writes: true,
           needsTarget: true,
-          requiredPermissions: ['APPLICATIONS'],
+          requiredPermissions: ['WORKSPACE_APPS'],
         }),
       ]),
     );

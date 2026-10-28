@@ -40,7 +40,7 @@ import { ImapSmtpCalDavApiService } from 'src/modules/connected-account/services
     oauthClient: true,
     application: true,
   }),
-  SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS),
+  SettingsPermissionGuard(PermissionFlagType.USER_APPS),
 )
 export class ImapSmtpCaldavResolver {
   constructor(

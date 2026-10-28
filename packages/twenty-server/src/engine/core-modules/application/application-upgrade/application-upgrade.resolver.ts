@@ -49,7 +49,7 @@ export class ApplicationUpgradeResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async upgradeApplication(
@@ -70,7 +70,7 @@ export class ApplicationUpgradeResolver {
 
   @Mutation(() => TriggerUpgradeApplicationResultDTO)
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async triggerUpgradeApplication(
@@ -91,7 +91,7 @@ export class ApplicationUpgradeResolver {
 
   @Query(() => JobStatusDTO, { nullable: true })
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async findUpgradeApplicationJobStatus(

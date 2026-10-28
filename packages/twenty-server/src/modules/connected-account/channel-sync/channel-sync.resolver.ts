@@ -39,7 +39,7 @@ export class ChannelSyncResolver {
   ) {}
 
   @Mutation(() => ChannelSyncSuccessDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.USER_APPS))
   async startChannelSync(
     @Args('connectedAccountId', { type: () => UUIDScalarType })
     connectedAccountId: string,

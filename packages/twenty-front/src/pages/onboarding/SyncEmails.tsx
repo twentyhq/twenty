@@ -41,7 +41,7 @@ export const SyncEmails = () => {
   const [hasAutoSkipFailed, setHasAutoSkipFailed] = useState(false);
   const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const hasConnectedAccountsPermission = useHasPermissionFlag(
-    PermissionFlagType.CONNECTED_ACCOUNTS,
+    PermissionFlagType.USER_APPS,
   );
 
   const isGoogleMessagingEnabled = useAtomStateValue(

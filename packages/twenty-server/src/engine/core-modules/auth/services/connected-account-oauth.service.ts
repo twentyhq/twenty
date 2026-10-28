@@ -51,7 +51,7 @@ export class ConnectedAccountOAuthService {
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId: userWorkspace.id,
         workspaceId,
-        setting: PermissionFlagType.CONNECTED_ACCOUNTS,
+        setting: PermissionFlagType.USER_APPS,
         applicationId: undefined,
         agentId: undefined,
       });

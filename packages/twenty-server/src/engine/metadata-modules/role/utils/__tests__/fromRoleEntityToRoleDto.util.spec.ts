@@ -1,4 +1,7 @@
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
@@ -54,6 +57,7 @@ describe('fromRoleEntityToRoleDto', () => {
             id: 'role-permission-flag-id',
             roleId: 'role-id',
             permissionFlag: {
+              universalIdentifier: SystemPermissionFlag.WORKSPACE,
               key: PermissionFlagType.WORKSPACE,
             },
           },
@@ -68,5 +72,26 @@ describe('fromRoleEntityToRoleDto', () => {
         flag: PermissionFlagType.WORKSPACE,
       },
     ]);
+  });
+
+  it('exposes the current key of a standard flag still stored under its previous key', () => {
+    const roleDto = fromRoleEntityToRoleDto(
+      buildRoleEntity({
+        rolePermissionFlags: [
+          {
+            id: 'role-permission-flag-id',
+            roleId: 'role-id',
+            permissionFlag: {
+              universalIdentifier: SystemPermissionFlag.WORKSPACE_APPS,
+              key: 'APPLICATIONS',
+            },
+          },
+        ] as RoleEntity['rolePermissionFlags'],
+      }),
+    );
+
+    expect(roleDto.permissionFlags?.[0].flag).toBe(
+      PermissionFlagType.WORKSPACE_APPS,
+    );
   });
 });
