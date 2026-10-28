@@ -148,8 +148,6 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.webhook.update,
 
     ...aggregatedOrchestratorActionsReport.mcpServer.delete,
-    ...aggregatedOrchestratorActionsReport.mcpServer.create,
-    ...aggregatedOrchestratorActionsReport.mcpServer.update,
 
     ...aggregatedOrchestratorActionsReport.applicationVariable.delete,
     ...aggregatedOrchestratorActionsReport.applicationVariable.create,
@@ -161,6 +159,8 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.messagingProvider.delete,
     ...aggregatedOrchestratorActionsReport.messagingProvider.create,
     ...aggregatedOrchestratorActionsReport.messagingProvider.update,
+    ...aggregatedOrchestratorActionsReport.mcpServer.create,
+    ...aggregatedOrchestratorActionsReport.mcpServer.update,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.delete,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.create,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.update,
