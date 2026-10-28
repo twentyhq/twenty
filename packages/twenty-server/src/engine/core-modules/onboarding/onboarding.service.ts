@@ -471,13 +471,21 @@ export class OnboardingService {
         async (queryRunner) => {
           const hasClaimedPendingStep =
             await this.claimOnboardingConnectAccountStep(
-              { userId, workspaceId },
+              {
+                userId,
+                workspaceId,
+                key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+              },
               queryRunner,
             );
 
           const hasClaimedSkippedStep =
-            await this.claimOnboardingConnectAccountSkippedStep(
-              { userId, workspaceId },
+            await this.claimOnboardingConnectAccountStep(
+              {
+                userId,
+                workspaceId,
+                key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_SKIPPED,
+              },
               queryRunner,
             );
 
@@ -524,7 +532,11 @@ export class OnboardingService {
       async (queryRunner) => {
         const hasClaimedConnectAccountStep =
           await this.claimOnboardingConnectAccountStep(
-            { userId, workspaceId },
+            {
+              userId,
+              workspaceId,
+              key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+            },
             queryRunner,
           );
 
@@ -576,9 +588,13 @@ export class OnboardingService {
     {
       userId,
       workspaceId,
+      key,
     }: {
       userId: string;
       workspaceId: string;
+      key:
+        | OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING
+        | OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_SKIPPED;
     },
     queryRunner?: QueryRunner,
   ): Promise<boolean> {
@@ -586,29 +602,7 @@ export class OnboardingService {
       {
         userId,
         workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-      },
-      queryRunner,
-    );
-
-    return isDefined(affectedRows) && affectedRows > 0;
-  }
-
-  private async claimOnboardingConnectAccountSkippedStep(
-    {
-      userId,
-      workspaceId,
-    }: {
-      userId: string;
-      workspaceId: string;
-    },
-    queryRunner?: QueryRunner,
-  ): Promise<boolean> {
-    const affectedRows = await this.userVarsService.delete(
-      {
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_SKIPPED,
+        key,
       },
       queryRunner,
     );

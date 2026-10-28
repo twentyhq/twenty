@@ -12,11 +12,9 @@ import { useLingui } from '@lingui/react/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconExternalLink, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
-import {
-  GettingStartedStep,
-  GettingStartedStepStatus,
-} from '~/generated-metadata/graphql';
+import { GettingStartedStep } from '~/generated-metadata/graphql';
 
 const StyledColumn = styled.div`
   display: flex;
@@ -29,11 +27,6 @@ const StyledRow = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledMuted = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 export const GettingStartedImportAction = () => {
@@ -54,10 +47,7 @@ export const GettingStartedImportAction = () => {
     openObjectRecordsSpreadsheetImportDialog({
       uploadStepHook: async (importedRows) => {
         void updateGettingStarted({
-          stepStatus: {
-            step: GettingStartedStep.IMPORT_DATA,
-            status: GettingStartedStepStatus.DONE,
-          },
+          completedStep: GettingStartedStep.IMPORT_DATA,
         });
 
         return importedRows;
@@ -71,16 +61,19 @@ export const GettingStartedImportAction = () => {
     >
       <SpreadsheetImportProvider>
         <StyledColumn>
-          <StyledMuted>{t`Spreadsheet`}</StyledMuted>
+          <Text size="sm" color="tertiary">{t`Spreadsheet`}</Text>
           <Button
             size="sm"
             fullWidth
             startIcon={<IconUpload />}
             onClick={openImportDialog}
           >{t`Upload file`}</Button>
-          <StyledMuted>{t`A CSV or Excel import from any tool`}</StyledMuted>
+          <Text
+            size="sm"
+            color="tertiary"
+          >{t`A CSV or Excel import from any tool`}</Text>
           <StyledRow>
-            <StyledMuted>{t`Export a CSV from`}</StyledMuted>
+            <Text size="sm" color="tertiary">{t`Export a CSV from`}</Text>
             {SPREADSHEET_EXPORT_GUIDES.map((guide) => (
               <Button
                 key={guide.name}

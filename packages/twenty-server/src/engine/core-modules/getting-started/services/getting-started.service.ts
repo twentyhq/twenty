@@ -1,47 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { EmailOperation } from 'twenty-shared/types';
-import {
-  canConnectedAccountPerformEmailOperation,
-  getEmailProvidersForOperation,
-  isDefined,
-} from 'twenty-shared/utils';
-import { In, IsNull, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import {
-  COMPANY_ENRICHMENT_KEY,
-  type CompanyEnrichmentKeyValueTypeMap,
-} from 'src/engine/core-modules/company-enrichment/types/company-enrichment-key-value.type';
-import {
-  PERSON_ENRICHMENT_KEY,
-  type PersonEnrichmentKeyValueTypeMap,
-} from 'src/engine/core-modules/company-enrichment/types/person-enrichment-key-value.type';
-import { matchWorkspacePersonEnrichmentToUserEmail } from 'src/engine/core-modules/company-enrichment/utils/match-workspace-person-enrichment-to-user-email.util';
-import { GETTING_STARTED_HIDDEN_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-hidden-user-var-key.constant';
-import { GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-selected-step-user-var-key.constant';
-import { GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-snoozed-until-user-var-key.constant';
-import { GETTING_STARTED_STEP_DEFINITIONS } from 'src/engine/core-modules/getting-started/constants/getting-started-step-definitions.constant';
-import { GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX } from 'src/engine/core-modules/getting-started/constants/getting-started-step-user-var-key-prefix.constant';
-import { GETTING_STARTED_STEPS_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-steps-user-var-key.constant';
+import { GETTING_STARTED_TEAM_STEPS } from 'src/engine/core-modules/getting-started/constants/getting-started-team-steps.constant';
 import { type GettingStartedProgressDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-progress.dto';
 import { type UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
-import { GettingStartedStepStatus } from 'src/engine/core-modules/getting-started/enums/getting-started-step-status.enum';
 import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
-import { type GettingStartedKeyValueTypeMap } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
-import { type GettingStartedSelectionContext } from 'src/engine/core-modules/getting-started/types/getting-started-selection-context.type';
-import { selectGettingStartedSteps } from 'src/engine/core-modules/getting-started/utils/select-getting-started-steps.util';
-import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import {
+  GETTING_STARTED_HIDDEN_USER_VAR_KEY,
+  GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY,
+  GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY,
+  GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX,
+  type GettingStartedKeyValueTypeMap,
+} from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
 import { ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES } from 'src/engine/core-modules/onboarding/constants/onboarding-reward-idempotency-key-prefixes';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { isWorkEmail } from 'src/utils/is-work-email';
@@ -53,18 +35,13 @@ type GettingStartedScope = {
   userWorkspaceId: string;
 };
 
-type WorkspaceEnrichmentKeyValueTypeMap = CompanyEnrichmentKeyValueTypeMap &
-  PersonEnrichmentKeyValueTypeMap;
-
 @Injectable()
 export class GettingStartedService {
   constructor(
     private readonly userVarsService: UserVarsService<GettingStartedKeyValueTypeMap>,
-    private readonly keyValuePairService: KeyValuePairService<WorkspaceEnrichmentKeyValueTypeMap>,
     private readonly billingService: BillingService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
@@ -80,17 +57,9 @@ export class GettingStartedService {
       this.getCreditsEarned(workspaceId),
     ]);
 
-    const savedSteps: GettingStartedKeyValueTypeMap[typeof GETTING_STARTED_STEPS_USER_VAR_KEY] =
-      userVars.get(GETTING_STARTED_STEPS_USER_VAR_KEY) ??
-      (await this.prepareSteps({
-        userId,
-        userEmail,
-        workspaceId,
-        userWorkspaceId,
-      }));
-
-    const steps = savedSteps.steps.filter((step) =>
-      Object.values(GettingStartedStep).includes(step),
+    const steps = Object.values(GettingStartedStep).filter(
+      (step) =>
+        isWorkEmail(userEmail) || !GETTING_STARTED_TEAM_STEPS.includes(step),
     );
 
     const isSavedAsCompleted = (step: GettingStartedStep) =>
@@ -123,11 +92,7 @@ export class GettingStartedService {
 
     return {
       creditsEarned,
-      steps: steps.map((step) => ({
-        key: step,
-        kind: GETTING_STARTED_STEP_DEFINITIONS[step].kind,
-        permissionFlag: GETTING_STARTED_STEP_DEFINITIONS[step].permissionFlag,
-      })),
+      steps,
       completedSteps,
       selectedStep: steps.find((step) => step === savedSelectedStep) ?? null,
       snoozedUntil: typeof snoozedUntil === 'string' ? snoozedUntil : null,
@@ -171,20 +136,11 @@ export class GettingStartedService {
       });
     }
 
-    if (input.stepStatus?.status === GettingStartedStepStatus.DONE) {
+    if (isDefined(input.completedStep)) {
       await this.completeStep({
         userId,
         workspaceId,
-        step: input.stepStatus.step,
-        threadId: input.stepStatus.threadId ?? undefined,
-      });
-    }
-
-    if (input.stepStatus?.status === GettingStartedStepStatus.TODO) {
-      await this.userVarsService.delete({
-        userId,
-        workspaceId,
-        key: `${GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX}${input.stepStatus.step}`,
+        step: input.completedStep,
       });
     }
 
@@ -200,86 +156,17 @@ export class GettingStartedService {
     userId,
     workspaceId,
     step,
-    threadId,
   }: {
     userId: string;
     workspaceId: string;
     step: GettingStartedStep;
-    threadId?: string;
   }): Promise<void> {
     await this.userVarsService.setIfNotExists({
       userId,
       workspaceId,
       key: `${GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX}${step}`,
-      value: { completedAt: new Date().toISOString(), threadId },
+      value: { completedAt: new Date().toISOString() },
     });
-  }
-
-  private async prepareSteps({
-    userId,
-    userEmail,
-    workspaceId,
-    userWorkspaceId,
-  }: GettingStartedScope) {
-    const selectionContext = await this.buildSelectionContext({
-      userEmail,
-      workspaceId,
-      userWorkspaceId,
-    });
-
-    await this.userVarsService.setIfNotExists({
-      userId,
-      workspaceId,
-      key: GETTING_STARTED_STEPS_USER_VAR_KEY,
-      value: {
-        ...selectGettingStartedSteps(selectionContext),
-        preparedAt: new Date().toISOString(),
-      },
-    });
-
-    return this.userVarsService.get({
-      userId,
-      workspaceId,
-      key: GETTING_STARTED_STEPS_USER_VAR_KEY,
-    });
-  }
-
-  private async buildSelectionContext({
-    userEmail,
-    workspaceId,
-    userWorkspaceId,
-  }: Omit<
-    GettingStartedScope,
-    'userId'
-  >): Promise<GettingStartedSelectionContext> {
-    const [
-      hasConnectedMailbox,
-      hasInstalledFeaturedApp,
-      companyEnrichment,
-      personEnrichment,
-    ] = await Promise.all([
-      this.hasConnectedMailbox({ workspaceId, userWorkspaceId }),
-      this.hasInstalledFeaturedApp(workspaceId),
-      this.findWorkspaceEnrichment({
-        workspaceId,
-        key: COMPANY_ENRICHMENT_KEY,
-      }),
-      this.findWorkspaceEnrichment({
-        workspaceId,
-        key: PERSON_ENRICHMENT_KEY,
-      }),
-    ]);
-
-    return {
-      isWorkEmail: isWorkEmail(userEmail),
-      hasConnectedMailbox,
-      hasInstalledFeaturedApp,
-      companyEnrichment,
-      personEnrichment: matchWorkspacePersonEnrichmentToUserEmail({
-        personEnrichment,
-        userEmail,
-      }),
-    };
   }
 
   private async findAlreadyDoneSteps({
@@ -319,21 +206,15 @@ export class GettingStartedService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<boolean> {
-    const connectedAccounts = await this.connectedAccountRepository.find({
-      where: {
+    const mailboxes =
+      await this.connectedAccountMetadataService.findMailboxesUsableByCaller({
         workspaceId,
         userWorkspaceId,
-        provider: In(getEmailProvidersForOperation(EmailOperation.DRAFT)),
-        archivedAt: IsNull(),
-      },
-      select: { provider: true, connectionParameters: true },
-    });
-
-    return connectedAccounts.some((connectedAccount) =>
-      canConnectedAccountPerformEmailOperation({
-        connectedAccount,
         operation: EmailOperation.DRAFT,
-      }),
+      });
+
+    return mailboxes.some(
+      (mailbox) => mailbox.userWorkspaceId === userWorkspaceId,
     );
   }
 
@@ -343,31 +224,6 @@ export class GettingStartedService {
         universalIdentifier: In(GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS),
       },
     });
-  }
-
-  private async findWorkspaceEnrichment<
-    TKey extends keyof WorkspaceEnrichmentKeyValueTypeMap,
-  >({
-    workspaceId,
-    key,
-  }: {
-    workspaceId: string;
-    key: Extract<TKey, string>;
-  }): Promise<WorkspaceEnrichmentKeyValueTypeMap[TKey] | null> {
-    const [keyValuePair] = await this.keyValuePairService.get({
-      userId: null,
-      workspaceId,
-      type: KeyValuePairType.CONFIG_VARIABLE,
-      key,
-    });
-
-    return (
-      (
-        keyValuePair as
-          | { value?: WorkspaceEnrichmentKeyValueTypeMap[TKey] }
-          | undefined
-      )?.value ?? null
-    );
   }
 
   private async getCreditsEarned(workspaceId: string): Promise<number> {

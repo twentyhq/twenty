@@ -1,3 +1,4 @@
+// Universal identifiers of the first-party apps in packages/twenty-apps/public.
 export const TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS = {
   CALL_RECORDER: '8da4b8b5-5edf-4880-b51f-ab6e679ec617',
   EXA: '2b7f4a2e-9c4b-4a11-b63c-2e5e7d3f5a9a',

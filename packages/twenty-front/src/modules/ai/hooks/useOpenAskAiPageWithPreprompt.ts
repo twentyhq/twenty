@@ -1,4 +1,3 @@
-import { useStore } from 'jotai';
 import { type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -6,7 +5,6 @@ import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { type AgentChatPrepromptMode } from '@/ai/states/agentChatPrepromptState';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -19,7 +17,6 @@ const TIER_BY_PRESELECTION: Record<AgentChatModelPreselection, AiModelTier> = {
 };
 
 export const useOpenAskAiPageWithPreprompt = () => {
-  const store = useStore();
   const { switchToNewChat } = useSwitchToNewAiChat();
   const { stageAiChatPreprompt } = useStageAiChatPreprompt();
   const setAgentChatUserSelectedModelTier = useSetAtomState(
@@ -36,8 +33,6 @@ export const useOpenAskAiPageWithPreprompt = () => {
     mode?: AgentChatPrepromptMode;
     model?: AgentChatModelPreselection;
   }) => {
-    const threadId = store.get(newAiChatThreadIdState.atom);
-
     switchToNewChat();
 
     if (isDefined(model)) {
@@ -48,8 +43,6 @@ export const useOpenAskAiPageWithPreprompt = () => {
     }
 
     stageAiChatPreprompt({ serializedDocument, mode });
-
-    return threadId;
   };
 
   return { openAskAiPageWithPreprompt };

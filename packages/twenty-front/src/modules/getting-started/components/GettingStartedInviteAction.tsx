@@ -11,6 +11,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
 
@@ -22,11 +23,6 @@ const StyledForm = styled.form`
 
 const StyledFooter = styled.div`
   display: flex;
-`;
-
-const StyledMuted = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 export const GettingStartedInviteAction = () => {
@@ -109,7 +105,7 @@ export const GettingStartedInviteAction = () => {
   return (
     <StyledForm onSubmit={(event) => void sendInvitations(event)}>
       {inviteSuggestions.length > 0 && (
-        <StyledMuted>{t`Found in your emails`}</StyledMuted>
+        <Text size="sm" color="tertiary">{t`Found in your emails`}</Text>
       )}
       {emails.map((email, index) => {
         const emailNumber = index + 1;

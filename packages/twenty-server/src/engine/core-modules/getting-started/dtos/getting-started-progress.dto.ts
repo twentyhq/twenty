@@ -1,6 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { GettingStartedStepDefinitionDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-step-definition.dto';
 import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
 
 @ObjectType('GettingStartedProgress')
@@ -8,8 +7,8 @@ export class GettingStartedProgressDTO {
   @Field(() => Number)
   creditsEarned: number;
 
-  @Field(() => [GettingStartedStepDefinitionDTO])
-  steps: GettingStartedStepDefinitionDTO[];
+  @Field(() => [GettingStartedStep])
+  steps: GettingStartedStep[];
 
   @Field(() => [GettingStartedStep])
   completedSteps: GettingStartedStep[];

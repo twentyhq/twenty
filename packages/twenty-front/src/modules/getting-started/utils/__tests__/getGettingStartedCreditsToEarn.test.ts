@@ -30,12 +30,6 @@ describe('getGettingStartedCreditsToEarn', () => {
       isWorkspaceCreator: false,
       expectedCredits: 2,
     },
-    {
-      description: 'skips reward steps that are done or not in the track',
-      remainingSteps: [GettingStartedStep.IMPORT_DATA],
-      isWorkspaceCreator: true,
-      expectedCredits: 0,
-    },
   ])(
     '$description',
     ({ remainingSteps, isWorkspaceCreator, expectedCredits }) => {

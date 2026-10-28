@@ -21,6 +21,7 @@ export const buildHandoverWorkflow = ({
   memberIdFieldId: string;
   opportunityStageFieldId: string;
 }): {
+  name: string;
   trigger: WorkflowDatabaseEventTrigger & {
     settings: UpdateEventTriggerSettings;
   };
@@ -138,6 +139,7 @@ export const buildHandoverWorkflow = ({
   ];
 
   return {
+    name: 'Hand over won deals',
     trigger: {
       name: 'A deal is won',
       type: WorkflowTriggerType.DATABASE_EVENT,

@@ -1,5 +1,5 @@
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -25,7 +25,7 @@ export const useGettingStartedJustCompletedStep = ({
         getGettingStartedStepSelection({
           steps: seenProgress.steps,
           completedSteps: seenProgress.completedSteps,
-          savedSelectedStep: seenProgress.selectedStep,
+          selectedStep: seenProgress.selectedStep,
           permissionFlagMap,
         });
 
@@ -40,10 +40,7 @@ export const useGettingStartedJustCompletedStep = ({
     setSeenProgress(progress);
   }
 
-  const clearJustCompletedStep = useCallback(
-    () => setJustCompletedStep(null),
-    [],
-  );
+  const clearJustCompletedStep = () => setJustCompletedStep(null);
 
   return { justCompletedStep, clearJustCompletedStep };
 };

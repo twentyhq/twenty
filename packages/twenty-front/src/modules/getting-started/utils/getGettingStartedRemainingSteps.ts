@@ -1,6 +1,6 @@
+import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedStepContent';
 import {
   type GettingStartedStep,
-  type GettingStartedStepDefinition,
   type PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
@@ -9,13 +9,12 @@ export const getGettingStartedRemainingSteps = ({
   completedSteps,
   permissionFlagMap,
 }: {
-  steps: GettingStartedStepDefinition[];
+  steps: GettingStartedStep[];
   completedSteps: GettingStartedStep[];
   permissionFlagMap: Record<PermissionFlagType, boolean>;
 }): GettingStartedStep[] =>
-  steps
-    .filter(
-      ({ key, permissionFlag }) =>
-        !completedSteps.includes(key) && permissionFlagMap[permissionFlag],
-    )
-    .map(({ key }) => key);
+  steps.filter(
+    (step) =>
+      !completedSteps.includes(step) &&
+      permissionFlagMap[GETTING_STARTED_STEP_CONTENT[step].permissionFlag],
+  );

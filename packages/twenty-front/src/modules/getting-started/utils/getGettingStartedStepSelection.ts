@@ -1,41 +1,45 @@
 import { getGettingStartedRemainingSteps } from '@/getting-started/utils/getGettingStartedRemainingSteps';
-import { getNextGettingStartedStep } from '@/getting-started/utils/getNextGettingStartedStep';
 import {
   type GettingStartedStep,
-  type GettingStartedStepDefinition,
   type PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
 export const getGettingStartedStepSelection = ({
   steps,
   completedSteps,
-  savedSelectedStep,
+  selectedStep,
   permissionFlagMap,
 }: {
-  steps: GettingStartedStepDefinition[];
+  steps: GettingStartedStep[];
   completedSteps: GettingStartedStep[];
-  savedSelectedStep: GettingStartedStep | null | undefined;
+  selectedStep: GettingStartedStep | null | undefined;
   permissionFlagMap: Record<PermissionFlagType, boolean>;
-}): { selectedStep: GettingStartedStep; stepAfterSkip: GettingStartedStep } => {
-  const stepKeys = steps.map(({ key }) => key);
+}): {
+  selectedStep: GettingStartedStep;
+  nextStep: GettingStartedStep;
+  stepAfterSkip: GettingStartedStep;
+} => {
   const currentStep =
     getGettingStartedRemainingSteps({
       steps,
       completedSteps,
       permissionFlagMap,
     })[0] ??
-    stepKeys.find((step) => !completedSteps.includes(step)) ??
-    stepKeys[0];
-  const selectedStep = savedSelectedStep ?? currentStep;
+    steps.find((step) => !completedSteps.includes(step)) ??
+    steps[0];
+  const displayedStep = selectedStep ?? currentStep;
+  const displayedStepIndex = steps.indexOf(displayedStep);
+  const nextStep =
+    [
+      ...steps.slice(displayedStepIndex + 1),
+      ...steps.slice(0, displayedStepIndex),
+    ].find((step) => !completedSteps.includes(step)) ?? displayedStep;
 
   return {
-    selectedStep,
-    stepAfterSkip: completedSteps.includes(selectedStep)
+    selectedStep: displayedStep,
+    nextStep,
+    stepAfterSkip: completedSteps.includes(displayedStep)
       ? currentStep
-      : getNextGettingStartedStep({
-          steps: stepKeys,
-          selectedStep,
-          completedSteps,
-        }),
+      : nextStep,
   };
 };

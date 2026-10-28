@@ -6,7 +6,7 @@ import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/f
 import { BILLING_PLAN_LABELS } from '@/settings/billing/constants/BillingPlanLabels';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
-import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
@@ -26,7 +26,7 @@ export const useGettingStartedTrial = () => {
   const billingHasPaymentMethod = useAtomStateValue(
     billingHasPaymentMethodSelector,
   );
-  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const hasBillingPermission = useHasPermissionFlag(PermissionFlagType.BILLING);
   const billing = useAtomStateValue(billingState);
   const { timeZone } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
@@ -69,8 +69,7 @@ export const useGettingStartedTrial = () => {
     daysLeft,
     trialDays: Math.max(trialDurationInDays, daysLeft),
     isCountdownVisible,
-    canKeepPlan:
-      isCountdownVisible && permissionFlagMap[PermissionFlagType.BILLING],
+    canKeepPlan: isCountdownVisible && hasBillingPermission,
     keepPlanLabel: isDefined(planLabel)
       ? t`Keep ${planLabel}`
       : t`Keep your plan`,

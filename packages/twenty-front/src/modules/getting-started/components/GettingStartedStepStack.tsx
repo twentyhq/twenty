@@ -7,10 +7,7 @@ import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import {
-  type GettingStartedStep,
-  type GettingStartedStepDefinition,
-} from '~/generated-metadata/graphql';
+import { type GettingStartedStep } from '~/generated-metadata/graphql';
 
 const StyledActiveStep = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -105,8 +102,8 @@ const StyledStackedStepTitle = styled.span`
 `;
 
 type GettingStartedStepStackProps = {
-  steps: GettingStartedStepDefinition[];
-  selectedStep: GettingStartedStepDefinition;
+  steps: GettingStartedStep[];
+  selectedStep: GettingStartedStep;
   completedSteps: GettingStartedStep[];
   justCompletedStep: GettingStartedStep | null;
   isSaving: boolean;
@@ -136,7 +133,7 @@ export const GettingStartedStepStack = ({
     .filter((depth) => depth < steps.length)
     .map((depth) => ({
       depth,
-      step: steps[(selectedStepIndex + depth) % steps.length].key,
+      step: steps[(selectedStepIndex + depth) % steps.length],
     }));
 
   return (
@@ -170,21 +167,21 @@ export const GettingStartedStepStack = ({
       </AnimatePresence>
       <StyledActiveStep>
         <StyledSteps aria-label={t`Getting started steps`}>
-          {steps.map(({ key }) => (
+          {steps.map((step) => (
             <StyledTick
-              key={key}
+              key={step}
               type="button"
-              aria-label={t(GETTING_STARTED_STEP_CONTENT[key].title)}
-              aria-current={key === selectedStep.key ? 'step' : undefined}
-              data-completed={completedSteps.includes(key) || undefined}
+              aria-label={t(GETTING_STARTED_STEP_CONTENT[step].title)}
+              aria-current={step === selectedStep ? 'step' : undefined}
+              data-completed={completedSteps.includes(step) || undefined}
               disabled={isSaving}
-              onClick={() => onSelectStep(key)}
+              onClick={() => onSelectStep(step)}
             />
           ))}
         </StyledSteps>
         <AnimatePresence initial={false} mode="wait">
           <motion.div
-            key={selectedStep.key}
+            key={selectedStep}
             initial={{ opacity: 0, y: -cardOffset }}
             animate={{ opacity: 1, y: 0 }}
             exit={{
@@ -200,8 +197,8 @@ export const GettingStartedStepStack = ({
           >
             <GettingStartedStepCard
               step={selectedStep}
-              isCompleted={completedSteps.includes(selectedStep.key)}
-              isJustCompleted={justCompletedStep === selectedStep.key}
+              isCompleted={completedSteps.includes(selectedStep)}
+              isJustCompleted={justCompletedStep === selectedStep}
             />
           </motion.div>
         </AnimatePresence>

@@ -24,6 +24,7 @@ import {
   IconEyeOff,
   IconZzz,
 } from 'twenty-ui/icon';
+import { type UpdateGettingStartedInput } from '~/generated-metadata/graphql';
 
 export const GettingStartedSnoozeMenu = () => {
   const { t } = useLingui();
@@ -45,27 +46,8 @@ export const GettingStartedSnoozeMenu = () => {
     { option: 'lastThreeDays', label: t`Until the last 3 days`, Icon: IconZzz },
   ];
 
-  const getSnoozedUntil = (option: GettingStartedSnoozeOption) =>
-    getGettingStartedSnoozedUntil({
-      option,
-      now: new Date(),
-      timeZone,
-      trialEnd,
-    });
-
-  const snooze = async (option: GettingStartedSnoozeOption) => {
-    const snoozedUntil = getSnoozedUntil(option);
-
-    if (!isDefined(snoozedUntil)) {
-      return;
-    }
-
-    await updateGettingStarted({ snoozedUntil });
-    navigate(defaultHomePagePath);
-  };
-
-  const hideForGood = async () => {
-    await updateGettingStarted({ isHidden: true });
+  const updateAndNavigateHome = async (input: UpdateGettingStartedInput) => {
+    await updateGettingStarted(input);
     navigate(defaultHomePagePath);
   };
 
@@ -88,7 +70,12 @@ export const GettingStartedSnoozeMenu = () => {
         </Dropdown.Header>
         <Dropdown.Section>
           {snoozeOptions.map(({ option, label, Icon }) => {
-            const snoozedUntil = getSnoozedUntil(option);
+            const snoozedUntil = getGettingStartedSnoozedUntil({
+              option,
+              now: new Date(),
+              timeZone,
+              trialEnd,
+            });
 
             return (
               <Dropdown.ActionItem
@@ -106,7 +93,7 @@ export const GettingStartedSnoozeMenu = () => {
                 }
                 descriptionPlacement="inline"
                 disabled={isSaving || !isDefined(snoozedUntil)}
-                onClick={() => void snooze(option)}
+                onClick={() => void updateAndNavigateHome({ snoozedUntil })}
               >
                 {label}
               </Dropdown.ActionItem>
@@ -118,7 +105,7 @@ export const GettingStartedSnoozeMenu = () => {
           <Dropdown.ActionItem
             startIcon={<IconEyeOff />}
             disabled={isSaving}
-            onClick={() => void hideForGood()}
+            onClick={() => void updateAndNavigateHome({ isHidden: true })}
           >
             {t`Hide for good`}
           </Dropdown.ActionItem>

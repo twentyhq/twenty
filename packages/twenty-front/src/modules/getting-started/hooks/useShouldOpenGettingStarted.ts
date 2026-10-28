@@ -1,6 +1,5 @@
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { getGettingStartedRemainingSteps } from '@/getting-started/utils/getGettingStartedRemainingSteps';
-import { shouldOpenGettingStarted } from '@/getting-started/utils/shouldOpenGettingStarted';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
@@ -24,17 +23,18 @@ export const useShouldOpenGettingStarted = ({
     return { shouldOpenGettingStarted: false, isLoading: loading };
   }
 
+  const remainingSteps = getGettingStartedRemainingSteps({
+    steps: progress.steps,
+    completedSteps: progress.completedSteps,
+    permissionFlagMap,
+  });
+
   return {
-    shouldOpenGettingStarted: shouldOpenGettingStarted({
-      remainingSteps: getGettingStartedRemainingSteps({
-        steps: progress.steps,
-        completedSteps: progress.completedSteps,
-        permissionFlagMap,
-      }),
-      snoozedUntil: progress.snoozedUntil,
-      isHidden: progress.isHidden,
-      now: new Date(),
-    }),
+    shouldOpenGettingStarted:
+      !progress.isHidden &&
+      remainingSteps.length > 0 &&
+      (!isDefined(progress.snoozedUntil) ||
+        Date.parse(progress.snoozedUntil) <= Date.now()),
     isLoading: false,
   };
 };

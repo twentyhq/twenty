@@ -16,7 +16,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import {
-  type GettingStartedStep,
+  GettingStartedStep,
   PrepareGettingStartedWorkflowDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -49,13 +49,7 @@ const StyledRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-type GettingStartedWorkflowActionProps = {
-  step: GettingStartedStep;
-};
-
-export const GettingStartedWorkflowAction = ({
-  step,
-}: GettingStartedWorkflowActionProps) => {
+export const GettingStartedHandoverAction = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const navigateApp = useNavigateApp();
@@ -64,12 +58,14 @@ export const GettingStartedWorkflowAction = ({
   const [prepareGettingStartedWorkflow, { loading }] = useMutation(
     PrepareGettingStartedWorkflowDocument,
   );
-  const isWorkflowEnabled = progress?.completedSteps.includes(step) ?? false;
+  const isWorkflowEnabled =
+    progress?.completedSteps.includes(GettingStartedStep.HANDOVER_DEALS) ??
+    false;
 
   const prepareWorkflow = async ({ activate }: { activate: boolean }) => {
     try {
       const { data } = await prepareGettingStartedWorkflow({
-        variables: { step, activate },
+        variables: { activate },
       });
 
       if (!isDefined(data)) {
@@ -93,26 +89,24 @@ export const GettingStartedWorkflowAction = ({
   return (
     <StyledColumn>
       <StyledWorkflowPreview>
-        {(GETTING_STARTED_WORKFLOW_NODES[step] ?? []).map(
-          ({ label, title, Icon }, index) => (
-            <Fragment key={index}>
-              {index > 0 && <StyledConnector />}
-              <WorkflowNodeContainer selected={false}>
-                <WorkflowNodeIconContainer>
-                  <Icon size={theme.icon.size.md} />
-                </WorkflowNodeIconContainer>
-                <WorkflowNodeRightPart>
-                  <WorkflowNodeLabel selected={false}>
-                    {t(label)}
-                  </WorkflowNodeLabel>
-                  <WorkflowNodeTitle selected={false} highlight>
-                    {t(title)}
-                  </WorkflowNodeTitle>
-                </WorkflowNodeRightPart>
-              </WorkflowNodeContainer>
-            </Fragment>
-          ),
-        )}
+        {GETTING_STARTED_WORKFLOW_NODES.map(({ label, title, Icon }, index) => (
+          <Fragment key={index}>
+            {index > 0 && <StyledConnector />}
+            <WorkflowNodeContainer selected={false}>
+              <WorkflowNodeIconContainer>
+                <Icon size={theme.icon.size.md} />
+              </WorkflowNodeIconContainer>
+              <WorkflowNodeRightPart>
+                <WorkflowNodeLabel selected={false}>
+                  {t(label)}
+                </WorkflowNodeLabel>
+                <WorkflowNodeTitle selected={false} highlight>
+                  {t(title)}
+                </WorkflowNodeTitle>
+              </WorkflowNodeRightPart>
+            </WorkflowNodeContainer>
+          </Fragment>
+        ))}
       </StyledWorkflowPreview>
       <StyledRow>
         <Button

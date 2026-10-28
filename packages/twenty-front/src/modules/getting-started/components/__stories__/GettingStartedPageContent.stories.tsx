@@ -132,7 +132,7 @@ export const AllDone: Story = {
           data: {
             gettingStartedProgress: {
               ...TRIAL_PROGRESS,
-              completedSteps: mockGettingStartedSteps.map(({ key }) => key),
+              completedSteps: mockGettingStartedSteps,
               selectedStep: GettingStartedStep.CONNECT_MAILBOX,
               creditsEarned: 2,
             },
@@ -216,7 +216,7 @@ const GettingStartedAnimationPreview = () => {
     const stepToComplete =
       isDefined(selectedStep) && !completedSteps.includes(selectedStep)
         ? selectedStep
-        : steps.find(({ key }) => !completedSteps.includes(key))?.key;
+        : steps.find((step) => !completedSteps.includes(step));
 
     if (!isDefined(stepToComplete)) {
       return;

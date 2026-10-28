@@ -2,20 +2,15 @@ import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
-import { GETTING_STARTED_AI_THREAD_PROMPTS } from '@/getting-started/constants/GettingStartedAiThreadPrompts';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconArrowUp } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-import {
-  type GettingStartedStep,
-  GettingStartedStepStatus,
-} from '~/generated-metadata/graphql';
+import { GettingStartedStep } from '~/generated-metadata/graphql';
 
 const StyledColumn = styled.div`
   display: flex;
@@ -30,17 +25,10 @@ const StyledComposerActions = styled.div`
   justify-content: flex-end;
 `;
 
-type GettingStartedAiThreadActionProps = {
-  step: GettingStartedStep;
-};
-
-export const GettingStartedAiThreadAction = ({
-  step,
-}: GettingStartedAiThreadActionProps) => {
+export const GettingStartedFollowUpAction = () => {
   const { t } = useLingui();
-  const aiThreadPrompt = GETTING_STARTED_AI_THREAD_PROMPTS[step];
   const [prompt, setPrompt] = useState(
-    isDefined(aiThreadPrompt) ? t(aiThreadPrompt.prompt) : '',
+    t`Every Monday, draft a follow-up email for each deal closing in the next 30 days.`,
   );
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
   const { updateGettingStarted } = useUpdateGettingStarted();
@@ -48,27 +36,27 @@ export const GettingStartedAiThreadAction = ({
   const trimmedPrompt = prompt.trim();
 
   const sendPrompt = () => {
-    const threadId = openAskAiPageWithPreprompt({
+    openAskAiPageWithPreprompt({
       serializedDocument:
         serializePlainTextAsAdvancedTextEditorDocument(trimmedPrompt),
       mode: 'SEND',
     });
     void updateGettingStarted({
-      stepStatus: { step, status: GettingStartedStepStatus.DONE, threadId },
+      completedStep: GettingStartedStep.FOLLOW_UP_DEALS,
     });
   };
 
   return (
     <StyledColumn>
       <TextArea
-        textAreaId={`getting-started-${step}-prompt`}
-        label={isDefined(aiThreadPrompt) ? t(aiThreadPrompt.label) : undefined}
+        textAreaId="getting-started-follow-up-prompt"
+        label={t`Follow-up instructions`}
         minRows={3}
         value={prompt}
         onChange={setPrompt}
       />
       <StyledComposerActions>
-        <AiModelTierDropdown dropdownId={`getting-started-${step}-model`} />
+        <AiModelTierDropdown dropdownId="getting-started-follow-up-model" />
         <IconButton
           size="sm"
           variant="solid"

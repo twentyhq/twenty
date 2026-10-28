@@ -7,7 +7,7 @@ import { useQuery } from '@apollo/client/react';
 import { useLocation } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getAppPath, getSettingsPath } from 'twenty-shared/utils';
 import { OnboardingStatus, PageLayoutType } from '~/generated-metadata/graphql';
 
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
@@ -61,13 +61,12 @@ const setupMockShouldOpenGettingStarted = (shouldOpenGettingStartedResult?: {
   shouldOpenGettingStarted: boolean;
   isLoading: boolean;
 }) => {
-  if (!isDefined(shouldOpenGettingStartedResult)) {
-    return;
-  }
-
-  jest
-    .mocked(useShouldOpenGettingStarted)
-    .mockReturnValueOnce(shouldOpenGettingStartedResult);
+  jest.mocked(useShouldOpenGettingStarted).mockReturnValueOnce(
+    shouldOpenGettingStartedResult ?? {
+      shouldOpenGettingStarted: false,
+      isLoading: false,
+    },
+  );
 };
 
 jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace');

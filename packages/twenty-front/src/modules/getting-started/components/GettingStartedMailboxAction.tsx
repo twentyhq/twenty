@@ -1,6 +1,6 @@
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsConnectedAccountsTableHeader } from '@/settings/accounts/components/SettingsConnectedAccountsTableHeader';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
@@ -20,6 +20,7 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
 import { IconGoogle, IconLock, IconMicrosoft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   CalendarChannelVisibility,
@@ -45,11 +46,6 @@ const StyledFooter = styled.div`
   justify-content: space-between;
 `;
 
-const StyledMuted = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-`;
-
 export const GettingStartedMailboxAction = () => {
   const { t } = useLingui();
   const { triggerApisOAuth } = useTriggerApisOAuth();
@@ -58,10 +54,6 @@ export const GettingStartedMailboxAction = () => {
     (account) => !isDefined(account.archivedAt),
   );
   const hasActiveAccounts = activeAccounts.length > 0;
-  const { objectMetadataItem: personObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.Person,
-    });
   const { totalCount: peopleCount } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Person,
     limit: 1,
@@ -126,15 +118,15 @@ export const GettingStartedMailboxAction = () => {
             ))}
           </Table>
           <StyledFooter>
-            <StyledMuted>
+            <Text size="sm" color="tertiary">
               {isDefined(peopleCount) &&
                 isDefined(companyCount) &&
                 t`${peopleCount} people and ${companyCount} companies in your workspace`}
-            </StyledMuted>
+            </Text>
             <NavigationButton
               size="sm"
               to={getAppPath(AppPath.RecordIndexPage, {
-                objectNamePlural: personObjectMetadataItem.namePlural,
+                objectNamePlural: CoreObjectNamePlural.Person,
               })}
             >{t`Open people`}</NavigationButton>
           </StyledFooter>

@@ -7,7 +7,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { GettingStartedProgressDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-progress.dto';
 import { UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
-import { GettingStartedGraphqlApiExceptionFilter } from 'src/engine/core-modules/getting-started/filters/getting-started-graphql-api-exception.filter';
 import { GettingStartedService } from 'src/engine/core-modules/getting-started/services/getting-started.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -36,10 +35,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
   NoPermissionGuard,
 )
 @UsePipes(ResolverValidationPipe)
-@UseFilters(
-  GettingStartedGraphqlApiExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class GettingStartedResolver {
   constructor(private readonly gettingStartedService: GettingStartedService) {}
 

@@ -1,6 +1,6 @@
 import { GettingStartedStepRewardChip } from '@/getting-started/components/GettingStartedStepRewardChip';
 import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
-import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
+import { GETTING_STARTED_STEP_ACTIONS } from '@/getting-started/constants/GettingStartedStepActions';
 import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedStepContent';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { AnimatedCheckmark } from '@/ui/navigation/step-bar/components/internal/AnimatedCheckmark/AnimatedCheckmark';
@@ -9,10 +9,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconCheck } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { Heading } from 'twenty-ui/primitives/typography';
+import { Heading, Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { type GettingStartedStepDefinition } from '~/generated-metadata/graphql';
+import { type GettingStartedStep } from '~/generated-metadata/graphql';
 
 const StyledHeading = styled.div<{ isCompleted: boolean }>`
   align-items: flex-start;
@@ -53,13 +53,8 @@ const StyledBody = styled.div`
   padding: ${themeCssVariables.spacing[5]} ${themeCssVariables.spacing[6]};
 `;
 
-const StyledPermissionNotice = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-`;
-
 type GettingStartedStepCardProps = {
-  step: GettingStartedStepDefinition;
+  step: GettingStartedStep;
   isCompleted: boolean;
   isJustCompleted: boolean;
 };
@@ -73,7 +68,8 @@ export const GettingStartedStepCard = ({
   const theme = useTheme();
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
 
-  const content = GETTING_STARTED_STEP_CONTENT[step.key];
+  const content = GETTING_STARTED_STEP_CONTENT[step];
+  const StepAction = GETTING_STARTED_STEP_ACTIONS[step];
 
   return (
     <Card.Root
@@ -100,16 +96,16 @@ export const GettingStartedStepCard = ({
           </Heading>
           <StyledDescription>{t(content.description)}</StyledDescription>
         </StyledTitle>
-        <GettingStartedStepRewardChip
-          step={step.key}
-          isCompleted={isCompleted}
-        />
+        <GettingStartedStepRewardChip step={step} isCompleted={isCompleted} />
       </StyledHeading>
       <StyledBody>
-        {permissionFlagMap[step.permissionFlag] ? (
-          <GettingStartedStepAction step={step} />
+        {permissionFlagMap[content.permissionFlag] ? (
+          <StepAction />
         ) : (
-          <StyledPermissionNotice>{t`Ask your workspace admin for permission to complete this step.`}</StyledPermissionNotice>
+          <Text
+            size="sm"
+            color="tertiary"
+          >{t`Ask your workspace admin for permission to complete this step.`}</Text>
         )}
       </StyledBody>
     </Card.Root>
