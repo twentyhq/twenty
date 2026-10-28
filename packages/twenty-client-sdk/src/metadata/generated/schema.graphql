@@ -3545,6 +3545,7 @@ type Object {
     paging: CursorPaging! = {first: 10}
   ): ObjectIndexMetadatasConnection!
   isActive: Boolean!
+  isAuditLogged: Boolean!
   isLabelSyncedWithName: Boolean!
   isRemote: Boolean!
   isSearchable: Boolean!

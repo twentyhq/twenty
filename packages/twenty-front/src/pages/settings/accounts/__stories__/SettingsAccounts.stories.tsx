@@ -197,6 +197,35 @@ export const WorkspaceSharedAppConnectionsStayOff: Story = {
   },
 };
 
+export const AppsSectionHeaderStaysWhileLoading: Story = {
+  ...accountGroupsStory,
+  beforeEach: seedApplicationPreferencesStory,
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyApplicationPreferences', async () => {
+          await delay('infinite');
+        }),
+        ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Choose your preferences for the apps installed on your workspace by the admin',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(canvas.getByRole('heading', { name: 'Apps' })).toBeVisible();
+    expect(canvasElement.querySelector('[aria-busy="true"]')).not.toBeNull();
+    expect(canvas.queryByText('Outlook')).not.toBeInTheDocument();
+  },
+};
+
 export const AccountsSectionHeaderStaysWhileLoading: Story = {
   ...accountsTabStory,
   parameters: {

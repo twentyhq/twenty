@@ -17,6 +17,9 @@ export const STANDARD_OBJECT_FIELDS = {
       universalIdentifier: '6f3ed3b5-0642-4a2a-9558-98376adb60f4',
     },
     title: { universalIdentifier: '9283c05e-127c-46ec-82e9-6424a7c0a2f1' },
+    isAssistantParticipant: {
+      universalIdentifier: 'd901f5bc-23ba-48ac-9103-145da4b76afe',
+    },
     totalInputTokens: {
       universalIdentifier: '2705f4af-24b8-4660-a8a8-8eff689298d1',
     },
