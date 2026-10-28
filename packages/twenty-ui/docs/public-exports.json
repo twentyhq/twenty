@@ -520,6 +520,7 @@
       "IconMessage": "icon/components/TablerIcons",
       "IconMessageCircle": "icon/components/TablerIcons",
       "IconMessageCirclePlus": "icon/components/TablerIcons",
+      "IconMessageHeart": "icon/components/TablerIcons",
       "IconMicrophone": "icon/components/TablerIcons",
       "IconMicrosoft": "icon/components/IconMicrosoft",
       "IconMicrosoftCalendar": "icon/components/IconMicrosoftCalendar",

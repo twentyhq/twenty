@@ -35,6 +35,16 @@ exports[`MCP navigation menu item tools (integration) should describe the naviga
             "VIEW",
             "RECORD",
             "PAGE_LAYOUT",
+            "TAB",
+            "SECTION",
+            "AI_CHAT_INBOX",
+            "AI_CHAT_FAVORITES",
+            "AI_CHAT_RECENTS",
+            "AI_AGENTS",
+            "AI_CHAT_CHANNELS",
+            "PINNED_COMMANDS",
+            "COMMAND",
+            "FAVORITES",
           ],
           "type": "string",
         },
@@ -47,6 +57,12 @@ exports[`MCP navigation menu item tools (integration) should describe the naviga
     "description": "Create a navigation menu item. With scope='user' it becomes a personal favorite for the current user; with scope='workspace' it is shared with everyone (requires LAYOUTS permission).
 
 Type chooses the variant:
+- TAB: a sidebar tab next to Home (name required, no parent). Items and sections live in it through folderId.
+- SECTION: a titled group of items inside a tab or at the root of Home (name required).
+- AI_CHAT_INBOX, AI_CHAT_FAVORITES, AI_CHAT_RECENTS: built-in inbox sections (triage filters, favorite chats, recent chats) that list the viewer's own chats; they live in a tab or at the root of Home.
+- AI_AGENTS: a built-in section listing the workspace's AI agents, each opening its agent page; it lives in a tab or at the root of Home.
+- AI_CHAT_CHANNELS: a built-in section listing the workspace's chat channels the viewer can access; it lives in a tab or at the root of Home.
+- FAVORITES: a built-in section listing the viewer's own favorites; it lives in a tab or at the root of Home.
 - FOLDER: a group to nest other items into (name required).
 - LINK: an external URL pinned in the sidebar (name + link required).
 - OBJECT: pins an object's standard view (label auto-derived from the object's plural name; only pass 'name' if the user wants a custom label).
@@ -64,7 +80,7 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "type": "string",
             },
             "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
+              "description": "Parent id: the tab, section or folder the item should live in. Tabs have no parent, sections live in a tab or at the root of Home, folders cannot be nested in folders.",
               "format": "uuid",
               "type": "string",
             },
@@ -108,7 +124,136 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "type": "string",
             },
             "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
+              "description": "Parent id: the tab, section or folder the item should live in. Tabs have no parent, sections live in a tab or at the root of Home, folders cannot be nested in folders.",
+              "format": "uuid",
+              "type": "string",
+            },
+            "icon": {
+              "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+              "type": "string",
+            },
+            "name": {
+              "description": "Label shown in the sidebar.",
+              "minLength": 1,
+              "type": "string",
+            },
+            "position": {
+              "description": "Position among siblings; defaults to the end.",
+              "type": "number",
+            },
+            "scope": {
+              "const": "workspace",
+              "description": "Tabs and sections are shared with the whole workspace.",
+              "type": "string",
+            },
+            "type": {
+              "const": "TAB",
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "scope",
+            "name",
+          ],
+          "type": "object",
+        },
+        {
+          "properties": {
+            "color": {
+              "description": "Optional hex colour",
+              "type": "string",
+            },
+            "folderId": {
+              "description": "Parent id: the tab, section or folder the item should live in. Tabs have no parent, sections live in a tab or at the root of Home, folders cannot be nested in folders.",
+              "format": "uuid",
+              "type": "string",
+            },
+            "icon": {
+              "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+              "type": "string",
+            },
+            "name": {
+              "description": "Label shown in the sidebar.",
+              "minLength": 1,
+              "type": "string",
+            },
+            "position": {
+              "description": "Position among siblings; defaults to the end.",
+              "type": "number",
+            },
+            "scope": {
+              "const": "workspace",
+              "description": "Tabs and sections are shared with the whole workspace.",
+              "type": "string",
+            },
+            "type": {
+              "const": "SECTION",
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "scope",
+            "name",
+          ],
+          "type": "object",
+        },
+        {
+          "properties": {
+            "color": {
+              "description": "Optional hex colour",
+              "type": "string",
+            },
+            "folderId": {
+              "description": "Parent id: the tab, section or folder the item should live in. Tabs have no parent, sections live in a tab or at the root of Home, folders cannot be nested in folders.",
+              "format": "uuid",
+              "type": "string",
+            },
+            "icon": {
+              "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+              "type": "string",
+            },
+            "name": {
+              "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
+              "minLength": 1,
+              "type": "string",
+            },
+            "position": {
+              "description": "Position among siblings; defaults to the end.",
+              "type": "number",
+            },
+            "scope": {
+              "const": "workspace",
+              "description": "Tabs and sections are shared with the whole workspace.",
+              "type": "string",
+            },
+            "type": {
+              "enum": [
+                "AI_CHAT_INBOX",
+                "AI_CHAT_FAVORITES",
+                "AI_CHAT_RECENTS",
+                "AI_AGENTS",
+                "AI_CHAT_CHANNELS",
+                "FAVORITES",
+              ],
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "scope",
+          ],
+          "type": "object",
+        },
+        {
+          "properties": {
+            "color": {
+              "description": "Optional hex colour",
+              "type": "string",
+            },
+            "folderId": {
+              "description": "Parent id: the tab, section or folder the item should live in. Tabs have no parent, sections live in a tab or at the root of Home, folders cannot be nested in folders.",
               "format": "uuid",
               "type": "string",
             },
@@ -158,7 +303,7 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "type": "string",
             },
             "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
+              "description": "Parent id: the tab, section or folder the item should live in. Tabs have no parent, sections live in a tab or at the root of Home, folders cannot be nested in folders.",
               "format": "uuid",
               "type": "string",
             },
@@ -207,7 +352,7 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "type": "string",
             },
             "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
+              "description": "Parent id: the tab, section or folder the item should live in. Tabs have no parent, sections live in a tab or at the root of Home, folders cannot be nested in folders.",
               "format": "uuid",
               "type": "string",
             },
@@ -256,7 +401,7 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "type": "string",
             },
             "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
+              "description": "Parent id: the tab, section or folder the item should live in. Tabs have no parent, sections live in a tab or at the root of Home, folders cannot be nested in folders.",
               "format": "uuid",
               "type": "string",
             },
@@ -311,7 +456,7 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "type": "string",
             },
             "folderId": {
-              "description": "Parent folder id, if the item should live inside a folder.",
+              "description": "Parent id: the tab, section or folder the item should live in. Tabs have no parent, sections live in a tab or at the root of Home, folders cannot be nested in folders.",
               "format": "uuid",
               "type": "string",
             },

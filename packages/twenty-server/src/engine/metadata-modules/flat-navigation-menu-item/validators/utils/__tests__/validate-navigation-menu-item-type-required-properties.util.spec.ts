@@ -75,6 +75,10 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
         'A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type',
       ],
     },
+    {
+      type: NavigationMenuItemType.COMMAND,
+      expectedMessages: ['A valid commandKey is required for COMMAND type'],
+    },
   ])(
     'should report every missing property for $type type',
     ({ type, expectedMessages }) => {
@@ -117,6 +121,10 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     {
       type: NavigationMenuItemType.PAGE_LAYOUT,
       overrides: { pageLayoutUniversalIdentifier: VALID_UUID },
+    },
+    {
+      type: NavigationMenuItemType.COMMAND,
+      overrides: { commandKey: 'SEARCH' as const },
     },
   ])(
     'should not report any error when $type type properties are valid',

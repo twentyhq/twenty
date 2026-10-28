@@ -14,6 +14,8 @@ const EMPTY_AGENT_CHAT_OPEN_THREADS_SUMMARY = {
   hasUnreadOpenThread: false,
   hasUnreadMentionThread: false,
   hasUnreadAssignedThread: false,
+  unreadMentionThreadCount: 0,
+  unreadAssignedThreadCount: 0,
 };
 
 // Counted by the server over every chat, past the pages loaded here; it is

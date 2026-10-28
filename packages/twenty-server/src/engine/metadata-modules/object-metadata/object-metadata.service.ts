@@ -30,6 +30,7 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -645,15 +646,24 @@ export class ObjectMetadataService {
         'flatNavigationMenuItemMaps',
       ]);
 
-    const workspaceLevelItems = Object.values(
+    const workspaceSection = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatNavigationMenuItemMaps,
+      universalIdentifier:
+        STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection.universalIdentifier,
+    });
+    const folderId = workspaceSection?.id ?? null;
+
+    const siblingItems = Object.values(
       flatNavigationMenuItemMaps.byUniversalIdentifier,
     ).filter(
       (item): item is FlatNavigationMenuItem =>
-        isDefined(item) && !isDefined(item.userWorkspaceId),
+        isDefined(item) &&
+        !isDefined(item.userWorkspaceId) &&
+        (item.folderId ?? null) === folderId,
     );
     const nextPosition =
-      workspaceLevelItems.length > 0
-        ? Math.max(...workspaceLevelItems.map((item) => item.position)) + 1
+      siblingItems.length > 0
+        ? Math.max(...siblingItems.map((item) => item.position)) + 1
         : 0;
 
     const newId = v4();
@@ -670,8 +680,8 @@ export class ObjectMetadataService {
         objectMetadata.universalIdentifier,
       viewId: null,
       viewUniversalIdentifier: null,
-      folderId: null,
-      folderUniversalIdentifier: null,
+      folderId,
+      folderUniversalIdentifier: workspaceSection?.universalIdentifier ?? null,
       pageLayoutId: null,
       pageLayoutUniversalIdentifier: null,
       agentChatChannelId: null,
@@ -679,6 +689,8 @@ export class ObjectMetadataService {
       name: null,
       link: null,
       icon: null,
+      visibleItemLimit: null,
+      commandKey: null,
       color: null,
       position: nextPosition,
       workspaceId,

@@ -262,6 +262,8 @@ import { AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand } f
 import { BackfillApplicationAutoUpgradeSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-slow-1793170402367-backfill-application-auto-upgrade';
 import { AddMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438837-add-messaging-provider';
 import { AddMcpServerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793150000000-add-mcp-server';
+import { AddSidebarNavigationMenuItemTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793201008388-add-sidebar-navigation-menu-item-types';
+import { AddVisibleItemLimitToNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793201008391-add-visible-item-limit-to-navigation-menu-item';
 import { DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793139794914-drop-is-custom-from-agent-skill-view-index-and-agent-chat-channel';
 
 export const INSTANCE_COMMANDS = [
@@ -527,5 +529,7 @@ export const INSTANCE_COMMANDS = [
   AddMcpServerFastInstanceCommand,
   AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand,
   BackfillApplicationAutoUpgradeSlowInstanceCommand,
+  AddSidebarNavigationMenuItemTypesFastInstanceCommand,
+  AddVisibleItemLimitToNavigationMenuItemFastInstanceCommand,
   DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand,
 ];

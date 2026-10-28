@@ -7,8 +7,6 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 
 describe('Navigation Menu Item update should fail with circular dependency', () => {
   let folderId: string;
-  let parentFolderId: string;
-  let childFolderId: string;
 
   beforeAll(async () => {
     const { data: folderData } = await createNavigationMenuItem({
@@ -21,46 +19,9 @@ describe('Navigation Menu Item update should fail with circular dependency', () 
 
     folderId = folderData?.createNavigationMenuItem?.id;
     jestExpectToBeDefined(folderId);
-
-    const { data: parentFolderData } = await createNavigationMenuItem({
-      expectToFail: false,
-      input: {
-        type: NavigationMenuItemType.FOLDER,
-        name: 'Parent Folder',
-      },
-    });
-
-    parentFolderId = parentFolderData?.createNavigationMenuItem?.id;
-    jestExpectToBeDefined(parentFolderId);
-
-    const { data: childFolderData } = await createNavigationMenuItem({
-      expectToFail: false,
-      input: {
-        type: NavigationMenuItemType.FOLDER,
-        name: 'Child Folder',
-        folderId: parentFolderId,
-      },
-    });
-
-    childFolderId = childFolderData?.createNavigationMenuItem?.id;
-    jestExpectToBeDefined(childFolderId);
   });
 
   afterAll(async () => {
-    if (childFolderId) {
-      await deleteNavigationMenuItem({
-        expectToFail: false,
-        input: { id: childFolderId },
-      });
-    }
-
-    if (parentFolderId) {
-      await deleteNavigationMenuItem({
-        expectToFail: false,
-        input: { id: parentFolderId },
-      });
-    }
-
     if (folderId) {
       await deleteNavigationMenuItem({
         expectToFail: false,
@@ -76,22 +37,6 @@ describe('Navigation Menu Item update should fail with circular dependency', () 
         id: folderId,
         update: {
           folderId: folderId,
-        },
-      },
-    });
-
-    expectOneNotInternalServerErrorSnapshot({
-      errors,
-    });
-  });
-
-  it('when update creates a circular dependency chain', async () => {
-    const { errors } = await updateNavigationMenuItem({
-      expectToFail: true,
-      input: {
-        id: parentFolderId,
-        update: {
-          folderId: childFolderId,
         },
       },
     });

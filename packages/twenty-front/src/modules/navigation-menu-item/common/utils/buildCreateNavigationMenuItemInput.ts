@@ -10,6 +10,7 @@ import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/co
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
 import { isNavigationMenuItemObject } from '@/navigation-menu-item/common/utils/isNavigationMenuItemObject';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 
 export const buildCreateNavigationMenuItemInput = (
   draftItem: NavigationMenuItem,
@@ -21,11 +22,15 @@ export const buildCreateNavigationMenuItemInput = (
     position: draftItem.position,
   };
 
-  if (isNavigationMenuItemFolder(draftItem)) {
+  if (
+    isNavigationMenuItemFolder(draftItem) ||
+    isNavigationMenuItemContainer(draftItem)
+  ) {
     input.name = draftItem.name ?? undefined;
     input.icon = draftItem.icon ?? null;
   } else if (isNavigationMenuItemLink(draftItem)) {
     input.name = draftItem.name ?? t`Link`;
+    input.icon = draftItem.icon ?? null;
     const linkUrl = (draftItem.link ?? '').trim();
     input.link = linkUrl
       ? getLinkNavigationMenuItemComputedLink({ link: linkUrl })
@@ -51,6 +56,14 @@ export const buildCreateNavigationMenuItemInput = (
 
   if (isDefined(draftItem.color)) {
     input.color = draftItem.color;
+  }
+
+  if (isDefined(draftItem.visibleItemLimit)) {
+    input.visibleItemLimit = draftItem.visibleItemLimit;
+  }
+
+  if (isDefined(draftItem.commandKey)) {
+    input.commandKey = draftItem.commandKey;
   }
 
   return input;

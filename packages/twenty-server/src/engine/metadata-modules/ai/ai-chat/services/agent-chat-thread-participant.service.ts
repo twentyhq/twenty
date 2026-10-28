@@ -116,6 +116,8 @@ const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
   hasUnreadOpenThread: false,
   hasUnreadMentionThread: false,
   hasUnreadAssignedThread: false,
+  unreadMentionThreadCount: 0,
+  unreadAssignedThreadCount: 0,
 };
 
 const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "updatedAt"`;
@@ -496,7 +498,9 @@ export class AgentChatThreadParticipantService {
              COUNT("pendingQuestionMessageId")::int AS "needsInputThreadCount",
              COALESCE(BOOL_OR("isUnread"), false) AS "hasUnreadOpenThread",
              COALESCE(BOOL_OR("isUnread" AND "lastMentionedAt" IS NOT NULL), false) AS "hasUnreadMentionThread",
-             COALESCE(BOOL_OR("isUnread" AND "assigneeId" = :summaryWorkspaceMemberId), false) AS "hasUnreadAssignedThread"
+             COALESCE(BOOL_OR("isUnread" AND "assigneeId" = :summaryWorkspaceMemberId), false) AS "hasUnreadAssignedThread",
+             (COUNT(*) FILTER (WHERE "isUnread" AND "lastMentionedAt" IS NOT NULL))::int AS "unreadMentionThreadCount",
+             (COUNT(*) FILTER (WHERE "isUnread" AND "assigneeId" = :summaryWorkspaceMemberId))::int AS "unreadAssignedThreadCount"
            FROM open_thread`,
           {
             ...readableThreads.getParameters(),

@@ -4,18 +4,26 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
+  FeatureFlagKey,
   GetAgentChatOpenThreadsSummaryDocument,
+  type GetAgentChatOpenThreadsSummaryQuery,
+  type NavigationMenuItem,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { mockedUserData } from '~/testing/mock-data/users';
@@ -26,11 +34,19 @@ jest.mock(
 );
 jest.mock('@/navigation/hooks/useNavigationDrawerModes');
 jest.mock('@/navigation/hooks/useSwitchNavigationDrawerMode');
+jest.mock(
+  '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs',
+);
+jest.mock('@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab');
 
 let mockIsAiChatInboxEnabled = true;
+let mockIsCustomizableSidebarEnabled = true;
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
+  useIsFeatureEnabled: (featureFlagKey: FeatureFlagKey | null) =>
+    featureFlagKey === FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED
+      ? mockIsCustomizableSidebarEnabled
+      : mockIsAiChatInboxEnabled,
 }));
 
 jest.mock('twenty-ui/utilities', () => ({
@@ -39,8 +55,43 @@ jest.mock('twenty-ui/utilities', () => ({
 }));
 
 const mockSwitchNavigationDrawerMode = jest.fn();
+const mockSwitchToNavigationMenuTab = jest.fn();
 
-const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
+const inboxTab: NavigationMenuItem = {
+  id: 'inbox-tab',
+  type: NavigationMenuItemType.TAB,
+  name: 'Inbox',
+  icon: 'IconInbox',
+  position: 0,
+  createdAt: '',
+  updatedAt: '',
+};
+
+const developersTab: NavigationMenuItem = {
+  id: 'developers-tab',
+  type: NavigationMenuItemType.TAB,
+  name: 'Developers',
+  icon: 'IconCode',
+  position: 0,
+  createdAt: '',
+  updatedAt: '',
+};
+
+const inboxSection: NavigationMenuItem = {
+  id: 'inbox-section',
+  type: NavigationMenuItemType.AI_CHAT_INBOX,
+  folderId: inboxTab.id,
+  position: 0,
+  createdAt: '',
+  updatedAt: '',
+};
+
+type OpenThreadsSummary =
+  GetAgentChatOpenThreadsSummaryQuery['agentChatOpenThreadsSummary'];
+
+const buildOpenThreadsSummaryMock = (
+  openThreadsSummary: Partial<OpenThreadsSummary>,
+) => ({
   request: { query: GetAgentChatOpenThreadsSummaryDocument },
   delay: 0,
   result: {
@@ -49,9 +100,12 @@ const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
         __typename: 'AgentChatOpenThreadsSummary' as const,
         openThreadCount: 1,
         needsInputThreadCount: 0,
-        hasUnreadOpenThread,
+        hasUnreadOpenThread: false,
         hasUnreadMentionThread: false,
         hasUnreadAssignedThread: false,
+        unreadMentionThreadCount: 0,
+        unreadAssignedThreadCount: 0,
+        ...openThreadsSummary,
       },
     },
   },
@@ -59,10 +113,14 @@ const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
 
 const renderModeSwitcher = ({
   isLayoutCustomizationModeEnabled = false,
-  hasUnreadOpenThread = false,
+  openThreadsSummary = {},
+  navigationMenuItems = [],
+  permissionFlags = [PermissionFlagType.AI],
 }: {
   isLayoutCustomizationModeEnabled?: boolean;
-  hasUnreadOpenThread?: boolean;
+  openThreadsSummary?: Partial<OpenThreadsSummary>;
+  navigationMenuItems?: NavigationMenuItem[];
+  permissionFlags?: PermissionFlagType[];
 } = {}) => {
   const store = createStore();
 
@@ -72,16 +130,23 @@ const renderModeSwitcher = ({
   );
   store.set(currentUserWorkspaceState.atom, {
     ...mockedUserData.currentUserWorkspace,
-    permissionFlags: [PermissionFlagType.AI],
+    permissionFlags,
+  });
+  store.set(metadataStoreState.atomFamily('navigationMenuItems'), {
+    current: navigationMenuItems,
+    draft: [],
+    status: 'up-to-date',
   });
 
   render(
     <I18nProvider i18n={i18n}>
       <JotaiProvider store={store}>
         <MockedProvider
-          mocks={[buildOpenThreadsSummaryMock(hasUnreadOpenThread)]}
+          mocks={[buildOpenThreadsSummaryMock(openThreadsSummary)]}
         >
-          <MainNavigationDrawerModeSwitcher />
+          <ToastProvider>
+            <MainNavigationDrawerModeSwitcher />
+          </ToastProvider>
         </MockedProvider>
       </JotaiProvider>
     </I18nProvider>,
@@ -97,6 +162,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsAiChatInboxEnabled = true;
+    mockIsCustomizableSidebarEnabled = true;
 
     jest.mocked(useNavigationDrawerModes).mockReturnValue([
       {
@@ -120,7 +186,10 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       .mockReturnValue(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     jest.mocked(useSwitchNavigationDrawerMode).mockReturnValue({
       switchNavigationDrawerMode: mockSwitchNavigationDrawerMode,
+      switchToNavigationMenuTab: mockSwitchToNavigationMenuTab,
     });
+    jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue([]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(null);
     jest.mocked(useIsNavigationDrawerContentExpanded).mockReturnValue(true);
   });
 
@@ -140,17 +209,15 @@ describe('MainNavigationDrawerModeSwitcher', () => {
   it('switches mode from the expanded row', async () => {
     renderModeSwitcher();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    await userEvent.click(screen.getByRole('button', { name: 'AI' }));
 
     expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledTimes(1);
     expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(
-      NAVIGATION_DRAWER_TABS.SETTINGS,
+      NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
     );
   });
 
   it.each([
-    [true, 'Settings', NAVIGATION_DRAWER_TABS.SETTINGS],
-    [false, 'Settings', NAVIGATION_DRAWER_TABS.SETTINGS],
     [true, 'AI', NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY],
     [false, 'AI', NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY],
   ] as const)(
@@ -162,17 +229,17 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       const { store } = renderModeSwitcher({
         isLayoutCustomizationModeEnabled: true,
       });
-      const settingsButton = screen.getByRole('button', { name: label });
+      const modeButton = screen.getByRole('button', { name: label });
 
-      expect(settingsButton).toHaveAttribute('aria-disabled', 'true');
+      expect(modeButton).toHaveAttribute('aria-disabled', 'true');
       expect(screen.getByRole('button', { name: 'Home' })).toBeEnabled();
       expect(screen.getByRole('button', { name: 'Home' })).toHaveAttribute(
         'aria-disabled',
         'false',
       );
 
-      await userEvent.click(settingsButton);
-      expect(settingsButton).toHaveFocus();
+      await userEvent.click(modeButton);
+      expect(modeButton).toHaveFocus();
       await userEvent.keyboard('{Enter} ');
 
       expect(mockSwitchNavigationDrawerMode).not.toHaveBeenCalled();
@@ -181,45 +248,253 @@ describe('MainNavigationDrawerModeSwitcher', () => {
         store.set(isLayoutCustomizationModeEnabledState.atom, false);
       });
 
-      expect(settingsButton).toHaveAttribute('aria-disabled', 'false');
-      await userEvent.click(settingsButton);
+      expect(modeButton).toHaveAttribute('aria-disabled', 'false');
+      await userEvent.click(modeButton);
 
       expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledTimes(1);
       expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(mode);
     },
   );
 
-  it('marks the inbox while one of its open chats is unread', async () => {
-    renderModeSwitcher({ hasUnreadOpenThread: true });
+  it('shows the Settings mode and no Add tab while the customizable sidebar is off', () => {
+    mockIsCustomizableSidebarEnabled = false;
+
+    renderModeSwitcher({ isLayoutCustomizationModeEnabled: true });
+
+    const buttonNames = screen
+      .getAllByRole('button')
+      .map((button) => button.getAttribute('aria-label'));
+
+    expect(buttonNames).toEqual(['Home', 'AI', 'Settings']);
+  });
+
+  it('lists custom tabs after the leading modes and opens them', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuTabs)
+      .mockReturnValue([developersTab]);
+
+    renderModeSwitcher();
+
+    const buttonNames = screen
+      .getAllByRole('button')
+      .map((button) => button.getAttribute('aria-label'));
+
+    expect(buttonNames).toEqual(['Home', 'AI', 'Developers']);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Developers' }));
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith(
+      developersTab.id,
+    );
+  });
+
+  it('returns Home from a custom tab', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuTabs)
+      .mockReturnValue([developersTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(developersTab);
+
+    renderModeSwitcher();
+
+    expect(screen.getByRole('button', { name: 'Developers' })).toHaveAttribute(
+      'aria-current',
+      'true',
+    );
+    expect(screen.getByRole('button', { name: 'Home' })).not.toHaveAttribute(
+      'aria-current',
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Home' }));
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith(null);
+  });
+
+  it('opens the tab holding the chat sections like any other tab', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuTabs)
+      .mockReturnValue([inboxTab, developersTab]);
+
+    renderModeSwitcher({ navigationMenuItems: [inboxSection] });
 
     expect(
-      await screen.findByRole('button', { name: 'AI, unread' }),
-    ).toBeInTheDocument();
+      screen
+        .getAllByRole('button')
+        .map((button) => button.getAttribute('aria-label')),
+    ).toEqual(['Home', 'Inbox', 'Developers']);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Inbox' }));
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith(inboxTab.id);
+    expect(mockSwitchNavigationDrawerMode).not.toHaveBeenCalled();
   });
 
-  it('does not mark the inbox when its open chats are read', async () => {
+  it.each([
+    ['chat', NavigationMenuItemType.AI_CHAT_INBOX],
+    ['agents', NavigationMenuItemType.AI_AGENTS],
+  ] as const)(
+    'hides a tab holding only %s sections from members without AI access',
+    (_, sectionType) => {
+      jest
+        .mocked(useWorkspaceNavigationMenuTabs)
+        .mockReturnValue([inboxTab, developersTab]);
+
+      renderModeSwitcher({
+        navigationMenuItems: [{ ...inboxSection, type: sectionType }],
+        permissionFlags: [],
+      });
+
+      expect(
+        screen.queryByRole('button', { name: 'Inbox' }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Developers' }),
+      ).toBeInTheDocument();
+    },
+  );
+
+  it('offers to add a tab only while editing the layout', () => {
     renderModeSwitcher();
+
+    expect(
+      screen.queryByRole('button', { name: 'Add tab' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it.each([
+    { tabs: [inboxTab, developersTab], addTabButtonCount: 1 },
+    {
+      tabs: [
+        inboxTab,
+        developersTab,
+        { ...developersTab, id: 'reports-tab', name: 'Reports' },
+      ],
+      addTabButtonCount: 0,
+    },
+  ])(
+    'caps the row at four tabs counting Home ($tabs.length custom tabs)',
+    ({ tabs, addTabButtonCount }) => {
+      jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue(tabs);
+
+      renderModeSwitcher({
+        isLayoutCustomizationModeEnabled: true,
+        navigationMenuItems: [inboxSection],
+      });
+
+      expect(screen.queryAllByRole('button', { name: 'Add tab' })).toHaveLength(
+        addTabButtonCount,
+      );
+    },
+  );
+
+  it('keeps custom tabs reachable while editing the layout', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuTabs)
+      .mockReturnValue([developersTab]);
+
+    renderModeSwitcher({ isLayoutCustomizationModeEnabled: true });
+
+    expect(screen.getByRole('button', { name: 'Add tab' })).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Developers' }));
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith(
+      developersTab.id,
+    );
+  });
+
+  it.each([
+    ['mentions the member', { hasUnreadMentionThread: true }],
+    ['is assigned to the member', { hasUnreadAssignedThread: true }],
+    ['waits on the member', { needsInputThreadCount: 1 }],
+  ] as const)(
+    'flags the inbox while a chat %s',
+    async (_reason, openThreadsSummary) => {
+      renderModeSwitcher({ openThreadsSummary });
+
+      expect(
+        await screen.findByRole('button', {
+          name: 'AI, needs your attention',
+        }),
+      ).toBeInTheDocument();
+    },
+  );
+
+  it.each([
+    ['Inbox', inboxTab.id],
+    ['Home', null],
+  ] as const)(
+    'flags %s while the inbox it holds needs the member',
+    async (label, inboxParentId) => {
+      jest
+        .mocked(useWorkspaceNavigationMenuTabs)
+        .mockReturnValue([inboxTab, developersTab]);
+      jest.mocked(useActiveNavigationMenuTab).mockReturnValue(developersTab);
+
+      renderModeSwitcher({
+        openThreadsSummary: { hasUnreadMentionThread: true },
+        navigationMenuItems: [{ ...inboxSection, folderId: inboxParentId }],
+      });
+
+      expect(
+        await screen.findByRole('button', {
+          name: `${label}, needs your attention`,
+        }),
+      ).toBeInTheDocument();
+    },
+  );
+
+  it('does not flag the inbox for unread chats that do not need the member', async () => {
+    renderModeSwitcher({ openThreadsSummary: { hasUnreadOpenThread: true } });
     await waitForOpenThreadsSummary();
 
     expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
   });
 
-  it('does not mark unread chats while the inbox feature flag is off', async () => {
+  it('does not flag the inbox while the inbox feature flag is off', async () => {
     mockIsAiChatInboxEnabled = false;
-    renderModeSwitcher({ hasUnreadOpenThread: true });
+    renderModeSwitcher({
+      openThreadsSummary: { hasUnreadMentionThread: true },
+    });
     await waitForOpenThreadsSummary();
 
     expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
   });
 
-  it('does not mark the inbox while it is open', async () => {
+  it('leaves the flag to the inbox while it is open', async () => {
     jest
       .mocked(useActiveNavigationDrawerMode)
       .mockReturnValue(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
-    renderModeSwitcher({ hasUnreadOpenThread: true });
+    renderModeSwitcher({ openThreadsSummary: { needsInputThreadCount: 1 } });
     await waitForOpenThreadsSummary();
 
     expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
+  });
+
+  it('leaves the flag to the inbox of the tab you are on', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuTabs)
+      .mockReturnValue([inboxTab, developersTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(inboxTab);
+
+    renderModeSwitcher({
+      openThreadsSummary: { needsInputThreadCount: 1 },
+      navigationMenuItems: [inboxSection],
+    });
+    await waitForOpenThreadsSummary();
+
+    expect(screen.getByRole('button', { name: 'Inbox' })).toBeInTheDocument();
+  });
+
+  it('keeps flagging the inbox while it is open in the collapsed drawer', async () => {
+    jest
+      .mocked(useActiveNavigationDrawerMode)
+      .mockReturnValue(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
+    jest.mocked(useIsNavigationDrawerContentExpanded).mockReturnValue(false);
+    renderModeSwitcher({ openThreadsSummary: { needsInputThreadCount: 1 } });
+
+    expect(
+      await screen.findByRole('button', { name: 'AI, needs your attention' }),
+    ).toBeInTheDocument();
   });
 
   it('renders nothing when no mode is available', () => {

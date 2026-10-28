@@ -71,7 +71,7 @@ export const AddMenuResetsOnClose: Story = {
     const options = await canvas.findByRole('button', { name: 'More options' });
     await userEvent.click(options);
     await userEvent.click(
-      await body.findByRole('menuitem', { name: 'Add menu item' }),
+      await body.findByRole('menuitem', { name: 'Add item' }),
     );
     await expect(
       jotaiStore.get(openNavigationMenuItemFolderIdsState.atom),
@@ -87,7 +87,7 @@ export const AddMenuResetsOnClose: Story = {
       await body.findByRole('menuitem', { name: 'Edit' }),
     ).toBeVisible();
     await userEvent.click(
-      await body.findByRole('menuitem', { name: 'Add menu item' }),
+      await body.findByRole('menuitem', { name: 'Add item' }),
     );
     await userEvent.keyboard('{Escape}');
     await userEvent.hover(canvas.getByText('Example website'));

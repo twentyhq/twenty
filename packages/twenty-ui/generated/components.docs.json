@@ -1265,7 +1265,7 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"inherit\" | \"primary\" | \"secondary\" | \"tertiary\"",
+        "type": "\"accent\" | \"danger\" | \"inherit\" | \"primary\" | \"secondary\" | \"tertiary\"",
         "required": false,
         "defaultValue": "tertiary",
         "description": "Neutral tertiary, inherited text, solid primary accent, soft accent tint, or secondary treatment."

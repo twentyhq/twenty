@@ -5,6 +5,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { getExpandedAiChatReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
+import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -47,6 +48,9 @@ export const useSwitchNavigationDrawerMode = () => {
   );
   const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
+  );
+  const setCurrentNavigationMenuTabId = useSetAtomState(
+    currentNavigationMenuTabIdState,
   );
 
   const { defaultHomePagePath } = useDefaultHomePagePath();
@@ -117,5 +121,10 @@ export const useSwitchNavigationDrawerMode = () => {
     }
   };
 
-  return { switchNavigationDrawerMode };
+  const switchToNavigationMenuTab = (tabId: string | null) => {
+    setCurrentNavigationMenuTabId(tabId);
+    switchNavigationDrawerMode(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+  };
+
+  return { switchNavigationDrawerMode, switchToNavigationMenuTab };
 };

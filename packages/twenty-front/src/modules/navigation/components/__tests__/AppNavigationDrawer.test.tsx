@@ -14,6 +14,12 @@ jest.mock('@/navigation/components/MainNavigationDrawerContent', () => ({
   MainNavigationDrawerContent: () => <div>Main content</div>,
 }));
 
+jest.mock('@/navigation/components/MainNavigationDrawerContextMenu', () => ({
+  MainNavigationDrawerContextMenu: ({ children }: { children: ReactNode }) => (
+    <>{children}</>
+  ),
+}));
+
 jest.mock('@/navigation/components/MainNavigationDrawerModeSwitcher', () => ({
   MainNavigationDrawerModeSwitcher: () => (
     <button type="button">Navigation modes</button>

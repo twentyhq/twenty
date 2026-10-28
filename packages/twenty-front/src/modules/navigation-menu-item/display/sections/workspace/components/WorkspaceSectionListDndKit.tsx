@@ -1,5 +1,6 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
+import { NavigationMenuItemContainerContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemContainerContext';
+import { getNavigationMenuItemContainerDroppableId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerDroppableId';
 import {
   FOLDER_HEADER_SLOT_COLLISION_PRIORITY,
   NavigationMenuItemDroppableSlot,
@@ -39,12 +40,16 @@ export const WorkspaceSectionListDndKit = ({
   folderChildrenById,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
+  addMenuItemButton,
 }: WorkspaceSectionListDndKitProps) => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { isDragging } = useContext(NavigationMenuItemDragContext);
+  const { containerId } = useContext(NavigationMenuItemContainerContext);
+  const containerDroppableId =
+    getNavigationMenuItemContainerDroppableId(containerId);
   const folderCount = filteredItems.filter(
     (item) => item.type === NavigationMenuItemType.FOLDER,
   ).length;
@@ -58,9 +63,7 @@ export const WorkspaceSectionListDndKit = ({
           <NavigationMenuItemSortableItem
             id={item.id}
             index={index}
-            group={
-              NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
-            }
+            group={containerDroppableId}
             disabled={
               !isLayoutCustomizationModeEnabled || workspaceDropDisabled
             }
@@ -79,9 +82,7 @@ export const WorkspaceSectionListDndKit = ({
         </StyledListItemRow>
       ))}
       <NavigationMenuItemDroppableSlot
-        droppableId={
-          NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
-        }
+        droppableId={containerDroppableId}
         index={orphanAppendDndIndex}
         disabled={workspaceDropDisabled}
         collisionPriority={FOLDER_HEADER_SLOT_COLLISION_PRIORITY}
@@ -91,7 +92,13 @@ export const WorkspaceSectionListDndKit = ({
           compact
           highlightPosition="top"
         />
-        {isAddMenuItemButtonVisible && <WorkspaceSectionAddMenuItemButton />}
+        {isAddMenuItemButtonVisible &&
+          (addMenuItemButton ?? (
+            <WorkspaceSectionAddMenuItemButton
+              containerId={containerId}
+              position={filteredItems.length}
+            />
+          ))}
       </NavigationMenuItemDroppableSlot>
     </StyledList>
   );

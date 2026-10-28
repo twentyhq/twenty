@@ -3,6 +3,7 @@ import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdow
 import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropdown/hooks/useUpdateObjectViewOptions';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { DropdownMenuIconAndNameContainer } from '@/ui/layout/dropdown/components/DropdownMenuIconAndNameContainer';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -14,14 +15,6 @@ import { useEffect, useRef, useState } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { useIcons } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-
-const StyledDropdownMenuIconAndNameContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  margin-left: 0;
-  margin-right: 0;
-`;
 
 const StyledMenuTitleContainer = styled.div`
   align-items: center;
@@ -105,7 +98,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
         </StyledMenuTitleContainer>
       ) : (
         <DropdownMenuItemsContainer>
-          <StyledDropdownMenuIconAndNameContainer>
+          <DropdownMenuIconAndNameContainer>
             <IconPicker
               size="sm"
               onChange={handleIconChange}
@@ -121,7 +114,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
               sizeVariant="sm"
               fullWidth
             />
-          </StyledDropdownMenuIconAndNameContainer>
+          </DropdownMenuIconAndNameContainer>
         </DropdownMenuItemsContainer>
       )}
     </>

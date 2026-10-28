@@ -2,17 +2,16 @@ import { useEffect } from 'react';
 
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 
-type NavigationMenuItemLinkEditorOpenEffectProps = {
+type NavigationMenuItemDropdownOpenEffectProps = {
   dropdownId: string;
   onOpen: () => void;
 };
 
-// A link created from the add dropdown is selected by that dropdown, which
-// cannot reach this row because it does not exist yet when the click happens.
-export const NavigationMenuItemLinkEditorOpenEffect = ({
+// A row created from an add menu does not exist yet when that menu's click runs
+export const NavigationMenuItemDropdownOpenEffect = ({
   dropdownId,
   onOpen,
-}: NavigationMenuItemLinkEditorOpenEffectProps) => {
+}: NavigationMenuItemDropdownOpenEffectProps) => {
   const { openDropdown } = useOpenDropdown();
 
   useEffect(() => {

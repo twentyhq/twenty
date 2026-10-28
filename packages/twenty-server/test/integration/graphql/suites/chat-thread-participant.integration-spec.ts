@@ -90,7 +90,7 @@ type Participant = {
 };
 
 const OPEN_THREADS_SUMMARY = parse(
-  `query OpenThreadsSummary { agentChatOpenThreadsSummary { openThreadCount needsInputThreadCount hasUnreadOpenThread hasUnreadMentionThread hasUnreadAssignedThread } }`,
+  `query OpenThreadsSummary { agentChatOpenThreadsSummary { openThreadCount needsInputThreadCount hasUnreadOpenThread hasUnreadMentionThread hasUnreadAssignedThread unreadMentionThreadCount unreadAssignedThreadCount } }`,
 );
 
 type OpenThreadsSummary = {
@@ -99,6 +99,8 @@ type OpenThreadsSummary = {
   hasUnreadOpenThread: boolean;
   hasUnreadMentionThread: boolean;
   hasUnreadAssignedThread: boolean;
+  unreadMentionThreadCount: number;
+  unreadAssignedThreadCount: number;
 };
 
 const findOpenThreadsSummary = async (
@@ -1159,6 +1161,7 @@ describe('Chat thread participant state through the authenticated API', () => {
   });
 
   it('flags the open chats the member was mentioned in or assigned that are unread', async () => {
+    const summaryBeforeMentionAndAssignment = await findOpenThreadsSummary();
     const mentionedThreadId = await createTestThread();
     const assignedThreadId = await createTestThread();
 
@@ -1170,6 +1173,10 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(await findOpenThreadsSummary()).toMatchObject({
       hasUnreadMentionThread: true,
       hasUnreadAssignedThread: true,
+      unreadMentionThreadCount:
+        summaryBeforeMentionAndAssignment.unreadMentionThreadCount + 1,
+      unreadAssignedThreadCount:
+        summaryBeforeMentionAndAssignment.unreadAssignedThreadCount + 1,
     });
 
     const unsubscribed = await runInboxAction(

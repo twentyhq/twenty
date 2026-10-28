@@ -1377,6 +1377,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    visibleItemLimit: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    commandKey: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     createdAt: {
       toCompare: false,
       toStringify: false,

@@ -1,14 +1,12 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
+import { NavigationDrawerAiChatInboxSection } from '@/ai/components/NavigationDrawerAiChatInboxSection';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -48,14 +46,18 @@ const READ_SUMMARY: OpenThreadsSummary = {
   hasUnreadOpenThread: false,
   hasUnreadMentionThread: false,
   hasUnreadAssignedThread: false,
+  unreadMentionThreadCount: 0,
+  unreadAssignedThreadCount: 0,
 };
 
-const renderTriage = ({
+const renderInboxSection = ({
   path = '/inbox',
   summary = READ_SUMMARY,
+  visibleItemLimit,
 }: {
   path?: string;
   summary?: OpenThreadsSummary;
+  visibleItemLimit?: number;
 } = {}) =>
   render(
     <JotaiProvider store={jotaiStore}>
@@ -70,14 +72,29 @@ const renderTriage = ({
           ]}
         >
           <MemoryRouter initialEntries={[path]}>
-            <NavigationDrawerAiChatTriageSection />
+            <NavigationDrawerAiChatInboxSection
+              visibleItemLimit={visibleItemLimit}
+            />
           </MemoryRouter>
         </MockedProvider>
       </I18nProvider>
     </JotaiProvider>,
   );
 
-describe('NavigationDrawerAiChatTriageSection', () => {
+const expectInboxRowToHaveText = ({
+  name,
+  text,
+}: {
+  name: RegExp;
+  text: RegExp;
+}) =>
+  waitFor(() =>
+    expect(
+      screen.getByRole('button', { name }).closest('.navigation-drawer-item'),
+    ).toHaveTextContent(text),
+  );
+
+describe('NavigationDrawerAiChatInboxSection', () => {
   beforeEach(() => {
     localStorage.clear();
     resetJotaiStore();
@@ -96,21 +113,22 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('counts every open chat and flags Open when one is unread', async () => {
-    renderTriage({ summary: { ...READ_SUMMARY, hasUnreadOpenThread: true } });
+    renderInboxSection({
+      summary: { ...READ_SUMMARY, hasUnreadOpenThread: true },
+    });
 
-    expect(
-      await screen.findByRole('button', { name: /^Open\s*, unread · 2$/ }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText({
+      name: /^Open\s*, unread$/,
+      text: /^Open\s*, unread\s*2$/,
+    });
     expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Done' })).toBeVisible();
   });
 
   it('shows Open as read when every open chat is read', async () => {
-    renderTriage();
+    renderInboxSection();
 
-    expect(
-      await screen.findByRole('button', { name: 'Open · 2' }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText({ name: /^Open$/, text: /^Open\s*2$/ });
   });
 
   it('marks the status the inbox shows as current', () => {
@@ -119,7 +137,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
       AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
     );
 
-    renderTriage({ path: '/inbox' });
+    renderInboxSection({ path: '/inbox' });
 
     expect(screen.getByRole('button', { name: 'Snoozed' })).toHaveAttribute(
       'aria-current',
@@ -130,24 +148,24 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     );
   });
 
-  it('hides the statuses narrowing Open while another status is shown', () => {
+  it('keeps personal filters visible while Snoozed is shown', () => {
     jotaiStore.set(
       agentChatThreadFilterStatusState.atom,
       AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
     );
 
-    renderTriage();
+    renderInboxSection();
 
-    expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Mentions' })).toBeVisible();
   });
 
-  it('keeps the statuses narrowing Open while one of them is shown', () => {
+  it('marks Mentions as current without hiding the other filters', () => {
     jotaiStore.set(
       agentChatThreadFilterStatusState.atom,
       AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
     );
 
-    renderTriage();
+    renderInboxSection();
 
     expect(screen.getByRole('button', { name: 'Mentions' })).toHaveAttribute(
       'aria-current',
@@ -156,60 +174,80 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     expect(screen.getByRole('button', { name: 'Assigned' })).toBeVisible();
   });
 
-  it('hides the statuses narrowing Open outside the inbox', () => {
-    renderTriage({ path: '/objects/companies' });
+  it('keeps personal filters visible outside the inbox', () => {
+    renderInboxSection({ path: '/objects/companies' });
 
-    expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Mentions' })).toBeVisible();
   });
 
-  it('opens the inbox on the chosen status', async () => {
-    renderTriage();
+  it('counts the open chats waiting on an answer in Needs input', async () => {
+    renderInboxSection({
+      summary: { ...READ_SUMMARY, needsInputThreadCount: 1 },
+    });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Snoozed' }));
-
-    expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
-      AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
-    );
-    expect(navigate).toHaveBeenCalledWith(AppPath.AiChatInbox, {
-      threadId: null,
+    await expectInboxRowToHaveText({
+      name: /^Needs input$/,
+      text: /^Needs input\s*1$/,
     });
   });
 
-  it('counts the open chats waiting on an answer under Needs input', async () => {
-    renderTriage({ summary: { ...READ_SUMMARY, needsInputThreadCount: 1 } });
-
-    expect(
-      await screen.findByRole('button', { name: 'Needs input · 1' }),
-    ).toBeVisible();
-  });
-
-  it('flags Mentions when a chat the member was mentioned in is unread', async () => {
-    renderTriage({
-      summary: { ...READ_SUMMARY, hasUnreadMentionThread: true },
+  it('keeps Needs input and its count in view outside the inbox', async () => {
+    renderInboxSection({
+      path: '/objects/companies',
+      summary: { ...READ_SUMMARY, needsInputThreadCount: 3 },
     });
 
-    expect(
-      await screen.findByRole('button', { name: /^Mentions\s*, unread$/ }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText({
+      name: /^Needs input$/,
+      text: /^Needs input\s*3$/,
+    });
+    expect(screen.getByRole('button', { name: 'Mentions' })).toBeVisible();
   });
 
-  it('opens the inbox on the chats the member was mentioned in', async () => {
-    renderTriage();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Mentions' }));
-
-    expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
-      AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
-    );
-  });
-
-  it('flags Assigned when a chat assigned to the member is unread', async () => {
-    renderTriage({
-      summary: { ...READ_SUMMARY, hasUnreadAssignedThread: true },
+  it('flags and counts Mentions when chats the member was mentioned in are unread', async () => {
+    renderInboxSection({
+      summary: {
+        ...READ_SUMMARY,
+        hasUnreadMentionThread: true,
+        unreadMentionThreadCount: 2,
+      },
     });
 
-    expect(
-      await screen.findByRole('button', { name: /^Assigned\s*, unread$/ }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText({
+      name: /^Mentions\s*, unread$/,
+      text: /^Mentions\s*, unread\s*2$/,
+    });
+  });
+
+  it('preserves unread counts outside the inbox', async () => {
+    renderInboxSection({
+      path: '/objects/companies',
+      summary: {
+        ...READ_SUMMARY,
+        hasUnreadAssignedThread: true,
+        unreadAssignedThreadCount: 1,
+      },
+    });
+
+    await expectInboxRowToHaveText({
+      name: /^Assigned\s*, unread$/,
+      text: /^Assigned\s*, unread\s*1$/,
+    });
+    expect(screen.getByRole('button', { name: 'Mentions' })).toBeVisible();
+  });
+
+  it('flags and counts Assigned when chats assigned to the member are unread', async () => {
+    renderInboxSection({
+      summary: {
+        ...READ_SUMMARY,
+        hasUnreadAssignedThread: true,
+        unreadAssignedThreadCount: 3,
+      },
+    });
+
+    await expectInboxRowToHaveText({
+      name: /^Assigned\s*, unread$/,
+      text: /^Assigned\s*, unread\s*3$/,
+    });
   });
 });

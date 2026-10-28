@@ -134,6 +134,43 @@ describe('NavigationMenuItem batch creation should succeed', () => {
     });
   });
 
+  it('should create a pinned command listed before its new pinned commands section', async () => {
+    const pinnedCommandsId = faker.string.uuid();
+
+    const { data } = await createManyNavigationMenuItems({
+      expectToFail: false,
+      inputs: [
+        {
+          type: NavigationMenuItemType.COMMAND,
+          commandKey: 'SEARCH',
+          folderId: pinnedCommandsId,
+          position: 0,
+        },
+        {
+          id: pinnedCommandsId,
+          type: NavigationMenuItemType.PINNED_COMMANDS,
+          position: 0,
+        },
+      ],
+      gqlFields: `
+        id
+        type
+        folderId
+      `,
+    });
+
+    jestExpectToBeDefined(data?.createManyNavigationMenuItems);
+
+    const items = data.createManyNavigationMenuItems;
+
+    createdIds = items.map((item) => item.id);
+
+    expect(items).toMatchObject([
+      { type: NavigationMenuItemType.COMMAND, folderId: pinnedCommandsId },
+      { id: pinnedCommandsId, type: NavigationMenuItemType.PINNED_COMMANDS },
+    ]);
+  });
+
   it('should preserve input order in the response', async () => {
     const targetRecordId1 = faker.string.uuid();
     const targetRecordId2 = faker.string.uuid();

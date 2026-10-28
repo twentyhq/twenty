@@ -79,6 +79,7 @@ export const Colors: CatalogStory<Story, typeof Badge> = {
             'tertiary',
             'inherit',
             'primary',
+            'danger',
             'secondary',
             'accent',
           ] satisfies BadgeColor[],
@@ -148,6 +149,7 @@ export const VisualRegression: CatalogStory<Story, typeof Badge> = {
             'tertiary',
             'inherit',
             'primary',
+            'danger',
             'secondary',
             'accent',
           ] satisfies BadgeColor[],
@@ -164,7 +166,7 @@ export const VisualRegression: CatalogStory<Story, typeof Badge> = {
   decorators: [CatalogDecorator],
   play: async ({ canvasElement }) => {
     const badges = within(canvasElement).getAllByText('3');
-    await expect(badges).toHaveLength(30);
+    await expect(badges).toHaveLength(36);
 
     for (const badge of badges) {
       await expect(badge).toBeVisible();

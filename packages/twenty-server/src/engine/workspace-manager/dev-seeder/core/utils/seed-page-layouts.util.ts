@@ -1,4 +1,5 @@
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { getNavigationMenuItemFlatEntitySeeds } from 'src/engine/workspace-manager/dev-seeder/core/utils/get-navigation-menu-item-data-seeds.util';
 import { getPageLayoutFlatEntitySeeds } from 'src/engine/workspace-manager/dev-seeder/core/utils/get-page-layout-data-seeds.util';
@@ -11,11 +12,13 @@ export const seedPageLayouts = async ({
   workspaceId,
   flatApplication,
   objectMetadataItems,
+  workspaceNavigationMenuSection,
   workspaceMigrationValidateBuildAndRunService,
 }: {
   workspaceId: string;
   flatApplication: FlatApplication;
   objectMetadataItems: ObjectMetadataEntity[];
+  workspaceNavigationMenuSection?: FlatNavigationMenuItem;
   workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService;
 }): Promise<void> => {
   const pageLayouts = getPageLayoutFlatEntitySeeds({
@@ -37,6 +40,7 @@ export const seedPageLayouts = async ({
   const navigationMenuItems = getNavigationMenuItemFlatEntitySeeds({
     workspaceId,
     flatApplication,
+    workspaceNavigationMenuSection,
   });
 
   const result =

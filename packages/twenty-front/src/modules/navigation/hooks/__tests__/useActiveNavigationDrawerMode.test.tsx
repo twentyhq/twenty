@@ -1,3 +1,4 @@
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import {
@@ -8,17 +9,41 @@ import { renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+
+let mockIsCustomizableSidebarEnabled = false;
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsCustomizableSidebarEnabled,
+}));
+
+const inboxSection: NavigationMenuItem = {
+  id: 'inbox-section',
+  type: NavigationMenuItemType.AI_CHAT_INBOX,
+  folderId: 'inbox-tab',
+  position: 0,
+  createdAt: '',
+  updatedAt: '',
+};
 
 const renderActiveNavigationDrawerMode = ({
   pathname,
   activeTab = NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+  navigationMenuItems = [],
 }: {
   pathname: string;
   activeTab?: NavigationDrawerActiveTab;
+  navigationMenuItems?: NavigationMenuItem[];
 }) => {
   const store = createStore();
 
   store.set(navigationDrawerActiveTabState.atom, activeTab);
+  store.set(metadataStoreState.atomFamily('navigationMenuItems'), {
+    current: navigationMenuItems,
+    draft: [],
+    status: 'up-to-date',
+  });
 
   return renderHook(() => useActiveNavigationDrawerMode(), {
     wrapper: ({ children }: { children: ReactNode }) => (
@@ -30,6 +55,10 @@ const renderActiveNavigationDrawerMode = ({
 };
 
 describe('useActiveNavigationDrawerMode', () => {
+  beforeEach(() => {
+    mockIsCustomizableSidebarEnabled = false;
+  });
+
   it('is the settings mode on a settings page', () => {
     const { result } = renderActiveNavigationDrawerMode({
       pathname: '/settings/profile',
@@ -59,6 +88,33 @@ describe('useActiveNavigationDrawerMode', () => {
     const { result } = renderActiveNavigationDrawerMode({
       pathname: '/objects/people',
       activeTab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+    });
+
+    expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
+  });
+
+  it.each([
+    ['/inbox', NAVIGATION_DRAWER_TABS.NAVIGATION_MENU],
+    ['/objects/people', NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY],
+  ] as const)(
+    'stays on the navigation menu on %s with %s stored once the menu holds the chat sections',
+    (pathname, activeTab) => {
+      mockIsCustomizableSidebarEnabled = true;
+
+      const { result } = renderActiveNavigationDrawerMode({
+        pathname,
+        activeTab,
+        navigationMenuItems: [inboxSection],
+      });
+
+      expect(result.current).toBe(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+    },
+  );
+
+  it('keeps the AI mode on the inbox page while the customizable sidebar is off', () => {
+    const { result } = renderActiveNavigationDrawerMode({
+      pathname: '/inbox',
+      navigationMenuItems: [inboxSection],
     });
 
     expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);

@@ -23,8 +23,14 @@ const commonOptionalFields = {
   folderId: z
     .uuid()
     .optional()
-    .describe('Parent folder id, if the item should live inside a folder.'),
+    .describe(
+      'Parent id: the tab, section or folder the item should live in. Tabs have no parent, sections live in a tab or at the root of Home, folders cannot be nested in folders.',
+    ),
 };
+
+const workspaceScopeField = z
+  .literal('workspace')
+  .describe('Tabs and sections are shared with the whole workspace.');
 
 const requiredNameField = z
   .string()
@@ -46,6 +52,31 @@ const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
     type: z.literal(NavigationMenuItemType.FOLDER),
     scope: navigationMenuItemScopeSchema,
     name: requiredNameField,
+    ...commonOptionalFields,
+  }),
+  z.object({
+    type: z.literal(NavigationMenuItemType.TAB),
+    scope: workspaceScopeField,
+    name: requiredNameField,
+    ...commonOptionalFields,
+  }),
+  z.object({
+    type: z.literal(NavigationMenuItemType.SECTION),
+    scope: workspaceScopeField,
+    name: requiredNameField,
+    ...commonOptionalFields,
+  }),
+  z.object({
+    type: z.enum([
+      NavigationMenuItemType.AI_CHAT_INBOX,
+      NavigationMenuItemType.AI_CHAT_FAVORITES,
+      NavigationMenuItemType.AI_CHAT_RECENTS,
+      NavigationMenuItemType.AI_AGENTS,
+      NavigationMenuItemType.AI_CHAT_CHANNELS,
+      NavigationMenuItemType.FAVORITES,
+    ]),
+    scope: workspaceScopeField,
+    name: derivedNameField,
     ...commonOptionalFields,
   }),
   z.object({
@@ -113,6 +144,14 @@ const toServiceInput = (
 
   switch (params.type) {
     case NavigationMenuItemType.FOLDER:
+    case NavigationMenuItemType.TAB:
+    case NavigationMenuItemType.SECTION:
+    case NavigationMenuItemType.AI_CHAT_INBOX:
+    case NavigationMenuItemType.AI_CHAT_FAVORITES:
+    case NavigationMenuItemType.AI_CHAT_RECENTS:
+    case NavigationMenuItemType.AI_AGENTS:
+    case NavigationMenuItemType.AI_CHAT_CHANNELS:
+    case NavigationMenuItemType.FAVORITES:
       return { ...base, name: params.name };
     case NavigationMenuItemType.LINK:
       return { ...base, name: params.name, link: params.link };
@@ -147,6 +186,12 @@ const toServiceInput = (
   description: `Create a navigation menu item. With scope='user' it becomes a personal favorite for the current user; with scope='workspace' it is shared with everyone (requires LAYOUTS permission).
 
 Type chooses the variant:
+- TAB: a sidebar tab next to Home (name required, no parent). Items and sections live in it through folderId.
+- SECTION: a titled group of items inside a tab or at the root of Home (name required).
+- AI_CHAT_INBOX, AI_CHAT_FAVORITES, AI_CHAT_RECENTS: built-in inbox sections (triage filters, favorite chats, recent chats) that list the viewer's own chats; they live in a tab or at the root of Home.
+- AI_AGENTS: a built-in section listing the workspace's AI agents, each opening its agent page; it lives in a tab or at the root of Home.
+- AI_CHAT_CHANNELS: a built-in section listing the workspace's chat channels the viewer can access; it lives in a tab or at the root of Home.
+- FAVORITES: a built-in section listing the viewer's own favorites; it lives in a tab or at the root of Home.
 - FOLDER: a group to nest other items into (name required).
 - LINK: an external URL pinned in the sidebar (name + link required).
 - OBJECT: pins an object's standard view (label auto-derived from the object's plural name; only pass 'name' if the user wants a custom label).

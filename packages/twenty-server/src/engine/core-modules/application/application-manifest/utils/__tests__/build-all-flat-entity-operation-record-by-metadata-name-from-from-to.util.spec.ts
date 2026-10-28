@@ -113,6 +113,8 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   name: 'App link',
   link: 'https://example.com',
   icon: null,
+  visibleItemLimit: null,
+  commandKey: null,
   color: null,
   folderId: null,
   folderUniversalIdentifier: null,

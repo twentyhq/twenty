@@ -18,6 +18,7 @@ import {
   type NewNavigationMenuItemInput,
 } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 
 const VIEW_OBJECT_PAGE = 'view-object';
 
@@ -64,7 +65,9 @@ export const NavigationMenuItemAddDropdownContent = ({
   const insertionIndex =
     position ??
     currentItems.filter(
-      (item) => (item.folderId ?? null) === (folderId ?? null),
+      (item) =>
+        (item.folderId ?? null) === (folderId ?? null) &&
+        !isNavigationMenuItemContainer(item),
     ).length;
 
   const navigate = (next: Step) => {
@@ -106,7 +109,7 @@ export const NavigationMenuItemAddDropdownContent = ({
   });
 
   const titles: Record<Step, string> = {
-    main: t`Add menu item`,
+    main: t`Add item`,
     object: t`Object`,
     view: t`View`,
     record: t`Record`,
@@ -198,7 +201,7 @@ export const NavigationMenuItemAddDropdownContent = ({
           placeholder={step === 'record' ? t`Search records...` : t`Search...`}
         />
         <Dropdown.Separator />
-        <Dropdown.Section scrollable>
+        <Dropdown.Section scrollable={step !== 'main' || isSearchingAllItems}>
           {groups
             .filter((group) => isNonEmptyArray(group.items))
             .map((group, index) => (

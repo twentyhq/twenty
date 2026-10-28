@@ -1,5 +1,9 @@
+import { type ReactNode } from 'react';
+
 import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
+import { NavigationDrawerSectionSeeMoreItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionSeeMoreItem';
+import { useNavigationSectionVisibleItems } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSectionVisibleItems';
 import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
 
 export type NavigationDrawerAiChatThreadSectionProps = {
@@ -8,6 +12,10 @@ export type NavigationDrawerAiChatThreadSectionProps = {
   threads: AgentChatThreadListItem[];
   currentThreadId: string | null;
   onThreadClick: (thread: AgentChatThreadListItem) => void;
+  rightIcon?: ReactNode;
+  alwaysShowRightIcon?: boolean;
+  visibleItemLimit?: number | null;
+  fetchMoreTrigger?: ReactNode;
 };
 
 export const NavigationDrawerAiChatThreadSection = ({
@@ -16,10 +24,30 @@ export const NavigationDrawerAiChatThreadSection = ({
   threads,
   currentThreadId,
   onThreadClick,
+  rightIcon,
+  alwaysShowRightIcon,
+  visibleItemLimit,
+  fetchMoreTrigger,
 }: NavigationDrawerAiChatThreadSectionProps) => {
+  const {
+    visibleItems,
+    isOverVisibleItemLimit,
+    isShowingAllItems,
+    toggleShowingAllItems,
+  } = useNavigationSectionVisibleItems({
+    navigationSectionId: sectionId,
+    items: threads,
+    visibleItemLimit,
+  });
+
   return (
-    <CollapsibleNavigationDrawerSection sectionId={sectionId} label={title}>
-      {threads.map((thread) => (
+    <CollapsibleNavigationDrawerSection
+      sectionId={sectionId}
+      label={title}
+      rightIcon={rightIcon}
+      alwaysShowRightIcon={alwaysShowRightIcon}
+    >
+      {visibleItems.map((thread) => (
         <NavigationDrawerAiChatThreadItem
           key={thread.id}
           thread={thread}
@@ -27,6 +55,13 @@ export const NavigationDrawerAiChatThreadSection = ({
           onClick={onThreadClick}
         />
       ))}
+      {(!isOverVisibleItemLimit || isShowingAllItems) && fetchMoreTrigger}
+      {isOverVisibleItemLimit && (
+        <NavigationDrawerSectionSeeMoreItem
+          isShowingAllItems={isShowingAllItems}
+          onClick={toggleShowingAllItems}
+        />
+      )}
     </CollapsibleNavigationDrawerSection>
   );
 };

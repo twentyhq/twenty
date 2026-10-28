@@ -123,6 +123,8 @@ export type AgentChatOpenThreadsSummary = {
   hasUnreadOpenThread: Scalars['Boolean']['output'];
   needsInputThreadCount: Scalars['Int']['output'];
   openThreadCount: Scalars['Int']['output'];
+  unreadAssignedThreadCount: Scalars['Int']['output'];
+  unreadMentionThreadCount: Scalars['Int']['output'];
 };
 
 export type AgentChatThread = {
@@ -1733,6 +1735,7 @@ export type CreateMessageSuppressionInput = {
 export type CreateNavigationMenuItemInput = {
   agentChatChannelId?: InputMaybe<Scalars['UUID']['input']>;
   color?: InputMaybe<Scalars['String']['input']>;
+  commandKey?: InputMaybe<Scalars['String']['input']>;
   folderId?: InputMaybe<Scalars['UUID']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
@@ -1745,6 +1748,7 @@ export type CreateNavigationMenuItemInput = {
   type: NavigationMenuItemType;
   userWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;
   viewId?: InputMaybe<Scalars['UUID']['input']>;
+  visibleItemLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreateObjectInput = {
@@ -2418,6 +2422,7 @@ export enum FeatureFlagKey {
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
+  IS_CUSTOMIZABLE_SIDEBAR_ENABLED = 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED',
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED = 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
@@ -5147,6 +5152,7 @@ export type NavigationMenuItem = {
   agentChatChannelId?: Maybe<Scalars['UUID']['output']>;
   applicationId?: Maybe<Scalars['UUID']['output']>;
   color?: Maybe<Scalars['String']['output']>;
+  commandKey?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   folderId?: Maybe<Scalars['UUID']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
@@ -5162,15 +5168,26 @@ export type NavigationMenuItem = {
   updatedAt: Scalars['DateTime']['output'];
   userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   viewId?: Maybe<Scalars['UUID']['output']>;
+  visibleItemLimit?: Maybe<Scalars['Int']['output']>;
 };
 
 export enum NavigationMenuItemType {
   AGENT_CHAT_CHANNEL = 'AGENT_CHAT_CHANNEL',
+  AI_AGENTS = 'AI_AGENTS',
+  AI_CHAT_CHANNELS = 'AI_CHAT_CHANNELS',
+  AI_CHAT_FAVORITES = 'AI_CHAT_FAVORITES',
+  AI_CHAT_INBOX = 'AI_CHAT_INBOX',
+  AI_CHAT_RECENTS = 'AI_CHAT_RECENTS',
+  COMMAND = 'COMMAND',
+  FAVORITES = 'FAVORITES',
   FOLDER = 'FOLDER',
   LINK = 'LINK',
   OBJECT = 'OBJECT',
   PAGE_LAYOUT = 'PAGE_LAYOUT',
+  PINNED_COMMANDS = 'PINNED_COMMANDS',
   RECORD = 'RECORD',
+  SECTION = 'SECTION',
+  TAB = 'TAB',
   VIEW = 'VIEW'
 }
 
@@ -7394,6 +7411,7 @@ export type UpdateNavigationMenuItemInput = {
   name?: InputMaybe<Scalars['String']['input']>;
   pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  visibleItemLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateObjectPayload = {
