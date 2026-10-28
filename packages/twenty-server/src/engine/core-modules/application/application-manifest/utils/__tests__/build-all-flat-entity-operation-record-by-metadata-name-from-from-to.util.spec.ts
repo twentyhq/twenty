@@ -133,7 +133,6 @@ const AGENT_CHAT_CHANNEL: FlatAgentChatChannel = {
   icon: null,
   color: null,
   position: 1,
-  isCustom: true,
   channelRoleIds: [],
   channelRoleUniversalIdentifiers: [],
   navigationMenuItemIds: [],

@@ -32,7 +32,7 @@ const CHANNEL_MANAGER_PERMISSION_FLAGS = [
 type ListedChannel = {
   id: string;
   name: string;
-  isCustom: boolean;
+  applicationId: string;
   isAccessible: boolean;
   roleIds: string[];
 };
@@ -44,7 +44,7 @@ type ApplicationUnderTest = {
 };
 
 const CHANNELS = parse(
-  `query Channels { agentChatChannels { id name isCustom isAccessible roleIds } }`,
+  `query Channels { agentChatChannels { id name applicationId isAccessible roleIds } }`,
 );
 
 const CHANNEL_ROLES = parse(
@@ -52,7 +52,7 @@ const CHANNEL_ROLES = parse(
 );
 
 const CREATE_CHANNEL = parse(
-  `mutation CreateChannel($input: CreateAgentChatChannelInput!) { createAgentChatChannel(input: $input) { id name roleIds isCustom } }`,
+  `mutation CreateChannel($input: CreateAgentChatChannelInput!) { createAgentChatChannel(input: $input) { id name roleIds applicationId } }`,
 );
 
 const UPDATE_CHANNEL = parse(
@@ -341,11 +341,10 @@ describe('Inbox channels managed by an application', () => {
     const channels = await listChannels(channelManager.token);
 
     expect(channels.find(({ id }) => id === generalChannelId)).toMatchObject({
-      isCustom: false,
       isAccessible: false,
     });
     expect(channels.find(({ id }) => id === channelId)).toMatchObject({
-      isCustom: true,
+      applicationId: channelManager.application.id,
       isAccessible: true,
       roleIds: [channelManager.roleId],
     });

@@ -52,7 +52,8 @@ const METADATA_QUERY = `
             indexWhereClause
             indexType
             isUnique
-            isCustom
+            applicationId
+            isSystemSideEffect
             indexFieldMetadataList {
               __typename
               id
