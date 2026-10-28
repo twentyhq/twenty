@@ -91,6 +91,15 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
 
   const ownerWorkspace = ownerWorkspaceData?.getPublicWorkspaceDataById;
 
+  const ownerWorkspaceAvatar = (
+    <AvatarOrIcon
+      shape="circle"
+      name={ownerWorkspace?.displayName ?? ''}
+      colorSeed={getWorkspaceAvatarColorSeed(ownerWorkspace?.displayName)}
+      src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
+    />
+  );
+
   const generateItems = () => {
     const items: TableItem[] = [
       {
@@ -112,34 +121,12 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
           to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
             workspaceId: registration.ownerWorkspaceId,
           })}
-          startElement={
-            <AvatarOrIcon
-              shape="circle"
-              name={ownerWorkspace.displayName}
-              colorSeed={getWorkspaceAvatarColorSeed(
-                ownerWorkspace.displayName,
-              )}
-              src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
-            />
-          }
+          startElement={ownerWorkspaceAvatar}
         >
           {getChipLabel(ownerWorkspace.displayName).content}
         </LinkChip>
       ) : (
-        <Chip
-          size="md"
-          variant="soft"
-          startElement={
-            <AvatarOrIcon
-              shape="circle"
-              name={ownerWorkspace.displayName}
-              colorSeed={getWorkspaceAvatarColorSeed(
-                ownerWorkspace.displayName,
-              )}
-              src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
-            />
-          }
-        >
+        <Chip size="md" variant="soft" startElement={ownerWorkspaceAvatar}>
           {getChipLabel(ownerWorkspace.displayName).content}
         </Chip>
       ),
