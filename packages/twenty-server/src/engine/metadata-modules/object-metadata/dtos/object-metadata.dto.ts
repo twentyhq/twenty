@@ -11,6 +11,7 @@ import {
   ObjectOpenRecordIn,
   ObjectSharingReach,
 } from 'twenty-shared/types';
+import { type ObjectPermissionAction } from 'twenty-shared/application';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
@@ -67,6 +68,9 @@ export class ObjectMetadataDTO {
   isSystem: boolean;
 
   @Field()
+  isAuditLogged: boolean;
+
+  @Field()
   isUIEditable: boolean;
 
   @Field()
@@ -89,6 +93,9 @@ export class ObjectMetadataDTO {
 
   @Field(() => [UUIDScalarType], { nullable: true })
   readabilityParentFieldUniversalIdentifiers: string[] | null;
+
+  @Field(() => [String], { nullable: true })
+  disabledObjectPermissionActions?: ObjectPermissionAction[] | null;
 
   @Field(() => ObjectSharingReach)
   sharingReach: ObjectSharingReach;

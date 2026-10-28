@@ -81,7 +81,7 @@ When adding AI behavior:
 
 ## Inbox Messages
 
-`sendInboxMessage` from `twenty-sdk/logic-function` posts a message from the app in the chats of one or more workspace members.
+`sendInboxMessage` posts a message from the app in the chats of one or more workspace members. Import it from `twenty-sdk/logic-function` in a logic function and from `twenty-sdk/front-component` in a front component; the inbox helpers are the same in both.
 
 - `workspaceMemberIds` lists the members who receive it (at least one), and `text` is the message, in markdown. The first member of a new conversation owns it and the others follow it; a later send with the same key that lists new members adds them.
 - `threadKey` picks the conversation per app, shared by every member it is sent to: a new key starts one titled `title`, a known key adds to it. `idempotencyKey` identifies the message in it, so sending again with the same keys writes nothing and retries never duplicate it.
@@ -90,7 +90,9 @@ When adding AI behavior:
 - Only one call the member answers (`ask_question`, `request_form`, `propose_tool_call`) can wait at a time; another fails with `THREAD_AWAITING_ANSWER` until they answer. Plain messages and app tool calls are still accepted.
 - A conversation its owner deleted is gone for every member and is not recreated.
 - The app's default role needs `SystemPermissionFlag.AI`, and every member needs the AI permission.
-- It always uses the app's access and ignores `runAs`.
+- The message is always from the app. The call runs like the default clients: as the member who triggered the run or looks at the page, who then needs the AI permission too, or as the app when nobody triggered the run. In a front component an expired token is refreshed once before the call is retried.
+- Write mentions with `await inboxMention({ workspaceMemberId })` and record chips with `await inboxReferenceRecord({ objectNameSingular, recordId })`, never by hand. Both read the label the chip shows (the member's full name or email, the record's label identifier), so the caller needs read access to the member or record. A mention only renders: list every recipient in `workspaceMemberIds`.
+- `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
 
 ## Connection Providers
 
@@ -100,7 +102,16 @@ For third-party connections:
 - Document required OAuth or API setup in the app README or listing.
 - Verify failure states for expired or missing credentials.
 - When the provider can say which account a token belongs to (team, organization, user), declare `identifyAccountLogicFunction` so a reconnect that authorizes a different account is refused instead of overwriting the connection. Write the handler as one request to the provider's "who am I" endpoint, return the id as a string, and return `{ externalAccountId: null }` when there is no stable id.
-- Set `scope` on `defineConnectionProvider`: `'WORKSPACE'` (default) when the app uses one connection shared with the workspace, `'USER'` when each member connects their own account. One scope per provider; declare two providers when the app needs both. A provider's scope cannot change in a later version: declare a new provider with a new `universalIdentifier` instead, which deletes the old provider's connections on upgrade, and deletes existing `'USER'` connected accounts left on a `'WORKSPACE'` provider. Members cannot add `USER` connections from settings yet (they will from App preferences). Requires `"engines": { "twenty": ">=2.49.0" }`.
+- Set `scope` on `defineConnectionProvider`: `'WORKSPACE'` (default) when the app uses one connection shared with the workspace, `'USER'` when each member connects their own account. One scope per provider; declare two providers when the app needs both. A provider's scope cannot change in a later version: declare a new provider with a new `universalIdentifier` instead, which deletes the old provider's connections on upgrade, and deletes existing `'USER'` connected accounts left on a `'WORKSPACE'` provider. Members add, reconnect and remove `USER` connections from the app's page under Settings > User > Apps preferences, but that page is not enabled in every workspace yet, so do not rely on a `USER` provider for a feature every workspace needs now. Requires `"engines": { "twenty": ">=2.49.0" }`.
+- For services that connect accounts through their own hosted flow instead of OAuth (Unipile, Plaid, Merge), declare `type: 'custom'` with `custom.authorizeLogicFunction` (return `{ authorizationUrl }` built with the given `callbackUrl`) and `custom.callbackLogicFunction` (receives each `GET` return and `POST` notification to that URL with its query, headers, body and `rawBody`; verify a signed notification over `rawBody`, confirm the account with the service, then return `{ externalAccountId, handle?, accessToken? }`, or `null` when the request carries no account). Both run within 10 seconds. Connections carry `providerType`: an `'oauth'` connection always has an `accessToken`, a `'custom'` one has `null` unless the callback returned one, so call the service with the app's own key and `externalAccountId`. Release upstream state in `onDisconnectLogicFunction`; Twenty does not refresh or revoke custom connections. The `type` cannot change after the first sync; declare a new provider with a new `universalIdentifier` instead. Requires `"engines": { "twenty": ">=2.52.0" }`.
+
+## Messaging Providers
+
+To let members reply to an app's message channels, declare `defineMessagingProvider` with a kebab-case `name`, a `displayName`, the `connectionProvider` it sends through, and a `sendMessageLogicFunction`:
+
+- Bind each channel to it with `messagingProvider: { universalIdentifier }` on `createMessageChannel` or `updateMessageChannel` (`null` unbinds). The provider must use the channel account's connection provider. A channel without one, or whose provider or function is gone, only ingests.
+- The send function receives `{ messagingProviderName, connectedAccountId, messageChannelId, threadExternalId, text, idempotencyKey, recipients }` (type `SendAppMessagePayload`; `recipients` are the latest message's participants), must deliver the reply and return `{ externalId, sentAt? }`. Twenty then records it in the thread, and a later ingestion of the same `externalId` is a no-op. Throw on failure so nothing is recorded. A `sendAppChannelMessage` retry with the same `idempotencyKey` records the delivered reply without calling the function again; forward the key to the provider when it supports idempotent sends.
+- Declare one messaging provider per kind of messaging (LinkedIn, WhatsApp) even when they share a connection provider. Its connection provider cannot change after the first sync; declare a new one with a new `universalIdentifier` instead. Requires `"engines": { "twenty": ">=2.52.0" }`.
 
 ## Post-Install Hooks
 

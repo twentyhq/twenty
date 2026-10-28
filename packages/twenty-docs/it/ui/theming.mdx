@@ -1,0 +1,98 @@
+---
+title: Tematizzazione
+description: Usa i token del tema Twenty UI e limita le sovrascritture del tema a una parte della tua applicazione.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import ThemeProviderReference from '/snippets/ui/generated/theme/theme-provider.mdx';
+
+## Panoramica
+
+I componenti Twenty UI leggono le proprietà personalizzate CSS pubbliche con prefisso `--t-`. Quando applichi stili ai tuoi componenti, preferisci token semantici come `background.secondary` e `font.color.primary`; questi valori si adattano alla tavolozza attiva.
+
+## Usa i token negli stili
+
+`themeCssVariables` associa i percorsi dei token ai riferimenti alle variabili CSS. Usalo per i valori che CSS risolve:
+
+```tsx
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const Summary = () => (
+  <section
+    style={{
+      background: themeCssVariables.background.secondary,
+      color: themeCssVariables.font.color.primary,
+      padding: themeCssVariables.spacing[4],
+      borderRadius: themeCssVariables.border.radius.md,
+    }}
+  >
+    Three tasks are due today.
+  </section>
+);
+```
+
+Il CSS equivalente usa direttamente le variabili:
+
+```css
+.summary {
+  background: var(--t-background-secondary);
+  color: var(--t-font-color-primary);
+  padding: var(--t-spacing-4);
+  border-radius: var(--t-border-radius-md);
+}
+```
+
+## Leggi i valori risolti
+
+`useTheme()` legge i token calcolati del provider attivo. Usalo quando un componente prevede un numero JavaScript, ad esempio una dimensione dell'icona. Il provider richiede che il foglio di stile del tema sia caricato nel browser per risolvere le variabili CSS.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme';
+
+export const CompleteIcon = () => {
+  const theme = useTheme();
+
+  return <IconCheck size={theme.icon.size.md} aria-hidden />;
+};
+```
+
+Ogni voce in `themeCssVariables` è una stringa di riferimento CSS, inclusi i token numerici. Non eseguire operazioni aritmetiche su queste stringhe. Sul server, i valori risolti dal browser non sono disponibili; consulta il [rendering lato server](/it/ui/ssr).
+
+## Limita una sovrascrittura
+
+Passa `applyToRoot={false}` per applicare un tema a un sottoalbero. Sovrascrivi le variabili CSS pubbliche con il loro nome completo:
+
+```tsx
+import { type ReactNode } from 'react';
+import { ThemeProvider } from 'twenty-ui/theme';
+
+export const EmbeddedPanel = ({ children }: { children: ReactNode }) => (
+  <ThemeProvider
+    colorScheme="light"
+    applyToRoot={false}
+    overrides={{ '--t-background-secondary': '#f4f6ff' }}
+  >
+    {children}
+  </ThemeProvider>
+);
+```
+
+Un provider con ambito aggiunge un wrapper con `display: contents`; non crea un riquadro di layout. Fornisce inoltre un contenitore per i componenti che supportano i portali tematizzati. I portali creati da altre librerie necessitano della propria configurazione del contenitore.
+
+Le variabili con prefisso `--tw-` sono dettagli privati dei componenti. Usa le proprietà pubbliche e i token `--t-` invece di dipendere da quelle variabili.
+
+Consulta il [riferimento dei token](/it/ui/tokens) per i nomi e i valori della tavolozza disponibili.
+
+## Valori espliciti e scala
+
+La prop `theme` fornisce valori del tema JavaScript risolti anziché leggere gli stili calcolati. Viene inoltre propagata ai provider annidati, a meno che non forniscano un altro tema esplicito. Ciò modifica i valori letti dagli hook; carica il foglio di stile appropriato e usa gli override CSS per definire lo stile dei componenti.
+
+`scale` scrive `--t-scale-user` nella radice del documento. Influisce solo sulle interfacce il cui CSS utilizza tale variabile ed è ignorata dai provider con ambito. `className` si applica a un wrapper con ambito; passarlo da solo non crea un wrapper. `overrides` crea un ambito anche quando `applyToRoot` rimane true.
+
+## Prop di ThemeProvider
+
+<ThemeProviderReference />
+
+<PageBanner illustration="page-cover-palette" />

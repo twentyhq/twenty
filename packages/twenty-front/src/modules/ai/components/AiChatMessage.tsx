@@ -72,8 +72,12 @@ const StyledMessageText = styled.div<{
       ? `1px solid ${themeCssVariables.border.color.medium}`
       : 'none'};
   border-radius: ${({ isUser }) =>
-    isUser ? themeCssVariables.border.radius.lg : '0'};
-  color: ${themeCssVariables.font.color.primary};
+    isUser ? themeCssVariables.border.radius.lgRound : '0'};
+  color: ${({ isUser }) =>
+    isUser
+      ? themeCssVariables.font.color.secondary
+      : themeCssVariables.font.color.primary};
+  corner-shape: round;
   font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
   line-height: ${themeCssVariables.spacing[6]};
   max-width: 100%;

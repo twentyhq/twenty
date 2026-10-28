@@ -3,11 +3,18 @@ title: Solución de problemas
 description: "Problemas comunes en la primera ejecución: Docker, versión de Node, Yarn, dependencias."
 ---
 
-* **Errores de Docker** — Asegúrate de que Docker Desktop (o el daemon) esté en ejecución antes de `yarn twenty docker:start`. El mensaje de error mostrará el comando de inicio correcto para tu sistema operativo.
-* **Versión de Node incorrecta** — Se necesita la versión 24.5 o superior (`engines.node: ^24.5.0`). Compruébalo con `node -v`.
-* **Falta Yarn 4** — Ejecuta `corepack enable`.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Problemas comunes
+
+* **Errores del servidor local**, comprueba tu entorno de desarrollo de Docker o del repositorio. La CLI independiente no administra contenedores.
+* **Versión de Node incorrecta** — Se necesita 24.5+ o 26.5+ (`engines.node: ^24.5.0 || ^26.5.1`). Compruébalo con `node -v`.
+* **Falta Yarn 4** — Ejecuta `corepack enable` (en Node 26, primero `npm install -g corepack`).
 * **Dependencias rotas** — `rm -rf node_modules && yarn install`.
+* **`yarn.lock` vacío** — La compilación falla con "yarn.lock is empty" cuando el archivo de bloqueo existe pero no tiene contenido; ejecuta `yarn install` para regenerarlo.
 * **Errores de `twenty-sdk` tras actualizar a la v2.8.0** — Pasó de `dependencies` a `devDependencies` en la v2.8.0. Consulta [Estructura del proyecto → Dependencias](/es/developers/extend/apps/getting-started/project-structure#dependencies).
-* **`twenty dev:build` muestra una advertencia sobre `twenty-client-sdk` en `dependencies`** — Twenty lo proporciona en tiempo de ejecución, por lo que debería trasladarse a `devDependencies` junto con `twenty-sdk`. Consulta [Estructura del proyecto → Dependencias](/es/developers/extend/apps/getting-started/project-structure#dependencies).
+* **`twenty app build` muestra una advertencia sobre `twenty-client-sdk` en `dependencies`** — Twenty lo proporciona en tiempo de ejecución, por lo que debería trasladarse a `devDependencies` junto con `twenty-sdk`. Consulta [Estructura del proyecto → Dependencias](/es/developers/extend/apps/getting-started/project-structure#dependencies).
 
 ¿Atascado? Pide ayuda en el [Discord de Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).
+
+<PageBanner illustration="card-page-bug-requests" />

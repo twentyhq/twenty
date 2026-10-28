@@ -52,6 +52,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         tokenRequestContentType: 'json',
         usePkce: true,
       },
+      customConfig: null,
       identifyAccountLogicFunctionUniversalIdentifier: null,
       onConnectLogicFunctionUniversalIdentifier: null,
       onDisconnectLogicFunctionUniversalIdentifier: null,
@@ -82,6 +83,37 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       });
 
     expect(result.logo).toBe('public/linear-logomark.svg');
+  });
+
+  it('moves the custom flow logic functions into the customConfig blob', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: {
+          universalIdentifier: PROVIDER_UID,
+          name: 'linkedin',
+          displayName: 'LinkedIn',
+          type: 'custom',
+          custom: {
+            authorizeLogicFunction: {
+              universalIdentifier: 'f1f1f1f1-f1f1-4f1f-f1f1-f1f1f1f1f1f1',
+            },
+            callbackLogicFunction: {
+              universalIdentifier: 'f2f2f2f2-f2f2-4f2f-f2f2-f2f2f2f2f2f2',
+            },
+          },
+        },
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.type).toBe('custom');
+    expect(result.oauthConfig).toBeNull();
+    expect(result.customConfig).toEqual({
+      authorizeLogicFunctionUniversalIdentifier:
+        'f1f1f1f1-f1f1-4f1f-f1f1-f1f1f1f1f1f1',
+      callbackLogicFunctionUniversalIdentifier:
+        'f2f2f2f2-f2f2-4f2f-f2f2-f2f2f2f2f2f2',
+    });
   });
 
   it('resolves the identifyAccountLogicFunction universalIdentifier into the flat field when provided', () => {

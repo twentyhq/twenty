@@ -40,6 +40,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "id": {
         "universalIdentifier": "59b74693-2b88-5eb9-82ef-23b1e75c2b78",
       },
+      "isAssistantParticipant": {
+        "universalIdentifier": "d901f5bc-23ba-48ac-9103-145da4b76afe",
+      },
       "lastActivityAt": {
         "universalIdentifier": "b3847509-8e98-4038-88de-dd891767d6fc",
       },
@@ -4370,6 +4373,43 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "ownedOpportunities": {
             "universalIdentifier": "e15281a1-9f03-5b59-87d9-7f6a5b7a8d99",
+          },
+        },
+      },
+      "workspaceMemberRecordPageFields": {
+        "universalIdentifier": "2279f421-1f27-5d05-8fbe-5a32e1c76644",
+        "viewFieldGroups": {
+          "general": {
+            "universalIdentifier": "8eb47630-e2d2-5b10-a203-c8c62c5cf306",
+          },
+          "relations": {
+            "universalIdentifier": "d498fcae-c66e-51d6-9f50-f0666b6a3fcb",
+          },
+          "system": {
+            "universalIdentifier": "74be40ee-8b93-5c68-980b-a271d3a090bb",
+          },
+        },
+        "viewFields": {
+          "accountOwnerForCompanies": {
+            "universalIdentifier": "2e094fb9-f06f-5ad4-9a7f-903e826b4421",
+          },
+          "assignedTasks": {
+            "universalIdentifier": "d9a72b6a-98e0-5749-8878-4dcf5bdca254",
+          },
+          "createdAt": {
+            "universalIdentifier": "4558b0f9-71d4-593c-8991-e7bcc3ddb550",
+          },
+          "jobTitle": {
+            "universalIdentifier": "868f1240-f6f0-533b-b09a-eef7c3f357ba",
+          },
+          "ownedOpportunities": {
+            "universalIdentifier": "63bd7dfb-b384-550f-8424-9839c6f446b6",
+          },
+          "updatedAt": {
+            "universalIdentifier": "9c1bfc43-2cef-572f-b6f6-c656ce6ba89f",
+          },
+          "userEmail": {
+            "universalIdentifier": "6410f7bb-faf1-564f-ace5-5babf385d3e6",
           },
         },
       },

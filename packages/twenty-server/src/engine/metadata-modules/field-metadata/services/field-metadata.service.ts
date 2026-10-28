@@ -211,11 +211,13 @@ export class FieldMetadataService {
     workspaceId,
     isSystemBuild = false,
     ownerFlatApplication,
+    shouldDeferActions,
   }: {
     updateFieldInput: Omit<UpdateFieldInput, 'workspaceId'>;
     workspaceId: string;
     isSystemBuild?: boolean;
     ownerFlatApplication?: FlatApplication;
+    shouldDeferActions?: boolean;
   }): Promise<FlatFieldMetadata> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -303,6 +305,7 @@ export class FieldMetadataService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: flatFieldMetadatasToCreate,
@@ -368,11 +371,13 @@ export class FieldMetadataService {
     workspaceId,
     ownerFlatApplication,
     isSystemBuild = false,
+    shouldDeferActions,
   }: {
     createFieldInputs: Omit<CreateFieldInput, 'workspaceId'>[];
     workspaceId: string;
     ownerFlatApplication?: FlatApplication;
     isSystemBuild?: boolean;
+    shouldDeferActions?: boolean;
   }): Promise<FlatFieldMetadata[]> {
     if (createFieldInputs.length === 0) {
       return [];
@@ -431,6 +436,7 @@ export class FieldMetadataService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: flatFieldMetadatasToCreate,

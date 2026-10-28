@@ -125,6 +125,7 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
     ]);
     const result =
       await this.migrations.validateBuildAndRunLegacyWorkspaceMigration({
+        shouldDeferActions: false,
         workspaceId,
         isSystemBuild: true,
         applicationUniversalIdentifier:

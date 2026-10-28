@@ -8,6 +8,7 @@ import {
   ROLE_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
   VIEW_FIELD_ENUM_BINDINGS,
+  WORKFLOW_ENUM_BINDINGS,
   writeDefineFile,
 } from '@/app/pull/write-define-file';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -552,5 +553,98 @@ describe('writeDefineFile', () => {
         "  permissionType: 'settings',\n" +
         '});\n',
     );
+  });
+
+  it('should write workflow filter operands and form field types as enum members, keeping logical operators and record pickers literal', () => {
+    const stepFilters = {
+      stepFilterGroups: [{ id: 'group', logicalOperator: 'AND' }],
+      stepFilters: [
+        {
+          id: 'filter',
+          type: 'TEXT',
+          stepOutputKey: '{{trigger.properties.after.status}}',
+          operand: 'IS',
+          value: 'open',
+          stepFilterGroupId: 'group',
+        },
+      ],
+    };
+    const { content: file, requiredSdkExports } = writeDefineFile({
+      definer: 'defineWorkflow',
+      config: {
+        universalIdentifier: 'workflow-uid',
+        name: 'Triage',
+        version: {
+          trigger: {
+            universalIdentifier: 'trigger-uid',
+            type: 'DATABASE_EVENT',
+            nextStepIds: ['find-uid'],
+            settings: {
+              action: 'updated',
+              filter: stepFilters,
+              objectUniversalIdentifier: 'object-uid',
+            },
+          },
+          steps: [
+            {
+              universalIdentifier: 'find-uid',
+              name: 'Find',
+              type: 'FIND_RECORDS',
+              nextStepIds: ['filter-uid'],
+              input: {
+                filter: {
+                  recordFilterGroups: [{ id: 'root', logicalOperator: 'OR' }],
+                  recordFilters: [
+                    {
+                      fieldMetadataUniversalIdentifier: 'field-uid',
+                      operand: 'IS_NOT_EMPTY',
+                    },
+                  ],
+                },
+                objectUniversalIdentifier: 'object-uid',
+              },
+            },
+            {
+              universalIdentifier: 'filter-uid',
+              name: 'Filter',
+              type: 'FILTER',
+              nextStepIds: ['form-uid'],
+              input: stepFilters,
+            },
+            {
+              universalIdentifier: 'form-uid',
+              name: 'Form',
+              type: 'FORM',
+              nextStepIds: [],
+              input: [
+                { id: 'name', label: 'Name', name: 'name', type: 'TEXT' },
+                {
+                  id: 'ticket',
+                  label: 'Ticket',
+                  name: 'ticket',
+                  settings: { objectUniversalIdentifier: 'object-uid' },
+                  type: 'RECORD',
+                },
+              ],
+            },
+          ],
+        },
+      },
+      enumBindings: WORKFLOW_ENUM_BINDINGS,
+    });
+
+    expect(requiredSdkExports).toEqual([
+      'defineWorkflow',
+      'FieldType',
+      'ViewFilterOperand',
+    ]);
+    expect(file.match(/operand: ViewFilterOperand\.IS,/g)).toHaveLength(2);
+    expect(file).toContain('operand: ViewFilterOperand.IS_NOT_EMPTY,');
+    expect(file).toContain("logicalOperator: 'AND',");
+    expect(file).toContain("logicalOperator: 'OR',");
+    expect(file).toContain('type: FieldType.TEXT,');
+    expect(file).toContain("type: 'RECORD',");
+    expect(file).toContain("type: 'FIND_RECORDS',");
+    expect(file).toContain("type: 'DATABASE_EVENT',");
   });
 });

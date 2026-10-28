@@ -79,13 +79,15 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
             recordsToCreate: createInputs,
             upsert: true,
           });
+        } catch (error) {
+          enqueueToast(getToastOptionsFromError({ error }));
+          throw error;
+        } finally {
           await apolloCoreClient.refetchQueries({
             updateCache: (cache) => {
               cache.evict({ fieldName: objectMetadataItem.namePlural });
             },
           });
-        } catch (error: any) {
-          enqueueToast(getToastOptionsFromError({ error }));
         }
       },
       spreadsheetImportFields,

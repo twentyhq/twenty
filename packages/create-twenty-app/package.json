@@ -5,7 +5,7 @@
     "url": "git+https://github.com/twentyhq/twenty.git",
     "directory": "packages/create-twenty-app"
   },
-  "version": "2.52.0",
+  "version": "2.53.0",
   "description": "Retired scaffolder, use twenty app init",
   "main": "dist/cli.cjs",
   "bin": "dist/cli.cjs",
@@ -36,7 +36,7 @@
     "vite": "^8.0.0"
   },
   "engines": {
-    "node": "^24.5.0",
+    "node": "^24.5.0 || ^26.5.1",
     "yarn": "^4.0.2"
   }
 }

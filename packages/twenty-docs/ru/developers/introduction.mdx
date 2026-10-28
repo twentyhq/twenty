@@ -1,28 +1,68 @@
 ---
-title: Разработчики
-description: Создавайте приложения, используйте API, разворачивайте у себя или вносите вклад в кодовую базу.
+title: Построить на двадцать
+sidebarTitle: Разработчики
+description: Создавайте приложения в TypeScript, подключайте ваши инструменты через API и размещайте двадцать себя.
+hideFooterPagination: true
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3} className="documentation-card-group documentation-card-group--patterned">
+<LandingActions>
+  <LandingButton href="/ru/developers/extend/apps/getting-started/quick-start">Создайте свое первое приложение</LandingButton>
+  <LandingButton href="https://github.com/twentyhq/twenty" outlined>Посмотреть на GitHub</LandingButton>
+</LandingActions>
+
+## Почему стоит построить на двадцать
+
+Большинство CRM предоставляют разработчикам API и несколько мест для подключения. Двадцать дает вам самую платформу. объявляют объекты, серверные функции, React компоненты и AI агенты в простом TypeScript с помощью `twenty-sdk`, увидеть каждое изменение синхронизации с локальным сервером по мере сохранения и отправить с помощью CLI.
+
+* **Управляйте вашей рабочей областью с помощью кода.** Объекты, поля, представления и макеты страниц живут как файлы TypeScript в вашем хранилище, версий и проверенных как любые другие изменения.
+* \*\*То же самое, что и сами приложения Twenty. \* Slack, Linear и Granola являются приложениями, построенными с помощью `twenty-sdk`, так что вы строите с учетом того, что именно использует команда Twenty.
+* **Подключитесь к ядро, а не к боковой панели.** Ваши объекты получают те же таблицы и разрешения, что и Люди и Компании. Ваши приложения могут вести разговоры в сообщениях Twenty, писать на учет времени и выявлять функции для рабочих процессов и ИИ агентов.
+* **Без потолка.** Ядро с открытым исходным кодом и самохостинг. Когда точка расширения отсутствует, измените двадцать себя или сделайте это назад.
+* **Безопасно экспериментировать.** Приложения бегают в песочнице и только прикасаются к данным их роли, написали ли этот код независимо от того, написала ли ваша команда или агент ИИ.
+
+## Исследуйте документацию разработчика
+
+Помимо приложений, документация разработчика охватывает API, самохостинг, пожертвование в Twenty и UI-библиотеку.
+
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/ru/developers/extend/apps/getting-started/quick-start" img="/images/documentation/banner-icons-v2/dev-apps.svg">
     <CardTitle>Приложения</CardTitle>
-    Расширяйте Twenty с помощью пользовательских объектов, серверной логики, UI-компонентов и ИИ-агентов — всё в виде пакетов TypeScript.
+    Создание объектов, логики, интерфейсов и ИИ агентов как TypeScript приложений, от быстрого начала до публикации.
   </Card>
 
   <Card href="/ru/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
     <CardTitle>API</CardTitle>
-    REST и GraphQL API, вебхуки и OAuth.
+    Чтение и запись записей через REST и GraphQL, получение веб-хуков при изменении записей и подключение приложений к OAuth.
   </Card>
 
   <Card href="/ru/developers/self-host/capabilities/docker-compose" img="/images/documentation/banner-icons-v2/dev-self-host.svg">
-    <CardTitle>Развертывайте у себя</CardTitle>
-    Запускайте Twenty в собственной инфраструктуре.
+    <CardTitle>Self-Host</CardTitle>
+    Run Twenty on your own infrastructure with Docker Compose, then secure and upgrade it.
   </Card>
 
   <Card href="/ru/developers/contribute/capabilities/local-setup" img="/images/documentation/banner-icons-v2/dev-contribute.svg">
-    <CardTitle>Вносите вклад</CardTitle>
-    Настройте монорепозиторий локально и отправляйте PR.
+    <CardTitle>Внести вклад в развитие</CardTitle>
+    Настройте локальный союзник monorepo и помогите улучшить ядро с открытым исходным кодом.
+  </Card>
+
+  <Card href="/ru/ui/getting-started" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Библиотека UI</CardTitle>
+    Open-source примитивы React, компоненты, значки и токены темы Twenty.
+  </Card>
+
+  <Card href="https://github.com/twentyhq/twenty" img="/images/user-guide/halftone/community-github.svg">
+    <CardTitle>GitHub</CardTitle>
+    Просмотрите исходный код, сообщите о проблемах и следуйте за выпусками.
+  </Card>
+
+  <Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+    <CardTitle>Discord</CardTitle>
+    задавайте вопросы и делитесь тем, что вы создаете с двадцатью сообществами.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="developers" />

@@ -40,6 +40,7 @@ import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/cr
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { UpsertViewWidgetInput } from 'src/engine/metadata-modules/view/dtos/inputs/upsert-view-widget.input';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
+import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewWidgetUpsertService } from 'src/engine/metadata-modules/view/services/view-widget-upsert.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
@@ -97,6 +98,16 @@ export class ViewResolver {
         }),
       i18nContext,
     });
+  }
+
+  @ResolveField(() => Boolean, {
+    deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
+  })
+  isCustom(
+    @Parent() view: ViewDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): boolean {
+    return view.applicationId === workspace.workspaceCustomApplicationId;
   }
 
   // A workspace-custom view can point at a standard object, so the label resolves against the object's application

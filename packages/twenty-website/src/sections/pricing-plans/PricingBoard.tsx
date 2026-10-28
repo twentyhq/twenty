@@ -3,9 +3,17 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
-import { HERO_COMPOSITION, mediaUp, spacing } from '@/tokens';
+import {
+  EASING,
+  HERO_COMPOSITION,
+  mediaUp,
+  REDUCED_MOTION,
+  spacing,
+} from '@/tokens';
 
 import { BillingToggle } from './BillingToggle';
+import { FEATURE_TRANSITION_TIMING } from './feature-transition-timing';
+import { getPlanCardRowTemplate } from './get-plan-card-row-template';
 import { PlanCard } from './PlanCard';
 import { PLANS_DATA, type PlansBillingPeriod } from './plans-data';
 import { SelfHostToggle } from './SelfHostToggle';
@@ -56,7 +64,7 @@ const SelfHostToggleSlot = styled.div`
   }
 `;
 
-const CardsGrid = styled.div`
+const CardsGrid = styled.div<{ $cardRowTemplate: string }>`
   display: grid;
   grid-template-columns: 1fr;
   margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
@@ -66,7 +74,14 @@ const CardsGrid = styled.div`
   ${mediaUp('md')} {
     column-gap: ${spacing(6)};
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: ${({ $cardRowTemplate }) => $cardRowTemplate};
     row-gap: 0;
+    transition: grid-template-rows
+      ${FEATURE_TRANSITION_TIMING.switchMilliseconds}ms ${EASING.spring};
+  }
+
+  ${REDUCED_MOTION} {
+    transition: none;
   }
 `;
 
@@ -74,10 +89,10 @@ export function PricingBoard() {
   const [billing, setBilling] = useState<PlansBillingPeriod>('yearly');
   const { hosting, setHosting } = usePricingState();
 
-  const maxBullets = Math.max(
-    PLANS_DATA.pro.cells[hosting][billing].featureBullets.length,
-    PLANS_DATA.organization.cells[hosting][billing].featureBullets.length,
-    PLANS_DATA.enterprise.cells[hosting][billing].featureBullets.length,
+  const featureCount = Math.max(
+    PLANS_DATA.pro.cells[hosting][billing].features.length,
+    PLANS_DATA.organization.cells[hosting][billing].features.length,
+    PLANS_DATA.enterprise.cells[hosting][billing].features.length,
   );
 
   return (
@@ -90,26 +105,15 @@ export function PricingBoard() {
           <SelfHostToggle hosting={hosting} onHostingChange={setHosting} />
         </SelfHostToggleSlot>
       </ControlsRow>
-      <CardsGrid>
-        <PlanCard
-          billing={billing}
-          hosting={hosting}
-          maxBullets={maxBullets}
-          tierId="pro"
-        />
+      <CardsGrid $cardRowTemplate={getPlanCardRowTemplate(featureCount)}>
+        <PlanCard billing={billing} hosting={hosting} tierId="pro" />
         <PlanCard
           billing={billing}
           highlighted
           hosting={hosting}
-          maxBullets={maxBullets}
           tierId="organization"
         />
-        <PlanCard
-          billing={billing}
-          hosting={hosting}
-          maxBullets={maxBullets}
-          tierId="enterprise"
-        />
+        <PlanCard billing={billing} hosting={hosting} tierId="enterprise" />
       </CardsGrid>
     </Board>
   );

@@ -40,6 +40,7 @@ export type PageDecoratorArgs = {
   routeParams: RouteParams;
   additionalRoutes?: string[];
   searchParams?: RouteParams;
+  routeHash?: string;
 };
 
 export type RouteParams = {
@@ -54,11 +55,15 @@ export const isRouteParams = (obj: any): obj is RouteParams => {
   return Object.keys(obj).every((key) => typeof obj[key] === 'string');
 };
 
-export const computeLocation = (
-  routePath: string,
-  routeParams?: RouteParams,
-  searchParams?: RouteParams,
-) => {
+export const computeLocation = ({
+  routePath,
+  routeParams,
+  searchParams,
+  routeHash = '',
+}: Pick<PageDecoratorArgs, 'routePath'> &
+  Partial<
+    Pick<PageDecoratorArgs, 'routeParams' | 'searchParams' | 'routeHash'>
+  >) => {
   const search = searchParams
     ? `?${new URLSearchParams(searchParams).toString()}`
     : '';
@@ -69,6 +74,7 @@ export const computeLocation = (
       (paramName) => routeParams?.[paramName] ?? '',
     ),
     search,
+    hash: routeHash,
   };
 };
 
@@ -138,6 +144,8 @@ const createRouter = ({
   };
   initialEntries?: {
     pathname: string;
+    search?: string;
+    hash?: string;
   }[];
   initialIndex?: number;
 }) => {
@@ -170,12 +178,18 @@ export const PageDecorator: Decorator<{
   routeParams: RouteParams;
   additionalRoutes?: string[];
   searchParams?: RouteParams;
+  routeHash?: string;
 }> = (Story, { args }) => {
   const router = createRouter({
     Story,
     args,
     initialEntries: [
-      computeLocation(args.routePath, args.routeParams, args.searchParams),
+      computeLocation({
+        routePath: args.routePath,
+        routeParams: args.routeParams,
+        searchParams: args.searchParams,
+        routeHash: args.routeHash,
+      }),
     ],
   });
 

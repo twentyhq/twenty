@@ -7,8 +7,9 @@ export const fromFlatIndexMetadataToIndexMetadataDto = (
   return {
     id: flatIndexMetadata.id,
     name: flatIndexMetadata.name,
-    isCustom: flatIndexMetadata.isCustom,
     isUnique: flatIndexMetadata.isUnique,
+    applicationId: flatIndexMetadata.applicationId,
+    isSystemSideEffect: flatIndexMetadata.isSystemSideEffect,
     indexWhereClause: flatIndexMetadata.indexWhereClause ?? undefined,
     indexType: flatIndexMetadata.indexType,
     objectMetadataId: flatIndexMetadata.objectMetadataId,

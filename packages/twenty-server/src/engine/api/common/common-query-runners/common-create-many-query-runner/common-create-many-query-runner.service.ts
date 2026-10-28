@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { MetadataReadability, ObjectRecord } from 'twenty-shared/types';
+import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   Brackets,
@@ -77,15 +77,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
-    const isPrivateObject =
-      queryRunnerContext.flatObjectMetadata.readability ===
-      MetadataReadability.PRIVATE;
     const { sharingMode } = resolveObjectSharing(queryRunnerContext);
-    const isGatedThroughRecordShares =
-      sharingMode === RecordSharingMode.PRIVATE ||
-      sharingMode === RecordSharingMode.INHERITED;
+    const isPrivateObject = sharingMode === RecordSharingMode.PRIVATE;
 
-    // An inherited record is reachable through its parent, so shareWith is optional there
     if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
@@ -164,8 +158,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       repository:
-        isGatedThroughRecordShares &&
-        isDefined(queryRunnerContext.transactionScope)
+        isPrivateObject && isDefined(queryRunnerContext.transactionScope)
           ? queryRunnerContext.transactionScope.getRepository(
               flatObjectMetadata.nameSingular,
               { shouldBypassPermissionChecks: true },

@@ -43,7 +43,7 @@ const SALES_CHANNEL = {
   icon: 'IconCoins',
   color: 'green',
   position: 1,
-  isCustom: true,
+  applicationId: 'workspace-custom-application-id',
   isAccessible: true,
   roleIds: [],
 };
@@ -168,6 +168,7 @@ const renderThread = async ({
           archivedAt: scope === 'INBOX' ? null : INBOX_EVENT_AT,
           snoozedUntil: scope === 'SNOOZED' ? SNOOZED_UNTIL : null,
           lastReadAt: THREAD_ACTIVITY_AT,
+          lastMentionedAt: null,
           updatedAt: INBOX_EVENT_AT,
         },
       });

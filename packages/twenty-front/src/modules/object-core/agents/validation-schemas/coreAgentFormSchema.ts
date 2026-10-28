@@ -12,7 +12,6 @@ export const coreAgentFormSchema = z.object({
   modelId: z.string().min(1, { error: () => t`Model is required` }),
   role: z.string().nullish(),
   prompt: zodNonEmptyString,
-  isCustom: z.boolean().default(true),
   modelConfiguration: z
     .object({
       webSearch: z

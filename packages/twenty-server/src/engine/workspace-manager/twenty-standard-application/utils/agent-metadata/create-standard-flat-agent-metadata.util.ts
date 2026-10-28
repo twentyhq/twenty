@@ -42,7 +42,6 @@ Response format:
 Always base answers on official Twenty documentation. Be patient and helpful.`,
         modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
         responseFormat: { type: 'text' },
-        isCustom: false,
         isSystem: false,
         modelConfiguration: {},
       },

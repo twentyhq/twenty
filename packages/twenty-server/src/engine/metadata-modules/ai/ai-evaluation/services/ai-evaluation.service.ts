@@ -23,20 +23,24 @@ export class AiEvaluationService {
     private readonly aiBillingService: AiBillingService,
   ) {}
 
+  isAvailable(): boolean {
+    return (
+      this.aiModelRegistryService.isModelAdminAllowed(JEV_MODEL_ID) &&
+      isDefined(this.aiModelRegistryService.getEvaluationModel(JEV_MODEL_ID))
+    );
+  }
+
   async evaluate({
     workspaceId,
     userWorkspaceId,
+    operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     state,
     questions,
     abortSignal,
   }: AiEvaluationRequest): Promise<AiEvaluationResult> {
     assertEvaluationQuestionsAreWellFormed(questions);
 
-    const isJevAvailable =
-      this.aiModelRegistryService.isModelAdminAllowed(JEV_MODEL_ID) &&
-      isDefined(this.aiModelRegistryService.getEvaluationModel(JEV_MODEL_ID));
-
-    if (!isJevAvailable) {
+    if (!this.isAvailable()) {
       throw new AiException(
         'Jev is unavailable. Configure the TypeSafe AI API key and enable Jev before running Classify.',
         AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
@@ -47,7 +51,7 @@ export class AiEvaluationService {
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
-      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+      operationType,
       spenders: { userWorkspaceId },
     });
 
@@ -62,7 +66,7 @@ export class AiEvaluationService {
       modelId,
       billingInput: { usage },
       workspaceId,
-      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+      operationType,
       spenders: { userWorkspaceId },
     });
 

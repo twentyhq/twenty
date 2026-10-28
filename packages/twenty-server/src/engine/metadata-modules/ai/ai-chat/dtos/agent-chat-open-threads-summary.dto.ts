@@ -6,6 +6,9 @@ export class AgentChatOpenThreadsSummaryDTO {
   openThreadCount: number;
 
   @Field(() => Int)
+  unreadOpenThreadCount: number;
+
+  @Field(() => Int)
   needsInputThreadCount: number;
 
   @Field(() => Boolean)

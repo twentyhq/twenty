@@ -24,10 +24,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
-  [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
-    label: msg`Deferred workspace migration actions`,
-    description: msg`Run the slow parts of data model changes in the background after they are saved.`,
-  },
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
     label: msg`Record creation form`,
     description: msg`Use a dedicated form when creating records, and enable validation rules.`,
@@ -43,6 +39,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
     label: msg`App preferences`,
     description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
+  },
+  [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
+    label: msg`MCP servers`,
+    description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
   },
   [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
     label: msg`Getting started`,

@@ -7,6 +7,7 @@ import { CommandListItemLoader } from '@/command-menu-item/display/components/Co
 import { CommandMenuDropdownActionItem } from '@/command-menu-item/display/components/CommandMenuDropdownActionItem';
 import { useCommandMenuItemDisplay } from '@/command-menu-item/display/hooks/useCommandMenuItemDisplay';
 import { getCommandMenuItemButtonHotKey } from '@/command-menu-item/display/utils/getCommandMenuItemButtonHotKey';
+import { ENGINE_COMPONENT_KEYS_WITH_SUB_MENU } from '@/command-menu-item/engine-command/constants/EngineComponentKeysWithSubMenu';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -155,6 +156,9 @@ const CommandMenuItemSelectableRenderer = ({
         label={label}
         onClick={disabled ? undefined : handleClick}
         hotKeys={item.hotKeys}
+        hasSubMenu={ENGINE_COMPONENT_KEYS_WITH_SUB_MENU.has(
+          item.engineComponentKey,
+        )}
         disabled={disabled}
         RightComponent={loaderComponent}
       />

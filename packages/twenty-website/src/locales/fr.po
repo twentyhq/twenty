@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-12 12:37\n"
+"PO-Revision-Date: 2026-10-28 14:17\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -102,11 +102,17 @@ msgstr "/ utilisateur / mois - facturé annuellement"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "/user/month"
 msgstr "/utilisateur/mois"
 
 #. js-lingui-id: 0XQjhY
 #: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "/year"
 msgstr "/an"
 
@@ -219,41 +225,63 @@ msgstr "≈ 228 $ par utilisateur et par mois avant les modules complémentaire
 msgid "≈ $300 per user per month in year one"
 msgstr "≈ 300 $ par utilisateur et par mois la première année"
 
-#. js-lingui-id: jdJifG
-#: src/sections/compare/compare-data.ts
-msgid "≈ 12× less"
-msgstr "≈ 12× moins"
+#. js-lingui-id: QSuM4t
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "≈ 10,000 workflow steps"
+msgstr "≈ 10 000 étapes de workflow"
 
-#. js-lingui-id: xSqWmB
+#. js-lingui-id: GiXLJ1
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "≈ 100"
+msgstr "≈ 100"
+
+#. js-lingui-id: ZSX1/c
 #: src/sections/compare/compare-data.ts
-msgid "≈ 15× less"
-msgstr "≈ 15× moins"
+msgid "≈ 2× less"
+msgstr "≈ 2× moins"
+
+#. js-lingui-id: af5Bta
+#: src/sections/compare/compare-data.ts
+msgid "≈ 3× less"
+msgstr "≈ 3× moins"
 
 #. js-lingui-id: XEcaNi
 #: src/sections/compare/compare-data.ts
 msgid "≈ 4× less"
 msgstr "≈ 4× moins"
 
-#. js-lingui-id: 7AGSOz
-#: src/sections/compare/compare-data.ts
-msgid "≈ 6× less"
-msgstr "≈ 6× moins"
+#. js-lingui-id: qjBGD6
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "≈ 40,000 workflow steps"
+msgstr "≈ 40 000 étapes de workflow"
 
-#. js-lingui-id: rHH4Ef
+#. js-lingui-id: Y/zbvK
 #: src/sections/compare/compare-data.ts
-msgid "≈ 8× less"
-msgstr "≈ 8× moins"
+msgid "≈ 5× less"
+msgstr "≈ 5× moins"
+
+#. js-lingui-id: zn2aZh
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "≈ 500"
+msgstr "≈ 500"
+
+#. js-lingui-id: PDkwaA
+#: src/sections/compare/compare-data.ts
+msgid "≈ 7× less"
+msgstr "≈ 7× moins"
 
 #. js-lingui-id: be30i9
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$0"
 msgstr "$0"
 
-#. js-lingui-id: hPuNoh
+#. js-lingui-id: XaFwfg
 #: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "$0/user"
-msgstr ""
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$1 per credit, from $20/month"
+msgstr "1 $ par crédit, à partir de 20 $/mois"
 
 #. js-lingui-id: RVS9wF
 #: src/sections/compare/compare-data.ts
@@ -329,24 +357,10 @@ msgstr "175 $/utilisateur/mois"
 msgid "$18,960"
 msgstr "18 960 $"
 
-#. js-lingui-id: 3TfGqu
-#: src/sections/compare/compare-data.ts
-msgid "$19 per user per month, SSO included"
-msgstr "19 $ par utilisateur et par mois, SSO inclus"
-
-#. js-lingui-id: nEeXt3
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-msgid "$19 per user per month, that's it"
-msgstr "19 $ par utilisateur et par mois, c’est tout"
-
-#. js-lingui-id: rlRjZO
+#. js-lingui-id: EkIZkY
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "$19/user"
-msgstr ""
+msgid "$19"
+msgstr "$19"
 
 #. js-lingui-id: buZDJK
 #: src/sections/compare/compare-data.ts
@@ -383,28 +397,28 @@ msgstr "32 160 $/an"
 msgid "$36,000/yr"
 msgstr "36 000 $/an"
 
+#. js-lingui-id: QBR8AB
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$39"
+msgstr "39 $"
+
+#. js-lingui-id: kNzyu3
+#: src/sections/compare/compare-data.ts
+msgid "$39 per user per month, SSO included"
+msgstr "39 $ par utilisateur et par mois, SSO inclus"
+
+#. js-lingui-id: azz07D
+#: src/sections/compare/compare-data.ts
+#: src/sections/compare/compare-data.ts
+#: src/sections/compare/compare-data.ts
+#: src/sections/compare/compare-data.ts
+msgid "$39 per user per month, that's it"
+msgstr "39 $ par utilisateur et par mois, c’est tout"
+
 #. js-lingui-id: q9R8xN
 #: src/sections/compare/compare-data.ts
 msgid "$39,500"
 msgstr "39 500 $"
-
-#. js-lingui-id: BkOdiw
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-msgid "$4,560"
-msgstr "4 560 $"
-
-#. js-lingui-id: godgke
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-msgid "$4,560/yr"
-msgstr "4 560 $/an"
 
 #. js-lingui-id: 6bS7c4
 #: src/sections/compare/compare-data.ts
@@ -441,6 +455,12 @@ msgstr "49 $/utilisateur/mois"
 msgid "$500/user/mo"
 msgstr "500 $/utilisateur/mois"
 
+#. js-lingui-id: ThYX+l
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$50k"
+msgstr "50 k$"
+
 #. js-lingui-id: rJXDlT
 #: src/sections/compare/compare-data.ts
 msgid "$54,600"
@@ -461,22 +481,45 @@ msgstr "79 $ par utilisateur et par mois avec SSO"
 msgid "$79/user/mo"
 msgstr "79 $/utilisateur/mois"
 
-#. js-lingui-id: OCkNt+
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-msgid "$9 to $19/user, everything included"
-msgstr "9 $ à 19 $/utilisateur, tout inclus"
-
-#. js-lingui-id: R6J1hV
+#. js-lingui-id: 8r6DgO
 #: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "$9/user"
-msgstr ""
+msgid "$9"
+msgstr "$9"
+
+#. js-lingui-id: RbeSoe
+#: src/sections/compare/compare-data.ts
+#: src/sections/compare/compare-data.ts
+#: src/sections/compare/compare-data.ts
+msgid "$9 to $39/user, everything included"
+msgstr "9 $ à 39 $/utilisateur, tout inclus"
+
+#. js-lingui-id: nliPPd
+#: src/sections/compare/compare-data.ts
+#: src/sections/compare/compare-data.ts
+#: src/sections/compare/compare-data.ts
+#: src/sections/compare/compare-data.ts
+#: src/sections/compare/compare-data.ts
+msgid "$9,360"
+msgstr "9 360 $"
+
+#. js-lingui-id: iH2efm
+#: src/sections/compare/compare-data.ts
+#: src/sections/compare/compare-data.ts
+#: src/sections/compare/compare-data.ts
+#: src/sections/compare/compare-data.ts
+#: src/sections/compare/compare-data.ts
+msgid "$9,360/yr"
+msgstr "9 360 $/an"
 
 #. js-lingui-id: 5QiFtr
 #: src/sections/compare/compare-data.ts
 msgid "$9/user on Pro"
 msgstr "9 $/utilisateur sur Pro"
+
+#. js-lingui-id: K42cxp
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "1"
+msgstr "1"
 
 #. js-lingui-id: EHNAf2
 #: src/case-studies/case-study-catalog.ts
@@ -527,14 +570,14 @@ msgstr "Contrat de 2 ans"
 msgid "2,000+"
 msgstr "2 000+"
 
-#. js-lingui-id: gONZ+/
+#. js-lingui-id: ilgQyx
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
-msgid "20 × Organization ($19)"
-msgstr "20 × Organization (19 $)"
+msgid "20 × Organization ($39)"
+msgstr "20 × Organization (39 $)"
 
 #. js-lingui-id: t8U4dF
 #: src/sections/compare/compare-data.ts
@@ -599,15 +642,15 @@ msgstr "30 minutes, sans engagement"
 msgid "30+"
 msgstr "30+"
 
+#. js-lingui-id: YqbCZi
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "4"
+msgstr "4"
+
 #. js-lingui-id: Pdl2UE
 #: src/case-studies/case-study-catalog.ts
 msgid "4 tools"
 msgstr "4 outils"
-
-#. js-lingui-id: 2ScEtE
-#: src/sections/pricing-plans/plans-data.ts
-msgid "5 workflow credits/month included"
-msgstr "5 crédits de workflow/mois inclus"
 
 #. js-lingui-id: hIKxCy
 #: src/partner-application/partner-application-copy.ts
@@ -619,10 +662,10 @@ msgstr "5,000"
 msgid "50 per minute"
 msgstr "50 par minute"
 
-#. js-lingui-id: CiRGZ8
+#. js-lingui-id: bPBd1a
 #: src/sections/pricing-plans/plans-data.ts
-msgid "50 workflow credits/year included"
-msgstr "50 crédits de workflow/an inclus"
+msgid "5x more personal AI usage"
+msgstr "5 fois plus d'utilisation personnelle de l'IA"
 
 #. js-lingui-id: tZvajW
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -652,6 +695,11 @@ msgstr "Une entreprise qui ne correspond pas à un *modèle*"
 #: src/case-studies/case-study-stories.ts
 msgid "A business that does not fit a template"
 msgstr "Une entreprise qui ne correspond pas à un modèle"
+
+#. js-lingui-id: I0Cpfd
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A command menu in sections"
+msgstr "Un menu de commandes organisé en sections"
 
 #. js-lingui-id: SR9TmK
 #: src/sections/product-hero/ProductHero.tsx
@@ -691,6 +739,11 @@ msgstr ""
 msgid "A CRM they actually own"
 msgstr "Un CRM qu’ils possèdent vraiment"
 
+#. js-lingui-id: Wy0ITC
+#: src/sections/pricing-plans/plans-data.ts
+msgid "A custom agentic CRM for one team."
+msgstr "Un CRM agentique personnalisé pour une équipe."
+
 #. js-lingui-id: HSyZ9R
 #: src/sections/problem/Problem.tsx
 msgid "A custom CRM gives your org an edge, *but building one* comes with *tradeoffs*"
@@ -724,6 +777,16 @@ msgstr "Un CRM moderne avec *une interface intuitive*"
 msgid "A new breadcrumb navigation across the app, improved keyboard menu navigation, and a new focus state for table views."
 msgstr "Une nouvelle navigation en fil d’Ariane dans toute l’application, une navigation au clavier améliorée dans les menus et un nouvel état de focus pour les vues en tableau."
 
+#. js-lingui-id: tIDKH9
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A new Classify step uses AI to answer questions you set about a record, like which category an email belongs to, and passes each answer to the next steps."
+msgstr "Une nouvelle étape Classify utilise l’IA pour répondre aux questions que vous définissez sur un enregistrement, comme la catégorie à laquelle appartient un e-mail, et transmet chaque réponse aux étapes suivantes."
+
+#. js-lingui-id: i2bJp4
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A new editor for notes and tasks"
+msgstr "Un nouvel éditeur pour les notes et les tâches"
+
 #. js-lingui-id: aYUQpm
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new maintenance mode helps admins pause workspace changes during sensitive operations."
@@ -733,6 +796,11 @@ msgstr "Un nouveau mode maintenance aide les administrateurs à suspendre les mo
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new onboarding experience"
 msgstr "Une nouvelle expérience d'onboarding"
+
+#. js-lingui-id: pj2AXy
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A page for every attachment"
+msgstr "Une page pour chaque pièce jointe"
 
 #. js-lingui-id: P5BDuh
 #: src/case-studies/case-study-stories.ts
@@ -772,6 +840,11 @@ msgstr "Un véritable environnement de préproduction"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A rebuilt setup flow guides new teams through workspace creation, contact import, and teammate invitations."
 msgstr "Un flux de configuration repensé guide les nouvelles équipes à travers la création d'un espace de travail, l'importation de contacts et les invitations de coéquipiers."
+
+#. js-lingui-id: ZpC2fq
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A relation to a junction object can now skip it and show the records on the other side, like a many-to-many relation. Set it up in the relation field’s settings, in Advanced mode."
+msgstr "Une relation vers un objet de jonction peut désormais l'ignorer et afficher les enregistrements de l'autre côté, comme une relation plusieurs-à-plusieurs. Configurez-la dans les paramètres du champ de relation, en mode Avancé."
 
 #. js-lingui-id: WjUlJr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -819,6 +892,16 @@ msgstr "AC&T est passé à une instance Twenty auto-hébergée : aucun risque fo
 msgid "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
 msgstr "AC&T a remplacé un CRM propriétaire abandonné par Twenty auto-hébergé et réduit ses coûts CRM de plus de 90 %."
 
+#. js-lingui-id: Ex+PbS
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Access follows your directory"
+msgstr "L'accès suit votre annuaire"
+
+#. js-lingui-id: SWc/zk
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Access to our implementation partner network"
+msgstr "Accès à notre réseau de partenaires d'implémentation"
+
 #. js-lingui-id: pd81Qb
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -865,11 +948,21 @@ msgstr "Automatisations actives"
 msgid "Active filters"
 msgstr "Filtres actifs"
 
+#. js-lingui-id: QvulpL
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Add a credit pack to your monthly or yearly plan. Unused pack credits roll over, up to twice the pack."
+msgstr "Ajoutez un pack de crédits à votre forfait mensuel ou annuel. Les crédits de pack non utilisés sont reportés, jusqu'à deux fois le pack."
+
 #. js-lingui-id: r8W+9y
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Add a Section"
 msgstr "Ajouter une section"
+
+#. js-lingui-id: HjFWMR
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Add context to a chat from the + menu"
+msgstr "Ajouter du contexte à une discussion depuis le menu +"
 
 #. js-lingui-id: iNSn2+
 #: src/platform/releases/ReleaseNotes.tsx
@@ -936,6 +1029,11 @@ msgstr "Modules complémentaires"
 msgid "Added \"Group By\" in tables to better organize entries, like grouping companies by industry for clearer data visualization. This feature is available in the table Options menu."
 msgstr "Ajout de « Group By » dans les tableaux pour mieux organiser les entrées, par exemple en regroupant les entreprises par secteur pour une visualisation des données plus claire. Cette fonctionnalité est disponible dans le menu Options du tableau."
 
+#. js-lingui-id: 92+0S0
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Adding a menu item opens a searchable list right in the sidebar, and folders and links are edited in a small editor next to it."
+msgstr "L'ajout d'un élément de menu ouvre une liste avec recherche directement dans la barre latérale, et les dossiers et liens sont modifiés dans un petit éditeur à côté."
+
 #. js-lingui-id: 8i1KwT
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "Additional"
@@ -952,6 +1050,17 @@ msgstr "Adresse"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Address Field Type"
 msgstr "Type de champ Adresse"
+
+#. js-lingui-id: ERfoaJ
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Admin & Member"
+msgstr "Administrateur et membre"
+
+#. js-lingui-id: MY7fuZ
+#: src/sections/compare/compare-data.ts
+msgid "Admin & Member roles on Pro, custom permissions on Organization"
+msgstr "Rôles Administrateur et membre dans Pro, autorisations personnalisées dans Organization"
 
 #. js-lingui-id: g1in8j
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1029,10 +1138,25 @@ msgstr "Agentforce 1 Sales edition"
 msgid "Agentforce list price"
 msgstr "Prix catalogue Agentforce"
 
+#. js-lingui-id: vFWpqb
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Agentic workflows"
+msgstr "Workflows agentiques"
+
 #. js-lingui-id: HrtCcp
 #: src/sections/compare/compare-data.ts
 msgid "Agents and Data Cloud bundled"
 msgstr "Agents et Data Cloud groupés"
+
+#. js-lingui-id: 7uiZOn
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Agents get their own pages"
+msgstr "Les agents ont leurs propres pages"
+
+#. js-lingui-id: R8ADJv
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Agents now have a list and a page each, like workflows. Create and edit agents there instead of in settings."
+msgstr "Les agents disposent désormais chacun d'une liste et d'une page, comme les workflows. Créez et modifiez les agents à cet endroit plutôt que dans les paramètres."
 
 #. js-lingui-id: vZKKhf
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -1080,12 +1204,6 @@ msgstr "Les agents IA commencent à rédiger l’outreach, noter les leads, rech
 msgid "AI agents included, usage credits"
 msgstr "Agents IA inclus, crédits d’utilisation"
 
-#. js-lingui-id: Rsxdfy
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-msgid "AI Agents with custom skills"
-msgstr "Agents IA avec compétences personnalisées"
-
 #. js-lingui-id: JHi+LN
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "AI agents, chats, and MCP"
@@ -1125,6 +1243,12 @@ msgstr "IA dans le workflow de migration"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "AI settings now show each model’s provider, price per million tokens, context window, maximum output, and data residency."
 msgstr "Les paramètres d’IA affichent désormais le fournisseur de chaque modèle, le prix par million de jetons, la fenêtre de contexte, la sortie maximale et la résidence des données."
+
+#. js-lingui-id: 7psHr1
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "AI tasks/week"
+msgstr "Tâches d'IA/semaine"
 
 #. js-lingui-id: t97j+F
 #: src/case-studies/case-study-catalog.ts
@@ -1183,6 +1307,16 @@ msgstr "toujours"
 msgid "Amrendra Pratap Singh"
 msgstr "Amrendra Pratap Singh"
 
+#. js-lingui-id: J0tGZf
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "An email sent from a record is now linked to that record, even when the recipient isn’t its point of contact."
+msgstr "Un e-mail envoyé depuis un enregistrement est désormais lié à cet enregistrement, même lorsque le destinataire n'est pas son point de contact."
+
+#. js-lingui-id: t4V3jR
+#: src/sections/pricing-plans/plans-data.ts
+msgid "And more apps from our marketplace"
+msgstr "Et plus d'applications de notre marketplace"
+
 #. js-lingui-id: Sbiivs
 #: src/partner-application/data/partner-country-options.ts
 msgid "Andorra 🇦🇩"
@@ -1192,6 +1326,11 @@ msgstr "Andorre 🇦🇩"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Angola 🇦🇴"
 msgstr "Angola 🇦🇴"
+
+#. js-lingui-id: SOLXKf
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Answers from the team that builds it"
+msgstr "Des réponses de l'équipe qui le développe"
 
 #. js-lingui-id: qKANz3
 #: src/partner-application/data/partner-country-options.ts
@@ -1361,6 +1500,11 @@ msgstr "Joindre des fichiers aux enregistrements avec l'IA"
 msgid "Attachment Visualizer"
 msgstr "Visualiseur de pièces jointes"
 
+#. js-lingui-id: DDl94x
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Attachments open on their own page with an inline preview, and the attachments table shows what each file belongs to in a single Attached to column."
+msgstr "Les pièces jointes s'ouvrent sur leur propre page avec un aperçu intégré, et le tableau des pièces jointes indique à quoi appartient chaque fichier dans une seule colonne Lié à."
+
 #. js-lingui-id: fxL/Km
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Attachments without the chaos."
@@ -1386,6 +1530,11 @@ msgstr "Autriche 🇦🇹"
 msgid "Auto-renewing term contracts"
 msgstr "Contrats à durée déterminée avec reconduction automatique"
 
+#. js-lingui-id: fXf/nR
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Automate the busywork"
+msgstr "Automatisez les tâches répétitives"
+
 #. js-lingui-id: FFv0Vh
 #: src/sections/product-stepper/data/product-stepper-data.ts
 msgid "Automation"
@@ -1395,6 +1544,11 @@ msgstr "Automatisation"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Available on YouTube!"
 msgstr "Disponible sur YouTube !"
+
+#. js-lingui-id: Lj+SZB
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Average, min and max for ratings"
+msgstr "Moyenne, minimum et maximum pour les évaluations"
 
 #. js-lingui-id: 4OP74a
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -1572,10 +1726,15 @@ msgstr "Bhoutan 🇧🇹"
 msgid "Billing period"
 msgstr "Période de facturation"
 
-#. js-lingui-id: BpyJwa
+#. js-lingui-id: fztLkj
 #: src/sections/menu/data/menu.ts
-msgid "Blue developer illustration with branching arrows"
-msgstr "Illustration développeur bleue avec des flèches ramifiées"
+msgid "Blue code window illustration"
+msgstr "Illustration d'une fenêtre de code bleue"
+
+#. js-lingui-id: go4Mpk
+#: src/sections/menu/data/menu.ts
+msgid "Blue megaphone illustration"
+msgstr "Illustration d'un mégaphone bleu"
 
 #. js-lingui-id: TVJDFA
 #: src/partner-application/data/partner-country-options.ts
@@ -1607,6 +1766,11 @@ msgstr "Botswana 🇧🇼"
 msgid "Brazil 🇧🇷"
 msgstr "Brésil 🇧🇷"
 
+#. js-lingui-id: ISQOxf
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Bring your own AI models"
+msgstr "Apportez vos propres modèles d'IA"
+
 #. js-lingui-id: hKAV/O
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
 #: src/sections/partner-hero/BrowseDirectoryButton.tsx
@@ -1627,11 +1791,6 @@ msgstr "Parcourez vos enregistrements dans une liste compacte, désormais access
 #: src/partner-application/data/partner-country-options.ts
 msgid "Brunei 🇧🇳"
 msgstr "Brunei 🇧🇳"
-
-#. js-lingui-id: 0Nu8Fw
-#: src/client-brief/client-brief-copy.ts
-msgid "Budget range"
-msgstr "Fourchette de budget"
 
 #. js-lingui-id: NcjNpp
 #: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
@@ -1728,10 +1887,20 @@ msgstr "Lien de calendrier / de réservation"
 msgid "Calendar View for Objects"
 msgstr "Vue Calendrier pour les objets"
 
+#. js-lingui-id: XF6oYz
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Call recordings on record pages"
+msgstr "Enregistrements d'appels sur les pages d'enregistrement"
+
 #. js-lingui-id: RZgOeI
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Call recordings that have no video now come with an audio player, so click-to-seek and transcript highlighting work there too."
 msgstr "Les enregistrements d’appels sans vidéo sont désormais accompagnés d’un lecteur audio, afin que la recherche par clic et la mise en surbrillance de la transcription y fonctionnent également."
+
+#. js-lingui-id: zV3oiN
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Calls recorded, leads enriched"
+msgstr "Appels enregistrés, prospects enrichis"
 
 #. js-lingui-id: 4yFkf9
 #: src/partner-application/data/partner-country-options.ts
@@ -1891,6 +2060,11 @@ msgstr "Choisissez le comportement de votre IA à l’aide d’un seul curseur, 
 msgid "Choose where records open"
 msgstr "Choisissez où les enregistrements s'ouvrent"
 
+#. js-lingui-id: WZRyy5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Choose whether to import private events"
+msgstr "Choisir d'importer ou non les événements privés"
+
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose which part of a name or address field a view should sort by directly from the sort chip."
@@ -1905,6 +2079,11 @@ msgstr "Ville *"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Classic never dies. It just gets extended one more time."
 msgstr "Le classique ne meurt jamais. Il est simplement étendu une fois de plus."
+
+#. js-lingui-id: cJbhDP
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Classify records in workflows"
+msgstr "Classer les enregistrements dans les workflows"
 
 #. js-lingui-id: u8JHrO
 #: src/partners-marketplace/FilterBar.tsx
@@ -1921,6 +2100,11 @@ msgstr "Des chiffres plus clairs dans les tableaux de bord"
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Click Become a partner and complete the short application: who you are, what you cover, and one real Twenty project with proof. We review every application against real, shipped work — acceptance is selective."
 msgstr "Cliquez sur Devenir partenaire et remplissez le court formulaire : qui vous êtes, ce que vous couvrez et un véritable projet Twenty avec des preuves. Nous examinons chaque candidature en fonction de réalisations concrètes livrées — l'acceptation est sélective."
+
+#. js-lingui-id: glfrZq
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Clicking a call in the Call recordings widget now opens its calendar event, with the summary, transcript and participants in one place."
+msgstr "Cliquer sur un appel dans le widget Enregistrements d'appels ouvre désormais son événement de calendrier, avec le résumé, la transcription et les participants au même endroit."
 
 #. js-lingui-id: yz7wBu
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -1958,10 +2142,10 @@ msgstr "Cloud (hébergé par Twenty)"
 msgid "Cloud or self-hosted?"
 msgstr "Cloud ou auto-hébergé ?"
 
-#. js-lingui-id: L/LPQZ
+#. js-lingui-id: PQn82X
 #: src/sections/faq/faq.data.ts
-msgid "Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control."
-msgstr "Cloud Pro coûte 9 $/utilisateur/mois (facturation annuelle). Organization, à 19 $/utilisateur/mois, débloque le SSO et les permissions au niveau des lignes pour les équipes qui exigent un contrôle d’accès plus fin."
+msgid "Cloud Pro is $9/user/month and Organization is $39/user/month, billed yearly. Organization adds 5x more AI usage per member, custom roles with field and row-level permissions, and SSO. Self-hosting the open source core is free."
+msgstr "Cloud Pro coûte 9 $/utilisateur/mois et Organization coûte 39 $/utilisateur/mois, facturés annuellement. Organization offre 5 fois plus d'utilisation de l'IA par membre, des rôles personnalisés avec des autorisations au niveau des champs et des lignes, ainsi que le SSO. L'auto-hébergement du cœur open source est gratuit."
 
 #. js-lingui-id: WYgF8M
 #: src/platform/routing/static-website-routes.ts
@@ -1989,6 +2173,11 @@ msgstr "Cofondateur, NetZero"
 msgid "Colombia 🇨🇴"
 msgstr "Colombie 🇨🇴"
 
+#. js-lingui-id: WgI3ng
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Colored icons across the app"
+msgstr "Icônes colorées dans toute l'application"
+
 #. js-lingui-id: b5bnuN
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Column-to-field mapping (including relations)"
@@ -1999,6 +2188,11 @@ msgstr "Correspondance colonnes-vers-champs (y compris les relations)"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Coming soon!"
 msgstr "Bientôt disponible !"
+
+#. js-lingui-id: 5B0hTq
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Commands are grouped into sections such as Pinned, Selection, the current object, and Create record, instead of one long list."
+msgstr "Les commandes sont regroupées en sections telles que Épinglé, Sélection, l'objet actuel et Créer un enregistrement, au lieu d'une longue liste unique."
 
 #. js-lingui-id: KGD9Kt
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -2011,6 +2205,7 @@ msgid "Commercials"
 msgstr "Aspects commerciaux"
 
 #. js-lingui-id: chL5IG
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/menu/components/MenuSocial.tsx
 msgid "Community"
@@ -2161,6 +2356,16 @@ msgstr "Page des contributeurs"
 msgid "Control"
 msgstr "Contrôle"
 
+#. js-lingui-id: 4XqT0A
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Control who can see what"
+msgstr "Contrôlez qui peut voir quoi"
+
+#. js-lingui-id: 85Qb5T
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Control who does what"
+msgstr "Contrôlez qui fait quoi"
+
 #. js-lingui-id: uiJ97K
 #: src/sections/compare/compare-data.ts
 msgid "Control who sees and edits what"
@@ -2200,6 +2405,11 @@ msgstr "Copier"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Copy a call recording's transcript or video link directly from the record page."
 msgstr "Copiez la transcription ou le lien vidéo d’un enregistrement d’appel directement depuis la page d’enregistrement."
+
+#. js-lingui-id: +Sa0Ex
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Copy emails, phones and links on hover"
+msgstr "Copier les e-mails, numéros de téléphone et liens au survol"
 
 #. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2266,13 +2476,6 @@ msgstr "Créez des applications sur Twenty"
 msgid "Create calendar events directly from a record’s timeline, with the current contact prefilled as a guest."
 msgstr "Créez des événements de calendrier directement depuis la chronologie d'un enregistrement, avec le contact actuel prérempli en tant qu'invité."
 
-#. js-lingui-id: yAL7FY
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-msgid "Create custom apps"
-msgstr "Créer des applications personnalisées"
-
 #. js-lingui-id: 20ZdFp
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create custom charts and visualizations using your workspace data with the new Dashboards feature. Available in Labs, this beta feature lets you build powerful analytics and insights to monitor your business metrics."
@@ -2333,10 +2536,26 @@ msgstr "La création d’enregistrements dans des vues filtrées applique désor
 msgid "Creation date"
 msgstr "Date de création"
 
+#. js-lingui-id: 5HG2bB
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Credit packs"
+msgstr "Packs de crédits"
+
 #. js-lingui-id: KOLvLO
 #: src/sections/compare/compare-data.ts
 msgid "Credit-based, no per-chat fee"
 msgstr "Basé sur des crédits, sans frais par conversation"
+
+#. js-lingui-id: Xv/V2C
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "credit/user/month"
+msgstr "crédit/utilisateur/mois"
+
+#. js-lingui-id: CVe7cK
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "credits/user/month"
+msgstr "crédits/utilisateur/mois"
 
 #. js-lingui-id: NLgmM4
 #: src/partners-marketplace/data/partner-scope-options.ts
@@ -2412,6 +2631,9 @@ msgstr "Champ de devise"
 
 #. js-lingui-id: 8Tg/JR
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom"
 msgstr "Personnalisé"
 
@@ -2433,6 +2655,11 @@ msgstr "Applications personnalisées"
 msgid "Custom Apps · Scripts · AI/agent integrations"
 msgstr "Applications personnalisées · Scripts · Intégrations IA/agents"
 
+#. js-lingui-id: DdD8/a
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Custom data model, apps and automations"
+msgstr "Modèle de données, applications et automatisations personnalisés"
+
 #. js-lingui-id: onPW5H
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Custom date formats"
@@ -2453,11 +2680,6 @@ msgstr "Étapes d’affaires personnalisées, tableaux en glisser-déposer et su
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Custom Development"
 msgstr "Développement personnalisé"
-
-#. js-lingui-id: GAD3Dx
-#: src/sections/pricing-plans/plans-data.ts
-msgid "Custom domain"
-msgstr "Domaine personnalisé"
 
 #. js-lingui-id: Vz1Vq2
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -2501,6 +2723,18 @@ msgstr "Objets personnalisés"
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Custom objects, workflows and apps built on the platform."
 msgstr "Objets personnalisés, workflows et applications créés sur la plateforme."
+
+#. js-lingui-id: jspdE3
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom roles"
+msgstr "Rôles personnalisés"
+
+#. js-lingui-id: WN2bYG
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Custom roles, permissions and usage limits"
+msgstr "Rôles, autorisations et limites d'utilisation personnalisés"
 
 #. js-lingui-id: y5pLQH
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2580,6 +2814,11 @@ msgstr "Applications de personnalisation"
 msgid "Customizations"
 msgstr "Personnalisations"
 
+#. js-lingui-id: X/83bp
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Customize the sidebar in place"
+msgstr "Personnaliser la barre latérale sur place"
+
 #. js-lingui-id: dy0yuR
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Customize your sub-domain"
@@ -2647,6 +2886,11 @@ msgstr "Modélisation des données · Migrations · Workflows no-code · Tableau
 msgid "Data models"
 msgstr "Modèles de données"
 
+#. js-lingui-id: hsPieC
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Data Processing Agreement (DPA)"
+msgstr "Accord de traitement des données (DPA)"
+
 #. js-lingui-id: dfdijQ
 #: src/sections/compare/compare-data.ts
 msgid "Database storage"
@@ -2702,6 +2946,16 @@ msgstr "Chère équipe, j’ai le plaisir de vous soumettre notre proposition po
 msgid "Decide whether records open in the side panel or as a full page, set per object and as your own preference in Settings > Experience."
 msgstr "Décidez si les enregistrements s'ouvrent dans le panneau latéral ou en tant que page complète, défini par objet et selon vos préférences dans Paramètres > Expérience."
 
+#. js-lingui-id: GOEUlt
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Dedicated compute and custom API rates"
+msgstr "Calcul dédié et tarifs d'API personnalisés"
+
+#. js-lingui-id: 7f0JvT
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Dedicated scale for large companies."
+msgstr "Une capacité dédiée pour les grandes entreprises."
+
 #. js-lingui-id: 4UlR5Y
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
@@ -2709,10 +2963,26 @@ msgstr "Décidez si les enregistrements s'ouvrent dans le panneau latéral ou en
 msgid "Dedicated support & SLA"
 msgstr "Support dédié et SLA"
 
+#. js-lingui-id: u9GtYn
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Dedicated, with SLA"
+msgstr "Dédié, avec SLA"
+
 #. js-lingui-id: 46Erl4
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Default position/visibility for field…"
 msgstr "Position/visibilité par défaut pour le champ…"
+
+#. js-lingui-id: s0LyBg
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Delegate 5x more to AI"
+msgstr "Déléguez 5 fois plus à l'IA"
+
+#. js-lingui-id: cL6BYo
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Delegate the CRM chores to AI"
+msgstr "Déléguez les tâches du CRM à l'IA"
 
 #. js-lingui-id: IOhXZ5
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2889,6 +3159,17 @@ msgstr "Terminé"
 msgid "DONE"
 msgstr "TERMINÉ"
 
+#. js-lingui-id: SBTQRZ
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "down to fields"
+msgstr "jusqu'aux champs"
+
+#. js-lingui-id: 6ujaBZ
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "down to fields and rows"
+msgstr "jusqu'aux champs et aux lignes"
+
 #. js-lingui-id: HDR0en
 #: src/partner-application/data/partner-country-options.ts
 msgid "DR Congo 🇨🇩"
@@ -2975,6 +3256,11 @@ msgstr "par ex. migrer depuis HubSpot, configurer des pipelines, intégrations p
 msgid "e.g. n8n, Shopify, Real estate…"
 msgstr "p. ex. n8n, Shopify, immobilier…"
 
+#. js-lingui-id: x7z+7U
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Each member's own AI allowance, renewed every Monday. An AI task is one chat request, estimated with the default model; smarter models use more. When it runs out, chat continues on workspace credits unless an admin turns that off."
+msgstr "Chaque membre dispose de son propre quota d'IA, renouvelé chaque lundi. Une tâche d'IA correspond à une demande de chat, estimée avec le modèle par défaut ; les modèles plus intelligents en consomment davantage. Lorsqu'il est épuisé, le chat continue d'utiliser les crédits de l'espace de travail, sauf si un administrateur désactive cette option."
+
 #. js-lingui-id: a35sCN
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Each workspace now gets a dedicated sub-domain for a more secure experience. And soon you will be able to set your own domain."
@@ -3015,6 +3301,11 @@ msgstr "Modifier les actions"
 msgid "Edit deactivated objects"
 msgstr "Modifier les objets désactivés"
 
+#. js-lingui-id: J27hBl
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Edit field values in place"
+msgstr "Modifier les valeurs de champ sur place"
+
 #. js-lingui-id: 0cnnX+
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Edit long-form text directly inside record page widgets with automatic saving."
@@ -3024,6 +3315,11 @@ msgstr "Modifiez du texte long directement dans les widgets de page d’enregist
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Editable text widgets"
 msgstr "Widgets de texte modifiables"
+
+#. js-lingui-id: lofEfT
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Editing an email, phone, link or file now opens the input on that item’s row instead of below the list, and link labels can be edited from the cell. Full names take one input that splits into first and last name as you type."
+msgstr "La modification d'un e-mail, d'un numéro de téléphone, d'un lien ou d'un fichier ouvre désormais le champ de saisie sur la ligne de cet élément au lieu de sous la liste, et les libellés des liens peuvent être modifiés depuis la cellule. Les noms complets utilisent un seul champ qui les sépare en prénom et nom à mesure de la saisie."
 
 #. js-lingui-id: 4CJ4xV
 #: src/case-studies/case-study-catalog.ts
@@ -3064,6 +3360,11 @@ msgstr "Le PDG d’Elevate a été tellement impressionné par Twenty qu’il a 
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email and calendar Blocklist"
 msgstr "Liste de blocage pour les e-mails et les calendriers"
+
+#. js-lingui-id: yX/pF3
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Email and chat"
+msgstr "E-mails et chat"
 
 #. js-lingui-id: AoN898
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -3110,6 +3411,16 @@ msgstr "E-mails et calendrier"
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Emails and events linked to CRM records"
 msgstr "E-mails et événements liés aux enregistrements du CRM"
+
+#. js-lingui-id: a9uuza
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Emails and meetings log themselves"
+msgstr "Les e-mails et les réunions s'enregistrent automatiquement"
+
+#. js-lingui-id: s4kwSO
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Emails stay on the record you sent them from"
+msgstr "Les e-mails restent sur l'enregistrement depuis lequel vous les avez envoyés"
 
 #. js-lingui-id: gqv5ZL
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -3223,6 +3534,11 @@ msgstr "Édition Enterprise"
 msgid "Enterprise only"
 msgstr "Enterprise uniquement"
 
+#. js-lingui-id: g3FvX+
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Enterprise procurement support"
+msgstr "Assistance aux achats pour les grandes entreprises"
+
 #. js-lingui-id: /BbcE4
 #: src/sections/compare/compare-data.ts
 msgid "Enterprise rate cards are rarely published"
@@ -3288,17 +3604,15 @@ msgstr "Chaque partenaire est certifié par Twenty et évalué sur ses projets l
 msgid "Every thread, on the right record."
 msgstr "Chaque fil de discussion, sur le bon enregistrement."
 
-#. js-lingui-id: WvNwM2
+#. js-lingui-id: Gy9kTe
 #: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-msgid "Everything in Organization"
-msgstr "Tout ce qui est dans Organization"
+msgid "Everything in Organization, plus"
+msgstr "Tout ce qui est dans Organization, plus"
 
-#. js-lingui-id: kz/8m8
+#. js-lingui-id: 4Tqp8y
 #: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-msgid "Everything in Pro"
-msgstr "Tout ce qui est dans Pro"
+msgid "Everything in Pro, plus"
+msgstr "Tout ce qui est dans Pro, plus"
 
 #. js-lingui-id: zoNk7e
 #: src/sections/feature-cards/feature-cards.data.ts
@@ -3378,6 +3692,11 @@ msgstr "Étendez votre CRM avec des applications développées et maintenues par
 msgid "Extended run!"
 msgstr "Exécution prolongée !"
 
+#. js-lingui-id: 07Wl2A
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Extra credits"
+msgstr "Crédits supplémentaires"
+
 #. js-lingui-id: D5e0U+
 #: src/sections/compare/compare-data.ts
 msgid "Extra Dataverse storage (10 GB)"
@@ -3407,6 +3726,11 @@ msgstr "Farsi"
 #: src/sections/feature-cards/feature-cards.data.ts
 msgid "Fast path to action"
 msgstr "Un chemin rapide vers l’action"
+
+#. js-lingui-id: 9MAcr1
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Faster answers from our team"
+msgstr "Des réponses plus rapides de notre équipe"
 
 #. js-lingui-id: /irOkZ
 #: src/sections/compare/compare-data.ts
@@ -3493,6 +3817,11 @@ msgstr "champs"
 msgid "Fields"
 msgstr "Champs"
 
+#. js-lingui-id: tJtUhq
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Fields, views, widgets and records that come from an installed app show the app’s logo on their icon."
+msgstr "Les champs, vues, widgets et enregistrements issus d'une application installée affichent le logo de l'application sur leur icône."
+
 #. js-lingui-id: z+q1Th
 #: src/partner-application/data/partner-country-options.ts
 msgid "Fiji 🇫🇯"
@@ -3572,6 +3901,11 @@ msgstr "Trouver un partenaire Twenty — experts CRM open source certifiés"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Find and install featured apps such as People Data Labs, Last Contact, and Call Recorder directly from the marketplace."
 msgstr "Recherchez et installez des applications à la une telles que People Data Labs, Last Contact et Call Recorder directement depuis la marketplace."
+
+#. js-lingui-id: o/pt/x
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Find experts to roll it out"
+msgstr "Trouvez des experts pour le déployer"
 
 #. js-lingui-id: wHyJkT
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
@@ -3657,6 +3991,21 @@ msgstr "Pied de page"
 msgid "For a firm that once ran on sticky notes, this is more than an upgrade. It is a complete transformation."
 msgstr "Pour une entreprise qui a autrefois fonctionné avec des notes adhésives, c’est plus qu’une mise à niveau. C’est une transformation complète."
 
+#. js-lingui-id: Suco2Z
+#: src/sections/pricing-plans/plans-data.ts
+msgid "For one team, on your servers."
+msgstr "Pour une équipe, sur vos serveurs."
+
+#. js-lingui-id: jCGEo0
+#: src/sections/pricing-plans/plans-data.ts
+msgid "For several teams, in production."
+msgstr "Pour plusieurs équipes, en production."
+
+#. js-lingui-id: 761I8E
+#: src/sections/pricing-plans/plans-data.ts
+msgid "For strict compliance, at scale."
+msgstr "Pour une conformité stricte, à grande échelle."
+
 #. js-lingui-id: yAJC9c
 #: src/sections/why-twenty-editorial/editorials.data.ts
 msgid "For twenty years, CRM meant the same thing: a place to log calls, track deals, and pull reports on Friday. The real work happened in people's heads, in Slack threads, in hallway conversations. The CRM kept score. Nobody expected more from it."
@@ -3701,11 +4050,16 @@ msgstr "Gratuit pour vous !"
 msgid "French"
 msgstr "Français"
 
-#. js-lingui-id: bwdcPM
+#. js-lingui-id: GtmO8/
+#: src/sections/pricing-plans/plans-data.ts
+msgid "from"
+msgstr "à partir de"
+
+#. js-lingui-id: ejVYRQ
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "From $50k/year"
-msgstr "À partir de 50 k$/an"
+msgid "From"
+msgstr "À partir de"
 
 #. js-lingui-id: Iuxc00
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3761,12 +4115,10 @@ msgstr "Composants Front"
 msgid "Full communication history in one place"
 msgstr "Historique complet des communications en un seul endroit"
 
-#. js-lingui-id: wXgKOm
+#. js-lingui-id: 90Xsa/
 #: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-msgid "Full customization"
-msgstr "Personnalisation complète"
+msgid "Full customization and custom apps"
+msgstr "Personnalisation complète et applications personnalisées"
 
 #. js-lingui-id: bKjaLJ
 #: src/sections/compare/compare-data.ts
@@ -3903,10 +4255,20 @@ msgstr "Allez plus loin *avec le no-code*"
 msgid "Good choice!"
 msgstr "Bon choix !"
 
+#. js-lingui-id: 2Gfu3a
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Google and Microsoft email and calendar sync"
+msgstr "Synchronisation des e-mails et calendriers Google et Microsoft"
+
 #. js-lingui-id: opD7oA
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Google Calendar Integration"
 msgstr "Intégration Google Calendar"
+
+#. js-lingui-id: lW8GOS
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Granola meeting notes in Twenty"
+msgstr "Notes de réunion Granola dans Twenty"
 
 #. js-lingui-id: 1W3PAd
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3993,6 +4355,11 @@ msgstr "Aide"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Help center"
 msgstr "Centre d’aide"
+
+#. js-lingui-id: WorXzH
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Help from the community"
+msgstr "Aide de la communauté"
 
 #. js-lingui-id: xJnMnj
 #: src/sections/product-feature/EmailsVisual/data/threads.ts
@@ -4082,6 +4449,11 @@ msgstr "Taux horaire *"
 msgid "Hover a column header or a field label to read that field’s description, instead of opening settings to find it."
 msgstr "Survolez un en-tête de colonne ou le libellé d’un champ pour lire la description de ce champ, au lieu d’ouvrir les paramètres pour la trouver."
 
+#. js-lingui-id: crYO+H
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Hover an email, phone or link in the side panel to copy it in one click, as you already could in tables."
+msgstr "Survolez un e-mail, un numéro de téléphone ou un lien dans le panneau latéral pour le copier en un clic, comme vous pouviez déjà le faire dans les tableaux."
+
 #. js-lingui-id: XnFo3G
 #: src/case-studies/case-study-stories.ts
 msgid "How AC&T Education Migration and Flycoder replaced a shuttered vendor CRM with self-hosted Twenty, with 90%+ lower cost and full ownership."
@@ -4160,6 +4532,11 @@ msgstr "Comment Twenty collecte, utilise et protège vos données — notre poli
 #: src/case-studies/case-study-stories.ts
 msgid "How W3villa Technologies shipped W3Grads, an AI mock interview platform for institutions, on Twenty as the operational backbone."
 msgstr "Comment W3villa Technologies a livré W3Grads, une plateforme d’entretiens simulés par IA pour les établissements, sur Twenty comme colonne vertébrale opérationnelle."
+
+#. js-lingui-id: slTOKD
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "HTML in workflow emails"
+msgstr "HTML dans les e-mails de workflow"
 
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
@@ -4240,6 +4617,11 @@ msgstr "Partenaires d’implémentation"
 #: src/sections/compare/compare-data.ts
 msgid "Implementation project (year one, typical)"
 msgstr "Projet de mise en œuvre (première année, typique)"
+
+#. js-lingui-id: WuWe27
+#: src/client-brief/client-brief-copy.ts
+msgid "Implementation/migration budget range"
+msgstr "Fourchette budgétaire pour l'implémentation/la migration"
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4359,6 +4741,11 @@ msgstr "Inclus à partir de Pro, 9 $/utilisateur"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Included!"
 msgstr "Inclus !"
+
+#. js-lingui-id: 11h9eK
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Includes"
+msgstr "Comprend"
 
 #. js-lingui-id: /c4yUr
 #: src/partner-application/data/partner-country-options.ts
@@ -4488,7 +4875,6 @@ msgid "Invite roles"
 msgstr "Rôles d’invitation"
 
 #. js-lingui-id: GJOKz/
-#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "IP allow-listing"
 msgstr "Autorisation des adresses IP"
@@ -4821,6 +5207,16 @@ msgstr "Liechtenstein 🇱🇮"
 msgid "Like any regular object, add some custom fields to your tasks and companies or create some custom views to better organize your content."
 msgstr "Comme pour tout objet standard, ajoutez des champs personnalisés à vos tâches et entreprises, ou créez des vues personnalisées pour mieux organiser votre contenu."
 
+#. js-lingui-id: qfiYod
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Limited personal AI usage"
+msgstr "Utilisation personnelle limitée de l'IA"
+
+#. js-lingui-id: nlPPL5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Link emails and meetings to a deal"
+msgstr "Lier des e-mails et des réunions à une opportunité"
+
 #. js-lingui-id: kvxPie
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
@@ -5034,6 +5430,11 @@ msgstr "Les workflows déclenchés manuellement prennent désormais en charge la
 msgid "Manual work at core"
 msgstr "Travail manuel au cœur"
 
+#. js-lingui-id: MzFWad
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Many-to-many relations"
+msgstr "Relations plusieurs-à-plusieurs"
+
 #. js-lingui-id: VJOKPB
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Maps view"
@@ -5124,6 +5525,11 @@ msgstr "Micronésie 🇫🇲"
 msgid "Microsoft o365 Integration"
 msgstr "Intégration Microsoft o365"
 
+#. js-lingui-id: 1+j2It
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Microsoft Teams transcripts in Twenty"
+msgstr "Transcriptions Microsoft Teams dans Twenty"
+
 #. js-lingui-id: z1ceJ1
 #: src/sections/compare/compare-data.ts
 msgid "Middleware licensed separately"
@@ -5194,10 +5600,20 @@ msgstr "Monténégro 🇲🇪"
 msgid "Monthly"
 msgstr "Mensuel"
 
+#. js-lingui-id: b2GPvZ
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Monthly credits shared by the workspace for workflows, AI agents and apps. 1 credit covers 10,000 workflow steps."
+msgstr "Crédits mensuels partagés par l'espace de travail pour les workflows, les agents IA et les applications. 1 crédit couvre 10 000 étapes de workflow."
+
 #. js-lingui-id: Ggmdbf
 #: src/sections/compare/compare-data.ts
 msgid "Monthly or yearly, cancel anytime"
 msgstr "Mensuelle ou annuelle, résiliable à tout moment"
+
+#. js-lingui-id: W87SCX
+#: src/sections/pricing-plans/plans-data.ts
+msgid "More AI and control for several teams."
+msgstr "Plus d'IA et de contrôle pour plusieurs équipes."
 
 #. js-lingui-id: paxFAm
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5213,6 +5629,11 @@ msgstr "Plus de types de champs, plus de puissance"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More flexible record pages"
 msgstr "Pages d'enregistrement plus flexibles"
+
+#. js-lingui-id: kjrq/8
+#: src/sections/pricing-plan-table/PlanTableInfoTooltip.tsx
+msgid "More information"
+msgstr "Plus d'informations"
 
 #. js-lingui-id: VqXuUv
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -5375,6 +5796,11 @@ msgstr "Nouveau"
 msgid "New Array field type"
 msgstr "Nouveau type de champ tableau"
 
+#. js-lingui-id: xTO27+
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "New chat and Open chat in the command menu start a chat or find a past one from any page, and the chat opens next to the page you’re on."
+msgstr "Nouvelle discussion et Ouvrir une discussion dans le menu des commandes permettent de démarrer une discussion ou d'en retrouver une précédente depuis n'importe quelle page, et la discussion s'ouvre à côté de la page affichée."
+
 #. js-lingui-id: gy5v+A
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "New emails and calendar events now appear on record pages without a manual refresh."
@@ -5467,6 +5893,7 @@ msgid "Nine Dots Ventures"
 msgstr "Nine Dots Ventures"
 
 #. js-lingui-id: 1UzENP
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/PlanTableContent.tsx
 msgid "No"
 msgstr "Non"
@@ -5570,6 +5997,11 @@ msgstr "Notes"
 msgid "Notes and Tasks standard objects"
 msgstr "Objets standard Notes et Tâches"
 
+#. js-lingui-id: guqxiL
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Notes, tasks, rich text fields and rich text widgets now use the same editor as emails and workflow forms. Existing content is converted automatically."
+msgstr "Les notes, tâches, champs de texte enrichi et widgets de texte enrichi utilisent désormais le même éditeur que les e-mails et les formulaires de workflow. Le contenu existant est converti automatiquement."
+
 #. js-lingui-id: iDNBZe
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Notifications"
@@ -5590,6 +6022,11 @@ msgstr "Nombre"
 msgid "Number of dashboards"
 msgstr "Nombre de tableaux de bord"
 
+#. js-lingui-id: 44KnZO
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Objects, folders, links and pages now have colored icons in the sidebar, headers and pickers."
+msgstr "Les objets, dossiers, liens et pages disposent désormais d'icônes colorées dans la barre latérale, les en-têtes et les sélecteurs."
+
 #. js-lingui-id: pkrZnO
 #: src/case-studies/case-study-stories.ts
 msgid "Olivier recognizes that NetZero's current use of Twenty is still relatively simple: workflows and integrations are not yet as deep as he eventually wants, because he prioritized getting foundations right first."
@@ -5609,6 +6046,11 @@ msgstr "Oman 🇴🇲"
 #: src/case-studies/case-study-catalog.ts
 msgid "On a single CRM"
 msgstr "Sur un seul CRM"
+
+#. js-lingui-id: 3484qM
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "On an opportunity, the Emails and Calendar widgets have a Link action to add any of the company’s email threads and meetings, not only the ones with its point of contact."
+msgstr "Sur une opportunité, les widgets E-mails et Calendrier proposent une action Lier permettant d'ajouter n'importe quel fil d'e-mails et toute réunion de l'entreprise, et non seulement ceux avec son point de contact."
 
 #. js-lingui-id: vSdM7d
 #: src/sections/compare/compare-data.ts
@@ -5691,10 +6133,20 @@ msgstr "Frais d’onboarding obligatoires, une seule fois"
 msgid "Only $5 for SSO. Practically a charity program."
 msgstr "Seulement 5 $ pour le SSO. Pratiquement un programme caritatif."
 
+#. js-lingui-id: 5BRQYd
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Open a chat from anywhere"
+msgstr "Ouvrir une discussion depuis n'importe où"
+
 #. js-lingui-id: Av5T3E
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Open a deactivated object from Settings and change it, instead of deleting it and building it again."
 msgstr "Ouvrez un objet désactivé depuis Paramètres et modifiez-le, au lieu de le supprimer et de le recréer."
+
+#. js-lingui-id: pC+y+1
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Open a meeting from its recording"
+msgstr "Ouvrir une réunion depuis son enregistrement"
 
 #. js-lingui-id: VWC0s5
 #. placeholder {0}: caseStudy.title
@@ -5753,11 +6205,11 @@ msgstr "*Activation* de l’organisation"
 msgid "Organization Activation | Twenty"
 msgstr "Activation de l’organisation | Twenty"
 
-#. js-lingui-id: 6BoFxZ
+#. js-lingui-id: 3Yz0mq
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
-msgid "Organization, $19/user"
-msgstr "Organization, 19 $/utilisateur"
+msgid "Organization, $39/user"
+msgstr "Organization, 39 $/utilisateur"
 
 #. js-lingui-id: 6yVLtC
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5913,6 +6365,12 @@ msgstr "Mettre en pause le bot d’enregistrement"
 msgid "People"
 msgstr "Personnes"
 
+#. js-lingui-id: nU1kSZ
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "per member"
+msgstr "par membre"
+
 #. js-lingui-id: cSBVtF
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
@@ -5937,6 +6395,11 @@ msgstr "Pourcentage dans les champs numériques"
 msgid "Performance Improvements"
 msgstr "Améliorations des performances"
 
+#. js-lingui-id: 9cDpsw
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Permissions"
+msgstr "Autorisations"
+
 #. js-lingui-id: JjOHl8
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Permissions V1"
@@ -5951,6 +6414,11 @@ msgstr "Autorisations V2"
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 msgid "Person"
 msgstr "Personne"
+
+#. js-lingui-id: Lz7jRL
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Personal AI usage"
+msgstr "Utilisation personnelle de l'IA"
 
 #. js-lingui-id: OzAIDr
 #: src/partner-application/data/partner-country-options.ts
@@ -6001,6 +6469,11 @@ msgstr "Pipeline, contacts, synchronisation d’e-mails"
 #: src/platform/routing/static-website-routes.ts
 msgid "Pipelines, custom objects, AI assistants, and a native API on top of Postgres. Twenty is the open source CRM with the modern UX teams actually want to use."
 msgstr "Pipelines, objets personnalisés, assistants IA et une API native au-dessus de Postgres. Twenty est le CRM open source, avec une UX moderne, que les équipes ont réellement envie d’utiliser."
+
+#. js-lingui-id: h4k6l4
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Plan essentials"
+msgstr "Fonctionnalités essentielles du forfait"
 
 #. js-lingui-id: NjL3pD
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6118,6 +6591,12 @@ msgstr "Dirigeant et fondateur"
 msgid "Principal and Founder, Alternative Partners"
 msgstr "Principal et Fondateur, Alternative Partners"
 
+#. js-lingui-id: 1hKEom
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Priority"
+msgstr "Priorité"
+
 #. js-lingui-id: k62X/2
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -6139,6 +6618,11 @@ msgstr "Politique de confidentialité"
 #: src/platform/routing/static-website-routes.ts
 msgid "Privacy Policy | Twenty"
 msgstr "Politique de confidentialité | Twenty"
+
+#. js-lingui-id: 8wTqgw
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Private calendar events are imported again by default. Turn on Exclude private events in calendar settings to leave them out; changing it resyncs your calendar."
+msgstr "Les événements de calendrier privés sont à nouveau importés par défaut. Activez Exclure les événements privés dans les paramètres du calendrier pour ne pas les inclure ; cette modification resynchronise votre calendrier."
 
 #. js-lingui-id: 3fPjUY
 #: src/sections/pricing-plans/plans-data.ts
@@ -6261,6 +6745,11 @@ msgstr "Les tarifs varient selon le partenaire et le périmètre. Chaque profil 
 msgid "Rating field"
 msgstr "Champ de notation"
 
+#. js-lingui-id: V6xqAX
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Rating fields can now show their average, minimum and maximum in views and charts, and bar charts can be grouped by Created by."
+msgstr "Les champs d'évaluation peuvent désormais afficher leur moyenne, minimum et maximum dans les vues et graphiques, et les graphiques à barres peuvent être regroupés par Créé par."
+
 #. js-lingui-id: DnWJal
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Reach out"
@@ -6280,6 +6769,12 @@ msgstr "Lire le cas client"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Read/Edit/Delete permissions"
 msgstr "Autorisations de lecture/modification/suppression"
+
+#. js-lingui-id: PvsAB9
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Ready for your security review"
+msgstr "Prêt pour votre évaluation de sécurité"
 
 #. js-lingui-id: LNWY6D
 #: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
@@ -6352,6 +6847,11 @@ msgstr "Trimestre record"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Records"
 msgstr "Enregistrements"
+
+#. js-lingui-id: eCciTz
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Recovery codes for two-factor authentication"
+msgstr "Codes de récupération pour l'authentification à deux facteurs"
 
 #. js-lingui-id: duvxlo
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6486,6 +6986,12 @@ msgstr "Redimensionner la barre de navigation et le panneau latéral"
 msgid "Resources"
 msgstr "Ressources"
 
+#. js-lingui-id: a5Mb5Q
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Response times you can count on"
+msgstr "Des délais de réponse fiables"
+
 #. js-lingui-id: oC2l7f
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "REST & GraphQL API"
@@ -6567,11 +7073,6 @@ msgstr "Mises en page de relations plus riches"
 msgid "Roadmap"
 msgstr "Feuille de route"
 
-#. js-lingui-id: Yb8S4J
-#: src/sections/compare/compare-data.ts
-msgid "Roles from Pro, row-level on Organization"
-msgstr "Rôles à partir de Pro, au niveau des lignes sur Organization"
-
 #. js-lingui-id: mLp5AP
 #: src/partner-application/data/partner-country-options.ts
 msgid "Romania 🇷🇴"
@@ -6582,8 +7083,17 @@ msgstr "Roumanie 🇷🇴"
 msgid "Romanian"
 msgstr "Roumain"
 
-#. js-lingui-id: Wdh41P
+#. js-lingui-id: muOXax
 #: src/sections/pricing-plans/plans-data.ts
+msgid "Room for several teams"
+msgstr "De la place pour plusieurs équipes"
+
+#. js-lingui-id: WRJqac
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Room to grow, at any scale"
+msgstr "De la place pour évoluer, quelle que soit l'échelle"
+
+#. js-lingui-id: Wdh41P
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Row-level permissions"
@@ -6598,6 +7108,11 @@ msgstr "Effectuez la comparaison sur vos propres données"
 #: src/case-studies/case-study-stories.ts
 msgid "Running mock interview programs for hundreds of students sounds straightforward. In practice, universities and training institutes hit the same wall: registrations entered by hand, interview links sent one by one, faculty reviewing every session without scoring or classification. At real scale, it breaks."
 msgstr "Faire fonctionner des programmes de faux entretiens pour des centaines d’étudiants semble simple. En pratique, universités et instituts de formation se heurtent au même mur : inscriptions saisies à la main, liens d’entretien envoyés un par un, enseignants qui examinent chaque session sans notation ni classification. À l’échelle réelle, ça casse."
+
+#. js-lingui-id: /wDNXh
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Runs fully offline"
+msgstr "Fonctionne entièrement hors ligne"
 
 #. js-lingui-id: T1ut28
 #: src/partner-application/data/partner-country-options.ts
@@ -6715,11 +7230,25 @@ msgstr "SSO SAML"
 msgid "SAML SSO & security rules"
 msgstr "SSO SAML et règles de sécurité"
 
+#. js-lingui-id: pPyTOz
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "SAML/OIDC"
+msgstr "SAML/OIDC"
+
+#. js-lingui-id: oL+5Cq
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "SAML/OIDC + SCIM"
+msgstr "SAML/OIDC + SCIM"
+
 #. js-lingui-id: w9QWxz
-#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "SAML/OIDC SSO"
 msgstr "SSO SAML/OIDC"
+
+#. js-lingui-id: 7RCVaA
+#: src/sections/pricing-plans/plans-data.ts
+msgid "SAML/OIDC SSO and audit logs"
+msgstr "SSO SAML/OIDC et journaux d'audit"
 
 #. js-lingui-id: R38ZPo
 #: src/partner-application/data/partner-country-options.ts
@@ -6793,7 +7322,6 @@ msgstr "Planifier une revue de sécurité"
 
 #. js-lingui-id: NFixwq
 #: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "SCIM provisioning"
 msgstr "Provisionnement SCIM"
@@ -6828,10 +7356,25 @@ msgstr "Limite d’utilisateurs"
 msgid "Security"
 msgstr "Sécurité"
 
-#. js-lingui-id: sioPk8
+#. js-lingui-id: y3s3Ok
 #: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "Security review & DPA"
-msgstr "Revue de sécurité et DPA"
+msgid "Security reviews & custom contracts"
+msgstr "Évaluations de sécurité et contrats personnalisés"
+
+#. js-lingui-id: hONkro
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Security reviews and custom contracts"
+msgstr "Évaluations de sécurité et contrats personnalisés"
+
+#. js-lingui-id: yGMbZ5
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Security tailored to your IT"
+msgstr "Sécurité adaptée à votre informatique"
+
+#. js-lingui-id: fi/gek
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See context and credits in AI chat"
+msgstr "Voir le contexte et les crédits dans la discussion IA"
 
 #. js-lingui-id: nmVU/t
 #: src/sections/customers-hero/CustomersHero.tsx
@@ -6878,6 +7421,11 @@ msgstr "Voir le coût d’un modèle et où il s’exécute"
 msgid "See what shipped in {0}"
 msgstr "Découvrez les nouveautés de la {0}"
 
+#. js-lingui-id: lPsNq3
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See which app added a field"
+msgstr "Voir quelle application a ajouté un champ"
+
 #. js-lingui-id: 02ePaq
 #. placeholder {0}: company.name
 #: src/sections/product-feature/ContactsVisual/ContactsVisual.tsx
@@ -6893,6 +7441,11 @@ msgstr "Tout sélectionner"
 #: src/partner-application/partner-application-copy.ts
 msgid "Select every area you used in a real project — not what you offer, what you actually did."
 msgstr "Sélectionnez chaque domaine que vous avez utilisé dans un projet réel — pas ce que vous proposez, mais ce que vous avez réellement fait."
+
+#. js-lingui-id: oOXqnr
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Select records with Cmd and Shift"
+msgstr "Sélectionner des enregistrements avec Cmd et Maj"
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
@@ -6976,6 +7529,11 @@ msgstr "En libre-service, partenaires en option"
 msgid "Send Email"
 msgstr "Envoyer un e-mail"
 
+#. js-lingui-id: yHrgF3
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Send Email and Draft Email steps accept raw HTML. Type <0>/html</0> in the body to paste a template, with variables shown as chips."
+msgstr "Les étapes Envoyer un e-mail et Brouillon d'e-mail acceptent le HTML brut. Saisissez <0>/html</0> dans le corps pour coller un modèle, avec les variables affichées sous forme de pastilles."
+
 #. js-lingui-id: ig4Kg0
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Send email from aliases"
@@ -7037,6 +7595,12 @@ msgstr "Seychelles 🇸🇨"
 msgid "Shape records to your business"
 msgstr "Adapter les enregistrements à votre activité"
 
+#. js-lingui-id: zqfRXL
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Shaped around how you sell"
+msgstr "Conçu selon votre façon de vendre"
+
 #. js-lingui-id: 3PvOYS
 #: src/sections/faq/partner-faq.data.ts
 msgid "Share a short brief on your project, timeline, and budget. We hand-pick certified partners who fit and introduce you within 48 hours."
@@ -7061,6 +7625,11 @@ msgstr "Partagez votre projet en quelques minutes. Nous vous mettons en relation
 #: src/sections/compare/compare-data.ts
 msgid "Shared limit below Ultimate"
 msgstr "Limite partagée en dessous d’Ultimate"
+
+#. js-lingui-id: yZrICd
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Shift-click selects a range of records in tables, boards and lists, and Cmd-click (Ctrl-click on Windows) adds or removes a single record."
+msgstr "Maj-clic sélectionne une plage d'enregistrements dans les tableaux, tableaux Kanban et listes, et Cmd-clic (Ctrl-clic sous Windows) ajoute ou retire un seul enregistrement."
 
 #. js-lingui-id: 3VFzsh
 #: src/sections/helped/helped.data.ts
@@ -7300,12 +7869,6 @@ msgstr "SSO et autorisations au niveau des lignes"
 msgid "SSO & security rules: move to Ultimate"
 msgstr "SSO et règles de sécurité : passer à Ultimate"
 
-#. js-lingui-id: uQl22y
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-msgid "Standard support"
-msgstr "Support standard"
-
 #. js-lingui-id: wxW2Sv
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Start automating at huge scale!"
@@ -7450,6 +8013,7 @@ msgid "Super partner"
 msgstr "Super partenaire"
 
 #. js-lingui-id: XYLcNv
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/app/[locale]/(site)/support/page.tsx
@@ -7731,6 +8295,16 @@ msgstr "L’équipe de développement commercial avait enfin le CRM qu’elle de
 msgid "The CEO had resisted bringing in a CRM for years. The business development team had no experience using one, and the licensing costs of well-known CRMs like Salesforce or HubSpot were hard to justify without any guarantee of adoption: CRMs are only as good as the maintenance of the data inside them."
 msgstr "Le PDG avait résisté pendant des années à l’idée d’introduire un CRM. L’équipe de développement commercial n’avait aucune expérience d’un tel outil, et les coûts de licence des CRM bien connus comme Salesforce ou HubSpot étaient difficiles à justifier sans garantie d’adoption : un CRM n’est aussi bon que la qualité de la maintenance des données qu’il contient."
 
+#. js-lingui-id: MAi4hK
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The chat composer shows how much of the context window you’ve used. Open it to see your AI credit usage, when it resets, and a breakdown for the last message and the whole conversation."
+msgstr "L'éditeur de discussion indique la part de la fenêtre de contexte que vous avez utilisée. Ouvrez-le pour voir votre utilisation des crédits IA, leur date de réinitialisation et une répartition pour le dernier message et l'ensemble de la conversation."
+
+#. js-lingui-id: D21WDI
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The chat composer’s + menu attaches files and adds records or skills, the same way typing <0>@</0> or <1>/</1> does."
+msgstr "Le menu + de l'éditeur de discussion joint des fichiers et ajoute des enregistrements ou des compétences, comme lorsque vous saisissez <0>@</0> ou <1>/</1>."
+
 #. js-lingui-id: 93BQde
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
@@ -7794,6 +8368,11 @@ msgstr "Le monolithe géant"
 msgid "The In-house Burden"
 msgstr "Le fardeau du fait-maison"
 
+#. js-lingui-id: N8bBZ8
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The interface is now available in Persian, laid out right to left."
+msgstr "L'interface est désormais disponible en persan, avec une disposition de droite à gauche."
+
 #. js-lingui-id: 6U7fek
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The interface now mirrors for right-to-left languages, so Arabic and Hebrew workspaces read in their own direction."
@@ -7841,6 +8420,16 @@ msgstr "Le menu de navigation est désormais une page à part entière, avec une
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The new <0>Address Field</0> Type enables entry of a full address in one field, while structurally storing each address part - such as street name and number - in separate subfields."
 msgstr "Le nouveau type de <0>champ adresse</0> permet de saisir une adresse complète dans un seul champ, tout en stockant structurellement chaque partie de l’adresse — comme le nom de la rue et le numéro — dans des sous-champs distincts."
+
+#. js-lingui-id: jPuON+
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The new Granola app saves your Granola summaries and speaker transcripts to call recordings, links them to the matching calendar event, and keeps them in sync as notes change. It needs a Granola Business or Enterprise plan."
+msgstr "La nouvelle application Granola enregistre vos résumés Granola et les transcriptions des intervenants dans les enregistrements d'appels, les lie à l'événement de calendrier correspondant et les maintient synchronisés lorsque les notes changent. Elle nécessite un forfait Granola Business ou Enterprise."
+
+#. js-lingui-id: SngW9d
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The new Microsoft Teams app saves your Teams meeting transcripts to call recordings and can write an AI summary of each call."
+msgstr "La nouvelle application Microsoft Teams enregistre les transcriptions de vos réunions Teams dans les enregistrements d'appels et peut rédiger un résumé IA de chaque appel."
 
 #. js-lingui-id: tADBQB
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7937,6 +8526,11 @@ msgstr "Les conditions qui régissent votre utilisation de Twenty et de ses serv
 msgid "The timeline on every record page has been significantly improved. It now provides detailed updates for: Record creations Field updates Received emails Created calendar events"
 msgstr "La frise chronologique de chaque page d’enregistrement a été considérablement améliorée. Elle fournit désormais des mises à jour détaillées pour : créations d’enregistrements, mises à jour de champs, e-mails reçus, événements de calendrier créés."
 
+#. js-lingui-id: pHA+ow
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The Update Record step can now fill custom fields on emails and calendar events, such as a category picked by a Classify step."
+msgstr "L'étape Mettre à jour l'enregistrement peut désormais renseigner des champs personnalisés sur les e-mails et les événements de calendrier, comme une catégorie choisie par une étape Classer."
+
 #. js-lingui-id: u0uFxg
 #: src/sections/testimonials/TestimonialsCarousel.tsx
 msgid "They are the real sales"
@@ -7996,6 +8590,16 @@ msgstr "Pour préserver la simplicité de Twenty, nous introduisons les « Para
 #: src/sections/product-feature/TasksVisual/TasksVisual.tsx
 msgid "TODO"
 msgstr "À FAIRE"
+
+#. js-lingui-id: DKijYW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Toggle lists and toggle headings fold again, Tab indents blocks, and headings 4 to 6 return to the slash menu. Tables get row and column handles again to add, delete, merge and split cells."
+msgstr "Les listes repliables et les titres repliables peuvent à nouveau être repliés, Tab indentent les blocs, et les titres 4 à 6 reviennent dans le menu barre oblique. Les tableaux retrouvent des poignées de lignes et de colonnes pour ajouter, supprimer, fusionner et scinder des cellules."
+
+#. js-lingui-id: vNHNy7
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Toggles and table controls are back in notes"
+msgstr "Les contrôles de bascule et de tableau sont de retour dans les notes"
 
 #. js-lingui-id: DeTupk
 #: src/partner-application/data/partner-country-options.ts
@@ -8200,6 +8804,11 @@ msgstr "Twenty donne aux équipes techniques les briques pour construire un CRM 
 msgid "Twenty gives you the kind of flexibility that actually changes what you can offer your clients. The dev experience is clean, the APIs are open, and when something needs to be customized, you can just do it. There's no fighting the platform."
 msgstr "Twenty vous offre le type de flexibilité qui change réellement ce que vous pouvez proposer à vos clients. L’expérience développeur est soignée, les API sont ouvertes, et quand quelque chose doit être personnalisé, vous pouvez simplement le faire. Il n’y a pas de combat contre la plateforme."
 
+#. js-lingui-id: lcDb/Z
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Twenty in Persian"
+msgstr "Twenty en persan"
+
 #. js-lingui-id: x/I85y
 #: src/case-studies/case-study-stories.ts
 msgid "Twenty is not only where CRM data lives. It is the API backbone that makes the rest of the stack possible."
@@ -8225,13 +8834,6 @@ msgstr "Twenty rend les choses simples. C'est épuré, intuitif et conçu pour r
 #: src/sections/menu/data/menu.ts
 msgid "Twenty partner ecosystem"
 msgstr "Écosystème de partenaires Twenty"
-
-#. js-lingui-id: vD7S1X
-#. placeholder {0}: LATEST_RELEASE.release
-#. placeholder {1}: LATEST_RELEASE.title
-#: src/sections/menu/data/menu.ts
-msgid "Twenty release {0} — {1}"
-msgstr "Version {0} de Twenty — {1}"
 
 #. js-lingui-id: X1GHuJ
 #: src/platform/routing/static-website-routes.ts
@@ -8381,31 +8983,7 @@ msgid "Unified timeline (emails, events, tasks, notes, files)"
 msgstr "Chronologie unifiée (e-mails, événements, tâches, notes, fichiers)"
 
 #. js-lingui-id: NIuIk1
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/PlanTableContent.tsx
 msgid "Unlimited"
 msgstr "Illimité"
 
@@ -8454,6 +9032,11 @@ msgstr "Mis à jour par"
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Upfront consulting, scoping, strategy."
 msgstr "Conseil en amont, cadrage, stratégie."
+
+#. js-lingui-id: 5DSuOT
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Upgrade on your schedule"
+msgstr "Passez à la vitesse supérieure à votre rythme"
 
 #. js-lingui-id: WLb3m4
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8603,6 +9186,11 @@ msgstr "VP de l'ingénierie chez W3villa Technologies"
 #: src/case-studies/case-study-catalog.ts
 msgid "VP of Engineering, W3villa Technologies"
 msgstr "VP Ingénierie, W3villa Technologies"
+
+#. js-lingui-id: cLpH4u
+#: src/sections/pricing-plans/plans-data.ts
+msgid "VPN, your own AI providers and more"
+msgstr "VPN, vos propres fournisseurs d'IA et plus encore"
 
 #. js-lingui-id: s0tU5h
 #: src/case-studies/case-study-stories.ts
@@ -8883,6 +9471,11 @@ msgstr "Ce que vous avez construit dans Twenty *"
 msgid "Whatever came next had to be something they could own."
 msgstr "Quelle que soit la suite, il fallait que ce soit quelque chose qu'ils puissent posséder."
 
+#. js-lingui-id: tQV2Gz
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "When a member loses their authenticator, an admin can issue a one-time recovery code from the member’s page in settings. The member signs in with it and their old authenticator is removed."
+msgstr "Lorsqu'un membre perd son authentificateur, un administrateur peut émettre un code de récupération à usage unique depuis la page du membre dans les paramètres. Le membre se connecte avec ce code et son ancien authentificateur est supprimé."
+
 #. js-lingui-id: cs6VpJ
 #: src/case-studies/case-study-stories.ts
 msgid "When a student registers via QR at a campus event, the system assigns a plan, generates an interview session, and sends a link. The AI conducts the interview, scores the candidate, and classifies the result. Faculty see where each student stands without manually reviewing every session. Building and iterating on these workflows was faster with AI in the loop."
@@ -8997,6 +9590,11 @@ msgstr "Avec l’intégration Google Calendar, vous pouvez suivre dans votre CR
 msgid "With the <0>Datetime Field</0>, you can effectively track events, deadlines, and activities with enhanced accuracy, improving time management and scheduling. <1>Example Use Case</1>: Precisely track and set reminders for project milestones and deadlines."
 msgstr "Avec le <0>champ date-heure</0>, vous pouvez suivre efficacement les événements, échéances et activités avec une précision accrue, améliorant la gestion du temps et la planification. <1>Exemple de cas d’usage</1> : suivez précisément et définissez des rappels pour les jalons de projet et les dates limites."
 
+#. js-lingui-id: mNuV02
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "With the call recorder app, add a Call recordings widget to person, company and opportunity pages to list the recent recorded meetings linked to that record."
+msgstr "Avec l'application d'enregistreur d'appels, ajoutez un widget Enregistrements d'appels aux pages de personne, d'entreprise et d'opportunité pour répertorier les réunions récemment enregistrées liées à cet enregistrement."
+
 #. js-lingui-id: OKVlnc
 #: src/case-studies/case-study-stories.ts
 msgid "With Twenty, when a new need appears, he can address it himself: no developer required, no support ticket."
@@ -9067,6 +9665,11 @@ msgstr "Workflows"
 msgid "Workflows can pick records randomly, in round-robin order, or by choosing the least-loaded assignee."
 msgstr "Les workflows peuvent sélectionner des enregistrements aléatoirement, selon un ordre circulaire ou en choisissant l’attributaire le moins chargé."
 
+#. js-lingui-id: vCENh4
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Workflows can update emails and meetings"
+msgstr "Les workflows peuvent mettre à jour les e-mails et les réunions"
+
 #. js-lingui-id: OteDxj
 #: src/case-studies/case-study-stories.ts
 msgid "Workflows that *actually get used*"
@@ -9087,6 +9690,11 @@ msgstr "Travailler avec *un partenaire Twenty*"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Workspace"
 msgstr "Espace de travail"
+
+#. js-lingui-id: Rg6QK1
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Workspace credits"
+msgstr "Crédits de l'espace de travail"
 
 #. js-lingui-id: p3ZD6C
 #: src/sections/menu/data/menu.ts
@@ -9158,14 +9766,15 @@ msgstr "Yémen 🇾🇪"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/PlanTableContent.tsx
 msgid "Yes"
 msgstr "Oui"
 
-#. js-lingui-id: bo6pUs
+#. js-lingui-id: DLTd8S
 #: src/sections/faq/faq.data.ts
-msgid "Yes, with our Apps framework. Scaffold an extension with `npx create-twenty-app` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
-msgstr "Oui, avec notre framework Apps. Générez une extension avec `npx create-twenty-app` et livrez objets personnalisés, fonctions de logique côté serveur, composants React rendus dans l’interface de Twenty, compétences et agents IA, vues et navigation — le tout en TypeScript, déployable sur n’importe quel espace de travail."
+msgid "Yes, with our Apps framework. Scaffold an extension with `npx twenty@latest app init my-app` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
+msgstr "Oui, avec notre framework Apps. Générez une extension avec `npx twenty@latest app init my-app` et livrez des objets personnalisés, des fonctions de logique côté serveur, des composants React rendus dans l'interface de Twenty, des compétences et agents IA, des vues et la navigation, le tout en TypeScript, déployable dans n'importe quel espace de travail."
 
 #. js-lingui-id: yIcBW6
 #: src/sections/faq/faq.data.ts
@@ -9316,6 +9925,11 @@ msgstr "Votre cahier des charges"
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 msgid "Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance."
 msgstr "Votre achat est terminé. Suivez les étapes ci-dessous pour copier votre clé de licence dans votre instance Twenty."
+
+#. js-lingui-id: rcT2v7
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Your data, fully isolated"
+msgstr "Vos données, entièrement isolées"
 
 #. js-lingui-id: pEQiCY
 #: src/partner-application/partner-application-copy.ts

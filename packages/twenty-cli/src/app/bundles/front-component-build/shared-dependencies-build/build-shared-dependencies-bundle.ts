@@ -1,9 +1,11 @@
 import { getWatchInputPlugins } from '@/app/dev/collect-watch-inputs';
 import { getBaseFrontComponentBuildOptions } from '@/app/bundles/front-component-build/utils/get-base-front-component-build-options';
 import { type OnFileBuiltCallback } from '@/app/bundles/types/on-file-built-callback.type';
-import { type SharedDependenciesBuildContext } from '@/app/bundles/front-component-build/shared-dependencies-build/types/shared-dependencies-build-context.type';
+import {
+  getSharedDependenciesEntrySource,
+  type SharedDependenciesBuildContext,
+} from 'twenty-shared/front-component-build';
 import { enumerateSharedDependenciesExportNames } from '@/app/bundles/front-component-build/shared-dependencies-build/utils/enumerate-shared-dependencies-export-names';
-import { getSharedDependenciesEntrySource } from '@/app/bundles/front-component-build/shared-dependencies-build/utils/get-shared-dependencies-entry-source';
 import { getSharedDependenciesNamespaceCollisions } from '@/app/bundles/front-component-build/shared-dependencies-build/utils/get-shared-dependencies-namespace-collisions';
 import { ensureDir } from '@/app/fs-utils';
 import crypto from 'crypto';
