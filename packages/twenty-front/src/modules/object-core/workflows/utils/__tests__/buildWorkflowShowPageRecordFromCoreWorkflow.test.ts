@@ -10,6 +10,7 @@ describe('buildWorkflowShowPageRecordFromCoreWorkflow', () => {
     lastPublishedCoreWorkflowVersionId: 'published-version-id',
     workspaceWorkflowId: 'workspace-workflow-id',
     visibility: WorkflowVisibility.WORKSPACE,
+    applicationId: null,
     canChangeVisibility: true,
     createdAt: '2026-09-01T00:00:00.000Z',
     updatedAt: '2026-09-14T00:00:00.000Z',

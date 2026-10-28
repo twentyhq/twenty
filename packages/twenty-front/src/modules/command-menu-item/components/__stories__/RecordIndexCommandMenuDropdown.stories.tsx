@@ -63,6 +63,11 @@ const THIRD_PARTY_COMMAND_MENU_ITEM: CommandMenuItemFieldsFragment = {
   availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
   availabilityObjectMetadataId: null,
   payload: null,
+  universalIdentifier: null,
+  coreWorkflowVersionId: null,
+  conditionalPinnedExpression: null,
+  navigationTargetObjectMetadataId: null,
+  pageLayoutId: null,
 };
 
 const COMMAND_MENU_ITEMS = [

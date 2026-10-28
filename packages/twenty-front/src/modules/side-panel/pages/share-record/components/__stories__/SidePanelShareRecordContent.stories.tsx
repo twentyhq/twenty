@@ -54,12 +54,14 @@ const MEMBERS = [
 ];
 
 const SHARING = {
+  __typename: 'RecordSharingDTO' as const,
   sharingMode: RecordSharingMode.PRIVATE,
   canManageSharing: true,
   generalAccessLevel: RecordShareAccessLevel.NONE,
   defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
   hasManagedGeneralAccess: false,
   permissions: {
+    __typename: 'RecordPermissionsDTO' as const,
     canRead: true,
     canUpdate: true,
     canDelete: false,
@@ -67,6 +69,7 @@ const SHARING = {
   },
   shares: [
     {
+      __typename: 'RecordSharingGrantDTO' as const,
       id: 'owner-grant',
       principalId: 'owner',
       principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
@@ -75,6 +78,7 @@ const SHARING = {
       accessLevel: RecordShareAccessLevel.FULL,
     },
     {
+      __typename: 'RecordSharingGrantDTO' as const,
       id: 'member-grant',
       principalId: 'member',
       principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
@@ -83,6 +87,7 @@ const SHARING = {
       accessLevel: RecordShareAccessLevel.READ_WRITE,
     },
     {
+      __typename: 'RecordSharingGrantDTO' as const,
       id: 'role-grant',
       principalId: 'sales',
       principalType: RecordSharePrincipalType.ROLE,
@@ -91,7 +96,15 @@ const SHARING = {
       accessLevel: RecordShareAccessLevel.READ,
     },
   ],
-  roles: [{ id: 'sales', label: 'Sales', canRead: true, canUpdate: true }],
+  roles: [
+    {
+      __typename: 'RecordSharingRoleDTO' as const,
+      id: 'sales',
+      label: 'Sales',
+      canRead: true,
+      canUpdate: true,
+    },
+  ],
 };
 
 const StyledSidePanel = styled.div`

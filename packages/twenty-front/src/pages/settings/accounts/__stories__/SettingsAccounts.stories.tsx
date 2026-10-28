@@ -39,7 +39,7 @@ import {
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
 import {
   LINEAR_APPLICATION_ID,
-  LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+  LINEAR_GENERAL_TAB_REDIRECT_LOCATION,
   MOCKED_TRANSIENT_TOKEN,
 } from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
 import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
@@ -315,7 +315,7 @@ export const AccountsTabWithoutAccountsOffersConnectCards: Story = {
       applicationId: LINEAR_APPLICATION_ID,
       providerName: 'linear',
       transientToken: MOCKED_TRANSIENT_TOKEN,
-      redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+      redirectLocation: LINEAR_GENERAL_TAB_REDIRECT_LOCATION,
     });
   },
 };
