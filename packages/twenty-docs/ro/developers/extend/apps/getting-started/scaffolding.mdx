@@ -1,62 +1,33 @@
 ---
 title: Generare automată
-description: Generați fișiere de entități în mod interactiv cu yarn twenty dev:add — obiecte, câmpuri, vizualizări, funcții logice și altele.
+description: Generați entități ale aplicației cu twenty app add.
 ---
 
-În loc să creați manual fișiere de entități, folosiți generatorul interactiv (scaffolder):
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-```bash filename="Terminal"
-yarn twenty dev:add
+## Prezentare generală
+
+Utilizați CLI-ul independent pentru a genera un obiect, un câmp, o funcție logică sau o componentă front-end:
+
+```bash
+twenty app add
+twenty app add object --name invoice --name-plural invoices --no-input
+twenty app add field --name amount --type NUMBER --object <object-uuid> --no-input
+twenty app add logic-function --name send-invoice --no-input
+twenty app add front-component --name invoice-panel --no-input
 ```
 
-Vă cere să alegeți un tip de entitate și vă ghidează prin câmpurile necesare, apoi scrie un fișier gata de utilizare cu un `universalIdentifier` stabil și apelul corect `defineEntity()`.
+Fără flag-uri, terminalele interactive solicită valorile lipsă. Pentru scripturi și agenți, furnizați câmpurile obligatorii și utilizați `--no-input` sau `--json`.
 
-Puteți de asemenea să transmiteți direct tipul de entitate pentru a sări peste primul prompt:
+Generarea obiectelor poate crea și o vizualizare, un element de navigare și un aspect al paginii de înregistrare:
 
-```bash filename="Terminal"
-yarn twenty dev:add object
-yarn twenty dev:add logicFunction
-yarn twenty dev:add frontComponent
+```bash
+twenty app add object --name invoice --name-plural invoices \
+  --create-view --create-navigation-menu-item --create-page-layout --no-input
 ```
 
-## Tipuri de entități disponibile
+Pentru alte tipuri de entități, scrieți fișierul `define*` corespunzător folosind `twenty-sdk/define` și un UUID v4 valid. Rulați `twenty app typecheck` și `twenty app plan` înainte de sincronizare.
 
-| Tipul entității                 | Comandă                                    | Fișier generat                                            |
-| ------------------------------- | ------------------------------------------ | --------------------------------------------------------- |
-| Obiect                          | `yarn twenty dev:add object`               | `src/objects/\<name>.ts`                 |
-| Câmp                            | `yarn twenty dev:add field`                | `src/fields/\<name>.ts`                  |
-| Funcție logică                  | `yarn twenty dev:add logicFunction`        | `src/logic-functions/\<name>.ts`         |
-| Componentă frontend             | `yarn twenty dev:add frontComponent`       | `src/front-components/\<name>.tsx`       |
-| Rol                             | `yarn twenty dev:add role`                 | `src/roles/\<name>.ts`                   |
-| Abilitate                       | `yarn twenty dev:add skill`                | `src/skills/\<name>.ts`                  |
-| Agent                           | `yarn twenty dev:add agent`                | `src/agents/\<name>.ts`                  |
-| Vizualizare                     | `yarn twenty dev:add view`                 | `src/views/\<name>.ts`                   |
-| Element de meniu de navigare    | `yarn twenty dev:add navigationMenuItem`   | `src/navigation-menu-items/\<name>.ts`   |
-| Machetă de pagină               | `yarn twenty dev:add pageLayout`           | `src/page-layouts/\<name>.ts`            |
-| Fila "Aspect pagină"            | `yarn twenty dev:add pageLayoutTab`        | `src/page-layout-tabs/\<name>.ts`        |
-| Element din meniul de comenzi   | `yarn twenty dev:add commandMenuItem`      | `src/command-menu-items/\<name>.ts`      |
-| Câmpul vizualizării             | `yarn twenty dev:add viewField`            | `src/view-fields/\<name>.ts`             |
-| Furnizor de conexiune           | `yarn twenty dev:add connectionProvider`   | `src/connection-providers/\<name>.ts`    |
-| Tip de activitate în cronologie | `yarn twenty dev:add timelineActivityType` | `src/timeline-activity-types/\<name>.ts` |
+`--path` selectează directorul aplicației, nu un folder de ieșire personalizat. Rulați `twenty app add --help` pentru opțiunile acceptate.
 
-## Ce generează scaffolder-ul
-
-Fiecare tip de entitate are propriul său șablon. De exemplu, `yarn twenty dev:add object` solicită:
-
-1. **Nume (singular)** — de ex., `invoice`
-2. **Nume (plural)** — de ex., `invoices`
-3. **Etichetă (singular)** — completată automat din nume (de ex., `Invoice`)
-4. **Etichetă (plural)** — completată automat (de ex., `Invoices`)
-5. **Creați o vizualizare și un element de navigare?** — dacă răspundeți afirmativ, scaffolder-ul generează, de asemenea, o vizualizare corespunzătoare și un link în bara laterală pentru noul obiect.
-
-Alte tipuri de entități au prompturi mai simple — majoritatea cer doar un nume.
-
-Tipul de entitate `field` este mai detaliat: solicită numele câmpului, eticheta, tipul (dintr-o listă cu toate tipurile de câmp disponibile precum `TEXT`, `NUMBER`, `SELECT`, `RELATION` etc.) și `universalIdentifier` al obiectului țintă.
-
-## Cale de output personalizată
-
-Utilizați opțiunea `--path` pentru a plasa fișierul generat într-o locație personalizată:
-
-```bash filename="Terminal"
-yarn twenty dev:add logicFunction --path src/custom-folder
-```
+<PageBanner illustration="dev-contribute" />

@@ -130,17 +130,22 @@ Pull needs an existing project — scaffold one with `twenty app init` first, th
 - tabs your app added to page layouts it does not own, as standalone `definePageLayoutTab()` files;
 - navigation menu items, as `defineNavigationMenuItem()` files, folders included;
 - widgets your app added to tabs it does not own, as standalone `definePageLayoutWidget()` files;
+- workflows, as `defineWorkflow()` files, when their stored version is the one the last sync wrote;
+- skills, as `defineSkill()` files;
+- agents, as `defineAgent()` files, with their triggers and the role your app binds them to;
 - published translations, as `locales/<locale>.json` for the strings pull can read back from the pulled metadata and source, and `locales/compiled/<locale>.json` for the rest.
 
 Each entity goes to the file that already defines it, so a second pull rewrites only what changed on the server. A file is also rewritten when it uses a different define function than pull would write, for example a role that became or stopped being the default role. New entities are placed beside existing files of their kind, and a generated name that would land on an unrelated file is qualified rather than overwriting it.
 
 **What it does not write:**
 
-- **Not exported yet** — command menu items and settings menu items, logic functions and front components, skills and agents, connection providers, application variables, public assets, timeline activity types, and the stored source of your functions.
+- **Not exported yet** — command menu items and settings menu items, logic functions and front components, connection providers, application variables, public assets, timeline activity types, and the stored source of your functions.
 - **Derived by the engine** — system fields, default relations, default views and backing indexes, and the default page layouts of each object. The server rebuilds them on apply. An object may still point its label identifier at one of them, as junction objects created in the UI do; the pointer is written and the build resolves it without adding a field.
 - **Placed on a default or foreign view** — filters, filter groups, sorts, groups and field groups added to an engine default view, or to a view owned by another application, have no source form yet and are reported. View fields added there are written as standalone files, since the view's identifier is known.
 - **Placed on a default or foreign page layout** — tabs and widgets added to an engine default page layout, or to one owned by another application, are written as standalone `definePageLayoutTab()` and `definePageLayoutWidget()` files, since the identifier they attach to is known.
 - **Widgets the export cannot carry yet** — on any layout, including your own, a widget of the deprecated `VIEW` type, a widget showing one of your app's own front components or command menu items, or a widget without a position for its tab's layout mode is reported, and the layout or tab is written without it.
+- **Workflows the export cannot carry yet** — a workflow changed in the workflow builder since the last sync, one built in the workspace, a system or private workflow, one with a Code or chat message step, which application workflows don't support, or an email or calendar step, which export doesn't carry yet, and one calling another app's workflow action are reported and left in place. The workspace custom application is the exception for that last case: its workflows may call any app's actions, so they are pulled.
+- **Agents and skills the export cannot carry yet** — agents and skills created in the workspace rather than by your app, a deactivated skill, and an agent with a model configuration or bound to a role pull does not write are reported and left in place.
 - **Workspace runtime state** — member and API-key role assignments, webhooks, per-user navigation and navigation items pinned to a record, all excluded by design.
 - **Owned by another application** — reported, never pulled.
 

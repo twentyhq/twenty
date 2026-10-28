@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
 import {
   type CountryCallingCode,
+  type PhoneNumber,
   parsePhoneNumberWithError,
 } from 'libphonenumber-js';
 import isEmpty from 'lodash.isempty';
@@ -31,6 +32,8 @@ export type PhonesFieldGraphQLInput =
 
 type AdditionalPhoneMetadataWithNumber = Partial<AdditionalPhoneMetadata> &
   Required<Pick<AdditionalPhoneMetadata, 'number'>>;
+
+const LETTER_REGEX = /\p{L}/u;
 
 const removePlusFromString = (str: string) => str.replace(/\+/g, '');
 
@@ -82,25 +85,41 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
   }
 };
 
+const throwInvalidPhoneNumberException = (number: string): never => {
+  throw new RecordTransformerException(
+    `Provided phone number is invalid ${number}`,
+    RecordTransformerExceptionCode.INVALID_PHONE_NUMBER,
+    { userFriendlyMessage: msg`Provided phone number is invalid ${number}` },
+  );
+};
+
 const parsePhoneNumberExceptionWrapper = ({
   callingCode,
   countryCode,
   number,
 }: AdditionalPhoneMetadataWithNumber) => {
+  if (LETTER_REGEX.test(number)) {
+    return throwInvalidPhoneNumberException(number);
+  }
+
+  let phone: PhoneNumber;
+
   try {
-    return parsePhoneNumberWithError(number, {
+    phone = parsePhoneNumberWithError(number, {
       defaultCallingCode: callingCode
         ? removePlusFromString(callingCode)
         : callingCode,
       defaultCountry: countryCode,
     });
   } catch {
-    throw new RecordTransformerException(
-      `Provided phone number is invalid ${number}`,
-      RecordTransformerExceptionCode.INVALID_PHONE_NUMBER,
-      { userFriendlyMessage: msg`Provided phone number is invalid ${number}` },
-    );
+    return throwInvalidPhoneNumberException(number);
   }
+
+  if (!phone.isPossible()) {
+    return throwInvalidPhoneNumberException(number);
+  }
+
+  return phone;
 };
 
 const validateAndInferMetadataFromPrimaryPhoneNumber = ({

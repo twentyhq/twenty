@@ -1,0 +1,105 @@
+---
+title: نص
+description: أنشئ تنسيق طباعة السمة مع اقتطاع لسطر واحد أو عدد محدود من الأسطر.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TextReference from '/snippets/ui/generated/typography/text.mdx';
+
+## نظرة عامة
+
+يوفر `Text` تنسيق الطباعة ومعالجة التجاوز. يعرض عنصر `div` افتراضيًا. احذف `size` و`weight` و`color` لمواصلة وراثة تنسيق الطباعة من محيطه.
+
+<StoryEmbed storyId="ui-typography-text--display" title="مثال على النص" height={90} />
+
+## استخدام
+
+امنح النص عرضًا مقيّدًا، ثم اضبط `truncate` لعرض علامة حذف عند تجاوزه:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ContactName = () => (
+  <Text truncate style={{ maxWidth: 160 }}>
+    Alexandra Montgomery
+  </Text>
+);
+```
+
+## اختر تنسيق الطباعة
+
+يستخدم `size` مقياس السمة الحالي. يغيّر حجم الخط، دون قيمة افتراضية للارتفاع أو font-family أو line-height:
+
+| الحجم | قيمة السمة |
+| ----- | ---------- |
+| `xxs` | `0.625rem` |
+| `xs`  | `0.85rem`  |
+| `sm`  | `0.92rem`  |
+| `md`  | `1rem`     |
+| `lg`  | `1.23rem`  |
+| `xl`  | `1.54rem`  |
+| `xxl` | `1.85rem`  |
+
+يقبل `weight` القيم `regular` (400) أو `medium` (500) أو `semibold` (600). يقبل `color` القيم `primary` و`secondary` و`tertiary` أو `light`. يرث كل prop مُهمَل بشكل مستقل. لا يغيّر الحجم المرئي العنصر الدلالي.
+
+<StoryEmbed storyId="ui-typography-text--typography-catalog" title="مقياس طباعة النص" height={410} />
+
+للتسميات التوضيحية، اجمع بين الحجم الصغير ووزن semibold واللون light:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Caption = () => (
+  <Text size="xs" weight="semibold" color="light">
+    Workspace
+  </Text>
+);
+```
+
+استخدم `style` الأصلي لألوان وقت التشغيل وقيود تخطيط العنصر الأب. تستهدف أصناف المستدعي وتركيب العرض عنصر النص نفسه. لا يضيف Text أي قيم افتراضية للطباعة عند إهمال هذه الخصائص.
+
+## تحديد عدد الأسطر
+
+<StoryEmbed storyId="ui-typography-text--catalog" title="خيارات تجاوز سعة النص" height={210} />
+
+استخدم `lineClamp` مع عدد صحيح موجب. اختر إما `truncate` أو `lineClamp`؛ فخصائصهما متنافية.
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Summary = () => (
+  <Text lineClamp={2} style={{ maxWidth: 240 }}>
+    Follow up with the customer about their onboarding milestones and upcoming
+    renewal.
+  </Text>
+);
+```
+
+## اختر عنصرًا
+
+استخدم `render` عندما يحتاج النص إلى عنصر دلالي آخر:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Description = () => (
+  <Text render={<p />}>Account description</Text>
+);
+```
+
+يؤثر الاقتطاع في العرض المرئي؛ ولا يختصر النص في DOM. وفّر طريقة لقراءة المحتوى الكامل عندما يكون الجزء المرئي غير كافٍ.
+
+## الخصائص
+
+تستهدف السمات الأصلية والعناصر التابعة والمراجع وأسماء الفئات والأنماط عنصر النص المعروض. يتم تصدير `TextProps` من `twenty-ui/primitives/typography`. يتم عرض محتوى النص دون تغيير، بما في ذلك الروابط التي يوفرها المستدعي.
+
+<TextReference />
+
+## الترحيل
+
+يختار `color` الآن لون سمة دلاليًا. انقل قيم ألوان CSS الاعتباطية من سمة `color` الأصلية إلى `style={{ color: customColor }}`. تستمر الأنماط والأصناف الحالية وتركيب العرض في استهداف عنصر النص.
+
+<PageBanner illustration="section-document-generator" />

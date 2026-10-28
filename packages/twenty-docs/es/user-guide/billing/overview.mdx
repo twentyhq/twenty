@@ -1,17 +1,25 @@
 ---
 title: Facturación
+sidebarTitle: Resumen
 description: Comprende los precios de Twenty y gestiona tu suscripción.
 ---
 
-Twenty ofrece planes de precios flexibles para adaptarse a las necesidades de tu equipo. Gestiona tu suscripción, supervisa los créditos de flujos de trabajo y accede a las facturas, todo desde **Settings → Billing**.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Qué incluye esta sección
 
-<CardGroup cols={2}>
-  <Card title="Planes de precios" icon="tags" href="/es/user-guide/billing/capabilities/pricing-plans">
-    Obtén información sobre los planes de precios de Twenty y lo que incluyen.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/es/user-guide/billing/capabilities/pricing-plans" img="/images/user-guide/halftone/card-page-pricing-plans.svg">
+    <CardTitle>Planes de Precios</CardTitle>
+    Aprende sobre los planes de precios de 20 y lo que está incluido.
   </Card>
-  <Card title="Preguntas frecuentes" icon="help-circle" href="/es/user-guide/billing/how-tos/billing-faq">
+  <Card href="/es/user-guide/billing/capabilities/usage-limits" img="/images/user-guide/halftone/card-page-usage-limits.svg">
+    <CardTitle>Límites de uso</CardTitle>
+    Limita lo que pueden gastar tu espacio de trabajo, miembros, claves API y aplicaciones.
+  </Card>
+  <Card href="/es/user-guide/billing/how-tos/billing-faq" img="/images/user-guide/halftone/card-page-billing-faq.svg">
+    <CardTitle>FAQ</CardTitle>
     Preguntas frecuentes sobre precios y facturación.
   </Card>
 </CardGroup>
@@ -37,3 +45,5 @@ Ve a **Settings → Billing** para ver tu plan, actualizar los métodos de pago 
 Ve a **Settings → Billing** y haz clic en **Cambiar a Organización** o **Cambiar a anual**.
 
 Para más preguntas, consulta las [Preguntas frecuentes sobre facturación](/es/user-guide/billing/how-tos/billing-faq).
+
+<PageBanner illustration="billing" />

@@ -1,0 +1,269 @@
+---
+title: Buton
+description: Declanșați acțiuni sau navigați cu butoane stilizate.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ButtonReference from '/snippets/ui/generated/input/button.mdx';
+
+## Prezentare generală
+
+Utilizați `Button` pentru o acțiune și furnizați eticheta sa vizibilă ca elemente copil. Utilizați [IconButton](/ro/ui/components/input/icon-button) pentru controale numai cu pictograme, cu un nume accesibil din `aria-label` sau `aria-labelledby`.
+
+Pentru valori implicite recurente de design, utilizați [MainButton](/ro/ui/components/input/main-button)
+sau [LightButton](/ro/ui/components/input/light-button) din `twenty-ui/components`.
+Ambele partajează proprietățile native, referințele, starea și comportamentul de redare ale Button.
+
+<StoryEmbed title="Afișare buton" storyId="ui-input-button-button--display" height={100} />
+
+## Utilizare
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SaveChanges = () => <Button>Save changes</Button>;
+```
+
+## Aspect
+
+Comparați separat variantele, culorile semantice, dimensiunile și stările obișnuite. Fiecare grup modifică o opțiune, păstrându-le pe celelalte neschimbate.
+
+<StoryEmbed storyId="ui-input-button-button--catalog" title="Aspect pentru buton" height={630} />
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const CreateRecord = () => (
+  <Button variant="solid" color="accent" size="sm" startIcon={<IconPlus />}>
+    Create record
+  </Button>
+);
+```
+
+Alegeți `solid`, `outline`, `soft`, `ghost` sau `link` independent de culoarea `neutral`, `accent`, `danger` sau `success`. Dimensiunile sunt `sm` și `md`; valorile implicite sunt `outline`, `neutral` și `md`. `fullWidth` umple lățimea disponibilă. `startIcon` și `endIcon` acceptă elemente și sunt decorative. `elevated` adaugă o umbră și estomparea fundalului. Butoanele neutre cu contur primesc, de asemenea, o suprafață cu chenar, cu culori corespunzătoare pentru text și interacțiune. Alte variante și culori semantice își păstrează paleta existentă. Valoarea implicită este `false` și nu modifică dimensiunea sau poziția. `shortcut` afișează indicii de tastatură pe ecrane mai mari; asociați scurtăturile în aplicația dvs.
+
+Utilizați `color="inherit"` pentru controalele de pe o suprafață colorată. Eticheta, pictogramele, indicatorul de încărcare și conturul urmează culoarea textului din jur. Umplerile pentru interacțiune folosesc negru translucid. Butoanele cu contur se află pe o suprafață transparentă, cu un contur currentColor de 25%, și folosesc umpleri negre de 10% și 20% la trecerea cursorului și la apăsare. Ghost folosește umpleri negre transparente, de 10% și 20%; soft folosește 10%, 20% și 30%. Link rămâne neumplut.
+
+`inherit` acceptă `outline`, `ghost`, `soft` și `link`. O combinație rezolvată de `solid` și `inherit` generează o eroare în timpul rulării, inclusiv valorile implicite furnizate de ButtonGroup sau de un înveliș. `MainButton` are implicit varianta solid, deci furnizați o variantă care nu este solid atunci când moșteniți culoarea.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SurfaceActions = () => (
+  <>
+    <Button color="inherit" variant="outline">
+      Save
+    </Button>
+    <Button color="inherit" variant="ghost">
+      Cancel
+    </Button>
+  </>
+);
+```
+
+`link` utilizează text compact, fără chenar sau fundal umplut. Urmează înălțimea conținutului la ambele dimensiuni, cu un font mai mic și o spațiere interioară mai îngustă. Culoarea sa neutră utilizează un text mai pronunțat la trecerea cursorului. Aspectul nu determină semantica: utilizați `onClick` pentru acțiuni și `href` pentru navigare.
+
+`disabled` și `loading` împiedică activarea. Încărcarea menține eticheta accesibilă și comunică o stare de ocupare. În mod implicit, `loadingPosition="center"` ascunde conținutul, păstrând în același timp spațiul din aspectul său, și centrează indicatorul de încărcare. Setați `loadingPosition` la `start` sau `end` pentru a menține elementele copil și pictograma opusă vizibile, înlocuind în același timp pictograma corespunzătoare cu indicatorul de încărcare.
+
+Aplicația dvs. gestionează formatarea progresului și eticheta tradusă. Transmiteți expresia de stare completă ca elemente copil, de exemplu `Installing (42%)`.
+
+<StoryEmbed title="Încărcare buton la final" storyId="ui-input-button-button--loading-at-end" height={100} />
+
+## Proprietatea asupra stării
+
+`Button` declanșează o acțiune și nu gestionează o valoare selectată, deci nu are un mod de selecție controlat sau necontrolat. Proprietatea sa nativă `value` furnizează date de formular, nu starea selecției.
+
+Aplicația dvs. gestionează `loading` și `disabled`, care au implicit valoarea `false`. Clicul pe un buton nu modifică aceste proprietăți și nu afișează automat încărcarea în timp ce rulează un gestionar asincron. Transmiteți explicit starea curentă a aplicației.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+
+type SaveRecordProps = { onSave: () => Promise<void> };
+
+export const SaveRecord = ({ onSave }: SaveRecordProps) => {
+  const [loading, setLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  const handleSave = async () => {
+    setLoading(true);
+    setHasError(false);
+
+    try {
+      await onSave();
+    } catch {
+      setHasError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <Button loading={loading} onClick={handleSave}>
+        Save record
+      </Button>
+      {hasError && <p role="alert">Unable to save the record. Try again.</p>}
+    </>
+  );
+};
+```
+
+Aplicația inițiază și oprește încărcarea în jurul operației de salvare. Butonul împiedică activarea în timpul încărcării și devine din nou disponibil când operația se încheie, inclusiv după o eroare. `MainButton` și `LightButton` utilizează același model de stare.
+
+## Declanșatoare de popup
+
+Compuneți un declanșator de popup cu `Button`, `LightButton` sau un alt wrapper pentru Button prin `render`. Declanșatorul furnizează `data-popup-open`, astfel încât butonul își păstrează fundalul la trecerea cursorului cât timp popupul este deschis și utilizează fundalul activ la trecerea cursorului sau la apăsare. Fiecare variantă și culoare își păstrează propria paletă. Fundalurile linkurilor rămân transparente, iar butoanele dezactivate sau în curs de încărcare își păstrează aspectul dezactivat. Butoanele cu `aria-pressed="true"` își păstrează stilul existent de comutare. Starea pop-upului nu setează `aria-pressed` și nu reprezintă o valoare selectată.
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const DetailsPopup = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<LightButton>Show details</LightButton>} />
+    <Popover.Portal>
+      <Popover.Positioner>
+        <Popover.Popup>
+          <Popover.Title>Details</Popover.Title>
+          <Popover.Description>
+            More information about this record.
+          </Popover.Description>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+## Funcții viitoare
+
+Aplicația dvs. gestionează disponibilitatea funcției și eticheta acesteia. Compune un buton dezactivat cu `Badge` ca elemente copil, astfel încât eticheta să rămână parte din numele accesibil al butonului. Furnizați text localizat din aplicația dvs.
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const UpcomingAction = () => (
+  <Button disabled>
+    <Text
+      render={<span />}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 'var(--t-spacing-1)',
+      }}
+    >
+      Upcoming action
+      <Badge>Coming soon</Badge>
+    </Text>
+  </Button>
+);
+```
+
+Această compoziție funcționează și cu `MainButton` și `LightButton`. Înlocuiește proprietățile `soon` și `soonLabel` eliminate.
+
+## Pictograme animate
+
+Compuneți `Button` cu `AnimatedIconCrossfade` pentru a-i schimba pictograma când se modifică starea aplicației. Transmiteți elementul animat la `startIcon` și eticheta ca elemente copil.
+
+```tsx
+import { useState } from 'react';
+import { IconPencil, IconX } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
+
+export const EditActions = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <Button
+      size="sm"
+      aria-expanded={isEditing}
+      onClick={() => setIsEditing(!isEditing)}
+      startIcon={
+        <AnimatedIconCrossfade
+          isActive={isEditing}
+          activeIcon={<IconX size={14} />}
+          inactiveIcon={<IconPencil size={14} />}
+        />
+      }
+    >
+      Edit actions
+    </Button>
+  );
+};
+```
+
+Când o pictogramă este ea însăși o acțiune, utilizați `IconButton` sau `LightIconButton` și animați conținutul pictogramei. Când un antet de dezvăluire controlează extinderea, păstrați-i indicatorul chevron decorativ și expuneți `aria-expanded` pe controlul antetului. Păstrați stilurile de animație împreună cu funcționalitatea și respectați `prefers-reduced-motion`.
+
+<StoryEmbed title="Buton cu o pictogramă animată" storyId="ui-components-layout-animatediconcrossfade--display" height={100} />
+
+## Linkuri și formulare
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const DocumentationLink = () => (
+  <Button
+    variant="link"
+    href="https://twenty.com"
+    target="_blank"
+    rel="noreferrer"
+    hrefLang="en"
+    referrerPolicy="no-referrer"
+  >
+    Read documentation
+  </Button>
+);
+```
+
+Fără un `render` personalizat, `href` redă o ancoră cu semantica unui link, cu excepția cazului în care setați explicit `nativeButton` la `true`. Atributele native ale ancorei, precum `download`, `hrefLang`, `ping` și `referrerPolicy`, ajung la ancoră. Proprietățile partajate cu butoanele native își păstrează tipurile Base UI. Pentru a furniza un tip MIME de ancoră, plasați-l pe renderer, de exemplu `render={<a href="/records.csv" type="text/csv">Download records</a>}` cu `nativeButton={false}` și `role="link"`. Linkurile dezactivate și în curs de încărcare nu pot fi activate.
+
+Utilizați `render` pentru a compune un alt element sau un link de router. `nativeButton` descrie elementul redat și are implicit valoarea `true` pentru rendererele personalizate. Setați `nativeButton={false}` și `role="link"` pentru o ancoră de navigare. Componenta ancoră sau router poate deține destinația fără un `href` pentru `Button`.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordsLink = () => (
+  <Button nativeButton={false} role="link" render={<a href="/records" />}>
+    Open records
+  </Button>
+);
+```
+
+Pentru un `\<button>` nativ personalizat, păstrați `nativeButton` la true. Pentru un element de acțiune non-nativ, cum ar fi un `\<div>`, utilizați `nativeButton={false}`; Base UI furnizează comportamentul de tastatură al butonului. Un `nativeButton` sau `role` explicit este păstrat chiar și atunci când este furnizat și `href`.
+
+Butoanele au implicit `type="button"`. Setați explicit `type="submit"` sau `type="reset"` pentru formulare. Atributele native, gestionarele de evenimente, detaliile evenimentelor și referințele ajung la rădăcina redată. O referință primește butonul, ancora sau elementul rădăcină personalizat efectiv. Gestionarele de tastatură păstrează metodele de evenimente Base UI, inclusiv `preventBaseUIHandler()` pentru a anula acțiunea de tastatură integrată. Callbackul de redare al Base UI primește atât proprietățile rădăcinii, cât și starea curentă de dezactivare; distribuiți proprietățile pe rădăcina dvs. pentru a păstra comportamentul de compunere.
+
+## Valori implicite ale grupului
+
+[ButtonGroup](/ro/ui/primitives/input/button-group) furnizează o variantă, o culoare și o dimensiune partajate. O proprietate explicită a unui element copil are prioritate față de valoarea implicită a grupului. Atunci când niciuna nu setează o proprietate, se aplică valoarea implicită a componentei.
+
+## Migrarea de la ClickToActionLink
+
+Importați `Button` din `twenty-ui/primitives/input` și înlocuiți `ClickToActionLink` cu `Button variant="link"`. Păstrați `href`, `target` și `rel` pentru navigare. Acțiunile fără `href` redau acum un buton nativ cu activare de la tastatură. Atributele, evenimentele și referințele native sunt transmise elementului rădăcină.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+type LogOutProps = { onLogOut: () => void };
+
+export const LogOut = ({ onLogOut }: LogOutProps) => (
+  <Button variant="link" onClick={onLogOut}>
+    Log out
+  </Button>
+);
+```
+
+## Proprietăți
+
+<ButtonReference />
+
+Transmiteți `shortcut={['Mod', 'Enter']}` pentru taste simultane sau `shortcut={[['G'], ['P']]}` pentru apăsări succesive. Consultați [Shortcut](/ro/ui/primitives/typography/shortcut) pentru combinații imbricate și formatorul de șiruri partajat.
+
+<PageBanner illustration="page-cover-pointer" />

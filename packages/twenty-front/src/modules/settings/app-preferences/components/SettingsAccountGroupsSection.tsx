@@ -6,7 +6,7 @@ import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccoun
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
-import { SettingsTableRowsSkeletonLoader } from '@/settings/components/SettingsTableRowsSkeletonLoader';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -84,19 +84,7 @@ export const SettingsAccountGroupsSection = ({
         description={t`Shared accounts between apps`}
       />
       {loading ? (
-        <Table>
-          {tableHeaderRow}
-          <SettingsTableRowsSkeletonLoader
-            gridTemplateColumns={gridTemplateColumns}
-            columns={[
-              {},
-              isDefined(builtInAccountApp)
-                ? { width: 140 }
-                : { align: 'right', width: 48 },
-              {},
-            ]}
-          />
-        </Table>
+        <SettingsSectionSkeletonLoader />
       ) : groups.length === 0 ? (
         <SettingsAccountGroupsEmptyState
           builtInAccountApp={builtInAccountApp}

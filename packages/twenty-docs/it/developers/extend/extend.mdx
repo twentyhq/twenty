@@ -3,6 +3,10 @@ title: Estendi
 description: Estendi le funzionalità di Twenty con API, webhook e app personalizzate.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
 ## Panoramica
 
 Twenty è progettato per essere estensibile. Usa le nostre API, i webhook e il framework per le app per integrarti con i tuoi strumenti esistenti e creare funzionalità personalizzate.
@@ -15,14 +19,19 @@ Twenty è progettato per essere estensibile. Usa le nostre API, i webhook e il f
 
 ## Per iniziare
 
-<CardGroup cols={2}>
-  <Card title="API" icon="code" href="/it/developers/extend/api">
-    Connettiti a Twenty in modo programmatico
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/it/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
+    <CardTitle>API</CardTitle>
+    Connect to Twenty programmatically
   </Card>
-  <Card title="Webhooks" icon="bell" href="/it/developers/extend/webhooks">
-    Ricevi notifiche sugli eventi in tempo reale
+  <Card href="/it/developers/extend/webhooks" img="/images/user-guide/halftone/card-page-webhooks.svg">
+    <CardTitle>Webhooks</CardTitle>
+    Ricevi notifiche degli eventi in tempo reale
   </Card>
-  <Card title="App" icon="puzzle" href="/it/developers/extend/apps/getting-started/quick-start">
-    Crea personalizzazioni come codice
+  <Card href="/it/developers/extend/apps/getting-started/quick-start" img="/images/documentation/banner-icons-v2/dev-apps.svg">
+    <CardTitle>Apps</CardTitle>
+    Costruisci personalizzazioni come codice
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-apps" />

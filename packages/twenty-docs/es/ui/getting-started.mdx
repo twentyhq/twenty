@@ -1,0 +1,146 @@
+---
+title: Primeros pasos
+description: Instala Twenty UI en una aplicación React y usa sus componentes y temas.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Twenty UI es la biblioteca de interfaz de usuario de React de código abierto de Twenty. Proporciona primitivas fundamentales, componentes compartidos, iconos y tokens de tema con CSS predefinido, por lo que tu aplicación no necesita un compilador de CSS-in-JS.
+
+## Instalar
+
+Para una aplicación de React existente, instala la biblioteca. Se requiere React 19.
+
+```bash
+yarn add twenty-ui
+```
+
+El [editor de código](/es/ui/components/code-editor/code-editor) tiene un punto de entrada independiente, `twenty-ui/components/code-editor`. Los demás componentes no requieren Monaco. Para usar el editor de código, instala sus dependencias de pares opcionales y configura los workers de Monaco para tu empaquetador antes de montarlo:
+
+```bash
+yarn add @monaco-editor/react monaco-editor
+```
+
+Si estás creando una aplicación de Twenty, sigue [Uso de componentes de Twenty UI](/es/developers/extend/apps/layout/front-components#using-twenty-ui-components). El renderizador de componentes front proporciona el tema del espacio de trabajo y tiene una configuración diferente de la de una aplicación de navegador independiente. Mantén `twenty-ui`, `twenty-sdk` y `twenty-client-sdk` en la misma versión.
+
+## Carga estilos y proporciona un tema
+
+Importa la hoja de estilos de los componentes y una hoja de estilos de tema una vez en el punto de entrada de tu aplicación. `ThemeProvider` aplica la clase de tema activa y pone los valores del tema a disposición de los componentes.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+import { ThemeProvider } from 'twenty-ui/theme';
+
+import 'twenty-ui/style.css';
+import 'twenty-ui/theme-light.css';
+
+export const App = () => (
+  <ThemeProvider colorScheme="light">
+    <Field.Root>
+      <Field.Label>Email</Field.Label>
+      <Input name="email" type="email" placeholder="you@example.com" />
+      <Field.Description>Use your work email address.</Field.Description>
+    </Field.Root>
+  </ThemeProvider>
+);
+```
+
+La hoja de estilos de los componentes incluye un restablecimiento global. Revisa su efecto al añadir Twenty UI a una aplicación existente.
+
+## Sobrescribir estilos
+
+Twenty UI coloca los estilos de componentes y el restablecimiento en la capa de cascada `twenty-ui`. Los estilos que escribes fuera de una capa, como un `className`, un módulo CSS o una regla CSS-in-JS, sobrescriben esas reglas en capas independientemente de la especificidad del selector o el orden de importación. Las hojas de estilos del tema y las reglas globales opcionales de Monaco del editor permanecen sin capas.
+
+Los restablecimientos globales de elementos de tu aplicación tampoco tienen capas, por lo que sobrescribirían los componentes de Twenty UI. Declara una capa para ellos antes de que se cargue la hoja de estilos de Twenty UI:
+
+```css
+@layer reset, twenty-ui;
+
+@layer reset {
+  button {
+    font: inherit;
+  }
+}
+```
+
+Con Tailwind CSS v4, coloca Twenty UI entre las capas base y de utilidades de Tailwind:
+
+```css
+@layer theme, base, twenty-ui, components, utilities;
+```
+
+## Elige un punto de entrada
+
+Importa componentes desde su subruta pública para mantener las importaciones centradas:
+
+Las primitivas son controles fundamentales, incluidos controles compuestos como Select,
+Popover y AlertDialog. Los componentes compartidos combinan primitivas en ajustes de diseño recurrentes
+y bloques de construcción reutilizables de aplicaciones. Ambos reciben datos y devoluciones de llamada
+de la aplicación.
+
+Usa [MainButton](/es/ui/components/input/main-button) para acciones destacadas y
+[LightButton](/es/ui/components/input/light-button) para acciones ligeras. Ambos
+provienen de `twenty-ui/components/input` y comparten el contrato de interacción fundamental de
+[Button](/es/ui/primitives/input/button). El enrutamiento y el diseño de página
+permanecen en la aplicación.
+
+Cada familia de primitivas y componentes compartidos tiene un punto de entrada público correspondiente, como
+`twenty-ui/primitives/input` y `twenty-ui/components/settings`. Las entradas agregadas
+`twenty-ui/primitives` y `twenty-ui/components` exportan sus respectivas familias.
+La entrada raíz `twenty-ui` vuelve a exportar primitivas, componentes compartidos, iconos, tokens de tema
+y utilidades. Los recursos, las utilidades de prueba y el editor de código opcional tienen puntos de entrada independientes.
+
+| Importar                             | Contenido                                                                                    |
+| ------------------------------------ | -------------------------------------------------------------------------------------------- |
+| `twenty-ui/assets`                   | Logotipos y recursos estáticos                                                               |
+| `twenty-ui/components`               | Todas las familias de componentes compartidos, excepto el editor opcional                    |
+| `twenty-ui/components/data-display`  | Grupos de avatares, bloques de comandos, árboles JSON, métricas y mosaicos de iconos         |
+| `twenty-ui/components/feedback`      | Destacados, banners integrados y notificaciones                                              |
+| `twenty-ui/components/input`         | Ajustes predefinidos de botones, entradas especializadas, selectores y controles segmentados |
+| `twenty-ui/components/layout`        | Secciones, listas con desbordamiento y transiciones de iconos                                |
+| `twenty-ui/components/navigation`    | Menús desplegables, composiciones de menú y acciones de pestañas                             |
+| `twenty-ui/components/settings`      | Filas de configuración con controles etiquetados                                             |
+| `twenty-ui/components/code-editor`   | Editor de código, encabezado del editor y utilidades del tema del editor                     |
+| `twenty-ui/primitives`               | Todas las familias de primitivas                                                             |
+| `twenty-ui/primitives/accessibility` | Elementos ocultos y utilidades de interacción con el teclado                                 |
+| `twenty-ui/primitives/data-display`  | Avatares, insignias, chips, etiquetas, muestras de color e indicadores de estado             |
+| `twenty-ui/primitives/feedback`      | Banners, indicadores de progreso, cargadores y esqueletos                                    |
+| `twenty-ui/primitives/input`         | Botones y controles de formulario                                                            |
+| `twenty-ui/primitives/layout`        | Expansión, separadores, dirección y cambio de tamaño                                         |
+| `twenty-ui/primitives/navigation`    | Rutas de navegación, elementos de lista y pestañas                                           |
+| `twenty-ui/primitives/surfaces`      | Tarjetas, diálogos, ventanas emergentes y descripciones emergentes                           |
+| `twenty-ui/primitives/typography`    | Texto, encabezados, accesos directos y texto desbordado                                      |
+| `twenty-ui/icon`                     | [Iconos y búsqueda dinámica](/es/ui/icons)                                                      |
+| `twenty-ui/testing`                  | [Decoradores y diseños de Storybook](/es/ui/testing)                                            |
+| `twenty-ui/theme`                    | Proveedor de tema, hooks y referencias de variables CSS                                      |
+| `twenty-ui/utilities`                | Hooks y utilidades compartidas                                                               |
+
+Importa iconos individuales, como `IconCheck`, desde `twenty-ui/icon`. El proveedor dinámico de iconos incluye el catálogo completo de iconos, así que resérvalo para interfaces que necesiten buscar iconos en tiempo de ejecución.
+
+## Hooks responsivos
+
+Importa `useIsMobile`, `useIsTouchDevice` y `useMediaQuery` desde `twenty-ui/utilities`.
+
+| Hook                   | Consulta                                                          | Usar                                                                        |
+| ---------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `useIsMobile()`        | `MOBILE_MEDIA_QUERY`, hasta `MOBILE_VIEWPORT` inclusive           | Elige un diseño compacto.                                                   |
+| `useIsTouchDevice()`   | `TOUCH_DEVICE_MEDIA_QUERY`, `(hover: none) and (pointer: coarse)` | Elige el comportamiento de interacción táctil independientemente del ancho. |
+| `useMediaQuery(query)` | Cualquier consulta de medios compatible con `window.matchMedia`   | Suscríbete a una consulta de medios personalizada.                          |
+
+Las constantes de consulta provienen de `twenty-ui/utilities`; `MOBILE_VIEWPORT` proviene de `twenty-ui/theme`. Las suscripciones comparten una `MediaQueryList` por consulta y se actualizan cuando cambia su coincidencia. Los hooks devuelven `false` durante el renderizado del servidor, el primer renderizado de hidratación y cuando `window.matchMedia` no está disponible.
+
+En un [componente frontal de Twenty](/es/developers/extend/apps/layout/front-components#current-limitations), las consultas de ancho siguen el cuadro del widget. Por lo tanto, `useIsMobile` sigue el ancho del widget, mientras que `useIsTouchDevice` sigue la entrada principal del dispositivo. Usa las [anulaciones de historias](/es/ui/testing#media-query-overrides) para probar estos estados en Storybook.
+
+## Continuar
+
+* [Temas](/es/ui/theming): usa tokens semánticos y anulaciones con ámbito.
+* [Modo oscuro](/es/ui/dark-mode): alterna entre paletas claras y oscuras.
+
+## Explora la biblioteca
+
+* [Primitivos](/es/ui/primitives/overview): controles fundamentales agrupados por familia, con ejemplos de uso y referencias de API.
+* [Componentes](/es/ui/components/overview): ajustes preestablecidos de diseño compartidos y bloques de construcción reutilizables para la aplicación compuestos a partir de primitivas.
+
+<PageBanner illustration="card-page-ui-library" />

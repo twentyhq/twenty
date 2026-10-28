@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type AxiosRequestConfig, isAxiosError } from 'axios';
+import { AxiosHeaders, type AxiosRequestConfig, isAxiosError } from 'axios';
 import { isDefined } from 'twenty-shared/utils';
 import { parseDataFromContentType } from 'twenty-shared/workflow';
 
@@ -29,7 +29,7 @@ export class HttpTool implements Tool {
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
     const { url, method, headers, body } = parameters as HttpRequestInput;
-    const headersCopy = { ...headers };
+    const headersCopy = new AxiosHeaders(headers);
     const isMethodForBody = ['POST', 'PUT', 'PATCH'].includes(method);
 
     try {
@@ -42,12 +42,12 @@ export class HttpTool implements Tool {
         maxBodyLength: HTTP_TOOL_MAX_PAYLOAD_SIZE_BYTES,
       };
 
-      if (isMethodForBody && body) {
-        const contentType = headers?.['content-type'];
+      if (isMethodForBody && isDefined(body)) {
+        const contentType = headersCopy.getContentType()?.toString();
 
         axiosConfig.data = parseDataFromContentType(body, contentType);
-        if (isDefined(headersCopy) && contentType === 'multipart/form-data') {
-          delete headersCopy['content-type'];
+        if (contentType === 'multipart/form-data') {
+          headersCopy.delete('Content-Type');
         }
       }
 

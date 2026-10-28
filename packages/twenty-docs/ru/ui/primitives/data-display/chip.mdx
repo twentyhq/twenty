@@ -1,0 +1,119 @@
+---
+title: Чип
+description: Отображает компактное содержимое, принадлежащее вызывающей стороне, с необязательными начальными и конечными слотами.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ChipReference from '/snippets/ui/generated/data-display/chip.mdx';
+
+## Обзор
+
+Используйте `Chip` для компактных ссылок на людей, записи или файлы. Используйте [Tag](/ru/ui/primitives/data-display/tag) для цветных категорий и [Status](/ru/ui/primitives/data-display/status) для состояний рабочего процесса.
+
+<StoryEmbed storyId="ui-data-display-chip--display" title="Пример Chip" height={90} />
+
+## Использование
+
+```tsx
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+
+export const AssigneeChip = () => (
+  <Chip
+    variant="soft"
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
+  >
+    Jane
+  </Chip>
+);
+```
+
+Дочерние элементы принимают текст или узлы. `startElement` и `endElement` принимают аватары, значки или другое содержимое. `endElementDivider` добавляет разделитель перед конечным содержимым. По умолчанию chip — это `div`; его слоты могут содержать отдельное действие, при этом сам chip остаётся презентационным.
+
+Chip никогда не вставляет метку. При необходимости предоставьте переведённый резервный вариант из вашего приложения. Не указывайте children для содержимого, полностью состоящего из слотов. Интерактивному chip только со значком требуется доступное имя, предоставленное вызывающей стороной.
+
+## Внешний вид
+
+<StoryEmbed storyId="ui-data-display-chip--catalog" title="Варианты и размеры чипа" height={200} />
+
+`size` принимает значения `sm` или `md` с общей высотой 20px и 24px. `variant` принимает значения `ghost`, `soft`, `solid`, `plain` или `outline`; по умолчанию используется `ghost`. Чипы `plain` не имеют заливки в состоянии покоя или начального внутреннего отступа. Контурные чипы имеют заметную границу толщиной 1px, более светлую заливку в обычном состоянии и внутренний горизонтальный отступ 8px с каждой стороны при той же общей высоте, что и у других вариантов. Интерактивные чипы `plain` и `outline` используют фоны `ghost` при наведении и нажатии, курсор-указатель и кольцо фокуса. Используйте `shape="round"` для формы таблетки, `weight="medium"` для выделения и `color="secondary"` для вторичного текста.
+
+## Кнопки и ссылки
+
+```tsx
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+
+type AssigneeActionProps = {
+  onOpenAssignee: () => void;
+  disabled?: boolean;
+};
+
+export const AssigneeAction = ({
+  onOpenAssignee,
+  disabled,
+}: AssigneeActionProps) => (
+  <Chip
+    render={<button type="button" disabled={disabled} />}
+    onClick={onOpenAssignee}
+    aria-label="Open Jane's record"
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
+  >
+    Jane
+  </Chip>
+);
+```
+
+Указание `onClick` сохраняет `div` по умолчанию. Используйте `render` для компоновки явной нативной кнопки, якоря, ссылки маршрутизатора или другого подходящего владельца. Нативные атрибуты, обработчики, стили и корневая ссылка достигают этого владельца. Нативная кнопка обеспечивает активацию с клавиатуры и поведение в отключённом состоянии. Chip распознаёт нативное отключённое состояние и `aria-disabled` для внешнего вида; один только `aria-disabled` не предотвращает активацию.
+
+`clickable` управляет внешним видом при наведении и указателе и по умолчанию зависит от того, указан ли `onClick`. Явно укажите его для ссылки без обработчика клика. Не вкладывайте кнопки или ссылки внутрь chip, который сам является интерактивным.
+
+```tsx
+import { Chip } from 'twenty-ui/primitives/data-display';
+
+export const DocumentationChip = () => (
+  <Chip
+    variant="outline"
+    shape="round"
+    render={<a href="https://twenty.com/developers" />}
+    clickable
+  >
+    Documentation
+  </Chip>
+);
+```
+
+Текст URL остаётся обычным текстом. Преднамеренные ссылки должны находиться в содержимом вызывающей стороны или в явной компоновке корневого элемента.
+
+## Обрезка и всплывающие подсказки
+
+```tsx
+import { Chip } from 'twenty-ui/primitives/data-display';
+
+export const FileChip = () => (
+  <Chip variant="soft" maxWidth={180} tooltipPlace="top">
+    Quarterly customer research.pdf
+  </Chip>
+);
+```
+
+`maxWidth` ограничивает ширину отображаемого чипа в пикселях, включая внутренние отступы и границу обводки. То же ограничение применяется к простым чипам с асимметричными внутренними отступами. По умолчанию содержимое обрезается с многоточием; `truncate={false}` оставляет его без ограничений обрезки. Строковые children предоставляют собственный текст всплывающей подсказки. Укажите `tooltipContent` для пользовательского текста или содержимого узла, `tooltipDelay` для задержки открытия и `isTooltipMultiline` для сохранения разрывов строк. `alwaysShowTooltip` также включает всплывающую подсказку, когда содержимое помещается. Эти параметры соответствуют [OverflowingTextWithTooltip](/ru/ui/primitives/typography/overflowing-text-with-tooltip). Сохраняйте доступность важной информации без зависимости от наведения.
+
+## Миграция
+
+Замените `emptyLabel` резервными children, предоставленными вызывающей стороной, а `forceEmptyText` или `isLabelHidden` — отсутствующими children. Храните переведённые резервные варианты продукта в приложении. Замените `tooltipLabel` на `tooltipContent`. Перенесите `disabled` к явному интерактивному владельцу и удалите `nativeButton`. Добавьте нативную кнопку или ссылку через `render` везде, где chip ранее полагался на `onClick` для выбора своего элемента.
+
+Переопределения начального внутреннего отступа замените на `variant="plain"`. Оставляйте `clickable` включенным для нативных ссылок и кнопок, которым требуется обратная связь при наведении и нажатии.
+
+## Свойства
+
+Типы и значения по умолчанию генерируются из публичных типов компонента. Также принимаются нативные атрибуты и обработчики событий.
+
+<ChipReference />
+
+<PageBanner illustration="page-cover-checkbox" />
