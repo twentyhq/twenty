@@ -3,6 +3,7 @@
 ## 1.0.1
 
 - Accept the Workspace Apps permission under its new `WORKSPACE_APPS` key as well as `APPLICATIONS`, so folder selection and webhook setup keep working once Twenty stops reporting `APPLICATIONS` (2.53 reports both).
+- Uninstall without an API key now skips the Granola webhook cleanup instead of failing; remove any registered webhook in Granola settings.
 
 ## 1.0.0
 

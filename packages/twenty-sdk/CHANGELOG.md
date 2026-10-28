@@ -26,9 +26,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
   The returned `{ id, path, size, createdAt, url }` is unchanged. `uploadFile` now requires a Twenty server that exposes the `createFileUpload` and `completeFileUpload` mutations.
 
-- **A role permission flag's `flag` is `USER_APPS` or `WORKSPACE_APPS` where it was `CONNECTED_ACCOUNTS` or `APPLICATIONS`.** Unlike `currentUserWorkspace.permissionFlags`, roles (`permissionFlags { flag }`) report only the new key on Twenty 2.53 servers, so code that matches it must accept both keys, as in the snippet under Deprecated.
+- **Roles and permission flag definitions report `USER_APPS` or `WORKSPACE_APPS` where they reported `CONNECTED_ACCOUNTS` or `APPLICATIONS`.** Unlike `currentUserWorkspace.permissionFlags`, a role's `permissionFlags { flag }` and `getPermissionFlags { key }`, which callers with an API key, OAuth or app token use to look up flag ids, return only the new key on Twenty 2.53 servers. Code that matches these keys must accept the new and the old one, as in the snippet under Deprecated.
 
-- **App permission flags can no longer use a standard key, including the former `CONNECTED_ACCOUNTS` and `APPLICATIONS`.** Twenty servers reject a `definePermissionFlag` whose `key` is a standard permission flag key or one of those two former keys. Pick a key specific to your app.
+- **App permission flags can no longer use a standard key, including the former `CONNECTED_ACCOUNTS` and `APPLICATIONS`.** Twenty servers reject a `definePermissionFlag` whose `key` is a standard permission flag key or one of those two former keys. Pick a key specific to your app. An installed app flag already keyed `USER_APPS` or `WORKSPACE_APPS` stops the 2.53 upgrade of that workspace until the flag is revoked from every role and the app is uninstalled.
 
 ### Removed
 
@@ -63,13 +63,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   const objectMetadata = useSelectedObjectMetadata();
   ```
 
-- **`USER_APPS` and `WORKSPACE_APPS` permission flag keys.** The new names of the User Apps and Workspace Apps permission flags, formerly `CONNECTED_ACCOUNTS` and `APPLICATIONS`, with the same universal identifiers: `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` in `twenty-sdk/define`, and new values of `MetadataSchema.PermissionFlagType` and `MetadataSchema.enumPermissionFlagType` in `twenty-client-sdk`.
+- **`USER_APPS` and `WORKSPACE_APPS` permission flag keys.** The new names of the User Apps and Workspace Apps permission flags, formerly `CONNECTED_ACCOUNTS` and `APPLICATIONS`, with the same universal identifiers: `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` in `twenty-sdk/define`, and new values of `MetadataSchema.PermissionFlagType` and `MetadataSchema.enumPermissionFlagType` in `twenty-client-sdk`. Twenty provides `twenty-client-sdk` at runtime, so these `enumPermissionFlagType` values are `undefined` on servers before 2.53; compare string literals as in the snippet under Deprecated.
 
 ### Deprecated
 
 - **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element `payloads` list instead. `enqueueJob` keeps working for now and will be removed in a future major version.
-- **`SystemPermissionFlag.CONNECTED_ACCOUNTS` and `SystemPermissionFlag.APPLICATIONS` in `twenty-sdk/define`.** Use `USER_APPS` and `WORKSPACE_APPS` instead. The old names are aliases with the same universal identifiers, left out of `Object.keys` and `Object.values`. They keep working for now and will be removed in a future major version.
-- **The `CONNECTED_ACCOUNTS` and `APPLICATIONS` permission flag keys at runtime.** Twenty 2.53 servers report both the new and the old key in `currentUserWorkspace.permissionFlags`, `twenty-client-sdk` keeps the old keys as deprecated values of `MetadataSchema.PermissionFlagType` and `MetadataSchema.enumPermissionFlagType`, and `upsertPermissionFlags` accepts either key. A later release stops reporting and accepting the old keys. Check the new key and fall back to the old one for servers before 2.53:
+- **`SystemPermissionFlag.CONNECTED_ACCOUNTS` and `SystemPermissionFlag.APPLICATIONS` in `twenty-sdk/define`.** Use `USER_APPS` and `WORKSPACE_APPS` instead. The old names are aliases with the same universal identifiers, left out of `Object.keys` and `Object.values`. They keep working for now and will be removed in a future major version. In logic functions and front components they resolve only when bundled with the `twenty` CLI 2.53 or later; earlier CLIs drop them, so use the new names in runtime code.
+- **The `CONNECTED_ACCOUNTS` and `APPLICATIONS` permission flag keys at runtime.** Twenty 2.53 servers report both the new and the old key in `currentUserWorkspace.permissionFlags` and accept either key in `upsertPermissionFlags`. The old keys stay in `MetadataSchema.PermissionFlagType` and `MetadataSchema.enumPermissionFlagType` of `twenty-client-sdk` and are deprecated in the GraphQL schema. A later release stops reporting and accepting them. Check the new key and fall back to the old one for servers before 2.53:
 
   ```ts
   const permissionFlags: string[] =

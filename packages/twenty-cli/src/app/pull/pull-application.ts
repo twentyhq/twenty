@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getToolingErrorContext } from '@/app/get-tooling-error-context';
 import { assertPullPaths } from '@/app/pull/assert-pull-paths';
@@ -48,12 +48,6 @@ export const pullApplication = async (
     const unreconciledBaseIdentifiers = new Set(
       base.unreconciledUniversalIdentifiers,
     );
-    const grantsPermissionFlags = [manifest, baseManifest].some(
-      (pullManifest) =>
-        pullManifest?.roles?.some((role) =>
-          isNonEmptyArray(role.permissionFlagUniversalIdentifiers),
-        ),
-    );
     const {
       entities,
       baseEntities,
@@ -63,9 +57,7 @@ export const pullApplication = async (
       baseManifest,
       scannedFiles,
       unreconciledUniversalIdentifiers: unreconciledBaseIdentifiers,
-      systemPermissionFlag: grantsPermissionFlags
-        ? resolvePullSystemPermissionFlag(appPath)
-        : undefined,
+      systemPermissionFlag: resolvePullSystemPermissionFlag(appPath),
     });
 
     signal?.throwIfAborted();

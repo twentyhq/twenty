@@ -53,7 +53,7 @@ describe('permissionFlagMapSelector', () => {
     expect(permissionFlagMap[PermissionFlagType.WORKSPACE]).toBe(false);
   });
 
-  it('should keep command menu expressions on the previous keys working while the server reports them', () => {
+  it('upgrade:2-53:rename-app-permission-flag-keys: should keep command menu expressions on the previous keys working while the server reports them', () => {
     const store = buildStore({
       permissionFlags: [
         PermissionFlagType.USER_APPS,
