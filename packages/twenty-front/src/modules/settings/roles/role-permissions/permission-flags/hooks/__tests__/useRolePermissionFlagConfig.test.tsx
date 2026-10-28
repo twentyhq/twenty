@@ -20,17 +20,23 @@ describe('useRolePermissionFlagConfig', () => {
     resetJotaiStore();
     jotaiStore.set(settingsPermissionFlagDefinitionsState.atom, [
       {
+        __typename: 'PermissionFlag',
         id: 'standard-workspace-apps',
         applicationId: 'standard-app',
         key: PermissionFlagType.WORKSPACE_APPS,
         label: 'Workspace Apps',
+        description: null,
+        icon: null,
         permissionType: 'settings',
       },
       {
+        __typename: 'PermissionFlag',
         id: 'custom-applications',
         applicationId: 'custom-app',
         key: 'APPLICATIONS',
         label: 'Custom applications',
+        description: null,
+        icon: null,
         permissionType: 'settings',
       },
     ]);

@@ -41,6 +41,7 @@ const buildChat = (id: string, updatedAt: string): AgentChatThreadRecord => ({
 });
 
 const buildFollowedParticipant = (threadId: string) => ({
+  __typename: 'AgentChatThreadParticipant' as const,
   id: `participant-${threadId}`,
   threadId,
   lastReadAt: null,

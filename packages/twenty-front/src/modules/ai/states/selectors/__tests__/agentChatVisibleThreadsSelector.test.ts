@@ -28,12 +28,24 @@ const THREADS: {
     | Omit<AgentChatThreadParticipantFieldsFragment, 'id' | 'threadId'>
     | undefined;
 }[] = [
-  { id: 'read', deletedAt: null, participant: { ...READ, archivedAt: null } },
+  {
+    id: 'read',
+    deletedAt: null,
+    participant: {
+      ...READ,
+      archivedAt: null,
+      __typename: 'AgentChatThreadParticipant',
+    },
+  },
   {
     id: 'archived-then-active',
     deletedAt: null,
     lastActivityAt: ACTIVITY_AFTER_ARCHIVE_AT,
-    participant: { ...READ, archivedAt: '2026-10-01T11:00:00.000Z' },
+    participant: {
+      ...READ,
+      archivedAt: '2026-10-01T11:00:00.000Z',
+      __typename: 'AgentChatThreadParticipant',
+    },
   },
   {
     id: 'snoozed-then-active',
@@ -43,18 +55,29 @@ const THREADS: {
       ...READ,
       archivedAt: '2026-10-01T11:00:00.000Z',
       snoozedUntil: '2026-10-02T09:00:00.000Z',
+      __typename: 'AgentChatThreadParticipant',
     },
   },
   {
     id: 'unread',
     deletedAt: null,
-    participant: { ...READ, lastReadAt: null, archivedAt: null },
+    participant: {
+      ...READ,
+      lastReadAt: null,
+      archivedAt: null,
+      __typename: 'AgentChatThreadParticipant',
+    },
   },
   { id: 'not-followed', deletedAt: null, participant: undefined },
   {
     id: 'opened-not-followed',
     deletedAt: null,
-    participant: { ...READ, archivedAt: null, isSubscribed: false },
+    participant: {
+      ...READ,
+      archivedAt: null,
+      isSubscribed: false,
+      __typename: 'AgentChatThreadParticipant',
+    },
   },
   {
     id: 'snoozed',
@@ -63,6 +86,7 @@ const THREADS: {
       ...READ,
       archivedAt: '2026-10-01T11:00:00.000Z',
       snoozedUntil: '2026-10-02T09:00:00.000Z',
+      __typename: 'AgentChatThreadParticipant',
     },
   },
   {
@@ -72,29 +96,46 @@ const THREADS: {
       ...READ,
       archivedAt: null,
       snoozedUntil: '2026-10-01T11:30:00.000Z',
+      __typename: 'AgentChatThreadParticipant',
     },
   },
   {
     id: 'archived',
     deletedAt: null,
-    participant: { ...READ, archivedAt: '2026-10-01T11:00:00.000Z' },
+    participant: {
+      ...READ,
+      archivedAt: '2026-10-01T11:00:00.000Z',
+      __typename: 'AgentChatThreadParticipant',
+    },
   },
   {
     id: 'deleted',
     deletedAt: '2026-10-01T11:00:00.000Z',
-    participant: { ...READ, archivedAt: null },
+    participant: {
+      ...READ,
+      archivedAt: null,
+      __typename: 'AgentChatThreadParticipant',
+    },
   },
   {
     id: 'needs-input',
     deletedAt: null,
     pendingQuestionMessageId: 'question',
-    participant: { ...READ, archivedAt: null },
+    participant: {
+      ...READ,
+      archivedAt: null,
+      __typename: 'AgentChatThreadParticipant',
+    },
   },
   {
     id: 'done-needs-input',
     deletedAt: null,
     pendingQuestionMessageId: 'question',
-    participant: { ...READ, archivedAt: '2026-10-01T11:00:00.000Z' },
+    participant: {
+      ...READ,
+      archivedAt: '2026-10-01T11:00:00.000Z',
+      __typename: 'AgentChatThreadParticipant',
+    },
   },
   {
     id: 'mentioned',
@@ -103,6 +144,7 @@ const THREADS: {
       ...READ,
       archivedAt: null,
       lastMentionedAt: '2026-10-01T09:00:00.000Z',
+      __typename: 'AgentChatThreadParticipant',
     },
   },
   {
@@ -113,6 +155,7 @@ const THREADS: {
       ...READ,
       archivedAt: '2026-10-01T11:00:00.000Z',
       isSubscribed: false,
+      __typename: 'AgentChatThreadParticipant',
     },
   },
 ];
