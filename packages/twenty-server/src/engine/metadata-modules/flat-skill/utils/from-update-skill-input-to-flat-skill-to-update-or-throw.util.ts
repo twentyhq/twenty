@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -13,6 +13,12 @@ import {
   SkillExceptionCode,
 } from 'src/engine/metadata-modules/skill/skill.exception';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
+
+const NON_NULLABLE_SKILL_UPDATE_PROPERTIES = [
+  'label',
+  'content',
+  'isActive',
+] as const;
 
 export const fromUpdateSkillInputToFlatSkillToUpdateOrThrow = ({
   flatSkillMaps,
@@ -56,12 +62,14 @@ export const fromUpdateSkillInputToFlatSkillToUpdateOrThrow = ({
     );
   }
 
-  const { id: _id, name, isActive, ...otherUpdates } = updateSkillInput;
-  // GraphQL accepts an explicit null for any optional input, but isActive is never null
-  const updates = {
-    ...otherUpdates,
-    ...(isDefined(isActive) ? { isActive } : {}),
-  };
+  const { id: _id, name, ...inputUpdates } = updateSkillInput;
+  // GraphQL accepts an explicit null for any optional input, but these columns are never null
+  const updates = removePropertiesFromRecord(
+    inputUpdates,
+    NON_NULLABLE_SKILL_UPDATE_PROPERTIES.filter(
+      (property) => inputUpdates[property] === null,
+    ),
+  );
 
   if (shouldOverride && isDefined(name) && name !== existingFlatSkill.name) {
     throw new SkillException(

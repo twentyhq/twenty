@@ -136,19 +136,22 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
     expect(flatAgentToUpdate.isActive).toBe(true);
   });
 
-  it('ignores a null isActive instead of storing it', () => {
+  it('ignores a null on a non-nullable property instead of storing it', () => {
     const { flatAgentToUpdate } = updateAsWorkspace({
       id: appAgent.id,
-      label: 'Market researcher',
+      label: null as unknown as string,
+      prompt: 'Research the market',
       isActive: null as unknown as boolean,
     });
 
-    expect(flatAgentToUpdate.isActive).toBe(true);
     expect(
       flatAgentToUpdate.overrides?.[
         WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER
       ],
-    ).toEqual({ label: 'Market researcher' });
+    ).toEqual({ prompt: 'Research the market' });
+    expect(
+      fromFlatAgentWithRoleIdToAgentDto({ ...flatAgentToUpdate, roleId: null }),
+    ).toMatchObject({ label: 'Researcher', isActive: true });
   });
 
   it('refuses to rename another application agent', () => {
