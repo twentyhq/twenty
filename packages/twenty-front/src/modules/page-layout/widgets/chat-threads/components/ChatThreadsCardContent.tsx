@@ -1,12 +1,13 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { type ReactNode } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { ChatThreadsList } from '@/page-layout/widgets/chat-threads/components/ChatThreadsList';
+import { AiChatThreadList } from '@/ai/components/AiChatThreadList';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
@@ -35,8 +36,7 @@ type ChatThreadsCardContentProps = {
   onDetachThread: (threadId: string) => void;
   threads: AgentChatThreadRecord[];
   hasNextPage?: boolean;
-  isFetchingMoreThreads?: boolean;
-  onLoadMore?: () => void;
+  pagination?: ReactNode;
 };
 
 export const ChatThreadsCardContent = ({
@@ -46,8 +46,7 @@ export const ChatThreadsCardContent = ({
   onDetachThread,
   threads,
   hasNextPage = false,
-  isFetchingMoreThreads = false,
-  onLoadMore,
+  pagination,
 }: ChatThreadsCardContentProps) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
@@ -104,9 +103,12 @@ export const ChatThreadsCardContent = ({
 
   return (
     <StyledThreadsContainer>
-      <ChatThreadsList
+      <AiChatThreadList
         threads={threads}
-        selectedThreadId={sidePanelThreadId}
+        variant="compact"
+        selectedThreadIds={
+          isDefined(sidePanelThreadId) ? [sidePanelThreadId] : []
+        }
         onThreadClick={({ id }) =>
           openRecordInSidePanel({
             recordId: id,
@@ -115,15 +117,7 @@ export const ChatThreadsCardContent = ({
         }
         onDetachThread={onDetachThread}
       />
-      {hasNextPage && (
-        <Button
-          variant="ghost"
-          onClick={onLoadMore}
-          disabled={loading || isFetchingMoreThreads}
-        >
-          {isFetchingMoreThreads ? t`Loading…` : t`Load more conversations`}
-        </Button>
-      )}
+      {pagination}
     </StyledThreadsContainer>
   );
 };

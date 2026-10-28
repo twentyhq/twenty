@@ -1,9 +1,12 @@
+import { t } from '@lingui/core/macro';
+
 import { useChatThreadsForRecord } from '@/ai/hooks/useChatThreadsForRecord';
 import { useDetachChatThreadFromRecord } from '@/ai/hooks/useDetachChatThreadFromRecord';
 import { ChatThreadsCardContent } from '@/page-layout/widgets/chat-threads/components/ChatThreadsCardContent';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useToast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
 
 export const ChatThreadsCard = () => {
   const targetRecord = useTargetRecord();
@@ -38,8 +41,17 @@ export const ChatThreadsCard = () => {
       onDetachThread={(threadId) => void handleDetachThread(threadId)}
       threads={threads}
       hasNextPage={hasNextPage}
-      isFetchingMoreThreads={isFetchingMoreThreads}
-      onLoadMore={() => void fetchMoreThreads()}
+      pagination={
+        hasNextPage && (
+          <Button
+            variant="ghost"
+            onClick={() => void fetchMoreThreads()}
+            disabled={loading || isFetchingMoreThreads}
+          >
+            {isFetchingMoreThreads ? t`Loading…` : t`Load more conversations`}
+          </Button>
+        )
+      }
     />
   );
 };

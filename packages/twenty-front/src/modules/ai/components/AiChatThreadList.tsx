@@ -4,10 +4,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { AiChatThreadListGroup } from '@/ai/components/AiChatThreadListGroup';
 import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 
 type AiChatThreadListProps = {
   threads: AgentChatThreadRecord[];
+  variant?: AiChatThreadListVariant;
   selectedThreadIds?: string[];
   checkedThreadIds?: string[];
   onThreadClick: (
@@ -27,6 +29,7 @@ type AiChatThreadListProps = {
 
 export const AiChatThreadList = ({
   threads,
+  variant = 'default',
   selectedThreadIds = [],
   checkedThreadIds = [],
   onThreadClick,
@@ -41,6 +44,7 @@ export const AiChatThreadList = ({
     <AiChatThreadListItem
       key={thread.id}
       thread={thread}
+      variant={variant}
       isSelected={selectedThreadIdSet.has(thread.id)}
       isChecked={checkedThreadIdSet.has(thread.id)}
       onClick={onThreadClick}
@@ -54,8 +58,12 @@ export const AiChatThreadList = ({
 
   return (
     <>
-      {groupThreadsByDate(threads).map((dateGroup) => (
-        <AiChatThreadListGroup key={dateGroup.id} title={dateGroup.title}>
+      {groupThreadsByDate({ threads, variant }).map((dateGroup) => (
+        <AiChatThreadListGroup
+          key={dateGroup.id}
+          title={dateGroup.title}
+          variant={variant}
+        >
           {dateGroup.threads.map(renderThread)}
         </AiChatThreadListGroup>
       ))}

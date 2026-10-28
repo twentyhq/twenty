@@ -1,9 +1,10 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isArray } from '@sniptt/guards';
-import { type ReactNode } from 'react';
+import { type ComponentProps } from 'react';
 import mockDatePreview from 'storybook-addon-mock-date/preview';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -89,6 +90,13 @@ const StyledWidget = styled.div`
   width: 400px;
 `;
 
+type ChatThreadsCardContentStoryArgs = ComponentProps<
+  typeof ChatThreadsCardContent
+> & {
+  isFetchingMoreThreads: boolean;
+  onLoadMore: () => void;
+};
+
 const meta = {
   title: 'Modules/PageLayout/Widgets/ChatThreadsCardContent',
   component: ChatThreadsCardContent,
@@ -102,7 +110,9 @@ const meta = {
         ? mockDatePreview.decorators[0]
         : mockDatePreview.decorators;
 
-      return <>{mockDateDecorator?.(Story, context) as ReactNode}</>;
+      mockDateDecorator?.(() => null, context);
+
+      return <Story />;
     },
     MemoryRouterDecorator,
     ToastDecorator,
@@ -112,6 +122,7 @@ const meta = {
     threads: THREADS,
     onRetry: fn(),
     onDetachThread: fn(),
+    isFetchingMoreThreads: false,
     onLoadMore: fn(),
   },
   beforeEach: () => {
@@ -126,12 +137,23 @@ const meta = {
         onRetry={args.onRetry}
         onDetachThread={args.onDetachThread}
         hasNextPage={args.hasNextPage}
-        isFetchingMoreThreads={args.isFetchingMoreThreads}
-        onLoadMore={args.onLoadMore}
+        pagination={
+          args.hasNextPage && (
+            <Button
+              variant="ghost"
+              onClick={args.onLoadMore}
+              disabled={args.loading || args.isFetchingMoreThreads}
+            >
+              {args.isFetchingMoreThreads
+                ? 'Loading…'
+                : 'Load more conversations'}
+            </Button>
+          )
+        }
       />
     </StyledWidget>
   ),
-} satisfies Meta<typeof ChatThreadsCardContent>;
+} satisfies Meta<ChatThreadsCardContentStoryArgs>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
