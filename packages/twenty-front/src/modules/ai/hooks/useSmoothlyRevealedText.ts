@@ -21,7 +21,6 @@ export const useSmoothlyRevealedText = ({
 
   const isAppendedText = text.startsWith(textReveal.revealedText);
 
-  // a rewrite rather than an append is shown whole
   if (!isAppendedText) {
     setTextReveal({ revealedText: text, revealedAtInMs: null });
   }
@@ -53,12 +52,13 @@ export const useSmoothlyRevealedText = ({
 
   const revealedText = isAppendedText ? textReveal.revealedText : text;
 
+  if (revealedText.trim().length > 0) {
+    return { revealedText, isRevealing };
+  }
+
   // the first word shows at once so a starting answer never renders empty
   return {
-    revealedText:
-      revealedText.trim().length === 0
-        ? (/^\s*\S+/.exec(text)?.[0] ?? revealedText)
-        : revealedText,
+    revealedText: /^\s*\S+/.exec(text)?.[0] ?? revealedText,
     isRevealing,
   };
 };

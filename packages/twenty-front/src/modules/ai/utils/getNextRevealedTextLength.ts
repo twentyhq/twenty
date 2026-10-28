@@ -4,7 +4,6 @@ const MINIMUM_CHARACTERS_REVEALED_PER_MS = 0.06;
 const MAXIMUM_ELAPSED_FRAME_COUNT = 2;
 
 // Eases toward the received text so network bursts spread over a few hundred ms, never splitting a word.
-// Elapsed time is capped so a reveal resuming after an idle pause starts slow again.
 export const getNextRevealedTextLength = ({
   text,
   revealedLength,
@@ -20,6 +19,7 @@ export const getNextRevealedTextLength = ({
     return text.length;
   }
 
+  // capped so a reveal resuming after an idle pause starts slow again
   const elapsedFrameCount = Math.min(
     Math.max(elapsedMs / FRAME_DURATION_IN_MS, 1),
     MAXIMUM_ELAPSED_FRAME_COUNT,

@@ -2,10 +2,10 @@ const CODE_FENCE_LINE_REGEX = /^\s*(```|~~~)/gm;
 const TABLE_DELIMITER_LINE_REGEX = /^\s*\|?\s*:?-{3,}/m;
 const UNFINISHED_LINK_REGEX = /^\[[^\]]*(\]\([^)]*)?$/;
 
-const hideFrom = (text: string, index: number) =>
+const hideFrom = ({ text, index }: { text: string; index: number }) =>
   text.slice(0, index).trimEnd();
 
-const countOccurrences = (text: string, token: string) =>
+const countOccurrences = ({ text, token }: { text: string; token: string }) =>
   text.split(token).length - 1;
 
 // Text cut mid-stream would flash raw syntax, so hide what cannot render yet and close what can.
@@ -25,7 +25,7 @@ export const getDisplayableStreamingMarkdown = (text: string): string => {
     lastBlock.trimStart().startsWith('|') &&
     !TABLE_DELIMITER_LINE_REGEX.test(lastBlock)
   ) {
-    return hideFrom(text, lastBlockStart);
+    return hideFrom({ text, index: lastBlockStart });
   }
 
   let displayableText = text;
@@ -33,7 +33,10 @@ export const getDisplayableStreamingMarkdown = (text: string): string => {
   const chatReferenceStart = displayableText.lastIndexOf('[[');
 
   if (chatReferenceStart > displayableText.lastIndexOf(']]')) {
-    displayableText = hideFrom(displayableText, chatReferenceStart);
+    displayableText = hideFrom({
+      text: displayableText,
+      index: chatReferenceStart,
+    });
   }
 
   const lastLineStart = displayableText.lastIndexOf('\n') + 1;
@@ -45,29 +48,32 @@ export const getDisplayableStreamingMarkdown = (text: string): string => {
   ) {
     const isImage = displayableText[linkStart - 1] === '!';
 
-    displayableText = hideFrom(
-      displayableText,
-      isImage ? linkStart - 1 : linkStart,
-    );
+    displayableText = hideFrom({
+      text: displayableText,
+      index: isImage ? linkStart - 1 : linkStart,
+    });
   }
 
   const lastLine = displayableText.slice(lastLineStart);
 
-  if (countOccurrences(lastLine, '`') % 2 === 1) {
+  if (countOccurrences({ text: lastLine, token: '`' }) % 2 === 1) {
     const inlineCodeStart = displayableText.lastIndexOf('`');
 
     return inlineCodeStart === displayableText.length - 1
-      ? hideFrom(displayableText, inlineCodeStart)
+      ? hideFrom({ text: displayableText, index: inlineCodeStart })
       : `${displayableText}\``;
   }
 
   const lastLineWithoutInlineCode = lastLine.replace(/`[^`]*`/g, '');
 
-  if (countOccurrences(lastLineWithoutInlineCode, '**') % 2 === 1) {
+  if (
+    countOccurrences({ text: lastLineWithoutInlineCode, token: '**' }) % 2 ===
+    1
+  ) {
     const boldStart = displayableText.lastIndexOf('**');
 
     return displayableText.slice(boldStart + 2).trim() === ''
-      ? hideFrom(displayableText, boldStart)
+      ? hideFrom({ text: displayableText, index: boldStart })
       : `${displayableText.trimEnd()}**`;
   }
 
