@@ -160,9 +160,18 @@ export const useChatThreadsForRecord = ({
     skip: !isRecordLinkable,
   });
 
+  const refetchThreads = useCallback(
+    () =>
+      refetch({
+        limit: Math.max(links.length, CHAT_THREADS_FOR_RECORD_PAGE_SIZE),
+        lastCursor: undefined,
+      }),
+    [links.length, refetch],
+  );
+
   const refetchLinks = useCallback(() => {
-    void refetch();
-  }, [refetch]);
+    void refetchThreads();
+  }, [refetchThreads]);
 
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: refetchLinks,
@@ -204,7 +213,7 @@ export const useChatThreadsForRecord = ({
     getAllLinkIdsToThread,
     loading,
     error,
-    refetch,
+    refetch: refetchThreads,
     fetchMoreThreads,
     hasNextPage,
     isFetchingMoreThreads: isFetchingMoreRecords,

@@ -322,6 +322,45 @@ describe('useChatThreadsForRecord', () => {
     });
 
     expect(refetch).toHaveBeenCalledTimes(1);
+    expect(refetch).toHaveBeenCalledWith({
+      limit: 20,
+      lastCursor: undefined,
+    });
+  });
+
+  it('keeps every loaded link when refreshing after a mutation or retrying', async () => {
+    const loadedLinks = Array.from({ length: 40 }, (_, linkIndex) =>
+      buildLink({
+        id: `link-${linkIndex}`,
+        threadId: RENEWAL_THREAD_ID,
+        title: 'Renewal prep',
+      }),
+    );
+    useFindManyRecords.mockReturnValue({
+      ...findManyRecordsResult,
+      records: loadedLinks,
+    });
+    const result = renderChatThreadsForRecord();
+
+    dispatchThreadOperation({
+      type: 'delete-one',
+      deletedRecordId: ONBOARDING_THREAD_ID,
+    });
+
+    await act(async () => {
+      await result.current.refetch();
+    });
+
+    expect(result.current.threads).toHaveLength(1);
+    expect(refetch).toHaveBeenCalledTimes(2);
+    expect(refetch).toHaveBeenNthCalledWith(1, {
+      limit: loadedLinks.length,
+      lastCursor: undefined,
+    });
+    expect(refetch).toHaveBeenNthCalledWith(2, {
+      limit: loadedLinks.length,
+      lastCursor: undefined,
+    });
   });
 
   it.each([

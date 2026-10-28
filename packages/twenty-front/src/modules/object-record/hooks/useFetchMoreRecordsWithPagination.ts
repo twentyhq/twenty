@@ -125,6 +125,7 @@ export const useFetchMoreRecordsWithPagination = <
           variables: {
             filter,
             orderBy,
+            limit,
             lastCursor: isNonEmptyString(lastCursorLocal)
               ? lastCursorLocal
               : undefined,
@@ -202,6 +203,7 @@ export const useFetchMoreRecordsWithPagination = <
     fetchMore,
     filter,
     orderBy,
+    limit,
     onCompleted,
     handleFindManyRecordsError,
     queryIdentifier,
