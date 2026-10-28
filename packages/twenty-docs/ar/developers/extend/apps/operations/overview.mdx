@@ -1,31 +1,54 @@
 ---
 title: نظرة عامة
-description: قم ببناء تطبيقك واختباره وإصداره — أوامر CLI، واختبارات التكامل، وCI، والنشر إلى خادم أو إلى npm.
+description: ابنِ تطبيقك واختبره وأصدره — أوامر CLI، واختبارات التكامل، وCI، والترجمات، والنشر إلى خادم أو إلى npm.
 ---
 
-**طبقة العمليات** هي كل ما تفعله *على* تطبيقك وليس *به*: استدعاء أوامر CLI، وتشغيل اختبارات التكامل على خادم Twenty حقيقي، وإعداد CI، وإطلاق الإصدارات — إما كملف tarball يُنشر على خادم واحد أو كحزمة npm مُدرجة في المتجر.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
-```text
-   develop ─▶ test ─▶ build ─▶ deploy / publish
-   ───────    ────    ─────    ─────────────────
-   yarn       yarn    yarn     yarn twenty app:publish --private  (tarball → one server)
-   twenty     test    twenty
-   dev                dev:build    yarn twenty app:publish         (npm → marketplace)
-```
+## ما تغطيه طبقة العمليات
+
+**طبقة العمليات** هي كل ما تفعله *على* تطبيقك بدلًا من *به*: استدعاء أوامر CLI، وتشغيل اختبارات التكامل على خادم Twenty حقيقي، وإعداد CI، وترجمة سلاسله النصية، وإصدار الإصدارات — إما كملف tarball يُنشر على خادم واحد أو كحزمة npm مُدرجة في المتجر.
+
+| الخطوة              | أمر                            |
+| ------------------- | ------------------------------ |
+| التطوير             | `twenty app dev`               |
+| تجربة               | `yarn test`                    |
+| البناء              | `twenty app build`             |
+| النشر إلى خادم واحد | `twenty app publish --private` |
+| النشر على npm       | `twenty app publish`           |
 
 ## في هذا القسم
 
-<CardGroup cols={2}>
-  <Card title="CLI" icon="terminal" href="/ar/developers/extend/apps/operations/cli">
-    مرجع `yarn twenty` — exec، logs، uninstall، remotes.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ar/developers/extend/apps/operations/cli" img="/images/user-guide/halftone/card-page-cli.svg">
+    <CardTitle>CLI</CardTitle>
+    تسجيل الدخول، استكشاف البيانات، بناء التطبيقات، exec، سجلات وإلغاء التثبيت باستخدام CLI \`20'.
   </Card>
-  <Card title="المزامنة والاستعادة" icon="compass" href="/ar/developers/extend/apps/operations/sync-and-recovery">
-    أي أمر يُستخدم ومتى، وكيفية قراءة فروق المزامنة، وسلّم الاستعادة.
+  <Card href="/ar/developers/extend/apps/operations/sync-and-recovery" img="/images/user-guide/halftone/card-page-sync-recovery.svg">
+    <CardTitle>المزامنة والاسترداد</CardTitle>
+    أي الأمر عندما يكون ذلك، قراءة المزامنة مختلفة، وسلم الاسترداد.
   </Card>
-  <Card title="الاختبار" icon="flask" href="/ar/developers/extend/apps/operations/testing">
-    إعداد Vitest، اختبارات التكامل، فحص الأنواع، سير عمل CI.
+  <Card href="/ar/developers/extend/apps/operations/testing" img="/images/user-guide/halftone/card-page-testing.svg">
+    <CardTitle>اختبار</CardTitle>
+    إعداد Vitest ، اختبارات التكامل، التحقق من النوع، سير العمل CI.
   </Card>
-  <Card title="النشر" icon="upload" href="/ar/developers/extend/apps/operations/publishing">
-    البناء، نشر ملف tarball، النشر إلى npm، التثبيت.
+  <Card href="/ar/developers/extend/apps/operations/translations" img="/images/user-guide/halftone/card-page-translations.svg">
+    <CardTitle>الترجمة</CardTitle>
+    ضع علامات على السلاسل، واستخراج الكتالوجات، وشحن تطبيقك بعدة لغات.
+  </Card>
+  <Card href="/ar/developers/extend/apps/operations/publishing" img="/images/user-guide/halftone/card-page-publishing.svg">
+    <CardTitle>نشر</CardTitle>
+    بناية ، نشر كرة التار ، نشر إلى npm ، تثبيت.
+  </Card>
+  <Card href="/ar/developers/extend/apps/operations/marketplace-vetting" img="/images/documentation/banner-icons-v2/permissions.svg">
+    <CardTitle>فحص السوق (WIP)</CardTitle>
+    مقترح لأمان وجودة وعمليات فحص تشغيلي لإصدار تطبيقات طرف ثالث.
+  </Card>
+  <Card href="/ar/developers/extend/apps/operations/monitoring" img="/images/user-guide/halftone/card-page-monitoring.svg">
+    <CardTitle>رصد</CardTitle>
+    الأخطاء، تحديد الأسعار، الاعتمادات وأداء الوظائف عبر التثبيت.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="section-apps-operations" />

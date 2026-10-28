@@ -5,7 +5,7 @@ import { fromWorkflowStepManifestToActionOrThrow } from 'src/engine/core-modules
 import { fromWorkflowTriggerManifestToTriggerOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util';
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, sortKeysDeeply } from 'twenty-shared/utils';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -92,7 +92,7 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
     createdAt: existingWorkflow?.createdAt ?? now,
     updatedAt: now,
     versionDefinitionHash: createHash('sha256')
-      .update(JSON.stringify({ trigger, steps }))
+      .update(JSON.stringify(sortKeysDeeply({ trigger, steps })))
       .digest('hex'),
     flatUniversalWorkflowVersion: {
       id: versionId,

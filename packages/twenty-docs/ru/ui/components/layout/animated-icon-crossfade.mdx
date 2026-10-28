@@ -1,0 +1,57 @@
+---
+title: AnimatedIconCrossfade
+description: Плавное переключение между двумя значками при изменении состояния приложения.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AnimatedIconCrossfadeReference from '/snippets/ui/generated/components/layout/animated-icon-crossfade.mdx';
+
+## Обзор
+
+`AnimatedIconCrossfade` выполняет плавное перекрестное затухание между содержимым узлов `activeIcon` и `inactiveIcon` в соответствии с `isActive`. Он не управляет действием или состоянием. Размещайте его внутри подписанной [кнопки](/ru/ui/primitives/input/button).
+
+<StoryEmbed storyId="ui-components-layout-animatediconcrossfade--display" title="Пример AnimatedIconCrossfade" height={100} />
+
+## Использование
+
+```tsx
+import { useState } from 'react';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
+import { IconPencil, IconX } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const EditToggle = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <Button
+      size="sm"
+      aria-expanded={isEditing}
+      onClick={() => setIsEditing(!isEditing)}
+      startIcon={
+        <AnimatedIconCrossfade
+          isActive={isEditing}
+          activeIcon={<IconX size={14} />}
+          inactiveIcon={<IconPencil size={14} />}
+        />
+      }
+    >
+      Edit actions
+    </Button>
+  );
+};
+```
+
+Оба узла остаются смонтированными при изменении `isActive`, сохраняя своё локальное состояние. Слои анимируют непрозрачность и масштаб, а также отключают переходы при уменьшенном движении. Оба слоя являются декоративными; сохраняйте доступное имя действия на окружающем элементе управления. Для отдельного изображения с подписью задайте `role="img"` и `aria-label` в корневом элементе.
+
+Нативные атрибуты, события, `className`, `style` и `ref` применяются к встроенному элементу span, который может находиться внутри кнопки. `render` заменяет этот целевой элемент посредством композиции Base UI. По умолчанию размеры корневого элемента задаются токеном темы для маленьких значков. Явно задавайте размер каждого узла значка и используйте стили ширины и высоты корневого элемента для более крупной графики.
+
+Замените конструкторы `ActiveIcon` и `InactiveIcon` узлами `activeIcon` и `inactiveIcon` в нижнем регистре. Перенесите прежний параметр `size` в размеры узла и стили корневого элемента.
+
+## Свойства
+
+<AnimatedIconCrossfadeReference />
+
+<PageBanner illustration="card-page-sync-recovery" />

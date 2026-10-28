@@ -1,0 +1,102 @@
+---
+title: ButtonGroup
+description: Grupați butoanele asociate cu un aspect comun și un cadru opțional.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ButtonGroupReference from '/snippets/ui/generated/input/button-group.mdx';
+
+## Prezentare generală
+
+Oferiți unui grup un nume accesibil și plasați în interiorul acestuia butoanele asociate. Grupul unește marginile adiacente și poate aplica valori implicite pentru dimensiune, variantă și culoare. Butoanele își păstrează propriile opriri de tabulare.
+
+<StoryEmbed storyId="ui-input-button-buttongroup--display" title="Grup de butoane" height={100} />
+
+## Utilizare
+
+```tsx
+import { IconCheckbox, IconNotes, IconTimelineEvent } from 'twenty-ui/icon';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const ActivityActions = () => (
+  <ButtonGroup aria-label="Create activity" size="sm">
+    <Button startIcon={<IconNotes />}>Note</Button>
+    <Button startIcon={<IconCheckbox />}>Task</Button>
+    <Button startIcon={<IconTimelineEvent />}>Activity</Button>
+  </ButtonGroup>
+);
+```
+
+## Gestionarea stării
+
+`ButtonGroup` coordonează aspectul, nu selecția. Nu are un mod de selecție controlat sau necontrolat. Fiecare buton primește propriul gestionar de acțiuni și propria stare a aplicației; consultați [exemplul de gestionare a stării pentru Button](/ro/ui/primitives/input/button#state-ownership) pentru comportamentul de încărcare.
+
+Pentru o alegere reciproc exclusivă, utilizați [RadioGroup](/ro/ui/primitives/input/radio-group), care gestionează selecția pentru controalele sale radio.
+
+## Precedența aspectului
+
+Fiecare proprietate de aspect se rezolvă independent: proprietatea explicită a copilului, apoi valoarea implicită a grupului, apoi valoarea implicită a componentei. Acest lucru se aplică atât pentru Button, cât și pentru IconButton, inclusiv pentru un `IconButton size="xs"` explicit. Valorile implicite ajung la copii prin fragmente, învelișuri și ancore pentru tooltip.
+
+Un grup poate furniza `color="inherit"` pe o suprafață colorată. Un element copil care se rezolvă la culoarea moștenită trebuie, de asemenea, să se rezolve la o variantă nesolidă. Suprascrierile explicite ale culorii și variantei elementului copil au prioritate, astfel încât un element copil poate alege o variantă nesolidă sau o culoare semantică atunci când grupul furnizează împreună solid și inherit.
+
+Păstrați butoanele atașate la aceeași dimensiune, astfel încât marginile lor să fie aliniate. Acest exemplu suprascrie varianta și culoarea, moștenind în același timp dimensiunea grupului.
+
+```tsx
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const ActivityActions = () => (
+  <ButtonGroup
+    aria-label="Activity actions"
+    variant="solid"
+    color="accent"
+    size="sm"
+  >
+    <Button variant="ghost" color="danger">
+      Delete activity
+    </Button>
+    <Button color="neutral">Duplicate activity</Button>
+    <Button>New activity</Button>
+  </ButtonGroup>
+);
+```
+
+<StoryEmbed storyId="ui-input-button-buttongroup--appearance-overrides" title="Aspect individual într-un grup de butoane" height={100} />
+
+## Controale detașate
+
+Setați `attached={false}` pentru a păstra colțurile rotunjite ale fiecărui control și un spațiu de 2 px. Valorile implicite ale grupului se aplică în continuare prin intermediul wrapperelor și al ancorelor pentru indicii; proprietățile explicite ale elementelor copil au prioritate.
+
+## Controale încadrate
+
+Setați `framed` pentru a adăuga un fundal translucid, o bordură, spațiere interioară de 2 px și colțuri concentrice. Cadrul funcționează cu controale atașate sau detașate și păstrează aspectul explicit al elementelor copil. Utilizați `size="xs"` pentru [IconButton](/ro/ui/components/input/icon-button) pentru acțiuni compacte de 20 px.
+
+<StoryEmbed storyId="ui-components-iconbutton--framed-group-documentation" title="Grup de butoane încadrat" height={100} />
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus, IconTrash } from 'twenty-ui/icon';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const CompactRecordActions = () => (
+  <ButtonGroup framed attached={false} aria-label="Record actions">
+    <IconButton size="xs" aria-label="Add" variant="ghost">
+      <IconPlus />
+    </IconButton>
+    <IconButton size="xs" aria-label="Delete" variant="ghost" disabled>
+      <IconTrash />
+    </IconButton>
+  </ButtonGroup>
+);
+```
+
+## Actualizarea grupurilor existente
+
+Înlocuiți `IconButtonGroup` și matricea sa `iconButtons` cu `ButtonGroup framed attached={false}` și elemente copil explicite. Înlocuiți `InsideButton` cu `LightIconButton size="xs"`. Fiecare buton își gestionează numele accesibil, gestionarul de acțiuni, starea dezactivată și indiciul opțional.
+
+## Proprietăți
+
+<ButtonGroupReference />
+
+<PageBanner illustration="page-cover-pointer" />

@@ -3,6 +3,8 @@ title: Întrebări frecvente legale
 description: Întrebări juridice puse frecvent.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Rezervarea datelor și transferurile internaționale
 
 <AccordionGroup>
@@ -26,14 +28,17 @@ Clauze contractuale standard ale UE, împreună cu addendumul din Regatul Unit �
 <Accordion title="Unde putem găsi actualul acord de prelucrare a datelor?">
 Puteți genera DPA semnat la http://{your-domain}/settings/legal/dpa (de ex. https://getting-started.twenty.com/settings/legal/dpa).
 </Accordion>
+<Accordion title="Este DPA disponibil pe toate planurile?">
+Da. Acordul standard de prelucrare a datelor este disponibil în fiecare plan și poate fi semnat cu un singur clic din Setări → Juridic → DPA. Modificările aduse termenilor standard, cum ar fi o entitate contractantă diferită sau termene-limită de notificare personalizate, sunt disponibile în planul Enterprise.
+</Accordion>
 <Accordion title="Funcționează douăzeci de persoane care prelucrează date pentru comerciant și informații de contact stocate în CRM, în timp ce compania noastră rămâne operatorul de date?">
 În conformitate cu [Politica noastră de confidențialitate](https://twenty.com/privacy-policy), douăzeci acționează ca procesor de date pentru comerciant și contactează informațiile stocate în CRM, în timp ce firma dumneavoastră rămâne operatorul de date.
 </Accordion>
 <Accordion title="Conținutul CRM este folosit vreodată pentru a instrui modele AI de douăzeci sau terțe părți?">
-Conținutul CRM poate fi folosit pentru a instrui modele AI în funcție de termenii și condițiile sub-procesorilor. Douăzeci de ani nu au propriul model AI — toate modelele AI disponibile pe 20 de cloud sunt furnizate de subprocesoarele noastre.
+Nu. Twenty nu are propriul model AI și nu antrenează niciun model pe datele dvs. Furnizorii de AI utilizați în mod implicit pe Twenty Cloud (Azure OpenAI, OpenAI, Anthropic și Mistral) nu se antrenează pe baza acestora conform termenilor lor. Unele modele opționale, precum Google Gemini și TypeSafe (utilizat de acțiunea Classify din fluxurile de lucru), sunt utilizate numai dacă un administrator le activează; termenii acestora sunt enumerați în [Centrul nostru de încredere](https://trust.twenty.com/?tab=subprocessors).
 </Accordion>
 <Accordion title="Dacă există o procesare AI opțională, poate fi dezactivată complet pentru spațiul nostru de lucru?">
-AI poate fi complet dezactivat prin dezactivarea tuturor modelelor AI în Setări → AI → Modele. În plus, nu sunt trimise date către AI decât dacă interacționezi activ cu AI chat sau un nod AI într-un flux de lucru.
+Nicio dată nu este trimisă unui furnizor de AI decât dacă cineva din spațiul dvs. de lucru rulează AI: chatul AI, un agent AI sau un pas AI într-un flux de lucru. Pentru a bloca complet AI, setați o limită de utilizare AI de 0 pentru spațiul de lucru în Setări → Facturare, care se aplică fiecărui membru, inclusiv administratorilor. De asemenea, puteți elimina permisiunea Ask AI din rolurile dvs. editabile în Setări → Roluri; rolul Admin încorporat o păstrează întotdeauna.
 </Accordion>
 </AccordionGroup>
 
@@ -44,10 +49,16 @@ AI poate fi complet dezactivat prin dezactivarea tuturor modelelor AI în Setăr
 Toate datele sunt criptate în tranzit și în repaus. Datele disponibile sunt izolate prin intermediul unei scheme per chiriaș, iar cheile de criptare sunt rotite periodic.
 </Accordion>
 <Accordion title="Care douăzeci de membri ai personalului sau subprelucrătorilor pot accesa spațiile de lucru ale clienților, în ce scopuri și cum se accesează autorizați și înregistrați?">
-Echipele de inginerie și asistență Twenty pot accesa spațiile de lucru ale clienților pentru a investiga și rezolva problemele. Proprietarii spațiilor de lucru controlează acest lucru: accesul pentru asistență poate fi dezactivat oricând în Settings → General → Security și rămâne dezactivat până când îl activați din nou.
+Echipele de inginerie și asistență Twenty pot accesa spațiile de lucru ale clienților pentru a investiga și rezolva problemele. Proprietarii spațiilor de lucru controlează acest lucru: accesul pentru asistență poate fi dezactivat oricând în Settings → General → Security și rămâne dezactivat până când îl activați din nou. Accesul pentru asistență necesită autentificare cu doi factori din partea Twenty, iar în planul Organization și în planurile superioare fiecare sesiune este înregistrată în jurnalele dvs. de audit. În timp ce o persoană de la Twenty vă impersonifică, sesiunea apare și cu eticheta Impersonation în Setări → Profil → Dispozitive.
+</Accordion>
+<Accordion title="Pot membrii spațiului nostru de lucru să se impersonifice reciproc?">
+Membrii al căror rol are permisiunea Impersonate pot vedea spațiul de lucru ca orice alt membru, inclusiv ca administratori ai spațiului de lucru, așadar acordați-o numai rolurilor în care aveți încredere. Controlați cine are această permisiune în Setări → Roluri.
+</Accordion>
+<Accordion title="Cât timp sunt păstrate jurnalele de audit?">
+Jurnalele de audit sunt disponibile în planul Organization și în planurile superioare. Puteți seta durata de păstrare a acestora în Setări → General → Securitate.
 </Accordion>
 <Accordion title="Care este procesul de notificare a incidentelor și ținta termenului de notificare în urma unui incident confirmat de securitate care afectează datele noastre?">
-În cazul unei încălcări confirmate a datelor cu caracter personal care afectează datele tale, vă vom notifica fără întârzieri nejustificate şi, în orice caz, în termen de 48 de ore de la conştientizarea acestui fapt. Notificarea noastră va include, în măsura în care este cunoscută la momentul respectiv: natura încălcării, categoriile și volumul aproximativ al datelor și persoanelor afectate, consecințele probabile, precum și măsurile de remediere și atenuare luate sau planificate. Vom oferi actualizări pe măsură ce ancheta progresează.
+În cazul unei încălcări confirmate a securității datelor cu caracter personal care afectează datele dumneavoastră, vă vom notifica fără întârzieri nejustificate, vizând un termen de cel mult 72 de ore de la verificarea incidentului, astfel cum se prevede în secțiunea 4.6 din DPA-ul nostru. Notificarea noastră va include, în măsura în care este cunoscută la momentul respectiv: natura încălcării, categoriile și volumul aproximativ al datelor și persoanelor afectate, consecințele probabile, precum și măsurile de remediere și atenuare luate sau planificate. Vom oferi actualizări pe măsură ce ancheta progresează.
 </Accordion>
 </AccordionGroup>
 
@@ -86,9 +97,6 @@ Backup-urile sunt create continuu cu instantanee luate zilnic, iar perioada de r
 <Accordion title="Care este obiectivul stabilit pentru douăzeci de nori în ceea ce privește redresarea și redresarea?">
 RTO și RPO sunt 6 ore (în conformitate cu DPA).
 </Accordion>
-<Accordion title="Care este procedura de solicitare sau de efectuare a unei restaurări?">
-Pentru a solicita restaurare, te rugăm să contactezi echipa noastră prin intermediul chat de suport sau e-mail la [contact@twenty.com](mailto:contact@twenty.com).
-</Accordion>
 <Accordion title="Sunt copiile de rezervă criptate și stocate în aceeași regiune cu datele primare din spațiul de lucru?">
 Toate copiile de rezervă sunt criptate și stocate în locații separate geografic din cadrul aceleiași jurisdicții (de exemplu, în interiorul UE, pentru date UE).
 </Accordion>
@@ -120,6 +128,11 @@ Nu. Front-end-ul dvs. este o operă proprie, separată, iar faptul că interacț
 <Accordion title="Dacă modific codul pentru a adăuga funcționalități în scopul revânzării, trebuie să public acele modificări?">
 Da, deoarece modificați codul pentru a-l distribui altora, aveți obligația de a publica acele modificări. Dacă nu doriți să publicați modificările, puteți obține o licență Organization.
 </Accordion>
+<Accordion title="Aplicațiile dezvoltate pe Twenty trebuie să fie licențiate AGPL?">
+Aplicațiile care interacționează cu Twenty numai prin intermediul API-urilor/SDK-urilor sale publicate pot fi licențiate în condițiile alese de dvs. (consultați „Excepția pentru aplicațiile Twenty” din LICENSE-ul depozitului). Twenty în sine este în mare parte sub licența AGPLv3, iar unele pachete (inclusiv SDK-ul Twenty) sunt licențiate MIT.
+</Accordion>
 </AccordionGroup>
 
 Dacă aveţi mai multe întrebări, vă rugăm să verificaţi [Termenii şi condiţiile noastre](https://twenty.com/terms), [Politica de confidenţialitate](https://twenty.com/privacy-policy) şi [Centrul de încredere](https://trust.twenty.com/). Dacă încă nu ai răspuns la întrebări, trimite-le la [contact@twenty.com](mailto:contact@twenty.com) sau prin chat-ul de suport.
+
+<PageBanner illustration="section-legal" />

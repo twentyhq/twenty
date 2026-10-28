@@ -1,0 +1,55 @@
+---
+title: Proveedor de modo de información sobre herramientas para texto desbordado
+description: Elige cuándo OverflowingTextWithTooltip comprueba el truncamiento de un subárbol.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import OverflowingTextTooltipModeProviderReference from '/snippets/ui/generated/typography/overflowing-text-tooltip-mode-provider.mdx';
+
+## Resumen
+
+`OverflowingTextTooltipModeProvider` establece cómo cada [OverflowingTextWithTooltip](/es/ui/primitives/typography/overflowing-text-with-tooltip) dentro de él maneja su información sobre herramientas. No representa ningún elemento DOM.
+
+<StoryEmbed storyId="ui-typography-overflowingtexttooltipmodeprovider--display" title="Ejemplo de proveedor de modo de información sobre herramientas para texto desbordado" height={180} />
+
+## "Uso"
+
+```tsx
+import {
+  OverflowingTextTooltipModeProvider,
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordCell = () => (
+  <OverflowingTextTooltipModeProvider mode="measure-on-hover">
+    <Text style={{ maxWidth: 220 }}>
+      <OverflowingTextWithTooltip
+        text="Quarterly account review and renewal preparation"
+        isFocusable
+      />
+    </Text>
+  </OverflowingTextTooltipModeProvider>
+);
+```
+
+Pasa el cursor por encima de la etiqueta truncada o selecciónala para leer su valor completo. Cambia `mode` en los controles de Storybook para comparar cuándo está disponible la información sobre herramientas.
+
+## Modos
+
+* `measure-on-hover`, el valor predeterminado sin un proveedor, comprueba el truncamiento al entrar con el puntero y al recibir el foco. Una etiqueta que cabe no interfiere con el tooltip de un elemento principal.
+* `measure-on-open` comprueba el truncamiento cuando el tooltip intenta abrirse. Úsalo para etiquetas que se montan bajo el puntero, como una superposición al pasar el cursor, donde no se produce ninguna entrada del puntero.
+* `disabled` representa solo el texto, sin ninguna parte del tooltip. Úsalo para muchas etiquetas sobre las que un usuario no puede pasar el cursor, como contenido cubierto por una superposición.
+
+<StoryEmbed storyId="ui-typography-overflowingtexttooltipmodeprovider--disabled" title="Información sobre herramientas deshabilitada para un subárbol" height={90} />
+
+Los proveedores anidados anulan el modo para su subárbol.
+
+## "Props"
+
+<OverflowingTextTooltipModeProviderReference />
+
+<PageBanner illustration="section-document-generator" />

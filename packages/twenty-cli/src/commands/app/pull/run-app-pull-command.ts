@@ -142,7 +142,7 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
       hint:
         result.error.hint ??
         (result.error.code === 'SDK_SOURCE_UNSUPPORTED'
-          ? 'Upgrade the app to a compatible twenty-sdk version (2.40.0 or later).'
+          ? 'Upgrade the app to a compatible twenty-sdk version (2.50.0 or later).'
           : undefined),
       details: { ...result.error.details, diagnostics },
     });
