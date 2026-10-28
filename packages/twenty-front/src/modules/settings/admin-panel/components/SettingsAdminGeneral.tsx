@@ -12,6 +12,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -199,7 +200,9 @@ export const SettingsAdminGeneral = () => {
                           <Avatar
                             src={getAbsoluteImageUrl(user.workspaceLogo)}
                             name={user.workspaceName || ''}
-                            colorSeed={user.workspaceId}
+                            colorSeed={getWorkspaceAvatarColorSeed(
+                              user.workspaceName,
+                            )}
                             size="sm"
                           />
                           <OverflowingTextWithTooltip
@@ -274,7 +277,9 @@ export const SettingsAdminGeneral = () => {
                         <Avatar
                           src={getAbsoluteImageUrl(workspace.logoUrl)}
                           name={workspace.name || ''}
-                          colorSeed={workspace.id}
+                          colorSeed={getWorkspaceAvatarColorSeed(
+                            workspace.name,
+                          )}
                           size="md"
                         />
                         <OverflowingTextWithTooltip
