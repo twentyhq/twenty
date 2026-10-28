@@ -59,7 +59,7 @@ export const resolveEventsReadableByRole = async <
       buildRoleRowAccessPolicySubject({
         roleId,
         owningApplicationId,
-        rolesPermissions,
+        rolesPermissions: { [roleId]: objectsPermissions },
         roleIdsWithAllRecordsAccess,
         flatRowLevelPermissionPredicateMaps,
         flatRowLevelPermissionPredicateGroupMaps,

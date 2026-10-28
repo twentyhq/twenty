@@ -145,4 +145,77 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
       ).not.toBe(false);
     },
   );
+
+  it('should keep the label identifier readable and restrict the inverse of a relation', () => {
+    const COMPANY_ID = 'company-id';
+    const objectMaps: FlatEntityMaps<FlatObjectMetadata> =
+      createEmptyFlatEntityMaps();
+
+    objectMaps.byUniversalIdentifier.invoice = getFlatObjectMetadataMock({
+      id: INVOICE_ID,
+      universalIdentifier: 'invoice',
+      applicationId: 'owning-application-id',
+      labelIdentifierFieldMetadataId: 'invoice-name-field-id',
+    });
+    objectMaps.universalIdentifierById[INVOICE_ID] = 'invoice';
+    objectMaps.byUniversalIdentifier.company = getFlatObjectMetadataMock({
+      id: COMPANY_ID,
+      universalIdentifier: 'company',
+    });
+    objectMaps.universalIdentifierById[COMPANY_ID] = 'company';
+
+    const fieldMaps: FlatEntityMaps<FlatFieldMetadata> =
+      createEmptyFlatEntityMaps();
+
+    for (const flatFieldMetadata of [
+      getFlatFieldMetadataMock({
+        id: 'invoice-name-field-id',
+        universalIdentifier: 'invoice-name',
+        objectMetadataId: INVOICE_ID,
+        type: FieldMetadataType.TEXT,
+        applicationId: 'owning-application-id',
+        disabledFieldPermissionActions: ['canReadFieldValue'],
+      }),
+      getFlatFieldMetadataMock({
+        id: 'invoice-customer-field-id',
+        universalIdentifier: 'invoice-customer',
+        objectMetadataId: INVOICE_ID,
+        type: FieldMetadataType.RELATION,
+        applicationId: 'owning-application-id',
+        relationTargetObjectMetadataId: COMPANY_ID,
+        relationTargetFieldMetadataId: 'company-invoices-field-id',
+        disabledFieldPermissionActions: ['canReadFieldValue'],
+      }),
+    ]) {
+      fieldMaps.byUniversalIdentifier[flatFieldMetadata.universalIdentifier] =
+        flatFieldMetadata;
+      fieldMaps.universalIdentifierById[flatFieldMetadata.id] =
+        flatFieldMetadata.universalIdentifier;
+    }
+
+    const objectsPermissions = computeObjectsPermissionsForRolePermissionConfig(
+      {
+        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+        rolesPermissions: {
+          'user-role-id': {
+            [INVOICE_ID]: FULL_ACCESS,
+            [COMPANY_ID]: FULL_ACCESS,
+          },
+        },
+        flatObjectMetadataMaps: objectMaps,
+        flatFieldMetadataMaps: fieldMaps,
+        flatApplicationMaps,
+      },
+    );
+
+    expect(
+      objectsPermissions[INVOICE_ID]?.restrictedFields['invoice-name-field-id']
+        ?.canRead,
+    ).not.toBe(false);
+    expect(
+      objectsPermissions[COMPANY_ID]?.restrictedFields[
+        'company-invoices-field-id'
+      ]?.canRead,
+    ).toBe(false);
+  });
 });

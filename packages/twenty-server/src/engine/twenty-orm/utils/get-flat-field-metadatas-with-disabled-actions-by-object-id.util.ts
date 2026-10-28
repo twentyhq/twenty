@@ -1,3 +1,4 @@
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -8,6 +9,27 @@ const fieldsWithDisabledActionsByObjectIdCache = new WeakMap<
   FlatEntityMaps<OrmFlatFieldMetadata>,
   Map<string, OrmFlatFieldMetadata[]>
 >();
+
+// Like saved field permissions, a relation's restriction also applies to its inverse field
+const getInverseRelationFlatFieldMetadatas = (
+  flatFieldMetadata: OrmFlatFieldMetadata,
+): OrmFlatFieldMetadata[] => {
+  if (
+    flatFieldMetadata.type !== FieldMetadataType.RELATION ||
+    !isDefined(flatFieldMetadata.relationTargetFieldMetadataId) ||
+    !isDefined(flatFieldMetadata.relationTargetObjectMetadataId)
+  ) {
+    return [];
+  }
+
+  return [
+    {
+      ...flatFieldMetadata,
+      id: flatFieldMetadata.relationTargetFieldMetadataId,
+      objectMetadataId: flatFieldMetadata.relationTargetObjectMetadataId,
+    },
+  ];
+};
 
 export const getFlatFieldMetadatasWithDisabledActionsByObjectId = (
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
@@ -32,10 +54,17 @@ export const getFlatFieldMetadatasWithDisabledActionsByObjectId = (
       continue;
     }
 
-    fieldsByObjectId.set(flatFieldMetadata.objectMetadataId, [
-      ...(fieldsByObjectId.get(flatFieldMetadata.objectMetadataId) ?? []),
+    for (const restrictedFlatFieldMetadata of [
       flatFieldMetadata,
-    ]);
+      ...getInverseRelationFlatFieldMetadatas(flatFieldMetadata),
+    ]) {
+      fieldsByObjectId.set(restrictedFlatFieldMetadata.objectMetadataId, [
+        ...(fieldsByObjectId.get(
+          restrictedFlatFieldMetadata.objectMetadataId,
+        ) ?? []),
+        restrictedFlatFieldMetadata,
+      ]);
+    }
   }
 
   fieldsWithDisabledActionsByObjectIdCache.set(

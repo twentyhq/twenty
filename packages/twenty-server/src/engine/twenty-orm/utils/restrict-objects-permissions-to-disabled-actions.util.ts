@@ -37,12 +37,31 @@ const getDisabledObjectPermissionActions = ({
   return flatObjectMetadata.disabledObjectPermissionActions ?? [];
 };
 
+// Like saved field permissions, the label identifier always stays readable
+const getEnforcedFieldPermissionActions = ({
+  flatFieldMetadata,
+  labelIdentifierFieldMetadataId,
+}: {
+  flatFieldMetadata: Pick<
+    OrmFlatFieldMetadata,
+    'id' | 'disabledFieldPermissionActions'
+  >;
+  labelIdentifierFieldMetadataId: string | null;
+}): FieldPermissionAction[] =>
+  (flatFieldMetadata.disabledFieldPermissionActions ?? []).filter(
+    (action) =>
+      action !== 'canReadFieldValue' ||
+      flatFieldMetadata.id !== labelIdentifierFieldMetadataId,
+  );
+
 const restrictFieldsToDisabledActions = ({
   restrictedFields,
   fieldsWithDisabledActions,
+  labelIdentifierFieldMetadataId,
 }: {
   restrictedFields: RestrictedFieldsPermissions;
   fieldsWithDisabledActions: OrmFlatFieldMetadata[];
+  labelIdentifierFieldMetadataId: string | null;
 }): RestrictedFieldsPermissions => {
   const updatedRestrictedFields = { ...restrictedFields };
 
@@ -50,12 +69,13 @@ const restrictFieldsToDisabledActions = ({
     updatedRestrictedFields[flatFieldMetadata.id] = {
       ...updatedRestrictedFields[flatFieldMetadata.id],
       ...Object.fromEntries(
-        (flatFieldMetadata.disabledFieldPermissionActions ?? []).map(
-          (action) => [
-            RESTRICTED_FIELD_PERMISSION_BY_FIELD_PERMISSION_ACTION[action],
-            false,
-          ],
-        ),
+        getEnforcedFieldPermissionActions({
+          flatFieldMetadata,
+          labelIdentifierFieldMetadataId,
+        }).map((action) => [
+          RESTRICTED_FIELD_PERMISSION_BY_FIELD_PERMISSION_ACTION[action],
+          false,
+        ]),
       ),
     };
   }
@@ -117,6 +137,8 @@ export const restrictObjectsPermissionsToDisabledActions = ({
       restrictedFields: restrictFieldsToDisabledActions({
         restrictedFields: objectPermissions.restrictedFields,
         fieldsWithDisabledActions,
+        labelIdentifierFieldMetadataId:
+          flatObjectMetadata.labelIdentifierFieldMetadataId,
       }),
     };
   }
