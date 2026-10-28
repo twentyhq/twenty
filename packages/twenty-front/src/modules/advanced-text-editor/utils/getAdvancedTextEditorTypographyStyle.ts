@@ -82,46 +82,116 @@ const VARIANT_SPACING: Record<
   widget: { ...NOTE_SPACING, lineHeight: '1.4', headingLineHeight: '1.4' },
 };
 
-const APP_TYPOGRAPHY = {
+type AdvancedTextEditorTypography = {
+  fontFamily: string;
+  fontSize: string;
+  accentColor: string;
+  listMarkerColor: string;
+  headingFontSizes: Record<1 | 2 | 3 | 4 | 5 | 6, string>;
+  quoteColor: string;
+  quoteFontStyle: string;
+  codeBlockBackground: Record<'light' | 'dark', string>;
+  codeBlockColor: Record<'light' | 'dark', string>;
+  codeBlockFontSize: string;
+  dividerColor: string;
+  guideColor: string;
+  toggleIconColor: string;
+  toggleIconSize: string;
+  taskCheckedColor: string;
+};
+
+const APP_TYPOGRAPHY: AdvancedTextEditorTypography = {
   fontFamily: themeCssVariables.font.family,
   fontSize: themeCssVariables.font.size.md,
   accentColor: themeCssVariables.color.blue,
   listMarkerColor: 'inherit',
+  headingFontSizes: {
+    ...EMAIL_TYPOGRAPHY.headingFontSizes,
+    4: 'calc(var(--editor-font-size) * 1.15)',
+    5: 'var(--editor-font-size)',
+    6: 'calc(var(--editor-font-size) * 0.9)',
+  },
+  quoteColor: 'inherit',
+  quoteFontStyle: 'italic',
+  codeBlockBackground: {
+    light: themeCssVariables.background.transparent.lighter,
+    dark: themeCssVariables.background.transparent.lighter,
+  },
+  codeBlockColor: { light: 'inherit', dark: 'inherit' },
+  codeBlockFontSize: '0.9em',
+  dividerColor: themeCssVariables.border.color.medium,
+  guideColor: 'transparent',
+  toggleIconColor: themeCssVariables.font.color.tertiary,
+  toggleIconSize: themeCssVariables.spacing[2],
+  taskCheckedColor: themeCssVariables.font.color.tertiary,
+};
+
+const NOTE_TYPOGRAPHY: AdvancedTextEditorTypography = {
+  ...APP_TYPOGRAPHY,
+  accentColor: themeCssVariables.font.color.secondary,
+  headingFontSizes: {
+    1: '3em',
+    2: '2em',
+    3: '1.3em',
+    4: '1em',
+    5: '0.9em',
+    6: '0.8em',
+  },
+  quoteColor: themeCssVariables.font.color.secondary,
+  quoteFontStyle: 'normal',
+  codeBlockBackground: {
+    light: themeCssVariables.background.primaryInverted,
+    dark: themeCssVariables.background.primary,
+  },
+  codeBlockColor: {
+    light: themeCssVariables.font.color.inverted,
+    dark: themeCssVariables.font.color.primary,
+  },
+  codeBlockFontSize: '1em',
+  dividerColor: themeCssVariables.font.color.secondary,
+  guideColor: themeCssVariables.border.color.strong,
+  toggleIconColor: themeCssVariables.font.color.primary,
+  toggleIconSize: '10.5px',
+  taskCheckedColor: 'inherit',
 };
 
 const VARIANT_TYPOGRAPHY: Record<
   AdvancedTextEditorVariant,
-  typeof APP_TYPOGRAPHY
+  AdvancedTextEditorTypography
 > = {
   app: APP_TYPOGRAPHY,
   email: {
+    ...APP_TYPOGRAPHY,
     fontFamily: EMAIL_TYPOGRAPHY.fontFamily,
     fontSize: EMAIL_TYPOGRAPHY.fontSize,
     accentColor: EMAIL_TYPOGRAPHY.accentColor,
     listMarkerColor: EMAIL_TYPOGRAPHY.accentColor,
   },
-  note: APP_TYPOGRAPHY,
-  widget: APP_TYPOGRAPHY,
+  note: NOTE_TYPOGRAPHY,
+  widget: NOTE_TYPOGRAPHY,
 };
 
 export const getAdvancedTextEditorTypographyStyle = (
   variant: AdvancedTextEditorVariant,
+  colorScheme: 'light' | 'dark',
 ) => {
-  const { fontFamily, fontSize, accentColor, listMarkerColor } =
-    VARIANT_TYPOGRAPHY[variant];
+  const typography = VARIANT_TYPOGRAPHY[variant];
   const spacing = VARIANT_SPACING[variant];
 
   return {
-    '--editor-font-family': fontFamily,
-    '--editor-font-size': fontSize,
-    '--editor-accent-color': accentColor,
-    '--editor-list-marker-color': listMarkerColor,
+    '--editor-font-family': typography.fontFamily,
+    '--editor-font-size': typography.fontSize,
+    '--editor-accent-color': typography.accentColor,
+    '--editor-list-marker-color': typography.listMarkerColor,
     '--editor-padding': spacing.padding,
     '--editor-line-height': spacing.lineHeight,
     '--editor-block-spacing': spacing.blockSpacing,
-    '--editor-heading-1-font-size': EMAIL_TYPOGRAPHY.headingFontSizes[1],
-    '--editor-heading-2-font-size': EMAIL_TYPOGRAPHY.headingFontSizes[2],
-    '--editor-heading-3-font-size': EMAIL_TYPOGRAPHY.headingFontSizes[3],
+    '--editor-heading-1-font-size': typography.headingFontSizes[1],
+    '--editor-heading-2-font-size': typography.headingFontSizes[2],
+    '--editor-heading-3-font-size': typography.headingFontSizes[3],
+    '--editor-heading-4-font-size': typography.headingFontSizes[4],
+    '--editor-heading-5-font-size': typography.headingFontSizes[5],
+    '--editor-heading-6-font-size': typography.headingFontSizes[6],
     '--editor-heading-font-weight': EMAIL_TYPOGRAPHY.headingFontWeight,
     '--editor-heading-line-height': spacing.headingLineHeight,
     '--editor-heading-spacing-top': spacing.headingSpacingTop,
@@ -132,12 +202,23 @@ export const getAdvancedTextEditorTypographyStyle = (
     '--editor-nested-list-spacing': spacing.nestedListSpacing,
     '--editor-quote-border-width': EMAIL_TYPOGRAPHY.quoteBorderWidth,
     '--editor-quote-indent': spacing.quoteIndent,
+    '--editor-quote-color': typography.quoteColor,
+    '--editor-quote-font-style': typography.quoteFontStyle,
+    '--editor-code-block-background':
+      typography.codeBlockBackground[colorScheme],
+    '--editor-code-block-color': typography.codeBlockColor[colorScheme],
+    '--editor-code-block-font-size': typography.codeBlockFontSize,
+    '--editor-divider-color': typography.dividerColor,
+    '--editor-guide-color': typography.guideColor,
+    '--editor-toggle-icon-color': typography.toggleIconColor,
+    '--editor-toggle-icon-size': typography.toggleIconSize,
     '--editor-code-block-padding': spacing.codeBlockPadding,
     '--editor-divider-spacing': spacing.dividerSpacing,
     '--editor-task-checkbox-margin': spacing.taskCheckboxMargin,
     '--editor-task-checkbox-width': spacing.taskCheckboxWidth,
     '--editor-task-checkbox-height': spacing.taskCheckboxHeight,
     '--editor-task-checkbox-vertical-align': spacing.taskCheckboxVerticalAlign,
+    '--editor-task-checked-color': typography.taskCheckedColor,
     '--editor-table-wrapper-padding': spacing.tableWrapperPadding,
     '--editor-table-cell-padding': spacing.tableCellPadding,
     '--editor-toggle-row-height': spacing.toggleRowHeight,
