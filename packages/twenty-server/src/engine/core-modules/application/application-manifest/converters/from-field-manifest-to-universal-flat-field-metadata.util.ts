@@ -87,6 +87,24 @@ const resolveManifestFieldOptions = (
     : fieldManifest.options;
 };
 
+// Published manifests still declare writability without disabledFieldPermissionActions
+const resolveManifestFieldDisabledFieldPermissionActions = (
+  fieldManifest: FieldManifest,
+): UniversalFlatFieldMetadata['disabledFieldPermissionActions'] => {
+  if (isDefined(fieldManifest.disabledFieldPermissionActions)) {
+    return fieldManifest.disabledFieldPermissionActions;
+  }
+
+  if (
+    fieldManifest.writability === MetadataWritability.APPLICATION ||
+    fieldManifest.writability === MetadataWritability.SYSTEM
+  ) {
+    return ['canUpdateFieldValue'];
+  }
+
+  return null;
+};
+
 export const fromFieldManifestToUniversalFlatFieldMetadata = ({
   fieldManifest,
   applicationUniversalIdentifier,
@@ -134,7 +152,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     isUIEditable: fieldManifest.isUIEditable ?? true,
     writability: fieldManifest.writability ?? MetadataWritability.OPEN,
     disabledFieldPermissionActions:
-      fieldManifest.disabledFieldPermissionActions ?? null,
+      resolveManifestFieldDisabledFieldPermissionActions(fieldManifest),
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: fieldManifest.isUnique ?? false,
     isSearchable: resolveManifestFieldIsSearchable({
