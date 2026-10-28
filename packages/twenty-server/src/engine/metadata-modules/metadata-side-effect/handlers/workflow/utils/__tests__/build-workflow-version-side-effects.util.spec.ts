@@ -346,7 +346,10 @@ describe('workspace custom application workflow version side effects', () => {
     existing,
   }: {
     definition: WorkflowManifest;
-    existing: ReturnType<typeof persisted>;
+    existing: Pick<
+      ReturnType<typeof persisted>,
+      'flatWorkflowMaps' | 'flatWorkflowVersionMaps'
+    >;
   }) =>
     fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
       manifest: definition,
