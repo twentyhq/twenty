@@ -92,6 +92,16 @@ export const NavigationDrawerAiChatChannelsSection = ({
     }
   };
 
+  const newChannelButton = canManageChannels ? (
+    <LightIconButton
+      emphasis="subtle"
+      aria-label={t`New channel`}
+      onClick={startCreate}
+    >
+      <IconPlus />
+    </LightIconButton>
+  ) : undefined;
+
   return (
     <CollapsibleNavigationDrawerSection
       sectionId={AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID}
@@ -99,18 +109,7 @@ export const NavigationDrawerAiChatChannelsSection = ({
       alwaysShowRightIcon={
         alwaysShowRightIcon ?? agentChatAccessibleChannels.length === 0
       }
-      rightIcon={
-        rightIcon ??
-        (canManageChannels ? (
-          <LightIconButton
-            emphasis="subtle"
-            aria-label={t`New channel`}
-            onClick={startCreate}
-          >
-            <IconPlus />
-          </LightIconButton>
-        ) : undefined)
-      }
+      rightIcon={rightIcon ?? newChannelButton}
     >
       {visibleChannels.map((channel) => (
         <NavigationDrawerAiChatChannelItem
