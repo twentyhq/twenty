@@ -18,6 +18,7 @@ import { fromFlatMcpServerToMcpServerDto } from 'src/engine/metadata-modules/fla
 import { fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow } from 'src/engine/metadata-modules/flat-mcp-server/utils/from-update-mcp-server-input-to-flat-mcp-server-to-update-or-throw.util';
 import { type CreateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/create-mcp-server.input';
 import { type McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server.dto';
+import { McpServerToolSyncService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-sync.service';
 import { type UpdateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/update-mcp-server.input';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -28,6 +29,7 @@ export class McpServerService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly mcpServerToolSyncService: McpServerToolSyncService,
   ) {}
 
   async findAll(workspaceId: string): Promise<McpServerDTO[]> {
@@ -59,6 +61,7 @@ export class McpServerService {
   async create(
     input: CreateMcpServerInput,
     workspaceId: string,
+    userWorkspaceId?: string,
   ): Promise<McpServerDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -84,17 +87,17 @@ export class McpServerService {
         'Multiple validation errors occurred while creating MCP server',
     });
 
-    return fromFlatMcpServerToMcpServerDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatMcpServerToCreate.id,
-        flatEntityMaps: await this.getFlatMcpServerMaps(workspaceId),
-      }),
+    return this.syncTools(
+      flatMcpServerToCreate.id,
+      workspaceId,
+      userWorkspaceId,
     );
   }
 
   async update(
     input: UpdateMcpServerInput,
     workspaceId: string,
+    userWorkspaceId?: string,
   ): Promise<McpServerDTO> {
     const { name, label, url } =
       trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -113,6 +116,11 @@ export class McpServerService {
               workspaceId,
             }),
         };
+
+    const existingFlatMcpServer = findFlatMcpServerByIdOrThrow({
+      flatMcpServerMaps: await this.getFlatMcpServerMaps(workspaceId),
+      mcpServerId: input.id,
+    });
 
     const flatMcpServerToUpdate =
       fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow({
@@ -134,9 +142,39 @@ export class McpServerService {
         'Multiple validation errors occurred while updating MCP server',
     });
 
+    const hasConnectionChanged =
+      flatMcpServerToUpdate.url !== existingFlatMcpServer.url ||
+      flatMcpServerToUpdate.connectionProviderId !==
+        existingFlatMcpServer.connectionProviderId;
+
+    if (hasConnectionChanged) {
+      return this.syncTools(input.id, workspaceId, userWorkspaceId);
+    }
+
     return fromFlatMcpServerToMcpServerDto(
       findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: input.id,
+        flatEntityMaps: await this.getFlatMcpServerMaps(workspaceId),
+      }),
+    );
+  }
+
+  async syncTools(
+    id: string,
+    workspaceId: string,
+    userWorkspaceId?: string,
+  ): Promise<McpServerDTO> {
+    await this.mcpServerToolSyncService.syncTools({
+      ...findFlatMcpServerByIdOrThrow({
+        flatMcpServerMaps: await this.getFlatMcpServerMaps(workspaceId),
+        mcpServerId: id,
+      }),
+      userWorkspaceId,
+    });
+
+    return fromFlatMcpServerToMcpServerDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
         flatEntityMaps: await this.getFlatMcpServerMaps(workspaceId),
       }),
     );

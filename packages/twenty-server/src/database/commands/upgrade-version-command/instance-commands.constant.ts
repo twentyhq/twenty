@@ -261,6 +261,7 @@ import { AddCustomConfigToConnectionProviderFastInstanceCommand } from 'src/data
 import { AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793111477950-add-object-metadata-disabled-object-permission-actions';
 import { AddMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438837-add-messaging-provider';
 import { AddMcpServerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793150000000-add-mcp-server';
+import { AddToolsToMcpServerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793160000000-add-tools-to-mcp-server';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -524,4 +525,5 @@ export const INSTANCE_COMMANDS = [
   AddMessagingProviderFastInstanceCommand,
   AddMcpServerFastInstanceCommand,
   AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand,
+  AddToolsToMcpServerFastInstanceCommand,
 ];

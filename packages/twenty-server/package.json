@@ -52,6 +52,7 @@
     "@lingui/format-po": "5.9.5",
     "@microsoft/microsoft-graph-client": "3.0.7",
     "@microsoft/microsoft-graph-types": "^2.40.0",
+    "@modelcontextprotocol/sdk": "1.30.0",
     "@nestjs/axios": "12.0.1",
     "@nestjs/cache-manager": "^12.0.1",
     "@nestjs/common": "12.3.0",
