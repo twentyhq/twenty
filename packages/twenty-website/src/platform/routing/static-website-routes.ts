@@ -14,7 +14,7 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
   },
   {
     changeFrequency: 'weekly',
-    description: msg`Extend Twenty with official apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click.`,
+    description: msg`Extend Twenty with apps — call recording, enrichment, Slack, Teams and more. Install any app on your open source CRM workspace in one click.`,
     id: 'apps',
     indexed: true,
     path: '/apps',
