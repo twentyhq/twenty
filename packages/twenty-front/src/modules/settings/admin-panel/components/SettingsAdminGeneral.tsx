@@ -47,14 +47,6 @@ const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledWorkspaceTableBody = styled(TableBody)`
-  padding: ${themeCssVariables.spacing[1]} 0;
-
-  & + & {
-    border-top: 1px solid ${themeCssVariables.border.color.light};
-  }
-`;
-
 const RECENT_USERS_GRID_TEMPLATE_COLUMNS = '1fr 2fr 1fr 36px';
 const TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS = '2fr 1fr 36px';
 
@@ -259,8 +251,12 @@ export const SettingsAdminGeneral = () => {
                 <TableHeader align="right">{t`Users`}</TableHeader>
                 <TableHeader />
               </TableRow>
-              {workspaceGroups.map((workspaces) => (
-                <StyledWorkspaceTableBody key={workspaces[0].id}>
+              {workspaceGroups.map((workspaces, groupIndex) => (
+                <TableBody
+                  key={workspaces[0].id}
+                  padding={`${themeCssVariables.spacing[1]} 0`}
+                  hasTopBorder={groupIndex > 0}
+                >
                   {workspaces.map((workspace) => (
                     <TableRow
                       key={workspace.id}
@@ -299,7 +295,7 @@ export const SettingsAdminGeneral = () => {
                       </TableCell>
                     </TableRow>
                   ))}
-                </StyledWorkspaceTableBody>
+                </TableBody>
               ))}
             </Table>
           )}
