@@ -37,10 +37,13 @@ const isFailedMetadataValidation = (
   isArray(value.errors) &&
   isPlainObject(value.flatEntityMinimalInformation);
 
-const collectDetails = (
-  errorsByMetadata: Record<string, unknown>,
-  limit: number,
-): ValidationErrorDetail[] => {
+const collectDetails = ({
+  errorsByMetadata,
+  limit,
+}: {
+  errorsByMetadata: Record<string, unknown>;
+  limit: number;
+}): ValidationErrorDetail[] => {
   const details: ValidationErrorDetail[] = [];
 
   for (const [metadataName, failures] of Object.entries(errorsByMetadata)) {
@@ -94,10 +97,10 @@ export const extractMetadataValidation = (
       continue;
     }
 
-    const extracted = collectDetails(
-      graphqlError.extensions.errors,
-      MAX_VALIDATION_ERRORS - errors.length,
-    );
+    const extracted = collectDetails({
+      errorsByMetadata: graphqlError.extensions.errors,
+      limit: MAX_VALIDATION_ERRORS - errors.length,
+    });
 
     if (extracted.length === 0) {
       continue;
