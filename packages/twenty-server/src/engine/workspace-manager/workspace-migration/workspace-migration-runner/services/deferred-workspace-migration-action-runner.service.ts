@@ -82,33 +82,16 @@ export class DeferredWorkspaceMigrationActionRunnerService {
 
   async dispatchAfterCommit({
     deferredActions,
-    hasPersistedDeferredActions,
     workspaceId,
-    applicationUniversalIdentifier,
-    allFlatEntityMaps,
   }: {
     deferredActions: DeferredWorkspaceMigrationAction[];
-    hasPersistedDeferredActions: boolean;
     workspaceId: string;
-    applicationUniversalIdentifier: string;
-    allFlatEntityMaps: AllFlatEntityMaps;
   }): Promise<void> {
     if (deferredActions.length === 0) {
       return;
     }
 
-    if (hasPersistedDeferredActions) {
-      await this.enqueue(workspaceId);
-
-      return;
-    }
-
-    await this.executeInProcess({
-      deferredActions,
-      workspaceId,
-      applicationUniversalIdentifier,
-      allFlatEntityMaps,
-    });
+    await this.enqueue(workspaceId);
   }
 
   async runPendingActions(workspaceId: string): Promise<void> {
@@ -168,43 +151,6 @@ export class DeferredWorkspaceMigrationActionRunnerService {
       this.logger.error(
         `Failed to enqueue deferred workspace migration actions for workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
       );
-    }
-  }
-
-  private async executeInProcess({
-    deferredActions,
-    workspaceId,
-    applicationUniversalIdentifier,
-    allFlatEntityMaps,
-  }: {
-    deferredActions: DeferredWorkspaceMigrationAction[];
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-    allFlatEntityMaps: AllFlatEntityMaps;
-  }): Promise<void> {
-    const queryRunner = this.coreDataSource.createQueryRunner();
-
-    try {
-      for (const deferredAction of deferredActions) {
-        try {
-          await this.deferredWorkspaceMigrationActionHandlerRegistry
-            .getHandler(deferredAction.name)
-            .execute({
-              workspaceId,
-              applicationUniversalIdentifier,
-              payload: deferredAction.payload,
-              allFlatEntityMaps,
-              attempt: 1,
-              queryRunner,
-            });
-        } catch (error) {
-          this.logger.warn(
-            `Deferred action ${deferredAction.name} failed for workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-          );
-        }
-      }
-    } finally {
-      await queryRunner.release();
     }
   }
 
