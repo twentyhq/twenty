@@ -1,6 +1,6 @@
 import { ToolCategory } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey, MessageCampaignStatus } from 'twenty-shared/types';
+import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -34,7 +34,6 @@ const sendCampaignInputSchema = z.object({
   name: SEND_CAMPAIGN_TOOL_NAME,
   category: ToolCategory.ACTION,
   requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-  requiredFeatureFlags: [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED],
   description:
     'Send an email campaign to its list now, or schedule it. This emails real people and cannot be undone once sending starts. ' +
     'Only call it after the person explicitly asked to send this campaign and approved the recipient count from preview_campaign_send. ' +
