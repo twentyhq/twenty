@@ -1,5 +1,4 @@
-import { PermissionFlagType } from 'twenty-shared/constants';
-
+import { resolvePermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/utils/resolve-permission-flag-key.util';
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
@@ -26,7 +25,7 @@ export const fromRoleEntityToRoleDto = (role: RoleEntity): RoleDTO => {
     permissionFlags: role.rolePermissionFlags?.map((rolePermissionFlag) => ({
       id: rolePermissionFlag.id,
       roleId: rolePermissionFlag.roleId,
-      flag: rolePermissionFlag.permissionFlag.key as PermissionFlagType,
+      flag: resolvePermissionFlagKey(rolePermissionFlag.permissionFlag),
     })),
     objectPermissions: role.objectPermissions,
     fieldPermissions: role.fieldPermissions,

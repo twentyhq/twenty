@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatPermissionFlagMaps } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag-maps.type';
 import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag.type';
+import { resolvePermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/utils/resolve-permission-flag-key.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -27,6 +28,6 @@ export const fromFlatRolePermissionFlagToRolePermissionFlagDto = (
   return {
     id: flatRolePermissionFlag.id,
     roleId: flatRolePermissionFlag.roleId,
-    flag: permissionFlag.key,
+    flag: resolvePermissionFlagKey(permissionFlag),
   };
 };
