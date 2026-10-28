@@ -66,8 +66,9 @@ export class CopyMorphRelationReferencesToHeadsCommand extends ProvisionedWorksp
     const workspaceCustomApplicationUniversalIdentifier =
       workspaceCustomFlatApplication.universalIdentifier;
 
-    const headByRepresentativeId =
-      computeMorphRelationHeadByRepresentativeId(flatFieldMetadataMaps);
+    const headByRepresentativeId = computeMorphRelationHeadByRepresentativeId(
+      flatFieldMetadataMaps,
+    );
 
     const copies: MorphRelationHeadReferences = {
       viewFields: buildMorphRelationHeadViewFieldCopies({
@@ -196,6 +197,7 @@ export class CopyMorphRelationReferencesToHeadsCommand extends ProvisionedWorksp
       };
 
       const args = {
+        shouldDeferActions: false,
         workspaceId,
         isSystemBuild: true,
         applicationUniversalIdentifier,

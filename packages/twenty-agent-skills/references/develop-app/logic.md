@@ -81,7 +81,7 @@ When adding AI behavior:
 
 ## Inbox Messages
 
-`sendInboxMessage` from `twenty-sdk/logic-function` posts a message from the app in the chats of one or more workspace members.
+`sendInboxMessage` posts a message from the app in the chats of one or more workspace members. Import it from `twenty-sdk/logic-function` in a logic function and from `twenty-sdk/front-component` in a front component; the inbox helpers are the same in both.
 
 - `workspaceMemberIds` lists the members who receive it (at least one), and `text` is the message, in markdown. The first member of a new conversation owns it and the others follow it; a later send with the same key that lists new members adds them.
 - `threadKey` picks the conversation per app, shared by every member it is sent to: a new key starts one titled `title`, a known key adds to it. `idempotencyKey` identifies the message in it, so sending again with the same keys writes nothing and retries never duplicate it.
@@ -90,7 +90,9 @@ When adding AI behavior:
 - Only one call the member answers (`ask_question`, `request_form`, `propose_tool_call`) can wait at a time; another fails with `THREAD_AWAITING_ANSWER` until they answer. Plain messages and app tool calls are still accepted.
 - A conversation its owner deleted is gone for every member and is not recreated.
 - The app's default role needs `SystemPermissionFlag.AI`, and every member needs the AI permission.
-- It always uses the app's access and ignores `runAs`.
+- The message is always from the app. The call runs like the default clients: as the member who triggered the run or looks at the page, who then needs the AI permission too, or as the app when nobody triggered the run. In a front component an expired token is refreshed once before the call is retried.
+- Write mentions with `await inboxMention({ workspaceMemberId })` and record chips with `await inboxReferenceRecord({ objectNameSingular, recordId })`, never by hand. Both read the label the chip shows (the member's full name or email, the record's label identifier), so the caller needs read access to the member or record. A mention only renders: list every recipient in `workspaceMemberIds`.
+- `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
 
 ## Connection Providers
 

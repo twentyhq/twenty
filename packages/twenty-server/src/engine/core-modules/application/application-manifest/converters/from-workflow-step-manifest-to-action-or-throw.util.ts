@@ -22,11 +22,16 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
   index: number;
   references: WorkflowManifestReferences;
 }): WorkflowAction => {
-  const { resolve, objectName, field, fieldReference } =
-    buildWorkflowManifestReferenceResolvers({
-      references,
-      subject: `Workflow step ${step.name}`,
-    });
+  const {
+    resolve,
+    objectName,
+    field,
+    fieldReference,
+    connectedAccountIdOrThrow,
+  } = buildWorkflowManifestReferenceResolvers({
+    references,
+    subject: `Workflow step ${step.name}`,
+  });
   let input: unknown;
   switch (step.type) {
     case 'LOGIC_FUNCTION':
@@ -194,6 +199,21 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
         ),
       };
       break;
+    case 'SEND_EMAIL':
+    case 'DRAFT_EMAIL':
+    case 'CREATE_CALENDAR_EVENT': {
+      const { connectedAccountHandle, ...rest } = step.input;
+      input = isDefined(connectedAccountHandle)
+        ? {
+            ...rest,
+            connectedAccountId: connectedAccountIdOrThrow({
+              stepType: step.type,
+              handle: connectedAccountHandle,
+            }),
+          }
+        : rest;
+      break;
+    }
     default:
       input = step.input;
   }

@@ -171,12 +171,15 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
       const { applicationUniversalIdentifier } =
         missingIndex.universalFlatIndexMetadata;
 
-      missingIndexesByApplicationUniversalIdentifier.set(applicationUniversalIdentifier, [
-        ...(missingIndexesByApplicationUniversalIdentifier.get(
-          applicationUniversalIdentifier,
-        ) ?? []),
-        missingIndex,
-      ]);
+      missingIndexesByApplicationUniversalIdentifier.set(
+        applicationUniversalIdentifier,
+        [
+          ...(missingIndexesByApplicationUniversalIdentifier.get(
+            applicationUniversalIdentifier,
+          ) ?? []),
+          missingIndex,
+        ],
+      );
     }
 
     for (const [
@@ -186,6 +189,7 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
       const result =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             isSystemBuild: true,
             workspaceId,
             applicationUniversalIdentifier,

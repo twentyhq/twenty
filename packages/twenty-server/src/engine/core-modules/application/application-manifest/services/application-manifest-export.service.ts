@@ -26,6 +26,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
@@ -49,6 +50,7 @@ export class ApplicationManifestExportService {
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly applicationService: ApplicationService,
+    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
   async exportApplication({
@@ -153,6 +155,10 @@ export class ApplicationManifestExportService {
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
+    const connectedAccounts =
+      await this.connectedAccountMetadataService.findAllForWorkflowStepResolution(
+        { workspaceId },
+      );
     const { workflows, coverage: workflowsCoverage } =
       reconstructWorkflowsManifest({
         applicationAllFlatEntityMaps,
@@ -161,6 +167,7 @@ export class ApplicationManifestExportService {
         resolvableFieldUniversalIdentifiers,
         isWorkspaceCustomApplication:
           flatApplication.id === workspaceCustomFlatApplication.id,
+        connectedAccounts,
       });
     const { agents, coverage: agentsCoverage } = reconstructAgentsManifest({
       applicationAllFlatEntityMaps,

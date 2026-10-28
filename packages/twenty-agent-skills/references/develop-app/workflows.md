@@ -8,6 +8,8 @@ See `logic.md` for post-install hooks. See `app-structure.md` for source layout.
 
 Declare app workflows with `defineWorkflow` from `twenty-sdk/define`: one call per workflow, holding a trigger and its steps. Install creates it active; installing a new app version updates it in place. Users can't edit an installed workflow — they duplicate it.
 
+Workflows created at runtime through the workspace API are a `Workflow` plus at least one `WorkflowVersion`. Creating a `Workflow` auto-creates its draft `v1`; never create a `WorkflowVersion` directly.
+
 ## defineWorkflow
 
 - The workflow and each step need a stable `universalIdentifier`. The trigger's is optional.
@@ -17,6 +19,12 @@ Declare app workflows with `defineWorkflow` from `twenty-sdk/define`: one call p
 - Triggers take optional `name`, `position` and `outputSchema`; steps take optional `position` and `outputSchema`. They only shape the builder view. Omit them to get the derived defaults.
 - `position: null` means no position. `outputSchema: {}` means an empty schema; omit `outputSchema` to derive it.
 - `twenty app pull` on the workspace Custom application writes builder workflows in this form, keeping the builder's trigger name, positions and output schemas.
+
+## Email and Calendar Steps
+
+- `SEND_EMAIL`, `DRAFT_EMAIL` and `CREATE_CALENDAR_EVENT` name their account with exactly one of `connectedAccountId` or `connectedAccountHandle`.
+- Use `connectedAccountHandle` (the account's email address) in app code: ids only exist in one workspace. Apply resolves it to the oldest active account with that address that is shared with the workspace (`WORKSPACE` scope) and can run the step, and fails if none can. A member's private account can't be named by handle.
+- `twenty app pull` writes a shared account's id as its handle. Private account ids, variables and workspace member ids stay `connectedAccountId`.
 
 ## Manual Record Trigger
 

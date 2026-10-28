@@ -160,6 +160,76 @@ describe('workflow manifest step types', () => {
     expect(workflowManifestSchema.safeParse(definition).success).toBe(true);
   });
 
+  describe('connected account reference', () => {
+    const CALENDAR_EVENT = {
+      title: 'Kick-off',
+      startsAt: '2026-11-02T09:00:00.000Z',
+      endsAt: '2026-11-02T09:30:00.000Z',
+      isFullDay: false,
+      sendInvitations: true,
+      addConferencing: false,
+    };
+    const withStep = ({
+      type,
+      input,
+    }: {
+      type: string;
+      input: Record<string, unknown>;
+    }) => {
+      const definition = structuredClone(workflow);
+      Object.assign(getStep(definition, 2), { type, input });
+      return workflowManifestSchema.safeParse(definition);
+    };
+
+    it.each([
+      { type: 'SEND_EMAIL', input: { recipients: { to: 'jane@example.com' } } },
+      {
+        type: 'DRAFT_EMAIL',
+        input: { recipients: { to: 'jane@example.com' } },
+      },
+      { type: 'CREATE_CALENDAR_EVENT', input: CALENDAR_EVENT },
+    ])(
+      'accepts a $type step naming its account by handle',
+      ({ type, input }) => {
+        const result = withStep({
+          type,
+          input: { ...input, connectedAccountHandle: ' sales@example.com ' },
+        });
+
+        expect(result.success).toBe(true);
+        expect(result.data?.version.steps[2]?.input).toMatchObject({
+          connectedAccountHandle: 'sales@example.com',
+        });
+      },
+    );
+
+    it.each([
+      {
+        case: 'both',
+        reference: {
+          connectedAccountId: ASSIGNEE,
+          connectedAccountHandle: 'sales@example.com',
+        },
+      },
+      { case: 'neither', reference: {} },
+      { case: 'an empty handle', reference: { connectedAccountHandle: ' ' } },
+    ])('rejects $case of the account id and handle', ({ reference }) => {
+      const result = withStep({
+        type: 'CREATE_CALENDAR_EVENT',
+        input: { ...CALENDAR_EVENT, ...reference },
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error?.issues[0]?.path).toEqual([
+        'version',
+        'steps',
+        2,
+        'input',
+        'connectedAccountHandle',
+      ]);
+    });
+  });
+
   it('rejects a step type applications cannot use', () => {
     const invalid = structuredClone(workflow);
     Object.assign(getStep(invalid, 2), { type: 'CODE' });
