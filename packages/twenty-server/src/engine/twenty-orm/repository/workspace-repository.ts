@@ -2226,6 +2226,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private isOperationDisabled(operationType: OperationType): boolean {
+    if (this.options.shouldBypassPermissionChecks) {
+      return false;
+    }
+
     const subject = this.resolveRowAccessPolicySubject();
 
     return (
