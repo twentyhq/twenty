@@ -1,0 +1,119 @@
+---
+title: InputGroup
+description: أضف بادئات ولاحقات وإجراءات حول حقل إدخال نصي.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InputGroupReference from '/snippets/ui/generated/input/input-group.mdx';
+
+## نظرة عامة
+
+يمنح `InputGroup` [الإدخال](/ar/ui/primitives/input/input) حدًا مشتركًا ومحتوى بادئًا أو لاحقًا اختياريًا. اضبط `size` على المجموعة لتحديد حجم الحاوية وتوفير قيمة افتراضية لإدخالها. يكون لحجم العنصر الفرعي المحدد صراحةً الأولوية على تلك القيمة الافتراضية؛ وتظل المجموعة تتحكم في ارتفاع التخطيط المشترك.
+
+<StoryEmbed storyId="ui-input-inputgroup--display" title="مثال InputGroup" height={140} />
+
+## استخدام
+
+```tsx
+import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WebsiteField = () => (
+  <Field.Root name="website">
+    <Field.Label>Website</Field.Label>
+    <InputGroup
+      startElement={
+        <Text render={<span />} aria-hidden>
+          https://
+        </Text>
+      }
+    >
+      <Input placeholder="example.com" />
+    </InputGroup>
+    <Field.Description>Enter the domain without https://.</Field.Description>
+  </Field.Root>
+);
+```
+
+يقبل `startElement` و`endElement` عُقد React. البادئات واللاحقات هي محتوى مرئي؛ تحتوي القيمة المُرسلة لعنصر الإدخال على ما يُدخله المستخدم فقط.
+
+## خيارات مرئية
+
+قارن ملحقات البادئة واللاحقة والملحقات المدمجة في كلا حجمي الإدخال. تتشارك المجموعة حجمها مع الإدخال.
+
+<StoryEmbed storyId="ui-input-inputgroup--catalog" title="خيارات مرئية لمجموعة الإدخال" height={300} />
+
+## البنية التشريحية
+
+ضع حقل الإدخال داخل `InputGroup` وأبقِ تسميات الحقول والرسائل خارج الحدود المشتركة.
+
+```text
+Field.Root
+├── Field.Label
+├── InputGroup
+│   └── Input
+└── Field.Description
+```
+
+| الجزء أو الموضع                               | المتطلبة       | الغرض                                              |
+| --------------------------------------------- | -------------- | -------------------------------------------------- |
+| `InputGroup`                                  | مطلوب          | يوفر الحدود المشتركة والتخطيط والحجم.              |
+| `Input` بوصفه `children`                      | مطلوب          | يمتلك قيمة الإدخال والسمات الأصلية وسلوك التحرير.  |
+| `startElement`                                | خاصية اختيارية | يضيف بادئة أو أيقونة أو محتوى آخر قبل الإدخال.     |
+| `endElement`                                  | خاصية اختيارية | يضيف لاحقة أو إجراءً بعد الإدخال.                  |
+| `Field.Root`, `Label`, `Description`, `Error` | تركيب اختياري  | يربط تسمية ونصًا مساعدًا وملاحظات التحقق بالإدخال. |
+
+`startElement` و`endElement` هما خصائص عقد React، وليسا مكونات منفصلة. لا يوفر `InputGroup` تسمية ولا يدير التحقق. امنح الإدخال اسمًا يمكن الوصول إليه، إما عبر `Field.Label` أو عبر سمات التسمية الخاصة به.
+
+## إجراء لاحق
+
+```tsx
+import { useState } from 'react';
+import { Button, Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+
+export const PasswordField = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Field.Root name="password">
+      <Field.Label>Password</Field.Label>
+      <InputGroup
+        endElement={
+          <Button
+            type="button"
+            aria-label={visible ? 'Hide password' : 'Show password'}
+            variant="ghost"
+            size="sm"
+            onClick={() => setVisible(!visible)}
+          >
+            {visible ? 'Hide' : 'Show'}
+          </Button>
+        }
+      >
+        <Input
+          type={visible ? 'text' : 'password'}
+          autoComplete="current-password"
+        />
+      </InputGroup>
+    </Field.Root>
+  );
+};
+```
+
+ضع التسميات والتحقق ومعالجة القيمة على الحقل أو عنصر الإدخال. امنح أزرار الزخرفة أسماء يمكن الوصول إليها خاصة بها، واستخدم `type="button"` عندما لا ينبغي لها إرسال النموذج. تدعم المجموعة المقاسين `sm` و`md`، وتستخدم `md` افتراضيًا.
+
+## تخصيص التخطيط
+
+تستهدف الخصائص الأصلية و`className` و`style` و`render` و`ref` عنصر div الخاص بالتخطيط. يتلقى عنصر `render` مخصص خصائص التخطيط والعناصر الفرعية. أبقِ المرجع supplied على عنصر التخطيط هذا.
+
+ضع `value` و`defaultValue` و`onValueChange` و`name` و`required` و`readOnly` و`disabled` ومرجع عنصر التحكم الأصلي على `Input`. لا تدير المجموعة حالة الإدخال ولا تستبدل ارتباط تسمية Field.
+
+## الخصائص
+
+يُنشأ المرجع من أنواع المكونات العامة. تُقبل أيضًا السمات الأصلية، بما في ذلك الأسماء التي يمكن الوصول إليها ومعالجات الأحداث، على الأجزاء التي تعرض عناصر.
+
+<InputGroupReference />
+
+<PageBanner illustration="page-cover-input" />

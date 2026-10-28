@@ -1,0 +1,43 @@
+---
+title: Encabezado
+description: Renderiza encabezados semánticos con tamaños visuales independientes.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import HeadingReference from '/snippets/ui/generated/typography/heading.mdx';
+
+## Resumen
+
+`Heading` renderiza un `h2` de forma predeterminada. Usa `children` para su contenido, `level` para la estructura del documento y `size` para la apariencia.
+
+<StoryEmbed storyId="ui-typography-heading--display" title="Ejemplo de encabezado" height={90} />
+
+## Uso
+
+Elige los niveles en el orden del documento. Un tamaño visual más pequeño no cambia el nivel anunciado por la tecnología de asistencia.
+
+```tsx
+import { Heading } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceTitle = () => <Heading>Workspace settings</Heading>;
+```
+
+Los tamaños `xs`, `sm`, `md`, `lg`, `xl` y `xxl` usan los tokens de fuente correspondientes. Los tamaños más grandes usan `1.54rem` y `1.85rem`, respectivamente. Todos los tamaños mantienen un grosor seminegrita y una altura de línea de `1.1`. `Section.Header` y `Dialog.Title` aceptan los mismos valores de tamaño. Los encabezados no tienen margen exterior; su diseño circundante controla el espaciado.
+
+## Color y composición
+
+<StoryEmbed storyId="ui-typography-heading--catalog" title="Tamaños y colores de los encabezados" height={480} />
+
+Usa `color="secondary"` para encabezados menos destacados. `tertiary` también está disponible, pero su contraste depende del tamaño de fuente, el tema y el fondo. Comprueba la legibilidad al usarlo.
+
+Los atributos nativos, estilos, nombres de clase y refs se pasan al encabezado. Usa `render` para componer con un elemento o componente personalizado; ese elemento es responsable de preservar la semántica de los encabezados.
+
+Para un encabezado con texto complementario o acciones, usa [Section](/es/ui/components/layout/section).
+
+## Props
+
+<HeadingReference />
+
+<PageBanner illustration="section-document-generator" />

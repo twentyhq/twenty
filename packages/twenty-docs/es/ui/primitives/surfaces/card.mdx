@@ -1,0 +1,221 @@
+---
+title: Tarjeta
+description: Agrupa información relacionada dentro de una superficie con borde.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CardReference from '/snippets/ui/generated/surfaces/card.mdx';
+
+## Resumen
+
+`Card` agrupa información y acciones relacionadas bajo una exportación con nombre. Componga `Card.Root`, `Card.Header`, `Card.Content` y `Card.Footer` para separar un título, un cuerpo y acciones complementarias. Las partes no gestionan la selección, el foco ni el estado de la aplicación. La aplicación es responsable del comportamiento de los controles que se coloquen dentro de ellas.
+
+<StoryEmbed storyId="ui-surfaces-card--display" title="Ejemplo de Card" height={200} />
+
+## Uso
+
+```tsx
+import { useId } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Heading, Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSummary = () => {
+  const titleId = useId();
+
+  return (
+    <Card.Root fullWidth role="region" aria-labelledby={titleId}>
+      <Card.Header>
+        <Heading id={titleId} level={2}>
+          Import summary
+        </Heading>
+      </Card.Header>
+      <Card.Content>
+        <Text>24 records are ready to import.</Text>
+      </Card.Content>
+      <Card.Footer>
+        <Button>Review records</Button>
+      </Card.Footer>
+    </Card.Root>
+  );
+};
+```
+
+Use [Encabezado](/es/ui/primitives/typography/heading) en el nivel requerido por la página circundante. Coloque las acciones en [Botón](/es/ui/primitives/input/button) o en un enlace nativo para que los usuarios de teclado y de tecnologías de asistencia puedan activarlas.
+
+## Anatomía
+
+```text
+Card.Root (outer surface)
+├── Card.Header (optional)
+├── Card.Content (optional, repeatable)
+├── Card.Footer (optional)
+├── Card.Action (optional, inside an action area)
+└── Card.Control (optional, independent control or tooltip target)
+```
+
+Importe `Card` desde `twenty-ui/primitives/surfaces`. `Card.Root` proporciona el borde exterior y el recorte, pero no crea secciones internamente. Ninguna parte requiere otra parte ni un orden de secciones específico. Las secciones también funcionan de forma independiente, sin `Card.Root` ni contexto.
+
+Root, Header, Content y Footer representan un `div` de forma predeterminada y aceptan atributos nativos de div, controladores de eventos, `className`, `style` y una `ref` de DOM. Action representa un botón nativo con `type="button"`, y Control representa un span. Usa `render` con un elemento o una devolución de llamada para elegir un destino semántico. Ninguna parte infiere un elemento o rol a partir de `onClick`.
+
+`CardRootProps`, `CardHeaderProps`, `CardContentProps`, `CardFooterProps`, `CardActionProps` y `CardControlProps` se exportan desde `twenty-ui/primitives/surfaces`, `twenty-ui/primitives` y el paquete raíz.
+
+## Apariencia y separadores
+
+`Card.Root` tiene un fondo transparente de forma predeterminada. `fullWidth` llena su contenedor y `backgroundColor` cambia el fondo exterior. Las secciones secundarias tienen sus propios fondos.
+
+`Card.Header` tiene un fondo primario, relleno y un borde inferior. `Card.Content` tiene un fondo secundario y relleno; su `divider` opcional añade un borde inferior. `Card.Footer` tiene un fondo primario, relleno y un borde superior, a menos que `divider={false}`. Evita añadir dos bordes en el mismo límite de sección.
+
+```tsx
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSections = () => (
+  <Card.Root>
+    <Card.Content divider>
+      <Text>24 records are ready to import.</Text>
+    </Card.Content>
+    <Card.Content divider>
+      <Text>3 records need review.</Text>
+    </Card.Content>
+    <Card.Footer divider={false}>
+      <Text>Last checked just now.</Text>
+    </Card.Footer>
+  </Card.Root>
+);
+```
+
+## Composición interactiva
+
+Elige un botón nativo para una acción o un ancla para la navegación mediante `render`. Proporciona atributos específicos del destino, como `type`, `disabled`, `href` y `target`, en ese elemento. El elemento propietario real proporciona su comportamiento de teclado, foco, estado deshabilitado y enlace. Card no añade esos comportamientos a un `div` de visualización.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type ReviewCardProps = {
+  disabled?: boolean;
+  onReview: () => void;
+  onDismiss: () => void;
+};
+
+export const ReviewCard = ({
+  disabled,
+  onReview,
+  onDismiss,
+}: ReviewCardProps) => (
+  <Card.Root>
+    <Card.Content
+      render={<button type="button" disabled={disabled} />}
+      onClick={onReview}
+    >
+      <Text render={<span />}>Review 24 ready records</Text>
+    </Card.Content>
+    <Card.Footer>
+      <Button onClick={onDismiss}>Dismiss</Button>
+    </Card.Footer>
+  </Card.Root>
+);
+```
+
+El botón de acción y el de descarte son elementos hermanos dentro de una tarjeta de visualización. No coloques otro botón, enlace, entrada u otro control interactivo dentro de un botón o elemento propietario de enlace. Cuando un botón contiene partes de Card, representa esas partes como elementos de fraseo, como `span`.
+
+```tsx
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportLinkCard = () => (
+  <Card.Root render={<a href="/imports" />} fullWidth>
+    <Card.Content>
+      <Text>View imports</Text>
+    </Card.Content>
+  </Card.Root>
+);
+```
+
+Los elementos propietarios de botones y enlaces nativos conservan el diseño de la tarjeta y obtienen un contorno de foco visible. Los elementos propietarios explícitos de botones y enlaces se resaltan al pasar el cursor. Los elementos propietarios deshabilitados conservan su apariencia deshabilitada. Los elementos propietarios personalizados deben proporcionar su comportamiento de interacción, incluida la activación mediante teclado y el manejo del estado deshabilitado cuando corresponda.
+
+## Acciones extendidas y controles independientes
+
+Usa `Card.Action` cuando una acción principal abarca una sección de tarjeta que también contiene controles independientes. Coloca la acción directamente dentro de Card.Root, Card.Header, Card.Content o Card.Footer. Esa parte inmediata define el área extendida. Mantén una acción principal por área y mantén los formularios expandidos u otras secciones independientes fuera de ella.
+
+`Card.Action` es un botón nativo de forma predeterminada. Asigna a una acción vacía un nombre accesible con `aria-label` o `aria-labelledby`, y usa `aria-describedby` para el texto de apoyo. Un ancla nativa o enlace de enrutador proporcionado mediante `render` conserva su propia navegación y su comportamiento de destino, clic con modificador y menú contextual. Los elementos propietarios personalizados no reciben ningún rol de botón sintético, controlador de teclado ni punto de tabulación. Coloca los atributos nativos específicos del destino en el elemento renderizado.
+
+`Card.Control` eleva un control independiente o un destino de información sobre herramientas por encima de la acción extendida. Compón su elemento existente mediante `render` para conservar su diseño y atributos. Los controles permanecen como elementos hermanos de la acción principal, en lugar de ser elementos secundarios de un botón o enlace. Card no infiere qué elementos descendientes son interactivos ni reenvía sus clics a la acción principal. Las aplicaciones se encargan de cualquier gestión adicional necesaria para el texto sin formato elevado.
+
+```tsx
+import { useId } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CustomerImportActions = () => {
+  const titleId = useId();
+
+  return (
+    <Card.Root>
+      <Card.Content>
+        <Card.Action
+          aria-labelledby={titleId}
+          render={<a href="/imports/review" />}
+        />
+        <Text id={titleId}>Review customer import</Text>
+        <Card.Control render={<Button variant="ghost" />}>
+          Import options
+        </Card.Control>
+      </Card.Content>
+    </Card.Root>
+  );
+};
+```
+
+Las áreas de acción habilitadas usan el color compartido al pasar el cursor de Card, incluso cuando se pasa el cursor sobre un control independiente. Un área de acción anidada gestiona su propio resaltado y no resalta sus elementos ancestros. Las acciones de botón y enlace nativos muestran un contorno de enfoque insertado de 2 px alrededor del área extendida. Un botón nativo deshabilitado se elimina de la navegación por teclado y su área no se resalta, incluido un botón proporcionado mediante `render`. Los enlaces y controles asociados mediante etiquetas siguen siendo responsables de su propio comportamiento deshabilitado; la propiedad `disabled` de Action también suprime el tratamiento compartido del área de acción.
+
+Para una fila de Switch o Radio, renderiza Action como `<label htmlFor={controlId} />` y asigna ese ID al control real. Mantén su etiqueta visible y su descripción accesible asociadas con el control. La etiqueta no crea ningún destino de teclado ni anillo de enfoque adicionales. Switch y Radio conservan su propio comportamiento de enfoque y teclado. Coloca el formulario expandido de una opción de radio en un Card.Content separado para que la etiqueta cubra solo su encabezado de selección.
+
+<StoryEmbed storyId="ui-surfaces-card-interactions--stretched-actions" title="Acciones extendidas con controles independientes" height={360} />
+
+## Partes independientes y contenedores personalizados
+
+Se puede usar una sección sin la superficie exterior. Los contenedores pueden usar su tipo de props exportado y propagarlo para conservar atributos nativos, controladores de eventos, refs, composición de renderizado, clases y estilos. Con un destino personalizado, coloca su ref específica del destino en el elemento proporcionado. Base UI combina esa ref con la ref de la parte y las props compuestas.
+
+```tsx
+import { Card, type CardContentProps } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type SummaryContentProps = CardContentProps;
+
+const SummaryContent = ({ children, ...props }: SummaryContentProps) => (
+  <Card.Content {...props}>{children}</Card.Content>
+);
+
+export const StandaloneSummary = () => (
+  <SummaryContent aria-label="Import summary" style={{ maxWidth: 360 }}>
+    <Text>24 records are ready to import.</Text>
+  </SummaryContent>
+);
+```
+
+## Migración
+
+Reemplaza las cuatro importaciones independientes por `import { Card } from 'twenty-ui/primitives/surfaces'`. El paquete raíz y `twenty-ui/primitives` también exportan el mismo objeto `Card`.
+
+| API anterior                                    | API compuesta                                        |
+| ----------------------------------------------- | ---------------------------------------------------- |
+| `Card` como componente                          | `Card.Root`                                          |
+| `CardHeader`                                    | `Card.Header`                                        |
+| `CardContent`                                   | `Card.Content`                                       |
+| `CardFooter`                                    | `Card.Footer`                                        |
+| `ComponentProps\<typeof Card>` | `ComponentProps\<typeof Card.Root>` |
+| `styled(Card)`                                  | `styled(Card.Root)`                                  |
+
+Aplica los mismos nombres de miembro a las etiquetas JSX, los contenedores con estilo y los tipos de props. Las exportaciones de partes independientes se eliminan sin alias de compatibilidad. Se mantienen las props de diseño, los valores predeterminados de estilo y el uso de secciones independientes. Reemplaza `isClickable` y `hasHoverHighlight` por un elemento propietario nativo explícito mediante `render`. Mueve los controladores de acciones fuera de los contenedores solo de visualización, conserva los nombres accesibles y mantén los controles anidados fuera de la acción principal. Usa `render={<button type="button" disabled={disabled} />}` para una acción y `render={<a href="/imports" />}` para la navegación. Ahora las refs del DOM apuntan a la parte realmente renderizada.
+
+## "Props"
+
+<CardReference />
+
+<PageBanner illustration="section-ui-primitives" />

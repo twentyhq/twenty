@@ -1,6 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
-import { SettingsAppPreferencesListEmptyStateCard } from '@/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
 import { SettingsAppPreferencesSelectedMessageChannelDetails } from '~/pages/settings/accounts/SettingsAppPreferencesSelectedMessageChannelDetails';
@@ -110,16 +109,10 @@ export const SettingsBuiltInAccountApp = () => {
 
   const renderContent = () => {
     if (activeTabId === 'emails') {
-      if (loading && emailAccounts.length === 0) {
-        return <SettingsSectionSkeletonLoader />;
-      }
-
       const selectedAccount = getSelectedAccount(emailAccounts);
 
       if (!isDefined(selectedAccount)) {
-        return (
-          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
-        );
+        return <SettingsSectionSkeletonLoader />;
       }
 
       const { messageChannel } =
@@ -138,16 +131,10 @@ export const SettingsBuiltInAccountApp = () => {
     }
 
     if (activeTabId === 'calendar') {
-      if (loading && calendarAccounts.length === 0) {
-        return <SettingsSectionSkeletonLoader />;
-      }
-
       const selectedAccount = getSelectedAccount(calendarAccounts);
 
       if (!isDefined(selectedAccount)) {
-        return (
-          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
-        );
+        return <SettingsSectionSkeletonLoader />;
       }
 
       const { calendarChannel } =
@@ -189,11 +176,13 @@ export const SettingsBuiltInAccountApp = () => {
         { children: appName },
       ]}
       secondaryBar={
-        <SettingsTabBar
-          aria-label={t`${appName} preferences`}
-          tabs={tabs}
-          componentInstanceId={tabListComponentInstanceId}
-        />
+        tabs.length > 1 ? (
+          <SettingsTabBar
+            aria-label={t`${appName} preferences`}
+            tabs={tabs}
+            componentInstanceId={tabListComponentInstanceId}
+          />
+        ) : undefined
       }
     >
       <SettingsAccountsMessageChannelsSSEEffect />

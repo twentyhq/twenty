@@ -1,0 +1,61 @@
+---
+title: Verificarea marketplace-ului (în curs)
+description: Cerințe propuse pentru ca aplicațiile terțe să primească o insignă Verificată.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Cum funcţionează verificarea
+
+<Warning>
+  **În curs de elaborare.** Această pagină și cerințele sale se pot schimba. Verificarea terților
+  nu este încă disponibilă. Consultați
+  [Publicare](/ro/developers/extend/apps/operations/publishing#marketplace-visibility-and-vetting)
+  pentru comportamentul actual al marketplace-ului.
+</Warning>
+
+Verificarea se aplică unei versiuni și unui pachet exacte ale aplicației. Fiecare actualizare necesită revizuire și
+aprobare din partea Twenty. Aplicațiile verificate pot fi reevaluate pe măsură ce dependențele sau serviciile
+evoluează.
+
+## Listă de verificare pentru evaluare
+
+Toate elementele aplicabile trebuie să fie aprobate. Recomandăm utilizarea unui agent pentru autoevaluarea
+fiecărui criteriu cu dovezi și remedierile necesare înainte de trimitere.
+
+* [ ] **Editor.** [Revendicați-vă aplicația](/ro/developers/extend/apps/operations/publishing#claiming-your-app)
+  și [publicați cu proveniență](/ro/developers/extend/apps/operations/publishing#ci-publishing).
+* [ ] **Securitate.** Treceți de revizuirea internă de securitate a Twenty și remediați
+  constatările blocante.
+* [ ] **Permisiuni.** Solicitați doar
+  [permisiunile](/ro/developers/extend/apps/config/roles) necesare pentru funcționalitățile aplicației.
+* [ ] **Funcționalitate.** Configurarea și fluxurile de lucru principale sunt ușor de urmat și funcționează conform
+  descrierii, fără blocări, activitate pierdută sau înregistrări duplicate. Fără funcționalități de tip substituent
+  sau controale nefuncționale.
+* [ ] **Performanță.** Respectați limitele de rată partajate pentru API-uri/sarcini, gestionați limitarea și
+  urmați
+  [bunele practici de dezvoltare a aplicațiilor](/ro/developers/extend/apps/getting-started/good-practices).
+* [ ] **Utilitate.** Finalizați o sarcină CRM relevantă pentru un public mai larg decât
+  configurarea unui singur client. Conectorii mici și automatizările fără interfață sunt eligibile.
+* [ ] **Experiență nativă.** Reutilizați obiectele, vizualizările și fluxurile de lucru native, după caz.
+  Dacă aplicația are o interfață cu utilizatorul, utilizați
+  [`twenty-ui`](/ro/developers/extend/apps/layout/front-components#using-twenty-ui-components)
+  și respectați machetele, interacțiunile și convențiile de accesibilitate ale Twenty.
+* [ ] **Confidențialitate.** Explicați ce date părăsesc spațiul de lucru, unde ajung și de ce,
+  inclusiv furnizorii de IA, cât timp sunt păstrate și cum pot fi șterse.
+* [ ] **Întreținere și compatibilitate.** Declarați versiunile Twenty acceptate, mențineți
+  identificatorii entităților stabili și remediați în timp erorile critice și integrările nefuncționale.
+* [ ] **Siglă și galerie.** Furnizați o siglă originală, ușor de recunoscut și imagini
+  finisate ale aplicației reale. Urmați
+  [regulile pentru imagini](/ro/developers/extend/apps/operations/publishing#marketplace-metadata).
+* [ ] **Listare și README.** Descrieți cu acuratețe funcționalitățile și afilierile în
+  nume, descriere și capturi de ecran. Păstrați README-ul concis, bine formatat
+  și axat pe valoarea aplicației.
+* [ ] **Prețuri.** Specificați clar dacă aplicația este gratuită sau cu plată, prețurile planurilor,
+  frecvența facturării și orice servicii terțe cu plată necesare.
+* [ ] **Documentație și asistență.** Furnizați instrucțiuni de configurare, un exemplu funcțional
+  și un contact pentru asistență. Dacă utilizați rute partajate, finalizați
+  [configurarea](/ro/developers/extend/apps/operations/publishing#setting-up-server-routes)
+  și verificați că evenimentele ajung în spațiul de lucru corect.
+
+<PageBanner illustration="card-page-marketplace-vetting" />

@@ -3,7 +3,7 @@ title: Crediti del flusso di lavoro
 description: Comprendere il consumo e la gestione dei crediti dei flussi di lavoro.
 ---
 
-I crediti del flusso di lavoro alimentano le tue automazioni in Twenty. Capire come funzionano ti aiuta a ottimizzare i costi e a gestire efficacemente il tuo budget di automazione.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Allocazione dei crediti
 
@@ -40,7 +40,7 @@ I crediti vengono consumati quando i flussi di lavoro vengono eseguiti, non quan
   * Prompt più complessi e output più lunghi utilizzano più crediti
 
 * **Azioni Delay**: Consumo di crediti minimo
-  * Il nodo Delay consuma **1 credito** quando viene eseguito
+  * Il nodo Delay consuma **0,0001 crediti (0,0001 $)** quando viene eseguito, come un passaggio standard del flusso di lavoro
   * **Nessun credito viene consumato** durante il periodo di attesa
   * Un ritardo di 5 minuti costa quanto un ritardo di 5 giorni
 
@@ -73,3 +73,5 @@ Se hai bisogno di più crediti oltre alla tua assegnazione del piano:
 * **Elaborazione batch**: Utilizza in modo efficiente le operazioni di massa e le azioni di Iteratore per ridurre le singole chiamate di azione
 * **Ottimizzazione del trigger manuale**: Per i trigger manuali, scegli la disponibilità `Bulk` per elaborare più record in una singola esecuzione del flusso di lavoro
 * Ottimizza le azioni di codice per l'efficienza
+
+<PageBanner illustration="card-page-charging-credits" />
