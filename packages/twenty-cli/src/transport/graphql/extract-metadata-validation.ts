@@ -39,6 +39,7 @@ const isFailedMetadataValidation = (
 
 const collectDetails = (
   errorsByMetadata: Record<string, unknown>,
+  limit: number,
 ): ValidationErrorDetail[] => {
   const details: ValidationErrorDetail[] = [];
 
@@ -65,7 +66,7 @@ const collectDetails = (
           message: error.message,
         });
 
-        if (details.length >= MAX_VALIDATION_ERRORS) {
+        if (details.length >= limit) {
           return details;
         }
       }
@@ -93,7 +94,10 @@ export const extractMetadataValidation = (
       continue;
     }
 
-    const extracted = collectDetails(graphqlError.extensions.errors);
+    const extracted = collectDetails(
+      graphqlError.extensions.errors,
+      MAX_VALIDATION_ERRORS - errors.length,
+    );
 
     if (extracted.length === 0) {
       continue;
@@ -112,6 +116,6 @@ export const extractMetadataValidation = (
 
   return {
     ...(isDefined(summary) ? { summary } : {}),
-    errors: errors.slice(0, MAX_VALIDATION_ERRORS),
+    errors,
   };
 };
