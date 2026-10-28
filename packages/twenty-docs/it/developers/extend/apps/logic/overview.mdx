@@ -3,7 +3,12 @@ title: Panoramica
 description: TypeScript lato server che viene eseguito all'interno di Twenty — attivato da route HTTP, pianificazioni cron, eventi del database, strumenti di AI o azioni di workflow.
 ---
 
-Il **livello logico** di un'app Twenty è il codice che *viene eseguito* — handler TypeScript lato server che reagiscono a richieste HTTP, pianificazioni cron e modifiche ai record; skill e agenti di AI che vivono all'interno dello spazio di lavoro; e connessioni OAuth che permettono alle tue funzioni di agire per conto dell'utente in servizi di terze parti.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Cosa copre lo strato logico
+
+Il **livello logico** di un'app Twenty è il codice che *viene eseguito* — handler TypeScript lato server che reagiscono a richieste HTTP, pianificazioni cron e modifiche ai record; skill e agenti di AI che vivono all'interno dello spazio di lavoro; connessioni (OAuth o un flusso di accesso personalizzato) che permettono alle tue funzioni di agire per conto dell'utente in servizi di terze parti; e canali di messaggistica che portano una posta in arrivo esterna in Twenty.
 
 ```text
             ┌─ HTTP route      ──┐
@@ -23,21 +28,38 @@ Il **livello logico** di un'app Twenty è il codice che *viene eseguito* — han
 
 ## In questa sezione
 
-<CardGroup cols={2}>
-  <Card title="Funzioni logiche" icon="bolt" href="/it/developers/extend/apps/logic/logic-functions">
-    Il blocco di base — tipi di trigger, payload e client API tipizzato.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/it/developers/extend/apps/logic/logic-functions" img="/images/user-guide/halftone/card-page-logic-functions.svg">
+    <CardTitle>Funzioni Logiche</CardTitle>
+    Il blocco principale — tipi di attivazione, payload, e il client API digitato.
   </Card>
-  <Card title="Skill e agenti" icon="robot" href="/it/developers/extend/apps/logic/skills-and-agents">
-    Istruzioni riutilizzabili per agenti AI e assistenti con prompt di sistema personalizzati.
+  <Card href="/it/developers/extend/apps/logic/skills-and-agents" img="/images/user-guide/halftone/card-page-skills-agents.svg">
+    <CardTitle>Skills & Agents</CardTitle>
+    Istruzioni per l'agente IA riutilizzabile e assistenti con suggerimenti di sistema personalizzati.
   </Card>
-  <Card title="Connessioni" icon="plug" href="/it/developers/extend/apps/logic/connections">
-    Credenziali OAuth che la tua app detiene per servizi di terze parti — Linear, GitHub, Slack e altri.
+  <Card href="/it/developers/extend/apps/logic/workflows" img="/images/user-guide/halftone/workflows-belt-v1.svg">
+    <CardTitle>Flussi di lavoro</CardTitle>
+    Flussi di lavoro pronti installati con la tua app: inneschi, passaggi e come vengono eseguiti.
   </Card>
-  <Card title="Archivio chiave-valore" icon="database" href="/it/developers/extend/apps/logic/key-value-store">
-    Mantieni lo stato tra le esecuzioni delle funzioni di logica — cache, cursori e asserzioni tra spazi di lavoro.
+  <Card href="/it/developers/extend/apps/logic/connections" img="/images/user-guide/halftone/card-page-connections.svg">
+    <CardTitle>Connessioni</CardTitle>
+    credenziali OAuth la tua app contiene per servizi di terze parti — Linear, GitHub, Slack e altro ancora.
   </Card>
-  <Card title="Job in background" icon="stack-2" href="/it/developers/extend/apps/logic/background-jobs">
-    Metti in coda l’esecuzione di una funzione di logica sui worker per superare il timeout per esecuzione.
+  <Card href="/it/developers/extend/apps/logic/messaging-channels" img="/images/user-guide/halftone/card-page-messaging-channels.svg">
+    <CardTitle>Canali di messaggistica</CardTitle>
+    Portare le conversazioni da qualsiasi provider nei record di thread di messaggi e messaggi di Twenty's — threading e de-duplicazione inclusi.
+  </Card>
+  <Card href="/it/developers/extend/apps/logic/key-value-store" img="/images/user-guide/halftone/card-page-key-value-store.svg">
+    <CardTitle>Key-Value Store</CardTitle>
+    Mantenere lo stato tra le funzioni logiche gira: cache, cursori, e rivendicazioni cross-workspace.
+  </Card>
+  <Card href="/it/developers/extend/apps/logic/background-jobs" img="/images/user-guide/halftone/card-page-background-jobs.svg">
+    <CardTitle>Background Jobs</CardTitle>
+    Accoda una funzione logica eseguita sui lavoratori per superare il timeout per-time.
+  </Card>
+  <Card href="/it/developers/extend/apps/logic/credits" img="/images/user-guide/halftone/card-page-charging-credits.svg">
+    <CardTitle>Charging Credits</CardTitle>
+    Dichiara ciò che le tue app fatturano e carica crediti workspace per esso.
   </Card>
 </CardGroup>
 
@@ -57,4 +79,8 @@ Le funzioni vengono eseguite in sandbox in processi Node.js isolati e accedono a
 
 <Note>
 **Hook di installazione** — codice che viene eseguito prima o dopo l'installazione — condividono questo runtime ma usano le proprie funzioni define e risiedono in [Config → Install Hooks](/it/developers/extend/apps/config/install-hooks).
+
+Anche il [**controllo dello stato**](/it/developers/extend/apps/logic/logic-functions#health-check) lo condivide. Non dichiara alcun trigger: Twenty lo richiama su richiesta quando si apre la pagina delle impostazioni dell'app.
 </Note>
+
+<PageBanner illustration="section-apps-logic" />

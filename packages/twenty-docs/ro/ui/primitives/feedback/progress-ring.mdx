@@ -1,0 +1,60 @@
+---
+title: Inel de progres
+description: Afișați progresul măsurat sau nedeterminat într-un indicator circular compact.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressRingReference from '/snippets/ui/generated/feedback/progress-ring.mdx';
+
+## Prezentare generală
+
+`ProgressRing` oferă un aspect circular pentru [Progress](/ro/ui/primitives/feedback/progress). Acesta partajează contractul componentei rădăcină pentru intervalul personalizat, null, formatare, etichetare, proprietatea nativă, ref și render. Elementele copil opționale afișează o valoare preformatată lângă inel.
+
+<StoryEmbed storyId="ui-feedback-progressring-progressring--display" title="Exemplu de inel de progres" height={90} />
+
+## Utilizare
+
+Furnizați valoarea brută controlată și un nume accesibil. Utilizați `aria-valuetext` atunci când o valoare formatată explică progresul mai clar decât un procentaj.
+
+```tsx
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
+
+export const ImportProgress = () => (
+  <ProgressRing
+    value={600}
+    max={1000}
+    aria-label="Importing records"
+    aria-valuetext="600 of 1,000 records"
+  >
+    600 / 1,000
+  </ProgressRing>
+);
+```
+
+Utilizați `aria-labelledby` pentru a asocia inelul cu o etichetă vizibilă existentă sau compuneți `Progress.Label` ca element copil. Elementele copil preformatate nu furnizează automat numele accesibil al inelului.
+
+## Progres și intervale controlate
+
+Aplicația calculează `value` și formatează conținutul afișat. Inelul nu preia date, nu avansează progresul și nu calculează cote. `min` are implicit valoarea `0`, iar `max` are implicit valoarea `100`. Valorile finite sunt limitate la interval pentru valorile semantice și geometria arcului. Arcul se umple în funcție de procentajul normalizat, inclusiv când minimul nu este zero.
+
+<StoryEmbed storyId="ui-feedback-progressring-progressring--custom-range" title="Progres circular într-un interval personalizat" height={90} />
+
+Transmiteți `value={null}` pentru progres nedeterminat. Inelul omite `aria-valuenow` și afișează un arc nedeterminat. Valorile nefinite rămân, de asemenea, nedeterminate; nu devin zero sau finalizare. Conținutul afișat rămâne controlat de aplicație.
+
+Utilizați `locale`, `format` și `getAriaValueText` conform descrierii din [Progress](/ro/ui/primitives/feedback/progress). Compuneți `Progress.Value` pentru a afișa valoarea formatată a componentei rădăcină.
+
+Utilizați [ProgressBar](/ro/ui/primitives/feedback/progress-bar) pentru progres orizontal sau [MetricRow](/ro/ui/components/data-display/metric-row) pentru o etichetă și o valoare aliniată.
+
+## Aspect și compunere
+
+`size="md"` redă un inel de 16px; `size="sm"` redă un inel de 14px. Ambele utilizează un contur de 2px și se umplu în sensul acelor de ceasornic, pornind de sus. `barColor` acceptă culori CSS, inclusiv variabile de temă. SVG-ul este decorativ și ascuns din API-urile de accesibilitate.
+
+Modificările valorii sunt animate timp de 300ms. Preferințele pentru mișcare redusă dezactivează tranziția și rotația nedeterminată. Atributele native, `className`, `style` și `ref` vizează elementul extern de progres. `className` și `style` pot primi starea progresului. `render` poate înlocui componenta rădăcină păstrându-i semantica.
+
+## Proprietăți
+
+<ProgressRingReference />
+
+<PageBanner illustration="card-page-usage-limits" />

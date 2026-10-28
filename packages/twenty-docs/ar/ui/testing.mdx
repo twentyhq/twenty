@@ -1,0 +1,157 @@
+---
+title: مساعدات Storybook‏.
+description: اعرض معاينات المكونات وكتالوجات المتغيرات باستخدام twenty-ui/testing.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import ComponentStorybookLayoutReference from '/snippets/ui/generated/testing/component-storybook-layout.mdx';
+import GroupedCatalogReference from '/snippets/ui/generated/testing/grouped-catalog.mdx';
+
+## نظرة عامة
+
+يعرّض `twenty-ui/testing` مُزيّنات Storybook، ومساعدات تخطيط المعاينة، وتجاوزات استعلامات الوسائط. اضبط الأنماط و[ThemeProvider](/ar/ui/theming) في معاينة Storybook قبل عرض المكونات ذات النسق.
+
+## أدوار القصص
+
+ابدأ دليل كل مكوّن بقصة `Display` تعرض مثالاً واحداً تمثيلياً قابلاً للاستخدام. اتبعها برمز Usage يعيد إنتاج المعاينة باستخدام عمليات استيراد عامة. توضح المكوّنات المركبة أجزاءها معاً. يوضح الموفّرون ومساعدات إمكانية الوصول تأثيرهم في السياق.
+
+أضف `Catalog` عندما تساعد مقارنة معنونة القراء على الاختيار بين الخيارات المرئية. جمّع المتغيرات والأحجام والألوان والحالات بشكل منفصل؛ واستخدم مصفوفة فقط عندما تكون مقارنة بُعدين معاً مفيدة. يمكن للمكوّن البسيط استخدام مثال بديل واحد. تحتاج مربعات الحوار والقوائم والمكوّنات التفاعلية الأخرى عادةً إلى أمثلة مركزة لكل سير عمل.
+
+حافظ على تغطية شاملة للقطات الشاشة في قصص `VisualRegression` منفصلة، بما في ذلك السمات الداكنة ومصفوفات المتغيرات. ضع علامة `!autodocs` على تلك القصص وأبقها خارج أدلة المكوّنات.
+
+سمِّ القصص الأخرى وفقاً لما توضحه، مثل `Controlled` أو `WithValidation` أو `MultipleSelection`. أبقِ عمليات التحقق من التفاعل في قصص منفصلة تتضمن دوال `play`. تظل معاينة العرض ومعاينات التوثيق الأخرى قابلة للاستخدام من قِبل القارئ دون إجراءات مؤتمتة.
+
+## ComponentDecorator
+
+يلف `ComponentDecorator` قصةً داخل `ComponentStorybookLayout`. عيّن `parameters.container.width` و`parameters.container.height` بالبكسل. يقرأ أيضًا وسيطتي `inverted` و`accent` الخاصتين بالقصة لاختيار خلفية اختيارية.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+const meta = {
+  component: Button,
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 240, height: 100 } },
+};
+
+export default meta;
+
+export const Display = { args: { children: 'Save changes' } };
+```
+
+## الكتالوج المجمّع
+
+يوفر `GroupedCatalog` للكتالوجات المنسقة تخطيطاً مشتركاً للعناوين والصفوف الملتفة والتباعد. تحتوي كل مجموعة على `label` ومصفوفة `examples`. يحتاج كل مثال إلى `label` فريد ضمن مجموعته؛ ويمكنه حمل أي بيانات أخرى يستخدمها `renderExample`.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { GroupedCatalog } from 'twenty-ui/testing';
+
+const groups = [
+  {
+    label: 'Variants',
+    examples: [
+      { label: 'Solid', variant: 'solid' as const },
+      { label: 'Outline', variant: 'outline' as const },
+    ],
+  },
+];
+
+export const ButtonCatalog = () => (
+  <GroupedCatalog
+    groups={groups}
+    renderExample={({ label, variant }) => (
+      <>
+        <Text>{label}</Text>
+        <Button variant={variant}>Save changes</Button>
+      </>
+    )}
+  />
+);
+```
+
+<GroupedCatalogReference />
+
+## CatalogDecorator
+
+يعرض `CatalogDecorator` مجموعات من أربعة أبعاد كحد أقصى من `parameters.catalog.dimensions`. لكل بُعد `name` و`values` ومُعيّن `props(value)` ومنسّق `labels(value)` اختياري. يعيد المُعيّن الخصائص لتلك الخلية. يقبل `parameters.catalog.options.elementContainer` القيم `width` و`style` و`className`.
+
+```tsx
+import { Button, type ButtonVariant } from 'twenty-ui/primitives/input';
+import { CatalogDecorator } from 'twenty-ui/testing';
+
+const meta = { component: Button };
+export default meta;
+
+export const VisualRegression = {
+  tags: ['!autodocs'],
+  args: { children: 'Save changes' },
+  decorators: [CatalogDecorator],
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'variant',
+          values: ['outline', 'solid', 'ghost'],
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+};
+```
+
+## ComponentStorybookLayout
+
+استخدم التخطيط مباشرةً عند إنشاء معاينة خارج مزخرف. يقبل عنصرًا فرعيًا واحدًا.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ComponentStorybookLayout } from 'twenty-ui/testing';
+
+export const ButtonPreview = () => (
+  <ComponentStorybookLayout width={240} height={100}>
+    <Button>Save changes</Button>
+  </ComponentStorybookLayout>
+);
+```
+
+<ComponentStorybookLayoutReference />
+
+## تجاوزات استعلامات الوسائط
+
+استخدم `overrideMediaQueryMatches` في `beforeEach` الخاص بالقصة لفرض نتائج الخطافات المتجاوبة. أعِد دالة التنظيف الخاصة بها لاستعادة `window.matchMedia` بعد القصة:
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { overrideMediaQueryMatches } from 'twenty-ui/testing';
+import { MOBILE_MEDIA_QUERY, useIsMobile } from 'twenty-ui/utilities';
+
+const ResponsiveAction = () => {
+  const isMobile = useIsMobile();
+
+  return <Button fullWidth={isMobile}>Save changes</Button>;
+};
+
+const meta = { component: ResponsiveAction };
+export default meta;
+
+export const Mobile = {
+  beforeEach: () => overrideMediaQueryMatches({ [MOBILE_MEDIA_QUERY]: true }),
+};
+```
+
+تحتفظ الاستعلامات المحذوفة من التجاوز بسلوكها الأصلي. تجاوز `TOUCH_DEVICE_MEDIA_QUERY` بشكل منفصل عندما يعتمد مثال على إدخال اللمس. تتحكم هذه التجاوزات في نتائج `matchMedia`؛ استخدم منفذ عرض Storybook لتغيير استعلامات وسائط CSS وعرض المعاينة.
+
+## معاينات التوثيق
+
+يجب أن تكون القصص المضمّنة في التوثيق مخصّصة للعرض وألا تحتوي على دالة `play`. احتفظ باختبارات التفاعل في قصص منفصلة. شارك `args` و`render` و`decorators` و`parameters` الصريحة عند الحاجة، بدلًا من نشر قصة تفاعل داخل معاينة. يرفض فحص تضمين التوثيق القصص المعلَّمة بوسم `play-fn` الخاص بـ Storybook، بما في ذلك دوال التشغيل الموروثة.
+
+يجب أن يشير التضمين الأول في دليل كل مكوّن إلى قصة مُصدَّرة باسم `Display`. امنح كل تضمين عنواناً وصفياً لإطار iframe الخاص به وارتفاعاً كافياً لعرض المثال. توفر المعاينة المشتركة علامتي تبويب فاتحة وداكنة ورابطاً إلى Storybook، حيث يمكن للقراء استخدام عناصر التحكم لاستكشاف الخصائص.
+
+شغّل `npx nx check:ui-stories twenty-docs` للتحقق من العرض المطلوب وعناوين المعاينات والمراجع وقواعد العرض. شغّل `npx nx check:ui twenty-docs` للتحقق من صحة مراجع API المُنشأة وفحص الأنواع للأمثلة القابلة للنسخ.
+
+<PageBanner illustration="card-page-testing" />

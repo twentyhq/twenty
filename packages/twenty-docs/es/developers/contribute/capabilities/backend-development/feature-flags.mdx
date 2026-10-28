@@ -1,8 +1,9 @@
 ---
 title: Indicadores de característica
+description: Ocultar características experimentales detrás de las banderas de funcionalidad a nivel de espacio de trabajo.
 ---
 
-Los indicadores de característica se usan para ocultar características experimentales. Para Twenty, se configuran a nivel de espacio de trabajo y no a nivel de usuario.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Agregar un nuevo indicador de característica
 
@@ -44,3 +45,5 @@ Cambie el registro correspondiente en la Tabla `core.featureFlag`:
 | iD        | clave                    | workspaceId               | valor       |
 | --------- | ------------------------ | ------------------------- | ----------- |
 | Aleatorio | `IS_FEATURENAME_ENABLED` | ID del espacio de trabajo | `verdadero` |
+
+<PageBanner illustration="page-cover-switch" />

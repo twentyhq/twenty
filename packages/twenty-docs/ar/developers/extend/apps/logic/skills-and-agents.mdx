@@ -3,6 +3,10 @@ title: المهارات والوكلاء
 description: عرّف مهارات ووكلاء الذكاء الاصطناعي لتطبيقك.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
+
 <Warning>
   المهارات والوكلاء حاليًا في مرحلة الألفا. الميزة تعمل لكنها لا تزال قيد التطور.
 </Warning>
@@ -63,7 +67,8 @@ export default defineAgent({
 * `description` (اختياري) يوفّر سياقًا حول ما يفعله الوكيل.
 * `icon` (اختياري) يحدّد الأيقونة المعروضة في واجهة المستخدم.
 * `modelId` (اختياري) يتجاوز نموذج الذكاء الاصطناعي الافتراضي الذي يستخدمه الوكيل.
-* `responseFormat` (اختياري) يتحكم في شكل مخرجات الوكيل. القيمة الافتراضية هي `{ type: 'text' }` للنص الحر. استخدم `{ type: 'json', schema }` لفرض مخرجات JSON منظمة.
+* `responseFormat` (اختياري) يحدد شكل الإخراج الافتراضي للوكيل. القيمة الافتراضية هي `{ type: 'text' }` للنص الحر. استخدم `{ type: 'json', schema }` لفرض مخرجات JSON منظمة. يمكن لاستدعاء `runAgent()` أو لخطوة ذكاء اصطناعي في سير عمل طلب شكل مختلف، ويكون له الأسبقية.
+* يربط `roleUniversalIdentifier` (اختياري) الوكيل بدور يحدده تطبيقك. يجب ألا يمنح ذلك الدور صلاحيات أكثر من دور التطبيق، وإلا فسيفشل الإصدار؛ راجع [أدوار الوكلاء](/ar/developers/extend/apps/config/roles#agent-roles).
 
 بشكل افتراضي، يعيد الوكيل نصًا حرًا. للحصول على مخرجات منظمة، عيّن `responseFormat` إلى `{ type: 'json' }` ووفّر `schema`:
 
@@ -99,42 +104,45 @@ export default defineAgent({
 </Accordion>
 <Accordion title="runAgent" description="تشغيل وكيل من دالة منطقية">
 
-تتيح `runAgent()` لدالة منطقية تشغيل أحد وكلاء تطبيقك (مع مهاراته وأدواته). حدِّد الوكيل بواسطة `universalIdentifier` الذي مررته إلى `defineAgent()`. مرر إما سلسلة `prompt` أو سجل المحادثة `messages`
-— وليس كليهما معًا:
+تتيح `runAgent()` لدالة منطقية تشغيل أحد وكلاء تطبيقك (مع مهاراته وأدواته). عرِّف الوكيل باستخدام `universalIdentifier` الذي مررته إلى `defineAgent()`، ومرِّر ما تريد أن يعمل عليه باعتباره `input`:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { result, error, success } = await runAgent({
+const { threadId, status, result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  prompt: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
-});
-```
-
-لبوتات المحادثة متعددة الجولات (Slack, Discord, Teams, …)، مرر سجل سلسلة المحادثة كـ
-`messages` بدلًا من استخدام `prompt` واحد فقط:
-
-```ts src/logic-functions/reply-in-thread.ts
-import { runAgent } from 'twenty-sdk/logic-function';
-
-const { result, error, success } = await runAgent({
-  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  messages: [
-    { role: 'user', content: 'Who owns Acme?' },
-    { role: 'assistant', content: 'Sarah owns the Acme account.' },
-    { role: 'user', content: 'What was the last touchpoint?' },
-  ],
+  input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
 ```
 
 النقاط الرئيسية:
-* قدِّم **واحدًا فقط** من `prompt` (سلسلة نصية) أو `messages` (من 1 إلى 100 عنصر من `{ role: 'user' | 'assistant', content: string }`).
-* يعمل الوكيل **بشكل متزامن** ويمكنه قراءة/تحديث السجلات بنفسه عبر أدواته الخاصة — يتم حل `runAgent()` بمجرد اكتمال التشغيل.
+* `input` عبارة عن سلسلة نصية، أو قائمة تضم من 1 إلى 100 رسالة
+  (`{ role: 'user' | 'assistant', content: string }`). يمكن أن تتضمن رسالة `user`
+  أيضًا مرفقات ملفات (انظر أدناه). لإجراء محادثة، مرّر
+  `thread` بدلًا من إعادة تشغيل الأدوار السابقة بنفسك.
+* افتراضيا، ينتظر الاستدعاء الوكيل، الذي يمكنه قراءة/تحديث السجلات
+  بنفسه عبر أدواته الخاصة — يُرجع `runAgent()` بمجرد اكتمال التشغيل.
+  مرر `waitForCompletion: false` للإرجاع بمجرد بدء التشغيل:
+  تكون `status` حينها `RUNNING` و`result: null`، ويصل الرد إلى محادثة
+  `threadId`. يُرجع التشغيل الذي يستمر لأكثر من 15 دقيقة أيضا بالحالة
+  `RUNNING`.
+* يمكن للوكيل أيضًا التوقف مؤقتًا حتى يتغير سجل أو يمر بعض الوقت.
+  تُرجع `runAgent()` بعد ذلك `success: true` و`status: 'SUSPENDED'` و
+  `result: null`؛ ثم يواصل الوكيل العمل بنفسه لاحقًا، ويصل ردّه إلى محادثة
+  `threadId`. يفشل استدعاء `thread` الذي لا يزال وكيله في حالة انتظار
+  إلى أن ينتهي.
+* يُخزَّن كل استدعاء مع مدخلاته وحالته، بالإضافة إلى رده واستخدامه
+  عند اكتماله، بحيث يظهر في عمليات تشغيل الوكيل. من دون `thread`، يحصل الاستدعاء على محادثة خاصة به:
+  يسمّيها `threadId`، ولا يراها أي استدعاء لاحق مطلقًا.
 * لا يمكن للتطبيق تشغيل سوى وكلائه الخاصين.
 * يجب أن يمنح [الدور الافتراضي](/ar/developers/extend/apps/config/roles) للتطبيق علامة الإذن `AI` — أضِف `SystemPermissionFlag.AI` إلى `permissionFlagUniversalIdentifiers` الخاصة به (أو عيِّن `canAccessAllTools: true`).
   بدون ذلك، تفشل `runAgent()` بخطأ في الأذونات.
 * اضبط قيمة كبيرة لـ `timeoutSeconds` على الدالة المنطقية — قد يستغرق تشغيل الوكيل عدة ثوانٍ.
-* يكون `success` بقيمة `true` و`result` غير فارغ عند اكتمال التشغيل؛ في حال الفشل يكون `success` بقيمة `false`، و`result` بقيمة `null`، وتحتوي `error` على السبب (على سبيل المثال، عندما تنفد أرصدة الذكاء الاصطناعي الخاصة بمساحة العمل أثناء التشغيل).
+* تكون `status` بالقيمة `COMPLETED` مع `result` غير فارغ عند اكتمال التشغيل
+  دون انتظار؛ وبالقيمة `SUSPENDED` مع `success: true` و`result: null` أثناء
+  الانتظار؛ وبالقيمة `RUNNING` مع `success: true` و`result: null` عندما لا
+  ينتظر الاستدعاء التشغيل؛ وبالقيمة `FAILED` مع `success: false` واحتواء `error` على
+  السبب (على سبيل المثال، عندما تنفد أرصدة الذكاء الاصطناعي لمساحة العمل أثناء التشغيل).
 
 ```ts src/roles/default-role.ts
 import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
@@ -151,6 +159,90 @@ export default defineApplicationRole({
   **تجنب الحلقات:** إذا استدعيت `runAgent()` من مشغل حدث قاعدة بيانات من نوع `*.updated` وقام الوكيل بتحديث نفس السجل، فحدد نطاق المشغل باستخدام `updatedFields` إلى حقل لا يكتبه الوكيل أبدًا (مثل عنوان URL المصدر)، أو تحقَّق مما إذا كان أي حقل مستهدف لا يزال فارغًا قبل استدعاء `runAgent()`.
 </Warning>
 
+### إرسال الملفات مع رسالة
+
+يمكن أن تحمل رسالة `user` `attachments`، بحيث يرى الوكيل لقطة شاشة أو ملف PDF
+بدلاً من اسمه فقط. يشير كل إدخال إلى ملف سبق لتطبيقك
+تحميله إلى مجلد `agent-chat`:
+
+```ts src/logic-functions/describe-screenshot.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: [
+    {
+      role: 'user',
+      content: 'What does this error screen say?',
+      attachments: [{ fileId: uploadedFileId, filename: 'error.png' }],
+    },
+  ],
+});
+```
+
+يتطلب التحميل علامة الإذن `UPLOAD_FILE` في الدور الافتراضي للتطبيق،
+إلى جانب `AI`. `filename` اختياري ويُستخدم فقط لتسمية الملف للنموذج.
+
+* يمكن لرسائل `user` فقط أن تحمل مرفقات. لا يمكن تمثيلها في
+  دور assistant، لذا ترفضها `runAgent()` هناك بدلاً من إسقاطها.
+* بحد أقصى **10** مرفقات لكل رسالة.
+* يجب أن يشير `fileId` إلى ملف تم تحميله بالكامل في مساحة العمل نفسها، ضمن
+  مجلد `agent-chat`. أي شيء آخر يؤدي إلى فشل الاستدعاء بدلاً من
+  الإجابة بهدوء من دون الملف.
+
+### طلب نتيجة منظَّمة
+
+مرّر `responseFormat` للحصول على شكل لهذه المكالمة فقط. له الأسبقية على
+`responseFormat` الخاص بالوكيل، لذا يمكن لوكيل واحد خدمة المستدعين الذين يحتاجون إلى
+مخرجات مختلفة. يستخدم المخطط نفسه مثل `defineAgent()`:
+
+```ts src/logic-functions/score-lead.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: `Score this lead: ${JSON.stringify(lead)}`,
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: {
+        score: { type: 'number', description: 'Lead score from 0 to 100' },
+      },
+      required: ['score'],
+    },
+  },
+});
+```
+
+### متابعة محادثة
+
+مرّر `thread` وسيتولى Twenty الاحتفاظ بالمحادثة لك: لا يرسل كل استدعاء سوى
+الإدخال الجديد، ويرى الوكيل الأدوار السابقة، بما في ذلك ما أعادته أدواته. استخدم أي معرّف ثابت من جانبك كمفتاح، مثل قناة Slack
+وطابع زمني لسلسلة المحادثة:
+
+```ts src/logic-functions/reply-in-thread.ts
+const { result, threadId } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: 'What was the last touchpoint?',
+  additionalInstructions: 'Answer in Slack markdown.',
+  thread: { key: `${channelId}:${threadTs}`, title: 'Acme renewal' },
+});
+```
+
+* تقتصر المفاتيح على تطبيقك ووكيلك، لذا لا يشترك تطبيقان مطلقًا في
+  محادثة واحدة. لا يمكن تمرير `thread` إلا باستخدام رموز وصول التطبيق.
+* `input` لا يمكن أن يحتوي إلا على رسائل `user`: فالمحادثة تحتوي بالفعل على
+  ردود الوكيل.
+* `additionalInstructions` تُعطى للنموذج لهذا الاستدعاء فقط ولا يتم
+  تخزينها، وهي مناسبة للإرشادات الخاصة بكل طلب، مثل قواعد التنسيق أو
+  موعد نهائي. وهي تعمل دون `thread` أيضًا.
+* يُخزَّن كل تشغيل كدور مع حالته، بما في ذلك عمليات التشغيل الفاشلة. يُخزَّن
+  استخدامه عند عودة الوكيل، حتى إذا نفدت أرصدته. إن
+  التشغيل الفاشل ليس جزءًا من المحادثة، لذا لا تراه المكالمة التالية
+  له.
+* تعمل الاستدعاءات على سلسلة المحادثة نفسها واحدًا تلو الآخر: ينتظر الاستدعاء الثاني حتى
+  ينتهي الأول، لذا يرى كلٌّ منها الأدوار التي سبقته.
+* عندما تُنفَّذ الأدوار بصفتها أعضاء مختلفين (انظر أدناه)، لا يرى كل منها سوى النص
+  الخاص بأدوار الآخرين، ولا يرى مطلقًا نتائج أدواتهم، إذ قُرئت تلك النتائج باستخدام
+  أذونات شخص آخر.
+
 ### التشغيل نيابةً عن أحد أعضاء مساحة العمل
 
 مرر `runAsWorkspaceMemberId` عندما يتم تشغيل التنفيذ بواسطة شخص — مثل روبوت دردشة يجيب على رسالة، مثلاً — لكي يتصرف الوكيل بصفة ذلك العضو بدلًا من التطبيق:
@@ -158,7 +250,7 @@ export default defineApplicationRole({
 ```ts src/logic-functions/answer-question.ts
 const { result } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  prompt: 'How many open opportunities do we have?',
+  input: 'How many open opportunities do we have?',
   runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
 });
 ```
@@ -178,4 +270,67 @@ const { result } = await runAgent({
 </Warning>
 
 </Accordion>
+<Accordion title="sendInboxMessage" description="بدء محادثة أو متابعتها في دردشات الأعضاء">
+
+ينشر `sendInboxMessage()` رسالة من تطبيقك في دردشات عضو واحد أو أكثر من أعضاء
+مساحة العمل. يمكن أن تنتهي باستدعاء أداة يجيب عنه العضو من الدردشة، وبعد ذلك
+تستمر المحادثة مع مساعد Twenty.
+
+```ts src/logic-functions/notify-first-recording.ts
+import { sendInboxMessage } from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: 'first-call-recording',
+  idempotencyKey: 'first-call-recording',
+  title: 'Your first call recording is ready',
+  text: 'Your first call was recorded: **Weekly sync**.',
+  toolCall: {
+    toolName: 'ask_question',
+    input: {
+      header: 'Share',
+      question: 'Do you want to share it with the other attendees?',
+      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+    },
+  },
+});
+```
+
+النقاط الرئيسية:
+* يسرد `workspaceMemberIds` الأعضاء الذين يتلقون المحادثة، عضوًا واحدًا على الأقل. يمتلك أول عضو في محادثة جديدة هذه المحادثة، ويتابعها الآخرون
+  بصفتهم مشاركين. تؤدي عملية إرسال لاحقة بالمفتاح نفسه تسرد أعضاء جددًا إلى إضافتهم؛ ويحتفظ الأعضاء الذين لا تدرجهم بالمحادثة.
+* يحدد `threadKey` المحادثة الخاصة بهذا التطبيق، والتي تتم مشاركتها مع كل عضو
+  تُرسل إليه. يبدأ مفتاح جديد محادثة بعنوان `title`؛ ويضيف المفتاح الذي استخدمته سابقًا
+  الرسالة إلى تلك المحادثة.
+* يعرّف `idempotencyKey` الرسالة ضمن المحادثة. لا تؤدي الإرسال
+  مرة أخرى بالمفاتيح نفسها إلى كتابة أي شيء جديد، لذا لا تكرر عمليات إعادة المحاولة والتشغيلات المتزامنة
+  الرسالة أبدًا.
+* ينهي `toolCall` (اختياري) الرسالة بأحد الخيارات التالية:
+  * مكالمة يجيب عليها العضو، مما يوقف المحادثة مؤقتًا: `ask_question`
+    (سؤال واحد متعدد الخيارات)، `request_form` (حقول لملئها) أو
+    `propose_tool_call` (مكالمة للموافقة عليها). يأخذ `input` الخاص به `toolName`،
+    و`arguments` التي ستستدعي الأداة بها، و`summary` من جملة واحدة.
+    يجب أن تكون الأداة مما يمكن للدور الافتراضي لتطبيقك تشغيله بنفسه، مثل
+    `create_one_person` أو `update_one_opportunity` (مع `id` للسجل)؛ ولا يحتاج
+    البريد الإلكتروني (`send_email` أو `draft_email`، مع `recipients` و`subject` و
+    `body` بتنسيق HTML) إلى أي إذن من تطبيقك. يراجع العضو الاستدعاء
+    في البطاقة نفسها التي يظهر فيها استدعاء يقترحه المساعد، ويعدّله إذا أراد، ثم
+    يُشغَّل الاستدعاء الموافق عليه باستخدام صلاحيات الوصول الخاصة به؛
+  * إحدى أدوات تطبيقك الخاصة، عبر `logicFunctionUniversalIdentifier`، وتُعرض
+    بواسطة مكون الواجهة الخاص بها مع `input` و`output` اللذين تمررهما. لا يؤدي ذلك إلى
+    إيقاف المحادثة مؤقتًا.
+* يمكن أن ينتظر في المحادثة استدعاء واحد فقط يجيب عنه العضو في كل مرة:
+  يفشل إرسال استدعاء آخر قبل إجابته مع `THREAD_AWAITING_ANSWER`. تظل
+  الرسائل العادية واستدعاءات أدوات التطبيق مقبولة.
+* لا يمكن حذف المحادثة إلا للعضو الذي يمتلكها، وتختفي المحادثة المحذوفة
+  لجميع الأعضاء: لا يُعاد إنشاؤها، ولا يُضاف إليها شيء. يمكن للأعضاء الآخرين إلغاء الاشتراك لإزالتها من
+  صندوق الوارد الخاص بهم.
+* يجب أن يمتلك كل عضو إذن `AI`، ويفشل الاستدعاء دون
+  كتابة الرسالة عندما يتعذر على أحدهم إجراء المحادثة. يجب أن يمنح
+  [الدور الافتراضي](/ar/developers/extend/apps/config/roles) لتطبيقك
+  `SystemPermissionFlag.AI`.
+
+</Accordion>
 </AccordionGroup>
+
+<PageBanner illustration="card-page-skills-agents" />

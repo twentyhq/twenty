@@ -1,0 +1,193 @@
+---
+title: Trimite prima ta campanie de e-mail
+description: Creează lista, scrie e-mailul, testează-l, apoi trimite-l sau programează-l.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Începe cu o listă de persoane care se așteaptă să primească vești de la tine. Scrie e-mailul, trimite-ți un mesaj de test, apoi trimite-l acum sau programează-l pentru mai târziu.
+
+<Tip>
+  AI te poate ajuta cu asta: poate crea lista și redacta e-mailul.
+  Consultă Creează o campanie cu
+  AI.
+</Tip>
+
+## Înainte de a începe
+
+Înainte de a începe, asigură-te că ai:
+
+* **Un domeniu de expediere verificat.** Consultă [Configurează un domeniu de expediere](/ro/user-guide/email-campaigns/how-tos/set-up-a-sending-domain).
+* **Permisiunea pentru setările spațiului de lucru** pentru a testa, programa și trimite campanii.
+* **Credite de e-mail** dacă utilizezi Twenty Cloud. Fiecare e-mail trimis consumă credite. Consultă [Credite](/ro/user-guide/billing/capabilities/credits).
+
+## Partea 1: Creează o listă
+
+Creează o listă cu persoanele care ar trebui să primească acest e-mail.
+
+1. Apasă `Cmd+K` (`Ctrl+K` pe Windows) și caută **Accesează Liste**.
+2. Fă clic pe **Listă nouă** și dă listei un nume, de exemplu `Newsletter subscribers`.
+3. Deschide lista și utilizează câmpul **Membri** pentru a adăuga persoane.
+
+<img src="/images/user-guide/email-campaigns/list-members.png" style={{ width: '100%' }} />
+
+De asemenea, poți adăuga o persoană din înregistrarea sa folosind câmpul **Liste**.
+
+<Note>
+  Twenty trimite la adresa de e-mail principală a fiecărei persoane. Omite persoanele fără
+  adresă și persoanele care s-au dezabonat, pentru care livrarea a eșuat sau care au raportat spam.
+</Note>
+
+## Partea 2: Creează campania
+
+1. Apasă `Cmd+K` și alege **Compune campanie** sau deschide **Campanii** și fă clic pe **Campanie nouă**.
+2. Dă campaniei un nume. Doar echipa ta vede acest nume.
+3. Deschide fila **E-mail** și completează plicul:
+   * **De la**: adresa pe care o văd destinatarii ca expeditor. Aceasta afișează canalele tale de e-mail.
+   * **Către**: lista din Partea 1. De asemenea, poți crea o listă nouă aici.
+   * **Subiect de dezabonare**: opțional. Alege un subiect pentru ca persoanele să poată renunța la acest tip de e-mail fără să părăsească toate listele. Acest câmp apare după ce creezi un subiect. Consultă [Gestionează dezabonările și subiectele](/ro/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics).
+   * **Subiect**: linia de subiect pe care o văd destinatarii în căsuța de e-mail.
+
+<img src="/images/user-guide/email-campaigns/campaign-composer.png" style={{ width: '100%' }} />
+
+## Partea 3: Scrie e-mailul
+
+Scrie e-mailul în editorul de sub subiect. Twenty salvează schița pe măsură ce lucrezi.
+
+* Tastează `/` pentru a vedea comenzile sau utilizează bara laterală din stânga pentru a adăuga **Text**, **Imagine**, **Blocuri** și **Variabile**.
+* **Blocurile** includ **Secțiune**, **2 coloane**, **3 coloane**, **Buton**, **Separator**, **Imagine** și **HTML**, pentru lipirea propriului cod HTML.
+
+### Personalizează cu variabile
+
+Variabilele sunt înlocuite cu detaliile fiecărei persoane atunci când campania este trimisă. Inserează una din **Variabile** sau tasteaz-o între acolade duble:
+
+| Variabilă            | Înlocuit cu     |
+| -------------------- | --------------- |
+| `{{name.firstName}}` | Prenume         |
+| `{{name.lastName}}`  | Nume de familie |
+| `{{fullName}}`       | Nume complet    |
+| `{{jobTitle}}`       | Funcție         |
+
+Puteți utiliza și câmpuri de text, număr, dată și selecție din Persoane, inclusiv câmpuri personalizate. Variabilele funcționează în linia de subiect, corp și adresele linkurilor.
+
+De exemplu, `Hi {{name.firstName}},` devine `Hi Ana,` pentru Ana.
+
+<img src="/images/user-guide/email-campaigns/campaign-variables.png" style={{ width: '100%' }} />
+
+<Warning>
+  Dacă o persoană nu are o valoare pentru o variabilă, Twenty o lasă necompletată.
+  `Hi {{name.firstName}},` devine `Hi ,` când o persoană nu are prenume.
+  Verificați lista sau scrieți un salut care funcționează în continuare.
+</Warning>
+
+Twenty nu adaugă adresa poștală a companiei dvs. Adăugați-o în partea de jos a e-mailului; legislația din SUA o impune în e-mailurile de marketing.
+
+## Partea 4: Trimiteți un test
+
+1. Faceți clic pe **Test** în partea de sus a campaniei sau apăsați `Cmd+K` și alegeți **Send Test Email**.
+2. În **Recipient**, introduceți propria adresă.
+3. Faceți clic pe **Trimite e-mail de test**.
+
+<img src="/images/user-guide/email-campaigns/campaign-send-test.png" style={{ width: '100%' }} />
+
+Verificați aspectul, linkurile și expeditorul în inbox, pe desktop și pe telefon.
+
+<Note>
+  Variabilele sunt necompletate în e-mailurile de test deoarece un test nu este trimis unei anumite
+  persoane. Spațiul dvs. de lucru poate trimite trei e-mailuri de test pe zi.
+</Note>
+
+## Partea 5: Trimiteți sau programați
+
+1. Faceți clic pe **Trimite** în partea de sus a campaniei sau apăsați `Cmd+K` și alegeți **Send Campaign**.
+2. Verificați rezumatul. **Destinatari** arată câte persoane vor primi e-mailul și de ce altele sunt omise, de exemplu din cauza lipsei unei adrese de e-mail sau a dezabonării.
+3. La **Livrare**, alegeți:
+   * **Trimite acum**: începe imediat și nu poate fi anulat.
+   * **Trimite mai târziu**: alegeți o dată și o oră în **Trimite la**.
+4. Faceți clic pe **Trimite campania** sau **Programează campania**.
+
+<img src="/images/user-guide/email-campaigns/campaign-send-panel.png" style={{ width: '50%' }} />
+
+Pentru a muta o campanie programată, faceți clic din nou pe **Trimite**, alegeți o oră nouă în **Trimite la** și faceți clic pe **Reprogramează campania**. Twenty numără din nou destinatarii când trimite, astfel încât numărul se poate schimba.
+
+<img src="/images/user-guide/email-campaigns/campaign-schedule-panel.png" style={{ width: '50%' }} />
+
+Spațiul dvs. de lucru poate trimite până la 1.000 de e-mailuri de campanie pe zi. Aveți nevoie de mai mult? Contactați-ne prin chat pentru a solicita o limită mai mare.
+
+<Note>
+  Twenty verifică din nou o campanie programată când este momentul trimiterii. Dacă nimeni
+  nu o poate primi sau domeniul de trimitere nu mai este verificat, aceasta revine la
+  **Ciornă** în loc să fie trimisă.
+</Note>
+
+## După ce trimiteți
+
+**Starea** campaniei vă arată unde se află aceasta:
+
+<img src="/images/user-guide/email-campaigns/campaigns-list.png" style={{ width: '100%' }} />
+
+| Status              | Semnificație                                                                                       |
+| ------------------- | -------------------------------------------------------------------------------------------------- |
+| **Ciornă**          | Nu a fost trimisă încă. O puteți edita.                                                            |
+| **Programat**       | Așteaptă momentul trimiterii.                                                                      |
+| **Se trimite**      | E-mailurile sunt trimise.                                                                          |
+| **Trimis**          | Fiecare e-mail a fost trimis furnizorului de livrare.                                              |
+| **Trimis cu erori** | Unele e-mailuri nu au putut fi trimise, de exemplu deoarece spațiul de lucru a rămas fără credite. |
+| **Anulat**          | Oprită înainte de finalizare.                                                                      |
+
+Fila **Acasă** afișează numărul de e-mailuri trimise, livrate, respinse, reclamate, eșuate și omise. Lista **Destinatari** arată cui i-a fost trimisă campania.
+
+<img src="/images/user-guide/email-campaigns/campaign-sent-results.png" style={{ width: '100%' }} />
+
+Pentru a trimite mai târziu o campanie similară, faceți clic pe **Duplică**. Twenty copiază e-mailul, lista și setările într-o ciornă nouă.
+
+### Anulați o campanie
+
+Faceți clic pe **Anulează** în partea de sus a campaniei sau apăsați `Cmd+K` și alegeți **Cancel Campaign**:
+
+* **Programat**: nu a fost trimis nimic. Confirmați cu **Anulează programarea campaniei**. Campania revine la ciorne și o puteți edita sau programa din nou.
+* **În curs de trimitere**: e-mailurile care încă așteaptă sunt oprite. Nu puteți retrage e-mailurile deja trimise.
+
+## Depanare
+
+<Accordion title="Câmpul De la nu are adrese">
+  **De la** listează canalele dvs. de e-mail. Creați mai întâi un canal de e-mail, apoi verificați-i
+  domeniul. Consultați Configurați un domeniu de
+  trimitere.
+</Accordion>
+
+<Accordion title="Trimiterea eșuează cu Niciun domeniu de trimitere verificat nu corespunde acestei adrese a expeditorului">
+  Adresa **De la** se află pe un domeniu care nu este încă verificat. Finalizați pașii
+  din Configurați un domeniu de
+  trimitere sau
+  alegeți altă adresă.
+</Accordion>
+
+<Accordion title="Trimite campania este dezactivat">
+  Campania are nevoie de o adresă **De la**, o listă, un subiect și un corp, precum și de
+  cel puțin o persoană care o poate primi. Verificați rezumatul **Destinatari** pentru
+  persoanele care sunt omise. Cu **Trimite mai târziu**, ora trimiterii trebuie să fie și în
+  viitor.
+</Accordion>
+
+<Accordion title="Trimiterea eșuează cu Această campanie nu poate fi trimisă">
+  Verificați dacă această campanie are o adresă **De la**, o listă și un subiect. Apoi
+  verificați variabilele: o variabilă care nu corespunde unui câmp din Persoane blochează
+  trimiterea. Inserați variabile din **Variabile** în loc să le introduceți manual și utilizați
+  `{{name.firstName}}`, nu `{{firstName}}`.
+</Accordion>
+
+<Accordion title="O campanie programată a revenit la Ciornă">
+  Când a venit momentul trimiterii, campania nu a putut fi trimisă, de exemplu deoarece
+  nimeni din listă nu o putea primi sau domeniul nu mai era verificat. Remediați
+  cauza, apoi programați-o din nou.
+</Accordion>
+
+<Accordion title="Nu găsesc Campanii">
+  Este posibil ca campaniile de e-mail să nu fie încă activate pentru spațiul dvs. de lucru. Contactați-ne prin
+  chat pentru a le activa.
+</Accordion>
+
+<PageBanner illustration="card-page-first-campaign" />

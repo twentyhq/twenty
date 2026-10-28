@@ -3,13 +3,13 @@ title: Webhooks
 description: Primiți notificări în timp real atunci când au loc evenimente în CRM-ul dvs.
 ---
 
-import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-Webhook-urile trimit date către sistemele dvs. în timp real atunci când au loc evenimente în Twenty — nu este necesară interogarea periodică. Folosiți-le pentru a menține sistemele externe sincronizate, a declanșa automatizări sau a trimite alerte.
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Creează Webhook
 
-1. Mergeți la **Setări → API-uri şi Webhooks → Webhooks**
+1. Mergeți la **Setări → Dezvoltatori → Webhook-uri**
 2. Faceți clic pe **+ Creează webhook**
 3. Introduceți URL-ul webhook-ului dvs. (trebuie să fie accesibil public)
 4. Faceți clic pe **Salvare**
@@ -110,3 +110,5 @@ const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
 | **Declanșator webhook în fluxul de lucru** | IN       | Primiți date în Twenty din sisteme externe                                       |
 
 Pentru a primi date externe, consultați [Configurați un declanșator Webhook](/ro/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
+
+<PageBanner illustration="card-page-webhooks" />

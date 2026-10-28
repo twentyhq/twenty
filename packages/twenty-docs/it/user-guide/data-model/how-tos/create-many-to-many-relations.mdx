@@ -3,14 +3,14 @@ title: Crea relazioni molti-a-molti
 description: Collega record in cui molti elementi su entrambi i lati possono essere collegati tra loro utilizzando oggetti di giunzione.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 Le relazioni molti-a-molti ti consentono di collegare più record su entrambi i lati. Ad esempio: molte Persone possono lavorare su molti Progetti, e ogni Progetto può avere molte Persone.
 
-<Warning>
-**Funzionalità beta**: Le relazioni di giunzione sono attualmente in beta. Abilita le in **Impostazioni → Community → Funzionalità** prima di seguire questa guida.
-</Warning>
-
 <Note>
-Questa funzionalità richiede anche che la **Modalità avanzata** sia abilitata (tramite l'interruttore in basso a sinistra nelle Impostazioni).
+L'interruttore **This is a relation to a Junction Object** appare in un campo di relazione uno-a-molti con un singolo oggetto di destinazione, quando tale destinazione sembra un oggetto di giunzione (le sue relazioni, ignorando quelle di sistema, sono tutte molti-a-uno) e dispone di un'altra relazione attraverso cui puntare.
 </Note>
 
 ## Quando usare le relazioni molti-a-molti
@@ -40,11 +40,10 @@ Quando abiliti l'interruttore della relazione di giunzione, Twenty mostra dirett
 
 ## Prerequisiti
 
-1. **Abilita le relazioni di giunzione nelle funzionalità beta**: Vai a **Impostazioni → Community → Funzionalità** e abilita **Relazioni di giunzione**
-2. **Abilita la Modalità avanzata**: Attiva la **Modalità avanzata** in basso a sinistra nella barra laterale delle Impostazioni
-3. Pianifica il tuo modello di dati:
-   * Quali due oggetti stai collegando?
-   * Come dovrebbe chiamarsi l'oggetto di giunzione?
+Pianifica il tuo modello di dati:
+
+* Quali due oggetti stai collegando?
+* Come dovrebbe chiamarsi l'oggetto di giunzione?
 
 ## Passaggio 1: Crea l'oggetto di giunzione
 
@@ -173,3 +172,5 @@ Per accedere a questi dati, vai direttamente all'oggetto di giunzione oppure int
 * [Campi di relazione](/it/user-guide/data-model/capabilities/relation-fields) — tipi di relazione spiegati
 * [Crea oggetti personalizzati](/it/user-guide/data-model/how-tos/create-custom-objects) — come creare oggetti
 * [Crea campi di relazione](/it/user-guide/data-model/how-tos/create-relation-fields) — configurazione di base della relazione
+
+<PageBanner illustration="card-page-relations" />

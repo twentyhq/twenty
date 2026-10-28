@@ -1,0 +1,89 @@
+---
+title: CountPager
+description: Navegue por una colección finita con controles anterior y siguiente y texto de posición con formato.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CountPagerReference from '/snippets/ui/generated/components/navigation/count-pager.mdx';
+
+## Resumen
+
+`CountPager` combina botones anterior y siguiente con texto de posición formateado por quien llama. Úselo para desplazarse por una colección pequeña, como elementos de revisión o solicitudes.
+
+<StoryEmbed storyId="ui-components-countpager--display" title="Ejemplo de paginador por recuento" height={100} />
+
+## "Uso"
+
+```tsx
+import { useState } from 'react';
+import { CountPager } from 'twenty-ui/components/navigation';
+
+export const ReviewPager = () => {
+  const [index, setIndex] = useState(0);
+
+  return (
+    <CountPager
+      aria-label="Review item"
+      index={index}
+      count={3}
+      onIndexChange={setIndex}
+      positionText={`${index + 1} of 3`}
+      previousLabel="Previous item"
+      nextLabel="Next item"
+    />
+  );
+};
+```
+
+## Navegación controlada
+
+Proporcione un `index` basado en cero, el `count` de la colección y `onIndexChange`. Al activar un botón disponible, se solicita el índice adyacente. La aplicación actualiza el índice y representa el contenido correspondiente.
+
+Anterior se desactiva en el primer elemento y Siguiente se desactiva en el último elemento. Ambos botones se desactivan para una colección vacía o de un solo elemento, cuando se establece `disabled` o cuando el índice o el recuento proporcionados no son válidos. Los recuentos deben ser enteros no negativos y el índice debe ser un entero dentro de los límites de la colección.
+
+Cambiar las propiedades nunca llama a `onIndexChange`. Cuando los elementos desaparecen o la colección cambia, la aplicación elige el siguiente elemento activo. La carga de datos, las identidades estables de los elementos, la conservación de borradores y la ejecución del elemento mostrado siguen siendo responsabilidad de la aplicación.
+
+## Texto de posición y ubicación
+
+`positionText` es obligatorio y permanece bajo el control de la aplicación. Formatee los números, las unidades y las traducciones antes de pasarlos al paginador. Para una colección vacía, proporcione un valor significativo, como `No items`; el componente no crea una etiqueta de estado vacío.
+
+El valor predeterminado `positionPlacement="between"` muestra Anterior, texto de posición y Siguiente. Establezca `positionPlacement="start"` para colocar el texto antes de ambos botones. El texto ocupa entonces el ancho disponible para que las acciones se alineen al final de la fila.
+
+```tsx
+import { useState } from 'react';
+import { CountPager } from 'twenty-ui/components/navigation';
+
+export const RequestPager = () => {
+  const [index, setIndex] = useState(0);
+
+  return (
+    <CountPager
+      aria-label="Pending requests"
+      index={index}
+      count={3}
+      onIndexChange={setIndex}
+      positionText={`Request ${index + 1} of 3`}
+      previousLabel="Previous request"
+      nextLabel="Next request"
+      positionPlacement="start"
+      style={{ width: 280, maxWidth: '100%' }}
+    />
+  );
+};
+```
+
+## Accesibilidad y composición
+
+El elemento raíz usa un grupo de forma predeterminada. Proporcione un nombre accesible contextual con `aria-label` o `aria-labelledby`, además de `previousLabel` y `nextLabel` para los dos botones de icono. El texto de posición usa una región activa de prioridad baja para que los cambios puedan anunciarse sin mover el foco.
+
+Los controles usan botones nativos con la presentación compartida de [LightIconButton](/es/ui/components/input/light-icon-button). Tab permite desplazarse entre controles activados, y Enter o Espacio activa el botón enfocado. Los controles desactivados no pueden navegar. Los clics en el paginador no envían un formulario circundante.
+
+Los atributos nativos, `className`, `style` y `ref` se aplican al elemento raíz. Use `render` para componer un elemento raíz diferente mientras conserva las propiedades proporcionadas y la referencia. Mantenga intactos los botones y su semántica de interacción.
+
+## "Props"
+
+<CountPagerReference />
+
+<PageBanner illustration="dashboards" />
