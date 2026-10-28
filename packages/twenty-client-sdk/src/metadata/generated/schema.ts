@@ -2052,6 +2052,13 @@ export interface McpServer {
     __typename: 'McpServer'
 }
 
+export interface McpServerMention {
+    id: Scalars['UUID']
+    label: Scalars['String']
+    name: Scalars['String']
+    __typename: 'McpServerMention'
+}
+
 export interface MessageCampaignBodyConfiguration {
     configurationType: WidgetConfigurationType
     __typename: 'MessageCampaignBodyConfiguration'
@@ -2942,6 +2949,7 @@ export interface PublicWorkspaceDataSummary {
 }
 
 export interface Query {
+    activeMcpServers: McpServerMention[]
     agentChatChannelRoles: AgentChatChannelRole[]
     agentChatChannelSummaries: AgentChatChannelSummary[]
     agentChatChannelThreadIds: AgentChatChannelThreadIds
@@ -6558,6 +6566,14 @@ export interface McpServerGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface McpServerMentionGenqlSelection{
+    id?: boolean | number
+    label?: boolean | number
+    name?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface MessageCampaignBodyConfigurationGenqlSelection{
     configurationType?: boolean | number
     __typename?: boolean | number
@@ -7466,6 +7482,7 @@ export interface PublicWorkspaceDataSummaryGenqlSelection{
 }
 
 export interface QueryGenqlSelection{
+    activeMcpServers?: McpServerMentionGenqlSelection
     agentChatChannelRoles?: AgentChatChannelRoleGenqlSelection
     agentChatChannelSummaries?: AgentChatChannelSummaryGenqlSelection
     agentChatChannelThreadIds?: (AgentChatChannelThreadIdsGenqlSelection & { __args: {after?: (Scalars['String'] | null), assignment?: (AgentChatChannelAssignmentFilter | null), channelId: Scalars['UUID'], first?: (Scalars['Int'] | null), status?: (AgentChatChannelThreadStatus | null)} })
@@ -10611,6 +10628,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isMcpServer = (obj?: { __typename?: any } | null): obj is McpServer => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMcpServer"')
       return McpServer_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const McpServerMention_possibleTypes: string[] = ['McpServerMention']
+    export const isMcpServerMention = (obj?: { __typename?: any } | null): obj is McpServerMention => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMcpServerMention"')
+      return McpServerMention_possibleTypes.includes(obj.__typename)
     }
     
 

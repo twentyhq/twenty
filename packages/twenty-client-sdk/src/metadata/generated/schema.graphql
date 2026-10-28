@@ -2958,6 +2958,12 @@ type McpServer {
   url: String!
 }
 
+type McpServerMention {
+  id: UUID!
+  label: String!
+  name: String!
+}
+
 type MessageCampaignBodyConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -4004,6 +4010,7 @@ type PublicWorkspaceDataSummary {
 }
 
 type Query {
+  activeMcpServers: [McpServerMention!]!
   agentChatChannelRoles: [AgentChatChannelRole!]!
   agentChatChannelSummaries: [AgentChatChannelSummary!]!
   agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!
