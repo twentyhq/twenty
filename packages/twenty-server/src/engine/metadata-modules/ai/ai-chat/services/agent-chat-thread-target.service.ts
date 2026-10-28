@@ -81,6 +81,11 @@ export class AgentChatThreadTargetService {
     });
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.assertRecordIsReadableOrThrow({
+        objectNameSingular,
+        recordId,
+      });
+
       await this.getThreadTargetRepository().softDelete({
         threadId,
         [joinColumnName]: recordId,
