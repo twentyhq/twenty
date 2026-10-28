@@ -1,3 +1,4 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
@@ -14,9 +15,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -24,6 +25,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import {
   AdminPanelRecentUsersDocument,
@@ -54,6 +56,7 @@ export const SettingsAdminGeneral = () => {
   const [debouncedWorkspaceSearchTerm] = useDebounce(workspaceSearchTerm, 300);
 
   const currentUser = useAtomStateValue(currentUserState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
   const canImpersonate = currentUser?.canImpersonate;
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
@@ -78,6 +81,25 @@ export const SettingsAdminGeneral = () => {
 
   const recentUsers = recentUsersData?.adminPanelRecentUsers ?? [];
   const topWorkspaces = topWorkspacesData?.adminPanelTopWorkspaces ?? [];
+  const pinnedWorkspace =
+    topWorkspaces.find((workspace) => workspace.id === currentWorkspace?.id) ??
+    (isDefined(currentWorkspace) &&
+    debouncedWorkspaceSearchTerm.trim().length === 0
+      ? {
+          id: currentWorkspace.id,
+          name: currentWorkspace.displayName,
+          logoUrl: currentWorkspace.logo,
+          totalUsers: currentWorkspace.workspaceMembersCount ?? 0,
+        }
+      : undefined);
+  const workspaces = isDefined(pinnedWorkspace)
+    ? [
+        pinnedWorkspace,
+        ...topWorkspaces.filter(
+          (workspace) => workspace.id !== pinnedWorkspace.id,
+        ),
+      ]
+    : topWorkspaces;
 
   return (
     <>
@@ -213,7 +235,7 @@ export const SettingsAdminGeneral = () => {
           </StyledSearchInputContainer>
           {isLoadingWorkspaces ? (
             <SettingsSectionSkeletonLoader />
-          ) : topWorkspaces.length === 0 ? (
+          ) : workspaces.length === 0 ? (
             <StyledEmptyState>
               {t`No workspaces found matching your search criteria.`}
             </StyledEmptyState>
@@ -227,41 +249,45 @@ export const SettingsAdminGeneral = () => {
                 <TableHeader />
               </TableRow>
               <TableBody>
-                {topWorkspaces.map((workspace) => (
-                  <TableRow
-                    key={workspace.id}
-                    gridTemplateColumns={TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS}
-                    to={getSettingsPath(
-                      SettingsPath.AdminPanelWorkspaceDetail,
-                      { workspaceId: workspace.id },
-                    )}
-                  >
-                    <TableCell
-                      color={themeCssVariables.font.color.primary}
-                      gap={themeCssVariables.spacing[2]}
-                      overflow="hidden"
+                {workspaces.map((workspace, workspaceIndex) => (
+                  <Fragment key={workspace.id}>
+                    <TableRow
+                      gridTemplateColumns={TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS}
+                      to={getSettingsPath(
+                        SettingsPath.AdminPanelWorkspaceDetail,
+                        { workspaceId: workspace.id },
+                      )}
                     >
-                      <Avatar
-                        src={getAbsoluteImageUrl(workspace.logoUrl)}
-                        name={workspace.name || ''}
-                        colorSeed={workspace.id}
-                        size="md"
-                      />
-                      <OverflowingTextWithTooltip
-                        text={workspace.name || '\u2014'}
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      {formatNumber(workspace.totalUsers)}
-                    </TableCell>
-                    <TableCell align="center">
-                      <IconChevronRight
-                        size={theme.icon.size.md}
-                        stroke={theme.icon.stroke.sm}
-                        color={theme.font.color.tertiary}
-                      />
-                    </TableCell>
-                  </TableRow>
+                      <TableCell
+                        color={themeCssVariables.font.color.primary}
+                        gap={themeCssVariables.spacing[2]}
+                        overflow="hidden"
+                      >
+                        <Avatar
+                          src={getAbsoluteImageUrl(workspace.logoUrl)}
+                          name={workspace.name || ''}
+                          colorSeed={workspace.id}
+                          size="md"
+                        />
+                        <OverflowingTextWithTooltip
+                          text={workspace.name || '\u2014'}
+                        />
+                      </TableCell>
+                      <TableCell align="right">
+                        {formatNumber(workspace.totalUsers)}
+                      </TableCell>
+                      <TableCell align="center">
+                        <IconChevronRight
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                          color={theme.font.color.tertiary}
+                        />
+                      </TableCell>
+                    </TableRow>
+                    {isDefined(pinnedWorkspace) &&
+                      workspaceIndex === 0 &&
+                      workspaces.length > 1 && <Separator />}
+                  </Fragment>
                 ))}
               </TableBody>
             </Table>
