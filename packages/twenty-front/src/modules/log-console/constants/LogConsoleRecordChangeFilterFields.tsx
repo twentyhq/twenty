@@ -45,9 +45,13 @@ export const LOG_CONSOLE_RECORD_CHANGE_FILTER_FIELDS: LogConsoleFilterField[] =
       label: msg`Object`,
       Icon: IconBox,
       serverField: 'objectMetadataId',
+      // Object metadata persisted before isAuditLogged existed has no value for
+      // it until the metadata store refreshes; keep those objects listed.
       getOptions: ({ activeObjectMetadataItems }) =>
         activeObjectMetadataItems
-          .filter((objectMetadataItem) => objectMetadataItem.isAuditLogged)
+          .filter(
+            (objectMetadataItem) => objectMetadataItem.isAuditLogged !== false,
+          )
           .map((objectMetadataItem) => ({
             label: objectMetadataItem.labelPlural,
             values: [objectMetadataItem.id],
