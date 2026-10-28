@@ -15,23 +15,13 @@ import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twent
 
 export type RowAccessRecord = { id: string } & Record<string, unknown>;
 
-type InheritedReadabilityExpression = Extract<
-  RowAccessExpression,
-  { kind: 'inheritedReadability' }
->;
-
-export type RowAccessEvaluationContext<TRecord extends RowAccessRecord> = {
+export type RowAccessEvaluationContext = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   shouldIgnoreSoftDeleteDefaultFilter: boolean;
   fetchRecordShares: (args: {
     objectMetadataId: string;
     recordIds: string[];
   }) => Promise<RecordShareGrant[]>;
-  // Parents live in other tables, so whoever holds the records resolves them
-  resolveRecordIdsReadableThroughParents: (args: {
-    expression: InheritedReadabilityExpression;
-    records: TRecord[];
-  }) => Promise<Set<string>>;
 };
 
 // The in-memory counterpart of compileRowAccessPolicy: both read the same
@@ -43,7 +33,7 @@ export const evaluateRowAccessPolicy = async <TRecord extends RowAccessRecord>({
 }: {
   policy: RowAccessPolicy;
   records: TRecord[];
-  context: RowAccessEvaluationContext<TRecord>;
+  context: RowAccessEvaluationContext;
 }): Promise<Set<string>> => {
   switch (policy.kind) {
     case 'open':
@@ -68,7 +58,7 @@ const evaluateRowAccessExpression = async <TRecord extends RowAccessRecord>({
 }: {
   expression: RowAccessExpression;
   records: TRecord[];
-  context: RowAccessEvaluationContext<TRecord>;
+  context: RowAccessEvaluationContext;
 }): Promise<Set<string>> => {
   if (records.length === 0) {
     return new Set();
@@ -161,26 +151,6 @@ const evaluateRowAccessExpression = async <TRecord extends RowAccessRecord>({
       );
 
       return new Set(admittedRecordIds);
-    }
-    case 'inheritedReadability': {
-      const sharedRecordIds = await evaluateRowAccessExpression({
-        expression: {
-          kind: 'recordShared',
-          tableAlias: expression.tableAlias,
-          objectMetadataId: expression.objectMetadataId,
-          principalIds: expression.principalIds,
-          accessLevels: expression.accessLevels,
-        },
-        records,
-        context,
-      });
-      const readableThroughParentIds =
-        await context.resolveRecordIdsReadableThroughParents({
-          expression,
-          records: records.filter((record) => !sharedRecordIds.has(record.id)),
-        });
-
-      return new Set([...sharedRecordIds, ...readableThroughParentIds]);
     }
     default:
       return assertUnreachable(expression);

@@ -11,6 +11,7 @@ import {
 import { ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-is-system-to-agent-and-workflow-upgrade-command-name.constant';
 import { ADD_TRIGGERS_TO_AGENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-triggers-to-agent-upgrade-command-name.constant';
 import { DROP_AGENT_EVALUATION_INPUTS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-47/drop-agent-evaluation-inputs-upgrade-command-name.constant';
+import { AGENT_AND_SKILL_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-53/agent-and-skill-overridable-entity-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
@@ -18,8 +19,19 @@ import { ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/type
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { type AgentTrigger } from 'twenty-shared/application';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
 import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+
+export type AgentOverrides = {
+  label?: string;
+  icon?: string | null;
+  description?: string | null;
+  prompt?: string;
+  modelId?: ModelId;
+  responseFormat?: AgentResponseFormat;
+  modelConfiguration?: ModelConfiguration | null;
+  isActive?: boolean;
+};
 
 @Entity('agent')
 @Index('IDX_AGENT_ID_DELETED_AT', ['id', 'deletedAt'])
@@ -28,7 +40,7 @@ import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/
   where: '"deletedAt" IS NULL',
 })
 export class AgentEntity
-  extends SyncableEntity
+  extends OverridableEntity<AgentOverrides>
   implements Required<AgentEntity>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -60,8 +72,8 @@ export class AgentEntity
   @Column({ nullable: true, type: 'jsonb', default: { type: 'text' } })
   responseFormat: JsonbProperty<AgentResponseFormat>;
 
-  @Column({ default: false })
-  isCustom: boolean;
+  @Column({ type: 'boolean', default: false })
+  isCustom: WasRemovedInUpgrade<boolean>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:
@@ -94,3 +106,10 @@ export class AgentEntity
   @Column({ type: 'text', array: true, default: '{}' })
   evaluationInputs: WasRemovedInUpgrade<string[]>;
 }
+
+WasIntroducedInUpgrade({
+  upgradeCommandName: AGENT_AND_SKILL_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+})(AgentEntity.prototype, 'overrides');
+WasIntroducedInUpgrade({
+  upgradeCommandName: AGENT_AND_SKILL_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+})(AgentEntity.prototype, 'isActive');

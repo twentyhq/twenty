@@ -894,12 +894,6 @@ describe('Conversations through the record API', () => {
         'Renamed through the record API',
       );
 
-      const legacyArchive = await updateThreadRecord(threadId, {
-        archivedAt: new Date().toISOString(),
-      });
-      expect(legacyArchive.body.errors[0].extensions.code).toBe('FORBIDDEN');
-      expect((await readStoredThread(threadId))?.archivedAt).toBeNull();
-
       const outsiderSoftDelete = await softDeleteThreadRecord(
         threadId,
         APPLE_JONY_MEMBER_ACCESS_TOKEN,

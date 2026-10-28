@@ -15,8 +15,10 @@ const DEACTIVATED_SKILL_UNIVERSAL_IDENTIFIER =
   '20000000-0000-4000-8000-000000000002';
 const SYSTEM_SKILL_UNIVERSAL_IDENTIFIER =
   '20000000-0000-4000-8000-000000000003';
-const WORKSPACE_SKILL_UNIVERSAL_IDENTIFIER =
+const OVERRIDDEN_SKILL_UNIVERSAL_IDENTIFIER =
   '20000000-0000-4000-8000-000000000004';
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '10000000-0000-4000-8000-000000000002';
 
 const buildSkillManifest = (universalIdentifier: string): SkillManifest => ({
   universalIdentifier,
@@ -49,8 +51,13 @@ const { skills, coverage } = reconstructSkillsManifest({
           isActive: false,
         }),
         buildFlatSkill(SYSTEM_SKILL_UNIVERSAL_IDENTIFIER, { isSystem: true }),
-        buildFlatSkill(WORKSPACE_SKILL_UNIVERSAL_IDENTIFIER, {
-          isCustom: true,
+        buildFlatSkill(OVERRIDDEN_SKILL_UNIVERSAL_IDENTIFIER, {
+          overrides: {
+            [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+              label: 'Workspace label',
+              isActive: false,
+            },
+          },
         }),
       ],
       flatEntityMaps: createEmptyAllFlatEntityMaps().flatSkillMaps,
@@ -60,9 +67,9 @@ const { skills, coverage } = reconstructSkillsManifest({
 
 describe('reconstructSkillsManifest', () => {
   it('should export an active application skill', () => {
-    expect(skills).toEqual([
+    expect(skills).toContainEqual(
       buildSkillManifest(OUTREACH_SKILL_UNIVERSAL_IDENTIFIER),
-    ]);
+    );
     expect(coverage).toContainEqual({
       metadataName: 'skill',
       universalIdentifier: OUTREACH_SKILL_UNIVERSAL_IDENTIFIER,
@@ -71,24 +78,33 @@ describe('reconstructSkillsManifest', () => {
   });
 
   it.each([
-    [WORKSPACE_SKILL_UNIVERSAL_IDENTIFIER, 'skill created in the workspace'],
     [
       DEACTIVATED_SKILL_UNIVERSAL_IDENTIFIER,
-      'skill deactivated in this workspace',
+      'deactivated in this workspace, exported active',
     ],
     [
-      SYSTEM_SKILL_UNIVERSAL_IDENTIFIER,
-      'skill with values a definition cannot express: isSystem',
+      OVERRIDDEN_SKILL_UNIVERSAL_IDENTIFIER,
+      'deactivated in this workspace, exported active, workspace overrides not exported',
     ],
   ])(
-    'should report skill %s as unsupported: %s',
+    'should export skill %s with its workspace state noted: %s',
     (universalIdentifier, reason) => {
+      expect(skills).toContainEqual(buildSkillManifest(universalIdentifier));
       expect(coverage).toContainEqual({
         metadataName: 'skill',
         universalIdentifier,
-        status: ApplicationExportCoverageStatus.UNSUPPORTED,
+        status: ApplicationExportCoverageStatus.EXPORTED,
         reason,
       });
     },
   );
+
+  it('should report a system skill as unsupported', () => {
+    expect(coverage).toContainEqual({
+      metadataName: 'skill',
+      universalIdentifier: SYSTEM_SKILL_UNIVERSAL_IDENTIFIER,
+      status: ApplicationExportCoverageStatus.UNSUPPORTED,
+      reason: 'skill with values a definition cannot express: isSystem',
+    });
+  });
 });

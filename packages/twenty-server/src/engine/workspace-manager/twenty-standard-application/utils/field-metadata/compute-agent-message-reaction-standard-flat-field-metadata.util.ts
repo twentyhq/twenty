@@ -12,6 +12,7 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-field-permission-actions.constant';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const buildAgentMessageReactionStandardFlatFieldMetadatas = (
@@ -43,6 +44,8 @@ export const buildAgentMessageReactionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   createdAt: {
@@ -65,6 +68,8 @@ export const buildAgentMessageReactionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   updatedAt: {
@@ -87,6 +92,8 @@ export const buildAgentMessageReactionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   deletedAt: {
@@ -108,6 +115,8 @@ export const buildAgentMessageReactionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   message: {
@@ -139,6 +148,8 @@ export const buildAgentMessageReactionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   workspaceMember: {
@@ -171,6 +182,8 @@ export const buildAgentMessageReactionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   agentId: {
@@ -196,6 +209,8 @@ export const buildAgentMessageReactionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   emoji: {
@@ -220,6 +235,8 @@ export const buildAgentMessageReactionStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
 });

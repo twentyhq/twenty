@@ -72,6 +72,7 @@ Puncte cheie:
 * `nextStepIds` conectează graful. Declanșatorul indică spre primii pași, iar fiecare pas indică spre pașii care se execută după acesta.
 * Un pas citește rezultatul anterior cu `{{trigger.\<path>}}` sau `{{\<step universalIdentifier>.\<path>}}`.
 * Compilarea validează întreaga definiție: tipurile de declanșatoare sau pași neacceptate, legăturile de pași defecte și referințele la pași necunoscuți o fac să eșueze.
+* `isSystem` (opțional, implicit `false`) ascunde fluxul de lucru din listele care omit fluxurile de lucru de sistem. Modifică doar ceea ce este afișat.
 
 ## Referirea la alte entități
 
@@ -108,12 +109,25 @@ Intrările lor corespund pașilor din [constructorul de fluxuri de lucru](/ro/us
 * Câmpurile de formular de tip `RECORD` își denumesc obiectul cu `settings.objectUniversalIdentifier`. Câmpurile de tip `SELECT` și `MULTI_SELECT` oferă opțiunile unui câmp existent de același tip, denumit cu `settings.selectedFieldUniversalIdentifier`.
 * Pentru a executa propriul cod, utilizați un pas `LOGIC_FUNCTION`. Pasul Code al generatorului nu este disponibil.
 * Pașii de e-mail și calendar rulează numai dacă rolul aplicației dvs. are indicatorul de permisiune corespunzător: `SystemPermissionFlag.SEND_EMAIL_TOOL` pentru `SEND_EMAIL` și `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` pentru `CREATE_CALENDAR_EVENT`. Spațiul de lucru o acordă prin instalarea aplicației, iar pasul poate utiliza apoi orice cont conectat din spațiul de lucru, asemenea unui flux de lucru creat în aplicație.
-* id-urile conturilor conectate sunt locale pentru fiecare spațiu de lucru, deci nu includeți unul direct în cod. Transmite contul ca variabilă. Pașii de e-mail acceptă, de asemenea, un ID de membru al spațiului de lucru, cum ar fi `{{trigger.properties.after.assigneeId}}`, care se rezolvă la primul cont al acelui membru care poate trimite.
+* id-urile conturilor conectate sunt locale pentru fiecare spațiu de lucru, deci nu includeți unul direct în cod. Denumiți contul în unul dintre următoarele două moduri:
+
+  * `connectedAccountHandle`: adresa de e-mail a contului, cum ar fi `'sales@example.com'`. Când aplicația este sincronizată, identificatorul se rezolvă într-un cont cu acea adresă, care este partajat cu spațiul de lucru (domeniul de aplicare `WORKSPACE`) și poate executa pasul. Contul privat al unui membru nu poate fi denumit după identificator: pull îl păstrează ca `connectedAccountId`. Dacă mai multe conturi partajează adresa, de exemplu o căsuță poștală conectată de doi membri sau prin doi furnizori, câștigă cel mai vechi. Dacă niciunul nu corespunde, sincronizarea eșuează și indică identificatorul. Acesta nu este `fromHandle`, care alege un alias de la care să trimită.
+  * `connectedAccountId`: o variabilă, cum ar fi `{{trigger.properties.after.connectedAccountId}}`. Pașii de e-mail acceptă, de asemenea, un ID de membru al spațiului de lucru, cum ar fi `{{trigger.properties.after.assigneeId}}`, care se rezolvă la primul cont al acelui membru care poate trimite.
+
+  Setează exact unul dintre cele două.
 
 ## După instalare
 
 * Fluxul de lucru devine activ imediat ce aplicația este instalată, iar execuțiile sale apar împreună cu celelalte execuții de fluxuri de lucru ale spațiului de lucru.
 * Instalarea unei versiuni noi a aplicației actualizează fluxul de lucru pe loc.
 * Utilizatorii nu pot edita un flux de lucru instalat. Pentru a personaliza unul, îl duplică: copia le aparține pentru editare.
+
+## Fluxurile de lucru ale aplicației personalizate a spațiului de lucru
+
+Aplicația personalizată a spațiului de lucru deține fluxurile de lucru create în constructorul de fluxuri de lucru, iar codul este la fel de autoritar pentru acestea ca și constructorul:
+
+* `twenty app pull` scrie fiecare dintre acestea din versiunea sa activă, cea publicată ultima dată de constructor. Un flux de lucru a cărui versiune activă utilizează setări pe care un fișier `defineWorkflow()` nu le poate exprima, precum un pas Code sau un declanșator redenumit de constructor, este semnalat și lăsat pe loc.
+* `twenty app apply` publică la fel ca constructorul. Un flux de lucru a cărui definiție corespunde versiunii sale active este lăsat neschimbat. În caz contrar, versiunea activă este arhivată, iar definiția devine o nouă versiune activă, astfel încât rulările anterioare păstrează versiunea pe care au rulat.
+* Utilizatorii continuă să editeze aceste fluxuri de lucru în editor, iar următorul pull readuce modificările lor.
 
 <PageBanner illustration="card-page-workflows" />

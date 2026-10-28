@@ -148,6 +148,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    disabledFieldPermissionActions: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     isNullable: {
       toCompare: true,
       toStringify: false,
@@ -477,11 +482,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'objectMetadataUniversalIdentifier',
     },
-    isCustom: {
-      toCompare: false,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     createdAt: {
       toCompare: false,
       toStringify: false,
@@ -685,11 +685,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'objectMetadataUniversalIdentifier',
-    },
-    isCustom: {
-      toCompare: false,
-      toStringify: false,
-      universalProperty: undefined,
     },
     createdAt: {
       toCompare: false,
@@ -964,45 +959,62 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
-    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    icon: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     description: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     prompt: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     modelId: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     responseFormat: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
+      isOverridable: true,
     },
     modelConfiguration: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
+      isOverridable: true,
     },
     triggers: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
     },
-    isSystem: {
+    isActive: {
+      isOverridable: true,
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
-    isCustom: {
-      toCompare: false,
+    overrides: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    isSystem: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -1208,30 +1220,39 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
-    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    icon: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     description: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     content: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     isActive: {
+      isOverridable: true,
       toCompare: true,
       toStringify: false,
+      universalProperty: undefined,
+    },
+    overrides: {
+      toCompare: true,
+      toStringify: true,
       universalProperty: undefined,
     },
     isSystem: {
       toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
-    isCustom: {
-      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -2378,11 +2399,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     position: {
       toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
-    isCustom: {
-      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },

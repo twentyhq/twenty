@@ -8,8 +8,8 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 ## Probleme comune
 
 * **Erori ale serverului local**, verificați mediul de dezvoltare Docker sau al depozitului. CLI-ul autonom nu gestionează containere.
-* **Versiune Node greșită** — Este nevoie de 24.5+ (`engines.node: ^24.5.0`). Verificați cu `node -v`.
-* **Lipsește Yarn 4** — Rulați `corepack enable`.
+* **Versiune Node greșită** — Este necesară versiunea 24.5+ sau 26.5+ (`engines.node: ^24.5.0 || ^26.5.1`). Verificați cu `node -v`.
+* **Yarn 4 lipsește** — Rulați `corepack enable` (pe Node 26, mai întâi `npm install -g corepack`).
 * **Dependențe nefuncționale** — `rm -rf node_modules && yarn install`.
 * **`yarn.lock` gol** — Compilarea eșuează cu "yarn.lock is empty" atunci când fișierul de blocare există, dar nu are conținut; rulați `yarn install` pentru a-l regenera.
 * **Erori ale `twenty-sdk` după actualizarea la v2.8.0** — A fost mutat din `dependencies` în `devDependencies` în v2.8.0. Vezi [Structura proiectului → Dependințe](/ro/developers/extend/apps/getting-started/project-structure#dependencies).

@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { compareByCodePoint } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-code-point.util';
 import { MANIFEST_ENTITY_REGISTRY } from 'src/engine/core-modules/application/application-manifest/utils/find-manifest-entity-descriptor-by-universal-identifier.util';
+import { preserveApplicationLocalMetadataState } from 'src/engine/core-modules/application/application-manifest/utils/preserve-application-local-metadata-state.util';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
 
@@ -20,7 +21,10 @@ export const getUnreproducedPropertiesReason = <
 }): string | undefined => {
   const comparison = compareTwoFlatEntity({
     fromUniversalFlatEntity: flatEntity,
-    toUniversalFlatEntity: reproducedUniversalFlatEntity,
+    toUniversalFlatEntity: preserveApplicationLocalMetadataState({
+      existingEntity: flatEntity,
+      manifestEntity: reproducedUniversalFlatEntity,
+    }),
     metadataName,
   });
 

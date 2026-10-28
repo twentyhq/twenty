@@ -96,6 +96,7 @@ export class OpenShareRecordToEveryObjectCommand extends ProvisionedWorkspaceCom
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

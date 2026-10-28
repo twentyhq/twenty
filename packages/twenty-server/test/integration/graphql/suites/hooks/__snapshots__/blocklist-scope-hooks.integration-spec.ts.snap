@@ -139,7 +139,7 @@ exports[`blocklist scope hooks refuses every bulk mutation of blocklist entries 
     "subCode": "INVALID_QUERY_INPUT",
     "userFriendlyMessage": "This type of record cannot be merged.",
   },
-  "message": "Merge is only available for objects with duplicate criteria. Object 'blocklist' does not have duplicate criteria defined.",
+  "message": "Merge is not available on system object 'blocklist'.",
 }
 `;
 

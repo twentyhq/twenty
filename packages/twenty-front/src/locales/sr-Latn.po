@@ -430,7 +430,9 @@ msgstr "{0} ponovnih pokušaja"
 
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
+#. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
+#: src/modules/ai/components/AiChatInboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -624,6 +626,11 @@ msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} sat} few
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr "{cardCount, plural, one {Odobriti # radnju?} few {Odobriti # radnje?} other {Odobriti # radnji?}}"
+
+#. js-lingui-id: AnO6CC
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
+msgid "{channelStatusLabel} · {assignmentLabel}"
+msgstr "{channelStatusLabel} · {assignmentLabel}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -850,10 +857,10 @@ msgstr "{label} (zastarelo)"
 msgid "{label}, {statusLabel}"
 msgstr "{label}, {statusLabel}"
 
-#. js-lingui-id: hr3CkB
+#. js-lingui-id: g4xrfh
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
-msgid "{label}, unread"
-msgstr "{label}, nepročitano"
+msgid "{label}, {unreadOpenThreadCount} unread"
+msgstr ""
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -1559,11 +1566,6 @@ msgstr "Potreban je način plaćanja da bi vaš radni prostor ostao aktivan."
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "Plaćanje vaše pretplate nije uspelo. Vaše premium funkcije ostaju aktivne dok ponovo pokušavamo da izvršimo plaćanje."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "Zapis se može deliti sa bilo kim, čak i sa osobama čija uloga nema pristup ovom objektu. Dobijaju samo taj zapis, za pregled ili uređivanje."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1671,11 +1673,6 @@ msgstr "O vašoj aplikaciji"
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Prihvaćeni i potpisani DPA sporazumi za ovaj radni prostor, sa njihovom verzijom šablona i datumom."
 
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "Pristup se takođe nasleđuje iz povezanih zapisa."
-
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -1735,6 +1732,7 @@ msgid "Account Owner"
 msgstr "Vlasnik naloga"
 
 #. js-lingui-id: T3FM0r
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Account settings"
 msgstr "Podešavanja naloga"
@@ -2098,6 +2096,11 @@ msgstr "Dodaj karticu"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Add CC"
 msgstr "Dodaj CC"
+
+#. js-lingui-id: PKjhUq
+#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+msgid "Add channel"
+msgstr "Dodaj kanal"
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -3046,7 +3049,7 @@ msgstr "Poravnanje"
 
 #. js-lingui-id: N40H+G
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
@@ -3218,7 +3221,7 @@ msgid "All tasks addressed. Maintain the momentum."
 msgstr "Svi zadaci su rešeni. Održite zamah."
 
 #. js-lingui-id: 45Gm/K
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
 msgid "All the applications currently installed on this workspace"
 msgstr "Sve aplikacije trenutno instalirane na ovom radnom prostoru"
 
@@ -3556,11 +3559,6 @@ msgstr "Bilo koji uređaj"
 msgid "Any field"
 msgstr "Bilo koje polje"
 
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "Bilo ko u radnom prostoru"
-
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Anyone with an approved email domain can find and join."
@@ -3691,7 +3689,6 @@ msgstr "Apostrof i tačka"
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
@@ -3753,7 +3750,7 @@ msgid "Applicability"
 msgstr "Aplikativnost"
 
 #. js-lingui-id: IrC12v
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+#: src/modules/settings/app-preferences/utils/getInstalledApplicationDisplayName.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -4162,6 +4159,7 @@ msgid "Assignable to Workspace Members"
 msgstr "Može se dodeliti članovima radnog prostora"
 
 #. js-lingui-id: lXGdbb
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned"
 msgstr "Dodeljeno"
@@ -4187,7 +4185,7 @@ msgid "Assigned to you"
 msgstr "Dodeljeno vama"
 
 #. js-lingui-id: ojKCLU
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
 msgstr "Izvršilac"
@@ -4956,7 +4954,7 @@ msgid "Build many-to-many relations"
 msgstr "Kreirajte relacije mnogo-prema-mnogo"
 
 #. js-lingui-id: +7fBMP
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Built-in"
 msgstr "Ugrađeno"
 
@@ -5280,11 +5278,6 @@ msgstr "Kampanja je zakazana za {sendTime}"
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Zakazivanje kampanje je otkazano i vraćena je u vaše nacrte"
-
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "Može samo da pregleda: njegova uloga ne može da uređuje {objectLabelPlural}"
 
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -6921,19 +6914,22 @@ msgstr "Povežite se sa ovim radnim prostorom"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "Poveži se putem IMAP/SMTP"
 
+#. js-lingui-id: vPwoq6
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
+#: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
+msgid "Connect with {appName}"
+msgstr "Povežite se sa {appName}"
+
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "Povežite se sa Google"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Povežite se sa Microsoft"
 
@@ -8909,11 +8905,6 @@ msgstr "Podrazumevani prikaz"
 msgid "Defaults to the step name"
 msgstr "Podrazumevano je naziv koraka"
 
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
-msgstr "Odložene radnje migracije radnog prostora"
-
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
@@ -9338,6 +9329,11 @@ msgstr "Obrisano"
 msgid "Deleted {objectLabel}"
 msgstr "Obrisano {objectLabel}"
 
+#. js-lingui-id: 6T/COx
+#: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
+msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
+msgstr "Obrisano je {successfulCount} od {totalCount} veza. Nije moguće obrisati: {failedLabels}."
+
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "Deleted member"
@@ -9405,6 +9401,7 @@ msgstr "Opišite šta želite da AI uradi..."
 
 #. js-lingui-id: Nu4oKW
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
@@ -9415,7 +9412,6 @@ msgstr "Opišite šta želite da AI uradi..."
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -9623,6 +9619,11 @@ msgstr "Prekini vezu sa nalogom"
 msgid "Disconnected"
 msgstr "Veza je prekinuta"
 
+#. js-lingui-id: +etBOJ
+#: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
+msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
+msgstr "Prekinuto je {successfulCount} od {totalCount} veza. Nije moguće prekinuti: {failedLabels}."
+
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Discoverable"
@@ -9808,9 +9809,9 @@ msgstr "Ne uvozi događaje označene kao privatne"
 
 #. js-lingui-id: DPfwMq
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -12201,11 +12202,6 @@ msgstr "Neuspelo odjavljivanje ovog uređaja"
 msgid "Failed to merge records"
 msgstr "Spajanje zapisa nije uspelo"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "Spajanje zapisa nije uspelo. Pokušajte ponovo."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"
@@ -12798,6 +12794,12 @@ msgstr "Filtrirajte po tipu objekta"
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
 msgid "Filter by record ID"
 msgstr "Filtrirajte po ID-u zapisa"
+
+#. js-lingui-id: jge9hE
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+msgid "Filter channel chats"
+msgstr "Filtriraj ćaskanja kanala"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -14831,7 +14833,7 @@ msgid "Installed"
 msgstr "Instalirano"
 
 #. js-lingui-id: OMxM9j
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
 msgid "Installed apps"
 msgstr "Instalirane aplikacije"
 
@@ -16440,8 +16442,8 @@ msgstr "Učitavanje…"
 
 #. js-lingui-id: d5zxa4
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Local"
 msgstr "Lokalno"
 
@@ -17156,6 +17158,16 @@ msgstr "Spoji zapise"
 msgid "Merge review tabs"
 msgstr "Kartice pregleda spajanja"
 
+#. js-lingui-id: 1uAvIV
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merged {objectLabel}"
+msgstr ""
+
+#. js-lingui-id: v4CzQ/
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merging {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
@@ -17273,7 +17285,8 @@ msgid "Min range"
 msgstr "Minimalni opseg"
 
 #. js-lingui-id: oSrMRT
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "Mine"
 msgstr "Moje"
 
@@ -17751,6 +17764,7 @@ msgstr "Nije dostupno"
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -17781,7 +17795,6 @@ msgstr "Nije dostupno"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -17790,7 +17803,6 @@ msgstr "Nije dostupno"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
-#: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
@@ -17970,7 +17982,6 @@ msgid "New calendar event"
 msgstr "Novi događaj u kalendaru"
 
 #. js-lingui-id: BW0+uJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "New channel"
 msgstr "Novi kanal"
@@ -18301,11 +18312,6 @@ msgstr "Nije pronađen nijedan {objectLabelSingular}"
 msgid "No access"
 msgstr "Nema pristupa"
 
-#. js-lingui-id: ETfwRt
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
-msgid "No accounts yet"
-msgstr "Još nema naloga"
-
 #. js-lingui-id: IeiB4r
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "No actions to review"
@@ -18394,7 +18400,7 @@ msgid "No application found. If you just published it to npm with the \"twenty-a
 msgstr "Nijedna aplikacija nije pronađena. Ako ste je upravo objavili na npm-u sa ključnom reči \"twenty-app\", sinhronizujte katalog i pokušajte ponovo."
 
 #. js-lingui-id: JgiGgF
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "No application matches your search"
 msgstr "Nijedna aplikacija ne odgovara vašoj pretrazi"
@@ -19351,6 +19357,11 @@ msgstr "Nije dostupno u Podrazumevanom Pregledu"
 msgid "Not configured"
 msgstr "Nije podešeno"
 
+#. js-lingui-id: S33tz3
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Not connected"
+msgstr ""
+
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
@@ -19387,7 +19398,7 @@ msgid "Not measured at this effort yet. Showing the base model's reading."
 msgstr "Još nije mereno pri ovom nivou napora. Prikazuje se vrednost osnovnog modela."
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
 msgid "Not open to you"
 msgstr "Nije otvoreno za vas"
 
@@ -19496,8 +19507,8 @@ msgid "now"
 msgstr "sada"
 
 #. js-lingui-id: hzMYNj
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "NPM"
 msgstr "NPM"
 
@@ -19580,9 +19591,9 @@ msgid "Numbered list"
 msgstr "Numerisana lista"
 
 #. js-lingui-id: b/j06W
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "OAuth"
@@ -19896,11 +19907,6 @@ msgstr "samo na {firstDay} i {secondDay}"
 msgid "only on {remainingDays} and {0}"
 msgstr "samo na {remainingDays} i {0}"
 
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "Samo osobe koje već imaju pristup ovim zapisima"
-
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Only run when one of these fields changes"
@@ -19937,8 +19943,8 @@ msgid "Only you will be able to see your emails and events"
 msgstr "Samo ćete vi moći da vidite svoje imejlove i događaje"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -22095,7 +22101,6 @@ msgstr "Izbor zapisa"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "Deljenje zapisa"
 
@@ -23153,11 +23158,6 @@ msgstr "uloga"
 msgid "Role"
 msgstr "Uloga"
 
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "Dozvole za uloge i polja se i dalje primenjuju."
-
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
 msgid "Role for {agentLabel} agent"
@@ -23333,11 +23333,6 @@ msgstr "Pokrenite kod za analizu fajlova i podataka"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "Izvrši funkciju"
-
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr "Pokrenite spore delove izmena modela podataka u pozadini nakon što se sačuvaju."
 
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
@@ -23699,7 +23694,7 @@ msgid "Search agents"
 msgstr "Pretražite agente"
 
 #. js-lingui-id: fGTI3o
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 msgid "Search an application"
@@ -25040,11 +25035,6 @@ msgstr "Imejlovi deljenog prijemnog sandučeta"
 msgid "Shared record"
 msgstr "Deljeni zapis"
 
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "Deljenje nikada ne prevazilazi uloge i njihove filtere redova. Koristite ga za osetljive objekte."
-
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Sharing record"
@@ -25513,8 +25503,8 @@ msgid "Snooze until {snoozedUntilLabel}"
 msgstr "Odloži do {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Snoozed"
 msgstr "Odloženo"
@@ -25895,7 +25885,6 @@ msgstr "Statistika"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
@@ -25906,8 +25895,8 @@ msgstr "Statistika"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -26488,9 +26477,13 @@ msgstr "Sinhronizuj naziv i API ime"
 msgid "Synchronize Objects Labels and API Names"
 msgstr "Sinhronizuj etikete i nazive API-a objekata"
 
+#. js-lingui-id: 4XvJjz
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
+msgstr "Sinhronizacija će se zaustaviti, a akreditivi će biti uklonjeni za sledeće. Vaše e-poruke i događaji će biti sačuvani i dostupni nakon što se ponovo povežete."
+
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and this account's credentials will be removed. Your emails and events will be retained and available after you reconnect."
 msgstr "Sinhronizacija će se zaustaviti, a akreditivi ovog naloga će biti uklonjeni. Vaše e-poruke i događaji će biti sačuvani i dostupni nakon što se ponovo povežete."
 
@@ -26611,9 +26604,9 @@ msgstr "Razgovarajte sa našim timom"
 
 #. js-lingui-id: bcrHWv
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Tarball"
 msgstr "Tar arhiva"
 
@@ -27484,9 +27477,13 @@ msgstr "Ova stranica nije dostupna."
 
 #. js-lingui-id: PIZjqy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes {accountHandle} and all of its synced emails and events. This action cannot be undone."
 msgstr "Ovim se trajno briše {accountHandle} i sve njegove sinhronizovane e-poruke i događaji. Ova radnja se ne može opozvati."
+
+#. js-lingui-id: vrBe2V
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
+msgstr "Ovim se trajno brišu sledeće stavke, kao i sve njihove sinhronizovane e-poruke i događaji. Ova radnja se ne može opozvati."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -28425,6 +28422,7 @@ msgstr "Dvofaktorska autentifikacija je resetovana za ovaj radni prostor. Ponovo
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
@@ -28433,8 +28431,6 @@ msgstr "Dvofaktorska autentifikacija je resetovana za ovaj radni prostor. Ponovo
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-#: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -28520,7 +28516,8 @@ msgid "Unanswered"
 msgstr "Neodgovoreno"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "Unassigned"
 msgstr "Nedodeljeno"
 
@@ -29050,8 +29047,8 @@ msgstr "ažuriraj"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Update"
 msgstr "Ažurirati"
 
@@ -29261,6 +29258,11 @@ msgstr "Nadogradi na Organization"
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Upgrade to Organization to configure SSO."
 msgstr "Nadogradite na Organization da biste konfigurisali SSO."
+
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr "Nadogradite na Organization da biste kreirali prilagođene uloge"
 
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -29944,6 +29946,7 @@ msgid "view"
 msgstr "pregled"
 
 #. js-lingui-id: jpctdh
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -30298,6 +30301,7 @@ msgid "Watch members demo"
 msgstr "Pogledajte demo članova"
 
 #. js-lingui-id: Rxoy7e
+#: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Trenutno imamo poteškoća sa ovom aplikacijom, njeno ponašanje može biti narušeno dok radimo na rešenju."
@@ -30650,11 +30654,6 @@ msgstr "Da li ovaj model podržava lančano rezonovanje"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "U koji razgovor sa primaocem ovaj korak upisuje"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "Sa kim se može deliti zapis objekta {objectLabel}. Uloge i dalje određuju šta ljudi podrazumevano vide."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30727,11 +30726,6 @@ msgstr "Bez pozivnog koda"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "bez kreditne kartice"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "Neće ga videti: njihova uloga nema pristup objektima {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)
@@ -31384,6 +31378,7 @@ msgid "Your card was saved, but the payment still needs attention."
 msgstr "Vaša kartica je sačuvana, ali plaćanje i dalje zahteva pažnju."
 
 #. js-lingui-id: OD3Fzl
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Your connections could not be loaded. Check your connection and try again."
 msgstr "Vaše veze nisu mogle da se učitaju. Proverite vezu i pokušajte ponovo."

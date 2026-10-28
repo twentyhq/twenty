@@ -35,6 +35,22 @@ const withStep = (step: Record<string, unknown>) => ({
   },
 });
 
+const withSendEmailStep = (input: Record<string, unknown>) => ({
+  ...workflow,
+  version: {
+    ...workflow.version,
+    steps: [
+      {
+        universalIdentifier: STEP_ID,
+        name: 'Email',
+        type: 'SEND_EMAIL',
+        input: { recipients: { to: 'jane@example.com' }, ...input },
+        nextStepIds: [],
+      },
+    ],
+  },
+});
+
 describe('defineWorkflow', () => {
   it('accepts a manual workflow', () => {
     expect(defineWorkflow(workflow)).toEqual({
@@ -45,7 +61,33 @@ describe('defineWorkflow', () => {
     });
   });
 
+  it('accepts a workflow flagged as system', () => {
+    const systemWorkflow = { ...workflow, isSystem: true };
+
+    expect(defineWorkflow(systemWorkflow)).toMatchObject({
+      success: true,
+      config: systemWorkflow,
+    });
+  });
+
+  it('accepts an email step naming its account by handle', () => {
+    const definition = withSendEmailStep({
+      connectedAccountHandle: 'sales@example.com',
+    }) as WorkflowManifest;
+
+    expect(defineWorkflow(definition).errors).toEqual([]);
+  });
+
   it.each([
+    {
+      problem: 'an email step naming its account by both id and handle',
+      definition: withSendEmailStep({
+        connectedAccountId: '{{trigger.accountId}}',
+        connectedAccountHandle: 'sales@example.com',
+      }),
+      error:
+        'version.steps.0.input.connectedAccountHandle: Set exactly one of connectedAccountId and connectedAccountHandle',
+    },
     {
       problem: 'a step type applications cannot use',
       definition: withStep({ type: 'CODE' }),
@@ -62,6 +104,11 @@ describe('defineWorkflow', () => {
         },
       },
       error: expect.stringMatching(/^version\.trigger\.type: .*MANUAL/),
+    },
+    {
+      problem: 'an isSystem that is not a boolean',
+      definition: { ...workflow, isSystem: 'true' },
+      error: 'isSystem: Invalid input: expected boolean, received string',
     },
     {
       problem: 'a cycle',

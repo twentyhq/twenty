@@ -139,6 +139,7 @@ export class SyncShortLinkObjectCommand extends ProvisionedWorkspaceCommandRunne
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName,
           workspaceId,
           isSystemBuild: true,

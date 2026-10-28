@@ -163,6 +163,9 @@ export default {
             "id": [
                 532
             ],
+            "isActive": [
+                4
+            ],
             "isCustom": [
                 4
             ],
@@ -202,6 +205,9 @@ export default {
         },
         "Boolean": {},
         "AgentChatChannel": {
+            "applicationId": [
+                532
+            ],
             "color": [
                 1
             ],
@@ -250,13 +256,25 @@ export default {
             ]
         },
         "AgentChatChannelSummary": {
+            "assignedToMeCount": [
+                10
+            ],
             "channelId": [
                 532
+            ],
+            "doneCount": [
+                10
+            ],
+            "hasUnreadAssignedToMe": [
+                4
             ],
             "hasUnreadOpen": [
                 4
             ],
             "openCount": [
+                10
+            ],
+            "snoozedCount": [
                 10
             ],
             "__typename": [
@@ -305,6 +323,9 @@ export default {
                 10
             ],
             "openThreadCount": [
+                10
+            ],
+            "unreadOpenThreadCount": [
                 10
             ],
             "__typename": [
@@ -4902,6 +4923,9 @@ export default {
             "description": [
                 1
             ],
+            "disabledFieldPermissionActions": [
+                1
+            ],
             "icon": [
                 1
             ],
@@ -5476,6 +5500,9 @@ export default {
             ]
         },
         "Index": {
+            "applicationId": [
+                532
+            ],
             "createdAt": [
                 214
             ],
@@ -5492,6 +5519,9 @@ export default {
                 1
             ],
             "isCustom": [
+                4
+            ],
+            "isSystemSideEffect": [
                 4
             ],
             "isUnique": [
@@ -13222,6 +13252,9 @@ export default {
             ],
             "id": [
                 532
+            ],
+            "isActive": [
+                4
             ],
             "label": [
                 1

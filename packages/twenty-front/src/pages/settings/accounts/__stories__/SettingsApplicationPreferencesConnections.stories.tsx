@@ -18,7 +18,7 @@ import {
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
 import {
   LINEAR_APPLICATION_ID,
-  LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+  LINEAR_GENERAL_TAB_REDIRECT_LOCATION,
   LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
   MOCKED_TRANSIENT_TOKEN,
   generateTransientToken,
@@ -149,7 +149,7 @@ export const AddConnectionStartsTheOAuthFlow: Story = {
       applicationId: LINEAR_APPLICATION_ID,
       providerName: 'linear',
       transientToken: MOCKED_TRANSIENT_TOKEN,
-      redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+      redirectLocation: LINEAR_GENERAL_TAB_REDIRECT_LOCATION,
     });
   },
 };
@@ -183,7 +183,7 @@ export const ReconnectStartsTheOAuthFlow: Story = {
       providerName: 'linear',
       transientToken: MOCKED_TRANSIENT_TOKEN,
       reconnectingConnectedAccountId: LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
-      redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+      redirectLocation: LINEAR_GENERAL_TAB_REDIRECT_LOCATION,
     });
   },
 };

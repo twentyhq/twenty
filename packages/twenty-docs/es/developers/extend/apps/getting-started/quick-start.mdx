@@ -8,7 +8,7 @@ import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Antes de empezar
 
-Usa Node.js 24.5+ y Yarn 4. Instala la CLI globalmente; tu aplicación conserva sus propias dependencias del SDK.
+Usa Node.js 24.5+ o 26.5+ y Yarn 4 (mediante Corepack: `corepack enable`; en Node 26, instálalo primero con `npm install -g corepack`). Instala la CLI globalmente; tu aplicación conserva sus propias dependencias del SDK.
 
 <Note>
 La compilación de aplicaciones Twenty solo es compatible oficialmente con sistemas Unix (macOS y Linux). En Windows, trabaja dentro de WSL 2.
@@ -54,7 +54,7 @@ twenty app plan
 twenty app apply
 ```
 
-`plan` previsualiza los cambios. `apply` carga y sincroniza una vez. Usa `--no-delete` para conservar las entidades remotas que faltan en el origen, o `--yes` para permitir eliminaciones de objetos y campos sin confirmación. Los tres comandos requieren un remoto autenticado y la propiedad del registro.
+`plan` previsualiza los cambios. `apply` carga y sincroniza una vez. Usa `--no-prune` para conservar las entidades remotas que faltan en el origen, o `--yes` para permitir eliminaciones de objetos y campos sin confirmación. Los tres comandos requieren un remoto autenticado y la propiedad del registro.
 
 ## Lo que puedes crear
 

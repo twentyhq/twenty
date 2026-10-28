@@ -35,6 +35,7 @@ describe('agentChatRecentThreadsSelector', () => {
     ]);
     store.set(agentChatThreadParticipantsState.atom, {
       'followed-channel-chat': {
+        __typename: 'AgentChatThreadParticipant' as const,
         id: 'participant',
         threadId: 'followed-channel-chat',
         lastReadAt: null,

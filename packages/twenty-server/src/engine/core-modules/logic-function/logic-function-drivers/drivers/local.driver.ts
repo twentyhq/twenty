@@ -202,6 +202,9 @@ export class LocalDriver implements LogicFunctionDriver {
         const { ok, result, errorType, error, stack, stdout, stderr } =
           await this.childProcessRunner.runChildWithEnv({
             runnerPath,
+            executionDirectory: sourceTemporaryDir,
+            flatApplication,
+            applicationUniversalIdentifier,
             env: env ?? {},
             payload,
             context,

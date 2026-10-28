@@ -430,7 +430,9 @@ msgstr "{0} uudelleenyritystä"
 
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
+#. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
+#: src/modules/ai/components/AiChatInboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -624,6 +626,11 @@ msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} tunti} o
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr "{cardCount, plural, one {Hyväksytäänkö # toiminto?} other {Hyväksytäänkö # toimintoa?}}"
+
+#. js-lingui-id: AnO6CC
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
+msgid "{channelStatusLabel} · {assignmentLabel}"
+msgstr "{channelStatusLabel} · {assignmentLabel}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -850,10 +857,10 @@ msgstr "{label} (vanhentunut)"
 msgid "{label}, {statusLabel}"
 msgstr "{label}, {statusLabel}"
 
-#. js-lingui-id: hr3CkB
+#. js-lingui-id: g4xrfh
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
-msgid "{label}, unread"
-msgstr "{label}, lukematon"
+msgid "{label}, {unreadOpenThreadCount} unread"
+msgstr ""
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -1559,11 +1566,6 @@ msgstr "Maksutapa tarvitaan, jotta työtilasi pysyy aktiivisena."
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "Tilauksesi maksu epäonnistui. Premium-ominaisuutesi pysyvät aktiivisina, kun yritämme maksua uudelleen."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "Tietue voidaan jakaa kenen tahansa kanssa, myös sellaisten henkilöiden kanssa, joiden roolilla ei ole pääsyä tähän objektiin. He saavat vain kyseisen tietueen katselua tai muokkausta varten."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1671,11 +1673,6 @@ msgstr "Tietoja sovelluksestasi"
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Tälle työtilalle hyväksytyt ja allekirjoitetut DPA-sopimukset sekä niiden malliversio ja päivämäärä."
 
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "Käyttöoikeudet periytyvät myös liittyvistä tietueista."
-
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -1735,6 +1732,7 @@ msgid "Account Owner"
 msgstr "Tilin omistaja"
 
 #. js-lingui-id: T3FM0r
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 msgid "Account settings"
 msgstr "Tilin asetukset"
@@ -2098,6 +2096,11 @@ msgstr "Lisää kortti"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Add CC"
 msgstr "Lisää kopio"
+
+#. js-lingui-id: PKjhUq
+#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+msgid "Add channel"
+msgstr "Lisää kanava"
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -3046,7 +3049,7 @@ msgstr "Tasaus"
 
 #. js-lingui-id: N40H+G
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
@@ -3218,7 +3221,7 @@ msgid "All tasks addressed. Maintain the momentum."
 msgstr "Kaikki tehtävät käsitelty. Pidä vauhti yllä."
 
 #. js-lingui-id: 45Gm/K
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
 msgid "All the applications currently installed on this workspace"
 msgstr "Kaikki tähän työtilaan tällä hetkellä asennetut sovellukset"
 
@@ -3556,11 +3559,6 @@ msgstr "Kaikki laitteet"
 msgid "Any field"
 msgstr "Mikä tahansa kenttä"
 
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "Kuka tahansa työtilassa"
-
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Anyone with an approved email domain can find and join."
@@ -3691,7 +3689,6 @@ msgstr "Heittomerkki ja piste"
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
@@ -3753,7 +3750,7 @@ msgid "Applicability"
 msgstr "Soveltuvuus"
 
 #. js-lingui-id: IrC12v
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
+#: src/modules/settings/app-preferences/utils/getInstalledApplicationDisplayName.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -4162,6 +4159,7 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned"
 msgstr "Määritetty"
@@ -4187,7 +4185,7 @@ msgid "Assigned to you"
 msgstr "Määrätty sinulle"
 
 #. js-lingui-id: ojKCLU
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
 msgstr "Tehtävään määrätty"
@@ -4956,7 +4954,7 @@ msgid "Build many-to-many relations"
 msgstr "Luo moni-moneen-suhteita"
 
 #. js-lingui-id: +7fBMP
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Built-in"
 msgstr "Sisäänrakennettu"
 
@@ -5280,11 +5278,6 @@ msgstr "Kampanja ajastettu ajankohtaan {sendTime}"
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Kampanjan ajastus poistettu, ja se on jälleen luonnoksissasi"
-
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "Voi vain tarkastella: hänen roolinsa ei voi muokata kohteita {objectLabelPlural}"
 
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -6921,19 +6914,22 @@ msgstr "Yhdistä tähän työtilaan"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "Yhdistä IMAP/SMTP:n kautta"
 
+#. js-lingui-id: vPwoq6
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
+#: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
+msgid "Connect with {appName}"
+msgstr "Yhdistä palveluun {appName}"
+
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "Yhdistä Googleen"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Yhdistä Microsoftiin"
 
@@ -8909,11 +8905,6 @@ msgstr "Oletusnäkymä"
 msgid "Defaults to the step name"
 msgstr "Oletusarvona vaiheen nimi"
 
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
-msgstr "Lykkääntyneet työtilan siirtotoimet"
-
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
@@ -9338,6 +9329,11 @@ msgstr "Poistettu"
 msgid "Deleted {objectLabel}"
 msgstr "Poistettiin {objectLabel}"
 
+#. js-lingui-id: 6T/COx
+#: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
+msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
+msgstr "Poistettiin {successfulCount}/{totalCount} yhteydestä. Ei voitu poistaa: {failedLabels}."
+
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "Deleted member"
@@ -9405,6 +9401,7 @@ msgstr "Kuvaile mitä haluat, että tekoäly tekee..."
 
 #. js-lingui-id: Nu4oKW
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
@@ -9415,7 +9412,6 @@ msgstr "Kuvaile mitä haluat, että tekoäly tekee..."
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -9623,6 +9619,11 @@ msgstr "Katkaise tilin yhteys"
 msgid "Disconnected"
 msgstr "Yhteys katkaistu"
 
+#. js-lingui-id: +etBOJ
+#: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
+msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
+msgstr "Katkaistiin {successfulCount}/{totalCount} yhteydestä. Ei voitu katkaista: {failedLabels}."
+
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Discoverable"
@@ -9808,9 +9809,9 @@ msgstr "Älä tuo yksityisiksi merkittyjä tapahtumia"
 
 #. js-lingui-id: DPfwMq
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -12201,11 +12202,6 @@ msgstr "Uloskirjautuminen tältä laitteelta epäonnistui"
 msgid "Failed to merge records"
 msgstr "Tietueiden yhdistäminen epäonnistui"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "Tietueiden yhdistäminen epäonnistui. Yritä uudelleen."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"
@@ -12798,6 +12794,12 @@ msgstr "Suodata objektityypin mukaan"
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
 msgid "Filter by record ID"
 msgstr "Suodata tietue-ID:n mukaan"
+
+#. js-lingui-id: jge9hE
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+msgid "Filter channel chats"
+msgstr "Suodata kanavakeskusteluja"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -14831,7 +14833,7 @@ msgid "Installed"
 msgstr "Asennettu"
 
 #. js-lingui-id: OMxM9j
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
 msgid "Installed apps"
 msgstr "Asennetut sovellukset"
 
@@ -16440,8 +16442,8 @@ msgstr "Ladataan…"
 
 #. js-lingui-id: d5zxa4
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Local"
 msgstr "Paikallinen"
 
@@ -17156,6 +17158,16 @@ msgstr "Yhdistä tietueet"
 msgid "Merge review tabs"
 msgstr "Yhdistämisen tarkistusvälilehdet"
 
+#. js-lingui-id: 1uAvIV
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merged {objectLabel}"
+msgstr ""
+
+#. js-lingui-id: v4CzQ/
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merging {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
@@ -17273,7 +17285,8 @@ msgid "Min range"
 msgstr "Minimirajoitus"
 
 #. js-lingui-id: oSrMRT
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "Mine"
 msgstr "Omani"
 
@@ -17751,6 +17764,7 @@ msgstr "N/A"
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -17781,7 +17795,6 @@ msgstr "N/A"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -17790,7 +17803,6 @@ msgstr "N/A"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
-#: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
@@ -17970,7 +17982,6 @@ msgid "New calendar event"
 msgstr "Uusi kalenteritapahtuma"
 
 #. js-lingui-id: BW0+uJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "New channel"
 msgstr "Uusi kanava"
@@ -18301,11 +18312,6 @@ msgstr "Yhtään {objectLabelSingular} ei löytynyt"
 msgid "No access"
 msgstr "Ei pääsyä"
 
-#. js-lingui-id: ETfwRt
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
-msgid "No accounts yet"
-msgstr "Ei vielä tilejä"
-
 #. js-lingui-id: IeiB4r
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "No actions to review"
@@ -18394,7 +18400,7 @@ msgid "No application found. If you just published it to npm with the \"twenty-a
 msgstr "Sovellusta ei löytynyt. Jos julkaisit sen juuri npm:ään avainsanalla \"twenty-app\", synkronoi luettelo ja yritä uudelleen."
 
 #. js-lingui-id: JgiGgF
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "No application matches your search"
 msgstr "Mikään sovellus ei vastaa hakuasi"
@@ -19351,6 +19357,11 @@ msgstr "Ei saatavilla oletusnäkymässä"
 msgid "Not configured"
 msgstr "Ei määritetty"
 
+#. js-lingui-id: S33tz3
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Not connected"
+msgstr ""
+
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
@@ -19387,7 +19398,7 @@ msgid "Not measured at this effort yet. Showing the base model's reading."
 msgstr "Ei vielä mitattu tällä päättelytasolla. Näytetään perusmallin lukema."
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
 msgid "Not open to you"
 msgstr "Ei avoin sinulle"
 
@@ -19496,8 +19507,8 @@ msgid "now"
 msgstr "nyt"
 
 #. js-lingui-id: hzMYNj
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "NPM"
 msgstr "NPM"
 
@@ -19580,9 +19591,9 @@ msgid "Numbered list"
 msgstr ""
 
 #. js-lingui-id: b/j06W
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "OAuth"
@@ -19896,11 +19907,6 @@ msgstr "vain {firstDay} ja {secondDay} päivinä"
 msgid "only on {remainingDays} and {0}"
 msgstr "vain {remainingDays} ja {0} päivinä"
 
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "Vain henkilöt, joilla on jo pääsy näihin tietueisiin"
-
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Only run when one of these fields changes"
@@ -19937,8 +19943,8 @@ msgid "Only you will be able to see your emails and events"
 msgstr "Vain sinä näet sähköpostisi ja tapahtumasi"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -22095,7 +22101,6 @@ msgstr "Tietueen valinta"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "Tietueen jakaminen"
 
@@ -23153,11 +23158,6 @@ msgstr "rooli"
 msgid "Role"
 msgstr "Rooli"
 
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "Rooli- ja kenttäoikeudet ovat edelleen voimassa."
-
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
 msgid "Role for {agentLabel} agent"
@@ -23333,11 +23333,6 @@ msgstr "Suorittaa koodia tiedostojen ja datan analysointiin"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "Suorita toiminto"
-
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr "Suorita tietomallimuutosten hitaat osat taustalla tallentamisen jälkeen."
 
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
@@ -23699,7 +23694,7 @@ msgid "Search agents"
 msgstr "Etsi agentteja"
 
 #. js-lingui-id: fGTI3o
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 msgid "Search an application"
@@ -25040,11 +25035,6 @@ msgstr "Jaetun postilaatikon sähköpostit"
 msgid "Shared record"
 msgstr "Jaettu tietue"
 
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "Jakaminen ei koskaan ylitä rooleja ja niiden rivisuodattimia. Käytä sitä arkaluonteisille objekteille."
-
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Sharing record"
@@ -25513,8 +25503,8 @@ msgid "Snooze until {snoozedUntilLabel}"
 msgstr "Torkuta asti {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Snoozed"
 msgstr "Torkutettu"
@@ -25895,7 +25885,6 @@ msgstr "Tilastot"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
@@ -25906,8 +25895,8 @@ msgstr "Tilastot"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -26488,9 +26477,13 @@ msgstr "Synkronoi nimi ja API-nimi"
 msgid "Synchronize Objects Labels and API Names"
 msgstr "Synkronoi objektien nimilaput ja API-nimet"
 
+#. js-lingui-id: 4XvJjz
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
+msgstr "Synkronointi lopetetaan ja seuraavien tunnistetiedot poistetaan. Sähköpostisi ja tapahtumasi säilyvät ja ovat käytettävissä, kun muodostat yhteyden uudelleen."
+
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and this account's credentials will be removed. Your emails and events will be retained and available after you reconnect."
 msgstr "Synkronointi lakkaa, ja tämän tilin tunnistetiedot poistetaan. Sähköpostisi ja tapahtumasi säilyvät, ja ne ovat käytettävissä, kun yhdistät tilin uudelleen."
 
@@ -26611,9 +26604,9 @@ msgstr "Keskustele tiimimme kanssa"
 
 #. js-lingui-id: bcrHWv
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Tarball"
 msgstr "Tar-paketti"
 
@@ -27484,9 +27477,13 @@ msgstr "Tämä sivu ei ole käytettävissä."
 
 #. js-lingui-id: PIZjqy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes {accountHandle} and all of its synced emails and events. This action cannot be undone."
 msgstr "Tämä poistaa pysyvästi tilin {accountHandle} sekä kaikki sen synkronoidut sähköpostit ja tapahtumat. Tätä toimintoa ei voi kumota."
+
+#. js-lingui-id: vrBe2V
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
+msgstr "Tämä poistaa pysyvästi seuraavat kohteet sekä kaikki niiden synkronoidut sähköpostit ja tapahtumat. Tätä toimintoa ei voi kumota."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -28425,6 +28422,7 @@ msgstr "Kaksivaiheinen todennus nollattiin tässä työtilassa. Määritä se uu
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
@@ -28433,8 +28431,6 @@ msgstr "Kaksivaiheinen todennus nollattiin tässä työtilassa. Määritä se uu
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-#: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -28520,7 +28516,8 @@ msgid "Unanswered"
 msgstr "Vastaamattomat"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "Unassigned"
 msgstr "Määrittämätön"
 
@@ -29050,8 +29047,8 @@ msgstr "päivitä"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Update"
 msgstr "Päivitä"
 
@@ -29261,6 +29258,11 @@ msgstr "Päivitä Organizationiin"
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Upgrade to Organization to configure SSO."
 msgstr "Päivitä Organization-versioon määrittääksesi SSO:n."
+
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr "Päivitä Organization-versioon luodaksesi mukautettuja rooleja"
 
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -29944,6 +29946,7 @@ msgid "view"
 msgstr "näkymä"
 
 #. js-lingui-id: jpctdh
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -30298,6 +30301,7 @@ msgid "Watch members demo"
 msgstr "Katso Jäsenet-osion demo"
 
 #. js-lingui-id: Rxoy7e
+#: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Tässä sovelluksessa ilmenee parhaillaan ongelmia, ja sen toiminta voi olla heikentynyttä sillä aikaa kun teemme korjausta."
@@ -30650,11 +30654,6 @@ msgstr "Tukeeko tämä malli ajatusketju-päättelyä"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "Mihin vastaanottajan keskusteluun tämä vaihe kirjoittaa"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "Kenelle tietueen {objectLabel} voi jakaa. Roolit määrittävät edelleen, mitä henkilöt näkevät oletusarvoisesti."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30727,11 +30726,6 @@ msgstr "Ilman suuntanumeroa"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "ilman luottokorttia"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "Ei näe sitä: heidän roolillaan ei ole pääsyä kohteisiin {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)
@@ -31384,6 +31378,7 @@ msgid "Your card was saved, but the payment still needs attention."
 msgstr "Korttisi tallennettiin, mutta maksu vaatii edelleen huomiota."
 
 #. js-lingui-id: OD3Fzl
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Your connections could not be loaded. Check your connection and try again."
 msgstr "Yhteyksiäsi ei voitu ladata. Tarkista yhteytesi ja yritä uudelleen."

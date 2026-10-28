@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { isNull } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { CurrencyCode } from 'twenty-shared/constants';
 
 import { validateNumericFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-numeric-field-or-throw.util';
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
@@ -25,9 +26,24 @@ export const validateCurrencyFieldOrThrow = (
       case 'amountMicros':
         validateNumericFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
         break;
-      case 'currencyCode':
-        validateTextFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
+      case 'currencyCode': {
+        const currencyCode = validateTextFieldOrThrow(
+          subFieldValue,
+          `${fieldName}.${subField}`,
+        );
+
+        if (
+          isNonEmptyString(currencyCode) &&
+          !Object.values<string>(CurrencyCode).includes(currencyCode)
+        ) {
+          throw new CommonQueryRunnerException(
+            `Invalid currency code "${currencyCode}" for currency field "${fieldName}"`,
+            CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: msg`Invalid value for currency.` },
+          );
+        }
         break;
+      }
 
       default:
         throw new CommonQueryRunnerException(

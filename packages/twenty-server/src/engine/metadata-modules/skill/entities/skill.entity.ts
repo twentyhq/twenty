@@ -8,8 +8,18 @@ import {
 } from 'typeorm';
 
 import { ADD_IS_SYSTEM_TO_SKILL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-40/add-is-system-to-skill-upgrade-command-name.constant';
+import { AGENT_AND_SKILL_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-53/agent-and-skill-overridable-entity-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
+
+export type SkillOverrides = {
+  label?: string;
+  icon?: string | null;
+  description?: string | null;
+  content?: string;
+  isActive?: boolean;
+};
 
 @Entity('skill')
 @Index('IDX_SKILL_APPLICATION_ID', ['applicationId'])
@@ -19,7 +29,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   where: '"isActive" = true',
 })
 export class SkillEntity
-  extends SyncableEntity
+  extends OverridableEntity<SkillOverrides>
   implements Required<SkillEntity>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -40,8 +50,8 @@ export class SkillEntity
   @Column({ nullable: false, type: 'text' })
   content: string;
 
-  @Column({ default: false })
-  isCustom: boolean;
+  @Column({ type: 'boolean', default: false })
+  isCustom: WasRemovedInUpgrade<boolean>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_IS_SYSTEM_TO_SKILL_UPGRADE_COMMAND_NAME,
@@ -49,12 +59,13 @@ export class SkillEntity
   @Column({ default: false })
   isSystem: boolean;
 
-  @Column({ default: true })
-  isActive: boolean;
-
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }
+
+WasIntroducedInUpgrade({
+  upgradeCommandName: AGENT_AND_SKILL_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+})(SkillEntity.prototype, 'overrides');

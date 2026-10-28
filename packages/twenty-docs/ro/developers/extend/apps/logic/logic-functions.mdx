@@ -624,7 +624,7 @@ Verificați `context.workspaceMemberId` atunci când o funcție se comportă dif
 
 </Note>
 
-Funcțiile ajutătoare SDK care accesează propriile resurse ale aplicației dvs. folosesc întotdeauna accesul acesteia și ignoră `runAs`: [stocarea cheie-valoare](/ro/developers/extend/apps/logic/key-value-store), [conexiunile](/ro/developers/extend/apps/logic/connections), [canalele de mesagerie](/ro/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` și [taxarea creditelor](/ro/developers/extend/apps/logic/credits). `sendInboxMessage` folosește, de asemenea, accesul aplicației dvs. și ignoră `runAs`, deși scrie în conversațiile membrilor pe care îi numiți.
+Funcțiile ajutătoare SDK care accesează propriile resurse ale aplicației dvs. folosesc întotdeauna accesul acesteia și ignoră `runAs`: [stocarea cheie-valoare](/ro/developers/extend/apps/logic/key-value-store), [conexiunile](/ro/developers/extend/apps/logic/connections), [canalele de mesagerie](/ro/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` și [taxarea creditelor](/ro/developers/extend/apps/logic/credits).
 
 #### Expunerea unei funcții ca instrument AI sau ca acțiune în fluxul de lucru
 
@@ -1041,7 +1041,7 @@ const { createCompany } = await client.mutation({
   },
 });
 
-// Only on an object whose readability is PRIVATE: choose who can read the created record
+// Only on an object whose records are private: choose who can read the created record
 const { createContract } = await client.mutation({
   createContract: {
     __args: {
@@ -1060,7 +1060,7 @@ const { createContract } = await client.mutation({
 });
 ```
 
-`shareWith` contează doar pentru un obiect a cărui vizibilitate este `PRIVATE`; fiecare obiect este `OPEN` în mod implicit, iar pentru un obiect `OPEN` argumentul este ignorat. Pentru un obiect `PRIVATE`, acesta enumeră cine primește acces la înregistrarea creată: fiecare intrare vizează exact unul dintre `workspaceMemberId`, `roleId` sau `everyone: true`, cu un `accessLevel` de `READ`, `READ_WRITE` sau `FULL`. Un membru al spațiului de lucru care creează o înregistrare primește întotdeauna o acordare de proprietar `FULL`, astfel că argumentul este opțional pentru acesta; o funcție logică care acționează ca aplicația sa sau o cheie API primește, de asemenea, o acordare `FULL` pentru rolul său, iar astfel de apelanți, precum un apelant de sistem, trebuie să transmită `shareWith`, altfel crearea este respinsă. Fiecare intrare trebuie să indice un membru sau un rol al spațiului de lucru. O funcție logică sau o cheie API partajează prin intermediul rolului său, astfel încât fiecare deținător al acelui rol primește același acces la înregistrările pe care le creează; atribuiți unei chei ale cărei înregistrări trebuie să rămână private un rol propriu.
+`shareWith` contează numai pentru un obiect ale cărui înregistrări sunt private; în rest, argumentul este ignorat. Pentru un astfel de obiect, acesta enumeră cine primește acces la înregistrarea creată: fiecare intrare vizează exact unul dintre `workspaceMemberId`, `roleId` sau `everyone: true`, cu un `accessLevel` de `READ`, `READ_WRITE` sau `FULL`. Un membru al spațiului de lucru care creează o înregistrare primește întotdeauna o acordare de proprietar `FULL`, astfel că argumentul este opțional pentru acesta; o funcție logică care acționează ca aplicația sa sau o cheie API primește, de asemenea, o acordare `FULL` pentru rolul său, iar astfel de apelanți, precum un apelant de sistem, trebuie să transmită `shareWith`, altfel crearea este respinsă. Fiecare intrare trebuie să indice un membru sau un rol al spațiului de lucru. O funcție logică sau o cheie API partajează prin intermediul rolului său, astfel încât fiecare deținător al acelui rol primește același acces la înregistrările pe care le creează; atribuiți unei chei ale cărei înregistrări trebuie să rămână private un rol propriu.
 
 Clientul folosește o sintaxă de tip selection-set: transmiteți `true` pentru a include un câmp, folosiți `__args` pentru argumente și imbricați obiecte pentru relații. Obțineți autocompletare și verificare completă a tipurilor, pe baza schemei spațiului dvs. de lucru.
 
@@ -1117,7 +1117,7 @@ const { objects } = await metadataClient.query({
         nameSingular: true,
         namePlural: true,
         labelSingular: true,
-        isCustom: true,
+        applicationId: true,
       },
     },
     __args: {

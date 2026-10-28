@@ -72,6 +72,7 @@ Puntos clave:
 * `nextStepIds` conecta el grafo. El desencadenador apunta a los primeros pasos, y cada paso apunta a los pasos que se ejecutan después de él.
 * Un paso lee la salida anterior con `{{trigger.\<path>}}` o `{{\<step universalIdentifier>.\<path>}}`.
 * La compilación valida toda la definición: los tipos de desencadenador o de paso no compatibles, los enlaces de pasos rotos y las referencias a pasos desconocidos hacen que falle.
+* `isSystem` (opcional, el valor predeterminado es `false`) oculta el flujo de trabajo de las listas que excluyen los flujos de trabajo del sistema. Solo cambia lo que se muestra.
 
 ## Referencia a otras entidades
 
@@ -108,12 +109,25 @@ Sus entradas coinciden con los pasos del [generador de flujos de trabajo](/es/us
 * Los campos de formulario de tipo `RECORD` nombran su objeto con `settings.objectUniversalIdentifier`. Los campos de tipo `SELECT` y `MULTI_SELECT` ofrecen las opciones de un campo existente del mismo tipo, denominado con `settings.selectedFieldUniversalIdentifier`.
 * Para ejecutar tu propio código, usa un paso `LOGIC_FUNCTION`. El paso Code del constructor no está disponible.
 * Los pasos de correo electrónico y calendario se ejecutan solo si el rol de tu aplicación tiene el indicador de permiso correspondiente: `SystemPermissionFlag.SEND_EMAIL_TOOL` para `SEND_EMAIL` y `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` para `CREATE_CALENDAR_EVENT`. El espacio de trabajo lo concede al instalar la aplicación, y el paso puede usar cualquier cuenta conectada en el espacio de trabajo, como un flujo de trabajo creado en la aplicación.
-* Los ID de las cuentas conectadas son locales para cada espacio de trabajo, así que no codifiques uno de forma fija. Pase la cuenta como una variable. Los pasos de correo electrónico también aceptan un id de miembro del espacio de trabajo, como `{{trigger.properties.after.assigneeId}}`, que se resuelve en la primera cuenta de ese miembro que puede enviar.
+* Los ID de las cuentas conectadas son locales para cada espacio de trabajo, así que no codifiques uno de forma fija. Asigne un nombre a la cuenta de una de estas dos formas:
+
+  * `connectedAccountHandle`: la dirección de correo electrónico de la cuenta, como `'sales@example.com'`. Cuando la aplicación se sincroniza, el identificador se resuelve en una cuenta con esa dirección que se comparte con el espacio de trabajo (ámbito `WORKSPACE`) y puede ejecutar el paso. No se puede asignar un nombre mediante identificador a la cuenta privada de un miembro: pull la conserva como su `connectedAccountId`. Si varias cuentas comparten la dirección, por ejemplo, un buzón conectado por dos miembros o a través de dos proveedores, gana la más antigua. Si ninguna coincide, la sincronización falla e indica el identificador. Esto no es `fromHandle`, que selecciona un alias desde el que enviar.
+  * `connectedAccountId`: una variable, como `{{trigger.properties.after.connectedAccountId}}`. Los pasos de correo electrónico también aceptan un id de miembro del espacio de trabajo, como `{{trigger.properties.after.assigneeId}}`, que se resuelve en la primera cuenta de ese miembro que puede enviar.
+
+  Establece exactamente uno de los dos.
 
 ## Después de la instalación
 
 * El flujo de trabajo está activo en cuanto se instala la aplicación, y sus ejecuciones aparecen junto con las otras ejecuciones de flujos de trabajo del espacio de trabajo.
 * La instalación de una nueva versión de la aplicación actualiza el flujo de trabajo en el mismo lugar.
 * Los usuarios no pueden editar un flujo de trabajo instalado. Para personalizar uno, lo duplican: la copia es suya para editarla.
+
+## Workflows de la aplicación personalizada del espacio de trabajo
+
+La aplicación personalizada del espacio de trabajo posee los flujos de trabajo creados en el generador de flujos de trabajo, y el código es tan autoritativo para ellos como el generador:
+
+* `twenty app pull` escribe cada uno desde su versión activa, la que el generador publicó por última vez. Se informa de un flujo de trabajo cuya versión activa usa configuraciones que un archivo `defineWorkflow()` no puede expresar, como un paso de Code o un desencadenador que el generador renombró, y se deja en su lugar.
+* `twenty app apply` publica como el generador. Un flujo de trabajo cuya definición coincide con su versión activa se deja sin cambios. De lo contrario, la versión activa se archiva y la definición se convierte en una nueva versión activa, por lo que las ejecuciones anteriores conservan la versión que ejecutaron.
+* Los usuarios siguen editando estos flujos de trabajo en el constructor, y la siguiente extracción recupera sus cambios.
 
 <PageBanner illustration="card-page-workflows" />

@@ -152,6 +152,7 @@ describe('useRefreshAgentChatThreads', () => {
       updatedAt,
     });
     const streamedParticipant = {
+      __typename: 'AgentChatThreadParticipant' as const,
       id: 'thread-2-member-id',
       threadId: 'thread-2',
       lastReadAt: null,
@@ -211,6 +212,7 @@ describe('useRefreshAgentChatThreads', () => {
 
     expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
       'thread-1': {
+        __typename: 'AgentChatThreadParticipant' as const,
         id: 'thread-1-member-id',
         threadId: 'thread-1',
         lastReadAt: '2026-10-01T10:00:00.000Z',

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
@@ -8,6 +9,7 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { buildStartedAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-started-agent-run-summary.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -88,14 +90,26 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    const agent = await this.agentRepository.findOne(workspaceId, {
+    const agentRow = await this.agentRepository.findOne(workspaceId, {
       where: { id: agentId },
     });
 
-    if (!isDefined(agent)) {
+    if (!isDefined(agentRow)) {
       throw new WorkflowStepExecutorException(
         `Agent with id ${agentId} not found`,
         WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+
+    const agent = resolveEffectiveAgent(agentRow);
+
+    if (!agent.isActive) {
+      const { label } = agent;
+
+      throw new WorkflowStepExecutorException(
+        `Agent "${label}" is archived`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+        { userFriendlyMessage: msg`Agent "${label}" is archived.` },
       );
     }
 
