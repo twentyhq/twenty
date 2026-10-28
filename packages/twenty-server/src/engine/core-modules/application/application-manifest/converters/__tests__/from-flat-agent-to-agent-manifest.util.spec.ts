@@ -30,6 +30,11 @@ const AGENT_MANIFEST: Required<AgentManifest> = {
       additionalProperties: false,
     },
   },
+  modelConfiguration: {
+    webSearch: { enabled: true },
+    twitterSearch: { enabled: false, configuration: { maxResults: 5 } },
+  },
+  isSystem: true,
   roleUniversalIdentifier: ROLE_UID,
   triggers: [
     {
@@ -104,7 +109,7 @@ describe('fromFlatAgentToAgentManifest', () => {
     ).toBeUndefined();
   });
 
-  it('should omit what the forward conversion defaults: icon, description, the workspace default model, triggers and the role', () => {
+  it('should omit what the forward conversion defaults: icon, description, the workspace default model, model configuration, isSystem, triggers and the role', () => {
     expect(
       fromFlatAgentToAgentManifest({
         flatAgent: forward(MINIMAL_AGENT_MANIFEST),

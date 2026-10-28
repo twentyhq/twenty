@@ -63,7 +63,11 @@ import { MessageListDuplicationService } from 'src/modules/emailing/services/mes
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
 import { UnsubscribePreferencesService } from 'src/modules/emailing/services/unsubscribe-preferences.service';
+import { FindCampaignSuppressionsTool } from 'src/modules/emailing/tools/find-campaign-suppressions.tool';
+import { PreviewCampaignSendTool } from 'src/modules/emailing/tools/preview-campaign-send.tool';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
+import { SendCampaignTestTool } from 'src/modules/emailing/tools/send-campaign-test.tool';
+import { SendCampaignTool } from 'src/modules/emailing/tools/send-campaign.tool';
 
 @Module({
   imports: [
@@ -114,6 +118,10 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     UnsubscribeTopicService,
     EmailingDomainSenderService,
     SaveCampaignTool,
+    PreviewCampaignSendTool,
+    SendCampaignTestTool,
+    SendCampaignTool,
+    FindCampaignSuppressionsTool,
     EmailingSendResolver,
     MessageListDuplicationService,
     AddPeopleToMessageListService,
