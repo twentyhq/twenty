@@ -75,34 +75,11 @@ export class LambdaLayerManagerService {
   ) {}
 
   async ensureDepsLayer(flatApplication: FlatApplication): Promise<string> {
-    const existingArn = await this.findExistingDepsLayerArn(flatApplication);
-
-    if (isDefined(existingArn)) {
-      return existingArn;
+    if (await this.isWorkspaceCustomApplication(flatApplication)) {
+      return this.ensureWorkspaceCustomDepsLayer(flatApplication);
     }
 
-    const workspaceCustomDepsLayerName =
-      await this.getWorkspaceCustomDepsLayerName(flatApplication);
-
-    if (isDefined(workspaceCustomDepsLayerName)) {
-      const workspaceCustomDepsLayerDependencies =
-        await this.findWorkspaceCustomDepsLayerDependencies(flatApplication);
-
-      if (isDefined(workspaceCustomDepsLayerDependencies)) {
-        return this.buildDepsLayer({
-          layerName: workspaceCustomDepsLayerName,
-          dependencies: workspaceCustomDepsLayerDependencies,
-        });
-      }
-    }
-
-    return this.buildDepsLayer({
-      layerName: getLambdaDepsLayerName({
-        flatApplication,
-        namespace: this.options.resourceNamespace,
-      }),
-      dependencies: await this.getVerifiedDependencies(flatApplication),
-    });
+    return this.ensureApplicationDepsLayer(flatApplication);
   }
 
   async findExistingDepsLayerArn(
@@ -120,16 +97,84 @@ export class LambdaLayerManagerService {
   }
 
   async getDepsLayerNames(flatApplication: FlatApplication): Promise<string[]> {
-    const workspaceCustomDepsLayerName =
-      await this.getWorkspaceCustomDepsLayerName(flatApplication);
+    const applicationDepsLayerName = getLambdaDepsLayerName({
+      flatApplication,
+      namespace: this.options.resourceNamespace,
+    });
+
+    if (
+      !(await this.isWorkspaceCustomApplication(flatApplication)) ||
+      !isDefined(flatApplication.yarnLockChecksum)
+    ) {
+      return [applicationDepsLayerName];
+    }
 
     return [
-      workspaceCustomDepsLayerName,
-      getLambdaDepsLayerName({
-        flatApplication,
+      getLambdaWorkspaceCustomDepsLayerName({
+        yarnLockChecksum: flatApplication.yarnLockChecksum,
         namespace: this.options.resourceNamespace,
       }),
-    ].filter(isDefined);
+      applicationDepsLayerName,
+    ];
+  }
+
+  private async ensureWorkspaceCustomDepsLayer(
+    flatApplication: FlatApplication,
+  ): Promise<string> {
+    const { yarnLockChecksum } = flatApplication;
+
+    if (!isDefined(yarnLockChecksum)) {
+      return this.ensureApplicationDepsLayer(flatApplication);
+    }
+
+    const layerName = getLambdaWorkspaceCustomDepsLayerName({
+      yarnLockChecksum,
+      namespace: this.options.resourceNamespace,
+    });
+    const existingArn = await this.awsClient.getExistingLayerArn(layerName);
+
+    if (isDefined(existingArn)) {
+      return existingArn;
+    }
+
+    const dependencies =
+      await this.findWorkspaceCustomDepsLayerDependencies(flatApplication);
+
+    if (!isDefined(dependencies)) {
+      return this.ensureApplicationDepsLayer(flatApplication);
+    }
+
+    return this.buildDepsLayer({ layerName, dependencies });
+  }
+
+  private async ensureApplicationDepsLayer(
+    flatApplication: FlatApplication,
+  ): Promise<string> {
+    const layerName = getLambdaDepsLayerName({
+      flatApplication,
+      namespace: this.options.resourceNamespace,
+    });
+    const existingArn = await this.awsClient.getExistingLayerArn(layerName);
+
+    if (isDefined(existingArn)) {
+      return existingArn;
+    }
+
+    return this.buildDepsLayer({
+      layerName,
+      dependencies: await this.getVerifiedDependencies(flatApplication),
+    });
+  }
+
+  private async isWorkspaceCustomApplication(
+    flatApplication: FlatApplication,
+  ): Promise<boolean> {
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      flatApplication.workspaceId,
+    );
+
+    return workspace?.workspaceCustomApplicationId === flatApplication.id;
   }
 
   async ensureSdkLayer(flatApplication: FlatApplication): Promise<string> {
@@ -291,28 +336,6 @@ export class LambdaLayerManagerService {
         : undefined;
 
       return isDefined(layerName) && depsLayerNames.includes(layerName);
-    });
-  }
-
-  private async getWorkspaceCustomDepsLayerName(
-    flatApplication: FlatApplication,
-  ): Promise<string | undefined> {
-    if (!isDefined(flatApplication.yarnLockChecksum)) {
-      return undefined;
-    }
-
-    const workspace = await this.coreEntityCacheService.get(
-      'workspaceEntity',
-      flatApplication.workspaceId,
-    );
-
-    if (workspace?.workspaceCustomApplicationId !== flatApplication.id) {
-      return undefined;
-    }
-
-    return getLambdaWorkspaceCustomDepsLayerName({
-      yarnLockChecksum: flatApplication.yarnLockChecksum,
-      namespace: this.options.resourceNamespace,
     });
   }
 
