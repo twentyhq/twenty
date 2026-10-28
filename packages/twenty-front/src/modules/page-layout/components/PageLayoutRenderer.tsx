@@ -1,3 +1,4 @@
+import { RecordFilterValueDependenciesContext } from '@/object-record/record-filter/contexts/RecordFilterValueDependenciesContext';
 import { PageLayoutEditModeProvider } from '@/page-layout/components/PageLayoutEditModeProvider';
 import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/PageLayoutInitializationQueryEffect';
 import { PageLayoutRecordPageCustomizationSessionRegistrationEffect } from '@/page-layout/components/PageLayoutRecordPageCustomizationSessionRegistrationEffect';
@@ -9,6 +10,9 @@ import { PageLayoutSidePanelTargetProvider } from '@/side-panel/pages/page-layou
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
+import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -32,32 +36,51 @@ export const PageLayoutRenderer = ({
     }),
   );
 
+  const recordFilterValueDependencies = useMemo(
+    () => ({
+      currentRecord:
+        layoutType === PageLayoutType.RECORD_PAGE &&
+        isDefined(targetRecordIdentifier)
+          ? {
+              id: targetRecordIdentifier.id,
+              objectMetadataNameSingular:
+                targetRecordIdentifier.targetObjectNameSingular,
+            }
+          : undefined,
+    }),
+    [layoutType, targetRecordIdentifier],
+  );
+
   return (
-    <PageLayoutComponentInstanceContext.Provider
-      value={{
-        instanceId: pageLayoutComponentInstanceId,
-      }}
+    <RecordFilterValueDependenciesContext.Provider
+      value={recordFilterValueDependencies}
     >
-      <TabListComponentInstanceContext.Provider
+      <PageLayoutComponentInstanceContext.Provider
         value={{
-          instanceId: tabListInstanceId,
+          instanceId: pageLayoutComponentInstanceId,
         }}
       >
-        <PageLayoutSidePanelTargetProvider
-          pageLayoutId={pageLayoutComponentInstanceId}
-          targetRecordIdentifier={targetRecordIdentifier}
+        <TabListComponentInstanceContext.Provider
+          value={{
+            instanceId: tabListInstanceId,
+          }}
         >
-          <PageLayoutEditModeProvider
-            layoutType={layoutType}
-            pageLayoutId={pageLayoutId}
+          <PageLayoutSidePanelTargetProvider
+            pageLayoutId={pageLayoutComponentInstanceId}
+            targetRecordIdentifier={targetRecordIdentifier}
           >
-            <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
-            <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
-            <RecordTableWidgetViewDraftsInitializationEffect />
-            <PageLayoutRendererContent />
-          </PageLayoutEditModeProvider>
-        </PageLayoutSidePanelTargetProvider>
-      </TabListComponentInstanceContext.Provider>
-    </PageLayoutComponentInstanceContext.Provider>
+            <PageLayoutEditModeProvider
+              layoutType={layoutType}
+              pageLayoutId={pageLayoutId}
+            >
+              <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
+              <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
+              <RecordTableWidgetViewDraftsInitializationEffect />
+              <PageLayoutRendererContent />
+            </PageLayoutEditModeProvider>
+          </PageLayoutSidePanelTargetProvider>
+        </TabListComponentInstanceContext.Provider>
+      </PageLayoutComponentInstanceContext.Provider>
+    </RecordFilterValueDependenciesContext.Provider>
   );
 };
