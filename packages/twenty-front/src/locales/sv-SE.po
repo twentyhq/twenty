@@ -1566,11 +1566,6 @@ msgstr "En betalningsmetod behövs för att hålla din arbetsyta aktiv."
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "En betalning för din prenumeration misslyckades. Dina premiumfunktioner förblir aktiva medan vi försöker igen."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "En post kan delas med vem som helst, även personer vars roll inte kan komma åt detta objekt. De får endast den posten, för att visa eller redigera den."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1677,11 +1672,6 @@ msgstr "Om din app"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Accepterade och signerade PUB:er för den här arbetsytan, med deras mallversion och datum."
-
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "Åtkomst ärvs också från relaterade poster."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3569,11 +3559,6 @@ msgstr "Alla enheter"
 msgid "Any field"
 msgstr "Vilket fält som helst"
 
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "Alla i arbetsytan"
-
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Anyone with an approved email domain can find and join."
@@ -5294,11 +5279,6 @@ msgstr "Kampanjen är schemalagd till {sendTime}"
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Kampanjens schemaläggning har avbrutits och den är tillbaka i dina utkast"
-
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "Kan endast visa: deras roll kan inte redigera {objectLabelPlural}"
 
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -19934,11 +19914,6 @@ msgstr "endast på {firstDay} och {secondDay}"
 msgid "only on {remainingDays} and {0}"
 msgstr "endast på {remainingDays} och {0}"
 
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "Endast personer som redan har åtkomst till dessa poster"
-
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Only run when one of these fields changes"
@@ -22133,7 +22108,6 @@ msgstr "Postval"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "Postdelning"
 
@@ -23190,11 +23164,6 @@ msgstr "roll"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Role"
 msgstr "Roll"
-
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "Roll- och fältbehörigheter gäller fortfarande."
 
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
@@ -25079,11 +25048,6 @@ msgstr "Delade inkorgsmejl"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Shared record"
 msgstr "Delad post"
-
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "Delning går aldrig utöver roller och deras radfilter. Använd den för känsliga objekt."
 
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -29314,6 +29278,11 @@ msgstr "Uppgradera till organisation"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "Uppgradera till Organization för att konfigurera SSO."
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr ""
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
@@ -30703,11 +30672,6 @@ msgstr "Om den här modellen stöder chain-of-thought-resonemang"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "Vilken konversation med mottagaren det här steget skriver till"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "Vem en post av {objectLabel} kan delas med. Roller avgör fortfarande vad personer ser som standard."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30780,11 +30744,6 @@ msgstr "Utan uppringningskod"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "utan kreditkort"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "Kan inte se den: deras roll saknar åtkomst till {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)

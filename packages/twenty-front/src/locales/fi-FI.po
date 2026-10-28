@@ -1566,11 +1566,6 @@ msgstr "Maksutapa tarvitaan, jotta työtilasi pysyy aktiivisena."
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "Tilauksesi maksu epäonnistui. Premium-ominaisuutesi pysyvät aktiivisina, kun yritämme maksua uudelleen."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "Tietue voidaan jakaa kenen tahansa kanssa, myös sellaisten henkilöiden kanssa, joiden roolilla ei ole pääsyä tähän objektiin. He saavat vain kyseisen tietueen katselua tai muokkausta varten."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1677,11 +1672,6 @@ msgstr "Tietoja sovelluksestasi"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Tälle työtilalle hyväksytyt ja allekirjoitetut DPA-sopimukset sekä niiden malliversio ja päivämäärä."
-
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "Käyttöoikeudet periytyvät myös liittyvistä tietueista."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3569,11 +3559,6 @@ msgstr "Kaikki laitteet"
 msgid "Any field"
 msgstr "Mikä tahansa kenttä"
 
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "Kuka tahansa työtilassa"
-
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Anyone with an approved email domain can find and join."
@@ -5294,11 +5279,6 @@ msgstr "Kampanja ajastettu ajankohtaan {sendTime}"
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Kampanjan ajastus poistettu, ja se on jälleen luonnoksissasi"
-
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "Voi vain tarkastella: hänen roolinsa ei voi muokata kohteita {objectLabelPlural}"
 
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -19932,11 +19912,6 @@ msgstr "vain {firstDay} ja {secondDay} päivinä"
 msgid "only on {remainingDays} and {0}"
 msgstr "vain {remainingDays} ja {0} päivinä"
 
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "Vain henkilöt, joilla on jo pääsy näihin tietueisiin"
-
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Only run when one of these fields changes"
@@ -22131,7 +22106,6 @@ msgstr "Tietueen valinta"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "Tietueen jakaminen"
 
@@ -23188,11 +23162,6 @@ msgstr "rooli"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Role"
 msgstr "Rooli"
-
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "Rooli- ja kenttäoikeudet ovat edelleen voimassa."
 
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
@@ -25075,11 +25044,6 @@ msgstr "Jaetun postilaatikon sähköpostit"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Shared record"
 msgstr "Jaettu tietue"
-
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "Jakaminen ei koskaan ylitä rooleja ja niiden rivisuodattimia. Käytä sitä arkaluonteisille objekteille."
 
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -29306,6 +29270,11 @@ msgstr "Päivitä Organizationiin"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "Päivitä Organization-versioon määrittääksesi SSO:n."
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr ""
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
@@ -30695,11 +30664,6 @@ msgstr "Tukeeko tämä malli ajatusketju-päättelyä"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "Mihin vastaanottajan keskusteluun tämä vaihe kirjoittaa"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "Kenelle tietueen {objectLabel} voi jakaa. Roolit määrittävät edelleen, mitä henkilöt näkevät oletusarvoisesti."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30772,11 +30736,6 @@ msgstr "Ilman suuntanumeroa"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "ilman luottokorttia"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "Ei näe sitä: heidän roolillaan ei ole pääsyä kohteisiin {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)

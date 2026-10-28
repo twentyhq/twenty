@@ -1566,11 +1566,6 @@ msgstr "Este necesară o metodă de plată pentru a menține spațiul dvs. de lu
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "O plată pentru abonamentul dvs. a eșuat. Funcționalitățile dvs. premium rămân active în timp ce reîncercăm plata."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "O înregistrare poate fi partajată cu oricine, chiar și cu persoane al căror rol nu poate accesa acest obiect. Acestea primesc doar acea înregistrare, pentru a o vizualiza sau edita."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1677,11 +1672,6 @@ msgstr "Despre aplicația ta"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "DPA-uri acceptate și semnate pentru acest spațiu de lucru, cu versiunea șablonului și data lor."
-
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "Accesul este moștenit și de la înregistrările asociate."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3569,11 +3559,6 @@ msgstr "Orice dispozitiv"
 msgid "Any field"
 msgstr "Orice câmp"
 
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "Oricine din spațiul de lucru"
-
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Anyone with an approved email domain can find and join."
@@ -5294,11 +5279,6 @@ msgstr "Campania este programată pentru {sendTime}"
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Programarea campaniei a fost anulată și aceasta a revenit în schițele tale"
-
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "Poate doar vizualiza: rolul său nu poate edita {objectLabelPlural}"
 
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -19932,11 +19912,6 @@ msgstr "doar în zilele {firstDay} și {secondDay}"
 msgid "only on {remainingDays} and {0}"
 msgstr "doar în zilele {remainingDays} și {0}"
 
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "Doar persoanele care pot deja accesa aceste înregistrări"
-
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Only run when one of these fields changes"
@@ -22131,7 +22106,6 @@ msgstr "Selectarea înregistrării"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "Partajarea înregistrărilor"
 
@@ -23188,11 +23162,6 @@ msgstr "rol"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Role"
 msgstr "Rol"
-
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "Permisiunile pentru roluri și câmpuri se aplică în continuare."
 
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
@@ -25075,11 +25044,6 @@ msgstr "E-mailuri din căsuța de primire partajată"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Shared record"
 msgstr "Înregistrare partajată"
-
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "Partajarea nu depășește niciodată rolurile și filtrele lor de rânduri. Folosește-o pentru obiecte sensibile."
 
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -29306,6 +29270,11 @@ msgstr "Treci la Organization"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "Fă upgrade la Organization pentru a configura SSO."
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr ""
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
@@ -30695,11 +30664,6 @@ msgstr "Dacă acest model suportă raționare în lanț"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "În ce conversație cu destinatarul scrie acest pas"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "Cu cine poate fi partajată o înregistrare de tip {objectLabel}. Rolurile decid în continuare ce văd oamenii în mod implicit."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30772,11 +30736,6 @@ msgstr "Fără cod de apelare"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "fără card de credit"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "Nu o va vedea: rolul său nu poate accesa {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)

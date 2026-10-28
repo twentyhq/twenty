@@ -1566,11 +1566,6 @@ msgstr "워크스페이스를 활성 상태로 유지하려면 결제 수단이 
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "구독 결제에 실패했습니다. 재시도하는 동안 프리미엄 기능은 계속 활성 상태로 유지됩니다."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "역할이 이 객체에 액세스할 수 없는 사람을 포함해 누구와도 레코드를 공유할 수 있습니다. 해당 레코드만 보고 편집할 수 있습니다."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1677,11 +1672,6 @@ msgstr "앱 정보"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "이 워크스페이스에 대해 수락 및 서명된 DPA와 해당 템플릿 버전 및 날짜입니다."
-
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "관련 레코드에서 액세스 권한도 상속됩니다."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3569,11 +3559,6 @@ msgstr "모든 기기"
 msgid "Any field"
 msgstr "어떤 필드"
 
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "작업공간의 모든 사용자"
-
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Anyone with an approved email domain can find and join."
@@ -5294,11 +5279,6 @@ msgstr "캠페인이 {sendTime}(으)로 예약되었습니다"
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "캠페인 예약이 취소되어 초안으로 돌아갔습니다"
-
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "보기만 가능: 해당 역할에서는 {objectLabelPlural} 편집이 불가능합니다"
 
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -19932,11 +19912,6 @@ msgstr "{firstDay}일과 {secondDay}일에만"
 msgid "only on {remainingDays} and {0}"
 msgstr "{remainingDays}일과 {0}일에만"
 
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "이미 이 레코드에 액세스할 수 있는 사람만"
-
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Only run when one of these fields changes"
@@ -22131,7 +22106,6 @@ msgstr "레코드 선택"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "레코드 공유"
 
@@ -23188,11 +23162,6 @@ msgstr "역할"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Role"
 msgstr "역할"
-
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "역할 및 필드 권한은 계속 적용됩니다."
 
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
@@ -25075,11 +25044,6 @@ msgstr "공유 받은편지함 이메일"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Shared record"
 msgstr "공유된 레코드"
-
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "공유는 역할 및 해당 역할의 행 필터 범위를 절대 벗어나지 않습니다. 민감한 객체에 사용하세요."
 
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -29306,6 +29270,11 @@ msgstr "조직으로 업그레이드"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "SSO를 구성하려면 Organization으로 업그레이드하세요."
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr ""
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
@@ -30695,11 +30664,6 @@ msgstr "이 모델이 Chain-of-Thought 추론을 지원하는지 여부"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "이 단계가 수신자와의 어떤 대화에 기록되는지"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "{objectLabel} 레코드를 공유할 수 있는 대상입니다. 역할은 기본적으로 사람들이 볼 수 있는 항목을 계속 결정합니다."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30772,11 +30736,6 @@ msgstr "국가 번호 없이"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "신용카드 없음"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "볼 수 없음: 해당 역할은 {objectLabelPlural}에 접근할 수 없습니다"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)

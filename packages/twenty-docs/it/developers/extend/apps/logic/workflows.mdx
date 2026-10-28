@@ -72,6 +72,7 @@ Punti chiave:
 * `nextStepIds` collega il grafo. Il trigger punta ai primi passaggi e ogni passaggio punta ai passaggi eseguiti dopo di esso.
 * Un passaggio legge l'output precedente con `{{trigger.\<path>}}` o `{{\<step universalIdentifier>.\<path>}}`.
 * La build convalida l'intera definizione: tipi di trigger o passaggio non supportati, collegamenti tra passaggi non validi e riferimenti a passaggi sconosciuti causano l'errore.
+* `isSystem` (facoltativo, il valore predefinito è `false`) nasconde il workflow dagli elenchi che escludono i workflow di sistema. Modifica solo ciò che viene visualizzato.
 
 ## Riferimento ad altre entità
 

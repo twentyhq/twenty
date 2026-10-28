@@ -1040,7 +1040,7 @@ const { createCompany } = await client.mutation({
   },
 });
 
-// Only on an object whose readability is PRIVATE: choose who can read the created record
+// Only on an object whose records are private: choose who can read the created record
 const { createContract } = await client.mutation({
   createContract: {
     __args: {
@@ -1059,7 +1059,7 @@ const { createContract } = await client.mutation({
 });
 ```
 
-`shareWith` ha effetto solo su un oggetto la cui leggibilità è `PRIVATE`; per impostazione predefinita ogni oggetto è `OPEN` e, su un oggetto `OPEN`, l'argomento viene ignorato. Su un oggetto `PRIVATE`, elenca chi ottiene l'accesso al record creato: ogni voce si riferisce esattamente a uno tra `workspaceMemberId`, `roleId` o `everyone: true`, con un `accessLevel` pari a `READ`, `READ_WRITE` o `FULL`. Un membro dello spazio di lavoro che crea un record riceve sempre un'autorizzazione proprietario `FULL`, quindi l'argomento è facoltativo per lui; anche una funzione logica che agisce come relativa applicazione o una chiave API riceve un'autorizzazione `FULL` per il proprio ruolo e tali chiamanti, come un chiamante di sistema, devono passare `shareWith`, altrimenti la creazione viene rifiutata. Ogni voce deve indicare un membro o un ruolo dello spazio di lavoro. Una funzione logica o una chiave API condivide tramite il proprio ruolo, quindi ogni titolare di tale ruolo ottiene lo stesso accesso ai record che crea; assegna a una chiave i cui record devono rimanere privati un ruolo proprio.
+`shareWith` è rilevante solo su un oggetto i cui record sono privati; altrove l'argomento viene ignorato. Su un oggetto di questo tipo, elenca chi ottiene l'accesso al record creato: ogni voce si rivolge esattamente a uno tra `workspaceMemberId`, `roleId` o `everyone: true`, con un `accessLevel` pari a `READ`, `READ_WRITE` o `FULL`. Un membro dello spazio di lavoro che crea un record riceve sempre un'autorizzazione proprietario `FULL`, quindi l'argomento è facoltativo per lui; anche una funzione logica che agisce come relativa applicazione o una chiave API riceve un'autorizzazione `FULL` per il proprio ruolo e tali chiamanti, come un chiamante di sistema, devono passare `shareWith`, altrimenti la creazione viene rifiutata. Ogni voce deve indicare un membro o un ruolo dello spazio di lavoro. Una funzione logica o una chiave API condivide tramite il proprio ruolo, quindi ogni titolare di tale ruolo ottiene lo stesso accesso ai record che crea; assegna a una chiave i cui record devono rimanere privati un ruolo proprio.
 
 Il client utilizza una sintassi a selection-set: passa `true` per includere un campo, usa `__args` per gli argomenti e annida oggetti per le relazioni. Ottieni completamento automatico e controllo dei tipi completi basati sullo schema del tuo spazio di lavoro.
 

@@ -3781,6 +3781,7 @@ msgstr "自訂物件缺少標籤識別欄位。"
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "自訂角色屬於「組織方案」的一部分。"
 
@@ -5409,11 +5410,6 @@ msgstr "欄位類型為 TS_VECTOR 的欄位必須是系統欄位。"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "欄位類型為 TS_VECTOR 的欄位必須命名為 \"searchVector\""
-
-#. js-lingui-id: VkSxbb
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
-msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr "欄位類型 TS_VECTOR 必須具有 SYSTEM 可寫入權限"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

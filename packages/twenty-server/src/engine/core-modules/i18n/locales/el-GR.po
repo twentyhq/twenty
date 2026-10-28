@@ -3781,6 +3781,7 @@ msgstr "Στο προσαρμοσμένο αντικείμενο λείπει π
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Οι προσαρμοσμένοι ρόλοι αποτελούν μέρος του Πλάνου Οργανισμού."
 
@@ -5409,11 +5410,6 @@ msgstr "Ο τύπος πεδίου TS_VECTOR πρέπει να είναι πεδ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "Ο τύπος πεδίου TS_VECTOR πρέπει να ονομάζεται \"searchVector\""
-
-#. js-lingui-id: VkSxbb
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
-msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr "Ο τύπος πεδίου TS_VECTOR πρέπει να έχει δυνατότητα εγγραφής από το SYSTEM"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
