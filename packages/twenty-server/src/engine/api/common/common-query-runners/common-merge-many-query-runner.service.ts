@@ -77,7 +77,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       args.conflictPriorityIndex,
     );
 
-    await this.assertMergeKeepsUnreadableFieldValues({
+    await this.assertMergeKeepsUnreadableFieldValuesOrThrow({
       queryRunnerContext,
       ids: args.ids,
       priorityRecordId: priorityRecord.id,
@@ -197,7 +197,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
   }
 
   // Unreadable fields are left out of the merge, so a value only a deleted record holds would vanish unseen
-  private async assertMergeKeepsUnreadableFieldValues({
+  private async assertMergeKeepsUnreadableFieldValuesOrThrow({
     queryRunnerContext,
     ids,
     priorityRecordId,
@@ -310,10 +310,14 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
   ): Partial<ObjectRecord> {
     const mergedResult: Partial<ObjectRecord> = {};
 
-    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    );
+    const { fieldIdByName, fieldIdByJoinColumnName } =
+      buildFieldMapsFromFlatObjectMetadata(
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
+      );
+
+    // Records carry many-to-one relations under their join column (companyId), not the field name
+    const fieldIdByRecordKey = { ...fieldIdByName, ...fieldIdByJoinColumnName };
 
     const allFieldNames = new Set<string>();
 
@@ -322,7 +326,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         if (
           !this.shouldExcludeFieldFromMerge(
             fieldName,
-            fieldIdByName,
+            fieldIdByRecordKey,
             flatFieldMetadataMaps,
           )
         ) {
@@ -348,7 +352,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         mergedResult[fieldName] = recordsWithValues[0].value;
       } else {
         const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldIdByName[fieldName],
+          flatEntityId: fieldIdByRecordKey[fieldName],
           flatEntityMaps: flatFieldMetadataMaps,
         });
 
@@ -378,11 +382,11 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
   private shouldExcludeFieldFromMerge(
     fieldName: string,
-    fieldIdByName: Record<string, string>,
+    fieldIdByRecordKey: Record<string, string>,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
   ): boolean {
     const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldIdByName[fieldName],
+      flatEntityId: fieldIdByRecordKey[fieldName],
       flatEntityMaps: flatFieldMetadataMaps,
     });
 

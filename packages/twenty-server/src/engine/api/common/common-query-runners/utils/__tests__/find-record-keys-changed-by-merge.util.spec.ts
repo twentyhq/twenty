@@ -56,6 +56,16 @@ describe('findRecordKeysChangedByMerge', () => {
     expect(result).toEqual([]);
   });
 
+  it('should detect a date the priority record does not hold', () => {
+    const result = findRecordKeysChangedByMerge({
+      mergedData: { birthday: new Date('2026-01-15T10:00:00.000Z') },
+      priorityRecord: { id: 'priority', birthday: null },
+      recordKeys: ['birthday'],
+    });
+
+    expect(result).toEqual(['birthday']);
+  });
+
   it('should ignore keys the merge leaves untouched', () => {
     const result = findRecordKeysChangedByMerge({
       mergedData: {},
