@@ -1,5 +1,7 @@
 import { type JSX, createContext } from 'react';
 
+import { SalesfarceTheme } from '@/salesfarce/components/SalesfarceTheme';
+import { isSalesfarceActiveState } from '@/salesfarce/states/isSalesfarceActiveState';
 import { UI_SCALE_MULTIPLIERS } from '@/ui/theme/constants/UiScaleMultipliers';
 import { useSystemColorScheme } from '@/ui/theme/hooks/useSystemColorScheme';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
@@ -22,6 +24,7 @@ export const BaseThemeProvider = ({ children }: BaseThemeProviderProps) => {
     persistedColorSchemeState,
   );
   const persistedUiScaleStep = useAtomStateValue(persistedUiScaleStepState);
+  const isSalesfarceActive = useAtomStateValue(isSalesfarceActiveState);
   const systemColorScheme = useSystemColorScheme();
   const effectiveColorScheme =
     persistedColorScheme === 'System'
@@ -30,8 +33,13 @@ export const BaseThemeProvider = ({ children }: BaseThemeProviderProps) => {
 
   return (
     <ThemeSchemeContext.Provider value={setPersistedColorScheme}>
+      <SalesfarceTheme isActive={isSalesfarceActive} />
       <ThemeProvider
-        colorScheme={effectiveColorScheme === 'Dark' ? 'dark' : 'light'}
+        colorScheme={
+          !isSalesfarceActive && effectiveColorScheme === 'Dark'
+            ? 'dark'
+            : 'light'
+        }
         scale={UI_SCALE_MULTIPLIERS[persistedUiScaleStep]}
       >
         {children}

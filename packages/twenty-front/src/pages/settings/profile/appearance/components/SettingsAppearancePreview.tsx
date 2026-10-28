@@ -6,8 +6,10 @@ import {
   GRAY_SCALE_LIGHT,
   themeCssVariables,
 } from 'twenty-ui/theme';
-import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
+import { SALESFARCE_APPEARANCE_VALUE } from '@/salesfarce/constants/SalesfarceAppearanceValue';
+import { SALESFARCE_PREVIEW_COLORS } from '@/salesfarce/constants/SalesfarcePreviewColors';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { type SettingsAppearanceValue } from '~/pages/settings/profile/appearance/types/SettingsAppearanceValue';
 
 const StyledPreview = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -68,14 +70,14 @@ const StyledContent = styled.div`
 `;
 
 type SettingsAppearancePreviewProps = {
-  colorScheme: ColorScheme;
+  appearance: SettingsAppearanceValue;
 };
 
 export const SettingsAppearancePreview = ({
-  colorScheme,
+  appearance,
 }: SettingsAppearancePreviewProps) => {
   const segments = doNotTranslate(
-    colorScheme === 'System' ? ['Light', 'Dark'] : [colorScheme],
+    appearance === 'System' ? ['Light', 'Dark'] : [appearance],
   );
 
   return (
@@ -83,16 +85,27 @@ export const SettingsAppearancePreview = ({
       {segments.map((segment) => {
         const grayScale =
           segment === 'Dark' ? GRAY_SCALE_DARK : GRAY_SCALE_LIGHT;
+        const previewColors =
+          segment === SALESFARCE_APPEARANCE_VALUE
+            ? SALESFARCE_PREVIEW_COLORS
+            : {
+                background: grayScale.gray4,
+                border: grayScale.gray5,
+                contentBackground: grayScale.gray1,
+                contentColor: grayScale.gray12,
+              };
 
         return (
           <StyledSegment
             key={segment}
             style={
               {
-                '--appearance-preview-background': grayScale.gray4,
-                '--appearance-preview-border': grayScale.gray5,
-                '--appearance-preview-content-background': grayScale.gray1,
-                '--appearance-preview-content-color': grayScale.gray12,
+                '--appearance-preview-background': previewColors.background,
+                '--appearance-preview-border': previewColors.border,
+                '--appearance-preview-content-background':
+                  previewColors.contentBackground,
+                '--appearance-preview-content-color':
+                  previewColors.contentColor,
               } as CSSProperties
             }
           >

@@ -1,11 +1,12 @@
 import { styled } from '@linaria/react';
-import { useId } from 'react';
+import { type ReactNode, useId } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { IconCheck } from 'twenty-ui/icon';
 import { Radio } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { SettingsAppearancePreview } from '~/pages/settings/profile/appearance/components/SettingsAppearancePreview';
-import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
+import { type SettingsAppearanceValue } from '~/pages/settings/profile/appearance/types/SettingsAppearanceValue';
 
 const StyledChoice = styled.label`
   display: flex;
@@ -77,6 +78,13 @@ const StyledCheckmark = styled.div`
   }
 `;
 
+const StyledBadge = styled.div`
+  inset-inline-end: ${themeCssVariables.spacing[1]};
+  pointer-events: none;
+  position: absolute;
+  top: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.xs};
@@ -85,13 +93,15 @@ const StyledLabel = styled.span`
 `;
 
 type SettingsAppearanceOptionProps = {
-  colorScheme: ColorScheme;
+  appearance: SettingsAppearanceValue;
   label: string;
+  badge?: ReactNode;
 };
 
 export const SettingsAppearanceOption = ({
-  colorScheme,
+  appearance,
   label,
+  badge,
 }: SettingsAppearanceOptionProps) => {
   const theme = useTheme();
   const labelId = useId();
@@ -99,11 +109,12 @@ export const SettingsAppearanceOption = ({
   return (
     <StyledChoice>
       <Radio.Root
-        value={colorScheme}
+        value={appearance}
         aria-labelledby={labelId}
         render={<StyledTile />}
       >
-        <SettingsAppearancePreview colorScheme={colorScheme} />
+        <SettingsAppearancePreview appearance={appearance} />
+        {isDefined(badge) && <StyledBadge>{badge}</StyledBadge>}
         <Radio.Indicator keepMounted aria-hidden render={<StyledCheckmark />}>
           <IconCheck size={theme.icon.size.sm} />
         </Radio.Indicator>

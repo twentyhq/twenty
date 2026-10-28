@@ -1,5 +1,6 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { isSalesfarceActiveState } from '@/salesfarce/states/isSalesfarceActiveState';
 import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -17,6 +18,7 @@ import {
   IconSunMoon,
 } from 'twenty-ui/icon';
 import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
+import { reloadWindow } from '~/utils/reloadWindow';
 
 export const useColorScheme = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -53,6 +55,10 @@ export const useColorScheme = () => {
             colorScheme: value,
           },
         });
+
+        if (store.get(isSalesfarceActiveState.atom)) {
+          reloadWindow();
+        }
       } catch (error) {
         const latestWorkspaceMember = store.get(
           currentWorkspaceMemberState.atom,

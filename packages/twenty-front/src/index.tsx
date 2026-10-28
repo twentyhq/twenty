@@ -13,6 +13,7 @@ import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 import 'twenty-ui/theme-dark.css';
 import './index.css';
+import '@/salesfarce/styles/salesfarce.css';
 
 const renderApp = () => {
   const root = ReactDOM.createRoot(
