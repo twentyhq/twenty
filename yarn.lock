@@ -30133,25 +30133,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gaxios@npm:7.1.5, gaxios@npm:^7.0.0, gaxios@npm:^7.0.0-rc.4, gaxios@npm:^7.1.4":
-  version: 7.1.5
-  resolution: "gaxios@npm:7.1.5"
+"gaxios@npm:8.3.2, gaxios@npm:^8.3.0":
+  version: 8.3.2
+  resolution: "gaxios@npm:8.3.2"
   dependencies:
     extend: "npm:^3.0.2"
     https-proxy-agent: "npm:^7.0.1"
     node-fetch: "npm:^3.3.2"
-  checksum: 10c0/a3d12a9d2b781c548b40b4f2d7792281d091b63ffdd92713301a6e55bc9072fe7c1c54fa014416ca1fcdba40c171389bd409d0e3e326f4ae5ae60b25ae8ea540
+  checksum: 10c0/112ba770aed72a4fc794b869beb57f9a88d76ceb33329ad16c48224793600a8bd31b6dcafee9ab28272113dd384fd03a6991e9913a89b7bb90e0b6b56829e4bb
   languageName: node
   linkType: hard
 
-"gcp-metadata@npm:8.1.2":
-  version: 8.1.2
-  resolution: "gcp-metadata@npm:8.1.2"
+"gcp-metadata@npm:^9.0.0":
+  version: 9.2.2
+  resolution: "gcp-metadata@npm:9.2.2"
   dependencies:
-    gaxios: "npm:^7.0.0"
-    google-logging-utils: "npm:^1.0.0"
+    gaxios: "npm:^8.3.0"
+    google-logging-utils: "npm:^2.0.0"
     json-bigint: "npm:^1.0.0"
-  checksum: 10c0/15a61231a9410dc11c2828d2c9fdc8b0a939f1af746195c44edc6f2ffea0acab52cef3a7b9828069a36fd5d68bda730f7328a415fe42a01258f6e249dfba6908
+  checksum: 10c0/635c565921942ca5f2480594a0bbbb5b6ab1ee96c9e976ba654ebd423dd52d44808be07a01a3ce32f8f7e20acffc5aa3f9a3805fcd6d0d5d12377a2baac84d83
   languageName: node
   linkType: hard
 
@@ -30532,54 +30532,48 @@ __metadata:
   languageName: node
   linkType: hard
 
-"google-auth-library@npm:^10.1.0, google-auth-library@npm:^10.2.0":
-  version: 10.7.0
-  resolution: "google-auth-library@npm:10.7.0"
+"google-auth-library@npm:^11.0.0":
+  version: 11.3.1
+  resolution: "google-auth-library@npm:11.3.1"
   dependencies:
     base64-js: "npm:^1.3.0"
     ecdsa-sig-formatter: "npm:^1.0.11"
-    gaxios: "npm:^7.1.4"
-    gcp-metadata: "npm:8.1.2"
-    google-logging-utils: "npm:1.1.3"
+    gaxios: "npm:^8.3.0"
+    gcp-metadata: "npm:^9.0.0"
+    google-logging-utils: "npm:^2.0.0"
     jws: "npm:^4.0.0"
-  checksum: 10c0/e8827ff84a69bbd6573229d8245d8fbb8870304e255c213571541d039c33764a6f4a8d773c002a16d6d75e35b9a596310b5c6f8e25b189a02eb4cebd6f022321
+  checksum: 10c0/db72e7977fdb965312c5fc4696451f500e548607e413cac4a63e3c5ce37097e3c387cf43a1eb35ad8dbbbc4934b37370ffa0eda8a07dbe8e446c6b057a1af983
   languageName: node
   linkType: hard
 
-"google-logging-utils@npm:1.1.3":
-  version: 1.1.3
-  resolution: "google-logging-utils@npm:1.1.3"
-  checksum: 10c0/e65201c7e96543bd1423b9324013736646b9eed60941e0bfa47b9bfd146d2f09cf3df1c99ca60b7d80a726075263ead049ee72de53372cb8458c3bc55c2c1e59
+"google-logging-utils@npm:^2.0.0":
+  version: 2.1.0
+  resolution: "google-logging-utils@npm:2.1.0"
+  checksum: 10c0/be018c896cf3ae6521d365a569ce448347aa8b7e15b78f8a734ad182345af251d13a3974115748e679195bbc1dfa02ab4e6dd5433502829ab420656138048080
   languageName: node
   linkType: hard
 
-"google-logging-utils@npm:^1.0.0":
-  version: 1.1.4
-  resolution: "google-logging-utils@npm:1.1.4"
-  checksum: 10c0/860873974dd31678553f1074eb8fcf49c6417807086f4645ee8d4eaa81e8dce39f8f7a4b6856be4fda6e5d812b2df10e7abeb6dfe28353d28724cf81357c5a53
-  languageName: node
-  linkType: hard
-
-"googleapis-common@npm:8.0.1":
-  version: 8.0.1
-  resolution: "googleapis-common@npm:8.0.1"
+"googleapis-common@npm:^9.0.0":
+  version: 9.3.1
+  resolution: "googleapis-common@npm:9.3.1"
   dependencies:
     extend: "npm:^3.0.2"
-    gaxios: "npm:^7.0.0-rc.4"
-    google-auth-library: "npm:^10.1.0"
+    gaxios: "npm:^8.3.0"
+    google-auth-library: "npm:^11.0.0"
+    google-logging-utils: "npm:^2.0.0"
     qs: "npm:^6.7.0"
     url-template: "npm:^2.0.8"
-  checksum: 10c0/ee939fdfcaea32c528e7be64621b3e6b35e612f2456c8d4aca835e0a01ccec52f4ea2ac9509b083128398631a6cd66512c400adb4d0375a4638c55888ccdea7f
+  checksum: 10c0/98fd6a14cc2f309940050a585569cba06343a17b97877aa68b9197f69b26cd45e3b593a0d13efbaf47bbe2f2e834fff32eb54c145d8fe98e2bc732c6767d6e4d
   languageName: node
   linkType: hard
 
-"googleapis@npm:173.0.0":
-  version: 173.0.0
-  resolution: "googleapis@npm:173.0.0"
+"googleapis@npm:188.0.0":
+  version: 188.0.0
+  resolution: "googleapis@npm:188.0.0"
   dependencies:
-    google-auth-library: "npm:^10.2.0"
-    googleapis-common: "npm:^8.0.0"
-  checksum: 10c0/29a4814292ae98390d6db26deeb299160f07730f59075193fec54300035e7d6919e0bec4e45cf4b109370b7a2ebbee186ad9c12ee931a3cf02a40b2c9132d802
+    google-auth-library: "npm:^11.0.0"
+    googleapis-common: "npm:^9.0.0"
+  checksum: 10c0/5abdb08647a8b45a4fbd307e3e4168ad7b7ad0296a3b682f1c637d4eb27f3f5b5ed5cbebfef5aab84eb8c0b40b6507a7738093c07ba9ae9cc831818a6b917a27
   languageName: node
   linkType: hard
 
@@ -46567,8 +46561,8 @@ __metadata:
     express-session: "npm:^1.18.2"
     file-type: "npm:^21.3.2"
     fuse.js: "npm:^7.1.0"
-    gaxios: "npm:7.1.5"
-    googleapis: "npm:173.0.0"
+    gaxios: "npm:8.3.2"
+    googleapis: "npm:188.0.0"
     graphql: "npm:16.14.2"
     graphql-fields: "npm:2.0.3"
     graphql-redis-subscriptions: "npm:2.7.0"

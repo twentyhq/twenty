@@ -36,7 +36,6 @@
     "tmp": "^0.2.7",
     "@angular-devkit/core": "19.2.24",
     "yeoman-environment": "6.0.1",
-    "googleapis/googleapis-common": "8.0.1",
     "@cyntler/react-doc-viewer/ajv": "8.20.0",
     "@lingui/cli/esbuild": "0.28.1",
     "zapier-platform-cli/esbuild": "0.28.1",
