@@ -36,6 +36,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   );
   ```
 
+  In `twenty-client-sdk`, `MetadataSchema.enumPermissionFlagType.USER_APPS` and `MetadataSchema.enumPermissionFlagType.WORKSPACE_APPS` replace `MetadataSchema.enumPermissionFlagType.CONNECTED_ACCOUNTS` and `MetadataSchema.enumPermissionFlagType.APPLICATIONS`, and the `MetadataSchema.PermissionFlagType` union changes the same way.
+
+- **Command menu expressions in apps must read `permissionFlags.USER_APPS` and `permissionFlags.WORKSPACE_APPS`.** Update `conditionalAvailabilityExpression` and `conditionalPinnedExpression` strings in `defineCommandMenuItem` that read `permissionFlags.CONNECTED_ACCOUNTS` or `permissionFlags.APPLICATIONS`. The server upgrade rewrites these expressions on standard and workspace-custom command menu items only, not on items an app defines.
+
+- **App permission flags can no longer use a standard key, including the former `CONNECTED_ACCOUNTS` and `APPLICATIONS`.** Twenty servers reject a `definePermissionFlag` whose `key` is a standard permission flag key or one of those two former keys. Pick a key specific to your app.
+
 ### Removed
 
 - **The per-file multipart fallback in `twenty app deploy` and `twenty app dev`.** Application files are only uploaded straight to file storage now (`createApplicationFileUploads`, PUT, `completeApplicationFileUploads`). The CLI no longer falls back to the `uploadApplicationFile` mutation on a server that lacks the batch mutations, so deploying to a server older than the direct upload fails instead of degrading.
@@ -74,7 +80,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ### Deprecated
 
 - **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element `payloads` list instead. `enqueueJob` keeps working for now and will be removed in a future major version.
-- **`SystemPermissionFlag.CONNECTED_ACCOUNTS` and `SystemPermissionFlag.APPLICATIONS` in `twenty-sdk/define`.** Use `USER_APPS` and `WORKSPACE_APPS` instead. The old names are aliases with the same universal identifiers, so existing roles keep working, and `Object.values(SystemPermissionFlag)` lists those two identifiers twice.
+- **`SystemPermissionFlag.CONNECTED_ACCOUNTS` and `SystemPermissionFlag.APPLICATIONS` in `twenty-sdk/define`.** Use `USER_APPS` and `WORKSPACE_APPS` instead. The old names are aliases with the same universal identifiers, left out of `Object.keys` and `Object.values`. They keep working for now and will be removed in a future major version.
 
 ### Changed
 
@@ -93,7 +99,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   `twenty build` now also emits a warning when `twenty-client-sdk` is still listed under `dependencies`.
 
 - **`defineRole` and `defineApplicationRole` reject a permission flag listed twice in `permissionFlagUniversalIdentifiers`.** Syncing such a role already failed on the server. A deprecated `SystemPermissionFlag` name and its replacement are the same flag.
-- **`twenty app pull` writes `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` when the app's `twenty-sdk` exports them**, and the deprecated names otherwise.
+- **`twenty app pull` names permission flags after the app's installed `twenty-sdk`.** Role files get `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` with `twenty-sdk` 2.53 or later, and `CONNECTED_ACCOUNTS` and `APPLICATIONS` with earlier versions. A flag the installed `SystemPermissionFlag` lacks is written as its universal identifier string.
 
 ## [2.8.0]
 

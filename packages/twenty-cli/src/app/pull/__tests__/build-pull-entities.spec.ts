@@ -3,10 +3,10 @@ import {
   NAVIGATION_MENU_ITEM_ENUM_BINDINGS,
   PAGE_LAYOUT_ENUM_BINDINGS,
   PAGE_LAYOUT_TAB_ENUM_BINDINGS,
-  ROLE_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
   VIEW_FIELD_ENUM_BINDINGS,
   WORKFLOW_ENUM_BINDINGS,
+  buildRoleEnumBindings,
 } from '@/app/pull/write-define-file';
 import {
   getFieldPermissionUniversalIdentifier,
@@ -22,6 +22,7 @@ import {
   type ViewManifest,
   type WorkflowManifest,
 } from 'twenty-shared/application';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import {
   STANDARD_OBJECT_FIELDS,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
@@ -1143,12 +1144,12 @@ describe('buildPullEntities', () => {
       {
         definer: 'defineApplicationRole',
         path: 'src/roles/support.role.ts',
-        enumBindings: ROLE_ENUM_BINDINGS,
+        enumBindings: buildRoleEnumBindings(SystemPermissionFlag),
       },
       {
         definer: 'defineRole',
         path: 'src/roles/auditor.role.ts',
-        enumBindings: ROLE_ENUM_BINDINGS,
+        enumBindings: buildRoleEnumBindings(SystemPermissionFlag),
       },
     ]);
   });

@@ -43,7 +43,7 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
         )
       ) {
         errors.push(
-          `Duplicate permission flag universalIdentifier "${permissionFlagUniversalIdentifier}". Deprecated SystemPermissionFlag names share a universalIdentifier with their replacements, so list each flag once`,
+          `Duplicate permission flag universalIdentifier "${permissionFlagUniversalIdentifier}"`,
         );
       } else {
         permissionFlagUniversalIdentifiers.add(

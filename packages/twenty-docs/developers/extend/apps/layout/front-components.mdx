@@ -178,6 +178,12 @@ Declare as many as you need. Twenty's own **General** item — auto-upgrade, App
 A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value, and your component saves it with `updateMyUserApplicationVariable`, which writes that member's value only and needs `SystemPermissionFlag.USER_APPS` in your app's role, if it declares one (see [Reading and updating variables at runtime](#reading-and-updating-variables-at-runtime)). Like a `WORKSPACE` item, a `USER` item replaces the generated **Variables** form, so it should let the member set every user variable your app needs. A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
 
 <Note>
+  `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` are
+  available from `twenty-sdk` 2.53 onward; earlier versions use
+  `CONNECTED_ACCOUNTS` and `APPLICATIONS`.
+</Note>
+
+<Note>
   `defineSettingsFrontComponent()` is deprecated in favor of
   `defineSettingsMenuItem()`. An app still using it keeps working — its
   component is treated as a single **Settings** menu item — but it can only ever

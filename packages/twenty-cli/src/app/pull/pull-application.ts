@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { getToolingErrorContext } from '@/app/get-tooling-error-context';
 import { assertPullPaths } from '@/app/pull/assert-pull-paths';
@@ -12,7 +12,6 @@ import { reconcilePullBaseManifest } from '@/app/pull/reconcile-pull-base-manife
 import { createPullBaseWrite } from '@/app/pull/create-pull-base-write';
 import { readTargetBoundPullBase } from '@/app/pull/read-target-bound-pull-base';
 import { resolvePullSystemPermissionFlag } from '@/app/pull/resolve-pull-system-permission-flag';
-import { buildRoleEnumBindings } from '@/app/pull/write-define-file';
 import { type PullAppOptions, type PullAppResult } from '@/app/pull/types';
 import { type ToolingResult } from '@/app/types/tooling-result.type';
 import { CliError } from '@/output/cli-error';
@@ -49,6 +48,12 @@ export const pullApplication = async (
     const unreconciledBaseIdentifiers = new Set(
       base.unreconciledUniversalIdentifiers,
     );
+    const grantsPermissionFlags = [manifest, baseManifest].some(
+      (pullManifest) =>
+        pullManifest?.roles?.some((role) =>
+          isNonEmptyArray(role.permissionFlagUniversalIdentifiers),
+        ),
+    );
     const {
       entities,
       baseEntities,
@@ -58,9 +63,9 @@ export const pullApplication = async (
       baseManifest,
       scannedFiles,
       unreconciledUniversalIdentifiers: unreconciledBaseIdentifiers,
-      roleEnumBindings: buildRoleEnumBindings(
-        resolvePullSystemPermissionFlag(appPath),
-      ),
+      systemPermissionFlag: grantsPermissionFlags
+        ? resolvePullSystemPermissionFlag(appPath)
+        : undefined,
     });
 
     signal?.throwIfAborted();

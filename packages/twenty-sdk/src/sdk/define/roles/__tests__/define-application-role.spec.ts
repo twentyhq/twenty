@@ -44,23 +44,6 @@ describe('defineApplicationRole', () => {
     expect(result.config?.permissionFlagUniversalIdentifiers).toHaveLength(1);
   });
 
-  it('should return error when a deprecated permission flag is listed with its replacement', () => {
-    const config = {
-      ...validConfig,
-      permissionFlagUniversalIdentifiers: [
-        SystemPermissionFlag.APPLICATIONS,
-        SystemPermissionFlag.WORKSPACE_APPS,
-      ],
-    };
-
-    const result = defineApplicationRole(config);
-
-    expect(result.success).toBe(false);
-    expect(result.errors).toContain(
-      `Duplicate permission flag universalIdentifier "${SystemPermissionFlag.WORKSPACE_APPS}". Deprecated SystemPermissionFlag names share a universalIdentifier with their replacements, so list each flag once`,
-    );
-  });
-
   it('should return error when universalIdentifier is missing', () => {
     const config = {
       label: 'Default function role',

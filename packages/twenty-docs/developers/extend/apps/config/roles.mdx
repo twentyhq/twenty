@@ -54,6 +54,13 @@ export default defineRole({
 });
 ```
 
+<Note>
+  `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` are
+  available from `twenty-sdk` 2.53 onward; earlier versions use
+  `CONNECTED_ACCOUNTS` and `APPLICATIONS`. From 2.53 the old names are
+  deprecated aliases for the same flags, so list each flag under one name only.
+</Note>
+
 ## Row-level security
 
 Row-level permissions require the **Organization plan or above** — see
@@ -227,7 +234,6 @@ The application role is what a workspace reviews when it installs your app, so i
 - Start from the scaffolded role, then progressively restrict it — the default grants broad read access, which is rarely what you want in production.
 - Replace `objectPermissions` and `fieldPermissions` with the exact objects and fields your functions actually need.
 - `permissionFlagUniversalIdentifiers` control access to platform-level capabilities. Keep them minimal.
-- `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` were previously named `CONNECTED_ACCOUNTS` and `APPLICATIONS`. The old SDK names still work as deprecated aliases with the same universal identifiers, so list each flag under one name only.
 - A permission flag your app declares with `definePermissionFlag()` carries a `permissionType`: `'tool'` (the default) for a capability an agent or a user can be granted, `'settings'` for a flag that unlocks a settings area.
 - See a working example: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
 

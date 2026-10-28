@@ -60,7 +60,7 @@ describe('defineRole', () => {
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      `Duplicate permission flag universalIdentifier "${SystemPermissionFlag.UPLOAD_FILE}". Deprecated SystemPermissionFlag names share a universalIdentifier with their replacements, so list each flag once`,
+      `Duplicate permission flag universalIdentifier "${SystemPermissionFlag.UPLOAD_FILE}"`,
     );
   });
 
@@ -81,10 +81,9 @@ describe('defineRole', () => {
       const result = defineRole(config);
 
       expect(result.success).toBe(false);
-      expect(result.errors).toHaveLength(1);
-      expect(result.errors[0]).toContain(
+      expect(result.errors).toEqual([
         `Duplicate permission flag universalIdentifier "${SystemPermissionFlag[replacementName]}"`,
-      );
+      ]);
     },
   );
 

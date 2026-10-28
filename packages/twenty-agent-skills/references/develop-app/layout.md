@@ -62,6 +62,8 @@ The menu item points at the component, not the reverse, so one component can bac
 
 `scope` is `WORKSPACE` (configured once for the whole workspace, the default) or `USER` (configured by each member for themselves). A `USER` item renders as a tab on the app's page under the member's Settings > Apps preferences, but that page is not enabled in every workspace yet — where it is not, the item is persisted and synced but nothing displays it, so say so rather than relying on a `USER` item for a settings entry every workspace needs visible now. To store something per person, a `USER` item should use an application variable declared with `scope: 'USER'`, which `getApplicationVariable` returns with the viewing member's value unless it is secret; the component saves it with `updateMyUserApplicationVariable`, which writes the viewing member's value only (an empty value resets it to the variable's default), refuses a token with nobody behind it, and needs `SystemPermissionFlag.USER_APPS` in the app's default role, if it declares one (and in the member's role, since the component's token is the intersection of both), and since a `USER` item replaces the generated Variables form like a `WORKSPACE` item does, it should let the member set every user variable the app needs; a variable without that scope holds one value shared by the whole workspace.
 
+`SystemPermissionFlag.USER_APPS` is available from `twenty-sdk` 2.53 onward; earlier versions use `SystemPermissionFlag.CONNECTED_ACCOUNTS`.
+
 Items sort by ascending `position`, which is a decimal so an item can be slotted between two existing ones. Two items of one app cannot share a position in the same scope, and `General` is reserved for the built-in item.
 
 ## Verification

@@ -3,11 +3,19 @@ import { SystemPermissionFlag as SharedSystemPermissionFlag } from 'twenty-share
 import { SystemPermissionFlag } from '@/sdk/define';
 
 describe('SystemPermissionFlag', () => {
-  it('should expose every shared permission flag', () => {
-    expect(SystemPermissionFlag).toMatchObject(SharedSystemPermissionFlag);
+  it('should list exactly the shared permission flags', () => {
+    expect({ ...SystemPermissionFlag }).toEqual(SharedSystemPermissionFlag);
   });
 
-  it('should keep the deprecated names on the universal identifiers published apps reference', () => {
+  it('should list each universal identifier once', () => {
+    const universalIdentifiers = Object.values(SystemPermissionFlag);
+
+    expect(new Set(universalIdentifiers).size).toBe(
+      universalIdentifiers.length,
+    );
+  });
+
+  it('should resolve the deprecated names to the universal identifiers published apps reference', () => {
     expect(SystemPermissionFlag.CONNECTED_ACCOUNTS).toBe(
       'e5f63b2d-5369-5df6-8f32-a8bd9e79e653',
     );

@@ -1,6 +1,6 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
-// Servers before the rename to WORKSPACE_APPS report this flag as APPLICATIONS.
+// Servers before 2.53 report this flag as APPLICATIONS.
 const MANAGE_APPS_PERMISSION_FLAG_KEYS = ['WORKSPACE_APPS', 'APPLICATIONS'];
 
 export const currentUserCanManageGranolaOrThrow =

@@ -5,10 +5,10 @@ import {
   OBJECT_ENUM_BINDINGS,
   PAGE_LAYOUT_ENUM_BINDINGS,
   PAGE_LAYOUT_TAB_ENUM_BINDINGS,
-  ROLE_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
   VIEW_FIELD_ENUM_BINDINGS,
   WORKFLOW_ENUM_BINDINGS,
+  buildRoleEnumBindings,
   writeDefineFile,
 } from '@/app/pull/write-define-file';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -509,7 +509,7 @@ describe('writeDefineFile', () => {
           'application-permission-flag-uid',
         ],
       },
-      enumBindings: ROLE_ENUM_BINDINGS,
+      enumBindings: buildRoleEnumBindings(SystemPermissionFlag),
     });
 
     expect(

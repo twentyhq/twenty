@@ -192,6 +192,11 @@ Values are strings, in the same format as `process.env` (see [Variable types](#v
 
 It needs no `WORKSPACE_APPS` permission, but it needs `USER_APPS`: on the member's role, and, when your app's token makes the call, on your app's default role too, if it declares one. If your app saves user variables, add `SystemPermissionFlag.USER_APPS` to `permissionFlagUniversalIdentifiers` in its [role](/developers/extend/apps/config/roles).
 
+<Note>
+  `SystemPermissionFlag.USER_APPS` is available from `twenty-sdk` 2.53 onward;
+  earlier versions use `SystemPermissionFlag.CONNECTED_ACCOUNTS`.
+</Note>
+
 ## Default function role
 
 The role declared with [`defineApplicationRole()`](/developers/extend/apps/config/roles) controls what the app's logic functions and front components can access:

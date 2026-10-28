@@ -27,7 +27,7 @@ describe('currentUserCanManageGranolaOrThrow', () => {
   });
 
   it.each(['WORKSPACE_APPS', 'APPLICATIONS'])(
-    'should allow when the current user has %s',
+    'allows a user with %s',
     async (permissionFlag) => {
       mockPermissionFlags(['WORKFLOWS', permissionFlag]);
 
@@ -35,19 +35,19 @@ describe('currentUserCanManageGranolaOrThrow', () => {
     },
   );
 
-  it('should deny without the workspace apps flag', async () => {
+  it('denies a user without the workspace apps flag', async () => {
     mockPermissionFlags(['WORKFLOWS', 'USER_APPS']);
 
     expect(await currentUserCanManageGranolaOrThrow()).toBe(false);
   });
 
-  it('should deny when the current user workspace carries no flags', async () => {
+  it('denies when the current user workspace carries no flags', async () => {
     mockPermissionFlags(null);
 
     expect(await currentUserCanManageGranolaOrThrow()).toBe(false);
   });
 
-  it('should throw when the permission query fails', async () => {
+  it('propagates a failed permission query', async () => {
     queryMock.mockRejectedValue(new Error('unauthenticated'));
 
     await expect(currentUserCanManageGranolaOrThrow()).rejects.toThrow(
