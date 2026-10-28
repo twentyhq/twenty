@@ -115,6 +115,8 @@ describe('2-51 workspace command - add agent chat channels (integration)', () =>
     await expect(
       channelService.createChannel({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
+        callingApplication: undefined,
+        universalIdentifier: undefined,
         name: 'Support',
         icon: null,
         color: null,

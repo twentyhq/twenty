@@ -3,17 +3,20 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
 import { type AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-role.dto';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { type AgentChatCaller } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-caller.type';
 import { assertAgentChatChannelExists } from 'src/engine/metadata-modules/ai/ai-chat/utils/assert-agent-chat-channel-exists.util';
 import { buildAgentChatChannelDeletionLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-deletion-lock-key.util';
 import { isAgentChatChannelOpenToRole } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-role.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { throwAgentChatChannelBusy } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-busy.util';
+import { throwAgentChatChannelNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-not-found.util';
 import { throwAgentChatChannelsUnavailable } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channels-unavailable.util';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -49,19 +52,16 @@ export class AgentChatChannelService {
 
   async findChannels({
     workspaceId,
-    workspaceMemberId,
+    caller,
     canManageChannels,
   }: {
     workspaceId: string;
-    workspaceMemberId: string;
+    caller: AgentChatCaller;
     canManageChannels: boolean;
   }): Promise<(FlatAgentChatChannelWithRoleIds & { isAccessible: boolean })[]> {
     const [channels, role] = await Promise.all([
       this.channelMetadataService.findChannels(workspaceId),
-      this.channelAccessService.findMemberRole({
-        workspaceId,
-        workspaceMemberId,
-      }),
+      this.channelAccessService.findCallerRole({ workspaceId, caller }),
     ]);
 
     return channels
@@ -74,12 +74,16 @@ export class AgentChatChannelService {
 
   async createChannel({
     workspaceId,
+    callingApplication,
+    universalIdentifier,
     name,
     icon,
     color,
     roleIds,
   }: {
     workspaceId: string;
+    callingApplication: FlatApplication | undefined;
+    universalIdentifier: string | undefined;
     name: string;
     icon: string | null;
     color: string | null;
@@ -91,6 +95,8 @@ export class AgentChatChannelService {
 
     return this.channelMetadataService.createChannel({
       workspaceId,
+      callingApplication,
+      universalIdentifier,
       name,
       icon,
       color,
@@ -100,15 +106,26 @@ export class AgentChatChannelService {
 
   async updateChannel({
     workspaceId,
+    caller,
+    callingApplication,
     channelId,
     changes: { roleIds, ...changes },
   }: {
     workspaceId: string;
+    caller: AgentChatCaller;
+    callingApplication: FlatApplication | undefined;
     channelId: string;
     changes: ChannelChanges;
   }): Promise<FlatAgentChatChannelWithRoleIds> {
+    await this.findChannelCallerCanManageOrThrow({
+      workspaceId,
+      caller,
+      channelId,
+    });
+
     const channel = await this.channelMetadataService.updateChannel({
       workspaceId,
+      callingApplication,
       channelId,
       changes,
       roleIds,
@@ -134,17 +151,20 @@ export class AgentChatChannelService {
   // move to another channel first
   async deleteChannel({
     workspaceId,
-    workspaceMemberId,
+    caller,
+    callingApplication,
     channelId,
     destinationChannelId,
   }: {
     workspaceId: string;
-    workspaceMemberId: string;
+    caller: AgentChatCaller;
+    callingApplication: FlatApplication | undefined;
     channelId: string;
     destinationChannelId: string | null;
   }): Promise<void> {
-    const channel = await this.channelMetadataService.findChannelOrThrow({
+    const channel = await this.findChannelCallerCanManageOrThrow({
       workspaceId,
+      caller,
       channelId,
     });
 
@@ -164,10 +184,13 @@ export class AgentChatChannelService {
     }
 
     if (isDefined(destinationChannelId)) {
-      await this.channelAccessService.assertChannelAccess({
+      await this.channelAccessService.assertChannelOpenToRole({
         workspaceId,
-        workspaceMemberId,
         channelId: destinationChannelId,
+        role: await this.channelAccessService.findCallerRole({
+          workspaceId,
+          caller,
+        }),
       });
     }
 
@@ -187,6 +210,7 @@ export class AgentChatChannelService {
 
         await this.channelMetadataService.deleteChannel({
           workspaceId,
+          callingApplication,
           channelId,
         });
       },
@@ -216,6 +240,30 @@ export class AgentChatChannelService {
         canAccessAllAgentChatChannels,
       }))
       .sort((left, right) => left.label.localeCompare(right.label));
+  }
+
+  private async findChannelCallerCanManageOrThrow({
+    workspaceId,
+    caller,
+    channelId,
+  }: {
+    workspaceId: string;
+    caller: AgentChatCaller;
+    channelId: string;
+  }): Promise<FlatAgentChatChannelWithRoleIds> {
+    const channel = await this.channelMetadataService.findChannelOrThrow({
+      workspaceId,
+      channelId,
+    });
+    const isChannelNotOwnedByApplicationCaller =
+      caller.type === 'application' &&
+      channel.applicationId !== caller.application.id;
+
+    if (isChannelNotOwnedByApplicationCaller) {
+      throwAgentChatChannelNotFound();
+    }
+
+    return channel;
   }
 
   // Moved chats keep their channel status

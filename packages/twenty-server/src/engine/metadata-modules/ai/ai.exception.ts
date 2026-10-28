@@ -25,6 +25,7 @@ export enum AiExceptionCode {
   CHAT_CHANNEL_NOT_EMPTY = 'CHAT_CHANNEL_NOT_EMPTY',
   CHAT_CHANNEL_BUSY = 'CHAT_CHANNEL_BUSY',
   CHAT_CHANNEL_IS_STANDARD = 'CHAT_CHANNEL_IS_STANDARD',
+  CHAT_CHANNEL_UNIVERSAL_IDENTIFIER_TAKEN = 'CHAT_CHANNEL_UNIVERSAL_IDENTIFIER_TAKEN',
   INVALID_CHAT_CHANNEL_NAME = 'INVALID_CHAT_CHANNEL_NAME',
   INVALID_CHAT_CHANNEL_ROLE = 'INVALID_CHAT_CHANNEL_ROLE',
   INVALID_CHAT_CHANNEL_DESTINATION = 'INVALID_CHAT_CHANNEL_DESTINATION',
@@ -90,6 +91,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This channel is being changed. Try again in a moment.`;
     case AiExceptionCode.CHAT_CHANNEL_IS_STANDARD:
       return msg`Standard channels cannot be deleted.`;
+    case AiExceptionCode.CHAT_CHANNEL_UNIVERSAL_IDENTIFIER_TAKEN:
+      return msg`A channel with this identifier belongs to another application.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_NAME:
       return msg`A channel needs a name.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_ROLE:
