@@ -33,12 +33,6 @@ export class DeleteAgentChatChannelActionHandlerService extends WorkspaceMigrati
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
 
-    await moveAgentChatChannelThreadsToGeneral({
-      manager: queryRunner.manager,
-      workspaceId,
-      channelId: flatAction.entityId,
-    });
-
     const agentChatChannelRepository =
       queryRunner.manager.getRepository<AgentChatChannelEntity>(
         AgentChatChannelEntity,
@@ -47,6 +41,12 @@ export class DeleteAgentChatChannelActionHandlerService extends WorkspaceMigrati
     await agentChatChannelRepository.delete({
       id: flatAction.entityId,
       workspaceId,
+    });
+
+    await moveAgentChatChannelThreadsToGeneral({
+      manager: queryRunner.manager,
+      workspaceId,
+      channelId: flatAction.entityId,
     });
   }
 

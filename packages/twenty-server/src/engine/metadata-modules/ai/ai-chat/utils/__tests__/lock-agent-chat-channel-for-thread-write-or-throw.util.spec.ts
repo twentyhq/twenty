@@ -7,7 +7,7 @@ const CHANNEL_ID = '20202020-0000-4000-8000-00000000000a';
 const TRY_SHARED_LOCK_QUERY =
   'SELECT pg_try_advisory_xact_lock_shared(hashtextextended($1, 0)) AS "isLocked"';
 const CHANNEL_EXISTS_QUERY =
-  'SELECT id FROM core."agentChatChannel" WHERE id = $1 AND "workspaceId" = $2';
+  'SELECT id FROM core."agentChatChannel" WHERE id = $1 AND "workspaceId" = $2 FOR KEY SHARE';
 
 describe('lockAgentChatChannelForThreadWriteOrThrow', () => {
   it('refuses while a deletion holds the channel', async () => {

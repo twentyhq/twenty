@@ -13,7 +13,7 @@ export const assertAgentChatChannelExists = async ({
   channelId: string;
 }): Promise<void> => {
   const channels = await manager.query<{ id: string }[]>(
-    'SELECT id FROM core."agentChatChannel" WHERE id = $1 AND "workspaceId" = $2',
+    'SELECT id FROM core."agentChatChannel" WHERE id = $1 AND "workspaceId" = $2 FOR KEY SHARE',
     [channelId, workspaceId],
   );
 
