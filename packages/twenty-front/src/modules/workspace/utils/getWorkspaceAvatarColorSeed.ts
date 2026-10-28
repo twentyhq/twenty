@@ -1,1 +1,1 @@
-export { getWorkspaceAvatarColorSeed } from 'twenty-ui/utilities';
+export { getAvatarInitial as getWorkspaceAvatarColorSeed } from 'twenty-ui/utilities';

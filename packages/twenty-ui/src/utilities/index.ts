@@ -8,7 +8,6 @@
  */
 
 export { getMainColorNameFromPaletteColorName } from './color/utils/getMainColorNameFromPaletteColorName';
-export { getWorkspaceAvatarColorSeed } from './color/utils/getWorkspaceAvatarColorSeed';
 export { parseThemeColor } from './color/utils/parseThemeColor';
 export {
   stringToThemeColor,
@@ -23,6 +22,7 @@ export { useIsMobile } from './responsive/hooks/useIsMobile';
 export { useIsTouchDevice } from './responsive/hooks/useIsTouchDevice';
 export { useMediaQuery } from './responsive/hooks/useMediaQuery';
 export type { Nullable } from './types/Nullable';
+export { getAvatarInitial } from './utils/getAvatarInitial';
 export { getSafeUrl } from './utils/getSafeUrl';
 export { isDefined } from './utils/isDefined';
 export { normalizeSearchText } from './utils/normalizeSearchText';
