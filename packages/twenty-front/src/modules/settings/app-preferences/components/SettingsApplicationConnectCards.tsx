@@ -2,7 +2,7 @@ import { AppChip } from '@/applications/components/AppChip';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
-import { getApplicationPreferencesConnectionsPath } from '@/settings/app-preferences/utils/getApplicationPreferencesConnectionsPath';
+import { getApplicationPreferencesGeneralPath } from '@/settings/app-preferences/utils/getApplicationPreferencesGeneralPath';
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
 import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
 import { SettingsCard } from '@/settings/components/SettingsCard';
@@ -56,7 +56,7 @@ export const SettingsApplicationConnectCards = () => {
                 triggerAppOAuth({
                   applicationId: application.id,
                   providerName: connectionProvider.name,
-                  redirectLocation: getApplicationPreferencesConnectionsPath(
+                  redirectLocation: getApplicationPreferencesGeneralPath(
                     application.id,
                   ),
                 })

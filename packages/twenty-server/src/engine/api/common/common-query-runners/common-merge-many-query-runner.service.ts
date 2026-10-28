@@ -24,6 +24,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { computeDuplicateKeyColumnGroupsForJoinColumn } from 'src/engine/api/common/common-query-runners/utils/compute-duplicate-key-column-groups-for-join-column.util';
+import { findRecordKeysChangedByMerge } from 'src/engine/api/common/common-query-runners/utils/find-record-keys-changed-by-merge.util';
 import { splitRelatedRecordIdsToMigrateAndSoftDelete } from 'src/engine/api/common/common-query-runners/utils/split-related-record-ids-to-migrate-and-soft-delete.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -75,6 +76,12 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       args.ids,
       args.conflictPriorityIndex,
     );
+
+    await this.assertMergeKeepsUnreadableFieldValuesOrThrow({
+      queryRunnerContext,
+      ids: args.ids,
+      priorityRecordId: priorityRecord.id,
+    });
 
     const mergedData = this.performDeepMerge(
       recordsToMerge,
@@ -189,6 +196,111 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     return priorityRecord;
   }
 
+  // Unreadable fields are left out of the merge, so a value only a deleted record holds would vanish unseen
+  private async assertMergeKeepsUnreadableFieldValuesOrThrow({
+    queryRunnerContext,
+    ids,
+    priorityRecordId,
+  }: {
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+    ids: string[];
+    priorityRecordId: string;
+  }): Promise<void> {
+    const {
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      repository,
+      transactionScope,
+    } = queryRunnerContext;
+
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+        ?.restrictedFields ?? {};
+
+    const unreadableFieldIds = new Set(
+      Object.entries(restrictedFields)
+        .filter(([, fieldPermissions]) => fieldPermissions.canRead === false)
+        .map(([fieldMetadataId]) => fieldMetadataId),
+    );
+
+    if (unreadableFieldIds.size === 0) {
+      return;
+    }
+
+    const { fieldIdByName, fieldIdByJoinColumnName } =
+      buildFieldMapsFromFlatObjectMetadata(
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
+      );
+
+    const unreadableRecordKeys = Object.entries({
+      ...fieldIdByName,
+      ...fieldIdByJoinColumnName,
+    })
+      .filter(([, fieldMetadataId]) => unreadableFieldIds.has(fieldMetadataId))
+      .map(([recordKey]) => recordKey);
+
+    const bypassPermissionConfig = {
+      shouldBypassPermissionChecks: true,
+    } as const;
+
+    const unrestrictedRepository = isDefined(transactionScope)
+      ? transactionScope.getRepository<ObjectRecord>(
+          flatObjectMetadata.nameSingular,
+          bypassPermissionConfig,
+        )
+      : this.workspaceOrmManager.getRepository<ObjectRecord>(
+          flatObjectMetadata.nameSingular,
+          bypassPermissionConfig,
+        );
+
+    const fullRecords = await unrestrictedRepository.find({
+      where: { id: In(ids) },
+      select: getAllSelectableColumnNames({
+        restrictedFields: {},
+        objectMetadata: {
+          objectMetadataMapItem: flatObjectMetadata,
+          flatFieldMetadataMaps,
+        },
+      }),
+    });
+
+    const fullPriorityRecord = fullRecords.find(
+      (record) => record.id === priorityRecordId,
+    );
+
+    if (!isDefined(fullPriorityRecord)) {
+      return;
+    }
+
+    // Priority first, so array unions only differ when another record adds a value
+    const fullyMergedData = this.performDeepMerge(
+      [
+        fullPriorityRecord,
+        ...fullRecords.filter((record) => record.id !== priorityRecordId),
+      ],
+      priorityRecordId,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    const changedUnreadableRecordKeys = findRecordKeysChangedByMerge({
+      mergedData: fullyMergedData,
+      priorityRecord: fullPriorityRecord,
+      recordKeys: unreadableRecordKeys,
+    });
+
+    if (changedUnreadableRecordKeys.length > 0) {
+      throw new CommonQueryRunnerException(
+        `Merge would drop values in fields the requester cannot read: ${changedUnreadableRecordKeys.join(', ')}`,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        {
+          userFriendlyMessage: msg`These records hold data in fields your role cannot see. Ask someone with access to those fields to merge them.`,
+        },
+      );
+    }
+  }
+
   private performDeepMerge(
     recordsToMerge: ObjectRecord[],
     priorityRecordId: string,
@@ -198,10 +310,14 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
   ): Partial<ObjectRecord> {
     const mergedResult: Partial<ObjectRecord> = {};
 
-    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    );
+    const { fieldIdByName, fieldIdByJoinColumnName } =
+      buildFieldMapsFromFlatObjectMetadata(
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
+      );
+
+    // Records carry many-to-one relations under their join column (companyId), not the field name
+    const fieldIdByRecordKey = { ...fieldIdByName, ...fieldIdByJoinColumnName };
 
     const allFieldNames = new Set<string>();
 
@@ -210,7 +326,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         if (
           !this.shouldExcludeFieldFromMerge(
             fieldName,
-            fieldIdByName,
+            fieldIdByRecordKey,
             flatFieldMetadataMaps,
           )
         ) {
@@ -236,7 +352,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         mergedResult[fieldName] = recordsWithValues[0].value;
       } else {
         const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldIdByName[fieldName],
+          flatEntityId: fieldIdByRecordKey[fieldName],
           flatEntityMaps: flatFieldMetadataMaps,
         });
 
@@ -266,11 +382,11 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
   private shouldExcludeFieldFromMerge(
     fieldName: string,
-    fieldIdByName: Record<string, string>,
+    fieldIdByRecordKey: Record<string, string>,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
   ): boolean {
     const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldIdByName[fieldName],
+      flatEntityId: fieldIdByRecordKey[fieldName],
       flatEntityMaps: flatFieldMetadataMaps,
     });
 

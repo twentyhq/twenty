@@ -29,7 +29,6 @@ export const buildSearchVectorGinIndexForCustomObject = ({
       ],
       indexType: IndexType.GIN,
       indexWhereClause: null,
-      isCustom: false,
       isUnique: false,
       isSystemSideEffect: true,
       objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,

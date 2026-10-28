@@ -10,7 +10,7 @@ import {
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 
 export const LINEAR_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000024';
-export const LINEAR_CONNECTIONS_REDIRECT_LOCATION = `/settings/accounts/applications/${LINEAR_APPLICATION_ID}#connections`;
+export const LINEAR_GENERAL_TAB_REDIRECT_LOCATION = `/settings/accounts/applications/${LINEAR_APPLICATION_ID}#general`;
 const LINEAR_CONNECTION_PROVIDER_ID = '20202020-1a2b-4c3d-8e4f-000000000071';
 export const LINEAR_RECONNECT_NEEDED_ACCOUNT_ID =
   '20202020-1a2b-4c3d-8e4f-000000000081';
