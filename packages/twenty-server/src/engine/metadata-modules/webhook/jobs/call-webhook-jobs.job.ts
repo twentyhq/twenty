@@ -15,6 +15,7 @@ import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-we
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
+import { omitReadDisabledFieldsFromWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/omit-read-disabled-fields-from-webhook-events.util';
 import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { EVERYONE_ROW_ACCESS_POLICY_SUBJECT } from 'src/engine/core-modules/record-share/constants/everyone-row-access-policy-subject.constant';
@@ -40,10 +41,10 @@ export class CallWebhookJobsJob {
   ): Promise<void> {
     // Keep in sync with packages/twenty-zapier/src/triggers/trigger_record.ts and computeWebhooks.utils.ts
 
-    const { flatWebhookMaps, flatObjectMetadataMaps } =
+    const { flatWebhookMaps, flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(
         workspaceEventBatch.workspaceId,
-        ['flatWebhookMaps', 'flatObjectMetadataMaps'],
+        ['flatWebhookMaps', 'flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
       );
 
     const webhooks = findWebhooksMatchingEventName({
@@ -77,7 +78,15 @@ export class CallWebhookJobsJob {
       .resolveAdmittedRecordIds(EVERYONE_ROW_ACCESS_POLICY_SUBJECT);
 
     const webhookEvents = transformEventBatchToWebhookEvents({
-      workspaceEventBatch,
+      workspaceEventBatch: {
+        ...workspaceEventBatch,
+        events: omitReadDisabledFieldsFromWebhookEvents({
+          events: workspaceEventBatch.events,
+          objectMetadata: flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        }),
+      },
       webhooks,
       admittedRecordIds,
     });
