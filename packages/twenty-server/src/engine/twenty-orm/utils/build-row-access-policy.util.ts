@@ -1,4 +1,3 @@
-import { isMetadataWritePermitted } from 'src/engine/twenty-orm/utils/is-metadata-write-permitted.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildNamedRecordGrantExpression } from 'src/engine/core-modules/record-share/utils/build-named-record-grant-expression.util';
@@ -10,6 +9,7 @@ import {
   type RowAccessPolicyContext,
   type RowAccessPolicyTarget,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { isObjectOperationDisabled } from 'src/engine/twenty-orm/utils/is-object-operation-disabled.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 
@@ -23,16 +23,13 @@ export const buildRowAccessPolicy = ({
   }
 
   const context = { subject, environment };
-  // Inherited writes also need the parent's writability, or a child could become writable through a SYSTEM parent
+
   if (
-    target.operationType !== 'select' &&
-    !isMetadataWritePermitted({
-      writability: target.flatObjectMetadata.writability,
-      isSystemContext: false,
-      isOwningApplication: subject.isOwningApplication(
-        target.flatObjectMetadata,
-      ),
-    })
+    isObjectOperationDisabled({
+      objectMetadata: target.flatObjectMetadata,
+      operationType: target.operationType,
+    }) &&
+    !subject.isOwningApplication(target.flatObjectMetadata)
   ) {
     return { kind: 'denied' };
   }
@@ -57,16 +54,7 @@ export const buildRowAccessPolicy = ({
       : { kind: 'denied' };
   }
 
-  const recordShareGate = buildRecordShareGate({
-    context,
-    target,
-    buildParentPolicy: (parentTarget) =>
-      buildRowAccessPolicy({ ...context, ...parentTarget }),
-  });
-
-  if (recordShareGate.kind === 'denied') {
-    return { kind: 'denied' };
-  }
+  const recordShareGate = buildRecordShareGate({ ...context, ...target });
 
   const roleFilter = buildRoleFilterExpression(context, target);
   const operands = [

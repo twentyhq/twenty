@@ -3781,6 +3781,7 @@ msgstr "Aangepaste objek kort 'n etiket-identifiseerveld."
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Gepasmaakte rolle is deel van die Organization Plan."
 
@@ -5409,11 +5410,6 @@ msgstr "Veldtipe TS_VECTOR moet ’n stelselveld wees"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "Veldtipe TS_VECTOR moet \"searchVector\" genoem word"
-
-#. js-lingui-id: VkSxbb
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
-msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr "Veldtipe TS_VECTOR moet SYSTEM-skryfbaarheid hê"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

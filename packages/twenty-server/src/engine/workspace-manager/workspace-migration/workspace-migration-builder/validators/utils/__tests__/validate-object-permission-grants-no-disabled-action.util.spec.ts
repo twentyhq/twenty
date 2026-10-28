@@ -20,10 +20,17 @@ const buildObjectPermission = (
   ...overrides,
 });
 
+const OWNING_APPLICATION_UNIVERSAL_IDENTIFIER = 'stripe-universal-identifier';
+
 const invoice = getFlatObjectMetadataMock({
   universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
   disabledObjectPermissionActions: ['canDestroyObjectRecords'],
 });
+
+const workspaceRole = {
+  applicationUniversalIdentifier: 'workspace-custom-universal-identifier',
+};
 
 describe('validateObjectPermissionGrantsNoDisabledAction', () => {
   it('should reject granting an action the object disables', () => {
@@ -33,6 +40,7 @@ describe('validateObjectPermissionGrantsNoDisabledAction', () => {
           canDestroyObjectRecords: true,
         }),
         flatObjectMetadata: invoice,
+        flatRole: workspaceRole,
       }),
     ).toEqual([expect.objectContaining({ value: 'canDestroyObjectRecords' })]);
   });
@@ -45,8 +53,24 @@ describe('validateObjectPermissionGrantsNoDisabledAction', () => {
             canDestroyObjectRecords,
           }),
           flatObjectMetadata: invoice,
+          flatRole: workspaceRole,
         }),
       ).toEqual([]);
     }
+  });
+
+  it('should let the owning application grant a disabled action to its own role', () => {
+    expect(
+      validateObjectPermissionGrantsNoDisabledAction({
+        flatObjectPermission: buildObjectPermission({
+          canDestroyObjectRecords: true,
+        }),
+        flatObjectMetadata: invoice,
+        flatRole: {
+          applicationUniversalIdentifier:
+            OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+      }),
+    ).toEqual([]);
   });
 });

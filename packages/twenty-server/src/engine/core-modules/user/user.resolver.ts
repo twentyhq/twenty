@@ -55,6 +55,7 @@ import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator
 import { AuthImpersonationContext } from 'src/engine/decorators/auth/auth-impersonation-context.decorator';
 import { canCredentialAutoLoginIntoWorkspaces } from 'src/engine/core-modules/auth/utils/can-credential-auto-login-into-workspaces.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthIsUserSession } from 'src/engine/decorators/auth/auth-is-user-session.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -770,6 +771,7 @@ export class UserResolver {
     }),
     SettingsPermissionGuard(PermissionFlagType.PROFILE_INFORMATION),
   )
+  @UseFilters(EmailVerificationExceptionFilter)
   async updateUserEmail(
     @Args() { newEmail, verifyEmailRedirectPath }: UpdateUserEmailInput,
     @AuthUser() user: AuthContextUser,
