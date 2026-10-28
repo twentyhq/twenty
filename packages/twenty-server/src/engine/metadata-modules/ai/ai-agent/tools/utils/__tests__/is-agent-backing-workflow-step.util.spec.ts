@@ -1,5 +1,4 @@
-import { type WorkflowAction } from 'twenty-shared/workflow';
-import { WorkflowActionType } from 'twenty-shared/workflow';
+import { type WorkflowAction, WorkflowActionType } from 'twenty-shared/workflow';
 
 import { isAgentBackingWorkflowStep } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/is-agent-backing-workflow-step.util';
 
