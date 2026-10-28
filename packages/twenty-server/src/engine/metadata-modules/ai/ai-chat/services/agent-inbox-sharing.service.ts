@@ -83,7 +83,7 @@ export class AgentInboxSharingService {
       threadId,
     });
 
-    await this.inboxAccessService.assertApplicationParticipatesInThread({
+    await this.inboxAccessService.assertApplicationParticipatesInThreadOrThrow({
       workspaceId,
       application: authContext.application,
       threadId,

@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
-import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
+import { isAgentChatThreadReachedByRole } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-thread-reached-by-role.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -55,7 +54,7 @@ export class AgentInboxAccessService {
 
     const thread = await this.getThreadOrThrow({ workspaceId, threadId });
 
-    await this.assertApplicationCanWriteThread({
+    await this.assertApplicationCanWriteThreadOrThrow({
       workspaceId,
       application: authContext.application,
       thread,
@@ -78,7 +77,7 @@ export class AgentInboxAccessService {
     return thread ?? throwAgentChatThreadNotFound();
   }
 
-  async assertApplicationCanWriteThread({
+  async assertApplicationCanWriteThreadOrThrow({
     thread,
     ...applicationArgs
   }: ApplicationThreadAccessArgs & {
@@ -99,7 +98,7 @@ export class AgentInboxAccessService {
     }
   }
 
-  async assertApplicationParticipatesInThread(
+  async assertApplicationParticipatesInThreadOrThrow(
     args: ApplicationThreadAccessArgs & { threadId: string },
   ): Promise<void> {
     if (!(await this.doesApplicationParticipateInThread(args))) {
@@ -142,28 +141,17 @@ export class AgentInboxAccessService {
       return false;
     }
 
-    const isChannelThreadOpenToApplicationRole =
-      isDefined(thread.channelId) &&
-      applicationRole.canAccessAllAgentChatChannels;
-
-    if (isChannelThreadOpenToApplicationRole) {
-      return true;
-    }
-
     const threadShares = await this.recordShareStorageService.findByRecordIds({
       workspaceId,
       objectMetadataId:
         await this.sharingService.getThreadObjectMetadataId(workspaceId),
       recordIds: [thread.id],
     });
-    const threadWriteAccessLevels =
-      resolveRequiredRecordShareAccessLevels('update');
 
-    return threadShares.some(
-      (threadShare) =>
-        threadShare.principalType === RecordSharePrincipalType.ROLE &&
-        threadShare.principalId === applicationRole.id &&
-        threadWriteAccessLevels.includes(threadShare.accessLevel),
-    );
+    return isAgentChatThreadReachedByRole({
+      role: applicationRole,
+      thread,
+      threadShares,
+    });
   }
 }
