@@ -73,30 +73,27 @@ export const SettingsApplicationsTable = ({
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+  const filteredApplications = filterBySearchQuery({
+    items: applications,
+    searchQuery: searchTerm.trim(),
+    getSearchableValues: (application) => [
+      application.name,
+      application.description ?? '',
+    ],
+  }).sort((firstApplication, secondApplication) => {
+    const isFirstApplicationOAuthOnly =
+      firstApplication.applicationRegistration?.sourceType ===
+      ApplicationRegistrationSourceType.OAUTH_ONLY;
+    const isSecondApplicationOAuthOnly =
+      secondApplication.applicationRegistration?.sourceType ===
+      ApplicationRegistrationSourceType.OAUTH_ONLY;
 
-  const filteredApplications = applications
-    .filter(
-      (application) =>
-        application.name.toLowerCase().includes(normalizedSearchTerm) ||
-        (application.description ?? '')
-          .toLowerCase()
-          .includes(normalizedSearchTerm),
-    )
-    .sort((firstApplication, secondApplication) => {
-      const isFirstApplicationOAuthOnly =
-        firstApplication.applicationRegistration?.sourceType ===
-        ApplicationRegistrationSourceType.OAUTH_ONLY;
-      const isSecondApplicationOAuthOnly =
-        secondApplication.applicationRegistration?.sourceType ===
-        ApplicationRegistrationSourceType.OAUTH_ONLY;
+    if (isFirstApplicationOAuthOnly === isSecondApplicationOAuthOnly) {
+      return 0;
+    }
 
-      if (isFirstApplicationOAuthOnly === isSecondApplicationOAuthOnly) {
-        return 0;
-      }
-
-      return isFirstApplicationOAuthOnly ? 1 : -1;
-    });
+    return isFirstApplicationOAuthOnly ? 1 : -1;
+  });
 
   const filteredBuiltInAccountApps = filterBySearchQuery({
     items: builtInAccountApps,

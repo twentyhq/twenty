@@ -56,7 +56,7 @@ const buildApplication = ({
     : [],
 });
 
-const getApplicationStatus = ({
+const getStatusOfInstalledApplication = ({
   application = buildApplication(),
   appAccounts = [],
 }: {
@@ -97,7 +97,7 @@ describe('getAppPreferencesAppStatusById', () => {
 
   it('asks to reconnect when an active connection failed to authenticate', () => {
     expect(
-      getApplicationStatus({
+      getStatusOfInstalledApplication({
         appAccounts: [buildAccount({ authFailedAt: '2026-09-01' })],
       }),
     ).toEqual({ type: 'reconnectNeeded' });
@@ -105,13 +105,13 @@ describe('getAppPreferencesAppStatusById', () => {
 
   it('flags missing configuration when the app is in use', () => {
     expect(
-      getApplicationStatus({
+      getStatusOfInstalledApplication({
         application: buildApplication({ hasMissingRequiredVariable: true }),
         appAccounts: [buildAccount()],
       }),
     ).toEqual({ type: 'missingConfiguration' });
     expect(
-      getApplicationStatus({
+      getStatusOfInstalledApplication({
         application: buildApplication({
           hasConnectionProvider: false,
           hasMissingRequiredVariable: true,
@@ -121,9 +121,11 @@ describe('getAppPreferencesAppStatusById', () => {
   });
 
   it('hints at connecting when a provider can authorize and nothing is connected', () => {
-    expect(getApplicationStatus({})).toEqual({ type: 'notConnected' });
+    expect(getStatusOfInstalledApplication({})).toEqual({
+      type: 'notConnected',
+    });
     expect(
-      getApplicationStatus({
+      getStatusOfInstalledApplication({
         application: buildApplication({ hasMissingRequiredVariable: true }),
         appAccounts: [buildAccount({ archivedAt: '2026-09-01' })],
       }),
@@ -132,15 +134,15 @@ describe('getAppPreferencesAppStatusById', () => {
 
   it('shows nothing for a connected app, an app without providers or an unconfigured provider', () => {
     expect(
-      getApplicationStatus({ appAccounts: [buildAccount()] }),
+      getStatusOfInstalledApplication({ appAccounts: [buildAccount()] }),
     ).toBeUndefined();
     expect(
-      getApplicationStatus({
+      getStatusOfInstalledApplication({
         application: buildApplication({ hasConnectionProvider: false }),
       }),
     ).toBeUndefined();
     expect(
-      getApplicationStatus({
+      getStatusOfInstalledApplication({
         application: buildApplication({
           isClientCredentialsConfigured: false,
         }),
