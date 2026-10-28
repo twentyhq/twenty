@@ -46,7 +46,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   await navigate(AppPath.AiChatInbox, { threadId });
   ```
 
-- **Inbox mention helpers in `twenty-sdk/logic-function` and `twenty-sdk/front-component`.** `formatInboxMention({ workspaceMemberId, label })` and `formatInboxRecordReference({ objectNameSingular, recordId, label })` write the tokens the inbox renders as chips, and throw on a label the inbox cannot render: an empty one, or one with brackets or line breaks. `extractMentionedWorkspaceMemberIds(text)` reads member mentions back, and `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
+- **Inbox mention helpers in `twenty-sdk/logic-function` and `twenty-sdk/front-component`.** `formatInboxMention({ workspaceMemberId, label })` and `formatInboxRecordReference({ objectNameSingular, recordId, label })` write the tokens the inbox renders as chips, and throw on a label the inbox cannot render: an empty one, or one with brackets or line breaks. `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
 
   ```ts
   import { formatInboxMention } from 'twenty-sdk/logic-function';
