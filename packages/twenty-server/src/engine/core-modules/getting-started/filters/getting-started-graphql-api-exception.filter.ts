@@ -13,6 +13,7 @@ export class GettingStartedGraphqlApiExceptionFilter implements ExceptionFilter 
   catch(exception: GettingStartedException) {
     switch (exception.code) {
       case GettingStartedExceptionCode.MAILBOX_NOT_CONNECTED:
+      case GettingStartedExceptionCode.MAILBOX_NOT_USABLE:
         throw new UserInputError(exception);
       default: {
         assertUnreachable(exception.code);

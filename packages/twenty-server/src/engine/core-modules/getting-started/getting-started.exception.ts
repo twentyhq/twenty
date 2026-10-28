@@ -6,6 +6,7 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export enum GettingStartedExceptionCode {
   MAILBOX_NOT_CONNECTED = 'MAILBOX_NOT_CONNECTED',
+  MAILBOX_NOT_USABLE = 'MAILBOX_NOT_USABLE',
 }
 
 const getGettingStartedExceptionUserFriendlyMessage = (
@@ -14,6 +15,8 @@ const getGettingStartedExceptionUserFriendlyMessage = (
   switch (code) {
     case GettingStartedExceptionCode.MAILBOX_NOT_CONNECTED:
       return msg`Connect a mailbox before preparing this workflow.`;
+    case GettingStartedExceptionCode.MAILBOX_NOT_USABLE:
+      return msg`This workflow uses a mailbox you cannot use. Edit the draft and choose one of your own mailboxes.`;
     default:
       assertUnreachable(code);
   }

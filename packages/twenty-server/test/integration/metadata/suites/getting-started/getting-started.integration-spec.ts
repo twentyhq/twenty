@@ -7,6 +7,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 const GETTING_STARTED_PROGRESS_QUERY = gql`
@@ -147,6 +148,61 @@ describe('gettingStarted (e2e)', () => {
     afterAll(async () => {
       if (isDefined(handoverWorkflowId)) {
         await deleteCoreWorkflows({ coreWorkflowIds: [handoverWorkflowId] });
+      }
+    });
+
+    it("refuses to turn on a draft that sends from another member's mailbox", async () => {
+      const draftResponse = await prepareHandoverWorkflow(false);
+
+      expect(draftResponse.body.errors).toBeUndefined();
+
+      const draft = draftResponse.body.data.prepareGettingStartedWorkflow;
+
+      try {
+        const [draftVersion]: {
+          steps: {
+            type: string;
+            settings: { input: Record<string, unknown> };
+          }[];
+        }[] = await globalThis.testDataSource.query(
+          `SELECT "steps" FROM core."workflowVersion" WHERE "id" = $1`,
+          [draft.versionId],
+        );
+
+        const stepsSendingFromTimMailbox = draftVersion.steps.map((step) =>
+          step.type === 'SEND_EMAIL'
+            ? {
+                ...step,
+                settings: {
+                  ...step.settings,
+                  input: {
+                    ...step.settings.input,
+                    connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM,
+                  },
+                },
+              }
+            : step,
+        );
+
+        await globalThis.testDataSource.query(
+          `UPDATE core."workflowVersion" SET "steps" = $2::jsonb WHERE "id" = $1`,
+          [draft.versionId, JSON.stringify(stepsSendingFromTimMailbox)],
+        );
+
+        const activationResponse = await prepareHandoverWorkflow(true);
+
+        expect(activationResponse.body.errors?.[0]?.extensions?.subCode).toBe(
+          'MAILBOX_NOT_USABLE',
+        );
+        expect(
+          (
+            await findCoreWorkflowVersion({
+              coreWorkflowVersionId: draft.versionId,
+            })
+          ).status,
+        ).toBe('DRAFT');
+      } finally {
+        await deleteCoreWorkflows({ coreWorkflowIds: [draft.workflowId] });
       }
     });
 
