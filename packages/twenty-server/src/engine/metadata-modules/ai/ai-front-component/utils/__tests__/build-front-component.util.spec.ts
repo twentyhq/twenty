@@ -3,6 +3,7 @@ import { PageLayoutType } from 'twenty-shared/types';
 
 import { FRONT_COMPONENT_UI_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-ui-imports.constant';
 import { buildFrontComponent as compileFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
+import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 
 jest.useRealTimers();
@@ -122,6 +123,81 @@ describe('buildFrontComponent', () => {
   );
 
   it.each([
+    'import(url)',
+    'import(`https://example.com/${url}.js`)',
+    'require(url)',
+    "require('react' + url)",
+  ])('rejects computed module loading: %s', async (expression) => {
+    await expect(
+      buildFrontComponent({
+        ...INPUT,
+        source: `export const Component = ({ url }) => <button onClick={() => ${expression}}>Load</button>;`,
+      }),
+    ).rejects.toMatchObject({
+      code: 'INVALID_INPUT',
+      message: 'Use a string literal for import() and require().',
+    });
+  });
+
+  it('rejects computed imports even when esbuild would remove the unused function', async () => {
+    await expect(
+      buildFrontComponent({
+        ...INPUT,
+        source:
+          'const load = (url) => import(url); export const Component = () => <div />;',
+      }),
+    ).rejects.toMatchObject({ code: 'INVALID_INPUT' });
+  });
+
+  it.each(['import("react")', 'import(`react`)', 'require("react")'])(
+    'allows supported literal module loading: %s',
+    async (expression) => {
+      await expect(
+        buildFrontComponent({
+          ...INPUT,
+          source: `export const Component = () => <button onClick={() => ${expression}}>Load</button>;`,
+        }),
+      ).resolves.toHaveProperty('compiledSource');
+    },
+  );
+
+  it.each(['LIST', 'DASHBOARD }; globalThis.injected = true; //'])(
+    'rejects invalid page layout before generating source: %s',
+    (pageLayoutType) => {
+      expect(() =>
+        buildFrontComponentEntrySource({
+          ...INPUT,
+          pageLayoutType: pageLayoutType as typeof INPUT.pageLayoutType,
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          code: 'INVALID_INPUT',
+          message: expect.stringContaining('pageLayoutType'),
+          userFriendlyMessage: expect.objectContaining({
+            message: 'Invalid front component settings.',
+          }),
+        }),
+      );
+    },
+  );
+
+  it.each([
+    { ...INPUT.query, objectName: 'company.name' },
+    { ...INPUT.query, select: [] },
+    { ...INPUT.query, limit: 101 },
+  ])('returns a structured error for invalid query %j', async (query) => {
+    await expect(
+      buildFrontComponent({ ...INPUT, query }),
+    ).rejects.toMatchObject({
+      code: 'INVALID_INPUT',
+      userFriendlyMessage: {
+        id: expect.any(String),
+        message: 'Invalid front component settings.',
+      },
+    });
+  });
+
+  it.each([
     'export default () => <div />;',
     'export default function Component() { return <div />; }',
     'const View = () => <div />; export { View as default };',
@@ -141,7 +217,14 @@ describe('buildFrontComponent', () => {
         ...INPUT,
         source: 'export const Component = () => <div>;',
       }),
-    ).rejects.toThrow();
+    ).rejects.toMatchObject({
+      code: 'BUILD_FAILED',
+      message: expect.stringContaining('Build failed'),
+      userFriendlyMessage: {
+        id: expect.any(String),
+        message: 'Failed to build front component.',
+      },
+    });
   });
 
   it('rejects collisions with the SDK wrapper before saving', async () => {

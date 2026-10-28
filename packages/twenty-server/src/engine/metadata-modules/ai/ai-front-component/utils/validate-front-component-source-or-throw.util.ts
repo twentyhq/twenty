@@ -69,6 +69,33 @@ export const validateFrontComponentSourceOrThrow = (source: string): void => {
     }
   }
 
+  const validateModuleCalls = (node: typescript.Node): void => {
+    if (
+      typescript.isCallExpression(node) &&
+      (node.expression.kind === typescript.SyntaxKind.ImportKeyword ||
+        (typescript.isIdentifier(node.expression) &&
+          node.expression.text === 'require'))
+    ) {
+      const specifier = node.arguments[0];
+
+      if (!isDefined(specifier) || !typescript.isStringLiteralLike(specifier)) {
+        throw new FrontComponentBuildException({
+          message: 'Use a string literal for import() and require().',
+          code: 'INVALID_INPUT',
+        });
+      }
+      if (!FRONT_COMPONENT_ALLOWED_IMPORTS.includes(specifier.text)) {
+        throw new FrontComponentBuildException({
+          message: `Unsupported import: ${specifier.text}. Use React and the supported twenty-ui imports.`,
+          code: 'INVALID_INPUT',
+        });
+      }
+    }
+    typescript.forEachChild(node, validateModuleCalls);
+  };
+
+  validateModuleCalls(sourceFile);
+
   if (!hasComponent) {
     throw new FrontComponentBuildException({
       message: 'Export a named Component function or const.',

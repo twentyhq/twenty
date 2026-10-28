@@ -106,10 +106,38 @@ describe('component build limits', () => {
 
   it('preserves compiler diagnostics and releases a failed build', async () => {
     rebuild.mockRejectedValueOnce(new Error('Unsupported import'));
-    await expect(buildFrontComponentWithLimitsOrThrow({})).rejects.toThrow(
-      'Unsupported import',
-    );
+    await expect(
+      buildFrontComponentWithLimitsOrThrow({}),
+    ).rejects.toMatchObject({
+      message: 'Unsupported import',
+      code: 'BUILD_FAILED',
+      userFriendlyMessage: {
+        id: expect.any(String),
+        message: 'Failed to build front component.',
+      },
+    });
     expect(dispose).toHaveBeenCalledTimes(1);
+    await expect(buildFrontComponentWithLimitsOrThrow({})).resolves.toBe(
+      output,
+    );
+  });
+
+  it('wraps context creation failures without disposing a missing context', async () => {
+    jest
+      .mocked(context)
+      .mockRejectedValueOnce(new Error('Invalid build options'));
+
+    await expect(
+      buildFrontComponentWithLimitsOrThrow({}),
+    ).rejects.toMatchObject({
+      message: 'Invalid build options',
+      code: 'BUILD_FAILED',
+      userFriendlyMessage: {
+        id: expect.any(String),
+        message: 'Failed to build front component.',
+      },
+    });
+    expect(dispose).not.toHaveBeenCalled();
     await expect(buildFrontComponentWithLimitsOrThrow({})).resolves.toBe(
       output,
     );
