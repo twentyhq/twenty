@@ -4,7 +4,6 @@ import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
   MetadataReadability,
-  ObjectSharingReach,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -75,7 +74,6 @@ const buildService = ({
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
     readability,
     isSystem: true,
-    sharingReach: ObjectSharingReach.ROLE_ACCESS,
   };
   const transactionScope = {
     workspaceId: WORKSPACE_ID,
