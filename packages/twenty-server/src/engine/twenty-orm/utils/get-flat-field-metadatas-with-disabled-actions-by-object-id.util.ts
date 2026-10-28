@@ -22,7 +22,10 @@ const getMorphTargetIds = ({
   flatFieldMetadata,
   morphTargetIdsByMorphId,
 }: {
-  flatFieldMetadata: OrmFlatFieldMetadata;
+  flatFieldMetadata: Pick<
+    OrmFlatFieldMetadata,
+    'type' | 'universalIdentifier' | 'morphId'
+  >;
   morphTargetIdsByMorphId: Map<string, string[]>;
 }): string[] => {
   if (

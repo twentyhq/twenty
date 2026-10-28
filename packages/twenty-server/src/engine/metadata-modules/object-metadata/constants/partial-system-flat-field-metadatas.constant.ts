@@ -1,6 +1,7 @@
 import { FieldMetadataType, MetadataWritability } from 'twenty-shared/types';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-field-permission-actions.constant';
 
 type PartialSystemFlatFieldMetadata<
   T extends FieldMetadataType = FieldMetadataType,
@@ -273,7 +274,8 @@ const PARTIAL_SEARCH_VECTOR_FIELD = {
   isSystemSideEffect: true,
   isUIEditable: false,
   writability: MetadataWritability.SYSTEM,
-  disabledFieldPermissionActions: null,
+  disabledFieldPermissionActions:
+    PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
   isLabelSyncedWithName: false,
   defaultValue: null,
   options: null,
