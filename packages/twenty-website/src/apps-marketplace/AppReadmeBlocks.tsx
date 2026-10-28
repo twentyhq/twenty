@@ -1,21 +1,14 @@
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { mediaUp, radius, semanticColor, spacing } from '@/tokens';
-import { CornerMarkers, ExplainerCard } from '@/ui';
+import { mediaUp, spacing } from '@/tokens';
+import { ExplainerCard } from '@/ui';
 
 import { AppReadmeMarkdown } from './AppReadmeMarkdown';
 import {
   type AppReadmeBlock,
   type AppReadmeListItem,
 } from './parse-app-readme';
-
-const Note = styled.div`
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  padding: ${spacing(5)} ${spacing(6)};
-  position: relative;
-`;
 
 const CardStack = styled.div`
   display: flex;
@@ -102,10 +95,7 @@ export function AppReadmeBlocks({ blocks, listLayout }: AppReadmeBlocksProps) {
         return <ListCards key={key} block={block} layout={listLayout} />;
       case 'note':
         return (
-          <Note key={key}>
-            <CornerMarkers />
-            <AppReadmeMarkdown markdown={block.markdown} tone="ink" />
-          </Note>
+          <AppReadmeMarkdown key={key} markdown={block.markdown} size="xs" />
         );
       case 'text':
         return <AppReadmeMarkdown key={key} markdown={block.markdown} />;
