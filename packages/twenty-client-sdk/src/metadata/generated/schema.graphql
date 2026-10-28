@@ -17,6 +17,7 @@ type Agent {
   description: String
   icon: String
   id: UUID!
+  isActive: Boolean!
   isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystem: Boolean!
   label: String!
@@ -98,6 +99,7 @@ type AgentChatOpenThreadsSummary {
   hasUnreadOpenThread: Boolean!
   needsInputThreadCount: Int!
   openThreadCount: Int!
+  unreadOpenThreadCount: Int!
 }
 
 type AgentChatThread {
@@ -2298,6 +2300,7 @@ type Field {
   createdAt: DateTime!
   defaultValue: JSON
   description: String
+  disabledFieldPermissionActions: [String!]
   icon: String
   id: UUID!
   isActive: Boolean
@@ -4910,6 +4913,7 @@ input UpdateAgentInput {
   description: String
   icon: String
   id: UUID!
+  isActive: Boolean
   label: String
   modelConfiguration: JSON
   modelId: String

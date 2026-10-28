@@ -22,6 +22,7 @@ import { AGENT_TRIGGER_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai
 import { type RunAgentTriggerJobData } from 'src/engine/metadata-modules/ai/ai-agent-trigger/types/run-agent-trigger-job-data.type';
 import { buildAgentTriggerMessages } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/build-agent-trigger-messages.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import {
   AiException,
   AiExceptionCode,
@@ -144,15 +145,20 @@ export class AgentTriggerRunnerService
     workspaceId: string;
     ref: AgentTriggerCallerRef;
   }): Promise<Pick<TriggeredRun, 'agent' | 'trigger'> | null> {
-    const agent = await this.agentRepository.findOne(workspaceId, {
+    const agentRow = await this.agentRepository.findOne(workspaceId, {
       where: { id: agentId },
     });
 
-    const trigger = agent?.triggers.find(
+    if (!isDefined(agentRow)) {
+      return null;
+    }
+
+    const agent = resolveEffectiveAgent(agentRow);
+    const trigger = agent.triggers.find(
       (agentTrigger) => agentTrigger.id === triggerId,
     );
 
-    return isDefined(agent) && isDefined(trigger) && trigger.isActive
+    return agent.isActive && isDefined(trigger) && trigger.isActive
       ? { agent, trigger }
       : null;
   }

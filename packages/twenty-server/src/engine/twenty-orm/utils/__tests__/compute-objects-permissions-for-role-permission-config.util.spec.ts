@@ -1,7 +1,9 @@
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/twenty-orm/types/application-default-role-maps.type';
@@ -9,6 +11,7 @@ import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permissio
 import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
 
 const INVOICE_ID = 'invoice-id';
+const AMOUNT_FIELD_ID = 'amount-field-id';
 
 const FULL_ACCESS: ObjectPermissions = {
   canReadObjectRecords: true,
@@ -31,6 +34,19 @@ flatObjectMetadataMaps.byUniversalIdentifier.invoice =
     disabledObjectPermissionActions: ['canDestroyObjectRecords'],
   });
 flatObjectMetadataMaps.universalIdentifierById[INVOICE_ID] = 'invoice';
+
+const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> =
+  createEmptyFlatEntityMaps();
+
+flatFieldMetadataMaps.byUniversalIdentifier.amount = getFlatFieldMetadataMock({
+  id: AMOUNT_FIELD_ID,
+  universalIdentifier: 'amount',
+  objectMetadataId: INVOICE_ID,
+  type: FieldMetadataType.NUMBER,
+  applicationId: 'owning-application-id',
+  disabledFieldPermissionActions: ['canUpdateFieldValue'],
+});
+flatFieldMetadataMaps.universalIdentifierById[AMOUNT_FIELD_ID] = 'amount';
 
 const flatApplicationMaps: ApplicationDefaultRoleMaps = {
   byId: {
@@ -108,16 +124,114 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
       canDestroy: false,
     },
   ])(
-    'disabled action allowed for $actor: $canDestroy',
+    'disabled actions allowed for $actor: $canDestroy',
     ({ intersectionOf, canDestroy }) => {
-      expect(
+      const invoicePermissions =
         computeObjectsPermissionsForRolePermissionConfig({
           intersectionOf,
           rolesPermissions,
           flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
           flatApplicationMaps,
-        })[INVOICE_ID]?.canDestroyObjectRecords,
-      ).toBe(canDestroy);
+        })[INVOICE_ID];
+
+      expect(invoicePermissions?.canDestroyObjectRecords).toBe(canDestroy);
+      expect(
+        invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]?.canUpdate ===
+          false,
+      ).toBe(!canDestroy);
+      expect(
+        invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]?.canRead,
+      ).not.toBe(false);
     },
   );
+
+  it('should keep the label identifier readable and restrict the inverse of a relation or morph relation', () => {
+    const COMPANY_ID = 'company-id';
+    const objectMaps: FlatEntityMaps<FlatObjectMetadata> =
+      createEmptyFlatEntityMaps();
+
+    objectMaps.byUniversalIdentifier.invoice = getFlatObjectMetadataMock({
+      id: INVOICE_ID,
+      universalIdentifier: 'invoice',
+      applicationId: 'owning-application-id',
+      labelIdentifierFieldMetadataId: 'invoice-name-field-id',
+    });
+    objectMaps.universalIdentifierById[INVOICE_ID] = 'invoice';
+    objectMaps.byUniversalIdentifier.company = getFlatObjectMetadataMock({
+      id: COMPANY_ID,
+      universalIdentifier: 'company',
+    });
+    objectMaps.universalIdentifierById[COMPANY_ID] = 'company';
+
+    const fieldMaps: FlatEntityMaps<FlatFieldMetadata> =
+      createEmptyFlatEntityMaps();
+
+    for (const flatFieldMetadata of [
+      getFlatFieldMetadataMock({
+        id: 'invoice-name-field-id',
+        universalIdentifier: 'invoice-name',
+        objectMetadataId: INVOICE_ID,
+        type: FieldMetadataType.TEXT,
+        applicationId: 'owning-application-id',
+        disabledFieldPermissionActions: ['canReadFieldValue'],
+      }),
+      getFlatFieldMetadataMock({
+        id: 'invoice-customer-field-id',
+        universalIdentifier: 'invoice-customer',
+        objectMetadataId: INVOICE_ID,
+        type: FieldMetadataType.RELATION,
+        applicationId: 'owning-application-id',
+        relationTargetObjectMetadataId: COMPANY_ID,
+        relationTargetFieldMetadataId: 'company-invoices-field-id',
+        disabledFieldPermissionActions: ['canReadFieldValue'],
+      }),
+      getFlatFieldMetadataMock({
+        id: 'invoice-payer-company-field-id',
+        universalIdentifier: 'invoice-payer-company',
+        objectMetadataId: INVOICE_ID,
+        type: FieldMetadataType.MORPH_RELATION,
+        morphId: 'invoice-payer',
+        applicationId: 'owning-application-id',
+        relationTargetObjectMetadataId: COMPANY_ID,
+        relationTargetFieldMetadataId: 'company-paid-invoices-field-id',
+        disabledFieldPermissionActions: ['canReadFieldValue'],
+      }),
+    ]) {
+      fieldMaps.byUniversalIdentifier[flatFieldMetadata.universalIdentifier] =
+        flatFieldMetadata;
+      fieldMaps.universalIdentifierById[flatFieldMetadata.id] =
+        flatFieldMetadata.universalIdentifier;
+    }
+
+    const objectsPermissions = computeObjectsPermissionsForRolePermissionConfig(
+      {
+        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+        rolesPermissions: {
+          'user-role-id': {
+            [INVOICE_ID]: FULL_ACCESS,
+            [COMPANY_ID]: FULL_ACCESS,
+          },
+        },
+        flatObjectMetadataMaps: objectMaps,
+        flatFieldMetadataMaps: fieldMaps,
+        flatApplicationMaps,
+      },
+    );
+
+    expect(
+      objectsPermissions[INVOICE_ID]?.restrictedFields['invoice-name-field-id']
+        ?.canRead,
+    ).not.toBe(false);
+    expect(
+      objectsPermissions[COMPANY_ID]?.restrictedFields[
+        'company-invoices-field-id'
+      ]?.canRead,
+    ).toBe(false);
+    expect(
+      objectsPermissions[COMPANY_ID]?.restrictedFields[
+        'company-paid-invoices-field-id'
+      ]?.canRead,
+    ).toBe(false);
+  });
 });

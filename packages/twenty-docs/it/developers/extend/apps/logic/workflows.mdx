@@ -109,12 +109,25 @@ I relativi input corrispondono ai passaggi del [generatore di workflow](/it/user
 * I campi del modulo di tipo `RECORD` denominano il proprio oggetto con `settings.objectUniversalIdentifier`. I campi di tipo `SELECT` e `MULTI_SELECT` offrono le opzioni di un campo esistente dello stesso tipo, denominato con `settings.selectedFieldUniversalIdentifier`.
 * Per eseguire il tuo codice, usa un passaggio `LOGIC_FUNCTION`. Il passaggio Code del builder non è disponibile.
 * I passaggi email e calendario vengono eseguiti solo se il ruolo della tua app dispone del flag di autorizzazione corrispondente: `SystemPermissionFlag.SEND_EMAIL_TOOL` per `SEND_EMAIL` e `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` per `CREATE_CALENDAR_EVENT`. Il workspace lo concede installando l'app e il passaggio può quindi usare qualsiasi account connesso nel workspace, come un workflow creato nell'app.
-* Gli ID degli account connessi sono locali a ogni spazio di lavoro, quindi non codificarne uno in modo fisso. Passa l'account come variabile. I passaggi Email accettano anche un ID membro dell'area di lavoro, ad esempio `{{trigger.properties.after.assigneeId}}`, che viene risolto nel primo account di quel membro in grado di inviare.
+* Gli ID degli account connessi sono locali a ogni spazio di lavoro, quindi non codificarne uno in modo fisso. Specifica l'account in uno dei due modi seguenti:
+
+  * `connectedAccountHandle`: l'indirizzo email dell'account, ad esempio `'sales@example.com'`. Quando l'app viene sincronizzata, l'handle viene risolto in un account con quell'indirizzo condiviso con lo spazio di lavoro (ambito `WORKSPACE`) e può eseguire il passaggio. L'account privato di un membro non può essere specificato tramite handle: pull lo mantiene come proprio `connectedAccountId`. Se più account condividono l'indirizzo, ad esempio una casella di posta collegata da due membri o tramite due provider, vince quello meno recente. Se nessuno corrisponde, la sincronizzazione non riesce e indica l'handle. Questo non è `fromHandle`, che seleziona un alias da cui inviare.
+  * `connectedAccountId`: una variabile, ad esempio `{{trigger.properties.after.connectedAccountId}}`. I passaggi Email accettano anche un ID membro dell'area di lavoro, ad esempio `{{trigger.properties.after.assigneeId}}`, che viene risolto nel primo account di quel membro in grado di inviare.
+
+  Imposta esattamente uno dei due.
 
 ## Dopo l'installazione
 
 * Il workflow è attivo non appena l'app viene installata e le relative esecuzioni vengono visualizzate insieme alle altre esecuzioni di workflow dello spazio di lavoro.
 * L'installazione di una nuova versione dell'app aggiorna il workflow sul posto.
 * Gli utenti non possono modificare un workflow installato. Per personalizzarne uno, lo duplicano: la copia può essere modificata da loro.
+
+## Workflow dell'applicazione Custom dell'area di lavoro
+
+L'applicazione Custom dell'area di lavoro possiede i workflow creati nel workflow builder e il codice ha per essi la stessa autorevolezza del builder:
+
+* `twenty app pull` scrive ciascuno dalla relativa versione attiva, quella pubblicata per ultima dal builder. Un workflow la cui versione attiva utilizza impostazioni che un file `defineWorkflow()` non può esprimere, come un passaggio Code o un trigger rinominato dal builder, viene segnalato e lasciato al suo posto.
+* `twenty app apply` pubblica come il builder. Un workflow la cui definizione corrisponde alla sua versione attiva non viene modificato. Altrimenti, la versione attiva viene archiviata e la definizione diventa una nuova versione attiva, così le esecuzioni precedenti mantengono la versione con cui sono state eseguite.
+* Gli utenti continuano a modificare questi workflow nel builder e il pull successivo recupera le loro modifiche.
 
 <PageBanner illustration="card-page-workflows" />

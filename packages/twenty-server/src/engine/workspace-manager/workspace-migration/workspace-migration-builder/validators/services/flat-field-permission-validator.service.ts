@@ -10,6 +10,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateFieldPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 
 @Injectable()
@@ -109,6 +110,16 @@ export class FlatFieldPermissionValidatorService {
         userFriendlyMessage: msg`Field metadata not found`,
       });
     }
+
+    validationResult.errors.push(
+      ...validateFieldPermissionGrantsNoDisabledAction({
+        flatFieldPermission: flatFieldPermissionToValidate,
+        flatFieldMetadata: referencedFieldMetadata,
+        flatRole: referencedRole,
+        applicationDefaultRoleUniversalIdentifier:
+          buildOptions.applicationDefaultRoleUniversalIdentifier,
+      }),
+    );
 
     const duplicateForSameRoleObjectField = Object.values(
       optimisticFlatFieldPermissionMaps.byUniversalIdentifier,
@@ -236,6 +247,20 @@ export class FlatFieldPermissionValidatorService {
         });
       }
     }
+
+    validationResult.errors.push(
+      ...validateFieldPermissionGrantsNoDisabledAction({
+        flatFieldPermission: updatedFlatFieldPermission,
+        flatFieldMetadata: findFlatEntityByUniversalIdentifier({
+          universalIdentifier:
+            updatedFlatFieldPermission.fieldMetadataUniversalIdentifier,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
+        flatRole: referencedRole,
+        applicationDefaultRoleUniversalIdentifier:
+          buildOptions.applicationDefaultRoleUniversalIdentifier,
+      }),
+    );
 
     const duplicateForSameRoleObjectField = Object.values(
       optimisticFlatFieldPermissionMaps.byUniversalIdentifier,
