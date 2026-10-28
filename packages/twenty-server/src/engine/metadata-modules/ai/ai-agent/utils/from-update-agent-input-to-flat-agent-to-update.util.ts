@@ -192,7 +192,7 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
   const updatedName = computeUpdatedAgentName({
     shouldOverride,
     name,
-    label: updatedEditableAgentProperties.label,
+    label: inputEditableAgentProperties.label,
   });
 
   const { overrides, updatedEditableProperties } =
