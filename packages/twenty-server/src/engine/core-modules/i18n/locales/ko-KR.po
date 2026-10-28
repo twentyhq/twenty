@@ -4164,6 +4164,12 @@ msgctxt "pageLayout.name"
 msgid "Default Workflow Version Layout"
 msgstr "기본 워크플로 버전 레이아웃"
 
+#. js-lingui-id: PzuWtK
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-workspace-member-page-layout.config.ts
+msgctxt "pageLayout.name"
+msgid "Default Workspace Member Layout"
+msgstr ""
+
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -5918,6 +5924,7 @@ msgstr "일반"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "General"
 msgstr "일반"
@@ -10923,6 +10930,7 @@ msgstr "관계"
 
 #. js-lingui-id: /deTOT
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-opportunity-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "Relations"
 msgstr "관계"
@@ -12493,6 +12501,7 @@ msgstr "시스템"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "System"
 msgstr "시스템"
@@ -13592,7 +13601,7 @@ msgstr "워크스페이스가 활성화되기 전에 다음 필드는 업데이�
 #. js-lingui-id: 4RZeZG
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "These records hold data in fields your role cannot see. Ask someone with access to those fields to merge them."
-msgstr ""
+msgstr "이 레코드에는 현재 역할이 볼 수 없는 필드의 데이터가 포함되어 있습니다. 해당 필드에 액세스할 수 있는 사람에게 병합을 요청하세요."
 
 #. js-lingui-id: YZk5x6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -16784,6 +16793,12 @@ msgstr "워크스페이스 멤버를 찾을 수 없음."
 msgctxt "fieldMetadata.description"
 msgid "Workspace member position"
 msgstr "워크스페이스 멤버 위치"
+
+#. js-lingui-id: wFbHLs
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workspace-member-views.util.ts
+msgctxt "view.name"
+msgid "Workspace Member Record Page Fields"
+msgstr ""
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

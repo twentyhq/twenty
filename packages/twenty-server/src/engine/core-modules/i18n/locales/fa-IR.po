@@ -4164,6 +4164,12 @@ msgctxt "pageLayout.name"
 msgid "Default Workflow Version Layout"
 msgstr "طرح‌بندی پیش‌فرض نسخه گردش کار"
 
+#. js-lingui-id: PzuWtK
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-workspace-member-page-layout.config.ts
+msgctxt "pageLayout.name"
+msgid "Default Workspace Member Layout"
+msgstr ""
+
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -5918,6 +5924,7 @@ msgstr "عمومی"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "General"
 msgstr "عمومی"
@@ -10923,6 +10930,7 @@ msgstr "روابط"
 
 #. js-lingui-id: /deTOT
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-opportunity-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "Relations"
 msgstr "روابط"
@@ -12493,6 +12501,7 @@ msgstr "سیستم"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "System"
 msgstr "سیستم"
@@ -13592,7 +13601,7 @@ msgstr "این فیلدها پیش از فعال‌سازی فضای کاری ق
 #. js-lingui-id: 4RZeZG
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "These records hold data in fields your role cannot see. Ask someone with access to those fields to merge them."
-msgstr ""
+msgstr "این رکوردها داده‌هایی را در فیلدهایی نگه می‌دارند که نقش شما نمی‌تواند آن‌ها را ببیند. از فردی که به آن فیلدها دسترسی دارد بخواهید آن‌ها را ادغام کند."
 
 #. js-lingui-id: YZk5x6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -16784,6 +16793,12 @@ msgstr "عضو فضای کاری یافت نشد."
 msgctxt "fieldMetadata.description"
 msgid "Workspace member position"
 msgstr "موقعیت عضو فضای کاری"
+
+#. js-lingui-id: wFbHLs
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workspace-member-views.util.ts
+msgctxt "view.name"
+msgid "Workspace Member Record Page Fields"
+msgstr ""
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

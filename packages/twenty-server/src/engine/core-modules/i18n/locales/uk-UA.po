@@ -4164,6 +4164,12 @@ msgctxt "pageLayout.name"
 msgid "Default Workflow Version Layout"
 msgstr "Типовий макет версії робочого процесу"
 
+#. js-lingui-id: PzuWtK
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-workspace-member-page-layout.config.ts
+msgctxt "pageLayout.name"
+msgid "Default Workspace Member Layout"
+msgstr ""
+
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -5918,6 +5924,7 @@ msgstr "Загальні"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "General"
 msgstr "Загальні"
@@ -10923,6 +10930,7 @@ msgstr "Зв'язки"
 
 #. js-lingui-id: /deTOT
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-opportunity-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "Relations"
 msgstr "Зв'язки"
@@ -12493,6 +12501,7 @@ msgstr "Система"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "System"
 msgstr "Система"
@@ -13592,7 +13601,7 @@ msgstr "Ці поля не можна оновити, доки робочу об
 #. js-lingui-id: 4RZeZG
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "These records hold data in fields your role cannot see. Ask someone with access to those fields to merge them."
-msgstr ""
+msgstr "Ці записи містять дані в полях, які ваша роль не може бачити. Попросіть когось, хто має доступ до цих полів, об’єднати їх."
 
 #. js-lingui-id: YZk5x6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -16784,6 +16793,12 @@ msgstr "Учасника робочого простору не знайдено
 msgctxt "fieldMetadata.description"
 msgid "Workspace member position"
 msgstr "Посада учасника робочого простору"
+
+#. js-lingui-id: wFbHLs
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workspace-member-views.util.ts
+msgctxt "view.name"
+msgid "Workspace Member Record Page Fields"
+msgstr ""
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
