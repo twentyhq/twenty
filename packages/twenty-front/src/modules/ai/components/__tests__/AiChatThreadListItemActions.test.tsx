@@ -168,6 +168,7 @@ const renderThread = async ({
           archivedAt: scope === 'INBOX' ? null : INBOX_EVENT_AT,
           snoozedUntil: scope === 'SNOOZED' ? SNOOZED_UNTIL : null,
           lastReadAt: THREAD_ACTIVITY_AT,
+          lastMentionedAt: null,
           updatedAt: INBOX_EVENT_AT,
         },
       });
