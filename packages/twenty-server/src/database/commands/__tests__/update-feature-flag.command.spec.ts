@@ -42,6 +42,7 @@ describe('UpdateFeatureFlagCommand', () => {
       total: 1,
     });
 
+    expect(upsertWorkspaceFeatureFlag).toHaveBeenCalledTimes(1);
     expect(upsertWorkspaceFeatureFlag).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
       featureFlag: featureFlagKey,
