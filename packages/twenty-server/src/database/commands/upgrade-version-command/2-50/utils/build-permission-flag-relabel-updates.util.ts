@@ -1,5 +1,4 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
@@ -17,7 +16,7 @@ type PermissionFlagRelabel = {
 
 const PERMISSION_FLAG_RELABELS: PermissionFlagRelabel[] = [
   {
-    universalIdentifier: SystemPermissionFlag.APPLICATIONS,
+    universalIdentifier: '9faa55f7-2606-566b-9e1d-aefbedbd0136',
     previous: {
       label: 'Applications',
       description: 'Install and manage applications',
@@ -30,7 +29,7 @@ const PERMISSION_FLAG_RELABELS: PermissionFlagRelabel[] = [
     },
   },
   {
-    universalIdentifier: SystemPermissionFlag.CONNECTED_ACCOUNTS,
+    universalIdentifier: 'e5f63b2d-5369-5df6-8f32-a8bd9e79e653',
     previous: {
       label: 'Sync Account',
       description: 'Sync email and calendar accounts',

@@ -1,4 +1,3 @@
-import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildPermissionFlagRelabelUpdates } from 'src/database/commands/upgrade-version-command/2-50/utils/build-permission-flag-relabel-updates.util';
@@ -7,13 +6,19 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 
 const NOW = '2026-10-14T12:00:00.000Z';
 
+const APPLICATIONS_UNIVERSAL_IDENTIFIER =
+  '9faa55f7-2606-566b-9e1d-aefbedbd0136';
+
+const CONNECTED_ACCOUNTS_UNIVERSAL_IDENTIFIER =
+  'e5f63b2d-5369-5df6-8f32-a8bd9e79e653';
+
 const PREVIOUS_PRESENTATIONS = {
-  [SystemPermissionFlag.APPLICATIONS]: {
+  [APPLICATIONS_UNIVERSAL_IDENTIFIER]: {
     label: 'Applications',
     description: 'Install and manage applications',
     icon: 'IconApps',
   },
-  [SystemPermissionFlag.CONNECTED_ACCOUNTS]: {
+  [CONNECTED_ACCOUNTS_UNIVERSAL_IDENTIFIER]: {
     label: 'Sync Account',
     description: 'Sync email and calendar accounts',
     icon: 'IconAt',
@@ -21,12 +26,12 @@ const PREVIOUS_PRESENTATIONS = {
 };
 
 const NEXT_PRESENTATIONS = {
-  [SystemPermissionFlag.APPLICATIONS]: {
+  [APPLICATIONS_UNIVERSAL_IDENTIFIER]: {
     label: 'Workspace Apps',
     description: 'Install and manage workspace apps',
     icon: 'IconApps',
   },
-  [SystemPermissionFlag.CONNECTED_ACCOUNTS]: {
+  [CONNECTED_ACCOUNTS_UNIVERSAL_IDENTIFIER]: {
     label: 'User Apps',
     description: 'Manage own app preferences and accounts',
     icon: 'IconApps',
@@ -98,13 +103,13 @@ describe('buildPermissionFlagRelabelUpdates', () => {
       })),
     ).toEqual([
       {
-        universalIdentifier: SystemPermissionFlag.APPLICATIONS,
+        universalIdentifier: APPLICATIONS_UNIVERSAL_IDENTIFIER,
         label: 'Workspace Apps',
         description: 'Install and manage workspace apps',
         icon: 'IconApps',
       },
       {
-        universalIdentifier: SystemPermissionFlag.CONNECTED_ACCOUNTS,
+        universalIdentifier: CONNECTED_ACCOUNTS_UNIVERSAL_IDENTIFIER,
         label: 'User Apps',
         description: 'Manage own app preferences and accounts',
         icon: 'IconApps',
