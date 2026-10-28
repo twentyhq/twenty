@@ -201,7 +201,7 @@ export class ApplicationSyncService {
       healthCheckLogicFunctionId: null,
       uninstallHookCompletedForRequestedAt: null,
       canBeUninstalled: true,
-      autoUpgrade: true,
+      autoUpgrade: false,
       isSdkLayerStale: false,
       sdkClientCoreChecksum: null,
       frontComponentSharedDependenciesChecksum: null,

@@ -7,7 +7,12 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class BackfillApplicationAutoUpgradeSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(
-      'UPDATE "core"."application" SET "autoUpgrade" = true WHERE "autoUpgrade" = false',
+      `UPDATE "core"."application" AS application
+       SET "autoUpgrade" = true
+       FROM "core"."applicationRegistration" AS registration
+       WHERE application."applicationRegistrationId" = registration.id
+         AND registration."isVetted" = true
+         AND application."autoUpgrade" = false`,
     );
   }
 
