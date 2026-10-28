@@ -7,16 +7,17 @@ import { Input } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { AiChatThreadCompactRow } from '@/ai/components/AiChatThreadCompactRow';
+import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
 
 const onDetach = fn();
 
 const meta = {
   title: 'Modules/AI/AiChatThreadCompactRow',
-  component: AiChatThreadCompactRow,
+  component: AiChatThreadRow,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 368 } },
   args: {
+    variant: 'compact',
     id: 'renewal',
     label: 'Cloud renewal prep',
     avatar: <Avatar name="Sarah" size="md" shape="circle" />,
@@ -30,7 +31,7 @@ const meta = {
     onClick: fn(),
     onContextMenu: fn(),
   },
-} satisfies Meta<typeof AiChatThreadCompactRow>;
+} satisfies Meta<typeof AiChatThreadRow>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

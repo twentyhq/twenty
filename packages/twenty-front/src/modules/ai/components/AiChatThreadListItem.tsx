@@ -9,7 +9,6 @@ import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActions
 import { AiChatThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
 import { AiChatThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
 import { AiChatThreadChannelIcon } from '@/ai/components/AiChatThreadChannelIcon';
-import { AiChatThreadCompactRow } from '@/ai/components/AiChatThreadCompactRow';
 import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
 import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
 import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
@@ -17,6 +16,7 @@ import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useAiChatThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -31,7 +31,7 @@ const StyledActivityTime = styled.div`
 
 type AiChatThreadListItemProps = {
   thread: AgentChatThreadRecord;
-  variant?: 'default' | 'compact';
+  variant?: AiChatThreadListVariant;
   isSelected: boolean;
   isChecked?: boolean;
   onClick: (
@@ -87,11 +87,9 @@ export const AiChatThreadListItem = ({
     !isDefined(triageStatus) ||
     triageStatus === 'open';
 
-  const ThreadRow =
-    variant === 'compact' ? AiChatThreadCompactRow : AiChatThreadRow;
-
   return (
-    <ThreadRow
+    <AiChatThreadRow
+      variant={variant}
       id={thread.id}
       label={thread.title ?? t`Untitled`}
       isSelected={isSelected}
