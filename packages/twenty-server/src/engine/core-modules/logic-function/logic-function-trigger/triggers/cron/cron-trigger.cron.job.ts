@@ -132,6 +132,12 @@ export class CronTriggerCronJob {
             {
               logicFunctionId: logicFunction.id,
               workspaceId: activeWorkspace.id,
+              ...(isDefined(application)
+                ? {
+                    applicationUniversalIdentifier:
+                      application.universalIdentifier,
+                  }
+                : {}),
               payload: {},
             },
             {

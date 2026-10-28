@@ -630,7 +630,7 @@ msgstr "{cardCount, plural, one {Zatwierdzić # działanie?} few {Zatwierdzić #
 #. js-lingui-id: AnO6CC
 #: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr ""
+msgstr "{channelStatusLabel} · {assignmentLabel}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -1566,11 +1566,6 @@ msgstr "Do utrzymania aktywności obszaru roboczego potrzebna jest metoda płatn
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "Płatność za subskrypcję nie powiodła się. Funkcje premium pozostają aktywne, gdy ponawiamy próbę jej pobrania."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "Rekord można udostępnić każdemu, nawet osobom, których rola nie zapewnia dostępu do tego obiektu. Otrzymają tylko ten rekord, aby go wyświetlać lub edytować."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1677,11 +1672,6 @@ msgstr "Informacje o twojej aplikacji"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Zaakceptowane i podpisane DPA dla tej przestrzeni roboczej wraz z wersją szablonu i datą."
-
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "Dostęp jest również dziedziczony z powiązanych rekordów."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2110,7 +2100,7 @@ msgstr "Dodaj DW"
 #. js-lingui-id: PKjhUq
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "Add channel"
-msgstr ""
+msgstr "Dodaj kanał"
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -3568,11 +3558,6 @@ msgstr "Dowolne urządzenie"
 #: src/modules/views/components/AnyFieldSearchChip.tsx
 msgid "Any field"
 msgstr "Dowolne pole"
-
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "Każdy w przestrzeni roboczej"
 
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5295,11 +5280,6 @@ msgstr "Kampania zaplanowana na {sendTime}"
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Anulowano harmonogram kampanii i przeniesiono ją z powrotem do wersji roboczych"
 
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "Może tylko wyświetlać: jego rola nie może edytować {objectLabelPlural}"
-
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
@@ -6935,19 +6915,22 @@ msgstr "Połącz z tą przestrzenią roboczą"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "Połącz przez IMAP/SMTP"
 
+#. js-lingui-id: vPwoq6
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
+#: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
+msgid "Connect with {appName}"
+msgstr "Połącz z {appName}"
+
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "Połącz z Google"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Połącz z Microsoft"
 
@@ -9355,7 +9338,7 @@ msgstr "Usunięto {objectLabel}"
 #. js-lingui-id: 6T/COx
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
-msgstr ""
+msgstr "Usunięto {successfulCount} z {totalCount} połączeń. Nie udało się usunąć: {failedLabels}."
 
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
@@ -9645,7 +9628,7 @@ msgstr "Rozłączono"
 #. js-lingui-id: +etBOJ
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
-msgstr ""
+msgstr "Rozłączono {successfulCount} z {totalCount} połączeń. Nie udało się rozłączyć: {failedLabels}."
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -12225,11 +12208,6 @@ msgstr "Nie udało się wylogować tego urządzenia"
 msgid "Failed to merge records"
 msgstr "Nie udało się scalić rekordów"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "Nie udało się scalić rekordów. Spróbuj ponownie."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"
@@ -12827,7 +12805,7 @@ msgstr "Filtruj według identyfikatora rekordu"
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 msgid "Filter channel chats"
-msgstr ""
+msgstr "Filtruj czaty kanału"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -17186,6 +17164,16 @@ msgstr "Scal rekordy"
 msgid "Merge review tabs"
 msgstr "Karty przeglądu scalania"
 
+#. js-lingui-id: 1uAvIV
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merged {objectLabel}"
+msgstr ""
+
+#. js-lingui-id: v4CzQ/
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merging {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
@@ -18330,11 +18318,6 @@ msgstr "Nie znaleziono {objectLabelSingular}"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "No access"
 msgstr "Brak dostępu"
-
-#. js-lingui-id: ETfwRt
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
-msgid "No accounts yet"
-msgstr "Brak kont"
 
 #. js-lingui-id: IeiB4r
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
@@ -19925,11 +19908,6 @@ msgstr "tylko w {firstDay} i {secondDay}"
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {0}"
 msgstr "tylko w {remainingDays} i {0}"
-
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "Tylko osoby, które mają już dostęp do tych rekordów"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -22125,7 +22103,6 @@ msgstr "Wybór rekordu"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "Udostępnianie rekordu"
 
@@ -23182,11 +23159,6 @@ msgstr "rola"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Role"
 msgstr "Rola"
-
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "Uprawnienia ról i pól nadal obowiązują."
 
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
@@ -25070,11 +25042,6 @@ msgstr "E-maile współdzielonej skrzynki odbiorczej"
 msgid "Shared record"
 msgstr "Udostępniony rekord"
 
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "Udostępnianie nigdy nie wykracza poza role i ich filtry wierszy. Użyj tego w przypadku poufnych obiektów."
-
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Sharing record"
@@ -26520,7 +26487,7 @@ msgstr "Synchronizuj etykiety obiektów i nazwy API"
 #. js-lingui-id: 4XvJjz
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
-msgstr ""
+msgstr "Synchronizacja zostanie zatrzymana, a poświadczenia zostaną usunięte dla następujących elementów. Twoje e-maile i wydarzenia zostaną zachowane i będą dostępne po ponownym połączeniu."
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -27523,7 +27490,7 @@ msgstr "Spowoduje to trwałe usunięcie konta {accountHandle} oraz wszystkich zs
 #. js-lingui-id: vrBe2V
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
-msgstr ""
+msgstr "Spowoduje to trwałe usunięcie poniższych elementów oraz wszystkich zsynchronizowanych z nimi wiadomości e-mail i wydarzeń. Tej czynności nie można cofnąć."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29300,6 +29267,11 @@ msgstr "Uaktualnij do Organization"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "Przejdź na plan Organization, aby skonfigurować SSO."
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr "Przejdź na plan Organization, aby tworzyć niestandardowe role"
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
@@ -30337,6 +30309,7 @@ msgid "Watch members demo"
 msgstr "Obejrzyj demo członków obszaru roboczego"
 
 #. js-lingui-id: Rxoy7e
+#: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Aktualnie napotykamy problemy z tą aplikacją, jej działanie może być ograniczone, dopóki nie wprowadzimy poprawki."
@@ -30689,11 +30662,6 @@ msgstr "Czy ten model obsługuje rozumowanie chain-of-thought"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "Do której konwersacji z odbiorcą zapisuje ten krok"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "Z kim można udostępnić rekord obiektu {objectLabel}. Role nadal domyślnie określają, co widzą użytkownicy."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30766,11 +30734,6 @@ msgstr "Bez kodu wybierania"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "bez karty kredytowej"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "Nie zobaczy tego: jego rola nie ma dostępu do {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)

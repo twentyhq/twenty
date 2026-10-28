@@ -1,7 +1,5 @@
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
-import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { preserveLegacyRecordAccess } from 'src/database/commands/upgrade-version-command/2-43/utils/preserve-legacy-record-access.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
@@ -13,7 +11,6 @@ import { parse } from 'graphql';
 import {
   FieldMetadataType,
   MetadataReadability,
-  MetadataWritability,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -561,36 +558,6 @@ describe('Generic sharing API on an ordinary private object', () => {
     expect(
       (await setGeneralAccess(RecordShareAccessLevel.READ)).body.errors,
     ).toBeDefined();
-  });
-
-  it('keeps object writability above FULL grants', async () => {
-    const setWritability = async (writability: MetadataWritability) => {
-      await getCoreRepository<ObjectMetadataEntity>(
-        ObjectMetadataEntity,
-      ).update(objectMetadataId, { writability });
-      await getAppProviderByClassName<WorkspaceCacheService>(
-        'WorkspaceCacheService',
-      ).invalidateAndRecompute(workspaceId, ['flatObjectMetadataMaps']);
-    };
-    await grant(RecordShareAccessLevel.FULL);
-    await setWritability(MetadataWritability.SYSTEM);
-    try {
-      expect(
-        (await settings()).body.data.recordSharing.permissions.canUpdate,
-      ).toBe(false);
-      expect(
-        (await setGeneralAccess(RecordShareAccessLevel.READ)).body.errors,
-      ).toBeDefined();
-      expect(
-        (
-          await unshare({
-            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          })
-        ).body.errors,
-      ).toBeDefined();
-    } finally {
-      await setWritability(MetadataWritability.OPEN);
-    }
   });
 
   it('keeps object role permissions above even FULL record grants', async () => {

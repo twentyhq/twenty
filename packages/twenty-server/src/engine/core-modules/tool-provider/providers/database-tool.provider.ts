@@ -1,6 +1,7 @@
 import { type I18n } from '@lingui/core';
 import { Injectable } from '@nestjs/common';
 
+import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
@@ -23,6 +24,7 @@ import { DELETE_TOOL_INPUT_SCHEMA } from 'src/engine/core-modules/record-crud/js
 import { FIND_ONE_TOOL_INPUT_SCHEMA } from 'src/engine/core-modules/record-crud/json-schemas/find-one-tool.json-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/json-schemas/find-tool.json-schema';
 import { generateGroupByToolInputSchema } from 'src/engine/core-modules/record-crud/json-schemas/group-by-tool.json-schema';
+import { MERGE_MANY_TOOL_INPUT_SCHEMA } from 'src/engine/core-modules/record-crud/json-schemas/merge-many-tool.json-schema';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -160,6 +162,10 @@ export class DatabaseToolProvider implements ToolProvider {
         permission.canSoftDeleteObjectRecords &&
         (!requireExplicitObjectGrants ||
           explicitPermission?.canSoftDeleteObjectRecords === true);
+      const canDestroyRecords =
+        permission.canDestroyObjectRecords &&
+        (!requireExplicitObjectGrants ||
+          explicitPermission?.canDestroyObjectRecords === true);
 
       const snakePlural = camelToSnakeCase(flatObject.namePlural);
       const snakeSingular = camelToSnakeCase(flatObject.nameSingular);
@@ -448,6 +454,36 @@ export class DatabaseToolProvider implements ToolProvider {
           operation: 'delete_many',
         });
       }
+
+      if (
+        canUpdateRecords &&
+        canDestroyRecords &&
+        canBeManagedByAutomation &&
+        !flatObject.isSystem
+      ) {
+        descriptors.push({
+          name: `merge_many_${snakePlural}`,
+          ...getCrudToolLabels(
+            'merge_many',
+            flatObject.labelPlural,
+            this.i18nService,
+            context.locale,
+          ),
+          description: `Merge 2 to ${MUTATION_MAX_MERGE_RECORDS} duplicate ${objectMetadata.labelPlural} records into one, like the Merge action in the app. The record at conflictPriorityIndex is kept: its empty fields are filled from the other records, its values win on conflicting values, multi-value fields (emails, phones, links, arrays) are combined, and every record linked to the other records (notes, tasks, related records) is moved to it. The other records are then permanently deleted, which cannot be undone. Use this instead of copying fields and deleting a record, which loses the linked records. Call it with dryRun: true first to preview the merged record.`,
+          category: ToolCategory.DATABASE_CRUD,
+          ...(shouldIncludeSchema(`merge_many_${snakePlural}`) && {
+            inputSchema: MERGE_MANY_TOOL_INPUT_SCHEMA,
+          }),
+          executionRef: {
+            kind: 'database_crud',
+            objectNameSingular: objectMetadata.nameSingular,
+            operation: 'merge_many',
+          },
+          objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
+          operation: 'merge_many',
+        });
+      }
     }
 
     // group_by answers with aggregates, not the recordReferences the records widget links.
@@ -505,7 +541,8 @@ export class DatabaseToolProvider implements ToolProvider {
       toolNames.has(`update_many_${snakePlural}`) ||
       toolNames.has(`delete_one_${snakeSingular}`) ||
       toolNames.has(`delete_many_${snakePlural}`) ||
-      toolNames.has(`upsert_many_${snakePlural}`)
+      toolNames.has(`upsert_many_${snakePlural}`) ||
+      toolNames.has(`merge_many_${snakePlural}`)
     );
   }
 }

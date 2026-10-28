@@ -159,7 +159,7 @@ export class ApplicationManifestExportService {
         allFlatEntityMaps,
         exportedObjectUniversalIdentifiers,
         resolvableFieldUniversalIdentifiers,
-        canReferenceOtherApplicationsWorkflowActions:
+        isWorkspaceCustomApplication:
           flatApplication.id === workspaceCustomFlatApplication.id,
       });
     const { agents, coverage: agentsCoverage } = reconstructAgentsManifest({

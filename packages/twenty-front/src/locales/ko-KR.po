@@ -630,7 +630,7 @@ msgstr "{cardCount, plural, other {#개 작업을 승인하시겠습니까?}}"
 #. js-lingui-id: AnO6CC
 #: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr ""
+msgstr "{channelStatusLabel} · {assignmentLabel}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -1566,11 +1566,6 @@ msgstr "워크스페이스를 활성 상태로 유지하려면 결제 수단이 
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "구독 결제에 실패했습니다. 재시도하는 동안 프리미엄 기능은 계속 활성 상태로 유지됩니다."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "역할이 이 객체에 액세스할 수 없는 사람을 포함해 누구와도 레코드를 공유할 수 있습니다. 해당 레코드만 보고 편집할 수 있습니다."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1677,11 +1672,6 @@ msgstr "앱 정보"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "이 워크스페이스에 대해 수락 및 서명된 DPA와 해당 템플릿 버전 및 날짜입니다."
-
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "관련 레코드에서 액세스 권한도 상속됩니다."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2110,7 +2100,7 @@ msgstr "CC 추가"
 #. js-lingui-id: PKjhUq
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "Add channel"
-msgstr ""
+msgstr "채널 추가"
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -3568,11 +3558,6 @@ msgstr "모든 기기"
 #: src/modules/views/components/AnyFieldSearchChip.tsx
 msgid "Any field"
 msgstr "어떤 필드"
-
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "작업공간의 모든 사용자"
 
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5295,11 +5280,6 @@ msgstr "캠페인이 {sendTime}(으)로 예약되었습니다"
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "캠페인 예약이 취소되어 초안으로 돌아갔습니다"
 
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "보기만 가능: 해당 역할에서는 {objectLabelPlural} 편집이 불가능합니다"
-
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
@@ -6935,19 +6915,22 @@ msgstr "이 작업공간에 연결"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "IMAP/SMTP로 연결"
 
+#. js-lingui-id: vPwoq6
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
+#: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
+msgid "Connect with {appName}"
+msgstr "{appName}과 연결하기"
+
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "Google과 연결"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Microsoft와 연결"
 
@@ -9355,7 +9338,7 @@ msgstr "삭제된 {objectLabel}"
 #. js-lingui-id: 6T/COx
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
-msgstr ""
+msgstr "총 {totalCount}개의 연결 중 {successfulCount}개를 삭제했습니다. 삭제하지 못한 연결: {failedLabels}."
 
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
@@ -9645,7 +9628,7 @@ msgstr "연결 해제됨"
 #. js-lingui-id: +etBOJ
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
-msgstr ""
+msgstr "총 {totalCount}개의 연결 중 {successfulCount}개를 연결 해제했습니다. 연결 해제하지 못한 연결: {failedLabels}."
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -12225,11 +12208,6 @@ msgstr "이 기기에서 로그아웃하지 못했습니다."
 msgid "Failed to merge records"
 msgstr "레코드 병합 실패"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "레코드 병합에 실패했습니다. 다시 시도해 주세요."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"
@@ -12827,7 +12805,7 @@ msgstr "레코드 ID로 필터링"
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 msgid "Filter channel chats"
-msgstr ""
+msgstr "채널 채팅 필터"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -17186,6 +17164,16 @@ msgstr "레코드 병합"
 msgid "Merge review tabs"
 msgstr "병합 검토 탭"
 
+#. js-lingui-id: 1uAvIV
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merged {objectLabel}"
+msgstr ""
+
+#. js-lingui-id: v4CzQ/
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merging {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
@@ -18330,11 +18318,6 @@ msgstr "{objectLabelSingular}을(를) 찾을 수 없습니다"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "No access"
 msgstr "액세스 없음"
-
-#. js-lingui-id: ETfwRt
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
-msgid "No accounts yet"
-msgstr "아직 계정이 없습니다"
 
 #. js-lingui-id: IeiB4r
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
@@ -19925,11 +19908,6 @@ msgstr "{firstDay}일과 {secondDay}일에만"
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {0}"
 msgstr "{remainingDays}일과 {0}일에만"
-
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "이미 이 레코드에 액세스할 수 있는 사람만"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -22125,7 +22103,6 @@ msgstr "레코드 선택"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "레코드 공유"
 
@@ -23182,11 +23159,6 @@ msgstr "역할"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Role"
 msgstr "역할"
-
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "역할 및 필드 권한은 계속 적용됩니다."
 
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
@@ -25070,11 +25042,6 @@ msgstr "공유 받은편지함 이메일"
 msgid "Shared record"
 msgstr "공유된 레코드"
 
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "공유는 역할 및 해당 역할의 행 필터 범위를 절대 벗어나지 않습니다. 민감한 객체에 사용하세요."
-
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Sharing record"
@@ -26520,7 +26487,7 @@ msgstr "객체 레이블과 API 이름 동기화"
 #. js-lingui-id: 4XvJjz
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
-msgstr ""
+msgstr "다음 항목의 동기화가 중지되고 자격 증명이 삭제됩니다. 이메일과 이벤트는 유지되며 다시 연결한 후에도 사용할 수 있습니다."
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -27523,7 +27490,7 @@ msgstr "{accountHandle} 및 동기화된 모든 이메일과 이벤트를 영구
 #. js-lingui-id: vrBe2V
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
-msgstr ""
+msgstr "이 작업을 수행하면 다음 항목과 해당 항목의 동기화된 모든 이메일 및 이벤트가 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29300,6 +29267,11 @@ msgstr "조직으로 업그레이드"
 msgid "Upgrade to Organization to configure SSO."
 msgstr "SSO를 구성하려면 Organization으로 업그레이드하세요."
 
+#. js-lingui-id: LNDff6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Upgrade to Organization to create custom roles"
+msgstr "사용자 지정 역할을 만들려면 Organization으로 업그레이드하세요"
+
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
@@ -30337,6 +30309,7 @@ msgid "Watch members demo"
 msgstr "멤버 데모 보기"
 
 #. js-lingui-id: Rxoy7e
+#: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "현재 이 앱에 문제가 발생하여, 수정 작업 중에는 동작이 저하될 수 있습니다."
@@ -30689,11 +30662,6 @@ msgstr "이 모델이 Chain-of-Thought 추론을 지원하는지 여부"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "이 단계가 수신자와의 어떤 대화에 기록되는지"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "{objectLabel} 레코드를 공유할 수 있는 대상입니다. 역할은 기본적으로 사람들이 볼 수 있는 항목을 계속 결정합니다."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30766,11 +30734,6 @@ msgstr "국가 번호 없이"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "신용카드 없음"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "볼 수 없음: 해당 역할은 {objectLabelPlural}에 접근할 수 없습니다"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)

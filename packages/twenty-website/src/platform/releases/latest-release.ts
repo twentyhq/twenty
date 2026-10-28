@@ -5,5 +5,5 @@
 export const LATEST_RELEASE: {
   release: string;
 } = {
-  release: '2.40.0',
+  release: '2.52.0',
 };

@@ -1,7 +1,7 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAppPreferencesRemoveConnectionDialog } from '@/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog';
 import { SettingsApplicationConnectionName } from '@/settings/applications/components/SettingsApplicationConnectionName';
-import { getApplicationPreferencesConnectionsPath } from '@/settings/app-preferences/utils/getApplicationPreferencesConnectionsPath';
+import { getApplicationPreferencesGeneralPath } from '@/settings/app-preferences/utils/getApplicationPreferencesGeneralPath';
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
 import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -55,7 +55,7 @@ export const SettingsAppPreferencesConnectionRowDropdownMenu = ({
                       providerName,
                       reconnectingConnectedAccountId: connection.id,
                       redirectLocation:
-                        getApplicationPreferencesConnectionsPath(applicationId),
+                        getApplicationPreferencesGeneralPath(applicationId),
                     })
                   }
                 >{t`Reconnect`}</Dropdown.ActionItem>

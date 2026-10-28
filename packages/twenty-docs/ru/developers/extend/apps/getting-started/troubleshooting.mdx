@@ -8,8 +8,8 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 ## Распространённые проблемы
 
 * **Ошибки локального сервера**: проверьте среду разработки Docker или репозитория. Автономный CLI не управляет контейнерами.
-* **Неверная версия Node** — требуется 24.5+ (`engines.node: ^24.5.0`). Проверьте с помощью `node -v`.
-* **Отсутствует Yarn 4** — выполните `corepack enable`.
+* **Неверная версия Node** — требуется 24.5+ или 26.5+ (`engines.node: ^24.5.0 || ^26.5.1`). Проверьте с помощью `node -v`.
+* **Yarn 4 отсутствует** — выполните `corepack enable` (в Node 26 сначала выполните `npm install -g corepack`).
 * **Зависимости повреждены** — `rm -rf node_modules && yarn install`.
 * **Пустой `yarn.lock`** — Сборка завершается ошибкой «yarn.lock is empty», когда файл блокировки существует, но не содержит данных; выполните `yarn install`, чтобы пересоздать его.
 * **Ошибки `twenty-sdk` после обновления до v2.8.0** — он был перенесен из `dependencies` в `devDependencies` в v2.8.0. См. [Структура проекта → Зависимости](/ru/developers/extend/apps/getting-started/project-structure#dependencies).

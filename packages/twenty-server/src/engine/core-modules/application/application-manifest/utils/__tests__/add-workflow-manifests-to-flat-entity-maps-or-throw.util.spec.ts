@@ -1,6 +1,7 @@
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -39,6 +40,7 @@ const MANIFEST = buildBaseManifest({
 const compute = ({
   workflows = MANIFEST.workflows ?? [],
   fromAllFlatEntityMaps = createEmptyAllFlatEntityMaps(),
+  isWorkspaceCustomApplication = false,
 } = {}) => {
   for (const workflow of Object.values(
     fromAllFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier,
@@ -63,7 +65,7 @@ const compute = ({
     toAllUniversalFlatEntityMaps,
     existingAllFlatEntityMaps: fromAllFlatEntityMaps,
     idByUniversalIdentifierByMetadataName: {},
-    canReferenceOtherApplicationsWorkflowActions: false,
+    isWorkspaceCustomApplication,
     now: '2026-09-28T00:00:00.000Z',
   });
 
@@ -147,5 +149,86 @@ describe('application workflow manifest updates', () => {
     expect(() =>
       compute({ workflows, fromAllFlatEntityMaps: existing }),
     ).toThrow(/unknown record field missing.*fieldsToUpdate/);
+  });
+
+  describe('workspace custom application', () => {
+    const WORKFLOW_UNIVERSAL_IDENTIFIER =
+      '33333333-3333-4333-8333-333333333333';
+    const LEGACY_WORKFLOW_ID = '77777777-7777-4777-8777-777777777777';
+
+    const publishedFromBuilder = () => {
+      const published = compute({ isWorkspaceCustomApplication: true });
+      const workflow = published.flatWorkflowMaps.byUniversalIdentifier[
+        WORKFLOW_UNIVERSAL_IDENTIFIER
+      ] as UniversalFlatWorkflow & FlatWorkflow;
+
+      published.flatWorkflowMaps.byUniversalIdentifier[
+        WORKFLOW_UNIVERSAL_IDENTIFIER
+      ] = {
+        ...workflow,
+        versionDefinitionHash: null,
+        lastPublishedVersionId: 'legacy-workflow-version-id',
+        workspaceWorkflowId: LEGACY_WORKFLOW_ID,
+      };
+
+      return { published, version: workflow.flatUniversalWorkflowVersion };
+    };
+    const syncedWorkflow = (maps: ReturnType<typeof compute>) =>
+      maps.flatWorkflowMaps.byUniversalIdentifier[
+        WORKFLOW_UNIVERSAL_IDENTIFIER
+      ] as UniversalFlatWorkflow;
+
+    it('keeps the active version and its pointers when the definition matches it', () => {
+      const { published, version } = publishedFromBuilder();
+
+      const workflow = syncedWorkflow(
+        compute({
+          fromAllFlatEntityMaps: published,
+          isWorkspaceCustomApplication: true,
+        }),
+      );
+
+      expect(workflow).toMatchObject({
+        versionDefinitionHash: null,
+        lastPublishedVersionId: 'legacy-workflow-version-id',
+        lastPublishedCoreWorkflowVersionId: version?.id,
+      });
+      expect(workflow.flatUniversalWorkflowVersion).toEqual(version);
+    });
+
+    it('publishes a changed definition as a new version of the workflow', () => {
+      const { published, version } = publishedFromBuilder();
+      const workflows = structuredClone(MANIFEST.workflows ?? []);
+      const [step] = workflows[0]?.version.steps ?? [];
+
+      if (!isDefined(step)) {
+        throw new Error('Expected step');
+      }
+      step.name = 'Changed';
+
+      const workflow = syncedWorkflow(
+        compute({
+          workflows,
+          fromAllFlatEntityMaps: published,
+          isWorkspaceCustomApplication: true,
+        }),
+      );
+
+      expect(workflow.flatUniversalWorkflowVersion).toMatchObject({
+        status: 'ACTIVE',
+        workflowId: LEGACY_WORKFLOW_ID,
+        steps: [{ name: 'Changed' }],
+      });
+      expect(workflow.flatUniversalWorkflowVersion?.id).not.toBe(version?.id);
+      expect(
+        workflow.flatUniversalWorkflowVersion?.universalIdentifier,
+      ).not.toBe(version?.universalIdentifier);
+      expect(workflow).toMatchObject({
+        lastPublishedVersionId: null,
+        lastPublishedCoreWorkflowVersionId:
+          workflow.flatUniversalWorkflowVersion?.id,
+      });
+      expect(workflow.versionDefinitionHash).toEqual(expect.any(String));
+    });
   });
 });

@@ -278,6 +278,7 @@ describe('AiChatInboxPage', () => {
         THREADS.map(({ id, updatedAt }) => [
           id,
           {
+            __typename: 'AgentChatThreadParticipant' as const,
             id: `participant-${id}`,
             threadId: id,
             lastReadAt: updatedAt,
@@ -346,6 +347,7 @@ describe('AiChatInboxPage', () => {
         THREADS.map(({ id }) => [
           id,
           {
+            __typename: 'AgentChatThreadParticipant' as const,
             id: `participant-${id}`,
             threadId: id,
             lastReadAt: '2026-09-07T00:00:00.000Z',
