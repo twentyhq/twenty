@@ -8,6 +8,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ToastProvider } from 'twenty-ui/components/feedback';
 
+import { type useObjectRecordSearchRecords as useObjectRecordSearchRecordsHook } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { SidePanelMergeWithRecordPage } from '@/side-panel/pages/merge-with-record/components/SidePanelMergeWithRecordPage';
 import { mergeWithRecordSourceComponentState } from '@/side-panel/pages/merge-with-record/states/mergeWithRecordSourceComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
@@ -30,8 +31,9 @@ jest.mock('@/side-panel/hooks/useOpenMergeRecordsPageInSidePanel', () => ({
 }));
 
 jest.mock('@/object-record/hooks/useObjectRecordSearchRecords', () => ({
-  useObjectRecordSearchRecords: (params: unknown) =>
-    useObjectRecordSearchRecords(params),
+  useObjectRecordSearchRecords: (
+    params: Parameters<typeof useObjectRecordSearchRecordsHook>[0],
+  ) => useObjectRecordSearchRecords(params),
 }));
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({

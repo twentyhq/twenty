@@ -619,7 +619,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           rolePermissionConfig,
         );
 
-        await objectRepository.runMutation({
+        const deletedRecords = await objectRepository.runMutation({
           selectQueryBuilder: objectRepository
             .createQueryBuilder(alias)
             .where({ id: In(idsToDelete) }),
@@ -627,6 +627,17 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           kind: 'delete',
           columnsToReturn,
         });
+
+        // Row-level permissions filter the delete, so a record the role can read but not delete is skipped silently
+        if (deletedRecords.length !== idsToDelete.length) {
+          throw new CommonQueryRunnerException(
+            'Some records to merge cannot be deleted with the current role',
+            CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+            {
+              userFriendlyMessage: msg`Your role cannot delete some of these records, so they cannot be merged.`,
+            },
+          );
+        }
 
         const [resolvedMergedData] = await this.resolveNestedRelations({
           records: [mergedData],
