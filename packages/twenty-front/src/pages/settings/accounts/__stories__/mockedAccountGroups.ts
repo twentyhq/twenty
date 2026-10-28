@@ -320,6 +320,7 @@ export const seedAccountGroupsStory = async () => {
         id: FATHOM_APPLICATION_ID,
         universalIdentifier: FATHOM_APPLICATION_ID,
         name: 'Fathom',
+        description: 'Records, transcribes and summarizes your meetings.',
         logoUrl: null,
         createdAt: '2024-01-01T00:00:00.000Z',
       },
