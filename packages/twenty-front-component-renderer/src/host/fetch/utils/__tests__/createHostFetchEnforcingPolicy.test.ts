@@ -1,3 +1,4 @@
+import { FRONT_COMPONENT_HOST_FETCH_HEADER_NAME } from 'twenty-shared/constants';
 import { CustomError } from 'twenty-shared/utils';
 
 import { createHostFetchEnforcingPolicy } from '../createHostFetchEnforcingPolicy';
@@ -85,6 +86,48 @@ describe('createHostFetchEnforcingPolicy', () => {
     expect(result.status).toBe(200);
     expect(result.body).toBe('response-body');
     expect(result.headers['content-type']).toBe('application/json');
+
+    const [, requestInit] = fetchSpy.mock.calls[0] as unknown as [
+      string,
+      RequestInit,
+    ];
+    const forwardedHeaders = requestInit.headers as Headers;
+
+    expect(forwardedHeaders.get('authorization')).toBe('Bearer token');
+    expect(forwardedHeaders.has(FRONT_COMPONENT_HOST_FETCH_HEADER_NAME)).toBe(
+      false,
+    );
+  });
+
+  it('should send page cookies with the host fetch marker for page-origin requests', async () => {
+    const fetchSpy = jest.fn(async () => createFakeResponse());
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+
+    const pageOrigin = window.location.origin;
+    const hostFetch = createHostFetchEnforcingPolicy({
+      allowedOrigins: [pageOrigin],
+      fileStorageRedirectableUrls: [],
+    });
+    await hostFetch({
+      url: `${pageOrigin}/graphql`,
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer app-token',
+        'X-Twenty-Front-Component-Host-Fetch': 'spoofed',
+      },
+    });
+
+    const [, requestInit] = fetchSpy.mock.calls[0] as unknown as [
+      string,
+      RequestInit,
+    ];
+    const forwardedHeaders = requestInit.headers as Headers;
+
+    expect(requestInit.credentials).toBe('same-origin');
+    expect(forwardedHeaders.get(FRONT_COMPONENT_HOST_FETCH_HEADER_NAME)).toBe(
+      '1',
+    );
+    expect(forwardedHeaders.get('authorization')).toBe('Bearer app-token');
   });
 
   it('should refuse redirects by default', async () => {

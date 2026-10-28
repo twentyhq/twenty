@@ -9,6 +9,7 @@ import { USER_SESSION_IMPERSONATOR_COOKIE_NAME } from 'src/engine/core-modules/u
 import { USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-impersonator-secure-cookie-name.constant';
 import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
+import { isFrontComponentHostFetchRequest } from 'src/engine/core-modules/user-session/utils/is-front-component-host-fetch-request.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const isHttpsUrl = (url: string | undefined): boolean => {
@@ -110,7 +111,10 @@ export class UserSessionCookieService {
   hasSessionCookie(request: Request): boolean {
     const cookieHeader = request.headers.cookie;
 
-    if (!isNonEmptyString(cookieHeader)) {
+    if (
+      !isNonEmptyString(cookieHeader) ||
+      isFrontComponentHostFetchRequest(request)
+    ) {
       return false;
     }
 
