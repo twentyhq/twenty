@@ -3,7 +3,7 @@ title: Automatizări pentru Closed Won
 description: Automatizați activitățile de după câștig atunci când oportunitățile se închid.
 ---
 
-Când o tranzacție se închide, trebuie să se întâmple mai multe lucruri: actualizați starea companiei, notificați membrii echipei, creați sarcini de onboarding. Automatizați totul cu un singur flux de lucru.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Problema
 
@@ -37,47 +37,49 @@ Creați un flux de lucru care gestionează automat toate activitățile de după
 ### Pasul 3: Adăugați filtrul de stadiu
 
 1. Adăugați acțiunea **Filter**
-2. Condiție: `{{trigger.object.stage}}` este egal cu "Closed Won"
+2. Condiție: `{{trigger.properties.after.stage}}` este egal cu "Closed Won"
 
 ### Pasul 4: Actualizați tipul companiei
 
 1. Adăugați acțiunea **Update Record**
 2. Configurați:
 
-| Câmp                       | Valoare                         |
-| -------------------------- | ------------------------------- |
-| **Obiect**                 | Companii                        |
-| **Înregistrare**           | `{{trigger.object.company.id}}` |
-| **Tip**                    | Client                          |
-| **Data primei tranzacții** | `{{trigger.object.closedAt}}`   |
-| **Proprietarul contului**  | `{{trigger.object.owner.id}}`   |
+| Câmp                       | Valoare                                  |
+| -------------------------- | ---------------------------------------- |
+| **Obiect**                 | Companii                                 |
+| **Înregistrare**           | `{{trigger.properties.after.companyId}}` |
+| **Tip**                    | Client                                   |
+| **Data primei tranzacții** | `{{trigger.properties.after.closeDate}}` |
+| **Proprietarul contului**  | `{{trigger.properties.after.ownerId}}`   |
+
+Denumiți acest pas „Actualizare companie”. Rezultatul său este compania actualizată, astfel încât pașii ulteriori să poată insera câmpurile acesteia din selectorul de variabile, afișat mai jos ca `{{Update Company.name}}`. Selectați-le din selector, în loc să le introduceți manual: variabilele indică ID-ul pasului, nu numele acestuia.
 
 ### Pasul 5: Creați o sarcină de onboarding
 
 1. Adăugați acțiunea **Create Record**
 2. Configurați:
 
-| Câmp                      | Valoare                                                                                                          |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **Obiect**                | Sarcini                                                                                                          |
-| **Titlu**                 | `Onboarding: {{trigger.object.name}}`                                                                            |
-| **Responsabil**           | Membru al echipei de Customer Success                                                                            |
-| **Data scadenței**        | Peste 3 zile                                                                                                     |
-| **Prioritate**            | Ridicată                                                                                                         |
-| **Companie asociată**     | `{{trigger.object.company.id}}`                                                                                  |
-| **Oportunitate asociată** | `{{trigger.object.id}}`                                                                                          |
-| **Descriere**             | `Onboarding pentru noul client {{trigger.object.company.name}}. Valoarea tranzacției: {{trigger.object.amount}}` |
+| Câmp                      | Valoare                                                  |
+| ------------------------- | -------------------------------------------------------- |
+| **Obiect**                | Sarcini                                                  |
+| **Titlu**                 | `Onboarding: {{trigger.properties.after.name}}`          |
+| **Responsabil**           | Membru al echipei de Customer Success                    |
+| **Data scadenței**        | Peste 3 zile                                             |
+| **Prioritate**            | Ridicată                                                 |
+| **Companie asociată**     | `{{trigger.properties.after.companyId}}`                 |
+| **Oportunitate asociată** | `{{trigger.properties.after.id}}`                        |
+| **Descriere**             | `Onboarding pentru noul client {{Update Company.name}}.` |
 
 ### Pasul 6: Notificați echipa de Customer Success
 
 1. Adăugați acțiunea **Send Email**
 2. Configurați:
 
-| Câmp        | Valoare                                          |
-| ----------- | ------------------------------------------------ |
-| **Către**   | customer-success@yourcompany.com                 |
-| **Subiect** | `🎉 Client nou: {{trigger.object.company.name}}` |
-| **Corp**    | Consultați exemplul de mai jos                   |
+| Câmp        | Valoare                                  |
+| ----------- | ---------------------------------------- |
+| **Către**   | customer-success@yourcompany.com         |
+| **Subiect** | `🎉 Client nou: {{Update Company.name}}` |
+| **Corp**    | Consultați exemplul de mai jos           |
 
 **Exemplu de corp al e-mailului**:
 
@@ -86,11 +88,9 @@ Hi CS Team,
 
 We have a new customer!
 
-Company: {{trigger.object.company.name}}
-Deal: {{trigger.object.name}}
-Value: {{trigger.object.amount}}
-Sales Rep: {{trigger.object.owner.name}}
-Close Date: {{trigger.object.closedAt}}
+Company: {{Update Company.name}}
+Deal: {{trigger.properties.after.name}}
+Close Date: {{trigger.properties.after.closeDate}}
 
 An onboarding task has been created automatically.
 
@@ -99,14 +99,23 @@ Let's give them a great start!
 
 ### Pasul 7: Confirmare către reprezentantul de vânzări
 
-1. Adăugați încă o acțiune **Send Email**
-2. Configurați:
+1. Adăugați o acțiune **Căutare înregistrări** denumită „Găsire proprietar” pentru a obține reprezentantul de vânzări:
+
+| Câmp       | Valoare                                           |
+| ---------- | ------------------------------------------------- |
+| **Obiect** | Membrii spațiului de lucru                        |
+| **Filtru** | ID egal cu `{{trigger.properties.after.ownerId}}` |
+
+2. Adăugați încă o acțiune **Send Email**
+3. Configurați:
 
 | Câmp        | Valoare                                                                                                           |
 | ----------- | ----------------------------------------------------------------------------------------------------------------- |
-| **Către**   | `{{trigger.object.owner.email}}`                                                                                  |
-| **Subiect** | `✅ Tranzacție închisă: {{trigger.object.name}}`                                                                   |
+| **Către**   | `{{Find Owner.first.userEmail}}`                                                                                  |
+| **Subiect** | `✅ Tranzacție închisă: {{trigger.properties.after.name}}`                                                         |
 | **Corp**    | Felicitări! Tranzacția a fost procesată. Echipa de Customer Success a fost notificată și onboarding-ul a început. |
+
+Selectați valoarea **Către** din selectorul de variabile de sub pasul „Găsire proprietar”.
 
 ### Pasul 8: Testați și activați
 
@@ -177,3 +186,5 @@ Utilizați acțiunea **Code** pentru a formata:
 
 * [Acțiuni ale fluxurilor de lucru](/ro/user-guide/workflows/capabilities/workflow-actions)
 * [Trimiteți e-mailuri din fluxuri de lucru](/ro/user-guide/workflows/capabilities/send-emails-from-workflows)
+
+<PageBanner illustration="card-page-campaign-practices" />

@@ -14,7 +14,7 @@ describe('application dependency defaults', () => {
     expect(standard.packageJsonChecksum).toBe(
       '7a6f26a21a5a95e71afea95f73d91f97',
     );
-    expect(standard.yarnLockChecksum).toBe('b2ad1ca487a0818f3fdba803aa8a8548');
+    expect(standard.yarnLockChecksum).toBe('73cdf4b9d674e4be327ad36550d758e6');
     const standardPackage = JSON.parse(standard.packageJsonContent);
     const customPackage = JSON.parse(custom.packageJsonContent);
     expect(standardPackage.devDependencies).toBeUndefined();
@@ -22,7 +22,7 @@ describe('application dependency defaults', () => {
     expect(customPackage.devDependencies).toEqual({
       react: '19.2.0',
       'react-dom': '19.2.0',
-      'twenty-ui': `~${TWENTY_PREVIOUS_VERSIONS[TWENTY_PREVIOUS_VERSIONS.length - 1]}`,
+      'twenty-ui': `~${TWENTY_PREVIOUS_VERSIONS[TWENTY_PREVIOUS_VERSIONS.length - 2]}`,
     });
     expect(customPackage.frontComponentSharedDependencies).toEqual(
       expect.arrayContaining([

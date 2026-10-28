@@ -3,6 +3,7 @@ title: Acciones del Flujo de Trabajo
 description: Conoce las acciones disponibles en los flujos de trabajo de Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Acerca de las acciones
@@ -104,6 +105,34 @@ Crea un registro nuevo o actualiza uno existente según criterios de coincidenci
 
 **Salida**: Los datos del registro creado o actualizado están disponibles para su uso en pasos posteriores.
 
+### Seleccionar registro
+
+Selecciona un único registro de una lista de candidatos mediante una estrategia de distribución. Útil para asignar un cliente potencial entrante a un representante o distribuir registros entre un conjunto de propietarios.
+
+**Configuración**:
+
+* Seleccione los registros candidatos en el campo **Elegir de**
+
+<Note>
+**Elegir de** solo acepta un conjunto estático de registros seleccionados manualmente; no puede pasar una variable como la salida de un paso `Search Records`.
+</Note>
+
+* Elija una estrategia:
+
+| Estrategia               | Descripción                                                                                                                                                                  |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Aleatorio**            | Selecciona un candidato al azar                                                                                                                                              |
+| **Round robin**          | Recorre los candidatos en orden y recuerda su posición entre ejecuciones                                                                                                     |
+| **Balanceado por carga** | Selecciona el candidato vinculado actualmente a la menor cantidad de registros en un campo que elija (p. ej., el representante de ventas con menos oportunidades vinculadas) |
+
+* Para **Balanceado por carga**, seleccione el objeto y el campo utilizados para contar la carga existente por candidato
+
+<Note>
+Balanceado por carga cuenta todos los registros vinculados en ese campo, independientemente del estado; por ejemplo, todas las oportunidades vinculadas a un representante, no solo las abiertas.
+</Note>
+
+**Salida**: El registro seleccionado está disponible para usarse en pasos posteriores.
+
 ## Acciones de flujo
 
 ### Iterador
@@ -173,7 +202,7 @@ La fecha programada no puede estar en el pasado. Si se usa un campo de fecha de 
 **Límites y créditos**:
 
 * **Sin límite máximo de duración**—puede establecer retrasos de minutos, días, semanas o más
-* **1 crédito consumido** cuando se ejecuta el nodo Retraso, independientemente de la duración
+* **Se consume un crédito de 0.0001 $ (0.0001 $)** cuando se ejecuta el nodo Retraso, al igual que un paso de flujo de trabajo estándar, independientemente de la duración
 * **No se consumen créditos** mientras se espera—un retraso de 5 minutos cuesta lo mismo que uno de 5 días
 
 ## Acciones de comunicación
@@ -208,12 +237,36 @@ Por el momento, solo es posible un destinatario.
 No es posible agregar firmas HTML por el momento.
 </Note>
 
+### Borrador de correo electrónico
+
+Crea un borrador de correo electrónico en lugar de enviarlo. Tiene la misma configuración que Enviar correo electrónico, pero el mensaje se guarda en la carpeta Borradores del buzón conectado para revisarlo y enviarlo manualmente, en lugar de enviarse automáticamente.
+
+**Configuración**: Los mismos campos que [Enviar correo electrónico](#send-email): cuenta del remitente, destinatario, asunto y cuerpo.
+
+**Caso de uso**: Correos electrónicos generados por IA o por flujos de trabajo que desea que una persona revise antes de enviarlos.
+
+### Crear evento de calendario
+
+Crea un evento en un calendario conectado.
+
+**Configuración**:
+
+* Seleccione la cuenta de calendario conectada
+* Establezca el título, la descripción y la ubicación del evento
+* Establezca la fecha y hora de inicio y fin, o marque el evento como de día completo
+* Opcionalmente, establezca una zona horaria
+* Agregar asistentes
+* Elija si desea enviar invitaciones de calendario a los asistentes
+* Elija si desea agregar un enlace de conferencia al evento
+
+**Salida**: Los datos del evento creado están disponibles para su uso en pasos posteriores.
+
 ### Formulario
 
-Solicita un formulario durante la ejecución del flujo de trabajo para recopilar la entrada del usuario. Las respuestas pueden usarse luego en pasos posteriores para crear registros, enviar correos o ejecutar cualquier otra acción según la entrada.
+Abre un formulario para la persona que inicia el flujo de trabajo, a fin de recopilar información en el momento. Las respuestas pueden usarse luego en pasos posteriores para crear registros, enviar correos o ejecutar cualquier otra acción según la entrada.
 
 <Warning>
-**Los formularios están diseñados solo para disparadores manuales**. Para flujos de trabajo con otros disparadores (Registro Creado, Actualizado, etc.), los formularios solo son accesibles a través de la interfaz de ejecución de flujos de trabajo, lo cual no es la experiencia de usuario esperada. En 2026 se lanzará un centro de notificación para soportar adecuadamente los formularios en flujos de trabajo automatizados.
+**Los formularios están diseñados solo para disparadores manuales**. La persona que ejecuta el flujo de trabajo rellena un formulario de inmediato, y este no llega a la bandeja de entrada de nadie. Para flujos de trabajo con otros disparadores (Registro Creado, Actualizado, etc.), los formularios solo son accesibles a través de la interfaz de ejecución de flujos de trabajo. Para pedirle a alguien una respuesta o una aprobación en su bandeja de entrada, usa el paso Enviar a la bandeja de entrada.
 </Warning>
 
 **Configuración**:
@@ -223,6 +276,7 @@ Solicita un formulario durante la ejecución del flujo de trabajo para recopilar
   * una etiqueta
   * un valor predeterminado en `Placeholder` (opcional)
 * Edite el título del formulario
+* Añade instrucciones que se muestren encima de los campos (opcional). Pueden incluir variables de pasos anteriores, por ejemplo, el nombre del registro al que se refiere el formulario.
 
 **Salida**: Las respuestas del formulario están disponibles para su uso en pasos posteriores.
 
@@ -301,9 +355,11 @@ Envía una solicitud a un API externo como parte de su flujo de trabajo.
 * Agregue encabezados y valores necesarios
 * Proporcione una respuesta de muestra para vista previa de estructura
 
+**Límites**: la solicitud falla si tarda más de 30 segundos o si el cuerpo de la solicitud o la respuesta supera los 10 MB.
+
 ## Acciones de IA
 
-### Agente de IA - Próximamente
+### Agente de IA
 
 Ejecuta un agente de IA dentro de su flujo de trabajo para realizar tareas inteligentes.
 
@@ -330,3 +386,24 @@ Las acciones del agente de IA consumen créditos de flujo de trabajo según el m
 <Note>
 Los agentes de IA respetan los permisos basados en roles. Puede asignar roles específicos a los agentes en **Configuración → Miembros → Roles** para controlar a qué datos pueden acceder. Consulte [Permisos](/es/user-guide/permissions-access/capabilities/permissions) para obtener detalles.
 </Note>
+
+### Clasificar
+
+Pide a un modelo de IA que responda una o más preguntas estructuradas sobre datos de pasos anteriores; por ejemplo, calificar un cliente potencial o categorizar un mensaje entrante. A diferencia de Agente de IA, Clasificar siempre devuelve un valor con la estructura que definió, por lo que es adecuado para controlar ramas de forma determinista.
+
+<Note>
+**Requisito previo**: Clasificar se ejecuta en el modelo de evaluación de Twenty (Jev), que un administrador debe habilitar y configurar con una clave de API de TypeSafe AI. Sin ella, la ejecución de este paso falla.
+</Note>
+
+**Configuración**:
+
+* **Entrada**: Los datos que se van a clasificar (p. ej., un registro o texto de un paso anterior)
+* **Preguntas**: Agregue una o más preguntas, cada una con:
+  * Un **nombre**: se utiliza para leer la respuesta en pasos posteriores (p. ej., `{{stepId.answers.<name>}}`)
+  * Un **tipo**: `boolean`, `choice` o `score`
+  * **Instrucciones** para el modelo
+  * **Criterios**: las posibles opciones o los niveles de puntuación de menor a mayor (no es necesario para `boolean`)
+
+**Salida**: La respuesta a cada pregunta, identificada por su nombre, además del modelo utilizado.
+
+<PageBanner illustration="workflows" />

@@ -324,21 +324,21 @@ export const successfulCreateInputByFieldMetadataType: {
     {
       input: {
         phonesField: {
-          primaryPhoneNumber: '1234567890',
+          primaryPhoneNumber: '123456789',
           primaryPhoneCountryCode: 'FR',
           primaryPhoneCallingCode: '+33',
           additionalPhones: [
-            { number: '1234567890', callingCode: '+33', countryCode: 'FR' },
+            { number: '123456789', callingCode: '+33', countryCode: 'FR' },
           ],
         },
       },
       validateInput: (record: Record<string, any>) => {
         return (
-          record.phonesField.primaryPhoneNumber === '1234567890' &&
+          record.phonesField.primaryPhoneNumber === '123456789' &&
           record.phonesField.primaryPhoneCountryCode === 'FR' &&
           record.phonesField.primaryPhoneCallingCode === '+33' &&
           record.phonesField.additionalPhones.length === 1 &&
-          record.phonesField.additionalPhones[0].number === '1234567890' &&
+          record.phonesField.additionalPhones[0].number === '123456789' &&
           record.phonesField.additionalPhones[0].callingCode === '+33' &&
           record.phonesField.additionalPhones[0].countryCode === 'FR'
         );
@@ -347,19 +347,19 @@ export const successfulCreateInputByFieldMetadataType: {
     {
       input: {
         phonesField: {
-          primaryPhoneNumber: '1234567890',
+          primaryPhoneNumber: '123456789',
           primaryPhoneCountryCode: 'FR',
           primaryPhoneCallingCode: '+33',
           additionalPhones: [
             { number: '', callingCode: '+33', countryCode: 'FR' },
-            { number: '1234567890', callingCode: '+33', countryCode: 'FR' },
+            { number: '123456789', callingCode: '+33', countryCode: 'FR' },
           ],
         },
       },
       validateInput: (record: Record<string, any>) => {
         return (
           record.phonesField.additionalPhones.length === 1 &&
-          record.phonesField.additionalPhones[0].number === '1234567890'
+          record.phonesField.additionalPhones[0].number === '123456789'
         );
       },
     },

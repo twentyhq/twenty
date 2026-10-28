@@ -3,7 +3,12 @@ title: Обзор
 description: Серверный TypeScript, который выполняется внутри Twenty — запускается HTTP-маршрутами, расписаниями cron, событиями базы данных, инструментами ИИ или действиями рабочих процессов.
 ---
 
-**Логический слой** приложения Twenty — это код, который *выполняется*: серверные обработчики TypeScript, реагирующие на HTTP-запросы, расписания cron и изменения записей; навыки ИИ и агенты, работающие внутри рабочего пространства; а также OAuth-подключения, позволяющие вашим функциям действовать от имени пользователя в сторонних сервисах.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Что покрывает логический слой
+
+**Логический слой** приложения Twenty — это код, который *выполняется* — серверные обработчики TypeScript, реагирующие на HTTP-запросы, расписания cron и изменения записей; навыки ИИ и агенты, работающие внутри рабочего пространства; подключения (OAuth или пользовательский процесс входа), позволяющие вашим функциям действовать от имени пользователя в сторонних сервисах; а также каналы обмена сообщениями, которые переносят внешний почтовый ящик в Twenty.
 
 ```text
             ┌─ HTTP route      ──┐
@@ -23,21 +28,38 @@ description: Серверный TypeScript, который выполняетс�
 
 ## В этом разделе
 
-<CardGroup cols={2}>
-  <Card title="Логические функции" icon="bolt" href="/ru/developers/extend/apps/logic/logic-functions">
-    Основной строительный блок — типы триггеров, полезные данные (payloads) и типизированный клиент API.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ru/developers/extend/apps/logic/logic-functions" img="/images/user-guide/halftone/card-page-logic-functions.svg">
+    <CardTitle>Logic Functions</CardTitle>
+    Ключевой строительный блок — триггерные типы, полезные нагрузки и тип API клиента.
   </Card>
-  <Card title="Навыки и агенты" icon="robot" href="/ru/developers/extend/apps/logic/skills-and-agents">
-    Повторно используемые инструкции агента ИИ и ассистенты с пользовательскими системными подсказками.
+  <Card href="/ru/developers/extend/apps/logic/skills-and-agents" img="/images/user-guide/halftone/card-page-skills-agents.svg">
+    <CardTitle>Навыки и агенты</CardTitle>
+    Повторно используемые инструкции для агентов ИИ и ассистенты с пользовательскими системными подсказками.
   </Card>
-  <Card title="Подключения" icon="plug" href="/ru/developers/extend/apps/logic/connections">
+  <Card href="/ru/developers/extend/apps/logic/workflows" img="/images/user-guide/halftone/workflows-belt-v1.svg">
+    <CardTitle>Рабочие процессы</CardTitle>
+    Прошлые рабочие процессы, установленные в вашем приложении: триггеры, шаги и как они выполняются.
+  </Card>
+  <Card href="/ru/developers/extend/apps/logic/connections" img="/images/user-guide/halftone/card-page-connections.svg">
+    <CardTitle>Подключения</CardTitle>
     OAuth-учетные данные, которые ваше приложение хранит для сторонних сервисов — Linear, GitHub, Slack и других.
   </Card>
-  <Card title="Хранилище ключ-значение" icon="database" href="/ru/developers/extend/apps/logic/key-value-store">
-    Сохраняйте состояние между запусками логических функций — кэши, курсоры и утверждения между рабочими пространствами.
+  <Card href="/ru/developers/extend/apps/logic/messaging-channels" img="/images/user-guide/halftone/card-page-messaging-channels.svg">
+    <CardTitle>Каналы обмена сообщениями</CardTitle>
+    Привлечение разговоров любого провайдера к записям Twenty's Message and Message Thread — включая обсуждение и удаление дублирования.
   </Card>
-  <Card title="Фоновые задания" icon="stack-2" href="/ru/developers/extend/apps/logic/background-jobs">
-    Поставьте функцию Logic в очередь на исполнение воркерами, чтобы обойти таймаут на один запуск.
+  <Card href="/ru/developers/extend/apps/logic/key-value-store" img="/images/user-guide/halftone/card-page-key-value-store.svg">
+    <CardTitle>Store Key-Value Store</CardTitle>
+    Сохранять состояние между логическими функциями — кэш, курсоры и межрабочее пространство.
+  </Card>
+  <Card href="/ru/developers/extend/apps/logic/background-jobs" img="/images/user-guide/halftone/card-page-background-jobs.svg">
+    <CardTitle>Фоновые задания</CardTitle>
+    Вставить в очередь функции логики на работников, чтобы пройти тайм-аут каждого запуска.
+  </Card>
+  <Card href="/ru/developers/extend/apps/logic/credits" img="/images/user-guide/halftone/card-page-charging-credits.svg">
+    <CardTitle>Списание кредитов</CardTitle>
+    Укажите, за что ваше приложение выставляет счета, и списывайте за это кредиты рабочего пространства.
   </Card>
 </CardGroup>
 
@@ -57,4 +79,8 @@ description: Серверный TypeScript, который выполняетс�
 
 <Note>
 **Хуки времени установки** — код, который выполняется до или после установки, — используют то же окружение выполнения, но свои собственные функции `define*` и находятся в разделе [Config → Install Hooks](/ru/developers/extend/apps/config/install-hooks).
+
+[**Проверка работоспособности**](/ru/developers/extend/apps/logic/logic-functions#health-check) также использует его совместно. Она не объявляет триггер: Twenty вызывает ее по требованию при открытии страницы настроек приложения.
 </Note>
+
+<PageBanner illustration="section-apps-logic" />

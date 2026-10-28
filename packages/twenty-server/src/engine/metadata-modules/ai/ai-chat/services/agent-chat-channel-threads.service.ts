@@ -25,6 +25,9 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 
 const { IS_UNREAD, STATUS } = AGENT_CHAT_CHANNEL_THREAD_PREDICATES;
 
+const IS_ASSIGNED_TO_ME =
+  'thread."assigneeId" = :channelThreadsWorkspaceMemberId::uuid';
+
 type MemberArgs = Omit<AgentChatThreadAccessArgs, 'threadId'>;
 
 type ReadableThreadsQuery = (readableThreads: {
@@ -35,7 +38,7 @@ type ReadableThreadsQuery = (readableThreads: {
 const ASSIGNMENT_FILTERS: Record<AgentChatChannelAssignmentFilter, string> = {
   [AgentChatChannelAssignmentFilter.ANY]: '',
   [AgentChatChannelAssignmentFilter.UNASSIGNED]: `AND thread."assigneeId" IS NULL`,
-  [AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME]: `AND thread."assigneeId" = :channelThreadsWorkspaceMemberId::uuid`,
+  [AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME]: `AND ${IS_ASSIGNED_TO_ME}`,
 };
 
 // Computed here because the client cannot load every chat of every channel to sort them
@@ -130,13 +133,21 @@ export class AgentChatChannelThreadsService {
     const counts = await this.queryReadableThreads<{
       channelId: string;
       openCount: number;
+      assignedToMeCount: number;
+      snoozedCount: number;
+      doneCount: number;
       hasUnreadOpen: boolean;
+      hasUnreadAssignedToMe: boolean;
     }>({
       ...args,
       buildQuery: ({ fromClause, parameters }) => ({
         sql: `SELECT thread."channelId",
               count(*) FILTER (WHERE ${STATUS.OPEN})::int AS "openCount",
-              COALESCE(bool_or(${STATUS.OPEN} AND ${IS_UNREAD}), false) AS "hasUnreadOpen"
+              count(*) FILTER (WHERE ${STATUS.OPEN} AND ${IS_ASSIGNED_TO_ME})::int AS "assignedToMeCount",
+              count(*) FILTER (WHERE ${STATUS.SNOOZED})::int AS "snoozedCount",
+              count(*) FILTER (WHERE ${STATUS.DONE})::int AS "doneCount",
+              COALESCE(bool_or(${STATUS.OPEN} AND ${IS_UNREAD}), false) AS "hasUnreadOpen",
+              COALESCE(bool_or(${STATUS.OPEN} AND ${IS_ASSIGNED_TO_ME} AND ${IS_UNREAD}), false) AS "hasUnreadAssignedToMe"
             ${fromClause}
             AND thread."channelId" = ANY(:channelThreadsChannelIds::uuid[])
             GROUP BY thread."channelId"`,
@@ -154,7 +165,12 @@ export class AgentChatChannelThreadsService {
     return channels.map(({ id }) => ({
       channelId: id,
       openCount: countByChannelId.get(id)?.openCount ?? 0,
+      assignedToMeCount: countByChannelId.get(id)?.assignedToMeCount ?? 0,
+      snoozedCount: countByChannelId.get(id)?.snoozedCount ?? 0,
+      doneCount: countByChannelId.get(id)?.doneCount ?? 0,
       hasUnreadOpen: countByChannelId.get(id)?.hasUnreadOpen ?? false,
+      hasUnreadAssignedToMe:
+        countByChannelId.get(id)?.hasUnreadAssignedToMe ?? false,
     }));
   }
 

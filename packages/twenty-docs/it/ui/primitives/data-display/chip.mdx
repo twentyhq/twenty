@@ -1,0 +1,119 @@
+---
+title: Chip
+description: Mostra contenuto compatto di proprietà del chiamante con slot iniziali e finali facoltativi.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ChipReference from '/snippets/ui/generated/data-display/chip.mdx';
+
+## Panoramica
+
+Usa `Chip` per riferimenti compatti a persone, record o file. Usa [Tag](/it/ui/primitives/data-display/tag) per le categorie colorate e [Status](/it/ui/primitives/data-display/status) per gli stati del workflow.
+
+<StoryEmbed storyId="ui-data-display-chip--display" title="Esempio di Chip" height={90} />
+
+## Utilizzo
+
+```tsx
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+
+export const AssigneeChip = () => (
+  <Chip
+    variant="soft"
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
+  >
+    Jane
+  </Chip>
+);
+```
+
+Gli elementi figli accettano testo o nodi. `startElement` e `endElement` accettano avatar, icone o altro contenuto. `endElementDivider` aggiunge un separatore prima del contenuto finale. Il chip predefinito è un `div`; i relativi slot possono contenere un'azione separata mentre il chip stesso rimane puramente presentazionale.
+
+Chip non inserisce mai un'etichetta. Fornisci un fallback tradotto dalla tua applicazione quando necessario. Ometti i children per i contenuti composti interamente da slot. Un chip interattivo con una sola icona necessita di un nome accessibile fornito dal chiamante.
+
+## Aspetto
+
+<StoryEmbed storyId="ui-data-display-chip--catalog" title="Varianti e dimensioni del chip" height={200} />
+
+`size` accetta `sm` o `md`, con altezze totali di 20px e 24px. `variant` accetta `ghost`, `soft`, `solid`, `plain` o `outline`; `ghost` è il valore predefinito. I chip plain non hanno riempimento a riposo né spaziatura interna iniziale. I chip con contorno hanno un bordo marcato di 1px, un riempimento a riposo più chiaro e una spaziatura interna orizzontale di 8px su ciascun lato, con la stessa altezza totale delle altre varianti. I chip `plain` e `outline` cliccabili utilizzano gli sfondi al passaggio del mouse e alla pressione di `ghost`, il cursore puntatore e l'anello di focus. Usa `shape="round"` per una pillola, `weight="medium"` per l'enfasi e `color="secondary"` per il testo secondario.
+
+## Pulsanti e link
+
+```tsx
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+
+type AssigneeActionProps = {
+  onOpenAssignee: () => void;
+  disabled?: boolean;
+};
+
+export const AssigneeAction = ({
+  onOpenAssignee,
+  disabled,
+}: AssigneeActionProps) => (
+  <Chip
+    render={<button type="button" disabled={disabled} />}
+    onClick={onOpenAssignee}
+    aria-label="Open Jane's record"
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
+  >
+    Jane
+  </Chip>
+);
+```
+
+Fornire `onClick` mantiene il `div` predefinito. Usa `render` per comporre un pulsante nativo esplicito, un'ancora, un link del router o un altro proprietario appropriato. Gli attributi nativi, i gestori, gli stili e la ref radice raggiungono quel proprietario. Un pulsante nativo fornisce l'attivazione da tastiera e il comportamento disabilitato. Chip riconosce lo stato disabilitato nativo e `aria-disabled` per l'aspetto; `aria-disabled` da solo non impedisce l'attivazione.
+
+`clickable` controlla l'aspetto al passaggio del mouse e del puntatore e, per impostazione predefinita, dipende dal fatto che venga fornito `onClick`. Impostalo esplicitamente per un link senza un gestore di clic. Non nidificare pulsanti o link all'interno di un chip che è a sua volta interattivo.
+
+```tsx
+import { Chip } from 'twenty-ui/primitives/data-display';
+
+export const DocumentationChip = () => (
+  <Chip
+    variant="outline"
+    shape="round"
+    render={<a href="https://twenty.com/developers" />}
+    clickable
+  >
+    Documentation
+  </Chip>
+);
+```
+
+Il testo dell'URL rimane testo normale. I link intenzionali appartengono al contenuto del chiamante o alla composizione esplicita della radice.
+
+## Troncamento e tooltip
+
+```tsx
+import { Chip } from 'twenty-ui/primitives/data-display';
+
+export const FileChip = () => (
+  <Chip variant="soft" maxWidth={180} tooltipPlace="top">
+    Quarterly customer research.pdf
+  </Chip>
+);
+```
+
+`maxWidth` limita la larghezza del chip renderizzato in pixel, inclusi il padding e qualsiasi bordo del contorno. Lo stesso limite si applica ai chip semplici con spaziatura interna asimmetrica. Per impostazione predefinita, il contenuto viene troncato con un'ellissi; `truncate={false}` lo lascia senza vincoli di troncamento. I children stringa forniscono il proprio testo del tooltip. Imposta `tooltipContent` per testo personalizzato o contenuto nodo, `tooltipDelay` per il ritardo di apertura e `isTooltipMultiline` per mantenere le interruzioni di riga. `alwaysShowTooltip` abilita inoltre il tooltip quando il contenuto rientra. Queste opzioni seguono [OverflowingTextWithTooltip](/it/ui/primitives/typography/overflowing-text-with-tooltip). Mantieni disponibili le informazioni essenziali senza fare affidamento sul passaggio del mouse.
+
+## Migrazione
+
+Sostituisci `emptyLabel` con children di fallback forniti dal chiamante e sostituisci `forceEmptyText` o `isLabelHidden` con children omessi. Mantieni nell'applicazione i fallback tradotti del prodotto. Sostituisci `tooltipLabel` con `tooltipContent`. Sposta `disabled` al proprietario interattivo esplicito e rimuovi `nativeButton`. Aggiungi un pulsante nativo o un link tramite `render` ovunque il chip si basasse in precedenza su `onClick` per scegliere il proprio elemento.
+
+Sostituisci le sovrascritture della spaziatura interna iniziale con `variant="plain"`. Mantieni `clickable` abilitato per link e pulsanti nativi che richiedono feedback al passaggio del mouse e alla pressione.
+
+## Props
+
+I tipi e i valori predefiniti sono generati dai tipi di componenti pubblici. Sono accettati anche attributi nativi e gestori di eventi.
+
+<ChipReference />
+
+<PageBanner illustration="page-cover-checkbox" />

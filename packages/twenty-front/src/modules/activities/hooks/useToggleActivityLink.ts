@@ -33,7 +33,12 @@ export const useToggleActivityLink = ({
     targetJoinColumnName,
   } = activityLinkConfig;
 
-  const { records: junctionRecords, refetch } = useFindManyRecords({
+  const {
+    records: junctionRecords,
+    loading: isLoadingActivityLinks,
+    error: activityLinksError,
+    refetch,
+  } = useFindManyRecords({
     objectNameSingular: junctionObjectNameSingular,
     filter: {
       [targetJoinColumnName]: { eq: targetRecord.id },
@@ -55,9 +60,11 @@ export const useToggleActivityLink = ({
       (junctionRecord) => junctionRecord[activityJoinColumnName],
     ),
   );
+  const areActivityLinksReady =
+    !isLoadingActivityLinks && !isDefined(activityLinksError);
 
   const toggleActivityLink = async (activityId: string) => {
-    if (pendingActivityIds.includes(activityId)) {
+    if (!areActivityLinksReady || pendingActivityIds.includes(activityId)) {
       return;
     }
 
@@ -89,5 +96,10 @@ export const useToggleActivityLink = ({
     }
   };
 
-  return { linkedActivityIds, pendingActivityIds, toggleActivityLink };
+  return {
+    linkedActivityIds,
+    pendingActivityIds,
+    areActivityLinksReady,
+    toggleActivityLink,
+  };
 };

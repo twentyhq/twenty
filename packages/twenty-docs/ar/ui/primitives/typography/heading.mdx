@@ -1,0 +1,43 @@
+---
+title: عنوان
+description: اعرض عناوين دلالية بأحجام مرئية مستقلة.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import HeadingReference from '/snippets/ui/generated/typography/heading.mdx';
+
+## نظرة عامة
+
+يعرض `Heading` عنصر `h2` افتراضياً. استخدم `children` للمحتوى، و`level` لبنية المستند، و`size` للمظهر.
+
+<StoryEmbed storyId="ui-typography-heading--display" title="مثال على العنوان" height={90} />
+
+## استخدام
+
+اختر المستويات وفق ترتيب المستند. لا يغيّر الحجم المرئي الأصغر المستوى الذي تعلنه التقنية المساعدة.
+
+```tsx
+import { Heading } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceTitle = () => <Heading>Workspace settings</Heading>;
+```
+
+تستخدم الأحجام `xs` و`sm` و`md` و`lg` و`xl` و`xxl` رموز الخط المطابقة. تستخدم الأحجام الأكبر `1.54rem` و`1.85rem` على التوالي. تحافظ جميع الأحجام على وزن شبه عريض وارتفاع سطر قدره `1.1`. يقبل `Section.Header` و`Dialog.Title` قيم الأحجام نفسها. لا تحتوي العناوين على هامش خارجي؛ إذ يتولى التخطيط المحيط بها المسافات.
+
+## اللون والتكوين
+
+<StoryEmbed storyId="ui-typography-heading--catalog" title="أحجام العناوين وألوانها" height={480} />
+
+استخدم `color="secondary"` للعناوين الأقل بروزاً. يتوفر `tertiary` أيضاً، لكن تباينه يعتمد على حجم الخط والسمة والخلفية. تحقق من سهولة القراءة عند استخدامه.
+
+تُمرَّر السمات الأصلية والأنماط وأسماء الفئات والمراجع إلى العنوان. استخدم `render` للتركيب باستخدام عنصر أو مكوّن مخصص؛ ويتحمل ذلك العنصر مسؤولية الحفاظ على دلالات العنوان.
+
+للعنوان الذي يتضمن نصًا داعمًا أو إجراءات، استخدم [Section](/ar/ui/components/layout/section).
+
+## الإزاحة
+
+<HeadingReference />
+
+<PageBanner illustration="section-document-generator" />

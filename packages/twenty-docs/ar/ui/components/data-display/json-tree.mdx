@@ -1,0 +1,45 @@
+---
+title: JsonTree
+description: استكشف قيم JSON باستخدام عُقد قابلة للتوسيع وتسميات مخصصة.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import JsonTreeReference from '/snippets/ui/generated/components/data-display/json-tree.mdx';
+
+## نظرة عامة
+
+يعرض `JsonTree` إما `value` بتنسيق JSON أو مصفوفة من `entries` المُسمّاة. مرر جميع تسميات القيم الفارغة والتوسيع/الطي لكي يتحكم تطبيقك في النص.
+
+<StoryEmbed storyId="ui-jsonvisualizer-jsontree--display" title="تفاصيل السجل القابلة للتوسيع" height={320} />
+
+## استخدام
+
+```tsx
+import { JsonTree } from 'twenty-ui/components/data-display';
+
+export const RecordDetails = () => (
+  <JsonTree
+    value={{ name: 'Acme', active: true, contacts: [] }}
+    emptyStringLabel="Empty text"
+    emptyArrayLabel="No items"
+    emptyObjectLabel="No properties"
+    arrowButtonCollapsedLabel="Expand node"
+    arrowButtonExpandedLabel="Collapse node"
+  />
+);
+```
+
+يحتوي كل إدخال على `id` و`label` و`value` بتنسيق JSON. استخدم الإدخالات عندما تختلف تسميات العرض عن المفاتيح المخزنة. يُوسّع الإعداد الافتراضي العمقين 0 و1. تجاوز `shouldExpandNodeInitially={({ depth }) => depth === 0}` لتوسيع الجذر فقط؛ ويكون التوسيع اللاحق مسؤولية كل عقدة.
+
+تعيد `getNodeHighlighting(keyPath)` القيمة `blue` أو `red` أو `partial-blue` أو `undefined`. تتلقى `onNodeValueClick` النص المعروض: قيم الأوراق كسلاسل نصية، وتسمية القيمة الفارغة المطابقة للسلاسل النصية والمصفوفات والكائنات الفارغة. تعرض الشجرة البيانات ولا تعدّلها.
+
+عند توفير `onNodeValueClick`، تكون القيم أزرارًا أصلية تُسمّى بالنص المعروض لها. ينقل Tab التركيز إلى قيمة؛ ويؤدي Enter أو Space أو النقر بالمؤشر إلى تنشيطها. من دون دالة الاستدعاء، تبقى القيم نصًا غير تفاعلي. لا ترسل أزرار القيم النماذج الحاوية.
+
+## الإزاحة
+
+<JsonTreeReference />
+
+<PageBanner illustration="page-cover-hierarchy" />

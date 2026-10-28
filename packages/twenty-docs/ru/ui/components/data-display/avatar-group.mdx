@@ -1,0 +1,159 @@
+---
+title: Группа аватаров
+description: Перекрывающиеся аватары с производным индикатором переполнения.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AvatarGroupReference from '/snippets/ui/generated/components/data-display/avatar-group.mdx';
+
+## Обзор
+
+`AvatarGroup` получает отрисованные аватары и определяет количество скрытых. `maxVisible` учитывает фактические аватары; индикатор переполнения является дополнительным. При наличии восьми аватаров `maxVisible={3}` отображаются три аватара и `+5`.
+
+<StoryEmbed storyId="ui-data-display-avatargroup--display" title="Восемь аватаров, три из которых видимы" height={100} />
+
+## Использование
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const TeamAvatars = () => (
+  <AvatarGroup
+    maxVisible={3}
+    overflowShape="circle"
+    overlap="left"
+    overlapOffset="4px"
+    avatars={[
+      'Ada',
+      'Grace',
+      'Margaret',
+      'Annie',
+      'Mary',
+      'Dorothy',
+      'Katherine',
+      'Joan',
+    ].map((name) => (
+      <Avatar
+        key={name}
+        name={name}
+        shape="circle"
+        imageProps={{ alt: name }}
+      />
+    ))}
+  />
+);
+```
+
+Передавайте стабильные ключи, чтобы оставшиеся аватары оставались смонтированными при изменении лимита, общего количества или порядка отображения. Аватары по умолчанию являются декоративными. Когда группа является единственным представлением своих участников, укажите имя каждого участника через `imageProps.alt`, чтобы добавить подпись к изображению и резервному варианту по умолчанию. Сохраняйте аватары декоративными, когда видимый текст или метка владельца уже указывают на эту личность.
+
+## Визуальные параметры
+
+Сравните круглые и квадратные аватары каждого размера. В этой сравнительной таблице в группе отображаются три участника.
+
+<StoryEmbed storyId="ui-data-display-avatargroup--catalog" title="Сравните формы и размеры аватаров" height={850} />
+
+## Частично загруженные коллекции
+
+Используйте `total` для полного размера коллекции, когда загружены только некоторые аватары. Три переданных и видимых аватара с `total={20}` отображают `+17`. Передайте все загруженные аватары и позвольте группе применить `maxVisible`.
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const LoadedTeamAvatars = () => (
+  <AvatarGroup
+    maxVisible={3}
+    total={20}
+    avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
+    ))}
+  />
+);
+```
+
+Значение `total` округляется вниз и не может быть меньше количества переданных аватаров, пригодных для рендеринга. Для неконечных итоговых значений используется переданное количество. Вычисленное количество скрытых аватаров всегда неотрицательно.
+
+Значение `maxVisible` по умолчанию равно `4`. Конечные лимиты округляются вниз и ограничиваются нулём, `Infinity` отображает все переданные аватары, а `NaN` не отображает ни одного. Пустые узлы React не считаются аватарами. При нулевом лимите может отображаться только индикатор переполнения. Пустая группа с положительным общим количеством может показывать это количество в своём индикаторе; пустая группа без скрытых аватаров ничего не рендерит.
+
+<StoryEmbed storyId="ui-data-display-avatargroup--partially-loaded" title="Три загруженных участника из команды в двадцать человек" height={100} />
+
+## Пользовательское переполнение
+
+`renderOverflow` получает то же вычисленное количество скрытых аватаров, что и стандартный индикатор `+N`. Он выполняется только при положительном количестве. Верните `null`, чтобы скрыть индикатор, не изменяя набор видимых аватаров.
+
+Используйте явный элемент управления, когда индикатор выполняет действие. Его доступное имя должно описывать действие и количество.
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+type TeamAvatarsWithActionProps = { onShowAll: () => void };
+
+export const TeamAvatarsWithAction = ({
+  onShowAll,
+}: TeamAvatarsWithActionProps) => (
+  <AvatarGroup
+    maxVisible={3}
+    total={20}
+    avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
+    ))}
+    renderOverflow={(hiddenCount) => (
+      <Button
+        size="sm"
+        aria-label={`Show ${hiddenCount} more members`}
+        onClick={onShowAll}
+      >
+        +{hiddenCount}
+      </Button>
+    )}
+  />
+);
+```
+
+<StoryEmbed storyId="ui-data-display-avatargroup--custom-overflow" title="Пользовательская кнопка переполнения" height={100} />
+
+## Внешний вид
+
+Более поздние аватары всегда отрисовываются поверх более ранних. `overlap` выбирает физическое поле, `left` или `right`, к которому применяется отрицательное смещение. `overlapOffset` задаёт это смещение как длину CSS. `overflowShape` задаёт форму стандартного числового индикатора.
+
+## Настройка корневого элемента
+
+Нативные атрибуты, обработчики событий, `className` и `style` применяются к корневому элементу. Его элементом по умолчанию является `div`, в том числе при передаче `onClick`. Используйте нативные интерактивные элементы для действий, например кнопку переполнения выше.
+
+Корневой элемент принимает ref и `render`, который может быть элементом или функцией. Пользовательские компоненты должны передавать предоставленные props и ref своему нативному корневому элементу. См. [пользовательские компоненты](/ru/ui/primitives/overview#custom-components), чтобы ознакомиться с требованиями к композиции.
+
+```tsx
+import { useRef } from 'react';
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const NamedTeamAvatars = () => {
+  const groupRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <AvatarGroup
+      ref={groupRef}
+      role="group"
+      aria-label="Project members"
+      style={{ marginBlock: 8 }}
+      render={<div data-location="project-header" />}
+      avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+        <Avatar key={name} name={name} imageProps={{ alt: name }} />
+      ))}
+    />
+  );
+};
+```
+
+## Свойства
+
+`AvatarGroupProps` экспортируется из `twenty-ui/components/data-display`.
+
+<AvatarGroupReference />
+
+<PageBanner illustration="page-cover-users" />

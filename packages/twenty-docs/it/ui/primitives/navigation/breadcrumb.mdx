@@ -1,0 +1,150 @@
+---
+title: Breadcrumb
+description: Mostra la posizione di una pagina con un percorso di link agli elementi predecessori.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import BreadcrumbReference from '/snippets/ui/generated/navigation/breadcrumb.mdx';
+
+## Panoramica
+
+`Breadcrumb` visualizza un percorso di navigazione ordinato. Include separatori decorativi, stili di focus dei link e il troncamento dell'etichetta dell'elemento finale. Gli elementi mantengono il comportamento nativo delle ancore e supportano il routing personalizzato tramite `render`. Il breadcrumb utilizza in modo coerente un peso del carattere medio, anche all'interno di intestazioni con un peso diverso.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--display" title="Esempio di Breadcrumb" height={100} />
+
+## Utilizzo
+
+Passa gli elementi nell'ordine dall'antenato a quello corrente. Il landmark di navigazione usa per impostazione predefinita il nome accessibile `Breadcrumb`; usa `aria-label` per localizzarlo o distinguere più percorsi. Per impostazione predefinita, l'elemento finale usa `aria-current="page"`, indipendentemente dal fatto che abbia una destinazione o visualizzi testo semplice.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const CompanyBreadcrumb = () => (
+  <Breadcrumb
+    aria-label="Breadcrumb"
+    links={[
+      { children: 'Home', href: '/' },
+      { children: 'Companies', href: '/companies' },
+      { children: 'Acme' },
+    ]}
+  />
+);
+```
+
+Gli elementi con `href` usano ancore native. Gli elementi senza una destinazione sono per impostazione predefinita testo. I separatori `/` sono decorativi, nascosti alle tecnologie assistive e al di fuori dei nomi accessibili dei link. I link seguono il normale comportamento del browser per Tab e Invio, inclusi i clic con tasti modificatori e l'apertura in una nuova scheda.
+
+## Props nativi degli elementi
+
+Ogni elemento accetta attributi anchor nativi, gestori di eventi, `className`, `style` e `ref`. Ad esempio, passa `target` e `rel` per una nuova scheda, `download` per un file oppure `referrerPolicy` per controllare la richiesta. Il ref dell'elemento raggiunge l'elemento DOM renderizzato.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const ReferenceBreadcrumb = () => (
+  <Breadcrumb
+    aria-label="Reference location"
+    links={[
+      {
+        children: 'Documentation',
+        href: 'https://docs.twenty.com',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        referrerPolicy: 'no-referrer',
+      },
+      { children: 'Companies' },
+    ]}
+  />
+);
+```
+
+## Pagina corrente
+
+Un valore `aria-current` esplicito su un elemento ha la precedenza sulla sua posizione. Usa `aria-current="page"` su un altro elemento e `aria-current={false}` sull'elemento finale quando la pagina corrente si trova prima nel percorso. Anche altri valori nativi per l'elemento corrente, come `step`, vengono mantenuti. Assicurati che sia corrente solo l'elemento previsto.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const CompanyContextBreadcrumb = () => (
+  <Breadcrumb
+    links={[
+      { children: 'Home', href: '/' },
+      {
+        children: 'Companies',
+        href: '/companies',
+        'aria-current': 'page',
+      },
+      { children: 'Acme', 'aria-current': false },
+    ]}
+  />
+);
+```
+
+## Link del router
+
+Usa la prop `render` di un elemento per fornire il componente link del router, insieme a `href`. Passa direttamente a quel componente destinazioni, stato e opzioni della cronologia specifici del router. `render` accetta un elemento o una funzione che riceve le props fornite, inclusi gli attributi anchor nativi e il relativo ref.
+
+Il link visualizzato deve inoltrare le prop e il ref forniti al relativo anchor. Mantieni il comportamento nativo dei link durante la gestione della navigazione, inclusi i clic con tasti modificatori e le nuove schede. Consulta [componenti personalizzati](/it/ui/primitives/overview#custom-components) per i requisiti di composizione.
+
+L'applicazione sceglie le destinazioni e decide quando mostrare un'azione per tornare indietro su dispositivi mobili. `Breadcrumb` non deduce le route né comprime gli antenati in un menu.
+
+## Etichette lunghe
+
+L'elemento finale si riduce e viene troncato con un'ellissi quando il contenitore ha spazio limitato. Gli elementi antenati mantengono la propria larghezza. Le etichette stringa semplici diventano automaticamente il tooltip nativo del browser. Usa `title` per sovrascrivere quel testo o fornire un tooltip per contenuti ricchi. Imposta `title=""` per sopprimere il tooltip automatico.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--truncation" title="Breadcrumb con un'etichetta lunga della pagina corrente" height={100} />
+
+## Contenuto ricco
+
+I `children` di un elemento possono includere testo e contenuti visivi di supporto. Mantieni l'etichetta leggibile ed evita di annidare controlli interattivi all'interno di un link.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--rich-content" title="Breadcrumb con contenuto di supporto" height={100} />
+
+## Direzione del testo
+
+Il percorso segue la direzione del testo circostante. Imposta `dir="rtl"` su `Breadcrumb` o su un antenato per i contenuti da destra a sinistra. Quando altri controlli richiedono un comportamento direzionale coerente per tastiera o puntatore, imposta anche [DirectionProvider](/it/ui/primitives/layout/direction-provider) sulla stessa direzione.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--rtl" title="Breadcrumb in contenuto da destra a sinistra" height={100} />
+
+## Personalizzazione dell'elemento radice
+
+Gli attributi di navigazione nativi, inclusi i nomi accessibili, `className`, `style` e i gestori di eventi, raggiungono il landmark radice. Il ref dell'elemento radice raggiunge il relativo elemento `nav`. Anche `render` dell'elemento radice accetta un elemento o una funzione; mantieni il landmark di navigazione e inoltra le props fornite e il relativo ref.
+
+```tsx
+import { useRef } from 'react';
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const HeaderBreadcrumb = () => {
+  const navigationRef = useRef<HTMLElement>(null);
+  const companiesRef = useRef<HTMLAnchorElement>(null);
+
+  return (
+    <Breadcrumb
+      aria-label="Company location"
+      ref={navigationRef}
+      render={<nav data-location="header" />}
+      links={[
+        {
+          children: 'Companies',
+          href: '/companies',
+          ref: companiesRef,
+          render: (props) => (
+            <a {...props} data-route={props.href}>
+              {props.children}
+            </a>
+          ),
+        },
+        { children: 'Acme' },
+      ]}
+    />
+  );
+};
+```
+
+## Props
+
+<BreadcrumbReference />
+
+<PageBanner illustration="card-page-navigation" />

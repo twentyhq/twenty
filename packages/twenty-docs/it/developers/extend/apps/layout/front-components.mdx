@@ -3,25 +3,31 @@ title: Componenti front-end
 description: Crea componenti React che vengono renderizzati all'interno della UI di Twenty con isolamento in sandbox.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 I componenti front-end sono componenti React che vengono renderizzati direttamente all'interno della UI di Twenty. Vengono eseguiti in un **Web Worker isolato** utilizzando Remote DOM — il tuo codice viene eseguito all'interno di un iframe con origine opaca e in sandbox, ma la sua interfaccia utente continua a essere renderizzata in modo nativo nella pagina invece di essere confinata in quell'iframe.
 
 <Warning>
-I componenti Front sono ancora in fase di sviluppo attivo. Il tuo codice viene eseguito su un DOM parziale, non su una vera pagina del browser, quindi gli utilizzi avanzati possono fallire, spesso in modo silenzioso. Vedi [Limitazioni attuali](#current-limitations).
+  I componenti Front sono ancora in fase di sviluppo attivo. Il tuo codice viene eseguito su un DOM parziale, non su una vera pagina del browser, quindi gli utilizzi avanzati possono fallire, spesso in modo silenzioso. Vedi [Limitazioni attuali](#current-limitations).
 </Warning>
 
 ## Dove possono essere utilizzati i componenti front-end
 
-I componenti front-end possono essere renderizzati in tre posizioni all'interno di Twenty:
+I componenti front-end possono essere renderizzati in quattro posizioni all'interno di Twenty:
 
 * **Pannello laterale** — I componenti front-end non headless si aprono nel pannello laterale destro. Questo è il comportamento predefinito quando un componente front-end viene avviato dal menu comandi.
 * **Widget (dashboard e pagine dei record)** — I componenti front possono essere incorporati come widget all'interno dei [layout di pagina](/it/developers/extend/apps/layout/page-layouts). Quando si configura una dashboard o il layout di una pagina record, gli utenti possono aggiungere un widget del componente front-end.
-* **Impostazioni dell'app** — Definito con [`defineSettingsFrontComponent()`](#custom-settings-component), il componente front-end viene renderizzato come una sezione all'interno della scheda **Settings** dell'app, al posto dell'interfaccia utente predefinita per la configurazione delle variabili.
+* **Impostazioni dell'app** — Indicate da una dichiarazione [`defineSettingsMenuItem()`](#settings-menu-items), il componente front-end visualizza la pagina associata a una delle voci del menu delle impostazioni dell'app. Un'app può dichiararne diverse.
+* **Chat IA** — Una [funzione logica esposta come strumento IA](/it/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) può assegnare un nome a un componente front-end, che quindi renderizza le chiamate di quello strumento in linea nella chat al posto della riga dei passaggi predefinita.
 
-Un componente front da solo non è raggiungibile dall'interfaccia utente: devi renderlo visibile. I tre modi per farlo sono:
+Un componente front da solo non è raggiungibile dall'interfaccia utente — devi *renderlo visibile*. I quattro modi per farlo sono:
 
 * **Associarlo a un [elemento di menu dei comandi](/it/developers/extend/apps/layout/command-menu-items)** — lo registra nel menu dei comandi (Cmd+K) e, facoltativamente, come azione rapida fissata.
 * **Incorporarlo come widget in un [layout di pagina](/it/developers/extend/apps/layout/page-layouts)** — lo posiziona nella pagina dei dettagli di un record o in una dashboard.
-* **Definirlo con [`defineSettingsFrontComponent()`](#custom-settings-component)** — lo renderizza come una sezione all'interno della scheda **Settings** dell'app, al posto dell'interfaccia utente predefinita per la configurazione delle variabili.
+* **Indica con [`defineSettingsMenuItem()`](#settings-menu-items)** — la visualizza dietro una delle voci del menu delle impostazioni dell'app.
+* **Assegnagli un nome dalle [`toolTriggerSettings` di una funzione logica](/it/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action)** — renderizza le chiamate dello strumento nella chat IA.
 
 ## Esempio di base
 
@@ -60,9 +66,9 @@ export default defineCommandMenuItem({
 });
 ```
 
-Dopo la sincronizzazione con `yarn twenty dev` (o eseguendo una volta sola `yarn twenty apply`), l'azione rapida appare nell'angolo in alto a destra della pagina:
+Dopo la sincronizzazione con `twenty app dev` (o eseguendo una sola volta `twenty app apply`), l'azione rapida appare nell'angolo in alto a destra della pagina:
 
-<div style={{textAlign: 'center'}}>
+<div style={{ textAlign: 'center' }}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Pulsante di azione rapida nell'angolo in alto a destra" />
 </div>
 
@@ -70,45 +76,108 @@ Fai clic per renderizzare il componente in linea.
 
 ## Campi di configurazione
 
-| Campo                 | Obbligatorio | Descrizione                                                            |
-| --------------------- | ------------ | ---------------------------------------------------------------------- |
-| `universalIdentifier` | Sì           | ID univoco stabile per questo componente                               |
-| `component`           | Sì           | Una funzione di componente React                                       |
-| `name`                | No           | Nome visualizzato                                                      |
-| `description`         | No           | Descrizione di ciò che fa il componente                                |
-| `isHeadless`          | No           | Imposta su `true` se il componente non ha una UI visibile (vedi sotto) |
+| Campo                 | Obbligatorio | Descrizione                                                                                                                           |
+| --------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Sì           | ID univoco stabile per questo componente                                                                                              |
+| `component`           | Sì           | Una funzione di componente React                                                                                                      |
+| `name`                | No           | Nome visualizzato                                                                                                                     |
+| `description`         | No           | Descrizione di ciò che fa il componente                                                                                               |
+| `isHeadless`          | No           | Imposta su `true` se il componente non ha una UI visibile (vedi sotto)                                                                |
+| `widgetAvailability`  | No           | Selettore di widget che offre il componente: pagine del record, facoltativamente limitate agli oggetti, oppure dashboard (vedi sotto) |
 
 ## Posizionare un componente front-end su una pagina
 
 Oltre ai comandi, puoi incorporare un componente front-end direttamente in una pagina record aggiungendolo come widget in un **layout di pagina**. Vedi [Layout di pagina](/it/developers/extend/apps/layout/page-layouts) per i dettagli.
 
-## Componente delle impostazioni personalizzato
+`widgetAvailability` determina quale selettore di widget offre il componente durante la modifica di un layout di pagina. Un componente front viene creato per le pagine del record, dove opera sul record visualizzato, oppure per le dashboard, pertanto dichiara un `pageLayoutType`:
 
-Per sostituire l'interfaccia utente di configurazione delle variabili generata automaticamente nella scheda **Settings** della tua app con il tuo componente, definiscilo con `defineSettingsFrontComponent` invece di `defineFrontComponent`. Utilizza gli stessi [campi di configurazione](#configuration-fields) (tranne `isHeadless`, che non è accettato poiché un componente delle impostazioni renderizza sempre un'interfaccia utente visibile) e inoltre contrassegna il componente come l'interfaccia delle impostazioni dell'app.
+| `widgetAvailability`                                                                | Disponibile in                       |
+| ----------------------------------------------------------------------------------- | ------------------------------------ |
+| omesso                                                                              | nessun selettore di widget           |
+| `{ pageLayoutType: PageLayoutType.RECORD_PAGE }`                                    | ogni pagina del record               |
+| `{ pageLayoutType: PageLayoutType.RECORD_PAGE, objectUniversalIdentifiers: [...] }` | le pagine del record di tali oggetti |
+| `{ pageLayoutType: PageLayoutType.DASHBOARD }`                                      | cruscotti                            |
 
-Il componente viene renderizzato come una sezione **all'interno** della scheda Settings, non come una sostituzione dell'intera scheda. Le sezioni gestite dal sistema di Twenty — aggiornamento automatico, URL dell'app e connessioni — vengono sempre renderizzate sopra di essa e non possono essere sovrascritte dall'app.
+```tsx
+import {
+  defineFrontComponent,
+  PageLayoutType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
 
-```tsx src/front-components/app-settings.tsx
-import { defineSettingsFrontComponent } from 'twenty-sdk/define';
-
-const AppSettings = () => {
-  return (
-    <div style={{ padding: '20px' }}>
-      <h2>My app settings</h2>
-      {/* render your own configuration UI here */}
-    </div>
-  );
-};
-
-export default defineSettingsFrontComponent({
-  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-  name: 'app-settings',
-  description: "Custom UI for the app's Settings tab",
-  component: AppSettings,
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'company-notes',
+  component: CompanyNotes,
+  widgetAvailability: {
+    pageLayoutType: PageLayoutType.RECORD_PAGE,
+    objectUniversalIdentifiers: [
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+    ],
+  },
 });
 ```
 
-È consentito un solo componente di front-end delle impostazioni per app; dichiararne più di uno fa fallire la build. Quando presente, la scheda **Settings** dell'app renderizza questo componente al posto dell'interfaccia utente di configurazione delle variabili predefinita.
+Ometti `widgetAvailability` per un componente che viene aperto solo da un comando, da una [voce del menu delle impostazioni](#settings-menu-items) o da una riga della timeline. Non limita mai dove viene visualizzato un componente: i comandi, le voci del menu delle impostazioni e i layout di pagina dichiarati dalla tua app lo visualizzano indipendentemente dal suo valore. La compilazione avvisa della presenza di un componente visibile che non ne dichiara alcuno e che non viene aperto da nessun'altra posizione.
+
+## Voci del menu delle impostazioni
+
+Un'app può aggiungere le proprie voci al menu delle impostazioni, ciascuna delle quali visualizza un componente front-end. Dichiarane una con `defineSettingsMenuItem()` nel proprio file, indicandole il componente che la visualizza:
+
+```tsx src/settings-menu-items/sync-settings.ts
+import { defineSettingsMenuItem } from 'twenty-sdk/define';
+
+export default defineSettingsMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+  title: 'Sync',
+  icon: 'IconRefresh',
+  position: 1,
+});
+```
+
+La voce di menu indica il componente front-end anziché il componente che si dichiara come voce delle impostazioni. Un componente può quindi supportare diverse voci di menu e una voce può essere reindirizzata a un componente diverso senza modificare nessuno dei due.
+
+Ogni voce viene visualizzata come scheda nella pagina dell'app in **Impostazioni > App**, dopo **Generali**, nell'ordine di `position`.
+
+Dichiarane quante te ne servono. La voce **Generale** di Twenty — aggiornamento automatico, URL dell'app e connessioni — viene sempre prima e non può essere sovrascritta da un'app; l'URL dell'app viene visualizzato solo quando l'app dispone di funzioni attivate tramite HTTP.
+
+### Campi
+
+| Campo                               | Descrizione                                                                                  |
+| ----------------------------------- | -------------------------------------------------------------------------------------------- |
+| `universalIdentifier`               | Un UUID che generi una sola volta e di cui sei proprietario, stabile tra le sincronizzazioni |
+| `frontComponentUniversalIdentifier` | L'`universalIdentifier` del componente front-end visualizzato da questa voce                 |
+| `titolo`                            | L'etichetta della voce. `General` è riservato e causa l'errore della build                   |
+| `icon` *(facoltativo)*              | Nome dell'icona, risolto lato client; un nome sconosciuto usa un valore predefinito          |
+| `position` *(facoltativo)*          | Ordine di ordinamento, crescente. Il valore predefinito è `0`                                |
+| `scope` *(facoltativo)*             | `WORKSPACE` (predefinito) o `USER`                                                           |
+
+`position` è un valore decimale, quindi una voce può essere inserita tra due voci esistenti senza rinumerarle. Le voci vengono ordinate per `position` crescente, con i pareggi risolti in base a `universalIdentifier`, così l'ordine è lo stesso in ogni workspace. Due voci della stessa app non possono condividere una posizione nello stesso ambito: la sincronizzazione lo rifiuta anziché lasciare che sia l'ordine di installazione a decidere quale venga visualizzata per prima.
+
+### Ambito workspace e utente
+
+`scope` indica da chi viene configurata una voce:
+
+* **`WORKSPACE`** (predefinito) — configurata una volta per l'intero workspace, insieme alle altre impostazioni del workspace. Queste sono le voci visualizzate come schede nella pagina dell'app.
+* **`USER`** — configurata da ciascun membro per sé stesso, nelle proprie impostazioni utente.
+
+<Note>
+  Un elemento `USER` viene visualizzato come scheda nella pagina dell'app in **Impostazioni > Preferenze
+  dell'app**, dove può vederlo solo il membro che ha effettuato l'accesso e solo quando il suo
+  ruolo concede l'autorizzazione `CONNECTED_ACCOUNTS`. Quella pagina non è ancora abilitata in
+  ogni spazio di lavoro: dove non lo è, un elemento `USER` viene mantenuto e sincronizzato
+  ma non viene visualizzato da nulla.
+</Note>
+
+Una voce `USER` viene eseguita come il membro che la visualizza. Per memorizzare qualcosa per persona, dichiara la variabile con `scope: 'USER'`: `getApplicationVariable` restituisce il valore del membro che sta visualizzando la pagina e il componente lo salva con `updateMyUserApplicationVariable`, che scrive solo il valore di quel membro e richiede `SystemPermissionFlag.CONNECTED_ACCOUNTS` nel ruolo della tua app, se ne dichiara uno (vedi [Lettura e aggiornamento delle variabili in fase di esecuzione](#reading-and-updating-variables-at-runtime)). Come un elemento `WORKSPACE`, un elemento `USER` sostituisce il modulo **Variabili** generato, quindi dovrebbe consentire al membro di impostare tutte le variabili utente necessarie all'app. Una variabile dello spazio di lavoro contiene un valore condiviso da tutti, quindi il salvataggio di un membro sovrascriverebbe quello di un altro.
+
+<Note>
+  `defineSettingsFrontComponent()` è deprecato a favore di
+  `defineSettingsMenuItem()`. Un'app che lo utilizza ancora continua a funzionare: il suo
+  componente viene trattato come una singola voce di menu **Impostazioni**, ma può sempre e solo
+  dichiararne una, limitazione che `defineSettingsMenuItem()` esiste per eliminare.
+</Note>
 
 ## Headless vs non headless
 
@@ -120,14 +189,20 @@ I componenti front-end prevedono due modalità di rendering controllate dall'opz
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, enqueueSnackbar } from 'twenty-sdk/front-component';
+import {
+  useSelectedRecordIds,
+  enqueueSnackbar,
+} from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const SyncTracker = () => {
   const [recordId] = useSelectedRecordIds();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -153,7 +228,7 @@ Importali da `twenty-sdk/front-component`:
 * **`Command`** — Esegue una callback asincrona tramite la prop `execute`.
 * **`CommandLink`** — Naviga verso un percorso dell'app. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Apre una finestra modale di conferma. Se l'utente conferma, esegue la callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Apre una pagina del pannello laterale. Le props dipendono da `page` — ad esempio `ViewRecord` accetta `recordId` + `objectNameSingular` (più un id `tab` opzionale per aprire il record in una scheda specifica), altre pagine accettano `pageTitle` + `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Apre il contenuto nel pannello laterale. Le pagine instradate utilizzano le stesse props tipizzate `to`, `params` e `queryParams` di `CommandLink`, oltre alle props facoltative `hash`, `pageTitle` e `resetNavigationStack`. Il registro delle route dell'area di lavoro decide se l'`AppPath` richiesto supporta il pannello laterale. `pageTitle` sovrascrive il titolo dell'intestazione del pannello, mentre `resetNavigationStack` cancella le pagine precedenti del pannello prima di aprire la route. Gli strumenti del pannello progettati appositamente utilizzano le proprie prop specifiche della pagina.
 
 Ecco un esempio completo di componente front-end headless che usa `Command` per eseguire un'azione dal menu comandi:
 
@@ -227,13 +302,13 @@ export default defineFrontComponent({
 });
 ```
 
-Ed ecco un esempio che usa `CommandOpenSidePanelPage` per aprire il record corrente nel pannello laterale in una scheda specifica. `tab` è un id di scheda di layout della pagina (i layout predefiniti usano id come `company-tab-emails` o `company-tab-timeline`; i layout personalizzati usano l'id della scheda stessa). Se l'id non esiste nel layout del record, viene invece aperta la scheda predefinita:
+Ed ecco un esempio che usa `CommandOpenSidePanelPage` per aprire il record corrente nel pannello laterale in una scheda specifica. `hash` è un id della scheda del layout della pagina senza il `#` iniziale (i layout predefiniti utilizzano id come `company-tab-emails` o `company-tab-timeline`; i layout personalizzati utilizzano l'id della scheda stessa). Se l'id non esiste nel layout del record, viene invece aperta la scheda predefinita:
 
 ```tsx src/front-components/open-company-emails.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  AppPath,
   CommandOpenSidePanelPage,
-  SidePanelPages,
   useSelectedRecordIds,
 } from 'twenty-sdk/front-component';
 
@@ -247,10 +322,12 @@ const OpenCompanyEmails = () => {
 
   return (
     <CommandOpenSidePanelPage
-      page={SidePanelPages.ViewRecord}
-      recordId={recordId}
-      objectNameSingular="company"
-      tab="company-tab-emails"
+      to={AppPath.RecordShowPage}
+      params={{
+        objectNameSingular: 'company',
+        objectRecordId: recordId,
+      }}
+      hash="company-tab-emails"
       resetNavigationStack={false}
     />
   );
@@ -325,7 +402,10 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_APP_ACCESS_TOKEN` viene inserito automaticamente — vedi [Variabili dell’applicazione](#application-variables). Poiché le variabili di applicazione segrete non vengono mai esposte ai front component, mantieni le chiavi API e altra logica sensibile all’interno della funzione logica, non nel front component.
+  `TWENTY_APP_ACCESS_TOKEN` viene inserito automaticamente — vedi Variabili
+  dell’applicazione. Poiché le variabili di applicazione segrete non vengono mai esposte ai
+  componenti front-end, mantieni le chiavi API e altra logica sensibile nella
+  funzione logica, non nel componente front-end.
 </Note>
 
 ### Chiamare le Twenty REST API
@@ -408,15 +488,69 @@ export default defineFrontComponent({
 
 Hook disponibili:
 
-| Hook                                          | Restituisce          | Descrizione                                                                                                   |
-| --------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` o `null`    | L'ID dell'utente corrente                                                                                     |
-| `useSelectedRecordIds()`                      | `string[]`           | Tutti gli ID dei record selezionati (array vuoto se nessuno è selezionato)                                    |
-| `useRecordId()`                               | `string` o `null`    | **Deprecato.** Usa `useSelectedRecordIds()` al suo posto                                                      |
-| `useFrontComponentId()`                       | `string`             | L'ID di questa istanza di componente                                                                          |
-| `useTimelineActivityId()`                     | `string` o `null`    | L'ID dell'attività della cronologia corrente durante il rendering di una riga della cronologia personalizzata |
-| `useColorScheme()`                            | `'light'` o `'dark'` | Lo schema di colori attivo dell'interfaccia utente dell'host (`System` è già stato risolto)                   |
-| `useFrontComponentExecutionContext(selector)` | varia                | Accedi all'intero contesto di esecuzione con una funzione selettore                                           |
+| Hook                                          | Restituisce                                     | Descrizione                                                                                                                                          |
+| --------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` o `null`                               | L'ID dell'utente corrente                                                                                                                            |
+| `useSelectedRecordIds()`                      | `string[]`                                      | Tutti gli ID dei record selezionati (array vuoto se nessuno è selezionato)                                                                           |
+| `useSelectedRecordsFilter()`                  | `RecordGqlOperationFilter` o `null`             | Filtro corrispondente esattamente ai record selezionati, incluso in Seleziona tutto                                                                  |
+| `useSelectedObjectMetadata()`                 | `FrontComponentSelectedObjectMetadata` o `null` | I metadati dell'oggetto associati al contesto del record di questo componente front                                                                  |
+| `useRecordId()`                               | `string` o `null`                               | **Deprecato.** Usa `useSelectedRecordIds()` al suo posto                                                                                             |
+| `useFrontComponentId()`                       | `string`                                        | L'ID di questa istanza di componente                                                                                                                 |
+| `useTimelineActivityId()`                     | `string` o `null`                               | L'ID dell'attività della cronologia corrente durante il rendering di una riga della cronologia personalizzata                                        |
+| `useColorScheme()`                            | `'light'` o `'dark'`                            | Lo schema di colori attivo dell'interfaccia utente dell'host (`System` è già stato risolto)                                                          |
+| `useLocation()`                               | `FrontComponentLocation` o `null`               | Il pathname, la stringa di query e l'hash della route host, oltre all'origine dell'app host                                                          |
+| `useToolCall()`                               | `FrontComponentToolCall` o `null`               | La chiamata dello strumento AI visualizzata da questo componente, quando è stata resa disponibile dalle `toolTriggerSettings` di una funzione logica |
+| `useFrontComponentExecutionContext(selector)` | varia                                           | Accedi all'intero contesto di esecuzione con una funzione selettore                                                                                  |
+
+### Metadati oggetto
+
+Usa `useSelectedObjectMetadata()` per identificare l'oggetto associato a un widget della pagina del record, a una riga della timeline personalizzata, a un comando con ambito oggetto o a un componente front-end aperto nel pannello laterale con un oggetto (da un comando o tramite `openSidePanelPage` con un `objectNameSingular`). Ciò consente a un'integrazione di selezionare modelli o altre configurazioni per l'oggetto corrente senza cercare tra gli oggetti un ID record.
+
+```tsx
+import {
+  useSelectedObjectMetadata,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const TemplatePicker = () => {
+  const objectMetadata = useSelectedObjectMetadata();
+  const selectedRecordIds = useSelectedRecordIds();
+
+  if (!objectMetadata) {
+    return <p>Open a record to select a template.</p>;
+  }
+
+  return (
+    <p>
+      Select a template for {objectMetadata.nameSingular}. Selected records:{' '}
+      {selectedRecordIds.length}
+    </p>
+  );
+};
+```
+
+Il risultato contiene `id` (l'UUID dei metadati dell'oggetto del workspace), `nameSingular` e `namePlural`. I nomi sono nomi dei metadati, come `person` e `people`, anziché etichette visualizzate.
+
+I metadati dell'oggetto possono essere disponibili anche quando non è selezionato alcun record. Appartengono al contesto di questo componente front-end, quindi un pannello laterale può esporre un oggetto diverso dalla pagina principale. L'hook si aggiorna quando quel contesto cambia e restituisce `null` quando l'oggetto non può essere risolto, quando non viene fornito alcun contesto dell'oggetto o quando viene eseguito su un host meno recente che non fornisce metadati dell'oggetto.
+
+### Posizione host
+
+Usa `useLocation()` per leggere la route che ospita il tuo componente front. Restituisce un oggetto `FrontComponentLocation` con quattro campi stringa obbligatori: `pathname`, `search`, `hash` e `origin`. Ad esempio, una pagina in `https://myworkspace.twenty.com/page/page-layout-id?project=abc#details` fornisce rispettivamente `/page/page-layout-id`, `?project=abc`, `#details` e `https://myworkspace.twenty.com`. `hash` include il suo `#` iniziale ed è `''` quando non è presente alcun frammento.
+
+`pathname`, `search` e `hash` seguono il contesto React Router del componente, inclusa la route di un pannello laterale con routing. `origin` proviene dall'app host. L'hook si aggiorna quando la route cambia. Gli host meno recenti potrebbero omettere `executionContext.location`, quindi `useLocation()` restituisce `null` quando la posizione non è disponibile.
+
+Per i parametri di query, leggi `useLocation()?.search ?? ''` e analizza il risultato con `URLSearchParams`. `search` include il suo `?` iniziale ed è `''` quando la route non ha una stringa di query. Il fallback fornisce anche `''` quando l'host non fornisce la posizione.
+
+```tsx
+import { useLocation } from 'twenty-sdk/front-component';
+
+const ProjectDetails = () => {
+  const search = useLocation()?.search ?? '';
+  const projectId = new URLSearchParams(search).get('project');
+
+  return <p>Project: {projectId ?? 'No project selected'}</p>;
+};
+```
 
 ## Variabili dell'applicazione
 
@@ -427,7 +561,8 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { getApplicationVariable } from 'twenty-sdk/front-component';
 
 const Greeting = () => {
-  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+  const recipientName =
+    getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
 
   return <p>Hello, {recipientName}!</p>;
 };
@@ -440,10 +575,65 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-Le variabili segrete (`isSecret: true`) **non** sono esposte ai componenti front-end. Sono disponibili solo nelle [funzioni logiche](/it/developers/extend/apps/logic/logic-functions), che vengono eseguite lato server. Questo impedisce che valori sensibili come le chiavi API vengano inviati al browser.
+  Le variabili segrete (`isSecret: true`) **non** sono esposte ai componenti front-end.
+  Sono disponibili solo nelle funzioni
+  logiche, che vengono eseguite
+  lato server. Questo impedisce che valori sensibili come le chiavi API vengano inviati al
+  browser.
 </Warning>
 
 `getApplicationVariable` restituisce sempre una **stringa** (o `undefined`), indipendentemente dal `type` dichiarato della variabile. La stringa viene serializzata in modo coerente in base al tipo (booleani come `"true"` / `"false"`, numeri come stringhe decimali, array / oggetti come JSON), lo stesso formato usato per la logic-function `process.env` — esegui il parsing manualmente (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). Vedi [Tipi di variabili](/it/developers/extend/apps/config/application#variable-types).
+
+### Lettura e aggiornamento delle variabili in fase di esecuzione
+
+`getApplicationVariable` restituisce i valori inseriti al caricamento del componente, quindi un valore scritto successivamente verrà visualizzato solo al caricamento successivo. Per leggere i valori memorizzati o scriverne uno (ciò che fa una [voce del menu delle impostazioni](#settings-menu-items) quando salva ciò che l'utente ha digitato), usa `MetadataApiClient`:
+
+```tsx src/front-components/app-settings.tsx
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER = '39783023-bcac-41e3-b0d2-ff1944d8465d';
+
+const readApplicationVariables = async () => {
+  const { findOneApplication } = await new MetadataApiClient().query({
+    findOneApplication: {
+      __args: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+      applicationVariables: { key: true, value: true, isSecret: true },
+    },
+  });
+
+  return findOneApplication?.applicationVariables ?? [];
+};
+
+const saveRecipientName = async (recipientName: string) => {
+  await new MetadataApiClient().mutation({
+    updateOneApplicationVariable: {
+      __args: { key: 'DEFAULT_RECIPIENT_NAME', value: recipientName },
+    },
+  });
+};
+
+const saveMyLanguage = async (language: string) => {
+  await new MetadataApiClient().mutation({
+    updateMyUserApplicationVariable: {
+      __args: {
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        key: 'LANGUAGE',
+        value: language,
+      },
+    },
+  });
+};
+```
+
+Note:
+
+* Il token del componente è associato alla tua applicazione. `updateOneApplicationVariable` la interessa, quindi `applicationId` è facoltativo e specificare un'altra applicazione viene rifiutato. Anche la lettura delle `applicationVariables` di un'altra applicazione viene rifiutata allo stesso modo e un'applicazione appartenente a un altro workspace risulta non trovata.
+* La chiave deve essere una di quelle dichiarate dall'app in [`defineApplication()`](/it/developers/extend/apps/config/application). La scrittura di una chiave non dichiarata risulta non trovata.
+* Le variabili segrete, quando vengono lette, vengono mascherate e non restituiscono mai il valore memorizzato. La loro scrittura funziona normalmente.
+* Per leggere il `value` di una variabile e scriverlo, è necessaria l'autorizzazione alle impostazioni `APPLICATIONS` sia per il ruolo della tua app sia per il ruolo della persona che ha effettuato l'accesso, poiché il token del componente è l'intersezione dei due. Aggiungi `SystemPermissionFlag.APPLICATIONS` a `permissionFlagUniversalIdentifiers` nel tuo [ruolo dell'applicazione](/it/developers/extend/apps/config/roles).
+* Una variabile utente (`scope: 'USER'`) viene iniettata con il valore del membro che visualizza, a meno che non sia segreta. `updateOneApplicationVariable` la rifiuta: salvala con `updateMyUserApplicationVariable`, come fa `saveMyLanguage` sopra. Scrive solo il valore del membro che sta visualizzando la pagina e rifiuta di specificare un'altra applicazione. Non richiede alcuna autorizzazione `APPLICATIONS`, ma richiede l'autorizzazione `CONNECTED_ACCOUNTS` nel ruolo del membro che sta visualizzando la pagina e nel ruolo della tua app, se ne dichiara uno: aggiungi `SystemPermissionFlag.CONNECTED_ACCOUNTS` a `permissionFlagUniversalIdentifiers` nel tuo [ruolo dell'applicazione](/it/developers/extend/apps/config/roles). Vedi [Variabili dello spazio di lavoro e dell'utente](/it/developers/extend/apps/config/application#workspace-and-user-variables).
+
+### Variabili di sistema
 
 Le seguenti variabili di sistema sono sempre disponibili tramite `process.env`:
 
@@ -456,7 +646,7 @@ Le seguenti variabili di sistema sono sempre disponibili tramite `process.env`:
 
 Twenty inserisce anche `TWENTY_FUNCTIONS_URL` nei front component e nelle funzioni di logica: la base URL da cui vengono servite le funzioni di logica attivate tramite HTTP della tua app.
 
-Esiste perché quell’URL non coincide sempre con il server di Twenty stesso. Su Twenty Cloud, le route dell’app sono servite su un dominio dedicato per ogni workspace (`https://\<your-workspace-subdomain>.withtwenty.com`, oppure il dominio pubblico primario dell’applicazione quando è configurato) in modo che le risposte create dall’app vengano eseguite in un’origine isolata invece che nell’origine dell’app Twenty. Le istanze self-hosted e locali servono le route dell’app con il prefisso `/s` direttamente sul server e potrebbero non impostare affatto la variabile. Dato che la base URL varia per workspace e per istanza, il tuo codice non può codificarla in modo statico — il server inserisce il valore corretto a runtime.
+Esiste perché quell’URL non coincide sempre con il server di Twenty stesso. Su Twenty Cloud, le route dell’app sono servite su un dominio dedicato per ogni workspace (`https://\<your-workspace-subdomain>.withtwenty.com`, oppure il dominio pubblico primario dell’applicazione quando è configurato) in modo che le risposte create dall’app vengano eseguite sulla propria origine anziché sull’origine dell’app Twenty. Le istanze self-hosted e locali servono le route dell’app con il prefisso `/s` direttamente sul server e potrebbero non impostare affatto la variabile. Dato che la base URL varia per workspace e per istanza, il tuo codice non può codificarla in modo statico — il server inserisce il valore corretto a runtime.
 
 Raramente devi leggerla direttamente. Chiama le tue route tramite `RestApiClient` con un percorso con prefisso `/s/` e il client risolve l’URL per te: rimuove il prefisso `/s` e punta a `TWENTY_FUNCTIONS_URL`, usando `\<TWENTY_API_URL>/s` come fallback quando la variabile non è impostata. Usa `resolveUrl('/s/\<path>')` per ottenere l’URL assoluto senza inviare una richiesta, ad esempio per un link. Leggi direttamente la variabile solo quando costruisci manualmente un URL:
 
@@ -466,7 +656,7 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 ## API di comunicazione con l'host
 
-I componenti front-end possono attivare navigazione, modali e notifiche utilizzando funzioni da `twenty-sdk`:
+I componenti front-end possono attivare navigazione, modali e notifiche utilizzando funzioni da `twenty-sdk/front-component`:
 
 | Funzione                                           | Descrizione                                                                                                                                                                                      |
 | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -479,11 +669,17 @@ I componenti front-end possono attivare navigazione, modali e notifiche utilizza
 | `updateProgress(progress)`                         | Aggiorna un indicatore di avanzamento                                                                                                                                                            |
 | `uploadFile(file, { fieldMetadataId, fileName? })` | Carica un `Blob` in un campo FILES; restituisce `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` oppure `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
+Utilizza `openCommandConfirmationModal` da `twenty-sdk/front-component` per le finestre di dialogo. Accetta opzioni strutturate per titolo, sottotitolo e pulsanti e restituisce `'confirm'` o `'cancel'`. Twenty gestisce la modale, la gestione del focus, la chiusura e lo scorrimento della pagina. I componenti front-end non devono eseguire direttamente il rendering di `Dialog`, `AlertDialog`, elementi `dialog` nativi o popover nativi del browser. Fornire un contenitore portal locale non rende supportata la modalità gestita direttamente dall'app.
+
 Ecco un esempio che usa l'API host per mostrare una snackbar e chiudere il pannello laterale dopo il completamento di un'azione:
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { enqueueSnackbar, closeSidePanel, useSelectedRecordIds } from 'twenty-sdk/front-component';
+import {
+  enqueueSnackbar,
+  closeSidePanel,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const ArchiveRecord = () => {
@@ -540,7 +736,10 @@ const NoteDraft = () => {
   };
 
   return (
-    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+    <textarea
+      value={draft}
+      onChange={(event) => handleChange(event.target.value)}
+    />
   );
 };
 
@@ -618,6 +817,36 @@ export default defineCommandMenuItem({
 });
 ```
 
+#### Seleziona tutti
+
+Quando l'utente seleziona tutti i record di una vista, `useSelectedRecordIds()` restituisce un array vuoto: la selezione è definita dai filtri, dalla ricerca e dalle righe non selezionate della vista e può contenere molti più record di quanti ne possano stare in memoria. `useSelectedRecordsFilter()` restituisce un filtro che corrisponde esattamente ai record selezionati in ogni caso, quindi esegui la query con esso invece di elencare gli ID:
+
+```tsx
+import { Command, useSelectedRecordsFilter } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const MarkExported = () => {
+  const selectedRecordsFilter = useSelectedRecordsFilter();
+
+  const execute = async () => {
+    if (selectedRecordsFilter === null) {
+      return;
+    }
+
+    await new CoreApiClient().mutation({
+      updateTasks: {
+        __args: { filter: selectedRecordsFilter, data: { exported: true } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+```
+
+Per selezioni di grandi dimensioni, passa il filtro a una [funzione logica](/it/developers/extend/apps/logic/logic-functions) ed elabora i record lì, pagina per pagina.
+
 ## Asset pubblici
 
 I componenti front-end possono accedere ai file dalla directory `public/` dell'app utilizzando `getPublicAssetUrl`:
@@ -643,7 +872,11 @@ Per impostazione predefinita, ogni front component include nel bundle la propria
 
 ```json package.json
 {
-  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+  "frontComponentSharedDependencies": [
+    "react",
+    "react-dom/client",
+    "twenty-ui/primitives/input"
+  ]
 }
 ```
 
@@ -669,7 +902,7 @@ export default defineFrontComponent({
 Alcune cose da sapere:
 
 * **Un solo bundle di dipendenze condivise per app.** Il bundle è costruito a partire dalle dipendenze della tua app, così mantieni il pieno controllo delle versioni che distribuisci.
-* **Elenca gli specificatori esatti che importi.** `twenty-ui/input` e `twenty-ui/display` sono due voci; il solo nome del pacchetto non copre i suoi sottopercorsi. L'elenco di `react` copre automaticamente `react/jsx-runtime`.
+* **Elenca gli specificatori esatti che importi.** `twenty-ui/primitives/input` e `twenty-ui/primitives/data-display` sono due voci; il solo nome di un pacchetto non include i relativi sottopercorsi. L'elenco di `react` copre automaticamente `react/jsx-runtime`.
 * **Condividi `react-dom/client` insieme a `react`.** Ogni componente effettua il rendering tramite `createRoot`, quindi ometterlo significa che ogni componente include ancora nel bundle React DOM.
 * **Il bundle è in cache.** È servito tramite un URL con content-hash con una cache immutabile a lunga durata, quindi viene scaricato una sola volta e riutilizzato in tutti i componenti dell'app finché una delle sue dipendenze non cambia.
 * **I componenti che non importano nessuno dei pacchetti condivisi non lo scaricano mai.**
@@ -687,42 +920,78 @@ I componenti front-end supportano diversi approcci di styling. Puoi usare:
 
 ## Uso dei componenti di Twenty UI
 
-Twenty distribuisce la sua libreria di componenti come pacchetto [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). I componenti front-end possono usarlo per pulsanti, tag, pillole di stato, chip, avatar, icone, tipografia e token del tema che si adattano automaticamente al tema chiaro e scuro dell’area di lavoro.
+Twenty distribuisce la sua libreria di componenti come pacchetto [`twenty-ui`](https://www.npmjs.com/package/twenty-ui). Preferisci i relativi controlli e token del tema per conferire ai componenti front lo stesso aspetto e le stesse interazioni del resto di Twenty. Esplora i [componenti condivisi](/it/ui/components/overview) e le [primitive](/it/ui/primitives/overview) per esempi, prop e API di composizione.
 
 ### Installazione
 
-Aggiungi il pacchetto alla tua app, bloccato alla versione con cui la tua istanza di Twenty viene distribuita:
+Le nuove app create con `twenty app init` includono già `twenty-ui`. Per un'app esistente, aggiungilo come dipendenza di sviluppo, vincolata alla stessa versione di `twenty-sdk` e `twenty-client-sdk`. Ad esempio, se i tuoi pacchetti SDK usano `2.51.0`:
 
 ```bash
-yarn add twenty-ui@1.0.0-alpha.1
+yarn add -D twenty-ui@2.51.0
 ```
 
-`twenty-ui` è incluso nel tuo componente front-end in fase di build, quindi deve essere solo una dipendenza della tua app: non c’è nulla da configurare a runtime.
+`twenty-ui` viene incluso nel bundle in fase di build, in ciascun componente front oppure nel [bundle delle dipendenze condivise](#sharing-dependencies-across-front-components) della tua app. Twenty carica i fogli di stile dei componenti e del tema e applica lo schema di colori attivo dell'area di lavoro. Non è necessario importare `twenty-ui/style.css`, i fogli di stile del tema o aggiungere un `ThemeProvider` radice come faresti in un'applicazione React autonoma.
 
 ### Importare i componenti
 
-Importa dal sottopercorso corrispondente invece che dalla root del pacchetto, in modo che solo i componenti che usi finiscano nel tuo bundle:
+Importa dal sotto-percorso pubblico della famiglia corrispondente per mantenere mirate le dipendenze:
 
-| Sottopercorso               | Cosa esporta                                     |
-| --------------------------- | ------------------------------------------------ |
-| `twenty-ui/input`           | `Button` e campi di input del form               |
-| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` e altro        |
-| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` e altro              |
-| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` e altro |
-| `twenty-ui/icon`            | Componenti `Icon*` (ad es. `IconCheck`)          |
-| `twenty-ui/theme` | `ThemeProvider`, `themeCssVariables`             |
+I controlli fondamentali sono raggruppati in `twenty-ui/primitives/\<family>`. Le preimpostazioni di design condivise e i blocchi di base dell'app sono raggruppati in `twenty-ui/components/\<family>`. Il punto di ingresso aggregato `twenty-ui/components` rimane disponibile, ma le importazioni delle famiglie semplificano la [condivisione solo delle dipendenze utilizzate](#sharing-dependencies-across-front-components).
+
+| Sottopercorso                        | Cosa esporta                                                                          |
+| ------------------------------------ | ------------------------------------------------------------------------------------- |
+| `twenty-ui/components/input`         | Pulsanti principali e chiari, input di ricerca e immagini e selettori di paese/valuta |
+| `twenty-ui/components/data-display`  | Gruppi di avatar, alberi JSON, metriche, blocchi di comandi e riquadri di icone       |
+| `twenty-ui/components/feedback`      | Riquadri informativi, banner inline e notifiche                                       |
+| `twenty-ui/components/layout`        | Sezioni, elenchi con overflow e transizioni delle icone                               |
+| `twenty-ui/components/navigation`    | Menu a discesa, composizioni di menu e azioni delle schede                            |
+| `twenty-ui/components/settings`      | Righe delle impostazioni                                                              |
+| `twenty-ui/primitives/accessibility` | Elementi nascosti                                                                     |
+| `twenty-ui/primitives/data-display`  | Avatar, chip, tag, campioni di colore e indicatori di stato                           |
+| `twenty-ui/primitives/feedback`      | Banner, barre di avanzamento e indicatori di caricamento                              |
+| `twenty-ui/primitives/input`         | Pulsanti e controlli del form                                                         |
+| `twenty-ui/primitives/layout`        | Espansione, separatori, direzione e ridimensionamento                                 |
+| `twenty-ui/primitives/navigation`    | Breadcrumb, elementi di elenco e schede                                               |
+| `twenty-ui/primitives/surfaces`      | Schede, popover non modali e tooltip                                                  |
+| `twenty-ui/primitives/typography`    | Testo e intestazioni                                                                  |
+| `twenty-ui/icon`                     | Componenti `Icon*` (ad es. `IconCheck`)                                               |
+| `twenty-ui/theme`                    | `useTheme`, `themeCssVariables` e `ThemeProvider`                                     |
+
+Usa [`MainButton`](/it/ui/components/input/main-button) per le azioni principali e [`LightButton`](/it/ui/components/input/light-button) per le azioni leggere. Usa `Button`, `Field`, `Input`, `Select` e altre primitive da `twenty-ui/primitives/input` per controlli e moduli di base. Segui le parti documentate di ciascun controllo composto, come `Field.Root`, `Field.Label` e `Field.Description`.
+
+Usa [`Dropdown`](/it/ui/components/navigation/dropdown) da `twenty-ui/components/navigation` per menu di azioni, selettori di opzioni e pannelli di moduli non modali. Usa `enqueueSnackbar` da `twenty-sdk/front-component` per le notifiche dell'host.
+
+Le API autonome `Dialog` e `AlertDialog` sono anch'esse esportate da Twenty UI, ma l'uso diretto nei componenti front-end è vietato. Utilizza l'[API di comunicazione con l'host](#host-communication-api) per le finestre di dialogo.
+
+Questi punti di ingresso non richiedono Monaco. Il punto di ingresso separato `twenty-ui/components/code-editor` dipende da Monaco, il cui caricatore di script non è supportato nel sandbox dei componenti front-end, quindi `CodeEditor` non può diventare interattivo in tale ambiente.
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Status, Tag } from 'twenty-ui/data-display';
-import { Button } from 'twenty-ui/input';
+import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { MainButton } from 'twenty-ui/components/input';
+import { Status, Tag } from 'twenty-ui/primitives/data-display';
+import { useTheme } from 'twenty-ui/theme';
 
 const StyledWidget = () => {
+  const theme = useTheme();
+
+  const handleClick = async () => {
+    await enqueueSnackbar({ message: 'Clicked!', variant: 'success' });
+  };
+
   return (
-    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
-      <Button title="Click me" onClick={() => alert('Clicked!')} />
-      <Tag text="Active" color="green" />
-      <Status color="green" text="Online" />
+    <div
+      style={{
+        padding: theme.spacing[4],
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: theme.spacing[2],
+      }}
+    >
+      <MainButton onClick={handleClick}>Click me</MainButton>
+      <Tag color="green">Active</Tag>
+      <Status color="green">Online</Status>
     </div>
   );
 };
@@ -742,13 +1011,13 @@ Importa le singole icone da `twenty-ui/icon`:
 import { IconBox, IconCheck } from 'twenty-ui/icon';
 ```
 
-Ogni icona nominata è sottoposta a tree-shaking, quindi importarne alcune aggiunge poco al tuo bundle. Evita `IconsProvider`, `useIcons` e `iconsState`: includono l’intero set di icone Tabler (diversi MB).
+Ogni icona nominata è sottoposta a tree-shaking, quindi importarne alcune aggiunge poco al tuo bundle. Evita `IconsProvider` e `useIcons` nei componenti front. I componenti front vengono raggruppati senza code splitting, quindi il catalogo dinamico di icone del provider (l'intero set Tabler, circa 2 MB minificato) finisce nel tuo bundle. Consulta il [riferimento delle icone](/it/ui/icons) per le esportazioni disponibili e le props supportate.
 
 ### Temi e token del tema
 
-I componenti Twenty UI si adattano automaticamente al tema chiaro e scuro dell’area di lavoro: il renderer applica lo schema di colori attivo sull’host e i componenti risolvono i loro colori rispetto ad esso.
+I componenti UI di Twenty corrispondono automaticamente al tema chiaro e scuro dell'area di lavoro. Il renderer applica lo schema di colori attivo sull'host e i componenti risolvono le proprie variabili CSS rispetto a esso.
 
-Per usare gli stessi design token nei tuoi stili inline, chiama l’hook `useTheme()`. Restituisce i token del tema di Twenty (spaziatura, colori, raggi, font) collegati al tema attivo, senza bisogno di configurare `ThemeProvider` nel tuo componente:
+Per usare gli stessi design token nei tuoi stili inline, chiama `useTheme()` all'interno del corpo del componente. Nei componenti front-end restituisce per impostazione predefinita riferimenti a variabili CSS, quindi gli stili seguono il tema attivo dell'host senza un `ThemeProvider` locale:
 
 ```tsx
 import { useTheme } from 'twenty-ui/theme';
@@ -770,13 +1039,15 @@ const Card = () => {
 };
 ```
 
-Poiché `useTheme()` è un hook, leggi i token all’interno del corpo del componente, così i valori riflettono sempre il tema attivo in tempo reale. La stessa mappa di token è anche esportata come costante `themeCssVariables`, ma nei componenti front-end è preferibile usare `useTheme()`: una costante a livello di modulo che dereferenzia `themeCssVariables` può essere undefined mentre il manifest dell’app viene estratto.
+Gli stessi riferimenti CSS vengono esportati come `themeCssVariables` da `twenty-ui/theme`. Leggili all'interno del corpo del componente: la CLI simula `twenty-ui` durante l'estrazione del manifesto, quindi il dereferenziamento delle costanti del tema importate nell'ambito del modulo può causare il fallimento della build.
+
+Le stringhe di riferimento CSS non sono numeri JavaScript risolti, neanche per token come `theme.icon.size.md`. Non eseguire operazioni aritmetiche su di esse né passarle ad API che richiedono numeri. Consulta [Temi](/it/ui/theming) e [Token](/it/ui/tokens) per i percorsi semantici e i nomi delle variabili CSS.
 
 Per diramare esplicitamente in base allo schema attivo, leggilo con `useColorScheme()` da `twenty-sdk/front-component`, che restituisce `'light'` o `'dark'`.
 
 ## Limitazioni attuali
 
-I componenti Front sono in fase di sviluppo attivo. Il rendering, lo styling, la gestione degli eventi, la misurazione degli elementi e lo storage del browser funzionano bene. Qualsiasi cosa che vada *oltre* questi aspetti (chiamare un metodo del DOM su un ref, osservare il ridimensionamento degli elementi, creare un portale al di fuori del tuo albero) oggi manca o è incompleta, e la maggior parte di queste operazioni fallisce silenziosamente: nessuna eccezione e nessun errore TypeScript, poiché lo scaffold è tipizzato contro il DOM completo del browser.
+I componenti Front sono in fase di sviluppo attivo. Il rendering, lo styling, la gestione degli eventi, la misurazione degli elementi, i portali del body e lo storage del browser funzionano bene. Qualsiasi cosa che vada *oltre* questi aspetti (chiamare un metodo del DOM su un ref, per esempio) oggi manca o è incompleta, e la maggior parte di queste operazioni fallisce silenziosamente: nessuna eccezione e nessun errore TypeScript, poiché lo scaffold è tipizzato rispetto al DOM completo del browser.
 
 Se una di queste limitazioni ti blocca, [apri una issue](https://github.com/twentyhq/twenty/issues/new/choose) così la sua priorità aumenta.
 
@@ -784,41 +1055,81 @@ Se una di queste limitazioni ti blocca, [apri una issue](https://github.com/twen
 
 Gli elementi possono misurare sé stessi: l'host rispecchia la geometria nella sandbox, quindi le letture vengono gestite localmente ma possono essere non aggiornate fino a un frame, e la prima lettura di un elemento mai misurato restituisce zeri. Dopo la scrittura, rileggi in una callback di `requestAnimationFrame` o in un effetto.
 
-| API                                                                                      | Cosa succede                                                                                                                    |
-| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Funzionano, dallo specchio; assegnare `scrollTop` / `scrollLeft` non ha effetto (no-op)                                         |
-| `getClientRects()`, `window.matchMedia()`                                                | Genera un’eccezione                                                                                                             |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Funzionano, riportando il **viewport del browser**; la dimensione del tuo widget è `document.body.clientWidth` / `clientHeight` |
-| `window.getComputedStyle()`                                                              | Restituisce solo gli stili inline dell’elemento, mai la cascata calcolata dall’host                                             |
-| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (le verifiche con `typeof` funzionano)                                                                         |
-| `MutationObserver`                                                                       | Funziona, incluso `subtree`, `attributeFilter`, i vecchi valori e `takeRecords()`                                               |
+| API                                                                                      | Cosa succede                                                                                                                              |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Funzionano, dallo specchio; assegnare `scrollTop` / `scrollLeft` fa scorrere l'elemento nella pagina (vedi Scorrimento)                   |
+| `getClientRects()`                                                                       | Genera un’eccezione                                                                                                                       |
+| `window.matchMedia()`                                                                    | Funziona per un insieme fisso di funzionalità, con eventi `change` (vedi sotto)                                                           |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Funzionano, riportando il **viewport del browser**; la dimensione del tuo widget è `document.body.clientWidth` / `clientHeight`           |
+| `window.getComputedStyle()`                                                              | Valori di layout dell'host per gli elementi misurati e i rispettivi genitori; il resto, incluse le variabili del tema, dagli stili inline |
+| `ResizeObserver`                                                                         | Funziona, dal mirror; `document.body` riporta il riquadro del widget                                                                      |
+| `IntersectionObserver`                                                                   | `ReferenceError` (le verifiche con `typeof` funzionano)                                                                                   |
+| `MutationObserver`                                                                       | Funziona, incluso `subtree`, `attributeFilter`, i vecchi valori e `takeRecords()`                                                         |
 
-Il posizionamento tramite `getBoundingClientRect` ora funziona, ma qualsiasi cosa che osservi i cambi di dimensione tramite `ResizeObserver` (il `ResponsiveContainer` di recharts, l’`autoUpdate` di Floating UI) continua a non funzionare. Preferisci comunque il CSS per il layout: il tuo stylesheet raggiunge la pagina reale, quindi flexbox, grid, `aspect-ratio`, `clamp()` e `@container` si comportano normalmente, senza lag del frame.
+Il posizionamento da `getBoundingClientRect` e l'osservazione delle dimensioni tramite `ResizeObserver` funzionano entrambi dallo stesso mirror, quindi i callback di ridimensionamento seguono l'host con un ritardo di circa un frame. Preferisci comunque il CSS per il layout: il tuo stylesheet raggiunge la pagina reale, quindi flexbox, grid, `aspect-ratio`, `clamp()` e `@container` si comportano normalmente, senza lag del frame.
+
+`matchMedia()` valuta `width`, `height`, `orientation`, `-webkit-device-pixel-ratio`, `resolution`, `hover`, `pointer` e `prefers-color-scheme`, nella forma `min-`/`max-`, nella forma di intervallo di livello 4 (`(width >= 600px)`, `(400px \<= width \<= 800px)`) e nella forma senza valore (`(width)`). Larghezze, altezze e `orientation` descrivono **il riquadro del tuo widget**, non il viewport del browser, quindi seguono `document.body.clientWidth` anziché `window.innerWidth`, e `em` e `rem` contano come 16px. `hover` e `pointer` descrivono l'input principale del dispositivo dell'utente. Qualsiasi altra condizione è considerata sconosciuta, come i browser trattano le funzionalità sconosciute: l'elemento separato da virgole in cui compare viene valutato come `false`, anche con `not`, a meno che il resto di quell'elemento non determini già il risultato, come in `not print and (prefers-reduced-motion: reduce)`. Questo comprende le funzionalità sconosciute e la sintassi che questo parser non implementa all'interno di una condizione, come gruppi annidati quali `((min-width: 600px))`, `not` all'interno di un gruppo e valori `calc()`. Un `or` tra condizioni rende il relativo elemento `false`. Anche i costruttori `MediaQueryList` e `MediaQueryListEvent` non sono esposti, quindi i controlli `instanceof` su di essi generano un `ReferenceError`.
+
+Poiché quel foglio di stile raggiunge la pagina reale, una regola `@media (min-width: ...)` viene valutata dall'host rispetto al viewport del browser, mentre `matchMedia('(min-width: ...)')` risponde in base al riquadro del tuo widget. Per fare in modo che il CSS segua lo stesso riquadro visto da JavaScript, dichiara il tuo `container-type` su un wrapper ed esegui la query su quello: una regola `@container` senza uno viene risolta rispetto al contenitore host più vicino, non al tuo widget. La stessa distinzione si applica alla combinazione di colori, dove un foglio di stile `@media (prefers-color-scheme: dark)` segue la preferenza del browser e del sistema operativo, mentre `matchMedia('(prefers-color-scheme: dark)')` segue il tema selezionato in Twenty, quindi applica gli stili dai token di `useTheme()` quando i due devono coincidere.
+
+Anche l'altezza che ricevi è quella del tuo riquadro e, a seconda di dove l'host ti monta, quel riquadro può essere dimensionato dai tuoi contenuti. La diramazione del layout in base a `min-height`, `max-height` o `orientation` può quindi influire su sé stessa e oscillare. Per le decisioni di layout, preferisci query basate sulla larghezza oppure `@container` con `container-type: inline-size`.
 
 <Note>
-`requestAnimationFrame`, `fetch`, `setTimeout` e `queueMicrotask` funzionano senza il prefisso `window.`. Solo `window.requestAnimationFrame(...)` e simili generano un’eccezione.
+  `requestAnimationFrame` funziona, con o senza il prefisso `window.`. Solo
+  Chrome esegue un vero frame di animazione all'interno di un worker; Firefox e Safari ricevono un
+  timer di 16 ms, quindi usalo per posticipare una nuova lettura dopo una scrittura, non per eseguire un'
+  animazione.
 </Note>
+
+### Scorrimento
+
+L'assegnazione di `scrollTop` o `scrollLeft`, la chiamata di `scrollTo()` o del suo alias `scroll()`, e la chiamata di `scrollIntoView()` fanno scorrere l'elemento corrispondente nella pagina:
+
+* Le modifiche allo scorrimento vengono applicate dopo il rendering successivo, nell'ordine in cui sono state effettuate dal codice. All'interno di un rendering, le modifiche alla selezione dell'input vengono applicate per prime, quindi `setSelectionRange()` seguito da una scrittura su `scrollLeft` mantiene visibile il cursore.
+* Le letture restituiscono il valore scritto finché la pagina non segnala la posizione reale, che il browser limita all'intervallo scorrevole. Nei contenitori da destra a sinistra, `scrollLeft` è zero o negativo, come nei browser.
+* `scrollIntoView()` accetta `block` e `inline` con `start`, `center`, `end` e `nearest`, allineando `block` verticalmente e `inline` orizzontalmente, quindi le modalità di scrittura verticale non vengono mappate. Fa scorrere solo i contenitori di scorrimento del tuo componente, mai il frame del widget, la pagina o un altro componente. `focus()` continua a mostrare l'elemento attivo come fa il browser.
+* Lo scorrimento è istantaneo: `behavior` e l'opzione `container` vengono ignorati e `scrollBy()` non è disponibile.
+* Riscrivere una posizione appena letta, ad esempio `element.scrollTop = element.scrollTop`, non ha alcun effetto, quindi non può annullare uno scorrimento effettuato dall'utente nel frattempo. Questo vale solo dopo che la pagina ha misurato l'elemento; fino ad allora, la scrittura viene applicata.
+* Lo scorrimento di `document.documentElement`, `document.body` o `window` rimane all'interno della sandbox e non fa mai scorrere la pagina; `window.scrollTo()`, `scroll()` e `scrollBy()` non hanno alcun effetto.
+* La prima lettura di un contenitore che non è mai stato misurato restituisce zeri (vedi Layout e misurazione), quindi un controllo della possibilità di scorrimento eseguito subito dopo la comparsa del contenitore può segnalarlo come non scorrevole.
+
+### Ambito globale
+
+Gli elementi nativi del worker sono anch'essi associati a `window`, quindi funzionano con o senza il prefisso `window.`: `fetch`, `setTimeout`/`clearTimeout`, `setInterval`/`clearInterval`, `queueMicrotask`, `console`, `crypto`, `performance`, `structuredClone`, `btoa`/`atob`, `URL`/`URLSearchParams`, `AbortController`/`AbortSignal`, `Headers`/`Request`/`Response`, `Blob`, `File`, `FormData` e `TextEncoder`/`TextDecoder`.
 
 ### Accesso al DOM
 
 Un `ref` ti restituisce un elemento sandbox, non un `HTMLElement`.
 
-| Cosa scrivi                                                                                                 | Cosa succede                                                | Usa invece                                                                                                                                                                                |
-| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Genera un’eccezione                                         | Componenti controllati; leggi i valori da `event.target`                                                                                                                                  |
-| `element.classList.add(...)`                                                                                | Genera un’eccezione (`classList` è `undefined`)             | Costruisci tu stesso la stringa `className`                                                                                                                                               |
-| `document.createTreeWalker()`                                                                               | Genera un’eccezione                                         | `querySelector()` / `querySelectorAll()` e `getElementById()` funzionano; anche `getElementsByClassName()` funziona, ma restituisce una collezione statica, non una `HTMLCollection` live |
-| `document.activeElement`                                                                                    | Sempre `undefined`                                          | Tieni traccia del focus con `onFocus` / `onBlur`                                                                                                                                          |
-| `canvas`                                                                                                    | Non renderizza nulla, nessun errore                         | SVG, oppure disegna fuori dallo schermo e mostra il risultato in un elemento `img`                                                                                                        |
-| `createPortal(node, document.body)`                                                                         | Non renderizza nulla, mentre `isConnected` segnala successo | Overlay inline con `position: absolute`, oppure passa alla libreria un tuo elemento container                                                                                             |
+| Cosa scrivi                                    | Cosa succede                                                                                                                                                                                           | Usa invece                                                                                                                                                                                                                                                                                                      |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.blur()`               | Inoltra all'elemento corrispondente nella pagina e aggiorna l'elemento attivo della sandbox                                                                                                            | `onFocus` / `onBlur` per osservare le modifiche del focus                                                                                                                                                                                                                                                       |
+| `ref.current.click()`                          | Invia un `click` all'interno della sandbox: una casella di controllo o un pulsante di opzione cambia stato e viene eseguito il relativo `onChange`, ma non viene fatto clic sull'elemento nella pagina | Componenti controllati per qualsiasi operazione che la pagina deve eseguire                                                                                                                                                                                                                                     |
+| `ref.current.select()`, `.setSelectionRange()` | Funzionano su `input` e `textarea`, applicati all'elemento sulla pagina dopo il rendering successivo                                                                                                   | Componenti controllati per il valore stesso                                                                                                                                                                                                                                                                     |
+| `ref.current.scrollTo()`, `.scrollIntoView()`  | Fai scorrere i contenitori di scorrimento del componente sulla pagina (vedi Scorrimento)                                                                                                               | `focus()` quando vuoi anche spostare il focus                                                                                                                                                                                                                                                                   |
+| `video.play()`                                 | Genera un’eccezione                                                                                                                                                                                    | Componenti controllati; leggi i valori da `event.target`                                                                                                                                                                                                                                                        |
+| `document.createTreeWalker()`                  | Genera un’eccezione                                                                                                                                                                                    | `querySelector()` / `querySelectorAll()`, `matches()`, `closest()` (incluse pseudoclassi come `:disabled` e `:not()`), `getElementById()`, `contains()` e `compareDocumentPosition()` funzionano; funziona anche `getElementsByClassName()`, ma restituisce una raccolta statica, non una `HTMLCollection` live |
+| `document.activeElement`                       | Segue il focus della pagina all'interno del componente e si aggiorna quando il codice del sandbox chiama `focus()` o `blur()`                                                                          | `onFocus` / `onBlur` per reagire al focus della pagina                                                                                                                                                                                                                                                          |
+| `canvas`                                       | Non renderizza nulla, nessun errore                                                                                                                                                                    | SVG, oppure disegna fuori dallo schermo e mostra il risultato in un elemento `img`                                                                                                                                                                                                                              |
+| `createPortal(node, document.body)`            | Esegue il rendering in un livello di overlay host delimitato a 200px attorno al componente                                                                                                             | Mantieni gli overlay all'interno di quest'area oppure aggiungi lo scorrimento per contenuti più grandi                                                                                                                                                                                                          |
 
-Il gap del portale è il motivo per cui i popover di Radix, Headless UI, MUI e react-select non renderizzano nulla per impostazione predefinita. La maggior parte accetta una prop container; indirizzala a un elemento che hai renderizzato.
+`element.classList` funziona, supportato dall'attributo `class`: `add`, `remove`, `toggle`, `replace`, `contains`, `item`, `length`, `value` e l'iterazione si comportano tutti come in un browser e `className` rimane sincronizzato. `element.dataset` funziona allo stesso modo, supportato dagli attributi `data-*`; scrivi i nomi `data-*` in minuscolo, poiché il sandbox mantiene i nomi degli attributi così come sono scritti invece di convertirli in minuscolo come farebbe un browser.
+
+I portali del body possono estendersi fino a 200px oltre ciascun bordo del componente, anche al di fuori dell'area di scorrimento di un widget. Gli overlay più grandi vengono ritagliati in quest'area, quindi assegna ai menu lunghi il proprio contenitore di scorrimento. La navigazione tramite tastiera negli elenchi dell'interfaccia utente Twenty, come Autocomplete e Select, mostra l'opzione evidenziata all'interno di quel contenitore. Le API native del livello superiore come `showModal()`, `showPopover()` e `requestFullscreen()` sono bloccate.
 
 ### Eventi
 
 Mouse, puntatore, touch, drag, tastiera, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` e `animationend`/`transitionend` passano all'host, più alcuni per elemento: `load`/`error` su `img`, appunti e composizione su `input`/`textarea`, media su `video`/`audio`, `toggle` su `details`/`dialog`. Tutto il resto (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, acquisizione del puntatore, `onLoad` su `img`) viene scartato senza alcun avviso.
 
-`document.addEventListener()` e `window.addEventListener()` si registrano senza errori e non vengono mai attivati, motivo per cui un drag si interrompe non appena il puntatore lascia l'elemento da cui è partito. `event.preventDefault()` non viene propagato nemmeno; l'invio dei form, `dragover`/`drop` e i clic sui link sono già protetti per te.
+I gestori ricevono eventi tipizzati creati a partire dall'evento della pagina, `PointerEvent`, `MouseEvent`, `KeyboardEvent`, `InputEvent`, `WheelEvent` o `FocusEvent`, e questi costruttori sono presenti nel sandbox per `dispatchEvent()`. Ogni evento inoltrato include anche la superficie dell'evento sintetico di React (`nativeEvent`, `isDefaultPrevented()`, `isPropagationStopped()`, `persist()`), quindi il codice scritto per gli eventi React continua a funzionare anche se il sandbox passa direttamente al tuo gestore l'oggetto evento.
+
+Un evento della pagina attraversa il confine quando l'elemento con cui l'utente ha interagito, o uno dei suoi antenati nel tuo componente, ha un gestore per quel tipo di evento. Attraversa il confine una sola volta e poi si propaga all'interno del sandbox come avviene nella pagina: `event.target` è l'elemento con cui l'utente ha interagito, `currentTarget` è l'elemento il cui gestore è in esecuzione, `stopPropagation()` impedisce l'esecuzione dei gestori degli antenati e `relatedTarget` punta all'elemento del sandbox da cui o verso cui si è spostato il focus o il puntatore, oppure è `null` quando tale elemento è esterno al tuo componente. Come in React, anche `onFocus` e `onBlur` vengono eseguiti per le modifiche del focus all'interno dell'elemento, mentre `onClickCapture` e gli altri gestori di cattura vengono eseguiti durante la fase di cattura.
+
+I gestori che una libreria aggiunge con `React.cloneElement`, come quelli associati alla prop `render` di Base UI, vengono eseguiti dopo i gestori dell'elemento stesso invece di sostituirli, quindi passare `onClick: undefined` a `cloneElement` non rimuove il gestore dell'elemento. Un gestore su un elemento `render` di Base UI può comunque chiamare `event.preventBaseUIHandler()` per ignorare il gestore di Base UI.
+
+`event.target.value` e `checked` riflettono il controllo una volta che il browser ha applicato la modifica dell'utente: nei gestori `input`, `change`, `click`, `blur` e `focusout`, e nei gestori `keyup` per `value`. Nei gestori `keydown`, `beforeinput` e del puntatore, contengono il valore e lo stato selezionato del controllo a partire dalla sua ultima modifica, indipendentemente da ciò che il tuo componente ascolta: un gestore `Enter` legge il testo digitato finora, ma un gestore per un tasto stampabile non vede ancora quel tasto; pertanto, leggi i valori in tempo reale da un input controllato o da un gestore `onChange`.
+
+I listener `document` ricevono gli eventi che attraversano il confine dal tuo componente, ma non ciò che accade altrove nella pagina; quindi, per intercettare scorciatoie con `document.addEventListener('keydown', ...)`, inserisci un `onKeyDown` su un elemento che avvolge il tuo componente. I listener `window` ricevono solo `error` e `unhandledrejection`. Gli spostamenti del puntatore attraversano il confine solo sugli elementi che hanno un gestore di spostamento, e la cattura del puntatore rimane nella pagina; per questo motivo, un trascinamento si interrompe non appena il puntatore lascia tali elementi. `event.preventDefault()` non viene propagato nemmeno; l'invio dei form, `dragover`/`drop` e i clic sui link sono già protetti per te.
 
 ### Attributi e stile
 
@@ -836,13 +1147,28 @@ Il CSS del componente, che provenga da `import './styles.css'`, da CSS-in-JS o d
 * Le altre origini escono dalla sandbox con `Origin: null`, quindi un'API di terze parti risponde solo se invia `Access-Control-Allow-Origin: *`. Invece, chiamala da una logic function.
 * `fetch('/rest/people')` non viene mai associato alla Twenty API, perché la sandbox non ha un URL di pagina rispetto a cui risolvere un percorso relativo.
 
+### Selezione del file
+
+Gli input file forniscono oggetti `File` nativi con metadati e contenuti leggibili. Usa `text()` o `arrayBuffer()` per leggere un file selezionato oppure passalo alla funzione host `uploadFile`. L'apertura del selettore nativo richiede di chiamare `input.click()` entro un secondo da un clic attendibile all'interno del componente. I flussi React e Preact creati con l'SDK sono verificati in Chromium.
+
+Gli URL degli oggetti creati dal worker assegnati a `img.src` supportano le anteprime. Revoca i tuoi URL quando sostituisci l'immagine o smonti il componente. La tua applicazione gestisce la convalida dei file, l'avanzamento del caricamento e l'annullamento.
+
 ### Acquisizione multimediale
 
-`navigator.mediaDevices.getUserMedia()` e `MediaRecorder` funzionano all'interno dei front components tramite sandbox polyfill, quindi il codice di registrazione standard viene eseguito senza modifiche e `MediaRecorder.isTypeSupported` restituisce risultati per le combinazioni comuni di contenitore/codec. Gli oggetti di constraint dettagliati per `getUserMedia` vengono accettati ma non inoltrati — l'host acquisisce con i propri valori predefiniti per i tipi richiesti — e può essere attiva una sola acquisizione alla volta tra le applicazioni. Archivia un `Blob` registrato con la funzione host `uploadFile`.
+Dichiara `microphone`, `camera` o entrambi nell'array `requestedCapabilities` passato a `defineApplication()` affinché queste capacità vengano visualizzate durante l'installazione. L'approvazione è valida per l'intero spazio di lavoro e richiede un membro che possa gestire le app.
+
+Se un'app installata chiama `navigator.mediaDevices.getUserMedia()` senza l'accesso richiesto, Twenty sospende l'acquisizione e mostra una finestra di dialogo per l'approvazione. Questo supporta anche le app meno recenti senza dichiarazioni delle capacità. I membri che non possono gestire le app devono chiedere a un amministratore dello spazio di lavoro di approvare l'accesso. L'annullamento della finestra di dialogo rifiuta la richiesta prima che vengano richieste le autorizzazioni del browser o del sistema operativo.
+
+Gli aggiornamenti del pacchetto mantengono le autorizzazioni esistenti dello spazio di lavoro e non concedono automaticamente ulteriore accesso ai contenuti multimediali. Le app di sviluppo sincronizzate localmente ricevono le capacità dichiarate nel relativo manifest. Una volta approvato l'accesso, Twenty non chiede nuovamente l'autorizzazione per ogni acquisizione, ma continuano ad applicarsi le autorizzazioni del browser e del sistema operativo.
+
+Un punto arancione nell'intestazione dello spazio di lavoro indica un'acquisizione attiva. Passa il puntatore sul punto o selezionalo per visualizzare le app che utilizzano il microfono o la fotocamera e interrompere la relativa acquisizione. Le richieste in sospeso vengono visualizzate come un punto delineato con un controllo di annullamento.
+
+`getUserMedia()` e `MediaRecorder` vengono eseguiti tramite polyfill sandbox, pertanto il codice di registrazione standard e `MediaRecorder.isTypeSupported()` funzionano senza modifiche dopo l'approvazione. Gli oggetti di vincolo dettagliati sono accettati ma non inoltrati. L'host acquisisce usando le impostazioni predefinite per i tipi richiesti. Applicazioni diverse possono acquisire contemporaneamente e l'arresto di un'app influisce solo sulle proprie sessioni. Ogni componente front supporta un'acquisizione in sospeso o attiva alla volta. Archivia un `Blob` registrato con la funzione host `uploadFile`.
 
 ### Altre lacune
 
-* **Contenuti dei file.** Un `input` di tipo `file` fornisce al tuo gestore solo i metadati del file, non i byte, quindi `FileReader` non è disponibile. Per caricare un `Blob` già a disposizione del tuo codice — ad esempio uno prodotto da `MediaRecorder` — usa la funzione host `uploadFile`.
 * **Payload di drag-and-drop.** Gli eventi di drag vengono attivati, ma `event.dataTransfer` è `undefined`.
-* **Built-in di Node.** `fs`, `path` e `node:crypto` fanno fallire la build, quindi sposta quel lavoro in una [logic function](/it/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` e `URL` sono disponibili.
+* **Built-in di Node.** `fs`, `path` e `node:crypto` fanno fallire la build, quindi sposta quel lavoro in una [logic function](/it/developers/extend/apps/logic/logic-functions). Web Crypto sostituisce `node:crypto` e sono disponibili anche `fetch`, `TextEncoder` e `URL`; consulta l'[ambito globale](#global-scope) — ma nulla sostituisce `fs`: il sandbox non dispone di un filesystem.
 * **`iframe`** viene sempre nuovamente messo in sandbox senza `allow-same-origin`, quindi un embed che dipende dalla propria sessione viene renderizzato come disconnesso. Non ha nemmeno `onLoad`.
+
+<PageBanner illustration="card-page-front-components" />

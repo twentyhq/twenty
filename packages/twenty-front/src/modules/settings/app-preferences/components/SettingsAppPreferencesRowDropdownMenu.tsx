@@ -1,18 +1,27 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { useApolloClient, useMutation } from '@apollo/client/react';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   CalendarChannelSyncStage,
   ConnectedAccountProvider,
   MessageChannelSyncStage,
   SettingsPath,
 } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
+import { SettingsAccountGroupActionTargetList } from '@/settings/app-preferences/components/SettingsAccountGroupActionTargetList';
+import { useRunAccountGroupAction } from '@/settings/app-preferences/hooks/useRunAccountGroupAction';
+import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
+import { type ConnectedAccountGroup } from '@/settings/app-preferences/types/ConnectedAccountGroup';
+import { getAccountGroupActionTargets } from '@/settings/app-preferences/utils/getAccountGroupActionTargets';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   IconAt,
@@ -24,61 +33,53 @@ import {
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { Link } from 'react-router-dom';
-import { DELETE_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/deleteConnectedAccount';
-import { DISCONNECT_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/disconnectConnectedAccount';
+import { Link, useLocation } from 'react-router-dom';
 import { isConnectedAccountEligibleForProviderReconnect } from '@/settings/accounts/utils/isConnectedAccountEligibleForProviderReconnect';
 
 type SettingsAppPreferencesRowDropdownMenuProps = {
-  account: ConnectedAccount;
+  group: ConnectedAccountGroup;
+  hasAccountSettings: boolean;
+  builtInAccountApp?: BuiltInAccountApp;
 };
 
 export const SettingsAppPreferencesRowDropdownMenu = ({
-  account,
+  group,
+  hasAccountSettings,
+  builtInAccountApp,
 }: SettingsAppPreferencesRowDropdownMenuProps) => {
-  const dropdownId = `settings-account-row-${account.id}`;
-  const deleteAccountModalId = `delete-account-modal-${account.id}`;
-  const disconnectAccountModalId = `disconnect-account-modal-${account.id}`;
-  const accountHandle = account.handle;
+  const { builtInAccount } = group;
+  const dropdownId = `settings-account-row-${group.id}`;
+  const deleteAccountModalId = `delete-account-modal-${group.id}`;
+  const disconnectAccountModalId = `disconnect-account-modal-${group.id}`;
 
   const { t } = useLingui();
   const { openDialog } = useDialog();
-
-  const apolloClient = useApolloClient();
-  const [deleteConnectedAccountMutation] = useMutation(
-    DELETE_CONNECTED_ACCOUNT,
-  );
-  const [disconnectConnectedAccountMutation] = useMutation(
-    DISCONNECT_CONNECTED_ACCOUNT,
-  );
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const { runAccountGroupAction } = useRunAccountGroupAction();
   const { triggerProviderReconnect } = useTriggerProviderReconnect();
+  const { pathname, hash } = useLocation();
+
+  const disconnectTargets = getAccountGroupActionTargets({
+    group,
+    action: 'disconnect',
+    currentWorkspace,
+  });
+  const deleteTargets = getAccountGroupActionTargets({
+    group,
+    action: 'delete',
+    currentWorkspace,
+  });
 
   const hasPendingConfiguration =
-    account.messageChannels.some(
+    isDefined(builtInAccount) &&
+    (builtInAccount.messageChannels.some(
       (channel) =>
         channel.syncStage === MessageChannelSyncStage.PENDING_CONFIGURATION,
     ) ||
-    account.calendarChannels.some(
-      (channel) =>
-        channel.syncStage === CalendarChannelSyncStage.PENDING_CONFIGURATION,
-    );
-
-  const isEligibleForProviderReconnect =
-    isConnectedAccountEligibleForProviderReconnect(account);
-
-  const deleteAccount = async () => {
-    await deleteConnectedAccountMutation({
-      variables: { id: account.id },
-    });
-    await apolloClient.refetchQueries({ include: 'active' });
-  };
-
-  const disconnectAccount = async () => {
-    await disconnectConnectedAccountMutation({
-      variables: { id: account.id },
-    });
-    await apolloClient.refetchQueries({ include: 'active' });
-  };
+      builtInAccount.calendarChannels.some(
+        (channel) =>
+          channel.syncStage === CalendarChannelSyncStage.PENDING_CONFIGURATION,
+      ));
 
   return (
     <>
@@ -92,44 +93,67 @@ export const SettingsAppPreferencesRowDropdownMenu = ({
         />
         <DropdownContent side="right" align="start">
           <Dropdown.Section>
+            {hasAccountSettings && (
+              <Dropdown.ActionItem
+                startIcon={<IconAt />}
+                render={
+                  <Link
+                    to={getSettingsPath(SettingsPath.AccountDetail, {
+                      connectedAccountId: group.id,
+                    })}
+                  />
+                }
+              >{t`Account settings`}</Dropdown.ActionItem>
+            )}
             {hasPendingConfiguration && (
               <Dropdown.ActionItem
                 startIcon={<IconPlayerPlay />}
                 render={
                   <Link
                     to={getSettingsPath(SettingsPath.AccountsConfiguration, {
-                      connectedAccountId: account.id,
+                      connectedAccountId: builtInAccount.id,
                     })}
                   />
                 }
               >{t`Complete setup`}</Dropdown.ActionItem>
             )}
-            {account.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV && (
-              <Dropdown.ActionItem
-                startIcon={<IconAt />}
-                render={
-                  <Link
-                    to={getSettingsPath(
-                      SettingsPath.EditImapSmtpCaldavConnection,
+            {isDefined(builtInAccount) &&
+              builtInAccount.provider ===
+                ConnectedAccountProvider.IMAP_SMTP_CALDAV && (
+                <Dropdown.ActionItem
+                  startIcon={<IconAt />}
+                  render={
+                    <Link
+                      to={getSettingsPath(
+                        SettingsPath.EditImapSmtpCaldavConnection,
+                        {
+                          connectedAccountId: builtInAccount.id,
+                        },
+                      )}
+                    />
+                  }
+                >{t`Connection settings`}</Dropdown.ActionItem>
+              )}
+            {isDefined(builtInAccountApp) &&
+              isDefined(builtInAccount) &&
+              isConnectedAccountEligibleForProviderReconnect(
+                builtInAccount,
+              ) && (
+                <Dropdown.ActionItem
+                  startIcon={<IconRefresh />}
+                  onClick={() => {
+                    triggerProviderReconnect(
+                      builtInAccount.provider,
+                      builtInAccount.id,
                       {
-                        connectedAccountId: account.id,
+                        loginHint: builtInAccount.handle,
+                        redirectLocation: `${pathname}${hash}`,
                       },
-                    )}
-                  />
-                }
-              >{t`Connection settings`}</Dropdown.ActionItem>
-            )}
-            {isEligibleForProviderReconnect && (
-              <Dropdown.ActionItem
-                startIcon={<IconRefresh />}
-                onClick={() => {
-                  triggerProviderReconnect(account.provider, account.id, {
-                    loginHint: account.handle,
-                  });
-                }}
-              >{t`Reconnect`}</Dropdown.ActionItem>
-            )}
-            {!isDefined(account.archivedAt) && (
+                    );
+                  }}
+                >{t`Reconnect`}</Dropdown.ActionItem>
+              )}
+            {isNonEmptyArray(disconnectTargets) && (
               <Dropdown.ActionItem
                 startIcon={<IconUnlink />}
                 onClick={() => {
@@ -151,26 +175,41 @@ export const SettingsAppPreferencesRowDropdownMenu = ({
         dialogId={disconnectAccountModalId}
         title={t`Disconnect account`}
         subtitle={
-          <Trans>
-            Syncing will stop and this account's credentials will be removed.
-            Your emails and events will be retained and available after you
-            reconnect.
-          </Trans>
+          <>
+            <Trans>
+              Syncing will stop and credentials will be removed for the
+              following. Your emails and events will be retained and available
+              after you reconnect.
+            </Trans>
+            <SettingsAccountGroupActionTargetList targets={disconnectTargets} />
+          </>
         }
-        onConfirmClick={disconnectAccount}
+        onConfirmClick={() =>
+          runAccountGroupAction({
+            action: 'disconnect',
+            targets: disconnectTargets,
+          })
+        }
         confirmButtonText={t`Disconnect account`}
+        shouldWaitForConfirmBeforeClosing
       />
       <ConfirmationDialog
         dialogId={deleteAccountModalId}
         title={t`Delete account and synced data?`}
         subtitle={
-          <Trans>
-            This permanently deletes {accountHandle} and all of its synced
-            emails and events. This action cannot be undone.
-          </Trans>
+          <>
+            <Trans>
+              This permanently deletes the following and all of their synced
+              emails and events. This action cannot be undone.
+            </Trans>
+            <SettingsAccountGroupActionTargetList targets={deleteTargets} />
+          </>
         }
-        onConfirmClick={deleteAccount}
+        onConfirmClick={() =>
+          runAccountGroupAction({ action: 'delete', targets: deleteTargets })
+        }
         confirmButtonText={t`Delete account and data`}
+        shouldWaitForConfirmBeforeClosing
       />
     </>
   );

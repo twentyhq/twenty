@@ -1,0 +1,98 @@
+---
+title: Темизация
+description: Используйте токены темы Twenty UI и ограничивайте переопределения темы частью приложения.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import ThemeProviderReference from '/snippets/ui/generated/theme/theme-provider.mdx';
+
+## Обзор
+
+Компоненты Twenty UI считывают публичные пользовательские свойства CSS с префиксом `--t-`. При стилизации собственных компонентов отдавайте предпочтение семантическим токенам, таким как `background.secondary` и `font.color.primary`; эти значения адаптируются к активной палитре.
+
+## Использование токенов в стилях
+
+`themeCssVariables` сопоставляет пути токенов со ссылками на переменные CSS. Используйте его для значений, которые разрешает CSS:
+
+```tsx
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const Summary = () => (
+  <section
+    style={{
+      background: themeCssVariables.background.secondary,
+      color: themeCssVariables.font.color.primary,
+      padding: themeCssVariables.spacing[4],
+      borderRadius: themeCssVariables.border.radius.md,
+    }}
+  >
+    Three tasks are due today.
+  </section>
+);
+```
+
+Эквивалентный CSS использует переменные напрямую:
+
+```css
+.summary {
+  background: var(--t-background-secondary);
+  color: var(--t-font-color-primary);
+  padding: var(--t-spacing-4);
+  border-radius: var(--t-border-radius-md);
+}
+```
+
+## Получение разрешённых значений
+
+`useTheme()` считывает вычисленные токены активного провайдера. Используйте его, когда компонент ожидает число JavaScript, например размер значка. Чтобы разрешать переменные CSS, провайдеру необходимо, чтобы таблица стилей темы была загружена в браузере.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme';
+
+export const CompleteIcon = () => {
+  const theme = useTheme();
+
+  return <IconCheck size={theme.icon.size.md} aria-hidden />;
+};
+```
+
+Каждая запись в `themeCssVariables` представляет собой строку ссылки CSS, включая числовые токены. Не выполняйте арифметические операции с этими строками. На сервере разрешённые значения браузера недоступны; см. [Рендеринг на сервере](/ru/ui/ssr).
+
+## Ограничение области переопределения
+
+Передайте `applyToRoot={false}`, чтобы применить тему к поддереву. Переопределяйте публичные переменные CSS по их полному имени:
+
+```tsx
+import { type ReactNode } from 'react';
+import { ThemeProvider } from 'twenty-ui/theme';
+
+export const EmbeddedPanel = ({ children }: { children: ReactNode }) => (
+  <ThemeProvider
+    colorScheme="light"
+    applyToRoot={false}
+    overrides={{ '--t-background-secondary': '#f4f6ff' }}
+  >
+    {children}
+  </ThemeProvider>
+);
+```
+
+Провайдер с ограниченной областью добавляет обёртку с `display: contents`; она не создаёт блок макета. Он также предоставляет контейнер для компонентов, поддерживающих порталы с темой. Порталам, созданным другими библиотеками, требуется собственная настройка контейнера.
+
+Переменные с префиксом `--tw-` являются внутренними деталями компонентов. Используйте публичные свойства и токены `--t-` вместо зависимости от этих переменных.
+
+Доступные имена и значения палитры см. в [справочнике токенов](/ru/ui/tokens).
+
+## Явные значения и масштаб
+
+Свойство `theme` предоставляет итоговые значения темы JavaScript вместо чтения вычисленных стилей. Оно также передается вложенным провайдерам, если они не предоставляют другую явную тему. Это изменяет значения, считываемые хуками; загрузите соответствующую таблицу стилей и используйте переопределения CSS для стилизации компонентов.
+
+`scale` записывает `--t-scale-user` в корневой элемент документа. Это влияет только на интерфейсы, CSS которых использует эту переменную, и игнорируется провайдерами с ограниченной областью действия. `className` применяется к обертке с ограниченной областью действия; передача только его не создает обертку. `overrides` создает область действия, даже если `applyToRoot` остается равным true.
+
+## Свойства ThemeProvider
+
+<ThemeProviderReference />
+
+<PageBanner illustration="page-cover-palette" />

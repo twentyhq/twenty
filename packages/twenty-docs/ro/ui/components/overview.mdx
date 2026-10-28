@@ -1,0 +1,97 @@
+---
+title: Componente
+sidebarTitle: Prezentare generală
+description: Preconfigurări de design partajate și blocuri reutilizabile pentru construirea aplicațiilor, alcătuite din primitivele Twenty UI.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Componentele combină [primitivele](/ro/ui/primitives/overview) în preconfigurări de design recurente și blocuri reutilizabile pentru construirea aplicațiilor. La fel ca primitivele, acestea primesc date și callback-uri de la aplicația dvs.
+
+Utilizați importul familiei corespunzătoare afișat mai jos. Punctul de intrare agregat `twenty-ui/components` rămâne, de asemenea, disponibil. Editorul de cod are propriul punct de intrare, `twenty-ui/components/code-editor`, deoarece necesită Monaco. Consultați [Noțiuni introductive](/ro/ui/getting-started) pentru instalare și configurarea temei.
+
+## Intrare
+
+Importați din `twenty-ui/components/input`.
+
+| Component                                                       | Scop                                                                            |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| [MainButton](/ro/ui/components/input/main-button)                  | Acțiuni proeminente cu o suprafață solidă, elevație și text semiîngroșat.       |
+| [LightButton](/ro/ui/components/input/light-button)                | Acțiuni ușoare cu accent standard sau subtil.                                   |
+| [Buton pictogramă](/ro/ui/components/input/icon-button)            | Acțiuni cu pictograme pătrate sau rotunde, bazate pe Button.                    |
+| [LightIconButton](/ro/ui/components/input/light-icon-button)       | Acțiuni cu pictograme ușoare, cu accent standard sau subtil.                    |
+| [Buton de reacție](/ro/ui/components/input/reaction-button)        | Reacții emoji cu un număr și o stare de apăsare controlată.                     |
+| [PhoneCountryPicker](/ro/ui/components/input/phone-country-picker) | Steaguri de țară care pot fi căutate și selectarea codului de apelare.          |
+| [NumberStepper](/ro/ui/components/input/number-stepper)            | Introducere numerică compactă cu butoane de incrementare opționale.             |
+| [SearchInput](/ro/ui/components/input/search-input)                | Text de căutare și controale opționale de filtrare.                             |
+| [CountrySelect](/ro/ui/components/input/country-select)            | Opțiuni de țări în care se poate căuta, steaguri și o selecție goală explicită. |
+| [CurrencyPicker](/ro/ui/components/input/currency-picker)          | Opțiuni de monedă în care se poate căuta, cu formatare explicită.               |
+| [ImageInput](/ro/ui/components/input/image-input)                  | Selectarea și previzualizarea imaginilor cu încărcări deținute de apelant.      |
+| [Control segmentat](/ro/ui/components/input/segmented-control)     | Opțiune radio compactă cu opțiuni de text sau pictograme alăturate.             |
+
+## Navigare
+
+Importați din `twenty-ui/components/navigation`.
+
+| Component                                                         | Scop                                                              |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------- |
+| [Buton element listă](/ro/ui/components/navigation/list-item-button) | Butoane de acțiune native cu stil de rând de listă.               |
+| [Dropdown](/ro/ui/components/navigation/dropdown)                    | Meniuri de acțiuni, selectoare cu căutare și panouri de formular. |
+| [TabButton](/ro/ui/components/navigation/tab-button)                 | Linkuri de rută și acțiuni adiacente cu același aspect ca filele. |
+
+## Date afișate
+
+Importați din `twenty-ui/components/data-display`.
+
+| Component                                                      | Scop                                                                              |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| [Rând cu detalii](/ro/ui/components/data-display/details-row)     | Etichete aliniate, valori cu încadrare pe mai multe rânduri și acțiuni opționale. |
+| [MetricRow](/ro/ui/components/data-display/metric-row)            | Etichete și valori formatate cu progres determinat opțional.                      |
+| [AvatarGroup](/ro/ui/components/data-display/avatar-group)        | Avatare suprapuse și numărători de depășire.                                      |
+| [CommandBlock](/ro/ui/components/data-display/command-block)      | Text de comandă cu o acțiune opțională de copiere.                                |
+| [JsonTree](/ro/ui/components/data-display/json-tree)              | Valori JSON extensibile și intrări denumite.                                      |
+| [StackIcon](/ro/ui/components/data-display/stack-icon)            | Pictograme cu un element mai mic suprapus în colțul din dreapta jos.              |
+| [TintedIconTile](/ro/ui/components/data-display/tinted-icon-tile) | Pictograme pe plăci colorate conform temei.                                       |
+
+## Feedback
+
+Importați din `twenty-ui/components/feedback`.
+
+| Component                                                                            | Scop                                                      |
+| ------------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| [Toast](/ro/ui/components/feedback/toast)                                               | Notificări, gestionarea cozii și închiderea acestora.     |
+| [Callout](/ro/ui/components/feedback/callout)                                           | Mesaje semantice cu acțiuni și posibilitate de închidere. |
+| [InlineBanner](/ro/ui/components/feedback/inline-banner)                                | Bannere compacte cu acțiuni opționale.                    |
+| [ToastProvider and Toaster](/ro/ui/components/feedback/toast#application-notifications) | Stocări de notificări, limite de coadă și redare.         |
+
+## Aspect
+
+Importați din `twenty-ui/components/layout`.
+
+| Component                                                              | Scop                                                              |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| [Section](/ro/ui/components/layout/section)                               | Conținut asociat cu un titlu, o descriere și o acțiune opțională. |
+| [AnimatedIconCrossfade](/ro/ui/components/layout/animated-icon-crossfade) | Tranziții ale pictogramelor determinate de stare.                 |
+| [OverflowingList](/ro/ui/components/layout/overflowing-list)              | Încadrați elementele vizibile și grupați surplusul.               |
+
+## Setări
+
+Importați din `twenty-ui/components/settings`.
+
+| Component                                           | Scop                                            |
+| --------------------------------------------------- | ----------------------------------------------- |
+| [SettingsRow](/ro/ui/components/settings/settings-row) | Comutatoare etichetate pentru setări și filtre. |
+
+## Editor de Cod
+
+Importați din `twenty-ui/components/code-editor`.
+
+| Component                                            | Scop                                                        |
+| ---------------------------------------------------- | ----------------------------------------------------------- |
+| [CodeEditor](/ro/ui/components/code-editor/code-editor) | Editare de cod cu Monaco, un antet opțional și tema Twenty. |
+
+Rutarea, formatarea înregistrărilor, substituenții de produs și starea aplicației aparțin aplicației gazdă. Componentele partajate expun proprietăți de date, callback și randare pentru acele integrări.
+
+<PageBanner illustration="section-ui-components" />

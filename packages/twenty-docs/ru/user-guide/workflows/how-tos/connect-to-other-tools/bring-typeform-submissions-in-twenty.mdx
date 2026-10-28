@@ -3,7 +3,13 @@ title: Импорт ответов Typeform в Twenty
 description: Обработайте полезную нагрузку вебхука Typeform, чтобы создавать лиды из отправок формы.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Перед началом
+
 Для стандартной настройки вебхука см. [Настройка триггера вебхука](/ru/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger). В этой статье рассматривается специальная обработка, требуемая для пользовательской структуры полезной нагрузки Typeform.
+
+## Шаги
 
 ### Шаг 1: Создайте рабочий процесс с вебхуком
 
@@ -128,3 +134,5 @@ export const main = async (params: {
 
 * [Настройка триггера вебхука](/ru/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
 * [Обработка массивов в действиях Code](/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+
+<PageBanner illustration="card-page-webhooks" />

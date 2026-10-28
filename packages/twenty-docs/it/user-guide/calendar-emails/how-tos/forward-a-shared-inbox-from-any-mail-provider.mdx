@@ -1,0 +1,118 @@
+---
+title: Inoltra una casella di posta condivisa da qualsiasi provider email
+description: Collega una casella di posta condivisa a un canale email di Twenty, indipendentemente dal provider di posta utilizzato.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+Twenty riceve la posta delle caselle di posta condivise facendo in modo che il provider invii una copia di ogni messaggio in arrivo a un indirizzo privato generato da Twenty. Una volta configurata, la casella di posta appare nel tuo spazio di lavoro.
+
+L'inoltro è la prima parte di un canale email. Per rispondere o inviare campagne anche da esso, consulta [Canali email](/it/user-guide/calendar-emails/capabilities/email-channels).
+
+Microsoft 365 e Google Workspace hanno ciascuno la propria guida:
+
+* [Microsoft 365](/it/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365)
+* [Google Workspace](/it/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace)
+
+Questa pagina tratta tutti gli altri provider.
+
+## Parte 1: crea il canale in Twenty
+
+1. Vai a **Impostazioni → Comunicazione**.
+2. Fai clic su **Aggiungi canale email**.
+
+<img src="/images/user-guide/emails/inbound-channels/03-twenty-add-email-channel.png" style={{ width: '100%' }} />
+
+3. In **Indirizzo email di origine**, inserisci l'indirizzo condiviso sul quale vuoi ricevere la posta, ad esempio `contact@yourcompany.com`.
+4. In **Nome visualizzato**, inserisci il nome che vedono i destinatari.
+5. Fai clic su **Salva**.
+
+<img src="/images/user-guide/emails/inbound-channels/04-twenty-new-channel-form.png" style={{ width: '100%' }} />
+
+6. Twenty ora mostra un **Indirizzo di inoltro**. Termina con `@inbound.twenty.com`. Fai clic su **Copia**.
+
+<img src="/images/user-guide/emails/inbound-channels/05-twenty-forwarding-address.png" style={{ width: '100%' }} />
+
+<Note>
+  Ogni canale ha il proprio indirizzo di inoltro. Non indirizzare mai due caselle di posta allo
+  stesso indirizzo, altrimenti le loro email finiranno nello stesso posto.
+</Note>
+
+## Parte 2: scegli il tipo di inoltro corretto
+
+La maggior parte dei provider offre più di un modo per inoltrare la posta, ma qui ne funziona solo uno.
+
+Twenty legge l'intestazione `From` di ogni messaggio ricevuto per determinare chi lo ha scritto. In questo modo un messaggio viene collegato alla persona e all'azienda corrette.
+
+* L'**inoltro automatico sul server di posta** mantiene il mittente originale. Il cliente rimane il mittente, il messaggio viene collegato al suo record e le risposte vengono inviate a lui. Alcuni provider lo chiamano **Reindirizzamento**, altri **Inoltro**. Questa è l'opzione da usare.
+* L'**inoltro come allegato**, o qualsiasi regola che componga un nuovo messaggio, sostituisce il mittente con il tuo indirizzo. Ogni conversazione sembrerà quindi provenire da te e nessun messaggio verrà associato a un contatto.
+
+Usa l'impostazione di inoltro automatico nel tuo account email o sul tuo server di posta. Non usare una regola che reinvia il messaggio come nuova email.
+
+<Warning>
+  Evita inoltre le regole che rimuovono gli allegati o convertono i messaggi in testo normale.
+  Twenty archivia ogni messaggio esattamente come arriva.
+</Warning>
+
+Dove disponibile, scegli l'opzione che **mantiene una copia** nella casella di posta originale, così il tuo team potrà continuare a usare la posta in arrivo come prima.
+
+## Parte 3: trova il tuo provider
+
+Segui le istruzioni del tuo provider, usando come destinazione l'indirizzo di inoltro copiato nella Parte 1.
+
+| Provider               | La sua guida                                                                                                                                                     |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Amazon SES             | [Inoltra le email in arrivo a una destinazione esterna](https://aws.amazon.com/blogs/messaging-and-targeting/forward-incoming-email-to-an-external-destination/) |
+| Amazon WorkMail        | [Regole email](https://docs.aws.amazon.com/workmail/latest/userguide/email-rules.html)                                                                           |
+| Bluehost               | [Crea inoltri di account e dominio](https://www.bluehost.com/help/article/create-account-and-domain-forwarders)                                                  |
+| cPanel                 | [Inoltri](https://docs.cpanel.net/cpanel/email/forwarders/)                                                                                                      |
+| DreamHost              | [Aggiungi un indirizzo email solo per l'inoltro](https://help.dreamhost.com/hc/en-us/articles/215724207-Add-a-forward-only-email-address)                        |
+| Exchange (self-hosted) | [Configura l'inoltro email per una casella di posta](https://learn.microsoft.com/en-us/exchange/recipients/user-mailboxes/email-forwarding)                      |
+| GoDaddy                | [Inoltra le email in arrivo a un altro indirizzo](https://www.godaddy.com/help/forward-incoming-email-to-another-email-address-32282)                            |
+| iCloud Mail            | [Inoltra le email su iCloud.com](https://support.apple.com/en-us/102376)                                                                                         |
+| Namecheap              | [Configura l'inoltro email gratuito](https://www.namecheap.com/support/knowledgebase/article.aspx/308/2214/how-to-set-up-free-email-forwarding)                  |
+| OVHcloud               | [Reindirizzamento email](https://help.ovhcloud.com/csm/en-emails-redirection)                                                                                    |
+| Rackspace              | [Configura l'inoltro email di Rackspace](https://docs.rackspace.com/docs/set-up-rackspace-email-forwarding)                                                      |
+| Zoho Mail              | [Inoltro email](https://www.zoho.com/mail/help/email-forwarding.html)                                                                                            |
+
+Se il tuo provider non è elencato, puoi comunque connetterlo. In quasi tutti i prodotti di posta, l'impostazione è disponibile con un nome come **Inoltro**, **Reindirizzamento**, **Inoltri**, **Alias**, **Regole** o **Filtri**, nelle impostazioni della casella di posta o del dominio.
+
+## Parte 4: testalo
+
+Invia un'email da un indirizzo esterno (puoi usare un Gmail personale) a `contact@yourcompany.com`. Dovrebbe apparire in Twenty entro uno o due minuti.
+
+## Risoluzione dei problemi
+
+<Accordion title="Non arriva nulla">
+  Confronta carattere per carattere l'indirizzo di inoltro con quello in Twenty.
+  Basta un solo carattere errato perché l'email non arrivi da nessuna parte e venga eliminata senza avviso.
+</Accordion>
+
+<Accordion title="Le email arrivano, ma ogni messaggio mostra il tuo indirizzo come mittente">
+  La regola ricrea il messaggio anziché inoltrarlo, quindi il tuo
+  indirizzo finisce nell'intestazione `From`. Passa all'impostazione di inoltro
+  o reindirizzamento semplice del tuo provider e disattiva qualsiasi opzione che inoltri come
+  allegato.
+</Accordion>
+
+<Accordion title="Il mittente riceve un messaggio di mancata consegna perché l'inoltro non è consentito">
+  Il tuo provider blocca l'inoltro automatico verso domini esterni. Cerca un'impostazione di
+  sicurezza o antispam che consenta l'inoltro esterno e abilitala
+  solo per questa casella di posta.
+</Accordion>
+
+<Accordion title="Le email non compaiono più nella posta in arrivo originale">
+  La regola sposta i messaggi anziché copiarli. Modificala affinché mantenga una copia,
+  oppure aggiungi una seconda regola che consegni i messaggi nella posta in arrivo.
+</Accordion>
+
+<Accordion title="Il canale riceve email ma non può inviarle">
+  La ricezione e l'invio sono separati. L'invio richiede che il tuo dominio sia
+  verificato nella sezione **Dominio di invio** del canale, il che significa aggiungere
+  i record di **Autenticazione del dominio** elencati da Twenty. Consulta [Canali email](/it/user-guide/calendar-emails/capabilities/email-channels) per sapere di quali
+  record necessita ciascun utilizzo.
+</Accordion>
+
+<PageBanner illustration="page-cover-email" />

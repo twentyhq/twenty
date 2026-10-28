@@ -40,14 +40,14 @@ export const SettingsApplicationPreferences = () => {
   if (isAppPreferencesEnabled && isDefined(error)) {
     return (
       <SettingsPageLayout
-        title={t`App preferences`}
+        title={t`Apps preferences`}
         links={[
           {
             children: t`User`,
             href: getSettingsPath(SettingsPath.ProfilePage),
           },
           {
-            children: t`App preferences`,
+            children: t`Apps preferences`,
             href: getSettingsPath(SettingsPath.Accounts),
           },
         ]}

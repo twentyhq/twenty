@@ -1,0 +1,45 @@
+---
+title: JsonTree
+description: Esplora i valori JSON con nodi espandibili ed etichette personalizzate.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import JsonTreeReference from '/snippets/ui/generated/components/data-display/json-tree.mdx';
+
+## Panoramica
+
+`JsonTree` visualizza un `value` JSON oppure un array di `entries` denominati. Passa tutte le etichette per valori vuoti e per espandere/comprimere, affinché l'applicazione controlli il testo.
+
+<StoryEmbed storyId="ui-jsonvisualizer-jsontree--display" title="Dettagli del record espandibili" height={320} />
+
+## Utilizzo
+
+```tsx
+import { JsonTree } from 'twenty-ui/components/data-display';
+
+export const RecordDetails = () => (
+  <JsonTree
+    value={{ name: 'Acme', active: true, contacts: [] }}
+    emptyStringLabel="Empty text"
+    emptyArrayLabel="No items"
+    emptyObjectLabel="No properties"
+    arrowButtonCollapsedLabel="Expand node"
+    arrowButtonExpandedLabel="Collapse node"
+  />
+);
+```
+
+Ogni voce ha un `id`, un `label` e un `value` JSON. Usa le voci quando le etichette visualizzate differiscono dalle chiavi memorizzate. Per impostazione predefinita vengono espansi i livelli 0 e 1. Sostituisci `shouldExpandNodeInitially={({ depth }) => depth === 0}` per espandere solo la radice; l'espansione successiva è gestita da ciascun nodo.
+
+`getNodeHighlighting(keyPath)` restituisce `blue`, `red`, `partial-blue` o `undefined`. `onNodeValueClick` riceve il testo visualizzato: i valori foglia come stringhe e l'etichetta vuota corrispondente per stringhe, array e oggetti vuoti. L'albero visualizza i dati e non li modifica.
+
+Quando viene fornito `onNodeValueClick`, i valori sono pulsanti nativi denominati in base al testo visualizzato. Tab sposta lo stato attivo su un valore; Invio, Spazio o un clic del puntatore lo attivano. Senza il callback, i valori rimangono testo non interattivo. I pulsanti dei valori non inviano i moduli che li contengono.
+
+## Props
+
+<JsonTreeReference />
+
+<PageBanner illustration="page-cover-hierarchy" />

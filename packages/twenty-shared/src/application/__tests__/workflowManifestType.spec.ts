@@ -168,6 +168,45 @@ describe('workflow manifest step types', () => {
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toContain('Unsupported step type');
   });
+
+  it.each(['SELECT', 'MULTI_SELECT'])(
+    'requires the field a %s form field takes its options from',
+    (type) => {
+      const withFormField = (settings: Record<string, unknown>) => {
+        const definition = structuredClone(workflow);
+        Object.assign(getStep(definition, 2), {
+          type: 'FORM',
+          input: [
+            { id: 'stage', name: 'stage', label: 'Stage', type, settings },
+          ],
+        });
+        return definition;
+      };
+
+      expect(
+        workflowManifestSchema.safeParse(
+          withFormField({
+            selectedFieldUniversalIdentifier:
+              '77777777-7777-4777-8777-777777777777',
+          }),
+        ).success,
+      ).toBe(true);
+
+      const result = workflowManifestSchema.safeParse(
+        withFormField({ selectedFieldId: 'a-workspace-specific-id' }),
+      );
+      expect(result.success).toBe(false);
+      expect(result.error?.issues[0]?.path).toEqual([
+        'version',
+        'steps',
+        2,
+        'input',
+        0,
+        'settings',
+        'selectedFieldUniversalIdentifier',
+      ]);
+    },
+  );
 });
 
 describe('workflow manifest manual trigger', () => {
@@ -480,5 +519,20 @@ describe('workflow manifest database event trigger', () => {
     expect(result.error?.issues.map((issue) => issue.message)).toEqual([
       'Filter group looping is not reachable from a root group',
     ]);
+  });
+});
+
+describe('workflow manifest isSystem', () => {
+  it('accepts a workflow flagged as system', () => {
+    expect(
+      workflowManifestSchema.safeParse({ ...workflow, isSystem: true }).success,
+    ).toBe(true);
+  });
+
+  it('rejects an isSystem that is not a boolean', () => {
+    expect(
+      workflowManifestSchema.safeParse({ ...workflow, isSystem: 'true' })
+        .success,
+    ).toBe(false);
   });
 });

@@ -50,7 +50,7 @@
     "@nivo/core": "^0.99.0",
     "@nivo/line": "^0.99.0",
     "@nivo/pie": "^0.99.0",
-    "@scalar/api-reference-react": "^0.9.42",
+    "@scalar/api-reference-react": "^0.9.83",
     "@sentry/react": "^10.51.0",
     "@sniptt/guards": "^0.2.0",
     "@stripe/react-stripe-js": "^6.6.0",
@@ -148,7 +148,7 @@
     "xlsx-ugnis": "^0.19.3",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.27",
-    "zod": "^4.1.11"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@argos-ci/storybook": "6.2.3",
