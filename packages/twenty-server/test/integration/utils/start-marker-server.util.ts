@@ -8,13 +8,16 @@ export const startMarkerServer = async (): Promise<MarkerServer> => {
   const markers = new Map<string, string>();
 
   const server = createServer((request, response) => {
-    let body = '';
+    const chunks: Buffer[] = [];
 
-    request.on('data', (chunk: Buffer) => (body += chunk.toString()));
+    request.on('data', (chunk: Buffer) => chunks.push(chunk));
     request.on('end', () => {
       const name = request.url ?? '/';
 
-      markers.set(name, (markers.get(name) ?? '') + body);
+      markers.set(
+        name,
+        (markers.get(name) ?? '') + Buffer.concat(chunks).toString(),
+      );
       response.end();
     });
   });
