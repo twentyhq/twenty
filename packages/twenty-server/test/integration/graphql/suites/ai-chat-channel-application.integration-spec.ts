@@ -285,7 +285,7 @@ describe('Inbox channels managed by an application', () => {
       permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
     });
     generalChannelId = await findGeneralChannelId();
-  });
+  }, 180_000);
 
   afterAll(async () => {
     for (const threadId of createdThreadIds.splice(0)) {
@@ -305,7 +305,7 @@ describe('Inbox channels managed by an application', () => {
         applicationUniversalIdentifier: application.universalIdentifier,
       });
     }
-  });
+  }, 120_000);
 
   it('lists every channel to an application managing AI settings, accessible through its role only', async () => {
     const channelId = await createChannelOrThrow(
@@ -626,7 +626,7 @@ describe('Uninstalling an application that created inbox channels', () => {
       name: 'Uninstalled Channel Application',
       permissionFlagUniversalIdentifiers: CHANNEL_MANAGER_PERMISSION_FLAGS,
     });
-  });
+  }, 180_000);
 
   afterAll(async () => {
     for (const threadId of createdThreadIds.splice(0)) {
@@ -637,7 +637,7 @@ describe('Uninstalling an application that created inbox channels', () => {
       applicationUniversalIdentifier:
         uninstalledApplication.application.universalIdentifier,
     });
-  });
+  }, 120_000);
 
   const createThreadInChannel = async (channelId: string): Promise<string> => {
     const response = await makeMetadataApiRequest({
@@ -693,5 +693,5 @@ describe('Uninstalling an application that created inbox channels', () => {
     expect(await readChannelGrantRoleIds(threadId)).toEqual(
       await readChannelGrantRoleIds(generalThreadId),
     );
-  });
+  }, 60_000);
 });

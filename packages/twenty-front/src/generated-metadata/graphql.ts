@@ -1546,6 +1546,7 @@ export type CreateAgentChatChannelInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   roleIds?: Array<Scalars['UUID']['input']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type CreateAgentInput = {
