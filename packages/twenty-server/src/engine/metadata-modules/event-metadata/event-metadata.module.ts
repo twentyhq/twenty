@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
-import { MemberEventStreamController } from 'src/engine/metadata-modules/event-metadata/controllers/member-event-stream.controller';
 import { VisitorEventStreamController } from 'src/engine/metadata-modules/event-metadata/controllers/visitor-event-stream.controller';
+import { AppEventSubscriptionResolver } from 'src/engine/metadata-modules/event-metadata/resolvers/app-event-subscription.resolver';
 import { ApplicationEventsResolver } from 'src/engine/metadata-modules/event-metadata/resolvers/application-events.resolver';
 import { ApplicationEventEmitterService } from 'src/engine/metadata-modules/event-metadata/services/application-event-emitter.service';
 import { EventRealtimeService } from 'src/engine/metadata-modules/event-metadata/services/event-realtime.service';
@@ -13,15 +12,11 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
-  imports: [
-    WorkspaceCacheModule,
-    WorkspaceCacheStorageModule,
-    JwtModule,
-    TokenModule,
-  ],
-  controllers: [VisitorEventStreamController, MemberEventStreamController],
+  imports: [WorkspaceCacheModule, WorkspaceCacheStorageModule, JwtModule],
+  controllers: [VisitorEventStreamController],
   providers: [
     ApplicationEventsResolver,
+    AppEventSubscriptionResolver,
     ApplicationEventEmitterService,
     EventRealtimeService,
     MemberEventSubscriptionService,

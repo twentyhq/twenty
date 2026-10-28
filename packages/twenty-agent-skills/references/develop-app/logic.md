@@ -96,11 +96,11 @@ When adding AI behavior:
 
 To push live updates to front components or to visitors on an external website, declare the event with `defineEvent` from `twenty-sdk/define` and emit it with `emitEvent` from `twenty-sdk/logic-function`. Never poll for this. See the [realtime events guide](https://docs.twenty.com/developers/extend/apps/logic/realtime-events.md).
 
-- `name` and property names are camelCase; an event name is unique within the app. Property types are `TEXT`, `NUMBER`, `BOOLEAN`, `DATE_TIME`, `UUID`, `RAW_JSON` and `RECORD_REFERENCE` (with `objectUniversalIdentifier`). Up to 50 properties.
+- `name` and property names are camelCase; an event name is unique within the app. Dotted names are reserved for events Twenty emits. Property types are `TEXT`, `NUMBER`, `BOOLEAN`, `DATE_TIME`, `UUID`, `RAW_JSON` and `RECORD_REFERENCE` (with `objectUniversalIdentifier`). Up to 50 properties.
 - `capabilities.realtime.scopes` decides who receives an occurrence, never the emitter: `{ kind: 'record', property }` reaches the app's front components whose viewer can read the referenced record, `{ kind: 'visitor' }` reaches holders of a visitor token for the occurrence's `anonymousId`.
 - `emitEvent({ event, properties, anonymousId? })` is refused when the event is not declared, a property is undeclared or mistyped, or the payload exceeds 32 KB. `anonymousId` (1 to 128 of `A-Z a-z 0-9 _ -`) is needed only for visitor delivery.
 - Everything in an occurrence is visible to its whole scope. Emit thin events (ids and what changed) and let receivers refetch through the APIs, where field permissions apply.
-- For a visitor, mint a token in the public route the widget calls with `createVisitorEventToken({ anonymousId, events, expiresInSeconds? })` (15 minutes by default, 24 hours max, up to 20 events), then have the widget open an `EventSource` on `<server-url>/app-events/stream?token=<token>` and listen for `occurrence` messages. The token is not an API credential, and the stream closes when it expires.
+- For a visitor, mint a token in the public route the widget calls with `createVisitorEventToken({ anonymousId, events, expiresInSeconds? })` (15 minutes by default, 24 hours max, up to 20 events), then have the widget open an `EventSource` on `<server-url>/app-events/stream?token=<token>` and listen for `occurrence` messages, each `{ id, type, occurredAt, properties }`. The token is not an API credential, and the stream closes when it expires.
 - Delivery is best effort with no replay: keep the source of truth in records and refetch on (re)connect.
 
 Requires `"engines": { "twenty": ">=2.53.0" }`.

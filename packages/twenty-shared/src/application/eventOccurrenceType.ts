@@ -1,6 +1,6 @@
 export type EventOccurrence = {
   id: string;
-  event: string;
+  type: string;
   occurredAt: string;
   properties: Record<string, unknown>;
 };

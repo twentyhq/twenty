@@ -301,6 +301,19 @@ export interface AppConnection {
     __typename: 'AppConnection'
 }
 
+export interface AppEventOccurrence {
+    id: Scalars['UUID']
+    occurredAt: Scalars['String']
+    properties: Scalars['JSON']
+    type: Scalars['String']
+    __typename: 'AppEventOccurrence'
+}
+
+export interface AppEventStreamPayload {
+    occurrence?: AppEventOccurrence
+    __typename: 'AppEventStreamPayload'
+}
+
 export interface AppKeyValue {
     key: Scalars['String']
     scope: AppKeyValueScope
@@ -3456,6 +3469,7 @@ export interface Subscription {
     exportRecords: RecordExport
     logicFunctionLogs: LogicFunctionLogs
     onAgentChatEvent: AgentChatEvent
+    onAppEvent: AppEventStreamPayload
     onEventSubscription?: EventSubscription
     __typename: 'Subscription'
 }
@@ -4508,6 +4522,23 @@ export interface AppConnectionGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface AppEventOccurrenceGenqlSelection{
+    id?: boolean | number
+    occurredAt?: boolean | number
+    properties?: boolean | number
+    type?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AppEventStreamPayloadGenqlSelection{
+    occurrence?: AppEventOccurrenceGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AppEventSubscriptionInput {event: Scalars['String'],property?: (Scalars['String'] | null),recordId: Scalars['UUID']}
 
 export interface AppKeyValueGenqlSelection{
     key?: boolean | number
@@ -7186,6 +7217,8 @@ export interface ObjectRecordEventWithQueryIdsGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface OnAppEventInput {subscriptions: AppEventSubscriptionInput[]}
+
 export interface OnboardingStepNavigationGenqlSelection{
     /** Onboarding status the user landed on */
     onboardingStatus?: boolean | number
@@ -8055,6 +8088,7 @@ export interface SubscriptionGenqlSelection{
     exportRecords?: (RecordExportGenqlSelection & { __args: {input: CreateRecordExportInput} })
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
     onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    onAppEvent?: (AppEventStreamPayloadGenqlSelection & { __args: {input: OnAppEventInput} })
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -9277,6 +9311,22 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAppConnection = (obj?: { __typename?: any } | null): obj is AppConnection => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAppConnection"')
       return AppConnection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AppEventOccurrence_possibleTypes: string[] = ['AppEventOccurrence']
+    export const isAppEventOccurrence = (obj?: { __typename?: any } | null): obj is AppEventOccurrence => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAppEventOccurrence"')
+      return AppEventOccurrence_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AppEventStreamPayload_possibleTypes: string[] = ['AppEventStreamPayload']
+    export const isAppEventStreamPayload = (obj?: { __typename?: any } | null): obj is AppEventStreamPayload => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAppEventStreamPayload"')
+      return AppEventStreamPayload_possibleTypes.includes(obj.__typename)
     }
     
 

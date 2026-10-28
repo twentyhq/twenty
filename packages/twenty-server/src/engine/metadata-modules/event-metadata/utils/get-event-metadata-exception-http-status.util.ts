@@ -20,6 +20,7 @@ export const getEventMetadataExceptionHttpStatus = (
     case EventMetadataExceptionCode.EVENT_SUBSCRIPTION_FORBIDDEN:
       return HttpStatus.FORBIDDEN;
     case EventMetadataExceptionCode.INVALID_VISITOR_EVENT_TOKEN:
+    case EventMetadataExceptionCode.EVENT_STREAM_ACCESS_EXPIRED:
       return HttpStatus.UNAUTHORIZED;
     case EventMetadataExceptionCode.TOO_MANY_VISITOR_EVENT_STREAMS:
       return HttpStatus.TOO_MANY_REQUESTS;

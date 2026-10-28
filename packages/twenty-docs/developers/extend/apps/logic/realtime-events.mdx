@@ -48,7 +48,7 @@ export default defineEvent({
 });
 ```
 
-`name` and property names are camelCase. An event name is unique within your app.
+`name` and property names are camelCase. An event name is unique within your app. Dotted names are reserved for events Twenty itself emits.
 
 | Property type | Accepted value |
 |---|---|
@@ -105,7 +105,7 @@ export const ConversationTranscript = () => {
 };
 ```
 
-The stream is authenticated as the person viewing the component, intersected with your app's role, and is refused if they cannot read the record. Read access is checked again every minute while the stream is open.
+The stream is a GraphQL subscription authenticated as the person viewing the component, intersected with your app's role, and is refused if they cannot read the record. Read access is checked again every minute while the stream is open.
 
 When an event declares several record scopes, pass `property` to say which one the `recordId` belongs to.
 
@@ -132,7 +132,7 @@ const stream = new EventSource(
 
 stream.addEventListener('occurrence', (event) => {
   const occurrence = JSON.parse(event.data);
-  // { id, event, occurredAt, properties }
+  // { id, type, occurredAt, properties }
 });
 ```
 

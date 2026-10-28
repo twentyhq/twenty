@@ -14,6 +14,7 @@ export enum EventMetadataExceptionCode {
   EVENT_SUBSCRIPTION_FORBIDDEN = 'EVENT_SUBSCRIPTION_FORBIDDEN',
   INVALID_VISITOR_EVENT_TOKEN = 'INVALID_VISITOR_EVENT_TOKEN',
   TOO_MANY_VISITOR_EVENT_STREAMS = 'TOO_MANY_VISITOR_EVENT_STREAMS',
+  EVENT_STREAM_ACCESS_EXPIRED = 'EVENT_STREAM_ACCESS_EXPIRED',
 }
 
 const getEventMetadataExceptionUserFriendlyMessage = (
@@ -38,6 +39,8 @@ const getEventMetadataExceptionUserFriendlyMessage = (
       return msg`This event stream link is invalid or has expired.`;
     case EventMetadataExceptionCode.TOO_MANY_VISITOR_EVENT_STREAMS:
       return msg`Too many open event streams for this visitor.`;
+    case EventMetadataExceptionCode.EVENT_STREAM_ACCESS_EXPIRED:
+      return msg`Your session has expired. Reconnect to keep receiving events.`;
     default:
       assertUnreachable(code);
   }

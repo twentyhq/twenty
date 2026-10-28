@@ -65,7 +65,7 @@ export class ApplicationEventEmitterService {
 
     const occurrence: EventOccurrence = {
       id: v4(),
-      event,
+      type: event,
       occurredAt: new Date().toISOString(),
       properties,
     };

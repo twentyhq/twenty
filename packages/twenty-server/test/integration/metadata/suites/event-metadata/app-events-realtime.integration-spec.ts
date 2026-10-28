@@ -40,6 +40,19 @@ const CREATE_APP_VISITOR_EVENT_TOKEN_MUTATION = gql`
   }
 `;
 
+const ON_APP_EVENT_SUBSCRIPTION = `
+  subscription OnAppEvent($input: OnAppEventInput!) {
+    onAppEvent(input: $input) {
+      occurrence {
+        id
+        type
+        occurredAt
+        properties
+      }
+    }
+  }
+`;
+
 const MESSAGE_ADDED_EVENT: EventManifest = {
   universalIdentifier: MESSAGE_ADDED_EVENT_ID,
   name: 'messageAdded',
@@ -85,13 +98,20 @@ const syncEvents = ({
     expectToFail,
   });
 
-const openEventStream = async (url: string, init?: RequestInit) => {
+type ServerSentEvent = { event: string; data: string };
+
+type AppEventStreamMessage = {
+  data?: { onAppEvent: { occurrence: EventOccurrence | null } };
+  errors?: { extensions?: { code?: string } }[];
+};
+
+const openServerSentEventStream = async (url: string, init?: RequestInit) => {
   const abortController = new AbortController();
   const response = await fetch(url, {
     ...init,
     signal: abortController.signal,
   });
-  const receivedOccurrences: EventOccurrence[] = [];
+  const receivedEvents: ServerSentEvent[] = [];
   let buffer = '';
 
   const chunks = (response.body as unknown as AsyncIterable<Uint8Array>)[
@@ -99,8 +119,10 @@ const openEventStream = async (url: string, init?: RequestInit) => {
   ]();
   const decoder = new TextDecoder();
 
-  const readUntil = async (occurrenceCount: number) => {
-    while (receivedOccurrences.length < occurrenceCount) {
+  const readUntil = async (
+    isComplete: (events: ServerSentEvent[]) => boolean,
+  ) => {
+    while (!isComplete(receivedEvents)) {
       const { done, value } = await chunks.next();
 
       if (done === true) {
@@ -114,12 +136,15 @@ const openEventStream = async (url: string, init?: RequestInit) => {
       buffer = blocks.pop() ?? '';
 
       for (const block of blocks) {
-        const dataLine = block
-          .split('\n')
-          .find((line) => line.startsWith('data: '));
+        const lines = block.split('\n');
+        const eventLine = lines.find((line) => line.startsWith('event: '));
+        const dataLines = lines.filter((line) => line.startsWith('data: '));
 
-        if (block.includes('event: occurrence') && dataLine) {
-          receivedOccurrences.push(JSON.parse(dataLine.slice(6)));
+        if (eventLine && dataLines.length > 0) {
+          receivedEvents.push({
+            event: eventLine.slice(7),
+            data: dataLines.map((line) => line.slice(6)).join('\n'),
+          });
         }
       }
     }
@@ -127,9 +152,58 @@ const openEventStream = async (url: string, init?: RequestInit) => {
 
   return {
     response,
-    receivedOccurrences,
+    receivedEvents,
     readUntil,
     close: () => abortController.abort(),
+  };
+};
+
+const openVisitorStream = async (token: string) => {
+  const stream = await openServerSentEventStream(
+    `${SERVER_URL}/app-events/stream?token=${token}`,
+  );
+  const getOccurrences = (): EventOccurrence[] =>
+    stream.receivedEvents
+      .filter(({ event }) => event === 'occurrence')
+      .map(({ data }) => JSON.parse(data));
+
+  return {
+    ...stream,
+    getOccurrences,
+    readOccurrences: (count: number) =>
+      stream.readUntil(() => getOccurrences().length >= count),
+  };
+};
+
+const openMemberStream = async ({
+  applicationToken,
+  subscriptions,
+}: {
+  applicationToken: string;
+  subscriptions: Record<string, unknown>[];
+}) => {
+  const stream = await openServerSentEventStream(`${SERVER_URL}/metadata`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'text/event-stream',
+      Authorization: `Bearer ${applicationToken}`,
+    },
+    body: JSON.stringify({
+      query: ON_APP_EVENT_SUBSCRIPTION,
+      variables: { input: { subscriptions } },
+    }),
+  });
+  const getMessages = (): AppEventStreamMessage[] =>
+    stream.receivedEvents
+      .filter(({ event }) => event === 'next')
+      .map(({ data }) => JSON.parse(data));
+
+  return {
+    ...stream,
+    getMessages,
+    readMessages: (count: number) =>
+      stream.readUntil(() => getMessages().length >= count),
   };
 };
 
@@ -244,11 +318,11 @@ describe('app events realtime (e2e)', () => {
   });
 
   it('delivers an occurrence only to the visitor it was emitted for', async () => {
-    const visitorStream = await openEventStream(
-      `${SERVER_URL}/app-events/stream?token=${await createVisitorToken('visitor-1')}`,
+    const visitorStream = await openVisitorStream(
+      await createVisitorToken('visitor-1'),
     );
-    const otherVisitorStream = await openEventStream(
-      `${SERVER_URL}/app-events/stream?token=${await createVisitorToken('visitor-2')}`,
+    const otherVisitorStream = await openVisitorStream(
+      await createVisitorToken('visitor-2'),
     );
 
     expect(visitorStream.response.status).toBe(200);
@@ -268,16 +342,16 @@ describe('app events realtime (e2e)', () => {
       anonymousId: 'visitor-2',
     });
 
-    await visitorStream.readUntil(1);
-    await otherVisitorStream.readUntil(1);
+    await visitorStream.readOccurrences(1);
+    await otherVisitorStream.readOccurrences(1);
 
-    expect(visitorStream.receivedOccurrences[0]).toEqual({
+    expect(visitorStream.getOccurrences()[0]).toEqual({
       id: emitResponse.body.data.emitAppEvent.id,
-      event: 'messageAdded',
+      type: 'messageAdded',
       occurredAt: emitResponse.body.data.emitAppEvent.occurredAt,
       properties: { companyId, text: 'Hello' },
     });
-    expect(otherVisitorStream.receivedOccurrences[0]?.properties).toEqual({
+    expect(otherVisitorStream.getOccurrences()[0]?.properties).toEqual({
       companyId,
       text: 'Hello other visitor',
     });
@@ -317,66 +391,68 @@ describe('app events realtime (e2e)', () => {
   });
 
   it('streams record-scoped occurrences to a member who can read the record', async () => {
-    const memberStream = await openEventStream(
-      `${SERVER_URL}/rest/app-events/stream`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${applicationToken}`,
-        },
-        body: JSON.stringify({
-          subscriptions: [{ event: 'messageAdded', recordId: companyId }],
-        }),
-      },
-    );
+    const memberStream = await openMemberStream({
+      applicationToken,
+      subscriptions: [{ event: 'messageAdded', recordId: companyId }],
+    });
 
     expect(memberStream.response.status).toBe(200);
 
-    await emit({
+    await memberStream.readMessages(1);
+
+    expect(memberStream.getMessages()[0]).toEqual({
+      data: { onAppEvent: { occurrence: null } },
+    });
+
+    const emitResponse = await emit({
       event: 'messageAdded',
       properties: { companyId, text: 'Hello team' },
     });
 
-    await memberStream.readUntil(1);
+    await memberStream.readMessages(2);
 
-    expect(memberStream.receivedOccurrences[0]?.properties).toEqual({
-      companyId,
-      text: 'Hello team',
+    expect(memberStream.getMessages()[1]).toEqual({
+      data: {
+        onAppEvent: {
+          occurrence: {
+            id: emitResponse.body.data.emitAppEvent.id,
+            type: 'messageAdded',
+            occurredAt: emitResponse.body.data.emitAppEvent.occurredAt,
+            properties: { companyId, text: 'Hello team' },
+          },
+        },
+      },
     });
 
     memberStream.close();
   });
 
   it('refuses a member subscription whose recordId is not a UUID', async () => {
-    const response = await fetch(`${SERVER_URL}/rest/app-events/stream`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${applicationToken}`,
-      },
-      body: JSON.stringify({
-        subscriptions: [{ event: 'messageAdded', recordId: 'company-1' }],
-      }),
+    const memberStream = await openMemberStream({
+      applicationToken,
+      subscriptions: [{ event: 'messageAdded', recordId: 'company-1' }],
     });
 
-    expect(response.status).toBe(400);
-    await response.text();
+    await memberStream.readMessages(1);
+
+    expect(memberStream.getMessages()[0]?.data ?? null).toBeNull();
+    expect(memberStream.getMessages()[0]?.errors?.length).toBeGreaterThan(0);
+
+    memberStream.close();
   });
 
   it('refuses a member subscription to a record they cannot read', async () => {
-    const response = await fetch(`${SERVER_URL}/rest/app-events/stream`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${applicationToken}`,
-      },
-      body: JSON.stringify({
-        subscriptions: [{ event: 'messageAdded', recordId: uuidv4() }],
-      }),
+    const memberStream = await openMemberStream({
+      applicationToken,
+      subscriptions: [{ event: 'messageAdded', recordId: uuidv4() }],
     });
 
-    expect(response.status).toBe(403);
-    await response.text();
+    await memberStream.readMessages(1);
+
+    expect(memberStream.getMessages()[0]?.errors?.[0]?.extensions?.code).toBe(
+      'FORBIDDEN',
+    );
+
+    memberStream.close();
   });
 });

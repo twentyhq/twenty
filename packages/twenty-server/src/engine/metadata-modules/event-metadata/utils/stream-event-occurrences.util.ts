@@ -2,17 +2,13 @@ import { type Request, type Response } from 'express';
 import { type EventOccurrence } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  EVENT_STREAM_HEARTBEAT_INTERVAL_MS,
-  EVENT_STREAM_REAUTHORIZATION_INTERVAL_MS,
-} from 'src/engine/metadata-modules/event-metadata/constants/event-stream.constant';
+import { EVENT_STREAM_HEARTBEAT_INTERVAL_MS } from 'src/engine/metadata-modules/event-metadata/constants/event-stream.constant';
 
 export const streamEventOccurrences = async ({
   request,
   response,
   subscribe,
   closeAt,
-  reauthorize,
   onClose,
 }: {
   request: Request;
@@ -21,7 +17,6 @@ export const streamEventOccurrences = async ({
     onOccurrence: (occurrence: EventOccurrence) => void,
   ) => Promise<() => void>;
   closeAt?: Date;
-  reauthorize?: () => Promise<boolean>;
   onClose?: () => void;
 }): Promise<void> => {
   let isClosed = false;
@@ -89,19 +84,5 @@ export const streamEventOccurrences = async ({
 
   if (isDefined(closeAt)) {
     timers.push(setTimeout(close, Math.max(closeAt.getTime() - Date.now(), 0)));
-  }
-
-  if (isDefined(reauthorize)) {
-    timers.push(
-      setInterval(() => {
-        void reauthorize()
-          .catch(() => false)
-          .then((isStillAuthorized) => {
-            if (!isStillAuthorized) {
-              close();
-            }
-          });
-      }, EVENT_STREAM_REAUTHORIZATION_INTERVAL_MS),
-    );
   }
 };

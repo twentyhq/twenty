@@ -79,7 +79,7 @@ describe('ApplicationEventEmitterService', () => {
       ],
       serializedOccurrence: JSON.stringify({
         id: result.id,
-        event: 'agentTyping',
+        type: 'agentTyping',
         occurredAt: result.occurredAt,
         properties: { isTyping: true },
       }),

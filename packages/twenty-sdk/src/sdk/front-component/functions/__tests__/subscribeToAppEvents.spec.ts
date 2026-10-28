@@ -10,16 +10,29 @@ import {
 
 import { subscribeToAppEvents } from '@/sdk/front-component/functions/subscribeToAppEvents';
 
-const buildStreamResponse = (body: string) =>
+const SUBSCRIPTIONS = [{ event: 'messageAdded', recordId: 'conversation-1' }];
+
+const buildStreamResponse = (messages: unknown[]) =>
   new Response(
     new ReadableStream({
       start(controller) {
-        controller.enqueue(new TextEncoder().encode(body));
+        controller.enqueue(
+          new TextEncoder().encode(
+            `:\n\n${messages
+              .map(
+                (message) =>
+                  `event: next\ndata: ${JSON.stringify(message)}\n\n`,
+              )
+              .join('')}event: complete\ndata:\n\n`,
+          ),
+        );
         controller.close();
       },
     }),
     { status: 200, headers: { 'Content-Type': 'text/event-stream' } },
   );
+
+const CONNECTED_MESSAGE = { data: { onAppEvent: { occurrence: null } } };
 
 describe('subscribeToAppEvents', () => {
   let fetchSpy: MockInstance<typeof fetch>;
@@ -36,26 +49,27 @@ describe('subscribeToAppEvents', () => {
     fetchSpy.mockRestore();
   });
 
-  it('POSTs the subscriptions and delivers occurrences', async () => {
+  it('subscribes over the metadata API and delivers occurrences', async () => {
     const abortController = new AbortController();
     const occurrence = {
       id: 'occurrence-1',
-      event: 'messageAdded',
+      type: 'messageAdded',
       occurredAt: '2026-10-27T10:00:00.000Z',
       properties: { conversationId: 'conversation-1' },
     };
 
     fetchSpy.mockResolvedValue(
-      buildStreamResponse(
-        `: connected\n\nid: occurrence-1\nevent: occurrence\ndata: ${JSON.stringify(occurrence)}\n\n`,
-      ),
+      buildStreamResponse([
+        CONNECTED_MESSAGE,
+        { data: { onAppEvent: { occurrence } } },
+      ]),
     );
 
     const onEvent = vi.fn(() => abortController.abort());
     const onConnected = vi.fn();
 
     await subscribeToAppEvents({
-      subscriptions: [{ event: 'messageAdded', recordId: 'conversation-1' }],
+      subscriptions: SUBSCRIPTIONS,
       onEvent,
       onConnected,
       signal: abortController.signal,
@@ -66,12 +80,12 @@ describe('subscribeToAppEvents', () => {
 
     const [url, requestInit] = fetchSpy.mock.calls[0];
 
-    expect(url).toBe('https://api.test/rest/app-events/stream');
+    expect(url).toBe('https://api.test/metadata');
     expect(new Headers(requestInit?.headers).get('Authorization')).toBe(
       'Bearer member-token',
     );
-    expect(JSON.parse(requestInit?.body as string)).toEqual({
-      subscriptions: [{ event: 'messageAdded', recordId: 'conversation-1' }],
+    expect(JSON.parse(requestInit?.body as string).variables).toEqual({
+      input: { subscriptions: SUBSCRIPTIONS },
     });
   });
 
@@ -80,10 +94,49 @@ describe('subscribeToAppEvents', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => undefined);
 
-    fetchSpy.mockResolvedValue(new Response(null, { status: 403 }));
+    fetchSpy.mockResolvedValue(
+      buildStreamResponse([
+        {
+          errors: [
+            {
+              message: 'You are not allowed to receive these events.',
+              extensions: { code: 'FORBIDDEN' },
+            },
+          ],
+        },
+      ]),
+    );
 
     await subscribeToAppEvents({
-      subscriptions: [{ event: 'messageAdded', recordId: 'conversation-1' }],
+      subscriptions: SUBSCRIPTIONS,
+      onEvent: vi.fn(),
+      signal: new AbortController().signal,
+    });
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('stops when the access token is refused and cannot be refreshed', async () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    fetchSpy.mockResolvedValue(
+      buildStreamResponse([
+        {
+          errors: [
+            {
+              message: 'Your session has expired.',
+              extensions: { code: 'UNAUTHENTICATED' },
+            },
+          ],
+        },
+      ]),
+    );
+
+    await subscribeToAppEvents({
+      subscriptions: SUBSCRIPTIONS,
       onEvent: vi.fn(),
       signal: new AbortController().signal,
     });

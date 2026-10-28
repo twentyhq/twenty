@@ -364,6 +364,23 @@ type AppConnection {
   workspaceMemberId: String
 }
 
+type AppEventOccurrence {
+  id: UUID!
+  occurredAt: String!
+  properties: JSON!
+  type: String!
+}
+
+type AppEventStreamPayload {
+  occurrence: AppEventOccurrence
+}
+
+input AppEventSubscriptionInput {
+  event: String!
+  property: String
+  recordId: UUID!
+}
+
 type AppKeyValue {
   key: String!
   scope: AppKeyValueScope!
@@ -3714,6 +3731,10 @@ enum ObjectSharingReach {
   WORKSPACE
 }
 
+input OnAppEventInput {
+  subscriptions: [AppEventSubscriptionInput!]!
+}
+
 """Onboarding status"""
 enum OnboardingStatus {
   BOOK_CALL
@@ -4717,6 +4738,7 @@ type Subscription {
   exportRecords(input: CreateRecordExportInput!): RecordExport!
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
+  onAppEvent(input: OnAppEventInput!): AppEventStreamPayload!
   onEventSubscription(eventStreamId: String!): EventSubscription
 }
 

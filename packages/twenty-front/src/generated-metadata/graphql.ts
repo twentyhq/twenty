@@ -411,6 +411,25 @@ export type AppConnection = {
   workspaceMemberId?: Maybe<Scalars['String']['output']>;
 };
 
+export type AppEventOccurrence = {
+  __typename?: 'AppEventOccurrence';
+  id: Scalars['UUID']['output'];
+  occurredAt: Scalars['String']['output'];
+  properties: Scalars['JSON']['output'];
+  type: Scalars['String']['output'];
+};
+
+export type AppEventStreamPayload = {
+  __typename?: 'AppEventStreamPayload';
+  occurrence?: Maybe<AppEventOccurrence>;
+};
+
+export type AppEventSubscriptionInput = {
+  event: Scalars['String']['input'];
+  property?: InputMaybe<Scalars['String']['input']>;
+  recordId: Scalars['UUID']['input'];
+};
+
 export type AppKeyValue = {
   __typename?: 'AppKeyValue';
   key: Scalars['String']['output'];
@@ -5391,6 +5410,10 @@ export enum ObjectSharingReach {
   WORKSPACE = 'WORKSPACE'
 }
 
+export type OnAppEventInput = {
+  subscriptions: Array<AppEventSubscriptionInput>;
+};
+
 /** Onboarding status */
 export enum OnboardingStatus {
   BOOK_CALL = 'BOOK_CALL',
@@ -6977,6 +7000,7 @@ export type Subscription = {
   exportRecords: RecordExport;
   logicFunctionLogs: LogicFunctionLogs;
   onAgentChatEvent: AgentChatEvent;
+  onAppEvent: AppEventStreamPayload;
   onEventSubscription?: Maybe<EventSubscription>;
 };
 
@@ -6999,6 +7023,11 @@ export type SubscriptionLogicFunctionLogsArgs = {
 
 export type SubscriptionOnAgentChatEventArgs = {
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type SubscriptionOnAppEventArgs = {
+  input: OnAppEventInput;
 };
 
 
