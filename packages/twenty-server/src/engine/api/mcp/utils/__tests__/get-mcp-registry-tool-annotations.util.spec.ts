@@ -26,6 +26,7 @@ describe('getMcpRegistryToolAnnotations', () => {
     ['upsert_many'],
     ['delete_one'],
     ['delete_many'],
+    ['merge_many'],
   ])(
     'should return execute annotations for the database write operation %p',
     (operation) => {
