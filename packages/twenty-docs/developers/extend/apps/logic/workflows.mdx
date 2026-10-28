@@ -71,6 +71,7 @@ Key points:
 - `nextStepIds` wires the graph. The trigger points to the first steps, and each step points to the steps that run after it.
 - A step reads earlier output with `{{trigger.<path>}}` or `{{<step universalIdentifier>.<path>}}`.
 - The build validates the whole definition: unsupported trigger or step types, broken step links and references to unknown steps fail it.
+- `isSystem` (optional, defaults to `false`) hides the workflow from the lists that leave out system workflows. It only changes what is displayed.
 
 ## Referencing other entities
 
