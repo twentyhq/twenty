@@ -25,7 +25,9 @@ LinkedIn accounts are connected through [Unipile](https://www.unipile.com)
 1. Create an application on [dashboardv2.unipile.com](https://dashboardv2.unipile.com)
    and an **Account API key** for it.
 2. Add a webhook endpoint on that application:
-   - URL: `<SERVER_URL>/webhooks/server/67c42401-744a-4cc6-afd8-ba9f5accded3`
+   - URL: `<SERVER_URL>/webhooks/server/<id>`, where `<id>` is the `id` of the
+     `linkedin-webhook-resolver` logic function in the owner workspace
+     (`findManyLogicFunctions` on the `/metadata` API)
    - Events: `message.new`, `account.status.disconnected`, `account.status.errored`
 3. In **Settings → Applications → LinkedIn → Application registration**, set
    `UNIPILE_API_KEY` to the API key and `UNIPILE_WEBHOOK_SECRET` to the
