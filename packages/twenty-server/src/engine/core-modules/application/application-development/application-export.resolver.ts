@@ -39,7 +39,7 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
     oauthClient: true,
     application: true,
   }),
-  SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
 )
 export class ApplicationExportResolver {
   constructor(

@@ -163,7 +163,7 @@ describe('Application token mutations on a registration should fail', () => {
     const callingApplication = await setupApplicationWithResources({
       name: 'Registration Mutation Calling Application',
       permissionFlagUniversalIdentifiers: [
-        SystemPermissionFlag.APPLICATIONS,
+        SystemPermissionFlag.WORKSPACE_APPS,
         SystemPermissionFlag.API_KEYS_AND_WEBHOOKS,
         SystemPermissionFlag.ROLES,
       ],

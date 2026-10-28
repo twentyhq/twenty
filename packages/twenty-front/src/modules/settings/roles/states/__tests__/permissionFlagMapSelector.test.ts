@@ -1,4 +1,5 @@
 import { createStore } from 'jotai';
+import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -50,6 +51,31 @@ describe('permissionFlagMapSelector', () => {
     );
     expect(permissionFlagMap[PermissionFlagType.DATA_MODEL]).toBe(true);
     expect(permissionFlagMap[PermissionFlagType.WORKSPACE]).toBe(false);
+  });
+
+  it('upgrade:2-53:rename-app-permission-flag-keys: should keep command menu expressions on the previous keys working while the server reports them', () => {
+    const store = buildStore({
+      permissionFlags: [
+        PermissionFlagType.USER_APPS,
+        PermissionFlagType.CONNECTED_ACCOUNTS,
+      ],
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
+    });
+
+    const permissionFlagMap = store.get(permissionFlagMapSelector.atom);
+
+    expect(
+      evaluateConditionalAvailabilityExpression(
+        'permissionFlags.CONNECTED_ACCOUNTS',
+        { permissionFlags: permissionFlagMap },
+      ),
+    ).toBe(true);
+    expect(
+      evaluateConditionalAvailabilityExpression(
+        'permissionFlags.APPLICATIONS',
+        { permissionFlags: permissionFlagMap },
+      ),
+    ).toBe(false);
   });
 
   it('should deny every flag while the current user workspace is not loaded', () => {

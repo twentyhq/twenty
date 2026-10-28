@@ -448,7 +448,7 @@ describe('app uninstall', () => {
           name: 'app uninstall',
           writes: true,
           needsTarget: true,
-          requiredPermissions: ['APPLICATIONS'],
+          requiredPermissions: ['WORKSPACE_APPS'],
         }),
       ]),
     );

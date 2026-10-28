@@ -1,5 +1,6 @@
 import { type PermissionFlagType } from 'twenty-shared/constants';
 
+import { addLegacyStandardPermissionFlagKeys } from 'src/engine/metadata-modules/permission-flag/utils/add-legacy-standard-permission-flag-keys.util';
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions.type';
 import { type UserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/dtos/user-workspace-permissions.dto';
 
@@ -30,6 +31,6 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
   return {
     objectPermissions,
     objectsPermissions,
-    permissionFlags,
+    permissionFlags: addLegacyStandardPermissionFlagKeys(permissionFlags),
   };
 };

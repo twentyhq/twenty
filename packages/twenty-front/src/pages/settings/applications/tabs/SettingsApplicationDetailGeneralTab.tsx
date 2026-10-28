@@ -65,7 +65,7 @@ export const SettingsApplicationDetailGeneralTab = ({
   const navigateSettings = useNavigateSettings();
 
   const canManageApplications = useHasPermissionFlag(
-    PermissionFlagType.APPLICATIONS,
+    PermissionFlagType.WORKSPACE_APPS,
   );
 
   const isUpgradable = isUpgradableApplicationSourceType(

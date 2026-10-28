@@ -67,7 +67,7 @@ export const SettingsAvailableApplicationDetails = () => {
   const { copyMarketplaceAppLink } = useCopyMarketplaceAppLink();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
-    PermissionFlagType.APPLICATIONS,
+    PermissionFlagType.WORKSPACE_APPS,
   );
 
   const { data: applicationData } = useQuery(

@@ -9,6 +9,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag.type';
 import { fromCreateRolePermissionFlagInputToFlatRolePermissionFlagToCreate } from 'src/engine/metadata-modules/flat-role-permission-flag/utils/from-create-role-permission-flag-input-to-flat-role-permission-flag-to-create.util';
+import { PERMISSION_FLAG_TYPE_BY_LEGACY_STANDARD_KEY } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-type-by-legacy-standard-key.constant';
 import { resolvePermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/utils/resolve-permission-flag-key.util';
 import { type UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/role-permission-flag/dtos/upsert-permission-flags.input';
 import {
@@ -19,6 +20,11 @@ import {
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+// Old clients still send pre-2.53 keys; remove after upgrade:2-53:rename-app-permission-flag-keys
+const PERMISSION_FLAG_TYPE_BY_LEGACY_KEY = new Map<string, string>(
+  Object.entries(PERMISSION_FLAG_TYPE_BY_LEGACY_STANDARD_KEY),
+);
 
 @Injectable()
 export class RolePermissionFlagService {
@@ -72,10 +78,11 @@ export class RolePermissionFlagService {
         permissionFlag,
       ]),
     );
-    const permissionFlagsByInputKey = input.permissionFlagKeys.map((flag) => ({
-      flag,
-      permissionFlag: permissionFlagByKey.get(flag),
-    }));
+    const permissionFlagsByInputKey = input.permissionFlagKeys.map((flag) => {
+      const key = PERMISSION_FLAG_TYPE_BY_LEGACY_KEY.get(flag) ?? flag;
+
+      return { flag, key, permissionFlag: permissionFlagByKey.get(key) };
+    });
     const missingPermissionFlags = permissionFlagsByInputKey
       .filter(({ permissionFlag }) => !isDefined(permissionFlag))
       .map(({ flag }) => flag);
@@ -93,7 +100,7 @@ export class RolePermissionFlagService {
     await this.validateNoAmbiguousPermissionFlagKeyOrThrow({
       workspaceId,
       permissionFlags,
-      requestedKeys: input.permissionFlagKeys,
+      requestedKeys: permissionFlagsByInputKey,
     });
 
     const requestedPermissionFlags = uniqBy(
@@ -203,24 +210,32 @@ export class RolePermissionFlagService {
   }: {
     workspaceId: string;
     permissionFlags: FlatPermissionFlag[];
-    requestedKeys: string[];
+    requestedKeys: { flag: string; key: string }[];
   }): Promise<void> {
-    const collisions = [...new Set(requestedKeys)].flatMap((key) => {
-      const permissionFlagsWithKey = permissionFlags.filter(
-        (permissionFlag) => resolvePermissionFlagKey(permissionFlag) === key,
-      );
+    const collisions = uniqBy(
+      uniqBy(requestedKeys, 'flag').flatMap(({ flag, key }) => {
+        const permissionFlagsWithKey = permissionFlags.filter(
+          (permissionFlag) => {
+            const resolvedKey = resolvePermissionFlagKey(permissionFlag);
 
-      return permissionFlagsWithKey.length > 1
-        ? [
-            {
-              key,
-              appPermissionFlags: permissionFlagsWithKey.filter(
-                (permissionFlag) => !belongsToTwentyStandardApp(permissionFlag),
-              ),
-            },
-          ]
-        : [];
-    });
+            return resolvedKey === key || resolvedKey === flag;
+          },
+        );
+
+        return permissionFlagsWithKey.length > 1
+          ? [
+              {
+                key,
+                appPermissionFlags: permissionFlagsWithKey.filter(
+                  (permissionFlag) =>
+                    !belongsToTwentyStandardApp(permissionFlag),
+                ),
+              },
+            ]
+          : [];
+      }),
+      'key',
+    );
 
     if (!isNonEmptyArray(collisions)) {
       return;

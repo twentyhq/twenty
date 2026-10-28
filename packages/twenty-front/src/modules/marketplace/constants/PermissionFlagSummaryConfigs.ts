@@ -73,7 +73,7 @@ export const PERMISSION_FLAG_SUMMARY_CONFIGS: Record<
     Icon: IconShield,
     getLabel: () => t`Bypass single sign-on`,
   },
-  [PermissionFlagType.APPLICATIONS]: {
+  [PermissionFlagType.WORKSPACE_APPS]: {
     Icon: IconApps,
     getLabel: () => t`Install and manage workspace apps`,
   },
@@ -133,7 +133,7 @@ export const PERMISSION_FLAG_SUMMARY_CONFIGS: Record<
     Icon: IconFileExport,
     getLabel: () => t`Export CSV files`,
   },
-  [PermissionFlagType.CONNECTED_ACCOUNTS]: {
+  [PermissionFlagType.USER_APPS]: {
     Icon: IconApps,
     getLabel: () => t`Manage own app preferences and accounts`,
   },

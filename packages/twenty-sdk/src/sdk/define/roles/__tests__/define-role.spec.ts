@@ -64,6 +64,29 @@ describe('defineRole', () => {
     );
   });
 
+  it.each([
+    ['CONNECTED_ACCOUNTS', 'USER_APPS'],
+    ['APPLICATIONS', 'WORKSPACE_APPS'],
+  ] as const)(
+    'should return error when deprecated %s is listed with %s',
+    (deprecatedName, replacementName) => {
+      const config = {
+        ...validConfig,
+        permissionFlagUniversalIdentifiers: [
+          SystemPermissionFlag[replacementName],
+          SystemPermissionFlag[deprecatedName],
+        ],
+      };
+
+      const result = defineRole(config);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toEqual([
+        `Duplicate permission flag universalIdentifier "${SystemPermissionFlag[replacementName]}"`,
+      ]);
+    },
+  );
+
   it('should return error when universalIdentifier is missing', () => {
     const config = {
       label: 'App User',

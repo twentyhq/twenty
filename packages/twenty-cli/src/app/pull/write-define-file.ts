@@ -27,7 +27,6 @@ import {
   ViewVisibility,
   WidgetType,
 } from 'twenty-shared/types';
-import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 const MAX_IMPORT_LINE_LENGTH = 80;
@@ -35,7 +34,7 @@ const MAX_IMPORT_LINE_LENGTH = 80;
 export type EnumBinding = {
   path: string[];
   symbol: string;
-  members: Record<string, string>;
+  members: Record<string, unknown>;
 };
 
 const buildFieldEnumBindings = (prefix: string[]): EnumBinding[] => [
@@ -91,7 +90,9 @@ export const INDEX_ENUM_BINDINGS: EnumBinding[] = [
   { path: ['indexType'], symbol: 'IndexType', members: IndexType },
 ];
 
-export const ROLE_ENUM_BINDINGS: EnumBinding[] = [
+export const buildRoleEnumBindings = (
+  systemPermissionFlag: Record<string, unknown>,
+): EnumBinding[] => [
   {
     path: ['rowLevelPermissionPredicateGroups', '[]', 'logicalOperator'],
     symbol: 'RowLevelPermissionPredicateGroupLogicalOperator',
@@ -105,7 +106,7 @@ export const ROLE_ENUM_BINDINGS: EnumBinding[] = [
   {
     path: ['permissionFlagUniversalIdentifiers', '[]'],
     symbol: 'SystemPermissionFlag',
-    members: SystemPermissionFlag,
+    members: systemPermissionFlag,
   },
 ];
 

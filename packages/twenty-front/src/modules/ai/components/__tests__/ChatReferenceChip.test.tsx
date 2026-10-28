@@ -55,7 +55,7 @@ const allCompaniesView = {
 const ALL_PERMISSION_FLAGS = [
   PermissionFlagType.DATA_MODEL,
   PermissionFlagType.ROLES,
-  PermissionFlagType.APPLICATIONS,
+  PermissionFlagType.WORKSPACE_APPS,
   PermissionFlagType.AI_SETTINGS,
 ];
 
@@ -145,7 +145,7 @@ const referenceCases: Array<{
       displayName: 'Twenty',
     }),
     href: `/settings/applications/${APPLICATION_ID}`,
-    permissionFlag: PermissionFlagType.APPLICATIONS,
+    permissionFlag: PermissionFlagType.WORKSPACE_APPS,
   },
   {
     reference: asMatch({

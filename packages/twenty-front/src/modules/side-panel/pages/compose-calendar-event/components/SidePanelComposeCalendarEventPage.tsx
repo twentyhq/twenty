@@ -35,7 +35,7 @@ export const SidePanelComposeCalendarEventPage = () => {
   const navigateSettings = useNavigateSettings();
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const hasConnectedAccountsPermission = useHasPermissionFlag(
-    PermissionFlagType.CONNECTED_ACCOUNTS,
+    PermissionFlagType.USER_APPS,
   );
   const { enqueueToast } = useToast();
 

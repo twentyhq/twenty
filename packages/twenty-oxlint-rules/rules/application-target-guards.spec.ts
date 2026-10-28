@@ -16,7 +16,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(${PRINCIPAL_GUARD}, SettingsPermissionGuard(PermissionFlagType.APPLICATIONS), ApplicationTargetGuard)
+          @UseGuards(${PRINCIPAL_GUARD}, SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS), ApplicationTargetGuard)
           testQuery(${targetArg('true')}) {}
         }
       `,
@@ -36,7 +36,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         class TestResolver {
-          @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS), ApplicationTargetGuard)
+          @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS), ApplicationTargetGuard)
           @Query()
           @UseGuards(${PRINCIPAL_GUARD})
           testQuery(${targetArg('false')}) {}
@@ -99,7 +99,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         class TestResolver {
-          @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+          @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS))
           @Query()
           @UseGuards(${PRINCIPAL_GUARD}, ApplicationTargetGuard)
           testQuery(${targetArg('false')}) {}

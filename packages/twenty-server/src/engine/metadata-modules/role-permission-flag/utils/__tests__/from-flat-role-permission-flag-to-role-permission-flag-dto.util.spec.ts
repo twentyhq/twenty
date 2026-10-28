@@ -75,18 +75,18 @@ describe('fromFlatRolePermissionFlagToRolePermissionFlagDto', () => {
     });
   });
 
-  it('upgrade:2-53:rename-app-permission-flag-keys exposes the code key of a standard flag stored under a different key', () => {
+  it('upgrade:2-53:rename-app-permission-flag-keys exposes the current key of a standard flag still stored under its previous key', () => {
     expect(
       fromFlatRolePermissionFlagToRolePermissionFlagDto(
         buildFlatRolePermissionFlag(),
         buildFlatPermissionFlagMaps(
           buildFlatPermissionFlag({
-            universalIdentifier: SystemPermissionFlag.CONNECTED_ACCOUNTS,
-            key: 'USER_APPS',
+            universalIdentifier: SystemPermissionFlag.USER_APPS,
+            key: 'CONNECTED_ACCOUNTS',
           }),
         ),
       ).flag,
-    ).toBe(PermissionFlagType.CONNECTED_ACCOUNTS);
+    ).toBe(PermissionFlagType.USER_APPS);
   });
 
   it('exposes the stored key of an app-defined flag', () => {

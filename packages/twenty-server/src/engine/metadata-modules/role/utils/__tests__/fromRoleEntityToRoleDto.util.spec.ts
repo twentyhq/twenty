@@ -78,20 +78,20 @@ describe('fromRoleEntityToRoleDto', () => {
     ]);
   });
 
-  it('upgrade:2-53:rename-app-permission-flag-keys exposes the code key of a standard flag stored under a different key', () => {
+  it('upgrade:2-53:rename-app-permission-flag-keys exposes the current key of a standard flag still stored under its previous key', () => {
     const roleDto = fromRoleEntityToRoleDto(
       buildRoleEntity({
         rolePermissionFlags: [
           buildRolePermissionFlagEntity({
-            universalIdentifier: SystemPermissionFlag.APPLICATIONS,
-            key: 'WORKSPACE_APPS',
+            universalIdentifier: SystemPermissionFlag.WORKSPACE_APPS,
+            key: 'APPLICATIONS',
           }),
         ],
       }),
     );
 
     expect(roleDto.permissionFlags?.[0].flag).toBe(
-      PermissionFlagType.APPLICATIONS,
+      PermissionFlagType.WORKSPACE_APPS,
     );
   });
 

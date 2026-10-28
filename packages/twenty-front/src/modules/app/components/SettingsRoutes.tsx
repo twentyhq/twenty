@@ -810,7 +810,7 @@ const createSettingsRouteElements = ({
     <Route
       element={
         <SettingsProtectedRouteWrapper
-          settingsPermission={PermissionFlagType.CONNECTED_ACCOUNTS}
+          settingsPermission={PermissionFlagType.USER_APPS}
         />
       }
     >
@@ -1156,7 +1156,7 @@ const createSettingsRouteElements = ({
     <Route
       element={
         <SettingsProtectedRouteWrapper
-          settingsPermission={PermissionFlagType.APPLICATIONS}
+          settingsPermission={PermissionFlagType.WORKSPACE_APPS}
         />
       }
     >

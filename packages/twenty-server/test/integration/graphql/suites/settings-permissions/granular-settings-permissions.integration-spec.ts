@@ -278,7 +278,7 @@ describe('Granular settings permissions', () => {
       expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
-    it('should deny access to applications operations when user does not have APPLICATIONS setting permission', async () => {
+    it('should deny access to applications operations when user does not have WORKSPACE_APPS setting permission', async () => {
       const findOneApplicationQuery = {
         query: `
           query FindOneApplication {

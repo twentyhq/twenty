@@ -66,7 +66,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
 
   const isUnclaimed = !isDefined(registration.ownerWorkspaceId);
   const hasApplicationsPermission = useHasPermissionFlag(
-    PermissionFlagType.APPLICATIONS,
+    PermissionFlagType.WORKSPACE_APPS,
   );
 
   const { data: statsData } = useQuery(

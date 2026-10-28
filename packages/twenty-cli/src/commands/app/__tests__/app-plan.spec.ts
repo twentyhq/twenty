@@ -531,7 +531,7 @@ describe('app plan', () => {
         writes: false,
         needsProject: true,
         needsTarget: true,
-        requiredPermissions: ['APPLICATIONS'],
+        requiredPermissions: ['WORKSPACE_APPS'],
         flags: expect.arrayContaining(['--prune', '--no-prune']),
       }),
     );

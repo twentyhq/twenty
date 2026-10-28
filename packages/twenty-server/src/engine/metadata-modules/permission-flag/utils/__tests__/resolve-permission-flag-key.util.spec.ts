@@ -6,25 +6,31 @@ import {
 import { resolvePermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/utils/resolve-permission-flag-key.util';
 
 describe('upgrade:2-53:rename-app-permission-flag-keys resolvePermissionFlagKey', () => {
-  it('returns the code key of a standard flag stored under a different key', () => {
+  it.each<[string, PermissionFlagType]>([
+    ['APPLICATIONS', PermissionFlagType.WORKSPACE_APPS],
+    ['CONNECTED_ACCOUNTS', PermissionFlagType.USER_APPS],
+  ])(
+    'returns the current key of a standard flag still stored as %s',
+    (storedKey, expectedKey) => {
+      expect(
+        resolvePermissionFlagKey({
+          universalIdentifier: SystemPermissionFlag[expectedKey],
+          key: storedKey,
+        }),
+      ).toBe(expectedKey);
+    },
+  );
+
+  it('returns the key of a standard flag already stored under its current key', () => {
     expect(
       resolvePermissionFlagKey({
-        universalIdentifier: SystemPermissionFlag.APPLICATIONS,
-        key: 'WORKSPACE_APPS',
+        universalIdentifier: SystemPermissionFlag.WORKSPACE_APPS,
+        key: PermissionFlagType.WORKSPACE_APPS,
       }),
-    ).toBe(PermissionFlagType.APPLICATIONS);
+    ).toBe(PermissionFlagType.WORKSPACE_APPS);
   });
 
-  it('returns the key of a standard flag stored under its code key', () => {
-    expect(
-      resolvePermissionFlagKey({
-        universalIdentifier: SystemPermissionFlag.CONNECTED_ACCOUNTS,
-        key: PermissionFlagType.CONNECTED_ACCOUNTS,
-      }),
-    ).toBe(PermissionFlagType.CONNECTED_ACCOUNTS);
-  });
-
-  it.each(['CAN_EXPORT_INVOICES', PermissionFlagType.APPLICATIONS])(
+  it.each(['CAN_EXPORT_INVOICES', 'APPLICATIONS'])(
     'returns the stored key %s of a flag outside the standard set',
     (storedKey) => {
       expect(

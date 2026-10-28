@@ -25,11 +25,8 @@ export const setupApplicationWithVariable = async ({
   isSecret = false,
   value = variableScope === 'USER' ? undefined : 'initial',
   permissionFlagUniversalIdentifiers = variableScope === 'USER'
-    ? [
-        SystemPermissionFlag.APPLICATIONS,
-        SystemPermissionFlag.CONNECTED_ACCOUNTS,
-      ]
-    : [SystemPermissionFlag.APPLICATIONS],
+    ? [SystemPermissionFlag.WORKSPACE_APPS, SystemPermissionFlag.USER_APPS]
+    : [SystemPermissionFlag.WORKSPACE_APPS],
   objectPermissions = [],
 }: {
   name: string;

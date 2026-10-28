@@ -25,18 +25,18 @@ const buildFlatPermissionFlag = (
 });
 
 describe('fromFlatPermissionFlagToPermissionFlagDto', () => {
-  it('upgrade:2-53:rename-app-permission-flag-keys exposes the code key of a standard flag stored under a different key', () => {
+  it('upgrade:2-53:rename-app-permission-flag-keys exposes the current key of a standard flag still stored under its previous key', () => {
     expect(
       fromFlatPermissionFlagToPermissionFlagDto(
         buildFlatPermissionFlag({
-          universalIdentifier: SystemPermissionFlag.APPLICATIONS,
-          key: 'WORKSPACE_APPS',
+          universalIdentifier: SystemPermissionFlag.WORKSPACE_APPS,
+          key: 'APPLICATIONS',
         }),
       ),
     ).toEqual({
       id: 'permission-flag-id',
-      universalIdentifier: SystemPermissionFlag.APPLICATIONS,
-      key: PermissionFlagType.APPLICATIONS,
+      universalIdentifier: SystemPermissionFlag.WORKSPACE_APPS,
+      key: PermissionFlagType.WORKSPACE_APPS,
       label: 'Workspace Apps',
       description: 'Install and manage workspace apps',
       icon: 'IconApps',

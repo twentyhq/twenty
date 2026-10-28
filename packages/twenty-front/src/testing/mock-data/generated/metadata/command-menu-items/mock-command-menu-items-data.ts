@@ -1004,7 +1004,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
       "path": "/settings/accounts"
     },
     "hotKeys": null,
-    "conditionalAvailabilityExpression": "permissionFlags.CONNECTED_ACCOUNTS",
+    "conditionalAvailabilityExpression": "permissionFlags.USER_APPS",
     "availabilityType": "GLOBAL",
     "availabilityObjectMetadataId": null,
     "pageLayoutId": null,
@@ -1029,7 +1029,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
       "path": "/settings/accounts/emails"
     },
     "hotKeys": null,
-    "conditionalAvailabilityExpression": "permissionFlags.CONNECTED_ACCOUNTS",
+    "conditionalAvailabilityExpression": "permissionFlags.USER_APPS",
     "availabilityType": "GLOBAL",
     "availabilityObjectMetadataId": null,
     "pageLayoutId": null,
@@ -1054,7 +1054,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
       "path": "/settings/accounts/calendars"
     },
     "hotKeys": null,
-    "conditionalAvailabilityExpression": "permissionFlags.CONNECTED_ACCOUNTS",
+    "conditionalAvailabilityExpression": "permissionFlags.USER_APPS",
     "availabilityType": "GLOBAL",
     "availabilityObjectMetadataId": null,
     "pageLayoutId": null,
@@ -1254,7 +1254,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
       "path": "/settings/applications"
     },
     "hotKeys": null,
-    "conditionalAvailabilityExpression": "permissionFlags.APPLICATIONS",
+    "conditionalAvailabilityExpression": "permissionFlags.WORKSPACE_APPS",
     "availabilityType": "GLOBAL",
     "availabilityObjectMetadataId": null,
     "pageLayoutId": null,

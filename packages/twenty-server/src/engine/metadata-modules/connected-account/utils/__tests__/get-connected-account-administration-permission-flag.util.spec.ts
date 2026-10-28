@@ -9,7 +9,7 @@ describe('getConnectedAccountAdministrationPermissionFlag', () => {
       getConnectedAccountAdministrationPermissionFlag(
         ConnectedAccountProvider.APP,
       ),
-    ).toBe(PermissionFlagType.APPLICATIONS);
+    ).toBe(PermissionFlagType.WORKSPACE_APPS);
   });
 
   it('requires the Workspace permission for a group mailbox', () => {

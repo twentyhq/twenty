@@ -34,8 +34,8 @@ export class AppConnectionAccessService {
         userWorkspaceId,
         workspaceId,
         setting: isWorkspaceShared
-          ? PermissionFlagType.APPLICATIONS
-          : PermissionFlagType.CONNECTED_ACCOUNTS,
+          ? PermissionFlagType.WORKSPACE_APPS
+          : PermissionFlagType.USER_APPS,
         apiKeyId,
         applicationId,
         agentId,

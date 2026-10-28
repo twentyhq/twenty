@@ -30,7 +30,7 @@ const grantResponse = {
 
 const setManageAppsPermission = (canManageApps: boolean) => {
   jotaiStore.set(currentUserWorkspaceState.atom, {
-    permissionFlags: canManageApps ? [PermissionFlagType.APPLICATIONS] : [],
+    permissionFlags: canManageApps ? [PermissionFlagType.WORKSPACE_APPS] : [],
     twoFactorAuthenticationMethodSummary: null,
     objectsPermissions: [],
   } as never);

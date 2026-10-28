@@ -57,7 +57,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
   const { accounts: myAccounts, loading } = useMyConnectedAccounts();
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const hasConnectedAccountsPermission = useHasPermissionFlag(
-    PermissionFlagType.CONNECTED_ACCOUNTS,
+    PermissionFlagType.USER_APPS,
   );
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(

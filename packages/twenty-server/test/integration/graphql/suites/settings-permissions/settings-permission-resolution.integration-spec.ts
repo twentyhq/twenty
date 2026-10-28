@@ -236,7 +236,7 @@ describe('Settings permission resolution', () => {
     deniedApplication = await setupApplicationWithVariable({
       name: 'Settings resolution denied app',
       variableKey: 'DENIED',
-      permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+      permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE_APPS],
     });
     rolelessApplication = await setupApplicationWithVariable({
       name: 'Settings resolution roleless app',

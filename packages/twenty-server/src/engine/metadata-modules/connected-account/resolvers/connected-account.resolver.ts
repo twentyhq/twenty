@@ -65,7 +65,7 @@ export class ConnectedAccountResolver {
 
   @Query(() => [ApplicationConnectedAccountDTO])
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_APPS),
     ApplicationTargetGuard,
   )
   async applicationConnectedAccounts(

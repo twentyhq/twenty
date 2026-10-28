@@ -62,7 +62,7 @@ describe('Administration operations with a code interpreter sandbox token should
       name: 'Code Interpreter Administration Probe',
       variableKey: 'CODE_INTERPRETER_ADMINISTRATION_PROBE',
       permissionFlagUniversalIdentifiers: [
-        SystemPermissionFlag.APPLICATIONS,
+        SystemPermissionFlag.WORKSPACE_APPS,
         SystemPermissionFlag.ROLES,
         SystemPermissionFlag.WORKSPACE,
       ],

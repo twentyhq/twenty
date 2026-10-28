@@ -57,9 +57,7 @@ describe.each([
       await upsertPermissionFlags({
         input: {
           roleId,
-          permissionFlagKeys: isAllowed
-            ? [PermissionFlagType.CONNECTED_ACCOUNTS]
-            : [],
+          permissionFlagKeys: isAllowed ? [PermissionFlagType.USER_APPS] : [],
         },
       });
     };

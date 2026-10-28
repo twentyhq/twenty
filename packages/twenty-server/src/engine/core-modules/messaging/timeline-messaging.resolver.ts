@@ -209,7 +209,7 @@ export class TimelineMessagingResolver {
     });
   }
 
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.USER_APPS))
   @Mutation(() => Boolean)
   async dismissReconnectAccountBanner(
     @AuthUser() user: AuthContextUser,

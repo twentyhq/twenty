@@ -60,7 +60,7 @@ export const SettingsDevelopersAppsTab = () => {
   useRefetchOnApplicationRegistrationChange({ refetch });
 
   const canClaimApplications = useHasPermissionFlag(
-    PermissionFlagType.APPLICATIONS,
+    PermissionFlagType.WORKSPACE_APPS,
   );
 
   const [myAppsSearchTerm, setMyAppsSearchTerm] = useState('');

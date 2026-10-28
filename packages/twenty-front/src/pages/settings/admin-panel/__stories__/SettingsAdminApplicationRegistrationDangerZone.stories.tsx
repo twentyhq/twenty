@@ -63,7 +63,7 @@ const meta: Meta<typeof SettingsAdminApplicationRegistrationDangerZone> = {
     transferOwnershipRequest.mockClear();
     finishTransferRequest = undefined;
     jotaiStore.set(currentUserWorkspaceState.atom, {
-      permissionFlags: [PermissionFlagType.APPLICATIONS],
+      permissionFlags: [PermissionFlagType.WORKSPACE_APPS],
       objectsPermissions: [],
       twoFactorAuthenticationMethodSummary: [],
       isImpersonating: false,

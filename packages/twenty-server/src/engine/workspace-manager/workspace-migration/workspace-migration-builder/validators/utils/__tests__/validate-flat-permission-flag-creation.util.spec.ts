@@ -89,10 +89,7 @@ describe('validateFlatPermissionFlagCreation', () => {
     expect(result.errors[0].message).toContain('CAN_DO_THING');
   });
 
-  it.each([
-    PermissionFlagType.CONNECTED_ACCOUNTS,
-    PermissionFlagType.WORKFLOWS,
-  ])(
+  it.each([PermissionFlagType.USER_APPS, 'CONNECTED_ACCOUNTS', 'APPLICATIONS'])(
     'should report an error when an app flag uses the reserved key %s',
     (key) => {
       const result = validateFlatPermissionFlagCreation(
@@ -117,12 +114,12 @@ describe('validateFlatPermissionFlagCreation', () => {
       buildCreationArgs({
         flatEntityToValidate: buildFlatPermissionFlag({
           universalIdentifier: 'new-flag',
-          key: PermissionFlagType.CONNECTED_ACCOUNTS,
+          key: PermissionFlagType.USER_APPS,
         }),
         existingFlags: [
           buildStandardAppFlatPermissionFlag({
-            universalIdentifier: SystemPermissionFlag.CONNECTED_ACCOUNTS,
-            key: PermissionFlagType.CONNECTED_ACCOUNTS,
+            universalIdentifier: SystemPermissionFlag.USER_APPS,
+            key: PermissionFlagType.USER_APPS,
           }),
         ],
       }),
@@ -137,8 +134,8 @@ describe('validateFlatPermissionFlagCreation', () => {
     const result = validateFlatPermissionFlagCreation(
       buildCreationArgs({
         flatEntityToValidate: buildStandardAppFlatPermissionFlag({
-          universalIdentifier: SystemPermissionFlag.CONNECTED_ACCOUNTS,
-          key: PermissionFlagType.CONNECTED_ACCOUNTS,
+          universalIdentifier: SystemPermissionFlag.USER_APPS,
+          key: PermissionFlagType.USER_APPS,
         }),
       }),
     );

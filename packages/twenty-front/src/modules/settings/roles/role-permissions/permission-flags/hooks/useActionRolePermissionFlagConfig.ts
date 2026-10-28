@@ -129,7 +129,7 @@ export const useActionRolePermissionFlagConfig = ({
         isRelevantForUsers: true,
       },
       {
-        key: PermissionFlagType.CONNECTED_ACCOUNTS,
+        key: PermissionFlagType.USER_APPS,
         name: t`User Apps`,
         description: t`Manage own app preferences and accounts`,
         Icon: IconApps,

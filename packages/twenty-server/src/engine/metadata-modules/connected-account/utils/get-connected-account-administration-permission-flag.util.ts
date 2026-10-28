@@ -5,5 +5,5 @@ export const getConnectedAccountAdministrationPermissionFlag = (
   provider: ConnectedAccountProvider,
 ): PermissionFlagType =>
   provider === ConnectedAccountProvider.APP
-    ? PermissionFlagType.APPLICATIONS
+    ? PermissionFlagType.WORKSPACE_APPS
     : PermissionFlagType.WORKSPACE;

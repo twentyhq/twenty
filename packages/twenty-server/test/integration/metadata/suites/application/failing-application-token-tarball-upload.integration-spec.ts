@@ -101,7 +101,7 @@ describe('Application token tarball upload should fail', () => {
     const callingApplication = await setupApplicationWithResources({
       name: 'Calling Application',
       permissionFlagUniversalIdentifiers: [
-        SystemPermissionFlag.APPLICATIONS,
+        SystemPermissionFlag.WORKSPACE_APPS,
         SystemPermissionFlag.MARKETPLACE_APPS,
         SystemPermissionFlag.UPLOAD_FILE,
       ],

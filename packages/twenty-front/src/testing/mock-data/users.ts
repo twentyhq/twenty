@@ -207,7 +207,7 @@ export const mockedUserData: MockedUser = {
   currentUserWorkspace: {
     permissionFlags: [
       PermissionFlagType.WORKSPACE_MEMBERS,
-      PermissionFlagType.CONNECTED_ACCOUNTS,
+      PermissionFlagType.USER_APPS,
     ],
     twoFactorAuthenticationMethodSummary: [],
     objectsPermissions: getTestEnrichedObjectMetadataItemsMock().map(

@@ -24,10 +24,24 @@ import { TwoFactorAuthenticationMethodSummaryDTO } from 'src/engine/core-modules
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
+import { type LegacyStandardPermissionFlagKey } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-type-by-legacy-standard-key.constant';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
-registerEnumType(PermissionFlagType, {
+// Old clients still read pre-2.53 keys; remove after upgrade:2-53:rename-app-permission-flag-keys
+const PERMISSION_FLAG_TYPE_WITH_LEGACY_KEYS = {
+  ...PermissionFlagType,
+  CONNECTED_ACCOUNTS: 'CONNECTED_ACCOUNTS',
+  APPLICATIONS: 'APPLICATIONS',
+} as const satisfies {
+  [TKey in PermissionFlagType | LegacyStandardPermissionFlagKey]: TKey;
+};
+
+registerEnumType(PERMISSION_FLAG_TYPE_WITH_LEGACY_KEYS, {
   name: 'PermissionFlagType',
+  valuesMap: {
+    CONNECTED_ACCOUNTS: { deprecationReason: 'Use USER_APPS instead.' },
+    APPLICATIONS: { deprecationReason: 'Use WORKSPACE_APPS instead.' },
+  },
 });
 
 registerEnumType(PermissionsOnAllObjectRecords, {
@@ -91,8 +105,8 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
     TwoFactorAuthenticationMethodEntity[]
   >;
 
-  @Field(() => [PermissionFlagType], { nullable: true })
-  permissionFlags?: PermissionFlagType[];
+  @Field(() => [PERMISSION_FLAG_TYPE_WITH_LEGACY_KEYS], { nullable: true })
+  permissionFlags?: (PermissionFlagType | LegacyStandardPermissionFlagKey)[];
 
   @Field(() => [ObjectPermissionDTO], { nullable: true })
   objectPermissions?: ObjectPermissionDTO[];
