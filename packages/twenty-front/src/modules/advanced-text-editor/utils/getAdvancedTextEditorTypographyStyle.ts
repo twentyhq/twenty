@@ -90,9 +90,19 @@ type AdvancedTextEditorTypography = {
   headingFontSizes: Record<1 | 2 | 3 | 4 | 5 | 6, string>;
   quoteColor: string;
   quoteFontStyle: string;
-  codeBlockBackground: string;
-  codeBlockColor: string;
+  codeBlockBackground: Record<'light' | 'dark', string>;
+  codeBlockColor: Record<'light' | 'dark', string>;
+  codeBlockFontSize: string;
+  dividerColor: string;
+  guideColor: string;
+  toggleIconColor: string;
+  toggleIconSize: string;
+  tableLayout: string;
+  tableWidth: string;
+  tableCellMinWidth: string;
+  tableBorderColor: Record<'light' | 'dark', string>;
   tableHeaderBackground: string;
+  tableHeaderFontWeight: string;
   taskCheckedColor: string;
 };
 
@@ -109,9 +119,25 @@ const APP_TYPOGRAPHY: AdvancedTextEditorTypography = {
   },
   quoteColor: 'inherit',
   quoteFontStyle: 'italic',
-  codeBlockBackground: themeCssVariables.background.transparent.lighter,
-  codeBlockColor: 'inherit',
+  codeBlockBackground: {
+    light: themeCssVariables.background.transparent.lighter,
+    dark: themeCssVariables.background.transparent.lighter,
+  },
+  codeBlockColor: { light: 'inherit', dark: 'inherit' },
+  codeBlockFontSize: '0.9em',
+  dividerColor: themeCssVariables.border.color.medium,
+  guideColor: 'transparent',
+  toggleIconColor: themeCssVariables.font.color.tertiary,
+  toggleIconSize: themeCssVariables.spacing[2],
+  tableLayout: 'fixed',
+  tableWidth: '100%',
+  tableCellMinWidth: '1em',
+  tableBorderColor: {
+    light: themeCssVariables.border.color.medium,
+    dark: themeCssVariables.border.color.medium,
+  },
   tableHeaderBackground: themeCssVariables.background.tertiary,
+  tableHeaderFontWeight: themeCssVariables.font.weight.medium,
   taskCheckedColor: themeCssVariables.font.color.tertiary,
 };
 
@@ -128,9 +154,28 @@ const NOTE_TYPOGRAPHY: AdvancedTextEditorTypography = {
   },
   quoteColor: themeCssVariables.font.color.secondary,
   quoteFontStyle: 'normal',
-  codeBlockBackground: themeCssVariables.background.primaryInverted,
-  codeBlockColor: themeCssVariables.font.color.inverted,
+  codeBlockBackground: {
+    light: themeCssVariables.background.primaryInverted,
+    dark: themeCssVariables.background.primary,
+  },
+  codeBlockColor: {
+    light: themeCssVariables.font.color.inverted,
+    dark: themeCssVariables.font.color.primary,
+  },
+  codeBlockFontSize: '1em',
+  dividerColor: themeCssVariables.font.color.secondary,
+  guideColor: themeCssVariables.border.color.strong,
+  toggleIconColor: themeCssVariables.font.color.primary,
+  toggleIconSize: '10.5px',
+  tableLayout: 'auto',
+  tableWidth: 'auto',
+  tableCellMinWidth: '120px',
+  tableBorderColor: {
+    light: themeCssVariables.border.color.strong,
+    dark: themeCssVariables.border.color.inverted,
+  },
   tableHeaderBackground: 'transparent',
+  tableHeaderFontWeight: themeCssVariables.font.weight.semiBold,
   taskCheckedColor: 'inherit',
 };
 
@@ -152,6 +197,7 @@ const VARIANT_TYPOGRAPHY: Record<
 
 export const getAdvancedTextEditorTypographyStyle = (
   variant: AdvancedTextEditorVariant,
+  colorScheme: 'light' | 'dark',
 ) => {
   const typography = VARIANT_TYPOGRAPHY[variant];
   const spacing = VARIANT_SPACING[variant];
@@ -182,8 +228,19 @@ export const getAdvancedTextEditorTypographyStyle = (
     '--editor-quote-indent': spacing.quoteIndent,
     '--editor-quote-color': typography.quoteColor,
     '--editor-quote-font-style': typography.quoteFontStyle,
-    '--editor-code-block-background': typography.codeBlockBackground,
-    '--editor-code-block-color': typography.codeBlockColor,
+    '--editor-code-block-background':
+      typography.codeBlockBackground[colorScheme],
+    '--editor-code-block-color': typography.codeBlockColor[colorScheme],
+    '--editor-code-block-font-size': typography.codeBlockFontSize,
+    '--editor-divider-color': typography.dividerColor,
+    '--editor-guide-color': typography.guideColor,
+    '--editor-toggle-icon-color': typography.toggleIconColor,
+    '--editor-toggle-icon-size': typography.toggleIconSize,
+    '--editor-table-layout': typography.tableLayout,
+    '--editor-table-width': typography.tableWidth,
+    '--editor-table-cell-min-width': typography.tableCellMinWidth,
+    '--editor-table-border-color': typography.tableBorderColor[colorScheme],
+    '--editor-table-header-font-weight': typography.tableHeaderFontWeight,
     '--editor-code-block-padding': spacing.codeBlockPadding,
     '--editor-divider-spacing': spacing.dividerSpacing,
     '--editor-task-checkbox-margin': spacing.taskCheckboxMargin,
