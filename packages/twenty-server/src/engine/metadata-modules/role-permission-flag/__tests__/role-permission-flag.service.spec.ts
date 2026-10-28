@@ -314,6 +314,7 @@ describe('RolePermissionFlagService.upsertPermissionFlags', () => {
         buildService({
           permissionFlags: [
             STANDARD_WORKSPACE_APPS_PERMISSION_FLAG,
+            STANDARD_USER_APPS_PERMISSION_FLAG,
             { ...APP_PERMISSION_FLAG, key: PermissionFlagType.WORKSPACE_APPS },
           ],
           grantedPermissionFlagUniversalIdentifiers: [
@@ -361,6 +362,25 @@ describe('RolePermissionFlagService.upsertPermissionFlags', () => {
             validateBuildAndRunWorkspaceMigration,
           ),
         ).toEqual([APP_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER]);
+      });
+
+      it('grants an unrelated key', async () => {
+        const { service, validateBuildAndRunWorkspaceMigration } =
+          buildCollidingService();
+
+        await service.upsertPermissionFlags({
+          workspaceId: WORKSPACE_ID,
+          input: {
+            roleId: ROLE_ID,
+            permissionFlagKeys: [PermissionFlagType.USER_APPS],
+          },
+        });
+
+        expect(
+          getCreatedPermissionFlagUniversalIdentifiers(
+            validateBuildAndRunWorkspaceMigration,
+          ),
+        ).toEqual([SystemPermissionFlag.USER_APPS]);
       });
     });
 

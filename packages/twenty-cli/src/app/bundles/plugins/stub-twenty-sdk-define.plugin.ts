@@ -15,10 +15,7 @@ const isPrimitive = (value: unknown): boolean =>
 
 export const isPlainDataExport = (value: unknown): boolean =>
   isPrimitive(value) ||
-  (isPlainObject(value) &&
-    Object.getOwnPropertyNames(value).every((name) =>
-      isPrimitive(value[name]),
-    ));
+  (isPlainObject(value) && Object.values(value).every(isPrimitive));
 
 // JSON.stringify drops non-enumerable properties such as deprecated aliases
 const serializePlainDataExport = (value: unknown): string => {
@@ -28,16 +25,18 @@ const serializePlainDataExport = (value: unknown): string => {
     return json;
   }
 
-  const nonEnumerableNames = Object.getOwnPropertyNames(value).filter(
-    (name) => !Object.prototype.propertyIsEnumerable.call(value, name),
+  const nonEnumerablePrimitiveNames = Object.getOwnPropertyNames(value).filter(
+    (name) =>
+      !Object.prototype.propertyIsEnumerable.call(value, name) &&
+      isPrimitive(value[name]),
   );
 
-  if (!isNonEmptyArray(nonEnumerableNames)) {
+  if (!isNonEmptyArray(nonEnumerablePrimitiveNames)) {
     return json;
   }
 
   const nonEnumerableDescriptors = Object.fromEntries(
-    nonEnumerableNames.map((name) => [name, { value: value[name] }]),
+    nonEnumerablePrimitiveNames.map((name) => [name, { value: value[name] }]),
   );
 
   return `/* @__PURE__ */ Object.defineProperties(${json}, ${JSON.stringify(nonEnumerableDescriptors)})`;

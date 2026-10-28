@@ -62,6 +62,19 @@ describe('buildStubModuleSource', () => {
     ).toBe(false);
   });
 
+  it('inlines enumerable values when a non-enumerable property is a function', async () => {
+    const Flag = Object.defineProperty({ CURRENT: 'flag-id' }, 'describe', {
+      value: () => 'flag',
+    });
+
+    const { Flag: stubbedFlag } = await importSource(
+      buildStubModuleSource({ Flag }),
+    );
+
+    expect(stubbedFlag.CURRENT).toBe('flag-id');
+    expect(Object.getOwnPropertyNames(stubbedFlag)).toEqual(['CURRENT']);
+  });
+
   it('stays tree-shakeable when an aliased export is unused', async () => {
     const appPath = await createAppWithSdkDefine(
       `exports.defineThing = (config) => config;

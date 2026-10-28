@@ -313,7 +313,7 @@ twenty app plan --remote dev
 twenty app plan --path ./apps/billing --no-delete --json
 ```
 
-`app plan` builds once with the CLI pipeline, releases the temporary snapshot, then requests the server's metadata preview with `dryRun: true`. It uses the usual connection selection and requires the server's `WORKSPACE_APPS` permission. The server enforces authorization, ownership and manifest/version compatibility. No registration, installation, upload or metadata synchronization is performed, and planning never advances a pull base. The local build can generate app artifacts, just as `app build` does.
+`app plan` builds once with the CLI pipeline, releases the temporary snapshot, then requests the server's metadata preview with `dryRun: true`. It uses the usual connection selection and requires the server's Workspace Apps (`WORKSPACE_APPS`; `APPLICATIONS` on servers before 2.53) permission. The server enforces authorization, ownership and manifest/version compatibility. No registration, installation, upload or metadata synchronization is performed, and planning never advances a pull base. The local build can generate app artifacts, just as `app build` does.
 
 JSON marks plans with `plan: true`. A plan is not a saved approval: remote changes can alter what a later apply does. A missing owned application registration returns `PLAN_UNAVAILABLE` (exit 1). Register the app with `twenty app apply --create`, then plan again.
 

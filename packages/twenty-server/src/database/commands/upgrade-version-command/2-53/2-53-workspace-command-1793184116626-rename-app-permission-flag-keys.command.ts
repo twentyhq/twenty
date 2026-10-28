@@ -89,7 +89,7 @@ export class RenameAppPermissionFlagKeysCommand extends ProvisionedWorkspaceComm
 
       throw new Error(
         doNotTranslate(
-          `Workspace ${workspaceId}: ${collisionDescriptions.join('; ')}. Permission flag keys cannot change: revoke each conflicting permission flag from every role, uninstall its application, then rerun the upgrade. upgrade --dry-run lists the workspaces that still collide.`,
+          `Workspace ${workspaceId}: ${collisionDescriptions.join('; ')}. Permission flag keys cannot change: revoke each conflicting permission flag from every role, uninstall its application, then rerun the upgrade. Afterwards, grant the standard Workspace Apps or User Apps permission again where it was removed. upgrade --dry-run lists the workspaces that still collide.`,
         ),
       );
     }
@@ -110,17 +110,24 @@ export class RenameAppPermissionFlagKeysCommand extends ProvisionedWorkspaceComm
         commandMenuItems: nonStandardCommandMenuItemsToUpdate,
       });
     // The owning application's next manifest sync would revert a rewrite
-    const skippedCommandMenuItemCount =
-      nonStandardCommandMenuItemsToUpdate.length -
-      customCommandMenuItemsToUpdate.length;
+    const otherApplicationCommandMenuItems =
+      nonStandardCommandMenuItemsToUpdate.filter(
+        (commandMenuItem) =>
+          !customCommandMenuItemsToUpdate.includes(commandMenuItem),
+      );
 
     const isDryRun = options.dryRun ?? false;
     const logPrefix = `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}`;
 
-    if (skippedCommandMenuItemCount > 0) {
+    if (isNonEmptyArray(otherApplicationCommandMenuItems)) {
       this.logger.warn(
         doNotTranslate(
-          `${logPrefix}: leaving ${skippedCommandMenuItemCount} command menu item(s) of other applications that read a renamed permission flag key`,
+          `${logPrefix}: leaving ${otherApplicationCommandMenuItems.length} command menu item(s) of other applications that read a renamed permission flag key: ${otherApplicationCommandMenuItems
+            .map(
+              ({ id, applicationUniversalIdentifier }) =>
+                `${id} (application ${applicationUniversalIdentifier})`,
+            )
+            .join(', ')}`,
         ),
       );
     }
@@ -298,37 +305,47 @@ export class RenameAppPermissionFlagKeysCommand extends ProvisionedWorkspaceComm
     logPrefix: string;
     commandMenuItemsToUpdate: FlatCommandMenuItem[];
   }): Promise<void> {
-    const failedCommandMenuItemIds: string[] = [];
+    const failedCommandMenuItemDescriptions: string[] = [];
 
-    for (const commandMenuItem of commandMenuItemsToUpdate) {
-      const result =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-          {
-            workspaceId,
-            isSystemBuild: true,
-            applicationUniversalIdentifier:
-              commandMenuItem.applicationUniversalIdentifier,
-            allFlatEntityOperationByMetadataName: {
-              commandMenuItem: {
-                flatEntityToCreate: [],
-                flatEntityToDelete: [],
-                flatEntityToUpdate: [commandMenuItem],
+    try {
+      for (const commandMenuItem of commandMenuItemsToUpdate) {
+        const result =
+          await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+            {
+              workspaceId,
+              isSystemBuild: true,
+              applicationUniversalIdentifier:
+                commandMenuItem.applicationUniversalIdentifier,
+              allFlatEntityOperationByMetadataName: {
+                commandMenuItem: {
+                  flatEntityToCreate: [],
+                  flatEntityToDelete: [],
+                  flatEntityToUpdate: [commandMenuItem],
+                },
               },
             },
-          },
-        );
+          );
 
-      if (result.status === 'fail') {
-        failedCommandMenuItemIds.push(commandMenuItem.id);
+        if (result.status === 'fail') {
+          const errorCodes = new Set(
+            Object.values(result.report)
+              .flat()
+              .flatMap(({ errors }) => errors.map(({ code }) => code)),
+          );
+
+          failedCommandMenuItemDescriptions.push(
+            `${commandMenuItem.id} (${[...errorCodes].join(', ')})`,
+          );
+        }
       }
-    }
-
-    if (isNonEmptyArray(failedCommandMenuItemIds)) {
-      this.logger.warn(
-        doNotTranslate(
-          `${logPrefix}: left the permission flag references of ${failedCommandMenuItemIds.length} custom command menu item(s) unchanged because they fail validation: ${failedCommandMenuItemIds.join(', ')}`,
-        ),
-      );
+    } finally {
+      if (isNonEmptyArray(failedCommandMenuItemDescriptions)) {
+        this.logger.warn(
+          doNotTranslate(
+            `${logPrefix}: left the permission flag references of ${failedCommandMenuItemDescriptions.length} custom command menu item(s) unchanged because they fail validation: ${failedCommandMenuItemDescriptions.join(', ')}. They keep the old keys and stop matching once the old keys are no longer reported`,
+          ),
+        );
+      }
     }
   }
 }

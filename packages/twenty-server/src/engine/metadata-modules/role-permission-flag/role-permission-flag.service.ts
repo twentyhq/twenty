@@ -264,10 +264,10 @@ export class RolePermissionFlagService {
       .join(', ');
 
     throw new PermissionsException(
-      `Permission flag key(s) defined by both Twenty and an application: ${collisionDescription}. Revoke them from every role, then uninstall the application.`,
+      `Permission flag key(s) defined by both Twenty and an application: ${collisionDescription}. Revoke them from every role, then uninstall the application. Afterwards, grant the standard Workspace Apps or User Apps permission again where it was removed.`,
       PermissionsExceptionCode.INVALID_SETTING,
       {
-        userFriendlyMessage: msg`These permissions are defined both by Twenty and by an installed application: ${collisionDescription}. Revoke them from every role, then uninstall the application.`,
+        userFriendlyMessage: msg`These permissions are defined both by Twenty and by an installed application: ${collisionDescription}. Revoke them from every role, then uninstall the application. Afterwards, grant the standard Workspace Apps or User Apps permission again where it was removed.`,
       },
     );
   }

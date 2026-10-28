@@ -3,7 +3,7 @@ import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIcons } from 'twenty-ui/icon';
 import { type PermissionFlagPermissionType } from 'twenty-shared/application';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 export const useRolePermissionFlagConfig = ({
   permissionType,

@@ -82,6 +82,11 @@ const buildInitialCommandMenuItems = () =>
     },
   ] as FlatCommandMenuItem[];
 
+const buildFailedMigrationResult = (code: string) => ({
+  status: 'fail',
+  report: { commandMenuItem: [{ errors: [{ code, message: code }] }] },
+});
+
 const indexByUniversalIdentifier = <
   TFlatEntity extends { universalIdentifier: string },
 >(
@@ -276,7 +281,7 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
       'permissionFlags.CONNECTED_ACCOUNTS',
     ]);
     expect(warn).toHaveBeenCalledWith(
-      `Workspace ${WORKSPACE_ID}: leaving 1 command menu item(s) of other applications that read a renamed permission flag key`,
+      `Workspace ${WORKSPACE_ID}: leaving 1 command menu item(s) of other applications that read a renamed permission flag key: other-application-command-menu-item-id (application ${OTHER_APPLICATION_UNIVERSAL_IDENTIFIER})`,
     );
   });
 
@@ -335,7 +340,7 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
     ];
 
     await expect(command.runOnWorkspace(buildArgs())).rejects.toThrow(
-      `CONNECTED_ACCOUNTS cannot become USER_APPS: permission flag 20202020-4444-4444-8444-444444444444 of application "Invoice Exporter" (${OTHER_APPLICATION_UNIVERSAL_IDENTIFIER}) already uses that key. Permission flag keys cannot change: revoke each conflicting permission flag from every role, uninstall its application, then rerun the upgrade. upgrade --dry-run lists the workspaces that still collide.`,
+      `CONNECTED_ACCOUNTS cannot become USER_APPS: permission flag 20202020-4444-4444-8444-444444444444 of application "Invoice Exporter" (${OTHER_APPLICATION_UNIVERSAL_IDENTIFIER}) already uses that key. Permission flag keys cannot change: revoke each conflicting permission flag from every role, uninstall its application, then rerun the upgrade. Afterwards, grant the standard Workspace Apps or User Apps permission again where it was removed. upgrade --dry-run lists the workspaces that still collide.`,
     );
     expect(writes).toEqual([]);
   });
@@ -357,9 +362,9 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
   });
 
   it('leaves an invalid custom command menu item behind with a warning instead of failing', async () => {
-    validateBuildAndRunWorkspaceMigration.mockResolvedValueOnce({
-      status: 'fail',
-    });
+    validateBuildAndRunWorkspaceMigration.mockResolvedValueOnce(
+      buildFailedMigrationResult('WORKFLOW_OR_FRONT_COMPONENT_REQUIRED'),
+    );
 
     await command.runOnWorkspace(buildArgs());
 
@@ -370,7 +375,38 @@ describe('RenameAppPermissionFlagKeysCommand', () => {
       'permissionFlags.CONNECTED_ACCOUNTS',
     ]);
     expect(warn).toHaveBeenCalledWith(
-      `Workspace ${WORKSPACE_ID}: left the permission flag references of 1 custom command menu item(s) unchanged because they fail validation: custom-command-menu-item-id`,
+      `Workspace ${WORKSPACE_ID}: left the permission flag references of 1 custom command menu item(s) unchanged because they fail validation: custom-command-menu-item-id (WORKFLOW_OR_FRONT_COMPONENT_REQUIRED). They keep the old keys and stop matching once the old keys are no longer reported`,
+    );
+  });
+
+  it('still rewrites the next custom command menu item after one fails validation', async () => {
+    commandMenuItems = [
+      ...buildInitialCommandMenuItems(),
+      {
+        id: 'second-custom-command-menu-item-id',
+        universalIdentifier: 'second-custom-command-menu-item',
+        applicationUniversalIdentifier:
+          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        conditionalAvailabilityExpression: 'permissionFlags.CONNECTED_ACCOUNTS',
+        conditionalPinnedExpression: null,
+      } as FlatCommandMenuItem,
+    ];
+    validateBuildAndRunWorkspaceMigration.mockResolvedValueOnce(
+      buildFailedMigrationResult('WORKFLOW_OR_FRONT_COMPONENT_REQUIRED'),
+    );
+
+    await command.runOnWorkspace(buildArgs());
+
+    expect(getExpressions()).toEqual([
+      'permissionFlags.USER_APPS',
+      'permissionFlags.APPLICATIONS',
+      'permissionFlags.CONNECTED_ACCOUNTS',
+      'permissionFlags.USER_APPS',
+    ]);
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'fail validation: custom-command-menu-item-id (WORKFLOW_OR_FRONT_COMPONENT_REQUIRED).',
+      ),
     );
   });
 
