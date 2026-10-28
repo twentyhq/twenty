@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { FRONT_COMPONENT_HOST_FETCH_HEADER_NAME } from 'twenty-shared/constants';
 import { CustomError, getUrlSafely, isDefined } from 'twenty-shared/utils';
 
 import { resolveHostFetchRedirectMode } from '@/host/fetch/utils/resolveHostFetchRedirectMode';
@@ -30,11 +31,21 @@ export const createHostFetchEnforcingPolicy = (
       ? input.method.toUpperCase()
       : 'GET';
 
+    // Page-origin requests carry the page's cookies so cookie-authenticating proxies
+    // (Cloudflare Access, IAP, oauth2-proxy) let them through. The marker header makes
+    // the server ignore the user session cookie, so app code still acts only with its own token.
+    const isPageOriginRequest = requestOrigin === window.location.origin;
+    const headers = new Headers(input.headers);
+
+    if (isPageOriginRequest) {
+      headers.set(FRONT_COMPONENT_HOST_FETCH_HEADER_NAME, '1');
+    }
+
     const response = await fetch(input.url, {
       method: requestMethod,
-      headers: input.headers,
+      headers,
       body: input.body,
-      credentials: 'omit',
+      credentials: isPageOriginRequest ? 'same-origin' : 'omit',
       redirect: resolveHostFetchRedirectMode(
         requestMethod,
         input.url,
