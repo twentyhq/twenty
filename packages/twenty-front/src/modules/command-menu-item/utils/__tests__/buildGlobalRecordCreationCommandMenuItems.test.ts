@@ -1,10 +1,7 @@
 // oxlint-disable twenty/folder-structure -- Utility specs intentionally live beside their implementation.
 import { buildGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/utils/buildGlobalRecordCreationCommandMenuItems';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import {
-  EngineComponentKey,
-  MetadataWritability,
-} from '~/generated-metadata/graphql';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';
 
 const createRecordCommand = mockedCommandMenuItems.find(
@@ -19,19 +16,8 @@ const objects = [
   { id: 'remote', labelSingular: 'remote', isRemote: true },
   { id: 'readonly', labelSingular: 'readonly', isUIEditable: false },
   { id: 'internal', labelSingular: 'internal', isUICreatable: false },
-  {
-    id: 'system',
-    labelSingular: 'system',
-    writability: MetadataWritability.SYSTEM,
-  },
-  {
-    id: 'application',
-    labelSingular: 'application',
-    writability: MetadataWritability.APPLICATION,
-  },
 ].map((objectMetadataItem) => ({
   icon: null,
-  writability: MetadataWritability.OPEN,
   isUICreatable: true,
   isUIEditable: true,
   isRemote: false,

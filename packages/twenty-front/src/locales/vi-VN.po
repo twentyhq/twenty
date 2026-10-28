@@ -430,7 +430,9 @@ msgstr "{0} lần thử lại"
 
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
+#. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
+#: src/modules/ai/components/AiChatInboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -624,6 +626,11 @@ msgstr "{callRecordingHours, plural, other {{formattedCallRecordingHours} giờ}
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr "{cardCount, plural, other {Phê duyệt # hành động?}}"
+
+#. js-lingui-id: AnO6CC
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
+msgid "{channelStatusLabel} · {assignmentLabel}"
+msgstr ""
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -1559,11 +1566,6 @@ msgstr "Cần có phương thức thanh toán để duy trì không gian làm vi
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
 msgstr "Một khoản thanh toán cho gói đăng ký của bạn đã thất bại. Các tính năng cao cấp của bạn vẫn hoạt động trong khi chúng tôi thử lại."
 
-#. js-lingui-id: Aiok04
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr "Một bản ghi có thể được chia sẻ với bất kỳ ai, kể cả những người có vai trò không thể truy cập đối tượng này. Họ chỉ nhận được bản ghi đó để xem hoặc chỉnh sửa."
-
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1670,11 +1672,6 @@ msgstr "Thông tin về ứng dụng của bạn"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Các DPA đã được chấp nhận và ký cho không gian làm việc này, kèm phiên bản và ngày của mẫu."
-
-#. js-lingui-id: F3vVuj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Access is also inherited from related records."
-msgstr "Quyền truy cập cũng được kế thừa từ các bản ghi liên quan."
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2099,6 +2096,11 @@ msgstr "Thêm thẻ"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Add CC"
 msgstr "Thêm CC"
+
+#. js-lingui-id: PKjhUq
+#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+msgid "Add channel"
+msgstr ""
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -3047,7 +3049,7 @@ msgstr "Căn chỉnh"
 
 #. js-lingui-id: N40H+G
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
@@ -3556,11 +3558,6 @@ msgstr "Mọi thiết bị"
 #: src/modules/views/components/AnyFieldSearchChip.tsx
 msgid "Any field"
 msgstr "Bất kỳ trường nào"
-
-#. js-lingui-id: V38wzw
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Anyone in the workspace"
-msgstr "Bất kỳ ai trong không gian làm việc"
 
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -4163,6 +4160,7 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned"
 msgstr "Đã giao"
@@ -4188,7 +4186,7 @@ msgid "Assigned to you"
 msgstr "Được gán cho bạn"
 
 #. js-lingui-id: ojKCLU
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
 msgstr "Người được giao"
@@ -5281,11 +5279,6 @@ msgstr "Chiến dịch được lên lịch vào {sendTime}"
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Đã hủy lịch chiến dịch và đưa lại vào bản nháp của bạn"
-
-#. js-lingui-id: n3fZtA
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr "Chỉ có thể xem: vai trò của họ không thể chỉnh sửa {objectLabelPlural}"
 
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -9819,9 +9812,9 @@ msgstr "Không nhập các sự kiện được đánh dấu là riêng tư"
 
 #. js-lingui-id: DPfwMq
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -12809,6 +12802,12 @@ msgstr "Lọc theo loại đối tượng"
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
 msgid "Filter by record ID"
 msgstr "Lọc theo ID bản ghi"
+
+#. js-lingui-id: jge9hE
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+msgid "Filter channel chats"
+msgstr ""
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -17284,7 +17283,8 @@ msgid "Min range"
 msgstr "Phạm vi tối thiểu"
 
 #. js-lingui-id: oSrMRT
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "Mine"
 msgstr "Của tôi"
 
@@ -17981,7 +17981,6 @@ msgid "New calendar event"
 msgstr "Sự kiện lịch mới"
 
 #. js-lingui-id: BW0+uJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "New channel"
 msgstr "Kênh mới"
@@ -19398,7 +19397,7 @@ msgid "Not measured at this effort yet. Showing the base model's reading."
 msgstr "Chưa được đo ở mức nỗ lực này. Đang hiển thị chỉ số của mô hình cơ sở."
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
 msgid "Not open to you"
 msgstr "Không mở cho bạn"
 
@@ -19907,11 +19906,6 @@ msgstr "chỉ vào {firstDay} và {secondDay}"
 msgid "only on {remainingDays} and {0}"
 msgstr "chỉ vào {remainingDays} và {0}"
 
-#. js-lingui-id: k24ukM
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Only people who can already access these records"
-msgstr "Chỉ những người đã có thể truy cập các bản ghi này"
-
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Only run when one of these fields changes"
@@ -19948,8 +19942,8 @@ msgid "Only you will be able to see your emails and events"
 msgstr "Chỉ mình bạn có thể xem email và sự kiện của mình"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -22106,7 +22100,6 @@ msgstr "Lựa chọn bản ghi"
 
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Record sharing"
 msgstr "Chia sẻ bản ghi"
 
@@ -23163,11 +23156,6 @@ msgstr "vai trò"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Role"
 msgstr "Vai trò"
-
-#. js-lingui-id: mZjYrm
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
-msgid "Role and field permissions still apply."
-msgstr "Quyền của vai trò và trường vẫn được áp dụng."
 
 #. js-lingui-id: l2yKTq
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
@@ -25051,11 +25039,6 @@ msgstr "Email hộp thư dùng chung"
 msgid "Shared record"
 msgstr "Bản ghi được chia sẻ"
 
-#. js-lingui-id: k1qX20
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
-msgid "Sharing never goes beyond roles and their row filters. Use it for sensitive objects."
-msgstr "Việc chia sẻ không bao giờ vượt quá các vai trò và bộ lọc hàng của chúng. Dùng tính năng này cho các đối tượng nhạy cảm."
-
 #. js-lingui-id: wxSZkW
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Sharing record"
@@ -25524,8 +25507,8 @@ msgid "Snooze until {snoozedUntilLabel}"
 msgstr "Tạm ẩn đến {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Snoozed"
 msgstr "Đã tạm ẩn"
@@ -25906,7 +25889,6 @@ msgstr "Thống kê"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
@@ -28539,7 +28521,8 @@ msgid "Unanswered"
 msgstr "Chưa được trả lời"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/components/AiChatInboxChannelToolbar.tsx
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
+#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "Unassigned"
 msgstr "Chưa được phân công"
 
@@ -29963,6 +29946,7 @@ msgid "view"
 msgstr "xem"
 
 #. js-lingui-id: jpctdh
+#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -30669,11 +30653,6 @@ msgstr "Mô hình này có hỗ trợ lập luận theo chuỗi hay không"
 msgid "Which conversation with the recipient this step writes to"
 msgstr "Bước này ghi vào cuộc trò chuyện nào với người nhận"
 
-#. js-lingui-id: rfuOpl
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-msgid "Who a record of {objectLabel} can be shared with. Roles still decide what people see by default."
-msgstr "Bản ghi {objectLabel} có thể được chia sẻ với những ai. Vai trò vẫn quyết định những gì mọi người thấy theo mặc định."
-
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -30746,11 +30725,6 @@ msgstr "Không có mã quốc gia"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "không cần thẻ tín dụng"
-
-#. js-lingui-id: rZg70x
-#: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
-msgid "Won't see it: their role can't access {objectLabelPlural}"
-msgstr "Không thể xem: vai trò của họ không thể truy cập {objectLabelPlural}"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)
