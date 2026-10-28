@@ -163,7 +163,13 @@ export const SettingsRoleAssignment = ({
           }
 
           updateApiKeyRoleDraftState({
-            apiKey: apiKeyData as ApiKeyForRole,
+            apiKey: {
+              __typename: 'ApiKeyForRole',
+              id: apiKeyData.id,
+              name: apiKeyData.name,
+              expiresAt: apiKeyData.expiresAt,
+              revokedAt: apiKeyData.revokedAt,
+            },
           });
           break;
         }
