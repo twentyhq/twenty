@@ -319,6 +319,12 @@ export default {
             "openThreadCount": [
                 10
             ],
+            "unreadAssignedThreadCount": [
+                10
+            ],
+            "unreadMentionThreadCount": [
+                10
+            ],
             "__typename": [
                 1
             ]
@@ -3582,6 +3588,9 @@ export default {
             "color": [
                 1
             ],
+            "commandKey": [
+                1
+            ],
             "folderId": [
                 524
             ],
@@ -3617,6 +3626,9 @@ export default {
             ],
             "viewId": [
                 524
+            ],
+            "visibleItemLimit": [
+                10
             ],
             "__typename": [
                 1
@@ -9418,6 +9430,9 @@ export default {
             "color": [
                 1
             ],
+            "commandKey": [
+                1
+            ],
             "createdAt": [
                 209
             ],
@@ -9462,6 +9477,9 @@ export default {
             ],
             "viewId": [
                 524
+            ],
+            "visibleItemLimit": [
+                10
             ],
             "__typename": [
                 1
@@ -13580,6 +13598,9 @@ export default {
             ],
             "position": [
                 6
+            ],
+            "visibleItemLimit": [
+                10
             ],
             "__typename": [
                 1

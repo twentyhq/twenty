@@ -90,6 +90,8 @@ export interface AgentChatOpenThreadsSummary {
     hasUnreadOpenThread: Scalars['Boolean']
     needsInputThreadCount: Scalars['Int']
     openThreadCount: Scalars['Int']
+    unreadAssignedThreadCount: Scalars['Int']
+    unreadMentionThreadCount: Scalars['Int']
     __typename: 'AgentChatOpenThreadsSummary'
 }
 
@@ -2516,6 +2518,7 @@ export interface NavigationMenuItem {
     agentChatChannelId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     color?: Scalars['String']
+    commandKey?: Scalars['String']
     createdAt: Scalars['DateTime']
     folderId?: Scalars['UUID']
     icon?: Scalars['String']
@@ -2531,10 +2534,11 @@ export interface NavigationMenuItem {
     updatedAt: Scalars['DateTime']
     userWorkspaceId?: Scalars['UUID']
     viewId?: Scalars['UUID']
+    visibleItemLimit?: Scalars['Int']
     __typename: 'NavigationMenuItem'
 }
 
-export type NavigationMenuItemType = 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'VIEW'
+export type NavigationMenuItemType = 'AGENT_CHAT_CHANNEL' | 'AI_AGENTS' | 'AI_CHAT_CHANNELS' | 'AI_CHAT_FAVORITES' | 'AI_CHAT_INBOX' | 'AI_CHAT_RECENTS' | 'COMMAND' | 'FAVORITES' | 'FOLDER' | 'LINK' | 'OBJECT' | 'PAGE_LAYOUT' | 'PINNED_COMMANDS' | 'RECORD' | 'SECTION' | 'TAB' | 'VIEW'
 
 export interface NotesConfiguration {
     configurationType: WidgetConfigurationType
@@ -4277,6 +4281,8 @@ export interface AgentChatOpenThreadsSummaryGenqlSelection{
     hasUnreadOpenThread?: boolean | number
     needsInputThreadCount?: boolean | number
     openThreadCount?: boolean | number
+    unreadAssignedThreadCount?: boolean | number
+    unreadMentionThreadCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5607,7 +5613,7 @@ export interface CreateMcpServerInput {connectionProviderId?: (Scalars['UUID'] |
 
 export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
 
-export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null)}
+export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),commandKey?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),visibleItemLimit?: (Scalars['Int'] | null)}
 
 export interface CreateObjectInput {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),labelPlural: Scalars['String'],labelSingular: Scalars['String'],namePlural: Scalars['String'],nameSingular: Scalars['String'],primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),shortcut?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null)}
 
@@ -6993,6 +6999,7 @@ export interface NavigationMenuItemGenqlSelection{
     agentChatChannelId?: boolean | number
     applicationId?: boolean | number
     color?: boolean | number
+    commandKey?: boolean | number
     createdAt?: boolean | number
     folderId?: boolean | number
     icon?: boolean | number
@@ -7008,6 +7015,7 @@ export interface NavigationMenuItemGenqlSelection{
     updatedAt?: boolean | number
     userWorkspaceId?: boolean | number
     viewId?: boolean | number
+    visibleItemLimit?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8265,7 +8273,7 @@ export interface UpdateMessageFolderInputUpdates {isSynced: Scalars['Boolean']}
 
 export interface UpdateMessageFoldersInput {ids: Scalars['UUID'][],update: UpdateMessageFolderInputUpdates}
 
-export interface UpdateNavigationMenuItemInput {color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
+export interface UpdateNavigationMenuItemInput {color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),visibleItemLimit?: (Scalars['Int'] | null)}
 
 export interface UpdateObjectPayload {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),labelPlural?: (Scalars['String'] | null),labelSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),openRecordIn?: (ObjectOpenRecordIn | null),readability?: (MetadataReadability | null),sharingReach?: (ObjectSharingReach | null),shortcut?: (Scalars['String'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
@@ -12452,11 +12460,21 @@ export const enumModelFamily = {
 
 export const enumNavigationMenuItemType = {
    AGENT_CHAT_CHANNEL: 'AGENT_CHAT_CHANNEL' as const,
+   AI_AGENTS: 'AI_AGENTS' as const,
+   AI_CHAT_CHANNELS: 'AI_CHAT_CHANNELS' as const,
+   AI_CHAT_FAVORITES: 'AI_CHAT_FAVORITES' as const,
+   AI_CHAT_INBOX: 'AI_CHAT_INBOX' as const,
+   AI_CHAT_RECENTS: 'AI_CHAT_RECENTS' as const,
+   COMMAND: 'COMMAND' as const,
+   FAVORITES: 'FAVORITES' as const,
    FOLDER: 'FOLDER' as const,
    LINK: 'LINK' as const,
    OBJECT: 'OBJECT' as const,
    PAGE_LAYOUT: 'PAGE_LAYOUT' as const,
+   PINNED_COMMANDS: 'PINNED_COMMANDS' as const,
    RECORD: 'RECORD' as const,
+   SECTION: 'SECTION' as const,
+   TAB: 'TAB' as const,
    VIEW: 'VIEW' as const
 }
 
