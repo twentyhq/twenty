@@ -47,7 +47,7 @@ import {
   RoleIdsBySource,
 } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
-import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
+import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
 import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
@@ -177,10 +177,11 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
-    const objectsPermissions = this.resolveStreamObjectsPermissions(
+    const objectsPermissions = this.resolveStreamObjectsPermissions({
       roleIds,
-      permissionsContext.rolesPermissions,
-    );
+      intersectionOf: rolePermissionConfig.intersectionOf,
+      permissionsContext,
+    });
 
     if (!isDefined(objectsPermissions)) {
       return;
@@ -429,19 +430,30 @@ export class ObjectRecordEventPublisher {
     };
   }
 
-  private resolveStreamObjectsPermissions(
-    roleIds: string[],
-    rolesPermissions: ObjectsPermissionsByRoleId,
-  ): ObjectsPermissions | undefined {
-    const allRolePermissions = roleIds.map(
-      (roleId) => rolesPermissions[roleId],
-    );
-
-    if (!allRolePermissions.every(isDefined)) {
+  private resolveStreamObjectsPermissions({
+    roleIds,
+    intersectionOf,
+    permissionsContext,
+  }: {
+    roleIds: string[];
+    intersectionOf: RoleIdsBySource;
+    permissionsContext: StreamPermissionsContext;
+  }): ObjectsPermissions | undefined {
+    if (
+      !roleIds.every((roleId) =>
+        isDefined(permissionsContext.rolesPermissions[roleId]),
+      )
+    ) {
       return undefined;
     }
 
-    return computePermissionIntersection(allRolePermissions);
+    return computeObjectsPermissionsForRolePermissionConfig({
+      intersectionOf,
+      rolesPermissions: permissionsContext.rolesPermissions,
+      flatObjectMetadataMaps: permissionsContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
+      flatApplicationMaps: permissionsContext.flatApplicationMaps,
+    });
   }
 
   private buildWorkspaceMemberIdByUserId(

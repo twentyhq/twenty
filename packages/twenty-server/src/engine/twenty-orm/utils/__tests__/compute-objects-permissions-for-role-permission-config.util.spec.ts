@@ -146,6 +146,61 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
     },
   );
 
+  it.each<{
+    actor: string;
+    intersectionOf: RoleIdsBySource;
+    canRead: boolean;
+  }>([
+    {
+      actor: 'the owning application',
+      intersectionOf: { applicationRoleId: 'owning-application-role-id' },
+      canRead: true,
+    },
+    {
+      actor: 'a user',
+      intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+      canRead: false,
+    },
+    {
+      actor: 'a user through the owning application',
+      intersectionOf: {
+        userWorkspaceRoleId: 'user-role-id',
+        applicationRoleId: 'owning-application-role-id',
+      },
+      canRead: false,
+    },
+  ])(
+    'read-disabled field readable by $actor: $canRead',
+    ({ intersectionOf, canRead }) => {
+      const fieldMaps: FlatEntityMaps<FlatFieldMetadata> =
+        createEmptyFlatEntityMaps();
+
+      fieldMaps.byUniversalIdentifier.secret = getFlatFieldMetadataMock({
+        id: 'secret-field-id',
+        universalIdentifier: 'secret',
+        objectMetadataId: INVOICE_ID,
+        type: FieldMetadataType.TEXT,
+        applicationId: 'owning-application-id',
+        disabledFieldPermissionActions: ['canReadFieldValue'],
+      });
+      fieldMaps.universalIdentifierById['secret-field-id'] = 'secret';
+
+      const invoicePermissions =
+        computeObjectsPermissionsForRolePermissionConfig({
+          intersectionOf,
+          rolesPermissions,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps: fieldMaps,
+          flatApplicationMaps,
+        })[INVOICE_ID];
+
+      expect(
+        invoicePermissions?.restrictedFields['secret-field-id']?.canRead !==
+          false,
+      ).toBe(canRead);
+    },
+  );
+
   it('should keep the label identifier readable and restrict the inverse of a relation', () => {
     const COMPANY_ID = 'company-id';
     const objectMaps: FlatEntityMaps<FlatObjectMetadata> =
